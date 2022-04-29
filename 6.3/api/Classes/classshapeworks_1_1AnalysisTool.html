@@ -2221,13 +2221,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#slot-on_linear_radio_toggled" class="md-nav__link">
-    slot on_linear_radio_toggled
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#slot-handle_reconstruction_complete" class="md-nav__link">
     slot handle_reconstruction_complete
   </a>
@@ -2377,6 +2370,13 @@
           <li class="md-nav__item">
   <a href="#slot-handle_lda_complete" class="md-nav__link">
     slot handle_lda_complete
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#slot-show_difference_to_mean_clicked" class="md-nav__link">
+    slot show_difference_to_mean_clicked
   </a>
   
 </li>
@@ -2541,8 +2541,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-get_group_value" class="md-nav__link">
-    function get_group_value
+  <a href="#function-get_group_ratio" class="md-nav__link">
+    function get_group_ratio
   </a>
   
 </li>
@@ -2825,10 +2825,6 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1AnalysisTool.html#slot-on-linear-radio-toggled">on_linear_radio_toggled</a></strong>(bool b)</td>
-</tr>
-<tr>
-<td>void</td>
 <td><strong><a href="classshapeworks_1_1AnalysisTool.html#slot-handle-reconstruction-complete">handle_reconstruction_complete</a></strong>()</td>
 </tr>
 <tr>
@@ -2914,6 +2910,10 @@
 <tr>
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1AnalysisTool.html#slot-handle-lda-complete">handle_lda_complete</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1AnalysisTool.html#slot-show-difference-to-mean-clicked">show_difference_to_mean_clicked</a></strong>()</td>
 </tr>
 </tbody>
 </table>
@@ -3015,7 +3015,7 @@
 </tr>
 <tr>
 <td>double</td>
-<td><strong><a href="classshapeworks_1_1AnalysisTool.html#function-get-group-value">get_group_value</a></strong>()</td>
+<td><strong><a href="classshapeworks_1_1AnalysisTool.html#function-get-group-ratio">get_group_ratio</a></strong>()</td>
 </tr>
 <tr>
 <td>double</td>
@@ -3189,11 +3189,6 @@
 <h3 id="slot-handle_group_timer">slot handle_group_timer</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_group_timer</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
-<h3 id="slot-on_linear_radio_toggled">slot on_linear_radio_toggled</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">on_linear_radio_toggled</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">b</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
-</code></pre></div>
 <h3 id="slot-handle_reconstruction_complete">slot handle_reconstruction_complete</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_reconstruction_complete</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
@@ -3279,6 +3274,9 @@
 <h3 id="slot-handle_lda_complete">slot handle_lda_complete</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_lda_complete</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
+<h3 id="slot-show_difference_to_mean_clicked">slot show_difference_to_mean_clicked</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">show_difference_to_mean_clicked</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
 <h2 id="public-signals-documentation">Public Signals Documentation</h2>
 <h3 id="signal-update_view">signal update_view</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_view</span><span class="p">()</span><span class="w"></span>
@@ -3363,8 +3361,8 @@
 <h3 id="function-get_pca_mode">function get_pca_mode</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_pca_mode</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
-<h3 id="function-get_group_value">function get_group_value</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">get_group_value</span><span class="p">()</span><span class="w"></span>
+<h3 id="function-get_group_ratio">function get_group_ratio</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">get_group_ratio</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-get_pca_value">function get_pca_value</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">get_pca_value</span><span class="p">()</span><span class="w"></span>
@@ -3444,7 +3442,7 @@
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">MODE_REGRESSION_C</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-04-29 at 21:19:25 +0000</p>
+<p>Updated on 2022-04-29 at 23:25:58 +0000</p>
 
               
             </article>

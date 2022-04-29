@@ -2137,7 +2137,6 @@
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Analysis/ShapeEvaluationJob.h&gt;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/Preferences.h&gt;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/Shape.h&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Visualization/BarGraph.h&gt;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Visualization/Visualizer.h&gt;</span><span class="cp"></span>
 
 <span class="k">class</span><span class="w"> </span><span class="nc">Ui_AnalysisTool</span><span class="p">;</span><span class="w"></span>
@@ -2184,7 +2183,7 @@
 
 <span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_pca_mode</span><span class="p">();</span><span class="w"></span>
 
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_group_value</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_group_ratio</span><span class="p">();</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_pca_value</span><span class="p">();</span><span class="w"></span>
 
@@ -2245,7 +2244,6 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_group_animate_state_changed</span><span class="p">();</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_group_timer</span><span class="p">();</span><span class="w"></span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_linear_radio_toggled</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">b</span><span class="p">);</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_reconstruction_complete</span><span class="p">();</span><span class="w"></span>
 
@@ -2286,6 +2284,8 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_lda_progress</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">progress</span><span class="p">);</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_lda_complete</span><span class="p">();</span><span class="w"></span>
 
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">show_difference_to_mean_clicked</span><span class="p">();</span><span class="w"></span>
+
 <span class="w"> </span><span class="nl">signals</span><span class="p">:</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_view</span><span class="p">();</span><span class="w"></span>
@@ -2317,6 +2317,8 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_domain_alignment_box</span><span class="p">();</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_lda_graph</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_difference_particles</span><span class="p">();</span><span class="w"></span>
 
 <span class="w">  </span><span class="n">ShapeHandle</span><span class="w"> </span><span class="nf">create_shape_from_points</span><span class="p">(</span><span class="n">StudioParticles</span><span class="w"> </span><span class="n">points</span><span class="p">);</span><span class="w"></span>
 
@@ -2365,7 +2367,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-04-29 at 21:19:27 +0000</p>
+<p>Updated on 2022-04-29 at 23:26:00 +0000</p>
 
               
             </article>

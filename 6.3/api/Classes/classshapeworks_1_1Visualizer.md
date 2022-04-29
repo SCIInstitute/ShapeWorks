@@ -66,20 +66,15 @@ Inherits from QObject
 | double * | **[get_feature_raw_range](../Classes/classshapeworks_1_1Visualizer.md#function-get-feature-raw-range)**()<br>Get the current raw feature range.  |
 | bool | **[get_feature_range_valid](../Classes/classshapeworks_1_1Visualizer.md#function-get-feature-range-valid)**()<br>Return if the feature range is valid or not.  |
 | void | **[update_feature_range](../Classes/classshapeworks_1_1Visualizer.md#function-update-feature-range)**(double * range)<br>Update the feature range with a given range.  |
+| void | **[update_feature_range](../Classes/classshapeworks_1_1Visualizer.md#function-update-feature-range)**(double min, double max)<br>Update the feature range with a given range.  |
 | vtkSmartPointer< vtkTransform > | **[get_transform](../Classes/classshapeworks_1_1Visualizer.md#function-get-transform)**(QSharedPointer< [Shape](../Classes/classshapeworks_1_1Shape.md) > shape, int alignment_domain, int domain)<br>Request the transform for a given shape and domain.  |
 | void | **[set_opacities](../Classes/classshapeworks_1_1Visualizer.md#function-set-opacities)**(std::vector< float > opacities)<br>Set domain opacities.  |
 | std::vector< float > | **[get_opacities](../Classes/classshapeworks_1_1Visualizer.md#function-get-opacities)**()<br>Get domain opacities.  |
 | double | **[get_current_glyph_size](../Classes/classshapeworks_1_1Visualizer.md#function-get-current-glyph-size)**()<br>Get the current glyph size.  |
 | void | **[handle_ctrl_click](../Classes/classshapeworks_1_1Visualizer.md#function-handle-ctrl-click)**([PickResult](../Classes/classshapeworks_1_1PickResult.md) result)<br>Handle ctrl click.  |
 | void | **[redraw](../Classes/classshapeworks_1_1Visualizer.md#function-redraw)**()<br>Redraw renderers.  |
-
-## Public Attributes
-
-|                | Name           |
-| -------------- | -------------- |
-| const std::string | **[MODE_ORIGINAL_C](../Classes/classshapeworks_1_1Visualizer.md#variable-mode-original-c)**  |
-| const std::string | **[MODE_GROOMED_C](../Classes/classshapeworks_1_1Visualizer.md#variable-mode-groomed-c)**  |
-| const std::string | **[MODE_RECONSTRUCTION_C](../Classes/classshapeworks_1_1Visualizer.md#variable-mode-reconstruction-c)**  |
+| QPixmap | **[export_to_pixmap](../Classes/classshapeworks_1_1Visualizer.md#function-export-to-pixmap)**(QSize size, bool transparent_background, bool show_orientation_marker, bool show_color_scale, bool & ready)<br>Export render window to pixmap.  |
+| QSize | **[get_render_size](../Classes/classshapeworks_1_1Visualizer.md#function-get-render-size)**()<br>Return render window size.  |
 
 ## Detailed Description
 
@@ -447,6 +442,17 @@ void update_feature_range(
 
 Update the feature range with a given range. 
 
+### function update_feature_range
+
+```cpp
+void update_feature_range(
+    double min,
+    double max
+)
+```
+
+Update the feature range with a given range. 
+
 ### function get_transform
 
 ```cpp
@@ -503,29 +509,28 @@ void redraw()
 
 Redraw renderers. 
 
-## Public Attributes Documentation
-
-### variable MODE_ORIGINAL_C
+### function export_to_pixmap
 
 ```cpp
-static const std::string MODE_ORIGINAL_C;
+QPixmap export_to_pixmap(
+    QSize size,
+    bool transparent_background,
+    bool show_orientation_marker,
+    bool show_color_scale,
+    bool & ready
+)
 ```
 
+Export render window to pixmap. 
 
-### variable MODE_GROOMED_C
+### function get_render_size
 
 ```cpp
-static const std::string MODE_GROOMED_C;
+QSize get_render_size()
 ```
 
-
-### variable MODE_RECONSTRUCTION_C
-
-```cpp
-static const std::string MODE_RECONSTRUCTION_C;
-```
-
+Return render window size. 
 
 -------------------------------
 
-Updated on 2022-04-29 at 21:19:26 +0000
+Updated on 2022-04-29 at 23:25:59 +0000

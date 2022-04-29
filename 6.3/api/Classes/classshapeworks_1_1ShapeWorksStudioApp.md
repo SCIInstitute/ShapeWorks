@@ -38,12 +38,13 @@ Inherits from QMainWindow
 | void | **[on_actionExport_Eigenvalues_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-actionexport-eigenvalues-triggered)**() |
 | void | **[on_actionExport_Eigenvectors_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-actionexport-eigenvectors-triggered)**() |
 | void | **[on_actionExport_PCA_Mode_Points_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-actionexport-pca-mode-points-triggered)**() |
-| void | **[on_actionExport_Variance_Graph_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-actionexport-variance-graph-triggered)**() |
 | void | **[on_action_preferences_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-action-preferences-triggered)**() |
 | void | **[on_action_export_current_mesh_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-action-export-current-mesh-triggered)**() |
 | void | **[on_action_export_current_particles_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-action-export-current-particles-triggered)**() |
 | void | **[on_action_export_mesh_scalars_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-action-export-mesh-scalars-triggered)**() |
 | void | **[on_action_export_pca_scores_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-action-export-pca-scores-triggered)**() |
+| void | **[action_export_pca_montage_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-action-export-pca-montage-triggered)**() |
+| void | **[action_export_screenshot_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-action-export-screenshot-triggered)**() |
 | void | **[on_center_checkbox_stateChanged](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-center-checkbox-statechanged)**() |
 | void | **[on_zoom_slider_valueChanged](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-zoom-slider-valuechanged)**() |
 | void | **[on_view_mode_combobox_currentIndexChanged](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-view-mode-combobox-currentindexchanged)**(QString disp_mode) |
@@ -245,13 +246,6 @@ void on_actionExport_PCA_Mode_Points_triggered()
 ```
 
 
-### slot on_actionExport_Variance_Graph_triggered
-
-```cpp
-void on_actionExport_Variance_Graph_triggered()
-```
-
-
 ### slot on_action_preferences_triggered
 
 ```cpp
@@ -284,6 +278,20 @@ void on_action_export_mesh_scalars_triggered()
 
 ```cpp
 void on_action_export_pca_scores_triggered()
+```
+
+
+### slot action_export_pca_montage_triggered
+
+```cpp
+void action_export_pca_montage_triggered()
+```
+
+
+### slot action_export_screenshot_triggered
+
+```cpp
+void action_export_screenshot_triggered()
 ```
 
 
@@ -620,4 +628,4 @@ void dropEvent(
 
 -------------------------------
 
-Updated on 2022-04-29 at 21:19:26 +0000
+Updated on 2022-04-29 at 23:25:59 +0000

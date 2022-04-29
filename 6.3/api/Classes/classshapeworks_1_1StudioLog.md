@@ -15,7 +15,8 @@ Inherits from QObject
 
 |                | Name           |
 | -------------- | -------------- |
-| void | **[error](../Classes/classshapeworks_1_1StudioLog.md#signal-error)**(QString message) |
+| void | **[error_signal](../Classes/classshapeworks_1_1StudioLog.md#signal-error-signal)**(QString message) |
+| void | **[message_signal](../Classes/classshapeworks_1_1StudioLog.md#signal-message-signal)**(QString message) |
 
 ## Public Functions
 
@@ -27,6 +28,7 @@ Inherits from QObject
 | void | **[log_stack](../Classes/classshapeworks_1_1StudioLog.md#function-log-stack)**(std::string message)<br>Log a stack trace message, use STUDIO_LOG_STACK macro.  |
 | void | **[log_error](../Classes/classshapeworks_1_1StudioLog.md#function-log-error)**(QString message, const int line, const char * file)<br>Log an error, use STUDIO_LOG_ERROR macro.  |
 | void | **[show_error](../Classes/classshapeworks_1_1StudioLog.md#function-show-error)**(QString message, const int line, const char * file)<br>Log an error, use STUDIO_SHOW_ERROR macro.  |
+| void | **[show_message](../Classes/classshapeworks_1_1StudioLog.md#function-show-message)**(QString message, const int line, const char * file)<br>Log a message, use STUDIO_SHOW_MESSAGE macro.  |
 | void | **[log_debug](../Classes/classshapeworks_1_1StudioLog.md#function-log-debug)**(QString message, const int line, const char * file)<br>Log a debug message, use STUDIO_LOG_DEBUG macro.  |
 | void | **[close_log](../Classes/classshapeworks_1_1StudioLog.md#function-close-log)**()<br>Close the log, use STUDIO_CLOSE_LOG macro.  |
 | void | **[flush_log](../Classes/classshapeworks_1_1StudioLog.md#function-flush-log)**()<br>Flush log to disk.  |
@@ -36,10 +38,19 @@ Inherits from QObject
 
 ## Public Signals Documentation
 
-### signal error
+### signal error_signal
 
 ```cpp
-void error(
+void error_signal(
+    QString message
+)
+```
+
+
+### signal message_signal
+
+```cpp
+void message_signal(
     QString message
 )
 ```
@@ -108,6 +119,18 @@ void show_error(
 
 Log an error, use STUDIO_SHOW_ERROR macro. 
 
+### function show_message
+
+```cpp
+void show_message(
+    QString message,
+    const int line,
+    const char * file
+)
+```
+
+Log a message, use STUDIO_SHOW_MESSAGE macro. 
+
 ### function log_debug
 
 ```cpp
@@ -162,4 +185,4 @@ Return the singleton instance.
 
 -------------------------------
 
-Updated on 2022-04-29 at 21:19:26 +0000
+Updated on 2022-04-29 at 23:25:59 +0000

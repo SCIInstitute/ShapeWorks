@@ -100,12 +100,13 @@ class ShapeWorksStudioApp : public QMainWindow {
   void on_actionExport_Eigenvalues_triggered();
   void on_actionExport_Eigenvectors_triggered();
   void on_actionExport_PCA_Mode_Points_triggered();
-  void on_actionExport_Variance_Graph_triggered();
   void on_action_preferences_triggered();
   void on_action_export_current_mesh_triggered();
   void on_action_export_current_particles_triggered();
   void on_action_export_mesh_scalars_triggered();
   void on_action_export_pca_scores_triggered();
+  void action_export_pca_montage_triggered();
+  void action_export_screenshot_triggered();
 
   void on_center_checkbox_stateChanged();
   void on_zoom_slider_valueChanged();
@@ -165,6 +166,9 @@ class ShapeWorksStudioApp : public QMainWindow {
   void reset_num_viewers();
 
   static bool write_particle_file(std::string filename, Eigen::VectorXd particles);
+
+  QString get_save_filename(QString title, QString filetypes, QString default_ext);
+  static QString get_mesh_file_filter();
 
   enum VIEW_MODE { ORIGINAL = 0, GROOMED = 1, RECONSTRUCTED = 2 };
 
@@ -269,4 +273,4 @@ class ShapeWorksStudioApp : public QMainWindow {
 
 -------------------------------
 
-Updated on 2022-04-29 at 21:19:27 +0000
+Updated on 2022-04-29 at 23:26:00 +0000

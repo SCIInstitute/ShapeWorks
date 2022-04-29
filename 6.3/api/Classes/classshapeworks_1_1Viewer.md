@@ -64,6 +64,9 @@ summary: 3D Viewer
 | void | **[update_clipping_planes](../Classes/classshapeworks_1_1Viewer.md#function-update-clipping-planes)**() |
 | vtkSmartPointer< vtkPolygonalSurfacePointPlacer > | **[get_point_placer](../Classes/classshapeworks_1_1Viewer.md#function-get-point-placer)**() |
 | void | **[handle_ffc_paint](../Classes/classshapeworks_1_1Viewer.md#function-handle-ffc-paint)**(double display_pos[2], double world_pos[3]) |
+| void | **[update_actors](../Classes/classshapeworks_1_1Viewer.md#function-update-actors)**() |
+| void | **[remove_scalar_bar](../Classes/classshapeworks_1_1Viewer.md#function-remove-scalar-bar)**() |
+| bool | **[is_ready](../Classes/classshapeworks_1_1Viewer.md#function-is-ready)**() |
 | bool | **[is_reverse](../Classes/classshapeworks_1_1Viewer.md#function-is-reverse)**(vtkSmartPointer< vtkTransform > transform) |
 
 ## Detailed Description
@@ -454,6 +457,27 @@ void handle_ffc_paint(
 ```
 
 
+### function update_actors
+
+```cpp
+void update_actors()
+```
+
+
+### function remove_scalar_bar
+
+```cpp
+void remove_scalar_bar()
+```
+
+
+### function is_ready
+
+```cpp
+inline bool is_ready()
+```
+
+
 ### function is_reverse
 
 ```cpp
@@ -465,4 +489,4 @@ static bool is_reverse(
 
 -------------------------------
 
-Updated on 2022-04-29 at 21:19:26 +0000
+Updated on 2022-04-29 at 23:25:59 +0000

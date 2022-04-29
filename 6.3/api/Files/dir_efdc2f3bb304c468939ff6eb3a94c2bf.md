@@ -11,6 +11,7 @@ title: Studio/src/Interface
 
 | Name           |
 | -------------- |
+| **[Studio/src/Interface/ExportImageDialog.h](../Files/ExportImageDialog_8h.md#file-exportimagedialog.h)**  |
 | **[Studio/src/Interface/KeyboardShortcuts.h](../Files/KeyboardShortcuts_8h.md#file-keyboardshortcuts.h)**  |
 | **[Studio/src/Interface/LogWindow.h](../Files/LogWindow_8h.md#file-logwindow.h)**  |
 | **[Studio/src/Interface/ShapeWorksStudioApp.h](../Files/ShapeWorksStudioApp_8h.md#file-shapeworksstudioapp.h)**  |
@@ -26,4 +27,4 @@ title: Studio/src/Interface
 
 -------------------------------
 
-Updated on 2022-04-29 at 21:19:27 +0000
+Updated on 2022-04-29 at 23:26:00 +0000

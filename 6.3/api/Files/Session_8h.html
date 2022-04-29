@@ -2126,12 +2126,12 @@
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/MeshManager.h&gt;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/Preferences.h&gt;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/StudioParticles.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Libs/Particles/ParticleSystem.h&gt;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Libs/Project/Project.h&gt;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Shapeworks.h&gt;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Visualization/Viewer.h&gt;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;itkMatrixOffsetTransformBase.h&gt;</span><span class="cp"></span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Libs/Particles/ParticleSystem.h&gt;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QSharedPointer&gt;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QVector&gt;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cstdlib&gt;</span><span class="cp"></span>
@@ -2252,6 +2252,7 @@
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_show_planes</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">show</span><span class="p">);</span><span class="w"></span>
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_show_planes</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">should_show_planes</span><span class="p">();</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_show_landmarks</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">show</span><span class="p">);</span><span class="w"></span>
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_show_landmarks</span><span class="p">();</span><span class="w"></span>
@@ -2279,6 +2280,7 @@
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_tool_state</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">state</span><span class="p">);</span><span class="w"></span>
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">get_tool_state</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">is_analysis_mode</span><span class="p">();</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_ffc_paint_active</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span><span class="p">);</span><span class="w"></span>
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_ffc_paint_active</span><span class="p">();</span><span class="w"></span>
@@ -2292,10 +2294,27 @@
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_show_good_bad_particles</span><span class="p">();</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_show_good_bad_particles</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span><span class="p">);</span><span class="w"></span>
 
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_show_difference_vectors</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_show_difference_vectors</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">should_difference_vectors_show</span><span class="p">();</span><span class="w"></span>
+
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_good_bad_particles</span><span class="p">();</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_good_bad_particles</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">good_bad</span><span class="p">);</span><span class="w"></span>
 
+<span class="w">  </span><span class="c1">// for setting difference to mean, etc</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_difference_particles</span><span class="p">(</span><span class="n">StudioParticles</span><span class="w"> </span><span class="n">particles</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">difference_particles_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">particles</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">  </span><span class="n">StudioParticles</span><span class="w"> </span><span class="nf">get_difference_particles</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">difference_particles_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">trigger_repaint</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_display_mode</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">mode</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">get_display_mode</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">MODE_ORIGINAL_C</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">MODE_GROOMED_C</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">MODE_RECONSTRUCTION_C</span><span class="p">;</span><span class="w"></span>
+
 
 <span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Q_SLOTS</span><span class="o">:</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">set_feature_auto_scale</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="p">);</span><span class="w"></span>
@@ -2333,9 +2352,8 @@
 <span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">DEEPSSM_C</span><span class="p">;</span><span class="w"></span>
 
 <span class="w"> </span><span class="k">private</span><span class="o">:</span><span class="w"></span>
-<span class="w">  </span><span class="n">Preferences</span><span class="o">&amp;</span><span class="w"> </span><span class="n">preferences_</span><span class="p">;</span><span class="w"></span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">save_particles_file</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">filename</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">points</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">save_particles_file</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">filename</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">points</span><span class="p">);</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">renumber_shapes</span><span class="p">();</span><span class="w"></span>
 
@@ -2345,11 +2363,15 @@
 
 <span class="w">  </span><span class="n">QWidget</span><span class="o">*</span><span class="w"> </span><span class="n">parent_</span><span class="p">{</span><span class="k">nullptr</span><span class="p">};</span><span class="w"></span>
 
+<span class="w">  </span><span class="n">Preferences</span><span class="o">&amp;</span><span class="w"> </span><span class="n">preferences_</span><span class="p">;</span><span class="w"></span>
+
 <span class="w">  </span><span class="n">QString</span><span class="w"> </span><span class="n">filename_</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">  </span><span class="n">QString</span><span class="w"> </span><span class="n">project_path_</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">  </span><span class="n">QVector</span><span class="o">&lt;</span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Shape</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">shapes_</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">  </span><span class="n">StudioParticles</span><span class="w"> </span><span class="n">difference_particles_</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">MeshManager</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mesh_manager_</span><span class="p">;</span><span class="w"></span>
 
@@ -2370,10 +2392,13 @@
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">landmarks_active_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">planes_active_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">show_landmark_labels_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">show_difference_vectors_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">ffc_painting_active_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">ffc_painting_inclusive_mode_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">ffc_paint_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">50</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">display_mode_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Session</span><span class="o">::</span><span class="n">MODE_ORIGINAL_C</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_loading_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"></span>
 <span class="p">};</span><span class="w"></span>
@@ -2381,7 +2406,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-04-29 at 21:19:27 +0000</p>
+<p>Updated on 2022-04-29 at 23:26:00 +0000</p>
 
               
             </article>

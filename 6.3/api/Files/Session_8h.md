@@ -30,12 +30,12 @@ title: Studio/src/Data/Session.h
 #include <Data/MeshManager.h>
 #include <Data/Preferences.h>
 #include <Data/StudioParticles.h>
+#include <Libs/Particles/ParticleSystem.h>
 #include <Libs/Project/Project.h>
 #include <Shapeworks.h>
 #include <Visualization/Viewer.h>
 #include <itkMatrixOffsetTransformBase.h>
 
-#include <Libs/Particles/ParticleSystem.h>
 #include <QSharedPointer>
 #include <QVector>
 #include <cstdlib>
@@ -156,6 +156,7 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
 
   void set_show_planes(bool show);
   bool get_show_planes();
+  bool should_show_planes();
 
   void set_show_landmarks(bool show);
   bool get_show_landmarks();
@@ -183,6 +184,7 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
 
   void set_tool_state(std::string state);
   std::string get_tool_state();
+  bool is_analysis_mode();
 
   void set_ffc_paint_active(bool enabled);
   bool get_ffc_paint_active();
@@ -196,10 +198,27 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   bool get_show_good_bad_particles();
   void set_show_good_bad_particles(bool enabled);
 
+  bool get_show_difference_vectors();
+  void set_show_difference_vectors(bool enabled);
+  bool should_difference_vectors_show();
+
   std::vector<bool> get_good_bad_particles();
   void set_good_bad_particles(const std::vector<bool>& good_bad);
 
+  // for setting difference to mean, etc
+  void set_difference_particles(StudioParticles particles) { difference_particles_ = particles; }
+  StudioParticles get_difference_particles() { return difference_particles_; }
+
   void trigger_repaint();
+
+  void set_display_mode(std::string mode);
+
+  std::string get_display_mode();
+
+  static const std::string MODE_ORIGINAL_C;
+  static const std::string MODE_GROOMED_C;
+  static const std::string MODE_RECONSTRUCTION_C;
+
 
  public Q_SLOTS:
   void set_feature_auto_scale(bool value);
@@ -237,7 +256,6 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   const static std::string DEEPSSM_C;
 
  private:
-  Preferences& preferences_;
 
   void save_particles_file(std::string filename, const Eigen::VectorXd& points);
 
@@ -249,11 +267,15 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
 
   QWidget* parent_{nullptr};
 
+  Preferences& preferences_;
+
   QString filename_;
 
   QString project_path_;
 
   QVector<QSharedPointer<Shape>> shapes_;
+
+  StudioParticles difference_particles_;
 
   QSharedPointer<MeshManager> mesh_manager_;
 
@@ -274,10 +296,13 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   bool landmarks_active_ = false;
   bool planes_active_ = false;
   bool show_landmark_labels_ = false;
+  bool show_difference_vectors_ = false;
 
   bool ffc_painting_active_ = false;
   bool ffc_painting_inclusive_mode_ = false;
   double ffc_paint_size = 50;
+
+  std::string display_mode_ = Session::MODE_ORIGINAL_C;
 
   bool is_loading_ = false;
 };
@@ -288,4 +313,4 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
 
 -------------------------------
 
-Updated on 2022-04-29 at 21:19:27 +0000
+Updated on 2022-04-29 at 23:26:00 +0000

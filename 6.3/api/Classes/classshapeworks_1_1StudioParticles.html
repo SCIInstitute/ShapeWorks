@@ -2159,6 +2159,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-set_combined_global_particles" class="md-nav__link">
+    function set_combined_global_particles
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-get_local_points" class="md-nav__link">
     function get_local_points
   </a>
@@ -2189,6 +2196,13 @@
           <li class="md-nav__item">
   <a href="#function-set_procrustes_transforms" class="md-nav__link">
     function set_procrustes_transforms
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_difference_vectors" class="md-nav__link">
+    function get_difference_vectors
   </a>
   
 </li>
@@ -2274,7 +2288,11 @@
 </tr>
 <tr>
 <td>Eigen::VectorXd</td>
-<td><strong><a href="classshapeworks_1_1StudioParticles.html#function-get-combined-global-particles">get_combined_global_particles</a></strong>()</td>
+<td><strong><a href="classshapeworks_1_1StudioParticles.html#function-get-combined-global-particles">get_combined_global_particles</a></strong>() const</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1StudioParticles.html#function-set-combined-global-particles">set_combined_global_particles</a></strong>(const Eigen::VectorXd &amp; particles)</td>
 </tr>
 <tr>
 <td>std::vector&lt; itk::Point&lt; double &gt; &gt;</td>
@@ -2295,6 +2313,10 @@
 <tr>
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1StudioParticles.html#function-set-procrustes-transforms">set_procrustes_transforms</a></strong>(std::vector&lt; vtkSmartPointer&lt; vtkTransform &gt;&gt; transforms)</td>
+</tr>
+<tr>
+<td>Eigen::VectorXd</td>
+<td><strong><a href="classshapeworks_1_1StudioParticles.html#function-get-difference-vectors">get_difference_vectors</a></strong>(const <a href="classshapeworks_1_1StudioParticles.html">StudioParticles</a> &amp; other)</td>
 </tr>
 </tbody>
 </table>
@@ -2357,7 +2379,12 @@
 <div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">get_combined_local_particles</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-get_combined_global_particles">function get_combined_global_particles</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">get_combined_global_particles</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">get_combined_global_particles</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-set_combined_global_particles">function set_combined_global_particles</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_combined_global_particles</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">particles</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-get_local_points">function get_local_points</h3>
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_local_points</span><span class="p">(</span><span class="w"></span>
@@ -2385,8 +2412,13 @@
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkTransform</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">transforms</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
+<h3 id="function-get_difference_vectors">function get_difference_vectors</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">get_difference_vectors</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">StudioParticles</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
 <hr />
-<p>Updated on 2022-04-29 at 21:19:26 +0000</p>
+<p>Updated on 2022-04-29 at 23:25:59 +0000</p>
 
               
             </article>

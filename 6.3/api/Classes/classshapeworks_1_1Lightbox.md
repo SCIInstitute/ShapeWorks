@@ -55,6 +55,7 @@ Inherits from QObject
 | void | **[update_feature_range](../Classes/classshapeworks_1_1Lightbox.md#function-update-feature-range)**() |
 | void | **[update_interactor_style](../Classes/classshapeworks_1_1Lightbox.md#function-update-interactor-style)**() |
 | void | **[set_shared_window_and_level](../Classes/classshapeworks_1_1Lightbox.md#function-set-shared-window-and-level)**(double window, double level) |
+| vtkRenderWindow * | **[get_render_window](../Classes/classshapeworks_1_1Lightbox.md#function-get-render-window)**() |
 
 ## Detailed Description
 
@@ -319,6 +320,13 @@ void set_shared_window_and_level(
 ```
 
 
+### function get_render_window
+
+```cpp
+vtkRenderWindow * get_render_window()
+```
+
+
 -------------------------------
 
-Updated on 2022-04-29 at 21:19:25 +0000
+Updated on 2022-04-29 at 23:25:58 +0000

@@ -27,12 +27,16 @@ title: Studio/src/Python/PythonWorker.h
 ```cpp
 #pragma once
 
+// qt
 #include <QObject>
 #include <QSharedPointer>
 
+// vtk
 #include <vtkSmartPointer.h>
-#include <Visualization/StudioVtkOutputWindow.h>
+
+// studio
 #include <Job/Job.h>
+#include <Visualization/StudioVtkOutputWindow.h>
 
 namespace shapeworks {
 class PythonLogger;
@@ -40,8 +44,7 @@ class PythonLogger;
 class PythonWorker : public QObject {
   Q_OBJECT
 
-public:
-
+ public:
   constexpr static const char* python_api_version = "6.2";
 
   PythonWorker();
@@ -58,7 +61,7 @@ public:
 
   void abort_job();
 
-public Q_SLOTS:
+ public Q_SLOTS:
 
   bool init();
 
@@ -66,7 +69,7 @@ public Q_SLOTS:
 
   void finalize_python();
 
-Q_SIGNALS:
+ Q_SIGNALS:
 
   void result_ready();
   void error_message(QString);
@@ -74,8 +77,7 @@ Q_SIGNALS:
   void message(QString);
   void finished();
 
-private:
-
+ private:
   bool initialized_ = false;
   bool initialized_success_ = false;
 
@@ -87,10 +89,10 @@ private:
 
   QThread* thread_;
 };
-}
+}  // namespace shapeworks
 ```
 
 
 -------------------------------
 
-Updated on 2022-04-29 at 21:19:27 +0000
+Updated on 2022-04-29 at 23:26:00 +0000

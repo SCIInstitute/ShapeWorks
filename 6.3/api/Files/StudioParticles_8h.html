@@ -2123,11 +2123,12 @@
 <h2 id="source-code">Source code</h2>
 <div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;itkPoint.h&gt;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vnl_vector.h&gt;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkSmartPointer.h&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;itkPoint.h&gt;</span><span class="cp"></span>
+
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cassert&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span><span class="cp"></span>
 
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Shapeworks.h&quot;</span><span class="cp"></span>
 
@@ -2137,8 +2138,7 @@
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">StudioParticles</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-
-<span class="k">public</span><span class="o">:</span><span class="w"></span>
+<span class="w"> </span><span class="k">public</span><span class="o">:</span><span class="w"></span>
 <span class="w">  </span><span class="n">StudioParticles</span><span class="p">();</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_local_particles</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">particles</span><span class="p">);</span><span class="w"></span>
@@ -2155,7 +2155,8 @@
 <span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="nf">get_raw_world_particles</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">);</span><span class="w"></span>
 
 <span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="nf">get_combined_local_particles</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="nf">get_combined_global_particles</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="nf">get_combined_global_particles</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_combined_global_particles</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="o">&amp;</span><span class="n">particles</span><span class="p">);</span><span class="w"></span>
 
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">get_local_points</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">);</span><span class="w"></span>
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">get_world_points</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">);</span><span class="w"></span>
@@ -2165,26 +2166,27 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_transform</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkTransform</span><span class="o">&gt;</span><span class="w"> </span><span class="n">transform</span><span class="p">);</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_procrustes_transforms</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkTransform</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">transforms</span><span class="p">);</span><span class="w"></span>
 
-<span class="k">private</span><span class="o">:</span><span class="w"></span>
+<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="nf">get_difference_vectors</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">StudioParticles</span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span><span class="p">);</span><span class="w"></span>
 
+<span class="w"> </span><span class="k">private</span><span class="o">:</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">transform_global_particles</span><span class="p">();</span><span class="w"></span>
 
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">vnl_to_point_vector</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">vnl</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">eigen_to_point_vector</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">particles</span><span class="p">);</span><span class="w"></span>
 
-<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="nf">combine</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">vnl</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="nf">combine</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">particles</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_particles</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">particles</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">local</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">&gt;</span><span class="w"> </span><span class="n">local_particles_</span><span class="p">;</span><span class="w"> </span><span class="c1">// one for each domain</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">&gt;</span><span class="w"> </span><span class="n">global_particles_</span><span class="p">;</span><span class="w"> </span><span class="c1">// one for each domain</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">&gt;</span><span class="w"> </span><span class="n">transformed_global_particles_</span><span class="p">;</span><span class="w"> </span><span class="c1">// one for each domain</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">&gt;</span><span class="w"> </span><span class="n">local_particles_</span><span class="p">;</span><span class="w">               </span><span class="c1">// one for each domain</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">&gt;</span><span class="w"> </span><span class="n">global_particles_</span><span class="p">;</span><span class="w">              </span><span class="c1">// one for each domain</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">&gt;</span><span class="w"> </span><span class="n">transformed_global_particles_</span><span class="p">;</span><span class="w">  </span><span class="c1">// one for each domain</span>
 
 <span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkTransform</span><span class="o">&gt;</span><span class="w"> </span><span class="n">transform_</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkTransform</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">procrustes_transforms_</span><span class="p">;</span><span class="w"></span>
 <span class="p">};</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-04-29 at 21:19:27 +0000</p>
+<p>Updated on 2022-04-29 at 23:26:00 +0000</p>
 
               
             </article>

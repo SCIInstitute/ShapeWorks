@@ -2123,23 +2123,14 @@
 <h2 id="source-code">Source code</h2>
 <div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Eigen/Dense&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Eigen/Sparse&gt;</span><span class="cp"></span>
-
-<span class="c1">// Qt</span>
+<span class="c1">// qt</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QSharedPointer&gt;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QWidget&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QElapsedTimer&gt;</span><span class="cp"></span>
 
-<span class="c1">// ShapeWorks</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;ParticleShapeStatistics.h&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/ShapeWorksWorker.h&gt;</span><span class="cp"></span>
-
-<span class="c1">// Studio</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/Shape.h&gt;</span><span class="cp"></span>
+<span class="c1">// studio</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/Preferences.h&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Visualization/Visualizer.h&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Visualization/BarGraph.h&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Python/PythonWorker.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/Shape.h&gt;</span><span class="cp"></span>
 
 <span class="k">class</span><span class="w"> </span><span class="nc">Ui_DeepSSMTool</span><span class="p">;</span><span class="w"></span>
 <span class="k">class</span><span class="w"> </span><span class="nc">QLabel</span><span class="p">;</span><span class="w"></span>
@@ -2154,13 +2145,10 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">ShapeWorksStudioApp</span><span class="p">;</span><span class="w"></span>
 
 <span class="k">class</span><span class="w"> </span><span class="nc">DeepSSMTool</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">QWidget</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="n">Q_OBJECT</span><span class="p">;</span><span class="w"></span>
-<span class="k">public</span><span class="o">:</span><span class="w"></span>
+<span class="w">  </span><span class="n">Q_OBJECT</span><span class="p">;</span><span class="w"></span>
 
-
-<span class="w">  </span><span class="k">enum</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">ToolMode</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">DeepSSM_SplitType</span><span class="p">,</span><span class="w"> </span><span class="n">DeepSSM_AugmentationType</span><span class="p">,</span><span class="w"> </span><span class="n">DeepSSM_TrainingType</span><span class="p">,</span><span class="w"> </span><span class="n">DeepSSM_TestingType</span><span class="w"></span>
-<span class="w">  </span><span class="p">};</span><span class="w"></span>
+<span class="w"> </span><span class="k">public</span><span class="o">:</span><span class="w"></span>
+<span class="w">  </span><span class="k">enum</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">ToolMode</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">DeepSSM_SplitType</span><span class="p">,</span><span class="w"> </span><span class="n">DeepSSM_AugmentationType</span><span class="p">,</span><span class="w"> </span><span class="n">DeepSSM_TrainingType</span><span class="p">,</span><span class="w"> </span><span class="n">DeepSSM_TestingType</span><span class="w"> </span><span class="p">};</span><span class="w"></span>
 
 <span class="w">  </span><span class="n">DeepSSMTool</span><span class="p">(</span><span class="n">Preferences</span><span class="o">&amp;</span><span class="w"> </span><span class="n">prefs</span><span class="p">);</span><span class="w"></span>
 <span class="w">  </span><span class="o">~</span><span class="n">DeepSSMTool</span><span class="p">();</span><span class="w"></span>
@@ -2184,7 +2172,7 @@
 
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">get_display_feature</span><span class="p">();</span><span class="w"></span>
 
-<span class="k">public</span><span class="w"> </span><span class="n">Q_SLOTS</span><span class="o">:</span><span class="w"></span>
+<span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Q_SLOTS</span><span class="o">:</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">run_clicked</span><span class="p">();</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">restore_defaults</span><span class="p">();</span><span class="w"></span>
@@ -2197,13 +2185,13 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">tab_changed</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">tab</span><span class="p">);</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_panels</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_split</span><span class="p">(</span><span class="n">QLineEdit</span><span class="w"> </span><span class="o">*</span><span class="n">source</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_split</span><span class="p">(</span><span class="n">QLineEdit</span><span class="o">*</span><span class="w"> </span><span class="n">source</span><span class="p">);</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_new_mesh</span><span class="p">();</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">training_fine_tuning_changed</span><span class="p">();</span><span class="w"></span>
 
-<span class="nl">signals</span><span class="p">:</span><span class="w"></span>
+<span class="w"> </span><span class="nl">signals</span><span class="p">:</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_view</span><span class="p">();</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">progress</span><span class="p">(</span><span class="kt">int</span><span class="p">);</span><span class="w"></span>
@@ -2211,8 +2199,7 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">error</span><span class="p">(</span><span class="n">QString</span><span class="p">);</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">warning</span><span class="p">(</span><span class="n">QString</span><span class="p">);</span><span class="w"></span>
 
-<span class="k">private</span><span class="o">:</span><span class="w"></span>
-
+<span class="w"> </span><span class="k">private</span><span class="o">:</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">update_meshes</span><span class="p">();</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">run_tool</span><span class="p">(</span><span class="n">DeepSSMTool</span><span class="o">::</span><span class="n">ToolMode</span><span class="w"> </span><span class="n">type</span><span class="p">);</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">show_augmentation_meshes</span><span class="p">();</span><span class="w"></span>
@@ -2223,9 +2210,9 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">load_plots</span><span class="p">();</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">resize_plots</span><span class="p">();</span><span class="w"></span>
 <span class="w">  </span><span class="n">QPixmap</span><span class="w"> </span><span class="nf">load_plot</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">filename</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_plot</span><span class="p">(</span><span class="n">QLabel</span><span class="w"> </span><span class="o">*</span><span class="n">qlabel</span><span class="p">,</span><span class="w"> </span><span class="n">QPixmap</span><span class="w"> </span><span class="n">pixmap</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_plot</span><span class="p">(</span><span class="n">QLabel</span><span class="o">*</span><span class="w"> </span><span class="n">qlabel</span><span class="p">,</span><span class="w"> </span><span class="n">QPixmap</span><span class="w"> </span><span class="n">pixmap</span><span class="p">);</span><span class="w"></span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">populate_table_from_csv</span><span class="p">(</span><span class="n">QTableWidget</span><span class="w"> </span><span class="o">*</span><span class="n">table</span><span class="p">,</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="n">filename</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">header</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">populate_table_from_csv</span><span class="p">(</span><span class="n">QTableWidget</span><span class="o">*</span><span class="w"> </span><span class="n">table</span><span class="p">,</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="n">filename</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">header</span><span class="p">);</span><span class="w"></span>
 
 <span class="w">  </span><span class="n">Preferences</span><span class="o">&amp;</span><span class="w"> </span><span class="n">preferences_</span><span class="p">;</span><span class="w"></span>
 
@@ -2241,13 +2228,12 @@
 <span class="w">  </span><span class="n">QVector</span><span class="o">&lt;</span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Shape</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">shapes_</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="n">QPixmap</span><span class="w"> </span><span class="n">violin_plot_</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="n">QPixmap</span><span class="w"> </span><span class="n">training_plot_</span><span class="p">;</span><span class="w"></span>
-
 <span class="p">};</span><span class="w"></span>
 
-<span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-04-29 at 21:19:27 +0000</p>
+<p>Updated on 2022-04-29 at 23:26:00 +0000</p>
 
               
             </article>

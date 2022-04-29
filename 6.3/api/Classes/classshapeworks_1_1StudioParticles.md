@@ -28,12 +28,14 @@ Representation of correspondence points for a shape including multiple domains. 
 | Eigen::VectorXd | **[get_world_particles](../Classes/classshapeworks_1_1StudioParticles.md#function-get-world-particles)**(int domain) |
 | Eigen::VectorXd | **[get_raw_world_particles](../Classes/classshapeworks_1_1StudioParticles.md#function-get-raw-world-particles)**(int domain)<br>Get untransformed original world particles from optimizer.  |
 | Eigen::VectorXd | **[get_combined_local_particles](../Classes/classshapeworks_1_1StudioParticles.md#function-get-combined-local-particles)**() |
-| Eigen::VectorXd | **[get_combined_global_particles](../Classes/classshapeworks_1_1StudioParticles.md#function-get-combined-global-particles)**() |
+| Eigen::VectorXd | **[get_combined_global_particles](../Classes/classshapeworks_1_1StudioParticles.md#function-get-combined-global-particles)**() const |
+| void | **[set_combined_global_particles](../Classes/classshapeworks_1_1StudioParticles.md#function-set-combined-global-particles)**(const Eigen::VectorXd & particles) |
 | std::vector< itk::Point< double > > | **[get_local_points](../Classes/classshapeworks_1_1StudioParticles.md#function-get-local-points)**(int domain) |
 | std::vector< itk::Point< double > > | **[get_world_points](../Classes/classshapeworks_1_1StudioParticles.md#function-get-world-points)**(int domain) |
 | int | **[get_domain_for_combined_id](../Classes/classshapeworks_1_1StudioParticles.md#function-get-domain-for-combined-id)**(int id)<br>Return which domain a particle belongs to when they are concatenated together.  |
 | void | **[set_transform](../Classes/classshapeworks_1_1StudioParticles.md#function-set-transform)**(vtkSmartPointer< vtkTransform > transform) |
 | void | **[set_procrustes_transforms](../Classes/classshapeworks_1_1StudioParticles.md#function-set-procrustes-transforms)**(std::vector< vtkSmartPointer< vtkTransform >> transforms) |
+| Eigen::VectorXd | **[get_difference_vectors](../Classes/classshapeworks_1_1StudioParticles.md#function-get-difference-vectors)**(const [StudioParticles](../Classes/classshapeworks_1_1StudioParticles.md) & other) |
 
 ## Detailed Description
 
@@ -146,7 +148,16 @@ Eigen::VectorXd get_combined_local_particles()
 ### function get_combined_global_particles
 
 ```cpp
-Eigen::VectorXd get_combined_global_particles()
+Eigen::VectorXd get_combined_global_particles() const
+```
+
+
+### function set_combined_global_particles
+
+```cpp
+void set_combined_global_particles(
+    const Eigen::VectorXd & particles
+)
 ```
 
 
@@ -196,6 +207,15 @@ void set_procrustes_transforms(
 ```
 
 
+### function get_difference_vectors
+
+```cpp
+Eigen::VectorXd get_difference_vectors(
+    const StudioParticles & other
+)
+```
+
+
 -------------------------------
 
-Updated on 2022-04-29 at 21:19:26 +0000
+Updated on 2022-04-29 at 23:25:59 +0000

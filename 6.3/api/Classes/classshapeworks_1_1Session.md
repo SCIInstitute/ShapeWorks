@@ -108,6 +108,7 @@ Inherits from QObject, QEnableSharedFromThis< Session >
 | bool | **[get_show_landmark_labels](../Classes/classshapeworks_1_1Session.md#function-get-show-landmark-labels)**() |
 | void | **[set_show_planes](../Classes/classshapeworks_1_1Session.md#function-set-show-planes)**(bool show) |
 | bool | **[get_show_planes](../Classes/classshapeworks_1_1Session.md#function-get-show-planes)**() |
+| bool | **[should_show_planes](../Classes/classshapeworks_1_1Session.md#function-should-show-planes)**() |
 | void | **[set_show_landmarks](../Classes/classshapeworks_1_1Session.md#function-set-show-landmarks)**(bool show) |
 | bool | **[get_show_landmarks](../Classes/classshapeworks_1_1Session.md#function-get-show-landmarks)**() |
 | bool | **[set_image_name](../Classes/classshapeworks_1_1Session.md#function-set-image-name)**(std::string image_name) |
@@ -123,6 +124,7 @@ Inherits from QObject, QEnableSharedFromThis< Session >
 | bool | **[is_loading](../Classes/classshapeworks_1_1Session.md#function-is-loading)**() |
 | void | **[set_tool_state](../Classes/classshapeworks_1_1Session.md#function-set-tool-state)**(std::string state) |
 | std::string | **[get_tool_state](../Classes/classshapeworks_1_1Session.md#function-get-tool-state)**() |
+| bool | **[is_analysis_mode](../Classes/classshapeworks_1_1Session.md#function-is-analysis-mode)**() |
 | void | **[set_ffc_paint_active](../Classes/classshapeworks_1_1Session.md#function-set-ffc-paint-active)**(bool enabled) |
 | bool | **[get_ffc_paint_active](../Classes/classshapeworks_1_1Session.md#function-get-ffc-paint-active)**() |
 | void | **[set_ffc_paint_mode_inclusive](../Classes/classshapeworks_1_1Session.md#function-set-ffc-paint-mode-inclusive)**(bool inclusive) |
@@ -131,9 +133,16 @@ Inherits from QObject, QEnableSharedFromThis< Session >
 | double | **[get_ffc_paint_size](../Classes/classshapeworks_1_1Session.md#function-get-ffc-paint-size)**() |
 | bool | **[get_show_good_bad_particles](../Classes/classshapeworks_1_1Session.md#function-get-show-good-bad-particles)**() |
 | void | **[set_show_good_bad_particles](../Classes/classshapeworks_1_1Session.md#function-set-show-good-bad-particles)**(bool enabled) |
+| bool | **[get_show_difference_vectors](../Classes/classshapeworks_1_1Session.md#function-get-show-difference-vectors)**() |
+| void | **[set_show_difference_vectors](../Classes/classshapeworks_1_1Session.md#function-set-show-difference-vectors)**(bool enabled) |
+| bool | **[should_difference_vectors_show](../Classes/classshapeworks_1_1Session.md#function-should-difference-vectors-show)**() |
 | std::vector< bool > | **[get_good_bad_particles](../Classes/classshapeworks_1_1Session.md#function-get-good-bad-particles)**() |
 | void | **[set_good_bad_particles](../Classes/classshapeworks_1_1Session.md#function-set-good-bad-particles)**(const std::vector< bool > & good_bad) |
+| void | **[set_difference_particles](../Classes/classshapeworks_1_1Session.md#function-set-difference-particles)**([StudioParticles](../Classes/classshapeworks_1_1StudioParticles.md) particles) |
+| [StudioParticles](../Classes/classshapeworks_1_1StudioParticles.md) | **[get_difference_particles](../Classes/classshapeworks_1_1Session.md#function-get-difference-particles)**() |
 | void | **[trigger_repaint](../Classes/classshapeworks_1_1Session.md#function-trigger-repaint)**() |
+| void | **[set_display_mode](../Classes/classshapeworks_1_1Session.md#function-set-display-mode)**(std::string mode)<br>set display mode (original, groomed, reconstructed)  |
+| std::string | **[get_display_mode](../Classes/classshapeworks_1_1Session.md#function-get-display-mode)**()<br>return the current display mode  |
 | bool | **[is_supported_file_format](../Classes/classshapeworks_1_1Session.md#function-is-supported-file-format)**(std::string filename) |
 | Point3 | **[get_point](../Classes/classshapeworks_1_1Session.md#function-get-point)**(const Eigen::VectorXd & points, int i) |
 
@@ -141,6 +150,9 @@ Inherits from QObject, QEnableSharedFromThis< Session >
 
 |                | Name           |
 | -------------- | -------------- |
+| const std::string | **[MODE_ORIGINAL_C](../Classes/classshapeworks_1_1Session.md#variable-mode-original-c)**  |
+| const std::string | **[MODE_GROOMED_C](../Classes/classshapeworks_1_1Session.md#variable-mode-groomed-c)**  |
+| const std::string | **[MODE_RECONSTRUCTION_C](../Classes/classshapeworks_1_1Session.md#variable-mode-reconstruction-c)**  |
 | const std::string | **[DATA_C](../Classes/classshapeworks_1_1Session.md#variable-data-c)**  |
 | const std::string | **[GROOM_C](../Classes/classshapeworks_1_1Session.md#variable-groom-c)**  |
 | const std::string | **[OPTIMIZE_C](../Classes/classshapeworks_1_1Session.md#variable-optimize-c)**  |
@@ -796,6 +808,13 @@ bool get_show_planes()
 ```
 
 
+### function should_show_planes
+
+```cpp
+bool should_show_planes()
+```
+
+
 ### function set_show_landmarks
 
 ```cpp
@@ -915,6 +934,13 @@ std::string get_tool_state()
 ```
 
 
+### function is_analysis_mode
+
+```cpp
+bool is_analysis_mode()
+```
+
+
 ### function set_ffc_paint_active
 
 ```cpp
@@ -979,6 +1005,29 @@ void set_show_good_bad_particles(
 ```
 
 
+### function get_show_difference_vectors
+
+```cpp
+bool get_show_difference_vectors()
+```
+
+
+### function set_show_difference_vectors
+
+```cpp
+void set_show_difference_vectors(
+    bool enabled
+)
+```
+
+
+### function should_difference_vectors_show
+
+```cpp
+bool should_difference_vectors_show()
+```
+
+
 ### function get_good_bad_particles
 
 ```cpp
@@ -995,12 +1044,46 @@ void set_good_bad_particles(
 ```
 
 
+### function set_difference_particles
+
+```cpp
+inline void set_difference_particles(
+    StudioParticles particles
+)
+```
+
+
+### function get_difference_particles
+
+```cpp
+inline StudioParticles get_difference_particles()
+```
+
+
 ### function trigger_repaint
 
 ```cpp
 void trigger_repaint()
 ```
 
+
+### function set_display_mode
+
+```cpp
+void set_display_mode(
+    std::string mode
+)
+```
+
+set display mode (original, groomed, reconstructed) 
+
+### function get_display_mode
+
+```cpp
+std::string get_display_mode()
+```
+
+return the current display mode 
 
 ### function is_supported_file_format
 
@@ -1022,6 +1105,27 @@ static Point3 get_point(
 
 
 ## Public Attributes Documentation
+
+### variable MODE_ORIGINAL_C
+
+```cpp
+static const std::string MODE_ORIGINAL_C;
+```
+
+
+### variable MODE_GROOMED_C
+
+```cpp
+static const std::string MODE_GROOMED_C;
+```
+
+
+### variable MODE_RECONSTRUCTION_C
+
+```cpp
+static const std::string MODE_RECONSTRUCTION_C;
+```
+
 
 ### variable DATA_C
 
@@ -1060,4 +1164,4 @@ static const std::string DEEPSSM_C;
 
 -------------------------------
 
-Updated on 2022-04-29 at 21:19:26 +0000
+Updated on 2022-04-29 at 23:25:59 +0000

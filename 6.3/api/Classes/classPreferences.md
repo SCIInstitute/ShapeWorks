@@ -57,8 +57,6 @@ Inherits from QObject
 | void | **[set_memory_cache_percent](../Classes/classPreferences.md#function-set-memory-cache-percent)**(int value) |
 | int | **[get_num_threads](../Classes/classPreferences.md#function-get-num-threads)**() |
 | void | **[set_num_threads](../Classes/classPreferences.md#function-set-num-threads)**(int num_threads) |
-| float | **[get_cache_epsilon](../Classes/classPreferences.md#function-get-cache-epsilon)**() |
-| void | **[set_cache_epsilon](../Classes/classPreferences.md#function-set-cache-epsilon)**(float value) |
 | float | **[get_glyph_size](../Classes/classPreferences.md#function-get-glyph-size)**() |
 | void | **[set_glyph_size](../Classes/classPreferences.md#function-set-glyph-size)**(float value) |
 | float | **[get_glyph_quality](../Classes/classPreferences.md#function-get-glyph-quality)**() |
@@ -83,6 +81,18 @@ Inherits from QObject
 | void | **[set_groom_file_template](../Classes/classPreferences.md#function-set-groom-file-template)**(QString groom_file_template) |
 | QString | **[get_optimize_file_template](../Classes/classPreferences.md#function-get-optimize-file-template)**() |
 | void | **[set_optimize_file_template](../Classes/classPreferences.md#function-set-optimize-file-template)**(QString optimize_file_template) |
+| QSize | **[get_export_override_size](../Classes/classPreferences.md#function-get-export-override-size)**() |
+| void | **[set_export_override_size](../Classes/classPreferences.md#function-set-export-override-size)**(QSize size) |
+| bool | **[get_export_override_size_enabled](../Classes/classPreferences.md#function-get-export-override-size-enabled)**() |
+| void | **[set_export_override_size_enabled](../Classes/classPreferences.md#function-set-export-override-size-enabled)**(bool enabled) |
+| bool | **[get_export_show_orientation_marker](../Classes/classPreferences.md#function-get-export-show-orientation-marker)**() |
+| void | **[set_export_show_orientation_marker](../Classes/classPreferences.md#function-set-export-show-orientation-marker)**(bool value) |
+| bool | **[get_export_show_color_scale](../Classes/classPreferences.md#function-get-export-show-color-scale)**() |
+| void | **[set_export_show_color_scale](../Classes/classPreferences.md#function-set-export-show-color-scale)**(bool value) |
+| int | **[get_export_num_pca_images](../Classes/classPreferences.md#function-get-export-num-pca-images)**() |
+| void | **[set_export_num_pca_images](../Classes/classPreferences.md#function-set-export-num-pca-images)**(int number) |
+| double | **[get_export_pca_range](../Classes/classPreferences.md#function-get-export-pca-range)**() |
+| void | **[set_export_pca_range](../Classes/classPreferences.md#function-set-export-pca-range)**(double range) |
 
 ## Detailed Description
 
@@ -328,22 +338,6 @@ void set_num_threads(
 ```
 
 
-### function get_cache_epsilon
-
-```cpp
-float get_cache_epsilon()
-```
-
-
-### function set_cache_epsilon
-
-```cpp
-void set_cache_epsilon(
-    float value
-)
-```
-
-
 ### function get_glyph_size
 
 ```cpp
@@ -536,6 +530,102 @@ void set_optimize_file_template(
 ```
 
 
+### function get_export_override_size
+
+```cpp
+QSize get_export_override_size()
+```
+
+
+### function set_export_override_size
+
+```cpp
+void set_export_override_size(
+    QSize size
+)
+```
+
+
+### function get_export_override_size_enabled
+
+```cpp
+bool get_export_override_size_enabled()
+```
+
+
+### function set_export_override_size_enabled
+
+```cpp
+void set_export_override_size_enabled(
+    bool enabled
+)
+```
+
+
+### function get_export_show_orientation_marker
+
+```cpp
+bool get_export_show_orientation_marker()
+```
+
+
+### function set_export_show_orientation_marker
+
+```cpp
+void set_export_show_orientation_marker(
+    bool value
+)
+```
+
+
+### function get_export_show_color_scale
+
+```cpp
+bool get_export_show_color_scale()
+```
+
+
+### function set_export_show_color_scale
+
+```cpp
+void set_export_show_color_scale(
+    bool value
+)
+```
+
+
+### function get_export_num_pca_images
+
+```cpp
+int get_export_num_pca_images()
+```
+
+
+### function set_export_num_pca_images
+
+```cpp
+void set_export_num_pca_images(
+    int number
+)
+```
+
+
+### function get_export_pca_range
+
+```cpp
+double get_export_pca_range()
+```
+
+
+### function set_export_pca_range
+
+```cpp
+void set_export_pca_range(
+    double range
+)
+```
+
+
 -------------------------------
 
-Updated on 2022-04-29 at 21:19:26 +0000
+Updated on 2022-04-29 at 23:25:59 +0000

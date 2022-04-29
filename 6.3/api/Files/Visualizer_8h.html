@@ -2179,9 +2179,6 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_selected_point_one</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="p">);</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_selected_point_two</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="p">);</span><span class="w"></span>
 
-<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">MODE_ORIGINAL_C</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">MODE_GROOMED_C</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">MODE_RECONSTRUCTION_C</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_mean</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">mean</span><span class="p">);</span><span class="w"></span>
 
@@ -2215,6 +2212,8 @@
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_feature_range</span><span class="p">(</span><span class="kt">double</span><span class="o">*</span><span class="w"> </span><span class="n">range</span><span class="p">);</span><span class="w"></span>
 
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_feature_range</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">min</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">max</span><span class="p">);</span><span class="w"></span>
+
 <span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkTransform</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_transform</span><span class="p">(</span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Shape</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shape</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">alignment_domain</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">);</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_opacities</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">opacities</span><span class="p">);</span><span class="w"></span>
@@ -2227,6 +2226,11 @@
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">redraw</span><span class="p">();</span><span class="w"></span>
 
+<span class="w">  </span><span class="n">QPixmap</span><span class="w"> </span><span class="nf">export_to_pixmap</span><span class="p">(</span><span class="n">QSize</span><span class="w"> </span><span class="n">size</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">transparent_background</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">show_orientation_marker</span><span class="p">,</span><span class="w"></span>
+<span class="w">                           </span><span class="kt">bool</span><span class="w"> </span><span class="n">show_color_scale</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="o">&amp;</span><span class="n">ready</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">  </span><span class="n">QSize</span><span class="w"> </span><span class="nf">get_render_size</span><span class="p">();</span><span class="w"></span>
+
 <span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Q_SLOTS</span><span class="o">:</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">update_viewer_properties</span><span class="p">();</span><span class="w"></span>
@@ -2236,12 +2240,12 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_image_slice_settings_changed</span><span class="p">();</span><span class="w"></span>
 
 <span class="w"> </span><span class="k">private</span><span class="o">:</span><span class="w"></span>
-<span class="w">  </span><span class="n">ShapeHandle</span><span class="w"> </span><span class="n">create_display_object</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">StudioParticles</span><span class="o">&amp;</span><span class="w"> </span><span class="n">points</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Shape</span><span class="o">::</span><span class="n">Point</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">vectors</span><span class="p">);</span><span class="w"></span>
 <span class="w">  </span><span class="n">Preferences</span><span class="o">&amp;</span><span class="w"> </span><span class="n">preferences_</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">compute_measurements</span><span class="p">();</span><span class="w"></span>
 
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">display_mode_</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">setup_single_selected_point_lut</span><span class="p">();</span><span class="w"></span>
+
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">feature_map_</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">alignment_domain_</span><span class="p">;</span><span class="w"></span>
 
@@ -2274,7 +2278,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-04-29 at 21:19:27 +0000</p>
+<p>Updated on 2022-04-29 at 23:26:00 +0000</p>
 
               
             </article>

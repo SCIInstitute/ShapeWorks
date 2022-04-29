@@ -31,11 +31,6 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.3/api/Classes/classBarGraph.html</loc>
-         <lastmod>2022-04-29</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
          <loc>https://www.sci.utah.edu/software/shapeworks.html/6.3/api/Classes/classColorScheme.html</loc>
          <lastmod>2022-04-29</lastmod>
          <changefreq>daily</changefreq>
@@ -526,6 +521,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.3/api/Classes/classshapeworks_1_1ExportImageDialog.html</loc>
+         <lastmod>2022-04-29</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://www.sci.utah.edu/software/shapeworks.html/6.3/api/Classes/classshapeworks_1_1FreeFormConstraint.html</loc>
          <lastmod>2022-04-29</lastmod>
          <changefreq>daily</changefreq>
@@ -562,6 +562,11 @@
     </url>
     <url>
          <loc>https://www.sci.utah.edu/software/shapeworks.html/6.3/api/Classes/classshapeworks_1_1ImageCommand.html</loc>
+         <lastmod>2022-04-29</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.3/api/Classes/classshapeworks_1_1ImageLabel.html</loc>
          <lastmod>2022-04-29</lastmod>
          <changefreq>daily</changefreq>
     </url>
@@ -1186,11 +1191,6 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.3/api/Files/BarGraph_8h.html</loc>
-         <lastmod>2022-04-29</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
          <loc>https://www.sci.utah.edu/software/shapeworks.html/6.3/api/Files/ColorSchemes_8h.html</loc>
          <lastmod>2022-04-29</lastmod>
          <changefreq>daily</changefreq>
@@ -1277,6 +1277,11 @@
     </url>
     <url>
          <loc>https://www.sci.utah.edu/software/shapeworks.html/6.3/api/Files/Executable_8h.html</loc>
+         <lastmod>2022-04-29</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.3/api/Files/ExportImageDialog_8h.html</loc>
          <lastmod>2022-04-29</lastmod>
          <changefreq>daily</changefreq>
     </url>
@@ -1372,6 +1377,11 @@
     </url>
     <url>
          <loc>https://www.sci.utah.edu/software/shapeworks.html/6.3/api/Files/GroupPvalueJob_8h.html</loc>
+         <lastmod>2022-04-29</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.3/api/Files/ImageLabel_8h.html</loc>
          <lastmod>2022-04-29</lastmod>
          <changefreq>daily</changefreq>
     </url>

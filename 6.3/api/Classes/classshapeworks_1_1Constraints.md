@@ -52,6 +52,7 @@ title: shapeworks::Constraints
 | void | **[Write](../Classes/classshapeworks_1_1Constraints.md#function-write)**(std::string filename) |
 | [FreeFormConstraint](../Classes/classshapeworks_1_1FreeFormConstraint.md) & | **[getFreeformConstraint](../Classes/classshapeworks_1_1Constraints.md#function-getfreeformconstraint)**() |
 | bool | **[hasConstraints](../Classes/classshapeworks_1_1Constraints.md#function-hasconstraints)**() |
+| void | **[clipMesh](../Classes/classshapeworks_1_1Constraints.md#function-clipmesh)**([Mesh](../Classes/classshapeworks_1_1Mesh.md) & mesh) |
 
 ## Public Types Documentation
 
@@ -353,6 +354,15 @@ bool hasConstraints()
 ```
 
 
+### function clipMesh
+
+```cpp
+void clipMesh(
+    Mesh & mesh
+)
+```
+
+
 -------------------------------
 
-Updated on 2022-04-29 at 21:19:25 +0000
+Updated on 2022-04-29 at 23:25:58 +0000

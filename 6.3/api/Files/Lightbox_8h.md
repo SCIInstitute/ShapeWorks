@@ -113,6 +113,8 @@ class Lightbox : public QObject {
 
   void set_shared_window_and_level(double window, double level);
 
+  vtkRenderWindow* get_render_window();
+
  public Q_SLOTS:
   void handle_timer_callback();
 
@@ -124,6 +126,8 @@ class Lightbox : public QObject {
   void display_shapes();
 
   void insert_shape_into_viewer(QSharedPointer<Shape> shape, int position);
+
+  int get_start_shape();
 
   vtkSmartPointer<vtkRenderer> renderer_;
 
@@ -172,4 +176,4 @@ class Lightbox : public QObject {
 
 -------------------------------
 
-Updated on 2022-04-29 at 21:19:27 +0000
+Updated on 2022-04-29 at 23:26:00 +0000

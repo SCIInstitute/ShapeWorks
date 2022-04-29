@@ -68,8 +68,6 @@ Representation of a single shape/patient/subject.
 | void | **[set_exclusion_sphere_radii](../Classes/classshapeworks_1_1Shape.md#function-set-exclusion-sphere-radii)**(QList< double > radii) |
 | int | **[get_group_id](../Classes/classshapeworks_1_1Shape.md#function-get-group-id)**() |
 | void | **[set_group_id](../Classes/classshapeworks_1_1Shape.md#function-set-group-id)**(int id) |
-| std::vector< [Point](../Classes/classshapeworks_1_1Shape_1_1Point.md) > | **[get_vectors](../Classes/classshapeworks_1_1Shape.md#function-get-vectors)**() |
-| void | **[set_vectors](../Classes/classshapeworks_1_1Shape.md#function-set-vectors)**(std::vector< [Point](../Classes/classshapeworks_1_1Shape_1_1Point.md) > vectors) |
 | void | **[set_transform](../Classes/classshapeworks_1_1Shape.md#function-set-transform)**(vtkSmartPointer< vtkTransform > transform) |
 | vtkSmartPointer< vtkTransform > | **[get_transform](../Classes/classshapeworks_1_1Shape.md#function-get-transform)**(int domain =0) |
 | bool | **[has_alignment](../Classes/classshapeworks_1_1Shape.md#function-has-alignment)**() |
@@ -91,7 +89,7 @@ Representation of a single shape/patient/subject.
 | std::vector< [Constraints](../Classes/classshapeworks_1_1Constraints.md) > & | **[constraints](../Classes/classshapeworks_1_1Shape.md#function-constraints)**() |
 | [Constraints](../Classes/classshapeworks_1_1Constraints.md) & | **[get_constraints](../Classes/classshapeworks_1_1Shape.md#function-get-constraints)**(int domain_id) |
 | bool | **[has_planes](../Classes/classshapeworks_1_1Shape.md#function-has-planes)**() |
-| std::vector< std::shared_ptr< [VtkMeshWrapper](../Classes/classshapeworks_1_1VtkMeshWrapper.md) > > | **[get_mesh_wrappers](../Classes/classshapeworks_1_1Shape.md#function-get-mesh-wrappers)**() |
+| std::vector< std::shared_ptr< [VtkMeshWrapper](../Classes/classshapeworks_1_1VtkMeshWrapper.md) > > | **[get_groomed_mesh_wrappers](../Classes/classshapeworks_1_1Shape.md#function-get-groomed-mesh-wrappers)**() |
 
 ## Public Functions Documentation
 
@@ -465,22 +463,6 @@ void set_group_id(
 ```
 
 
-### function get_vectors
-
-```cpp
-std::vector< Point > get_vectors()
-```
-
-
-### function set_vectors
-
-```cpp
-void set_vectors(
-    std::vector< Point > vectors
-)
-```
-
-
 ### function set_transform
 
 ```cpp
@@ -661,13 +643,13 @@ bool has_planes()
 ```
 
 
-### function get_mesh_wrappers
+### function get_groomed_mesh_wrappers
 
 ```cpp
-std::vector< std::shared_ptr< VtkMeshWrapper > > get_mesh_wrappers()
+std::vector< std::shared_ptr< VtkMeshWrapper > > get_groomed_mesh_wrappers()
 ```
 
 
 -------------------------------
 
-Updated on 2022-04-29 at 21:19:26 +0000
+Updated on 2022-04-29 at 23:25:59 +0000

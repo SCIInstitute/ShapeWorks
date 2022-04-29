@@ -27,6 +27,7 @@ title: Studio/src/Data/StudioLog.h
 |  | **[STUDIO_LOG_MESSAGE](../Files/StudioLog_8h.md#define-studio-log-message)**(message) <br>Log message macro.  |
 |  | **[STUDIO_LOG_ERROR](../Files/StudioLog_8h.md#define-studio-log-error)**(message) <br>Log error macro.  |
 |  | **[STUDIO_SHOW_ERROR](../Files/StudioLog_8h.md#define-studio-show-error)**(message) <br>Log show error macro.  |
+|  | **[STUDIO_SHOW_MESSAGE](../Files/StudioLog_8h.md#define-studio-show-message)**(message) <br>Log show message macro.  |
 |  | **[STUDIO_CLOSE_LOG](../Files/StudioLog_8h.md#define-studio-close-log)**() <br>Close session macro.  |
 |  | **[STUDIO_FLUSH_LOG](../Files/StudioLog_8h.md#define-studio-flush-log)**() <br>Close session macro.  |
 
@@ -78,6 +79,17 @@ shapeworks::StudioLog::Instance().show_error(message, __LINE__, __FILE__)
 ```
 
 Log show error macro. 
+
+### define STUDIO_SHOW_MESSAGE
+
+```cpp
+#define STUDIO_SHOW_MESSAGE(
+    message
+)
+shapeworks::StudioLog::Instance().show_message(message, __LINE__, __FILE__)
+```
+
+Log show message macro. 
 
 ### define STUDIO_CLOSE_LOG
 
@@ -131,6 +143,8 @@ class StudioLog : public QObject {
 
   void show_error(QString message, const int line, const char* file);
 
+  void show_message(QString message, const int line, const char* file);
+
   void log_debug(QString message, const int line, const char* file);
 
   void close_log();
@@ -142,7 +156,8 @@ class StudioLog : public QObject {
   QString get_log_filename();
 
  Q_SIGNALS:
-  void error(QString message);
+  void error_signal(QString message);
+  void message_signal(QString message);
 
  private:
   QString create_header(const int line, const char* filename);
@@ -166,6 +181,8 @@ class StudioLog : public QObject {
 
 #define STUDIO_SHOW_ERROR(message) shapeworks::StudioLog::Instance().show_error(message, __LINE__, __FILE__)
 
+#define STUDIO_SHOW_MESSAGE(message) shapeworks::StudioLog::Instance().show_message(message, __LINE__, __FILE__)
+
 #define STUDIO_CLOSE_LOG() shapeworks::StudioLog::Instance().close_log();
 
 #define STUDIO_FLUSH_LOG() shapeworks::StudioLog::Instance().flush_log();
@@ -175,4 +192,4 @@ class StudioLog : public QObject {
 
 -------------------------------
 
-Updated on 2022-04-29 at 21:19:27 +0000
+Updated on 2022-04-29 at 23:26:00 +0000

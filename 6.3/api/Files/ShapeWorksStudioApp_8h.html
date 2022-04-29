@@ -2196,12 +2196,13 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_actionExport_Eigenvalues_triggered</span><span class="p">();</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_actionExport_Eigenvectors_triggered</span><span class="p">();</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_actionExport_PCA_Mode_Points_triggered</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_actionExport_Variance_Graph_triggered</span><span class="p">();</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_action_preferences_triggered</span><span class="p">();</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_action_export_current_mesh_triggered</span><span class="p">();</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_action_export_current_particles_triggered</span><span class="p">();</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_action_export_mesh_scalars_triggered</span><span class="p">();</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_action_export_pca_scores_triggered</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">action_export_pca_montage_triggered</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">action_export_screenshot_triggered</span><span class="p">();</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_center_checkbox_stateChanged</span><span class="p">();</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_zoom_slider_valueChanged</span><span class="p">();</span><span class="w"></span>
@@ -2261,6 +2262,9 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">reset_num_viewers</span><span class="p">();</span><span class="w"></span>
 
 <span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="nf">write_particle_file</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">filename</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">particles</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">  </span><span class="n">QString</span><span class="w"> </span><span class="nf">get_save_filename</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">title</span><span class="p">,</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="n">filetypes</span><span class="p">,</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="n">default_ext</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="nf">get_mesh_file_filter</span><span class="p">();</span><span class="w"></span>
 
 <span class="w">  </span><span class="k">enum</span><span class="w"> </span><span class="nc">VIEW_MODE</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">ORIGINAL</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">GROOMED</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">RECONSTRUCTED</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="p">};</span><span class="w"></span>
 
@@ -2362,7 +2366,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-04-29 at 21:19:27 +0000</p>
+<p>Updated on 2022-04-29 at 23:26:00 +0000</p>
 
               
             </article>

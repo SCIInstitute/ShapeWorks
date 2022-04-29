@@ -2075,8 +2075,15 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#signal-error" class="md-nav__link">
-    signal error
+  <a href="#signal-error_signal" class="md-nav__link">
+    signal error_signal
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#signal-message_signal" class="md-nav__link">
+    signal message_signal
   </a>
   
 </li>
@@ -2132,6 +2139,13 @@
           <li class="md-nav__item">
   <a href="#function-show_error" class="md-nav__link">
     function show_error
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-show_message" class="md-nav__link">
+    function show_message
   </a>
   
 </li>
@@ -2214,7 +2228,11 @@
 <tbody>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1StudioLog.html#signal-error">error</a></strong>(QString message)</td>
+<td><strong><a href="classshapeworks_1_1StudioLog.html#signal-error-signal">error_signal</a></strong>(QString message)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1StudioLog.html#signal-message-signal">message_signal</a></strong>(QString message)</td>
 </tr>
 </tbody>
 </table>
@@ -2253,6 +2271,10 @@
 </tr>
 <tr>
 <td>void</td>
+<td><strong><a href="classshapeworks_1_1StudioLog.html#function-show-message">show_message</a></strong>(QString message, const int line, const char * file)<br>Log a message, use STUDIO_SHOW_MESSAGE macro.</td>
+</tr>
+<tr>
+<td>void</td>
 <td><strong><a href="classshapeworks_1_1StudioLog.html#function-log-debug">log_debug</a></strong>(QString message, const int line, const char * file)<br>Log a debug message, use STUDIO_LOG_DEBUG macro.</td>
 </tr>
 <tr>
@@ -2278,8 +2300,13 @@
 </tbody>
 </table>
 <h2 id="public-signals-documentation">Public Signals Documentation</h2>
-<h3 id="signal-error">signal error</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">error</span><span class="p">(</span><span class="w"></span>
+<h3 id="signal-error_signal">signal error_signal</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">error_signal</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">QString</span><span class="w"> </span><span class="n">message</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="signal-message_signal">signal message_signal</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">message_signal</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="n">QString</span><span class="w"> </span><span class="n">message</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
@@ -2321,6 +2348,14 @@
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <p>Log an error, use STUDIO_SHOW_ERROR macro. </p>
+<h3 id="function-show_message">function show_message</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">show_message</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">QString</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">line</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">file</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>Log a message, use STUDIO_SHOW_MESSAGE macro. </p>
 <h3 id="function-log_debug">function log_debug</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">log_debug</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="n">QString</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w"></span>
@@ -2350,7 +2385,7 @@
 </code></pre></div>
 <p>Return the singleton instance. </p>
 <hr />
-<p>Updated on 2022-04-29 at 21:19:26 +0000</p>
+<p>Updated on 2022-04-29 at 23:25:59 +0000</p>
 
               
             </article>

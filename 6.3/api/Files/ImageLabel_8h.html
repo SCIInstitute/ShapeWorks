@@ -12,14 +12,14 @@
         <meta name="author" content="Shireen Elhabian et al.">
       
       
-        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.3/api/Files/BarGraph_8h.html">
+        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.3/api/Files/ImageLabel_8h.html">
       
       <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.8">
     
     
       
-        <title>Studio/src/Visualization/BarGraph.h - ShapeWorks</title>
+        <title>Studio/src/Utils/ImageLabel.h - ShapeWorks</title>
       
     
     
@@ -81,7 +81,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#studiosrcvisualizationbargraphh" class="md-skip">
+        <a href="#studiosrcutilsimagelabelh" class="md-skip">
           Skip to content
         </a>
       
@@ -119,7 +119,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Studio/src/Visualization/BarGraph.h
+              Studio/src/Utils/ImageLabel.h
             
           </span>
         </div>
@@ -2053,6 +2053,13 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#namespaces" class="md-nav__link">
+    Namespaces
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#classes" class="md-nav__link">
     Classes
   </a>
@@ -2078,13 +2085,26 @@
             <article class="md-content__inner md-typeset">
               
                 
-<a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/api/Files/BarGraph_8h.md" title="Edit this page" class="md-content__button md-icon">
+<a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/api/Files/ImageLabel_8h.md" title="Edit this page" class="md-content__button md-icon">
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
 </a>
 
 
 
-<h1 id="studiosrcvisualizationbargraphh">Studio/src/Visualization/BarGraph.h</h1>
+<h1 id="studiosrcutilsimagelabelh">Studio/src/Utils/ImageLabel.h</h1>
+<h2 id="namespaces">Namespaces</h2>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong><a href="../Namespaces/namespaceshapeworks.html">shapeworks</a></strong></td>
+</tr>
+</tbody>
+</table>
 <h2 id="classes">Classes</h2>
 <table>
 <thead>
@@ -2096,84 +2116,37 @@
 <tbody>
 <tr>
 <td>class</td>
-<td><strong><a href="../Classes/classBarGraph.html">BarGraph</a></strong></td>
+<td><strong><a href="../Classes/classshapeworks_1_1ImageLabel.html">shapeworks::ImageLabel</a></strong> <br>An extention of QLabel especially for scaled images.</td>
 </tr>
 </tbody>
 </table>
 <h2 id="source-code">Source code</h2>
 <div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QWidget&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;utility&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QTimer&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Eigen/Eigen&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QLabel&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QResizeEvent&gt;</span><span class="cp"></span>
 
-<span class="k">class</span><span class="w"> </span><span class="nc">BarGraph</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">QWidget</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="n">Q_OBJECT</span><span class="w"></span>
+<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 
-<span class="k">public</span><span class="o">:</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ImageLabel</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">QLabel</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w"> </span><span class="k">public</span><span class="o">:</span><span class="w"></span>
+<span class="w">  </span><span class="n">ImageLabel</span><span class="p">(</span><span class="n">QWidget</span><span class="w"> </span><span class="o">*</span><span class="n">parent</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">QLabel</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">setPixmap</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">QPixmap</span><span class="w"> </span><span class="o">&amp;</span><span class="n">pixmap</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">setPixmap</span><span class="p">(</span><span class="n">pixmap</span><span class="p">,</span><span class="w"> </span><span class="n">size</span><span class="p">());</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
 
-<span class="w">  </span><span class="k">enum</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">ChartType</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">ExplainedVariance</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">Evaluation</span><span class="w"></span>
-<span class="w">  </span><span class="p">};</span><span class="w"></span>
+<span class="w"> </span><span class="k">protected</span><span class="o">:</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">resizeEvent</span><span class="p">(</span><span class="n">QResizeEvent</span><span class="w"> </span><span class="o">*</span><span class="n">reisze_event</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="p">;</span><span class="w"></span>
 
-<span class="w">  </span><span class="n">BarGraph</span><span class="p">(</span><span class="n">QWidget</span><span class="o">*</span><span class="w"> </span><span class="n">parent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="o">~</span><span class="n">BarGraph</span><span class="p">();</span><span class="w"></span>
+<span class="w"> </span><span class="k">private</span><span class="o">:</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">setPixmap</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">QPixmap</span><span class="w"> </span><span class="o">&amp;</span><span class="n">pixmap</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">QSize</span><span class="w"> </span><span class="o">&amp;</span><span class="n">size</span><span class="p">);</span><span class="w"></span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_chart_type</span><span class="p">(</span><span class="n">ChartType</span><span class="w"> </span><span class="n">chart_type</span><span class="p">);</span><span class="w"></span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_data</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">values</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_data</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">values</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_log_scale</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">b</span><span class="p">);</span><span class="w"></span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_y_label</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">label</span><span class="p">);</span><span class="w"></span>
-
-<span class="k">public</span><span class="w"> </span><span class="n">Q_SLOTS</span><span class="o">:</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">hover_timer_event</span><span class="p">();</span><span class="w"></span>
-
-<span class="k">private</span><span class="o">:</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">paintEvent</span><span class="p">(</span><span class="n">QPaintEvent</span><span class="o">*</span><span class="w"> </span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">resizeEvent</span><span class="p">(</span><span class="n">QResizeEvent</span><span class="o">*</span><span class="w"> </span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="p">;</span><span class="w"></span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">mouseMoveEvent</span><span class="p">(</span><span class="n">QMouseEvent</span><span class="o">*</span><span class="w"> </span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="p">;</span><span class="w"></span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">recalculate_bars</span><span class="p">();</span><span class="w"></span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">paint_bar_graph</span><span class="p">(</span><span class="n">QPainter</span><span class="o">&amp;</span><span class="w"> </span><span class="n">painter</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_chart_height</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_graph_height</span><span class="p">();</span><span class="w"></span>
-
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_height_for_value</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="p">);</span><span class="w"></span>
-
-<span class="w">  </span><span class="n">QFont</span><span class="w"> </span><span class="nf">get_font_for_size</span><span class="p">(</span><span class="n">QFont</span><span class="w"> </span><span class="n">font</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="o">&amp;</span><span class="n">text</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">width</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">height</span><span class="p">);</span><span class="w"></span>
-
-<span class="w">  </span><span class="c1">// members</span>
-<span class="w">  </span><span class="n">QString</span><span class="w"> </span><span class="n">y_label_</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">values_</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">accumulation_</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">QRect</span><span class="o">&gt;</span><span class="w"> </span><span class="n">bars_</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">max_val_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">100.0</span><span class="p">,</span><span class="w"> </span><span class="n">min_val_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">bar_width_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="n">margin_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">5</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">use_log_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">font_height_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">font_width_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">y_axis_text_width_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="n">QRect</span><span class="w"> </span><span class="n">y_axis_text_rect_</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="n">QRect</span><span class="w"> </span><span class="n">font_rect_</span><span class="p">;</span><span class="w"></span>
-
-<span class="w">  </span><span class="n">QPoint</span><span class="w"> </span><span class="n">hover_position_</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="n">QPointF</span><span class="w"> </span><span class="n">tooltip_position_</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="n">QTimer</span><span class="w"> </span><span class="n">hover_timer_</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="n">QFont</span><span class="w"> </span><span class="n">axis_font_</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="n">QFont</span><span class="w"> </span><span class="n">tick_font_</span><span class="p">;</span><span class="w"></span>
-
-<span class="w">  </span><span class="n">ChartType</span><span class="w"> </span><span class="n">chart_type_</span><span class="p">{</span><span class="n">ChartType</span><span class="o">::</span><span class="n">ExplainedVariance</span><span class="p">};</span><span class="w"></span>
+<span class="w"> </span><span class="k">private</span><span class="o">:</span><span class="w"></span>
+<span class="w">  </span><span class="n">QPixmap</span><span class="w"> </span><span class="n">pixmap_</span><span class="p">;</span><span class="w"></span>
 <span class="p">};</span><span class="w"></span>
+
+<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-04-29 at 21:19:27 +0000</p>
+<p>Updated on 2022-04-29 at 23:26:00 +0000</p>
 
               
             </article>

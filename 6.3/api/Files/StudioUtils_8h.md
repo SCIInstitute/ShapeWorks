@@ -30,23 +30,28 @@ title: Studio/src/Utils/StudioUtils.h
 #include <Libs/Project/Project.h>
 class QWidget;
 
+#include <vtkSmartPointer.h>
+
+#include <QImage>
 #include <QStringList>
+
+class vtkImageData;
 
 namespace shapeworks {
 
 class StudioUtils {
-public:
-
+ public:
   static bool ask_multiple_domains_as_single(QWidget *parent, std::shared_ptr<Project> project);
 
   static QStringList to_string_list(std::vector<std::string> vector);
 
+  static QImage vtk_image_to_qimage(vtkSmartPointer<vtkImageData> image_data);
 };
 
-} // namespace shapeworks
+}  // namespace shapeworks
 ```
 
 
 -------------------------------
 
-Updated on 2022-04-29 at 21:19:27 +0000
+Updated on 2022-04-29 at 23:26:00 +0000

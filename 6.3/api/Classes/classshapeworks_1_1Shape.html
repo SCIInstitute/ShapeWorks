@@ -2390,20 +2390,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-get_vectors" class="md-nav__link">
-    function get_vectors
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-set_vectors" class="md-nav__link">
-    function set_vectors
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#function-set_transform" class="md-nav__link">
     function set_transform
   </a>
@@ -2551,8 +2537,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-get_mesh_wrappers" class="md-nav__link">
-    function get_mesh_wrappers
+  <a href="#function-get_groomed_mesh_wrappers" class="md-nav__link">
+    function get_groomed_mesh_wrappers
   </a>
   
 </li>
@@ -2788,14 +2774,6 @@
 <td><strong><a href="classshapeworks_1_1Shape.html#function-set-group-id">set_group_id</a></strong>(int id)</td>
 </tr>
 <tr>
-<td>std::vector&lt; <a href="classshapeworks_1_1Shape_1_1Point.html">Point</a> &gt;</td>
-<td><strong><a href="classshapeworks_1_1Shape.html#function-get-vectors">get_vectors</a></strong>()</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1Shape.html#function-set-vectors">set_vectors</a></strong>(std::vector&lt; <a href="classshapeworks_1_1Shape_1_1Point.html">Point</a> &gt; vectors)</td>
-</tr>
-<tr>
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1Shape.html#function-set-transform">set_transform</a></strong>(vtkSmartPointer&lt; vtkTransform &gt; transform)</td>
 </tr>
@@ -2881,7 +2859,7 @@
 </tr>
 <tr>
 <td>std::vector&lt; std::shared_ptr&lt; <a href="classshapeworks_1_1VtkMeshWrapper.html">VtkMeshWrapper</a> &gt; &gt;</td>
-<td><strong><a href="classshapeworks_1_1Shape.html#function-get-mesh-wrappers">get_mesh_wrappers</a></strong>()</td>
+<td><strong><a href="classshapeworks_1_1Shape.html#function-get-groomed-mesh-wrappers">get_groomed_mesh_wrappers</a></strong>()</td>
 </tr>
 </tbody>
 </table>
@@ -3076,14 +3054,6 @@
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
-<h3 id="function-get_vectors">function get_vectors</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Point</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_vectors</span><span class="p">()</span><span class="w"></span>
-</code></pre></div>
-<h3 id="function-set_vectors">function set_vectors</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_vectors</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Point</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">vectors</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
-</code></pre></div>
 <h3 id="function-set_transform">function set_transform</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_transform</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkTransform</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">transform</span><span class="w"></span>
@@ -3180,11 +3150,11 @@
 <h3 id="function-has_planes">function has_planes</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">has_planes</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
-<h3 id="function-get_mesh_wrappers">function get_mesh_wrappers</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VtkMeshWrapper</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_mesh_wrappers</span><span class="p">()</span><span class="w"></span>
+<h3 id="function-get_groomed_mesh_wrappers">function get_groomed_mesh_wrappers</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VtkMeshWrapper</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_groomed_mesh_wrappers</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-04-29 at 21:19:26 +0000</p>
+<p>Updated on 2022-04-29 at 23:25:59 +0000</p>
 
               
             </article>

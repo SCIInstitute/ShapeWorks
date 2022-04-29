@@ -22,6 +22,7 @@ title: Studio/src/Data/PreferencesWindow.h
 #pragma once
 
 #include <QDialog>
+
 #include "Data/Preferences.h"
 
 class Ui_PreferencesWindow;
@@ -29,16 +30,16 @@ class QAbstractButton;
 
 
 class PreferencesWindow : public QDialog {
-Q_OBJECT
+  Q_OBJECT
 
-public:
+ public:
   PreferencesWindow(QWidget* parent, Preferences& prefs);
 
   void set_values_from_preferences();
 
-  void closeEvent(QCloseEvent *event) override;
+  void closeEvent(QCloseEvent* event) override;
 
-public Q_SLOTS:
+ public Q_SLOTS:
   void on_mesh_cache_enabled_stateChanged(int state);
   void on_mesh_cache_memory_valueChanged(int value);
   void on_color_scheme_currentIndexChanged(int index);
@@ -46,7 +47,6 @@ public Q_SLOTS:
   void on_pca_steps_valueChanged(int value);
   void on_parallel_enabled_toggled(bool b);
   void on_num_threads_valueChanged(int i);
-  void on_caching_epsilon_valueChanged(int i);
 
   void accept() override;
 
@@ -54,12 +54,12 @@ public Q_SLOTS:
 
   void save_to_preferences();
 
-Q_SIGNALS:
+ Q_SIGNALS:
   void clear_cache();
   void update_view();
   void slider_update();
 
-private:
+ private:
   void update_labels();
   Preferences& preferences_;
   Ui_PreferencesWindow* ui_;
@@ -69,4 +69,4 @@ private:
 
 -------------------------------
 
-Updated on 2022-04-29 at 21:19:27 +0000
+Updated on 2022-04-29 at 23:26:00 +0000

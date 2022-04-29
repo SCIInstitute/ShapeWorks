@@ -26,7 +26,6 @@ Inherits from QDialog
 | void | **[on_pca_steps_valueChanged](../Classes/classPreferencesWindow.md#slot-on-pca-steps-valuechanged)**(int value) |
 | void | **[on_parallel_enabled_toggled](../Classes/classPreferencesWindow.md#slot-on-parallel-enabled-toggled)**(bool b) |
 | void | **[on_num_threads_valueChanged](../Classes/classPreferencesWindow.md#slot-on-num-threads-valuechanged)**(int i) |
-| void | **[on_caching_epsilon_valueChanged](../Classes/classPreferencesWindow.md#slot-on-caching-epsilon-valuechanged)**(int i) |
 | void | **[accept](../Classes/classPreferencesWindow.md#slot-accept)**() override |
 | void | **[restore_defaults](../Classes/classPreferencesWindow.md#slot-restore-defaults)**() |
 | void | **[save_to_preferences](../Classes/classPreferencesWindow.md#slot-save-to-preferences)**() |
@@ -122,15 +121,6 @@ void on_num_threads_valueChanged(
 ```
 
 
-### slot on_caching_epsilon_valueChanged
-
-```cpp
-void on_caching_epsilon_valueChanged(
-    int i
-)
-```
-
-
 ### slot accept
 
 ```cpp
@@ -205,4 +195,4 @@ void closeEvent(
 
 -------------------------------
 
-Updated on 2022-04-29 at 21:19:26 +0000
+Updated on 2022-04-29 at 23:25:59 +0000

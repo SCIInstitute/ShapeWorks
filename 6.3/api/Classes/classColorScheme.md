@@ -19,6 +19,10 @@ title: ColorScheme
 
 |                | Name           |
 | -------------- | -------------- |
+| QColor | **[background_qcolor](../Classes/classColorScheme.md#function-background-qcolor)**(int alpha) |
+| QColor | **[foreground_qcolor](../Classes/classColorScheme.md#function-foreground-qcolor)**() |
+| QColor | **[get_text_color](../Classes/classColorScheme.md#function-get-text-color)**() |
+| double | **[get_text_intensity](../Classes/classColorScheme.md#function-get-text-intensity)**() |
 | | **[ColorScheme](../Classes/classColorScheme.md#function-colorscheme)**() |
 | | **[~ColorScheme](../Classes/classColorScheme.md#function-~colorscheme)**() |
 
@@ -31,6 +35,36 @@ title: ColorScheme
 | [rgb](../Classes/structColorScheme_1_1rgb.md) | **[alt](../Classes/classColorScheme.md#variable-alt)**  |
 
 ## Public Functions Documentation
+
+### function background_qcolor
+
+```cpp
+inline QColor background_qcolor(
+    int alpha
+)
+```
+
+
+### function foreground_qcolor
+
+```cpp
+inline QColor foreground_qcolor()
+```
+
+
+### function get_text_color
+
+```cpp
+inline QColor get_text_color()
+```
+
+
+### function get_text_intensity
+
+```cpp
+inline double get_text_intensity()
+```
+
 
 ### function ColorScheme
 
@@ -71,4 +105,4 @@ rgb alt;
 
 -------------------------------
 
-Updated on 2022-04-29 at 21:19:26 +0000
+Updated on 2022-04-29 at 23:25:59 +0000

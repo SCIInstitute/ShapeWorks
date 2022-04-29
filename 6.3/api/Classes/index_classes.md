@@ -8,7 +8,6 @@ title: Classes
 
 
 
-* **class [BarGraph](../Classes/classBarGraph.md)** 
 * **class [ColorScheme](../Classes/classColorScheme.md)** 
     * **struct [rgb](../Classes/structColorScheme_1_1rgb.md)** 
 * **class [ColorSchemes](../Classes/classColorSchemes.md)** 
@@ -126,6 +125,7 @@ title: Classes
     * **class [DeepSSMParameters](../Classes/classshapeworks_1_1DeepSSMParameters.md)** 
     * **class [DeepSSMTool](../Classes/classshapeworks_1_1DeepSSMTool.md)** 
     * **class [Executable](../Classes/classshapeworks_1_1Executable.md)** 
+    * **class [ExportImageDialog](../Classes/classshapeworks_1_1ExportImageDialog.md)** 
     * **class [FreeFormConstraint](../Classes/classshapeworks_1_1FreeFormConstraint.md)** <br>[FreeFormConstraint](). 
     * **class [Groom](../Classes/classshapeworks_1_1Groom.md)** <br>High level groom API. 
     * **class [GroomCommandGroup](../Classes/classshapeworks_1_1GroomCommandGroup.md)** 
@@ -134,6 +134,7 @@ title: Classes
     * **class [GroupPvalueJob](../Classes/classshapeworks_1_1GroupPvalueJob.md)** 
     * **class [Image](../Classes/classshapeworks_1_1Image.md)** 
     * **class [ImageCommand](../Classes/classshapeworks_1_1ImageCommand.md)** 
+    * **class [ImageLabel](../Classes/classshapeworks_1_1ImageLabel.md)** <br>An extention of QLabel especially for scaled images. 
     * **class [ImageUtils](../Classes/classshapeworks_1_1ImageUtils.md)** <br>Helper functions for image. 
     * **class [IndexRegion](../Classes/classshapeworks_1_1IndexRegion.md)** <br>Indices into a 3d region of memory (can be negative, e.g., for the purpose of padding an image) 
     * **class [Job](../Classes/classshapeworks_1_1Job.md)** 
@@ -247,4 +248,4 @@ title: Classes
 
 -------------------------------
 
-Updated on 2022-04-29 at 21:19:27 +0000
+Updated on 2022-04-29 at 23:26:00 +0000

@@ -22,6 +22,7 @@ title: shapeworks
 | class | **[shapeworks::DeepSSMParameters](../Classes/classshapeworks_1_1DeepSSMParameters.md)**  |
 | class | **[shapeworks::DeepSSMTool](../Classes/classshapeworks_1_1DeepSSMTool.md)**  |
 | class | **[shapeworks::Executable](../Classes/classshapeworks_1_1Executable.md)**  |
+| class | **[shapeworks::ExportImageDialog](../Classes/classshapeworks_1_1ExportImageDialog.md)**  |
 | class | **[shapeworks::FreeFormConstraint](../Classes/classshapeworks_1_1FreeFormConstraint.md)** <br>[FreeFormConstraint]().  |
 | class | **[shapeworks::Groom](../Classes/classshapeworks_1_1Groom.md)** <br>High level groom API.  |
 | class | **[shapeworks::GroomCommandGroup](../Classes/classshapeworks_1_1GroomCommandGroup.md)**  |
@@ -30,6 +31,7 @@ title: shapeworks
 | class | **[shapeworks::GroupPvalueJob](../Classes/classshapeworks_1_1GroupPvalueJob.md)**  |
 | class | **[shapeworks::Image](../Classes/classshapeworks_1_1Image.md)**  |
 | class | **[shapeworks::ImageCommand](../Classes/classshapeworks_1_1ImageCommand.md)**  |
+| class | **[shapeworks::ImageLabel](../Classes/classshapeworks_1_1ImageLabel.md)** <br>An extention of QLabel especially for scaled images.  |
 | class | **[shapeworks::ImageUtils](../Classes/classshapeworks_1_1ImageUtils.md)** <br>Helper functions for image.  |
 | class | **[shapeworks::IndexRegion](../Classes/classshapeworks_1_1IndexRegion.md)** <br>Indices into a 3d region of memory (can be negative, e.g., for the purpose of padding an image)  |
 | class | **[shapeworks::Job](../Classes/classshapeworks_1_1Job.md)**  |
@@ -2361,4 +2363,4 @@ pi that doesn't depend on deprecated or non-std lib defines
 
 -------------------------------
 
-Updated on 2022-04-29 at 21:19:25 +0000
+Updated on 2022-04-29 at 23:25:58 +0000

@@ -137,9 +137,6 @@ class Shape {
   int get_group_id();
   void set_group_id(int id);
 
-  std::vector<Point> get_vectors();
-  void set_vectors(std::vector<Point> vectors);
-
   void set_transform(vtkSmartPointer<vtkTransform> transform);
   vtkSmartPointer<vtkTransform> get_transform(int domain = 0);
   bool has_alignment();
@@ -177,7 +174,7 @@ class Shape {
 
   bool has_planes();
 
-  std::vector<std::shared_ptr<VtkMeshWrapper>> get_mesh_wrappers();
+  std::vector<std::shared_ptr<VtkMeshWrapper>> get_groomed_mesh_wrappers();
 
  private:
   void generate_meshes(std::vector<std::string> filenames, MeshGroup& mesh_list, bool save_transform,
@@ -193,7 +190,7 @@ class Shape {
   MeshGroup original_meshes_;
   MeshGroup groomed_meshes_;
   MeshGroup reconstructed_meshes_;
-  std::vector<std::shared_ptr<VtkMeshWrapper>> mesh_wrappers_;
+  std::vector<std::shared_ptr<VtkMeshWrapper>> groomed_mesh_wrappers_;
 
   int group_id_ = 1;
 
@@ -232,4 +229,4 @@ class Shape {
 
 -------------------------------
 
-Updated on 2022-04-29 at 21:19:27 +0000
+Updated on 2022-04-29 at 23:26:00 +0000

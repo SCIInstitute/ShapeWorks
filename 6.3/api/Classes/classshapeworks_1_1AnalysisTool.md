@@ -36,7 +36,6 @@ Inherits from QWidget
 | void | **[handle_pca_timer](../Classes/classshapeworks_1_1AnalysisTool.md#slot-handle-pca-timer)**() |
 | void | **[handle_group_animate_state_changed](../Classes/classshapeworks_1_1AnalysisTool.md#slot-handle-group-animate-state-changed)**() |
 | void | **[handle_group_timer](../Classes/classshapeworks_1_1AnalysisTool.md#slot-handle-group-timer)**() |
-| void | **[on_linear_radio_toggled](../Classes/classshapeworks_1_1AnalysisTool.md#slot-on-linear-radio-toggled)**(bool b) |
 | void | **[handle_reconstruction_complete](../Classes/classshapeworks_1_1AnalysisTool.md#slot-handle-reconstruction-complete)**() |
 | void | **[on_reconstructionButton_clicked](../Classes/classshapeworks_1_1AnalysisTool.md#slot-on-reconstructionbutton-clicked)**() |
 | void | **[set_feature_map](../Classes/classshapeworks_1_1AnalysisTool.md#slot-set-feature-map)**(const std::string & feature_map)<br>Set the currently selected feature map.  |
@@ -59,6 +58,7 @@ Inherits from QWidget
 | void | **[run_good_bad_particles](../Classes/classshapeworks_1_1AnalysisTool.md#slot-run-good-bad-particles)**() |
 | void | **[handle_lda_progress](../Classes/classshapeworks_1_1AnalysisTool.md#slot-handle-lda-progress)**(double progress) |
 | void | **[handle_lda_complete](../Classes/classshapeworks_1_1AnalysisTool.md#slot-handle-lda-complete)**() |
+| void | **[show_difference_to_mean_clicked](../Classes/classshapeworks_1_1AnalysisTool.md#slot-show-difference-to-mean-clicked)**() |
 
 ## Public Signals
 
@@ -88,7 +88,7 @@ Inherits from QWidget
 | void | **[set_analysis_mode](../Classes/classshapeworks_1_1AnalysisTool.md#function-set-analysis-mode)**(std::string mode) |
 | void | **[set_labels](../Classes/classshapeworks_1_1AnalysisTool.md#function-set-labels)**(QString which, QString value) |
 | int | **[get_pca_mode](../Classes/classshapeworks_1_1AnalysisTool.md#function-get-pca-mode)**() |
-| double | **[get_group_value](../Classes/classshapeworks_1_1AnalysisTool.md#function-get-group-value)**() |
+| double | **[get_group_ratio](../Classes/classshapeworks_1_1AnalysisTool.md#function-get-group-ratio)**() |
 | double | **[get_pca_value](../Classes/classshapeworks_1_1AnalysisTool.md#function-get-pca-value)**() |
 | bool | **[pca_animate](../Classes/classshapeworks_1_1AnalysisTool.md#function-pca-animate)**() |
 | int | **[get_sample_number](../Classes/classshapeworks_1_1AnalysisTool.md#function-get-sample-number)**() |
@@ -235,15 +235,6 @@ void handle_group_animate_state_changed()
 
 ```cpp
 void handle_group_timer()
-```
-
-
-### slot on_linear_radio_toggled
-
-```cpp
-void on_linear_radio_toggled(
-    bool b
-)
 ```
 
 
@@ -420,6 +411,13 @@ void handle_lda_complete()
 ```
 
 
+### slot show_difference_to_mean_clicked
+
+```cpp
+void show_difference_to_mean_clicked()
+```
+
+
 ## Public Signals Documentation
 
 ### signal update_view
@@ -582,10 +580,10 @@ int get_pca_mode()
 ```
 
 
-### function get_group_value
+### function get_group_ratio
 
 ```cpp
-double get_group_value()
+double get_group_ratio()
 ```
 
 
@@ -757,4 +755,4 @@ static const std::string MODE_REGRESSION_C;
 
 -------------------------------
 
-Updated on 2022-04-29 at 21:19:25 +0000
+Updated on 2022-04-29 at 23:25:58 +0000

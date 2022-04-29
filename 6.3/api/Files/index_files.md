@@ -187,6 +187,7 @@ title: Files
             * **file [Studio/src/Groom/GroomTool.h](../Files/GroomTool_8h.md#file-groomtool.h)** 
             * **file [Studio/src/Groom/QGroom.h](../Files/QGroom_8h.md#file-qgroom.h)** 
         * **dir [Studio/src/Interface](../Files/dir_efdc2f3bb304c468939ff6eb3a94c2bf.md#dir-studio/src/interface)** 
+            * **file [Studio/src/Interface/ExportImageDialog.h](../Files/ExportImageDialog_8h.md#file-exportimagedialog.h)** 
             * **file [Studio/src/Interface/KeyboardShortcuts.h](../Files/KeyboardShortcuts_8h.md#file-keyboardshortcuts.h)** 
             * **file [Studio/src/Interface/LogWindow.h](../Files/LogWindow_8h.md#file-logwindow.h)** 
             * **file [Studio/src/Interface/ShapeWorksStudioApp.h](../Files/ShapeWorksStudioApp_8h.md#file-shapeworksstudioapp.h)** 
@@ -208,11 +209,11 @@ title: Files
             * **file [Studio/src/Resources/resource.h](../Files/resource_8h.md#file-resource.h)** 
         * **dir [Studio/src/Utils](../Files/dir_6dabbda62b442fabee487c4141c09499.md#dir-studio/src/utils)** 
             * **file [Studio/src/Utils/AnalysisUtils.h](../Files/AnalysisUtils_8h.md#file-analysisutils.h)** 
+            * **file [Studio/src/Utils/ImageLabel.h](../Files/ImageLabel_8h.md#file-imagelabel.h)** 
             * **file [Studio/src/Utils/StackWalker.h](../Files/StackWalker_8h.md#file-stackwalker.h)** 
             * **file [Studio/src/Utils/StudioUtils.h](../Files/StudioUtils_8h.md#file-studioutils.h)** 
             * **file [Studio/src/Utils/WindowsCrashHandler.h](../Files/WindowsCrashHandler_8h.md#file-windowscrashhandler.h)** 
         * **dir [Studio/src/Visualization](../Files/dir_637230a14b7eb9dd0045894e3626aeed.md#dir-studio/src/visualization)** 
-            * **file [Studio/src/Visualization/BarGraph.h](../Files/BarGraph_8h.md#file-bargraph.h)** 
             * **file [Studio/src/Visualization/ColorSchemes.h](../Files/ColorSchemes_8h.md#file-colorschemes.h)** 
             * **file [Studio/src/Visualization/LandmarkWidget.h](../Files/LandmarkWidget_8h.md#file-landmarkwidget.h)** 
             * **file [Studio/src/Visualization/Lightbox.h](../Files/Lightbox_8h.md#file-lightbox.h)** 
@@ -231,4 +232,4 @@ title: Files
 
 -------------------------------
 
-Updated on 2022-04-29 at 21:19:27 +0000
+Updated on 2022-04-29 at 23:26:00 +0000

@@ -2067,13 +2067,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#public-attributes" class="md-nav__link">
-    Public Attributes
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#detailed-description" class="md-nav__link">
     Detailed Description
   </a>
@@ -2396,6 +2389,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-update_feature_range_1" class="md-nav__link">
+    function update_feature_range
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-get_transform" class="md-nav__link">
     function get_transform
   </a>
@@ -2437,36 +2437,16 @@
   
 </li>
         
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#public-attributes-documentation" class="md-nav__link">
-    Public Attributes Documentation
-  </a>
-  
-    <nav class="md-nav" aria-label="Public Attributes Documentation">
-      <ul class="md-nav__list">
-        
           <li class="md-nav__item">
-  <a href="#variable-mode_original_c" class="md-nav__link">
-    variable MODE_ORIGINAL_C
+  <a href="#function-export_to_pixmap" class="md-nav__link">
+    function export_to_pixmap
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#variable-mode_groomed_c" class="md-nav__link">
-    variable MODE_GROOMED_C
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#variable-mode_reconstruction_c" class="md-nav__link">
-    variable MODE_RECONSTRUCTION_C
+  <a href="#function-get_render_size" class="md-nav__link">
+    function get_render_size
   </a>
   
 </li>
@@ -2687,6 +2667,10 @@
 <td><strong><a href="classshapeworks_1_1Visualizer.html#function-update-feature-range">update_feature_range</a></strong>(double * range)<br>Update the feature range with a given range.</td>
 </tr>
 <tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Visualizer.html#function-update-feature-range">update_feature_range</a></strong>(double min, double max)<br>Update the feature range with a given range.</td>
+</tr>
+<tr>
 <td>vtkSmartPointer&lt; vtkTransform &gt;</td>
 <td><strong><a href="classshapeworks_1_1Visualizer.html#function-get-transform">get_transform</a></strong>(QSharedPointer&lt; <a href="classshapeworks_1_1Shape.html">Shape</a> &gt; shape, int alignment_domain, int domain)<br>Request the transform for a given shape and domain.</td>
 </tr>
@@ -2710,28 +2694,13 @@
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1Visualizer.html#function-redraw">redraw</a></strong>()<br>Redraw renderers.</td>
 </tr>
-</tbody>
-</table>
-<h2 id="public-attributes">Public Attributes</h2>
-<table>
-<thead>
 <tr>
-<th></th>
-<th>Name</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>const std::string</td>
-<td><strong><a href="classshapeworks_1_1Visualizer.html#variable-mode-original-c">MODE_ORIGINAL_C</a></strong></td>
+<td>QPixmap</td>
+<td><strong><a href="classshapeworks_1_1Visualizer.html#function-export-to-pixmap">export_to_pixmap</a></strong>(QSize size, bool transparent_background, bool show_orientation_marker, bool show_color_scale, bool &amp; ready)<br>Export render window to pixmap.</td>
 </tr>
 <tr>
-<td>const std::string</td>
-<td><strong><a href="classshapeworks_1_1Visualizer.html#variable-mode-groomed-c">MODE_GROOMED_C</a></strong></td>
-</tr>
-<tr>
-<td>const std::string</td>
-<td><strong><a href="classshapeworks_1_1Visualizer.html#variable-mode-reconstruction-c">MODE_RECONSTRUCTION_C</a></strong></td>
+<td>QSize</td>
+<td><strong><a href="classshapeworks_1_1Visualizer.html#function-get-render-size">get_render_size</a></strong>()<br>Return render window size.</td>
 </tr>
 </tbody>
 </table>
@@ -2926,6 +2895,13 @@
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <p>Update the feature range with a given range. </p>
+<h3 id="function-update_feature_range_1">function update_feature_range</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_feature_range</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">min</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">max</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>Update the feature range with a given range. </p>
 <h3 id="function-get_transform">function get_transform</h3>
 <div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkTransform</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_transform</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Shape</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">shape</span><span class="p">,</span><span class="w"></span>
@@ -2958,18 +2934,22 @@
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">redraw</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
 <p>Redraw renderers. </p>
-<h2 id="public-attributes-documentation">Public Attributes Documentation</h2>
-<h3 id="variable-mode_original_c">variable MODE_ORIGINAL_C</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">MODE_ORIGINAL_C</span><span class="p">;</span><span class="w"></span>
+<h3 id="function-export_to_pixmap">function export_to_pixmap</h3>
+<div class="highlight"><pre><span></span><code><span class="n">QPixmap</span><span class="w"> </span><span class="n">export_to_pixmap</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">QSize</span><span class="w"> </span><span class="n">size</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">transparent_background</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">show_orientation_marker</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">show_color_scale</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ready</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
 </code></pre></div>
-<h3 id="variable-mode_groomed_c">variable MODE_GROOMED_C</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">MODE_GROOMED_C</span><span class="p">;</span><span class="w"></span>
+<p>Export render window to pixmap. </p>
+<h3 id="function-get_render_size">function get_render_size</h3>
+<div class="highlight"><pre><span></span><code><span class="n">QSize</span><span class="w"> </span><span class="n">get_render_size</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
-<h3 id="variable-mode_reconstruction_c">variable MODE_RECONSTRUCTION_C</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">MODE_RECONSTRUCTION_C</span><span class="p">;</span><span class="w"></span>
-</code></pre></div>
+<p>Return render window size. </p>
 <hr />
-<p>Updated on 2022-04-29 at 21:19:26 +0000</p>
+<p>Updated on 2022-04-29 at 23:25:59 +0000</p>
 
               
             </article>

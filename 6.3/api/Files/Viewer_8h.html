@@ -2264,29 +2264,30 @@
 
 <span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="nf">is_reverse</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkTransform</span><span class="o">&gt;</span><span class="w"> </span><span class="n">transform</span><span class="p">);</span><span class="w"></span>
 
-<span class="w"> </span><span class="k">private</span><span class="o">:</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_actors</span><span class="p">();</span><span class="w"></span>
 
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">remove_scalar_bar</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">is_ready</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">mesh_ready_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+
+<span class="w"> </span><span class="k">private</span><span class="o">:</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">initialize_surfaces</span><span class="p">();</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">display_vector_field</span><span class="p">();</span><span class="w"></span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">compute_point_differences</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Shape</span><span class="o">::</span><span class="n">Point</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">points</span><span class="p">,</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkFloatArray</span><span class="o">&gt;</span><span class="w"> </span><span class="n">magnitudes</span><span class="p">,</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">compute_point_differences</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">points</span><span class="p">,</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkFloatArray</span><span class="o">&gt;</span><span class="w"> </span><span class="n">magnitudes</span><span class="p">,</span><span class="w"></span>
 <span class="w">                                 </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkFloatArray</span><span class="o">&gt;</span><span class="w"> </span><span class="n">vectors</span><span class="p">);</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">compute_surface_differences</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkFloatArray</span><span class="o">&gt;</span><span class="w"> </span><span class="n">magnitudes</span><span class="p">,</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkFloatArray</span><span class="o">&gt;</span><span class="w"> </span><span class="n">vectors</span><span class="p">);</span><span class="w"></span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">draw_exclusion_spheres</span><span class="p">(</span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Shape</span><span class="o">&gt;</span><span class="w"> </span><span class="n">object</span><span class="p">);</span><span class="w"></span>
-
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_difference_lut</span><span class="p">(</span><span class="kt">float</span><span class="w"> </span><span class="n">r0</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">r1</span><span class="p">);</span><span class="w"></span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_actors</span><span class="p">();</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">showing_feature_map</span><span class="p">();</span><span class="w"></span>
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">get_displayed_feature_map</span><span class="p">();</span><span class="w"></span>
 
 <span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPlane</span><span class="o">&gt;</span><span class="w"> </span><span class="n">transform_plane</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPlane</span><span class="o">&gt;</span><span class="w"> </span><span class="n">plane</span><span class="p">,</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkTransform</span><span class="o">&gt;</span><span class="w"> </span><span class="n">transform</span><span class="p">);</span><span class="w"></span>
 
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">visible_</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">visible_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Shape</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shape_</span><span class="p">;</span><span class="w"></span>
 
@@ -2306,12 +2307,6 @@
 <span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkGlyph3D</span><span class="o">&gt;</span><span class="w"> </span><span class="n">glyphs_</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyDataMapper</span><span class="o">&gt;</span><span class="w"> </span><span class="n">glyph_mapper_</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkActor</span><span class="o">&gt;</span><span class="w"> </span><span class="n">glyph_actor_</span><span class="p">;</span><span class="w"></span>
-
-<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPoints</span><span class="o">&gt;</span><span class="w"> </span><span class="n">exclusion_sphere_points_</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">exclusion_sphere_point_set_</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkGlyph3D</span><span class="o">&gt;</span><span class="w"> </span><span class="n">exclusion_sphere_glyph_</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyDataMapper</span><span class="o">&gt;</span><span class="w"> </span><span class="n">exclusion_sphere_mapper_</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkActor</span><span class="o">&gt;</span><span class="w"> </span><span class="n">exclusion_sphere_actor_</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyDataMapper</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">surface_mappers_</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkActor</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">surface_actors_</span><span class="p">;</span><span class="w"></span>
@@ -2335,7 +2330,7 @@
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">arrows_visible_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">  </span><span class="n">ColorSchemes</span><span class="w"> </span><span class="n">color_schemes_</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">scheme_</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">scheme_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">mesh_ready_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">viewer_ready_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"></span>
@@ -2353,7 +2348,7 @@
 
 <span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Session</span><span class="o">&gt;</span><span class="w"> </span><span class="n">session_</span><span class="p">;</span><span class="w"></span>
 
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">current_image_name_</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">current_image_name_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;-none-&quot;</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkCellPicker</span><span class="o">&gt;</span><span class="w"> </span><span class="n">cell_picker_</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPropPicker</span><span class="o">&gt;</span><span class="w"> </span><span class="n">prop_picker_</span><span class="p">;</span><span class="w"></span>
@@ -2365,7 +2360,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-04-29 at 21:19:27 +0000</p>
+<p>Updated on 2022-04-29 at 23:26:00 +0000</p>
 
               
             </article>
