@@ -72,8 +72,11 @@ nav:
       - 'Supershapes:Shape Model for Contour Domains':               'use-cases/contour-based/supershapes-contour.md'
    - Constraints Based Use Cases:
       - 'Ellipsoid: Shape Model with Cutting Planes':                'use-cases/constraint-based/ellipsoid-cutting-planes.md'
-      - 'Femur: Shape Model with Cutting Planes':                    'use-cases//constraint-based/femur-cutting-planes.md'
+      - 'Femur:Shape Model with Cutting Planes':                     'use-cases//constraint-based/femur-cutting-planes.md'
       - 'Studio Femur: Shape Model from Meshes with Cutting Planes Using Studio': 'use-cases//constraint-based/femur-cutting-planes-studio.md'
+   - Multi-Step Optimization Use Cases:
+      - 'Fixed Domains Ellipsoid: Shape Model on New Shapes':        'use-cases/multistep/fixed-domain-ellipsoid.md'
+      - 'Incremental Supershapes: Building a Shape Model Incrementally': 'use-cases/multistep/incremental_supershapes.md'
    - Statistics Based Use Cases:
       - 'Ellipsoid: Shape Statistics in Python':                     'use-cases/stats-based/ellipsoid-pca.md'
       - 'Femur: Group Difference Statistics in Python':              'use-cases/stats-based/femur-pvalues.md'

@@ -1158,12 +1158,12 @@ bool CompareImage::execute(const optparse::Values &options, SharedCommandData &s
 
   if (sharedData.image.compare(Image(filename), verifyAll, tolerance/100, precision))
   {
-    std::cout << "compare success\n";
+    std::cout << "images are the same\n";
     return true;
   }
   else
   {
-    std::cout << "compare failure\n";
+    std::cout << "images are different\n";
     return false;
   }
 }

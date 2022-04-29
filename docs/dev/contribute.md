@@ -35,9 +35,14 @@ View all branches:
 $ git branch -a
 ```
 
-Checkout a branch (or a tag or a specific commit):  
+Checkout an exising branch (or a tag or a specific commit):  
 ```
 $ git checkout <branchname>
+```
+
+Create a new branch
+```
+$ git checkout -b <branchname>
 ```
 
 Fetch changes for a specific branch from GitHub:  
@@ -204,3 +209,8 @@ Modify the description of the most recent commit:
 ```
 $ git commit --amend
 ```
+
+For further study please find various Git tutorials online, for example:
+
+[githowto](https://githowto.com)
+
