@@ -341,7 +341,8 @@ void Project::store_subjects() {
     auto seg_files = subject->get_original_filenames();
     int seg_count = 0;
     while (seg_files.size() > original_columns.size()) {
-      if (get_original_domain_types()[original_columns.size()] == DomainType::Contour) {
+      auto domain_types = get_original_domain_types();
+      if (domain_types.size() > original_columns.size() && domain_types[original_columns.size()] == DomainType::Contour) {
         original_columns.push_back(get_new_file_column(CONTOUR_PREFIX, seg_count));
       } else {
         original_columns.push_back(get_new_file_column(SHAPE_PREFIX, seg_count));
