@@ -2,12 +2,12 @@
 
 ## What is the Use Case?
 
-The `femur` use case demonstrates using the shape modeling workflow on a real-world femur dataset. The the femur shapes are represented as triangular surface meshes and the dataset also contains corresponding imaging data (e.g., CT). 
+The `femur` use case demonstrates using the shape modeling workflow on a real-world femur dataset. The femur shapes are represented as triangular surface meshes and the dataset also contains corresponding imaging data (e.g., CT).
 
-There are both left and right femurs in this dataset, thus some must be relfected so that they can all be aligned. The femur meshes have also been segmented with various shaft lengths, as can be seen below. To remove this variability so that it is not captured in the shape model, a cutting plane is used as an optimization constraint.
+There are both left and right femurs in this dataset, thus some must be reflected so that they can all be aligned. The femur meshes have also been segmented with various shaft lengths, as can be seen below. To remove this variability so that it is not captured in the shape model, a cutting plane is used as an optimization constraint.
 ![Femur Lengths](../../img/use-cases/femurLengths.png)
 
-!!! important 
+!!! important
     Minimum of 32GB of RAM required to run the full use case.
 
 ## Grooming Steps
@@ -21,7 +21,7 @@ The femur mesh grooming steps are:
 2. [**Smoothing and Remeshing**](../../workflow/groom.md#remesh): Meshes are smoothed and remeshed to ensure uniform vertices.
 3. [**Centering**](../../workflow/groom.md#aligning-meshes): Meshes are translated so that their center lies at [0,0,0].
 4. [**Reference Selection**](../../workflow/groom.md#aligning-meshes): The reference is selected by first computing the mean (average) mesh, then selecting the mesh closest to that mean (i.e., medoid).
-5. [**Rigid Alignment**](../../workflow/groom.md#aligning-meshes): All of the meshes are aligned to the selected reference using rigid alignment, which factors out the rotation and translation. 
+5. [**Rigid Alignment**](../../workflow/groom.md#aligning-meshes): All of the meshes are aligned to the selected reference using rigid alignment, which factors out the rotation and translation.
 
 Here are the resulting groomed femurs:
 ![Groomed femurs](../../img/use-cases/femur_groomed.png)
@@ -34,7 +34,7 @@ Here are the resulting groomed femurs:
 [--tiny_test](../use-cases.md#-tiny_test)
 
 ## Optimization Parameters
-The python code for the use case calls the `optimize` command of ShapeWorks, which requires that the optimization parameters are specified in a python dictionary. Please refer to [Parameter Dictionary in Python](../../workflow/optimize.md#parameter-dictionary-in-python) for more details. 
+The python code for the use case calls the `optimize` command of ShapeWorks, which requires that the optimization parameters are specified in a python dictionary. Please refer to [Parameter Dictionary in Python](../../workflow/optimize.md#parameter-dictionary-in-python) for more details.
 Below are the default optimization parameters for this use case.
 ```python        
         "number_of_particles" : 512,
