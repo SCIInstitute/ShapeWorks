@@ -147,6 +147,10 @@ class Viewer {
 
   bool is_ready() { return mesh_ready_; }
 
+  vtkFloatArray* get_particle_scalars();
+
+  vtkSmartPointer<vtkPolyData> get_particle_poly_data();
+
  private:
   void initialize_surfaces();
 

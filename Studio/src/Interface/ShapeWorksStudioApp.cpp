@@ -233,6 +233,9 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
   connect(ui_->action_export_screenshot, &QAction::triggered, this,
           &ShapeWorksStudioApp::action_export_screenshot_triggered);
 
+  connect(ui_->action_export_particle_scalars, &QAction::triggered, this,
+          &ShapeWorksStudioApp::action_export_particle_scalars_triggered);
+
   update_feature_map_scale();
   handle_message("ShapeWorks Studio Initialized");
 }
@@ -440,6 +443,10 @@ void ShapeWorksStudioApp::disable_all_actions() {
   ui_->action_open_project->setEnabled(false);
   ui_->action_import->setEnabled(false);
   ui_->menuExport->setEnabled(false);
+
+  ui_->action_export_pca_montage->setEnabled(false);
+  ui_->action_export_screenshot->setEnabled(false);
+  ui_->action_export_particle_scalars->setEnabled(false);
 
   // subtools
   data_tool_->disable_actions();
@@ -1449,11 +1456,18 @@ bool ShapeWorksStudioApp::write_scalars(vtkSmartPointer<vtkPolyData> poly_data, 
   std::cerr << "number of arrays = " << num_arrays << "\n";
 
   for (int i = 0; i < num_arrays; i++) {
-    if (!poly_data->GetPointData()->GetArrayName(i)) {
-      output << ","
-             << "scalars";
+    std::string name = poly_data->GetPointData()->GetArrayName(i);
+    if (name == "") {
+      name = "scalars";
+    }
+    auto array = poly_data->GetPointData()->GetArray(i);
+    int num_components = array->GetNumberOfComponents();
+    if (num_components == 1) {
+      output << "," << name;
     } else {
-      output << "," << poly_data->GetPointData()->GetArrayName(i);
+      for (int j = 0; j < num_components; j++) {
+        output << "," << name << "_" << j;
+      }
     }
   }
 
@@ -1470,7 +1484,11 @@ bool ShapeWorksStudioApp::write_scalars(vtkSmartPointer<vtkPolyData> poly_data, 
     output << "," << poly_data->GetPoint(i)[2];
 
     for (int j = 0; j < num_arrays; j++) {
-      output << "," << poly_data->GetPointData()->GetArray(j)->GetTuple(i)[0];
+      auto array = poly_data->GetPointData()->GetArray(j);
+      int num_components = array->GetNumberOfComponents();
+      for (int k = 0; k < num_components; k++) {
+        output << "," << array->GetTuple(i)[k];
+      }
     }
     output << "\n";
   }
@@ -1549,6 +1567,22 @@ void ShapeWorksStudioApp::on_action_export_mesh_scalars_triggered() {
       handle_message("Wrote: " + name);
     }
   }
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::action_export_particle_scalars_triggered() {
+  QString filename = get_save_filename(tr("Export Particle Scalars"), tr("CSV files (*.csv)"), ".csv");
+  if (filename.isEmpty()) {
+    return;
+  }
+
+  auto poly_data = visualizer_->get_current_particle_poly_data();
+  if (!poly_data) {
+    handle_error("Error exporting particle scalars: invalid data");
+    return;
+  }
+  write_scalars(poly_data, filename);
+  handle_message("Wrote: " + filename);
 }
 
 //---------------------------------------------------------------------------

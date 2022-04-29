@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1174</width>
+    <width>1184</width>
     <height>705</height>
    </rect>
   </property>
@@ -612,8 +612,8 @@ QWidget#image_widget {
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1174</width>
-     <height>22</height>
+     <width>1184</width>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -627,6 +627,7 @@ QWidget#image_widget {
      <addaction name="action_export_current_mesh"/>
      <addaction name="action_export_current_particles"/>
      <addaction name="action_export_mesh_scalars"/>
+     <addaction name="action_export_particle_scalars"/>
      <addaction name="actionExport_Eigenvectors"/>
      <addaction name="actionExport_Eigenvalues"/>
      <addaction name="action_export_pca_scores"/>
@@ -738,7 +739,7 @@ QWidget#image_widget {
           <x>0</x>
           <y>0</y>
           <width>398</width>
-          <height>640</height>
+          <height>641</height>
          </rect>
         </property>
         <property name="minimumSize">
@@ -1077,6 +1078,11 @@ QWidget#image_widget {
   <action name="action_export_screenshot">
    <property name="text">
     <string>Export Screenshot...</string>
+   </property>
+  </action>
+  <action name="action_export_particle_scalars">
+   <property name="text">
+    <string>Export Particle Scalars...</string>
    </property>
   </action>
  </widget>
