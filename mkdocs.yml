@@ -25,8 +25,10 @@ nav:
    - 'Revelant Papers':                      'users/papers.md'
 - Workflow:
    - 'How to Groom Your Dataset?':           'workflow/groom.md'
-   - 'How to Optimize Your Shape Model?' :   'workflow/optimize.md'
-   - 'How to Analyze Your Shape Model?' :    'workflow/analyze.md'
+   - Shape Model Optimization:
+      - 'How to Optimize Your Shape Model?' :   'workflow/optimize.md'
+      - 'How to Step Up Optimization?':          'workflow/parameters.md'
+   - 'How to Analyze Your Shape Model?' :    'workflow/analyze.md'     
 - What is New?:
    - 'New in ShapeWorks Studio':             'new/new-studio.md'
    - 'ShapeWorks Takes ~85% Less Memory':    'new/openvdb.md'
@@ -61,7 +63,6 @@ nav:
    - Segmentation Based Use Cases:
       - 'Ellipsoid: Basic Example':                                  'use-cases/segmentation-based/ellipsoid.md'
       - 'Left Atrium: Shape Model from Segmentations':               'use-cases/segmentation-based/left-atrium.md'
-      - 'Fixed Domains Ellipsoid: Shape Model on New Shapes':        'use-cases/segmentation-based/fixed-domain-ellipsoid.md'
       - 'Shape Model for Multiple Domains from Segmentations':       'use-cases/segmentation-based/ellipsoid-multiple-domain.md'
    - Mesh Based Use Cases:
       - 'Ellipsoid Mesh: Basic Example':                             'use-cases/mesh-based/ellipsoid_mesh.md'
@@ -83,6 +84,8 @@ nav:
       - 'Ellipsoid: Shape Evaluation in Python':                     'use-cases/stats-based/ellipsoid-evaluate.md'
    - Deep Learning Based Use Cases:
       - 'Femur SSM Directly from Images':                            'use-cases/deep-learning-based/deep-ssm-femur.md'
+   - Shared Boundary Use Cases:
+      - 'Peanut:Shape Model of Multiple Domains with Shared Boundaries': 'use-cases/shared-boundary-based/peanut.md'
    - 'Right Ventricle: Highly Variable Shapes':                      'use-cases/right-ventricle.md'
 
 - For Developers:

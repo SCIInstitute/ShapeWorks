@@ -270,7 +270,7 @@ Remeshing creates meshes with evenly spaced vertices.
 - `remeshPercent` remeshes the mesh to have a given percent of the current number of vertices
 
 ```python
-mesh.remeshPercent(percentage=80, adaptivity=1.0)
+mesh.remeshPercent(percentage=0.80, adaptivity=1.0)
 ```
 ![Remeshing](https://sci.utah.edu/~shapeworks/doc-resources/pngs/remeshing.png)
 
@@ -303,3 +303,37 @@ for mesh in mesh_list:
     mesh.applyTransform(rigid_transform)
 ```
 ![Mesh alignment](https://sci.utah.edu/~shapeworks/doc-resources/pngs/mesh_alignment.png)
+
+
+### Extract Shared Boundary
+In this step, we ingest the two original shapes and the output consists of three new shapes, two of which correspond to the original shapes and one for the shared boundary. Let us designate the original meshes as Lo and Ro. Then:
+
+1. Find all the triangles in Lo that are close to Ro, and construct a mesh with these triangles called Ls. A triangle with vertices v0, v1 and v2 is considered close to a mesh if the shortest euclidean distance to the mesh for all the three vertices is below a small threshold. We similarly find all the triangles in Ro that are close to Lo and designate this mesh as Rs
+2. Find the remainder of the mesh in Lo after removing the triangles in Ls and designate this as Lr. Similarly, we find the remainder of the mesh in Ro after removing the triangles in Rs and designate this as Rr.
+3. Arbitrary designed Rs as the shared surface M.
+4. Snap all the points on the boundary loop of Lr to the boundary loop of M
+5. Return three new shapes Lr, M and Rr
+
+```python
+ extracted_l,extracted_r,extracted_s = 
+ sw.MeshUtils.sharedBoundaryExtractor(mesh_l,mesh_r,tol)
+```
+#### Input shapes with shared surface
+![Shared Boundary Input](../img/workflow/peanut_shared_input.png)
+
+#### Output extracted surfaces
+![Shared Boundary Output](../img/workflow/peanut_shared_output.png)
+
+### Extract Contour
+The boundary loop of the shared surface M obtained using the `sharedBoundaryExtractor` is computed. 
+```python
+output_contour = sw.MeshUtils.boundaryLoopExtractor(extracted_shared_meshes)
+```
+![Shared Surface Contour](../img/workflow/peanut_shared_contour.png)
+
+### Smoothing 
+Laplacian Smoothing allows you to reduce noise on a mesh’s surface with minimal changes to its shape.The effect is to "relax" the mesh, making the cells better shaped and the vertices more evenly distributed.
+```python
+mesh.smooth(iterations, relaxation)
+```
+![Mesh Smoothing](../img/workflow/femur_smooth.png)

@@ -68,7 +68,7 @@ def Run_Pipeline(args):
         """
         Grooming Step 1: load mesh and remesh
         """
-        mesh = sw.Mesh(mesh_file).remeshPercent(percentage=99, adaptivity=1.0)
+        mesh = sw.Mesh(mesh_file).remeshPercent(percentage=0.99, adaptivity=1.0)
         # append to the list
         mesh_list.append(mesh)
 
