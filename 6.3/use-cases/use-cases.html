@@ -498,10 +498,57 @@
   
   
   
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_2" type="checkbox" id="__nav_4_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4_2">
+          Shape Model Optimization
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Shape Model Optimization" data-md-level="2">
+        <label class="md-nav__title" for="__nav_4_2">
+          <span class="md-nav__icon md-icon"></span>
+          Shape Model Optimization
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
     <li class="md-nav__item">
       <a href="../workflow/optimize.html" class="md-nav__link">
         How to Optimize Your Shape Model?
       </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../workflow/parameters.html" class="md-nav__link">
+        How to Step Up Optimization?
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
     </li>
   
 
@@ -1126,13 +1173,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#-skip_grooming" class="md-nav__link">
-    --skip_grooming
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#-use_single_scale" class="md-nav__link">
     --use_single_scale
   </a>
@@ -1149,6 +1189,13 @@
           <li class="md-nav__item">
   <a href="#-tiny_test" class="md-nav__link">
     --tiny_test
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#-verify" class="md-nav__link">
+    --verify
   </a>
   
 </li>
@@ -1254,20 +1301,6 @@
     <li class="md-nav__item">
       <a href="segmentation-based/left-atrium.html" class="md-nav__link">
         Left Atrium: Shape Model from Segmentations
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="segmentation-based/fixed-domain-ellipsoid.md" class="md-nav__link">
-        Fixed Domains Ellipsoid: Shape Model on New Shapes
       </a>
     </li>
   
@@ -1662,6 +1695,53 @@
     <li class="md-nav__item">
       <a href="deep-learning-based/deep-ssm-femur.html" class="md-nav__link">
         Femur SSM Directly from Images
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10_9" type="checkbox" id="__nav_10_9" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_10_9">
+          Shared Boundary Use Cases
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Shared Boundary Use Cases" data-md-level="2">
+        <label class="md-nav__title" for="__nav_10_9">
+          <span class="md-nav__icon md-icon"></span>
+          Shared Boundary Use Cases
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="shared-boundary-based/peanut.html" class="md-nav__link">
+        Peanut:Shape Model of Multiple Domains with Shared Boundaries
       </a>
     </li>
   
@@ -2155,13 +2235,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#-skip_grooming" class="md-nav__link">
-    --skip_grooming
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#-use_single_scale" class="md-nav__link">
     --use_single_scale
   </a>
@@ -2178,6 +2251,13 @@
           <li class="md-nav__item">
   <a href="#-tiny_test" class="md-nav__link">
     --tiny_test
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#-verify" class="md-nav__link">
+    --verify
   </a>
   
 </li>
@@ -2275,11 +2355,12 @@ $ python RunUseCase.py [use case name]
 Note: You are only required to enter your credentials the first time you run a use case. </p>
 <h3 id="use-case-data">Use Case Data</h3>
 <p>When a use case runs, the appropriate zipped data downloads to <code>Examples/Python/Data/</code>. The data is then extracted to <code>Examples/Python/output/use_case_name/</code> where all the output from running the use case is also saved.</p>
-<p>The downloaded data includes the raw input data (segmentations, meshes, and/or images) as well as the expected output from both the final grooming step of the use case (i.e., distance transforms) and the optimized shape model (particle files and XML). </p>
-<p>An "analyze.xml" file is included so that the resulting shape model can be visualized in Studio without running the use case.
+<p>The downloaded data includes the raw input data (segmentations, meshes, and/or images) as well as the expected output from both the final grooming step of the use case (i.e., distance transforms) and the optimized shape model (particle files and project excel sheets). </p>
+<p>An "project.xlsx" file is included so that the resulting shape model can be visualized in Studio without running the use case.
 For example, to view the shape model downloaded for the ellipsoid use case run:
-<div class="highlight"><pre><span></span><code>$ cd Examples/Python/Output/ellipsoid/
-$ ShapeWorksStudio ellipsoid-v0/shape_models/ellipsoid/analyze_128.xml
+<div class="highlight"><pre><span></span><code>$ cd Examples/Python/Output/ellipsoid/ellipsoid_1mode/
+$ cp shape_model ../
+$ ShapeWorksStudio ellipsoid_multiscale.xlsx
 </code></pre></div></p>
 <h3 id="use-cases-arguments">Use Cases Arguments</h3>
 <p>When calling <code>RunUseCase.py</code>, various optional arguments can be used. 
@@ -2290,10 +2371,6 @@ A description of each optional argument and how to use it is provided below.</p>
 <h4 id="-use_subsample">--use_subsample</h4>
 <p>Users can run a use case on a subset of the data by adding the <code>--use_subsample</code> argument followed by the <code>--num_subsample</code> argument with the number of samples you wish to use. This will select a representative subset of the specified sample size to run through the pipeline so that the use case runs faster and uses less memory. The subset is determined by running clustering, then picking one sample from each cluster so that the resulting subset is representative of all the data. If <code>--use_subsample</code> is used without <code>--num_subsample</code>, it will use the default number of subsamples which is 3. Note the entire dataset will still be downloaded to run the clustering.</p>
 <div class="highlight"><pre><span></span><code>$ python RunUseCase.py [use case name] --use_subsample --num_subsample 10
-</code></pre></div>
-<h4 id="-skip_grooming">--skip_grooming</h4>
-<p>When this argument is used, the grooming steps (if any) are skipped. Instead the expected groomed output from the downloaded .zip folder is used in optimization. This arguement is useful a user wishes to start with the optimization step.</p>
-<div class="highlight"><pre><span></span><code>$ python RunUseCase.py [use case name] --skip_grooming
 </code></pre></div>
 <h4 id="-use_single_scale">--use_single_scale</h4>
 <p>Use cases can be run with multi-scale or single-scale optimization. In both cases, particles on each shape sample are initialized using the particle splitting strategy starting from a single particle (or a given set of landmarks) until reaching the required number of particles. The optimized particles at each scale are used to initialize the next scale. At each scale, particles undergo <em>initialization</em> and <em>optimization</em> stages. The multi-scale argument triggers both the initialization and optimization stages. The single-scale mode uses the initialization stage at each scale and runs the optimization stage when the required number of particles is reached (i.e., at the last scale). </p>
@@ -2316,44 +2393,25 @@ A description of each optional argument and how to use it is provided below.</p>
 <p>Users can run a fast version of the use case using the <code>--tiny_test</code> argument. This runs on a subset of the data for fewer optimization iterations to verify ShapeWorks has been properly installed. It is meant to quickly test that use cases can run, not to create a good correspondence model. Only a subset of the data will be downloaded directly in the <code>Output</code> folder for the tiny test, and no zip file will be downloaded in the <code>Data</code> folder. No new data will be downloaded if the data has already been unzipped in the <code>Output</code> folder.</p>
 <div class="highlight"><pre><span></span><code>$ python RunUseCase.py [use case name] --tiny_test
 </code></pre></div>
+<h4 id="-verify">--verify</h4>
 <h2 id="use-case-workflow-overview">Use Case Workflow Overview</h2>
 <p>The use cases which demomstrate the <a href="../getting-started/workflow.html">Shape Modeling Workflow</a> follow this general outline:</p>
 <h3 id="grooming"><a href="../workflow/groom.html">Grooming</a></h3>
-<p>Grooming involves pre-processing steps to prepare the data for optimization. This involves generating aligned distance transforms if starting with binary segmentations or generating groomed meshes if starting with unaligned meshes. The grooming steps are unique to each use case, but common steps are explained here: <a href="../workflow/groom.html#Common-Pre-Processing-Steps-for-Segmentations">Common Grooming Steps</a>.</p>
+<p>Grooming involves pre-processing steps to prepare the data for optimization and calculate the alignment transforms which will be passed to the optimizer. This involves generating distance transforms if starting with binary segmentations or generating groomed meshes if starting with unaligned meshes and calculating the alignment transformation matrix for each shape. The grooming steps are unique to each use case, but common steps are explained here: <a href="../workflow/groom.html#Common-Pre-Processing-Steps-for-Segmentations">Common Grooming Steps</a>.</p>
 <p>Note some use cases start with pre-aligned data that does not require grooming. </p>
+<div class="admonition important">
+<p class="admonition-title"><strong>Prefix Transforms</strong></p>
+<p><strong>Worflow Switched from Transforming the Data (e.g. centering) to Passing the Transform as the Prefix Transform.</strong></p>
+<p>Instead of passing groomed and aligned shapes to the optimizer, now, the use cases only perform the grooming steps that do not change the co-ordinates of the shape. For the grooming steps that alter the co-ordinates, the transformation matrices are calculated and sent to the optimizer to be applied(pre-multiplied) after optimization. See <a href="../workflow/parameters.html#project-excel-file">How to Step Up Optimization?</a> page for details regarding setting up the project sheet.</p>
+</div>
 <h3 id="optimization"><a href="../workflow/optimize.html">Optimization</a></h3>
-<p>Optimization involves automatically computing a dense set of corresponding landmark positions from the groomed shape representations (distance transforms or meshes). Optimization can be run with different parameters in ShapeWorksStudio or via the command line. In the use cases, optimization parameters are defined in a python dictionary which is used to generate a parameter XML file and optimization is run from the command line. </p>
-<p>Below is a list of the currently exposed algorithmic parameters in the use cases:
-<div class="highlight"><pre><span></span><code>{
-        &quot;number_of_particles&quot;: 1024,
-        &quot;use_shape_statistics_after&quot;: 32, 
-        &quot;use_normals&quot;: 0, 
-        &quot;normal_weight&quot;: 0.0, 
-        &quot;checkpointing_interval&quot; : 10000, 
-        &quot;keep_checkpoints&quot; : 0, 
-        &quot;iterations_per_split&quot; : 4000, 
-        &quot;optimization_iterations&quot; : 500, 
-        &quot;starting_regularization&quot; : 10, 
-        &quot;ending_regularization&quot; : 1, 
-        &quot;recompute_regularization_interval&quot; : 2,
-        &quot;domains_per_shape&quot; : 1,
-        &quot;domain_type&quot; : &#39;mesh&#39;,
-        &quot;relative_weighting&quot; : 10,
-        &quot;initial_relative_weighting&quot; : 1,
-        &quot;procrustes_interval&quot; : 1,
-        &quot;procrustes_scaling&quot; : 1,
-        &quot;save_init_splits&quot; : 0,
-        &quot;verbosity&quot; : 2,
-        &quot;cutting_plane_counts&quot;: cutting_plane_counts,
-        &quot;cutting_planes&quot;: cutting_planes
-}
-</code></pre></div>
-For a full decription of parameters, please see: <a href="../workflow/optimize.html#On-Algorithmic-Parameters">optimization parameters</a>. All the keys of in this parameter dictionary correspond to the <a href="../workflow/optimize.html#xml-parameter-file">XML tags</a>, except for <code>"normal_weight"</code> that sets the <code>&lt;attribute_scales&gt;</code> of the surface normal vector.</p>
+<p>Optimization involves automatically computing a dense set of corresponding landmark positions from the groomed shape representations (distance transforms or meshes). Optimization can be run with different parameters in ShapeWorksStudio or via the command line. In the use cases, optimization parameters are defined in the optimize sheet of the project.xlsx and optimization is run from the command line. </p>
+<p>For a full decription of parameters, please see: <a href="../workflow/parameters.html">optimization parameters</a>. </p>
 <h3 id="analysis-of-results"><a href="../workflow/analyze.html">Analysis of Results</a></h3>
-<p>The resulting correspondence points from optimization can be viewed and analyzed in <strong>ShapeWorks Studio</strong>. This is a Qt and VTK-based graphical user interface (GUI), that allows visualizing the correspondence model for each shape sample where particle coloring is used to reflect correspondence among shapes. After optimization, the use cases create and open an <code>analyze.xml</code> file for viewing the results in Studio. Studio opens automatically when the use case finishes running. </p>
+<p>The resulting correspondence points from optimization can be viewed and analyzed in <strong>ShapeWorks Studio</strong>. This is a Qt and VTK-based graphical user interface (GUI), that allows visualizing the correspondence model for each shape sample where particle coloring is used to reflect correspondence among shapes. After optimization, the use cases create and open an <code>project.xlsx</code> file for viewing the results in Studio. Studio opens automatically when the use case finishes running. </p>
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_scroll.mp4" autoplay muted loop controls style="width:100%"></p>
 
-<p>This <code>anaylze.xml</code> file can be reopened at any time after running the use case for subsequent analysis by calling <code>ShapeworksStudio analyze.xml</code>. For a full description of how to analyze results in Studio, see <a href="../workflow/analyze.html">Analyzing Results</a>.</p>
+<p>This <code>project.xlsx</code> file can be reopened at any time after running the use case for subsequent analysis by calling <code>ShapeworksStudio project.xlsx</code>. For a full description of how to analyze results in Studio, see <a href="../workflow/analyze.html">Analyzing Results</a>.</p>
 
               
             </article>

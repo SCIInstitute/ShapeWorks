@@ -498,10 +498,57 @@
   
   
   
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_2" type="checkbox" id="__nav_4_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4_2">
+          Shape Model Optimization
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Shape Model Optimization" data-md-level="2">
+        <label class="md-nav__title" for="__nav_4_2">
+          <span class="md-nav__icon md-icon"></span>
+          Shape Model Optimization
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
     <li class="md-nav__item">
       <a href="../workflow/optimize.html" class="md-nav__link">
         How to Optimize Your Shape Model?
       </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../workflow/parameters.html" class="md-nav__link">
+        How to Step Up Optimization?
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
     </li>
   
 
@@ -1294,20 +1341,6 @@
   
   
     <li class="md-nav__item">
-      <a href="../use-cases/segmentation-based/fixed-domain-ellipsoid.md" class="md-nav__link">
-        Fixed Domains Ellipsoid: Shape Model on New Shapes
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../use-cases/segmentation-based/ellipsoid-multiple-domain.html" class="md-nav__link">
         Shape Model for Multiple Domains from Segmentations
       </a>
@@ -1690,6 +1723,53 @@
     <li class="md-nav__item">
       <a href="../use-cases/deep-learning-based/deep-ssm-femur.html" class="md-nav__link">
         Femur SSM Directly from Images
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10_9" type="checkbox" id="__nav_10_9" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_10_9">
+          Shared Boundary Use Cases
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Shared Boundary Use Cases" data-md-level="2">
+        <label class="md-nav__title" for="__nav_10_9">
+          <span class="md-nav__icon md-icon"></span>
+          Shared Boundary Use Cases
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/shared-boundary-based/peanut.html" class="md-nav__link">
+        Peanut:Shape Model of Multiple Domains with Shared Boundaries
       </a>
     </li>
   
@@ -2447,38 +2527,8 @@ your data all within a single interface.</p>
 <li>Export PCA Mode Points - Export the PCA mode points at each step of the PCA slider</li>
 </ul>
 <h2 id="project-setup">Project setup</h2>
-<p>ShapeWorks Studio and the <code>shapeworks</code> commands <code>groom</code> and <code>optimize</code> are using a new project format based off of XLSX.  The new spreadsheet format profiles a uniform, easy to edit, easy to organize way of inputing data into shapeworks for grooming, optimizing and analyzing data.</p>
-<p><img alt="ShapeWorks Studio Spreadsheet" src="../img/workflow/studio_ellipsoid_sheet.png" /></p>
-<p>Users input shapes (either binary segmentations or meshes) in the first sheet (or data sheet) using special column names to indiate type:</p>
-<table>
-<thead>
-<tr>
-<th>Prefix</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>shape_&lt;name&gt;</td>
-<td>An input shape (segmentation/mesh) with a given name.<br>* Specify multiple shape_&lt;name&gt; columns to input multiple anatomies for each subject</td>
-</tr>
-<tr>
-<td>group_&lt;name&gt;</td>
-<td>An group column with categorical types</td>
-</tr>
-<tr>
-<td>feature_&lt;name&gt;</td>
-<td>A feature volume (such as an MRI or CT)</td>
-</tr>
-</tbody>
-</table>
-<p><br/>
-Many other columns will be filled in automatically by the ShapeWorks tools.</p>
-<p>A more complete example is provided in Examples/Studio/FeatureMap/feature_map_example.xlsx :</p>
-<p><img alt="ShapeWorks Studio FeatureMap Example" src="../img/studio/studio_feature_map_example.png" width="300" /></p>
-<p>After completing groom and optimize steps, this worksheet will look like this:</p>
-<p><img alt="ShapeWorks Studio FeatureMap Example Complete" src="../img/studio/studio_feature_map_example_complete.png" /></p>
-<p>There will also be new worksheets with parameters from those tools and other studio settings.</p>
+<p>ShapeWorks Studio and the <code>shapeworks</code> commands <code>groom</code> and <code>optimize</code> are using a new project format based off of XLSX. The new spreadsheet format profiles a uniform, easy to edit, easy to organize way of inputing data into shapeworks for grooming, optimizing and analyzing data.
+See <a href="../workflow/parameters.html">Here</a> for more details regaring the project sheet and the python API available to generate the project sheet. </p>
 
               
             </article>

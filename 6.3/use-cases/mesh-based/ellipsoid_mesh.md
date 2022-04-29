@@ -11,9 +11,9 @@ This is how the meshes in the dataset look before grooming. The ellipsoids have 
 
 1. [**Remeshing**](../../workflow/groom.md#remesh): Meshes are remeshed to ensure uniform vertices.
 2. [**Reference Selection**](../../workflow/groom.md#aligning-meshes): The reference is selected by first computing the mean (average) mesh, then selecting the sample closest to that mean (i.e., medoid).
-3. [**Rigid Alignment**](../../workflow/groom.md#aligning-meshes): All of the meshes are then aligned to the selected reference using rigid alignment, which factors out the rotation and remaining translation.
+3. [**Rigid Alignment**](../../workflow/groom.md#aligning-meshes): For all the shapes, the transformation is calculated to factor out translation and rotation based on the reference shape.This transformation matrix will be sent to the optimizer as a 'prefix transform'
 
-The ellipsoids are now aligned ready to be sent to the optimizer.
+Here we show how the shapes would look like if the transforms are applied.
 ![Meshes obtained after grooming](https://sci.utah.edu/~shapeworks/doc-resources/pngs/ellipsoid_mesh_post_groom.png)
 
 ## Relevant Arguments
@@ -23,25 +23,24 @@ The ellipsoids are now aligned ready to be sent to the optimizer.
 [--tiny_test](../use-cases.md#-tiny_test)
 
 ## Optimization Parameters
-The python code for the use case calls the `optimize` command of ShapeWorks, which requires that the optimization parameters are specified in a python dictionary. Please refer to [Parameter Dictionary in Python](../../workflow/optimize.md#parameter-dictionary-in-python) for more details. 
+The python code for the use case calls the `optimize` command of ShapeWorks which reads the project sheet with the shape filenames and optimization parameter values. See [Project excel file](../../workflow/parameters.md#project-excel-file) for details regarding creating the project sheet.
 Below are the default optimization parameters for this use case.
 
 ```python
-{        
+{
         "number_of_particles": 128,
         "use_normals": 0,
         "normal_weight": 10.0,
-        "checkpointing_interval": 200,
+        "checkpointing_interval": 1000,
         "keep_checkpoints": 0,
-        "iterations_per_split": 500,
-        "optimization_iterations": 500,
-        "starting_regularization": 100,
-        "ending_regularization": 0.1,
-        "recompute_regularization_interval": 2,
+        "iterations_per_split": 1000,
+        "optimization_iterations": 1000,
+        "starting_regularization": 10,
+        "ending_regularization": 1,
+        "recompute_regularization_interval": 1,
         "domains_per_shape": 1,
-        "domain_type": 'mesh',
-        "relative_weighting": 10,
-        "initial_relative_weighting": 0.01,
+        "relative_weighting": 1,
+        "initial_relative_weighting": 0.05,
         "procrustes_interval": 0,
         "procrustes_scaling": 0,
         "save_init_splits": 0,

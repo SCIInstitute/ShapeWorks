@@ -2621,6 +2621,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.3/use-cases/shared-boundary-based/peanut.html</loc>
+         <lastmod>2022-04-29</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://www.sci.utah.edu/software/shapeworks.html/6.3/use-cases/stats-based/ellipsoid-evaluate.html</loc>
          <lastmod>2022-04-29</lastmod>
          <changefreq>daily</changefreq>
@@ -2662,6 +2667,11 @@
     </url>
     <url>
          <loc>https://www.sci.utah.edu/software/shapeworks.html/6.3/workflow/optimize.html</loc>
+         <lastmod>2022-04-29</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.3/workflow/parameters.html</loc>
          <lastmod>2022-04-29</lastmod>
          <changefreq>daily</changefreq>
     </url>

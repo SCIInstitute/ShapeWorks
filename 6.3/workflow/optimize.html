@@ -502,6 +502,34 @@
     
   
   
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_2" type="checkbox" id="__nav_4_2" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4_2">
+          Shape Model Optimization
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Shape Model Optimization" data-md-level="2">
+        <label class="md-nav__title" for="__nav_4_2">
+          <span class="md-nav__icon md-icon"></span>
+          Shape Model Optimization
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+    
+  
+  
     <li class="md-nav__item md-nav__item--active">
       
       <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
@@ -615,26 +643,6 @@
     Optimizing Correspondences
   </a>
   
-    <nav class="md-nav" aria-label="Optimizing Correspondences">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#xml-parameter-file" class="md-nav__link">
-    XML Parameter File
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#parameter-dictionary-in-python" class="md-nav__link">
-    Parameter Dictionary in Python
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
         <li class="md-nav__item">
@@ -682,6 +690,27 @@
   
 </nav>
       
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="parameters.html" class="md-nav__link">
+        How to Step Up Optimization?
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
     </li>
   
 
@@ -1301,20 +1330,6 @@
   
   
     <li class="md-nav__item">
-      <a href="../use-cases/segmentation-based/fixed-domain-ellipsoid.md" class="md-nav__link">
-        Fixed Domains Ellipsoid: Shape Model on New Shapes
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../use-cases/segmentation-based/ellipsoid-multiple-domain.html" class="md-nav__link">
         Shape Model for Multiple Domains from Segmentations
       </a>
@@ -1697,6 +1712,53 @@
     <li class="md-nav__item">
       <a href="../use-cases/deep-learning-based/deep-ssm-femur.html" class="md-nav__link">
         Femur SSM Directly from Images
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10_9" type="checkbox" id="__nav_10_9" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_10_9">
+          Shared Boundary Use Cases
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Shared Boundary Use Cases" data-md-level="2">
+        <label class="md-nav__title" for="__nav_10_9">
+          <span class="md-nav__icon md-icon"></span>
+          Shared Boundary Use Cases
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/shared-boundary-based/peanut.html" class="md-nav__link">
+        Peanut:Shape Model of Multiple Domains with Shared Boundaries
       </a>
     </li>
   
@@ -2233,26 +2295,6 @@
     Optimizing Correspondences
   </a>
   
-    <nav class="md-nav" aria-label="Optimizing Correspondences">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#xml-parameter-file" class="md-nav__link">
-    XML Parameter File
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#parameter-dictionary-in-python" class="md-nav__link">
-    Parameter Dictionary in Python
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
       
         <li class="md-nav__item">
@@ -2369,64 +2411,8 @@
 <p><em>This regularization can be considered as having a Gaussian ball in the shape space. Starting regularization pushes all samples to the mean and hides the underlying “unoptimized” covariance structure. Ending regularization should be small enough to reveal the optimized covariance structure.</em>
 <img alt="Starting and ending regularization" src="../img/workflow/regularization.png" /></p>
 <h2 id="optimizing-correspondences">Optimizing Correspondences</h2>
-<p>You can use either ShapeWorks Studio or <code>shapeworks optimize &lt;parameters.xml&gt;</code> command to optimize your shape model. Both use a set of algorithmic parameters to control the optimization process.</p>
-<p><img alt="Optimization Parameters" src="../img/workflow/params.png" /></p>
-<h3 id="xml-parameter-file">XML Parameter File</h3>
-<p>Here is the list of the parameters to be included in the <code>&lt;parameters.xml&gt;</code> file.</p>
-<ul>
-<li><code>&lt;inputs&gt;</code>: List of surface meshes or distance transforms (i.e., groom stage output) that comprises your dataset.</li>
-<li><code>&lt;output_dir&gt;</code>:  The directory to save the output produced by the ShapeWorks optimization.</li>
-<li><code>&lt;domain_type&gt;</code>: (default: image) The type of the domain in <code>&lt;inputs&gt;</code>, <code>image</code> for signed distance transforms, and <code>mesh</code> for triangular surface meshes.</li>
-<li><code>&lt;domains_per_shape&gt;</code>: (default: 1) The number of domains for anatomies with multiple structures (domains), e.g., joints. The list of <code>&lt;inputs&gt;</code> should be ordered to list a consistent order of the domains (surface mesh or distance transform) of each shape (e.g., shape1-domain1, shape1-domain2, shape2-domain1, shape2-domain2 ... etc.).</li>
-<li><code>&lt;narrow_band&gt;</code>: (default: 4.0 of <code>&lt;fixed_domains&gt;</code> is not active) The off-surface distance (in voxel units, largest spacing dimension) used to truncate (zero out) distance values for signed distance transforms beyond the narrow band radius (i.e., a narrow band of 4.0 preserve distance values within +/- 4.0 voxels off the surface). This is used to reduce the memory footprint required for keeping volumetric distance transforms in memory. If you get an error that particles are shooting outside the narrow band, please consider increasing this value. Narrow banding is disabled if <code>&lt;fixed_domains&gt;</code> is active. This does not significantly affect the memory footprint since distance transforms of the fixed domains are not loaded in memory.</li>
-<li><code>&lt;number_of_particles&gt;</code>: The desired number of particles to be placed. ShapeWorks will produce the smallest power-of-2 number of particles greater than or equal the given <code>&lt;number_of_particles&gt;</code>.</li>
-<li><code>&lt;iterations_per_split&gt;</code>: (default: 1000) The number of iterations in the initialization step for each split (i.e., scale). </li>
-<li><code>&lt;optimization_iterations&gt;</code>: (default: 2000) Number of iterations for each optimization step.</li>
-<li><code>&lt;save_init_splits&gt;</code>: (default: 1) A flag to save the particles for each split in the initialization steps. </li>
-<li><code>&lt;use_xyz&gt;</code>: (default: 1) A flag to enable using the xyz coordinates for particles as a feature for correspondence.</li>
-<li><code>&lt;use_normals&gt;</code>: (default: 0) A flag to consider surface normals (along with particles positions, i.e., <code>&lt;use_xyz&gt; 1 &lt;/use_xyz&gt;</code>) as a correspondence feature.</li>
-<li><code>&lt;attribute_scales&gt;</code>: A vector of weights that scale each dimension considered in the correspondence entropy. For example, if only xyz coordinates are used for particles, so <code>&lt;attribute_scales&gt;</code> is a vector of three weights that scale the x- and y- and z- coordinates of the particle (default = 1). If surface normals are also used, <code>&lt;attribute_scales&gt;</code> should be a vector of 6 entries, 3 for the xyz coordinates, and 3 for the surface normal (usually in scale of 10), assuming 3D anatomies.</li>
-<li><code>&lt;use_shape_statistics_after&gt;</code>: (default: -1) (e.g., 32 or 64) The number of particles after which to use shape space entropy (i.e., the covariance structure) in the initialization and optimization steps. Use -1 if you want shape statistics only used when the number of particles reach the desired <code>&lt;number_of_particles&gt;</code>. Hence, all initialization and optimization steps will use mean energy till the <code>&lt;number_of_particles&gt;</code> is reached.</li>
-<li><code>&lt;starting_regularization&gt;</code>: (default: 1000) Sets the starting regularization value (usually high value).</li>
-<li><code>&lt;ending_regularization&gt;</code>: (default: 1.0) Sets the ending regularization value (usually small value less than 1).</li>
-<li><code>&lt;recompute_regularization_interval&gt;</code>: (default: 1) Skip interval (i.e., number of iterations) to exponentially decay the regularization value.</li>
-<li><code>&lt;initial_relative_weighting&gt;</code>: (default: 0.05) The relative weight of the correspondence term in the initialization steps to make sure that optimization steps start with evenly spaced particle distributions that cover the entire surfaces (usually in the order of ~0.1 or 0.01).</li>
-<li><code>&lt;relative_weighting&gt;</code>: (default: 1) The relative weight of the correspondence term in the optimization steps.</li>
-<li><code>&lt;procrustes_scaling&gt;</code>: (default: 1) A flag to enable factoring out scaling in the shape space when performing Procrustes alignment.</li>
-<li><code>&lt;procrustes_interval&gt;</code>: (default: 3) Number of iterations (interval) between performing Procrustes alignment, use 0 to turn Procrustes off.</li>
-<li><code>&lt;mesh_based_attributes&gt;</code>: (default: 0) A flag that should be enabled when <code>&lt;use_normals&gt;</code> is enabled to cache and interpolate surface normals using isosurfaces.</li>
-<li><code>&lt;keep_checkpoints&gt;</code>: (default: 0) A flag to save the shape (correspondence) models through the initialization/optimization steps for debugging and troubleshooting.  </li>
-<li><code>&lt;checkpointing_interval&gt;</code>: (default: 50) The interval (number of iterations) to be used to save the checkpoints.</li>
-<li><code>&lt;verbosity&gt;</code>: (default: 0) '0' : almost zero verbosity (error messages only), '1': minimal verbosity (notification of running initialization/optimization steps), '2': additional details about parameters read from xml and files written, '3': full verbosity.</li>
-<li><code>&lt;adaptivity_mode&gt;</code>: (default: 0) Used to change the expected behavior of the particles sampler, where the sampler is expected to distribute evenly spaced particles to cover all the surface. Currently, 0 is used to trigger the update project method of cutting planes.</li>
-<li>'<cutting_plane_counts>`: Number of cutting planes for each shape if constrained particle optimization is used.</li>
-<li><code>&lt;cutting_planes&gt;</code>: A list of cutting planes to be used for all shapes. Each cutting plane is defined by three points in an order that indicates the plane's normal, i.e., the direction where particles are allowed to be distributed.</li>
-</ul>
-<h3 id="parameter-dictionary-in-python">Parameter Dictionary in Python</h3>
-<p>In <code>Examples/Python/&lt;use-case-name.py&gt;</code>, we use a python dictionary to expose important algorithmic parameters and automatically generate the XML parameter file. </p>
-<p>Below is a list of the currently exposed algorithmic parameters. All the keys of this parameter dictionary correspond to the <a href="#xml-parameter-file">XML tags</a>, except for <code>"normal_weight"</code> that sets the <code>&lt;attribute_scales&gt;</code> of the surface normal vector.</p>
-<div class="highlight"><pre><span></span><code>{
-        &quot;number_of_particles&quot;: 1024,
-        &quot;use_shape_statistics_after&quot;: 32, 
-        &quot;use_normals&quot;: 0, 
-        &quot;normal_weight&quot;: 0.0, 
-        &quot;checkpointing_interval&quot; : 10000, 
-        &quot;keep_checkpoints&quot; : 0, 
-        &quot;iterations_per_split&quot; : 4000, 
-        &quot;optimization_iterations&quot; : 500, 
-        &quot;starting_regularization&quot; : 10, 
-        &quot;ending_regularization&quot; : 1, 
-        &quot;recompute_regularization_interval&quot; : 2,
-        &quot;domains_per_shape&quot; : 1,
-        &quot;domain_type&quot; : &#39;mesh&#39;,
-        &quot;relative_weighting&quot; : 10,
-        &quot;initial_relative_weighting&quot; : 1,
-        &quot;procrustes_interval&quot; : 1,
-        &quot;procrustes_scaling&quot; : 1,
-        &quot;save_init_splits&quot; : 0,
-        &quot;verbosity&quot; : 2,
-}
-</code></pre></div>
+<p>You can use either ShapeWorks Studio or <code>shapeworks optimize &lt;parameters.xml&gt;</code> or <code>shapeworks optimize &lt;project.xlsx&gt;</code> command to optimize your shape model. Both use a set of algorithmic parameters to control the optimization process.</p>
+<p>See the <img alt="parameters page" src="parameters.html" /> for details regarding the XML file and project file format. </p>
 <h2 id="parameter-tuning">Parameter Tuning</h2>
 <h3 id="general-process">General Process</h3>
 <p><img alt="Tuning process" src="../img/workflow/tuning.png" /></p>
@@ -2489,13 +2475,13 @@
       
       
         
-        <a href="analyze.html" class="md-footer__link md-footer__link--next" aria-label="Next: How to Analyze Your Shape Model?" rel="next">
+        <a href="parameters.html" class="md-footer__link md-footer__link--next" aria-label="Next: How to Step Up Optimization?" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              How to Analyze Your Shape Model?
+              How to Step Up Optimization?
             </div>
           </div>
           <div class="md-footer__button md-icon">

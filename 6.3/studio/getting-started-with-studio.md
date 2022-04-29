@@ -175,31 +175,6 @@ The File -> Export menu is shown below.
 
 
 ## Project setup
-
-ShapeWorks Studio and the `shapeworks` commands `groom` and `optimize` are using a new project format based off of XLSX.  The new spreadsheet format profiles a uniform, easy to edit, easy to organize way of inputing data into shapeworks for grooming, optimizing and analyzing data.
-
-![ShapeWorks Studio Spreadsheet](../img/workflow/studio_ellipsoid_sheet.png)
-
-Users input shapes (either binary segmentations or meshes) in the first sheet (or data sheet) using special column names to indiate type:
-
-
-| Prefix | Description |
-| --- | ----------- |
-| shape_&lt;name&gt; | An input shape (segmentation/mesh) with a given name.<br>* Specify multiple shape_&lt;name&gt; columns to input multiple anatomies for each subject |
-| group_&lt;name&gt; | An group column with categorical types |
-| feature_&lt;name&gt; | A feature volume (such as an MRI or CT) |
-
-<br/>
-Many other columns will be filled in automatically by the ShapeWorks tools.
-
-A more complete example is provided in Examples/Studio/FeatureMap/feature_map_example.xlsx :
-
-![ShapeWorks Studio FeatureMap Example](../img/studio/studio_feature_map_example.png){: width="300" }
-
-After completing groom and optimize steps, this worksheet will look like this:
-
-![ShapeWorks Studio FeatureMap Example Complete](../img/studio/studio_feature_map_example_complete.png)
-
-There will also be new worksheets with parameters from those tools and other studio settings.
-
+ShapeWorks Studio and the `shapeworks` commands `groom` and `optimize` are using a new project format based off of XLSX. The new spreadsheet format profiles a uniform, easy to edit, easy to organize way of inputing data into shapeworks for grooming, optimizing and analyzing data.
+See [Here](../workflow/parameters.md) for more details regaring the project sheet and the python API available to generate the project sheet. 
 
