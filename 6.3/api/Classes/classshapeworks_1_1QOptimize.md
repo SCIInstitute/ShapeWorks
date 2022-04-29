@@ -91,6 +91,7 @@ Inherits from QObject, [shapeworks::Optimize](../Classes/classshapeworks_1_1Opti
 | void | **[SetCuttingPlane](../Classes/classshapeworks_1_1Optimize.md#function-setcuttingplane)**(unsigned int i, const vnl_vector_fixed< double, 3 > & va, const vnl_vector_fixed< double, 3 > & vb, const vnl_vector_fixed< double, 3 > & vc)<br>Set a given cutting plane for a shape.  |
 | void | **[SetProcessingMode](../Classes/classshapeworks_1_1Optimize.md#function-setprocessingmode)**(int mode)<br>Set processing mode (TODO: details)  |
 | void | **[SetAdaptivityMode](../Classes/classshapeworks_1_1Optimize.md#function-setadaptivitymode)**(int adaptivity_mode)<br>Set adaptivity mode (TODO: details)  |
+| void | **[SetMeshFFCMode](../Classes/classshapeworks_1_1Optimize.md#function-setmeshffcmode)**(int mesh_ffc_mode)<br>Set [Mesh](../Classes/classshapeworks_1_1Mesh.md) FFC Mode false/0 = mesh clipping mode, true/1 = mesh augmented lagrangian mode.  |
 | void | **[SetAdaptivityStrength](../Classes/classshapeworks_1_1Optimize.md#function-setadaptivitystrength)**(double adaptivity_strength)<br>Set adaptivity strength (TODO: details)  |
 | void | **[SetPairwisePotentialType](../Classes/classshapeworks_1_1Optimize.md#function-setpairwisepotentialtype)**(int pairwise_potential_type)<br>Set pairwise potential type (TODO: details)  |
 | void | **[SetTimePtsPerSubject](../Classes/classshapeworks_1_1Optimize.md#function-settimeptspersubject)**(int time_pts_per_subject)<br>Set the number of time points per subject (TODO: details)  |
@@ -150,6 +151,7 @@ Inherits from QObject, [shapeworks::Optimize](../Classes/classshapeworks_1_1Opti
 | [shapeworks::OptimizationVisualizer](../Classes/classshapeworks_1_1OptimizationVisualizer.md) & | **[GetVisualizer](../Classes/classshapeworks_1_1Optimize.md#function-getvisualizer)**() |
 | void | **[SetShowVisualizer](../Classes/classshapeworks_1_1Optimize.md#function-setshowvisualizer)**(bool show) |
 | bool | **[GetShowVisualizer](../Classes/classshapeworks_1_1Optimize.md#function-getshowvisualizer)**() |
+| bool | **[GetMeshFFCMode](../Classes/classshapeworks_1_1Optimize.md#function-getmeshffcmode)**() |
 | vnl_vector_fixed< double, 3 > | **[TransformPoint](../Classes/classshapeworks_1_1Optimize.md#function-transformpoint)**(int domain, vnl_vector_fixed< double, 3 > input)<br>transform a point if necessary  |
 
 **Protected Functions inherited from [shapeworks::Optimize](../Classes/classshapeworks_1_1Optimize.md)**
@@ -225,6 +227,7 @@ Inherits from QObject, [shapeworks::Optimize](../Classes/classshapeworks_1_1Opti
 | int | **[m_adaptivity_mode](../Classes/classshapeworks_1_1Optimize.md#variable-m-adaptivity-mode)**  |
 | double | **[m_adaptivity_strength](../Classes/classshapeworks_1_1Optimize.md#variable-m-adaptivity-strength)**  |
 | int | **[m_pairwise_potential_type](../Classes/classshapeworks_1_1Optimize.md#variable-m-pairwise-potential-type)**  |
+| bool | **[m_mesh_ffc_mode](../Classes/classshapeworks_1_1Optimize.md#variable-m-mesh-ffc-mode)**  |
 | unsigned int | **[m_timepts_per_subject](../Classes/classshapeworks_1_1Optimize.md#variable-m-timepts-per-subject)**  |
 | int | **[m_optimization_iterations](../Classes/classshapeworks_1_1Optimize.md#variable-m-optimization-iterations)**  |
 | int | **[m_optimization_iterations_completed](../Classes/classshapeworks_1_1Optimize.md#variable-m-optimization-iterations-completed)**  |
@@ -387,4 +390,4 @@ virtual void IterateCallback(
 
 -------------------------------
 
-Updated on 2022-04-22 at 21:29:12 +0000
+Updated on 2022-04-29 at 00:42:21 +0000

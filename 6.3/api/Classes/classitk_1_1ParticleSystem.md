@@ -54,7 +54,6 @@ Inherits from DataObject
 | void | **[SplitParticle](../Classes/classitk_1_1ParticleSystem.md#function-splitparticle)**(double epsilon, unsigned int idx, unsigned int d =0, int threadId =0) |
 | void | **[AdvancedAllParticleSplitting](../Classes/classitk_1_1ParticleSystem.md#function-advancedallparticlesplitting)**(double epsilon, unsigned int domains_per_shape, unsigned int dom_to_process) |
 | void | **[PrintParticleSystem](../Classes/classitk_1_1ParticleSystem.md#function-printparticlesystem)**() |
-| void | **[SplitAllParticlesInDomain](../Classes/classitk_1_1ParticleSystem.md#function-splitallparticlesindomain)**(const vnl_vector_fixed< double, VDimension > & , unsigned int d =0, int threadId =0) |
 | void | **[SetNeighborhood](../Classes/classitk_1_1ParticleSystem.md#function-setneighborhood)**(unsigned int , [NeighborhoodType](../Classes/classitk_1_1ParticleSystem.md#typedef-neighborhoodtype) * , int threadId =0) |
 | void | **[SetNeighborhood](../Classes/classitk_1_1ParticleSystem.md#function-setneighborhood)**([NeighborhoodType](../Classes/classitk_1_1ParticleSystem.md#typedef-neighborhoodtype) * n, int threadId =0) |
 | NeighborhoodType::ConstPointer | **[GetNeighborhood](../Classes/classitk_1_1ParticleSystem.md#function-getneighborhood)**(unsigned int k) const |
@@ -453,17 +452,6 @@ void AdvancedAllParticleSplitting(
 
 ```cpp
 void PrintParticleSystem()
-```
-
-
-### function SplitAllParticlesInDomain
-
-```cpp
-void SplitAllParticlesInDomain(
-    const vnl_vector_fixed< double, VDimension > & ,
-    unsigned int d =0,
-    int threadId =0
-)
 ```
 
 
@@ -1226,4 +1214,4 @@ static constexpr int VDimension = 3;
 
 -------------------------------
 
-Updated on 2022-04-22 at 21:29:11 +0000
+Updated on 2022-04-29 at 00:42:20 +0000

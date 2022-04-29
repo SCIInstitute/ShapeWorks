@@ -34,6 +34,7 @@ Inherited by [shapeworks::TriMeshWrapper](../Classes/classshapeworks_1_1TriMeshW
 | virtual PointType | **[SnapToMesh](../Classes/classshapeworks_1_1MeshWrapper.md#function-snaptomesh)**(PointType pointa, int idx) const =0 |
 | virtual void | **[InvalidateParticle](../Classes/classshapeworks_1_1MeshWrapper.md#function-invalidateparticle)**(int idx) |
 | virtual bool | **[IsGeodesicsEnabled](../Classes/classshapeworks_1_1MeshWrapper.md#function-isgeodesicsenabled)**() const =0 |
+| virtual vtkSmartPointer< vtkPolyData > | **[GetPolydata](../Classes/classshapeworks_1_1MeshWrapper.md#function-getpolydata)**() const =0 |
 
 ## Public Types Documentation
 
@@ -205,6 +206,16 @@ virtual bool IsGeodesicsEnabled() const =0
 **Reimplemented by**: [shapeworks::TriMeshWrapper::IsGeodesicsEnabled](../Classes/classshapeworks_1_1TriMeshWrapper.md#function-isgeodesicsenabled), [shapeworks::VtkMeshWrapper::IsGeodesicsEnabled](../Classes/classshapeworks_1_1VtkMeshWrapper.md#function-isgeodesicsenabled)
 
 
+### function GetPolydata
+
+```cpp
+virtual vtkSmartPointer< vtkPolyData > GetPolydata() const =0
+```
+
+
+**Reimplemented by**: [shapeworks::TriMeshWrapper::GetPolydata](../Classes/classshapeworks_1_1TriMeshWrapper.md#function-getpolydata), [shapeworks::VtkMeshWrapper::GetPolydata](../Classes/classshapeworks_1_1VtkMeshWrapper.md#function-getpolydata)
+
+
 -------------------------------
 
-Updated on 2022-04-22 at 21:29:11 +0000
+Updated on 2022-04-29 at 00:42:20 +0000

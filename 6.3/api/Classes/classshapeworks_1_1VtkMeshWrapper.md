@@ -37,6 +37,7 @@ Inherits from [shapeworks::MeshWrapper](../Classes/classshapeworks_1_1MeshWrappe
 | virtual const PointType & | **[GetMeshLowerBound](../Classes/classshapeworks_1_1VtkMeshWrapper.md#function-getmeshlowerbound)**() const override |
 | virtual const PointType & | **[GetMeshUpperBound](../Classes/classshapeworks_1_1VtkMeshWrapper.md#function-getmeshupperbound)**() const override |
 | virtual void | **[InvalidateParticle](../Classes/classshapeworks_1_1VtkMeshWrapper.md#function-invalidateparticle)**(int idx) override |
+| virtual vtkSmartPointer< vtkPolyData > | **[GetPolydata](../Classes/classshapeworks_1_1VtkMeshWrapper.md#function-getpolydata)**() const override |
 
 ## Public Types Documentation
 
@@ -227,6 +228,16 @@ virtual void InvalidateParticle(
 **Reimplements**: [shapeworks::MeshWrapper::InvalidateParticle](../Classes/classshapeworks_1_1MeshWrapper.md#function-invalidateparticle)
 
 
+### function GetPolydata
+
+```cpp
+inline virtual vtkSmartPointer< vtkPolyData > GetPolydata() const override
+```
+
+
+**Reimplements**: [shapeworks::MeshWrapper::GetPolydata](../Classes/classshapeworks_1_1MeshWrapper.md#function-getpolydata)
+
+
 -------------------------------
 
-Updated on 2022-04-22 at 21:29:12 +0000
+Updated on 2022-04-29 at 00:42:21 +0000

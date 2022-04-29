@@ -100,6 +100,9 @@ class OptimizeParameters {
   int get_verbosity();
   void set_verbosity(int value);
 
+  bool get_mesh_ffc_mode();
+  void set_mesh_ffc_mode(bool value);
+
   bool get_use_landmarks();
   void set_use_landmarks(bool value);
 
@@ -135,4 +138,4 @@ class OptimizeParameters {
 
 -------------------------------
 
-Updated on 2022-04-22 at 21:29:12 +0000
+Updated on 2022-04-29 at 00:42:22 +0000

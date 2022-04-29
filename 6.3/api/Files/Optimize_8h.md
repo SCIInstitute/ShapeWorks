@@ -142,6 +142,7 @@ public:
 
   void SetProcessingMode(int mode);
   void SetAdaptivityMode(int adaptivity_mode);
+  void SetMeshFFCMode(int mesh_ffc_mode){m_mesh_ffc_mode = mesh_ffc_mode; m_sampler->SetMeshFFCMode(mesh_ffc_mode);}
   void SetAdaptivityStrength(double adaptivity_strength);
   void SetPairwisePotentialType(int pairwise_potential_type);
   void SetTimePtsPerSubject(int time_pts_per_subject);
@@ -224,6 +225,8 @@ public:
   shapeworks::OptimizationVisualizer &GetVisualizer();
   void SetShowVisualizer(bool show);
   bool GetShowVisualizer();
+
+  bool GetMeshFFCMode(){return m_mesh_ffc_mode;}
 
   vnl_vector_fixed<double, 3> TransformPoint(int domain, vnl_vector_fixed<double, 3> input);
 
@@ -322,6 +325,8 @@ protected:
   double m_adaptivity_strength = 0.0;
   int m_pairwise_potential_type = 0;   // 0 - gaussian (Cates work), 1 - modified cotangent (Meyer),
 
+  bool m_mesh_ffc_mode = 0;
+
   unsigned int m_timepts_per_subject = 1;
   int m_optimization_iterations = 2000;
   int m_optimization_iterations_completed = 0;
@@ -398,4 +403,4 @@ protected:
 
 -------------------------------
 
-Updated on 2022-04-22 at 21:29:12 +0000
+Updated on 2022-04-29 at 00:42:22 +0000

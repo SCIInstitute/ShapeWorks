@@ -115,7 +115,6 @@ class ParticleSystem : public DataObject {
   void AdvancedAllParticleSplitting(double epsilon, unsigned int domains_per_shape, unsigned int dom_to_process);
   // Debug function
   void PrintParticleSystem();
-  void SplitAllParticlesInDomain(const vnl_vector_fixed<double, VDimension> &, unsigned int d = 0, int threadId = 0);
 
   void SetNeighborhood(unsigned int, NeighborhoodType *, int threadId = 0);
   void SetNeighborhood(NeighborhoodType *n, int threadId = 0) { this->SetNeighborhood(0, n, threadId); }
@@ -334,4 +333,4 @@ class ParticleSystem : public DataObject {
 
 -------------------------------
 
-Updated on 2022-04-22 at 21:29:12 +0000
+Updated on 2022-04-29 at 00:42:22 +0000

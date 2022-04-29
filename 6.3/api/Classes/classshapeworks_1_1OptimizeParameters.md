@@ -55,6 +55,8 @@ title: shapeworks::OptimizeParameters
 | void | **[set_narrow_band](../Classes/classshapeworks_1_1OptimizeParameters.md#function-set-narrow-band)**(double value) |
 | int | **[get_verbosity](../Classes/classshapeworks_1_1OptimizeParameters.md#function-get-verbosity)**() |
 | void | **[set_verbosity](../Classes/classshapeworks_1_1OptimizeParameters.md#function-set-verbosity)**(int value) |
+| bool | **[get_mesh_ffc_mode](../Classes/classshapeworks_1_1OptimizeParameters.md#function-get-mesh-ffc-mode)**() |
+| void | **[set_mesh_ffc_mode](../Classes/classshapeworks_1_1OptimizeParameters.md#function-set-mesh-ffc-mode)**(bool value) |
 | bool | **[get_use_landmarks](../Classes/classshapeworks_1_1OptimizeParameters.md#function-get-use-landmarks)**() |
 | void | **[set_use_landmarks](../Classes/classshapeworks_1_1OptimizeParameters.md#function-set-use-landmarks)**(bool value) |
 | bool | **[get_use_fixed_subjects](../Classes/classshapeworks_1_1OptimizeParameters.md#function-get-use-fixed-subjects)**() |
@@ -406,6 +408,22 @@ void set_verbosity(
 ```
 
 
+### function get_mesh_ffc_mode
+
+```cpp
+bool get_mesh_ffc_mode()
+```
+
+
+### function set_mesh_ffc_mode
+
+```cpp
+void set_mesh_ffc_mode(
+    bool value
+)
+```
+
+
 ### function get_use_landmarks
 
 ```cpp
@@ -508,4 +526,4 @@ bool is_subject_fixed(
 
 -------------------------------
 
-Updated on 2022-04-22 at 21:29:11 +0000
+Updated on 2022-04-29 at 00:42:20 +0000

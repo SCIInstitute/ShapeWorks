@@ -34,6 +34,7 @@ Inherits from [shapeworks::MeshWrapper](../Classes/classshapeworks_1_1MeshWrappe
 | virtual const PointType & | **[GetMeshLowerBound](../Classes/classshapeworks_1_1TriMeshWrapper.md#function-getmeshlowerbound)**() const override |
 | virtual const PointType & | **[GetMeshUpperBound](../Classes/classshapeworks_1_1TriMeshWrapper.md#function-getmeshupperbound)**() const override |
 | virtual bool | **[IsGeodesicsEnabled](../Classes/classshapeworks_1_1TriMeshWrapper.md#function-isgeodesicsenabled)**() const override |
+| virtual vtkSmartPointer< vtkPolyData > | **[GetPolydata](../Classes/classshapeworks_1_1TriMeshWrapper.md#function-getpolydata)**() const override |
 
 ## Additional inherited members
 
@@ -202,6 +203,16 @@ inline virtual bool IsGeodesicsEnabled() const override
 **Reimplements**: [shapeworks::MeshWrapper::IsGeodesicsEnabled](../Classes/classshapeworks_1_1MeshWrapper.md#function-isgeodesicsenabled)
 
 
+### function GetPolydata
+
+```cpp
+inline virtual vtkSmartPointer< vtkPolyData > GetPolydata() const override
+```
+
+
+**Reimplements**: [shapeworks::MeshWrapper::GetPolydata](../Classes/classshapeworks_1_1MeshWrapper.md#function-getpolydata)
+
+
 -------------------------------
 
-Updated on 2022-04-22 at 21:29:12 +0000
+Updated on 2022-04-29 at 00:42:21 +0000

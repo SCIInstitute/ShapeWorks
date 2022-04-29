@@ -2323,6 +2323,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-setmeshffcmode" class="md-nav__link">
+    function SetMeshFFCMode
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-setadaptivitystrength" class="md-nav__link">
     function SetAdaptivityStrength
   </a>
@@ -2731,6 +2738,13 @@
           <li class="md-nav__item">
   <a href="#function-getshowvisualizer" class="md-nav__link">
     function GetShowVisualizer
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-getmeshffcmode" class="md-nav__link">
+    function GetMeshFFCMode
   </a>
   
 </li>
@@ -3240,6 +3254,13 @@
           <li class="md-nav__item">
   <a href="#variable-m_pairwise_potential_type" class="md-nav__link">
     variable m_pairwise_potential_type
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#variable-m_mesh_ffc_mode" class="md-nav__link">
+    variable m_mesh_ffc_mode
   </a>
   
 </li>
@@ -3832,6 +3853,10 @@
 </tr>
 <tr>
 <td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setmeshffcmode">SetMeshFFCMode</a></strong>(int mesh_ffc_mode)<br>Set <a href="classshapeworks_1_1Mesh.html">Mesh</a> FFC Mode false/0 = mesh clipping mode, true/1 = mesh augmented lagrangian mode.</td>
+</tr>
+<tr>
+<td>void</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#function-setadaptivitystrength">SetAdaptivityStrength</a></strong>(double adaptivity_strength)<br>Set adaptivity strength (TODO: details)</td>
 </tr>
 <tr>
@@ -4065,6 +4090,10 @@
 <tr>
 <td>bool</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#function-getshowvisualizer">GetShowVisualizer</a></strong>()</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-getmeshffcmode">GetMeshFFCMode</a></strong>()</td>
 </tr>
 <tr>
 <td>vnl_vector_fixed&lt; double, 3 &gt;</td>
@@ -4363,6 +4392,10 @@
 <tr>
 <td>int</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-pairwise-potential-type">m_pairwise_potential_type</a></strong></td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-mesh-ffc-mode">m_mesh_ffc_mode</a></strong></td>
 </tr>
 <tr>
 <td>unsigned int</td>
@@ -4800,6 +4833,12 @@
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <p>Set adaptivity mode (TODO: details) </p>
+<h3 id="function-setmeshffcmode">function SetMeshFFCMode</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetMeshFFCMode</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">mesh_ffc_mode</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>Set <a href="classshapeworks_1_1Mesh.html">Mesh</a> FFC Mode false/0 = mesh clipping mode, true/1 = mesh augmented lagrangian mode. </p>
 <h3 id="function-setadaptivitystrength">function SetAdaptivityStrength</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetAdaptivityStrength</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">adaptivity_strength</span><span class="w"></span>
@@ -5124,6 +5163,9 @@
 <h3 id="function-getshowvisualizer">function GetShowVisualizer</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">GetShowVisualizer</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
+<h3 id="function-getmeshffcmode">function GetMeshFFCMode</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">GetMeshFFCMode</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
 <h3 id="function-transformpoint">function TransformPoint</h3>
 <div class="highlight"><pre><span></span><code><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">TransformPoint</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">,</span><span class="w"></span>
@@ -5373,6 +5415,9 @@
 <h3 id="variable-m_pairwise_potential_type">variable m_pairwise_potential_type</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">m_pairwise_potential_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
+<h3 id="variable-m_mesh_ffc_mode">variable m_mesh_ffc_mode</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">m_mesh_ffc_mode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
 <h3 id="variable-m_timepts_per_subject">variable m_timepts_per_subject</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">m_timepts_per_subject</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
@@ -5533,7 +5578,7 @@
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Project</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">project_</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-04-22 at 21:29:11 +0000</p>
+<p>Updated on 2022-04-29 at 00:42:20 +0000</p>
 
               
             </article>

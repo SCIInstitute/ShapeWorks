@@ -2161,6 +2161,7 @@
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetProcessingMode</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">mode</span><span class="p">);</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetAdaptivityMode</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">adaptivity_mode</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetMeshFFCMode</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">mesh_ffc_mode</span><span class="p">){</span><span class="n">m_mesh_ffc_mode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mesh_ffc_mode</span><span class="p">;</span><span class="w"> </span><span class="n">m_sampler</span><span class="o">-&gt;</span><span class="n">SetMeshFFCMode</span><span class="p">(</span><span class="n">mesh_ffc_mode</span><span class="p">);}</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetAdaptivityStrength</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">adaptivity_strength</span><span class="p">);</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetPairwisePotentialType</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">pairwise_potential_type</span><span class="p">);</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetTimePtsPerSubject</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">time_pts_per_subject</span><span class="p">);</span><span class="w"></span>
@@ -2243,6 +2244,8 @@
 <span class="w">  </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">OptimizationVisualizer</span><span class="w"> </span><span class="o">&amp;</span><span class="nf">GetVisualizer</span><span class="p">();</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetShowVisualizer</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">show</span><span class="p">);</span><span class="w"></span>
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">GetShowVisualizer</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">GetMeshFFCMode</span><span class="p">(){</span><span class="k">return</span><span class="w"> </span><span class="n">m_mesh_ffc_mode</span><span class="p">;}</span><span class="w"></span>
 
 <span class="w">  </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="w"> </span><span class="n">TransformPoint</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">,</span><span class="w"> </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="w"> </span><span class="n">input</span><span class="p">);</span><span class="w"></span>
 
@@ -2341,6 +2344,8 @@
 <span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">m_adaptivity_strength</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">m_pairwise_potential_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w">   </span><span class="c1">// 0 - gaussian (Cates work), 1 - modified cotangent (Meyer),</span>
 
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_mesh_ffc_mode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
+
 <span class="w">  </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">m_timepts_per_subject</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">m_optimization_iterations</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2000</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">m_optimization_iterations_completed</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
@@ -2414,7 +2419,7 @@
 <span class="p">}</span><span class="w"></span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-04-22 at 21:29:12 +0000</p>
+<p>Updated on 2022-04-29 at 00:42:22 +0000</p>
 
               
             </article>
