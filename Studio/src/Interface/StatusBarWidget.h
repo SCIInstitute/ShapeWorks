@@ -7,12 +7,7 @@ class Ui_StatusBarWidget;
 
 namespace shapeworks {
 
-enum class MessageType {
-  normal,
-  warning,
-  error,
-  debug
-};
+enum class MessageType { normal, warning, error, debug };
 
 //! StatusBarWidget
 /*!
@@ -21,9 +16,9 @@ enum class MessageType {
  *
  */
 class StatusBarWidget : public QWidget {
-Q_OBJECT
+  Q_OBJECT
 
-public:
+ public:
   StatusBarWidget(QMainWindow* parent = 0);
 
   void set_message(MessageType message_type, QString message);
@@ -31,11 +26,10 @@ public:
 
   void resizeEvent(QResizeEvent* event) override;
 
-Q_SIGNALS:
+ Q_SIGNALS:
   void toggle_log_window();
 
-private:
-
+ private:
   void update_layout();
 
   /// designer form
@@ -46,7 +40,6 @@ private:
   QIcon normal_message_icon_;
   QIcon warning_message_icon_;
   QIcon error_message_icon_;
-
 };
 
-} // shapeworks
+}  // namespace shapeworks

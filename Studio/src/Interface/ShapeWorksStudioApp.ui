@@ -480,7 +480,7 @@ QWidget#image_widget {
         </widget>
        </item>
        <item row="0" column="0">
-        <widget class="QLabel" name="label_2">
+        <widget class="QLabel" name="feature_map_label">
          <property name="text">
           <string>Feature Map</string>
          </property>
@@ -629,9 +629,10 @@ QWidget#image_widget {
      <addaction name="action_export_mesh_scalars"/>
      <addaction name="actionExport_Eigenvectors"/>
      <addaction name="actionExport_Eigenvalues"/>
-     <addaction name="actionExport_Variance_Graph"/>
      <addaction name="action_export_pca_scores"/>
      <addaction name="actionExport_PCA_Mode_Points"/>
+     <addaction name="action_export_pca_montage"/>
+     <addaction name="action_export_screenshot"/>
     </widget>
     <addaction name="action_new_project"/>
     <addaction name="action_open_project"/>
@@ -1068,6 +1069,16 @@ QWidget#image_widget {
     <string>DeepSSM</string>
    </property>
   </action>
+  <action name="action_export_pca_montage">
+   <property name="text">
+    <string>Export PCA Montage...</string>
+   </property>
+  </action>
+  <action name="action_export_screenshot">
+   <property name="text">
+    <string>Export Screenshot...</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -1079,11 +1090,25 @@ QWidget#image_widget {
  </customwidgets>
  <tabstops>
   <tabstop>auto_view_button</tabstop>
+  <tabstop>planes_visible_button_</tabstop>
+  <tabstop>landmarks_visible_button</tabstop>
   <tabstop>glyphs_visible_button</tabstop>
   <tabstop>surface_visible_button</tabstop>
   <tabstop>view_mode_combobox</tabstop>
   <tabstop>center_checkbox</tabstop>
+  <tabstop>alignment_combo</tabstop>
   <tabstop>zoom_slider</tabstop>
+  <tabstop>feature_line</tabstop>
+  <tabstop>features</tabstop>
+  <tabstop>feature_uniform_scale</tabstop>
+  <tabstop>feature_min</tabstop>
+  <tabstop>feature_max</tabstop>
+  <tabstop>feature_auto_scale</tabstop>
+  <tabstop>image_combo_</tabstop>
+  <tabstop>image_axis_</tabstop>
+  <tabstop>image_3d_mode_</tabstop>
+  <tabstop>image_share_window_and_level_</tabstop>
+  <tabstop>scrollArea</tabstop>
  </tabstops>
  <resources>
   <include location="../Resources/ShapeWorksStudio.qrc"/>

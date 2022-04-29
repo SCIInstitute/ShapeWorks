@@ -194,7 +194,7 @@ void PlaneWidget::update_planes() {
 
   auto shape = viewer_->get_shape();
 
-  if (!session->get_show_planes() || !shape) {
+  if (!session->should_show_planes() || !shape) {
     return;
   }
 

@@ -9,22 +9,12 @@
  * Values persist via the QSettings class.
  */
 class Preferences : public QObject {
-Q_OBJECT;
+  Q_OBJECT;
 
-public:
+ public:
+  enum OrientationMarkerType { medical = 0, triad = 1, none = 2 };
 
-  enum OrientationMarkerType {
-    medical = 0,
-    triad = 1,
-    none = 2
-  };
-
-  enum OrientationMarkerCorner {
-    upper_right = 0,
-    lower_right = 1,
-    lower_left = 2,
-    upper_left = 3
-  };
+  enum OrientationMarkerCorner { upper_right = 0, lower_right = 1, lower_left = 2, upper_left = 3 };
 
   Preferences();
 
@@ -59,9 +49,6 @@ public:
 
   int get_num_threads();
   void set_num_threads(int num_threads);
-
-  float get_cache_epsilon();
-  void set_cache_epsilon(float value);
 
   float get_glyph_size();
   void set_glyph_size(float value);
@@ -99,15 +86,32 @@ public:
   QString get_optimize_file_template();
   void set_optimize_file_template(QString optimize_file_template);
 
-Q_SIGNALS:
+  QSize get_export_override_size();
+  void set_export_override_size(QSize size);
+
+  bool get_export_override_size_enabled();
+  void set_export_override_size_enabled(bool enabled);
+
+  bool get_export_show_orientation_marker();
+  void set_export_show_orientation_marker(bool value);
+
+  bool get_export_show_color_scale();
+  void set_export_show_color_scale(bool value);
+
+  int get_export_num_pca_images();
+  void set_export_num_pca_images(int number);
+
+  double get_export_pca_range();
+  void set_export_pca_range(double range);
+
+ Q_SIGNALS:
 
   void color_scheme_changed(int newIndex);
   void glyph_properties_changed();
   void threading_changed_signal();
   void sliders_changed_signal();
 
-private:
-
+ private:
   void update_recent_files();
   QStringList recent_files_;
   QStringList recent_paths_;
