@@ -801,8 +801,8 @@ void AnalysisTool::compute_shape_evaluations() {
   if(dps > 1){
     eval_compactness_within_ = Eigen::VectorXd();
     eval_compactness_between_ = Eigen::VectorXd();
-    ui_->compactness_graph_within->setMinimumSize(ui_->graph_->minimumSize());
-    ui_->compactness_graph_between->setMinimumSize(ui_->graph_->minimumSize());
+    ui_->compactness_graph_within->setMinimumSize(QSize(250, 250));
+    ui_->compactness_graph_between->setMinimumSize(QSize(250, 250));
     ui_->compactness_progress_widget_within->show();
     ui_->compactness_progress_widget_between->show();
     ui_->compactness_progress_within->setValue(0);

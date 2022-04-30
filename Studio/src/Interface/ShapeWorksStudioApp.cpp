@@ -1276,7 +1276,7 @@ void ShapeWorksStudioApp::update_display(bool force) {
         set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, false);
         set_view_combo_item_enabled(VIEW_MODE::GROOMED, false);
         set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, true);
-        set_view_mode(Visualizer::MODE_RECONSTRUCTION_C);
+        set_view_mode(Session::MODE_RECONSTRUCTION_C);
         compute_mca_mode_shape();
         visualizer_->reset_camera();
       } else if (mode == AnalysisTool::MODE_SINGLE_SAMPLE_C) {
