@@ -29,7 +29,7 @@ void ParticleNormalEvaluationJob::run() {
 
     std::vector<std::shared_ptr<VtkMeshWrapper>> meshes;
     for (auto& shape : session_->get_shapes()) {
-      meshes.push_back(shape->get_mesh_wrappers()[domain]);
+      meshes.push_back(shape->get_groomed_mesh_wrappers()[domain]);
       count++;
       emit progress(count / total);
     }

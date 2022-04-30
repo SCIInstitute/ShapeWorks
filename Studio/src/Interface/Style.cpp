@@ -27,27 +27,27 @@ const QString normal_button_ss =
 
 const QString abort_button_ss =
   R"(
-  QPushButton#run_button{
+  QPushButton{
     background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:1, stop:0 rgba(98, 0, 0, 255), stop:0.299435 rgba(128, 0, 0, 255), stop:0.491525 rgba(128, 0, 0, 255), stop:1 rgba(98, 0, 0, 255));
     border-radius: 4px;
     border: 1px solid rgb(90, 90, 90);
     color: white;
   }
 
-  QPushButton#run_button:disabled{
+  QPushButton:disabled{
     background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:0.960227, stop:0 rgba(128, 128, 128, 255), stop:0.155779 rgba(96, 96, 96, 255), stop:1 rgba(96, 96, 96, 255));
     border-radius: 4px;
     border: 1px solid rgb(90, 90, 90);
   }
 
-  QPushButton#run_button:hover{
+  QPushButton:hover{
     background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:1, stop:0 rgba(80, 0, 0, 255), stop:0.299435 rgba(110, 0, 0, 255), stop:0.491525 rgba(110, 0, 0, 255), stop:1 rgba(80, 0, 0, 255));
     border-radius: 4px;
     border: 1px solid rgb(90, 90, 90);
     color: white;
   }
 
-  QPushButton#run_button:pressed{
+  QPushButton:pressed{
     background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:1, stop:0 rgba(50, 0, 0, 255), stop:0.299435 rgba(80, 0, 0, 255), stop:0.491525 rgba(80, 0, 0, 255), stop:1 rgba(50, 0, 0, 255));
     border-radius: 4px;
     border: 1px solid rgb(90, 90, 90);
