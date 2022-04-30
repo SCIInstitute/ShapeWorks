@@ -16,8 +16,8 @@ The input contours are:
 
 This use case does not support any arguments
 
-## Optimizing Shape Model
-The python code for the use case calls the `optimize` command of ShapeWorks which requires the parameters of the optimization to be specified in a python dictionary. Please refer to [Parameter Dictionory in Python](../../workflow/optimize.md#parameter-dictionary-in-python) for more details.
+## Optimization Parameters
+The python code for the use case calls the `optimize` command of ShapeWorks which reads the project sheet with the shape filenames and optimization parameter values. See [Project excel file](../../workflow/parameters.md#project-excel-file) for details regarding creating the project sheet.
 Below are the default optimization parameters for this use case.
 
 
@@ -25,8 +25,7 @@ Below are the default optimization parameters for this use case.
 {
         "number_of_particles" : 64,
         "use_normals": 0,
-        "normal_weight": 0.0,
-        "checkpointing_interval" : 5000,
+        "normals_strength": 0.0,
         "keep_checkpoints" : 0,
         "iterations_per_split" : 100,
         "optimization_iterations" : 500,
@@ -34,14 +33,15 @@ Below are the default optimization parameters for this use case.
         "ending_regularization" : 1,
         "recompute_regularization_interval" : 1,
         "domains_per_shape" : 1,
-        "domain_type" : 'contour',
         "relative_weighting" : 5,
         "initial_relative_weighting" : 0.1,
+        "procrustes" : 1,
         "procrustes_interval" : 2,
-        "procrustes_scaling" : 0,
+        "procrustes_scaling" : 1,
         "save_init_splits" : 0,
         "verbosity" : 0,
-        "use_shape_statistics_after": 4,
+        "multiscale": 1,
+        "multiscale_particles": 4,
 }
 ```
 

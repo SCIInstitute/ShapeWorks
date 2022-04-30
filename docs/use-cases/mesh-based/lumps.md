@@ -15,29 +15,28 @@ Here are some examples of the meshes:
 [--tiny_test](../use-cases.md#-tiny_test)
 
 ## Optimization Parameters
-The python code for the use case calls the `optimize` command of ShapeWorks, which requires that the optimization parameters are specified in a python dictionary. Please refer to [Parameter Dictionary in Python](../../workflow/optimize.md#parameter-dictionary-in-python) for more details. 
+The python code for the use case calls the `optimize` command of ShapeWorks which reads the project sheet with the shape filenames and optimization parameter values. See [Project excel file](../../workflow/parameters.md#project-excel-file) for details regarding creating the project sheet.
 Below are the default optimization parameters for this use case.
 
 ```python
-{        
+{
         "number_of_particles": 512,
         "use_normals": 0,
-        "normal_weight": 10.0,
+        "normals_strength": 10.0,
         "checkpointing_interval": 100,
         "keep_checkpoints": 0,
         "iterations_per_split": 2000,
         "optimization_iterations": 500,
         "starting_regularization": 10,
-        "ending_regularization": 1,ss
+        "ending_regularization": 1,
         "recompute_regularization_interval": 1,
         "domains_per_shape": 1,
-        "domain_type": "mesh",
         "relative_weighting": 10,
         "initial_relative_weighting": 1,
         "procrustes_interval": 0,
         "procrustes_scaling": 0,
         "save_init_splits": 0,
-        "verbosity": 1
+        "verbosity": 0
 }
 ```
 

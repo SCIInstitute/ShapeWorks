@@ -213,6 +213,11 @@ std::string axisToString(Axis axis)
     case Axis::invalid:
       return "Invalid";
   }
+  return "Invalid";
+}
+
+bool epsEqual(double a, double b, double eps) {
+  return std::abs(a-b) < eps;
 }
 
 }; //shapeworks

@@ -482,8 +482,8 @@ def lda_plot(group1_x,group2_x,group1_pdf,group2_pdf,group1_map,group2_map,lda_d
     plt.plot(group1_x, group1_pdf, label = labels[0] + ' PDF',linewidth=10)
     plt.plot(group2_x, group2_pdf, label = labels[1] + ' PDF',linewidth=10)
     
-    plt.scatter(group1_map, 0.01*np.ones((group1_num)), s=330, label = labels[0] + ' Shape Mappings')
-    plt.scatter(group2_map, 0.01*np.ones((group2_num)), s=330, label = labels[1] + ' Shape Mappings')
+    plt.scatter(group1_map, 0.01*np.ones((group1_num)), s=330, label = labels[0] + ' Shape Mappings', edgecolors='black',linewidths=5)
+    plt.scatter(group2_map, 0.01*np.ones((group2_num)), s=330, label = labels[1] + ' Shape Mappings', edgecolors='black',linewidths=5)
     plt.ylabel("Probability Density")
     plt.xlabel('Shape mapping to linear discrimination of variation between population means')
     plt.legend(loc='upper right')

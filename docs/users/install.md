@@ -4,12 +4,9 @@
 ## _**First, download ShapeWorks**_
 
 !!! important "Release Builds"
-    We provide the following [official user releases](https://github.com/SCIInstitute/ShapeWorks/releases/latest).  
-    [**Windows**](https://github.com/SCIInstitute/ShapeWorks/releases/download/v6.0.0/ShapeWorks-v6.0.0-windows.exe)  
-    [**Mac**](https://github.com/SCIInstitute/ShapeWorks/releases/download/v6.0.0/ShapeWorks-v6.0.0-mac.pkg)  
-    [**Linux**](https://github.com/SCIInstitute/ShapeWorks/releases/download/v6.0.0/ShapeWorks-v6.0.0-linux.zip)  
+    We provide [official user releases](https://github.com/SCIInstitute/ShapeWorks/releases/latest) for Windows, MacOS, and Linux.  
   
-     Their features can be seen at [Release Notes](../about/release-notes.md).
+    Their features can be seen at [Release Notes](../about/release-notes.md).
 
 !!! danger "Development Builds"
     We also provide up-to-date development builds from the **master** branch  

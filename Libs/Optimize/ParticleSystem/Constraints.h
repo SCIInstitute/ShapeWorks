@@ -87,6 +87,9 @@ class Constraints {
 
   bool hasConstraints();
 
+  // return a mesh that has been clipped by the constraints
+  void clipMesh(Mesh& mesh);
+
  private:
   std::vector<PlaneConstraint> planeConstraints_;
   std::vector<SphereConstraint> sphereConstraints_;

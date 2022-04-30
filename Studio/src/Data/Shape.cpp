@@ -45,9 +45,9 @@ Shape::~Shape() = default;
 
 //---------------------------------------------------------------------------
 MeshGroup Shape::get_meshes(const string& display_mode) {
-  if (display_mode == Visualizer::MODE_ORIGINAL_C) {
+  if (display_mode == Session::MODE_ORIGINAL_C) {
     return this->get_original_meshes();
-  } else if (display_mode == Visualizer::MODE_GROOMED_C) {
+  } else if (display_mode == Session::MODE_GROOMED_C) {
     return this->get_groomed_meshes();
   }
   return this->get_reconstructed_meshes();
@@ -401,12 +401,6 @@ void Shape::set_group_id(int id) {
 }
 
 //---------------------------------------------------------------------------
-std::vector<Shape::Point> Shape::get_vectors() { return this->vectors_; }
-
-//---------------------------------------------------------------------------
-void Shape::set_vectors(std::vector<Shape::Point> vectors) { this->vectors_ = vectors; }
-
-//---------------------------------------------------------------------------
 void Shape::set_transform(vtkSmartPointer<vtkTransform> transform) { this->transform_ = transform; }
 
 //---------------------------------------------------------------------------
@@ -511,7 +505,7 @@ void Shape::load_feature(std::string display_mode, std::string feature) {
       // first check if we have particle scalars for this feature
       auto point_features = get_point_features(feature);
       if (point_features.size() > 0 &&
-          display_mode == Visualizer::MODE_RECONSTRUCTION_C) {  // already loaded as particle scalars
+          display_mode == Session::MODE_RECONSTRUCTION_C) {  // already loaded as particle scalars
         set_point_features(feature, point_features);
       } else {
         // next check if there is a feature filename
@@ -688,7 +682,7 @@ std::vector<vtkSmartPointer<vtkTransform>> Shape::get_procrustest_transforms() {
 void Shape::set_point_features(std::string feature, Eigen::VectorXf values) {
   this->point_features_[feature] = values;
 
-  auto group = this->get_meshes(Visualizer::MODE_RECONSTRUCTION_C);
+  auto group = this->get_meshes(Session::MODE_RECONSTRUCTION_C);
 
   if (group.valid()) {
     for (auto mesh : group.meshes()) {
@@ -819,18 +813,18 @@ bool Shape::has_planes() {
 }
 
 //---------------------------------------------------------------------------
-std::vector<std::shared_ptr<VtkMeshWrapper>> Shape::get_mesh_wrappers()
+std::vector<std::shared_ptr<VtkMeshWrapper>> Shape::get_groomed_mesh_wrappers()
 {
-  if (!mesh_wrappers_.empty()) {
-    return mesh_wrappers_;
+  if (!groomed_mesh_wrappers_.empty()) {
+    return groomed_mesh_wrappers_;
   }
 
   auto group = get_groomed_meshes(true /* wait */);
   for (auto &mesh : group.meshes()) {
     auto wrapper = std::make_shared<VtkMeshWrapper>(mesh->get_poly_data());
-    mesh_wrappers_.push_back(wrapper);
+    groomed_mesh_wrappers_.push_back(wrapper);
   }
-  return mesh_wrappers_;
+  return groomed_mesh_wrappers_;
 
 }
 

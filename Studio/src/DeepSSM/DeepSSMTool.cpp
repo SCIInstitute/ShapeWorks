@@ -2,47 +2,43 @@
 #include <iostream>
 
 // qt
-#include <QThread>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QThread>
 
 // shapeworks
 #include <Libs/Mesh/Mesh.h>
-#include <DeepSSM/DeepSSMTool.h>
-#include <Interface/ShapeWorksStudioApp.h>
-#include <Data/ShapeWorksWorker.h>
+#include <Python/PythonWorker.h>
+
+// studio
 #include <Data/Session.h>
 #include <Data/Shape.h>
-#include <DeepSSM/DeepSSMParameters.h>
+#include <Data/ShapeWorksWorker.h>
 #include <DeepSSM/DeepSSMJob.h>
+#include <DeepSSM/DeepSSMParameters.h>
+#include <DeepSSM/DeepSSMTool.h>
+#include <Interface/ShapeWorksStudioApp.h>
 #include <Interface/Style.h>
 
+// ui
 #include <ui_DeepSSMTool.h>
 
 namespace shapeworks {
 
 //---------------------------------------------------------------------------
-DeepSSMTool::DeepSSMTool(Preferences& prefs) : preferences_(prefs)
-{
+DeepSSMTool::DeepSSMTool(Preferences& prefs) : preferences_(prefs) {
   this->ui_ = new Ui_DeepSSMTool;
   this->ui_->setupUi(this);
 
-  connect(this->ui_->run_button, &QPushButton::clicked,
-          this, &DeepSSMTool::run_clicked);
-  connect(this->ui_->restore_defaults, &QPushButton::clicked,
-          this, &DeepSSMTool::restore_defaults);
+  connect(this->ui_->run_button, &QPushButton::clicked, this, &DeepSSMTool::run_clicked);
+  connect(this->ui_->restore_defaults, &QPushButton::clicked, this, &DeepSSMTool::restore_defaults);
 
-  connect(this->ui_->data_open_button, &QPushButton::clicked,
-          this, &DeepSSMTool::update_panels);
-  connect(this->ui_->controls_open_button, &QPushButton::clicked,
-          this, &DeepSSMTool::update_panels);
-  connect(this->ui_->training_open_button, &QPushButton::clicked,
-          this, &DeepSSMTool::update_panels);
+  connect(this->ui_->data_open_button, &QPushButton::clicked, this, &DeepSSMTool::update_panels);
+  connect(this->ui_->controls_open_button, &QPushButton::clicked, this, &DeepSSMTool::update_panels);
+  connect(this->ui_->training_open_button, &QPushButton::clicked, this, &DeepSSMTool::update_panels);
 
-  connect(this->ui_->generated_data_checkbox, &QCheckBox::stateChanged,
-          this, &DeepSSMTool::show_augmentation_meshes);
-  connect(this->ui_->original_data_checkbox, &QCheckBox::stateChanged,
-          this, &DeepSSMTool::show_augmentation_meshes);
+  connect(this->ui_->generated_data_checkbox, &QCheckBox::stateChanged, this, &DeepSSMTool::show_augmentation_meshes);
+  connect(this->ui_->original_data_checkbox, &QCheckBox::stateChanged, this, &DeepSSMTool::show_augmentation_meshes);
 
   connect(this->ui_->tab_widget, &QTabWidget::currentChanged, this, &DeepSSMTool::tab_changed);
 
@@ -52,14 +48,10 @@ DeepSSMTool::DeepSSMTool(Preferences& prefs) : preferences_(prefs)
   this->ui_->validation_split->setValidator(zero_to_hundred);
   this->ui_->testing_split->setValidator(zero_to_hundred);
 
-  connect(this->ui_->validation_split, &QLineEdit::textChanged,
-          this, [ = ]() {
-      this->update_split(this->ui_->validation_split);
-    });
-  connect(this->ui_->testing_split, &QLineEdit::textChanged,
-          this, [ = ]() {
-      this->update_split(this->ui_->testing_split);
-    });
+  connect(this->ui_->validation_split, &QLineEdit::textChanged, this,
+          [=]() { this->update_split(this->ui_->validation_split); });
+  connect(this->ui_->testing_split, &QLineEdit::textChanged, this,
+          [=]() { this->update_split(this->ui_->testing_split); });
 
   this->ui_->tab_widget->setCurrentIndex(0);
   this->tab_changed(0);
@@ -71,47 +63,40 @@ DeepSSMTool::DeepSSMTool(Preferences& prefs) : preferences_(prefs)
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::tab_changed(int tab)
-{
+void DeepSSMTool::tab_changed(int tab) {
   switch (tab) {
-  case 0:
-    this->current_tool_ = DeepSSMTool::ToolMode::DeepSSM_SplitType;
-    break;
-  case 1:
-    this->current_tool_ = DeepSSMTool::ToolMode::DeepSSM_AugmentationType;
-    break;
-  case 2:
-    this->current_tool_ = DeepSSMTool::ToolMode::DeepSSM_TrainingType;
-    break;
-  case 3:
-    this->current_tool_ = DeepSSMTool::ToolMode::DeepSSM_TestingType;
-    break;
+    case 0:
+      this->current_tool_ = DeepSSMTool::ToolMode::DeepSSM_SplitType;
+      break;
+    case 1:
+      this->current_tool_ = DeepSSMTool::ToolMode::DeepSSM_AugmentationType;
+      break;
+    case 2:
+      this->current_tool_ = DeepSSMTool::ToolMode::DeepSSM_TrainingType;
+      break;
+    case 3:
+      this->current_tool_ = DeepSSMTool::ToolMode::DeepSSM_TestingType;
+      break;
   }
   this->update_panels();
   this->update_meshes();
 }
 
 //---------------------------------------------------------------------------
-DeepSSMTool::~DeepSSMTool()
-{}
+DeepSSMTool::~DeepSSMTool() {}
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::set_session(QSharedPointer<Session> session)
-{
+void DeepSSMTool::set_session(QSharedPointer<Session> session) {
   this->session_ = session;
   this->load_params();
   this->update_meshes();
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::set_app(ShapeWorksStudioApp* app)
-{
-  this->app_ = app;
-}
+void DeepSSMTool::set_app(ShapeWorksStudioApp* app) { this->app_ = app; }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::load_params()
-{
+void DeepSSMTool::load_params() {
   auto params = DeepSSMParameters(this->session_->get_project());
 
   this->ui_->validation_split->setText(QString::number(params.get_validation_split()));
@@ -128,15 +113,14 @@ void DeepSSMTool::load_params()
   this->ui_->training_fine_tuning->setChecked(params.get_training_fine_tuning());
   this->ui_->training_fine_tuning_epochs->setText(QString::number(params.get_training_fine_tuning_epochs()));
   this->ui_->training_batch_size->setText(QString::number(params.get_training_batch_size()));
-  this->ui_->training_fine_tuning_learning_rate->setText(QString::number(
-                                                           params.get_training_fine_tuning_learning_rate()));
+  this->ui_->training_fine_tuning_learning_rate->setText(
+      QString::number(params.get_training_fine_tuning_learning_rate()));
 
   this->update_meshes();
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::store_params()
-{
+void DeepSSMTool::store_params() {
   auto params = DeepSSMParameters(this->session_->get_project());
 
   params.set_validation_split(this->ui_->validation_split->text().toDouble());
@@ -158,37 +142,27 @@ void DeepSSMTool::store_params()
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::shutdown()
-{
-  this->app_->get_py_worker()->abort_job();
-}
+void DeepSSMTool::shutdown() { this->app_->get_py_worker()->abort_job(); }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::set_active(bool active)
-{}
+void DeepSSMTool::set_active(bool active) {}
 
 //---------------------------------------------------------------------------
-bool DeepSSMTool::get_active()
-{
-  return false;
-}
+bool DeepSSMTool::get_active() { return false; }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::run_clicked()
-{
+void DeepSSMTool::run_clicked() {
   if (this->tool_is_running_) {
     this->ui_->run_button->setText("Aborting...");
     this->ui_->run_button->setEnabled(false);
     this->app_->get_py_worker()->abort_job();
-  }
-  else {
+  } else {
     this->run_tool(this->current_tool_);
   }
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::handle_thread_complete()
-{
+void DeepSSMTool::handle_thread_complete() {
   emit progress(100);
   this->update_meshes();
   this->tool_is_running_ = false;
@@ -196,8 +170,7 @@ void DeepSSMTool::handle_thread_complete()
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::handle_progress(int val)
-{
+void DeepSSMTool::handle_progress(int val) {
   this->load_plots();
   this->update_tables();
   this->update_meshes();
@@ -205,12 +178,10 @@ void DeepSSMTool::handle_progress(int val)
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::handle_error(QString msg)
-{}
+void DeepSSMTool::handle_error(QString msg) {}
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::update_panels()
-{
+void DeepSSMTool::update_panels() {
   this->ui_->data_content->setVisible(this->ui_->data_open_button->isChecked());
   this->ui_->controls_content->setVisible(this->ui_->controls_open_button->isChecked());
   this->ui_->training_content->setVisible(this->ui_->training_open_button->isChecked());
@@ -222,27 +193,26 @@ void DeepSSMTool::update_panels()
   this->ui_->data_panel->hide();
   this->ui_->training_panel->hide();
   switch (this->current_tool_) {
-  case DeepSSMTool::ToolMode::DeepSSM_SplitType:
-    this->ui_->run_button->hide();
-    break;
-  case DeepSSMTool::ToolMode::DeepSSM_AugmentationType:
-    string = "Data Augmentation";
-    this->ui_->data_panel->show();
-    break;
-  case DeepSSMTool::ToolMode::DeepSSM_TrainingType:
-    string = "Training";
-    this->ui_->training_panel->show();
-    break;
-  case DeepSSMTool::ToolMode::DeepSSM_TestingType:
-    string = "Testing";
-    break;
+    case DeepSSMTool::ToolMode::DeepSSM_SplitType:
+      this->ui_->run_button->hide();
+      break;
+    case DeepSSMTool::ToolMode::DeepSSM_AugmentationType:
+      string = "Data Augmentation";
+      this->ui_->data_panel->show();
+      break;
+    case DeepSSMTool::ToolMode::DeepSSM_TrainingType:
+      string = "Training";
+      this->ui_->training_panel->show();
+      break;
+    case DeepSSMTool::ToolMode::DeepSSM_TestingType:
+      string = "Testing";
+      break;
   }
 
   if (this->tool_is_running_) {
     Style::apply_abort_button_style(this->ui_->run_button);
     this->ui_->run_button->setText("Abort");
-  }
-  else {
+  } else {
     Style::apply_normal_button_style(this->ui_->run_button);
     this->ui_->run_button->setText("Run " + string);
   }
@@ -250,34 +220,29 @@ void DeepSSMTool::update_panels()
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::update_split(QLineEdit* source)
-{}
+void DeepSSMTool::update_split(QLineEdit* source) {}
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::handle_new_mesh()
-{
+void DeepSSMTool::handle_new_mesh() {
   if (this->current_tool_ == DeepSSMTool::ToolMode::DeepSSM_TestingType) {
     this->update_testing_meshes();
   }
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::training_fine_tuning_changed()
-{
+void DeepSSMTool::training_fine_tuning_changed() {
   this->ui_->training_fine_tuning_epochs->setEnabled(this->ui_->training_fine_tuning->isChecked());
   this->ui_->training_fine_tuning_learning_rate->setEnabled(this->ui_->training_fine_tuning->isChecked());
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::update_tables()
-{
+void DeepSSMTool::update_tables() {
   this->populate_table_from_csv(this->ui_->training_table, "deepssm/model/train_log.csv", true);
   this->populate_table_from_csv(this->ui_->table, "deepssm/Augmentation/TotalData.csv", false);
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::populate_table_from_csv(QTableWidget* table, QString filename, bool header)
-{
+void DeepSSMTool::populate_table_from_csv(QTableWidget* table, QString filename, bool header) {
   table->clear();
   if (!QFile(filename).exists()) {
     return;
@@ -302,8 +267,7 @@ void DeepSSMTool::populate_table_from_csv(QTableWidget* table, QString filename,
     table->setHorizontalHeaderLabels(headers);
     lines.pop_front();
     table->verticalHeader()->setVisible(false);
-  }
-  else {
+  } else {
     table->verticalHeader()->setVisible(true);
   }
   table->setRowCount(lines.size());
@@ -323,8 +287,7 @@ void DeepSSMTool::populate_table_from_csv(QTableWidget* table, QString filename,
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::show_training_meshes()
-{
+void DeepSSMTool::show_training_meshes() {
   this->shapes_.clear();
 
   QStringList filenames;
@@ -336,8 +299,12 @@ void DeepSSMTool::show_training_meshes()
   filenames << "deepssm/model/examples/train_worst.particles";
 
   QStringList names;
-  names << "best validation" << "median validation" << "worst validation";
-  names << "best training" << "median training" << "worst training";
+  names << "best validation"
+        << "median validation"
+        << "worst validation";
+  names << "best training"
+        << "median training"
+        << "worst training";
 
   QStringList scalar_filenames;
   scalar_filenames << "deepssm/model/examples/validation_best.scalars";
@@ -355,8 +322,7 @@ void DeepSSMTool::show_training_meshes()
       shape->set_mesh_manager(this->session_->get_mesh_manager());
       shape->import_local_point_files({filenames[i]});
       shape->import_global_point_files({filenames[i]});
-      shape->load_feature_from_scalar_file(scalar_filenames[i].toStdString(),
-                                           "deepssm_error");
+      shape->load_feature_from_scalar_file(scalar_filenames[i].toStdString(), "deepssm_error");
       shape->get_reconstructed_meshes();
       QStringList list;
       list << names[i];
@@ -372,11 +338,10 @@ void DeepSSMTool::show_training_meshes()
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::show_testing_meshes()
-{
+void DeepSSMTool::show_testing_meshes() {
   this->shapes_.clear();
-  this->deep_ssm_ = QSharedPointer<DeepSSMJob>::create(
-    session_->get_project(), DeepSSMTool::ToolMode::DeepSSM_TestingType);
+  this->deep_ssm_ =
+      QSharedPointer<DeepSSMJob>::create(session_->get_project(), DeepSSMTool::ToolMode::DeepSSM_TestingType);
   auto id_list = this->deep_ssm_->get_list(DeepSSMJob::FileType::ID, DeepSSMJob::SplitType::TEST);
 
   auto subjects = this->session_->get_project()->get_subjects();
@@ -384,9 +349,8 @@ void DeepSSMTool::show_testing_meshes()
 
   for (auto& id : id_list) {
     int i = QString::fromStdString(id).toInt();
-    QString filename = QString("deepssm/model/predictions/FT_Predictions/predicted_ft_") +
-                       QString::fromStdString(id) +
-                       ".particles";
+    QString filename =
+        QString("deepssm/model/predictions/FT_Predictions/predicted_ft_") + QString::fromStdString(id) + ".particles";
 
     if (QFileInfo(filename).exists()) {
       ShapeHandle shape = ShapeHandle(new Shape());
@@ -413,10 +377,9 @@ void DeepSSMTool::show_testing_meshes()
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::update_testing_meshes()
-{
-  this->deep_ssm_ = QSharedPointer<DeepSSMJob>::create(
-    session_->get_project(), DeepSSMTool::ToolMode::DeepSSM_TestingType);
+void DeepSSMTool::update_testing_meshes() {
+  this->deep_ssm_ =
+      QSharedPointer<DeepSSMJob>::create(session_->get_project(), DeepSSMTool::ToolMode::DeepSSM_TestingType);
   auto id_list = this->deep_ssm_->get_list(DeepSSMJob::FileType::ID, DeepSSMJob::SplitType::TEST);
 
   auto subjects = this->session_->get_project()->get_subjects();
@@ -426,7 +389,8 @@ void DeepSSMTool::update_testing_meshes()
 
   table->clear();
   QStringList headers;
-  headers << "name" << "average distance";
+  headers << "name"
+          << "average distance";
   table->setColumnCount(headers.size());
   table->horizontalHeader()->setVisible(true);
   table->setHorizontalHeaderLabels(headers);
@@ -447,8 +411,7 @@ void DeepSSMTool::update_testing_meshes()
       continue;
     }
     Mesh base(mesh_group.meshes()[0]->get_poly_data());
-    std::string filename = "deepssm/model/predictions/FT_Predictions/predicted_ft_" + id +
-                           ".particles";
+    std::string filename = "deepssm/model/predictions/FT_Predictions/predicted_ft_" + id + ".particles";
     if (QFileInfo(QString::fromStdString(filename)).exists()) {
       if (idx < this->shapes_.size()) {
         auto shape = this->shapes_[idx++];
@@ -464,8 +427,7 @@ void DeepSSMTool::update_testing_meshes()
           auto field = m.getField("distance", Mesh::FieldType::Point);
           field->SetName("deepssm_error");
           group.meshes()[0]->get_poly_data()->GetPointData()->AddArray(field);
-        }
-        else {
+        } else {
           QTableWidgetItem* new_item = new QTableWidgetItem("computing...");
           table->setItem(idx - 1, 1, new_item);
         }
@@ -477,34 +439,31 @@ void DeepSSMTool::update_testing_meshes()
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::update_meshes()
-{
+void DeepSSMTool::update_meshes() {
   switch (this->current_tool_) {
-  case DeepSSMTool::ToolMode::DeepSSM_SplitType:
-    this->shapes_.clear();
-    emit update_view();
-    break;
-  case DeepSSMTool::ToolMode::DeepSSM_AugmentationType:
-    this->show_augmentation_meshes();
-    break;
-  case DeepSSMTool::ToolMode::DeepSSM_TrainingType:
-    this->show_training_meshes();
-    break;
-  case DeepSSMTool::ToolMode::DeepSSM_TestingType:
-    this->show_testing_meshes();
-    break;
+    case DeepSSMTool::ToolMode::DeepSSM_SplitType:
+      this->shapes_.clear();
+      emit update_view();
+      break;
+    case DeepSSMTool::ToolMode::DeepSSM_AugmentationType:
+      this->show_augmentation_meshes();
+      break;
+    case DeepSSMTool::ToolMode::DeepSSM_TrainingType:
+      this->show_training_meshes();
+      break;
+    case DeepSSMTool::ToolMode::DeepSSM_TestingType:
+      this->show_testing_meshes();
+      break;
   }
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::show_augmentation_meshes()
-{
+void DeepSSMTool::show_augmentation_meshes() {
   this->update_tables();
   this->shapes_.clear();
 
   QString filename = "deepssm/Augmentation/TotalData.csv";
   if (QFile(filename).exists()) {
-
     QFile file(filename);
 
     if (!file.open(QIODevice::ReadOnly)) {
@@ -549,22 +508,17 @@ void DeepSSMTool::show_augmentation_meshes()
 }
 
 //---------------------------------------------------------------------------
-QVector<QSharedPointer<Shape>> DeepSSMTool::get_shapes()
-{
-  return this->shapes_;
-}
+QVector<QSharedPointer<Shape>> DeepSSMTool::get_shapes() { return this->shapes_; }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::load_plots()
-{
+void DeepSSMTool::load_plots() {
   this->violin_plot_ = this->load_plot("deepssm/Augmentation/violin.png");
   this->training_plot_ = this->load_plot("deepssm/model/training_plot.png");
   this->resize_plots();
 }
 
 //---------------------------------------------------------------------------
-QPixmap DeepSSMTool::load_plot(QString filename)
-{
+QPixmap DeepSSMTool::load_plot(QString filename) {
   if (QFile(filename).exists()) {
     return QPixmap(filename);
   }
@@ -572,35 +526,29 @@ QPixmap DeepSSMTool::load_plot(QString filename)
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::resize_plots()
-{
+void DeepSSMTool::resize_plots() {
   this->set_plot(this->ui_->violin_plot, this->violin_plot_);
   this->set_plot(this->ui_->training_plot, this->training_plot_);
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::set_plot(QLabel* qlabel, QPixmap pixmap)
-{
+void DeepSSMTool::set_plot(QLabel* qlabel, QPixmap pixmap) {
   if (!pixmap.isNull()) {
-    QPixmap resized = pixmap.scaledToWidth(this->width() * 0.95,
-                                           Qt::SmoothTransformation);
+    QPixmap resized = pixmap.scaledToWidth(this->width() * 0.95, Qt::SmoothTransformation);
     qlabel->setPixmap(resized);
-  }
-  else {
+  } else {
     qlabel->setPixmap(QPixmap{});
   }
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::resizeEvent(QResizeEvent* event)
-{
+void DeepSSMTool::resizeEvent(QResizeEvent* event) {
   QWidget::resizeEvent(event);
   this->resize_plots();
 }
 
 //---------------------------------------------------------------------------
-string DeepSSMTool::get_display_feature()
-{
+string DeepSSMTool::get_display_feature() {
   if (this->current_tool_ == DeepSSMTool::ToolMode::DeepSSM_TrainingType ||
       this->current_tool_ == DeepSSMTool::ToolMode::DeepSSM_TestingType) {
     return "deepssm_error";
@@ -609,26 +557,25 @@ string DeepSSMTool::get_display_feature()
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::restore_defaults()
-{
+void DeepSSMTool::restore_defaults() {
   // need to save values from the other pages
   this->store_params();
 
   auto params = DeepSSMParameters(this->session_->get_project());
 
   switch (this->current_tool_) {
-  case DeepSSMTool::ToolMode::DeepSSM_SplitType:
-    params.restore_split_defaults();
-    break;
-  case DeepSSMTool::ToolMode::DeepSSM_AugmentationType:
-    params.restore_augmentation_defaults();
-    break;
-  case DeepSSMTool::ToolMode::DeepSSM_TrainingType:
-    params.restore_training_defaults();
-    break;
-  case DeepSSMTool::ToolMode::DeepSSM_TestingType:
-    //params.restore_inference_defaults();
-    break;
+    case DeepSSMTool::ToolMode::DeepSSM_SplitType:
+      params.restore_split_defaults();
+      break;
+    case DeepSSMTool::ToolMode::DeepSSM_AugmentationType:
+      params.restore_augmentation_defaults();
+      break;
+    case DeepSSMTool::ToolMode::DeepSSM_TrainingType:
+      params.restore_training_defaults();
+      break;
+    case DeepSSMTool::ToolMode::DeepSSM_TestingType:
+      // params.restore_inference_defaults();
+      break;
   }
 
   this->session_->get_project()->clear_parameters(Parameters::DEEPSSM_PARAMS);
@@ -637,24 +584,21 @@ void DeepSSMTool::restore_defaults()
 }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::run_tool(DeepSSMTool::ToolMode type)
-{
+void DeepSSMTool::run_tool(DeepSSMTool::ToolMode type) {
   this->current_tool_ = type;
   emit progress(-1);
   if (type == DeepSSMTool::ToolMode::DeepSSM_AugmentationType) {
     emit message("Please Wait: Running Data Augmentation...");
     // clean
     QFile("deepssm/Augmentation/TotalData.csv").remove();
-  }
-  else if (type == DeepSSMTool::ToolMode::DeepSSM_TrainingType) {
+  } else if (type == DeepSSMTool::ToolMode::DeepSSM_TrainingType) {
     emit message("Please Wait: Running Training...");
     // clean
     QDir dir("deepssm/model");
     dir.removeRecursively();
 
     this->show_training_meshes();
-  }
-  else {
+  } else {
     emit message("Please Wait: Running Testing...");
   }
 
@@ -670,7 +614,7 @@ void DeepSSMTool::run_tool(DeepSSMTool::ToolMode type)
   this->deep_ssm_ = QSharedPointer<DeepSSMJob>::create(session_->get_project(), type);
 
   connect(this->deep_ssm_.data(), &DeepSSMJob::message, this, &DeepSSMTool::message);
-  //connect(this->deep_ssm_.data(), &DeepSSMJob::error_message, this, &DeepSSMTool::error);
+  // connect(this->deep_ssm_.data(), &DeepSSMJob::error_message, this, &DeepSSMTool::error);
   connect(this->deep_ssm_.data(), &DeepSSMJob::progress, this, &DeepSSMTool::handle_progress);
   connect(this->deep_ssm_.data(), &DeepSSMJob::finished, this, &DeepSSMTool::handle_thread_complete);
 
@@ -678,10 +622,8 @@ void DeepSSMTool::run_tool(DeepSSMTool::ToolMode type)
 
   // ensure someone doesn't accidentally abort right after clicking RUN
   this->ui_->run_button->setEnabled(false);
-  QTimer::singleShot(1000, [ = ]() {
-      this->ui_->run_button->setEnabled(true);
-    });
+  QTimer::singleShot(1000, [=]() { this->ui_->run_button->setEnabled(true); });
 }
 
 //---------------------------------------------------------------------------
-}
+}  // namespace shapeworks
