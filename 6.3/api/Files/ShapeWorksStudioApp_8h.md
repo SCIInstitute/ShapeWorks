@@ -165,6 +165,9 @@ class ShapeWorksStudioApp : public QMainWindow {
   void update_view_mode();
   void reset_num_viewers();
 
+  void update_view_combo();
+  bool should_reconstruct_view_show();
+
   static bool write_particle_file(std::string filename, Eigen::VectorXd particles);
 
   QString get_save_filename(QString title, QString filetypes, QString default_ext);
@@ -273,4 +276,4 @@ class ShapeWorksStudioApp : public QMainWindow {
 
 -------------------------------
 
-Updated on 2022-04-29 at 23:26:00 +0000
+Updated on 2022-05-02 at 23:22:54 +0000
