@@ -44,7 +44,6 @@ import itertools
 import numpy as np
 from scipy import linalg
 
-
 def array1d(X, dtype=None, order=None):
     """Returns at least 1-d array with data from X"""
     return np.asarray(np.atleast_1d(X), dtype=dtype, order=order)
@@ -173,3 +172,15 @@ def repeat(times, M):
         result.append(M)
     result = np.array(result)
     return result
+
+def random_rotation_matrix(n, theta=None):
+    if theta is None:
+        theta = 0.5 * np.pi * np.random.rand()
+    if n == 1:
+        return np.random.rand() * np.eye(1)
+    rot = np.array([[np.cos(theta), -np.sin(theta)],
+                    [np.sin(theta), np.cos(theta)]])
+    out = np.zeros((n, n))
+    out[:2, :2] = rot
+    q = np.linalg.qr(np.random.randn(n, n))[0]
+    return q.dot(out).dot(q.T)
