@@ -679,15 +679,17 @@ void Viewer::display_shape(QSharedPointer<Shape> shape) {
           visualizer_->update_feature_range(range);
         }
       } else {
-        try {
-          auto& ffc = shape_->get_constraints(i).getFreeformConstraint();
-          if (ffc.getDefinition() != poly_data) {
-            ffc.computeBoundaries();
-            ffc.applyToPolyData(poly_data);
-            ffc.setDefinition(poly_data);
+        if (visualizer_->get_display_mode() != Session::MODE_RECONSTRUCTION_C) {
+          try {
+            auto& ffc = shape_->get_constraints(i).getFreeformConstraint();
+            if (ffc.getDefinition() != poly_data) {
+              ffc.computeBoundaries();
+              ffc.applyToPolyData(poly_data);
+              ffc.setDefinition(poly_data);
+            }
+          } catch (std::exception& e) {
+            STUDIO_SHOW_ERROR(QString("Unable to apply free form constraints: ") + e.what());
           }
-        } catch (std::exception& e) {
-          STUDIO_SHOW_ERROR(QString("Unable to apply free form constraints: ") + e.what());
         }
 
         mapper->ScalarVisibilityOn();
@@ -959,10 +961,7 @@ void Viewer::update_actors() {
 }
 
 //-----------------------------------------------------------------------------
-void Viewer::remove_scalar_bar()
-{
-  renderer_->RemoveActor(scalar_bar_actor_);
-}
+void Viewer::remove_scalar_bar() { renderer_->RemoveActor(scalar_bar_actor_); }
 
 //-----------------------------------------------------------------------------
 void Viewer::update_image_volume() {
@@ -1151,7 +1150,6 @@ void Viewer::initialize_surfaces() {
     }
     set_color_scheme(scheme_);
   }
-
 }
 
 //-----------------------------------------------------------------------------

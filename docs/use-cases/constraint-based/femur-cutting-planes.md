@@ -2,12 +2,12 @@
 
 ## What is the Use Case?
 
-The `femur` use case demonstrates using the shape modeling workflow on a real-world femur dataset. The the femur shapes are represented as triangular surface meshes and the dataset also contains corresponding imaging data (e.g., CT). 
+The `femur` use case demonstrates using the shape modeling workflow on a real-world femur dataset. The femur shapes are represented as triangular surface meshes and the dataset also contains corresponding imaging data (e.g., CT).
 
-There are both left and right femurs in this dataset, thus some must be relfected so that they can all be aligned. The femur meshes have also been segmented with various shaft lengths, as can be seen below. To remove this variability so that it is not captured in the shape model, a cutting plane is used as an optimization constraint.
+There are both left and right femurs in this dataset, thus some must be reflected so that they can all be aligned. The femur meshes have also been segmented with various shaft lengths, as can be seen below. To remove this variability so that it is not captured in the shape model, a cutting plane is used as an optimization constraint.
 ![Femur Lengths](../../img/use-cases/femurLengths.png)
 
-!!! important 
+!!! important
     Minimum of 32GB of RAM required to run the full use case.
 
 ## Grooming Steps
