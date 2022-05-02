@@ -1,123 +1,175 @@
+"""
+Source: Pykalman
+Adapted by: Jadie Adams
+Helper functions for LDS_model.py
+"""
+
+# New BSD License
+#
+# Copyright (c) 2007 - 2012 The scikit-learn developers.
+# All rights reserved.
+#
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+#   a. Redistributions of source code must retain the above copyright notice,
+#      this list of conditions and the following disclaimer.
+#   b. Redistributions in binary form must reproduce the above copyright
+#      notice, this list of conditions and the following disclaimer in the
+#      documentation and/or other materials provided with the distribution.
+#   c. Neither the name of the Scikit-learn Developers  nor the names of
+#      its contributors may be used to endorse or promote products
+#      derived from this software without specific prior written
+#      permission.
+#
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+# LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+# OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
+# DAMAGE.
+'''
+Utility functions taken from scikit-learn
+'''
+
+import inspect
+import itertools
 import numpy as np
-from numpy import linalg as la
-np.random.seed(0)
+from scipy import linalg
 
-def random_rotation(n, theta=None):
-    if theta is None:
-        theta = 0.5 * np.pi * np.random.rand()
-    if n == 1:
-        return np.random.rand() * np.eye(1)
 
-    rot = np.array([[np.cos(theta), -np.sin(theta)],
-                    [np.sin(theta), np.cos(theta)]])
-    out = np.zeros((n, n))
-    out[:2, :2] = rot
-    q = np.linalg.qr(np.random.randn(n, n))[0]
-    return q.dot(out).dot(q.T)
+def array1d(X, dtype=None, order=None):
+    """Returns at least 1-d array with data from X"""
+    return np.asarray(np.atleast_1d(X), dtype=dtype, order=order)
 
-def fix_covariance2(A):
-    if isPD(A):
-        return A
+
+def array2d(X, dtype=None, order=None):
+    """Returns at least 2-d array with data from X"""
+    return np.asarray(np.atleast_2d(X), dtype=dtype, order=order)
+
+def array3d(X, dtype=None, order=None):
+    """Returns at least 2-d array with data from X"""
+    return np.asarray(np.atleast_3d(X), dtype=dtype, order=order)
+
+def log_multivariate_normal_density(X, means, covars, min_covar=1.e-6):
+    """Log probability for full covariance matrices. """
+    if hasattr(linalg, 'solve_triangular'):
+        # only in scipy since 0.9
+        solve_triangular = linalg.solve_triangular
     else:
-        epsilon = 1e-6
-        u, s, vh = np.linalg.svd(A, full_matrices=True)
-        s[s<epsilon] = epsilon
-        A2 = np.dot(u * s, vh)
-        return A2
+        # slower, but works
+        solve_triangular = linalg.solve
+    n_samples, n_dim = X.shape
+    nmix = len(means)
+    log_prob = np.empty((n_samples, nmix))
+    for c, (mu, cv) in enumerate(zip(means, covars)):
+        try:
+            cv_chol = linalg.cholesky(cv, lower=True)
+        except linalg.LinAlgError:
+            # The model is most probabily stuck in a component with too
+            # few observations, we need to reinitialize this components
+            cv_chol = linalg.cholesky(cv + min_covar * np.eye(n_dim),
+                                      lower=True)
+        cv_log_det = 2 * np.sum(np.log(np.diagonal(cv_chol)))
+        try:
+            cv_sol = solve_triangular(cv_chol, (X - mu).T, lower=True).T
+        except ValueError:
+            cv_sol = np.linalg.solve(cv_chol, (X - mu).T).T
+        log_prob[:, c] = - .5 * (np.sum(cv_sol ** 2, axis=1) + \
+                                     n_dim * np.log(2 * np.pi) + cv_log_det)
 
-def fix_covariance(A):
-    if isPD(A):
-        return A
-    else:
-        """Find the nearest positive-definite matrix to input
-
-        A Python/Numpy port of John D'Errico's `nearestSPD` MATLAB code [1], which
-        credits [2].
-
-        [1] https://www.mathworks.com/matlabcentral/fileexchange/42885-nearestspd
-
-        [2] N.J. Higham, "Computing a nearest symmetric positive semidefinite
-        matrix" (1988): https://doi.org/10.1016/0024-3795(88)90223-6
-        """
-
-        B = (A + A.T) / 2
-        _, s, V = la.svd(B)
-
-        H = np.dot(V.T, np.dot(np.diag(s), V))
-
-        A2 = (B + H) / 2
-
-        A3 = (A2 + A2.T) / 2
-
-        if isPD(A3):
-            return A3
-
-        spacing = np.spacing(la.norm(A))
-        # The above is different from [1]. It appears that MATLAB's `chol` Cholesky
-        # decomposition will accept matrixes with exactly 0-eigenvalue, whereas
-        # Numpy's will not. So where [1] uses `eps(mineig)` (where `eps` is Matlab
-        # for `np.spacing`), we use the above definition. CAVEAT: our `spacing`
-        # will be much larger than [1]'s `eps(mineig)`, since `mineig` is usually on
-        # the order of 1e-16, and `eps(1e-16)` is on the order of 1e-34, whereas
-        # `spacing` will, for Gaussian random matrixes of small dimension, be on
-        # othe order of 1e-16. In practice, both ways converge, as the unit test
-        # below suggests.
-        I = np.eye(A.shape[0])
-        k = 1
-        while not isPD(A3):
-            mineig = np.min(np.real(la.eigvals(A3)))
-            A3 += I * (-mineig * k**2 + np.spacing(la.norm(A)))
-            k += 1
-            print(k)
-    return A3
+    return log_prob
 
 
-def isPD(B):
-    """Returns true when input is positive-definite, via Cholesky"""
+def check_random_state(seed):
+    """Turn seed into a np.random.RandomState instance
+
+    If seed is None, return the RandomState singleton used by np.random.
+    If seed is an int, return a new RandomState instance seeded with seed.
+    If seed is already a RandomState instance, return it.
+    Otherwise raise ValueError.
+    """
+    if seed is None or seed is np.random:
+        return np.random.mtrand._rand
+    if isinstance(seed, (int, np.integer)):
+        return np.random.RandomState(seed)
+    if isinstance(seed, np.random.RandomState):
+        return seed
+    raise ValueError('{0} cannot be used to seed a numpy.random.RandomState'
+                     + ' instance').format(seed)
+
+
+class Bunch(dict):
+    """Container object for datasets: dictionary-like object that exposes its
+    keys as attributes."""
+
+    def __init__(self, **kwargs):
+        dict.__init__(self, kwargs)
+        self.__dict__ = self
+
+
+def get_params(obj):
+    '''Get names and values of all parameters in `obj`'s __init__'''
     try:
-        _ = la.cholesky(B)
-        if np.linalg.det(B) > 0:
-            return True
-        else:
-            return False
-    except la.LinAlgError:
-        return False
+        # get names of every variable in the argument
+        args = inspect.getargspec(obj.__init__)[0]
+        args.pop(0)   # remove "self"
 
-def fix_covariance1(A):
-    # # symmetrize A into B
-    B = (A + A.T)/2
-    # # Compute the symmetric polar factor of B. Call it H.
-    # # Clearly H is itself SPD.
-    # if any(isnan(B(:))) || any(isinf(B(:)))
-    #     tt= 0;
-    # end
-    
-    U, sigma, V = la.svd(B)
-    H = np.dot(V, np.dot(np.diag(sigma), V.T))
+        # get values for each of the above in the object
+        argdict = dict([(arg, obj.__getattribute__(arg)) for arg in args])
+        return argdict
+    except:
+        raise ValueError("object has no __init__ method")
 
-    # get Ahat in the above formula
-    Ahat = (B+H)/2;
 
-    # ensure symmetry
-    Ahat = (Ahat + Ahat.T)/2
+def preprocess_arguments(argsets, converters):
+    """convert and collect arguments in order of priority
 
-    # test that Ahat is in fact PD. if it is not so, then tweak it just a bit.
-    k = 1
-    while not isPD(Ahat):
-        # Ahat failed the chol test. It must have been just a hair off,
-        # due to floating point trash, so it is simplest now just to
-        # tweak by adding a tiny multiple of an identity matrix.
-        print(k)
-        mineig = np.min(np.real(la.eigvals(Ahat)))
-        Ahat = Ahat + (-mineig*k**2 + np.finfo(mineig).eps)*np.eye(A.shape[0])
-        k = k + 1
-    return Ahat
+    Parameters
+    ----------
+    argsets : [{argname: argval}]
+        a list of argument sets, each with lower levels of priority
+    converters : {argname: function}
+        conversion functions for each argument
 
-if __name__ == '__main__':
-    import numpy as np
-    for i in range(10):
-        for j in range(2, 100):
-            A = np.random.randn(j, j)
-            B = fix_covariance(A)
-            assert (isPD(B))
-    print('unit test passed!')
+    Returns
+    -------
+    result : {argname: argval}
+        processed arguments
+    """
+    result = {}
+    for argset in argsets:
+        for (argname, argval) in argset.items():
+            # check that this argument is necessary
+            if not argname in converters:
+                raise ValueError("Unrecognized argument: {0}".format(argname))
+
+            # potentially use this argument
+            if argname not in result and argval is not None:
+                # convert to right type
+                argval = converters[argname](argval)
+
+                # save
+                result[argname] = argval
+
+    # check that all arguments are covered
+    if not len(converters.keys()) == len(result.keys()):
+        missing = set(converters.keys()) - set(result.keys())
+        s = "The following arguments are missing: {0}".format(list(missing))
+        raise ValueError(s)
+
+    return result
+
+def repeat(times, M):
+    result = []
+    for i in range(times):
+        result.append(M)
+    result = np.array(result)
+    return result
