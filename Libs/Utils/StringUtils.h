@@ -17,9 +17,6 @@ class StringUtils {
   static std::string toLower(std::string s);
   static bool hasSuffix(std::string const& filename, std::string const& suffix);
   static std::vector<std::string> getFileNamesFromPaths(const std::vector<std::string>& paths);
-
-  /// TODO: is this a duplicate of removeExtension?
-  static std::string getFileNameWithoutExtension(std::string path);
 };
 
 }  // namespace shapeworks

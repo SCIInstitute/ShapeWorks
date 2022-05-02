@@ -22,14 +22,21 @@ GroomTool::GroomTool(Preferences& prefs) : preferences_(prefs) {
 
   // connect panel open buttons
   connect(ui_->image_open_button, &QPushButton::toggled, ui_->image_content, &QWidget::setVisible);
+  connect(ui_->image_header, &QPushButton::clicked, ui_->image_open_button, &QPushButton::toggle);
   connect(ui_->mesh_open_button, &QPushButton::toggled, ui_->mesh_content, &QWidget::setVisible);
+  connect(ui_->mesh_header, &QPushButton::clicked, ui_->mesh_open_button, &QPushButton::toggle);
   connect(ui_->alignment_open_button, &QPushButton::toggled, ui_->alignment_content, &QWidget::setVisible);
+  connect(ui_->alignment_header, &QPushButton::clicked, ui_->alignment_open_button, &QPushButton::toggle);
 
   connect(ui_->alignment_image_checkbox, &QCheckBox::stateChanged, this, &GroomTool::alignment_checkbox_changed);
   connect(ui_->alignment_box, qOverload<int>(&QComboBox::currentIndexChanged), this,
           &GroomTool::alignment_option_changed);
 
   connect(ui_->convert_mesh_checkbox, &QCheckBox::stateChanged, this, &GroomTool::update_page);
+
+  ui_->image_label->setAttribute(Qt::WA_TransparentForMouseEvents);
+  ui_->mesh_label->setAttribute(Qt::WA_TransparentForMouseEvents);
+  ui_->alignment_label->setAttribute(Qt::WA_TransparentForMouseEvents);
 
   ui_->alignment_image_checkbox->setToolTip("Pre-alignment options");
   ui_->isolate_checkbox->setToolTip("Isolate the largest object in the image segmentation");
@@ -180,7 +187,7 @@ void GroomTool::update_reflect_columns() {
   auto headers = project->get_headers();
 
   QStringList reflect_columns;
-  for (auto header : headers) {
+  for (const auto &header : headers) {
     if (header != "") {
       reflect_columns << QString::fromStdString(header);
     }
@@ -447,7 +454,7 @@ void GroomTool::handle_thread_complete() {
   emit message("Groom Complete.  Duration: " + duration + " seconds");
 
   // trigger reload of meshes
-  for (auto shape : session_->get_shapes()) {
+  Q_FOREACH (auto shape, session_->get_shapes()) {
     shape->reset_groomed_mesh();
   }
 

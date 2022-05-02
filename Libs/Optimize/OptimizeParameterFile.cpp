@@ -343,6 +343,9 @@ bool OptimizeParameterFile::set_optimization_parameters(TiXmlHandle* docHandle, 
   elem = docHandle->FirstChild("procrustes_scaling").Element();
   if (elem) { optimize->SetProcrustesScaling(atoi(elem->GetText())); }
 
+  elem = docHandle->FirstChild("procrustes_rotation_translation").Element();
+  if (elem) { optimize->SetProcrustesRotationTranslation(atoi(elem->GetText())); }
+
   elem = docHandle->FirstChild("relative_weighting").Element();
   if (elem) { optimize->SetRelativeWeighting(atof(elem->GetText())); }
 
@@ -381,6 +384,15 @@ bool OptimizeParameterFile::set_optimization_parameters(TiXmlHandle* docHandle, 
 
   elem = docHandle->FirstChild("geodesics_cache_size_multiplier").Element();
   if (elem) { optimize->SetGeodesicsCacheSizeMultiplier((size_t) atol(elem->GetText())); }
+
+  elem = docHandle->FirstChild("mesh_ffc_mode").Element();
+  if (elem) { optimize->SetMeshFFCMode((bool) atoi(elem->GetText())); }
+
+  elem = docHandle->FirstChild("shared_boundary_enabled").Element();
+  if (elem) { optimize->SetSharedBoundaryEnabled((bool) atoi(elem->GetText())); }
+
+  elem = docHandle->FirstChild("shared_boundary_weight").Element();
+  if (elem) { optimize->SetSharedBoundaryWeight( atof(elem->GetText())); }
 
   return true;
 }
@@ -523,13 +535,15 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle* docHandle, Optimize* o
         }
       }
 
-      if (this->verbosity_level_ > 1) {
-        std::cout << "ffcssize " << ffcs.size() << std::endl;
-      }
-      if (index < ffcs.size()) {
-        mesh.prepareFFCFields(ffcs[index].boundaries, ffcs[index].query);
-        mesh = Mesh(mesh.clipByField("inout", 1.0));
-      }
+      if(optimize->GetMeshFFCMode() == 0){
+          if (this->verbosity_level_ > 1) {
+            std::cout << "ffcssize " << ffcs.size() << std::endl;
+          }
+            if (index < ffcs.size()) {
+              mesh.prepareFFCFields(ffcs[index].boundaries, ffcs[index].query);
+              mesh = Mesh(mesh.clipByField("inout", 0.0));
+            }
+        }
 
       auto poly_data = mesh.getVTKMesh();
 

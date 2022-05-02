@@ -37,6 +37,8 @@ class MeshWarper {
   //! Return if the warp is available
   bool get_warp_available();
 
+  bool is_contour() const { return is_contour_; }
+
   //! Build a mesh for a given set of particles
   vtkSmartPointer<vtkPolyData> build_mesh(const Eigen::MatrixXd& particles);
 

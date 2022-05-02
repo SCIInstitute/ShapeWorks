@@ -541,9 +541,9 @@ TEST(MeshTests, antialiasTest3)
 
 TEST(MeshTests, toDistanceTransformTest1)
 {
-  Mesh femur(std::string(TEST_DATA_DIR) + "/femur.ply");
-  Image image = femur.toDistanceTransform();
-  Image ground_truth(std::string(TEST_DATA_DIR) + "/femurDT.nrrd");
+  Mesh femur(std::string(TEST_DATA_DIR) + "/femur_remesh.ply");
+  Image image = femur.toDistanceTransform(PhysicalRegion(), Point3({5., 5., 5.}));
+  Image ground_truth(std::string(TEST_DATA_DIR) + "/femur_remesh_dt.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
 }
@@ -878,4 +878,32 @@ TEST(MeshTests, constructFromMatrixes)
   ground_truth.computeNormals();
   Mesh construct(ground_truth.points(), ground_truth.faces());
   ASSERT_TRUE(construct == ground_truth);
+}
+
+TEST(MeshTests, sharedBoundaryExtractor)
+{
+  Mesh left(std::string(TEST_DATA_DIR) + "/shared_boundary/00_l.vtk");
+  Mesh right(std::string(TEST_DATA_DIR) + "/shared_boundary/00_r.vtk");
+  double tol = 0.001;
+  std::array<Mesh, 3> output = MeshUtils::sharedBoundaryExtractor(left, right, tol);
+  Mesh output_l = output[0];
+  Mesh output_r = output[1];
+  Mesh output_s = output[2];
+
+  Mesh ground_truth_left(std::string(TEST_DATA_DIR) + "/shared_boundary/00_out_l.vtk");
+  Mesh ground_truth_right(std::string(TEST_DATA_DIR) + "/shared_boundary/00_out_r.vtk");
+  Mesh ground_truth_shared(std::string(TEST_DATA_DIR) + "/shared_boundary/00_out_s.vtk");
+
+  ASSERT_TRUE(ground_truth_left == output_l);
+  ASSERT_TRUE(ground_truth_right == output_r);
+  ASSERT_TRUE(ground_truth_shared == output_s);
+
+}
+
+TEST(MeshTests, boundaryLoopExtractor)
+{
+  Mesh ground_truth(std::string(TEST_DATA_DIR) + "/shared_boundary/00_out_c.vtp");
+  Mesh mesh(std::string(TEST_DATA_DIR) + "/shared_boundary/00_out_s.vtk");
+  Mesh loop = MeshUtils::boundaryLoopExtractor(mesh);
+  ASSERT_TRUE(loop == ground_truth);
 }

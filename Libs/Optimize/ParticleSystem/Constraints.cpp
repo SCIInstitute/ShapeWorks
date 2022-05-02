@@ -714,4 +714,18 @@ bool Constraints::hasConstraints() {
   return false;
 }
 
+//-----------------------------------------------------------------------------
+void Constraints::clipMesh(Mesh &mesh)
+{
+  for (auto& plane : getPlaneConstraints()) {
+    mesh.clip(plane.getVTKPlane());
+  }
+
+  if (getFreeformConstraint().isSet()) {
+    auto& ffc = getFreeformConstraint();
+    mesh.prepareFFCFields(ffc.boundaries(), ffc.getQueryPoint(), true);
+    mesh = Mesh(mesh.clipByField("inout", 1.0));
+  }
+}
+
 }  // namespace shapeworks

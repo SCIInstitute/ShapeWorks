@@ -93,7 +93,7 @@ int Executable::run(std::vector<std::string> arguments, SharedCommandData &share
       try {
         retval = cmd->second.run(sharedData);
       } catch(std::exception &e) {
-        throw std::runtime_error("'" + cmd->first + "' FAILED: " + e.what());
+        throw std::runtime_error("'" + cmd->first + "' Error: " + e.what());
       }
     }
     else {

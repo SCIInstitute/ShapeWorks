@@ -152,7 +152,6 @@ class ParticleSystem : public DataObject {
   void AdvancedAllParticleSplitting(double epsilon, unsigned int domains_per_shape, unsigned int dom_to_process);
   // Debug function
   void PrintParticleSystem();
-  void SplitAllParticlesInDomain(const vnl_vector_fixed<double, VDimension> &, unsigned int d = 0, int threadId = 0);
 
   /** Set/Get the neighborhood object associated with domain k. */
   void SetNeighborhood(unsigned int, NeighborhoodType *, int threadId = 0);
@@ -368,7 +367,8 @@ class ParticleSystem : public DataObject {
     m_DomainsPerShape = num;
     m_FixedParticleFlags.resize(m_DomainsPerShape);
   }
-  unsigned int GetDomainsPerShape() { return m_DomainsPerShape; }
+  unsigned int GetDomainsPerShape() const
+  { return m_DomainsPerShape; }
 
   /** Set the number of domains.  This method modifies the size of the
     m_Domains, m_Positions, and m_Transform lists. */

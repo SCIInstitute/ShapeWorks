@@ -65,6 +65,13 @@ install(TARGETS Mesh
  PUBLIC_HEADER DESTINATION include
  )
 
+
+
+
+#ADD_EXECUTABLE(ComputeGeodesicDistanceToCurve ComputeGeodesicDistanceToCurve.cxx)
+#TARGET_LINK_LIBRARIES(ComputeGeodesicDistanceToCurve ${ITK_LIBRARIES} Mesh tinyxml)
+#INSTALL(TARGETS ComputeGeodesicDistanceToCurve RUNTIME DESTINATION bin)
+
 # Added to backlog
 #ADD_EXECUTABLE(GenerateFidsFiles GenerateFidsFiles.cxx)
 #TARGET_LINK_LIBRARIES(GenerateFidsFiles ${ITK_LIBRARIES} Mesh tinyxml)

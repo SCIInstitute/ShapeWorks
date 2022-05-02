@@ -393,6 +393,11 @@ public:
   MeanCurvatureCacheType* GetMeanCurvatureCache()
   { return m_MeanCurvatureCache.GetPointer(); }
 
+  void SetSharedBoundaryEnabled(bool enabled)
+  { m_IsSharedBoundaryEnabled = enabled; }
+  void SetSharedBoundaryWeight(double weight)
+  { m_SharedBoundaryWeight = weight; }
+
   void ReadTransforms();
   void ReadPointsFiles();
   virtual void AllocateDataCaches();
@@ -448,6 +453,8 @@ public:
   }
 
   std::vector<FFCType> GetFFCs() { return m_FFCs; }
+
+  void SetMeshFFCMode(bool mesh_ffc_mode) {m_meshFFCMode = mesh_ffc_mode;}
 
 protected:
 
@@ -534,6 +541,8 @@ private:
   std::vector<int> m_AttributesPerDomain;
   int m_DomainsPerShape;
   double m_Spacing{0};
+  bool m_IsSharedBoundaryEnabled;
+  double m_SharedBoundaryWeight{0.5};
 
   std::string m_TransformFile;
   std::string m_PrefixTransformFile;
@@ -541,6 +550,7 @@ private:
   std::vector<std::vector<SphereType>> m_Spheres;
   std::vector<FFCType> m_FFCs;
   std::vector<vtkSmartPointer<vtkPolyData>> m_meshes;
+  bool m_meshFFCMode = false;
 
   unsigned int m_verbosity;
 };

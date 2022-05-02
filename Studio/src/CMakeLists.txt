@@ -117,11 +117,15 @@ SET(STUDIO_DATA_MOC_HDRS
 SET(STUDIO_JOB_SRCS
   Job/Job.cpp
   Job/GroupPvalueJob.cpp
+  Job/ParticleNormalEvaluationJob.cpp
+  Job/StatsGroupLDAJob.cpp
   )
 
 SET(STUDIO_JOB_MOC_HDRS
   Job/Job.h
   Job/GroupPvalueJob.h
+  Job/ParticleNormalEvaluationJob.h
+  Job/StatsGroupLDAJob.h
   )
 
 SET(STUDIO_GROOM_SRCS
@@ -172,20 +176,28 @@ SET(STUDIO_UTILS_SRCS
   Utils/StackWalker.cpp
   Utils/WindowsCrashHandler.cpp
   Utils/StudioUtils.cpp
+  Utils/AnalysisUtils.cpp
+  Utils/ImageLabel.cpp
+  )
+
+SET(STUDIO_UTILS_MOC_HDRS
+  Utils/ImageLabel.h
   )
 
 SET(STUDIO_INTERFACE_SRCS
-  Interface/LogWindow.cpp
+  Interface/ExportImageDialog.cpp
   Interface/KeyboardShortcuts.cpp
+  Interface/LogWindow.cpp
   Interface/ShapeWorksStudioApp.cpp
   Interface/SplashScreen.cpp
   Interface/StatusBarWidget.cpp
-  Interface/WheelEventForwarder.cpp
   Interface/Style.cpp
+  Interface/WheelEventForwarder.cpp
   )
 SET(STUDIO_INTERFACE_MOC_HDRS
-  Interface/LogWindow.h
+  Interface/ExportImageDialog.h
   Interface/KeyboardShortcuts.h
+  Interface/LogWindow.h
   Interface/ShapeWorksStudioApp.h
   Interface/SplashScreen.h
   Interface/StatusBarWidget.h
@@ -193,7 +205,6 @@ SET(STUDIO_INTERFACE_MOC_HDRS
   )
 
 SET(STUDIO_VISUALIZATION_SRCS
-  Visualization/BarGraph.cpp
   Visualization/Lightbox.cpp
   Visualization/LandmarkWidget.cpp
   Visualization/PlaneWidget.cpp
@@ -209,7 +220,6 @@ SET(STUDIO_VISUALIZATION_SRCS
 )
 
 SET(STUDIO_VISUALIZATION_MOC_HDRS
-  Visualization/BarGraph.h
   Visualization/Lightbox.h
   Visualization/Visualizer.h
   Visualization/StudioVtkOutputWindow.h
@@ -237,6 +247,7 @@ SET(STUDIO_MOC_HDRS
   ${STUDIO_PYTHON_MOC_HDRS}
   ${STUDIO_INTERFACE_MOC_HDRS}
   ${STUDIO_OPTIMIZE_MOC_HDRS}
+  ${STUDIO_UTILS_MOD_HDRS}
   ${STUDIO_VISUALIZATION_MOC_HDRS}
 )
 

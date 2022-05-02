@@ -18,7 +18,7 @@
 // shapeworks particle system
 #include "ParticleSystem/itkParticleSystem.h"
 #include "ParticleSystem/Sampler.h"
-#include "ParticleSystem/itkParticleProcrustesRegistration.h"
+#include "ParticleSystem/ParticleProcrustesRegistration.h"
 #include "ParticleSystem/itkParticleGoodBadAssessment.h"
 #include "ParticleSystem/itkParticleVectorFunction.h"
 #include "ParticleSystem/DomainType.h"
@@ -161,6 +161,8 @@ public:
   void SetProcessingMode(int mode);
   //! Set adaptivity mode (TODO: details)
   void SetAdaptivityMode(int adaptivity_mode);
+  //! Set Mesh FFC Mode false/0 = mesh clipping mode, true/1 = mesh augmented lagrangian mode
+  void SetMeshFFCMode(int mesh_ffc_mode){m_mesh_ffc_mode = mesh_ffc_mode; m_sampler->SetMeshFFCMode(mesh_ffc_mode);}
   //! Set adaptivity strength (TODO: details)
   void SetAdaptivityStrength(double adaptivity_strength);
   //! Set pairwise potential type (TODO: details)
@@ -183,8 +185,10 @@ public:
   void SetUseShapeStatisticsInInit(bool use_shape_statistics_in_init);
   //! Set the interval for running procrustes (0 to disable)
   void SetProcrustesInterval(int procrustes_interval);
-  //! Set if procrustes scaling should be used (0=disabled, 1=enabled)
-  void SetProcrustesScaling(int procrustes_scaling);
+  //! Set if procrustes scaling should be used
+  void SetProcrustesScaling(bool procrustes_scaling);
+  //! Set if procrustes rotation/translation should be used
+  void SetProcrustesRotationTranslation(bool procrustes_rotation_translation);
   //! Set the relative weighting (TODO: details)
   void SetRelativeWeighting(double relative_weighting);
   //! Set the initial relative weigting (TODO: details)
@@ -244,6 +248,10 @@ public:
   //! Set Domain Flags (TODO: details)
   void SetDomainFlags(std::vector<int> flags);
 
+  //! Shared boundary settings
+  void SetSharedBoundaryEnabled(bool enabled);
+  void SetSharedBoundaryWeight(double weight);
+
   const std::vector<int>& GetDomainFlags();
 
   //! Set if file output is enabled
@@ -290,6 +298,8 @@ public:
   shapeworks::OptimizationVisualizer &GetVisualizer();
   void SetShowVisualizer(bool show);
   bool GetShowVisualizer();
+
+  bool GetMeshFFCMode(){return m_mesh_ffc_mode;}
 
   //! transform a point if necessary
   vnl_vector_fixed<double, 3> TransformPoint(int domain, vnl_vector_fixed<double, 3> input);
@@ -353,7 +363,7 @@ protected:
   std::string GetCheckpointDir();
 
   std::shared_ptr<Sampler> m_sampler;
-  itk::ParticleProcrustesRegistration<3>::Pointer m_procrustes;
+  ParticleProcrustesRegistration::Pointer m_procrustes;
   itk::ParticleGoodBadAssessment<float, 3>::Pointer m_good_bad;
 
   unsigned int m_verbosity_level = 0;
@@ -391,6 +401,8 @@ protected:
   double m_adaptivity_strength = 0.0;
   int m_pairwise_potential_type = 0;   // 0 - gaussian (Cates work), 1 - modified cotangent (Meyer),
 
+  bool m_mesh_ffc_mode = 0;
+
   unsigned int m_timepts_per_subject = 1;
   int m_optimization_iterations = 2000;
   int m_optimization_iterations_completed = 0;
@@ -399,7 +411,8 @@ protected:
   double m_optimization_criterion = 1e-6;
   bool m_use_shape_statistics_in_init = false;
   unsigned int m_procrustes_interval = 3;
-  int m_procrustes_scaling = 1;
+  bool m_procrustes_scaling = true;
+  bool m_procrustes_rotation_translation = true;
   double m_relative_weighting = 1.0;
   double m_initial_relative_weighting = 0.05;
   double m_starting_regularization = 1000;

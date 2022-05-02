@@ -7,22 +7,37 @@ import shapeworks as sw
 from ShapeCohortGen.CohortGenUtils import *
 
 '''
-Generates super shapes and saves mesh form
+Generates super shapes and saves PLY mesh form
 '''
-def generate(num_samples, out_dir, randomize_center, randomize_rotation, m, start_id, size):
-    meshDir= out_dir + "meshes/"
+def generate(num_samples, out_dir, randomize_center=False, randomize_rotation=False, m=-1, start_id=0, size=12, numPoints=2048, n_distribution="chisquare"):
+    meshDir = out_dir + "meshes/"
     make_dir(meshDir)
-    for i in range(num_samples):
+    if m == -1:
+        randomize_m = True
+    else:
+        randomize_m = False
+    i = 0
+    meshes = []
+    while i < num_samples:
         print("Generating shape " + str(i+1) + " out of " + str(num_samples))
-        name = "id" + get_id_str(i+start_id) + "_ss" + str(m)
         # Define shape params
-        n1 = np.random.chisquare(4)
-        n2 = np.random.chisquare(4)
-        n3 = n2
+        if randomize_m:
+            m = np.random.randint(3,8)
+        name = "id" + get_id_str(i+start_id) + "_ss" + str(m)
+        if n_distribution == "chisquare":
+            n1 = np.random.chisquare(4)
+            n2 = np.random.chisquare(4)
+            n3 = np.random.chisquare(4)
+        elif n_distribution == "uniform":
+            n1 = np.random.uniform(0.75,1.5)
+            n2 = np.random.uniform(0.75,1.5)
+            n3 = n2
+        else:
+            print("Error: n_distribution unimplemented.")
         a = 1
         b = 1
-        X, Y, Z, triIndices = super_formula_3D(m, n1, n2, n3, a, b)
-       	verts = np.column_stack((X,Y,Z))
+        X, Y, Z, triIndices = super_formula_3D(m, n1, n2, n3, a, b, numPoints)
+        verts = np.column_stack((X,Y,Z))
         # Generate shape
         shapeMesh = trimesh.Trimesh(vertices=verts, faces=triIndices)
         # Apply transform
@@ -35,43 +50,45 @@ def generate(num_samples, out_dir, randomize_center, randomize_rotation, m, star
         else:
             rotation = np.zeros(3)
         S = trimesh.transformations.scale_matrix(size, [0,0,0])
-        T = trimesh.transformations.translation_matrix(center_loc)
-        R = trimesh.transformations.random_rotation_matrix(rotation)
-        transform_matrix = trimesh.transformations.concatenate_matrices(T, R, S)
-        shapeMesh = shapeMesh.apply_transform(transform_matrix)
-
-        # Save mesh as stl 
-        shapeMesh.export(meshDir + name + ".stl")
-
-
-    return get_files(meshDir)
+        shapeMesh = shapeMesh.apply_transform(S)
+        # check size
+        if max(max(shapeMesh.bounds[1]), max(abs(shapeMesh.bounds[0]))) > size*3:
+            print(name + " too large.")
+        else:
+            # Save mesh as ply
+            shapeMesh.export(meshDir + name + ".stl")
+            sw.Mesh(meshDir + name + ".stl").write(meshDir + name + ".ply")
+            os.remove(meshDir + name + ".stl")
+            meshes.append(meshDir + name + ".ply")
+            i += 1
+    return meshes
 
 # Name helper
 def get_id_str(num):
-	string = str(num)
-	while len(string) < 4:
-		string = '0' + string
-	return(string)
+    string = str(num)
+    while len(string) < 4:
+        string = '0' + string
+    return(string)
 
 # Shape generation helper
 def super_formula_3D(m, n1, n2, n3, a, b, numPoints=100000):
-	numPointsRoot = round(math.sqrt(numPoints))
-	theta = np.linspace(-math.pi, math.pi, endpoint=True, num=numPointsRoot)
-	phi = np.linspace(-math.pi / 2.0, math.pi/2.0, endpoint=True, num=numPointsRoot)
-	theta, phi = np.meshgrid(theta, phi)
-	theta, phi = theta.flatten(), phi.flatten()
-	r1 = super_formula_2D(m, n1, n2, n3, a, b, theta)
-	r2 = super_formula_2D(m, n1, n2, n3, a, b, phi)
-	x = r1 * r2 * np.cos(theta) * np.cos(phi)
-	y = r1 * r2 * np.sin(theta) * np.cos(phi)
-	z = r2 * np.sin(phi)
-	tri = mtri.Triangulation(theta, phi)
-	return x, y, z, tri.triangles
+    numPointsRoot = round(math.sqrt(numPoints))
+    theta = np.linspace(-math.pi, math.pi, endpoint=True, num=numPointsRoot)
+    phi = np.linspace(-math.pi / 2.0, math.pi/2.0, endpoint=True, num=numPointsRoot)
+    theta, phi = np.meshgrid(theta, phi)
+    theta, phi = theta.flatten(), phi.flatten()
+    r1 = super_formula_2D(m, n1, n2, n3, a, b, theta)
+    r2 = super_formula_2D(m, n1, n2, n3, a, b, phi)
+    x = r1 * r2 * np.cos(theta) * np.cos(phi)
+    y = r1 * r2 * np.sin(theta) * np.cos(phi)
+    z = r2 * np.sin(phi)
+    tri = mtri.Triangulation(theta, phi)
+    return x, y, z, tri.triangles
 
 # Shape generation helper
 def super_formula_2D(m, n1, n2, n3, a, b, theta):
-	r = abs((1 / a) * np.cos(m * theta / 4.0))**n2  +  abs((1 / b) * np.sin(m * theta / 4.0))**n3
-	return r**(-1 / n1)
+    r = abs((1 / a) * np.cos(m * theta / 4.0))**n2  +  abs((1 / b) * np.sin(m * theta / 4.0))**n3
+    return r**(-1 / n1)
 
 # Sample points for a 2D supershape and return as np.ndarray
 def sample_super_formula_2D(n_points, m, n1, n2, n3):

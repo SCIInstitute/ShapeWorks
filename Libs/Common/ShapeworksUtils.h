@@ -24,13 +24,13 @@ public:
   static double elapsed(time_point start, time_point end, bool print_elapsed = true);
 
   /// returns random seed
-  static unsigned rngSeed() { return _rngSeed; }
+  static unsigned rngSeed() { return rngSeed_; }
 
   /// sets random seed
   static void setRngSeed(const unsigned seed);
 
   /// generates random number
-  static unsigned generateNumber() { return mt(); }
+  static unsigned generateNumber() { return mt_(); }
 
   /// returns true if pathname is a directory
   // TODO: in C++17 this is a standard function
@@ -45,8 +45,8 @@ public:
   static Vector3 getOffset(const vtkSmartPointer<vtkMatrix4x4>& mat);
 
 private:
-  static unsigned _rngSeed;
-  static std::mt19937 mt;
+  static unsigned rngSeed_;
+  static std::mt19937 mt_;
 };
 
 } // shapeworks

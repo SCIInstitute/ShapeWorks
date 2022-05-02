@@ -6,6 +6,7 @@
 #include <Libs/Project/ProjectUtils.h>
 #include <Libs/Utils/StringUtils.h>
 #include <itkRegionOfInterestImageFilter.h>
+#include <tbb/mutex.h>
 #include <tbb/parallel_for.h>
 #include <tbb/task_scheduler_init.h>
 #include <vtkCenterOfMass.h>
@@ -16,6 +17,9 @@
 #include <vector>
 
 using namespace shapeworks;
+
+// for concurrent access
+static tbb::mutex mutex;
 
 typedef float PixelType;
 typedef itk::Image<PixelType, 3> ImageType;
@@ -46,6 +50,7 @@ bool Groom::run() {
 
         bool is_image = project_->get_original_domain_types()[domain] == DomainType::Image;
         bool is_mesh = project_->get_original_domain_types()[domain] == DomainType::Mesh;
+        bool is_contour = project_->get_original_domain_types()[domain] == DomainType::Contour;
 
         if (is_image) {
           if (!this->image_pipeline(subjects[i], domain)) {
@@ -58,6 +63,12 @@ bool Groom::run() {
             success = false;
           }
         }
+
+        if (is_contour) {
+          if (!this->contour_pipeline(subjects[i], domain)) {
+            success = false;
+          }
+        }
       }
     }
   });
@@ -65,6 +76,7 @@ bool Groom::run() {
   if (!this->run_alignment()) {
     success = false;
   }
+  increment_progress(10);  // alignment complete
 
   // store back to project
   this->project_->store_subjects();
@@ -319,6 +331,10 @@ bool Groom::run_mesh_pipeline(Mesh& mesh, GroomParameters params) {
   }
 
   if (params.get_remesh()) {
+    auto poly_data = mesh.getVTKMesh();
+    if (poly_data->GetNumberOfCells() == 0 || poly_data->GetCell(0)->GetNumberOfPoints() == 2) {
+      throw std::runtime_error("malformed mesh, mesh should be triangular");
+    }
     int total_vertices = mesh.getVTKMesh()->GetNumberOfPoints();
     int num_vertices = params.get_remesh_num_vertices();
     if (params.get_remesh_percent_mode()) {
@@ -336,6 +352,62 @@ bool Groom::run_mesh_pipeline(Mesh& mesh, GroomParameters params) {
     }
     this->increment_progress();
   }
+  return true;
+}
+
+//---------------------------------------------------------------------------
+bool Groom::contour_pipeline(std::shared_ptr<Subject> subject, size_t domain) {
+  // grab parameters
+  auto params = GroomParameters(this->project_, this->project_->get_domain_names()[domain]);
+
+  auto path = subject->get_original_filenames()[domain];
+
+  // groomed mesh name
+  std::string groom_name = this->get_output_filename(path, DomainType::Mesh);
+
+  Mesh mesh = MeshUtils::threadSafeReadMesh(path);
+
+  // define a groom transform
+  auto transform = vtkSmartPointer<vtkTransform>::New();
+
+  if (!this->skip_grooming_) {
+    // reflection
+    if (params.get_reflect()) {
+      auto table = subject->get_table_values();
+      if (table.find(params.get_reflect_column()) != table.end()) {
+        if (table[params.get_reflect_column()] == params.get_reflect_choice()) {
+          this->add_reflect_transform(transform, params.get_reflect_axis());
+        }
+      }
+    }
+
+    // centering
+    if (params.get_use_center()) {
+      this->add_center_transform(transform, mesh);
+    }
+  }
+
+  // save the groomed contour
+  MeshUtils::threadSafeWriteMesh(groom_name, mesh);
+
+  {
+    // lock for project data structure
+    tbb::mutex::scoped_lock lock(mutex_);
+
+    // store transform
+    subject->set_groomed_transform(domain, ProjectUtils::convert_transform(transform));
+
+    // update groomed filenames
+    std::vector<std::string> groomed_filenames = subject->get_groomed_filenames();
+    if (domain >= groomed_filenames.size()) {
+      groomed_filenames.resize(domain + 1);
+    }
+    groomed_filenames[domain] = groom_name;
+
+    // store filename back to subject
+    subject->set_groomed_filenames(groomed_filenames);
+  }
+
   return true;
 }
 
@@ -383,11 +455,13 @@ int Groom::get_total_ops() {
     }
   }
 
-  return num_subjects * num_tools;
+  // +10 for alignment
+  return num_subjects * num_tools + 10;
 }
 
 //---------------------------------------------------------------------------
 void Groom::increment_progress(int amount) {
+  tbb::mutex::scoped_lock lock(mutex);
   this->progress_counter_ += amount;
   this->progress_ = static_cast<float>(this->progress_counter_) / static_cast<float>(this->total_ops_) * 100.0;
   this->update_progress();
@@ -482,15 +556,15 @@ bool Groom::run_alignment() {
       assign_transforms(transforms, domain, true /* global */);
 
     } else {  // just center
-
+      std::vector<std::vector<double>> transforms;
       for (size_t i = 0; i < subjects.size(); i++) {
         auto subject = subjects[i];
         auto transform = vtkSmartPointer<vtkTransform>::New();
         Groom::add_center_transform(transform, meshes[i]);
-        // store transform
-        size_t domain = num_domains;  // end
-        subject->set_groomed_transform(domain, ProjectUtils::convert_transform(transform));
+        transforms.push_back(ProjectUtils::convert_transform(transform));
       }
+      size_t domain = num_domains;  // end
+      assign_transforms(transforms, domain, true /* global */);
     }
   }
 
@@ -565,7 +639,7 @@ std::string Groom::get_output_filename(std::string input, DomainType domain_type
     }
   }
 
-  auto output = path + "/" + StringUtils::getFileNameWithoutExtension(input) + suffix;
+  auto output = path + "/" + StringUtils::getBaseFilenameWithoutExtension(input) + suffix;
 
   return output;
 }
@@ -579,6 +653,9 @@ Mesh Groom::get_mesh(int subject, int domain) {
     Image image(path);
     return image.toMesh(0.5);
   } else if (project_->get_original_domain_types()[domain] == DomainType::Mesh) {
+    Mesh mesh = MeshUtils::threadSafeReadMesh(path);
+    return mesh;
+  } else if (project_->get_original_domain_types()[domain] == DomainType::Contour) {
     Mesh mesh = MeshUtils::threadSafeReadMesh(path);
     return mesh;
   }

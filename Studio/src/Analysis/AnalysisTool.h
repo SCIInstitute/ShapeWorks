@@ -14,7 +14,6 @@
 #include <Analysis/ShapeEvaluationJob.h>
 #include <Data/Preferences.h>
 #include <Data/Shape.h>
-#include <Visualization/BarGraph.h>
 #include <Visualization/Visualizer.h>
 
 class Ui_AnalysisTool;
@@ -26,6 +25,7 @@ class Session;
 class Lightbox;
 class ShapeWorksStudioApp;
 class GroupPvalueJob;
+class StatsGroupLDAJob;
 
 class AnalysisTool : public QWidget {
   Q_OBJECT;
@@ -60,21 +60,21 @@ class AnalysisTool : public QWidget {
   std::string get_analysis_mode();
   void set_analysis_mode(std::string mode);
 
-  void setLabels(QString which, QString value);
+  void set_labels(QString which, QString value);
 
-  int getPCAMode();
+  int get_pca_mode();
 
-  double get_group_value();
+  double get_group_ratio();
 
   double get_pca_value();
 
-  bool pcaAnimate();
+  bool pca_animate();
 
   int get_sample_number();
 
   bool compute_stats();
 
-  void updateSlider();
+  void update_slider();
 
   void reset_stats();
   void enable_actions(bool newly_enabled = false);
@@ -125,7 +125,6 @@ class AnalysisTool : public QWidget {
   void handle_group_animate_state_changed();
   void handle_group_timer();
 
-  void on_linear_radio_toggled(bool b);
 
   void handle_reconstruction_complete();
 
@@ -156,9 +155,18 @@ class AnalysisTool : public QWidget {
 
   void handle_eval_thread_complete(ShapeEvaluationJob::JobType job_type, Eigen::VectorXd data);
   void handle_eval_thread_progress(ShapeEvaluationJob::JobType job_type, float progress);
+  void handle_eval_particle_normals_progress(float progress);
+  void handle_eval_particle_normals_complete(std::vector<bool> good_bad);
 
   void handle_group_pvalues_complete();
   void handle_alignment_changed(int new_alignment);
+
+  void run_good_bad_particles();
+
+  void handle_lda_progress(double progress);
+  void handle_lda_complete();
+
+  void show_difference_to_mean_clicked();
 
  signals:
 
@@ -180,6 +188,7 @@ class AnalysisTool : public QWidget {
   void pca_labels_changed(QString value, QString eigen, QString lambda);
   void compute_mode_shape();
   void update_analysis_mode();
+  void update_interface();
 
   bool group_pvalues_valid();
 
@@ -189,6 +198,10 @@ class AnalysisTool : public QWidget {
   void update_group_boxes();
   void update_group_values();
   void update_domain_alignment_box();
+
+  void update_lda_graph();
+
+  void update_difference_particles();
 
   ShapeHandle create_shape_from_points(StudioParticles points);
 
@@ -229,6 +242,9 @@ class AnalysisTool : public QWidget {
   std::vector<vtkSmartPointer<vtkTransform>> reconstruction_transforms_;
 
   QSharedPointer<GroupPvalueJob> group_pvalue_job_;
+  QSharedPointer<StatsGroupLDAJob> group_lda_job_;
+  bool group_lda_job_running_ = false;
+  bool block_group_change_ = false;
 
   AlignmentType current_alignment_{AlignmentType::Local};
 };

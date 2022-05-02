@@ -115,6 +115,16 @@ bool OptimizeParameters::get_use_procrustes_scaling() { return this->params_.get
 void OptimizeParameters::set_use_procrustes_scaling(bool value) { this->params_.set("procrustes_scaling", value); }
 
 //---------------------------------------------------------------------------
+bool OptimizeParameters::get_use_procrustes_rotation_translation() {
+  return this->params_.get("procrustes_rotation_translation", true);
+}
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_use_procrustes_rotation_translation(bool value) {
+  this->params_.set("procrustes_rotation_translation", value);
+}
+
+//---------------------------------------------------------------------------
 int OptimizeParameters::get_procrustes_interval() { return this->params_.get("procrustes_interval", 10); }
 
 //---------------------------------------------------------------------------
@@ -161,7 +171,7 @@ std::string OptimizeParameters::get_output_prefix() {
     base = ".";
   }
 
-  auto project_name = StringUtils::getFileNameWithoutExtension(this->project_->get_filename());
+  auto project_name = StringUtils::getBaseFilenameWithoutExtension(this->project_->get_filename());
 
   if (project_name == "") {
     project_name = "new_project";
@@ -206,6 +216,12 @@ int OptimizeParameters::get_verbosity() { return this->params_.get("verbosity", 
 void OptimizeParameters::set_verbosity(int value) { this->params_.set("verbosity", value); }
 
 //---------------------------------------------------------------------------
+bool OptimizeParameters::get_mesh_ffc_mode() { return this->params_.get("mesh_ffc_mode", 0); }
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_mesh_ffc_mode(bool value) { this->params_.set("mesh_ffc_mode", value); }
+
+//---------------------------------------------------------------------------
 bool OptimizeParameters::get_use_landmarks() { return params_.get("use_landmarks", false); }
 
 //---------------------------------------------------------------------------
@@ -246,6 +262,11 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
   optimize->SetGeodesicsCacheSizeMultiplier(this->get_geodesic_cache_multiplier());
   optimize->SetNarrowBand(this->get_narrow_band());
   optimize->SetOutputDir(this->get_output_prefix());
+  optimize->SetMeshFFCMode(this->get_mesh_ffc_mode());
+
+  // TODO Remove this once Studio has controls for shared boundary
+  optimize->SetSharedBoundaryEnabled(true);
+  optimize->SetSharedBoundaryWeight(0.5);
 
   std::vector<bool> use_normals;
   std::vector<bool> use_xyz;
@@ -285,7 +306,8 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
     procrustes_interval = this->get_procrustes_interval();
   }
   optimize->SetProcrustesInterval(procrustes_interval);
-  optimize->SetProcrustesScaling(this->get_use_procrustes_scaling());
+  optimize->SetProcrustesScaling(get_use_procrustes_scaling());
+  optimize->SetProcrustesRotationTranslation(get_use_procrustes_rotation_translation());
 
   int multiscale_particles = 0;
   if (this->get_use_multiscale()) {
@@ -358,7 +380,7 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
           optimize->GetSampler()->SetCuttingPlane(domain_count, a, b, c);
         }
 
-        auto &ffc = constraint.getFreeformConstraint();
+        auto& ffc = constraint.getFreeformConstraint();
         if (ffc.isSet()) {
           optimize->GetSampler()->AddFreeFormConstraint(domain_count, ffc.boundaries(), ffc.getQueryPoint());
         }
@@ -392,22 +414,20 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
         Mesh mesh = MeshUtils::threadSafeReadMesh(filename.c_str());
         if (domain_count < constraints.size()) {
           Constraints constraint = constraints[domain_count];
-          for (auto& plane : constraint.getPlaneConstraints()) {
-            mesh.clip(plane.getVTKPlane());
-          }
-
-          if (constraint.getFreeformConstraint().isSet()) {
-            auto& ffc = constraint.getFreeformConstraint();
-            mesh.prepareFFCFields(ffc.boundaries(), ffc.getQueryPoint(), true);
-            mesh = Mesh(mesh.clipByField("inout", 1.0));
-          }
+          constraint.clipMesh(mesh);
         }
 
         auto poly_data = mesh.getVTKMesh();
 
         if (poly_data) {
-          optimize->AddMesh(poly_data);
-        } else {
+          // TODO This is a HACK for detecting contours
+          if(poly_data->GetCell(0)->GetNumberOfPoints() == 2) {
+            optimize->AddContour(poly_data);
+          } else {
+            optimize->AddMesh(poly_data);
+          }
+        }
+        else {
           throw std::invalid_argument("Error loading mesh: " + filename);
         }
       } else if (domain_type == DomainType::Contour) {
@@ -448,7 +468,7 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
 
       optimize->GetSampler()->GetParticleSystem()->SetPrefixTransform(domain_count++, prefix_transform);
 
-      auto name = StringUtils::getFileNameWithoutExtension(filename);
+      auto name = StringUtils::getBaseFilenameWithoutExtension(filename);
 
       auto prefix = this->get_output_prefix();
       local_particle_filenames.push_back(prefix + name + "_local.particles");

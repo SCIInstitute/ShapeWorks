@@ -31,6 +31,9 @@ class StudioLog : public QObject {
   //! Log an error, use STUDIO_SHOW_ERROR macro
   void show_error(QString message, const int line, const char* file);
 
+  //! Log a message, use STUDIO_SHOW_MESSAGE macro
+  void show_message(QString message, const int line, const char* file);
+
   //! Log a debug message, use STUDIO_LOG_DEBUG macro
   void log_debug(QString message, const int line, const char* file);
 
@@ -47,7 +50,8 @@ class StudioLog : public QObject {
   QString get_log_filename();
 
  Q_SIGNALS:
-  void error(QString message);
+  void error_signal(QString message);
+  void message_signal(QString message);
 
  private:
   QString create_header(const int line, const char* filename);
@@ -76,6 +80,9 @@ class StudioLog : public QObject {
 
 //! Log show error macro
 #define STUDIO_SHOW_ERROR(message) shapeworks::StudioLog::Instance().show_error(message, __LINE__, __FILE__)
+
+//! Log show message macro
+#define STUDIO_SHOW_MESSAGE(message) shapeworks::StudioLog::Instance().show_message(message, __LINE__, __FILE__)
 
 //! Close session macro
 #define STUDIO_CLOSE_LOG() shapeworks::StudioLog::Instance().close_log();

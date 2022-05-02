@@ -194,7 +194,7 @@ void PlaneWidget::update_planes() {
 
   auto shape = viewer_->get_shape();
 
-  if (!session->get_show_planes() || !shape) {
+  if (!session->should_show_planes() || !shape) {
     return;
   }
 
@@ -515,7 +515,7 @@ void PlaneWidget::assign_handle_to_domain(vtkSmartPointer<StudioHandleWidget> ha
   auto *rep = vtkPolygonalHandleRepresentation3D::SafeDownCast(handle->GetRepresentation());
 
   auto point_placer = vtkSmartPointer<vtkPolygonalSurfacePointPlacer>::New();
-  auto actors = viewer_->get_clipped_surface_actors();
+  auto actors = viewer_->get_unclipped_surface_actors();
   if (domain_id < actors.size()) {
     point_placer->AddProp(actors[domain_id]);
   }
