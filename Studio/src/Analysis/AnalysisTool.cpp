@@ -37,6 +37,14 @@ const std::string AnalysisTool::MODE_REGRESSION_C("regression");
 AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
   ui_ = new Ui_AnalysisTool;
   ui_->setupUi(this);
+
+#ifdef Q_OS_MACOS
+  ui_->tabWidget->tabBar()->setMinimumWidth(200);
+  ui_->tabWidget->setStyleSheet(
+      "QTabBar::tab:selected { border-radius: 4px; background-color: #3784f7; color: white; }");
+  ui_->tabWidget->tabBar()->setElideMode(Qt::TextElideMode::ElideNone);
+#endif
+
   stats_ready_ = false;
 
   connect(ui_->view_header, &QPushButton::clicked, ui_->view_open_button, &QPushButton::toggle);
@@ -1244,8 +1252,7 @@ void AnalysisTool::handle_lda_complete() {
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::show_difference_to_mean_clicked()
-{
+void AnalysisTool::show_difference_to_mean_clicked() {
   update_difference_particles();
   emit update_view();
 }
