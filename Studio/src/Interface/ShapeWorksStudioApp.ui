@@ -626,8 +626,9 @@ QWidget#image_widget {
      </property>
      <addaction name="action_export_current_mesh"/>
      <addaction name="action_export_current_particles"/>
-     <addaction name="action_export_mesh_scalars"/>
      <addaction name="action_export_particle_scalars"/>
+     <addaction name="action_export_mesh_scalars"/>
+     <addaction name="action_export_all_subjects_particle_scalars"/>
      <addaction name="actionExport_Eigenvectors"/>
      <addaction name="actionExport_Eigenvalues"/>
      <addaction name="action_export_pca_scores"/>
@@ -1010,7 +1011,7 @@ QWidget#image_widget {
   </action>
   <action name="action_export_mesh_scalars">
    <property name="text">
-    <string>Export Mesh Scalars...</string>
+    <string>Export Current Mesh Scalars...</string>
    </property>
   </action>
   <action name="action_export_pca_scores">
@@ -1082,7 +1083,12 @@ QWidget#image_widget {
   </action>
   <action name="action_export_particle_scalars">
    <property name="text">
-    <string>Export Particle Scalars...</string>
+    <string>Export Current Particle Scalars...</string>
+   </property>
+  </action>
+  <action name="action_export_all_subjects_particle_scalars">
+   <property name="text">
+    <string>Export All Subject Particle Scalars...</string>
    </property>
   </action>
  </widget>

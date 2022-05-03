@@ -201,9 +201,9 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
 
   // setup modes
   update_view_combo();
-  //set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, true);
-  //set_view_combo_item_enabled(VIEW_MODE::GROOMED, false);
-  //set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, should_reconstruct_view_show());
+  // set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, true);
+  // set_view_combo_item_enabled(VIEW_MODE::GROOMED, false);
+  // set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, should_reconstruct_view_show());
 
   connect(ui_->features, qOverload<const QString&>(&QComboBox::currentIndexChanged), this,
           &ShapeWorksStudioApp::update_feature_map_selection);
@@ -232,6 +232,8 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
 
   connect(ui_->action_export_particle_scalars, &QAction::triggered, this,
           &ShapeWorksStudioApp::action_export_particle_scalars_triggered);
+  connect(ui_->action_export_all_subjects_particle_scalars, &QAction::triggered, this,
+          &ShapeWorksStudioApp::action_export_all_subjects_particle_scalars_triggered);
 
   update_feature_map_scale();
   handle_message("ShapeWorks Studio Initialized");
@@ -1572,6 +1574,59 @@ void ShapeWorksStudioApp::action_export_particle_scalars_triggered() {
   }
   write_scalars(poly_data, filename);
   handle_message("Wrote: " + filename);
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::action_export_all_subjects_particle_scalars_triggered() {
+  bool single = StudioUtils::ask_multiple_domains_as_single(this, session_->get_project());
+
+  QString filename = get_save_filename(tr("Export All Shapes Particle Scalars"), tr("CSV files (*.csv)"), ".csv");
+  if (filename.isEmpty()) {
+    return;
+  }
+
+  QProgressDialog progress("Exporting Scalars...", "Abort", 0, session_->get_num_shapes(), this);
+  progress.setWindowModality(Qt::WindowModal);
+  progress.setMinimumDuration(2000);
+  // progress.show();
+
+  QFileInfo fi(filename);
+  QString base = fi.path() + QDir::separator() + fi.completeBaseName();
+  for (const auto& shape : session_->get_shapes()) {
+    QString shape_filename = base + "_" + shape->get_display_name() + "." + fi.completeSuffix();
+
+    auto display_mode = session_->get_display_mode();
+    auto mesh_group = shape->get_meshes(display_mode, true);
+
+    auto feature_maps = session_->get_project()->get_feature_names();
+    for (const std::string& feature : feature_maps) {
+      shape->load_feature(display_mode, feature);
+    }
+
+    if (single) {
+      auto poly_data = mesh_group.get_combined_poly_data();
+      write_scalars(poly_data, shape_filename);
+      handle_message("Wrote: " + shape_filename);
+    } else {
+      auto domain_names = session_->get_project()->get_domain_names();
+      QFileInfo fi(shape_filename);
+      QString domain_base = fi.path() + QDir::separator() + fi.completeBaseName();
+      for (int domain = 0; domain < domain_names.size(); domain++) {
+        QString name = domain_base + "_" + QString::fromStdString(domain_names[domain]) + "." + fi.completeSuffix();
+
+        auto poly_data = mesh_group.meshes()[domain]->get_poly_data();
+        if (!write_scalars(poly_data, name)) {
+          return;
+        }
+        handle_message("Wrote: " + name);
+      }
+    }
+
+    if (progress.wasCanceled()) {
+      break;
+    }
+    progress.setValue(progress.value() + 1);
+  }
 }
 
 //---------------------------------------------------------------------------

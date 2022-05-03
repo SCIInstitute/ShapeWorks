@@ -26,6 +26,9 @@ class MeshGroup {
   //! Return a reference to the list of meshes
   MeshList& meshes();
 
+  //! Return polydata of all meshes, combined
+  vtkSmartPointer<vtkPolyData> get_combined_poly_data();
+
  private:
   MeshList meshes_;
 };

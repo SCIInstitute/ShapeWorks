@@ -44,13 +44,13 @@ QString Shape::get_display_name() {
 Shape::~Shape() = default;
 
 //---------------------------------------------------------------------------
-MeshGroup Shape::get_meshes(const string& display_mode) {
+MeshGroup Shape::get_meshes(const string& display_mode, bool wait) {
   if (display_mode == Session::MODE_ORIGINAL_C) {
-    return this->get_original_meshes();
+    return this->get_original_meshes(wait);
   } else if (display_mode == Session::MODE_GROOMED_C) {
-    return this->get_groomed_meshes();
+    return this->get_groomed_meshes(wait);
   }
-  return this->get_reconstructed_meshes();
+  return this->get_reconstructed_meshes(wait);
 }
 
 //---------------------------------------------------------------------------
@@ -483,6 +483,10 @@ void Shape::load_feature(std::string display_mode, std::string feature) {
   }
 
   int num_domains = group.meshes().size();
+
+  if (!subject_) {
+    return;
+  }
 
   for (int d = 0; d < num_domains; d++) {
     vtkSmartPointer<vtkPolyData> poly_data = group.meshes()[d]->get_poly_data();
