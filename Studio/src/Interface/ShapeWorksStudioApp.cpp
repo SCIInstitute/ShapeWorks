@@ -200,13 +200,10 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
   update_display();
 
   // setup modes
-  ui_->view_mode_combobox->addItem(Session::MODE_ORIGINAL_C.c_str());
-  ui_->view_mode_combobox->addItem(Session::MODE_GROOMED_C.c_str());
-  ui_->view_mode_combobox->addItem(Session::MODE_RECONSTRUCTION_C.c_str());
-  ui_->view_mode_combobox->setCurrentIndex(VIEW_MODE::ORIGINAL);
-  set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, true);
-  set_view_combo_item_enabled(VIEW_MODE::GROOMED, false);
-  set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, false);
+  update_view_combo();
+  //set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, true);
+  //set_view_combo_item_enabled(VIEW_MODE::GROOMED, false);
+  //set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, should_reconstruct_view_show());
 
   connect(ui_->features, qOverload<const QString&>(&QComboBox::currentIndexChanged), this,
           &ShapeWorksStudioApp::update_feature_map_selection);
@@ -353,10 +350,7 @@ void ShapeWorksStudioApp::on_action_import_triggered() {
   preferences_.set_last_directory(QFileInfo(filenames[0]).absolutePath());
 
   // need to re-run everything if something new is added.
-  ui_->view_mode_combobox->setCurrentIndex(VIEW_MODE::ORIGINAL);
-  set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, true);
-  set_view_combo_item_enabled(VIEW_MODE::GROOMED, false);
-  set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, false);
+  set_view_mode(Session::MODE_ORIGINAL_C);
 
   visualizer_->set_display_mode(ui_->view_mode_combobox->currentText().toStdString());
   import_files(filenames);
@@ -906,6 +900,7 @@ void ShapeWorksStudioApp::update_tool_mode() {
 void ShapeWorksStudioApp::update_view_mode() {
   auto view_mode = get_view_mode();
   ui_->view_mode_combobox->setCurrentText(QString::fromStdString(view_mode));
+  update_view_combo();
 
   auto feature_map = get_feature_map();
   ui_->features->setCurrentText(QString::fromStdString(feature_map));
@@ -1016,7 +1011,7 @@ void ShapeWorksStudioApp::handle_project_changed() {
 
   set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, session_->original_present());
   set_view_combo_item_enabled(VIEW_MODE::GROOMED, session_->groomed_present());
-  set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, session_->particles_present());
+  set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, should_reconstruct_view_show());
 
   if (session_->particles_present()) {
     session_->handle_clear_cache();
@@ -1066,7 +1061,7 @@ void ShapeWorksStudioApp::handle_optimize_complete() {
   analysis_tool_->reset_stats();
   analysis_tool_->initialize_mesh_warper();
   session_->handle_clear_cache();
-  set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, true);
+  set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, should_reconstruct_view_show());
   ui_->view_mode_combobox->setCurrentIndex(VIEW_MODE::GROOMED);
   visualizer_->set_display_mode(ui_->view_mode_combobox->currentText().toStdString());
   visualizer_->set_mean(analysis_tool_->get_mean_shape_points().get_combined_global_particles());
@@ -1081,7 +1076,7 @@ void ShapeWorksStudioApp::handle_optimize_complete() {
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_reconstruction_complete() {
   session_->handle_clear_cache();
-  set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, true);
+  set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, should_reconstruct_view_show());
   visualizer_->set_mean(analysis_tool_->get_mean_shape_points().get_combined_global_particles());
   visualizer_->update_lut();
   update_display(true);
@@ -1221,11 +1216,12 @@ void ShapeWorksStudioApp::update_display(bool force) {
 
   update_view_mode();
 
+  set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, should_reconstruct_view_show());
+
   if (tool_state == Session::DEEPSSM_C) {
     visualizer_->display_shapes(deepssm_tool_->get_shapes());
     set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, false);
     set_view_combo_item_enabled(VIEW_MODE::GROOMED, false);
-    set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, true);
   } else {
     current_display_mode_ = mode;
 
@@ -1234,7 +1230,6 @@ void ShapeWorksStudioApp::update_display(bool force) {
     if (mode == AnalysisTool::MODE_ALL_SAMPLES_C) {
       set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, session_->original_present());
       set_view_combo_item_enabled(VIEW_MODE::GROOMED, session_->groomed_present());
-      set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, session_->particles_present());
 
       session_->calculate_reconstructed_samples();
       visualizer_->display_samples();
@@ -1242,28 +1237,22 @@ void ShapeWorksStudioApp::update_display(bool force) {
       if (mode == AnalysisTool::MODE_MEAN_C) {
         set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, false);
         set_view_combo_item_enabled(VIEW_MODE::GROOMED, false);
-        set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, true);
-
         set_view_mode(Session::MODE_RECONSTRUCTION_C);
-
         visualizer_->display_shape(analysis_tool_->get_mean_shape());
       } else if (mode == AnalysisTool::MODE_PCA_C) {
         set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, false);
         set_view_combo_item_enabled(VIEW_MODE::GROOMED, false);
-        set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, true);
         set_view_mode(Session::MODE_RECONSTRUCTION_C);
         compute_mode_shape();
         visualizer_->reset_camera();
       } else if (mode == AnalysisTool::MODE_SINGLE_SAMPLE_C) {
         set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, session_->original_present());
         set_view_combo_item_enabled(VIEW_MODE::GROOMED, session_->groomed_present());
-        set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, session_->particles_present() && reconstruct_ready);
         visualizer_->display_sample(analysis_tool_->get_sample_number());
         visualizer_->reset_camera();
       } else {  //?
         set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, session_->original_present());
         set_view_combo_item_enabled(VIEW_MODE::GROOMED, session_->groomed_present());
-        set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, session_->particles_present() && reconstruct_ready);
       }  // TODO regression?
     }
   }
@@ -2008,6 +1997,49 @@ void ShapeWorksStudioApp::reset_num_viewers() {
     }
   }
   on_zoom_slider_valueChanged();
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::update_view_combo() {
+  if (ui_->view_mode_combobox->count() == 0) {
+    // initialize
+    ui_->view_mode_combobox->addItem(Session::MODE_ORIGINAL_C.c_str());
+    ui_->view_mode_combobox->addItem(Session::MODE_GROOMED_C.c_str());
+    ui_->view_mode_combobox->addItem(Session::MODE_RECONSTRUCTION_C.c_str());
+    ui_->view_mode_combobox->setCurrentIndex(VIEW_MODE::ORIGINAL);
+  }
+
+  set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, session_->original_present());
+  set_view_combo_item_enabled(VIEW_MODE::GROOMED, session_->groomed_present());
+  set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, should_reconstruct_view_show());
+
+  int current = ui_->view_mode_combobox->currentIndex();
+  while (current > 0 && !is_view_combo_item_enabled(current)) {
+    current--;
+    ui_->view_mode_combobox->setCurrentIndex(current);
+  }
+}
+
+//---------------------------------------------------------------------------
+bool ShapeWorksStudioApp::should_reconstruct_view_show() {
+  bool reconstruct_ready = true;
+
+  for (int i = 0; i < session_->get_domains_per_shape(); i++) {
+    if (!session_->get_mesh_manager()->get_surface_reconstructor(i)->hasDenseMean()) {
+      reconstruct_ready = false;
+    }
+  }
+
+  if (!session_->groomed_present() && session_->particles_present()) {
+    // legacy will be used
+    reconstruct_ready = true;
+  }
+
+  if (session_->particles_present()) {
+    reconstruct_ready = true;
+  }
+
+  return reconstruct_ready && session_->particles_present() && session_->is_analysis_mode();
 }
 
 //---------------------------------------------------------------------------

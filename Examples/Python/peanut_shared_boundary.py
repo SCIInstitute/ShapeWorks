@@ -78,7 +78,7 @@ def Run_Pipeline(args):
         mesh = sw.Mesh(mesh_file)
         # do initial grooming steps
         print("Grooming: " + mesh_name)
-        mesh.remeshPercent(percentage=60, adaptivity=1.0)
+        mesh.remeshPercent(percentage=0.99, adaptivity=1.0)
         # append to the mesh list
         mesh_list.append(mesh)
 
@@ -96,7 +96,7 @@ def Run_Pipeline(args):
     extracted_meshes = []
     extracted_shared_names = [mesh_names[i].replace("l","s") for i in domain1_indx]
     # distance threshold to consider two surfaces as "shared"
-    tol = 1e-3
+    tol = 1e-1
     num_init_domains = 2 # left and right
     for i in range(len(domain1_indx)):
         mesh_l = mesh_list[domain1_indx[i]]
@@ -104,8 +104,8 @@ def Run_Pipeline(args):
         print("Extracting shared surface between files: ", mesh_names[i*num_init_domains],"\t",mesh_names[i*num_init_domains+1])
         extracted_l,extracted_r,extracted_s = sw.MeshUtils.sharedBoundaryExtractor(mesh_l,mesh_r,tol)
         #smooth the meshes 
-        extracted_l.smooth()
-        extracted_r.smooth()
+        extracted_l.remeshPercent(percentage=0.99, adaptivity=1.0).smooth()
+        extracted_r.remeshPercent(percentage=0.99, adaptivity=1.0).smooth()
         extracted_s.smooth()
         # append the extracted meshes to list
         extracted_meshes.append(extracted_l)
