@@ -20,8 +20,8 @@ def image_registration_transform(fixed_image_file, moving_image_file, out_image_
         parameter_map['Transform'] = ['TranslationTransform']
     parameter_object.AddParameterMap(parameter_map)
     # Call registration function
-    fixed_image = itk.imread(fixed_image_file, itk.F)
-    moving_image = itk.imread(moving_image_file, itk.F)
+    fixed_image = ref_image.toArray()
+    moving_image = image.toArray()
     result_image, result_transform_parameters = itk.elastix_registration_method(
         fixed_image, moving_image, parameter_object=parameter_object)
     # Get transform matrix
