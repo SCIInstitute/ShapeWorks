@@ -76,12 +76,15 @@ class ShapeWorksStudioApp : public QMainWindow {
   void on_actionExport_Eigenvalues_triggered();
   void on_actionExport_Eigenvectors_triggered();
   void on_actionExport_PCA_Mode_Points_triggered();
-  void on_actionExport_Variance_Graph_triggered();
   void on_action_preferences_triggered();
   void on_action_export_current_mesh_triggered();
   void on_action_export_current_particles_triggered();
   void on_action_export_mesh_scalars_triggered();
   void on_action_export_pca_scores_triggered();
+  void action_export_pca_montage_triggered();
+  void action_export_screenshot_triggered();
+  void action_export_particle_scalars_triggered();
+  void action_export_all_subjects_particle_scalars_triggered();
 
   void on_center_checkbox_stateChanged();
   void on_zoom_slider_valueChanged();
@@ -140,7 +143,13 @@ class ShapeWorksStudioApp : public QMainWindow {
   void update_view_mode();
   void reset_num_viewers();
 
+  void update_view_combo();
+  bool should_reconstruct_view_show();
+
   static bool write_particle_file(std::string filename, Eigen::VectorXd particles);
+
+  QString get_save_filename(QString title, QString filetypes, QString default_ext);
+  static QString get_mesh_file_filter();
 
   enum VIEW_MODE { ORIGINAL = 0, GROOMED = 1, RECONSTRUCTED = 2 };
 
@@ -182,7 +191,7 @@ class ShapeWorksStudioApp : public QMainWindow {
   void update_recent_files();
   void update_alignment_options();
 
-  void save_project(std::string filename);
+  void save_project(QString filename);
 
   bool write_mesh(vtkSmartPointer<vtkPolyData> poly_data, QString filename);
   bool write_scalars(vtkSmartPointer<vtkPolyData> poly_data, QString filename);
@@ -234,6 +243,9 @@ class ShapeWorksStudioApp : public QMainWindow {
 
   QElapsedTimer time_since_last_update_;
   qint64 last_render_ = -1;
+
+  QStringList current_features_;
+  QStringList current_image_list_;
 
   QSharedPointer<PythonWorker> py_worker_;
 };

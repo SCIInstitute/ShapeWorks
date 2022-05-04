@@ -4,7 +4,7 @@ from shapeworks import *
 
 success = True
 
-def surfaceTest1():
+def surfaceTestRBFS():
   denseFile = os.environ["DATA"] + "/_dense.vtk"
   sparseFile = os.environ["DATA"] + "/_sparse.particles"
   goodPointsFile = os.environ["DATA"] + "/_goodPoints.txt"
@@ -47,18 +47,27 @@ def surfaceTest1():
   denseParticlesFiles.append(os.environ["DATA"] + "/ellipsoid_02.local_dense.particles")
 
   baselineSparseParticles = ParticleSystem(baselineSparseParticleFiles)
-  sparseParticles = ParticleSystem (sparseParticlesFiles)
+  sparseParticles = ParticleSystem(sparseParticlesFiles)
 
   baselineDenseParticles = ParticleSystem(baselineDenseParticleFiles)
-  denseParticles = ParticleSystem (denseParticlesFiles)
+  denseParticles = ParticleSystem(denseParticlesFiles)
 
-  return (baselineSparseParticles.EvaluationCompare(sparseParticles) and
-          baselineDenseParticles.EvaluationCompare(denseParticles) and     
-          baselineDenseMesh1 == denseMesh1 and baselineDenseMesh2 == denseMesh2 and baselineDenseMesh3 == denseMesh3)
+  success = True
+  print("comparing sparse particles...")
+  success = success and baselineSparseParticles.EvaluationCompare(sparseParticles)
+  print("comparing dense particles...")
+  success = success and baselineDenseParticles.EvaluationCompare(denseParticles)
+  print("comparing dense mesh 1...")
+  success = success and baselineDenseMesh1 == denseMesh1
+  print("comparing dense mesh 2...")
+  success = success and baselineDenseMesh2 == denseMesh2
+  print("comparing dense mesh 3...")
+  success = success and baselineDenseMesh3 == denseMesh3
+  return success
 
-success &= utils.test(surfaceTest1)
+success &= utils.test(surfaceTestRBFS)
 
-def surfaceTest2():
+def surfaceTestThinPlateSpline():
   denseFile = os.environ["DATA"] + "/_dense.vtk"
   sparseFile = os.environ["DATA"] + "/_sparse.particles"
   goodPointsFile = os.environ["DATA"] + "/_goodPoints.txt"
@@ -101,15 +110,24 @@ def surfaceTest2():
   denseParticlesFiles.append(os.environ["DATA"] + "/ellipsoid_02.local_dense.particles")
 
   baselineSparseParticles = ParticleSystem(baselineSparseParticleFiles)
-  sparseParticles = ParticleSystem (sparseParticlesFiles)
+  sparseParticles = ParticleSystem(sparseParticlesFiles)
 
   baselineDenseParticles = ParticleSystem(baselineDenseParticleFiles)
-  denseParticles = ParticleSystem (denseParticlesFiles)
+  denseParticles = ParticleSystem(denseParticlesFiles)
 
-  return (baselineSparseParticles.EvaluationCompare(sparseParticles) and
-          baselineDenseParticles.EvaluationCompare(denseParticles) and     
-          baselineDenseMesh1 == denseMesh1 and baselineDenseMesh2 == denseMesh2 and baselineDenseMesh3 == denseMesh3)
+  success = True
+  print("comparing sparse particles...")
+  success = success and baselineSparseParticles.EvaluationCompare(sparseParticles)
+  print("comparing dense particles...")
+  success = success and baselineDenseParticles.EvaluationCompare(denseParticles)
+  print("comparing dense mesh 1...")
+  success = success and baselineDenseMesh1 == denseMesh1
+  print("comparing dense mesh 2...")
+  success = success and baselineDenseMesh2 == denseMesh2
+  print("comparing dense mesh 3...")
+  success = success and baselineDenseMesh3 == denseMesh3
+  return success
 
-success &= utils.test(surfaceTest2)
+success &= utils.test(surfaceTestThinPlateSpline)
 
 sys.exit(not success)

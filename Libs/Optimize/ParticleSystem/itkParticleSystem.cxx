@@ -56,7 +56,7 @@ void ParticleSystem::SetNumberOfDomains(unsigned int num) {
   this->Modified();
 }
 
-void ParticleSystem::AddDomain(DomainType *input, int threadId) {
+void ParticleSystem::AddDomain(DomainType::Pointer input, int threadId) {
   this->Modified();
 
   for (unsigned int idx = 0; idx < m_Domains.size(); ++idx) {
@@ -267,18 +267,21 @@ void ParticleSystem::AdvancedAllParticleSplitting(double epsilon, unsigned int d
         double norm = random.magnitude();
         random /= norm;
 
-        // Check where the update will take us after applying it to the point and th constraints.
+        // Check where the update will take us after applying it to the point and the constraints.
         newposs_good.clear();
         bool good = true;  // flag to check if the new update violates in any domain
         for (size_t j = 0; j < lists.size(); j++) {
           // Add epsilon times random direction to existing point and apply domain
           // constraints to generate a new particle position.
-          PointType newpos = this->GetDomain(dom_to_process + j * domains_per_shape)
-                                 ->GetPositionAfterSplit(lists[j][i], random, epsilon);
+
+          int local_domain = dom_to_process + j * domains_per_shape;
+          auto transformed_vector = TransformVector(random, GetInversePrefixTransform(local_domain) * GetInverseTransform(local_domain));
+          PointType newpos = GetDomain(local_domain)->GetPositionAfterSplit(lists[j][i], transformed_vector, random, epsilon);
+
           // Go to surface
-          if (!this->m_DomainFlags[dom_to_process + j * domains_per_shape] &&
-              !this->GetDomain(dom_to_process + j * domains_per_shape)->GetConstraints()->isAnyViolated(newpos)) {
-            this->GetDomain(dom_to_process + j * domains_per_shape)->ApplyConstraints(newpos, -1);
+          if (!this->m_DomainFlags[local_domain] &&
+              !this->GetDomain(local_domain)->GetConstraints()->isAnyViolated(newpos)) {
+            this->GetDomain(local_domain)->ApplyConstraints(newpos, -1);
           }
           newposs_good.push_back(newpos);
           // Check for plane constraint violations
@@ -292,7 +295,8 @@ void ParticleSystem::AdvancedAllParticleSplitting(double epsilon, unsigned int d
 
         if (good) {
           for (size_t j = 0; j < lists.size(); j++) {
-            this->AddPosition(newposs_good[j], dom_to_process + j * domains_per_shape, 0);
+            int local_domain = dom_to_process + j * domains_per_shape;
+            this->AddPosition(newposs_good[j], local_domain, 0);
             // Debuggg
             // std::cout << "Domain " << j << " Curr Pos " << lists[j][i] << " random "
             // << random  << " epsilon " << epsilon << " picked " << newposs_good[j] << std::endl;

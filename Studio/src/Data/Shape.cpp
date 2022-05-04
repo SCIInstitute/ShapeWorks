@@ -8,6 +8,7 @@
 #include <itkOrientImageFilter.h>
 #include <vtkCenterOfMass.h>
 
+#include <Libs/Optimize/ParticleSystem/VtkMeshWrapper.h>
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
 #include <QDebug>
@@ -43,13 +44,13 @@ QString Shape::get_display_name() {
 Shape::~Shape() = default;
 
 //---------------------------------------------------------------------------
-MeshGroup Shape::get_meshes(const string& display_mode) {
-  if (display_mode == Visualizer::MODE_ORIGINAL_C) {
-    return this->get_original_meshes();
-  } else if (display_mode == Visualizer::MODE_GROOMED_C) {
-    return this->get_groomed_meshes();
+MeshGroup Shape::get_meshes(const string& display_mode, bool wait) {
+  if (display_mode == Session::MODE_ORIGINAL_C) {
+    return this->get_original_meshes(wait);
+  } else if (display_mode == Session::MODE_GROOMED_C) {
+    return this->get_groomed_meshes(wait);
   }
-  return this->get_reconstructed_meshes();
+  return this->get_reconstructed_meshes(wait);
 }
 
 //---------------------------------------------------------------------------
@@ -73,9 +74,9 @@ void Shape::set_subject(std::shared_ptr<Subject> subject) {
   this->groomed_meshes_.set_number_of_meshes(subject->get_number_of_domains());
   this->reconstructed_meshes_.set_number_of_meshes(subject->get_number_of_domains());
 
-  if (!this->subject_->get_segmentation_filenames().empty()) {
+  if (!this->subject_->get_original_filenames().empty()) {
     /// TODO: Show multiple lines of filenames for multiple domains?
-    std::string filename = this->subject_->get_segmentation_filenames()[0];
+    std::string filename = this->subject_->get_original_filenames()[0];
     this->corner_annotations_[0] = QFileInfo(QString::fromStdString(filename)).fileName();
   }
 
@@ -89,7 +90,7 @@ std::shared_ptr<Subject> Shape::get_subject() { return this->subject_; }
 
 //---------------------------------------------------------------------------
 void Shape::import_original_image(const std::string& filename) {
-  this->subject_->set_segmentation_filenames(std::vector<std::string>{filename});
+  this->subject_->set_original_filenames(std::vector<std::string>{filename});
   this->corner_annotations_[0] = QFileInfo(QString::fromStdString(filename)).fileName();
 }
 
@@ -101,7 +102,7 @@ MeshGroup Shape::get_original_meshes(bool wait) {
   }
 
   if (!this->original_meshes_.valid()) {
-    this->generate_meshes(this->subject_->get_segmentation_filenames(), this->original_meshes_, true, wait);
+    this->generate_meshes(this->subject_->get_original_filenames(), this->original_meshes_, true, wait);
   }
   return this->original_meshes_;
 }
@@ -209,15 +210,15 @@ bool Shape::import_landmarks_files(QStringList filenames) {
 //---------------------------------------------------------------------------
 bool Shape::store_landmarks() {
   auto filenames = subject_->get_landmarks_filenames();
-  while (filenames.size() < subject_->get_segmentation_filenames().size()) {
-    std::string filename = subject_->get_segmentation_filenames()[filenames.size()];
-    filename = StringUtils::getFileNameWithoutExtension(filename) + "_landmarks.particles";
+  while (filenames.size() < subject_->get_original_filenames().size()) {
+    std::string filename = subject_->get_original_filenames()[filenames.size()];
+    filename = StringUtils::getBaseFilenameWithoutExtension(filename) + "_landmarks.particles";
     filenames.push_back(filename);
   }
   for (int i = 0; i < filenames.size(); i++) {
     if (filenames[i] == "") {
-      std::string filename = subject_->get_segmentation_filenames()[i];
-      filenames[i] = StringUtils::getFileNameWithoutExtension(filename) + "_landmarks.particles";
+      std::string filename = subject_->get_original_filenames()[i];
+      filenames[i] = StringUtils::getBaseFilenameWithoutExtension(filename) + "_landmarks.particles";
     }
   }
 
@@ -250,7 +251,9 @@ bool Shape::import_constraints(QStringList filenames) {
   for (int i = 0; i < filenames.size(); i++) {
     Constraints constraints;
     try {
-      constraints.Read(filenames[i].toStdString());
+      if (!filenames[i].isEmpty()) {
+        constraints.Read(filenames[i].toStdString());
+      }
     } catch (std::exception& e) {
       STUDIO_SHOW_ERROR(e.what());
       return false;
@@ -263,13 +266,25 @@ bool Shape::import_constraints(QStringList filenames) {
 //---------------------------------------------------------------------------
 bool Shape::store_constraints() {
   auto filenames = subject_->get_constraints_filenames();
-  while (filenames.size() < subject_->get_segmentation_filenames().size()) {
-    std::string filename = subject_->get_segmentation_filenames()[filenames.size()];
-    filename = StringUtils::getFileNameWithoutExtension(filename) + "_constraints.json";
+  while (filenames.size() < subject_->get_original_filenames().size()) {
+    std::string filename = subject_->get_original_filenames()[filenames.size()];
+    filename = StringUtils::getBaseFilenameWithoutExtension(filename) + "_constraints.json";
     filenames.push_back(filename);
   }
 
-  if (constraints_.size() == 0) {
+  if (constraints_.empty()) {
+    filenames = {};
+  }
+
+  bool has_constraints = false;
+
+  for (int i = 0; i < filenames.size(); i++) {
+    if (get_constraints(i).hasConstraints()) {
+      has_constraints = true;
+    }
+  }
+
+  if (!has_constraints) {
     filenames = {};
   }
 
@@ -300,30 +315,30 @@ void Shape::set_id(int id) { this->id_ = id; }
 
 //---------------------------------------------------------------------------
 QString Shape::get_original_filename() {
-  if (this->subject_->get_segmentation_filenames().size() < 1) {
+  if (this->subject_->get_original_filenames().size() < 1) {
     return "";
   }
-  auto string = QString::fromStdString(this->subject_->get_segmentation_filenames()[0]);
+  auto string = QString::fromStdString(this->subject_->get_original_filenames()[0]);
   QFileInfo info(string);
   return info.fileName();
 }
 
 //---------------------------------------------------------------------------
 QString Shape::get_original_filename_with_path() {
-  if (this->subject_->get_segmentation_filenames().size() < 1) {
+  if (this->subject_->get_original_filenames().size() < 1) {
     return "";
   }
-  return QString::fromStdString(this->subject_->get_segmentation_filenames()[0]);
+  return QString::fromStdString(this->subject_->get_original_filenames()[0]);
 }
 
 //---------------------------------------------------------------------------
 std::vector<QString> Shape::get_original_filenames() {
-  if (this->subject_->get_segmentation_filenames().size() < 1) {
+  if (this->subject_->get_original_filenames().size() < 1) {
     return std::vector<QString>();
   }
 
   std::vector<QString> filenames;
-  for (auto&& name : this->subject_->get_segmentation_filenames()) {
+  for (auto&& name : this->subject_->get_original_filenames()) {
     filenames.push_back(QFileInfo(QString::fromStdString(name)).fileName());
   }
 
@@ -332,12 +347,12 @@ std::vector<QString> Shape::get_original_filenames() {
 
 //---------------------------------------------------------------------------
 std::vector<QString> Shape::get_original_filenames_with_path() {
-  if (this->subject_->get_segmentation_filenames().size() < 1) {
+  if (this->subject_->get_original_filenames().size() < 1) {
     return std::vector<QString>();
   }
 
   std::vector<QString> filenames;
-  for (auto&& name : this->subject_->get_segmentation_filenames()) {
+  for (auto&& name : this->subject_->get_original_filenames()) {
     filenames.push_back(QString::fromStdString(name));
   }
 
@@ -384,12 +399,6 @@ void Shape::set_group_id(int id) {
   }
   this->group_id_ = id;
 }
-
-//---------------------------------------------------------------------------
-std::vector<Shape::Point> Shape::get_vectors() { return this->vectors_; }
-
-//---------------------------------------------------------------------------
-void Shape::set_vectors(std::vector<Shape::Point> vectors) { this->vectors_ = vectors; }
 
 //---------------------------------------------------------------------------
 void Shape::set_transform(vtkSmartPointer<vtkTransform> transform) { this->transform_ = transform; }
@@ -462,33 +471,7 @@ void Shape::generate_meshes(std::vector<std::string> filenames, MeshGroup& mesh_
 
 //---------------------------------------------------------------------------
 bool Shape::import_point_file(QString filename, Eigen::VectorXd& points) {
-  std::ifstream in(filename.toStdString().c_str());
-  if (!in.good()) {
-    return false;
-  }
-  vtkSmartPointer<vtkPoints> vtk_points = vtkSmartPointer<vtkPoints>::New();
-  int num_points = 0;
-  while (in.good()) {
-    double x, y, z;
-    in >> x >> y >> z;
-    if (!in.good()) {
-      break;
-    }
-    vtk_points->InsertNextPoint(x, y, z);
-    num_points++;
-  }
-  in.close();
-  points.setZero();
-  points.resize(num_points * 3);
-
-  int idx = 0;
-  for (int i = 0; i < num_points; i++) {
-    double* pos = vtk_points->GetPoint(i);
-    points[idx++] = pos[0];
-    points[idx++] = pos[1];
-    points[idx++] = pos[2];
-  }
-  return true;
+  return ParticleSystem::ReadParticleFile(filename.toStdString(), points);
 }
 
 //---------------------------------------------------------------------------
@@ -500,6 +483,10 @@ void Shape::load_feature(std::string display_mode, std::string feature) {
   }
 
   int num_domains = group.meshes().size();
+
+  if (!subject_) {
+    return;
+  }
 
   for (int d = 0; d < num_domains; d++) {
     vtkSmartPointer<vtkPolyData> poly_data = group.meshes()[d]->get_poly_data();
@@ -522,7 +509,7 @@ void Shape::load_feature(std::string display_mode, std::string feature) {
       // first check if we have particle scalars for this feature
       auto point_features = get_point_features(feature);
       if (point_features.size() > 0 &&
-          display_mode == Visualizer::MODE_RECONSTRUCTION_C) {  // already loaded as particle scalars
+          display_mode == Session::MODE_RECONSTRUCTION_C) {  // already loaded as particle scalars
         set_point_features(feature, point_features);
       } else {
         // next check if there is a feature filename
@@ -699,7 +686,7 @@ std::vector<vtkSmartPointer<vtkTransform>> Shape::get_procrustest_transforms() {
 void Shape::set_point_features(std::string feature, Eigen::VectorXf values) {
   this->point_features_[feature] = values;
 
-  auto group = this->get_meshes(Visualizer::MODE_RECONSTRUCTION_C);
+  auto group = this->get_meshes(Session::MODE_RECONSTRUCTION_C);
 
   if (group.valid()) {
     for (auto mesh : group.meshes()) {
@@ -827,6 +814,22 @@ bool Shape::has_planes() {
     }
   }
   return false;
+}
+
+//---------------------------------------------------------------------------
+std::vector<std::shared_ptr<VtkMeshWrapper>> Shape::get_groomed_mesh_wrappers()
+{
+  if (!groomed_mesh_wrappers_.empty()) {
+    return groomed_mesh_wrappers_;
+  }
+
+  auto group = get_groomed_meshes(true /* wait */);
+  for (auto &mesh : group.meshes()) {
+    auto wrapper = std::make_shared<VtkMeshWrapper>(mesh->get_poly_data());
+    groomed_mesh_wrappers_.push_back(wrapper);
+  }
+  return groomed_mesh_wrappers_;
+
 }
 
 }  // namespace shapeworks

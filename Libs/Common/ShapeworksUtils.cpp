@@ -15,8 +15,8 @@ namespace shapeworks {
 #define S_ISDIR(m) (((m) & S_IFMT) == S_IFDIR)
 #endif
 
-unsigned ShapeworksUtils::_rngSeed = std::chrono::system_clock::now().time_since_epoch().count();
-std::mt19937 ShapeworksUtils::mt;
+unsigned ShapeworksUtils::rngSeed_ = std::chrono::system_clock::now().time_since_epoch().count();
+std::mt19937 ShapeworksUtils::mt_;
 
 /// looks at the pathname to see if it's a file or a directory or neither
 bool statdatpath(const std::string &pathname, bool isdir = false)
@@ -32,8 +32,8 @@ bool statdatpath(const std::string &pathname, bool isdir = false)
 
 void ShapeworksUtils::setRngSeed(const unsigned seed)
 {
-  _rngSeed = seed;
-  mt.seed(_rngSeed);
+  rngSeed_ = seed;
+  mt_.seed(rngSeed_);
 }
 
 bool ShapeworksUtils::is_directory(const std::string &pathname)

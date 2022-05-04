@@ -21,12 +21,14 @@ static std::string replace_string(std::string subject, const std::string& search
 }
 
 //---------------------------------------------------------------------------
+
 Project::Project() {
   set_default_landmark_colors();
   this->wb_ = std::make_unique<xlnt::workbook>();
-
   this->input_prefixes_.push_back(SEGMENTATION_PREFIX);
   this->input_prefixes_.push_back(SHAPE_PREFIX);
+  this->input_prefixes_.push_back(MESH_PREFIX);
+  this->input_prefixes_.push_back(CONTOUR_PREFIX);
 }
 
 //---------------------------------------------------------------------------
@@ -45,6 +47,7 @@ bool Project::load(const std::string& filename) {
   }
 
   this->load_subjects();
+  determine_domain_types();
 
   Parameters project_parameters = this->get_parameters(Parameters::PROJECT_PARAMS);
 
@@ -93,14 +96,14 @@ std::vector<std::string> Project::get_headers() { return this->get_matching_colu
 
 //---------------------------------------------------------------------------
 int Project::get_number_of_subjects() {
-  auto seg_columns = this->get_matching_columns(this->input_prefixes_);
-  auto dt_columns = this->get_matching_columns(GROOMED_PREFIX);
+  auto original_columns = this->get_matching_columns(this->input_prefixes_);
+  auto groomed_columns = this->get_matching_columns(GROOMED_PREFIX);
   auto local_particle_files = this->get_matching_columns(LOCAL_PARTICLES);
-  if (!seg_columns.empty()) {
-    return this->get_string_column(seg_columns[0]).size();
+  if (!original_columns.empty()) {
+    return this->get_string_column(original_columns[0]).size();
   }
-  if (!dt_columns.empty()) {
-    return this->get_string_column(dt_columns[0]).size();
+  if (!groomed_columns.empty()) {
+    return this->get_string_column(groomed_columns[0]).size();
   }
   if (!local_particle_files.empty()) {
     return this->get_string_column(local_particle_files[0]).size();
@@ -115,6 +118,10 @@ int Project::get_number_of_domains_per_subject() { return this->get_domain_names
 std::vector<std::shared_ptr<Subject>>& Project::get_subjects() { return this->subjects_; }
 
 //---------------------------------------------------------------------------
+
+void Project::set_subjects(const std::vector<std::shared_ptr<Subject>>& subjects) { this->subjects_ = subjects; }
+
+//---------------------------------------------------------------------------
 std::vector<std::string> Project::get_matching_columns(const std::string& prefix) {
   std::vector<std::string> prefixes;
   prefixes.push_back(prefix);
@@ -122,7 +129,7 @@ std::vector<std::string> Project::get_matching_columns(const std::string& prefix
 }
 
 //---------------------------------------------------------------------------
-std::vector<std::string> Project::get_matching_columns(const std::vector<std::string> prefixes) {
+std::vector<std::string> Project::get_matching_columns(const std::vector<std::string>& prefixes) {
   for (const auto& prefix : prefixes) {
     if (prefix != "") {
       this->matching_columns_.insert(prefix);
@@ -175,7 +182,7 @@ void Project::load_subjects() {
 
   this->num_domains_per_subject_ = this->get_number_of_domains_per_subject();
 
-  auto seg_columns = this->get_matching_columns(this->input_prefixes_);
+  auto original_columns = this->get_matching_columns(this->input_prefixes_);
   auto groomed_columns = this->get_matching_columns(GROOMED_PREFIX);
   auto groomed_transform_columns = this->get_matching_columns(GROOMED_TRANSFORMS_PREFIX);
   auto procrustes_transform_columns = this->get_matching_columns(PROCRUSTES_TRANSFORMS_PREFIX);
@@ -195,15 +202,15 @@ void Project::load_subjects() {
     std::shared_ptr<Subject> subject = std::make_shared<Subject>();
 
     subject->set_number_of_domains(this->num_domains_per_subject_);
-    subject->set_segmentation_filenames(this->get_list(seg_columns, i));
-    subject->set_groomed_filenames(this->get_list(groomed_columns, i));
+    subject->set_original_filenames(this->get_file_list(original_columns, i));
+    subject->set_groomed_filenames(this->get_file_list(groomed_columns, i));
     subject->set_landmarks_filenames(this->get_list(landmarks_columns, i));
-    subject->set_constraints_filenames(this->get_list(constraints_columns, i));
+    subject->set_constraints_filenames(this->get_file_list(constraints_columns, i));
     subject->set_groomed_transforms(this->get_transform_list(groomed_transform_columns, i));
     subject->set_procrustes_transforms(this->get_transform_list(procrustes_transform_columns, i));
-    subject->set_image_filenames(this->get_list(image_columns, i));
+    subject->set_image_filenames(this->get_file_list(image_columns, i));
 
-    auto feature_list = this->get_list(feature_columns, i);
+    auto feature_list = this->get_file_list(feature_columns, i);
     std::map<std::string, std::string> map;
     for (int j = 0; j < feature_columns.size(); j++) {
       std::string feature = feature_columns[j].substr(std::strlen(FEATURE_PREFIX));
@@ -219,8 +226,8 @@ void Project::load_subjects() {
     }
     subject->set_group_values(group_map);
 
-    auto locals = this->get_list(local_particle_columns, i);
-    auto worlds = this->get_list(world_particle_columns, i);
+    auto locals = this->get_file_list(local_particle_columns, i);
+    auto worlds = this->get_file_list(world_particle_columns, i);
     subject->set_local_particle_filenames(locals);
     subject->set_world_particle_filenames(worlds);
 
@@ -231,12 +238,12 @@ void Project::load_subjects() {
     std::string name = "";
     if (name_column >= 0) {
       name = this->get_value(name_column, i + 2);  //+1 for header, +1 for 1-based index
-    } else if (subject->get_segmentation_filenames().size() != 0) {
-      name = StringUtils::getFileNameWithoutExtension(subject->get_segmentation_filenames()[0]);
+    } else if (subject->get_original_filenames().size() != 0) {
+      name = StringUtils::getBaseFilenameWithoutExtension(subject->get_original_filenames()[0]);
     } else if (subject->get_groomed_filenames().size() != 0) {
-      name = StringUtils::getFileNameWithoutExtension(subject->get_groomed_filenames()[0]);
+      name = StringUtils::getBaseFilenameWithoutExtension(subject->get_groomed_filenames()[0]);
     } else if (locals.size() > 0) {
-      name = StringUtils::getFileNameWithoutExtension(locals[0]);
+      name = StringUtils::getBaseFilenameWithoutExtension(locals[0]);
     }
     subject->set_display_name(name);
 
@@ -256,7 +263,7 @@ void Project::load_subjects() {
     }
     subject->set_table_values(table_values);
 
-    this->segmentations_present_ = !seg_columns.empty();
+    this->originals_present_ = !original_columns.empty();
     this->groomed_present_ = !groomed_columns.empty();
     this->subjects_.push_back(subject);
   }
@@ -269,8 +276,7 @@ void Project::store_subjects() {
     return;
   }
 
-  // segmentation columns
-  auto seg_columns = this->get_matching_columns(this->input_prefixes_);
+  auto original_columns = this->get_matching_columns(this->input_prefixes_);
   auto image_columns = this->get_matching_columns(IMAGE_PREFIX);
   auto landmarks_columns = this->get_matching_columns(LANDMARKS_FILE_PREFIX);
   landmarks_columns.clear();
@@ -279,8 +285,11 @@ void Project::store_subjects() {
 
   // groomed columns
   std::vector<std::string> groomed_columns;
-  for (int i = 0; i < seg_columns.size(); i++) {
-    std::string groom_column_name = GROOMED_PREFIX + this->get_column_identifier(seg_columns[i]);
+  for (int i = 0; i < original_columns.size(); i++) {
+    std::string groom_column_name = GROOMED_PREFIX + this->get_column_identifier(original_columns[i]);
+    if (i < groomed_domain_types_.size() && groomed_domain_types_[i] == DomainType::Contour) {
+      groom_column_name = GROOMED_CONTOUR_PREFIX + this->get_column_identifier(original_columns[i]);
+    }
     groomed_columns.push_back(groom_column_name);
   }
 
@@ -306,14 +315,14 @@ void Project::store_subjects() {
   // local and world particle columns
   std::vector<std::string> local_columns;
   std::vector<std::string> world_columns;
-  for (int i = 0; i < seg_columns.size(); i++) {
-    std::string column_name = std::string(LOCAL_PARTICLES) + "_" + this->get_column_identifier(seg_columns[i]);
+  for (int i = 0; i < original_columns.size(); i++) {
+    std::string column_name = std::string(LOCAL_PARTICLES) + "_" + this->get_column_identifier(original_columns[i]);
     local_columns.push_back(column_name);
-    column_name = std::string(WORLD_PARTICLES) + "_" + this->get_column_identifier(seg_columns[i]);
+    column_name = std::string(WORLD_PARTICLES) + "_" + this->get_column_identifier(original_columns[i]);
     world_columns.push_back(column_name);
-    column_name = std::string(LANDMARKS_FILE_PREFIX) + this->get_column_identifier(seg_columns[i]);
+    column_name = std::string(LANDMARKS_FILE_PREFIX) + this->get_column_identifier(original_columns[i]);
     landmarks_columns.push_back(column_name);
-    column_name = std::string(CONSTRAINTS_PREFIX) + this->get_column_identifier(seg_columns[i]);
+    column_name = std::string(CONSTRAINTS_PREFIX) + this->get_column_identifier(original_columns[i]);
     constraints_columns.push_back(column_name);
   }
 
@@ -329,11 +338,18 @@ void Project::store_subjects() {
     std::shared_ptr<Subject> subject = this->subjects_[i];
 
     // segmentations
-    auto seg_files = subject->get_segmentation_filenames();
-    if (seg_files.size() > seg_columns.size()) {
-      seg_columns.push_back(std::string(SHAPE_PREFIX) + "1");
+    auto seg_files = subject->get_original_filenames();
+    int seg_count = 0;
+    while (seg_files.size() > original_columns.size()) {
+      auto domain_types = get_original_domain_types();
+      if (domain_types.size() > original_columns.size() && domain_types[original_columns.size()] == DomainType::Contour) {
+        original_columns.push_back(get_new_file_column(CONTOUR_PREFIX, seg_count));
+      } else {
+        original_columns.push_back(get_new_file_column(SHAPE_PREFIX, seg_count));
+      }
+      seg_count++;
     }
-    this->set_list(seg_columns, i, seg_files);
+    this->set_list(original_columns, i, seg_files);
 
     auto groups = subject->get_group_values();
     this->set_map(i, GROUP_PREFIX, groups);
@@ -346,9 +362,18 @@ void Project::store_subjects() {
     auto groomed_files = subject->get_groomed_filenames();
     if (groomed_files.size() >= groomed_columns.size() && groomed_files.size() > 0) {
       groomed_present = true;
-      int count = 0;
+      int groom_count = 0;
       while (groomed_files.size() > groomed_columns.size()) {
-        groomed_columns.push_back(this->get_new_file_column(GROOMED_PREFIX, count++));
+        auto prefix = GROOMED_PREFIX;
+        int domain_index = groomed_columns.size();
+
+        if (i < groomed_domain_types_.size() && groomed_domain_types_[domain_index] == DomainType::Contour) {
+          prefix = GROOMED_CONTOUR_PREFIX;
+        }
+
+        groomed_columns.push_back(this->get_new_file_column(prefix, groom_count));
+        groomed_transform_columns.push_back(this->get_new_file_column(GROOMED_TRANSFORMS_PREFIX, groom_count));
+        groom_count++;
       }
       this->set_list(groomed_columns, i, groomed_files);
 
@@ -358,14 +383,24 @@ void Project::store_subjects() {
 
     // landmarks
     auto landmark_files = subject->get_landmarks_filenames();
+    int landmark_count = 0;
+    while (landmark_files.size() > landmarks_columns.size()) {
+      landmarks_columns.push_back(get_new_file_column(LANDMARKS_FILE_PREFIX, landmark_count));
+      landmark_count++;
+    }
     if (landmark_files.size() > 0) {
-      this->set_list(landmarks_columns, i, landmark_files);
+      set_list(landmarks_columns, i, landmark_files);
     }
 
     // constraints
     auto constraints_files = subject->get_constraints_filenames();
+    int constraints_count = 0;
+    while (constraints_files.size() > constraints_columns.size()) {
+      constraints_columns.push_back(get_new_file_column(CONSTRAINTS_PREFIX, constraints_count));
+      constraints_count++;
+    }
     if (constraints_files.size() > 0) {
-      this->set_list(constraints_columns, i, constraints_files);
+      set_list(constraints_columns, i, constraints_files);
     }
 
     // features
@@ -403,7 +438,8 @@ void Project::store_subjects() {
     }
   }
 
-  this->segmentations_present_ = !seg_columns.empty();
+  determine_domain_types();
+  this->originals_present_ = !original_columns.empty();
   this->groomed_present_ = groomed_present;
 }
 
@@ -456,7 +492,24 @@ void Project::new_landmark(int domain_id) {
 }
 
 //---------------------------------------------------------------------------
+std::vector<DomainType> Project::get_original_domain_types() { return original_domain_types_; }
+
+//---------------------------------------------------------------------------
+std::vector<DomainType> Project::get_groomed_domain_types() { return groomed_domain_types_; }
+
+//---------------------------------------------------------------------------
+void Project::set_original_domain_types(std::vector<DomainType> domain_types) { original_domain_types_ = domain_types; }
+
+//---------------------------------------------------------------------------
+void Project::set_groomed_domain_types(std::vector<DomainType> domain_types) { groomed_domain_types_ = domain_types; }
+
+//---------------------------------------------------------------------------
 void Project::load_landmark_definitions() {
+  if (landmarks_loaded_) {
+    return;
+  }
+  landmarks_loaded_ = true;
+
   auto domain_names = get_domain_names();
   landmark_definitions_.clear();
   landmark_definitions_.resize(domain_names.size());
@@ -536,6 +589,61 @@ void Project::set_default_landmark_colors() {
 }
 
 //---------------------------------------------------------------------------
+void Project::determine_domain_types() {
+  if (subjects_.empty()) {
+    return;
+  }
+
+  // determine original domain types
+  original_domain_types_.clear();
+  auto original_columns = get_matching_columns(input_prefixes_);
+  for (const auto& col : original_columns) {
+    if (starts_with(col, SEGMENTATION_PREFIX)) {
+      original_domain_types_.push_back(DomainType::Image);
+    } else if (starts_with(col, MESH_PREFIX)) {
+      original_domain_types_.push_back(DomainType::Mesh);
+    } else if (starts_with(col, CONTOUR_PREFIX)) {
+      original_domain_types_.push_back(DomainType::Contour);
+    } else {
+      // determine by file type of first subject
+      auto original_filenames = subjects_[0]->get_original_filenames();
+      if (!original_filenames.empty()) {
+        original_domain_types_.push_back(determine_domain_type(original_filenames[0]));
+      }
+    }
+  }
+
+  groomed_domain_types_.clear();
+  auto groomed_columns = get_matching_columns(GROOMED_PREFIX);
+  for (const auto& col : groomed_columns) {
+    if (starts_with(col, GROOMED_CONTOUR_PREFIX)) {
+      groomed_domain_types_.push_back(DomainType::Contour);
+    } else {
+      // determine by file type of first subject
+      auto groomed_filenames = subjects_[0]->get_groomed_filenames();
+      if (!groomed_filenames.empty()) {
+        groomed_domain_types_.push_back(determine_domain_type(groomed_filenames[0]));
+      }
+    }
+  }
+}
+
+//---------------------------------------------------------------------------
+DomainType Project::determine_domain_type(std::string filename) {
+  std::transform(filename.begin(), filename.end(), filename.begin(), ::tolower);
+
+  for (const auto& type : Mesh::getSupportedTypes()) {
+    if (StringUtils::hasSuffix(filename, type)) {
+      return DomainType::Mesh;
+    }
+  }
+  return DomainType::Image;
+}
+
+//---------------------------------------------------------------------------
+bool Project::starts_with(std::string str, std::string prefix) { return str.substr(0, prefix.size()) == prefix; }
+
+//---------------------------------------------------------------------------
 int Project::get_index_for_column(const std::string& name, bool create_if_not_found, int sheet) const {
   xlnt::worksheet ws = this->wb_->sheet_by_index(sheet);
 
@@ -589,7 +697,7 @@ std::vector<std::string> Project::get_string_column(const std::string& name) con
 }
 
 //---------------------------------------------------------------------------
-bool Project::get_segmentations_present() const { return this->segmentations_present_; }
+bool Project::get_originals_present() const { return this->originals_present_; }
 
 //---------------------------------------------------------------------------
 bool Project::get_groomed_present() const { return this->groomed_present_; }
@@ -601,7 +709,7 @@ bool Project::get_particles_present() const { return this->particles_present_; }
 bool Project::get_images_present() { return this->get_matching_columns(IMAGE_PREFIX).size() > 0; }
 
 //---------------------------------------------------------------------------
-Parameters Project::get_parameters(const std::string& name, const std::string& domain_name) {
+Parameters Project::get_parameters(const std::string& name, std::string domain_name) {
   Parameters params;
   std::map<std::string, std::string> map;
 
@@ -616,11 +724,15 @@ Parameters Project::get_parameters(const std::string& name, const std::string& d
 
   auto rows = ws.rows(false);
 
+  if (get_number_of_domains_per_subject() == 1) {
+    domain_name = "";
+  }
+
   int value_column = 1;  // single domain
   if (domain_name != "") {
-    for (int i = ws.lowest_row(); i < ws.highest_row(); i++) {
-      if (rows[0][i].to_string() == "value_" + domain_name) {
-        value_column = i;
+    for (auto i = ws.lowest_column(); i < ws.highest_column(); i++) {
+      if (rows[0][i.index].to_string() == "value_" + domain_name) {
+        value_column = i.index;
       }
     }
   }
@@ -635,8 +747,11 @@ Parameters Project::get_parameters(const std::string& name, const std::string& d
 }
 
 //---------------------------------------------------------------------------
-void Project::set_parameters(const std::string& name, Parameters params, const std::string& domain_name) {
+void Project::set_parameters(const std::string& name, Parameters params, std::string domain_name) {
   try {
+    if (get_number_of_domains_per_subject() == 1) {
+      domain_name = "";
+    }
     int id = this->get_or_create_worksheet(name);
     auto ws = this->wb_->sheet_by_index(id);
 
@@ -651,6 +766,7 @@ void Project::set_parameters(const std::string& name, Parameters params, const s
       key_column = this->get_index_for_column("key", true, sheet);
       value_column = this->get_index_for_column("value_" + domain_name, true, sheet);
     }
+
     int row = 2;  // skip header
     for (const auto& kv : params.get_map()) {
       ws.cell(xlnt::cell_reference(key_column, row)).value(kv.first);
@@ -668,6 +784,16 @@ void Project::clear_parameters(const std::string& name) {
   if (this->wb_->contains(name)) {
     this->wb_->remove_sheet(this->wb_->sheet_by_title(name));
   }
+}
+
+//---------------------------------------------------------------------------
+std::vector<std::string> Project::get_file_list(std::vector<std::string> columns, int subject)
+{
+  auto list = get_list(columns, subject);
+  for (auto& item : list) {
+    item = replace_string(item, "\\", "/");
+  }
+  return list;
 }
 
 //---------------------------------------------------------------------------
@@ -694,6 +820,7 @@ void Project::set_list(std::vector<std::string> columns, int subject, std::vecto
 }
 
 //---------------------------------------------------------------------------
+
 void Project::set_map(int subject, const std::string& prefix, const std::map<std::string, std::string>& map) {
   for (const auto& pair : map) {
     int column_index = get_index_for_column(prefix + pair.first, true);
@@ -737,10 +864,10 @@ std::vector<std::string> Project::get_feature_names() {
       auto subject = this->subjects_[0];  // we have to assume that all subjects have the same features
 
       // int domains_per_subject = this->get_number_of_domains_per_subject();
-      for (int d = 0; d < subject->get_domain_types().size(); d++) {
-        if (subject->get_domain_types()[d] == DomainType::Mesh) {
-          if (subject->get_segmentation_filenames().size() > d) {
-            auto filename = subject->get_segmentation_filenames()[d];
+      for (int d = 0; d < get_original_domain_types().size(); d++) {
+        if (get_original_domain_types()[d] == DomainType::Mesh) {
+          if (subject->get_original_filenames().size() > d) {
+            auto filename = subject->get_original_filenames()[d];
             try {
               auto poly_data = MeshUtils::threadSafeReadMesh(filename).getVTKMesh();
               if (poly_data) {
@@ -781,6 +908,7 @@ std::vector<std::string> Project::get_group_names() {
 
   for (std::string group : raw_names) {
     group.erase(0, std::strlen(GROUP_PREFIX));  // erase "group_"
+
     group_names.push_back(group);
   }
 
@@ -799,7 +927,7 @@ std::vector<std::vector<double>> Project::get_transform_list(std::vector<std::st
 
     std::vector<double> values;
 
-    for (double value; ss >> value;) {
+    for (double value = 0; ss >> value;) {
       values.push_back(value);
     }
 
@@ -862,6 +990,7 @@ std::vector<std::string> Project::get_extra_columns() const {
 std::string Project::get_filename() { return this->filename_; }
 
 //---------------------------------------------------------------------------
+
 void Project::set_filename(std::string filename) { this->filename_ = filename; }
 
 //---------------------------------------------------------------------------
@@ -916,5 +1045,6 @@ std::string Project::get_column_identifier(std::string name) {
   }
   return name;
 }
+
 
 //---------------------------------------------------------------------------

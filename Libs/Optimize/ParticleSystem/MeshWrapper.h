@@ -2,7 +2,7 @@
 
 #include <vnl/vnl_vector_fixed.h>
 
-#include "itkParticleDomain.h"
+#include "ParticleDomain.h"
 #include "DomainType.h"
 
 namespace shapeworks
@@ -10,8 +10,8 @@ namespace shapeworks
 class MeshWrapper
 {
 public:
-  typedef typename itk::ParticleDomain::PointType PointType;
-  typedef typename itk::ParticleDomain::GradNType GradNType;
+  typedef typename ParticleDomain::PointType PointType;
+  typedef typename ParticleDomain::GradNType GradNType;
 
   // Computed distance between points. If out_grad != nullptr, returns the gradient of the distance in that vector
   virtual double ComputeDistance(const PointType& pointa, int idx_a,
@@ -44,6 +44,8 @@ public:
   virtual void InvalidateParticle(int idx) {};
 
   virtual bool IsGeodesicsEnabled() const = 0;
+
+  virtual vtkSmartPointer<vtkPolyData> GetPolydata() const = 0;
 };
 
 }

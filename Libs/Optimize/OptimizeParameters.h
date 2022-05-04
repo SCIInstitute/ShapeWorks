@@ -1,24 +1,20 @@
 #pragma once
 
-#include <functional>
-
 #include <Libs/Project/Project.h>
+
+#include <functional>
 
 namespace shapeworks {
 
 class Optimize;
 
 class OptimizeParameters {
-
-public:
-
+ public:
   explicit OptimizeParameters(ProjectHandle project);
   void save_to_project();
 
   std::string get_optimize_output_prefix();
   void set_optimize_output_prefix(std::string prefix);
-
-  bool set_up_optimize(Optimize* optimize);
 
   std::vector<int> get_number_of_particles();
   void set_number_of_particles(std::vector<int> number_of_particles);
@@ -59,6 +55,9 @@ public:
   bool get_use_procrustes_scaling();
   void set_use_procrustes_scaling(bool value);
 
+  bool get_use_procrustes_rotation_translation();
+  void set_use_procrustes_rotation_translation(bool value);
+
   int get_procrustes_interval();
   void set_procrustes_interval(int value);
 
@@ -74,15 +73,28 @@ public:
   int get_verbosity();
   void set_verbosity(int value);
 
+  bool get_mesh_ffc_mode();
+  void set_mesh_ffc_mode(bool value);
+
   bool get_use_landmarks();
   void set_use_landmarks(bool value);
+
+  bool get_use_fixed_subjects();
+  void set_use_fixed_subjects(bool value);
+  std::string get_fixed_subjects_column();
+  void set_fixed_subject_column(std::string column);
+  std::string get_fixed_subjects_choice();
+  void set_fixed_subjects_choice(std::string choice);
 
   void set_abort_load(bool value);
 
   void set_load_callback(const std::function<void(int)>& f);
 
-private:
+  bool set_up_optimize(Optimize* optimize);
 
+  bool is_subject_fixed(std::shared_ptr<Subject> subject);
+
+ private:
   std::string get_output_prefix();
 
   Parameters params_;
@@ -91,7 +103,6 @@ private:
   std::function<void(int)> load_callback_;
 
   bool abort_load_ = false;
-
 };
 
-}
+}  // namespace shapeworks

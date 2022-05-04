@@ -10,7 +10,7 @@
 #include "itkObjectFactory.h"
 #include "itkParticleAttribute.h"
 #include "itkParticleContainer.h"
-#include "itkParticleDomain.h"
+#include "ParticleDomain.h"
 #include "itkParticleEvents.h"
 #include "itkParticleNeighborhood.h"
 #include "itkPoint.h"
@@ -56,7 +56,7 @@ class ParticleSystem : public DataObject {
   itkStaticConstMacro(Dimension, unsigned int, VDimension);
 
   /** Define the base domain type. */
-  typedef ParticleDomain DomainType;
+  using DomainType = shapeworks::ParticleDomain;
 
   /** Point type used to store particle locations. */
   typedef Point<double, VDimension> PointType;
@@ -152,7 +152,6 @@ class ParticleSystem : public DataObject {
   void AdvancedAllParticleSplitting(double epsilon, unsigned int domains_per_shape, unsigned int dom_to_process);
   // Debug function
   void PrintParticleSystem();
-  void SplitAllParticlesInDomain(const vnl_vector_fixed<double, VDimension> &, unsigned int d = 0, int threadId = 0);
 
   /** Set/Get the neighborhood object associated with domain k. */
   void SetNeighborhood(unsigned int, NeighborhoodType *, int threadId = 0);
@@ -205,7 +204,7 @@ class ParticleSystem : public DataObject {
       for a list of positions that are contained within the domain, and a
       default neighborhood calculator.  The final, optional argument indicates
       the calling thread id.*/
-  void AddDomain(DomainType *, int threadId = 0);
+  void AddDomain(DomainType::Pointer input, int threadId = 0);
 
   /** Return an iterator that points to the first element of the list of the
       domains. */
@@ -216,16 +215,16 @@ class ParticleSystem : public DataObject {
   std::vector<DomainType::Pointer>::const_iterator GetDomainsEnd() const { return m_Domains.end(); }
 
   /** Return the i'th domain object. */
-  DomainType *GetDomain(unsigned int i) { return m_Domains[i].GetPointer(); }
+  DomainType *GetDomain(unsigned int i) { return m_Domains[i].get(); }
 
   /** API for the single domain case. */
-  DomainType *GetDomain() { return m_Domains[0].GetPointer(); }
+  DomainType *GetDomain() { return m_Domains[0].get(); }
 
   /** Return the i'th domain object. */
-  const DomainType *GetDomain(unsigned int i) const { return m_Domains[i].GetPointer(); }
+  const DomainType *GetDomain(unsigned int i) const { return m_Domains[i].get(); }
 
   /** API for the single domain case. */
-  const DomainType *GetDomain() const { return m_Domains[0].GetPointer(); }
+  const DomainType *GetDomain() const { return m_Domains[0].get(); }
 
   /** Returns the number of domains contained in the particle system. */
   unsigned int GetNumberOfDomains() const { return m_Domains.size(); }
@@ -368,7 +367,8 @@ class ParticleSystem : public DataObject {
     m_DomainsPerShape = num;
     m_FixedParticleFlags.resize(m_DomainsPerShape);
   }
-  unsigned int GetDomainsPerShape() { return m_DomainsPerShape; }
+  unsigned int GetDomainsPerShape() const
+  { return m_DomainsPerShape; }
 
   /** Set the number of domains.  This method modifies the size of the
     m_Domains, m_Positions, and m_Transform lists. */

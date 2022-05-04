@@ -39,6 +39,7 @@ static void prep_distance_transform(std::string input, std::string output) {
   writer->Update();
 }
 
+
 //---------------------------------------------------------------------------
 static bool check_constraint_violations(Optimize &app, double slack) {
   // Check that points don't violate the constraints
@@ -437,7 +438,7 @@ TEST(OptimizeTests, ffc_test) {
   stats.ComputeModes();
   stats.PrincipalComponentProjections();
 
-  bool good = check_constraint_violations(app, 3.0e-1);
+  bool good = check_constraint_violations(app, 4.0e-1);
 
   ASSERT_TRUE(good);
 }
@@ -611,6 +612,39 @@ TEST(OptimizeTests, mesh_ffc_test) {
   std::remove("output/sphere_03_world.particles");
 
   // run with parameter file
+  std::string paramfile = std::string("mesh_constraints_clip.xml");
+  Optimize app;
+  OptimizeParameterFile param;
+  ASSERT_TRUE(param.load_parameter_file(paramfile.c_str(), &app));
+  app.Run();
+
+  // compute stats
+  ParticleShapeStatistics stats;
+  stats.ReadPointFiles("analyze.xml");
+  stats.ComputeModes();
+  stats.PrincipalComponentProjections();
+
+  // print out eigenvalues (for debugging)
+  auto values = stats.Eigenvalues();
+  for (int i = 0; i < values.size(); i++) {
+    std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
+  }
+
+  bool good = check_constraint_violations(app, 4.0e-1);
+  ASSERT_TRUE(good);
+}
+
+//---------------------------------------------------------------------------
+TEST(OptimizeTests, mesh_ffc_test_aug_lag) {
+  setupenv(std::string(TEST_DATA_DIR) + "/mesh_constraints");
+
+  // make sure we clean out at least one output file
+  std::remove("output/sphere_00_world.particles");
+  std::remove("output/sphere_01_world.particles");
+  std::remove("output/sphere_02_world.particles");
+  std::remove("output/sphere_03_world.particles");
+
+  // run with parameter file
   std::string paramfile = std::string("mesh_constraints.xml");
   Optimize app;
   OptimizeParameterFile param;
@@ -629,6 +663,131 @@ TEST(OptimizeTests, mesh_ffc_test) {
     std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
   }
 
-  bool good = check_constraint_violations(app, 3.0e-1);
+  bool good = check_constraint_violations(app, 20.0e-1);
   ASSERT_TRUE(good);
+}
+
+//---------------------------------------------------------------------------
+TEST(OptimizeTests, procrustes_disabled_test) {
+  TestUtils::Instance().prep_temp(std::string(TEST_DATA_DIR) + "/optimize/procrustes", "procrustes_disabled_test");
+
+  ProjectHandle project = std::make_shared<Project>();
+  project->load("procrustes.xlsx");
+  OptimizeParameters params(project);
+  params.set_use_procrustes(false);
+
+  Optimize app;
+  params.set_up_optimize(&app);
+
+  // run optimize
+  bool success = app.Run();
+  ASSERT_TRUE(success);
+
+  // compute stats
+  ParticleShapeStatistics stats(project);
+  stats.ComputeModes();
+  stats.PrincipalComponentProjections();
+
+  // print out eigenvalues (for debugging)
+  auto values = stats.Eigenvalues();
+  for (int i = 0; i < values.size(); i++) {
+    std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
+  }
+  ASSERT_GT(values[values.size() - 1], 700.0);
+}
+
+//---------------------------------------------------------------------------
+TEST(OptimizeTests, procrustes_no_scale_test) {
+  TestUtils::Instance().prep_temp(std::string(TEST_DATA_DIR) + "/optimize/procrustes", "procrustes_no_scale_test");
+
+  ProjectHandle project = std::make_shared<Project>();
+  project->load("procrustes.xlsx");
+  OptimizeParameters params(project);
+  params.set_use_procrustes(true);
+  params.set_use_procrustes_rotation_translation(true);
+  params.set_use_procrustes_scaling(false);
+
+  Optimize app;
+  params.set_up_optimize(&app);
+
+  // run optimize
+  bool success = app.Run();
+  ASSERT_TRUE(success);
+
+  // compute stats
+  ParticleShapeStatistics stats(project);
+  stats.ComputeModes();
+  stats.PrincipalComponentProjections();
+
+  // print out eigenvalues (for debugging)
+  auto values = stats.Eigenvalues();
+  for (int i = 0; i < values.size(); i++) {
+    std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
+  }
+  ASSERT_GT(values[values.size() - 1], 150.0);
+  ASSERT_LT(values[values.size() - 1], 200.0);
+}
+
+//---------------------------------------------------------------------------
+TEST(OptimizeTests, procrustes_both_enabled_test) {
+  TestUtils::Instance().prep_temp(std::string(TEST_DATA_DIR) + "/optimize/procrustes", "procrustes_both_enabled_test");
+
+  ProjectHandle project = std::make_shared<Project>();
+  project->load("procrustes.xlsx");
+  OptimizeParameters params(project);
+  params.set_use_procrustes(true);
+  params.set_use_procrustes_rotation_translation(true);
+  params.set_use_procrustes_scaling(true);
+
+  Optimize app;
+  params.set_up_optimize(&app);
+
+  // run optimize
+  bool success = app.Run();
+  ASSERT_TRUE(success);
+
+  // compute stats
+  ParticleShapeStatistics stats(project);
+  stats.ComputeModes();
+  stats.PrincipalComponentProjections();
+
+  // print out eigenvalues (for debugging)
+  auto values = stats.Eigenvalues();
+  for (int i = 0; i < values.size(); i++) {
+    std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
+  }
+  // should be tiny with all of procrustes enabled
+  ASSERT_LT(values[values.size() - 1], 1.0);
+}
+
+//---------------------------------------------------------------------------
+TEST(OptimizeTests, procrustes_scale_only_test) {
+  TestUtils::Instance().prep_temp(std::string(TEST_DATA_DIR) + "/optimize/procrustes", "procrustes_scale_only_test");
+
+  ProjectHandle project = std::make_shared<Project>();
+  project->load("procrustes.xlsx");
+  OptimizeParameters params(project);
+  params.set_use_procrustes(true);
+  params.set_use_procrustes_rotation_translation(false);
+  params.set_use_procrustes_scaling(true);
+
+  Optimize app;
+  params.set_up_optimize(&app);
+
+  // run optimize
+  bool success = app.Run();
+  ASSERT_TRUE(success);
+
+  // compute stats
+  ParticleShapeStatistics stats(project);
+  stats.ComputeModes();
+  stats.PrincipalComponentProjections();
+
+  // print out eigenvalues (for debugging)
+  auto values = stats.Eigenvalues();
+  for (int i = 0; i < values.size(); i++) {
+    std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
+  }
+  ASSERT_GT(values[values.size() - 1], 275.0);
+  ASSERT_LT(values[values.size() - 1], 325.0);
 }

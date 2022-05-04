@@ -1,11 +1,4 @@
-#include <Data/Preferences.h>
-#include <Data/Shape.h>
-#include <Data/StudioLog.h>
-#include <Visualization/LandmarkWidget.h>
-#include <Visualization/Lightbox.h>
-#include <Visualization/PlaneWidget.h>
-#include <Visualization/Viewer.h>
-#include <Visualization/Visualizer.h>
+// vtk
 #include <vtkArrowSource.h>
 #include <vtkCell.h>
 #include <vtkCellPicker.h>
@@ -37,7 +30,20 @@
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkUnsignedLongArray.h>
 
+// shapeworks
+#include <Data/Preferences.h>
+#include <Data/Shape.h>
+#include <Data/StudioLog.h>
+#include <Visualization/LandmarkWidget.h>
+#include <Visualization/Lightbox.h>
+#include <Visualization/PaintWidget.h>
+#include <Visualization/PlaneWidget.h>
+#include <Visualization/Viewer.h>
+#include <Visualization/Visualizer.h>
+
 namespace shapeworks {
+
+const double EXCLUDED_COLOR[4] = {0.45, 0.45, 0.45, 1.0};
 
 //-----------------------------------------------------------------------------
 Viewer::Viewer() {
@@ -50,6 +56,8 @@ Viewer::Viewer() {
 
   landmark_widget_ = std::make_shared<LandmarkWidget>(this);
   plane_widget_ = std::make_shared<PlaneWidget>(this);
+  paint_widget_ = vtkSmartPointer<PaintWidget>::New();
+  paint_widget_->set_viewer(this);
 
   sphere_source_ = vtkSmartPointer<vtkSphereSource>::New();
   reverse_sphere_ = vtkSmartPointer<vtkReverseSense>::New();
@@ -88,34 +96,6 @@ Viewer::Viewer() {
   glyph_actor_->GetProperty()->SetSpecular(0.3);
   glyph_actor_->GetProperty()->SetSpecularPower(10.0);
   glyph_actor_->SetMapper(glyph_mapper_);
-
-  // exclusion spheres
-  exclusion_sphere_points_ = vtkSmartPointer<vtkPoints>::New();
-  exclusion_sphere_points_->SetDataTypeToDouble();
-  exclusion_sphere_point_set_ = vtkSmartPointer<vtkPolyData>::New();
-  exclusion_sphere_point_set_->SetPoints(exclusion_sphere_points_);
-  exclusion_sphere_point_set_->GetPointData()->SetScalars(vtkSmartPointer<vtkUnsignedLongArray>::New());
-
-  exclusion_sphere_glyph_ = vtkSmartPointer<vtkGlyph3D>::New();
-  exclusion_sphere_glyph_->SetInputData(exclusion_sphere_point_set_);
-  exclusion_sphere_glyph_->ScalingOn();
-  exclusion_sphere_glyph_->ClampingOff();
-  exclusion_sphere_glyph_->SetScaleModeToScaleByScalar();
-  exclusion_sphere_glyph_->SetSourceConnection(sphere_source_->GetOutputPort());
-  // exclusion_sphere_glyph_->SetColorModeToColorByScale();
-
-  exclusion_sphere_mapper_ = vtkSmartPointer<vtkPolyDataMapper>::New();
-  exclusion_sphere_mapper_->SetInputConnection(exclusion_sphere_glyph_->GetOutputPort());
-  exclusion_sphere_mapper_->SetScalarVisibility(0);
-
-  exclusion_sphere_actor_ = vtkSmartPointer<vtkActor>::New();
-  // exclusion_sphere_actor_->GetProperty()->SetSpecularColor( 1.0, 1.0, 0.0 );
-  // exclusion_sphere_actor_->GetProperty()->SetDiffuse( 0.8 );
-  // exclusion_sphere_actor_->GetProperty()->SetSpecular( 0.3 );
-  // exclusion_sphere_actor_->GetProperty()->SetSpecularPower( 10.0 );
-  exclusion_sphere_actor_->GetProperty()->SetOpacity(0.5);
-  exclusion_sphere_actor_->GetProperty()->SetColor(0, 1, 0);
-  exclusion_sphere_actor_->SetMapper(exclusion_sphere_mapper_);
 
   arrow_flip_filter_ = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
   arrow_glyphs_ = vtkSmartPointer<vtkGlyph3D>::New();
@@ -202,22 +182,18 @@ void Viewer::set_color_scheme(int scheme) {
   for (size_t i = 0; i < surface_actors_.size(); i++) {
     int scheme = (scheme_ + i) % color_schemes_.size();
 
-    surface_actors_[i]->GetProperty()->SetDiffuseColor(
-        color_schemes_[scheme].foreground.r, color_schemes_[scheme].foreground.g, color_schemes_[scheme].foreground.b);
+    double rgba[4] = {color_schemes_[scheme].foreground.r, color_schemes_[scheme].foreground.g,
+                      color_schemes_[scheme].foreground.b, 1.0};
+    surface_actors_[i]->GetProperty()->SetDiffuseColor(rgba);
+
+    ffc_luts_[i]->SetTableValue(0, EXCLUDED_COLOR);
+    ffc_luts_[i]->SetTableValue(1, rgba);
   }
 
   renderer_->SetBackground(color_schemes_[scheme].background.r, color_schemes_[scheme].background.g,
                            color_schemes_[scheme].background.b);
 
-  double average = (color_schemes_[scheme].background.r + color_schemes_[scheme].background.g +
-                    color_schemes_[scheme].background.b) /
-                   3.0;
-
-  double color = 1;
-  if (average > 0.5) {
-    color = 0;
-  }
-
+  double color = color_schemes_[scheme].get_text_intensity();
   scalar_bar_actor_->GetLabelTextProperty()->SetColor(color, color, color);
 }
 
@@ -236,10 +212,9 @@ void Viewer::set_visualizer(Visualizer* visualizer) { visualizer_ = visualizer; 
 
 //-----------------------------------------------------------------------------
 void Viewer::display_vector_field() {
-  std::vector<Shape::Point> vecs = shape_->get_vectors();
-  if (vecs.empty()) {
+  auto vecs = shape_->get_particles().get_difference_vectors(session_->get_difference_particles());
+  if (!session_->should_difference_vectors_show() || vecs.size() == 0) {
     // restore things to normal
-    glyphs_->SetSourceConnection(sphere_source_->GetOutputPort());
     glyphs_->ScalingOn();
     glyphs_->ClampingOff();
     glyphs_->SetScaleModeToDataScalingOff();
@@ -267,9 +242,11 @@ void Viewer::display_vector_field() {
 
   // Dot product difference vectors with the surface normals.
   vtkSmartPointer<vtkFloatArray> magnitudes = vtkSmartPointer<vtkFloatArray>::New();
+  magnitudes->SetName("magnitues");
   magnitudes->SetNumberOfComponents(1);
 
   vtkSmartPointer<vtkFloatArray> vectors = vtkSmartPointer<vtkFloatArray>::New();
+  vectors->SetName("vectors");
   vectors->SetNumberOfComponents(3);
 
   update_points();
@@ -290,6 +267,7 @@ void Viewer::display_vector_field() {
 
   glyphs_->SetSourceConnection(arrow_source_->GetOutputPort());
   glyphs_->SetScaleModeToScaleByVector();
+  glyphs_->SetScaleFactor(1.0);
 
   // update glyph rendering
   glyph_mapper_->SetLookupTable(surface_lut_);
@@ -315,11 +293,10 @@ void Viewer::display_vector_field() {
 }
 
 //-----------------------------------------------------------------------------
-void Viewer::compute_point_differences(const std::vector<Shape::Point>& points,
-                                       vtkSmartPointer<vtkFloatArray> magnitudes,
+void Viewer::compute_point_differences(const Eigen::VectorXd& vecs, vtkSmartPointer<vtkFloatArray> magnitudes,
                                        vtkSmartPointer<vtkFloatArray> vectors) {
   auto mesh_group = shape_->get_meshes(visualizer_->get_display_mode());
-  if (!mesh_group.valid() || points.empty()) {
+  if (!mesh_group.valid() || vecs.size() == 0) {
     return;
   }
 
@@ -328,7 +305,7 @@ void Viewer::compute_point_differences(const std::vector<Shape::Point>& points,
   std::vector<vtkSmartPointer<vtkKdTreePointLocator>> locators;
 
   for (size_t i = 0; i < mesh_group.meshes().size(); i++) {
-    vtkSmartPointer<vtkPolyData> poly_data = mesh_group.meshes()[i]->get_poly_data();
+    auto poly_data = mesh_group.meshes()[i]->get_poly_data();
 
     auto normals = vtkSmartPointer<vtkPolyDataNormals>::New();
     normals->SetInputData(poly_data);
@@ -347,44 +324,47 @@ void Viewer::compute_point_differences(const std::vector<Shape::Point>& points,
   double maxmag = std::numeric_limits<double>::min();
 
   // Compute difference vector dot product with normal.  Length of vector is
-  // stored in the "scalars" so that the vtk color mapping and glyph scaling
-  // happens properly.
-  for (unsigned int i = 0; i < point_set->GetNumberOfPoints(); i++) {
+  // stored in the "scalars" so that the vtk color mapping and glyph scaling happens properly.
+  for (vtkIdType i = 0; i < point_set->GetNumberOfPoints(); i++) {
     int domain = shape_->get_particles().get_domain_for_combined_id(i);
 
     auto id = locators[domain]->FindClosestPoint(point_set->GetPoint(i));
     double* normal = polys[domain]->GetPointData()->GetNormals()->GetTuple(id);
 
-    float xd = points[i].x;
-    float yd = points[i].y;
-    float zd = points[i].z;
+    float xd = vecs(i * 3 + 0);
+    float yd = vecs(i * 3 + 1);
+    float zd = vecs(i * 3 + 2);
 
     float mag = xd * normal[0] + yd * normal[1] + zd * normal[2];
     if (std::isnan(mag)) {
       mag = 0;
     }
-    if (mag < minmag) {
-      minmag = mag;
-    }
-    if (mag > maxmag) {
-      maxmag = mag;
-    }
+    minmag = std::min<float>(minmag, mag);
+    maxmag = std::max<float>(maxmag, mag);
 
     vectors->InsertNextTuple3(normal[0] * mag, normal[1] * mag, normal[2] * mag);
     magnitudes->InsertNextTuple1(mag);
   }
+
+  if (!session_->get_feature_auto_scale()) {
+    minmag = session_->get_feature_range_min();
+    maxmag = session_->get_feature_range_max();
+  }
+
   update_difference_lut(minmag, maxmag);
+  visualizer_->update_feature_range(minmag, maxmag);
 }
 
 //-----------------------------------------------------------------------------
 void Viewer::compute_surface_differences(vtkSmartPointer<vtkFloatArray> magnitudes,
                                          vtkSmartPointer<vtkFloatArray> vectors) {
-  if (!mesh_ready_) {
+  auto mesh_group = shape_->get_meshes(visualizer_->get_display_mode());
+  if (!mesh_group.valid()) {
     return;
   }
 
-  for (size_t i = 0; i < surface_mappers_.size(); i++) {
-    vtkPolyData* poly_data = surface_mappers_[i]->GetInput();
+  for (size_t i = 0; i < mesh_group.meshes().size(); i++) {
+    auto poly_data = mesh_group.meshes()[i]->get_poly_data();
     if (!poly_data || poly_data->GetNumberOfPoints() < 0) {
       return;
     }
@@ -392,24 +372,24 @@ void Viewer::compute_surface_differences(vtkSmartPointer<vtkFloatArray> magnitud
     vtkSmartPointer<vtkPolyData> point_data = vtkSmartPointer<vtkPolyData>::New();
     point_data->SetPoints(glyph_points_);
 
-    vtkPointLocator* point_locator = vtkPointLocator::New();
+    auto point_locator = vtkSmartPointer<vtkPointLocator>::New();
     point_locator->SetDataSet(point_data);
     point_locator->SetDivisions(100, 100, 100);
     point_locator->BuildLocator();
 
-    vtkFloatArray* surface_magnitudes = vtkFloatArray::New();
+    auto surface_magnitudes = vtkSmartPointer<vtkFloatArray>::New();
     surface_magnitudes->SetName("surface_difference");
     surface_magnitudes->SetNumberOfComponents(1);
     surface_magnitudes->SetNumberOfTuples(poly_data->GetPoints()->GetNumberOfPoints());
 
-    vtkFloatArray* surface_vectors = vtkFloatArray::New();
+    auto surface_vectors = vtkSmartPointer<vtkFloatArray>::New();
     surface_vectors->SetNumberOfComponents(3);
     surface_vectors->SetName("surface_vectors");
     surface_vectors->SetNumberOfTuples(poly_data->GetPoints()->GetNumberOfPoints());
 
-    for (unsigned int i = 0; i < surface_magnitudes->GetNumberOfTuples(); i++) {
-      // find the 8 closest correspondence points the to current point
-      vtkSmartPointer<vtkIdList> closest_points = vtkSmartPointer<vtkIdList>::New();
+    for (vtkIdType i = 0; i < surface_magnitudes->GetNumberOfTuples(); i++) {
+      // find the 8 closest correspondence points the to current vertex
+      auto closest_points = vtkSmartPointer<vtkIdList>::New();
       point_locator->FindClosestNPoints(8, poly_data->GetPoint(i), closest_points);
       // assign scalar value based on a weighted scheme
       float weighted_scalar = 0.0f;
@@ -419,7 +399,7 @@ void Viewer::compute_surface_differences(vtkSmartPointer<vtkFloatArray> magnitud
       bool exactly_on_point = false;
       float exact_scalar = 0.0f;
 
-      for (unsigned int p = 0; p < closest_points->GetNumberOfIds(); p++) {
+      for (vtkIdType p = 0; p < closest_points->GetNumberOfIds(); p++) {
         // get a particle position
         vtkIdType id = closest_points->GetId(p);
 
@@ -444,7 +424,7 @@ void Viewer::compute_surface_differences(vtkSmartPointer<vtkFloatArray> magnitud
       float vecY = 0.0f;
       float vecZ = 0.0f;
 
-      for (unsigned int p = 0; p < closest_points->GetNumberOfIds(); p++) {
+      for (vtkIdType p = 0; p < closest_points->GetNumberOfIds(); p++) {
         vtkIdType currID = closest_points->GetId(p);
         weighted_scalar += distance[p] / distance_sum * magnitudes->GetValue(currID);
         vecX += distance[p] / distance_sum * vectors->GetComponent(currID, 0);
@@ -515,28 +495,16 @@ vtkSmartPointer<vtkTransform> Viewer::get_alignment_transform() {
 void Viewer::update_clipping_planes() {
   for (int i = 0; i < surface_mappers_.size(); i++) {
     auto mapper = surface_mappers_[i];
-    auto clipped_mapper = clipped_surface_mappers_[i];
     mapper->RemoveAllClippingPlanes();
-    clipped_mapper->RemoveAllClippingPlanes();
-    auto& constraints = shape_->get_constraints(i);
-    for (auto& plane : constraints.getPlaneConstraints()) {
-      if (plane.points().size() == 3) {
-        auto vtk_plane = plane.getVTKPlane();
-        auto transform = get_transform(visualizer_->get_alignment_domain(), i);
-
-        vtk_plane = transform_plane(vtk_plane, transform);
-        mapper->AddClippingPlane(vtk_plane);
-/*
-        auto opposite_plane = vtkSmartPointer<vtkPlane>::New();
-        opposite_plane->SetOrigin(vtk_plane->GetOrigin());
-        double normal[3];
-        vtk_plane->GetNormal(normal);
-        normal[0] = -normal[0];
-        normal[1] = -normal[1];
-        normal[2] = -normal[2];
-        opposite_plane->SetNormal(normal);
-        // clipped_mapper->AddClippingPlane(opposite_plane);
-*/
+    if (shape_ && visualizer_->get_display_mode() != Session::MODE_RECONSTRUCTION_C) {
+      auto& constraints = shape_->get_constraints(i);
+      for (auto& plane : constraints.getPlaneConstraints()) {
+        if (plane.points().size() == 3) {
+          auto vtk_plane = plane.getVTKPlane();
+          auto transform = get_transform(visualizer_->get_alignment_domain(), i);
+          vtk_plane = transform_plane(vtk_plane, transform);
+          mapper->AddClippingPlane(vtk_plane);
+        }
       }
     }
   }
@@ -544,6 +512,39 @@ void Viewer::update_clipping_planes() {
 
 //-----------------------------------------------------------------------------
 vtkSmartPointer<vtkPolygonalSurfacePointPlacer> Viewer::get_point_placer() { return point_placer_; }
+
+//-----------------------------------------------------------------------------
+void Viewer::handle_ffc_paint(double display_pos[], double world_pos[]) {
+  if (!meshes_.valid()) {
+    return;
+  }
+
+  prop_picker_->Pick(display_pos[0], display_pos[1], 0, renderer_);
+
+  int domain = 0;
+  for (int i = 0; i < unclipped_surface_actors_.size(); i++) {
+    if (prop_picker_->GetActor() == unclipped_surface_actors_[i]) {
+      domain = i;
+    }
+  }
+
+  auto mesh = meshes_.meshes()[domain];
+
+  auto transform = vtkSmartPointer<vtkTransform>::New();
+  transform->DeepCopy(get_landmark_transform(domain));
+  transform->Inverse();
+  double xyzt[3];
+  transform->TransformPoint(world_pos, xyzt);
+
+  mesh->paint_ffc(xyzt, paint_widget_->get_brush_size(), session_->get_ffc_paint_mode_inclusive());
+
+  auto& ffc = shape_->get_constraints(domain).getFreeformConstraint();
+  ffc.setDefinition(mesh->get_poly_data());
+  if (!ffc.isSet()) {
+    ffc.setPainted(true);
+    session_->trigger_ffc_changed();
+  }
+}
 
 //-----------------------------------------------------------------------------
 void Viewer::update_landmarks() { landmark_widget_->update_landmarks(); }
@@ -556,10 +557,29 @@ void Viewer::update_planes() {
 }
 
 //-----------------------------------------------------------------------------
+void Viewer::update_ffc_mode() {
+  paint_widget_->SetDefaultRenderer(renderer_);
+  paint_widget_->SetRenderer(renderer_);
+  paint_widget_->SetInteractor(renderer_->GetRenderWindow()->GetInteractor());
+  paint_widget_->SetEnabled(0);
+  paint_widget_->SetEnabled(session_->get_ffc_paint_active());
+
+  double paint_size = session_->get_ffc_paint_size() * 0.10;
+
+  // scale based on dimension of data
+  if (meshes_.valid()) {
+    paint_size = paint_size / 100.0 * meshes_.meshes()[0]->get_largest_dimension_size();
+  }
+
+  paint_widget_->set_brush_size(paint_size);
+  paint_widget_->SetPointPlacer(point_placer_);
+}
+
+//-----------------------------------------------------------------------------
 std::vector<vtkSmartPointer<vtkActor>> Viewer::get_surface_actors() { return surface_actors_; }
 
 //-----------------------------------------------------------------------------
-std::vector<vtkSmartPointer<vtkActor>> Viewer::get_clipped_surface_actors() { return clipped_surface_actors_; }
+std::vector<vtkSmartPointer<vtkActor>> Viewer::get_unclipped_surface_actors() { return unclipped_surface_actors_; }
 
 //-----------------------------------------------------------------------------
 MeshGroup Viewer::get_meshes() { return meshes_; }
@@ -590,6 +610,9 @@ void Viewer::display_shape(QSharedPointer<Shape> shape) {
 
   ren->RemoveAllViewProps();
 
+  number_of_domains_ = session_->get_domains_per_shape();
+  initialize_surfaces();
+
   if (!meshes_.valid()) {
     mesh_ready_ = false;
     viewer_ready_ = false;
@@ -599,9 +622,6 @@ void Viewer::display_shape(QSharedPointer<Shape> shape) {
     loading_displayed_ = false;
     viewer_ready_ = true;
 
-    number_of_domains_ = meshes_.meshes().size();
-    initialize_surfaces();
-
     for (size_t i = 0; i < meshes_.meshes().size(); i++) {
       MeshHandle mesh = meshes_.meshes()[i];
 
@@ -609,8 +629,7 @@ void Viewer::display_shape(QSharedPointer<Shape> shape) {
 
       auto feature_map = get_displayed_feature_map();
 
-      std::vector<Shape::Point> vecs = shape_->get_vectors();
-      if (!vecs.empty()) {
+      if (session_->should_difference_vectors_show()) {
         feature_map = "";
       }
 
@@ -624,11 +643,9 @@ void Viewer::display_shape(QSharedPointer<Shape> shape) {
       auto mapper = surface_mappers_[i];
       auto actor = surface_actors_[i];
 
-      draw_exclusion_spheres(shape);
-
       auto transform = get_transform(visualizer_->get_alignment_domain(), i);
       if (Viewer::is_reverse(transform)) {  // if it's been reflected we need to reverse
-        vtkSmartPointer<vtkReverseSense> reverse_filter = vtkSmartPointer<vtkReverseSense>::New();
+        auto reverse_filter = vtkSmartPointer<vtkReverseSense>::New();
         reverse_filter->SetInputData(poly_data);
         reverse_filter->ReverseNormalsOff();
         reverse_filter->ReverseCellsOn();
@@ -636,9 +653,9 @@ void Viewer::display_shape(QSharedPointer<Shape> shape) {
         poly_data = reverse_filter->GetOutput();
       }
       actor->SetUserTransform(transform);
-      clipped_surface_actors_[i]->SetUserTransform(transform);
+      unclipped_surface_actors_[i]->SetUserTransform(transform);
       mapper->SetInputData(poly_data);
-      clipped_surface_mappers_[i]->SetInputData(poly_data);
+      unclipped_surface_mappers_[i]->SetInputData(poly_data);
 
       int domain_scheme = (scheme_ + i) % color_schemes_.size();
 
@@ -648,6 +665,7 @@ void Viewer::display_shape(QSharedPointer<Shape> shape) {
                                             color_schemes_[domain_scheme].foreground.b);
       actor->GetProperty()->SetSpecular(0.2);
       actor->GetProperty()->SetSpecularPower(15);
+      actor->GetProperty()->SetOpacity(1.0);
 
       if (feature_map != "" && poly_data) {
         poly_data->GetPointData()->SetActiveScalars(feature_map.c_str());
@@ -663,7 +681,25 @@ void Viewer::display_shape(QSharedPointer<Shape> shape) {
           visualizer_->update_feature_range(range);
         }
       } else {
-        mapper->ScalarVisibilityOff();
+        if (visualizer_->get_display_mode() != Session::MODE_RECONSTRUCTION_C) {
+          try {
+            auto& ffc = shape_->get_constraints(i).getFreeformConstraint();
+            if (ffc.getDefinition() != poly_data) {
+              ffc.computeBoundaries();
+              ffc.applyToPolyData(poly_data);
+              ffc.setDefinition(poly_data);
+            }
+          } catch (std::exception& e) {
+            STUDIO_SHOW_ERROR(QString("Unable to apply free form constraints: ") + e.what());
+          }
+        }
+
+        mapper->ScalarVisibilityOn();
+        mapper->SetScalarModeToUsePointData();
+        mapper->SetScalarRange(0, 1);
+        mapper->SetLookupTable(ffc_luts_[i]);
+        mesh->get_or_create_array(StudioMesh::FFC_PAINT, 1.0);
+        poly_data->GetPointData()->SetActiveScalars(StudioMesh::FFC_PAINT);
       }
     }
     update_points();
@@ -676,10 +712,11 @@ void Viewer::display_shape(QSharedPointer<Shape> shape) {
   update_clipping_planes();
   update_actors();
   update_glyph_properties();
-  landmark_widget_->clear_landmarks();
+  landmark_widget_->clear_landmark_handles();
   plane_widget_->clear_planes();
   update_landmarks();
   update_planes();
+  update_ffc_mode();
   ren->AddViewProp(corner_annotation_);
 }
 
@@ -737,15 +774,20 @@ void Viewer::update_glyph_properties() {
     renderer_->ComputeVisiblePropBounds(bounds);
     double sum_range = bounds[1] - bounds[0];
     sum_range += bounds[3] - bounds[2];
-    sum_range += bounds[5] - bounds[3];
+    sum_range += bounds[5] - bounds[4];
     double average_range = sum_range / 3.0;
     // sanity clamp
-    glyph_size_ = std::max<double>(glyph_size_, average_range * 0.03);
+    glyph_size_ = std::max<double>(glyph_size_, average_range * 0.01);
     glyph_size_ = std::min<double>(glyph_size_, average_range * 0.25);
   }
 
-  glyphs_->SetScaleFactor(glyph_size_);
-  arrow_glyphs_->SetScaleFactor(glyph_size_);
+  if (session_ && session_->should_difference_vectors_show()) {
+    glyphs_->SetScaleFactor(1.0);
+    arrow_glyphs_->SetScaleFactor(1.0);
+  } else {
+    glyphs_->SetScaleFactor(glyph_size_);
+    arrow_glyphs_->SetScaleFactor(glyph_size_);
+  }
 
   sphere_source_->SetThetaResolution(glyph_quality_);
   sphere_source_->SetPhiResolution(glyph_quality_);
@@ -772,22 +814,13 @@ void Viewer::set_show_surface(bool show) {
 }
 
 //-----------------------------------------------------------------------------
-void Viewer::set_show_landmarks(bool show) {
-  show_landmarks_ = show;
-  update_landmarks();
-}
-
-//-----------------------------------------------------------------------------
-bool Viewer::get_show_landmarks() { return show_landmarks_; }
-
-//-----------------------------------------------------------------------------
 void Viewer::update_points() {
   if (!shape_) {
     return;
   }
 
   Eigen::VectorXd correspondence_points;
-  if (visualizer_->get_display_mode() == Visualizer::MODE_RECONSTRUCTION_C) {
+  if (visualizer_->get_display_mode() == Session::MODE_RECONSTRUCTION_C) {
     correspondence_points = shape_->get_global_correspondence_points_for_display();
   } else {
     correspondence_points = shape_->get_local_correspondence_points();
@@ -798,7 +831,7 @@ void Viewer::update_points() {
   vtkFloatArray* scalars = (vtkFloatArray*)(glyph_point_set_->GetPointData()->GetScalars());
 
   Eigen::VectorXf scalar_values;
-  if (showing_feature_map()) {
+  if (showing_feature_map() && !session_->should_difference_vectors_show()) {
     auto feature_map = get_displayed_feature_map();
     shape_->load_feature(visualizer_->get_display_mode(), feature_map);
     scalar_values = shape_->get_point_features(feature_map);
@@ -844,11 +877,12 @@ void Viewer::update_points() {
 
   int alignment_domain = visualizer_->get_alignment_domain();
 
-  // glyph_actor_->SetUserTransform(get_transform(alignment_domain));
+  // reset
+  glyph_actor_->SetUserTransform(vtkSmartPointer<vtkTransform>::New());
 
   bool reverse = false;
-  if (visualizer_->get_display_mode() == Visualizer::MODE_ORIGINAL_C ||
-      visualizer_->get_display_mode() == Visualizer::MODE_GROOMED_C) {
+  if (visualizer_->get_display_mode() == Session::MODE_ORIGINAL_C ||
+      visualizer_->get_display_mode() == Session::MODE_GROOMED_C) {
     if (visualizer_->get_center()) {
       auto transform = shape_->get_alignment(alignment_domain);
       reverse = Viewer::is_reverse(transform);
@@ -864,10 +898,14 @@ void Viewer::update_points() {
     }
   }
 
-  if (reverse) {
-    glyphs_->SetSourceConnection(reverse_sphere_->GetOutputPort());
+  if (session_->should_difference_vectors_show()) {
+    /// TODO:  probalby need reverse arrows?
   } else {
-    glyphs_->SetSourceConnection(sphere_source_->GetOutputPort());
+    if (reverse) {
+      glyphs_->SetSourceConnection(reverse_sphere_->GetOutputPort());
+    } else {
+      glyphs_->SetSourceConnection(sphere_source_->GetOutputPort());
+    }
   }
   glyph_points_->Modified();
 }
@@ -884,18 +922,18 @@ void Viewer::update_actors() {
 
   cell_picker_->InitializePickList();
   prop_picker_->InitializePickList();
+  point_placer_->RemoveAllProps();
   point_placer_->GetPolys()->RemoveAllItems();
   for (size_t i = 0; i < surface_actors_.size(); i++) {
     renderer_->RemoveActor(surface_actors_[i]);
   }
-  for (size_t i = 0; i < clipped_surface_actors_.size(); i++) {
-    renderer_->RemoveActor(clipped_surface_actors_[i]);
+  for (size_t i = 0; i < unclipped_surface_actors_.size(); i++) {
+    renderer_->RemoveActor(unclipped_surface_actors_[i]);
   }
 
   if (show_glyphs_) {
     renderer_->AddActor(glyph_actor_);
 
-    renderer_->AddActor(exclusion_sphere_actor_);
     if (arrows_visible_) {
       renderer_->AddActor(arrow_glyph_actor_);
     }
@@ -907,26 +945,14 @@ void Viewer::update_actors() {
 
   if (show_surface_ && meshes_.valid()) {
     for (int i = 0; i < number_of_domains_; i++) {
-      /*
-      if (shape_->has_planes()) {
-        renderer_->AddActor(surface_actors_[i]);
-        renderer_->AddActor(clipped_surface_actors_[i]);
-      } else {
-        renderer_->AddActor(clipped_surface_actors_[i]);
-        renderer_->AddActor(surface_actors_[i]);
-      }
-*/
-      renderer_->AddActor(clipped_surface_actors_[i]);
+      renderer_->AddActor(unclipped_surface_actors_[i]);
       renderer_->AddActor(surface_actors_[i]);
 
       surface_actors_[i]->GetProperty()->BackfaceCullingOff();
-      clipped_surface_actors_[i]->GetProperty()->BackfaceCullingOff();
-      //cell_picker_->AddPickList(surface_actors_[i]);
-      //prop_picker_->AddPickList(surface_actors_[i]);
-      cell_picker_->AddPickList(clipped_surface_actors_[i]);
-      prop_picker_->AddPickList(clipped_surface_actors_[i]);
-      // point_placer_->AddProp(surface_actors_[i]);
-      point_placer_->AddProp(clipped_surface_actors_[i]);
+      unclipped_surface_actors_[i]->GetProperty()->BackfaceCullingOff();
+      cell_picker_->AddPickList(unclipped_surface_actors_[i]);
+      prop_picker_->AddPickList(unclipped_surface_actors_[i]);
+      point_placer_->AddProp(unclipped_surface_actors_[i]);
       point_placer_->GetPolys()->AddItem(meshes_.meshes()[i]->get_poly_data());
     }
   }
@@ -935,6 +961,18 @@ void Viewer::update_actors() {
 
   update_opacities();
 }
+
+//-----------------------------------------------------------------------------
+void Viewer::remove_scalar_bar() { renderer_->RemoveActor(scalar_bar_actor_); }
+
+//-----------------------------------------------------------------------------
+vtkFloatArray* Viewer::get_particle_scalars() {
+  vtkFloatArray* scalars = (vtkFloatArray*)(glyph_point_set_->GetPointData()->GetScalars());
+  return scalars;
+}
+
+//-----------------------------------------------------------------------------
+vtkSmartPointer<vtkPolyData> Viewer::get_particle_poly_data() { return glyph_point_set_; }
 
 //-----------------------------------------------------------------------------
 void Viewer::update_image_volume() {
@@ -1009,8 +1047,8 @@ PickResult Viewer::handle_ctrl_click(int* click_pos) {
   cell_picker_->Pick(click_pos[0], click_pos[1], 0, renderer_);
   PickResult result;
 
-  for (int i = 0; i < clipped_surface_actors_.size(); i++) {
-    if (cell_picker_->GetActor() == clipped_surface_actors_[i]) {
+  for (int i = 0; i < unclipped_surface_actors_.size(); i++) {
+    if (cell_picker_->GetActor() == unclipped_surface_actors_[i]) {
       double* pos = cell_picker_->GetPickPosition();
 
       auto transform = vtkSmartPointer<vtkTransform>::New();
@@ -1040,44 +1078,7 @@ void Viewer::set_loading_screen(vtkSmartPointer<vtkImageData> loading_screen) {
 }
 
 //-----------------------------------------------------------------------------
-void Viewer::draw_exclusion_spheres(QSharedPointer<Shape> object) {
-  QList<Shape::Point> centers = object->get_exclusion_sphere_centers();
-  QList<double> radii = object->get_exclusion_sphere_radii();
-
-  int num_points = centers.size();
-
-  if (num_points <= 0) {
-    exclusion_sphere_points_->Reset();
-  } else {
-    vtkUnsignedLongArray* scalars = (vtkUnsignedLongArray*)(exclusion_sphere_point_set_->GetPointData()->GetScalars());
-    scalars->Reset();
-    scalars->SetNumberOfTuples(num_points);
-
-    exclusion_sphere_glyph_->SetRange(0.0, (double)num_points + 1);
-    exclusion_sphere_mapper_->SetScalarRange(0.0, (double)num_points + 1.0);
-
-    exclusion_sphere_points_->Reset();
-    exclusion_sphere_points_->SetNumberOfPoints(num_points);
-
-    for (int i = 0; i < num_points; i++) {
-      Shape::Point p = centers[i];
-      scalars->InsertValue(i, radii[i]);
-      exclusion_sphere_points_->InsertPoint(i, p.x, p.y, p.z);
-    }
-  }
-
-  exclusion_sphere_points_->Modified();
-}
-
-//-----------------------------------------------------------------------------
 void Viewer::update_difference_lut(float r0, float r1) {
-  float maxrange = 0;
-  if (fabs(r0) > fabs(r1)) {
-    maxrange = fabs(r0);
-  } else {
-    maxrange = fabs(r1);
-  }
-
   double rd = r1 - r0;
 
   double range[2];
@@ -1120,6 +1121,7 @@ void Viewer::update_opacities() {
   auto opacities = visualizer_->get_opacities();
   if (opacities.size() == surface_mappers_.size()) {
     for (size_t i = 0; i < opacities.size(); i++) {
+      unclipped_surface_actors_[i]->GetProperty()->SetOpacity(opacities[i]);
       surface_actors_[i]->GetProperty()->SetOpacity(opacities[i]);
     }
   }
@@ -1133,21 +1135,31 @@ void Viewer::initialize_surfaces() {
   if (number_of_domains_ > surface_mappers_.size()) {
     surface_mappers_.resize(number_of_domains_);
     surface_actors_.resize(number_of_domains_);
-    clipped_surface_mappers_.resize(number_of_domains_);
-    clipped_surface_actors_.resize(number_of_domains_);
+    unclipped_surface_mappers_.resize(number_of_domains_);
+    unclipped_surface_actors_.resize(number_of_domains_);
+    ffc_luts_.resize(number_of_domains_);
 
     for (int i = 0; i < number_of_domains_; i++) {
       surface_mappers_[i] = vtkSmartPointer<vtkPolyDataMapper>::New();
       surface_actors_[i] = vtkSmartPointer<vtkActor>::New();
       surface_actors_[i]->SetMapper(surface_mappers_[i]);
-      clipped_surface_mappers_[i] = vtkSmartPointer<vtkPolyDataMapper>::New();
-      clipped_surface_mappers_[i]->ScalarVisibilityOff();
+      unclipped_surface_mappers_[i] = vtkSmartPointer<vtkPolyDataMapper>::New();
+      unclipped_surface_mappers_[i]->ScalarVisibilityOff();
 
-      clipped_surface_actors_[i] = vtkSmartPointer<vtkActor>::New();
+      unclipped_surface_actors_[i] = vtkSmartPointer<vtkActor>::New();
       // clipped_surface_actors_[i]->GetProperty()->SetOpacity(0.5);
-      clipped_surface_actors_[i]->GetProperty()->SetColor(0.45, 0.45, 0.45);
-      clipped_surface_actors_[i]->SetMapper(clipped_surface_mappers_[i]);
+      unclipped_surface_actors_[i]->GetProperty()->SetColor(EXCLUDED_COLOR[0], EXCLUDED_COLOR[1], EXCLUDED_COLOR[2]);
+      unclipped_surface_actors_[i]->SetMapper(unclipped_surface_mappers_[i]);
+
+      ffc_luts_[i] = vtkSmartPointer<vtkLookupTable>::New();
+      ffc_luts_[i]->SetHueRange(.667, 0.0);
+      ffc_luts_[i]->SetNumberOfTableValues(2);
+      ffc_luts_[i]->SetRange(0, 1);
+      ffc_luts_[i]->SetValueRange(0, 1);
+      ffc_luts_[i]->SetTableRange(0, 1);
+      ffc_luts_[i]->Build();
     }
+    set_color_scheme(scheme_);
   }
 }
 

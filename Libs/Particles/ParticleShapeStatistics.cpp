@@ -1,6 +1,8 @@
 
 #include "ParticleShapeStatistics.h"
 #include "ShapeEvaluation.h"
+#include <Libs/Project/Project.h>
+
 
 #include <vnl/algo/vnl_symmetric_eigensystem.h>
 #include <tinyxml.h>
@@ -85,6 +87,9 @@ double ParticleShapeStatistics::L1Norm(unsigned int a, unsigned int b)
 
 int ParticleShapeStatistics::ImportPoints(std::vector<Eigen::VectorXd> points, std::vector<int> group_ids)
 {
+  // local copy of points
+  points_ = points;
+
   this->m_groupIDs = group_ids;
   this->m_domainsPerShape = 1;
 
@@ -231,7 +236,7 @@ int ParticleShapeStatistics::ReadPointFiles(const std::string &s)
   if (elem) this->m_domainsPerShape = atoi(elem->GetText());
 
   // Read the point files.  Assumes all the same size.
-  typename itk::ParticlePositionReader<VDimension>::Pointer reader1 = itk::ParticlePositionReader<VDimension>::New();
+  itk::ParticlePositionReader::Pointer reader1 = itk::ParticlePositionReader::New();
   reader1->SetFileName(pointsfiles[0].c_str());
   reader1->Update();
   m_numSamples1 = 0;
@@ -287,8 +292,8 @@ int ParticleShapeStatistics::ReadPointFiles(const std::string &s)
   for (unsigned int i = 0; i < m_numSamples; i++) {
     for (unsigned int k = 0; k < m_domainsPerShape; k++) {
       // read file
-      typename itk::ParticlePositionReader<VDimension>::Pointer reader
-        = itk::ParticlePositionReader<VDimension>::New();
+      itk::ParticlePositionReader::Pointer reader
+        = itk::ParticlePositionReader::New();
       reader->SetFileName(pointsfiles[i * m_domainsPerShape + k].c_str());
       reader->Update();
       unsigned int q = reader->GetOutput().size();
@@ -339,6 +344,28 @@ int ParticleShapeStatistics::ReadPointFiles(const std::string &s)
   return 0;
 }
 
+//---------------------------------------------------------------------------
+ParticleShapeStatistics::ParticleShapeStatistics(std::shared_ptr<Project> project) {
+
+  std::vector<Eigen::VectorXd> points;
+  std::vector<int> groups;
+  for (auto& s : project->get_subjects()) {
+    auto world_files = s->get_world_particle_filenames();
+    Eigen::VectorXd particles;
+    for (auto& file : world_files) {
+      Eigen::VectorXd domain_particles;
+      ParticleSystem::ReadParticleFile(file, domain_particles);
+      Eigen::VectorXd combined(particles.size() + domain_particles.size());
+      combined << particles, domain_particles;
+      particles = combined;
+    }
+    points.push_back(particles);
+    groups.push_back(1);
+  }
+  ImportPoints(points, groups);
+}
+
+//---------------------------------------------------------------------------
 int ParticleShapeStatistics::DoPCA(std::vector<std::vector<Point>> global_pts, int domainsPerShape)
 {
   this->m_domainsPerShape = domainsPerShape;
@@ -430,8 +457,8 @@ int ParticleShapeStatistics::ReloadPointFiles()
   for (unsigned int i = 0; i < m_numSamples; i++) {
     for (unsigned int k = 0; k < m_domainsPerShape; k++) {
       // read file
-      typename itk::ParticlePositionReader<VDimension>::Pointer reader
-        = itk::ParticlePositionReader<VDimension>::New();
+      itk::ParticlePositionReader::Pointer reader
+        = itk::ParticlePositionReader::New();
       reader->SetFileName(m_pointsfiles[i * m_domainsPerShape + k].c_str());
       reader->Update();
       unsigned int q = reader->GetOutput().size();
@@ -652,6 +679,9 @@ int ParticleShapeStatistics::WriteCSVFile2(const std::string &s)
   // Write csv file
   std::ofstream outfile;
   outfile.open(s.c_str());
+  if (!outfile.good()) {
+    throw std::runtime_error("Unable to open " + s + " for writing");
+  }
 
   outfile << "Group";
   for (unsigned int i = 0; i < m_numSamples; i++) {
@@ -723,6 +753,12 @@ Eigen::MatrixXd ParticleShapeStatistics::get_group1_matrix()
 Eigen::MatrixXd ParticleShapeStatistics::get_group2_matrix()
 {
   return this->m_group_2_matrix;
+}
+
+void ParticleShapeStatistics::compute_good_bad_points()
+{
+
+
 }
 
 } // shapeworks

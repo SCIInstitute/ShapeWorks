@@ -31,10 +31,15 @@ using namespace pybind11::literals;
 #include "ImageUtils.h"
 #include "Mesh.h"
 #include "MeshUtils.h"
+#include "MeshWarper.h"
 #include "Optimize.h"
 #include "ParticleSystem.h"
 #include "ShapeEvaluation.h"
 #include "ParticleShapeStatistics.h"
+#include "Project.h"
+#include "Subject.h"
+#include "Variant.h"
+#include "Parameters.h"
 #include "ReconstructSurface.h"
 #include "EigenUtils.h"
 #include "pybind_utils.h"
@@ -634,6 +639,14 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def("isolate",
        &Image::isolate,
        "isolate largest object")
+
+  .def("evaluate",
+       [](Image &image, std::vector<double> &pt) -> decltype(auto) {
+             return image.evaluate(Point({pt[0], pt[1], pt[2]}));
+           },
+           "evaluate the image at any given point in space",
+           "pt"_a)
+
   ;
 
   // PhysicalRegion
@@ -912,6 +925,8 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def(py::init<vtkSmartPointer<vtkPolyData>>())
   .def(py::self == py::self)
   .def(py::self += py::self)
+
+  .def(py::init<const Eigen::MatrixXd&, const Eigen::MatrixXi&>()) // Mesh constructor from matrices
 
   .def("__repr__",
        [](const Mesh &mesh) -> decltype(auto) {
@@ -1219,6 +1234,79 @@ PYBIND11_MODULE(shapeworks_py, m)
        "other_mesh"_a, "name1"_a, "name2"_a="", "eps"_a=-1.0)
   ;
 
+  // MeshWarping
+  py::class_<MeshWarper>(m, "MeshWarper")
+
+  .def(py::init<>())
+
+  .def_static("prepareMesh",
+        [](const Mesh &mesh) -> decltype(auto) {
+        return Mesh(MeshWarper::prep_mesh(mesh.getVTKMesh()));
+        },
+        "Return the prepared mesh used for warping (before vertices were inserted).",
+        "mesh"_a)
+
+  .def("generateWarp",
+        [](MeshWarper &w, const Mesh &mesh_ref, const Eigen::MatrixXd &particles_ref) -> decltype(auto) {
+         w.set_reference_mesh(mesh_ref.getVTKMesh(), particles_ref);
+         return w.generate_warp();
+        },
+        "Assign the reference mesh/particles (matrix [Nx3]) and pre-compute the warping",
+        "reference_mesh"_a, "reference_particles"_a)
+
+  .def("generateWarp",
+      [](MeshWarper &w, const Mesh &mesh_ref, const Eigen::MatrixXd &particles_ref, const Eigen::MatrixXd &landmarks) -> decltype(auto) {
+        w.set_reference_mesh(mesh_ref.getVTKMesh(), particles_ref, landmarks);
+        return w.generate_warp();
+      },
+      "Assign the reference mesh/particles (matrix [Nx3]) and landmarks (matrix [Nx3]) and pre-compute the warping",
+      "reference_mesh"_a, "reference_particles"_a, "landmarks"_a)
+
+  .def("getReferenceMesh",
+      [](MeshWarper &w) -> decltype(auto) {
+        return Mesh(w.get_reference_mesh());
+      },
+      "Return the mesh used for warping.")
+
+  .def("getReferenceParticles",
+      [](MeshWarper &w) -> decltype(auto) {
+        return w.get_reference_particles();
+      },
+      "Return the particles used for warping.")
+
+  .def("hasBadParticles",
+      [](MeshWarper &w) -> decltype(auto) {
+        return w.has_bad_particles();
+      },
+      "Return true if warping has removed any bad particle(s).")
+
+  .def("getWarpMatrix",
+      [](MeshWarper &w) -> decltype(auto) {
+        return w.get_warp_matrix();
+      },
+      "Return the warping matrix (Vertices = Warp * Control).")
+
+  .def("getLandmarksMap",
+      [](MeshWarper &w) -> decltype(auto) {
+        return w.get_landmarks_map();
+      },
+      "Return the map of landmarks to vertices.")
+
+  .def("buildMesh",
+      [](MeshWarper &w, const Eigen::MatrixXd &particles) -> decltype(auto) {
+          return Mesh(w.build_mesh(particles));
+      },
+      "Build the mesh from particle positions (matrix [Nx3])",
+      "particles"_a)
+
+  .def("extractLandmarks",
+      [](MeshWarper &w, const Mesh &warped_mesh) -> decltype(auto) {
+          return w.extract_landmarks(warped_mesh.getVTKMesh());
+      },
+      "Extract the landmarks from the warped mesh and return the landmarks (matrix [Nx3])",
+      "warped_mesh"_a)
+   ;
+
   // MeshUtils
   py::class_<MeshUtils>(m, "MeshUtils")
 
@@ -1236,6 +1324,22 @@ PYBIND11_MODULE(shapeworks_py, m)
               &MeshUtils::findReferenceMesh,
               "find reference mesh from a set of meshes",
               "meshes"_a)
+
+
+  .def_static("boundaryLoopExtractor",
+               &MeshUtils::boundaryLoopExtractor,
+               "for a mesh extracts the boundary loop and export the boundary loop as a contour .vtp file",
+               "mesh"_a)
+
+  .def_static("sharedBoundaryExtractor",
+       [](const Mesh &mesh_l, const Mesh &mesh_r, float tol) -> decltype(auto) {
+         std::array<Mesh, 3> output = MeshUtils::sharedBoundaryExtractor(mesh_l, mesh_r, tol);
+
+         // std::move passes ownership to Python
+         return py::make_tuple(std::move(output[0]), std::move(output[1]), std::move(output[2]));
+       },
+       "extract the shared boundary for the given left and right meshes and save the individual meshes",
+       "mesh_l"_a,"mesh_r"_a,"tol"_a = 1e-3)
 
   .def_static("generateNormals",
               &MeshUtils::generateNormals,
@@ -1257,12 +1361,23 @@ PYBIND11_MODULE(shapeworks_py, m)
                },
                "computes average normals for each point in given set of meshes",
                "meshes"_a)
+
   ;
 
   // ParticleSystem
   py::class_<ParticleSystem>(m, "ParticleSystem")
 
   .def(py::init<const std::vector<std::string> &>())
+
+  .def("ShapeAsPointSet",
+      [](ParticleSystem &p, int id_shape) -> decltype(auto) {
+          Eigen::MatrixXd points = p.Particles().col(id_shape);
+          points.resize(3, points.size() / 3);
+          points.transposeInPlace();
+          return points;
+      },
+      "Return the particle pointset [Nx3] of the specified shape",
+      "id_shape"_a)
 
   .def("Particles",
        &ParticleSystem::Particles)
@@ -1365,6 +1480,22 @@ PYBIND11_MODULE(shapeworks_py, m)
        &ReconstructSurface<ThinPlateSplineTransform>::setOutPath,
        "path"_a)
 
+  .def("setDoProcrustes",
+       &ReconstructSurface<ThinPlateSplineTransform>::setDoProcrustes,
+       "doProcrustes"_a)
+
+  .def("setDoProcrustesScaling",
+       &ReconstructSurface<ThinPlateSplineTransform>::setDoProcrustesScaling,
+       "doProcrustesScaling"_a)
+
+  .def("setMeanBeforeWarp",
+       &ReconstructSurface<ThinPlateSplineTransform>::setMeanBeforeWarp,
+       "meanBeforeWarp"_a)
+
+  .def("setEnableOutput",
+       &ReconstructSurface<ThinPlateSplineTransform>::setEnableOutput,
+       "enableOutput"_a)
+
   .def("setModeIndex",
        &ReconstructSurface<ThinPlateSplineTransform>::setModeIndex,
        "modeIndex"_a)
@@ -1373,21 +1504,29 @@ PYBIND11_MODULE(shapeworks_py, m)
        &ReconstructSurface<ThinPlateSplineTransform>::setNumOfModes,
        "numOfModes"_a)
 
-  .def("setMaxVarianceCaptured",
-       &ReconstructSurface<ThinPlateSplineTransform>::setMaxVarianceCaptured,
-       "maxVarianceCaptured"_a)
+  .def("setNumOfSamplesPerMode",
+       &ReconstructSurface<ThinPlateSplineTransform>::setNumOfSamplesPerMode,
+       "numOfSamplesPerMode"_a)
 
   .def("setNumOfParticles",
        &ReconstructSurface<ThinPlateSplineTransform>::setNumOfParticles,
        "numOfParticles"_a)
 
+  .def("setNumOfClusters",
+       &ReconstructSurface<ThinPlateSplineTransform>::setNumOfClusters,
+       "numOfClusters"_a)
+
   .def("setMaxStdDev",
        &ReconstructSurface<ThinPlateSplineTransform>::setMaxStdDev,
        "maxStdDev"_a)
 
-  .def("setNumOfSamplesPerMode",
-       &ReconstructSurface<ThinPlateSplineTransform>::setNumOfSamplesPerMode,
-       "numOfSamplesPerMode"_a) 
+  .def("setMaxVarianceCaptured",
+       &ReconstructSurface<ThinPlateSplineTransform>::setMaxVarianceCaptured,
+       "maxVarianceCaptured"_a)
+
+  .def("setMaxAngleDegrees",
+       &ReconstructSurface<ThinPlateSplineTransform>::setMaxAngleDegrees,
+       "maxAngleDegrees"_a)  
 
   .def("surface",
        &ReconstructSurface<ThinPlateSplineTransform>::surface,
@@ -1396,6 +1535,10 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def("samplesAlongPCAModes",
        &ReconstructSurface<ThinPlateSplineTransform>::samplesAlongPCAModes,
        "worldPointsFiles"_a)
+
+  .def("meanSurface",
+       &ReconstructSurface<ThinPlateSplineTransform>::meanSurface,
+       "distanceTransformFiles"_a, "localPointsFiles"_a, "worldPointsFiles"_a)
   ;
 
   py::class_<ReconstructSurface<RBFSSparseTransform>>(m, "ReconstructSurface_RBFSSparseTransform")
@@ -1408,9 +1551,25 @@ PYBIND11_MODULE(shapeworks_py, m)
        &ReconstructSurface<RBFSSparseTransform>::setOutPrefix,
        "prefix"_a)
 
-    .def("setOutPath",
+  .def("setOutPath",
        &ReconstructSurface<RBFSSparseTransform>::setOutPath,
        "path"_a)
+
+  .def("setDoProcrustes",
+       &ReconstructSurface<RBFSSparseTransform>::setDoProcrustes,
+       "doProcrustes"_a)
+
+  .def("setDoProcrustesScaling",
+       &ReconstructSurface<RBFSSparseTransform>::setDoProcrustesScaling,
+       "doProcrustesScaling"_a)
+
+  .def("setMeanBeforeWarp",
+       &ReconstructSurface<RBFSSparseTransform>::setMeanBeforeWarp,
+       "meanBeforeWarp"_a)
+
+  .def("setEnableOutput",
+       &ReconstructSurface<RBFSSparseTransform>::setEnableOutput,
+       "enableOutput"_a)
 
   .def("setModeIndex",
        &ReconstructSurface<RBFSSparseTransform>::setModeIndex,
@@ -1420,21 +1579,29 @@ PYBIND11_MODULE(shapeworks_py, m)
        &ReconstructSurface<RBFSSparseTransform>::setNumOfModes,
        "numOfModes"_a)
 
-  .def("setMaxVarianceCaptured",
-       &ReconstructSurface<RBFSSparseTransform>::setMaxVarianceCaptured,
-       "maxVarianceCaptured"_a)
+  .def("setNumOfSamplesPerMode",
+       &ReconstructSurface<RBFSSparseTransform>::setNumOfSamplesPerMode,
+       "numOfSamplesPerMode"_a)
 
   .def("setNumOfParticles",
        &ReconstructSurface<RBFSSparseTransform>::setNumOfParticles,
        "numOfParticles"_a)
 
+  .def("setNumOfClusters",
+       &ReconstructSurface<RBFSSparseTransform>::setNumOfClusters,
+       "numOfClusters"_a)
+
   .def("setMaxStdDev",
        &ReconstructSurface<RBFSSparseTransform>::setMaxStdDev,
        "maxStdDev"_a)
 
-  .def("setNumOfSamplesPerMode",
-       &ReconstructSurface<RBFSSparseTransform>::setNumOfSamplesPerMode,
-       "numOfSamplesPerMode"_a)
+  .def("setMaxVarianceCaptured",
+       &ReconstructSurface<RBFSSparseTransform>::setMaxVarianceCaptured,
+       "maxVarianceCaptured"_a)
+
+  .def("setMaxAngleDegrees",
+       &ReconstructSurface<RBFSSparseTransform>::setMaxAngleDegrees,
+       "maxAngleDegrees"_a) 
 
   .def("surface",
        &ReconstructSurface<RBFSSparseTransform>::surface,
@@ -1443,6 +1610,10 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def("samplesAlongPCAModes",
        &ReconstructSurface<RBFSSparseTransform>::samplesAlongPCAModes,
        "worldPointsFiles"_a)
+
+  .def("meanSurface",
+       &ReconstructSurface<RBFSSparseTransform>::meanSurface,
+       "distanceTransformFiles"_a, "localPointsFiles"_a, "worldPointsFiles"_a)
   ;
 
   // Optimize (TODO)
@@ -1452,6 +1623,10 @@ PYBIND11_MODULE(shapeworks_py, m)
 
   .def("LoadParameterFile",
        &Optimize::LoadParameterFile)
+
+  .def("SetUpOptimize",
+       &Optimize::SetUpOptimize,
+       "projectFile"_a )
 
   .def("Run",
        &Optimize::Run)
@@ -1463,4 +1638,334 @@ PYBIND11_MODULE(shapeworks_py, m)
        &optimize_get_particle_system)
   ;
 
+  // DomainType
+  py::enum_<DomainType>(m, "DomainType")
+  .value("MeshDomain", DomainType::Mesh)
+  .value("ImageDomain", DomainType::Image)
+  .value("ContourDomain", DomainType::Contour)
+  .export_values();
+  ;
+
+  // Project 
+  // py::class_<Project>(m, "Project")
+  py::class_<Project, std::shared_ptr<Project> /* <- holder type */> proj(m, "Project");
+  proj.def(py::init<>())
+
+  .def("load",
+      &Project::load,
+      "Load from XLSX file",
+      "filename"_a)
+
+  .def("save",
+      &Project::save,
+      "Save to XLSX file",
+      "filename"_a)
+
+  .def("get_filename",
+      &Project::get_filename,
+      "Return the filename")
+
+  .def("set_filename",
+      &Project::set_filename,
+      "Set project filename",
+      "filename"_a)
+
+  .def("get_headers",
+      &Project::get_headers,
+      "Return the headers of the subject sheet")
+
+  .def("get_string_column",
+      &Project::get_string_column,
+      "Return a column by name",
+      "name"_a)
+
+  .def("get_number_of_subjects",
+      &Project::get_number_of_subjects,
+      "Return the number of subjects in the project")
+
+  .def("get_number_of_domains_per_subject",
+      &Project::get_number_of_domains_per_subject,
+      "Return the number of domains")
+
+  .def("get_original_domain_types",
+      &Project::get_original_domain_types,
+      "Return the original domain types")
+
+  .def("set_original_domain_types",
+      &Project::set_original_domain_types,
+      "Set the original domain types",
+       "types"_a)
+
+  .def("get_groomed_domain_types",
+      &Project::get_groomed_domain_types,
+      "Return the groomed domain types")
+
+  .def("set_groomed_domain_types",
+      &Project::set_groomed_domain_types,
+      "Set the groomed domain types",
+       "types"_a)
+
+  .def("get_domain_names",
+      &Project::get_domain_names,
+      "Return the domain names (e.g. femur, pelvis, etc)")
+
+  .def("get_subjects",
+      &Project::get_subjects,
+      "Return the list of Subjects")
+
+  .def("get_originals_present",
+      &Project::get_originals_present,
+      "Return if original files are present")
+
+  .def("get_groomed_present",
+      &Project::get_groomed_present,
+      "Return if groomed files are present")
+
+  .def("get_particles_present",
+      &Project::get_particles_present,
+      "Return if particle files are present")
+
+  .def("get_images_present",
+      &Project::get_images_present)
+
+  .def("get_feature_names",
+      &Project::get_feature_names)
+
+  .def("get_group_names",
+      &Project::get_group_names)
+
+  .def("get_group_values",
+      &Project::get_group_values,
+      "group_names"_a)
+
+  .def("get_parameters",
+      &Project::get_parameters,
+      "name"_a,"domain_name"_a="")
+
+  .def("set_parameters",
+      &Project::set_parameters,
+      "name"_a,"params"_a,"domain_name"_a="")
+
+  .def("clear_parameters",
+      &Project::clear_parameters,
+      "name"_a)
+
+  .def("store_subjects",
+      &Project::store_subjects)
+
+  .def("get_supported_version",
+      &Project::get_supported_version)
+
+  .def("get_version",
+      &Project::get_version)
+
+  .def("set_subjects",
+       [](Project &project, std::vector<Subject> subjects) -> decltype(auto) {
+            std::vector<std::shared_ptr<Subject>> sharedSubjects;
+            for (auto sub : subjects) {
+               std::shared_ptr<Subject> s = std::make_shared<Subject>(sub);
+               sharedSubjects.push_back(s);
+            }
+            return project.set_subjects(sharedSubjects);
+       },
+       "subjects"_a)
+  ; // Project
+
+  // Subject 
+  py::class_<Subject>(m, "Subject")
+
+  .def(py::init<>())
+
+  .def("set_original_filenames",
+      &Subject::set_original_filenames,
+      "Set original filenames (one per domain)",
+      "filenames"_a)
+
+  .def("get_original_filenames",
+      &Subject::get_original_filenames,
+      "Get original filenames")
+
+  .def("set_groomed_filenames",
+      &Subject::set_groomed_filenames,
+      "Set groomed filenames",
+      "filenames"_a)
+
+  .def("get_groomed_filenames",
+      &Subject::get_groomed_filenames,
+      "Get groomed filenames")
+
+  .def("set_local_particle_filenames",
+      &Subject::set_local_particle_filenames,
+      "Set local particle filenames (one per domain)",
+      "filenames"_a)
+
+  .def("get_local_particle_filenames",
+      &Subject::get_local_particle_filenames,
+      "Get local particle filenames")
+
+  .def("set_world_particle_filenames",
+      &Subject::set_world_particle_filenames,
+      "Set the world particle filenames",
+      "filenames"_a)
+
+  .def("get_world_particle_filenames",
+     &Subject::get_world_particle_filenames,
+     "Get the world particle filenames")
+
+  .def("set_landmarks_filenames",
+      &Subject::set_landmarks_filenames,
+      "Set the landmarks filenames (one per domain)",
+      "filenames"_a)
+
+  .def("get_landmarks_filenames",
+      &Subject::get_landmarks_filenames,
+      "Get the landmarks filenames (one per domain)")
+
+  .def("set_constraints_filenames",
+      &Subject::set_constraints_filenames,
+      "Set the constraint filenames (one per domain)",
+      "filenames"_a)
+
+  .def("get_constraints_filenames",
+      &Subject::get_constraints_filenames,
+      "Get the constraints filenames (one per domain)")
+
+  .def("set_number_of_domains",
+      &Subject::set_number_of_domains,
+      "Set the number of domains",
+      "number_of_domains"_a)
+
+  .def("get_number_of_domains",
+      &Subject::get_number_of_domains,
+      "Get the number of domains")
+
+  .def("set_image_filenames",
+      &Subject::set_image_filenames,
+      "Set image filenames",
+      "filenames"_a)
+
+  .def("get_image_filenames",
+      &Subject::get_image_filenames,
+      "Get image filenames")
+
+  .def("get_feature_filenames",
+      &Subject::get_feature_filenames,
+      "Get the feature map filenames")
+
+  .def("set_feature_filenames",
+      &Subject::set_feature_filenames,
+      "Set the feature map filenames",
+      "filenames"_a)
+
+  .def("get_groomed_transforms",
+      &Subject::get_groomed_transforms,
+      "Get the groomed transforms (one vector per domain)")
+
+  .def("set_groomed_transforms",
+      &Subject::set_groomed_transforms,
+      "Set the groomed transforms (one vector per domain)",
+      "transforms"_a)
+
+  .def("get_procrustes_transforms",
+      &Subject::get_procrustes_transforms,
+      "Get the procrustes transforms (one vector per domain)")
+
+  .def("set_procrustes_transforms",
+      &Subject::set_procrustes_transforms,
+      "Set the procrustes transforms (one vector per domain)",
+      "transforms"_a)
+
+  .def("get_group_values",
+      &Subject::get_group_values,
+      "Get the group values")
+
+  .def("get_group_value",
+      &Subject::get_group_value,
+      "Get a specific group value",
+      "group_name"_a)
+
+  .def("set_group_values",
+      &Subject::set_group_values,
+      "Set a specific group value"
+      "group_values"_a)
+
+  .def("get_extra_values",
+      &Subject::get_extra_values,
+      "Get extra values (extra columns we don't interpret)")
+
+  .def("set_extra_values",
+      &Subject::set_extra_values,
+      "Set extra values",
+      "extra_values"_a)
+
+  .def("get_display_name",
+      &Subject::get_display_name,
+      "Get the display name")
+
+  .def("set_display_name",
+      &Subject::set_display_name,
+      "Set the display name",
+      "display_name"_a)
+  ;//Subject
+
+  // Parameters 
+  py::class_<Parameters>(m, "Parameters")
+
+  .def(py::init<>())
+
+  .def("get",
+      &Parameters::get,
+      "get a parameter based on a key, return default if it doesn't exist",
+      "key"_a,"Variant"_a)
+
+  .def("key_exists",
+      &Parameters::key_exists,
+      "return if a key exists or not",
+      "key"_a)
+
+  .def("set",
+      &Parameters::set,
+      "set a parameter based on a key",
+      "key"_a,"Variant"_a)
+
+  .def("remove_entry",
+      &Parameters::remove_entry,
+      "remove an entry",
+      "key"_a)
+
+  .def("set_map",
+      &Parameters::set_map,
+      "set underlying map",
+      "map"_a)
+
+  .def("get_map",
+      &Parameters::get_map,
+      "get underlying map")
+
+  .def("reset_parameters",
+      &Parameters::reset_parameters,
+      "reset parameters to blank")
+  ;//Parameters
+
+  py::class_<Variant>(m, "Variant")
+
+  .def(py::init<>())
+
+  .def(py::init< std::vector<int> >())
+
+  .def(py::init< std::vector<double> >())
+
+  .def(py::init< std::vector<bool> > ())
+
+  .def(py::init< const std::string& > ())
+
+  .def(py::init< int> ())
+
+  .def(py::init< double> ())
+
+  .def(py::init< const char*> ())
+
+  .def(py::init< bool> ())
+
+  ; //Variant
 } // PYBIND11_MODULE(shapeworks_py)

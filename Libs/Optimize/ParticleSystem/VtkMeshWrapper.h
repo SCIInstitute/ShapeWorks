@@ -43,7 +43,7 @@ public:
   VectorType ProjectVectorToSurfaceTangent(const PointType &pointa, int idx,
                                            VectorType &vector) const override;
 
-  NormalType SampleNormalAtPoint(PointType p, int idx) const override;
+  NormalType SampleNormalAtPoint(PointType p, int idx = -1) const override;
   GradNType SampleGradNAtPoint(PointType p, int idx) const override;
 
   PointType SnapToMesh(PointType pointa, int idx) const override;
@@ -61,6 +61,10 @@ public:
   }
 
   virtual void InvalidateParticle(int idx) override;
+
+  inline vtkSmartPointer<vtkPolyData> GetPolydata() const override {
+      return original_mesh_;
+  }
 
 private:
 
@@ -102,6 +106,7 @@ private:
                      const Eigen::Vector3d &vector) const;
 
   vtkSmartPointer<vtkPolyData> poly_data_;
+  vtkSmartPointer<vtkPolyData> original_mesh_;
 
   NormalType CalculateNormalAtPoint(VtkMeshWrapper::PointType p, int idx) const;
 

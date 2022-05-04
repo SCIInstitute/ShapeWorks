@@ -19,8 +19,7 @@ ParticleSystem::ParticleSystem(const std::vector<std::string> &_paths)
   // since this particle reader loads into a std::vector, which subsequently
   // is copied to Eigen. Refactor it to load directly to Eigen. (This is not a
   // huge problem for now because the particle files are quite small)
-  typename itk::ParticlePositionReader<VDimension>::Pointer reader0
-          = itk::ParticlePositionReader<VDimension>::New();
+  itk::ParticlePositionReader::Pointer reader0 = itk::ParticlePositionReader::New();
 
   // Read the first file to find dimensions
   reader0->SetFileName(paths[0]);
@@ -31,10 +30,13 @@ ParticleSystem::ParticleSystem(const std::vector<std::string> &_paths)
   P.col(0) = Eigen::Map<const Eigen::VectorXd>((double *) reader0->GetOutput().data(), D);
 
   for (int i = 1; i < N; i++) {
-    typename itk::ParticlePositionReader<VDimension>::Pointer reader
-            = itk::ParticlePositionReader<VDimension>::New();
+    itk::ParticlePositionReader::Pointer reader = itk::ParticlePositionReader::New();
     reader->SetFileName(paths[i]);
     reader->Update();
+    int count = reader->GetOutput().size() * VDimension;
+    if (count != D) {
+      throw std::runtime_error("ParticleSystem files must have the same number of particles");
+    }
     P.col(i) = Eigen::Map<const Eigen::VectorXd>((double *) reader->GetOutput().data(), D);
   }
 }
@@ -107,7 +109,7 @@ bool ParticleSystem::EvaluationCompare(const ParticleSystem& other) const
   if (spec1.size() > 0 && spec2.size() > 0) {
     std::cout << "Comparing specificity: " << spec1[0] << " vs " << spec2[0] << ": ";
     double diff = std::abs(spec1[0] - spec2[0]);
-    if (diff > 0.1 * spec1[0] || diff > 0.1 * spec2[0]) {
+    if (diff > 0.15 * spec1[0] || diff > 0.15 * spec2[0]) {
       std::cout << "different\n";
       good = false;
     } else {
@@ -116,6 +118,37 @@ bool ParticleSystem::EvaluationCompare(const ParticleSystem& other) const
   }
 
   return good;
+}
+
+bool ParticleSystem::ReadParticleFile(std::string filename, Eigen::VectorXd &points)
+{
+  std::ifstream in(filename);
+  if (!in.good()) {
+    return false;
+  }
+  vtkSmartPointer<vtkPoints> vtk_points = vtkSmartPointer<vtkPoints>::New();
+  int num_points = 0;
+  while (in.good()) {
+    double x, y, z;
+    in >> x >> y >> z;
+    if (!in.good()) {
+      break;
+    }
+    vtk_points->InsertNextPoint(x, y, z);
+    num_points++;
+  }
+  in.close();
+  points.setZero();
+  points.resize(num_points * 3);
+
+  int idx = 0;
+  for (int i = 0; i < num_points; i++) {
+    double* pos = vtk_points->GetPoint(i);
+    points[idx++] = pos[0];
+    points[idx++] = pos[1];
+    points[idx++] = pos[2];
+  }
+  return true;
 }
 
 }

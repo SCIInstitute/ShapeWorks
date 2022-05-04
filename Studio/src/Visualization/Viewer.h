@@ -38,6 +38,7 @@ class Visualizer;
 class StudioInteractorStyle;
 class LandmarkWidget;
 class PlaneWidget;
+class PaintWidget;
 class Session;
 
 typedef QSharedPointer<Viewer> ViewerHandle;
@@ -77,8 +78,6 @@ class Viewer {
 
   void set_show_glyphs(bool show);
   void set_show_surface(bool show);
-  void set_show_landmarks(bool show);
-  bool get_show_landmarks();
 
   void update_points();
   void update_glyph_properties();
@@ -109,9 +108,10 @@ class Viewer {
 
   void update_landmarks();
   void update_planes();
+  void update_ffc_mode();
 
   std::vector<vtkSmartPointer<vtkActor>> get_surface_actors();
-  std::vector<vtkSmartPointer<vtkActor>> get_clipped_surface_actors();
+  std::vector<vtkSmartPointer<vtkActor>> get_unclipped_surface_actors();
 
   MeshGroup get_meshes();
 
@@ -137,36 +137,43 @@ class Viewer {
 
   vtkSmartPointer<vtkPolygonalSurfacePointPlacer> get_point_placer();
 
- private:
+  void handle_ffc_paint(double display_pos[2], double world_pos[3]);
+
   static bool is_reverse(vtkSmartPointer<vtkTransform> transform);
 
+  void update_actors();
+
+  void remove_scalar_bar();
+
+  bool is_ready() { return mesh_ready_; }
+
+  vtkFloatArray* get_particle_scalars();
+
+  vtkSmartPointer<vtkPolyData> get_particle_poly_data();
+
+ private:
   void initialize_surfaces();
 
   void display_vector_field();
 
-  void compute_point_differences(const std::vector<Shape::Point>& points, vtkSmartPointer<vtkFloatArray> magnitudes,
+  void compute_point_differences(const Eigen::VectorXd& points, vtkSmartPointer<vtkFloatArray> magnitudes,
                                  vtkSmartPointer<vtkFloatArray> vectors);
 
   void compute_surface_differences(vtkSmartPointer<vtkFloatArray> magnitudes, vtkSmartPointer<vtkFloatArray> vectors);
 
-  void draw_exclusion_spheres(QSharedPointer<Shape> object);
-
   void update_difference_lut(float r0, float r1);
-
-  void update_actors();
 
   bool showing_feature_map();
   std::string get_displayed_feature_map();
 
   vtkSmartPointer<vtkPlane> transform_plane(vtkSmartPointer<vtkPlane> plane, vtkSmartPointer<vtkTransform> transform);
 
-  bool visible_;
+  bool visible_ = false;
 
   QSharedPointer<Shape> shape_;
 
   bool show_glyphs_ = true;
   bool show_surface_ = true;
-  bool show_landmarks_ = true;
 
   double glyph_size_ = 1.0f;
   double glyph_quality_ = 5.0f;
@@ -182,16 +189,11 @@ class Viewer {
   vtkSmartPointer<vtkPolyDataMapper> glyph_mapper_;
   vtkSmartPointer<vtkActor> glyph_actor_;
 
-  vtkSmartPointer<vtkPoints> exclusion_sphere_points_;
-  vtkSmartPointer<vtkPolyData> exclusion_sphere_point_set_;
-  vtkSmartPointer<vtkGlyph3D> exclusion_sphere_glyph_;
-  vtkSmartPointer<vtkPolyDataMapper> exclusion_sphere_mapper_;
-  vtkSmartPointer<vtkActor> exclusion_sphere_actor_;
-
   std::vector<vtkSmartPointer<vtkPolyDataMapper>> surface_mappers_;
   std::vector<vtkSmartPointer<vtkActor>> surface_actors_;
-  std::vector<vtkSmartPointer<vtkPolyDataMapper>> clipped_surface_mappers_;
-  std::vector<vtkSmartPointer<vtkActor>> clipped_surface_actors_;
+  std::vector<vtkSmartPointer<vtkPolyDataMapper>> unclipped_surface_mappers_;
+  std::vector<vtkSmartPointer<vtkActor>> unclipped_surface_actors_;
+  std::vector<vtkSmartPointer<vtkLookupTable>> ffc_luts_;
 
   vtkSmartPointer<vtkLookupTable> lut_;
   vtkSmartPointer<vtkLookupTable> surface_lut_;
@@ -209,7 +211,7 @@ class Viewer {
   bool arrows_visible_ = false;
 
   ColorSchemes color_schemes_;
-  int scheme_;
+  int scheme_ = 0;
 
   bool mesh_ready_ = false;
   bool viewer_ready_ = false;
@@ -223,15 +225,15 @@ class Viewer {
 
   std::shared_ptr<LandmarkWidget> landmark_widget_;
   std::shared_ptr<PlaneWidget> plane_widget_;
+  vtkSmartPointer<PaintWidget> paint_widget_;
 
   QSharedPointer<Session> session_;
 
-  std::string current_image_name_;
+  std::string current_image_name_ = "-none-";
 
   vtkSmartPointer<vtkCellPicker> cell_picker_;
   vtkSmartPointer<vtkPropPicker> prop_picker_;
   vtkSmartPointer<vtkPolygonalSurfacePointPlacer> point_placer_;
-
 
   // slice viewer
   SliceView slice_view_{this};

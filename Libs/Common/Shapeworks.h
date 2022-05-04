@@ -40,9 +40,12 @@ using Plane         = vtkSmartPointer<vtkPlane>;
 // explicitly using `dynamic_cast<vtkDoubleArray*>(vtk_data_array)`.
 using Array         = vtkSmartPointer<vtkDataArray>;
 using Field         = Array;
+using PointArray    = std::vector<Point3>;
 
 /// Enables `makeVector({1,2,3});`, construction using an initializer list (likely an accidental omission in current ITK version)
 Vector3 makeVector(std::array<double, 3>&& arr);
+
+PointArray makePointArray(int size, Point3 value);
 
 /// All transforms can be accessed using a generic transform pointer
 using GenericTransform   = itk::Transform<double, 3>;
@@ -279,5 +282,7 @@ bool epsEqual(const P &a, const P &b, const typename P::ValueType &eps)
 {
   return std::abs(a[0]-b[0]) < eps && std::abs(a[1]-b[1]) < eps && std::abs(a[2]-b[2]) < eps;
 }
+
+bool epsEqual(double a, double b, double eps);
 
 } // shapeworks

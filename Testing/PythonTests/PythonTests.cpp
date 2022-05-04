@@ -1,381 +1,399 @@
 #include "Testing.h"
+#include <boost/filesystem/operations.hpp>
 
 //---------------------------------------------------------------------------
-void run_use_case(const std::string& name)
+void run_test(const std::string& name)
 {
-  setupenv(std::string(TEST_DATA_DIR) + "/../PythonTests");
+  std::string python_test_dir = std::string(TEST_DATA_DIR) + "/../PythonTests";
+  setupenv(python_test_dir);
 
-  std::string command = "python -u " + name; // -u generates unbuffered output, shown even if crashes
+    // store the initial path
+  auto initial_path = boost::filesystem::current_path();
+
+  // change to temp dir
+  auto temp_dir = shapeworks::TestUtils::Instance().get_output_dir(name);
+  boost::filesystem::current_path(temp_dir);
+
+  std::string command = "python -u " + python_test_dir + "/" + name; // -u generates unbuffered output, shown even if crashes
   ASSERT_FALSE(system(command.c_str()));
+
+  // change dir back to initial path
+  boost::filesystem::current_path(initial_path);
+}
+
+TEST(pythonTests, shared_boundaryTest)
+{
+  run_test("shared_boundary.py");
 }
 
 TEST(pythonTests, reconstructsurfaceTest)
 {
-  run_use_case("reconstructsurface.py");
+  run_test("reconstructsurface.py");
 }
 
 TEST(pythonTests, reconstructpcaTest)
 {
-  run_use_case("reconstructpca.py");
+  run_test("reconstructpca.py");
 }
 
 TEST(pythonTests, transformTest)
 {
-  run_use_case("transform.py");
+  run_test("transform.py");
 }
 
 TEST(pythonTests, meshwriteTest)
 {
-  run_use_case("meshwrite.py");
+  run_test("meshwrite.py");
 }
 
 TEST(pythonTests, subdivisionTest)
 {
-  run_use_case("subdivision.py");
+  run_test("subdivision.py");
 }
 
 TEST(pythonTests, sw2vtkmeshTest)
 {
-  run_use_case("sw2vtkmesh.py");
+  run_test("sw2vtkmesh.py");
 }
 
 TEST(pythonTests, meshcurvatureTest)
 {
-  run_use_case("meshcurvature.py");
+  run_test("meshcurvature.py");
 }
 
 TEST(pythonTests, initImageTest)
 {
-  run_use_case("initImage.py");
+  run_test("initImage.py");
 }
 
 TEST(pythonTests, toArrayTest)
 {
-  run_use_case("toArray.py");
+  run_test("toArray.py");
 }
 
 TEST(pythonTests, imageInfoTest)
 {
-  run_use_case("imageinfo.py");
+  run_test("imageinfo.py");
 }
 
 TEST(pythonTests, meshInfoTest)
 {
-  run_use_case("meshinfo.py");
+  run_test("meshinfo.py");
 }
 
 TEST(pythonTests, copyTest)
 {
-  run_use_case("copyImgMesh.py");
+  run_test("copyImgMesh.py");
 }
 
 TEST(pythonTests, compareTest)
 {
-  run_use_case("compare.py");
+  run_test("compare.py");
 }
 
 TEST(pythonTests, antialiasTest)
 {
-  run_use_case("antialias.py");
+  run_test("antialias.py");
 }
 
 TEST(pythonTests, resampleTest)
 {
-  run_use_case("resample.py");
+  run_test("resample.py");
 }
 
 TEST(pythonTests, resizeTest)
 {
-  run_use_case("resize.py");
+  run_test("resize.py");
 }
 
 TEST(pythonTests, padTest)
 {
-  run_use_case("pad.py");
+  run_test("pad.py");
 }
 
 TEST(pythonTests, recenterTest)
 {
-  run_use_case("recenter.py");
+  run_test("recenter.py");
 }
 
 TEST(pythonTests, translateTest)
 {
-  run_use_case("translate.py");
+  run_test("translate.py");
 }
 
 TEST(pythonTests, centerofmassTest)
 {
-  run_use_case("centerofmass.py");
+  run_test("centerofmass.py");
 }
 
 TEST(pythonTests, scaleTest)
 {
-  run_use_case("scale.py");
+  run_test("scale.py");
 }
 
 TEST(pythonTests, rotateTest)
 {
-  run_use_case("rotate.py");
+  run_test("rotate.py");
 }
 
 TEST(pythonTests, extractLabelTest)
 {
-  run_use_case("extractlabel.py");
+  run_test("extractlabel.py");
 }
 
 TEST(pythonTests, closeholesTest)
 {
-  run_use_case("closeholes.py");
+  run_test("closeholes.py");
 }
 
 TEST(pythonTests, binarizeTest)
 {
-  run_use_case("binarize.py");
+  run_test("binarize.py");
 }
 
 TEST(pythonTests, computedtTest)
 {
-  run_use_case("computedt.py");
+  run_test("computedt.py");
 }
 
 TEST(pythonTests, curvatureTest)
 {
-  run_use_case("curvature.py");
+  run_test("curvature.py");
 }
 
 TEST(pythonTests, gradientTest)
 {
-  run_use_case("gradient.py");
+  run_test("gradient.py");
 }
 
 TEST(pythonTests, sigmoidTest)
 {
-  run_use_case("sigmoid.py");
+  run_test("sigmoid.py");
 }
 
 TEST(pythonTests, tplevelsetTest)
 {
-  run_use_case("tplevelset.py");
+  run_test("tplevelset.py");
 }
 
 TEST(pythonTests, intensityTest)
 {
-  run_use_case("intensity.py");
+  run_test("intensity.py");
 }
 
 TEST(pythonTests, topoTest)
 {
-  run_use_case("topo.py");
+  run_test("topo.py");
 }
 
 TEST(pythonTests, blurTest)
 {
-  run_use_case("blur.py");
+  run_test("blur.py");
 }
 
 TEST(pythonTests, boundingboxTest)
 {
-  run_use_case("boundingbox.py");
+  run_test("boundingbox.py");
 }
 
 TEST(pythonTests, cropTest)
 {
-  run_use_case("crop.py");
+  run_test("crop.py");
 }
 
 TEST(pythonTests, icpTest)
 {
-  run_use_case("icp.py");
+  run_test("icp.py");
 }
 
 TEST(pythonTests, clipTest)
 {
-  run_use_case("clip.py");
+  run_test("clip.py");
 }
 
 TEST(pythonTests, reflectTest)
 {
-  run_use_case("reflect.py");
+  run_test("reflect.py");
 }
 
 TEST(pythonTests, warpTest)
 {
-  run_use_case("warp.py");
+  run_test("warp.py");
 }
 
 TEST(pythonTests, coordsysTest)
 {
-  run_use_case("coordsys.py");
+  run_test("coordsys.py");
 }
 
 TEST(pythonTests, setoriginTest)
 {
-  run_use_case("setorigin.py");
+  run_test("setorigin.py");
 }
 
 TEST(pythonTests, setspacingTest)
 {
-  run_use_case("setspacing.py");
+  run_test("setspacing.py");
 }
 
 TEST(pythonTests, negateTest)
 {
-  run_use_case("negate.py");
+  run_test("negate.py");
 }
 
 TEST(pythonTests, addTest)
 {
-  run_use_case("add.py");
+  run_test("add.py");
 }
 
 TEST(pythonTests, subTest)
 {
-  run_use_case("sub.py");
+  run_test("sub.py");
 }
 
 TEST(pythonTests, mulTest)
 {
-  run_use_case("mul.py");
+  run_test("mul.py");
 }
 
 TEST(pythonTests, divTest)
 {
-  run_use_case("div.py");
+  run_test("div.py");
 }
 
 TEST(pythonTests, smoothTest)
 {
-  run_use_case("smooth.py");
+  run_test("smooth.py");
 }
 
 TEST(pythonTests, remeshTest)
 {
-  run_use_case("remesh.py");
+  run_test("remesh.py");
 }
 
 TEST(pythonTests, invertnormalsTest)
 {
-  run_use_case("invertNormals.py");
+  run_test("invertNormals.py");
 }
 
 TEST(pythonTests, fillholesTest)
 {
-  run_use_case("fillHoles.py");
+  run_test("fillHoles.py");
 }
 
 TEST(pythonTests, probevolumeTest)
 {
-  run_use_case("probeVolume.py");
+  run_test("probeVolume.py");
 }
 
 TEST(pythonTests, coverageTest)
 {
-  run_use_case("coverage.py");
+  run_test("coverage.py");
 }
 
 TEST(pythonTests, distanceTest)
 {
-  run_use_case("distance.py");
+  run_test("distance.py");
 }
 
 TEST(pythonTests, fixElementTest)
 {
-  run_use_case("fixelement.py");
+  run_test("fixelement.py");
 }
 
 TEST(pythonTests, closestpointTest)
 {
-  run_use_case("closestpoint.py");
+  run_test("closestpoint.py");
 }
 
 TEST(pythonTests, closestpointidTest)
 {
-  run_use_case("closestpointid.py");
+  run_test("closestpointid.py");
 }
 
 TEST(pythonTests, meannormalsTest)
 {
-  run_use_case("meannormals.py");
+  run_test("meannormals.py");
 }
 
 TEST(pythonTests, getpointTest)
 {
-  run_use_case("getpoint.py");
+  run_test("getpoint.py");
 }
 
 TEST(pythonTests, getfaceTest)
 {
-  run_use_case("getface.py");
+  run_test("getface.py");
 }
 
 TEST(pythonTests, facesTest)
 {
-  run_use_case("faces.py");
+  run_test("faces.py");
 }
 
 TEST(pythonTests, pointsTest)
 {
-  run_use_case("points.py");
+  run_test("points.py");
 }
 
 TEST(pythonTests, geodesicTest)
 {
-  run_use_case("geodesic.py");
+  run_test("geodesic.py");
 }
 
 TEST(pythonTests, computenormalsTest)
 {
-  run_use_case("computenormals.py");
+  run_test("computenormals.py");
 }
 
 TEST(pythonTests, toimageTest)
 {
-  run_use_case("toImage.py");
+  run_test("toImage.py");
 }
 
 TEST(pythonTests, todistancetransformTest)
 {
-  run_use_case("toDistanceTransform.py");
+  run_test("toDistanceTransform.py");
 }
 
 TEST(pythonTests, gradientinterpolatorTest)
 {
-  run_use_case("gradientinterp.py");
+  run_test("gradientinterp.py");
 }
 
 TEST(pythonTests, fieldTest)
 {
-  run_use_case("field.py");
+  run_test("field.py");
 }
 
 // note: we just use numpy arrays for coordinates/indices, points, dimensions, vectors, and matrices
 TEST(pythonTests, coordTest)
 {
-  run_use_case("coord.py");
+  run_test("coord.py");
 }
 
 TEST(pythonTests, statsTest)
 {
-  run_use_case("stats.py");
+  run_test("stats.py");
 }
 
 TEST(pythonTests, optimizeTest)
 {
-  run_use_case("optimize.py");
+  run_test("optimize.py");
 }
 
 TEST(pythonTests, pcaTest)
 {
-  run_use_case("pca.py");
+  run_test("pca.py");
 }
 
 TEST(pythonTests, findreferencemeshTest)
 {
-  run_use_case("findReferenceMesh.py");
+  run_test("findReferenceMesh.py");
 }
 
 TEST(pythonTests, isolateTest)
 {
-  run_use_case("isolate.py");
+  run_test("isolate.py");
 }
+

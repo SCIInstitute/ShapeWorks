@@ -6,6 +6,8 @@
 #include <vtkPolyData.h>
 
 #include <Data/MeshManager.h>
+#include <Data/QMeshWarper.h>
+
 
 namespace shapeworks {
 

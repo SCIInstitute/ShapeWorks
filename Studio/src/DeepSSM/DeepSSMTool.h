@@ -1,22 +1,13 @@
 #pragma once
 
-#include <Eigen/Dense>
-#include <Eigen/Sparse>
-
-// Qt
+// qt
 #include <QSharedPointer>
 #include <QWidget>
+#include <QElapsedTimer>
 
-// ShapeWorks
-#include <ParticleShapeStatistics.h>
-#include <Data/ShapeWorksWorker.h>
-
-// Studio
-#include <Data/Shape.h>
+// studio
 #include <Data/Preferences.h>
-#include <Visualization/Visualizer.h>
-#include <Visualization/BarGraph.h>
-#include <Python/PythonWorker.h>
+#include <Data/Shape.h>
 
 class Ui_DeepSSMTool;
 class QLabel;
@@ -31,13 +22,10 @@ class DeepSSMJob;
 class ShapeWorksStudioApp;
 
 class DeepSSMTool : public QWidget {
-Q_OBJECT;
-public:
+  Q_OBJECT;
 
-
-  enum class ToolMode {
-    DeepSSM_SplitType, DeepSSM_AugmentationType, DeepSSM_TrainingType, DeepSSM_TestingType
-  };
+ public:
+  enum class ToolMode { DeepSSM_SplitType, DeepSSM_AugmentationType, DeepSSM_TrainingType, DeepSSM_TestingType };
 
   DeepSSMTool(Preferences& prefs);
   ~DeepSSMTool();
@@ -65,7 +53,7 @@ public:
 
   std::string get_display_feature();
 
-public Q_SLOTS:
+ public Q_SLOTS:
 
   void run_clicked();
   void restore_defaults();
@@ -78,13 +66,13 @@ public Q_SLOTS:
   void tab_changed(int tab);
 
   void update_panels();
-  void update_split(QLineEdit *source);
+  void update_split(QLineEdit* source);
 
   void handle_new_mesh();
 
   void training_fine_tuning_changed();
 
-signals:
+ signals:
 
   void update_view();
   void progress(int);
@@ -92,8 +80,7 @@ signals:
   void error(QString);
   void warning(QString);
 
-private:
-
+ private:
   void update_meshes();
   void run_tool(DeepSSMTool::ToolMode type);
   void show_augmentation_meshes();
@@ -104,9 +91,9 @@ private:
   void load_plots();
   void resize_plots();
   QPixmap load_plot(QString filename);
-  void set_plot(QLabel *qlabel, QPixmap pixmap);
+  void set_plot(QLabel* qlabel, QPixmap pixmap);
 
-  void populate_table_from_csv(QTableWidget *table, QString filename, bool header);
+  void populate_table_from_csv(QTableWidget* table, QString filename, bool header);
 
   Preferences& preferences_;
 
@@ -122,7 +109,6 @@ private:
   QVector<QSharedPointer<Shape>> shapes_;
   QPixmap violin_plot_;
   QPixmap training_plot_;
-
 };
 
-}
+}  // namespace shapeworks

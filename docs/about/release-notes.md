@@ -195,7 +195,7 @@ The following tools are supported from all three different interfaces - command 
 * **DeepSSM evaluation:** The DeepSSM evaluation step in the use case is updated to use ShapeWorks mesh distance rather than the deprecated SurfaceToSurfaceDistance command. 
 
 
-## ShapeWorks 6.0 - 2020-03-30
+## ShapeWorks 6.0 - 2021-03-30
 
 ![](../img/about/release6.0.png)
 

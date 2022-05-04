@@ -23,11 +23,13 @@
 
 // shapeworks
 #include "TriMesh.h"
-#include "ParticleSystem/itkParticleImageDomain.h"
-#include "ParticleSystem/itkParticleImplicitSurfaceDomain.h"
+#include "ParticleSystem/ParticleImageDomain.h"
+#include "ParticleSystem/ParticleImplicitSurfaceDomain.h"
 #include "ParticleSystem/object_reader.h"
 #include "ParticleSystem/object_writer.h"
 #include "OptimizeParameterFile.h"
+#include "OptimizeParameters.h"
+#include <Libs/Project/Project.h>
 #include "VtkMeshWrapper.h"
 
 #include "Optimize.h"
@@ -279,16 +281,11 @@ void Optimize::SetParameters()
   }
 
   // Set up the procrustes registration object.
-  this->m_procrustes = itk::ParticleProcrustesRegistration<3>::New();
+  this->m_procrustes = std::make_shared<ParticleProcrustesRegistration>();
   this->m_procrustes->SetParticleSystem(this->m_sampler->GetParticleSystem());
   this->m_procrustes->SetDomainsPerShape(this->m_domains_per_shape);
-
-  if (this->m_procrustes_scaling == 0) {
-    this->m_procrustes->ScalingOff();
-  }
-  else {
-    this->m_procrustes->ScalingOn();
-  }
+  this->m_procrustes->SetScaling(this->m_procrustes_scaling);
+  this->m_procrustes->SetRotationTranslation(this->m_procrustes_rotation_translation);
 
   this->SetIterationCallback();
   this->PrintStartMessage("Initializing variables...");
@@ -1665,8 +1662,8 @@ void Optimize::WritePointFilesWithFeatures(std::string iter_prefix)
       }
 
       // Only run the following code if we are dealing with ImplicitSurfaceDomains
-      const itk::ParticleImplicitSurfaceDomain<float>* domain
-              = dynamic_cast <const itk::ParticleImplicitSurfaceDomain<float>*> (m_sampler->GetParticleSystem()
+      const ParticleImplicitSurfaceDomain<float>* domain
+              = dynamic_cast <const ParticleImplicitSurfaceDomain<float>*> (m_sampler->GetParticleSystem()
                       ->GetDomain(i));
       if (domain && m_attributes_per_domain.size() > 0) {
         if (m_attributes_per_domain[i % m_domains_per_shape] > 0) {
@@ -2101,8 +2098,12 @@ void Optimize::SetProcrustesInterval(int procrustes_interval)
 { this->m_procrustes_interval = procrustes_interval; }
 
 //---------------------------------------------------------------------------
-void Optimize::SetProcrustesScaling(int procrustes_scaling)
+void Optimize::SetProcrustesScaling(bool procrustes_scaling)
 { this->m_procrustes_scaling = procrustes_scaling; }
+
+//---------------------------------------------------------------------------
+void Optimize::SetProcrustesRotationTranslation(bool procrustes_rotation_translation)
+{ this->m_procrustes_rotation_translation = procrustes_rotation_translation; }
 
 //---------------------------------------------------------------------------
 void Optimize::SetRelativeWeighting(double relative_weighting)
@@ -2375,6 +2376,13 @@ bool Optimize::LoadParameterFile(std::string filename)
   return true;
 }
 
+bool Optimize::SetUpOptimize(ProjectHandle projectFile)
+{
+
+  OptimizeParameters param(projectFile);
+  param.set_up_optimize(this);
+  return true;
+}
 //---------------------------------------------------------------------------
 void Optimize::SetProject(std::shared_ptr<Project> project)
 {
@@ -2478,5 +2486,17 @@ vnl_vector_fixed<double, 3> Optimize::TransformPoint(int domain, vnl_vector_fixe
   return output;
 }
 
+
+//---------------------------------------------------------------------------
+void Optimize::SetSharedBoundaryEnabled(bool enabled)
+{
+  m_sampler->SetSharedBoundaryEnabled(enabled);
+}
+
+//---------------------------------------------------------------------------
+void Optimize::SetSharedBoundaryWeight(double weight)
+{
+  m_sampler->SetSharedBoundaryWeight(weight);
+}
 
 }
