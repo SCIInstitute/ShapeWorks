@@ -242,9 +242,11 @@ void Viewer::display_vector_field() {
 
   // Dot product difference vectors with the surface normals.
   vtkSmartPointer<vtkFloatArray> magnitudes = vtkSmartPointer<vtkFloatArray>::New();
+  magnitudes->SetName("magnitues");
   magnitudes->SetNumberOfComponents(1);
 
   vtkSmartPointer<vtkFloatArray> vectors = vtkSmartPointer<vtkFloatArray>::New();
+  vectors->SetName("vectors");
   vectors->SetNumberOfComponents(3);
 
   update_points();
@@ -962,6 +964,15 @@ void Viewer::update_actors() {
 
 //-----------------------------------------------------------------------------
 void Viewer::remove_scalar_bar() { renderer_->RemoveActor(scalar_bar_actor_); }
+
+//-----------------------------------------------------------------------------
+vtkFloatArray* Viewer::get_particle_scalars() {
+  vtkFloatArray* scalars = (vtkFloatArray*)(glyph_point_set_->GetPointData()->GetScalars());
+  return scalars;
+}
+
+//-----------------------------------------------------------------------------
+vtkSmartPointer<vtkPolyData> Viewer::get_particle_poly_data() { return glyph_point_set_; }
 
 //-----------------------------------------------------------------------------
 void Viewer::update_image_volume() {

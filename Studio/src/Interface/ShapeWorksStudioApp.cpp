@@ -201,9 +201,9 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
 
   // setup modes
   update_view_combo();
-  //set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, true);
-  //set_view_combo_item_enabled(VIEW_MODE::GROOMED, false);
-  //set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, should_reconstruct_view_show());
+  // set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, true);
+  // set_view_combo_item_enabled(VIEW_MODE::GROOMED, false);
+  // set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, should_reconstruct_view_show());
 
   connect(ui_->features, qOverload<const QString&>(&QComboBox::currentIndexChanged), this,
           &ShapeWorksStudioApp::update_feature_map_selection);
@@ -229,6 +229,11 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
           &ShapeWorksStudioApp::action_export_pca_montage_triggered);
   connect(ui_->action_export_screenshot, &QAction::triggered, this,
           &ShapeWorksStudioApp::action_export_screenshot_triggered);
+
+  connect(ui_->action_export_particle_scalars, &QAction::triggered, this,
+          &ShapeWorksStudioApp::action_export_particle_scalars_triggered);
+  connect(ui_->action_export_all_subjects_particle_scalars, &QAction::triggered, this,
+          &ShapeWorksStudioApp::action_export_all_subjects_particle_scalars_triggered);
 
   update_feature_map_scale();
   handle_message("ShapeWorks Studio Initialized");
@@ -434,6 +439,10 @@ void ShapeWorksStudioApp::disable_all_actions() {
   ui_->action_open_project->setEnabled(false);
   ui_->action_import->setEnabled(false);
   ui_->menuExport->setEnabled(false);
+
+  ui_->action_export_pca_montage->setEnabled(false);
+  ui_->action_export_screenshot->setEnabled(false);
+  ui_->action_export_particle_scalars->setEnabled(false);
 
   // subtools
   data_tool_->disable_actions();
@@ -1438,11 +1447,18 @@ bool ShapeWorksStudioApp::write_scalars(vtkSmartPointer<vtkPolyData> poly_data, 
   std::cerr << "number of arrays = " << num_arrays << "\n";
 
   for (int i = 0; i < num_arrays; i++) {
-    if (!poly_data->GetPointData()->GetArrayName(i)) {
-      output << ","
-             << "scalars";
+    std::string name = poly_data->GetPointData()->GetArrayName(i);
+    if (name == "") {
+      name = "scalars";
+    }
+    auto array = poly_data->GetPointData()->GetArray(i);
+    int num_components = array->GetNumberOfComponents();
+    if (num_components == 1) {
+      output << "," << name;
     } else {
-      output << "," << poly_data->GetPointData()->GetArrayName(i);
+      for (int j = 0; j < num_components; j++) {
+        output << "," << name << "_" << j;
+      }
     }
   }
 
@@ -1459,7 +1475,11 @@ bool ShapeWorksStudioApp::write_scalars(vtkSmartPointer<vtkPolyData> poly_data, 
     output << "," << poly_data->GetPoint(i)[2];
 
     for (int j = 0; j < num_arrays; j++) {
-      output << "," << poly_data->GetPointData()->GetArray(j)->GetTuple(i)[0];
+      auto array = poly_data->GetPointData()->GetArray(j);
+      int num_components = array->GetNumberOfComponents();
+      for (int k = 0; k < num_components; k++) {
+        output << "," << array->GetTuple(i)[k];
+      }
     }
     output << "\n";
   }
@@ -1537,6 +1557,75 @@ void ShapeWorksStudioApp::on_action_export_mesh_scalars_triggered() {
 
       handle_message("Wrote: " + name);
     }
+  }
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::action_export_particle_scalars_triggered() {
+  QString filename = get_save_filename(tr("Export Particle Scalars"), tr("CSV files (*.csv)"), ".csv");
+  if (filename.isEmpty()) {
+    return;
+  }
+
+  auto poly_data = visualizer_->get_current_particle_poly_data();
+  if (!poly_data) {
+    handle_error("Error exporting particle scalars: invalid data");
+    return;
+  }
+  write_scalars(poly_data, filename);
+  handle_message("Wrote: " + filename);
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::action_export_all_subjects_particle_scalars_triggered() {
+  bool single = StudioUtils::ask_multiple_domains_as_single(this, session_->get_project());
+
+  QString filename = get_save_filename(tr("Export All Shapes Particle Scalars"), tr("CSV files (*.csv)"), ".csv");
+  if (filename.isEmpty()) {
+    return;
+  }
+
+  QProgressDialog progress("Exporting Scalars...", "Abort", 0, session_->get_num_shapes(), this);
+  progress.setWindowModality(Qt::WindowModal);
+  progress.setMinimumDuration(2000);
+  // progress.show();
+
+  QFileInfo fi(filename);
+  QString base = fi.path() + QDir::separator() + fi.completeBaseName();
+  for (const auto& shape : session_->get_shapes()) {
+    QString shape_filename = base + "_" + shape->get_display_name() + "." + fi.completeSuffix();
+
+    auto display_mode = session_->get_display_mode();
+    auto mesh_group = shape->get_meshes(display_mode, true);
+
+    auto feature_maps = session_->get_project()->get_feature_names();
+    for (const std::string& feature : feature_maps) {
+      shape->load_feature(display_mode, feature);
+    }
+
+    if (single) {
+      auto poly_data = mesh_group.get_combined_poly_data();
+      write_scalars(poly_data, shape_filename);
+      handle_message("Wrote: " + shape_filename);
+    } else {
+      auto domain_names = session_->get_project()->get_domain_names();
+      QFileInfo fi(shape_filename);
+      QString domain_base = fi.path() + QDir::separator() + fi.completeBaseName();
+      for (int domain = 0; domain < domain_names.size(); domain++) {
+        QString name = domain_base + "_" + QString::fromStdString(domain_names[domain]) + "." + fi.completeSuffix();
+
+        auto poly_data = mesh_group.meshes()[domain]->get_poly_data();
+        if (!write_scalars(poly_data, name)) {
+          return;
+        }
+        handle_message("Wrote: " + name);
+      }
+    }
+
+    if (progress.wasCanceled()) {
+      break;
+    }
+    progress.setValue(progress.value() + 1);
   }
 }
 

@@ -17,10 +17,8 @@
 
 namespace shapeworks {
 
-
 //-----------------------------------------------------------------------------
 Visualizer::Visualizer(Preferences& prefs) : preferences_(prefs) {
-
   QObject::connect(&preferences_, SIGNAL(glyph_properties_changed()), this, SLOT(update_viewer_properties()));
 
   show_glyphs_ = true;
@@ -122,6 +120,26 @@ StudioParticles Visualizer::get_current_shape() {
 }
 
 //-----------------------------------------------------------------------------
+vtkFloatArray* Visualizer::get_current_particle_scalars() {
+  auto viewers = lightbox_->get_viewers();
+  if (viewers.size() > 0) {
+    return viewers[0]->get_particle_scalars();
+  }
+  return nullptr;
+}
+
+//-----------------------------------------------------------------------------
+vtkSmartPointer<vtkPolyData> Visualizer::get_current_particle_poly_data()
+{
+  auto viewers = lightbox_->get_viewers();
+  if (viewers.size() > 0) {
+    return viewers[0]->get_particle_poly_data();
+  }
+  return nullptr;
+
+}
+
+//-----------------------------------------------------------------------------
 void Visualizer::handle_new_mesh() {
   lightbox_->handle_new_mesh();
   if (needs_camera_reset_) {
@@ -135,7 +153,7 @@ vtkSmartPointer<vtkPolyData> Visualizer::get_current_mesh() {
   if (meshes.empty()) {
     return nullptr;
   }
-  vtkSmartPointer<vtkAppendPolyData> append = vtkSmartPointer<vtkAppendPolyData>::New();
+  auto append = vtkSmartPointer<vtkAppendPolyData>::New();
   for (int domain = 0; domain < meshes.size(); domain++) {
     append->AddInputData(meshes[domain]);
   }

@@ -1,4 +1,5 @@
 #include <Data/MeshGroup.h>
+#include <vtkAppendPolyData.h>
 
 using namespace shapeworks;
 
@@ -13,6 +14,18 @@ MeshGroup::~MeshGroup() {}
 
 //---------------------------------------------------------------------------
 MeshList& MeshGroup::meshes() { return meshes_; }
+
+//---------------------------------------------------------------------------
+vtkSmartPointer<vtkPolyData> MeshGroup::get_combined_poly_data()
+{
+  auto append = vtkSmartPointer<vtkAppendPolyData>::New();
+  for (int domain = 0; domain < meshes_.size(); domain++) {
+    append->AddInputData(meshes_[domain]->get_poly_data());
+  }
+  append->Update();
+  vtkSmartPointer<vtkPolyData> combined = append->GetOutput();
+  return combined;
+}
 
 //---------------------------------------------------------------------------
 bool MeshGroup::valid() {
