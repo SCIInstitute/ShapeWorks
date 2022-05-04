@@ -26,7 +26,7 @@ Representation of a single shape/patient/subject.
 | | **[Shape](../Classes/classshapeworks_1_1Shape.md#function-shape)**() |
 | | **[~Shape](../Classes/classshapeworks_1_1Shape.md#function-~shape)**() |
 | QString | **[get_display_name](../Classes/classshapeworks_1_1Shape.md#function-get-display-name)**() |
-| [MeshGroup](../Classes/classshapeworks_1_1MeshGroup.md) | **[get_meshes](../Classes/classshapeworks_1_1Shape.md#function-get-meshes)**(const string & display_mode) |
+| [MeshGroup](../Classes/classshapeworks_1_1MeshGroup.md) | **[get_meshes](../Classes/classshapeworks_1_1Shape.md#function-get-meshes)**(const string & display_mode, bool wait =false) |
 | void | **[set_annotations](../Classes/classshapeworks_1_1Shape.md#function-set-annotations)**(QStringList annotations, bool only_overwrite_blank =true) |
 | QStringList | **[get_annotations](../Classes/classshapeworks_1_1Shape.md#function-get-annotations)**() |
 | void | **[set_mesh_manager](../Classes/classshapeworks_1_1Shape.md#function-set-mesh-manager)**(QSharedPointer< [MeshManager](../Classes/classshapeworks_1_1MeshManager.md) > mesh_manager) |
@@ -118,7 +118,8 @@ QString get_display_name()
 
 ```cpp
 MeshGroup get_meshes(
-    const string & display_mode
+    const string & display_mode,
+    bool wait =false
 )
 ```
 
@@ -652,4 +653,4 @@ std::vector< std::shared_ptr< VtkMeshWrapper > > get_groomed_mesh_wrappers()
 
 -------------------------------
 
-Updated on 2022-05-02 at 23:22:53 +0000
+Updated on 2022-05-04 at 15:21:58 +0000

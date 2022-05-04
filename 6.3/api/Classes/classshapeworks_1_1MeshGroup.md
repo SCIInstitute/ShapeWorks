@@ -24,6 +24,7 @@ Representation of a group of meshes.  [More...](#detailed-description)
 | bool | **[valid](../Classes/classshapeworks_1_1MeshGroup.md#function-valid)**() |
 | void | **[set_mesh](../Classes/classshapeworks_1_1MeshGroup.md#function-set-mesh)**(int i, MeshHandle mesh) |
 | MeshList & | **[meshes](../Classes/classshapeworks_1_1MeshGroup.md#function-meshes)**()<br>Return a reference to the list of meshes.  |
+| vtkSmartPointer< vtkPolyData > | **[get_combined_poly_data](../Classes/classshapeworks_1_1MeshGroup.md#function-get-combined-poly-data)**()<br>Return polydata of all meshes, combined.  |
 
 ## Detailed Description
 
@@ -94,6 +95,14 @@ MeshList & meshes()
 
 Return a reference to the list of meshes. 
 
+### function get_combined_poly_data
+
+```cpp
+vtkSmartPointer< vtkPolyData > get_combined_poly_data()
+```
+
+Return polydata of all meshes, combined. 
+
 -------------------------------
 
-Updated on 2022-05-02 at 23:22:52 +0000
+Updated on 2022-05-04 at 15:21:57 +0000

@@ -53,6 +53,8 @@ Inherits from QObject
 | void | **[reset_camera](../Classes/classshapeworks_1_1Visualizer.md#function-reset-camera)**() |
 | void | **[update_lut](../Classes/classshapeworks_1_1Visualizer.md#function-update-lut)**() |
 | [StudioParticles](../Classes/classshapeworks_1_1StudioParticles.md) | **[get_current_shape](../Classes/classshapeworks_1_1Visualizer.md#function-get-current-shape)**() |
+| vtkFloatArray * | **[get_current_particle_scalars](../Classes/classshapeworks_1_1Visualizer.md#function-get-current-particle-scalars)**() |
+| vtkSmartPointer< vtkPolyData > | **[get_current_particle_poly_data](../Classes/classshapeworks_1_1Visualizer.md#function-get-current-particle-poly-data)**() |
 | void | **[handle_new_mesh](../Classes/classshapeworks_1_1Visualizer.md#function-handle-new-mesh)**() |
 | vtkSmartPointer< vtkPolyData > | **[get_current_mesh](../Classes/classshapeworks_1_1Visualizer.md#function-get-current-mesh)**() |
 | std::vector< vtkSmartPointer< vtkPolyData > > | **[get_current_meshes_transformed](../Classes/classshapeworks_1_1Visualizer.md#function-get-current-meshes-transformed)**() |
@@ -333,6 +335,20 @@ StudioParticles get_current_shape()
 ```
 
 
+### function get_current_particle_scalars
+
+```cpp
+vtkFloatArray * get_current_particle_scalars()
+```
+
+
+### function get_current_particle_poly_data
+
+```cpp
+vtkSmartPointer< vtkPolyData > get_current_particle_poly_data()
+```
+
+
 ### function handle_new_mesh
 
 ```cpp
@@ -533,4 +549,4 @@ Return render window size.
 
 -------------------------------
 
-Updated on 2022-05-02 at 23:22:53 +0000
+Updated on 2022-05-04 at 15:21:58 +0000

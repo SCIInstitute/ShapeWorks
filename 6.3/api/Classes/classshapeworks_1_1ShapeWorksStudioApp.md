@@ -45,6 +45,8 @@ Inherits from QMainWindow
 | void | **[on_action_export_pca_scores_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-action-export-pca-scores-triggered)**() |
 | void | **[action_export_pca_montage_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-action-export-pca-montage-triggered)**() |
 | void | **[action_export_screenshot_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-action-export-screenshot-triggered)**() |
+| void | **[action_export_particle_scalars_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-action-export-particle-scalars-triggered)**() |
+| void | **[action_export_all_subjects_particle_scalars_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-action-export-all-subjects-particle-scalars-triggered)**() |
 | void | **[on_center_checkbox_stateChanged](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-center-checkbox-statechanged)**() |
 | void | **[on_zoom_slider_valueChanged](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-zoom-slider-valuechanged)**() |
 | void | **[on_view_mode_combobox_currentIndexChanged](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-view-mode-combobox-currentindexchanged)**(QString disp_mode) |
@@ -292,6 +294,20 @@ void action_export_pca_montage_triggered()
 
 ```cpp
 void action_export_screenshot_triggered()
+```
+
+
+### slot action_export_particle_scalars_triggered
+
+```cpp
+void action_export_particle_scalars_triggered()
+```
+
+
+### slot action_export_all_subjects_particle_scalars_triggered
+
+```cpp
+void action_export_all_subjects_particle_scalars_triggered()
 ```
 
 
@@ -628,4 +644,4 @@ void dropEvent(
 
 -------------------------------
 
-Updated on 2022-05-02 at 23:22:53 +0000
+Updated on 2022-05-04 at 15:21:58 +0000

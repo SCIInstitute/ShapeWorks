@@ -48,6 +48,8 @@ class MeshGroup {
 
   MeshList& meshes();
 
+  vtkSmartPointer<vtkPolyData> get_combined_poly_data();
+
  private:
   MeshList meshes_;
 };
@@ -57,4 +59,4 @@ class MeshGroup {
 
 -------------------------------
 
-Updated on 2022-05-02 at 23:22:54 +0000
+Updated on 2022-05-04 at 15:21:59 +0000

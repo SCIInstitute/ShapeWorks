@@ -92,6 +92,9 @@ class Visualizer : public QObject {
 
   StudioParticles get_current_shape();
 
+  vtkFloatArray* get_current_particle_scalars();
+  vtkSmartPointer<vtkPolyData> get_current_particle_poly_data();
+
   void handle_new_mesh();
   vtkSmartPointer<vtkPolyData> get_current_mesh();
   std::vector<vtkSmartPointer<vtkPolyData>> get_current_meshes_transformed();
@@ -185,4 +188,4 @@ class Visualizer : public QObject {
 
 -------------------------------
 
-Updated on 2022-05-02 at 23:22:54 +0000
+Updated on 2022-05-04 at 15:21:59 +0000

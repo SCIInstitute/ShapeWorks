@@ -63,7 +63,7 @@ class Shape {
 
   QString get_display_name();
 
-  MeshGroup get_meshes(const string& display_mode);
+  MeshGroup get_meshes(const string& display_mode, bool wait = false);
 
   void set_annotations(QStringList annotations, bool only_overwrite_blank = true);
   QStringList get_annotations();
@@ -229,4 +229,4 @@ class Shape {
 
 -------------------------------
 
-Updated on 2022-05-02 at 23:22:54 +0000
+Updated on 2022-05-04 at 15:21:59 +0000

@@ -67,6 +67,8 @@ summary: 3D Viewer
 | void | **[update_actors](../Classes/classshapeworks_1_1Viewer.md#function-update-actors)**() |
 | void | **[remove_scalar_bar](../Classes/classshapeworks_1_1Viewer.md#function-remove-scalar-bar)**() |
 | bool | **[is_ready](../Classes/classshapeworks_1_1Viewer.md#function-is-ready)**() |
+| vtkFloatArray * | **[get_particle_scalars](../Classes/classshapeworks_1_1Viewer.md#function-get-particle-scalars)**() |
+| vtkSmartPointer< vtkPolyData > | **[get_particle_poly_data](../Classes/classshapeworks_1_1Viewer.md#function-get-particle-poly-data)**() |
 | bool | **[is_reverse](../Classes/classshapeworks_1_1Viewer.md#function-is-reverse)**(vtkSmartPointer< vtkTransform > transform) |
 
 ## Detailed Description
@@ -478,6 +480,20 @@ inline bool is_ready()
 ```
 
 
+### function get_particle_scalars
+
+```cpp
+vtkFloatArray * get_particle_scalars()
+```
+
+
+### function get_particle_poly_data
+
+```cpp
+vtkSmartPointer< vtkPolyData > get_particle_poly_data()
+```
+
+
 ### function is_reverse
 
 ```cpp
@@ -489,4 +505,4 @@ static bool is_reverse(
 
 -------------------------------
 
-Updated on 2022-05-02 at 23:22:53 +0000
+Updated on 2022-05-04 at 15:21:58 +0000
