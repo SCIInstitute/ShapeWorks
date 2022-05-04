@@ -49,6 +49,8 @@ ExportImageDialog::ExportImageDialog(QWidget* parent, Preferences& prefs, QShare
   ui_->show_color_scale->setChecked(prefs_.get_export_show_color_scale());
   ui_->pca_num_images->setValue(prefs_.get_export_num_pca_images());
   ui_->pca_range->setValue(prefs_.get_export_pca_range());
+  ui_->pca_mode_start->setValue(prefs_.get_export_pca_mode_start());
+  ui_->pca_num_modes->setValue(prefs_.get_export_pca_num_modes());
 
   connect(ui_->export_button, &QPushButton::clicked, this, &ExportImageDialog::export_clicked);
   connect(ui_->cancel_button, &QPushButton::clicked, this, &ExportImageDialog::reject);
@@ -68,6 +70,8 @@ ExportImageDialog::ExportImageDialog(QWidget* parent, Preferences& prefs, QShare
   connect(ui_->show_color_scale, &QCheckBox::toggled, this, &ExportImageDialog::update_preview);
   connect(ui_->pca_num_images, qOverload<int>(&QSpinBox::valueChanged), this, start_timer);
   connect(ui_->pca_range, qOverload<double>(&QDoubleSpinBox::valueChanged), this, start_timer);
+  connect(ui_->pca_mode_start, qOverload<int>(&QSpinBox::valueChanged), this, start_timer);
+  connect(ui_->pca_num_modes, qOverload<int>(&QSpinBox::valueChanged), this, start_timer);
 
   ui_->pca_widget->setVisible(pca_mode);
 
@@ -115,6 +119,8 @@ void ExportImageDialog::update_preview() {
   prefs_.set_export_show_color_scale(ui_->show_color_scale->isChecked());
   prefs_.set_export_num_pca_images(ui_->pca_num_images->value());
   prefs_.set_export_pca_range(ui_->pca_range->value());
+  prefs_.set_export_pca_mode_start(ui_->pca_mode_start->value());
+  prefs_.set_export_pca_num_modes(ui_->pca_num_modes->value());
   int num_pca_steps = ui_->pca_num_images->value();
   double pca_range = ui_->pca_range->value();
 

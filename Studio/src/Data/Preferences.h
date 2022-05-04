@@ -88,21 +88,20 @@ class Preferences : public QObject {
 
   QSize get_export_override_size();
   void set_export_override_size(QSize size);
-
   bool get_export_override_size_enabled();
   void set_export_override_size_enabled(bool enabled);
-
   bool get_export_show_orientation_marker();
   void set_export_show_orientation_marker(bool value);
-
   bool get_export_show_color_scale();
   void set_export_show_color_scale(bool value);
-
   int get_export_num_pca_images();
   void set_export_num_pca_images(int number);
-
   double get_export_pca_range();
   void set_export_pca_range(double range);
+  int get_export_pca_mode_start();
+  void set_export_pca_mode_start(int mode);
+  int get_export_pca_num_modes();
+  void set_export_pca_num_modes(int num_modes);
 
  Q_SIGNALS:
 

@@ -247,6 +247,18 @@ double Preferences::get_export_pca_range() { return settings_.value("Export/pca_
 void Preferences::set_export_pca_range(double range) { settings_.setValue("Export/pca_range", range); }
 
 //-----------------------------------------------------------------------------
+int Preferences::get_export_pca_mode_start() { return settings_.value("Export/pca_mode_start", 1).toInt(); }
+
+//-----------------------------------------------------------------------------
+void Preferences::set_export_pca_mode_start(int mode) { settings_.setValue("Export/pca_mode_start", mode); }
+
+//-----------------------------------------------------------------------------
+int Preferences::get_export_pca_num_modes() { return settings_.value("Export/pca_num_modes", 1).toInt(); }
+
+//-----------------------------------------------------------------------------
+void Preferences::set_export_pca_num_modes(int num_modes) { settings_.setValue("Export/pca_num_modes", num_modes); }
+
+//-----------------------------------------------------------------------------
 int Preferences::get_geodesic_cache_multiplier() { return settings_.value("Mesh/geodesic_cache_multiplier").toInt(); }
 
 //-----------------------------------------------------------------------------
