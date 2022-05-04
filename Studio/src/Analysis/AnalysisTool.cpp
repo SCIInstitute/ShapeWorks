@@ -235,6 +235,12 @@ void AnalysisTool::set_session(QSharedPointer<Session> session) {
 }
 
 //---------------------------------------------------------------------------
+QSharedPointer<Session> AnalysisTool::get_session()
+{
+  return session_;
+}
+
+//---------------------------------------------------------------------------
 void AnalysisTool::set_app(ShapeWorksStudioApp* app) { app_ = app; }
 
 //---------------------------------------------------------------------------
