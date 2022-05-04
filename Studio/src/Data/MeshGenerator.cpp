@@ -1,3 +1,5 @@
+#include <Data/SurfaceReconstructor.h>
+
 #include <Data/ItkToVtk.h>
 #include <Data/LegacyMeshGenerator.h>
 #include <Data/MeshGenerator.h>

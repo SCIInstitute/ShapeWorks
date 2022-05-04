@@ -1,3 +1,10 @@
+// qt
+#include <QDebug>
+#include <QFile>
+#include <QFileInfo>
+#include <QMessageBox>
+#include <QTextStream>
+
 #include <Data/MeshGenerator.h>
 #include <Data/Shape.h>
 #include <Data/StudioLog.h>
@@ -6,16 +13,17 @@
 #include <Libs/Utils/StringUtils.h>
 #include <Visualization/Visualizer.h>
 #include <itkOrientImageFilter.h>
+#include <itkImageFileReader.h>
 #include <vtkCenterOfMass.h>
 
+// vtk
+#include <vtkKdTreePointLocator.h>
+#include <vtkPointData.h>
+
 #include <Libs/Optimize/ParticleSystem/VtkMeshWrapper.h>
+
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
-#include <QDebug>
-#include <QFile>
-#include <QFileInfo>
-#include <QMessageBox>
-#include <QTextStream>
 
 using ReaderType = itk::ImageFileReader<ImageType>;
 
@@ -44,7 +52,7 @@ QString Shape::get_display_name() {
 Shape::~Shape() = default;
 
 //---------------------------------------------------------------------------
-MeshGroup Shape::get_meshes(const string& display_mode, bool wait) {
+MeshGroup Shape::get_meshes(const std::string& display_mode, bool wait) {
   if (display_mode == Session::MODE_ORIGINAL_C) {
     return this->get_original_meshes(wait);
   } else if (display_mode == Session::MODE_GROOMED_C) {
@@ -785,7 +793,7 @@ void Shape::load_feature_from_scalar_file(std::string filename, std::string feat
 }
 
 //---------------------------------------------------------------------------
-void Shape::set_override_feature(string feature) { this->override_feature_ = feature; }
+void Shape::set_override_feature(std::string feature) { this->override_feature_ = feature; }
 
 //---------------------------------------------------------------------------
 std::string Shape::get_override_feature() { return this->override_feature_; }

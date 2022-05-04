@@ -37,7 +37,7 @@ class Shape {
 
   QString get_display_name();
 
-  MeshGroup get_meshes(const string& display_mode, bool wait = false);
+  MeshGroup get_meshes(const std::string& display_mode, bool wait = false);
 
   void set_annotations(QStringList annotations, bool only_overwrite_blank = true);
   QStringList get_annotations();

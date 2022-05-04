@@ -10,6 +10,7 @@
 
 #include <Libs/Optimize/Optimize.h>
 #include <Libs/Optimize/OptimizeParameters.h>
+#include <Data/SurfaceReconstructor.h>
 
 namespace shapeworks {
 

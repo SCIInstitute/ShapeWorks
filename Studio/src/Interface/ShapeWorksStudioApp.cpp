@@ -14,11 +14,13 @@
 // vtk
 #include <vtkPolyDataWriter.h>
 #include <vtkRenderWindow.h>
+#include <vtkPointData.h>
 
 // shapeworks
 #include <Applications/Configuration.h>
 #include <Libs/Mesh/Mesh.h>
 #include <Libs/Utils/StringUtils.h>
+#include <Data/SurfaceReconstructor.h>
 
 // studio
 #include <Analysis/AnalysisTool.h>

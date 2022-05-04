@@ -1,5 +1,8 @@
 #include <vector>
 
+// vtk
+#include <vtkPointData.h>
+
 // qt
 #include <Libs/Mesh/MeshUtils.h>
 #include <Libs/Utils/StringUtils.h>
@@ -1204,7 +1207,7 @@ void Session::trigger_repaint() { Q_EMIT repaint(); }
 void Session::set_display_mode(std::string mode) { display_mode_ = mode; }
 
 //---------------------------------------------------------------------------
-string Session::get_display_mode() { return display_mode_; }
+std::string Session::get_display_mode() { return display_mode_; }
 
 //---------------------------------------------------------------------------
 void Session::set_ffc_paint_active(bool enabled) {

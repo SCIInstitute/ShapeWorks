@@ -19,7 +19,7 @@
 #include <Data/MeshWorker.h>
 
 #include <Data/Preferences.h>
-#include <Data/SurfaceReconstructor.h>
+class SurfaceReconstructor;
 
 namespace shapeworks {
 
