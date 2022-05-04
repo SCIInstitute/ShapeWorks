@@ -178,16 +178,9 @@ void ExportImageDialog::update_preview() {
         font.setPixelSize(margin * 0.75);
         painter.setFont(font);
 
-        //auto metrics = QFontMetrics(font);
-        //auto rect = metrics.boundingRect(text);
-
-        //double mid = x + pixmap.width() / 2.0;
-
         if (mode == last_mode) {
-          QRect draw_rect =
-              QRect(QPoint(x, y + pixmap.height()), QPoint(x + pixmap.width(), y + pixmap.height() + margin));
-          // QPointF anchor(mid - rect.width() / 2.0, pixmap.height() + (margin / 2.0));
-          painter.drawText(draw_rect, Qt::AlignCenter, text);
+          QRect rect = QRect(QPoint(x, y + pixmap.height()), QPoint(x + pixmap.width(), y + pixmap.height() + margin));
+          painter.drawText(rect, Qt::AlignCenter, text);
         }
         x += size.width();
       }
