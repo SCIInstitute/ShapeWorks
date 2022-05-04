@@ -141,29 +141,34 @@ class Viewer {
 
   static bool is_reverse(vtkSmartPointer<vtkTransform> transform);
 
- private:
+  void update_actors();
 
+  void remove_scalar_bar();
+
+  bool is_ready() { return mesh_ready_; }
+
+  vtkFloatArray* get_particle_scalars();
+
+  vtkSmartPointer<vtkPolyData> get_particle_poly_data();
+
+ private:
   void initialize_surfaces();
 
   void display_vector_field();
 
-  void compute_point_differences(const std::vector<Shape::Point>& points, vtkSmartPointer<vtkFloatArray> magnitudes,
+  void compute_point_differences(const Eigen::VectorXd& points, vtkSmartPointer<vtkFloatArray> magnitudes,
                                  vtkSmartPointer<vtkFloatArray> vectors);
 
   void compute_surface_differences(vtkSmartPointer<vtkFloatArray> magnitudes, vtkSmartPointer<vtkFloatArray> vectors);
 
-  void draw_exclusion_spheres(QSharedPointer<Shape> object);
-
   void update_difference_lut(float r0, float r1);
-
-  void update_actors();
 
   bool showing_feature_map();
   std::string get_displayed_feature_map();
 
   vtkSmartPointer<vtkPlane> transform_plane(vtkSmartPointer<vtkPlane> plane, vtkSmartPointer<vtkTransform> transform);
 
-  bool visible_;
+  bool visible_ = false;
 
   QSharedPointer<Shape> shape_;
 
@@ -183,12 +188,6 @@ class Viewer {
   vtkSmartPointer<vtkGlyph3D> glyphs_;
   vtkSmartPointer<vtkPolyDataMapper> glyph_mapper_;
   vtkSmartPointer<vtkActor> glyph_actor_;
-
-  vtkSmartPointer<vtkPoints> exclusion_sphere_points_;
-  vtkSmartPointer<vtkPolyData> exclusion_sphere_point_set_;
-  vtkSmartPointer<vtkGlyph3D> exclusion_sphere_glyph_;
-  vtkSmartPointer<vtkPolyDataMapper> exclusion_sphere_mapper_;
-  vtkSmartPointer<vtkActor> exclusion_sphere_actor_;
 
   std::vector<vtkSmartPointer<vtkPolyDataMapper>> surface_mappers_;
   std::vector<vtkSmartPointer<vtkActor>> surface_actors_;
@@ -212,7 +211,7 @@ class Viewer {
   bool arrows_visible_ = false;
 
   ColorSchemes color_schemes_;
-  int scheme_;
+  int scheme_ = 0;
 
   bool mesh_ready_ = false;
   bool viewer_ready_ = false;
@@ -230,7 +229,7 @@ class Viewer {
 
   QSharedPointer<Session> session_;
 
-  std::string current_image_name_;
+  std::string current_image_name_ = "-none-";
 
   vtkSmartPointer<vtkCellPicker> cell_picker_;
   vtkSmartPointer<vtkPropPicker> prop_picker_;

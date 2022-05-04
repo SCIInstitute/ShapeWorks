@@ -37,6 +37,12 @@ const std::string Session::OPTIMIZE_C("optimize");
 const std::string Session::ANALYSIS_C("analysis");
 const std::string Session::DEEPSSM_C("deepssm");
 
+//-----------------------------------------------------------------------------
+
+const std::string Session::MODE_ORIGINAL_C("Original");
+const std::string Session::MODE_GROOMED_C("Groomed");
+const std::string Session::MODE_RECONSTRUCTION_C("Reconstructed");
+
 //---------------------------------------------------------------------------
 Session::Session(QWidget* parent, Preferences& prefs)
     : parent_(parent), preferences_(prefs), mesh_manager_(QSharedPointer<MeshManager>(new MeshManager(preferences_))) {
@@ -367,7 +373,7 @@ bool Session::load_light_project(QString filename) {
     }
   }
 
-  this->parameters().set("view_state", Visualizer::MODE_RECONSTRUCTION_C);
+  this->parameters().set("view_state", Session::MODE_RECONSTRUCTION_C);
 
   set_tool_state(Session::ANALYSIS_C);
 
@@ -1043,6 +1049,11 @@ void Session::set_show_planes(bool show) {
 bool Session::get_show_planes() { return params_.get("show_planes", true); }
 
 //---------------------------------------------------------------------------
+bool Session::should_show_planes() {
+  return get_show_planes() && get_display_mode() != MODE_RECONSTRUCTION_C;
+}
+
+//---------------------------------------------------------------------------
 void Session::set_show_landmarks(bool show) {
   bool old_value = get_show_landmarks();
   if (show != old_value) {
@@ -1138,6 +1149,9 @@ void Session::set_tool_state(std::string state) {
 std::string Session::get_tool_state() { return parameters().get("tool_state", Session::DATA_C); }
 
 //---------------------------------------------------------------------------
+bool Session::is_analysis_mode() { return get_tool_state() == Session::ANALYSIS_C; }
+
+//---------------------------------------------------------------------------
 void Session::set_ffc_paint_mode_inclusive(bool inclusive) {
   ffc_painting_inclusive_mode_ = inclusive;
   Q_EMIT ffc_paint_mode_changed();
@@ -1165,15 +1179,32 @@ void Session::set_show_good_bad_particles(bool enabled) {
     emit update_display();
   }
 }
-//---------------------------------------------------------------------------
 
+//---------------------------------------------------------------------------
+bool Session::get_show_difference_vectors() { return show_difference_vectors_; }
+
+//---------------------------------------------------------------------------
+void Session::set_show_difference_vectors(bool enabled) { show_difference_vectors_ = enabled; }
+
+//---------------------------------------------------------------------------
+bool Session::should_difference_vectors_show() {
+  return get_show_difference_vectors() && (get_tool_state() == Session::ANALYSIS_C);
+}
+
+//---------------------------------------------------------------------------
 std::vector<bool> Session::get_good_bad_particles() { return params_.get("good_bad_particles", {}); }
 
 //---------------------------------------------------------------------------
-void Session::set_good_bad_particles(const std::vector<bool> &good_bad) { params_.set("good_bad_particles", good_bad); }
+void Session::set_good_bad_particles(const std::vector<bool>& good_bad) { params_.set("good_bad_particles", good_bad); }
 
 //---------------------------------------------------------------------------
 void Session::trigger_repaint() { Q_EMIT repaint(); }
+
+//---------------------------------------------------------------------------
+void Session::set_display_mode(std::string mode) { display_mode_ = mode; }
+
+//---------------------------------------------------------------------------
+string Session::get_display_mode() { return display_mode_; }
 
 //---------------------------------------------------------------------------
 void Session::set_ffc_paint_active(bool enabled) {

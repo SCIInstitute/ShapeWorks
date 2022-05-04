@@ -14,7 +14,6 @@
 #include <Analysis/ShapeEvaluationJob.h>
 #include <Data/Preferences.h>
 #include <Data/Shape.h>
-#include <Visualization/BarGraph.h>
 #include <Visualization/Visualizer.h>
 
 class Ui_AnalysisTool;
@@ -65,7 +64,7 @@ class AnalysisTool : public QWidget {
 
   int get_pca_mode();
 
-  double get_group_value();
+  double get_group_ratio();
 
   double get_pca_value();
 
@@ -126,7 +125,6 @@ class AnalysisTool : public QWidget {
   void handle_group_animate_state_changed();
   void handle_group_timer();
 
-  void on_linear_radio_toggled(bool b);
 
   void handle_reconstruction_complete();
 
@@ -168,6 +166,8 @@ class AnalysisTool : public QWidget {
   void handle_lda_progress(double progress);
   void handle_lda_complete();
 
+  void show_difference_to_mean_clicked();
+
  signals:
 
   void update_view();
@@ -200,6 +200,8 @@ class AnalysisTool : public QWidget {
   void update_domain_alignment_box();
 
   void update_lda_graph();
+
+  void update_difference_particles();
 
   ShapeHandle create_shape_from_points(StudioParticles points);
 

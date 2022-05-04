@@ -71,9 +71,6 @@ class Visualizer : public QObject {
   void set_selected_point_one(int id);
   void set_selected_point_two(int id);
 
-  static const std::string MODE_ORIGINAL_C;
-  static const std::string MODE_GROOMED_C;
-  static const std::string MODE_RECONSTRUCTION_C;
 
   void set_mean(const Eigen::VectorXd& mean);
 
@@ -82,6 +79,9 @@ class Visualizer : public QObject {
   void update_lut();
 
   StudioParticles get_current_shape();
+
+  vtkFloatArray* get_current_particle_scalars();
+  vtkSmartPointer<vtkPolyData> get_current_particle_poly_data();
 
   void handle_new_mesh();
   vtkSmartPointer<vtkPolyData> get_current_mesh();
@@ -117,6 +117,9 @@ class Visualizer : public QObject {
   //! Update the feature range with a given range
   void update_feature_range(double* range);
 
+  //! Update the feature range with a given range
+  void update_feature_range(double min, double max);
+
   //! Request the transform for a given shape and domain
   vtkSmartPointer<vtkTransform> get_transform(QSharedPointer<Shape> shape, int alignment_domain, int domain);
 
@@ -135,6 +138,13 @@ class Visualizer : public QObject {
   //! Redraw renderers
   void redraw();
 
+  //! Export render window to pixmap
+  QPixmap export_to_pixmap(QSize size, bool transparent_background, bool show_orientation_marker,
+                           bool show_color_scale, bool &ready);
+
+  //! Return render window size
+  QSize get_render_size();
+
  public Q_SLOTS:
 
   /// update viewer properties (e.g. glyph size, quality, etc)
@@ -145,12 +155,12 @@ class Visualizer : public QObject {
   void handle_image_slice_settings_changed();
 
  private:
-  ShapeHandle create_display_object(const StudioParticles& points, const std::vector<Shape::Point>& vectors);
   Preferences& preferences_;
 
   void compute_measurements();
 
-  std::string display_mode_;
+  void setup_single_selected_point_lut();
+
   std::string feature_map_;
   int alignment_domain_;
 
