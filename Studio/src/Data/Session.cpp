@@ -1052,9 +1052,7 @@ void Session::set_show_planes(bool show) {
 bool Session::get_show_planes() { return params_.get("show_planes", true); }
 
 //---------------------------------------------------------------------------
-bool Session::should_show_planes() {
-  return get_show_planes() && get_display_mode() != MODE_RECONSTRUCTION_C;
-}
+bool Session::should_show_planes() { return get_show_planes() && get_display_mode() != MODE_RECONSTRUCTION_C; }
 
 //---------------------------------------------------------------------------
 void Session::set_show_landmarks(bool show) {
@@ -1122,6 +1120,17 @@ void Session::set_image_share_window_and_level(bool enabled) {
 
 //---------------------------------------------------------------------------
 bool Session::get_image_share_window_and_level() { return params_.get("image_share_window_and_level", true); }
+
+//---------------------------------------------------------------------------
+void Session::set_image_sync_slice(bool enabled) {
+  if (enabled == get_image_sync_slice() || is_loading()) {
+    return;
+  }
+  params_.set("image_sync_slice", enabled);
+}
+
+//---------------------------------------------------------------------------
+bool Session::get_image_sync_slice() { return params_.get("image_sync_slice", true); }
 
 //---------------------------------------------------------------------------
 bool Session::has_constraints() {

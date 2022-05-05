@@ -809,6 +809,7 @@ void ShapeWorksStudioApp::new_session() {
   connect(ui_->image_3d_mode_, &QCheckBox::clicked, session_.data(), &Session::set_image_3d_mode);
   connect(ui_->image_share_window_and_level_, &QCheckBox::clicked, session_.data(),
           &Session::set_image_share_window_and_level);
+  connect(ui_->image_sync_slices, &QCheckBox::clicked, session_.data(), &Session::set_image_sync_slice);
 
   connect(ui_->planes_visible_button_, &QToolButton::toggled, session_.data(), &Session::set_show_planes);
   connect(ui_->landmarks_visible_button, &QToolButton::clicked, session_.data(), &Session::set_show_landmarks);

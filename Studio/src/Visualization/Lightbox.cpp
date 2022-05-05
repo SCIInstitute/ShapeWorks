@@ -2,6 +2,7 @@
 #include <Data/StudioMesh.h>
 #include <Visualization/Lightbox.h>
 #include <Visualization/StudioInteractorStyle.h>
+#include <Visualization/SliceView.h>
 #include <Visualization/StudioSliceInteractorStyle.h>
 #include <Visualization/Visualizer.h>
 #include <vtkAnnotatedCubeActor.h>
@@ -13,6 +14,7 @@
 #include <vtkQImageToImageSource.h>
 #include <vtkRenderWindow.h>
 #include <vtkRenderer.h>
+
 
 #include <QPixmap>
 
@@ -306,8 +308,23 @@ void Lightbox::handle_hover(int* click_pos) {}
 
 //-----------------------------------------------------------------------------
 void Lightbox::handle_key(int* click_pos, std::string key) {
-  for (int i = 0; i < viewers_.size(); i++) {
-    viewers_[i]->handle_key(click_pos, key);
+  if (key == "Up" || key == "Down") {
+    SliceView::SliceChange change = SliceView::SliceChange::Up;
+    if (key == "Down") {
+      change = SliceView::SliceChange::Down;
+    }
+
+    if (session_->get_image_sync_slice()) {
+      viewers_[0]->slice_view().change_slice(change);
+      Point point = viewers_[0]->slice_view().get_slice_position();
+      for (int i = 1; i < viewers_.size(); i++) {
+        viewers_[i]->slice_view().set_slice_position(point);
+      }
+    } else {
+      for (int i = 0; i < viewers_.size(); i++) {
+        viewers_[i]->slice_view().change_slice(change);
+      }
+    }
   }
 }
 
@@ -328,10 +345,7 @@ void Lightbox::set_visualizer(Visualizer* visualizer) { visualizer_ = visualizer
 //-----------------------------------------------------------------------------
 void Lightbox::handle_timer_callback() {
   timer_callback_count_ = (timer_callback_count_ + 1) % 19;
-
-  // std::cerr << "timer!\n";
   foreach (ViewerHandle viewer, get_viewers()) { viewer->set_loading_screen(spinner_images_[timer_callback_count_]); }
-  // renderer_->ResetCameraClippingRange();
   renderer_->GetRenderWindow()->Render();
 }
 
@@ -497,7 +511,7 @@ void Lightbox::set_shared_window_and_level(double window, double level) {
     return;
   }
   for (int i = 0; i < viewers_.size(); i++) {
-    viewers_[i]->set_window_and_level(window, level);
+    viewers_[i]->slice_view().set_window_and_level(window, level);
   }
 }
 

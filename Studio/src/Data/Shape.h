@@ -145,7 +145,7 @@ class Shape {
 
   void load_feature(std::string display_mode, std::string feature);
 
-  vtkSmartPointer<vtkImageData> get_image_volume(std::string image_volume_name);
+  std::shared_ptr<Image> get_image_volume(std::string image_volume_name);
 
   Eigen::VectorXf get_point_features(std::string feature);
 
@@ -208,7 +208,8 @@ class Shape {
 
   Eigen::MatrixXd landmarks_;
 
-  vtkSmartPointer<vtkImageData> image_volume_;
+  //vtkSmartPointer<vtkImageData> image_volume_;
+  std::shared_ptr<Image> image_volume_;
   std::string image_volume_filename_;
 
   std::vector<Constraints> constraints_;  // one set for each domain

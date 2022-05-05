@@ -550,7 +550,7 @@ void Shape::load_feature(std::string display_mode, std::string feature) {
 }
 
 //---------------------------------------------------------------------------
-vtkSmartPointer<vtkImageData> Shape::get_image_volume(std::string image_volume_name) {
+std::shared_ptr<Image> Shape::get_image_volume(std::string image_volume_name) {
   if (!subject_) {
     return nullptr;
   }
@@ -559,9 +559,9 @@ vtkSmartPointer<vtkImageData> Shape::get_image_volume(std::string image_volume_n
     auto filename = filenames[image_volume_name];
 
     if (image_volume_filename_ != filename) {
-      Image image(filename);
-      image_volume_ = vtkSmartPointer<vtkImageData>::New();
-      image_volume_->DeepCopy(image.getVTKImage());
+
+      std::shared_ptr<Image> image = std::make_shared<Image>(filename);
+      image_volume_ = image;
       image_volume_filename_ = filename;
     }
 

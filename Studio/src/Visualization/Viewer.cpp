@@ -1188,10 +1188,7 @@ vtkSmartPointer<vtkTransform> Viewer::get_image_transform() {
 }
 
 //-----------------------------------------------------------------------------
-void Viewer::handle_key(int* click_pos, std::string key) { slice_view_.handle_key(key); }
-
-//-----------------------------------------------------------------------------
-void Viewer::set_window_and_level(double window, double level) { slice_view_.set_window_and_level(window, level); }
+SliceView& Viewer::slice_view() { return slice_view_; }
 
 //-----------------------------------------------------------------------------
 bool Viewer::is_reverse(vtkSmartPointer<vtkTransform> transform) {

@@ -123,9 +123,7 @@ class Viewer {
 
   vtkSmartPointer<vtkTransform> get_image_transform();
 
-  void handle_key(int* click_pos, std::string key);
-
-  void set_window_and_level(double window, double level);
+  SliceView& slice_view();
 
   void update_image_volume();
 
