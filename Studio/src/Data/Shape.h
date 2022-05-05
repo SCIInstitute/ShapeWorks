@@ -129,6 +129,8 @@ class Shape {
 
   void set_transform(vtkSmartPointer<vtkTransform> transform);
   vtkSmartPointer<vtkTransform> get_transform(int domain = 0);
+  vtkSmartPointer<vtkTransform> get_inverse_transform(int domain = 0);
+
   bool has_alignment();
 
   vtkSmartPointer<vtkTransform> get_original_transform(int domain = 0);

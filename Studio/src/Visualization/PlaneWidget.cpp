@@ -402,9 +402,7 @@ void PlaneWidget::apply_plane(int domain, int plane_id) {
     auto base_transform = viewer_->get_shape()->get_transform(domain);
 
     // transform from common space to destination space
-    auto inverse = vtkSmartPointer<vtkTransform>::New();
-    inverse->DeepCopy(shape->get_transform(domain));
-    inverse->Inverse();
+    auto inverse = shape->get_inverse_transform(domain);
 
     // copy plane and transform plane
     PlaneConstraint new_plane = plane;

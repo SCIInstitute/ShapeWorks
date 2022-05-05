@@ -1,8 +1,8 @@
 #include <Data/Shape.h>
 #include <Data/StudioMesh.h>
 #include <Visualization/Lightbox.h>
-#include <Visualization/StudioInteractorStyle.h>
 #include <Visualization/SliceView.h>
+#include <Visualization/StudioInteractorStyle.h>
 #include <Visualization/StudioSliceInteractorStyle.h>
 #include <Visualization/Visualizer.h>
 #include <vtkAnnotatedCubeActor.h>
@@ -14,7 +14,6 @@
 #include <vtkQImageToImageSource.h>
 #include <vtkRenderWindow.h>
 #include <vtkRenderer.h>
-
 
 #include <QPixmap>
 
@@ -74,10 +73,7 @@ void Lightbox::insert_shape_into_viewer(QSharedPointer<Shape> shape, int positio
 }
 
 //-----------------------------------------------------------------------------
-int Lightbox::get_start_shape()
-{
-  return start_row_ * tile_layout_width_;
-}
+int Lightbox::get_start_shape() { return start_row_ * tile_layout_width_; }
 
 //-----------------------------------------------------------------------------
 std::array<double, 3> Lightbox::initPos() { return initPos_; }
@@ -317,8 +313,21 @@ void Lightbox::handle_key(int* click_pos, std::string key) {
     if (session_->get_image_sync_slice()) {
       viewers_[0]->slice_view().change_slice(change);
       Point point = viewers_[0]->slice_view().get_slice_position();
+
+      // transform from source shape to common space
+      auto base_transform = viewers_[0]->get_shape()->get_transform();
+
+      Point common;
+      base_transform->TransformPoint(point.GetDataPointer(), common.GetDataPointer());
+
       for (int i = 1; i < viewers_.size(); i++) {
-        viewers_[i]->slice_view().set_slice_position(point);
+        // transform from common space to destination space
+        auto inverse = viewers_[i]->get_shape()->get_inverse_transform();
+
+        Point local;
+        inverse->TransformPoint(common.GetDataPointer(), local.GetDataPointer());
+
+        viewers_[i]->slice_view().set_slice_position(local);
       }
     } else {
       for (int i = 0; i < viewers_.size(); i++) {

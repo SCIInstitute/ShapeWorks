@@ -1,10 +1,4 @@
 // qt
-#include <QDebug>
-#include <QFile>
-#include <QFileInfo>
-#include <QMessageBox>
-#include <QTextStream>
-
 #include <Data/MeshGenerator.h>
 #include <Data/Shape.h>
 #include <Data/StudioLog.h>
@@ -12,15 +6,20 @@
 #include <Libs/Project/ProjectUtils.h>
 #include <Libs/Utils/StringUtils.h>
 #include <Visualization/Visualizer.h>
-#include <itkOrientImageFilter.h>
 #include <itkImageFileReader.h>
+#include <itkOrientImageFilter.h>
 #include <vtkCenterOfMass.h>
 
+#include <QDebug>
+#include <QFile>
+#include <QFileInfo>
+#include <QMessageBox>
+#include <QTextStream>
+
 // vtk
+#include <Libs/Optimize/ParticleSystem/VtkMeshWrapper.h>
 #include <vtkKdTreePointLocator.h>
 #include <vtkPointData.h>
-
-#include <Libs/Optimize/ParticleSystem/VtkMeshWrapper.h>
 
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
@@ -421,6 +420,15 @@ vtkSmartPointer<vtkTransform> Shape::get_transform(int domain) {
 }
 
 //---------------------------------------------------------------------------
+vtkSmartPointer<vtkTransform> Shape::get_inverse_transform(int domain) {
+  // transform from common space to destination space
+  auto inverse = vtkSmartPointer<vtkTransform>::New();
+  inverse->DeepCopy(get_transform(domain));
+  inverse->Inverse();
+  return inverse;
+}
+
+//---------------------------------------------------------------------------
 vtkSmartPointer<vtkTransform> Shape::get_alignment(int domain) {
   auto groom_transform = this->get_groomed_transform(domain);
   if (!groom_transform) {
@@ -559,7 +567,6 @@ std::shared_ptr<Image> Shape::get_image_volume(std::string image_volume_name) {
     auto filename = filenames[image_volume_name];
 
     if (image_volume_filename_ != filename) {
-
       std::shared_ptr<Image> image = std::make_shared<Image>(filename);
       image_volume_ = image;
       image_volume_filename_ = filename;
@@ -825,19 +832,17 @@ bool Shape::has_planes() {
 }
 
 //---------------------------------------------------------------------------
-std::vector<std::shared_ptr<VtkMeshWrapper>> Shape::get_groomed_mesh_wrappers()
-{
+std::vector<std::shared_ptr<VtkMeshWrapper>> Shape::get_groomed_mesh_wrappers() {
   if (!groomed_mesh_wrappers_.empty()) {
     return groomed_mesh_wrappers_;
   }
 
   auto group = get_groomed_meshes(true /* wait */);
-  for (auto &mesh : group.meshes()) {
+  for (auto& mesh : group.meshes()) {
     auto wrapper = std::make_shared<VtkMeshWrapper>(mesh->get_poly_data());
     groomed_mesh_wrappers_.push_back(wrapper);
   }
   return groomed_mesh_wrappers_;
-
 }
 
 }  // namespace shapeworks
