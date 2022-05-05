@@ -49,8 +49,8 @@ def analyzeResults(out_dir, DT_dir, prediction_dir, mean_prefix):
 	avg_distance = eval_utils.get_distance_meshes(out_dir, DT_dir, prediction_dir, mean_prefix)
 	return avg_distance
 
-def image_registration_transform(fixed_image_file, moving_image_file, out_image_file, transform_type='rigid'):
-	itk_transform = image_utils.image_registration_transform(fixed_image_file, moving_image_file, out_image_file, transform_type='rigid')
+def get_image_registration_transform(fixed_image_file, moving_image_file, transform_type='rigid'):
+	itk_transform = image_utils.get_image_registration_transform(fixed_image_file, moving_image_file, transform_type='rigid')
 	return itk_transform
 
 def testPytorch():

@@ -386,20 +386,38 @@ def Run_Pipeline(args):
         vt_image.setOrigin(vt_image.origin() + translation).write(vt_image_file)
         transform[:3,-1] += translation
         # 3. Transalte with respect to slightly cropped ref
-        sw.Image(vt_image_file).crop(large_bb).write(vt_image_file)
-        translation_transform = DeepSSMUtils.image_registration_transform(large_cropped_ref_image_file, 
-                                vt_image_file, vt_image_file, transform_type='translation')
-        transform = np.matmul(translation_transform, transform)
+        vt_image = sw.Image(vt_image_file).crop(large_bb).write(vt_image_file)
+        itk_translation_transform = DeepSSMUtils.get_image_registration_transform(large_cropped_ref_image_file, 
+                                vt_image_file, transform_type='translation')
+        # Apply transform
+        vt_image.applyTransform(itk_translation_transform,
+                             large_cropped_ref_image.origin(),  large_cropped_ref_image.dims(),
+                             large_cropped_ref_image.spacing(), large_cropped_ref_image.coordsys(),
+                             sw.InterpolationType.Linear, meshTransform=False)
+        vtk_translation_transform = sw.utils.getVTKtransform(itk_translation_transform)
+        transform = np.matmul(vtk_translation_transform, transform)
         # 4. Crop with medium bounding box and find rigid transform
-        sw.Image(vt_image_file).crop(medium_bb).write(vt_image_file)
-        rigid_transform = DeepSSMUtils.image_registration_transform(medium_cropped_ref_image_file, 
-                            vt_image_file, vt_image_file, transform_type='rigid')
-        transform = np.matmul(rigid_transform, transform)
-        # Get similarity transform from image registration and apply
-        sw.Image(vt_image_file).crop(bounding_box).write(vt_image_file)
-        similarity_transform = DeepSSMUtils.image_registration_transform(cropped_ref_image_file, 
-                                vt_image_file, vt_image_file, transform_type='similarity')
-        transform = np.matmul(similarity_transform, transform)
+        vt_image.crop(medium_bb).write(vt_image_file)
+        itk_rigid_transform = DeepSSMUtils.get_image_registration_transform(medium_cropped_ref_image_file, 
+                                vt_image_file, transform_type='rigid')
+        # Apply transform
+        vt_image.applyTransform(itk_rigid_transform,
+                             medium_cropped_ref_image.origin(),  medium_cropped_ref_image.dims(),
+                             medium_cropped_ref_image.spacing(), medium_cropped_ref_image.coordsys(),
+                             sw.InterpolationType.Linear, meshTransform=False)
+        vtk_rigid_transform = sw.utils.getVTKtransform(itk_rigid_transform)
+        transform = np.matmul(vtk_rigid_transform, transform)
+        # 5. Get similarity transform from image registration and apply
+        vt_image.crop(bounding_box).write(vt_image_file)
+        itk_similarity_transform = DeepSSMUtils.get_image_registration_transform(cropped_ref_image_file, 
+                                vt_image_file, transform_type='similarity')
+        # Apply transform
+        vt_image.applyTransform(itk_similarity_transform,
+                             cropped_ref_image.origin(),  cropped_ref_image.dims(),
+                             cropped_ref_image.spacing(), cropped_ref_image.coordsys(),
+                             sw.InterpolationType.Linear, meshTransform=False)
+        vtk_similarity_transform = sw.utils.getVTKtransform(itk_similarity_transform)
+        transform = np.matmul(vtk_similarity_transform, transform)
         # Save transform
         val_test_transforms.append(transform)
     # split val and test groomed images and transforms    
