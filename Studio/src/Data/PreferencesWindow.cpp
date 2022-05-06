@@ -4,7 +4,13 @@
 
 #include <QtGui>
 #include <cmath>
+
+
 #include <iostream>
+
+
+#include <vtkColorSeries.h>
+#include <vtkNew.h>
 
 // The interface from the designer
 #include "StudioLog.h"
@@ -28,6 +34,11 @@ PreferencesWindow::PreferencesWindow(QWidget* parent, Preferences& prefs) : pref
   connect(ui_->orientation_marker_corner, qOverload<int>(&QComboBox::currentIndexChanged), this,
           &PreferencesWindow::save_to_preferences);
   connect(ui_->geodesic_cache_multiplier, &QSlider::valueChanged, this, &PreferencesWindow::save_to_preferences);
+
+  vtkNew<vtkColorSeries> colorSeries;
+  int colorSeriesEnum = colorSeries->BREWER_DIVERGING_BROWN_BLUE_GREEN_3;
+  colorSeries->SetColorScheme(colorSeriesEnum);
+  //std::cerr << "colors: " << colorSeries->GetColorSchemeName() << "\n";
 }
 
 //-----------------------------------------------------------------------------
