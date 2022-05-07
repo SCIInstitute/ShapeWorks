@@ -41,8 +41,8 @@ target_link_libraries(
   Optimize
   Utils
   trimesh2
-  vgl
-  vgl_algo
+#  vgl
+#  vgl_algo
   ${VTK_LIBRARIES}
   Eigen3::Eigen
   igl::core
