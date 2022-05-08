@@ -1082,7 +1082,7 @@
       
         <li class="md-nav__item">
   <a href="#reinstalling-the-correct-pytorch-version" class="md-nav__link">
-    Reinstalling the Correct Pytorch Version
+    Reinstalling the Correct PyTorch Version
   </a>
   
 </li>
@@ -2139,7 +2139,7 @@
       
         <li class="md-nav__item">
   <a href="#reinstalling-the-correct-pytorch-version" class="md-nav__link">
-    Reinstalling the Correct Pytorch Version
+    Reinstalling the Correct PyTorch Version
   </a>
   
 </li>
@@ -2177,10 +2177,11 @@ python
 </code></pre></div>
 If <code>torch.cuda.is_available()</code> is True then PyTorch has GPU support, otherwise the CPU version was installed. 
 If <code>torch</code> cannot be imported than PyTorch was not installed to the <code>shapeworks</code> environment. </p>
-<h2 id="reinstalling-the-correct-pytorch-version">Reinstalling the Correct Pytorch Version</h2>
+<h2 id="reinstalling-the-correct-pytorch-version">Reinstalling the Correct PyTorch Version</h2>
 <p>If you find that your system requires an older version of PyTorch or <code>install_shapeworks</code> did not correcty find your CUDA version, 
 the following steps explain how to install a different PyTorch version in the <code>shapeworks</code> conda environment.</p>
-<p>Deltailed instructions about the different ways to install PyTorch can be found here: <a href="https://pytorch.org/get-started/locally/">PyTorch Getting Started</a>.</p>
+<p>Detailed instructions about the different ways to install PyTorch can be found here: <a href="https://pytorch.org/get-started/locally/">PyTorch Getting Started</a> </p>
+<p>CUDA compatibility can be checked here: <a href="https://docs.nvidia.com/deploy/cuda-compatibility/">CUDA-Compatibility</a></p>
 <ol>
 <li>If the CPU version of PyTorch was installed, that first needs to be uninstalled. To uninstall run:
 <div class="highlight"><pre><span></span><code>conda activate shapeworks
