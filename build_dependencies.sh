@@ -11,7 +11,6 @@ BUILD_STUDIO=0
 BUILD_SHAPEWORKS=1
 BUILD_TYPE="Release"
 BUILD_LOG="build_dependencies.log"
-VXL_VER="v2.0.2-fix"
 VTK_VER="v8.2.0"
 VTK_VER_STR="8.2"
 ITK_VER="v5.2.1"
@@ -117,38 +116,6 @@ at_least_required_version()
   fi
 }
 
-build_vxl()
-{
-  echo ""
-  echo "## Building vxl..."
-
-  if [[ $OSTYPE == "msys" ]]; then
-      # VXL make install on windows doesn't work, build in INSTALL_DIR
-      cd ${INSTALL_DIR}
-  else
-      cd ${BUILD_DIR}
-  fi
-  
-  # using fork since no version of VXL compiles with MSVC 16.9
-  #git clone https://github.com/vxl/vxl.git
-  git clone https://github.com/akenmorris/vxl.git
-  cd vxl
-  git checkout -f tags/${VXL_VER}
-
-  if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
-  mkdir -p build && cd build
-
-  if [[ $OSTYPE == "msys" ]]; then
-      cmake -DCMAKE_CXX_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_C_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_SHARED_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_EXE_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" -DBUILD_SHARED_LIBS:BOOL=OFF -DVXL_FORCE_V3P_GEOTIFF:BOOL=ON -DVXL_USE_GEOTIFF:BOOL=OFF -DBUILD_TESTING:BOOL=OFF -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DBUILD_CONTRIB:BOOL=OFF -DVNL_CONFIG_LEGACY_METHODS=ON -DVXL_USE_DCMTK:BOOL=OFF -Wno-dev ..
-      cmake --build . --config $BUILD_TYPE || exit 1
-      VXL_DIR=${INSTALL_DIR}/vxl/build
-  else
-      cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=OFF -DBUILD_TESTING:BOOL=OFF -DBUILD_CORE_VIDEO:BOOL=OFF -DBUILD_BRL:BOOL=OFF -DBUILD_CONTRIB:BOOL=OFF -DVNL_CONFIG_LEGACY_METHODS=ON -DVCL_STATIC_CONST_INIT_FLOAT=0 -DVXL_FORCE_V3P_GEOTIFF:BOOL=ON -DVXL_USE_GEOTIFF:BOOL=OFF -DVXL_USE_DCMTK:BOOL=OFF -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -Wno-dev -DCMAKE_CXX_FLAGS="$FLAGS" ..
-      make -j${NUM_PROCS} install || exit 1
-      VXL_DIR=${INSTALL_DIR}/share/vxl/cmake
-  fi
-}
-
 build_vtk()
 {
   echo ""
@@ -178,8 +145,6 @@ build_itk()
   echo ""
   echo "## Building itk..."
   cd ${BUILD_DIR}
-  # using fork since no version of ITK compiles with MSVC 16.9
-  #git clone https://github.com/akenmorris/ITK.git
   git clone https://github.com/InsightSoftwareConsortium/ITK.git
   cd ITK
   git checkout -f tags/${ITK_VER}
@@ -426,10 +391,6 @@ build_all()
   if [[ -z $OpenVDB_DIR ]]; then
     build_openvdb
   fi
-
-  #if [[ -z $VXL_DIR ]]; then
-  #  build_vxl
-  #fi
 
   if [[ -z $VTK_DIR ]]; then
     build_vtk

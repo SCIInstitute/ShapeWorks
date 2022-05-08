@@ -127,15 +127,6 @@ if (NOT VTK_FOUND)
 endif()
 include(${VTK_USE_FILE})
 
-### vxl
-#FIND_PACKAGE(VXL REQUIRED)
-#IF(VXL_FOUND)
-  # this adds deprecated VXL variables to the cmake namespace (TODO: use the new ones)
-#  INCLUDE (${VXL_CMAKE_DIR}/UseVXL.cmake)
-#ELSE(VXL_FOUND)
-#  MESSAGE(SEND_ERROR "VXL is required, but could not be found! Make sure path to VXLConfig.cmake is incl#uded in CMAKE_PREFIX_PATH")
-#ENDIF(VXL_FOUND)
-
 ### Eigen
 find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 
