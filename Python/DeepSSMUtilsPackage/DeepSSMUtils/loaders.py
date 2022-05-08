@@ -9,12 +9,12 @@ from torch import nn
 from torch.utils.data import DataLoader
 import shapeworks as sw
 from shapeworks.utils import sw_message
-
+random.seed(1)
 
 ######################## Data loading functions ####################################
 
 '''
-Reads csv and makes train and validation data loaders
+Reads csv and makes both train and validation data loaders from it
 '''
 def get_train_val_loaders(loader_dir, data_csv, batch_size=1, down_factor=1, down_dir=None, train_split=0.80):
 	sw_message("Creating training and validation torch loaders:")
@@ -54,10 +54,73 @@ def get_train_val_loaders(loader_dir, data_csv, batch_size=1, down_factor=1, dow
 	return train_path, val_path
 
 '''
+Reads csv and makes just train data loaders
+'''
+def get_train_loader(loader_dir, data_csv, batch_size=1, down_factor=1, down_dir=None, train_split=0.80):
+	sw_message("Creating training torch loader...")
+	# Get data
+	if not os.path.exists(loader_dir):
+		os.makedirs(loader_dir)
+	images, scores, models, prefixes = get_all_train_data(loader_dir, data_csv, down_factor, down_dir)
+	images, scores, models, prefixes = shuffle_data(images, scores, models, prefixes)
+	train_data = DeepSSMdataset(images, scores, models)
+	# Save
+	trainloader = DataLoader(
+			train_data,
+			batch_size=batch_size,
+			shuffle=True,
+			num_workers=8,
+			pin_memory=torch.cuda.is_available()
+		)
+	train_path = loader_dir + 'train'
+	torch.save(trainloader, train_path)
+	sw_message("Training loader complete.")
+	return train_path
+
+'''
+Makes validation data loader
+'''
+def get_validation_loader(loader_dir, val_img_list, val_particles, down_factor=1, down_dir=None):
+	sw_message("Creating validation torch loader:")
+	# Get data
+	image_paths = []
+	scores = []
+	models = []
+	names = []
+	for index in range(len(val_img_list)):
+		image_path = val_img_list[index]
+		# add name
+		prefix = get_prefix(image_path)
+		names.append(prefix)
+		image_paths.append(image_path)
+		scores.append([1]) # placeholder
+		mdl = get_particles(val_particles[index])
+		models.append(mdl)
+	# Write test names to file so they are saved somewhere
+	name_file = open(loader_dir + 'validation_names.txt', 'w+')
+	name_file.write(str(names))
+	name_file.close()
+	sw_message("Validation names saved to: " + loader_dir + "validation_names.txt")
+	images = get_images(loader_dir, image_paths, down_factor, down_dir)
+	val_data = DeepSSMdataset(images, scores, models)
+	# Make loader
+	val_loader = DataLoader(
+			val_data,
+			batch_size=1,
+			shuffle=False,
+			num_workers=8,
+			pin_memory=torch.cuda.is_available()
+		)
+	val_path = loader_dir + 'validation'
+	torch.save(val_loader, val_path)
+	sw_message("Validation loader complete.")
+	return val_path
+
+'''
 Makes test data loader
 '''
 def get_test_loader(loader_dir, test_img_list, down_factor=1, down_dir=None):
-	sw_message("Creating test torch loader:")
+	sw_message("Creating test torch loader...")
 	# get data
 	image_paths = []
 	scores = []
@@ -80,7 +143,6 @@ def get_test_loader(loader_dir, test_img_list, down_factor=1, down_dir=None):
 	name_file.close()
 	sw_message("Test names saved to: " + loader_dir + "test_names.txt")
 	# Make loader
-	sw_message("Creating and saving test dataloader...")
 	testloader = DataLoader(
 			test_data,
 			batch_size=1,
@@ -90,7 +152,7 @@ def get_test_loader(loader_dir, test_img_list, down_factor=1, down_dir=None):
 		)
 	test_path = loader_dir + 'test'
 	torch.save(testloader, test_path)
-	sw_message("Test loader complete.\n")
+	sw_message("Test loader complete.")
 	return test_path, test_names
 
 ################################ Helper functions ######################################
@@ -100,7 +162,6 @@ returns images, scores, models, prefixes from CSV
 '''
 def get_all_train_data(loader_dir, data_csv, down_factor, down_dir):
 	# get all data and targets
-	sw_message("Reading all data...")
 	image_paths = []
 	scores = []
 	models = []
@@ -116,7 +177,7 @@ def get_all_train_data(loader_dir, data_csv, down_factor, down_dir):
 			prefix = get_prefix(image_path)
 			# data error check
 			if prefix not in get_prefix(model_path):
-				print("Error: Images and models mismatched in csv.")
+				print("Error: Images and particles are mismatched in csv.")
 				print(index)
 				print(prefix)
 				print(get_prefix(model_path))
@@ -139,7 +200,6 @@ def get_all_train_data(loader_dir, data_csv, down_factor, down_dir):
 Shuffle all data
 '''
 def shuffle_data(images, scores, models, prefixes):
-	sw_message("Shuffling.")
 	c = list(zip(images, scores, models, prefixes))
 	random.shuffle(c)
 	images, scores, models, prefixes = zip(*c)
@@ -150,10 +210,9 @@ Class for DeepSSM datasets that works with Pytorch DataLoader
 '''
 class DeepSSMdataset():
 	def __init__(self, img, pca_target, mdl_target):
-		self.img = torch.FloatTensor(img)
-		self.pca_target = torch.FloatTensor(pca_target)
-		self.mdl_target = torch.FloatTensor(mdl_target)
-		
+		self.img = torch.FloatTensor(np.array(img))
+		self.pca_target = torch.FloatTensor(np.array(pca_target))
+		self.mdl_target = torch.FloatTensor(np.array(mdl_target))
 	def __getitem__(self, index):
 		x = self.img[index]
 		y1 = self.pca_target[index]

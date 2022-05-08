@@ -11,11 +11,10 @@ BUILD_STUDIO=0
 BUILD_SHAPEWORKS=1
 BUILD_TYPE="Release"
 BUILD_LOG="build_dependencies.log"
-VXL_VER="v2.0.2-fix"
 VTK_VER="v8.2.0"
 VTK_VER_STR="8.2"
-ITK_VER="v5.0.1-fix"
-ITK_VER_STR="5.0"
+ITK_VER="v5.2.1"
+ITK_VER_STR="5.2"
 EIGEN_VER="3.3.7"
 QT_MIN_VER="5.9.8"  # NOTE: 5.x is required, but this restriction is a clever way to ensure the anaconda version of Qt (5.9.6 or 5.9.7) isn't used since it won't work on most systems.
 XLNT_VER="v1.5.0"
@@ -117,38 +116,6 @@ at_least_required_version()
   fi
 }
 
-build_vxl()
-{
-  echo ""
-  echo "## Building vxl..."
-
-  if [[ $OSTYPE == "msys" ]]; then
-      # VXL make install on windows doesn't work, build in INSTALL_DIR
-      cd ${INSTALL_DIR}
-  else
-      cd ${BUILD_DIR}
-  fi
-  
-  # using fork since no version of VXL compiles with MSVC 16.9
-  #git clone https://github.com/vxl/vxl.git
-  git clone https://github.com/akenmorris/vxl.git
-  cd vxl
-  git checkout -f tags/${VXL_VER}
-
-  if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
-  mkdir -p build && cd build
-
-  if [[ $OSTYPE == "msys" ]]; then
-      cmake -DCMAKE_CXX_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_C_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_SHARED_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_EXE_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" -DBUILD_SHARED_LIBS:BOOL=OFF -DVXL_FORCE_V3P_GEOTIFF:BOOL=ON -DVXL_USE_GEOTIFF:BOOL=OFF -DBUILD_TESTING:BOOL=OFF -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DBUILD_CONTRIB:BOOL=OFF -DVNL_CONFIG_LEGACY_METHODS=ON -DVXL_USE_DCMTK:BOOL=OFF -Wno-dev ..
-      cmake --build . --config $BUILD_TYPE || exit 1
-      VXL_DIR=${INSTALL_DIR}/vxl/build
-  else
-      cmake -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DBUILD_CORE_VIDEO:BOOL=OFF -DBUILD_BRL:BOOL=OFF -DBUILD_CONTRIB:BOOL=OFF -DVNL_CONFIG_LEGACY_METHODS=ON -DVCL_STATIC_CONST_INIT_FLOAT=0 -DVXL_FORCE_V3P_GEOTIFF:BOOL=ON -DVXL_USE_GEOTIFF:BOOL=OFF -DVXL_USE_DCMTK:BOOL=OFF -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -Wno-dev -DCMAKE_CXX_FLAGS="$FLAGS" ..
-      make -j${NUM_PROCS} install || exit 1
-      VXL_DIR=${INSTALL_DIR}/share/vxl/cmake
-  fi
-}
-
 build_vtk()
 {
   echo ""
@@ -178,9 +145,7 @@ build_itk()
   echo ""
   echo "## Building itk..."
   cd ${BUILD_DIR}
-  # using fork since no version of ITK compiles with MSVC 16.9
-  #git clone https://github.com/InsightSoftwareConsortium/ITK.git
-  git clone https://github.com/akenmorris/ITK.git
+  git clone https://github.com/InsightSoftwareConsortium/ITK.git
   cd ITK
   git checkout -f tags/${ITK_VER}
 
@@ -188,12 +153,12 @@ build_itk()
   mkdir -p build && cd build
 
   if [[ $OSTYPE == "msys" ]]; then
-      cmake -DCMAKE_CXX_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_C_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_SHARED_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_EXE_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DBUILD_EXAMPLES:BOOL=OFF -DVTK_DIR="${VTK_DIR}" -DITK_USE_SYSTEM_EIGEN=on -DEigen3_DIR=${EIGEN_DIR} -DModule_ITKVtkGlue:BOOL=ON -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -Wno-dev ..
+      cmake -DCMAKE_CXX_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_C_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_SHARED_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_EXE_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DBUILD_EXAMPLES:BOOL=OFF -DVTK_DIR="${VTK_DIR}" -DITK_USE_SYSTEM_EIGEN=on -DEigen3_DIR=${EIGEN_DIR} -DModule_ITKVtkGlue:BOOL=ON -DModule_ITKDeprecated:BOOL=ON -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -Wno-dev ..
       
       cmake --build . --config ${BUILD_TYPE} --parallel || exit 1
       cmake --build . --config ${BUILD_TYPE} --target install
   else
-      cmake -DCMAKE_CXX_FLAGS="$FLAGS" -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DBUILD_EXAMPLES:BOOL=OFF -DModule_ITKVtkGlue:BOOL=ON -DITK_USE_SYSTEM_VXL=on -DITK_USE_SYSTEM_EIGEN=on -DEigen3_DIR=${EIGEN_DIR} -DVXL_DIR=${INSTALL_DIR} -DVTK_DIR=${VTK_DIR} -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -Wno-dev ..
+      cmake -DCMAKE_CXX_FLAGS="$FLAGS" -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DBUILD_EXAMPLES:BOOL=OFF -DModule_ITKVtkGlue:BOOL=ON -DModule_ITKDeprecated:BOOL=ON -DITK_USE_SYSTEM_EIGEN=on -DEigen3_DIR=${EIGEN_DIR} -DVTK_DIR=${VTK_DIR} -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -Wno-dev ..
       make -j${NUM_PROCS} install || exit 1
   fi
 
@@ -425,10 +390,6 @@ build_all()
   ## build dependencies if their locations were not specified
   if [[ -z $OpenVDB_DIR ]]; then
     build_openvdb
-  fi
-
-  if [[ -z $VXL_DIR ]]; then
-    build_vxl
   fi
 
   if [[ -z $VTK_DIR ]]; then

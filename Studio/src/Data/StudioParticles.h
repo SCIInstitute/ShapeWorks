@@ -1,7 +1,7 @@
 #pragma once
 
 #include <itkPoint.h>
-#include <vnl_vector.h>
+#include <vnl/vnl_vector.h>
 #include <vtkSmartPointer.h>
 
 #include <cassert>

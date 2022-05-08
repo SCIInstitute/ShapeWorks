@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vnl/vnl_math.h>
-#include <vnl_vector.h>
+#include <vnl/vnl_vector.h>
 
 #include <Eigen/Core>
 
