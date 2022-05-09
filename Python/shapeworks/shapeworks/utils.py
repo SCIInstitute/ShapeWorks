@@ -308,3 +308,12 @@ def findMeanShape(shapeModelDir):
     meanShape = meanShape / len(fileList)
     nmMS = shapeModelDir + '/meanshape_local.particles'
     np.savetxt(nmMS, meanShape)
+
+def transformParticles(particles, transform, inverse=False):
+    if inverse:
+        transform = np.linalg.inv(transform)
+    transformed_particles = []
+    for particle in particles:
+        transformed_particles.append(np.matmul(transform, np.append(particle, 1))[:3])
+    transformed_particles = np.array(transformed_particles)
+    return transformed_particles

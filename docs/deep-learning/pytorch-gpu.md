@@ -18,12 +18,14 @@ python
 If `torch.cuda.is_available()` is True then PyTorch has GPU support, otherwise the CPU version was installed. 
 If `torch` cannot be imported than PyTorch was not installed to the `shapeworks` environment. 
 
-## Reinstalling the Correct Pytorch Version
+## Reinstalling the Correct PyTorch Version
 
 If you find that your system requires an older version of PyTorch or `install_shapeworks` did not correcty find your CUDA version, 
 the following steps explain how to install a different PyTorch version in the `shapeworks` conda environment.
 
-Deltailed instructions about the different ways to install PyTorch can be found here: [PyTorch Getting Started](https://pytorch.org/get-started/locally/).
+Detailed instructions about the different ways to install PyTorch can be found here: [PyTorch Getting Started](https://pytorch.org/get-started/locally/) 
+
+CUDA compatibility can be checked here: [CUDA-Compatibility](https://docs.nvidia.com/deploy/cuda-compatibility/)
 
 1. If the CPU version of PyTorch was installed, that first needs to be uninstalled. To uninstall run:
 ```

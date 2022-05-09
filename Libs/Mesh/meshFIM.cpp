@@ -1211,7 +1211,7 @@ int meshFIM::GetTriangleInfoForPoint(point x, TriMesh::Face &triangleX, float &a
   return faceID;
 
 }
-
+/*
 float meshFIM::GetVirtualSource(vnl_vector<float> baryCoord, vnl_matrix<float> X, vnl_vector<float> ds, vnl_vector< float > &x0) {
   //        vcl_cout<<"X:"<<std::endl<<X.extract(2,3,0,0);
   //        vcl_cout<<"ds: "<<ds<<std::endl;
@@ -1318,6 +1318,7 @@ float meshFIM::GetVirtualSource(vnl_vector<float> baryCoord, vnl_matrix<float> X
   }
 
 }
+*/
 
 namespace {
   /* Praful */
@@ -1355,7 +1356,7 @@ namespace {
     return 1.0f;
   }
 }
-
+/*
 float meshFIM::ComputeThreePointApproximatedGeodesic(vnl_vector<float> x, vnl_vector<float> baryCoord, vnl_matrix<float> X, vnl_vector<float> ds, char *method) {
 
   float geo_approx = -1.0f;
@@ -1541,6 +1542,7 @@ float meshFIM::ComputeThreePointApproximatedGeodesic(vnl_vector<float> x, vnl_ve
   return geo_approx;
 
 }
+*/
 
 float meshFIM::ComputeCanonicalForm(point s, vnl_vector<float> &x, vnl_matrix<float> &X)//, Face S)
 {
@@ -1631,7 +1633,7 @@ float meshFIM::GetGeodesicDistance(int v1, int v2) {
 
   return gDist;
 }
-
+/*
 float meshFIM::GetBronsteinGeodesicDistance(TriMesh::Face Sa, TriMesh::Face Sb, vnl_vector <float> baryCoord_a, vnl_vector <float> baryCoord_b, char *method) {
   point a; a.clear();
   point b; b.clear();
@@ -1729,7 +1731,9 @@ float meshFIM::GetBronsteinGeodesicDistance(TriMesh::Face Sa, TriMesh::Face Sb, 
 
   return dGeo_a_2_b;
 }
+*/
 
+/*
 // Praful - compute distance to landmarks based on geodesic approximation with given triangle info
 void meshFIM::ComputeDistanceToLandmarksGivenTriangleInfo(TriMesh *mesh, const char *infilename , const char *outfilename)
 {
@@ -1804,8 +1808,10 @@ void meshFIM::ComputeDistanceToLandmarksGivenTriangleInfo(TriMesh *mesh, const c
     pointsFile.close();
     outfile.close();
 }
+*/
 
 /* Praful */
+/*
 float meshFIM::GetBronsteinGeodesicDistance(point a, point b, char *method)//, Face Sa, Face Sb, vnl_vector <float> baryCoord_a, vnl_vector <float> baryCoord_b)
 {
   TriMesh::Face Sa, Sb;
@@ -1818,6 +1824,11 @@ float meshFIM::GetBronsteinGeodesicDistance(point a, point b, char *method)//, F
   return dGeo_a_2_b;
 }
 
+
+
+*/
+
+/*
 // SHIREEN - compute distance to landmarks based on geodesic approximation
 void meshFIM::ComputeDistanceToLandmark(TriMesh *mesh, point landmark, bool apply_log, const char *outfilename)
 {
@@ -1868,6 +1879,7 @@ void meshFIM::ComputeDistanceToLandmark(TriMesh *mesh, point landmark, bool appl
     outfile.close();
 
 }
+*/
 
 void meshFIM::UpdateGeodesicMapWithDistancesFromVertices(std::vector<int> vertexIdlist)
 {
@@ -1978,6 +1990,7 @@ void meshFIM::UpdateGeodesicMapWithDistancesFromVertices(std::vector<int> vertex
 
 // end SHIREEN
 
+/*
 // SHIREEN - compute distance to curve based on geodesic approximation
 void meshFIM::ComputeDistanceToCurve(TriMesh *mesh, std::vector< point > curvePoints, const char *outfilename)
 {
@@ -2035,7 +2048,7 @@ void meshFIM::ComputeDistanceToCurve(TriMesh *mesh, std::vector< point > curvePo
     outfile.close();
 }
 // end SHIREEN
-
+*/
 
 int meshFIM::GetVertexInfoForPoint(point x) {
   int vertX;
@@ -2138,7 +2151,7 @@ int meshFIM::GetVertexInfoForPoint(point x) {
 
   return vertX;
 }
-
+/*
 // SHIREEN - computing geo distance on the fly for fuzzy geodesics
 std::vector<float> meshFIM::ComputeDistanceToCurve(TriMesh *mesh, std::vector< point > curvePoints)
 {
@@ -2244,6 +2257,7 @@ std::vector<float> meshFIM::ComputeDistanceToCurve(TriMesh *mesh, std::vector< p
 
     return geodesics;
 }
+*/
 
 void meshFIM::WriteFeaFile(TriMesh *mesh, char* outfilename)
 {
