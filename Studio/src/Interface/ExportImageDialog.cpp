@@ -127,8 +127,9 @@ void ExportImageDialog::update_preview() {
   int num_pca_modes = ui_->pca_num_modes->value();
 
   int num_shapes = analysis_tool_->get_session()->get_num_shapes();
-  pca_mode_start = std::max<int>(pca_mode_start, num_shapes - 1);
-  num_pca_modes = std::max<int>(num_pca_modes, num_shapes - pca_mode_start - 1);
+  pca_mode_start = clamp(pca_mode_start, 0, num_shapes - 1);
+
+  num_pca_modes = clamp(num_pca_modes, 1, num_shapes - pca_mode_start);
 
   if (!prefs_.get_export_override_size_enabled()) {
     size = visualizer_->get_render_size();
@@ -146,27 +147,30 @@ void ExportImageDialog::update_preview() {
     int num_rows = num_pca_modes;
     double increment = pca_range / num_pca_steps;
     double margin = size.height() * 0.2;
-    auto canvas = QPixmap(size.width() * num_columns, size.height() * num_rows + margin);  // extra 20% for labels
+    double side_margin = size.width() * 0.2;
+    auto canvas =
+        QPixmap(size.width() * num_columns + side_margin, size.height() * num_rows + margin);  // extra 20% for labels
 
     canvas.fill(colors.background_qcolor(transparent ? 0 : 255));
 
     int last_mode = pca_mode_start + num_pca_modes - 1;
     int y = 0;
     for (int mode = pca_mode_start; mode <= last_mode; mode++) {
-      int x = 0;
+      int x = side_margin;
       for (int step = -num_pca_steps; step <= num_pca_steps; step++) {
         double pca_value = step * increment;
         visualizer_->display_shape(analysis_tool_->get_mode_shape(mode, pca_value));
         bool ready = false;
 
-        bool orientation_marker = ui_->show_corner_widget->isChecked() && step == num_pca_steps;
+        bool orientation_marker =
+            ui_->show_corner_widget->isChecked() && step == num_pca_steps && mode == pca_mode_start;
         bool color_scale = ui_->show_color_scale->isChecked() && step == num_pca_steps;
         auto pixmap = visualizer_->export_to_pixmap(size, transparent, orientation_marker, color_scale, ready);
         if (!ready) {
           all_ready = false;
         }
 
-        QString text = QString::number(pca_value, 'g', 2) + " SD";
+        QString text = QString::number(pca_value, 'g', 3) + " SD";
         if (step == 0) {
           text = "Mean Shape";
         }
@@ -182,6 +186,13 @@ void ExportImageDialog::update_preview() {
           QRect rect = QRect(QPoint(x, y + pixmap.height()), QPoint(x + pixmap.width(), y + pixmap.height() + margin));
           painter.drawText(rect, Qt::AlignCenter, text);
         }
+
+        // draw rotated "mode x" string
+        QString mode_string = "Mode " + QString::number(mode);
+        QPointF anchor(0, y + size.height());
+        QRect rect = QRect(0, 0, pixmap.height(), side_margin);
+        drawRotatedText(painter, mode_string, anchor, -90, rect);
+
         x += size.width();
       }
       y += size.height();
@@ -200,6 +211,15 @@ void ExportImageDialog::update_preview() {
   }
 
   ui_->preview->setPixmap(pixmap_);
+}
+
+//---------------------------------------------------------------------------
+void ExportImageDialog::drawRotatedText(QPainter& painter, QString text, QPointF point, qreal angle, QRect rect) {
+  painter.save();
+  painter.translate(point);
+  painter.rotate(-90);
+  painter.drawText(rect, Qt::AlignCenter, text);
+  painter.restore();
 }
 
 }  // namespace shapeworks

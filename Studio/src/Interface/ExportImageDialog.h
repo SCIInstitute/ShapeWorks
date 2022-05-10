@@ -33,6 +33,8 @@ class ExportImageDialog : public QDialog {
  private:
   void update_preview();
 
+  void drawRotatedText(QPainter &painter, QString text, QPointF point, qreal angle, QRect rect);
+
   Ui_ExportImageDialog* ui_;
 
   QSharedPointer<Visualizer> visualizer_;
