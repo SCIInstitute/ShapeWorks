@@ -285,4 +285,12 @@ bool epsEqual(const P &a, const P &b, const typename P::ValueType &eps)
 
 bool epsEqual(double a, double b, double eps);
 
+//! Simple clamp operation until C++17
+template<typename T>
+T clamp(T value, T min, T max) {
+  value = std::min<T>(value, max);
+  value = std::max<T>(value, min);
+  return value;
+}
+
 } // shapeworks
