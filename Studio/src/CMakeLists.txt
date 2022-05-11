@@ -205,6 +205,7 @@ SET(STUDIO_INTERFACE_MOC_HDRS
   )
 
 SET(STUDIO_VISUALIZATION_SRCS
+  Visualization/ColorMap.cpp
   Visualization/Lightbox.cpp
   Visualization/LandmarkWidget.cpp
   Visualization/PlaneWidget.cpp

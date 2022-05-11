@@ -49,8 +49,8 @@ ExportImageDialog::ExportImageDialog(QWidget* parent, Preferences& prefs, QShare
   ui_->show_color_scale->setChecked(prefs_.get_export_show_color_scale());
   ui_->pca_num_images->setValue(prefs_.get_export_num_pca_images());
   ui_->pca_range->setValue(prefs_.get_export_pca_range());
-  ui_->pca_mode_start->setValue(prefs_.get_export_pca_mode_start());
-  ui_->pca_num_modes->setValue(prefs_.get_export_pca_num_modes());
+  ui_->pca_modes->setText(prefs_.get_export_pca_modes());
+  ui_->pca_modes->setValidator(new QRegExpValidator(QRegExp("[0-9\\,\\-]*"), ui_->pca_modes));
 
   connect(ui_->export_button, &QPushButton::clicked, this, &ExportImageDialog::export_clicked);
   connect(ui_->cancel_button, &QPushButton::clicked, this, &ExportImageDialog::reject);
@@ -70,8 +70,7 @@ ExportImageDialog::ExportImageDialog(QWidget* parent, Preferences& prefs, QShare
   connect(ui_->show_color_scale, &QCheckBox::toggled, this, &ExportImageDialog::update_preview);
   connect(ui_->pca_num_images, qOverload<int>(&QSpinBox::valueChanged), this, start_timer);
   connect(ui_->pca_range, qOverload<double>(&QDoubleSpinBox::valueChanged), this, start_timer);
-  connect(ui_->pca_mode_start, qOverload<int>(&QSpinBox::valueChanged), this, start_timer);
-  connect(ui_->pca_num_modes, qOverload<int>(&QSpinBox::valueChanged), this, start_timer);
+  connect(ui_->pca_modes, &QLineEdit::textChanged, this, start_timer);
 
   ui_->pca_widget->setVisible(pca_mode);
 
@@ -119,17 +118,11 @@ void ExportImageDialog::update_preview() {
   prefs_.set_export_show_color_scale(ui_->show_color_scale->isChecked());
   prefs_.set_export_num_pca_images(ui_->pca_num_images->value());
   prefs_.set_export_pca_range(ui_->pca_range->value());
-  prefs_.set_export_pca_mode_start(ui_->pca_mode_start->value());
-  prefs_.set_export_pca_num_modes(ui_->pca_num_modes->value());
+  prefs_.set_export_pca_modes(ui_->pca_modes->text());
   int num_pca_steps = ui_->pca_num_images->value();
   double pca_range = ui_->pca_range->value();
-  int pca_mode_start = ui_->pca_mode_start->value();
-  int num_pca_modes = ui_->pca_num_modes->value();
 
-  int num_shapes = analysis_tool_->get_session()->get_num_shapes();
-  pca_mode_start = clamp(pca_mode_start, 0, num_shapes - 1);
-
-  num_pca_modes = clamp(num_pca_modes, 1, num_shapes - pca_mode_start);
+  auto mode_list = get_modes(ui_->pca_modes->text());
 
   if (!prefs_.get_export_override_size_enabled()) {
     size = visualizer_->get_render_size();
@@ -144,7 +137,7 @@ void ExportImageDialog::update_preview() {
 
   if (pca_mode_) {
     int num_columns = 2 * num_pca_steps + 1;
-    int num_rows = num_pca_modes;
+    int num_rows = mode_list.size();
     double increment = pca_range / num_pca_steps;
     double margin = size.height() * 0.2;
     double side_margin = size.width() * 0.2;
@@ -153,17 +146,16 @@ void ExportImageDialog::update_preview() {
 
     canvas.fill(colors.background_qcolor(transparent ? 0 : 255));
 
-    int last_mode = pca_mode_start + num_pca_modes - 1;
     int y = 0;
-    for (int mode = pca_mode_start; mode <= last_mode; mode++) {
+    for (int mode_idx = 0; mode_idx < mode_list.size(); mode_idx++) {
+      int mode = mode_list[mode_idx];
       int x = side_margin;
       for (int step = -num_pca_steps; step <= num_pca_steps; step++) {
         double pca_value = step * increment;
         visualizer_->display_shape(analysis_tool_->get_mode_shape(mode, pca_value));
         bool ready = false;
 
-        bool orientation_marker =
-            ui_->show_corner_widget->isChecked() && step == num_pca_steps && mode == pca_mode_start;
+        bool orientation_marker = ui_->show_corner_widget->isChecked() && step == num_pca_steps && mode_idx == 0;
         bool color_scale = ui_->show_color_scale->isChecked() && step == num_pca_steps;
         auto pixmap = visualizer_->export_to_pixmap(size, transparent, orientation_marker, color_scale, ready);
         if (!ready) {
@@ -182,13 +174,13 @@ void ExportImageDialog::update_preview() {
         font.setPixelSize(margin * 0.75);
         painter.setFont(font);
 
-        if (mode == last_mode) {
+        if (mode_idx == mode_list.size() - 1) {
           QRect rect = QRect(QPoint(x, y + pixmap.height()), QPoint(x + pixmap.width(), y + pixmap.height() + margin));
           painter.drawText(rect, Qt::AlignCenter, text);
         }
 
         // draw rotated "mode x" string
-        QString mode_string = "Mode " + QString::number(mode);
+        QString mode_string = "Mode " + QString::number(mode + 1);
         QPointF anchor(0, y + size.height());
         QRect rect = QRect(0, 0, pixmap.height(), side_margin);
         drawRotatedText(painter, mode_string, anchor, -90, rect);
@@ -220,6 +212,33 @@ void ExportImageDialog::drawRotatedText(QPainter& painter, QString text, QPointF
   painter.rotate(-90);
   painter.drawText(rect, Qt::AlignCenter, text);
   painter.restore();
+}
+
+//---------------------------------------------------------------------------
+QVector<int> ExportImageDialog::get_modes(QString string) {
+  QVector<int> list;
+  int max_mode = analysis_tool_->get_session()->get_num_shapes() - 2;
+
+  QStringList items = string.split(",");
+  Q_FOREACH (auto item, items) {
+    if (item.contains("-")) {  // range
+
+      int start = clamp(item.split("-")[0].toInt() - 1, 0, max_mode);
+      int end = clamp(item.split("-")[1].toInt() - 1, 0, max_mode);
+      for (int i = start; i <= end; i++) {
+        if (!list.contains(i)) {
+          list.push_back(i);
+        }
+      }
+    } else {  // single number
+      int i = clamp(item.toInt() - 1, 0, max_mode);
+      if (!list.contains(i)) {
+        list.push_back(i);
+      }
+    }
+  }
+
+  return list;
 }
 
 }  // namespace shapeworks

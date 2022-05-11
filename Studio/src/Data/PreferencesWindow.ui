@@ -265,58 +265,7 @@
        </widget>
       </item>
       <item row="1" column="1">
-       <widget class="QComboBox" name="color_map">
-        <item>
-         <property name="text">
-          <string>Orange on Grey</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Purple on Grey</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Blue on White</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Orange on White</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Grey on White</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Orange on Blue</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Yellow on Grey</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Grey on Black</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Blue on Black</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Green on Black</string>
-         </property>
-        </item>
-       </widget>
+       <widget class="QComboBox" name="color_map"/>
       </item>
      </layout>
     </widget>

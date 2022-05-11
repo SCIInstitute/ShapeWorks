@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>735</width>
-    <height>424</height>
+    <height>446</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -183,6 +183,30 @@
          <item row="0" column="0">
           <widget class="QWidget" name="pca_widget" native="true">
            <layout class="QGridLayout" name="gridLayout_4">
+            <item row="3" column="0">
+             <widget class="QLabel" name="pca_range_label">
+              <property name="text">
+               <string>PCA Range</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QLineEdit" name="pca_modes"/>
+            </item>
+            <item row="2" column="0">
+             <widget class="QLabel" name="pca_images_label">
+              <property name="text">
+               <string>PCA Images</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0">
+             <widget class="QLabel" name="pca_mode_start_label">
+              <property name="text">
+               <string>PCA Modes</string>
+              </property>
+             </widget>
+            </item>
             <item row="2" column="1">
              <widget class="QSpinBox" name="pca_num_images">
               <property name="minimum">
@@ -190,20 +214,6 @@
               </property>
               <property name="maximum">
                <number>5</number>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="0">
-             <widget class="QLabel" name="pca_mode_start_label">
-              <property name="text">
-               <string>PCA Mode Start</string>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="0">
-             <widget class="QLabel" name="pca_range_label">
-              <property name="text">
-               <string>PCA Range</string>
               </property>
              </widget>
             </item>
@@ -229,37 +239,12 @@
               </property>
              </widget>
             </item>
-            <item row="2" column="0">
-             <widget class="QLabel" name="pca_images_label">
-              <property name="text">
-               <string>PCA Images</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QLabel" name="pca_num_modes_label">
-              <property name="text">
-               <string>PCA Number of Modes</string>
-              </property>
-             </widget>
-            </item>
             <item row="1" column="1">
-             <widget class="QSpinBox" name="pca_num_modes">
-              <property name="minimum">
-               <number>1</number>
-              </property>
-              <property name="maximum">
-               <number>99</number>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="QSpinBox" name="pca_mode_start">
-              <property name="minimum">
-               <number>1</number>
-              </property>
-              <property name="maximum">
-               <number>99</number>
+             <widget class="QLabel" name="label">
+              <property name="text">
+               <string>Enter mode numbers and/or 
+anges separated by
+commas (e.g. 1, 4-6, 9)</string>
               </property>
              </widget>
             </item>
