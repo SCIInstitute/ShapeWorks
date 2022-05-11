@@ -222,6 +222,10 @@ def Run_Pipeline(args):
     if args.tiny_test:
         parameter_dictionary["number_of_particles"] = 128 
         parameter_dictionary["optimization_iterations"] = 25
+    # Run multiscale optimization unless single scale is specified
+    if not args.use_single_scale:
+        parameter_dictionary["multiscale"] = 1
+        parameter_dictionary["use_shape_statistics_after"] = 64
 
     for key in parameter_dictionary:
         parameters.set(key,sw.Variant([parameter_dictionary[key]]))
@@ -310,7 +314,7 @@ def Run_Pipeline(args):
     num_samples = 2961
     num_dim = 0
     percent_variability = 0.95
-    sampler = "kde"
+    sampler = "gaussian"
     if args.tiny_test:
         num_samples = 2
         percent_variability = 0.99
@@ -411,7 +415,6 @@ def Run_Pipeline(args):
         vt_image.crop(bounding_box).write(vt_image_file)
         itk_similarity_transform = DeepSSMUtils.get_image_registration_transform(cropped_ref_image_file, 
                                 vt_image_file, transform_type='similarity')
-        # Apply transform
         vt_image.applyTransform(itk_similarity_transform,
                              cropped_ref_image.origin(),  cropped_ref_image.dims(),
                              cropped_ref_image.spacing(), cropped_ref_image.coordsys(),
@@ -496,7 +499,8 @@ def Run_Pipeline(args):
     parameters = sw.Parameters()
 
     # Update parameter dictionary from step 4
-    parameter_dictionary["procrustes"] = 0 
+    parameter_dictionary["multiscale"] = 0
+    parameter_dictionary["procrustes"] = 0
     parameter_dictionary["procrustes_interval"] = 0
     parameter_dictionary["procrustes_scaling"] = 0
     parameter_dictionary["use_landmarks"] = 1
