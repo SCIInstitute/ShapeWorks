@@ -68,6 +68,9 @@ class Preferences : public QObject {
   void set_color_scheme(int value);
   int get_color_scheme();
 
+  void set_color_map(int value);
+  int get_color_map();
+
   bool get_center_checked();
   void set_center_checked(bool value);
 

@@ -97,6 +97,12 @@ void Preferences::set_color_scheme(int value) { settings_.setValue("Studio/color
 int Preferences::get_color_scheme() { return settings_.value("Studio/color_scheme", 0).toInt(); }
 
 //-----------------------------------------------------------------------------
+void Preferences::set_color_map(int value) { settings_.setValue("Studio/color_map", value); }
+
+//-----------------------------------------------------------------------------
+int Preferences::get_color_map() { return settings_.value("Studio/color_map", 0).toInt(); }
+
+//-----------------------------------------------------------------------------
 bool Preferences::get_center_checked() { return settings_.value("Studio/center_checked", true).toBool(); }
 
 //-----------------------------------------------------------------------------

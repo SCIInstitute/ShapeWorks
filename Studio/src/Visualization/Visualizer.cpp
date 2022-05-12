@@ -10,6 +10,7 @@
 #include <vtkRendererCollection.h>
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkWindowToImageFilter.h>
+#include <Visualization/ColorMap.h>
 
 #include <QColor>
 #include <QPixmap>
@@ -215,9 +216,12 @@ void Visualizer::update_viewer_properties() {
     size = session_->get_auto_glyph_size();
   }
 
+  ColorMaps color_maps;
+
   if (lightbox_) {
     foreach (ViewerHandle viewer, lightbox_->get_viewers()) {
       viewer->set_glyph_size_and_quality(size, quality);
+      viewer->set_color_series(color_maps.get_color_map(preferences_.get_color_map()));
       viewer->set_show_glyphs(show_glyphs_);
       viewer->set_show_surface(show_surface_);
       viewer->set_color_scheme(preferences_.get_color_scheme());

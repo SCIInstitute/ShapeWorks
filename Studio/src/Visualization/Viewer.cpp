@@ -2,6 +2,7 @@
 #include <vtkArrowSource.h>
 #include <vtkCell.h>
 #include <vtkCellPicker.h>
+#include <vtkColorSeries.h>
 #include <vtkCornerAnnotation.h>
 #include <vtkFloatArray.h>
 #include <vtkGlyph3D.h>
@@ -740,6 +741,15 @@ void Viewer::reset_camera() {
   renderer_->ResetCameraClippingRange();
   renderer_->ResetCamera();
   renderer_->GetRenderWindow()->Render();
+}
+
+//-----------------------------------------------------------------------------
+void Viewer::set_color_series(ColorMap color_series) {
+  color_series_ = color_series;
+
+  //  color_series.BuildLookupTable(surface_lut_, vtkColorSeries::LUTMode::ORDINAL);
+  color_series.construct_lookup_table(surface_lut_);
+  surface_lut_->Modified();
 }
 
 //-----------------------------------------------------------------------------

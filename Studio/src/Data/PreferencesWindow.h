@@ -7,6 +7,10 @@
 class Ui_PreferencesWindow;
 class QAbstractButton;
 
+namespace shapeworks {
+
+
+
 //! Qt UI dialog to control preferences
 /*!
  * The PreferenceWindow provides controls over preferences for the
@@ -47,3 +51,5 @@ class PreferencesWindow : public QDialog {
   Preferences& preferences_;
   Ui_PreferencesWindow* ui_;
 };
+
+}

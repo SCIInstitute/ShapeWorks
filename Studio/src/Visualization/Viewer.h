@@ -3,6 +3,7 @@
 #include <Data/Shape.h>
 #include <Visualization/ColorSchemes.h>
 #include <Visualization/SliceView.h>
+#include <Visualization/ColorMap.h>
 
 #include <QPointF>
 #include <QSharedPointer>
@@ -29,6 +30,7 @@ class vtkImageSliceMapper;
 class vtkImageData;
 class vtkCellPicker;
 class vtkPropPicker;
+class vtkColorSeries;
 
 namespace shapeworks {
 
@@ -70,6 +72,7 @@ class Viewer {
   void reset_camera(std::array<double, 3> c);
   void reset_camera();
 
+  void set_color_series(ColorMap color_series);
   void set_glyph_size_and_quality(double size, double quality);
   double get_glyph_size();
   double get_glyph_quality();
@@ -175,6 +178,7 @@ class Viewer {
 
   double glyph_size_ = 1.0f;
   double glyph_quality_ = 5.0f;
+  ColorMap color_series_;
 
   vtkSmartPointer<vtkRenderer> renderer_;
 

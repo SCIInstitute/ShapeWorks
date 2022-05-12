@@ -1,20 +1,19 @@
 // qt
 #include <Data/Preferences.h>
 #include <Data/PreferencesWindow.h>
+#include <Visualization/ColorMap.h>
+#include <vtkColorSeries.h>
+#include <vtkNew.h>
 
 #include <QtGui>
 #include <cmath>
-
-
 #include <iostream>
-
-
-#include <vtkColorSeries.h>
-#include <vtkNew.h>
 
 // The interface from the designer
 #include "StudioLog.h"
 #include "ui_PreferencesWindow.h"
+
+namespace shapeworks {
 
 //-----------------------------------------------------------------------------
 PreferencesWindow::PreferencesWindow(QWidget* parent, Preferences& prefs) : preferences_(prefs) {
@@ -35,10 +34,12 @@ PreferencesWindow::PreferencesWindow(QWidget* parent, Preferences& prefs) : pref
           &PreferencesWindow::save_to_preferences);
   connect(ui_->geodesic_cache_multiplier, &QSlider::valueChanged, this, &PreferencesWindow::save_to_preferences);
 
-  vtkNew<vtkColorSeries> colorSeries;
-  int colorSeriesEnum = colorSeries->BREWER_DIVERGING_BROWN_BLUE_GREEN_3;
-  colorSeries->SetColorScheme(colorSeriesEnum);
-  //std::cerr << "colors: " << colorSeries->GetColorSchemeName() << "\n";
+  connect(ui_->color_map, qOverload<int>(&QComboBox::currentIndexChanged), this,
+          &PreferencesWindow::save_to_preferences);
+
+  ui_->color_map->clear();
+  ColorMaps maps;
+  Q_FOREACH (auto color_map, maps) { ui_->color_map->addItem(color_map.name_); }
 }
 
 //-----------------------------------------------------------------------------
@@ -86,6 +87,7 @@ void PreferencesWindow::set_values_from_preferences() {
   ui_->mesh_cache_enabled->setChecked(preferences_.get_cache_enabled());
   ui_->mesh_cache_memory->setValue(preferences_.get_memory_cache_percent());
   ui_->color_scheme->setCurrentIndex(preferences_.get_color_scheme());
+  ui_->color_map->setCurrentIndex(preferences_.get_color_map());
   ui_->num_threads->setValue(preferences_.get_num_threads());
   ui_->parallel_enabled->setChecked(preferences_.get_parallel_enabled());
   ui_->pca_range->setValue(preferences_.get_pca_range());
@@ -121,6 +123,7 @@ void PreferencesWindow::save_to_preferences() {
   preferences_.set_groom_file_template(ui_->groom_file_template->text());
   preferences_.set_optimize_file_template(ui_->optimize_file_template->text());
   preferences_.set_geodesic_cache_multiplier(ui_->geodesic_cache_multiplier->value());
+  preferences_.set_color_map(ui_->color_map->currentIndex());
   update_labels();
   emit update_view();
 }
@@ -143,3 +146,5 @@ void PreferencesWindow::accept() {
   save_to_preferences();
   QDialog::accept();
 }
+
+}  // namespace shapeworks
