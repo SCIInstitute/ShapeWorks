@@ -344,7 +344,7 @@ def Run_Pipeline(args):
     ref_image = sw.Image(ref_image_file)
     ref_center = ref_image.center() # get center
     # Slightly cropped ref image
-    large_bb = sw.PhysicalRegion(bounding_box.min, bounding_box.max).pad(50)
+    large_bb = sw.PhysicalRegion(bounding_box.min, bounding_box.max).pad(80)
     large_cropped_ref_image_file = data_dir + 'large_cropped_reference_image.nrrd'
     large_cropped_ref_image = sw.Image(ref_image_file).crop(large_bb).write(large_cropped_ref_image_file)  
     # Further croppped ref image 
@@ -581,22 +581,16 @@ def Run_Pipeline(args):
         "trainer": {
             "epochs": 10,
             "learning_rate": 0.001,
-            "decay_lr": True,
+            "decay_lr": False,
             "val_freq": 1
         },
         "fine_tune": {
-            "enabled": True,
-            "loss": "MSE",
-            "epochs": 2,
-            "learning_rate": 0.001,
-            "decay_lr": True,
-            "val_freq": 1
+            "enabled": False,
         },
         "use_best_model": True
     }
     if args.tiny_test:
         model_parameters["trainer"]["epochs"] = 1
-        model_parameters["fine_tune"]["epochs"] = 1
     # Save config file    
     config_file = output_directory + model_name + ".json"
     with open(config_file, "w") as outfile:
