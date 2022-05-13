@@ -42,6 +42,7 @@ PreferencesWindow::PreferencesWindow(QWidget* parent, Preferences& prefs) : pref
   connect(ui_->color_map, qOverload<int>(&QComboBox::currentIndexChanged), this,
           &PreferencesWindow::save_to_preferences);
   connect(ui_->discrete_color_mode, &QCheckBox::toggled, this, &PreferencesWindow::save_to_preferences);
+  connect(ui_->reverse_color_map, &QCheckBox::toggled, this, &PreferencesWindow::save_to_preferences);
 }
 
 //-----------------------------------------------------------------------------
@@ -90,6 +91,7 @@ void PreferencesWindow::set_values_from_preferences() {
   ui_->mesh_cache_memory->setValue(preferences_.get_memory_cache_percent());
   ui_->color_scheme->setCurrentIndex(preferences_.get_color_scheme());
   ui_->color_map->setCurrentIndex(preferences_.get_color_map());
+  ui_->reverse_color_map->setChecked(preferences_.get_reverse_color_map());
   ui_->discrete_color_mode->setChecked(preferences_.get_discrete_color_mode());
   ui_->num_threads->setValue(preferences_.get_num_threads());
   ui_->parallel_enabled->setChecked(preferences_.get_parallel_enabled());
@@ -128,6 +130,7 @@ void PreferencesWindow::save_to_preferences() {
   preferences_.set_geodesic_cache_multiplier(ui_->geodesic_cache_multiplier->value());
   preferences_.set_color_map(ui_->color_map->currentIndex());
   preferences_.set_discrete_color_mode(ui_->discrete_color_mode->isChecked());
+  preferences_.set_reverse_color_map(ui_->reverse_color_map->isChecked());
   update_labels();
   emit update_view();
 }

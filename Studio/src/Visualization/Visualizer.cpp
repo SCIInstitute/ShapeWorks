@@ -219,6 +219,7 @@ void Visualizer::update_viewer_properties() {
   ColorMaps color_maps;
   auto color_map = color_maps.get_color_map(preferences_.get_color_map());
   color_map.set_discrete_mode(preferences_.get_discrete_color_mode());
+  color_map.set_reverse_mode(preferences_.get_reverse_color_map());
 
   if (lightbox_) {
     foreach (ViewerHandle viewer, lightbox_->get_viewers()) {
