@@ -35,20 +35,24 @@ vtkColor3ub ColorMap::convert(QColor color) { return vtkColor3ub(color.red(), co
 
 //-----------------------------------------------------------------------------
 ColorMaps::ColorMaps() {
-  ColorMap a;
+  auto add_custom_series = [&](auto name, std::vector<QColor> colors) {
+    ColorMap map;
+    map.name_ = name;
+    map.color_series_ = vtkSmartPointer<vtkColorSeries>::New();
+    map.color_series_->ClearColors();
+    for (const auto& color : colors) {
+      map.color_series_->AddColor(ColorMap::convert(color));
+    }
+    push_back(map);
+  };
 
-  ColorMap map;
-  map.name_ = "Rainbow";
-  map.color_series_ = vtkSmartPointer<vtkColorSeries>::New();
-  map.color_series_->ClearColors();
-  map.color_series_->AddColor(ColorMap::convert(Qt::blue));
-  map.color_series_->AddColor(ColorMap::convert(Qt::cyan));
-  map.color_series_->AddColor(ColorMap::convert(Qt::green));
-  map.color_series_->AddColor(ColorMap::convert(Qt::yellow));
-  map.color_series_->AddColor(ColorMap::convert(Qt::red));
-  push_back(map);
+  add_custom_series("Rainbow", {Qt::blue, Qt::cyan, Qt::green, Qt::yellow, Qt::red});
+  add_custom_series("Reverse Rainbow", {Qt::red, Qt::yellow, Qt::green, Qt::cyan, Qt::blue});
+  add_custom_series("Grayscale", {Qt::black, Qt::darkGray, Qt::lightGray, Qt::white});
+  add_custom_series("Black-Body Radiation", {Qt::black, Qt::red, Qt::yellow, Qt::white});
+  add_custom_series("Blue to Yellow", {Qt::blue, Qt::yellow});
 
-  auto add_vtk_series = [=](auto series) {
+  auto add_vtk_series = [&](auto series) {
     vtkNew<vtkColorSeries> colorSeries;
     int colorSeriesEnum = series;
     colorSeries->SetColorScheme(colorSeriesEnum);
@@ -58,9 +62,9 @@ ColorMaps::ColorMaps() {
     push_back(map);
   };
 
-  add_vtk_series(vtkColorSeries::SPECTRUM);
-  add_vtk_series(vtkColorSeries::WARM);
-  add_vtk_series(vtkColorSeries::BREWER_DIVERGING_BROWN_BLUE_GREEN_3);
+  for (int i = vtkColorSeries::SPECTRUM; i < vtkColorSeries::CUSTOM; i++) {
+    add_vtk_series(i);
+  }
 }
 
 }  // namespace shapeworks
