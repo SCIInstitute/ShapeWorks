@@ -1,4 +1,6 @@
 #include <Data/StudioMesh.h>
+#include <StringUtils.h>
+
 #include <itkImageRegionIteratorWithIndex.h>
 #include <itkLinearInterpolateImageFunction.h>
 #include <itkNearestNeighborInterpolateImageFunction.h>
@@ -258,7 +260,7 @@ void StudioMesh::apply_scalars(MeshHandle mesh) {
 
   // set up new arrays
   for (int i = 0; i < num_arrays; i++) {
-    std::string name = from_mesh->GetPointData()->GetArrayName(i);
+    std::string name = StringUtils::safeString(from_mesh->GetPointData()->GetArrayName(i));
     vtkSmartPointer<vtkFloatArray> to_array = vtkSmartPointer<vtkFloatArray>::New();
     to_array->SetName(name.c_str());
     to_array->SetNumberOfValues(to_mesh->GetNumberOfPoints());

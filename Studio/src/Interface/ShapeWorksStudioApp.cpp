@@ -1448,7 +1448,7 @@ bool ShapeWorksStudioApp::write_scalars(vtkSmartPointer<vtkPolyData> poly_data, 
   std::cerr << "number of arrays = " << num_arrays << "\n";
 
   for (int i = 0; i < num_arrays; i++) {
-    std::string name = poly_data->GetPointData()->GetArrayName(i);
+    std::string name = StringUtils::safeString(poly_data->GetPointData()->GetArrayName(i));
     if (name == "") {
       name = "scalars";
     }
