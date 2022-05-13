@@ -42,8 +42,10 @@ RequestExecutionLevel admin
 ;--------------------------------
 ;Installer Pages
   !define MUI_ICON "Support/windows/installer_icon.ico"
+  !define MUI_UNICON "Support/windows/installer_icon.ico"
   !define MUI_HEADERIMAGE
   !define MUI_HEADERIMAGE_BITMAP "Support/windows/installer_header_image.bmp"
+  !define MUI_HEADERIMAGE_UNBITMAP "Support/windows/installer_header_image.bmp"
   !define MUI_FINISHPAGE_SHOWREADME "Windows_README.txt"
   !define MUI_FINISHPAGE_SHOWREADME_TEXT "Show README"
   !define MUI_FINISHPAGE_TITLE "Installation Complete"
