@@ -47,9 +47,11 @@ class ColorMap {
   static vtkColor3ub convert(QColor color);
 
   void set_discrete_mode(bool discrete_mode) { discrete_mode_ = discrete_mode; }
+  void set_reverse_mode(bool reverse_mode) { reverse_mode_ = reverse_mode; }
 
  private:
   bool discrete_mode_ = false;
+  bool reverse_mode_ = false;
 };
 
 class ColorMaps : public std::vector<ColorMap> {
@@ -85,4 +87,4 @@ class ColorMaps : public std::vector<ColorMap> {
 
 -------------------------------
 
-Updated on 2022-05-13 at 17:34:12 +0000
+Updated on 2022-05-13 at 20:18:37 +0000

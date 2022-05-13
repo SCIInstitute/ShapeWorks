@@ -15,6 +15,7 @@ title: shapeworks::ColorMap
 | -------------- | -------------- |
 | void | **[construct_lookup_table](../Classes/classshapeworks_1_1ColorMap.md#function-construct-lookup-table)**(vtkSmartPointer< vtkLookupTable > lut) |
 | void | **[set_discrete_mode](../Classes/classshapeworks_1_1ColorMap.md#function-set-discrete-mode)**(bool discrete_mode) |
+| void | **[set_reverse_mode](../Classes/classshapeworks_1_1ColorMap.md#function-set-reverse-mode)**(bool reverse_mode) |
 | vtkColor3ub | **[convert](../Classes/classshapeworks_1_1ColorMap.md#function-convert)**(QColor color) |
 
 ## Public Attributes
@@ -40,6 +41,15 @@ void construct_lookup_table(
 ```cpp
 inline void set_discrete_mode(
     bool discrete_mode
+)
+```
+
+
+### function set_reverse_mode
+
+```cpp
+inline void set_reverse_mode(
+    bool reverse_mode
 )
 ```
 
@@ -71,4 +81,4 @@ vtkSmartPointer< vtkColorSeries > color_series_;
 
 -------------------------------
 
-Updated on 2022-05-13 at 17:34:11 +0000
+Updated on 2022-05-13 at 20:18:35 +0000

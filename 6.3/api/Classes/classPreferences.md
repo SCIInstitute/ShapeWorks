@@ -73,6 +73,8 @@ Inherits from QObject
 | int | **[get_color_map](../Classes/classPreferences.md#function-get-color-map)**() |
 | void | **[set_discrete_color_mode](../Classes/classPreferences.md#function-set-discrete-color-mode)**(bool value) |
 | bool | **[get_discrete_color_mode](../Classes/classPreferences.md#function-get-discrete-color-mode)**() |
+| void | **[set_reverse_color_map](../Classes/classPreferences.md#function-set-reverse-color-map)**(bool value) |
+| bool | **[get_reverse_color_map](../Classes/classPreferences.md#function-get-reverse-color-map)**() |
 | bool | **[get_center_checked](../Classes/classPreferences.md#function-get-center-checked)**() |
 | void | **[set_center_checked](../Classes/classPreferences.md#function-set-center-checked)**(bool value) |
 | int | **[get_geodesic_cache_multiplier](../Classes/classPreferences.md#function-get-geodesic-cache-multiplier)**() |
@@ -472,6 +474,22 @@ bool get_discrete_color_mode()
 ```
 
 
+### function set_reverse_color_map
+
+```cpp
+void set_reverse_color_map(
+    bool value
+)
+```
+
+
+### function get_reverse_color_map
+
+```cpp
+bool get_reverse_color_map()
+```
+
+
 ### function get_center_checked
 
 ```cpp
@@ -682,4 +700,4 @@ QString get_export_pca_modes()
 
 -------------------------------
 
-Updated on 2022-05-13 at 17:34:12 +0000
+Updated on 2022-05-13 at 20:18:37 +0000

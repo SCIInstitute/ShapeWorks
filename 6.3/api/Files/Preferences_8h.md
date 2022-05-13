@@ -91,6 +91,9 @@ class Preferences : public QObject {
   void set_discrete_color_mode(bool value);
   bool get_discrete_color_mode();
 
+  void set_reverse_color_map(bool value);
+  bool get_reverse_color_map();
+
   bool get_center_checked();
   void set_center_checked(bool value);
 
@@ -144,4 +147,4 @@ class Preferences : public QObject {
 
 -------------------------------
 
-Updated on 2022-05-13 at 17:34:12 +0000
+Updated on 2022-05-13 at 20:18:37 +0000
