@@ -186,7 +186,7 @@ void Project::load_subjects() {
   auto groomed_columns = this->get_matching_columns(GROOMED_PREFIX);
   auto groomed_transform_columns = this->get_matching_columns(GROOMED_TRANSFORMS_PREFIX);
   auto procrustes_transform_columns = this->get_matching_columns(PROCRUSTES_TRANSFORMS_PREFIX);
-  auto feature_columns = this->get_feature_names();
+  auto feature_columns = this->get_matching_columns(FEATURE_PREFIX);
   auto group_names = this->get_matching_columns(GROUP_PREFIX);
   auto local_particle_columns = this->get_matching_columns(LOCAL_PARTICLES);
   auto world_particle_columns = this->get_matching_columns(WORLD_PARTICLES);
@@ -857,7 +857,12 @@ std::string Project::get_next_landmark_color(int domain_id) {
 std::vector<std::string> Project::get_feature_names() {
   if (!this->feature_names_read_done_) {
     // grab feature volumes
-    auto feature_names = this->get_matching_columns(FEATURE_PREFIX);
+    auto feature_columns = this->get_matching_columns(FEATURE_PREFIX);
+
+    std::vector<std::string> feature_names;
+    for (auto feature : feature_columns) {
+      feature_names.push_back(feature.substr(std::strlen(FEATURE_PREFIX)));
+    }
 
     // now check for meshes that have scalars
     if (!this->subjects_.empty() && this->mesh_scalars_.empty()) {
@@ -891,6 +896,22 @@ std::vector<std::string> Project::get_feature_names() {
   }
 
   return this->feature_names_;
+}
+
+//---------------------------------------------------------------------------
+std::vector<std::string> Project::get_feature_base_names()
+{
+  /*
+  auto feature_maps = get_feature_names();
+  for (const std::string& feature : feature_maps) {
+
+    std::string base = feature_columns[j].substr(std::strlen(FEATURE_PREFIX));
+
+    QString item = QString::fromStdString(feature);
+    item = item.replace("feature_", "");
+    feature_list << item;
+  }
+  */
 }
 
 //---------------------------------------------------------------------------

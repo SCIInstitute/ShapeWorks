@@ -559,9 +559,7 @@ void ShapeWorksStudioApp::update_table() {
   feature_list << "-none-";
   auto feature_maps = project->get_feature_names();
   for (const std::string& feature : feature_maps) {
-    QString item = QString::fromStdString(feature);
-    item = item.replace("feature_", "");
-    feature_list << item;
+    feature_list << QString::fromStdString(feature);
   }
   if (feature_list != current_features_) {
     ui_->features->clear();

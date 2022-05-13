@@ -8,6 +8,7 @@ class vtkPolyData;
 namespace shapeworks {
 class Session;
 class ShapeWorksStudioApp;
+class Shape;
 
 //! Export utilities for Studio
 class ExportUtils {
@@ -17,6 +18,8 @@ class ExportUtils {
   static void export_all_subjects_particle_scalars(ShapeWorksStudioApp* parent, QSharedPointer<Session> session);
 
   static bool write_scalars(ShapeWorksStudioApp* app, vtkSmartPointer<vtkPolyData> poly_data, QString filename);
+
+  static bool write_particle_scalars(ShapeWorksStudioApp* app, QSharedPointer<Shape> shape, QString filename);
 };
 
 }  // namespace shapeworks

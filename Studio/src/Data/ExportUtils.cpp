@@ -1,17 +1,17 @@
 #include "ExportUtils.h"
 
-#include <StringUtils.h>
 #include <Data/Session.h>
+#include <Data/Shape.h>
 #include <Interface/ShapeWorksStudioApp.h>
+#include <StringUtils.h>
 #include <Utils/StudioUtils.h>
+#include <vtkPointData.h>
+#include <vtkPolyData.h>
 
 #include <QDir>
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QProgressDialog>
-
-#include <vtkPolyData.h>
-#include <vtkPointData.h>
 
 namespace shapeworks {
 
@@ -33,8 +33,6 @@ QString ExportUtils::get_save_filename(ShapeWorksStudioApp* parent, QString titl
 
 //---------------------------------------------------------------------------
 void ExportUtils::export_all_subjects_particle_scalars(ShapeWorksStudioApp* parent, QSharedPointer<Session> session) {
-  bool single = StudioUtils::ask_multiple_domains_as_single(parent, session->get_project());
-
   QString filename = ExportUtils::get_save_filename(parent, QWidget::tr("Export All Shapes Particle Scalars"),
                                                     QWidget::tr("CSV files (*.csv)"), ".csv");
   if (filename.isEmpty()) {
@@ -44,7 +42,6 @@ void ExportUtils::export_all_subjects_particle_scalars(ShapeWorksStudioApp* pare
   QProgressDialog progress("Exporting Scalars...", "Abort", 0, session->get_num_shapes(), parent);
   progress.setWindowModality(Qt::WindowModal);
   progress.setMinimumDuration(2000);
-  // progress.show();
 
   QFileInfo fi(filename);
   QString base = fi.path() + QDir::separator() + fi.completeBaseName();
@@ -59,24 +56,8 @@ void ExportUtils::export_all_subjects_particle_scalars(ShapeWorksStudioApp* pare
       shape->load_feature(display_mode, feature);
     }
 
-    if (single) {
-      auto poly_data = mesh_group.get_combined_poly_data();
-      ExportUtils::write_scalars(parent, poly_data, shape_filename);
-      parent->handle_message("Wrote: " + shape_filename);
-    } else {
-      auto domain_names = session->get_project()->get_domain_names();
-      QFileInfo fi(shape_filename);
-      QString domain_base = fi.path() + QDir::separator() + fi.completeBaseName();
-      for (int domain = 0; domain < domain_names.size(); domain++) {
-        QString name = domain_base + "_" + QString::fromStdString(domain_names[domain]) + "." + fi.completeSuffix();
-
-        auto poly_data = mesh_group.meshes()[domain]->get_poly_data();
-        if (!ExportUtils::write_scalars(parent, poly_data, name)) {
-          return;
-        }
-        parent->handle_message("Wrote: " + name);
-      }
-    }
+    ExportUtils::write_particle_scalars(parent, shape, shape_filename);
+    parent->handle_message("Wrote: " + shape_filename);
 
     if (progress.wasCanceled()) {
       break;
@@ -86,8 +67,7 @@ void ExportUtils::export_all_subjects_particle_scalars(ShapeWorksStudioApp* pare
 }
 
 //---------------------------------------------------------------------------
-bool ExportUtils::write_scalars(ShapeWorksStudioApp *app, vtkSmartPointer<vtkPolyData> poly_data, QString filename)
-{
+bool ExportUtils::write_scalars(ShapeWorksStudioApp* app, vtkSmartPointer<vtkPolyData> poly_data, QString filename) {
   if (!poly_data || !poly_data->GetPointData()->GetScalars()) {
     app->handle_error("Error, no scalars to export");
     return false;
@@ -136,6 +116,55 @@ bool ExportUtils::write_scalars(ShapeWorksStudioApp *app, vtkSmartPointer<vtkPol
       int num_components = array->GetNumberOfComponents();
       for (int k = 0; k < num_components; k++) {
         output << "," << array->GetTuple(i)[k];
+      }
+    }
+    output << "\n";
+  }
+
+  output.close();
+  return true;
+}
+
+//---------------------------------------------------------------------------
+bool ExportUtils::write_particle_scalars(ShapeWorksStudioApp* app, QSharedPointer<Shape> shape, QString filename) {
+  if (!shape) {
+    app->handle_error("No shape to export");
+    return false;
+  }
+
+  std::ofstream output;
+  output.open(filename.toStdString().c_str());
+  if (output.bad()) {
+    app->handle_error("Error writing to file: " + filename);
+    return false;
+  }
+  output << "point,x,y,z";
+
+  auto feature_maps = app->session()->get_project()->get_feature_names();
+
+  int num_arrays = feature_maps.size();
+
+  for (int i = 0; i < num_arrays; i++) {
+    std::string name = feature_maps[i];
+    output << "," << name;
+  }
+
+  output << "\n";
+
+  auto particles = shape->get_local_correspondence_points();
+  int num_points = particles.size() / 3;
+
+  for (int i = 0; i < num_points; i++) {
+    output << i;
+    output << "," << particles(i * 3 + 0);
+    output << "," << particles(i * 3 + 1);
+    output << "," << particles(i * 3 + 2);
+
+    for (int j = 0; j < num_arrays; j++) {
+      std::string name = feature_maps[j];
+      auto values = shape->get_point_features(name);
+      if (i < values.size()) {
+        output << "," << values(i);
       }
     }
     output << "\n";

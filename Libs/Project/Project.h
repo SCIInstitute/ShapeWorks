@@ -91,6 +91,7 @@ public:
 
   //! Get feature names
   std::vector<std::string> get_feature_names();
+  std::vector<std::string> get_feature_base_names();
 
   //! Get image names
   std::vector<std::string> get_image_names();
