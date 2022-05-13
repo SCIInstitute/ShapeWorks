@@ -108,6 +108,12 @@ void StudioMesh::interpolate_scalars_to_mesh(std::string name, Eigen::VectorXd p
     vtk_points->InsertPoint(i, x, y, z);
   }
 
+  if (num_points != scalar_values.size()) {
+    std::cerr << "Warning, mismatch of points and scalar values\n";
+    return;
+  }
+
+
   vtkSmartPointer<vtkPolyData> point_data = vtkSmartPointer<vtkPolyData>::New();
   point_data->SetPoints(vtk_points);
 
@@ -122,10 +128,7 @@ void StudioMesh::interpolate_scalars_to_mesh(std::string name, Eigen::VectorXd p
 
   auto points = this->poly_data_->GetPoints();
 
-  if (points->GetNumberOfPoints() != scalar_values.size()) {
-    std::cerr << "Warning, mismatch of points and scalar values\n";
-    return;
-  }
+
 
   vtkFloatArray* scalars = vtkFloatArray::New();
   scalars->SetNumberOfValues(points->GetNumberOfPoints());
@@ -227,7 +230,7 @@ void StudioMesh::paint_ffc(double world_pos[], double radius, bool inclusive) {
     vtkIdType point_ind = result->GetId(i);
     float value = inclusive ? 1 : 0;
     scalars->SetTuple1(point_ind, value);
-    //std::cerr << "paint " << point_ind << " to " << value << "\n";
+    // std::cerr << "paint " << point_ind << " to " << value << "\n";
   }
   scalars->Modified();
 }
