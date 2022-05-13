@@ -121,7 +121,7 @@ if (SHAPEWORKS_GUI)
 endif()
 
 ### vtk
-find_package(VTK ${SHAPEWORKS_VTK_VERSION_MIN})
+find_package(VTK 8.2.0)
 if (NOT VTK_FOUND)
   message(FATAL_ERROR "VTK is required, but could not be found! Make sure path to VTKConfig.cmake is included in CMAKE_PREFIX_PATH")
 endif()
@@ -131,7 +131,7 @@ include(${VTK_USE_FILE})
 find_package (Eigen3 3.3 REQUIRED NO_MODULE)
 
 ### ITK
-FIND_PACKAGE(ITK ${SHAPEWORKS_ITK_VERSION_MIN} REQUIRED)
+FIND_PACKAGE(ITK 5.2.1 REQUIRED)
 IF (ITK_FOUND)
   INCLUDE(${ITK_USE_FILE})
 ELSE()
