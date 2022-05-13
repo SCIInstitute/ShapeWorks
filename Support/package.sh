@@ -146,10 +146,18 @@ cp -a Documentation "${ROOT}/package/${VERSION}"
 
 mkdir ${ROOT}/artifacts
 cd ${ROOT}/package
-zip -y -r ${ROOT}/artifacts/${VERSION}.zip ${VERSION}
-if [ $? -ne 0 ]; then
-    echo "Failed to zip artifact"
-    exit 1
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    zip -y -r ${ROOT}/artifacts/${VERSION}.zip ${VERSION}
+    if [ $? -ne 0 ]; then
+	echo "Failed to zip artifact"
+	exit 1
+    fi
+else
+    tar czvf ${ROOT}/artifacts/${VERSION}.tar.gz ${VERSION}
+    if [ $? -ne 0 ]; then
+	echo "Failed to tar artifact"
+	exit 1
+    fi
 fi
 
 # Additionally on Mac, create an installer
