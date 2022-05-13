@@ -40,9 +40,9 @@ def analyzeMSE(predicted_particles, true_particles):
 	mean_MSE, STD_MSE = eval_utils.get_MSE(predicted_particles, true_particles)
 	return mean_MSE, STD_MSE
 
-def analyzeMeshDistance(predicted_particles, mesh_files, template_particles, template_mesh, out_dir):
-	mean_distance = eval_utils.get_mesh_distance(predicted_particles, mesh_files,
-													template_particles, template_mesh, out_dir)
+def analyzeMeshDistance(predicted_particles, mesh_files, template_particles, template_mesh, out_dir, planes=None):
+	mean_distance = eval_utils.get_mesh_distance(predicted_particles, mesh_files, template_particles, 
+													template_mesh, out_dir, planes)
 	return mean_distance
 
 def analyzeResults(out_dir, DT_dir, prediction_dir, mean_prefix):

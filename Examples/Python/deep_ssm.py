@@ -70,6 +70,32 @@ def Run_Pipeline(args):
     train_mesh_files = sorted(mesh_files[test_val_size*2:])
     print(str(len(train_mesh_files))+" in train set, "+str(len(val_mesh_files))+
             " in validation set, and "+str(len(test_mesh_files))+" in test set")
+    # Load and split cutting planes
+    planes = []
+    for plane_file in plane_files:
+        with open(plane_file) as json_file:
+            planes.append(json.load(json_file)['planes'][0]['points'])
+    # Train planes
+    train_planes = []
+    train_plane_files = []
+    for train_mesh_file in train_mesh_files:
+        plane_file = train_mesh_file.replace('meshes/', 'constraints/').replace('.ply','.json')
+        train_planes.append(planes[plane_files.index(plane_file)])
+        train_plane_files.append(plane_file)
+    # Val planes
+    val_planes = []
+    val_plane_files = []
+    for val_mesh_file in val_mesh_files:
+        plane_file = val_mesh_file.replace('meshes/', 'constraints/').replace('.ply','.json')
+        val_planes.append(planes[plane_files.index(plane_file)])
+        val_plane_files.append(plane_file)
+    # Test planes
+    test_planes = []
+    test_plane_files = []
+    for test_mesh_file in test_mesh_files:
+        plane_file = test_mesh_file.replace('meshes/', 'constraints/').replace('.ply','.json')
+        test_planes.append(planes[plane_files.index(plane_file)])
+        test_plane_files.append(plane_file)
 
     ######################################################################################
     print("\nStep 3. Find Training Mesh Transforms")
@@ -97,29 +123,20 @@ def Run_Pipeline(args):
     train_reflections = [] 
     train_names = []
     train_mesh_list = []
-    train_plane_files = []
     print('Loading meshes...')
-    for train_mesh_filename in train_mesh_files:
+    for train_mesh_file, train_plane in zip(train_mesh_files, train_planes):
         # Get shape name
-        train_name = os.path.basename(train_mesh_filename).replace('.ply', '')
+        train_name = os.path.basename(train_mesh_file).replace('.ply', '')
         train_names.append(train_name)
         """
         Grooming step 1: Load mesg
         """
-        train_mesh = sw.Mesh(train_mesh_filename)
+        train_mesh = sw.Mesh(train_mesh_file)
         train_mesh_list.append(train_mesh)
         """
         Grooming step 2: Apply clipping for finsing alignment transform
         """
-        # Load plane
-        for plane_file in plane_files:
-            if train_name in plane_file:
-                corresponding_plane_file = plane_file
-        with open(corresponding_plane_file) as json_file:
-            plane = json.load(json_file)['planes'][0]['points']
-        train_plane_files.append(corresponding_plane_file)
-        # Clip mesh
-        train_mesh.clip(plane[0], plane[1], plane[2])
+        train_mesh.clip(train_plane[0], train_plane[1], train_plane[2])
         """
         Grooming Step 3: Get reflection transform - We have left and 
         right femurs, so we reflect the non-reference side meshes 
@@ -438,16 +455,11 @@ def Run_Pipeline(args):
     For more information about optimization see:
     http://sciinstitute.github.io/ShapeWorks/workflow/optimize.html
     """
-    # Get validation plane files
-    val_plane_files = []
+    # Get validation names
     val_names = []
     for val_mesh_filename in val_mesh_files:
         val_name = os.path.basename(val_mesh_filename).replace('.ply', '')
         val_names.append(val_name)
-        for plane_file in plane_files:
-            if val_name in plane_file:
-                corresponding_plane_file = plane_file
-        val_plane_files.append(corresponding_plane_file)
 
     # Get meanshape in world particles
     mean_shape = np.loadtxt(train_world_particles[0])
@@ -630,8 +642,10 @@ def Run_Pipeline(args):
     print("Validation world particle MSE: "+str(mean_MSE)+" +- "+str(std_MSE))
     template_mesh = train_mesh_files[ref_index]
     template_particles = train_local_particles[ref_index].replace("./", data_dir)
+    # Get distabce between clipped true and predicted meshes
     mean_dist = DeepSSMUtils.analyzeMeshDistance(predicted_val_local_particles, val_mesh_files, 
-                                                    template_particles, template_mesh, val_out_dir)
+                                                    template_particles, template_mesh, val_out_dir,
+                                                    planes=val_planes)
     print("Validation mean mesh surface-to-surface distance: "+str(mean_dist))
 
     # If tiny test or verify, check results and exit
@@ -662,10 +676,11 @@ def Run_Pipeline(args):
     print("Test local predictions written to: " + local_test_prediction_dir)
     '''
     Analyze test accuracy in terms of surface to surface distance between 
-    true mesh and mesh generated from predicted local particles
+    clipped true mesh and clipped mesh generated from predicted local particles
     '''
     mean_dist = DeepSSMUtils.analyzeMeshDistance(predicted_test_local_particles, test_mesh_files, 
-                                                    template_particles, template_mesh, test_out_dir)
+                                                    template_particles, template_mesh, test_out_dir,
+                                                    planes=test_planes)
     print("Test mean mesh surface-to-surface distance: "+str(mean_dist))
 
 # Verification 
