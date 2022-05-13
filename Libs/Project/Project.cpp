@@ -899,22 +899,6 @@ std::vector<std::string> Project::get_feature_names() {
 }
 
 //---------------------------------------------------------------------------
-std::vector<std::string> Project::get_feature_base_names()
-{
-  /*
-  auto feature_maps = get_feature_names();
-  for (const std::string& feature : feature_maps) {
-
-    std::string base = feature_columns[j].substr(std::strlen(FEATURE_PREFIX));
-
-    QString item = QString::fromStdString(feature);
-    item = item.replace("feature_", "");
-    feature_list << item;
-  }
-  */
-}
-
-//---------------------------------------------------------------------------
 std::vector<std::string> Project::get_image_names() {
   // grab feature volumes
   auto feature_names = this->get_matching_columns(FEATURE_PREFIX);
