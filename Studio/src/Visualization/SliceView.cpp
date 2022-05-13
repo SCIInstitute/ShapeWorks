@@ -44,9 +44,10 @@ SliceView::SliceView(Viewer *viewer) : viewer_(viewer) {
 }
 
 //-----------------------------------------------------------------------------
-void SliceView::set_volume(vtkSmartPointer<vtkImageData> volume) {
+void SliceView::set_volume(std::shared_ptr<Image> volume) {
   volume_ = volume;
-  slice_mapper_->SetInputData(volume_);
+  vtk_volume_ = volume->getVTKImage();
+  slice_mapper_->SetInputData(vtk_volume_);
 
   image_slice_->SetMapper(slice_mapper_);
 
@@ -115,7 +116,6 @@ void SliceView::update_camera() {
   auto renderer = viewer_->get_renderer();
   if (!is_image_loaded()) {
     renderer->GetActiveCamera()->SetParallelProjection(0);
-
     return;
   }
 
@@ -123,20 +123,15 @@ void SliceView::update_camera() {
   double origin[3];
   int dims[3];
   double spacing[3];
-  volume_->GetOrigin(origin);
-  volume_->GetDimensions(dims);
-  volume_->GetSpacing(spacing);
-  // int max_slice_num = slice_mapper_->GetSliceNumberMaxValue();
-  //  std::cout << "dims: " << dims[0] << "\t" << dims[1] << "\t" << dims[2] << "\n";
-  //  std::cout << "spaces: " << spacing[0] << "\t" << spacing[1] << "\t" << spacing[2] << "\n";
-  //  std::cout << "slice range: " << slice_mapper_->GetSliceNumberMinValue() << " to "
-  //            << slice_mapper_->GetSliceNumberMaxValue() << "\n";
+  vtk_volume_->GetOrigin(origin);
+  vtk_volume_->GetDimensions(dims);
+  vtk_volume_->GetSpacing(spacing);
 
   int max_slice_num = slice_mapper_->GetSliceNumberMinValue();
+  // start in the middle
   current_slice_number_ = (slice_mapper_->GetSliceNumberMaxValue() - slice_mapper_->GetSliceNumberMinValue()) / 2;
   slice_mapper_->SetSliceNumber(current_slice_number_);
 
-  //  std::cerr << "orientation = " << orientation << "\n";
   if (orientation == 0) {
     renderer->GetActiveCamera()->SetPosition(spacing[0] * (max_slice_num + 1), spacing[1] * dims[1] / 2,
                                              spacing[2] * dims[2] / 2);
@@ -164,25 +159,61 @@ void SliceView::update_camera() {
 }
 
 //-----------------------------------------------------------------------------
-void SliceView::handle_key(std::string key) {
+Point SliceView::handle_key(std::string key) {
+  if (!is_image_loaded()) {
+    return Point({0, 0, 0});
+  }
+
+  if (key == "Up") {
+    set_slice_number(current_slice_number_ + 1);
+  } else if (key == "Down") {
+    set_slice_number(current_slice_number_ - 1);
+  }
+
+  auto plane = slice_mapper_->GetSlicePlane();
+  auto origin = plane->GetOrigin();
+  return Point({origin[0], origin[1], origin[2]});
+}
+
+//-----------------------------------------------------------------------------
+void SliceView::change_slice(SliceChange change) {
   if (!is_image_loaded()) {
     return;
   }
 
-  if (key == "Up") {
-    current_slice_number_++;
-    current_slice_number_ = std::min(current_slice_number_, slice_mapper_->GetSliceNumberMaxValue());
-    slice_mapper_->SetSliceNumber(current_slice_number_);
-    viewer_->get_renderer()->GetRenderWindow()->Render();
-  } else if (key == "Down") {
-    current_slice_number_--;
-    current_slice_number_ = std::max(current_slice_number_, slice_mapper_->GetSliceNumberMinValue());
-    slice_mapper_->SetSliceNumber(current_slice_number_);
-    viewer_->get_renderer()->GetRenderWindow()->Render();
+  if (change == SliceChange::Up) {
+    set_slice_number(current_slice_number_ + 1);
+  } else if (change == SliceChange::Down) {
+    set_slice_number(current_slice_number_ - 1);
   }
-  update_extent();
+}
 
-  viewer_->update_points();
+//-----------------------------------------------------------------------------
+Point SliceView::get_slice_position() {
+  if (!is_image_loaded()) {
+    return Point({0, 0, 0});
+  }
+
+  double origin[3];
+  vtk_volume_->GetOrigin(origin);
+  double spacing[3];
+  vtk_volume_->GetSpacing(spacing);
+
+  Point result = origin;
+
+  int i = get_orientation_index();
+  result[i] = origin[i] + spacing[i] * current_slice_number_;
+  return result;
+}
+
+//-----------------------------------------------------------------------------
+void SliceView::set_slice_position(Point point) {
+  if (!is_image_loaded()) {
+    return;
+  }
+  auto index = volume_->getITKImage()->TransformPhysicalPointToIndex(point);
+  int slice_number = index[get_orientation_index()];
+  set_slice_number(slice_number);
 }
 
 //-----------------------------------------------------------------------------
@@ -197,7 +228,7 @@ double SliceView::get_spacing() {
     return 1.0;
   }
   int index = get_orientation_index();
-  double *spacing = volume_->GetSpacing();
+  double *spacing = vtk_volume_->GetSpacing();
   return spacing[index];
 }
 
@@ -248,13 +279,26 @@ bool SliceView::should_point_show(double x, double y, double z) {
 }
 
 //-----------------------------------------------------------------------------
+void SliceView::set_slice_number(int slice) {
+  current_slice_number_ = slice;
+
+  current_slice_number_ = std::min(current_slice_number_, slice_mapper_->GetSliceNumberMaxValue());
+  current_slice_number_ = std::max(current_slice_number_, slice_mapper_->GetSliceNumberMinValue());
+
+  slice_mapper_->SetSliceNumber(current_slice_number_);
+  viewer_->get_renderer()->GetRenderWindow()->Render();
+  update_extent();
+  viewer_->update_points();
+}
+
+//-----------------------------------------------------------------------------
 void SliceView::update_extent() {
   if (!slice_mapper_ || !volume_) {
     return;
   }
   int orientation = slice_mapper_->GetOrientation();
 
-  int *extent = volume_->GetExtent();
+  int *extent = vtk_volume_->GetExtent();
 
   int slice = current_slice_number_;
   if (orientation == 2) {

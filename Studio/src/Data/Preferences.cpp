@@ -97,6 +97,23 @@ void Preferences::set_color_scheme(int value) { settings_.setValue("Studio/color
 int Preferences::get_color_scheme() { return settings_.value("Studio/color_scheme", 0).toInt(); }
 
 //-----------------------------------------------------------------------------
+void Preferences::set_color_map(int value) { settings_.setValue("Studio/color_map", value); }
+
+//-----------------------------------------------------------------------------
+int Preferences::get_color_map() { return settings_.value("Studio/color_map", 0).toInt(); }
+
+//-----------------------------------------------------------------------------
+void Preferences::set_discrete_color_mode(bool value) {
+  settings_.setValue("Studio/discrete_color_mode", value);
+}
+
+//-----------------------------------------------------------------------------
+bool Preferences::get_discrete_color_mode() {
+  bool value = settings_.value("Studio/discrete_color_mode", false).toBool();
+  return settings_.value("Studio/discrete_color_mode", false).toBool();
+}
+
+//-----------------------------------------------------------------------------
 bool Preferences::get_center_checked() { return settings_.value("Studio/center_checked", true).toBool(); }
 
 //-----------------------------------------------------------------------------
@@ -245,6 +262,12 @@ double Preferences::get_export_pca_range() { return settings_.value("Export/pca_
 
 //-----------------------------------------------------------------------------
 void Preferences::set_export_pca_range(double range) { settings_.setValue("Export/pca_range", range); }
+
+//-----------------------------------------------------------------------------
+void Preferences::set_export_pca_modes(QString string) { settings_.setValue("Export/pca_modes", string); }
+
+//-----------------------------------------------------------------------------
+QString Preferences::get_export_pca_modes() { return settings_.value("Export/pca_modes", "1").toString(); }
 
 //-----------------------------------------------------------------------------
 int Preferences::get_geodesic_cache_multiplier() { return settings_.value("Mesh/geodesic_cache_multiplier").toInt(); }

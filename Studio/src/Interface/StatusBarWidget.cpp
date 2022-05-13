@@ -1,8 +1,8 @@
 #include "StatusBarWidget.h"
 
+#include <QDebug>
 #include <QResizeEvent>
 #include <QStatusBar>
-#include <QDebug>
 
 // ui
 #include <ui_StatusBarWidget.h>

@@ -12,17 +12,20 @@
 #include <QWidgetAction>
 
 // vtk
+#include <vtkPointData.h>
 #include <vtkPolyDataWriter.h>
 #include <vtkRenderWindow.h>
 
 // shapeworks
 #include <Applications/Configuration.h>
+#include <Data/SurfaceReconstructor.h>
 #include <Libs/Mesh/Mesh.h>
 #include <Libs/Utils/StringUtils.h>
 
 // studio
 #include <Analysis/AnalysisTool.h>
 #include <Data/DataTool.h>
+#include <Data/ExportUtils.h>
 #include <Data/Preferences.h>
 #include <Data/Session.h>
 #include <Data/Shape.h>
@@ -180,7 +183,6 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
 
   // set up preferences window
   preferences_window_ = QSharedPointer<PreferencesWindow>(new PreferencesWindow(this, preferences_));
-  preferences_window_->set_values_from_preferences();
 
   connect(preferences_window_.data(), SIGNAL(clear_cache()), this, SLOT(handle_clear_cache()));
   connect(preferences_window_.data(), SIGNAL(update_view()), this, SLOT(handle_color_scheme()));
@@ -321,7 +323,7 @@ bool ShapeWorksStudioApp::on_action_save_project_triggered() {
 
 //---------------------------------------------------------------------------
 bool ShapeWorksStudioApp::on_action_save_project_as_triggered() {
-  QString filename = get_save_filename(tr("Save Project As..."), tr("XLSX files (*.xlsx)"), ".xlsx");
+  QString filename = ExportUtils::get_save_filename(this, tr("Save Project As..."), tr("XLSX files (*.xlsx)"), ".xlsx");
   if (filename.isEmpty()) {
     return false;
   }
@@ -557,9 +559,7 @@ void ShapeWorksStudioApp::update_table() {
   feature_list << "-none-";
   auto feature_maps = project->get_feature_names();
   for (const std::string& feature : feature_maps) {
-    QString item = QString::fromStdString(feature);
-    item = item.replace("feature_", "");
-    feature_list << item;
+    feature_list << QString::fromStdString(feature);
   }
   if (feature_list != current_features_) {
     ui_->features->clear();
@@ -807,6 +807,7 @@ void ShapeWorksStudioApp::new_session() {
   connect(ui_->image_3d_mode_, &QCheckBox::clicked, session_.data(), &Session::set_image_3d_mode);
   connect(ui_->image_share_window_and_level_, &QCheckBox::clicked, session_.data(),
           &Session::set_image_share_window_and_level);
+  connect(ui_->image_sync_slices, &QCheckBox::clicked, session_.data(), &Session::set_image_sync_slice);
 
   connect(ui_->planes_visible_button_, &QToolButton::toggled, session_.data(), &Session::set_show_planes);
   connect(ui_->landmarks_visible_button, &QToolButton::clicked, session_.data(), &Session::set_show_landmarks);
@@ -1315,7 +1316,6 @@ void ShapeWorksStudioApp::open_project(QString filename) {
 
   groom_tool_->load_params();
   optimize_tool_->load_params();
-  preferences_window_->set_values_from_preferences();
   update_from_preferences();
 
   update_tool_mode();
@@ -1383,7 +1383,7 @@ void ShapeWorksStudioApp::on_action_preferences_triggered() { preferences_window
 void ShapeWorksStudioApp::on_action_export_current_mesh_triggered() {
   bool single = StudioUtils::ask_multiple_domains_as_single(this, session_->get_project());
 
-  QString filename = get_save_filename(tr("Export Current Mesh"), get_mesh_file_filter(), ".vtk");
+  QString filename = ExportUtils::get_save_filename(this,tr("Export Current Mesh"), get_mesh_file_filter(), ".vtk");
   if (filename.isEmpty()) {
     return;
   }
@@ -1447,7 +1447,7 @@ bool ShapeWorksStudioApp::write_scalars(vtkSmartPointer<vtkPolyData> poly_data, 
   std::cerr << "number of arrays = " << num_arrays << "\n";
 
   for (int i = 0; i < num_arrays; i++) {
-    std::string name = poly_data->GetPointData()->GetArrayName(i);
+    std::string name = StringUtils::safeString(poly_data->GetPointData()->GetArrayName(i));
     if (name == "") {
       name = "scalars";
     }
@@ -1493,7 +1493,7 @@ void ShapeWorksStudioApp::on_action_export_current_particles_triggered() {
   bool single = StudioUtils::ask_multiple_domains_as_single(this, session_->get_project());
 
   QString filename =
-      get_save_filename(tr("Export Current Particles"), tr("Particle files (*.particles)"), ".particles");
+      ExportUtils::get_save_filename(this,tr("Export Current Particles"), tr("Particle files (*.particles)"), ".particles");
   if (filename.isEmpty()) {
     return;
   }
@@ -1528,7 +1528,7 @@ void ShapeWorksStudioApp::on_action_export_current_particles_triggered() {
 void ShapeWorksStudioApp::on_action_export_mesh_scalars_triggered() {
   bool single = StudioUtils::ask_multiple_domains_as_single(this, session_->get_project());
 
-  QString filename = get_save_filename(tr("Export Mesh Scalars"), tr("CSV files (*.csv)"), ".csv");
+  QString filename = ExportUtils::get_save_filename(this,tr("Export Mesh Scalars"), tr("CSV files (*.csv)"), ".csv");
   if (filename.isEmpty()) {
     return;
   }
@@ -1562,7 +1562,7 @@ void ShapeWorksStudioApp::on_action_export_mesh_scalars_triggered() {
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::action_export_particle_scalars_triggered() {
-  QString filename = get_save_filename(tr("Export Particle Scalars"), tr("CSV files (*.csv)"), ".csv");
+  QString filename = ExportUtils::get_save_filename(this,tr("Export Particle Scalars"), tr("CSV files (*.csv)"), ".csv");
   if (filename.isEmpty()) {
     return;
   }
@@ -1578,60 +1578,12 @@ void ShapeWorksStudioApp::action_export_particle_scalars_triggered() {
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::action_export_all_subjects_particle_scalars_triggered() {
-  bool single = StudioUtils::ask_multiple_domains_as_single(this, session_->get_project());
-
-  QString filename = get_save_filename(tr("Export All Shapes Particle Scalars"), tr("CSV files (*.csv)"), ".csv");
-  if (filename.isEmpty()) {
-    return;
-  }
-
-  QProgressDialog progress("Exporting Scalars...", "Abort", 0, session_->get_num_shapes(), this);
-  progress.setWindowModality(Qt::WindowModal);
-  progress.setMinimumDuration(2000);
-  // progress.show();
-
-  QFileInfo fi(filename);
-  QString base = fi.path() + QDir::separator() + fi.completeBaseName();
-  for (const auto& shape : session_->get_shapes()) {
-    QString shape_filename = base + "_" + shape->get_display_name() + "." + fi.completeSuffix();
-
-    auto display_mode = session_->get_display_mode();
-    auto mesh_group = shape->get_meshes(display_mode, true);
-
-    auto feature_maps = session_->get_project()->get_feature_names();
-    for (const std::string& feature : feature_maps) {
-      shape->load_feature(display_mode, feature);
-    }
-
-    if (single) {
-      auto poly_data = mesh_group.get_combined_poly_data();
-      write_scalars(poly_data, shape_filename);
-      handle_message("Wrote: " + shape_filename);
-    } else {
-      auto domain_names = session_->get_project()->get_domain_names();
-      QFileInfo fi(shape_filename);
-      QString domain_base = fi.path() + QDir::separator() + fi.completeBaseName();
-      for (int domain = 0; domain < domain_names.size(); domain++) {
-        QString name = domain_base + "_" + QString::fromStdString(domain_names[domain]) + "." + fi.completeSuffix();
-
-        auto poly_data = mesh_group.meshes()[domain]->get_poly_data();
-        if (!write_scalars(poly_data, name)) {
-          return;
-        }
-        handle_message("Wrote: " + name);
-      }
-    }
-
-    if (progress.wasCanceled()) {
-      break;
-    }
-    progress.setValue(progress.value() + 1);
-  }
+  ExportUtils::export_all_subjects_particle_scalars(this, session_);
 }
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_export_pca_scores_triggered() {
-  QString filename = get_save_filename(tr("Export PCA Scores"), tr("CSV files (*.csv)"), ".csv");
+  QString filename = ExportUtils::get_save_filename(this, tr("Export PCA Scores"), tr("CSV files (*.csv)"), ".csv");
   if (filename.isEmpty()) {
     return;
   }
@@ -1791,7 +1743,7 @@ void ShapeWorksStudioApp::on_auto_view_button_clicked() {
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_actionExport_PCA_Mesh_triggered() {
   QString filename =
-      get_save_filename(tr("Export PCA Mesh"), tr("Supported types (*.vtk *.ply *.vtp *.obj *.stl)"), ".vtk");
+      ExportUtils::get_save_filename(this,tr("Export PCA Mesh"), tr("Supported types (*.vtk *.ply *.vtp *.obj *.stl)"), ".vtk");
   if (filename.isEmpty()) {
     return;
   }
@@ -1828,7 +1780,7 @@ void ShapeWorksStudioApp::on_actionExport_PCA_Mesh_triggered() {
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_actionExport_Eigenvalues_triggered() {
-  QString filename = get_save_filename(tr("Export Eigenvalue EVAL file"), tr("EVAL files (*.eval)"), ".eval");
+  QString filename = ExportUtils::get_save_filename(this,tr("Export Eigenvalue EVAL file"), tr("EVAL files (*.eval)"), ".eval");
   if (filename.isEmpty()) {
     return;
   }
@@ -1845,7 +1797,7 @@ void ShapeWorksStudioApp::on_actionExport_Eigenvalues_triggered() {
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_actionExport_Eigenvectors_triggered() {
-  QString filename = get_save_filename(tr("Export Eigenvector EVAL file"), tr("EVAL files (*.eval)"), ".eval");
+  QString filename = ExportUtils::get_save_filename(this,tr("Export Eigenvector EVAL file"), tr("EVAL files (*.eval)"), ".eval");
   if (filename.isEmpty()) {
     return;
   }
@@ -1869,7 +1821,7 @@ void ShapeWorksStudioApp::on_actionExport_Eigenvectors_triggered() {
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_actionExport_PCA_Mode_Points_triggered() {
   QString filename =
-      get_save_filename(tr("Save PCA Mode Particle files"), tr("Particle files (*.particles)"), ".particles");
+      ExportUtils::get_save_filename(this,tr("Save PCA Mode Particle files"), tr("Particle files (*.particles)"), ".particles");
   if (filename.isEmpty()) {
     return;
   }
@@ -1927,21 +1879,6 @@ bool ShapeWorksStudioApp::write_particle_file(std::string filename, Eigen::Vecto
   }
 
   return true;
-}
-
-//---------------------------------------------------------------------------
-QString ShapeWorksStudioApp::get_save_filename(QString title, QString filetypes, QString default_ext) {
-  QString last_directory = preferences_.get_last_directory();
-  QString filename = QFileDialog::getSaveFileName(this, title, last_directory, filetypes);
-  if (filename.isEmpty()) {
-    return "";
-  }
-
-  if (QFileInfo(filename).suffix() == "") {
-    filename = filename + default_ext;
-  }
-  preferences_.set_last_directory(QFileInfo(filename).absolutePath());
-  return filename;
 }
 
 //---------------------------------------------------------------------------

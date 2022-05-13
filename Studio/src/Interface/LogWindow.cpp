@@ -8,8 +8,9 @@ namespace shapeworks {
 //---------------------------------------------------------------------------
 LogWindow::LogWindow(QWidget* parent) : QDialog(parent)
 {
-  this->ui_ = new Ui_LogWindow;
-  this->ui_->setupUi(this);
+  ui_ = new Ui_LogWindow;
+  ui_->setupUi(this);
+  ui_->history_list_->setWordWrap(true);
 
   QIcon icon = windowIcon();
   Qt::WindowFlags flags = windowFlags();
@@ -17,6 +18,7 @@ LogWindow::LogWindow(QWidget* parent) : QDialog(parent)
   flags = flags & (~helpFlag);
   this->setWindowFlags(flags);
   this->setWindowIcon(icon);
+
 }
 
 //---------------------------------------------------------------------------
