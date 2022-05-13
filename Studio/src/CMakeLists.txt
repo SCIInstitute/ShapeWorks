@@ -77,6 +77,7 @@ SET(STUDIO_DATA_SRCS
   Data/LandmarkItemDelegate.cpp
   Data/LandmarkTableModel.cpp
   Data/DataTool.cpp
+  Data/ExportUtils.cpp
   Data/LegacyMeshGenerator.cpp
   Data/MeshCache.cpp
   Data/MeshGenerator.cpp

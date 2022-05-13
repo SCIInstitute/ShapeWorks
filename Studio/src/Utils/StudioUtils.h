@@ -12,6 +12,7 @@ class vtkImageData;
 
 namespace shapeworks {
 
+//! Utilities for Studio
 class StudioUtils {
  public:
   static bool ask_multiple_domains_as_single(QWidget *parent, std::shared_ptr<Project> project);
