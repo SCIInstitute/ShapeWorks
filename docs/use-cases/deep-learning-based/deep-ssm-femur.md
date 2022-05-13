@@ -23,8 +23,7 @@ The femur data is downloaded from the [ShapeWorks Data Portal](https://girder.sh
 ![Femur Data Example](https://sci.utah.edu/~shapeworks/doc-resources/pngs/deepssm_data.png)
 
 ### Step 2: Define the data split
-The data is randomly split into training (80%), validation (10%), and test (10%) sets. Of the 49 examples in the femur dataset, 39 are used to create training set, 5 are held out for the validation set, and the remaining 5 are held out for a test set. If running `--tiny_test` only 5 samples are downloaded and 3 are used in training, 1 for validation, and 1 for testing. Note meshes and cutting planes are not required for the test set.
-![Split](https://sci.utah.edu/~shapeworks/doc-resources/pngs/deepssm_split.png)
+The data is randomly split into training (80%), validation (10%), and test (10%) sets. Of the 49 examples in the femur dataset, 39 are used to create training set, 5 are held out for the validation set, and the remaining 5 are held out for a test set. If running `--tiny_test` only 5 samples are downloaded and 3 are used in training, 1 for validation, and 1 for testing. 
 
 ### Step 3: Find training alignment transforms
 Training DeepSSM requires labels or ground truth particles, thus we run optimization on the training set. As the femur meshes are unaligned, this requires finiding the alignment transforms to use in optimization. The steps for computing the transforms are the same as in the [Femur Use Case](../constraint-based/femur-cutting-planes.md). See [Groom](../../workflow/groom.md) for more information on specific steps. In addition to computing the transforms, the smallest bounding box which contains all aligned meshes is computed. 
@@ -56,10 +55,19 @@ The distribution of real and augmented PCA scores are visualized as parallel vio
 ![Data Augmentation](https://sci.utah.edu/~shapeworks/doc-resources/pngs/deepssm_violin.png)
 
 ### Step 7: Find validation and test alignment transforms and groom images
-To prepare the input images for the validation and test sets, the original MRIs are reflected if neccesar then aligned to a reference image using rigid image registration. The reference image is selected as the groomed image corresponded to the training sample used in mesh alignment in step 3. The images are then cropped using the same bounding box computed in step 3 and the combined transforms are saved. Note this step does not use the validation or test meshes and can be performed without segmentation.
+To prepare the input images for the validation and test sets, the original MRIs are reflected if neccesary then aligned to a reference image using image registration. The reference image is selected as the groomed image corresponded to the training sample used in mesh alignment in step 3. The images are then cropped using the same bounding box computed in step 3 and the combined transforms are saved. Note this step does not use the validation or test meshes and can be performed without segmentation.
+![Test Image Grooming](https://sci.utah.edu/~shapeworks/doc-resources/pngs/deepssm_test_image_groom.png)
+
+Here are some examples of the groomed validation and test images. 
+![Validation and Test Groomed Images](https://sci.utah.edu/~shapeworks/doc-resources/pngs/deepssm_val_images.png)
 
 ### Step 8: Optimize validation particles with fixed domains
-In order to quantify the accuracy of DeepSSM, ground truth particles are optimized on the validation set. This is done by adding the validation meshes to the training model while keeping the training particles fixed as is done in the [Fixed Domain Use Case](../multistep/fixed-domain-ellipsoid.md).
+In order to quantify the accuracy of DeepSSM, ground truth particles are optimized on the validation set. This is done by adding the validation meshes to the training model while keeping the training particles fixed as is done in the [Fixed Domain Use Case](../multistep/fixed-domain-ellipsoid.md). The transforms found in step 7 are passed and Procrustes is turned off as these transform matrices account for scale.
+
+![Validation Optimization](https://sci.utah.edu/~shapeworks/doc-resources/pngs/deepssm_val_opt.png)
+
+Below are the resulting particles on the validation femurs.
+![Validation Samples](https://sci.utah.edu/~shapeworks/doc-resources/pngs/deepssm_val_samples.png)
 
 ### Step 9: Create PyTorch loaders from data
 The groomed images and particle files are reformatted into tensors for training and testing the DeepSSM network. In the case of the test loader, a place holder is used for the particles as we do not have ground truth particles.
@@ -69,16 +77,21 @@ The functions relevant to this step are [getTrainValLoaders](../../deep-learning
     If a CUDA memory error occurs when running the use case, the batch size value may need to be decreased. 
 
 ### Step 10: Training DeepSSM 
-A DeepSSM model is created and trained for 50 epochs. A learning rate of 0.0001 is used, and the validation error is calculated and reported every epoch.
+A DeepSSM model is created and trained for 10 epochs. A learning rate of 0.001 is used, and the validation error is calculated and reported every epoch.
 
 The function relevant to this step is [trainDeepSSM](../../deep-learning/deep-ssm.md#Train-DeepSSM).
+
+The training and validation errors are plotted after each epoch. 
+![Training Plot](https://sci.utah.edu/~shapeworks/doc-resources/pngs/deepssm_train.png)
+
 
 ### Step 11: Predict validation particles and analyze accuracy
 The trained DeepSSM model is used to predict the world particles for the validation images. The function relevant to this step is [testDeepSSM](../../deep-learning/deep-ssm.md#Test-DeepSSM). The predicted local particles are aquired by applying the inverse transforms from step 7 to the world particles. 
 
-The accuracy is then analyzed via two means. The first is the mean square error between the predicted worl dparticles and ground truth world particles. The second is the surface-to-surface distance between the true mesh and the mesh generated from the predicted local particles. Heat maps of these distances on the meshes are saved from visualizing the results. The function relevant to this step is [analyzeResults](../../deep-learning/deep-ssm.md#Analyze-Results).
+The accuracy is then analyzed via two means. The first is the mean square error between the predicted worl dparticles and ground truth world particles. The second is the surface-to-surface distance between the true mesh and the mesh generated from the predicted local particles. These results are printed to the console. The function relevant to this step is [analyzeResults](../../deep-learning/deep-ssm.md#Analyze-Results).
 
 ### Step 12: Predict test particles and analyze accuracy
 Similarly, the trained DeepSSM model is used to predict the world particles for the test images via [testDeepSSM](../../deep-learning/deep-ssm.md#Test-DeepSSM). As there are no ground truth particles, accuracy is just analyzed using the surface-to-surface distance between the true mesh and the mesh generated from the predicted local particles. 
 
-![DeepSSM Results](../../img/deep-learning/DeepSSMResults.png)
+Below we can see the results on the 5 test shapes. The original image is with the predicted meshes which have a heat map displaying the surface-tosurface distance to the true mesh.
+![DeepSSM Results](https://sci.utah.edu/~shapeworks/doc-resources/pngs/deepssm_results.png)
