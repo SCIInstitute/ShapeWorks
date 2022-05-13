@@ -217,11 +217,13 @@ void Visualizer::update_viewer_properties() {
   }
 
   ColorMaps color_maps;
+  auto color_map = color_maps.get_color_map(preferences_.get_color_map());
+  color_map.set_discrete_mode(preferences_.get_discrete_color_mode());
 
   if (lightbox_) {
     foreach (ViewerHandle viewer, lightbox_->get_viewers()) {
       viewer->set_glyph_size_and_quality(size, quality);
-      viewer->set_color_series(color_maps.get_color_map(preferences_.get_color_map()));
+      viewer->set_color_series(color_map);
       viewer->set_show_glyphs(show_glyphs_);
       viewer->set_show_surface(show_surface_);
       viewer->set_color_scheme(preferences_.get_color_scheme());

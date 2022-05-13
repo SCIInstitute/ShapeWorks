@@ -8,22 +8,26 @@ namespace shapeworks {
 
 //-----------------------------------------------------------------------------
 void ColorMap::construct_lookup_table(vtkSmartPointer<vtkLookupTable> lut) {
-  auto color_transfer = vtkSmartPointer<vtkColorTransferFunction>::New();
+  if (discrete_mode_) {
+    color_series_->BuildLookupTable(lut, vtkColorSeries::LUTMode::ORDINAL);
+  } else {
+    auto color_transfer = vtkSmartPointer<vtkColorTransferFunction>::New();
 
-  int num_colors = color_series_->GetNumberOfColors();
-  for (int i = 0; i < num_colors; i++) {
-    double ratio = static_cast<double>(i) / (num_colors - 1);
-    vtkColor3ub color = color_series_->GetColor(i);
-    std::cerr << i << " : " << color << "\n";
-    color_transfer->AddRGBPoint(ratio, color.GetRed() / 255.0, color.GetGreen() / 255.0, color.GetBlue() / 255.0);
-  }
+    int num_colors = color_series_->GetNumberOfColors();
+    for (int i = 0; i < num_colors; i++) {
+      double ratio = static_cast<double>(i) / (num_colors - 1);
+      vtkColor3ub color = color_series_->GetColor(i);
+      color_transfer->AddRGBPoint(ratio, color.GetRed() / 255.0, color.GetGreen() / 255.0, color.GetBlue() / 255.0);
+    }
 
-  lut->SetNumberOfTableValues(100);
-  for (int i = 0; i < 100; i++) {
-    double rgb[3];
-    color_transfer->GetColor(i / 99.0, rgb);
-    lut->SetTableValue(i, rgb[0], rgb[1], rgb[2]);
+    lut->SetNumberOfTableValues(100);
+    for (int i = 0; i < 100; i++) {
+      double rgb[3];
+      color_transfer->GetColor(i / 99.0, rgb);
+      lut->SetTableValue(i, rgb[0], rgb[1], rgb[2]);
+    }
   }
+  lut->Modified();
 }
 
 //-----------------------------------------------------------------------------

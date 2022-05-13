@@ -196,19 +196,8 @@
       <string>Colors</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_7">
-      <item row="0" column="0">
-       <widget class="QLabel" name="label_4">
-        <property name="text">
-         <string>Color Scheme</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="label_14">
-        <property name="text">
-         <string>Color Map</string>
-        </property>
-       </widget>
+      <item row="1" column="1">
+       <widget class="QComboBox" name="color_map"/>
       </item>
       <item row="0" column="1">
        <widget class="QComboBox" name="color_scheme">
@@ -264,8 +253,26 @@
         </item>
        </widget>
       </item>
-      <item row="1" column="1">
-       <widget class="QComboBox" name="color_map"/>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_14">
+        <property name="text">
+         <string>Color Map</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_4">
+        <property name="text">
+         <string>Color Scheme</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QCheckBox" name="discrete_color_mode">
+        <property name="text">
+         <string>Discrete Color Mode</string>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>

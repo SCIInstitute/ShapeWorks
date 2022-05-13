@@ -182,7 +182,6 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
 
   // set up preferences window
   preferences_window_ = QSharedPointer<PreferencesWindow>(new PreferencesWindow(this, preferences_));
-  preferences_window_->set_values_from_preferences();
 
   connect(preferences_window_.data(), SIGNAL(clear_cache()), this, SLOT(handle_clear_cache()));
   connect(preferences_window_.data(), SIGNAL(update_view()), this, SLOT(handle_color_scheme()));
@@ -1318,7 +1317,6 @@ void ShapeWorksStudioApp::open_project(QString filename) {
 
   groom_tool_->load_params();
   optimize_tool_->load_params();
-  preferences_window_->set_values_from_preferences();
   update_from_preferences();
 
   update_tool_mode();

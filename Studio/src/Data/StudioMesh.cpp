@@ -119,7 +119,13 @@ void StudioMesh::interpolate_scalars_to_mesh(std::string name, Eigen::VectorXd p
   if (!this->poly_data_) {
     return;
   }
+
   auto points = this->poly_data_->GetPoints();
+
+  if (points->GetNumberOfPoints() != scalar_values.size()) {
+    std::cerr << "Warning, mismatch of points and scalar values\n";
+    return;
+  }
 
   vtkFloatArray* scalars = vtkFloatArray::New();
   scalars->SetNumberOfValues(points->GetNumberOfPoints());

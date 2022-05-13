@@ -141,7 +141,7 @@ bool PythonWorker::init()
   if (this->initialized_) {
     if (!this->initialized_success_) {
       emit error_message(
-        QString::fromStdString("Unable to initialize Python. Please run " + script));
+        QString::fromStdString("Unable to initialize Python.  Please run " + script));
     }
     return this->initialized_success_;
   }
@@ -172,7 +172,7 @@ bool PythonWorker::init()
   }
   else {
     emit error_message(
-      QString::fromStdString("Unable to initialize Python. Please run " + script));
+      QString::fromStdString("Unable to initialize Python.  Please run " + script));
 
     this->initialized_success_ = false;
     return false;
@@ -244,11 +244,15 @@ bool PythonWorker::init()
 
     STUDIO_LOG_MESSAGE("Embedded Python Interpreter Initialized");
   } catch (py::error_already_set& e) {
-    emit error_message(QString::fromStdString("Error initializing Python:\n") + e.what());
+    emit error_message(QString::fromStdString("Unable to initialize Python:\n") + e.what());
+    emit error_message(
+      QString::fromStdString("Unable to initialize Python.  Please run " + script));
     this->initialized_success_ = false;
     return false;
   } catch (const std::exception& e) {
-    emit error_message(QString::fromStdString("Error initializing Python:\n") + e.what());
+    emit error_message(QString::fromStdString("Unable to initialize Python:\n") + e.what());
+    emit error_message(
+      QString::fromStdString("Unable to initialize Python.  Please run " + script));
     this->initialized_success_ = false;
     return false;
   }

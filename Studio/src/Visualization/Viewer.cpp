@@ -32,7 +32,6 @@
 #include <vtkUnsignedLongArray.h>
 
 // shapeworks
-#include <Data/Preferences.h>
 #include <Data/Shape.h>
 #include <Data/StudioLog.h>
 #include <Visualization/LandmarkWidget.h>
@@ -746,10 +745,7 @@ void Viewer::reset_camera() {
 //-----------------------------------------------------------------------------
 void Viewer::set_color_series(ColorMap color_series) {
   color_series_ = color_series;
-
-  //  color_series.BuildLookupTable(surface_lut_, vtkColorSeries::LUTMode::ORDINAL);
   color_series.construct_lookup_table(surface_lut_);
-  surface_lut_->Modified();
 }
 
 //-----------------------------------------------------------------------------

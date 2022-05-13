@@ -3,8 +3,8 @@
 #include <vtkColorSeries.h>
 #include <vtkSmartPointer.h>
 
-#include <QStringList>
 #include <QColor>
+#include <QStringList>
 #include <vector>
 
 namespace shapeworks {
@@ -18,6 +18,10 @@ class ColorMap {
 
   static vtkColor3ub convert(QColor color);
 
+  void set_discrete_mode(bool discrete_mode) { discrete_mode_ = discrete_mode; }
+
+ private:
+  bool discrete_mode_ = false;
 };
 
 class ColorMaps : public std::vector<ColorMap> {
