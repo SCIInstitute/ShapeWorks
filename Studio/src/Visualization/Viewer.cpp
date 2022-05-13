@@ -2,6 +2,7 @@
 #include <vtkArrowSource.h>
 #include <vtkCell.h>
 #include <vtkCellPicker.h>
+#include <vtkColorSeries.h>
 #include <vtkCornerAnnotation.h>
 #include <vtkFloatArray.h>
 #include <vtkGlyph3D.h>
@@ -31,7 +32,6 @@
 #include <vtkUnsignedLongArray.h>
 
 // shapeworks
-#include <Data/Preferences.h>
 #include <Data/Shape.h>
 #include <Data/StudioLog.h>
 #include <Visualization/LandmarkWidget.h>
@@ -743,6 +743,12 @@ void Viewer::reset_camera() {
 }
 
 //-----------------------------------------------------------------------------
+void Viewer::set_color_series(ColorMap color_series) {
+  color_series_ = color_series;
+  color_series.construct_lookup_table(surface_lut_);
+}
+
+//-----------------------------------------------------------------------------
 void Viewer::set_renderer(vtkSmartPointer<vtkRenderer> renderer) { renderer_ = renderer; }
 
 //-----------------------------------------------------------------------------
@@ -1188,10 +1194,7 @@ vtkSmartPointer<vtkTransform> Viewer::get_image_transform() {
 }
 
 //-----------------------------------------------------------------------------
-void Viewer::handle_key(int* click_pos, std::string key) { slice_view_.handle_key(key); }
-
-//-----------------------------------------------------------------------------
-void Viewer::set_window_and_level(double window, double level) { slice_view_.set_window_and_level(window, level); }
+SliceView& Viewer::slice_view() { return slice_view_; }
 
 //-----------------------------------------------------------------------------
 bool Viewer::is_reverse(vtkSmartPointer<vtkTransform> transform) {

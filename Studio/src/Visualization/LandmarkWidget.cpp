@@ -15,6 +15,8 @@
 #include <vtkRenderWindow.h>
 #include <vtkRenderer.h>
 #include <vtkSphereSource.h>
+#include <vtkFloatArray.h>
+#include <vtkPointData.h>
 
 #include <QColor>
 

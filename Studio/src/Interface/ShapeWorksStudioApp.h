@@ -132,6 +132,9 @@ class ShapeWorksStudioApp : public QMainWindow {
 
   QSharedPointer<PythonWorker> get_py_worker();
 
+  Preferences& prefs() { return preferences_; }
+  QSharedPointer<Session> session() { return session_; }
+
  protected:
   void dragEnterEvent(QDragEnterEvent* event) override;
   void dragLeaveEvent(QDragLeaveEvent* event) override;
@@ -148,7 +151,6 @@ class ShapeWorksStudioApp : public QMainWindow {
 
   static bool write_particle_file(std::string filename, Eigen::VectorXd particles);
 
-  QString get_save_filename(QString title, QString filetypes, QString default_ext);
   static QString get_mesh_file_filter();
 
   enum VIEW_MODE { ORIGINAL = 0, GROOMED = 1, RECONSTRUCTED = 2 };

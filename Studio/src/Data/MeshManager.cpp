@@ -7,6 +7,7 @@
 
 #include <Data/MeshManager.h>
 #include <Data/QMeshWarper.h>
+#include "SurfaceReconstructor.h"
 
 
 namespace shapeworks {

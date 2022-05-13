@@ -13,8 +13,9 @@
 
 #include <Data/StudioMesh.h>
 #include <Data/Preferences.h>
-#include <Data/SurfaceReconstructor.h>
 #include <Data/MeshWorkQueue.h>
+
+class SurfaceReconstructor;
 
 namespace shapeworks {
 

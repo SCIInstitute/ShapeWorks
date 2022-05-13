@@ -252,7 +252,7 @@ void OptimizeTool::load_params() {
 
   ui_->procrustes->setChecked(params.get_use_procrustes());
   ui_->procrustes_scaling->setChecked(params.get_use_procrustes_scaling());
-  ui_->procrustes_rotation_translation->setCheckable(params.get_use_procrustes_rotation_translation());
+  ui_->procrustes_rotation_translation->setChecked(params.get_use_procrustes_rotation_translation());
   ui_->procrustes_interval->setText(QString::number(params.get_procrustes_interval()));
 
   ui_->multiscale->setChecked(params.get_use_multiscale());

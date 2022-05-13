@@ -504,13 +504,6 @@ QWidget#image_widget {
        <property name="bottomMargin">
         <number>3</number>
        </property>
-       <item row="0" column="0">
-        <widget class="QLabel" name="label_10">
-         <property name="text">
-          <string>Image</string>
-         </property>
-        </widget>
-       </item>
        <item row="0" column="2">
         <widget class="QComboBox" name="image_combo_">
          <property name="toolTip">
@@ -521,7 +514,14 @@ QWidget#image_widget {
          </property>
         </widget>
        </item>
-       <item row="0" column="8">
+       <item row="0" column="3">
+        <widget class="QLabel" name="label_11">
+         <property name="text">
+          <string>View</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="11">
         <spacer name="horizontalSpacer_5">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
@@ -534,6 +534,26 @@ QWidget#image_widget {
          </property>
         </spacer>
        </item>
+       <item row="0" column="6">
+        <widget class="QCheckBox" name="image_3d_mode_">
+         <property name="toolTip">
+          <string>Apply a uniform scale for all viewers</string>
+         </property>
+         <property name="text">
+          <string>3D Mode</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_10">
+         <property name="text">
+          <string>Image</string>
+         </property>
+        </widget>
+       </item>
        <item row="0" column="4">
         <widget class="Line" name="line_6">
          <property name="orientation">
@@ -541,7 +561,7 @@ QWidget#image_widget {
          </property>
         </widget>
        </item>
-       <item row="0" column="7">
+       <item row="0" column="8">
         <widget class="QCheckBox" name="image_share_window_and_level_">
          <property name="toolTip">
           <string>Apply a uniform scale for all viewers</string>
@@ -554,20 +574,20 @@ QWidget#image_widget {
          </property>
         </widget>
        </item>
-       <item row="0" column="3">
-        <widget class="QLabel" name="label_11">
-         <property name="text">
-          <string>View</string>
+       <item row="0" column="7">
+        <widget class="Line" name="line_5">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
          </property>
         </widget>
        </item>
-       <item row="0" column="6">
-        <widget class="QCheckBox" name="image_3d_mode_">
+       <item row="0" column="10">
+        <widget class="QCheckBox" name="image_sync_slices">
          <property name="toolTip">
           <string>Apply a uniform scale for all viewers</string>
          </property>
          <property name="text">
-          <string>3D Mode</string>
+          <string>Sync Slices</string>
          </property>
          <property name="checked">
           <bool>true</bool>
@@ -600,6 +620,13 @@ QWidget#image_widget {
            <string>Z</string>
           </property>
          </item>
+        </widget>
+       </item>
+       <item row="0" column="9">
+        <widget class="Line" name="line_7">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
         </widget>
        </item>
       </layout>

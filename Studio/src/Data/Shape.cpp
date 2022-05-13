@@ -1,3 +1,4 @@
+// qt
 #include <Data/MeshGenerator.h>
 #include <Data/Shape.h>
 #include <Data/StudioLog.h>
@@ -5,17 +6,23 @@
 #include <Libs/Project/ProjectUtils.h>
 #include <Libs/Utils/StringUtils.h>
 #include <Visualization/Visualizer.h>
+#include <itkImageFileReader.h>
 #include <itkOrientImageFilter.h>
 #include <vtkCenterOfMass.h>
 
-#include <Libs/Optimize/ParticleSystem/VtkMeshWrapper.h>
-#include <Eigen/Dense>
-#include <Eigen/Sparse>
 #include <QDebug>
 #include <QFile>
 #include <QFileInfo>
 #include <QMessageBox>
 #include <QTextStream>
+
+// vtk
+#include <Libs/Optimize/ParticleSystem/VtkMeshWrapper.h>
+#include <vtkKdTreePointLocator.h>
+#include <vtkPointData.h>
+
+#include <Eigen/Dense>
+#include <Eigen/Sparse>
 
 using ReaderType = itk::ImageFileReader<ImageType>;
 
@@ -44,7 +51,7 @@ QString Shape::get_display_name() {
 Shape::~Shape() = default;
 
 //---------------------------------------------------------------------------
-MeshGroup Shape::get_meshes(const string& display_mode, bool wait) {
+MeshGroup Shape::get_meshes(const std::string& display_mode, bool wait) {
   if (display_mode == Session::MODE_ORIGINAL_C) {
     return this->get_original_meshes(wait);
   } else if (display_mode == Session::MODE_GROOMED_C) {
@@ -413,6 +420,15 @@ vtkSmartPointer<vtkTransform> Shape::get_transform(int domain) {
 }
 
 //---------------------------------------------------------------------------
+vtkSmartPointer<vtkTransform> Shape::get_inverse_transform(int domain) {
+  // transform from common space to destination space
+  auto inverse = vtkSmartPointer<vtkTransform>::New();
+  inverse->DeepCopy(get_transform(domain));
+  inverse->Inverse();
+  return inverse;
+}
+
+//---------------------------------------------------------------------------
 vtkSmartPointer<vtkTransform> Shape::get_alignment(int domain) {
   auto groom_transform = this->get_groomed_transform(domain);
   if (!groom_transform) {
@@ -542,7 +558,7 @@ void Shape::load_feature(std::string display_mode, std::string feature) {
 }
 
 //---------------------------------------------------------------------------
-vtkSmartPointer<vtkImageData> Shape::get_image_volume(std::string image_volume_name) {
+std::shared_ptr<Image> Shape::get_image_volume(std::string image_volume_name) {
   if (!subject_) {
     return nullptr;
   }
@@ -551,9 +567,8 @@ vtkSmartPointer<vtkImageData> Shape::get_image_volume(std::string image_volume_n
     auto filename = filenames[image_volume_name];
 
     if (image_volume_filename_ != filename) {
-      Image image(filename);
-      image_volume_ = vtkSmartPointer<vtkImageData>::New();
-      image_volume_->DeepCopy(image.getVTKImage());
+      std::shared_ptr<Image> image = std::make_shared<Image>(filename);
+      image_volume_ = image;
       image_volume_filename_ = filename;
     }
 
@@ -785,7 +800,7 @@ void Shape::load_feature_from_scalar_file(std::string filename, std::string feat
 }
 
 //---------------------------------------------------------------------------
-void Shape::set_override_feature(string feature) { this->override_feature_ = feature; }
+void Shape::set_override_feature(std::string feature) { this->override_feature_ = feature; }
 
 //---------------------------------------------------------------------------
 std::string Shape::get_override_feature() { return this->override_feature_; }
@@ -817,19 +832,17 @@ bool Shape::has_planes() {
 }
 
 //---------------------------------------------------------------------------
-std::vector<std::shared_ptr<VtkMeshWrapper>> Shape::get_groomed_mesh_wrappers()
-{
+std::vector<std::shared_ptr<VtkMeshWrapper>> Shape::get_groomed_mesh_wrappers() {
   if (!groomed_mesh_wrappers_.empty()) {
     return groomed_mesh_wrappers_;
   }
 
   auto group = get_groomed_meshes(true /* wait */);
-  for (auto &mesh : group.meshes()) {
+  for (auto& mesh : group.meshes()) {
     auto wrapper = std::make_shared<VtkMeshWrapper>(mesh->get_poly_data());
     groomed_mesh_wrappers_.push_back(wrapper);
   }
   return groomed_mesh_wrappers_;
-
 }
 
 }  // namespace shapeworks

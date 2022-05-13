@@ -20,6 +20,9 @@
 #include <Interface/ShapeWorksStudioApp.h>
 #include <Interface/Style.h>
 
+// vtk
+#include <vtkPointData.h>
+
 // ui
 #include <ui_DeepSSMTool.h>
 
@@ -548,7 +551,7 @@ void DeepSSMTool::resizeEvent(QResizeEvent* event) {
 }
 
 //---------------------------------------------------------------------------
-string DeepSSMTool::get_display_feature() {
+std::string DeepSSMTool::get_display_feature() {
   if (this->current_tool_ == DeepSSMTool::ToolMode::DeepSSM_TrainingType ||
       this->current_tool_ == DeepSSMTool::ToolMode::DeepSSM_TestingType) {
     return "deepssm_error";

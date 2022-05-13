@@ -33,18 +33,16 @@ class ExportImageDialog : public QDialog {
  private:
   void update_preview();
 
+  void drawRotatedText(QPainter& painter, QString text, QPointF point, qreal angle, QRect rect);
+
+  QVector<int> get_modes(QString string);
+
   Ui_ExportImageDialog* ui_;
-
   QSharedPointer<Visualizer> visualizer_;
-
   Preferences& prefs_;
-
   QPixmap pixmap_;
-
   bool pca_mode_ = false;
-
   QTimer update_preview_timer_;
-
   QSharedPointer<AnalysisTool> analysis_tool_;
 };
 

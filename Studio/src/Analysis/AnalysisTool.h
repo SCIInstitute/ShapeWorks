@@ -44,6 +44,9 @@ class AnalysisTool : public QWidget {
   /// set the pointer to the session
   void set_session(QSharedPointer<Session> session);
 
+  //! Return the session
+  QSharedPointer<Session> get_session();
+
   /// set the pointer to the application
   void set_app(ShapeWorksStudioApp* app);
 
