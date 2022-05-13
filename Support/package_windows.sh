@@ -63,7 +63,7 @@ cp -a Documentation bin/
 rm bin/*Tests.exe
 
 windeployqt "bin/ShapeWorksStudio.exe"
-../NSISPortable/App/NSIS/makensis.exe shapeworks.nsi /V4
+../NSISPortable/App/NSIS/makensis.exe -V4 shapeworks.nsi 
 mkdir artifacts
 cp *.exe artifacts
 
