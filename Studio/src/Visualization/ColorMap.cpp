@@ -8,15 +8,25 @@ namespace shapeworks {
 
 //-----------------------------------------------------------------------------
 void ColorMap::construct_lookup_table(vtkSmartPointer<vtkLookupTable> lut) {
+  auto colors = color_series_;
+
+  if (reverse_mode_) {
+    colors = vtkSmartPointer<vtkColorSeries>::New();
+    colors->ClearColors();
+    for (int i = color_series_->GetNumberOfColors() - 1; i >= 0; i--) {
+      colors->AddColor(color_series_->GetColor(i));
+    }
+  }
+
   if (discrete_mode_) {
-    color_series_->BuildLookupTable(lut, vtkColorSeries::LUTMode::ORDINAL);
+    colors->BuildLookupTable(lut, vtkColorSeries::LUTMode::ORDINAL);
   } else {
     auto color_transfer = vtkSmartPointer<vtkColorTransferFunction>::New();
 
-    int num_colors = color_series_->GetNumberOfColors();
+    int num_colors = colors->GetNumberOfColors();
     for (int i = 0; i < num_colors; i++) {
       double ratio = static_cast<double>(i) / (num_colors - 1);
-      vtkColor3ub color = color_series_->GetColor(i);
+      vtkColor3ub color = colors->GetColor(i);
       color_transfer->AddRGBPoint(ratio, color.GetRed() / 255.0, color.GetGreen() / 255.0, color.GetBlue() / 255.0);
     }
 
@@ -47,8 +57,10 @@ ColorMaps::ColorMaps() {
   };
 
   add_custom_series("Rainbow", {Qt::blue, Qt::cyan, Qt::green, Qt::yellow, Qt::red});
-  add_custom_series("Reverse Rainbow", {Qt::red, Qt::yellow, Qt::green, Qt::cyan, Qt::blue});
   add_custom_series("Grayscale", {Qt::black, Qt::darkGray, Qt::lightGray, Qt::white});
+  add_custom_series("Blue to Red", {Qt::blue, Qt::white, Qt::red});
+  add_custom_series("Magenta to Green", {QColor(191, 53, 136), QColor(208, 121, 178), Qt::white, QColor(155, 196, 128),
+                                         QColor(102, 167, 61)});
   add_custom_series("Black-Body Radiation", {Qt::black, Qt::red, Qt::yellow, Qt::white});
   add_custom_series("Blue to Yellow", {Qt::blue, Qt::yellow});
 

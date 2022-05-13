@@ -103,15 +103,16 @@ void Preferences::set_color_map(int value) { settings_.setValue("Studio/color_ma
 int Preferences::get_color_map() { return settings_.value("Studio/color_map", 0).toInt(); }
 
 //-----------------------------------------------------------------------------
-void Preferences::set_discrete_color_mode(bool value) {
-  settings_.setValue("Studio/discrete_color_mode", value);
-}
+void Preferences::set_discrete_color_mode(bool value) { settings_.setValue("Studio/discrete_color_mode", value); }
 
 //-----------------------------------------------------------------------------
-bool Preferences::get_discrete_color_mode() {
-  bool value = settings_.value("Studio/discrete_color_mode", false).toBool();
-  return settings_.value("Studio/discrete_color_mode", false).toBool();
-}
+bool Preferences::get_discrete_color_mode() { return settings_.value("Studio/discrete_color_mode", false).toBool(); }
+
+//-----------------------------------------------------------------------------
+void Preferences::set_reverse_color_map(bool value) { settings_.setValue("Studio/reverse_color_map", value); }
+
+//-----------------------------------------------------------------------------
+bool Preferences::get_reverse_color_map() { return settings_.value("Studio/reverse_color_map", false).toBool(); }
 
 //-----------------------------------------------------------------------------
 bool Preferences::get_center_checked() { return settings_.value("Studio/center_checked", true).toBool(); }
