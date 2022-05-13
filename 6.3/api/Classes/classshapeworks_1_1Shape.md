@@ -26,7 +26,7 @@ Representation of a single shape/patient/subject.
 | | **[Shape](../Classes/classshapeworks_1_1Shape.md#function-shape)**() |
 | | **[~Shape](../Classes/classshapeworks_1_1Shape.md#function-~shape)**() |
 | QString | **[get_display_name](../Classes/classshapeworks_1_1Shape.md#function-get-display-name)**() |
-| [MeshGroup](../Classes/classshapeworks_1_1MeshGroup.md) | **[get_meshes](../Classes/classshapeworks_1_1Shape.md#function-get-meshes)**(const string & display_mode, bool wait =false) |
+| [MeshGroup](../Classes/classshapeworks_1_1MeshGroup.md) | **[get_meshes](../Classes/classshapeworks_1_1Shape.md#function-get-meshes)**(const std::string & display_mode, bool wait =false) |
 | void | **[set_annotations](../Classes/classshapeworks_1_1Shape.md#function-set-annotations)**(QStringList annotations, bool only_overwrite_blank =true) |
 | QStringList | **[get_annotations](../Classes/classshapeworks_1_1Shape.md#function-get-annotations)**() |
 | void | **[set_mesh_manager](../Classes/classshapeworks_1_1Shape.md#function-set-mesh-manager)**(QSharedPointer< [MeshManager](../Classes/classshapeworks_1_1MeshManager.md) > mesh_manager) |
@@ -70,6 +70,7 @@ Representation of a single shape/patient/subject.
 | void | **[set_group_id](../Classes/classshapeworks_1_1Shape.md#function-set-group-id)**(int id) |
 | void | **[set_transform](../Classes/classshapeworks_1_1Shape.md#function-set-transform)**(vtkSmartPointer< vtkTransform > transform) |
 | vtkSmartPointer< vtkTransform > | **[get_transform](../Classes/classshapeworks_1_1Shape.md#function-get-transform)**(int domain =0) |
+| vtkSmartPointer< vtkTransform > | **[get_inverse_transform](../Classes/classshapeworks_1_1Shape.md#function-get-inverse-transform)**(int domain =0) |
 | bool | **[has_alignment](../Classes/classshapeworks_1_1Shape.md#function-has-alignment)**() |
 | vtkSmartPointer< vtkTransform > | **[get_original_transform](../Classes/classshapeworks_1_1Shape.md#function-get-original-transform)**(int domain =0) |
 | void | **[set_reconstruction_transforms](../Classes/classshapeworks_1_1Shape.md#function-set-reconstruction-transforms)**(std::vector< vtkSmartPointer< vtkTransform >> transforms) |
@@ -79,7 +80,7 @@ Representation of a single shape/patient/subject.
 | std::vector< vtkSmartPointer< vtkTransform > > | **[get_procrustest_transforms](../Classes/classshapeworks_1_1Shape.md#function-get-procrustest-transforms)**() |
 | vtkSmartPointer< vtkTransform > | **[get_alignment](../Classes/classshapeworks_1_1Shape.md#function-get-alignment)**(int domain =0) |
 | void | **[load_feature](../Classes/classshapeworks_1_1Shape.md#function-load-feature)**(std::string display_mode, std::string feature) |
-| vtkSmartPointer< vtkImageData > | **[get_image_volume](../Classes/classshapeworks_1_1Shape.md#function-get-image-volume)**(std::string image_volume_name) |
+| std::shared_ptr< [Image](../Classes/classshapeworks_1_1Image.md) > | **[get_image_volume](../Classes/classshapeworks_1_1Shape.md#function-get-image-volume)**(std::string image_volume_name) |
 | Eigen::VectorXf | **[get_point_features](../Classes/classshapeworks_1_1Shape.md#function-get-point-features)**(std::string feature) |
 | void | **[set_point_features](../Classes/classshapeworks_1_1Shape.md#function-set-point-features)**(std::string feature, Eigen::VectorXf values) |
 | void | **[load_feature_from_scalar_file](../Classes/classshapeworks_1_1Shape.md#function-load-feature-from-scalar-file)**(std::string filename, std::string feature_name) |
@@ -118,7 +119,7 @@ QString get_display_name()
 
 ```cpp
 MeshGroup get_meshes(
-    const string & display_mode,
+    const std::string & display_mode,
     bool wait =false
 )
 ```
@@ -482,6 +483,15 @@ vtkSmartPointer< vtkTransform > get_transform(
 ```
 
 
+### function get_inverse_transform
+
+```cpp
+vtkSmartPointer< vtkTransform > get_inverse_transform(
+    int domain =0
+)
+```
+
+
 ### function has_alignment
 
 ```cpp
@@ -563,7 +573,7 @@ void load_feature(
 ### function get_image_volume
 
 ```cpp
-vtkSmartPointer< vtkImageData > get_image_volume(
+std::shared_ptr< Image > get_image_volume(
     std::string image_volume_name
 )
 ```
@@ -653,4 +663,4 @@ std::vector< std::shared_ptr< VtkMeshWrapper > > get_groomed_mesh_wrappers()
 
 -------------------------------
 
-Updated on 2022-05-08 at 16:47:43 +0000
+Updated on 2022-05-13 at 17:34:11 +0000

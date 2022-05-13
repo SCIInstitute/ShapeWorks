@@ -2432,6 +2432,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-get_inverse_transform" class="md-nav__link">
+    function get_inverse_transform
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-has_alignment" class="md-nav__link">
     function has_alignment
   </a>
@@ -2635,7 +2642,7 @@
 </tr>
 <tr>
 <td><a href="classshapeworks_1_1MeshGroup.html">MeshGroup</a></td>
-<td><strong><a href="classshapeworks_1_1Shape.html#function-get-meshes">get_meshes</a></strong>(const string &amp; display_mode, bool wait =false)</td>
+<td><strong><a href="classshapeworks_1_1Shape.html#function-get-meshes">get_meshes</a></strong>(const std::string &amp; display_mode, bool wait =false)</td>
 </tr>
 <tr>
 <td>void</td>
@@ -2810,6 +2817,10 @@
 <td><strong><a href="classshapeworks_1_1Shape.html#function-get-transform">get_transform</a></strong>(int domain =0)</td>
 </tr>
 <tr>
+<td>vtkSmartPointer&lt; vtkTransform &gt;</td>
+<td><strong><a href="classshapeworks_1_1Shape.html#function-get-inverse-transform">get_inverse_transform</a></strong>(int domain =0)</td>
+</tr>
+<tr>
 <td>bool</td>
 <td><strong><a href="classshapeworks_1_1Shape.html#function-has-alignment">has_alignment</a></strong>()</td>
 </tr>
@@ -2846,7 +2857,7 @@
 <td><strong><a href="classshapeworks_1_1Shape.html#function-load-feature">load_feature</a></strong>(std::string display_mode, std::string feature)</td>
 </tr>
 <tr>
-<td>vtkSmartPointer&lt; vtkImageData &gt;</td>
+<td>std::shared_ptr&lt; <a href="classshapeworks_1_1Image.html">Image</a> &gt;</td>
 <td><strong><a href="classshapeworks_1_1Shape.html#function-get-image-volume">get_image_volume</a></strong>(std::string image_volume_name)</td>
 </tr>
 <tr>
@@ -2903,7 +2914,7 @@
 </code></pre></div>
 <h3 id="function-get_meshes">function get_meshes</h3>
 <div class="highlight"><pre><span></span><code><span class="n">MeshGroup</span><span class="w"> </span><span class="n">get_meshes</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">display_mode</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">display_mode</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">wait</span><span class="w"> </span><span class="o">=</span><span class="nb">false</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
@@ -3093,6 +3104,11 @@
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
+<h3 id="function-get_inverse_transform">function get_inverse_transform</h3>
+<div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkTransform</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_inverse_transform</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
 <h3 id="function-has_alignment">function has_alignment</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">has_alignment</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
@@ -3136,7 +3152,7 @@
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-get_image_volume">function get_image_volume</h3>
-<div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkImageData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_image_volume</span><span class="p">(</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Image</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_image_volume</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">image_volume_name</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
@@ -3183,7 +3199,7 @@
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VtkMeshWrapper</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_groomed_mesh_wrappers</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-05-08 at 16:47:43 +0000</p>
+<p>Updated on 2022-05-13 at 17:34:11 +0000</p>
 
               
             </article>

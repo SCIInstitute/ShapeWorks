@@ -41,6 +41,9 @@ class StringUtils {
   static std::string toLower(std::string s);
   static bool hasSuffix(std::string const& filename, std::string const& suffix);
   static std::vector<std::string> getFileNamesFromPaths(const std::vector<std::string>& paths);
+
+  // safely convert a const char* to string, allowing for nullptr
+  static std::string safeString(const char* s) { return s == nullptr ? std::string() : s; }
 };
 
 }  // namespace shapeworks
@@ -49,4 +52,4 @@ class StringUtils {
 
 -------------------------------
 
-Updated on 2022-05-08 at 16:47:44 +0000
+Updated on 2022-05-13 at 17:34:12 +0000

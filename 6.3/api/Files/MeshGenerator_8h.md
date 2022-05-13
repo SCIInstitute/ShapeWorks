@@ -41,8 +41,9 @@ The MeshGenerator performs the actual work of reconstructing a mesh from a shape
 
 #include <Data/StudioMesh.h>
 #include <Data/Preferences.h>
-#include <Data/SurfaceReconstructor.h>
 #include <Data/MeshWorkQueue.h>
+
+class SurfaceReconstructor;
 
 namespace shapeworks {
 
@@ -91,4 +92,4 @@ private:
 
 -------------------------------
 
-Updated on 2022-05-08 at 16:47:44 +0000
+Updated on 2022-05-13 at 17:34:12 +0000

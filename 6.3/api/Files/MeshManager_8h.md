@@ -45,7 +45,7 @@ The MeshManager handles all aspects of mesh generation and caching. It houses th
 #include <Data/MeshWorker.h>
 
 #include <Data/Preferences.h>
-#include <Data/SurfaceReconstructor.h>
+class SurfaceReconstructor;
 
 namespace shapeworks {
 
@@ -116,4 +116,4 @@ private:
 
 -------------------------------
 
-Updated on 2022-05-08 at 16:47:44 +0000
+Updated on 2022-05-13 at 17:34:12 +0000

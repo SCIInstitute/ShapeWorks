@@ -85,6 +85,12 @@ class Preferences : public QObject {
   void set_color_scheme(int value);
   int get_color_scheme();
 
+  void set_color_map(int value);
+  int get_color_map();
+
+  void set_discrete_color_mode(bool value);
+  bool get_discrete_color_mode();
+
   bool get_center_checked();
   void set_center_checked(bool value);
 
@@ -105,21 +111,18 @@ class Preferences : public QObject {
 
   QSize get_export_override_size();
   void set_export_override_size(QSize size);
-
   bool get_export_override_size_enabled();
   void set_export_override_size_enabled(bool enabled);
-
   bool get_export_show_orientation_marker();
   void set_export_show_orientation_marker(bool value);
-
   bool get_export_show_color_scale();
   void set_export_show_color_scale(bool value);
-
   int get_export_num_pca_images();
   void set_export_num_pca_images(int number);
-
   double get_export_pca_range();
   void set_export_pca_range(double range);
+  void set_export_pca_modes(QString string);
+  QString get_export_pca_modes();
 
  Q_SIGNALS:
 
@@ -141,4 +144,4 @@ class Preferences : public QObject {
 
 -------------------------------
 
-Updated on 2022-05-08 at 16:47:44 +0000
+Updated on 2022-05-13 at 17:34:12 +0000

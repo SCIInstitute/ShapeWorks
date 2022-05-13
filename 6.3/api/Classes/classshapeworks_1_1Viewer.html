@@ -2159,6 +2159,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-set_color_series" class="md-nav__link">
+    function set_color_series
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-set_glyph_size_and_quality" class="md-nav__link">
     function set_glyph_size_and_quality
   </a>
@@ -2376,15 +2383,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-handle_key" class="md-nav__link">
-    function handle_key
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-set_window_and_level" class="md-nav__link">
-    function set_window_and_level
+  <a href="#function-slice_view" class="md-nav__link">
+    function slice_view
   </a>
   
 </li>
@@ -2542,6 +2542,10 @@
 </tr>
 <tr>
 <td>void</td>
+<td><strong><a href="classshapeworks_1_1Viewer.html#function-set-color-series">set_color_series</a></strong>(<a href="classshapeworks_1_1ColorMap.html">ColorMap</a> color_series)</td>
+</tr>
+<tr>
+<td>void</td>
 <td><strong><a href="classshapeworks_1_1Viewer.html#function-set-glyph-size-and-quality">set_glyph_size_and_quality</a></strong>(double size, double quality)</td>
 </tr>
 <tr>
@@ -2665,12 +2669,8 @@
 <td><strong><a href="classshapeworks_1_1Viewer.html#function-get-image-transform">get_image_transform</a></strong>()</td>
 </tr>
 <tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1Viewer.html#function-handle-key">handle_key</a></strong>(int * click_pos, std::string key)</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1Viewer.html#function-set-window-and-level">set_window_and_level</a></strong>(double window, double level)</td>
+<td><a href="classshapeworks_1_1SliceView.html">SliceView</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Viewer.html#function-slice-view">slice_view</a></strong>()</td>
 </tr>
 <tr>
 <td>void</td>
@@ -2757,6 +2757,11 @@
 </code></pre></div>
 <h3 id="function-reset_camera_1">function reset_camera</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">reset_camera</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-set_color_series">function set_color_series</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_color_series</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">ColorMap</span><span class="w"> </span><span class="n">color_series</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-set_glyph_size_and_quality">function set_glyph_size_and_quality</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_glyph_size_and_quality</span><span class="p">(</span><span class="w"></span>
@@ -2883,17 +2888,8 @@
 <h3 id="function-get_image_transform">function get_image_transform</h3>
 <div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkTransform</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_image_transform</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
-<h3 id="function-handle_key">function handle_key</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_key</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">click_pos</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">key</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
-</code></pre></div>
-<h3 id="function-set_window_and_level">function set_window_and_level</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_window_and_level</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">window</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">level</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<h3 id="function-slice_view">function slice_view</h3>
+<div class="highlight"><pre><span></span><code><span class="n">SliceView</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">slice_view</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-update_image_volume">function update_image_volume</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_image_volume</span><span class="p">()</span><span class="w"></span>
@@ -2937,7 +2933,7 @@
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-05-08 at 16:47:43 +0000</p>
+<p>Updated on 2022-05-13 at 17:34:11 +0000</p>
 
               
             </article>

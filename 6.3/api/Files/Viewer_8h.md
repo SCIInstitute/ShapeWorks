@@ -31,6 +31,7 @@ title: Studio/src/Visualization/Viewer.h
 #include <Data/Shape.h>
 #include <Visualization/ColorSchemes.h>
 #include <Visualization/SliceView.h>
+#include <Visualization/ColorMap.h>
 
 #include <QPointF>
 #include <QSharedPointer>
@@ -57,6 +58,7 @@ class vtkImageSliceMapper;
 class vtkImageData;
 class vtkCellPicker;
 class vtkPropPicker;
+class vtkColorSeries;
 
 namespace shapeworks {
 
@@ -94,6 +96,7 @@ class Viewer {
   void reset_camera(std::array<double, 3> c);
   void reset_camera();
 
+  void set_color_series(ColorMap color_series);
   void set_glyph_size_and_quality(double size, double quality);
   double get_glyph_size();
   double get_glyph_quality();
@@ -147,9 +150,7 @@ class Viewer {
 
   vtkSmartPointer<vtkTransform> get_image_transform();
 
-  void handle_key(int* click_pos, std::string key);
-
-  void set_window_and_level(double window, double level);
+  SliceView& slice_view();
 
   void update_image_volume();
 
@@ -201,6 +202,7 @@ class Viewer {
 
   double glyph_size_ = 1.0f;
   double glyph_quality_ = 5.0f;
+  ColorMap color_series_;
 
   vtkSmartPointer<vtkRenderer> renderer_;
 
@@ -268,4 +270,4 @@ class Viewer {
 
 -------------------------------
 
-Updated on 2022-05-08 at 16:47:44 +0000
+Updated on 2022-05-13 at 17:34:12 +0000

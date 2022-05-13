@@ -2423,6 +2423,34 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-set_color_map" class="md-nav__link">
+    function set_color_map
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_color_map" class="md-nav__link">
+    function get_color_map
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-set_discrete_color_mode" class="md-nav__link">
+    function set_discrete_color_mode
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_discrete_color_mode" class="md-nav__link">
+    function get_discrete_color_mode
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-get_center_checked" class="md-nav__link">
     function get_center_checked
   </a>
@@ -2586,6 +2614,20 @@
           <li class="md-nav__item">
   <a href="#function-set_export_pca_range" class="md-nav__link">
     function set_export_pca_range
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-set_export_pca_modes" class="md-nav__link">
+    function set_export_pca_modes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_export_pca_modes" class="md-nav__link">
+    function get_export_pca_modes
   </a>
   
 </li>
@@ -2809,6 +2851,22 @@
 <td><strong><a href="classPreferences.html#function-get-color-scheme">get_color_scheme</a></strong>()</td>
 </tr>
 <tr>
+<td>void</td>
+<td><strong><a href="classPreferences.html#function-set-color-map">set_color_map</a></strong>(int value)</td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classPreferences.html#function-get-color-map">get_color_map</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classPreferences.html#function-set-discrete-color-mode">set_discrete_color_mode</a></strong>(bool value)</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classPreferences.html#function-get-discrete-color-mode">get_discrete_color_mode</a></strong>()</td>
+</tr>
+<tr>
 <td>bool</td>
 <td><strong><a href="classPreferences.html#function-get-center-checked">get_center_checked</a></strong>()</td>
 </tr>
@@ -2903,6 +2961,14 @@
 <tr>
 <td>void</td>
 <td><strong><a href="classPreferences.html#function-set-export-pca-range">set_export_pca_range</a></strong>(double range)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classPreferences.html#function-set-export-pca-modes">set_export_pca_modes</a></strong>(QString string)</td>
+</tr>
+<tr>
+<td>QString</td>
+<td><strong><a href="classPreferences.html#function-get-export-pca-modes">get_export_pca_modes</a></strong>()</td>
 </tr>
 </tbody>
 </table>
@@ -3134,6 +3200,22 @@
 <h3 id="function-get_color_scheme">function get_color_scheme</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_color_scheme</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
+<h3 id="function-set_color_map">function set_color_map</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_color_map</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">value</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-get_color_map">function get_color_map</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_color_map</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-set_discrete_color_mode">function set_discrete_color_mode</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_discrete_color_mode</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-get_discrete_color_mode">function get_discrete_color_mode</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_discrete_color_mode</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
 <h3 id="function-get_center_checked">function get_center_checked</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_center_checked</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
@@ -3230,8 +3312,16 @@
 <span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">range</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
+<h3 id="function-set_export_pca_modes">function set_export_pca_modes</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_export_pca_modes</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">QString</span><span class="w"> </span><span class="n">string</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-get_export_pca_modes">function get_export_pca_modes</h3>
+<div class="highlight"><pre><span></span><code><span class="n">QString</span><span class="w"> </span><span class="n">get_export_pca_modes</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
 <hr />
-<p>Updated on 2022-05-08 at 16:47:44 +0000</p>
+<p>Updated on 2022-05-13 at 17:34:12 +0000</p>
 
               
             </article>

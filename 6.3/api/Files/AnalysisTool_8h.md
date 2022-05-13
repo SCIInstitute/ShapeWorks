@@ -70,6 +70,8 @@ class AnalysisTool : public QWidget {
 
   void set_session(QSharedPointer<Session> session);
 
+  QSharedPointer<Session> get_session();
+
   void set_app(ShapeWorksStudioApp* app);
 
   void set_active(bool active);
@@ -274,4 +276,4 @@ class AnalysisTool : public QWidget {
 
 -------------------------------
 
-Updated on 2022-05-08 at 16:47:44 +0000
+Updated on 2022-05-13 at 17:34:12 +0000

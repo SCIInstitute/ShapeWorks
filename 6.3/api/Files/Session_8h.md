@@ -177,6 +177,10 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   void set_image_share_window_and_level(bool enabled);
   bool get_image_share_window_and_level();
 
+  // image sync slice
+  void set_image_sync_slice(bool enabled);
+  bool get_image_sync_slice();
+
   bool has_constraints();
 
   void set_loading(bool loading);
@@ -313,4 +317,4 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
 
 -------------------------------
 
-Updated on 2022-05-08 at 16:47:44 +0000
+Updated on 2022-05-13 at 17:34:12 +0000

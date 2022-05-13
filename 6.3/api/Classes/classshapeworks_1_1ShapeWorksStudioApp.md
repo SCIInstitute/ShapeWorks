@@ -82,6 +82,8 @@ Inherits from QMainWindow
 | void | **[keyboard_shortcuts](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-keyboard-shortcuts)**() |
 | void | **[toggle_log_window](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-toggle-log-window)**() |
 | QSharedPointer< [PythonWorker](../Classes/classshapeworks_1_1PythonWorker.md) > | **[get_py_worker](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-get-py-worker)**() |
+| [Preferences](../Classes/classPreferences.md) & | **[prefs](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-prefs)**() |
+| QSharedPointer< [Session](../Classes/classshapeworks_1_1Session.md) > | **[session](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-session)**() |
 
 ## Public Functions
 
@@ -572,6 +574,20 @@ QSharedPointer< PythonWorker > get_py_worker()
 ```
 
 
+### slot prefs
+
+```cpp
+inline Preferences & prefs()
+```
+
+
+### slot session
+
+```cpp
+inline QSharedPointer< Session > session()
+```
+
+
 ## Public Functions Documentation
 
 ### function ShapeWorksStudioApp
@@ -644,4 +660,4 @@ void dropEvent(
 
 -------------------------------
 
-Updated on 2022-05-08 at 16:47:43 +0000
+Updated on 2022-05-13 at 17:34:11 +0000

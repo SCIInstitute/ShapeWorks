@@ -3390,6 +3390,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-clamp" class="md-nav__link">
+    function clamp
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-operator_10" class="md-nav__link">
     function operator&lt;&lt;
   </a>
@@ -3620,6 +3627,14 @@
 </tr>
 <tr>
 <td>class</td>
+<td><strong><a href="../Classes/classshapeworks_1_1ColorMap.html">shapeworks::ColorMap</a></strong></td>
+</tr>
+<tr>
+<td>class</td>
+<td><strong><a href="../Classes/classshapeworks_1_1ColorMaps.html">shapeworks::ColorMaps</a></strong></td>
+</tr>
+<tr>
+<td>class</td>
 <td><strong><a href="../Classes/classshapeworks_1_1Command.html">shapeworks::Command</a></strong></td>
 </tr>
 <tr>
@@ -3657,6 +3672,10 @@
 <tr>
 <td>class</td>
 <td><strong><a href="../Classes/classshapeworks_1_1ExportImageDialog.html">shapeworks::ExportImageDialog</a></strong></td>
+</tr>
+<tr>
+<td>class</td>
+<td><strong><a href="../Classes/classshapeworks_1_1ExportUtils.html">shapeworks::ExportUtils</a></strong> <br>Export utilities for Studio.</td>
 </tr>
 <tr>
 <td>class</td>
@@ -3912,6 +3931,10 @@
 </tr>
 <tr>
 <td>class</td>
+<td><strong><a href="../Classes/classshapeworks_1_1PreferencesWindow.html">shapeworks::PreferencesWindow</a></strong> <br>Qt UI dialog to control preferences.</td>
+</tr>
+<tr>
+<td>class</td>
 <td><strong><a href="../Classes/classshapeworks_1_1Project.html">shapeworks::Project</a></strong> <br>Representation of a project.</td>
 </tr>
 <tr>
@@ -4036,7 +4059,7 @@
 </tr>
 <tr>
 <td>class</td>
-<td><strong><a href="../Classes/classshapeworks_1_1StudioUtils.html">shapeworks::StudioUtils</a></strong></td>
+<td><strong><a href="../Classes/classshapeworks_1_1StudioUtils.html">shapeworks::StudioUtils</a></strong> <br>Utilities for Studio.</td>
 </tr>
 <tr>
 <td>class</td>
@@ -4823,6 +4846,10 @@
 <tr>
 <td>bool</td>
 <td><strong><a href="namespaceshapeworks.html#function-epsequal">epsEqual</a></strong>(double a, double b, double eps)</td>
+</tr>
+<tr>
+<td>template &lt;typename T > <br>T</td>
+<td><strong><a href="namespaceshapeworks.html#function-clamp">clamp</a></strong>(T value, T min, T max)<br>Simple clamp operation until C++17.</td>
 </tr>
 <tr>
 <td>std::ostream &amp;</td>
@@ -6143,6 +6170,15 @@
 <span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">eps</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
+<h3 id="function-clamp">function clamp</h3>
+<div class="highlight"><pre><span></span><code><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="w"> </span><span class="o">&gt;</span><span class="w"></span>
+<span class="n">T</span><span class="w"> </span><span class="n">clamp</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">T</span><span class="w"> </span><span class="n">value</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">T</span><span class="w"> </span><span class="n">min</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">T</span><span class="w"> </span><span class="n">max</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>Simple clamp operation until C++17. </p>
 <h3 id="function-operator_10">function operator&lt;&lt;</h3>
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">&lt;&lt;</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">os</span><span class="p">,</span><span class="w"></span>
@@ -6313,7 +6349,7 @@
 </code></pre></div>
 <p>pi that doesn't depend on deprecated or non-std lib defines </p>
 <hr />
-<p>Updated on 2022-05-08 at 16:47:42 +0000</p>
+<p>Updated on 2022-05-13 at 17:34:10 +0000</p>
 
               
             </article>

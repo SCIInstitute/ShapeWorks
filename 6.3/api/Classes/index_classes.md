@@ -47,7 +47,6 @@ title: Classes
 * **class [ParticleEvent:: Parent](../Classes/classParticleEvent_1_1_01Parent.md)** 
 * **class [ParticleProcrustesRegistration](../Classes/classParticleProcrustesRegistration.md)** <br>Class for replacing bad particles during optimization Author - Praful Agrawal Date - June 05, 2017. 
 * **class [Preferences](../Classes/classPreferences.md)** <br>Application preferences. 
-* **class [PreferencesWindow](../Classes/classPreferencesWindow.md)** <br>Qt UI dialog to control preferences. 
 * **class [Procrustes3D](../Classes/classProcrustes3D.md)** 
 * **struct [Quad](../Classes/structQuad.md)** 
 * **struct [Ray](../Classes/structRay.md)** 
@@ -116,6 +115,8 @@ title: Classes
 * **namespace [shapeworks](../Namespaces/namespaceshapeworks.md)** 
     * **class [AnalysisTool](../Classes/classshapeworks_1_1AnalysisTool.md)** 
     * **class [AnalysisUtils](../Classes/classshapeworks_1_1AnalysisUtils.md)** 
+    * **class [ColorMap](../Classes/classshapeworks_1_1ColorMap.md)** 
+    * **class [ColorMaps](../Classes/classshapeworks_1_1ColorMaps.md)** 
     * **class [Command](../Classes/classshapeworks_1_1Command.md)** 
     * **class [Constraint](../Classes/classshapeworks_1_1Constraint.md)** 
     * **class [Constraints](../Classes/classshapeworks_1_1Constraints.md)** 
@@ -126,6 +127,7 @@ title: Classes
     * **class [DeepSSMTool](../Classes/classshapeworks_1_1DeepSSMTool.md)** 
     * **class [Executable](../Classes/classshapeworks_1_1Executable.md)** 
     * **class [ExportImageDialog](../Classes/classshapeworks_1_1ExportImageDialog.md)** 
+    * **class [ExportUtils](../Classes/classshapeworks_1_1ExportUtils.md)** <br>Export utilities for Studio. 
     * **class [FreeFormConstraint](../Classes/classshapeworks_1_1FreeFormConstraint.md)** <br>[FreeFormConstraint](). 
     * **class [Groom](../Classes/classshapeworks_1_1Groom.md)** <br>High level groom API. 
     * **class [GroomCommandGroup](../Classes/classshapeworks_1_1GroomCommandGroup.md)** 
@@ -189,6 +191,7 @@ title: Classes
     * **class [PickResult](../Classes/classshapeworks_1_1PickResult.md)** 
     * **class [PlaneConstraint](../Classes/classshapeworks_1_1PlaneConstraint.md)** <br>[PlaneConstraint](). 
     * **class [PlaneWidget](../Classes/classshapeworks_1_1PlaneWidget.md)** <br>[PlaneWidget](). 
+    * **class [PreferencesWindow](../Classes/classshapeworks_1_1PreferencesWindow.md)** <br>Qt UI dialog to control preferences. 
     * **class [Project](../Classes/classshapeworks_1_1Project.md)** <br>Representation of a project. 
     * **class [ProjectUtils](../Classes/classshapeworks_1_1ProjectUtils.md)** 
     * **class [PythonWorker](../Classes/classshapeworks_1_1PythonWorker.md)** 
@@ -223,7 +226,7 @@ title: Classes
     * **class [StudioMesh](../Classes/classshapeworks_1_1StudioMesh.md)** <br>Representation of a single mesh. 
     * **class [StudioParticles](../Classes/classshapeworks_1_1StudioParticles.md)** <br>Representation of correspondence points for a shape including multiple domains. 
     * **class [StudioSliceInteractorStyle](../Classes/classshapeworks_1_1StudioSliceInteractorStyle.md)** 
-    * **class [StudioUtils](../Classes/classshapeworks_1_1StudioUtils.md)** 
+    * **class [StudioUtils](../Classes/classshapeworks_1_1StudioUtils.md)** <br>Utilities for Studio. 
     * **class [StudioVtkOutputWindow](../Classes/classshapeworks_1_1StudioVtkOutputWindow.md)** <br>Implementation of vtkOutputWindow to capture and display VTK error messages. 
     * **class [Style](../Classes/classshapeworks_1_1Style.md)** 
     * **class [Subject](../Classes/classshapeworks_1_1Subject.md)** <br>Representation of a single subject. 
@@ -248,4 +251,4 @@ title: Classes
 
 -------------------------------
 
-Updated on 2022-05-08 at 16:47:44 +0000
+Updated on 2022-05-13 at 17:34:12 +0000

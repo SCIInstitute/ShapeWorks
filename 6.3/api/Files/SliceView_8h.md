@@ -28,6 +28,7 @@ title: Studio/src/Visualization/SliceView.h
 #pragma once
 
 #include <vtkSmartPointer.h>
+#include <Shapeworks.h>
 
 class vtkImageActor;
 class vtkImageSliceMapper;
@@ -49,9 +50,12 @@ class Viewer;
 
 class SliceView {
  public:
+
+  enum SliceChange { Down, Up };
+
   SliceView(Viewer* viewer);
 
-  void set_volume(vtkSmartPointer<vtkImageData> volume);
+  void set_volume(std::shared_ptr<Image> volume);
 
   void set_mesh(vtkSmartPointer<vtkPolyData> poly_data);
 
@@ -63,7 +67,13 @@ class SliceView {
 
   void update_camera();
 
-  void handle_key(std::string key);
+  Point handle_key(std::string key);
+
+  void change_slice(SliceChange change);
+
+  Point get_slice_position();
+
+  void set_slice_position(Point point);
 
   void set_window_and_level(double window, double level);
 
@@ -78,13 +88,17 @@ class SliceView {
   bool should_point_show(double x, double y, double z);
 
  private:
+
+  void set_slice_number(int slice);
+
   void update_extent();
 
   Viewer* viewer_;
 
   vtkSmartPointer<vtkImageActor> image_slice_;
   vtkSmartPointer<vtkImageSliceMapper> slice_mapper_;
-  vtkSmartPointer<vtkImageData> volume_;
+  std::shared_ptr<Image> volume_;
+  vtkSmartPointer<vtkImageData> vtk_volume_;
   vtkSmartPointer<vtkImageActorPointPlacer> placer_;
 
   int current_slice_number_ = 0;
@@ -104,4 +118,4 @@ class SliceView {
 
 -------------------------------
 
-Updated on 2022-05-08 at 16:47:44 +0000
+Updated on 2022-05-13 at 17:34:12 +0000

@@ -24,6 +24,7 @@ String utility functions.
 | std::string | **[toLower](../Classes/classshapeworks_1_1StringUtils.md#function-tolower)**(std::string s) |
 | bool | **[hasSuffix](../Classes/classshapeworks_1_1StringUtils.md#function-hassuffix)**(std::string const & filename, std::string const & suffix) |
 | std::vector< std::string > | **[getFileNamesFromPaths](../Classes/classshapeworks_1_1StringUtils.md#function-getfilenamesfrompaths)**(const std::vector< std::string > & paths) |
+| std::string | **[safeString](../Classes/classshapeworks_1_1StringUtils.md#function-safestring)**(const char * s) |
 
 ## Public Functions Documentation
 
@@ -93,6 +94,15 @@ static std::vector< std::string > getFileNamesFromPaths(
 ```
 
 
+### function safeString
+
+```cpp
+static inline std::string safeString(
+    const char * s
+)
+```
+
+
 -------------------------------
 
-Updated on 2022-05-08 at 16:47:43 +0000
+Updated on 2022-05-13 at 17:34:11 +0000

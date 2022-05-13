@@ -13,6 +13,8 @@ title: shapeworks
 | -------------- | -------------- |
 | class | **[shapeworks::AnalysisTool](../Classes/classshapeworks_1_1AnalysisTool.md)**  |
 | class | **[shapeworks::AnalysisUtils](../Classes/classshapeworks_1_1AnalysisUtils.md)**  |
+| class | **[shapeworks::ColorMap](../Classes/classshapeworks_1_1ColorMap.md)**  |
+| class | **[shapeworks::ColorMaps](../Classes/classshapeworks_1_1ColorMaps.md)**  |
 | class | **[shapeworks::Command](../Classes/classshapeworks_1_1Command.md)**  |
 | class | **[shapeworks::Constraint](../Classes/classshapeworks_1_1Constraint.md)**  |
 | class | **[shapeworks::Constraints](../Classes/classshapeworks_1_1Constraints.md)**  |
@@ -23,6 +25,7 @@ title: shapeworks
 | class | **[shapeworks::DeepSSMTool](../Classes/classshapeworks_1_1DeepSSMTool.md)**  |
 | class | **[shapeworks::Executable](../Classes/classshapeworks_1_1Executable.md)**  |
 | class | **[shapeworks::ExportImageDialog](../Classes/classshapeworks_1_1ExportImageDialog.md)**  |
+| class | **[shapeworks::ExportUtils](../Classes/classshapeworks_1_1ExportUtils.md)** <br>Export utilities for Studio.  |
 | class | **[shapeworks::FreeFormConstraint](../Classes/classshapeworks_1_1FreeFormConstraint.md)** <br>[FreeFormConstraint]().  |
 | class | **[shapeworks::Groom](../Classes/classshapeworks_1_1Groom.md)** <br>High level groom API.  |
 | class | **[shapeworks::GroomCommandGroup](../Classes/classshapeworks_1_1GroomCommandGroup.md)**  |
@@ -86,6 +89,7 @@ title: shapeworks
 | class | **[shapeworks::PickResult](../Classes/classshapeworks_1_1PickResult.md)**  |
 | class | **[shapeworks::PlaneConstraint](../Classes/classshapeworks_1_1PlaneConstraint.md)** <br>[PlaneConstraint]().  |
 | class | **[shapeworks::PlaneWidget](../Classes/classshapeworks_1_1PlaneWidget.md)** <br>[PlaneWidget]().  |
+| class | **[shapeworks::PreferencesWindow](../Classes/classshapeworks_1_1PreferencesWindow.md)** <br>Qt UI dialog to control preferences.  |
 | class | **[shapeworks::Project](../Classes/classshapeworks_1_1Project.md)** <br>Representation of a project.  |
 | class | **[shapeworks::ProjectUtils](../Classes/classshapeworks_1_1ProjectUtils.md)**  |
 | class | **[shapeworks::PythonWorker](../Classes/classshapeworks_1_1PythonWorker.md)**  |
@@ -117,7 +121,7 @@ title: shapeworks
 | class | **[shapeworks::StudioMesh](../Classes/classshapeworks_1_1StudioMesh.md)** <br>Representation of a single mesh.  |
 | class | **[shapeworks::StudioParticles](../Classes/classshapeworks_1_1StudioParticles.md)** <br>Representation of correspondence points for a shape including multiple domains.  |
 | class | **[shapeworks::StudioSliceInteractorStyle](../Classes/classshapeworks_1_1StudioSliceInteractorStyle.md)**  |
-| class | **[shapeworks::StudioUtils](../Classes/classshapeworks_1_1StudioUtils.md)**  |
+| class | **[shapeworks::StudioUtils](../Classes/classshapeworks_1_1StudioUtils.md)** <br>Utilities for Studio.  |
 | class | **[shapeworks::StudioVtkOutputWindow](../Classes/classshapeworks_1_1StudioVtkOutputWindow.md)** <br>Implementation of vtkOutputWindow to capture and display VTK error messages.  |
 | class | **[shapeworks::Style](../Classes/classshapeworks_1_1Style.md)**  |
 | class | **[shapeworks::Subject](../Classes/classshapeworks_1_1Subject.md)** <br>Representation of a single subject.  |
@@ -319,6 +323,7 @@ title: shapeworks
 | template <typename T \> <br>bool | **[epsEqual](../Namespaces/namespaceshapeworks.md#function-epsequal)**(T a, T b, T epsilon) |
 | template <typename P ,typename  =std::enable_if_t<std::is_same<Image, P>::value ||                                                 std::is_same<Coord, P>::value ||                                                 std::is_same<Dims, P>::value ||                                                 std::is_same<Vector, P>::value ||                                                 std::is_same<Point, P>::value ||                                                 std::is_same<IPoint3, P>::value ||                                                 std::is_same<FPoint3, P>::value>\> <br>bool | **[epsEqual](../Namespaces/namespaceshapeworks.md#function-epsequal)**(const P & a, const P & b, const typename P::ValueType & eps) |
 | bool | **[epsEqual](../Namespaces/namespaceshapeworks.md#function-epsequal)**(double a, double b, double eps) |
+| template <typename T \> <br>T | **[clamp](../Namespaces/namespaceshapeworks.md#function-clamp)**(T value, T min, T max)<br>Simple clamp operation until C++17.  |
 | std::ostream & | **[operator<<](../Namespaces/namespaceshapeworks.md#function-operator<<)**(std::ostream & os, const [Image](../Classes/classshapeworks_1_1Image.md) & img)<br>stream insertion operators for [Image]() |
 | [Image](../Classes/classshapeworks_1_1Image.md) | **[operator*](../Namespaces/namespaceshapeworks.md#function-operator*)**(const [Image](../Classes/classshapeworks_1_1Image.md) & img, const double x)<br>override templates defined in [Shapeworks.h] |
 | [Image](../Classes/classshapeworks_1_1Image.md) | **[operator/](../Namespaces/namespaceshapeworks.md#function-operator/)**(const [Image](../Classes/classshapeworks_1_1Image.md) & img, const double x) |
@@ -2083,6 +2088,19 @@ bool epsEqual(
 ```
 
 
+### function clamp
+
+```cpp
+template <typename T >
+T clamp(
+    T value,
+    T min,
+    T max
+)
+```
+
+Simple clamp operation until C++17. 
+
 ### function operator<<
 
 ```cpp
@@ -2363,4 +2381,4 @@ pi that doesn't depend on deprecated or non-std lib defines
 
 -------------------------------
 
-Updated on 2022-05-08 at 16:47:42 +0000
+Updated on 2022-05-13 at 17:34:10 +0000

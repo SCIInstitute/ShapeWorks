@@ -7,11 +7,17 @@ title: Studio/src/Data/PreferencesWindow.h
 
 
 
+## Namespaces
+
+| Name           |
+| -------------- |
+| **[shapeworks](../Namespaces/namespaceshapeworks.md)**  |
+
 ## Classes
 
 |                | Name           |
 | -------------- | -------------- |
-| class | **[PreferencesWindow](../Classes/classPreferencesWindow.md)** <br>Qt UI dialog to control preferences.  |
+| class | **[shapeworks::PreferencesWindow](../Classes/classshapeworks_1_1PreferencesWindow.md)** <br>Qt UI dialog to control preferences.  |
 
 
 
@@ -27,6 +33,10 @@ title: Studio/src/Data/PreferencesWindow.h
 
 class Ui_PreferencesWindow;
 class QAbstractButton;
+
+namespace shapeworks {
+
+
 
 
 class PreferencesWindow : public QDialog {
@@ -64,9 +74,11 @@ class PreferencesWindow : public QDialog {
   Preferences& preferences_;
   Ui_PreferencesWindow* ui_;
 };
+
+}
 ```
 
 
 -------------------------------
 
-Updated on 2022-05-08 at 16:47:44 +0000
+Updated on 2022-05-13 at 17:34:12 +0000

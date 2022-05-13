@@ -25,6 +25,7 @@ summary: 3D Viewer
 | void | **[clear_viewer](../Classes/classshapeworks_1_1Viewer.md#function-clear-viewer)**() |
 | void | **[reset_camera](../Classes/classshapeworks_1_1Viewer.md#function-reset-camera)**(std::array< double, 3 > c) |
 | void | **[reset_camera](../Classes/classshapeworks_1_1Viewer.md#function-reset-camera)**() |
+| void | **[set_color_series](../Classes/classshapeworks_1_1Viewer.md#function-set-color-series)**([ColorMap](../Classes/classshapeworks_1_1ColorMap.md) color_series) |
 | void | **[set_glyph_size_and_quality](../Classes/classshapeworks_1_1Viewer.md#function-set-glyph-size-and-quality)**(double size, double quality) |
 | double | **[get_glyph_size](../Classes/classshapeworks_1_1Viewer.md#function-get-glyph-size)**() |
 | double | **[get_glyph_quality](../Classes/classshapeworks_1_1Viewer.md#function-get-glyph-quality)**() |
@@ -56,8 +57,7 @@ summary: 3D Viewer
 | vtkSmartPointer< vtkTransform > | **[get_landmark_transform](../Classes/classshapeworks_1_1Viewer.md#function-get-landmark-transform)**(int domain) |
 | vtkSmartPointer< vtkTransform > | **[get_inverse_landmark_transform](../Classes/classshapeworks_1_1Viewer.md#function-get-inverse-landmark-transform)**(int domain) |
 | vtkSmartPointer< vtkTransform > | **[get_image_transform](../Classes/classshapeworks_1_1Viewer.md#function-get-image-transform)**() |
-| void | **[handle_key](../Classes/classshapeworks_1_1Viewer.md#function-handle-key)**(int * click_pos, std::string key) |
-| void | **[set_window_and_level](../Classes/classshapeworks_1_1Viewer.md#function-set-window-and-level)**(double window, double level) |
+| [SliceView](../Classes/classshapeworks_1_1SliceView.md) & | **[slice_view](../Classes/classshapeworks_1_1Viewer.md#function-slice-view)**() |
 | void | **[update_image_volume](../Classes/classshapeworks_1_1Viewer.md#function-update-image-volume)**() |
 | vtkSmartPointer< vtkPoints > | **[get_glyph_points](../Classes/classshapeworks_1_1Viewer.md#function-get-glyph-points)**() |
 | vtkSmartPointer< vtkTransform > | **[get_alignment_transform](../Classes/classshapeworks_1_1Viewer.md#function-get-alignment-transform)**() |
@@ -142,6 +142,15 @@ void reset_camera(
 
 ```cpp
 void reset_camera()
+```
+
+
+### function set_color_series
+
+```cpp
+void set_color_series(
+    ColorMap color_series
+)
 ```
 
 
@@ -394,23 +403,10 @@ vtkSmartPointer< vtkTransform > get_image_transform()
 ```
 
 
-### function handle_key
+### function slice_view
 
 ```cpp
-void handle_key(
-    int * click_pos,
-    std::string key
-)
-```
-
-
-### function set_window_and_level
-
-```cpp
-void set_window_and_level(
-    double window,
-    double level
-)
+SliceView & slice_view()
 ```
 
 
@@ -505,4 +501,4 @@ static bool is_reverse(
 
 -------------------------------
 
-Updated on 2022-05-08 at 16:47:43 +0000
+Updated on 2022-05-13 at 17:34:11 +0000

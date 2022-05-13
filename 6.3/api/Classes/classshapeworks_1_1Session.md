@@ -119,6 +119,8 @@ Inherits from QObject, QEnableSharedFromThis< Session >
 | bool | **[get_image_3d_mode](../Classes/classshapeworks_1_1Session.md#function-get-image-3d-mode)**() |
 | void | **[set_image_share_window_and_level](../Classes/classshapeworks_1_1Session.md#function-set-image-share-window-and-level)**(bool enabled) |
 | bool | **[get_image_share_window_and_level](../Classes/classshapeworks_1_1Session.md#function-get-image-share-window-and-level)**() |
+| void | **[set_image_sync_slice](../Classes/classshapeworks_1_1Session.md#function-set-image-sync-slice)**(bool enabled) |
+| bool | **[get_image_sync_slice](../Classes/classshapeworks_1_1Session.md#function-get-image-sync-slice)**() |
 | bool | **[has_constraints](../Classes/classshapeworks_1_1Session.md#function-has-constraints)**() |
 | void | **[set_loading](../Classes/classshapeworks_1_1Session.md#function-set-loading)**(bool loading) |
 | bool | **[is_loading](../Classes/classshapeworks_1_1Session.md#function-is-loading)**() |
@@ -895,6 +897,22 @@ bool get_image_share_window_and_level()
 ```
 
 
+### function set_image_sync_slice
+
+```cpp
+void set_image_sync_slice(
+    bool enabled
+)
+```
+
+
+### function get_image_sync_slice
+
+```cpp
+bool get_image_sync_slice()
+```
+
+
 ### function has_constraints
 
 ```cpp
@@ -1164,4 +1182,4 @@ static const std::string DEEPSSM_C;
 
 -------------------------------
 
-Updated on 2022-05-08 at 16:47:43 +0000
+Updated on 2022-05-13 at 17:34:11 +0000

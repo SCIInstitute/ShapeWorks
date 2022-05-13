@@ -79,6 +79,7 @@ Inherits from QWidget
 | | **[AnalysisTool](../Classes/classshapeworks_1_1AnalysisTool.md#function-analysistool)**([Preferences](../Classes/classPreferences.md) & prefs) |
 | | **[~AnalysisTool](../Classes/classshapeworks_1_1AnalysisTool.md#function-~analysistool)**() |
 | void | **[set_session](../Classes/classshapeworks_1_1AnalysisTool.md#function-set-session)**(QSharedPointer< [Session](../Classes/classshapeworks_1_1Session.md) > session)<br>set the pointer to the session  |
+| QSharedPointer< [Session](../Classes/classshapeworks_1_1Session.md) > | **[get_session](../Classes/classshapeworks_1_1AnalysisTool.md#function-get-session)**()<br>Return the session.  |
 | void | **[set_app](../Classes/classshapeworks_1_1AnalysisTool.md#function-set-app)**([ShapeWorksStudioApp](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md) * app)<br>set the pointer to the application  |
 | void | **[set_active](../Classes/classshapeworks_1_1AnalysisTool.md#function-set-active)**(bool active)<br>Set if this tool is active.  |
 | bool | **[get_active](../Classes/classshapeworks_1_1AnalysisTool.md#function-get-active)**()<br>Return if this tool is active.  |
@@ -505,6 +506,14 @@ void set_session(
 
 set the pointer to the session 
 
+### function get_session
+
+```cpp
+QSharedPointer< Session > get_session()
+```
+
+Return the session. 
+
 ### function set_app
 
 ```cpp
@@ -755,4 +764,4 @@ static const std::string MODE_REGRESSION_C;
 
 -------------------------------
 
-Updated on 2022-05-08 at 16:47:42 +0000
+Updated on 2022-05-13 at 17:34:11 +0000

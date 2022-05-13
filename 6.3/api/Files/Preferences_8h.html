@@ -2195,6 +2195,12 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_color_scheme</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">value</span><span class="p">);</span><span class="w"></span>
 <span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_color_scheme</span><span class="p">();</span><span class="w"></span>
 
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_color_map</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">value</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_color_map</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_discrete_color_mode</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_discrete_color_mode</span><span class="p">();</span><span class="w"></span>
+
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_center_checked</span><span class="p">();</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_center_checked</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="p">);</span><span class="w"></span>
 
@@ -2215,21 +2221,18 @@
 
 <span class="w">  </span><span class="n">QSize</span><span class="w"> </span><span class="nf">get_export_override_size</span><span class="p">();</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_export_override_size</span><span class="p">(</span><span class="n">QSize</span><span class="w"> </span><span class="n">size</span><span class="p">);</span><span class="w"></span>
-
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_export_override_size_enabled</span><span class="p">();</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_export_override_size_enabled</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span><span class="p">);</span><span class="w"></span>
-
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_export_show_orientation_marker</span><span class="p">();</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_export_show_orientation_marker</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="p">);</span><span class="w"></span>
-
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_export_show_color_scale</span><span class="p">();</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_export_show_color_scale</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="p">);</span><span class="w"></span>
-
 <span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_export_num_pca_images</span><span class="p">();</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_export_num_pca_images</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">number</span><span class="p">);</span><span class="w"></span>
-
 <span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_export_pca_range</span><span class="p">();</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_export_pca_range</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">range</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_export_pca_modes</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">string</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="n">QString</span><span class="w"> </span><span class="nf">get_export_pca_modes</span><span class="p">();</span><span class="w"></span>
 
 <span class="w"> </span><span class="nl">Q_SIGNALS</span><span class="p">:</span><span class="w"></span>
 
@@ -2248,7 +2251,7 @@
 <span class="p">};</span><span class="w"></span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-05-08 at 16:47:44 +0000</p>
+<p>Updated on 2022-05-13 at 17:34:12 +0000</p>
 
               
             </article>

@@ -69,6 +69,10 @@ Inherits from QObject
 | void | **[set_pca_steps](../Classes/classPreferences.md#function-set-pca-steps)**(int value) |
 | void | **[set_color_scheme](../Classes/classPreferences.md#function-set-color-scheme)**(int value) |
 | int | **[get_color_scheme](../Classes/classPreferences.md#function-get-color-scheme)**() |
+| void | **[set_color_map](../Classes/classPreferences.md#function-set-color-map)**(int value) |
+| int | **[get_color_map](../Classes/classPreferences.md#function-get-color-map)**() |
+| void | **[set_discrete_color_mode](../Classes/classPreferences.md#function-set-discrete-color-mode)**(bool value) |
+| bool | **[get_discrete_color_mode](../Classes/classPreferences.md#function-get-discrete-color-mode)**() |
 | bool | **[get_center_checked](../Classes/classPreferences.md#function-get-center-checked)**() |
 | void | **[set_center_checked](../Classes/classPreferences.md#function-set-center-checked)**(bool value) |
 | int | **[get_geodesic_cache_multiplier](../Classes/classPreferences.md#function-get-geodesic-cache-multiplier)**() |
@@ -93,6 +97,8 @@ Inherits from QObject
 | void | **[set_export_num_pca_images](../Classes/classPreferences.md#function-set-export-num-pca-images)**(int number) |
 | double | **[get_export_pca_range](../Classes/classPreferences.md#function-get-export-pca-range)**() |
 | void | **[set_export_pca_range](../Classes/classPreferences.md#function-set-export-pca-range)**(double range) |
+| void | **[set_export_pca_modes](../Classes/classPreferences.md#function-set-export-pca-modes)**(QString string) |
+| QString | **[get_export_pca_modes](../Classes/classPreferences.md#function-get-export-pca-modes)**() |
 
 ## Detailed Description
 
@@ -434,6 +440,38 @@ int get_color_scheme()
 ```
 
 
+### function set_color_map
+
+```cpp
+void set_color_map(
+    int value
+)
+```
+
+
+### function get_color_map
+
+```cpp
+int get_color_map()
+```
+
+
+### function set_discrete_color_mode
+
+```cpp
+void set_discrete_color_mode(
+    bool value
+)
+```
+
+
+### function get_discrete_color_mode
+
+```cpp
+bool get_discrete_color_mode()
+```
+
+
 ### function get_center_checked
 
 ```cpp
@@ -626,6 +664,22 @@ void set_export_pca_range(
 ```
 
 
+### function set_export_pca_modes
+
+```cpp
+void set_export_pca_modes(
+    QString string
+)
+```
+
+
+### function get_export_pca_modes
+
+```cpp
+QString get_export_pca_modes()
+```
+
+
 -------------------------------
 
-Updated on 2022-05-08 at 16:47:44 +0000
+Updated on 2022-05-13 at 17:34:12 +0000

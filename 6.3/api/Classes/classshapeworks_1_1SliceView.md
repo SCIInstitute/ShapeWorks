@@ -13,18 +13,27 @@ summary: SliceView.
 
 `#include <SliceView.h>`
 
+## Public Types
+
+|                | Name           |
+| -------------- | -------------- |
+| enum| **[SliceChange](../Classes/classshapeworks_1_1SliceView.md#enum-slicechange)** { Down, Up} |
+
 ## Public Functions
 
 |                | Name           |
 | -------------- | -------------- |
 | | **[SliceView](../Classes/classshapeworks_1_1SliceView.md#function-sliceview)**([Viewer](../Classes/classshapeworks_1_1Viewer.md) * viewer) |
-| void | **[set_volume](../Classes/classshapeworks_1_1SliceView.md#function-set-volume)**(vtkSmartPointer< vtkImageData > volume) |
+| void | **[set_volume](../Classes/classshapeworks_1_1SliceView.md#function-set-volume)**(std::shared_ptr< [Image](../Classes/classshapeworks_1_1Image.md) > volume) |
 | void | **[set_mesh](../Classes/classshapeworks_1_1SliceView.md#function-set-mesh)**(vtkSmartPointer< vtkPolyData > poly_data) |
 | void | **[set_orientation](../Classes/classshapeworks_1_1SliceView.md#function-set-orientation)**(int orientation) |
 | bool | **[is_image_loaded](../Classes/classshapeworks_1_1SliceView.md#function-is-image-loaded)**() |
 | void | **[update_renderer](../Classes/classshapeworks_1_1SliceView.md#function-update-renderer)**() |
 | void | **[update_camera](../Classes/classshapeworks_1_1SliceView.md#function-update-camera)**() |
-| void | **[handle_key](../Classes/classshapeworks_1_1SliceView.md#function-handle-key)**(std::string key) |
+| Point | **[handle_key](../Classes/classshapeworks_1_1SliceView.md#function-handle-key)**(std::string key) |
+| void | **[change_slice](../Classes/classshapeworks_1_1SliceView.md#function-change-slice)**(SliceChange change) |
+| Point | **[get_slice_position](../Classes/classshapeworks_1_1SliceView.md#function-get-slice-position)**() |
+| void | **[set_slice_position](../Classes/classshapeworks_1_1SliceView.md#function-set-slice-position)**(Point point) |
 | void | **[set_window_and_level](../Classes/classshapeworks_1_1SliceView.md#function-set-window-and-level)**(double window, double level) |
 | double | **[get_spacing](../Classes/classshapeworks_1_1SliceView.md#function-get-spacing)**() |
 | int | **[get_orientation_index](../Classes/classshapeworks_1_1SliceView.md#function-get-orientation-index)**() |
@@ -42,6 +51,18 @@ class shapeworks::SliceView;
 
 Provide slice viewing to the [Viewer](../Classes/classshapeworks_1_1Viewer.md)
 
+## Public Types Documentation
+
+### enum SliceChange
+
+| Enumerator | Value | Description |
+| ---------- | ----- | ----------- |
+| Down | |   |
+| Up | |   |
+
+
+
+
 ## Public Functions Documentation
 
 ### function SliceView
@@ -57,7 +78,7 @@ SliceView(
 
 ```cpp
 void set_volume(
-    vtkSmartPointer< vtkImageData > volume
+    std::shared_ptr< Image > volume
 )
 ```
 
@@ -104,8 +125,33 @@ void update_camera()
 ### function handle_key
 
 ```cpp
-void handle_key(
+Point handle_key(
     std::string key
+)
+```
+
+
+### function change_slice
+
+```cpp
+void change_slice(
+    SliceChange change
+)
+```
+
+
+### function get_slice_position
+
+```cpp
+Point get_slice_position()
+```
+
+
+### function set_slice_position
+
+```cpp
+void set_slice_position(
+    Point point
 )
 ```
 
@@ -161,4 +207,4 @@ bool should_point_show(
 
 -------------------------------
 
-Updated on 2022-05-08 at 16:47:43 +0000
+Updated on 2022-05-13 at 17:34:11 +0000

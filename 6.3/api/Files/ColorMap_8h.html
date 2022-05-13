@@ -12,14 +12,14 @@
         <meta name="author" content="Shireen Elhabian et al.">
       
       
-        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.3/api/Classes/classPreferencesWindow.html">
+        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.3/api/Files/ColorMap_8h.html">
       
       <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.8">
     
     
       
-        <title>PreferencesWindow - ShapeWorks</title>
+        <title>Studio/src/Visualization/ColorMap.h - ShapeWorks</title>
       
     
     
@@ -81,7 +81,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#preferenceswindow" class="md-skip">
+        <a href="#studiosrcvisualizationcolormaph" class="md-skip">
           Skip to content
         </a>
       
@@ -119,7 +119,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              PreferencesWindow
+              Studio/src/Visualization/ColorMap.h
             
           </span>
         </div>
@@ -1936,7 +1936,7 @@
   
   
     <li class="md-nav__item">
-      <a href="index_classes.html" class="md-nav__link">
+      <a href="../Classes/index_classes.html" class="md-nav__link">
         Classes
       </a>
     </li>
@@ -1950,7 +1950,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../Files/index_files.html" class="md-nav__link">
+      <a href="index_files.html" class="md-nav__link">
         Files
       </a>
     </li>
@@ -2081,181 +2081,23 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#public-slots" class="md-nav__link">
-    Public Slots
+  <a href="#namespaces" class="md-nav__link">
+    Namespaces
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#public-signals" class="md-nav__link">
-    Public Signals
+  <a href="#classes" class="md-nav__link">
+    Classes
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#public-functions" class="md-nav__link">
-    Public Functions
+  <a href="#source-code" class="md-nav__link">
+    Source code
   </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#detailed-description" class="md-nav__link">
-    Detailed Description
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#public-slots-documentation" class="md-nav__link">
-    Public Slots Documentation
-  </a>
-  
-    <nav class="md-nav" aria-label="Public Slots Documentation">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#slot-on_mesh_cache_enabled_statechanged" class="md-nav__link">
-    slot on_mesh_cache_enabled_stateChanged
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#slot-on_mesh_cache_memory_valuechanged" class="md-nav__link">
-    slot on_mesh_cache_memory_valueChanged
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#slot-on_color_scheme_currentindexchanged" class="md-nav__link">
-    slot on_color_scheme_currentIndexChanged
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#slot-on_pca_range_valuechanged" class="md-nav__link">
-    slot on_pca_range_valueChanged
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#slot-on_pca_steps_valuechanged" class="md-nav__link">
-    slot on_pca_steps_valueChanged
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#slot-on_parallel_enabled_toggled" class="md-nav__link">
-    slot on_parallel_enabled_toggled
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#slot-on_num_threads_valuechanged" class="md-nav__link">
-    slot on_num_threads_valueChanged
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#slot-accept" class="md-nav__link">
-    slot accept
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#slot-restore_defaults" class="md-nav__link">
-    slot restore_defaults
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#slot-save_to_preferences" class="md-nav__link">
-    slot save_to_preferences
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#public-signals-documentation" class="md-nav__link">
-    Public Signals Documentation
-  </a>
-  
-    <nav class="md-nav" aria-label="Public Signals Documentation">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#signal-clear_cache" class="md-nav__link">
-    signal clear_cache
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#signal-update_view" class="md-nav__link">
-    signal update_view
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#signal-slider_update" class="md-nav__link">
-    signal slider_update
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#public-functions-documentation" class="md-nav__link">
-    Public Functions Documentation
-  </a>
-  
-    <nav class="md-nav" aria-label="Public Functions Documentation">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#function-preferenceswindow" class="md-nav__link">
-    function PreferencesWindow
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-set_values_from_preferences" class="md-nav__link">
-    function set_values_from_preferences
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-closeevent" class="md-nav__link">
-    function closeEvent
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -2271,17 +2113,27 @@
             <article class="md-content__inner md-typeset">
               
                 
-<a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/api/Classes/classPreferencesWindow.md" title="Edit this page" class="md-content__button md-icon">
+<a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/api/Files/ColorMap_8h.md" title="Edit this page" class="md-content__button md-icon">
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
 </a>
 
 
 
-<h1 id="preferenceswindow">PreferencesWindow</h1>
-<p>Qt UI dialog to control preferences.  <a href="#detailed-description">More...</a></p>
-<p><code>#include &lt;PreferencesWindow.h&gt;</code></p>
-<p>Inherits from QDialog</p>
-<h2 id="public-slots">Public Slots</h2>
+<h1 id="studiosrcvisualizationcolormaph">Studio/src/Visualization/ColorMap.h</h1>
+<h2 id="namespaces">Namespaces</h2>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong><a href="../Namespaces/namespaceshapeworks.html">shapeworks</a></strong></td>
+</tr>
+</tbody>
+</table>
+<h2 id="classes">Classes</h2>
 <table>
 <thead>
 <tr>
@@ -2291,170 +2143,73 @@
 </thead>
 <tbody>
 <tr>
-<td>void</td>
-<td><strong><a href="classPreferencesWindow.html#slot-on-mesh-cache-enabled-statechanged">on_mesh_cache_enabled_stateChanged</a></strong>(int state)</td>
+<td>class</td>
+<td><strong><a href="../Classes/classshapeworks_1_1ColorMap.html">shapeworks::ColorMap</a></strong></td>
 </tr>
 <tr>
-<td>void</td>
-<td><strong><a href="classPreferencesWindow.html#slot-on-mesh-cache-memory-valuechanged">on_mesh_cache_memory_valueChanged</a></strong>(int value)</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classPreferencesWindow.html#slot-on-color-scheme-currentindexchanged">on_color_scheme_currentIndexChanged</a></strong>(int index)</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classPreferencesWindow.html#slot-on-pca-range-valuechanged">on_pca_range_valueChanged</a></strong>(double value)</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classPreferencesWindow.html#slot-on-pca-steps-valuechanged">on_pca_steps_valueChanged</a></strong>(int value)</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classPreferencesWindow.html#slot-on-parallel-enabled-toggled">on_parallel_enabled_toggled</a></strong>(bool b)</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classPreferencesWindow.html#slot-on-num-threads-valuechanged">on_num_threads_valueChanged</a></strong>(int i)</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classPreferencesWindow.html#slot-accept">accept</a></strong>() override</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classPreferencesWindow.html#slot-restore-defaults">restore_defaults</a></strong>()</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classPreferencesWindow.html#slot-save-to-preferences">save_to_preferences</a></strong>()</td>
+<td>class</td>
+<td><strong><a href="../Classes/classshapeworks_1_1ColorMaps.html">shapeworks::ColorMaps</a></strong></td>
 </tr>
 </tbody>
 </table>
-<h2 id="public-signals">Public Signals</h2>
-<table>
-<thead>
-<tr>
-<th></th>
-<th>Name</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>void</td>
-<td><strong><a href="classPreferencesWindow.html#signal-clear-cache">clear_cache</a></strong>()</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classPreferencesWindow.html#signal-update-view">update_view</a></strong>()</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classPreferencesWindow.html#signal-slider-update">slider_update</a></strong>()</td>
-</tr>
-</tbody>
-</table>
-<h2 id="public-functions">Public Functions</h2>
-<table>
-<thead>
-<tr>
-<th></th>
-<th>Name</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td></td>
-<td><strong><a href="classPreferencesWindow.html#function-preferenceswindow">PreferencesWindow</a></strong>(QWidget * parent, <a href="classPreferences.html">Preferences</a> &amp; prefs)</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classPreferencesWindow.html#function-set-values-from-preferences">set_values_from_preferences</a></strong>()</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classPreferencesWindow.html#function-closeevent">closeEvent</a></strong>(QCloseEvent * event) override</td>
-</tr>
-</tbody>
-</table>
-<h2 id="detailed-description">Detailed Description</h2>
-<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">PreferencesWindow</span><span class="p">;</span><span class="w"></span>
-</code></pre></div>
-<p>Qt UI dialog to control preferences. </p>
-<p>The PreferenceWindow provides controls over preferences for the application. It is synchronized with the singleton Preference object </p>
-<h2 id="public-slots-documentation">Public Slots Documentation</h2>
-<h3 id="slot-on_mesh_cache_enabled_statechanged">slot on_mesh_cache_enabled_stateChanged</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">on_mesh_cache_enabled_stateChanged</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">state</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
-</code></pre></div>
-<h3 id="slot-on_mesh_cache_memory_valuechanged">slot on_mesh_cache_memory_valueChanged</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">on_mesh_cache_memory_valueChanged</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">value</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
-</code></pre></div>
-<h3 id="slot-on_color_scheme_currentindexchanged">slot on_color_scheme_currentIndexChanged</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">on_color_scheme_currentIndexChanged</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">index</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
-</code></pre></div>
-<h3 id="slot-on_pca_range_valuechanged">slot on_pca_range_valueChanged</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">on_pca_range_valueChanged</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
-</code></pre></div>
-<h3 id="slot-on_pca_steps_valuechanged">slot on_pca_steps_valueChanged</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">on_pca_steps_valueChanged</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">value</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
-</code></pre></div>
-<h3 id="slot-on_parallel_enabled_toggled">slot on_parallel_enabled_toggled</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">on_parallel_enabled_toggled</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">b</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
-</code></pre></div>
-<h3 id="slot-on_num_threads_valuechanged">slot on_num_threads_valueChanged</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">on_num_threads_valueChanged</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
-</code></pre></div>
-<h3 id="slot-accept">slot accept</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">accept</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
-</code></pre></div>
-<h3 id="slot-restore_defaults">slot restore_defaults</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">restore_defaults</span><span class="p">()</span><span class="w"></span>
-</code></pre></div>
-<h3 id="slot-save_to_preferences">slot save_to_preferences</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">save_to_preferences</span><span class="p">()</span><span class="w"></span>
-</code></pre></div>
-<h2 id="public-signals-documentation">Public Signals Documentation</h2>
-<h3 id="signal-clear_cache">signal clear_cache</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">clear_cache</span><span class="p">()</span><span class="w"></span>
-</code></pre></div>
-<h3 id="signal-update_view">signal update_view</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_view</span><span class="p">()</span><span class="w"></span>
-</code></pre></div>
-<h3 id="signal-slider_update">signal slider_update</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">slider_update</span><span class="p">()</span><span class="w"></span>
-</code></pre></div>
-<h2 id="public-functions-documentation">Public Functions Documentation</h2>
-<h3 id="function-preferenceswindow">function PreferencesWindow</h3>
-<div class="highlight"><pre><span></span><code><span class="n">PreferencesWindow</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">QWidget</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">parent</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">Preferences</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">prefs</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
-</code></pre></div>
-<h3 id="function-set_values_from_preferences">function set_values_from_preferences</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_values_from_preferences</span><span class="p">()</span><span class="w"></span>
-</code></pre></div>
-<h3 id="function-closeevent">function closeEvent</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">closeEvent</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">QCloseEvent</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">event</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
+<h2 id="source-code">Source code</h2>
+<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkColorSeries.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkSmartPointer.h&gt;</span><span class="cp"></span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QColor&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QStringList&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span><span class="cp"></span>
+
+<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ColorMap</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w"> </span><span class="k">public</span><span class="o">:</span><span class="w"></span>
+<span class="w">  </span><span class="n">QString</span><span class="w"> </span><span class="n">name_</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkColorSeries</span><span class="o">&gt;</span><span class="w"> </span><span class="n">color_series_</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">construct_lookup_table</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkLookupTable</span><span class="o">&gt;</span><span class="w"> </span><span class="n">lut</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">vtkColor3ub</span><span class="w"> </span><span class="nf">convert</span><span class="p">(</span><span class="n">QColor</span><span class="w"> </span><span class="n">color</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_discrete_mode</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">discrete_mode</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">discrete_mode_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">discrete_mode</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+
+<span class="w"> </span><span class="k">private</span><span class="o">:</span><span class="w"></span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">discrete_mode_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ColorMaps</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">ColorMap</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w"> </span><span class="k">public</span><span class="o">:</span><span class="w"></span>
+<span class="w">  </span><span class="n">ColorMaps</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkColorSeries</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_color_series</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">index</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">index</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">      </span><span class="n">index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">index</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">      </span><span class="n">index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="k">this</span><span class="p">)[</span><span class="n">index</span><span class="p">].</span><span class="n">color_series_</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">  </span><span class="n">ColorMap</span><span class="w"> </span><span class="n">get_color_map</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">index</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">index</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">      </span><span class="n">index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">index</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">      </span><span class="n">index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
+
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="k">this</span><span class="p">)[</span><span class="n">index</span><span class="p">];</span><span class="w"></span>
+<span class="w">  </span><span class="p">}</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
+
+<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-05-08 at 16:47:44 +0000</p>
+<p>Updated on 2022-05-13 at 17:34:12 +0000</p>
 
               
             </article>
