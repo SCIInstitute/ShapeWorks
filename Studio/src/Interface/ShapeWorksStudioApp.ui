@@ -1115,7 +1115,7 @@ QWidget#image_widget {
   </action>
   <action name="action_export_all_subjects_particle_scalars">
    <property name="text">
-    <string>Export All Subject Particle Scalars...</string>
+    <string>Export All Subjects Particle Scalars...</string>
    </property>
   </action>
  </widget>

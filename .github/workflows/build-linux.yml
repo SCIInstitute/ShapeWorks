@@ -100,7 +100,7 @@ jobs:
         prerelease: true
         title: "Development Build for Linux"
         files: |
-             ${{runner.workspace}}/ShapeWorks/artifacts/*.zip
+             ${{runner.workspace}}/ShapeWorks/artifacts/*.tar.gz
 
     - name: Store ccache
       shell: bash -l {0}
