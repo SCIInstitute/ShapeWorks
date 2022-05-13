@@ -10,6 +10,7 @@ def get_image_registration_transform(fixed_image_file, moving_image_file, transf
         parameter_map['Transform'] = ['SimilarityTransform']
     elif transform_type == 'translation':
         parameter_map['Transform'] = ['TranslationTransform']
+    parameter_map['MaximumNumberOfIterations'] = ['1024']
     parameter_object.AddParameterMap(parameter_map)
     # Call registration function
     fixed_image = itk.imread(fixed_image_file, itk.F)
