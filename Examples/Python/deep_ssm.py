@@ -79,21 +79,21 @@ def Run_Pipeline(args):
     train_planes = []
     train_plane_files = []
     for train_mesh_file in train_mesh_files:
-        plane_file = train_mesh_file.replace('meshes/', 'constraints/').replace('.ply','.json')
+        plane_file = train_mesh_file.replace('meshes', 'constraints').replace('.ply','.json')
         train_planes.append(planes[plane_files.index(plane_file)])
         train_plane_files.append(plane_file)
     # Val planes
     val_planes = []
     val_plane_files = []
     for val_mesh_file in val_mesh_files:
-        plane_file = val_mesh_file.replace('meshes/', 'constraints/').replace('.ply','.json')
+        plane_file = val_mesh_file.replace('meshes', 'constraints').replace('.ply','.json')
         val_planes.append(planes[plane_files.index(plane_file)])
         val_plane_files.append(plane_file)
     # Test planes
     test_planes = []
     test_plane_files = []
     for test_mesh_file in test_mesh_files:
-        plane_file = test_mesh_file.replace('meshes/', 'constraints/').replace('.ply','.json')
+        plane_file = test_mesh_file.replace('meshes', 'constraints').replace('.ply','.json')
         test_planes.append(planes[plane_files.index(plane_file)])
         test_plane_files.append(plane_file)
 
