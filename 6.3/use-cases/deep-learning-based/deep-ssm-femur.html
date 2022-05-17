@@ -2372,22 +2372,40 @@
 <h2 id="use-case-pipeline">Use Case Pipeline</h2>
 <p>The use case pipeline includes creation of a training, validation, and testing sets. This involves particle optimization, image grooming, and <a href="../../deep-learning/data-augmentation.html">data augmentation</a>. Additionally, the use case demonstrates creating and training a <a href="../../deep-learning/deep-ssm.html">DeepSSM network</a> using ShapeWorks Python packages. For a full explanation of these packages see <a href="../../deep-learning/data-augmentation.html#Using-the-Data-Augmentation-Package">Using the Data Augmentation Python Package</a> and <a href="../../deep-learning/deep-ssm.html#Using-the-DeepSSM-Python-Package">Using the DeepSSM Python Package</a>. Each step of the pipeline is outlined below.</p>
 <h3 id="step-1-getting-the-original-data">Step 1: Getting the original data</h3>
-<p>The femur data is downloaded from the <a href="https://girder.shapeworks-cloud.org">ShapeWorks Data Portal</a>. This use case uses the original unsegmented images and the corresponding <code>.ply</code> mesh files. </p>
+<p>The femur data is downloaded from the <a href="https://girder.shapeworks-cloud.org">ShapeWorks Data Portal</a>. The data includes the original unsegmented <code>.nrrd</code> images, corresponding <code>.ply</code> mesh files, and <code>.json</code> constraint files with cutting planes. Below is one example of an MRI (blue), mesh (white), and corrresponding cutting plane (green).
+<img alt="Femur Data Example" src="https://sci.utah.edu/~shapeworks/doc-resources/pngs/deepssm_data.png" /></p>
 <h3 id="step-2-define-the-data-split">Step 2: Define the data split</h3>
-<p>The data is randomly split into training (70%), validation (15%), and test (15%) sets. Of the 49 examples in the femur dataset, 33 are used to create training set, 8 are held out for the validation set, and the remaining 8 are held out for a test set. </p>
+<p>The data is randomly split into training (80%), validation (10%), and test (10%) sets. Of the 49 examples in the femur dataset, 39 are used to create training set, 5 are held out for the validation set, and the remaining 5 are held out for a test set. If running <code>--tiny_test</code> only 5 samples are downloaded and 3 are used in training, 1 for validation, and 1 for testing. </p>
 <h3 id="step-3-find-training-alignment-transforms">Step 3: Find training alignment transforms</h3>
-<p>Training DeepSSM requires labels or ground truth particles, thus we run optimization on the training set. As the femur meshes are unaligned, this requires finiding the alignment transforms to use in optimization. The steps for computing the transforms are the same as in the <a href="../constraint-based/femur-cutting-planes.html">Femur Use Case</a>. See <a href="../../workflow/groom.html">Groom</a> for more information on specific steps. In addition to computing the transforms, the smallest bounding box which contains all aligned meshes is computed. </p>
+<p>Training DeepSSM requires labels or ground truth particles, thus we run optimization on the training set. As the femur meshes are unaligned, this requires finiding the alignment transforms to use in optimization. The steps for computing the transforms are the same as in the <a href="../constraint-based/femur-cutting-planes.html">Femur Use Case</a>. See <a href="../../workflow/groom.html">Groom</a> for more information on specific steps. In addition to computing the transforms, the smallest bounding box which contains all aligned meshes is computed. 
+<img alt="Train Alignment" src="https://sci.utah.edu/~shapeworks/doc-resources/pngs/deepssm_train_groom.png" /></p>
 <h3 id="step-4-optimize-training-particles">Step 4: Optimize training particles</h3>
-<p>Particles are optimized on the training femur meshes using corresponding alignment transforms and cutting planes as is done in the <a href="../constraint-based/femur-cutting-planes.html">Femur Use Case</a>.</p>
+<p>Particles are optimized on the training femur meshes using corresponding alignment transforms and cutting planes as is done in the <a href="../constraint-based/femur-cutting-planes.html">Femur Use Case</a>.
+<img alt="Train Optimization" src="https://sci.utah.edu/~shapeworks/doc-resources/pngs/deepssm_train_opt.png" /></p>
+<p>Below are some training set femur samples with their optimized correspondences.
+<img alt="Train Samples" src="https://sci.utah.edu/~shapeworks/doc-resources/pngs/deepssm_train_samples.png" /></p>
+<p>Here is the mean shape of the optimized training shape model.
+<img alt="Train Mean" src="https://sci.utah.edu/~shapeworks/doc-resources/pngs/deepssm_train_mean.png" /></p>
 <h3 id="step-5-groom-training-images">Step 5: Groom training images</h3>
-<p>Input images for the DeepSSM trainign set are created by taking the original training MRIs and applying the corresponding alignment transform (from step 3), applying the corresponding Procrustes transform (from optimization in step 4), and cropping using the boudning box (computed in step 3). This results in input images which consistently cropped and in alignment with the ground truth world particles.</p>
+<p>Input images for the DeepSSM training set are created by taking the original training MRIs and applying the corresponding alignment transform (from step 3), applying the corresponding Procrustes transform (from optimization in step 4), and cropping using the boudning box (computed in step 3). This results in input images which consistently cropped and in alignment with the ground truth world particles.
+<img alt="Train Image Grooming" src="https://sci.utah.edu/~shapeworks/doc-resources/pngs/deepssm_train_image_groom.png" /></p>
+<p>Here are some examples of slices of the groomed training images. These are now in alignment with the optimized world particles from Step 4.
+<img alt="Train Groomed Images" src="https://sci.utah.edu/~shapeworks/doc-resources/pngs/deepssm_train_images.png" /></p>
 <h3 id="step-6-data-augmentation">Step 6: Data augmentation</h3>
-<p>Data augmentation is run using the images and particle files allocated for training. 2967 augmented samples are created so that DeepSSM can be trained on 3000 total examples. The data is embedded to 12 dimensions using PCA, preserving 95% of the population variation. A kernel density estimate (KDE) distribution is then fit to the embedded data and used in sampling new shape samples for data augmentation. The real and augmented results are then visualized in a matrix of scatterplots.</p>
+<p>Data augmentation is run using the images and particle files allocated for training. 2967 augmented samples are created so that DeepSSM can be trained on 3000 total examples. The data is embedded to 12 dimensions using PCA, preserving 95% of the population variation. A Gaussian distribution is then fit to the embedded data and used in sampling new shape samples for data augmentation. </p>
 <p>The functions relevant to this step are <a href="../../deep-learning/data-augmentation.html#Running-Data-Augmentation">runDataAugmentation</a> and <a href="../../deep-learning/data-augmentation.html#Visualizing-Data-Augmentation">visualizeAugmentation</a>.</p>
+<p>The distribution of real and augmented PCA scores are visualized as parallel violin plots.
+<img alt="Data Augmentation" src="https://sci.utah.edu/~shapeworks/doc-resources/pngs/deepssm_violin.png" /></p>
 <h3 id="step-7-find-validation-and-test-alignment-transforms-and-groom-images">Step 7: Find validation and test alignment transforms and groom images</h3>
-<p>To prepare the input images for the validation and test sets, the original MRIs are reflected if neccesar then aligned to a reference image using rigid image registration. The reference image is selected as the groomed image corresponded to the training sample used in mesh alignment in step 3. The images are then cropped using the same bounding box computed in step 3 and the combined transforms are saved. Note this step does not use the validation or test meshes and can be performed without segmentation.</p>
+<p>To prepare the input images for the validation and test sets, the original MRIs are reflected if neccesary then aligned to a reference image using image registration. The reference image is selected as the groomed image corresponded to the training sample used in mesh alignment in step 3. The images are then cropped using the same bounding box computed in step 3 and the combined transforms are saved. Note this step does not use the validation or test meshes and can be performed without segmentation.
+<img alt="Test Image Grooming" src="https://sci.utah.edu/~shapeworks/doc-resources/pngs/deepssm_test_image_groom.png" /></p>
+<p>Here are some examples of the groomed validation and test images. 
+<img alt="Validation and Test Groomed Images" src="https://sci.utah.edu/~shapeworks/doc-resources/pngs/deepssm_val_images.png" /></p>
 <h3 id="step-8-optimize-validation-particles-with-fixed-domains">Step 8: Optimize validation particles with fixed domains</h3>
-<p>In order to quantify the accuracy of DeepSSM, ground truth particles are optimized on the validation set. This is done by adding the validation meshes to the training model while keeping the training particles fixed as is done in the <a href="../multistep/fixed-domain-ellipsoid.html">Fixed Domain Use Case</a>.</p>
+<p>In order to quantify the accuracy of DeepSSM, ground truth particles are optimized on the validation set. This is done by adding the validation meshes to the training model while keeping the training particles fixed as is done in the <a href="../multistep/fixed-domain-ellipsoid.html">Fixed Domain Use Case</a>. The transforms found in step 7 are passed and Procrustes is turned off as these transform matrices account for scale.</p>
+<p><img alt="Validation Optimization" src="https://sci.utah.edu/~shapeworks/doc-resources/pngs/deepssm_val_opt.png" /></p>
+<p>Below are the resulting particles on the validation femurs.
+<img alt="Validation Samples" src="https://sci.utah.edu/~shapeworks/doc-resources/pngs/deepssm_val_samples.png" /></p>
 <h3 id="step-9-create-pytorch-loaders-from-data">Step 9: Create PyTorch loaders from data</h3>
 <p>The groomed images and particle files are reformatted into tensors for training and testing the DeepSSM network. In the case of the test loader, a place holder is used for the particles as we do not have ground truth particles.
 The functions relevant to this step are <a href="../../deep-learning/deep-ssm.html#Get-train-and-validation-torch-loaders">getTrainValLoaders</a> and <a href="../../deep-learning/deep-ssm.html#Get-test-torch-loader">getTestLoader</a>.</p>
@@ -2396,14 +2414,17 @@ The functions relevant to this step are <a href="../../deep-learning/deep-ssm.ht
 <p>If a CUDA memory error occurs when running the use case, the batch size value may need to be decreased. </p>
 </div>
 <h3 id="step-10-training-deepssm">Step 10: Training DeepSSM</h3>
-<p>A DeepSSM model is created and trained for 50 epochs. A learning rate of 0.0001 is used, and the validation error is calculated and reported every epoch.</p>
+<p>A DeepSSM model is created and trained for 10 epochs. A learning rate of 0.001 is used, and the validation error is calculated and reported every epoch.</p>
 <p>The function relevant to this step is <a href="../../deep-learning/deep-ssm.html#Train-DeepSSM">trainDeepSSM</a>.</p>
+<p>The training and validation errors are plotted after each epoch. 
+<img alt="Training Plot" src="https://sci.utah.edu/~shapeworks/doc-resources/pngs/deepssm_train.png" /></p>
 <h3 id="step-11-predict-validation-particles-and-analyze-accuracy">Step 11: Predict validation particles and analyze accuracy</h3>
 <p>The trained DeepSSM model is used to predict the world particles for the validation images. The function relevant to this step is <a href="../../deep-learning/deep-ssm.html#Test-DeepSSM">testDeepSSM</a>. The predicted local particles are aquired by applying the inverse transforms from step 7 to the world particles. </p>
-<p>The accuracy is then analyzed via two means. The first is the mean square error between the predicted worl dparticles and ground truth world particles. The second is the surface-to-surface distance between the true mesh and the mesh generated from the predicted local particles. Heat maps of these distances on the meshes are saved from visualizing the results. The function relevant to this step is <a href="../../deep-learning/deep-ssm.html#Analyze-Results">analyzeResults</a>.</p>
+<p>The accuracy is then analyzed via two means. The first is the mean square error between the predicted worl dparticles and ground truth world particles. The second is the surface-to-surface distance between the true mesh and the mesh generated from the predicted local particles. These results are printed to the console. The function relevant to this step is <a href="../../deep-learning/deep-ssm.html#Analyze-Results">analyzeResults</a>.</p>
 <h3 id="step-12-predict-test-particles-and-analyze-accuracy">Step 12: Predict test particles and analyze accuracy</h3>
 <p>Similarly, the trained DeepSSM model is used to predict the world particles for the test images via <a href="../../deep-learning/deep-ssm.html#Test-DeepSSM">testDeepSSM</a>. As there are no ground truth particles, accuracy is just analyzed using the surface-to-surface distance between the true mesh and the mesh generated from the predicted local particles. </p>
-<p><img alt="DeepSSM Results" src="../../img/deep-learning/DeepSSMResults.png" /></p>
+<p>Below we can see the results on the 5 test shapes. The original image is with the predicted meshes which have a heat map displaying the surface-tosurface distance to the true mesh.
+<img alt="DeepSSM Results" src="https://sci.utah.edu/~shapeworks/doc-resources/pngs/deepssm_results.png" /></p>
 
               
             </article>
