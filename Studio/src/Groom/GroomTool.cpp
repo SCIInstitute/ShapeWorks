@@ -27,6 +27,8 @@ GroomTool::GroomTool(Preferences& prefs) : preferences_(prefs) {
   connect(ui_->mesh_header, &QPushButton::clicked, ui_->mesh_open_button, &QPushButton::toggle);
   connect(ui_->alignment_open_button, &QPushButton::toggled, ui_->alignment_content, &QWidget::setVisible);
   connect(ui_->alignment_header, &QPushButton::clicked, ui_->alignment_open_button, &QPushButton::toggle);
+  connect(ui_->domain_open_button, &QPushButton::toggled, ui_->domain_content, &QWidget::setVisible);
+  connect(ui_->domain_header, &QPushButton::clicked, ui_->domain_open_button, &QPushButton::toggle);
 
   connect(ui_->alignment_image_checkbox, &QCheckBox::stateChanged, this, &GroomTool::alignment_checkbox_changed);
   connect(ui_->alignment_box, qOverload<int>(&QComboBox::currentIndexChanged), this,
@@ -38,6 +40,7 @@ GroomTool::GroomTool(Preferences& prefs) : preferences_(prefs) {
   ui_->image_label->setAttribute(Qt::WA_TransparentForMouseEvents);
   ui_->mesh_label->setAttribute(Qt::WA_TransparentForMouseEvents);
   ui_->alignment_label->setAttribute(Qt::WA_TransparentForMouseEvents);
+  ui_->domain_label->setAttribute(Qt::WA_TransparentForMouseEvents);
 
   ui_->alignment_image_checkbox->setToolTip("Pre-alignment options");
   ui_->isolate_checkbox->setToolTip("Isolate the largest object in the image segmentation");
@@ -182,7 +185,7 @@ void GroomTool::update_page() {
 //---------------------------------------------------------------------------
 void GroomTool::update_domain_box() {
   auto domain_names = session_->get_project()->get_domain_names();
-  ui_->domain_widget->setVisible(domain_names.size() > 1);
+  ui_->domain_panel->setVisible(domain_names.size() > 1);
 
   if (domain_names.size() != ui_->domain_box->count()) {
     ui_->domain_box->clear();
@@ -192,6 +195,7 @@ void GroomTool::update_domain_box() {
   }
 
   ui_->domain_box->setEnabled(!ui_->apply_to_all_domains->isChecked());
+  ui_->current_domain_label->setEnabled(!ui_->apply_to_all_domains->isChecked());
   if (ui_->apply_to_all_domains->isChecked()) {
     current_domain_ = "";
     ui_->domain_box->clear();
