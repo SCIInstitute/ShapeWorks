@@ -49,6 +49,8 @@ constexpr const char* REMESH_PERCENT = "remesh_percent";
 constexpr const char* REMESH_NUM_VERTICES = "remesh_num_vertices";
 constexpr const char* REMESH_GRADATION = "remesh_gradation";
 
+constexpr const char* GROOM_ALL_DOMAINS_THE_SAME = "groom_all_domains_the_same";
+
 }
 
 namespace Defaults {
@@ -86,6 +88,8 @@ const double remesh_percent = 75;
 const int remesh_num_vertices = 3000;
 const double remesh_gradation = 1.0;
 
+const bool groom_all_domains_the_same = true;
+
 }
 
 //---------------------------------------------------------------------------
@@ -93,6 +97,12 @@ GroomParameters::GroomParameters(ProjectHandle project, std::string domain_name)
   project_(project), domain_name_(domain_name)
 {
   this->params_ = this->project_->get_parameters(Parameters::GROOM_PARAMS, this->domain_name_);
+}
+
+//---------------------------------------------------------------------------
+void GroomParameters::set_domain_name(std::string domain_name)
+{
+  domain_name_ = domain_name;
 }
 
 //---------------------------------------------------------------------------
@@ -237,6 +247,18 @@ std::string GroomParameters::get_groom_output_prefix()
 void GroomParameters::set_groom_output_prefix(std::string prefix)
 {
   this->params_.set(Keys::GROOM_OUTPUT_PREFIX, prefix);
+}
+
+//---------------------------------------------------------------------------
+bool GroomParameters::get_groom_all_domains_the_same()
+{
+  return params_.get(Keys::GROOM_ALL_DOMAINS_THE_SAME, Defaults::groom_all_domains_the_same);
+}
+
+//---------------------------------------------------------------------------
+void GroomParameters::set_groom_all_domains_the_same(bool value)
+{
+  params_.set(Keys::GROOM_ALL_DOMAINS_THE_SAME, value);
 }
 
 //---------------------------------------------------------------------------

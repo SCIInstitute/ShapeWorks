@@ -139,15 +139,25 @@ QWidget#mesh_panel {
       <property name="bottomMargin">
        <number>3</number>
       </property>
-      <item row="0" column="0">
+      <item row="1" column="0">
        <widget class="QLabel" name="domain_label">
         <property name="text">
          <string>Domain</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="1">
+      <item row="1" column="1">
        <widget class="QComboBox" name="domain_box"/>
+      </item>
+      <item row="2" column="0" colspan="2">
+       <widget class="QCheckBox" name="apply_to_all_domains">
+        <property name="text">
+         <string>Apply grooming parameters to all domains</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>
