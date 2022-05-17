@@ -152,8 +152,8 @@ void GroomTool::handle_progress(int val) {
 
 //---------------------------------------------------------------------------
 void GroomTool::on_restore_defaults_clicked() {
-  this->session_->get_project()->clear_parameters(Parameters::GROOM_PARAMS);
-  this->load_params();
+  session_->get_project()->clear_parameters(Parameters::GROOM_PARAMS);
+  load_params();
 }
 
 //---------------------------------------------------------------------------
@@ -503,7 +503,8 @@ void GroomTool::on_skip_button_clicked() {
 void GroomTool::set_session(QSharedPointer<Session> session) {
   session_ = session;
   ui_->domain_box->clear();
-  this->update_reflect_choices();
+  update_reflect_choices();
+  load_params();
 }
 
 //---------------------------------------------------------------------------
@@ -520,7 +521,7 @@ void GroomTool::activate() {
     }
   }
 
-  this->update_page();
+  update_page();
 }
 
 //---------------------------------------------------------------------------
