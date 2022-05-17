@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>334</width>
+    <width>500</width>
     <height>1136</height>
    </rect>
   </property>
@@ -137,13 +137,16 @@ QWidget#domain_panel {
     <number>3</number>
    </property>
    <property name="leftMargin">
-    <number>0</number>
+    <number>3</number>
+   </property>
+   <property name="topMargin">
+    <number>3</number>
    </property>
    <property name="rightMargin">
-    <number>0</number>
+    <number>3</number>
    </property>
    <property name="bottomMargin">
-    <number>0</number>
+    <number>3</number>
    </property>
    <item>
     <widget class="QWidget" name="domain_panel" native="true">
@@ -1963,31 +1966,30 @@ QWidget#domain_panel {
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="buttons">
-     <property name="spacing">
-      <number>0</number>
-     </property>
-     <item>
-      <widget class="QPushButton" name="skip_button">
-       <property name="text">
-        <string>Skip</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="run_groom_button">
-       <property name="text">
-        <string>Run Groom</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <widget class="QPushButton" name="restore_defaults">
-     <property name="text">
-      <string>Restore Defaults</string>
-     </property>
+    <widget class="QWidget" name="button_box" native="true">
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
+       <widget class="QPushButton" name="skip_button">
+        <property name="text">
+         <string>Skip</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QPushButton" name="run_groom_button">
+        <property name="text">
+         <string>Run Groom</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" colspan="2">
+       <widget class="QPushButton" name="restore_defaults">
+        <property name="text">
+         <string>Restore Defaults</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
    <item>
@@ -2024,9 +2026,6 @@ QWidget#domain_panel {
   <tabstop>reflect_axis</tabstop>
   <tabstop>alignment_image_checkbox</tabstop>
   <tabstop>alignment_box</tabstop>
-  <tabstop>skip_button</tabstop>
-  <tabstop>run_groom_button</tabstop>
-  <tabstop>restore_defaults</tabstop>
   <tabstop>sinc_passband</tabstop>
   <tabstop>sinc_iterations</tabstop>
  </tabstops>
