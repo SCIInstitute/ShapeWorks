@@ -142,14 +142,14 @@ void GroomTool::on_autopad_checkbox_stateChanged(int state) {
 
 //---------------------------------------------------------------------------
 void GroomTool::handle_error(QString msg) {
-  this->groom_is_running_ = false;
+  groom_is_running_ = false;
   emit error_message(msg);
-  this->enable_actions();
+  enable_actions();
 }
 
 //---------------------------------------------------------------------------
 void GroomTool::handle_progress(int val) {
-  if (this->groom_is_running_) {
+  if (groom_is_running_) {
     emit progress(val);
   }
 }
@@ -174,7 +174,7 @@ void GroomTool::update_page() {
     } else {
       ui_->image_panel->hide();
     }
-    if (is_mesh || (is_image && this->ui_->convert_mesh_checkbox->isChecked())) {
+    if (is_mesh || (is_image && ui_->convert_mesh_checkbox->isChecked())) {
       ui_->mesh_panel->show();
     } else {
       ui_->mesh_panel->hide();
@@ -189,7 +189,7 @@ void GroomTool::update_domain_box() {
 
   if (domain_names.size() != ui_->domain_box->count()) {
     ui_->domain_box->clear();
-    for (auto&& item : domain_names) {
+    for (auto& item : domain_names) {
       ui_->domain_box->addItem(QString::fromStdString(item));
     }
   }
@@ -233,11 +233,11 @@ void GroomTool::update_reflect_columns() {
     }
   }
 
-  if (reflect_columns != this->reflect_columns_) {
-    this->ui_->reflect_column->clear();
-    this->ui_->reflect_column->addItems(reflect_columns);
+  if (reflect_columns != reflect_columns_) {
+    ui_->reflect_column->clear();
+    ui_->reflect_column->addItems(reflect_columns);
   }
-  this->reflect_columns_ = reflect_columns;
+  reflect_columns_ = reflect_columns;
 }
 
 //---------------------------------------------------------------------------
@@ -269,12 +269,12 @@ void GroomTool::load_params() {
 //---------------------------------------------------------------------------
 void GroomTool::disable_actions() {
   ui_->skip_button->setEnabled(false);
-  // this->ui_->run_groom_button->setEnabled(false);
+  // ui_->run_groom_button->setEnabled(false);
 }
 
 //---------------------------------------------------------------------------
 void GroomTool::enable_actions() {
-  // this->ui_->run_groom_button->setEnabled(true);
+  // ui_->run_groom_button->setEnabled(true);
 
   if (groom_is_running_) {
     ui_->skip_button->setEnabled(false);
@@ -433,7 +433,7 @@ void GroomTool::store_params(bool all_same) {
 
 //---------------------------------------------------------------------------
 void GroomTool::on_run_groom_button_clicked() {
-  if (this->groom_is_running_) {
+  if (groom_is_running_) {
     shutdown_threads();
     groom_is_running_ = false;
     enable_actions();
@@ -486,7 +486,7 @@ void GroomTool::on_run_groom_button_clicked() {
   worker->moveToThread(thread);
   connect(thread, SIGNAL(started()), worker, SLOT(process()));
   connect(worker, &ShapeworksWorker::finished, this, &GroomTool::handle_thread_complete);
-  connect(this->groom_.data(), &QGroom::progress, this, &GroomTool::handle_progress);
+  connect(groom_.data(), &QGroom::progress, this, &GroomTool::handle_progress);
   connect(worker, &ShapeworksWorker::error_message, this, &GroomTool::handle_error);
   connect(worker, &ShapeworksWorker::message, this, &GroomTool::message);
   connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
@@ -500,7 +500,7 @@ void GroomTool::on_run_groom_button_clicked() {
 void GroomTool::handle_thread_complete() {
   emit progress(95);
 
-  QString duration = QString::number(this->timer_.elapsed() / 1000.0, 'f', 1);
+  QString duration = QString::number(timer_.elapsed() / 1000.0, 'f', 1);
   emit message("Groom Complete.  Duration: " + duration + " seconds");
 
   // trigger reload of meshes
@@ -582,7 +582,7 @@ void GroomTool::reflect_checkbox_changed(int state) {
 //---------------------------------------------------------------------------
 void GroomTool::reflect_column_changed(int index) {
   ui_->reflect_column->setCurrentIndex(index);
-  this->update_reflect_choices();
+  update_reflect_choices();
 }
 
 //---------------------------------------------------------------------------
