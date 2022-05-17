@@ -53,7 +53,7 @@ def get_mesh_from_DT(DT_list, mesh_dir):
 		mesh_files.append(output_vtk)
 	return sorted(mesh_files)
 
-def get_mesh_from_particles(particle_list, mesh_dir, template_particles, template_mesh):
+def get_mesh_from_particles(particle_list, mesh_dir, template_particles, template_mesh, planes=None):
 	num_particles = np.loadtxt(particle_list[0]).shape[0]
 	particle_dir = os.path.dirname(particle_list[0]) + '/'
 	execCommand = ["shapeworks", 
@@ -74,7 +74,9 @@ def get_mesh_from_particles(particle_list, mesh_dir, template_particles, templat
 		outfnm = infnm.replace(particle_dir, mesh_dir)
 		outmeshes.append(outfnm)
 		shutil.move(infnm, outfnm)
-
+	if planes is not None:
+		for index in range(len(outmeshes)):
+			sw.Mesh(outmeshes[index]).clip(planes[index][0], planes[index][1], planes[index][2]).write(outmeshes[index])
 	return sorted(outmeshes)
 
 def surface_to_surface_distance(orig_list, pred_list, out_dir):
@@ -112,14 +114,16 @@ def get_MSE(pred_particle_files, true_particle_files):
 	MSEs = np.array(MSEs)
 	return np.mean(MSEs), np.std(MSEs)
 
-def get_mesh_distance(pred_particle_files, mesh_list, template_particles, template_mesh, out_dir):
+def get_mesh_distance(pred_particle_files, mesh_list, template_particles, template_mesh, out_dir, planes=None):
 	# Step 1: Get predicted meshes from predicted particles
 	print("Getting meshes from predicted local particles...")
-	pred_mesh_list = sorted(get_mesh_from_particles(pred_particle_files, out_dir+"/predcited_meshes/", template_particles, template_mesh))
+	pred_mesh_list = sorted(get_mesh_from_particles(pred_particle_files, out_dir+"/predcited_meshes/", template_particles, template_mesh, planes))
 	# Step 2: Get distance between original and predicted mesh
 	mean_distances = []
 	for index in range(len(mesh_list)):
 		orig_mesh = sw.Mesh(mesh_list[index])
+		if planes is not None:
+			orig_mesh.clip(planes[index][0], planes[index][1], planes[index][2])
 		pred_mesh = sw.Mesh(pred_mesh_list[index])
 		mean_distances.append(np.mean(orig_mesh.distance(pred_mesh)[0]))
 		mean_distances.append(np.mean(pred_mesh.distance(orig_mesh)[0]))
