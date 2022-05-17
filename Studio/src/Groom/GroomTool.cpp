@@ -502,6 +502,7 @@ void GroomTool::on_skip_button_clicked() {
 //---------------------------------------------------------------------------
 void GroomTool::set_session(QSharedPointer<Session> session) {
   session_ = session;
+  ui_->domain_box->clear();
   this->update_reflect_choices();
 }
 
@@ -510,7 +511,7 @@ void GroomTool::activate() {
   auto subjects = session_->get_project()->get_subjects();
 
   auto domain_names = session_->get_project()->get_domain_names();
-  ui_->domain_box->setVisible(domain_names.size() > 1);
+  ui_->domain_widget->setVisible(domain_names.size() > 1);
 
   if (domain_names.size() != ui_->domain_box->count()) {
     ui_->domain_box->clear();

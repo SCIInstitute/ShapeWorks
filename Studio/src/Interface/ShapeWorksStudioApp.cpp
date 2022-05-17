@@ -1353,6 +1353,13 @@ void ShapeWorksStudioApp::open_project(QString filename) {
 
   session_->set_loading(false);
 
+  if (ui_->action_analysis_mode->isChecked() && !ui_->action_analysis_mode->isEnabled()) {
+    on_action_import_mode_triggered();
+  }
+  if (ui_->action_optimize_mode->isChecked() && !ui_->action_optimize_mode->isEnabled()) {
+    on_action_import_mode_triggered();
+  }
+
   handle_project_changed();
 
   if (session_->is_light_project()) {
@@ -1655,8 +1662,8 @@ bool ShapeWorksStudioApp::set_view_mode(std::string view_mode) {
   if (view_mode != get_view_mode()) {
     if (!session_->is_loading()) {
       session_->parameters().set("view_state", view_mode);
+      update_view_mode();
     }
-    update_view_mode();
     return true;
   }
   return false;
@@ -2008,8 +2015,8 @@ void ShapeWorksStudioApp::update_view_combo() {
   int current = ui_->view_mode_combobox->currentIndex();
   while (current > 0 && !is_view_combo_item_enabled(current)) {
     current--;
-    ui_->view_mode_combobox->setCurrentIndex(current);
   }
+  ui_->view_mode_combobox->setCurrentIndex(current);
 }
 
 //---------------------------------------------------------------------------

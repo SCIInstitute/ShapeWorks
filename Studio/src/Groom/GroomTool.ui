@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>332</width>
+    <width>334</width>
     <height>1136</height>
    </rect>
   </property>
@@ -125,7 +125,32 @@ QWidget#mesh_panel {
     <number>0</number>
    </property>
    <item>
-    <widget class="QComboBox" name="domain_box"/>
+    <widget class="QWidget" name="domain_widget" native="true">
+     <layout class="QGridLayout" name="gridLayout">
+      <property name="leftMargin">
+       <number>3</number>
+      </property>
+      <property name="topMargin">
+       <number>3</number>
+      </property>
+      <property name="rightMargin">
+       <number>3</number>
+      </property>
+      <property name="bottomMargin">
+       <number>3</number>
+      </property>
+      <item row="0" column="0">
+       <widget class="QLabel" name="domain_label">
+        <property name="text">
+         <string>Domain</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QComboBox" name="domain_box"/>
+      </item>
+     </layout>
+    </widget>
    </item>
    <item>
     <widget class="QWidget" name="image_panel" native="true">
@@ -1808,7 +1833,6 @@ QWidget#mesh_panel {
   </layout>
  </widget>
  <tabstops>
-  <tabstop>domain_box</tabstop>
   <tabstop>mesh_fill_holes</tabstop>
   <tabstop>mesh_smooth</tabstop>
   <tabstop>mesh_smooth_method</tabstop>
