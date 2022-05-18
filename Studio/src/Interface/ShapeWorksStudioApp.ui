@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1184</width>
+    <width>1206</width>
     <height>705</height>
    </rect>
   </property>
@@ -27,7 +27,10 @@ QWidget#image_widget {
     border-radius: 3px;
     border: 1px solid grey;
 }
-</string>
+
+QToolButton#compare::checked {
+	background-color: rgb(170, 81, 0);
+}</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
@@ -206,6 +209,34 @@ QWidget#image_widget {
            <widget class="QComboBox" name="view_mode_combobox">
             <property name="toolTip">
              <string>View mode</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QToolButton" name="compare">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="toolTip">
+             <string>Show/hide isosurface</string>
+            </property>
+            <property name="text">
+             <string>Compare</string>
+            </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+            <property name="popupMode">
+             <enum>QToolButton::MenuButtonPopup</enum>
+            </property>
+            <property name="autoRaise">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -639,7 +670,7 @@ QWidget#image_widget {
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1184</width>
+     <width>1206</width>
      <height>21</height>
     </rect>
    </property>
