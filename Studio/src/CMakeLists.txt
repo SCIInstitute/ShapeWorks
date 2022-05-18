@@ -186,6 +186,7 @@ SET(STUDIO_UTILS_MOC_HDRS
   )
 
 SET(STUDIO_INTERFACE_SRCS
+  Interface/CompareWidget.cpp
   Interface/ExportImageDialog.cpp
   Interface/KeyboardShortcuts.cpp
   Interface/LogWindow.cpp
@@ -196,6 +197,7 @@ SET(STUDIO_INTERFACE_SRCS
   Interface/WheelEventForwarder.cpp
   )
 SET(STUDIO_INTERFACE_MOC_HDRS
+  Interface/CompareWidget.h
   Interface/ExportImageDialog.h
   Interface/KeyboardShortcuts.h
   Interface/LogWindow.h

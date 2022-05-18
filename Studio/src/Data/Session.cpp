@@ -1210,6 +1210,15 @@ std::vector<bool> Session::get_good_bad_particles() { return params_.get("good_b
 void Session::set_good_bad_particles(const std::vector<bool>& good_bad) { params_.set("good_bad_particles", good_bad); }
 
 //---------------------------------------------------------------------------
+void Session::set_compare_settings(CompareSettings settings) {
+  compare_settings_ = settings;
+  emit update_display();
+}
+
+//---------------------------------------------------------------------------
+CompareSettings Session::get_compare_settings() { return compare_settings_; }
+
+//---------------------------------------------------------------------------
 void Session::trigger_repaint() { Q_EMIT repaint(); }
 
 //---------------------------------------------------------------------------

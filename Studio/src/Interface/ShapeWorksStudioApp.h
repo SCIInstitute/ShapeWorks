@@ -36,6 +36,7 @@ class SplashScreen;
 class WheelEventForwarder;
 class StatusBarWidget;
 class PythonWorker;
+class CompareWidget;
 
 //! Main ShapeWorksStudio window
 /*!
@@ -118,6 +119,7 @@ class ShapeWorksStudioApp : public QMainWindow {
   void handle_progress(int amt);
   void handle_new_mesh();
   void handle_clear_cache();
+  void handle_compare_settings_changed();
 
   void update_feature_map_selection(const QString& feature_map);
   void update_feature_map_scale();
@@ -202,11 +204,12 @@ class ShapeWorksStudioApp : public QMainWindow {
 
   void create_glyph_submenu();
   void create_iso_submenu();
+  void create_compare_submenu();
 
   /// designer form
   Ui_ShapeWorksStudioApp* ui_;
 
-  QActionGroup* action_group_;
+  QActionGroup* action_group_ = nullptr;
 
   QSharedPointer<Lightbox> lightbox_;
   QSharedPointer<DataTool> data_tool_;
@@ -216,6 +219,7 @@ class ShapeWorksStudioApp : public QMainWindow {
   QSharedPointer<DeepSSMTool> deepssm_tool_;
   QSharedPointer<Visualizer> visualizer_;
   QSharedPointer<PreferencesWindow> preferences_window_;
+  CompareWidget* compare_widget_ = nullptr;
   vtkSmartPointer<StudioVtkOutputWindow> studio_vtk_output_window_;
 
   // all the preferences

@@ -592,6 +592,8 @@ void Viewer::display_shape(QSharedPointer<Shape> shape) {
 
   meshes_ = shape->get_meshes(visualizer_->get_display_mode());
 
+  auto compare_settings = session_->get_compare_settings();
+
   if (!meshes_.valid() && loading_displayed_) {
     // no need to proceed
     mesh_ready_ = false;

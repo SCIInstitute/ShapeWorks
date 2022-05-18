@@ -18,6 +18,18 @@
 
 namespace shapeworks {
 
+class CompareSettings {
+ public:
+  bool compare_enabled_ = false;
+  bool surface_distance_mode_ = false;
+  bool original_checked_ = false;
+  bool groomed_checked_ = false;
+  bool reconstructed_checked_ = false;
+  float original_opacity_ = 1.0;
+  float groomed_opacity_ = 1.0;
+  float reconstructed_opacity_ = 1.0;
+};
+
 class Shape;
 
 class Session;
@@ -206,6 +218,9 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   void set_difference_particles(StudioParticles particles) { difference_particles_ = particles; }
   StudioParticles get_difference_particles() { return difference_particles_; }
 
+  void set_compare_settings(CompareSettings settings);
+  CompareSettings get_compare_settings();
+
   void trigger_repaint();
 
   /// set display mode (original, groomed, reconstructed)
@@ -217,7 +232,6 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   static const std::string MODE_ORIGINAL_C;
   static const std::string MODE_GROOMED_C;
   static const std::string MODE_RECONSTRUCTION_C;
-
 
  public Q_SLOTS:
   void set_feature_auto_scale(bool value);
@@ -256,7 +270,6 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   const static std::string DEEPSSM_C;
 
  private:
-
   void save_particles_file(std::string filename, const Eigen::VectorXd& points);
 
   void renumber_shapes();
@@ -307,6 +320,8 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   std::string display_mode_ = Session::MODE_ORIGINAL_C;
 
   bool is_loading_ = false;
+  CompareSettings compare_settings_;
+
 };
 
 }  // namespace shapeworks
