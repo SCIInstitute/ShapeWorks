@@ -230,6 +230,228 @@ void ParticleSystem::PrintParticleSystem() {
   */
 }
 
+void ParticleSystem::CorrespondenceBasedAllParticleSplitting(double epsilon, double delta, unsigned int domains_per_shape,
+                                                  unsigned int dom_to_process) {
+  size_t num_doms = this->GetNumberOfDomains();
+
+  for (size_t domain = 0; domain < num_doms; domain++) {
+    this->GetDomain(domain)->GetConstraints()->InitializeLagrangianParameters(1, 1, 1);
+  }
+
+  std::vector<std::vector<PointType> > lists;
+
+  for (size_t domain = dom_to_process; domain < num_doms; domain += domains_per_shape) {
+    std::vector<PointType> list;
+
+    for (auto k = 0; k < GetPositions(domain)->GetSize(); k++) {
+      list.push_back(GetPositions(domain)->Get(k));
+    }
+    lists.push_back(list);
+  }
+
+  if (lists.size() > 0) {
+    // --------------
+    // If first n splits
+    if(lists[0].size() <= 64){
+
+        // debuggg
+        std::vector<PointType> averages;
+        //For every particle
+        for (size_t i = 0; i < lists[0].size(); i++) {
+            // In every domain
+            double xm = 0, ym = 0, zm = 0;
+            for (size_t j = 0; j < lists.size(); j++) {
+                xm += lists[j][i][0];
+                ym += lists[j][i][1];
+                zm += lists[j][i][2];
+            }
+            PointType av({xm/lists.size(), ym/lists.size(), zm/lists.size()});
+            averages.push_back(av);
+            std::cout << av <<std::endl;
+        }
+        size_t counter = 0;
+        std::ofstream outfile;
+        std::string outname = "splitting_directions_" + std::to_string(lists[0].size()) + ".txt";
+        outfile.open(outname);
+        outfile << lists[0].size() << std::endl;
+        for (size_t i = 0; i < lists[0].size(); i++) {
+            outfile << averages[i][0] << " " << averages[i][1] << " " << averages[i][2] << " " << std::endl;
+        }
+        outfile << lists.size() << std::endl;
+
+        for (size_t i = 0; i < lists[0].size(); i++) {
+          // While the random vector updated violates plane constraints
+          // Breaks when it doesn't violate for any domain
+          std::vector<PointType> newposs_good;
+
+          while (true) {
+            // Generate random unit vector
+            std::uniform_real_distribution<double> distribution(-1000., 1000.);
+
+            vnl_vector_fixed<double, 3> random;
+
+            for (int i = 0; i < 3; i++) {
+              random[i] = distribution(this->m_rand);
+            }
+            double norm = random.magnitude();
+            random /= norm;
+
+            // Check where the update will take us after applying it to the point and the constraints.
+            newposs_good.clear();
+            bool good = true;  // flag to check if the new update violates in any domain
+            for (size_t j = 0; j < lists.size(); j++) {
+              // Add epsilon times random direction to existing point and apply domain
+              // constraints to generate a new particle position.
+
+              int local_domain = dom_to_process + j * domains_per_shape;
+              auto transformed_vector = TransformVector(random, GetInversePrefixTransform(local_domain) * GetInverseTransform(local_domain));
+              PointType newpos = GetDomain(local_domain)->GetPositionAfterSplit(lists[j][i], transformed_vector, random, epsilon);
+
+              // debuggg
+              vnl_vector_fixed<double, VDimension> updateVector = transformed_vector* delta;
+              outfile << updateVector << std::endl;
+
+              // Go to surface
+              if (!this->m_DomainFlags[local_domain]) {
+                this->GetDomain(local_domain)->ApplyConstraints(newpos, -1);
+              }
+              newposs_good.push_back(newpos);
+            }
+
+            if (good) {
+              for (size_t j = 0; j < lists.size(); j++) {
+                int local_domain = dom_to_process + j * domains_per_shape;
+                this->AddPosition(newposs_good[j], local_domain, 0);
+                // Debuggg
+                // std::cout << "Domain " << j << " Curr Pos " << lists[j][i] << " random "
+                // << random  << " epsilon " << epsilon << " picked " << newposs_good[j] << std::endl;
+              }
+              break;
+            }
+
+          }  // while end
+        }    // for end
+
+        // debuggg
+        outfile.close();
+    }        // if end
+    else{
+        // --------------
+        // Else non-first-n splits
+        // Compute mean particles over domains
+        std::vector<PointType> averages;
+        //For every particle
+        for (size_t i = 0; i < lists[0].size(); i++) {
+            // In every domain
+            double xm = 0, ym = 0, zm = 0;
+            for (size_t j = 0; j < lists.size(); j++) {
+                xm += lists[j][i][0];
+                ym += lists[j][i][1];
+                zm += lists[j][i][2];
+            }
+            PointType av({xm/lists.size(), ym/lists.size(), zm/lists.size()});
+            averages.push_back(av);
+            std::cout << av <<std::endl;
+        }
+
+        size_t counter = 0;
+
+        // debuggg
+        std::ofstream outfile;
+        std::string outname = "splitting_directions_" + std::to_string(lists[0].size()) + ".txt";
+        outfile.open(outname);
+        outfile << lists[0].size() << std::endl;
+        for (size_t i = 0; i < lists[0].size(); i++) {
+            outfile << averages[i][0] << " " << averages[i][1] << " " << averages[i][2] << " " << std::endl;
+        }
+        outfile << lists.size() << std::endl;
+
+        for (size_t i = 0; i < lists[0].size(); i++) {
+          // While the random vector updated violates plane constraints
+          // Breaks when it doesn't violate for any domain
+          std::vector<PointType> newposs_good;
+
+          //Debuggg
+          std::vector<vnl_vector_fixed<double, VDimension> > dbgoriginal;
+
+          // Find the closest mean particle to current mean particle
+          double min_distance = std::numeric_limits<double>::infinity();
+          PointType closest_particle = averages[0];
+          size_t closest_particle_index = 0;
+          for (size_t k = 0; k < averages.size(); k++) {
+              double dist = (averages[i]-averages[k]).GetSquaredNorm();
+              if(k != i && dist < min_distance){
+                  min_distance = dist;
+                  closest_particle = averages[k];
+                  closest_particle_index = k;
+              }
+          }
+
+          while (true) {
+            // Check where the update will take us after applying it to the point and the constraints.
+            newposs_good.clear();
+            bool good = true;  // flag to check if the new update violates in any domain
+            for (size_t j = 0; j < lists.size(); j++) {
+                PointType splitting_vec_PT = (lists[j][closest_particle_index]-lists[j][i])*delta;
+                vnl_vector_fixed<double, VDimension> splitting_vec({splitting_vec_PT[0], splitting_vec_PT[1], splitting_vec_PT[2]});
+
+                int local_domain = dom_to_process + j * domains_per_shape;
+
+                //Debuggg
+                vnl_vector_fixed<double, VDimension> updateVector = splitting_vec* delta;
+                outfile << updateVector << std::endl;
+                vnl_vector_fixed<double, VDimension> normupdateVector = updateVector / updateVector.magnitude();
+                dbgoriginal.push_back(normupdateVector);
+
+                auto transformed_vector = TransformVector(normupdateVector * (epsilon/5), GetInversePrefixTransform(local_domain) * GetInverseTransform(local_domain));
+                PointType newpos = GetDomain(local_domain)->GetPositionAfterSplit(lists[j][i], transformed_vector, splitting_vec, epsilon);
+
+                // Go to surface
+                if (!this->m_DomainFlags[local_domain]) {
+                this->GetDomain(local_domain)->ApplyConstraints(newpos, -1);
+                }
+
+                newposs_good.push_back(newpos);
+                }
+
+            //Debuggg
+            bool viol = false;
+            for(size_t l = 0; l < dbgoriginal.size(); l++){
+              for(size_t m = 0; m < dbgoriginal.size(); m++){
+                  vnl_vector_fixed<double, VDimension> dbgpro1 = dbgoriginal[l];
+                  vnl_vector_fixed<double, VDimension> dbgpro2 = dbgoriginal[m];
+                  double cosangle = dbgpro1[0]*dbgpro2[0] + dbgpro1[1]*dbgpro2[1] + dbgpro1[2]*dbgpro2[2];
+                  if(acos(cosangle)*180/3.14 > 50) {
+                      std::cout << acos(cosangle)*180/3.14 << "\t m " << m << "\t l " << l << "\t split " << lists[0].size();
+                      viol = true;
+                  }
+              }
+              if(viol == true) {
+                  std::cout << std::endl;
+                  viol = false;
+              }
+            }
+
+            if (good) {
+              for (size_t j = 0; j < lists.size(); j++) {
+                int local_domain = dom_to_process + j * domains_per_shape;
+                this->AddPosition(newposs_good[j], local_domain, 0);
+                // Debuggg
+                // std::cout << "Domain " << j << " Curr Pos " << lists[j][i] << " random "
+                // << random  << " epsilon " << epsilon << " picked " << newposs_good[j] << std::endl;
+              }
+              break;
+            }
+
+          }  // while end
+        }    // for end
+
+        //debuggg
+        outfile.close();
+      }      // else end
+  }          // if end
+}
+
 void ParticleSystem::AdvancedAllParticleSplitting(double epsilon, unsigned int domains_per_shape,
                                                   unsigned int dom_to_process) {
   size_t num_doms = this->GetNumberOfDomains();
@@ -308,6 +530,7 @@ void ParticleSystem::AdvancedAllParticleSplitting(double epsilon, unsigned int d
     }    // for end
   }      // if end
 }
+
 
 void ParticleSystem::RegisterAttribute(ParticleAttribute<3> *attr) {
   // Register any methods defined by the attribute as observers of this

@@ -3,6 +3,7 @@
 #include <map>
 #include <random>
 #include <vector>
+#include <limits>
 
 #include "itkCommand.h"
 #include "itkDataObject.h"
@@ -150,6 +151,7 @@ class ParticleSystem : public DataObject {
   void SplitAllParticles(double epsilon, int threadId = 0);
   void SplitParticle(double epsilon, unsigned int idx, unsigned int d = 0, int threadId = 0);
   void AdvancedAllParticleSplitting(double epsilon, unsigned int domains_per_shape, unsigned int dom_to_process);
+  void CorrespondenceBasedAllParticleSplitting(double epsilon, double delta, unsigned int domains_per_shape, unsigned int dom_to_process);
   // Debug function
   void PrintParticleSystem();
 
