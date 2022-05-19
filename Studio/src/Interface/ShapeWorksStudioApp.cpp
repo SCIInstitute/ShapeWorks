@@ -942,7 +942,10 @@ void ShapeWorksStudioApp::update_view_mode() {
     }
 
     std::string feature_map_override = "";
-    if (session_->get_tool_state() == Session::DEEPSSM_C) {
+
+    if (session_->get_compare_settings().compare_enabled_ && session_->get_compare_settings().surface_distance_mode_) {
+      feature_map_override = "distance";
+    } else if (session_->get_tool_state() == Session::DEEPSSM_C) {
       if (deepssm_tool_->get_display_feature() != "") {
         feature_map_override = deepssm_tool_->get_display_feature();
       }
@@ -1213,7 +1216,7 @@ void ShapeWorksStudioApp::update_display(bool force) {
 
   int num_domains = session_->get_domains_per_shape();
   ui_->alignment_combo->setVisible(!analysis_mode && num_domains > 1);
-  //ui_->center_checkbox->setVisible(!analysis_mode);
+  // ui_->center_checkbox->setVisible(!analysis_mode);
 
   if (analysis_mode) {
     mode = analysis_tool_->get_analysis_mode();
@@ -2017,7 +2020,6 @@ void ShapeWorksStudioApp::update_view_combo() {
     set_view_combo_item_enabled(DisplayMode::Original, false);
     set_view_combo_item_enabled(DisplayMode::Groomed, false);
   }
-
 
   int current = ui_->view_mode_combobox->currentIndex();
   while (current > 0 && !is_view_combo_item_enabled(current)) {

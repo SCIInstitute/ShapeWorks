@@ -243,7 +243,7 @@ void Viewer::display_vector_field() {
 
   // Dot product difference vectors with the surface normals.
   vtkSmartPointer<vtkFloatArray> magnitudes = vtkSmartPointer<vtkFloatArray>::New();
-  magnitudes->SetName("magnitues");
+  magnitudes->SetName("magnitudes");
   magnitudes->SetNumberOfComponents(1);
 
   vtkSmartPointer<vtkFloatArray> vectors = vtkSmartPointer<vtkFloatArray>::New();
@@ -669,19 +669,18 @@ void Viewer::display_shape(QSharedPointer<Shape> shape) {
       actor->GetProperty()->SetSpecularPower(15);
       actor->GetProperty()->SetOpacity(1.0);
 
-      if (feature_map != "" && poly_data) {
-        poly_data->GetPointData()->SetActiveScalars(feature_map.c_str());
-        mapper->ScalarVisibilityOn();
-        mapper->SetScalarModeToUsePointData();
+      if (compare_settings.compare_enabled_ && compare_settings.surface_distance_mode_) {
+        // compute surface to surface distance
+        Mesh m(poly_data);
+        Mesh m2(compare_meshes_.meshes()[i]->get_poly_data());
+        auto field = m.distance(m2)[0];
+        m.setField("distance", field, Mesh::Point);
 
-        auto scalars = poly_data->GetPointData()->GetScalars(feature_map.c_str());
-        if (scalars) {
-          double range[2];
-          scalars->GetRange(range);
-          update_difference_lut(range[0], range[1]);
-          mapper->SetScalarRange(range[0], range[1]);
-          visualizer_->update_feature_range(range);
-        }
+        //set_scalar_visibility(poly_data, mapper, "distance");
+      }
+
+      if (feature_map != "" && poly_data) {
+        set_scalar_visibility(poly_data, mapper, feature_map.c_str());
       } else {
         if (session_->get_display_mode() != DisplayMode::Reconstructed) {
           try {
@@ -891,8 +890,7 @@ void Viewer::update_points() {
   glyph_actor_->SetUserTransform(vtkSmartPointer<vtkTransform>::New());
 
   bool reverse = false;
-  if (session_->get_display_mode() == DisplayMode::Original ||
-      session_->get_display_mode() == DisplayMode::Groomed) {
+  if (session_->get_display_mode() == DisplayMode::Original || session_->get_display_mode() == DisplayMode::Groomed) {
     if (visualizer_->get_center()) {
       auto transform = shape_->get_alignment(alignment_domain);
       reverse = Viewer::is_reverse(transform);
@@ -961,7 +959,8 @@ void Viewer::update_actors() {
     for (int i = 0; i < number_of_domains_; i++) {
       renderer_->AddActor(unclipped_surface_actors_[i]);
       renderer_->AddActor(surface_actors_[i]);
-      if (session_->get_compare_settings().compare_enabled_) {
+      if (session_->get_compare_settings().compare_enabled_ &&
+          !session_->get_compare_settings().surface_distance_mode_) {
         renderer_->AddActor(compare_actors_[i]);
       }
 
@@ -995,7 +994,7 @@ vtkSmartPointer<vtkPolyData> Viewer::get_particle_poly_data() { return glyph_poi
 void Viewer::insert_compare_meshes() {
   auto settings = session_->get_compare_settings();
 
-  if (!settings.compare_enabled_ || !compare_meshes_.valid()) {
+  if (!settings.compare_enabled_ || !compare_meshes_.valid() || settings.surface_distance_mode_) {
     return;
   }
 
@@ -1005,24 +1004,25 @@ void Viewer::insert_compare_meshes() {
     auto mapper = compare_mappers_[i];
     auto actor = compare_actors_[i];
 
-    auto transform = visualizer_->get_transform(shape_, settings.get_display_mode(), visualizer_->get_alignment_domain(), i);
+    auto transform =
+        visualizer_->get_transform(shape_, settings.get_display_mode(), visualizer_->get_alignment_domain(), i);
     if (Viewer::is_reverse(transform)) {  // if it's been reflected we need to reverse
       poly_data = StudioUtils::reverse_poly_data(poly_data);
     }
-/*
-    if (session_->get_display_mode() == DisplayMode::Reconstructed) {
-      auto procrustes_transform = shape_->get_procrustest_transform(i);
+    /*
+        if (session_->get_display_mode() == DisplayMode::Reconstructed) {
+          auto procrustes_transform = shape_->get_procrustest_transform(i);
 
-      if (procrustes_transform) {
-        std::cerr << "compose transform!\n";
-        vtkSmartPointer<vtkMatrix4x4> matrix = vtkSmartPointer<vtkMatrix4x4>::New();
-        vtkMatrix4x4::Multiply4x4(procrustes_transform->GetMatrix(), transform->GetMatrix(), matrix);
+          if (procrustes_transform) {
+            std::cerr << "compose transform!\n";
+            vtkSmartPointer<vtkMatrix4x4> matrix = vtkSmartPointer<vtkMatrix4x4>::New();
+            vtkMatrix4x4::Multiply4x4(procrustes_transform->GetMatrix(), transform->GetMatrix(), matrix);
 
-        transform = vtkSmartPointer<vtkTransform>::New();
-        transform->SetMatrix(matrix);
-      }
-    }
-    */
+            transform = vtkSmartPointer<vtkTransform>::New();
+            transform->SetMatrix(matrix);
+          }
+        }
+        */
 
     actor->SetUserTransform(transform);
     mapper->SetInputData(poly_data);
@@ -1035,6 +1035,22 @@ void Viewer::insert_compare_meshes() {
     actor->GetProperty()->SetSpecular(0.2);
     actor->GetProperty()->SetSpecularPower(15);
     actor->GetProperty()->SetOpacity(settings.opacity_);
+  }
+}
+
+//-----------------------------------------------------------------------------
+void Viewer::set_scalar_visibility(vtkSmartPointer<vtkPolyData> poly_data, vtkSmartPointer<vtkPolyDataMapper> mapper,
+                                   std::string scalar) {
+  poly_data->GetPointData()->SetActiveScalars(scalar.c_str());
+  mapper->ScalarVisibilityOn();
+  mapper->SetScalarModeToUsePointData();
+  auto scalars = poly_data->GetPointData()->GetScalars(scalar.c_str());
+  if (scalars) {
+    double range[2];
+    scalars->GetRange(range);
+    update_difference_lut(range[0], range[1]);
+    mapper->SetScalarRange(range[0], range[1]);
+    visualizer_->update_feature_range(range);
   }
 }
 

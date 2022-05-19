@@ -154,6 +154,8 @@ class Viewer {
 
   void insert_compare_meshes();
 
+  void set_scalar_visibility(vtkSmartPointer<vtkPolyData> poly_data, vtkSmartPointer<vtkPolyDataMapper> mapper, std::string scalar);
+
  private:
   void initialize_surfaces();
 
