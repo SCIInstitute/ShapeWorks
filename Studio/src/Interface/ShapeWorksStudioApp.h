@@ -155,14 +155,6 @@ class ShapeWorksStudioApp : public QMainWindow {
 
   static QString get_mesh_file_filter();
 
-  enum VIEW_MODE { ORIGINAL = 0, GROOMED = 1, RECONSTRUCTED = 2 };
-
-  enum DISPLAY_MODE { ALL_SAMPLES = 0, MEAN = 1, PCA = 2, SINGLE_SAMPLE = 3 };
-
-  static const std::string MODE_ORIGINAL_C;
-  static const std::string MODE_GROOMED_C;
-  static const std::string MODE_RECONSTRUCTION_C;
-
   static const std::string SETTING_ZOOM_C;
 
   void set_view_combo_item_enabled(int item, bool value);
