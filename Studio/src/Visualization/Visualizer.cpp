@@ -53,12 +53,6 @@ void Visualizer::set_session(SessionHandle session) {
 }
 
 //-----------------------------------------------------------------------------
-void Visualizer::set_display_mode(std::string mode) { session_->set_display_mode(mode); }
-
-//-----------------------------------------------------------------------------
-std::string Visualizer::get_display_mode() { return session_->get_display_mode(); }
-
-//-----------------------------------------------------------------------------
 void Visualizer::set_center(bool center) { center_ = center; }
 
 //-----------------------------------------------------------------------------
@@ -168,8 +162,8 @@ std::vector<vtkSmartPointer<vtkPolyData>> Visualizer::get_current_meshes_transfo
   std::vector<vtkSmartPointer<vtkPolyData>> list;
   auto shapes = lightbox_->get_shapes();
   if (shapes.size() > 0) {
-    if (shapes[0]->get_meshes(get_display_mode()).valid()) {
-      auto meshes = shapes[0]->get_meshes(get_display_mode()).meshes();
+    if (shapes[0]->get_meshes(session_->get_display_mode()).valid()) {
+      auto meshes = shapes[0]->get_meshes(session_->get_display_mode()).meshes();
 
       for (int domain = 0; domain < meshes.size(); domain++) {
         if (!meshes[domain]->get_poly_data()) {
@@ -459,13 +453,19 @@ bool Visualizer::get_uniform_feature_range(void) { return feature_range_uniform_
 
 //-----------------------------------------------------------------------------
 vtkSmartPointer<vtkTransform> Visualizer::get_transform(QSharedPointer<Shape> shape, int alignment_domain, int domain) {
-  vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
+  return get_transform(shape, session_->get_display_mode(), alignment_domain, domain);
+}
 
-  if (get_display_mode() == Session::MODE_ORIGINAL_C) {
+//-----------------------------------------------------------------------------
+vtkSmartPointer<vtkTransform> Visualizer::get_transform(QSharedPointer<Shape> shape, DisplayMode display_mode, int alignment_domain, int domain)
+{
+  auto transform = vtkSmartPointer<vtkTransform>::New();
+
+  if (display_mode == DisplayMode::Original) {
     if (get_center()) {
       transform = shape->get_transform(alignment_domain);
     }
-  } else if (get_display_mode() == Session::MODE_GROOMED_C) {
+  } else if (display_mode == DisplayMode::Groomed) {
     if (get_center()) {
       transform = shape->get_alignment(alignment_domain);
     }
@@ -474,6 +474,7 @@ vtkSmartPointer<vtkTransform> Visualizer::get_transform(QSharedPointer<Shape> sh
   }
 
   return transform;
+
 }
 
 //-----------------------------------------------------------------------------

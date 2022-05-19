@@ -51,10 +51,10 @@ QString Shape::get_display_name() {
 Shape::~Shape() = default;
 
 //---------------------------------------------------------------------------
-MeshGroup Shape::get_meshes(const std::string& display_mode, bool wait) {
-  if (display_mode == Session::MODE_ORIGINAL_C) {
+MeshGroup Shape::get_meshes(DisplayMode display_mode, bool wait) {
+  if (display_mode == DisplayMode::Original) {
     return this->get_original_meshes(wait);
-  } else if (display_mode == Session::MODE_GROOMED_C) {
+  } else if (display_mode == DisplayMode::Groomed) {
     return this->get_groomed_meshes(wait);
   }
   return this->get_reconstructed_meshes(wait);
@@ -491,7 +491,7 @@ bool Shape::import_point_file(QString filename, Eigen::VectorXd& points) {
 }
 
 //---------------------------------------------------------------------------
-void Shape::load_feature(std::string display_mode, std::string feature) {
+void Shape::load_feature(DisplayMode display_mode, std::string feature) {
   auto group = get_meshes(display_mode);
   if (!group.valid()) {
     // not ready yet
@@ -525,7 +525,7 @@ void Shape::load_feature(std::string display_mode, std::string feature) {
       // first check if we have particle scalars for this feature
       auto point_features = get_point_features(feature);
       if (point_features.size() > 0 &&
-          display_mode == Session::MODE_RECONSTRUCTION_C) {  // already loaded as particle scalars
+          display_mode == DisplayMode::Reconstructed) {  // already loaded as particle scalars
         set_point_features(feature, point_features);
       } else {
         // next check if there is a feature filename
@@ -701,7 +701,7 @@ std::vector<vtkSmartPointer<vtkTransform>> Shape::get_procrustest_transforms() {
 void Shape::set_point_features(std::string feature, Eigen::VectorXf values) {
   this->point_features_[feature] = values;
 
-  auto group = this->get_meshes(Session::MODE_RECONSTRUCTION_C);
+  auto group = this->get_meshes(DisplayMode::Reconstructed);
 
   if (group.valid()) {
     for (auto mesh : group.meshes()) {

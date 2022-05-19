@@ -165,8 +165,6 @@ class ShapeWorksStudioApp : public QMainWindow {
 
   static const std::string SETTING_ZOOM_C;
 
-  std::string get_view_mode();
-
   void set_view_combo_item_enabled(int item, bool value);
   bool is_view_combo_item_enabled(int item);
 
@@ -183,8 +181,6 @@ class ShapeWorksStudioApp : public QMainWindow {
   void update_display(bool force = false);
 
   void compute_mode_shape();
-
-  bool set_view_mode(std::string view_mode);
 
   bool set_feature_map(std::string feature_map);
   std::string get_feature_map();

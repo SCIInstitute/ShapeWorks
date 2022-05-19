@@ -1,5 +1,6 @@
 #include <Utils/StudioUtils.h>
 #include <vtkImageData.h>
+#include <vtkReverseSense.h>
 
 #include <QMessageBox>
 
@@ -63,5 +64,17 @@ QImage StudioUtils::vtk_image_to_qimage(vtkSmartPointer<vtkImageData> image_data
   }
 
   return image;
+}
+
+//---------------------------------------------------------------------------
+vtkSmartPointer<vtkPolyData> StudioUtils::reverse_poly_data(vtkSmartPointer<vtkPolyData> poly_data)
+{
+  auto reverse_filter = vtkSmartPointer<vtkReverseSense>::New();
+  reverse_filter->SetInputData(poly_data);
+  reverse_filter->ReverseNormalsOff();
+  reverse_filter->ReverseCellsOn();
+  reverse_filter->Update();
+  poly_data = reverse_filter->GetOutput();
+  return poly_data;
 }
 }  // namespace shapeworks

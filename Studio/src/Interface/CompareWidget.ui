@@ -7,16 +7,19 @@
     <x>0</x>
     <y>0</y>
     <width>470</width>
-    <height>310</height>
+    <height>159</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="3" column="1">
-    <widget class="QSlider" name="reconstructed_slider">
+   <item row="8" column="1">
+    <widget class="QSlider" name="opacity">
      <property name="maximum">
+      <number>100</number>
+     </property>
+     <property name="value">
       <number>100</number>
      </property>
      <property name="orientation">
@@ -24,59 +27,39 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="1">
-    <widget class="QSlider" name="groomed_slider">
-     <property name="maximum">
-      <number>100</number>
-     </property>
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="0">
-    <widget class="QCheckBox" name="reconstructed">
-     <property name="text">
-      <string>Reconstructed</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0">
-    <widget class="QCheckBox" name="groomed">
+   <item row="4" column="0">
+    <widget class="QRadioButton" name="groomed">
      <property name="text">
       <string>Groomed</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
-    <widget class="QCheckBox" name="original">
+   <item row="8" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Opacity</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0">
+    <widget class="QRadioButton" name="reconstructed">
+     <property name="text">
+      <string>Reconstructed</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QRadioButton" name="original">
      <property name="text">
       <string>Original</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="1">
-    <widget class="QSlider" name="original_slider">
-     <property name="maximum">
-      <number>100</number>
-     </property>
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="0">
-    <widget class="QRadioButton" name="overlay">
-     <property name="text">
-      <string>Overlay</string>
      </property>
      <property name="checked">
       <bool>true</bool>
      </property>
     </widget>
    </item>
-   <item row="0" column="1">
-    <widget class="QRadioButton" name="surface_distance">
+   <item row="9" column="0">
+    <widget class="QCheckBox" name="surface_distance">
      <property name="text">
       <string>Surface to Surface Distance</string>
      </property>

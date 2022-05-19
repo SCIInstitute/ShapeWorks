@@ -31,12 +31,6 @@ class Visualizer : public QObject {
   /// set the session
   void set_session(SessionHandle session);
 
-  /// set display mode (original, groomed, reconstructed)
-  void set_display_mode(std::string mode);
-
-  //! return the current display mode
-  std::string get_display_mode();
-
   /// turn automatic centering on/off
   void set_center(bool center);
 
@@ -122,6 +116,9 @@ class Visualizer : public QObject {
 
   //! Request the transform for a given shape and domain
   vtkSmartPointer<vtkTransform> get_transform(QSharedPointer<Shape> shape, int alignment_domain, int domain);
+
+  //! Request the transform for a given shape and domain and display mode
+  vtkSmartPointer<vtkTransform> get_transform(QSharedPointer<Shape> shape, DisplayMode display_mode, int alignment_domain, int domain);
 
   //! Set domain opacities
   void set_opacities(std::vector<float> opacities);

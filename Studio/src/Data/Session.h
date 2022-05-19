@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Data/StudioEnums.h>
 #include <Data/MeshManager.h>
 #include <Data/Preferences.h>
 #include <Data/StudioParticles.h>
@@ -25,9 +26,16 @@ class CompareSettings {
   bool original_checked_ = false;
   bool groomed_checked_ = false;
   bool reconstructed_checked_ = false;
-  float original_opacity_ = 1.0;
-  float groomed_opacity_ = 1.0;
-  float reconstructed_opacity_ = 1.0;
+  float opacity_ = 1.0;
+  DisplayMode get_display_mode() {
+    if (original_checked_) {
+      return DisplayMode::Original;
+    } else if (groomed_checked_) {
+      return DisplayMode::Groomed;
+    } else {
+      return DisplayMode::Reconstructed;
+    }
+  }
 };
 
 class Shape;
@@ -224,14 +232,10 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   void trigger_repaint();
 
   /// set display mode (original, groomed, reconstructed)
-  void set_display_mode(std::string mode);
+  void set_display_mode(DisplayMode mode);
 
   //! return the current display mode
-  std::string get_display_mode();
-
-  static const std::string MODE_ORIGINAL_C;
-  static const std::string MODE_GROOMED_C;
-  static const std::string MODE_RECONSTRUCTION_C;
+  DisplayMode get_display_mode();
 
  public Q_SLOTS:
   void set_feature_auto_scale(bool value);
@@ -317,11 +321,8 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   bool ffc_painting_inclusive_mode_ = false;
   double ffc_paint_size = 50;
 
-  std::string display_mode_ = Session::MODE_ORIGINAL_C;
-
   bool is_loading_ = false;
   CompareSettings compare_settings_;
-
 };
 
 }  // namespace shapeworks

@@ -3,6 +3,7 @@
 #include <Libs/Project/Project.h>
 class QWidget;
 
+#include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
 
 #include <QImage>
@@ -22,6 +23,9 @@ class StudioUtils {
 
   //! convert vtkImageData to QImage
   static QImage vtk_image_to_qimage(vtkSmartPointer<vtkImageData> image_data);
+
+  //! reverse a poly data
+  static vtkSmartPointer<vtkPolyData> reverse_poly_data(vtkSmartPointer<vtkPolyData> poly_data);
 };
 
 }  // namespace shapeworks

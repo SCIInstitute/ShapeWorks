@@ -91,6 +91,7 @@ SET(STUDIO_DATA_SRCS
   Data/PreferencesWindow.cpp
   Data/Session.cpp
   Data/Shape.cpp
+  Data/StudioEnums.cpp
   Data/StudioLog.cpp
   Data/StudioMesh.cpp
   Data/StudioParticles.cpp
