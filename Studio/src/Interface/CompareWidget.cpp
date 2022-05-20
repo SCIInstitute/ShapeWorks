@@ -14,8 +14,8 @@ CompareWidget::CompareWidget(QWidget *parent) : QWidget(parent), ui_(new Ui::Com
   connect(ui_->reconstructed, &QCheckBox::toggled, this, &CompareWidget::settings_changed);
   connect(ui_->opacity, &QSlider::valueChanged, this, &CompareWidget::settings_changed);
 }
-//---------------------------------------------------------------------------
 
+//---------------------------------------------------------------------------
 CompareWidget::~CompareWidget() { delete ui_; }
 
 //---------------------------------------------------------------------------
@@ -44,17 +44,21 @@ void CompareWidget::set_available(DisplayMode mode, bool available) {
 bool CompareWidget::check_any_available() {
   bool any_available = ui_->original->isEnabled() || ui_->groomed->isEnabled() || ui_->reconstructed->isEnabled();
 
-  if (ui_->original->isChecked() && !ui_->original->isEnabled()) {
-    ui_->groomed->setChecked(true);
-  }
-  if (ui_->groomed->isChecked() && !ui_->groomed->isEnabled()) {
-    ui_->reconstructed->setChecked(true);
-  }
-  if (ui_->reconstructed->isChecked() && !ui_->reconstructed->isEnabled()) {
-    ui_->original->setChecked(true);
-  }
-  if (ui_->original->isChecked() && !ui_->original->isEnabled()) {
-    ui_->groomed->setChecked(true);
+  if (any_available) {
+    // cycle through to make sure we land on a valid selection
+
+    if (ui_->original->isChecked() && !ui_->original->isEnabled()) {
+      ui_->groomed->setChecked(true);
+    }
+    if (ui_->groomed->isChecked() && !ui_->groomed->isEnabled()) {
+      ui_->reconstructed->setChecked(true);
+    }
+    if (ui_->reconstructed->isChecked() && !ui_->reconstructed->isEnabled()) {
+      ui_->original->setChecked(true);
+    }
+    if (ui_->original->isChecked() && !ui_->original->isEnabled()) {
+      ui_->groomed->setChecked(true);
+    }
   }
 
   return any_available;
