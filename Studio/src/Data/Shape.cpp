@@ -93,6 +93,12 @@ void Shape::set_subject(std::shared_ptr<Subject> subject) {
 }
 
 //---------------------------------------------------------------------------
+bool Shape::is_subject()
+{
+  return subject_ != nullptr;
+}
+
+//---------------------------------------------------------------------------
 std::shared_ptr<Subject> Shape::get_subject() { return this->subject_; }
 
 //---------------------------------------------------------------------------
@@ -130,10 +136,10 @@ MeshGroup Shape::get_groomed_meshes(bool wait) {
 //---------------------------------------------------------------------------
 MeshGroup Shape::get_reconstructed_meshes(bool wait) {
   if (!this->reconstructed_meshes_.valid()) {
-    auto worlds = this->particles_.get_world_particles();
-    this->reconstructed_meshes_.set_number_of_meshes(worlds.size());
-    for (int i = 0; i < worlds.size(); i++) {
-      MeshHandle mesh = this->mesh_manager_->get_mesh(worlds[i], i);
+    auto locals = this->particles_.get_local_particles();
+    this->reconstructed_meshes_.set_number_of_meshes(locals.size());
+    for (int i = 0; i < locals.size(); i++) {
+      MeshHandle mesh = this->mesh_manager_->get_mesh(locals[i], i);
       if (mesh) {
         this->reconstructed_meshes_.set_mesh(i, mesh);
       }

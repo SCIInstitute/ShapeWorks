@@ -47,6 +47,8 @@ class Shape {
 
   void set_subject(std::shared_ptr<shapeworks::Subject> subject);
 
+  bool is_subject();
+
   std::shared_ptr<shapeworks::Subject> get_subject();
 
   /// Import the original raw image file

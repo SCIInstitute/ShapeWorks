@@ -1237,6 +1237,13 @@ void ShapeWorksStudioApp::update_display(bool force) {
   update_view_mode();
   update_view_combo();
 
+  if (mode == AnalysisTool::MODE_ALL_SAMPLES_C) {
+    ui_->compare->setEnabled(true);
+  } else {
+    ui_->compare->setChecked(false);
+    ui_->compare->setEnabled(false);
+  }
+
   if (tool_state == Session::DEEPSSM_C) {
     visualizer_->display_shapes(deepssm_tool_->get_shapes());
   } else {

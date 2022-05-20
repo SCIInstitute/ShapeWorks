@@ -672,11 +672,10 @@ void Viewer::display_shape(QSharedPointer<Shape> shape) {
       if (compare_settings.compare_enabled_ && compare_settings.surface_distance_mode_) {
         // compute surface to surface distance
         Mesh m(poly_data);
-        Mesh m2(compare_meshes_.meshes()[i]->get_poly_data());
+        auto compare_poly_data = compare_meshes_.meshes()[i]->get_poly_data();
+        Mesh m2(compare_poly_data);
         auto field = m.distance(m2)[0];
         m.setField("distance", field, Mesh::Point);
-
-        //set_scalar_visibility(poly_data, mapper, "distance");
       }
 
       if (feature_map != "" && poly_data) {

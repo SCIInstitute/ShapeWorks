@@ -470,7 +470,13 @@ vtkSmartPointer<vtkTransform> Visualizer::get_transform(QSharedPointer<Shape> sh
       transform = shape->get_alignment(alignment_domain);
     }
   } else {
-    transform = shape->get_reconstruction_transform(domain);
+    if (shape->is_subject()) {
+      if (get_center()) {
+        transform = shape->get_alignment(alignment_domain);
+      }
+    } else {
+      transform = shape->get_reconstruction_transform(domain);
+    }
   }
 
   return transform;
