@@ -18,6 +18,9 @@ class CompareWidget : public QWidget {
   ~CompareWidget();
 
   CompareSettings get_settings();
+  void set_available(DisplayMode mode, bool available);
+
+  bool check_any_available();
 
  Q_SIGNALS:
   void settings_changed();

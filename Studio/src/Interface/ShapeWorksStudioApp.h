@@ -149,6 +149,8 @@ class ShapeWorksStudioApp : public QMainWindow {
   void reset_num_viewers();
 
   void update_view_combo();
+  void update_compare_menu();
+
   bool should_reconstruct_view_show();
 
   static bool write_particle_file(std::string filename, Eigen::VectorXd particles);

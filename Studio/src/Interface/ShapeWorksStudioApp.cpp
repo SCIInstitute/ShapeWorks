@@ -1237,13 +1237,6 @@ void ShapeWorksStudioApp::update_display(bool force) {
   update_view_mode();
   update_view_combo();
 
-  if (mode == AnalysisTool::MODE_ALL_SAMPLES_C) {
-    ui_->compare->setEnabled(true);
-  } else {
-    ui_->compare->setChecked(false);
-    ui_->compare->setEnabled(false);
-  }
-
   if (tool_state == Session::DEEPSSM_C) {
     visualizer_->display_shapes(deepssm_tool_->get_shapes());
   } else {
@@ -1283,6 +1276,7 @@ void ShapeWorksStudioApp::update_display(bool force) {
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_view_mode_combobox_currentIndexChanged(QString disp_mode) {
   session_->set_display_mode(string_to_display_mode(disp_mode.toStdString()));
+  update_compare_menu();
   visualizer_->reset_camera();
 }
 
@@ -2033,6 +2027,24 @@ void ShapeWorksStudioApp::update_view_combo() {
     current--;
   }
   ui_->view_mode_combobox->setCurrentIndex(current);
+
+  update_compare_menu();
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::update_compare_menu() {
+  compare_widget_->set_available(DisplayMode::Original, is_view_combo_item_enabled(DisplayMode::Original));
+  compare_widget_->set_available(DisplayMode::Groomed, is_view_combo_item_enabled(DisplayMode::Groomed));
+  compare_widget_->set_available(DisplayMode::Reconstructed, is_view_combo_item_enabled(DisplayMode::Reconstructed));
+
+  compare_widget_->set_available(static_cast<DisplayMode>(ui_->view_mode_combobox->currentIndex()), false);
+
+  if (compare_widget_->check_any_available()) {
+    ui_->compare->setEnabled(true);
+  } else {
+    ui_->compare->setChecked(false);
+    ui_->compare->setEnabled(false);
+  }
 }
 
 //---------------------------------------------------------------------------

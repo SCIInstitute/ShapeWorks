@@ -29,4 +29,35 @@ CompareSettings CompareWidget::get_settings() {
   return settings;
 }
 
+//---------------------------------------------------------------------------
+void CompareWidget::set_available(DisplayMode mode, bool available) {
+  if (mode == DisplayMode::Original) {
+    ui_->original->setEnabled(available);
+  } else if (mode == DisplayMode::Groomed) {
+    ui_->groomed->setEnabled(available);
+  } else if (mode == DisplayMode::Reconstructed) {
+    ui_->reconstructed->setEnabled(available);
+  }
+}
+
+//---------------------------------------------------------------------------
+bool CompareWidget::check_any_available() {
+  bool any_available = ui_->original->isEnabled() || ui_->groomed->isEnabled() || ui_->reconstructed->isEnabled();
+
+  if (ui_->original->isChecked() && !ui_->original->isEnabled()) {
+    ui_->groomed->setChecked(true);
+  }
+  if (ui_->groomed->isChecked() && !ui_->groomed->isEnabled()) {
+    ui_->reconstructed->setChecked(true);
+  }
+  if (ui_->reconstructed->isChecked() && !ui_->reconstructed->isEnabled()) {
+    ui_->original->setChecked(true);
+  }
+  if (ui_->original->isChecked() && !ui_->original->isEnabled()) {
+    ui_->groomed->setChecked(true);
+  }
+
+  return any_available;
+}
+
 }  // namespace shapeworks
