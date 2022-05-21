@@ -1212,13 +1212,14 @@ void ShapeWorksStudioApp::update_display(bool force) {
 
   std::string mode = AnalysisTool::MODE_ALL_SAMPLES_C;
 
-  bool analysis_mode = ui_->action_analysis_mode->isChecked();
+  std::string tool_state = session_->get_tool_state();
+  bool analysis_mode = tool_state == Session::DATA_C;
 
   int num_domains = session_->get_domains_per_shape();
   ui_->alignment_combo->setVisible(!analysis_mode && num_domains > 1);
   // ui_->center_checkbox->setVisible(!analysis_mode);
 
-  if (analysis_mode) {
+  if (session_->is_analysis_mode()) {
     mode = analysis_tool_->get_analysis_mode();
   }
 
@@ -1232,7 +1233,6 @@ void ShapeWorksStudioApp::update_display(bool force) {
     return;
   }
 
-  std::string tool_state = session_->get_tool_state();
 
   update_view_mode();
   update_view_combo();

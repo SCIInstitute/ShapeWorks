@@ -41,7 +41,6 @@ DeepSSMTool::DeepSSMTool(Preferences& prefs) : preferences_(prefs) {
   ui_->tab_widget->tabBar()->setElideMode(Qt::TextElideMode::ElideNone);
 #endif
 
-
   connect(this->ui_->run_button, &QPushButton::clicked, this, &DeepSSMTool::run_clicked);
   connect(this->ui_->restore_defaults, &QPushButton::clicked, this, &DeepSSMTool::restore_defaults);
 
@@ -157,10 +156,7 @@ void DeepSSMTool::store_params() {
 void DeepSSMTool::shutdown() { this->app_->get_py_worker()->abort_job(); }
 
 //---------------------------------------------------------------------------
-void DeepSSMTool::set_active(bool active) {}
-
-//---------------------------------------------------------------------------
-bool DeepSSMTool::get_active() { return false; }
+bool DeepSSMTool::is_active() { return session_ && session_->get_tool_state() == Session::DEEPSSM_C; }
 
 //---------------------------------------------------------------------------
 void DeepSSMTool::run_clicked() {
@@ -457,6 +453,9 @@ void DeepSSMTool::update_testing_meshes() {
 
 //---------------------------------------------------------------------------
 void DeepSSMTool::update_meshes() {
+  if (!is_active()) {
+    return;
+  }
   switch (this->current_tool_) {
     case DeepSSMTool::ToolMode::DeepSSM_SplitType:
       this->shapes_.clear();

@@ -112,6 +112,7 @@ MeshGroup Shape::get_original_meshes(bool wait) {
   if (!this->subject_) {
     std::cerr << "Error: asked for original mesh when none is present!\n";
     assert(0);
+    return original_meshes_;
   }
 
   if (!this->original_meshes_.valid()) {
