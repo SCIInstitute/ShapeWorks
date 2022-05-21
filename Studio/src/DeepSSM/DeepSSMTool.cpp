@@ -14,6 +14,7 @@
 #include <Data/Session.h>
 #include <Data/Shape.h>
 #include <Data/ShapeWorksWorker.h>
+#include <Data/StudioLog.h>
 #include <DeepSSM/DeepSSMJob.h>
 #include <DeepSSM/DeepSSMParameters.h>
 #include <DeepSSM/DeepSSMTool.h>
@@ -32,6 +33,14 @@ namespace shapeworks {
 DeepSSMTool::DeepSSMTool(Preferences& prefs) : preferences_(prefs) {
   this->ui_ = new Ui_DeepSSMTool;
   this->ui_->setupUi(this);
+
+#ifdef Q_OS_MACOS
+  ui_->tab_widget->tabBar()->setMinimumWidth(200);
+  ui_->tab_widget->setStyleSheet(
+      "QTabBar::tab:selected { border-radius: 4px; background-color: #3784f7; color: white; }");
+  ui_->tab_widget->tabBar()->setElideMode(Qt::TextElideMode::ElideNone);
+#endif
+
 
   connect(this->ui_->run_button, &QPushButton::clicked, this, &DeepSSMTool::run_clicked);
   connect(this->ui_->restore_defaults, &QPushButton::clicked, this, &DeepSSMTool::restore_defaults);
@@ -352,12 +361,13 @@ void DeepSSMTool::show_testing_meshes() {
 
   for (auto& id : id_list) {
     int i = QString::fromStdString(id).toInt();
-    QString filename =
-        QString("deepssm/model/predictions/FT_Predictions/predicted_ft_") + QString::fromStdString(id) + ".particles";
+    QString filename = QString("deepssm/model/test_predictions/FT_Predictions/predicted_ft_") +
+                       QString::fromStdString(id) + ".particles";
 
     if (QFileInfo(filename).exists()) {
       ShapeHandle shape = ShapeHandle(new Shape());
       auto subject = std::make_shared<Subject>();
+      subject->set_display_name(id);
       shape->set_subject(subject);
       shape->set_mesh_manager(this->session_->get_mesh_manager());
       shape->import_local_point_files(QStringList(filename));
@@ -381,61 +391,65 @@ void DeepSSMTool::show_testing_meshes() {
 
 //---------------------------------------------------------------------------
 void DeepSSMTool::update_testing_meshes() {
-  this->deep_ssm_ =
-      QSharedPointer<DeepSSMJob>::create(session_->get_project(), DeepSSMTool::ToolMode::DeepSSM_TestingType);
-  auto id_list = this->deep_ssm_->get_list(DeepSSMJob::FileType::ID, DeepSSMJob::SplitType::TEST);
+  try {
+    this->deep_ssm_ =
+        QSharedPointer<DeepSSMJob>::create(session_->get_project(), DeepSSMTool::ToolMode::DeepSSM_TestingType);
+    auto id_list = this->deep_ssm_->get_list(DeepSSMJob::FileType::ID, DeepSSMJob::SplitType::TEST);
 
-  auto subjects = this->session_->get_project()->get_subjects();
-  auto shapes = this->session_->get_shapes();
+    auto subjects = this->session_->get_project()->get_subjects();
+    auto shapes = this->session_->get_shapes();
 
-  QTableWidget* table = this->ui_->testing_table;
+    QTableWidget* table = this->ui_->testing_table;
 
-  table->clear();
-  QStringList headers;
-  headers << "name"
-          << "average distance";
-  table->setColumnCount(headers.size());
-  table->horizontalHeader()->setVisible(true);
-  table->setHorizontalHeaderLabels(headers);
-  table->verticalHeader()->setVisible(false);
-  table->setRowCount(this->shapes_.size());
+    table->clear();
+    QStringList headers;
+    headers << "name"
+            << "average distance";
+    table->setColumnCount(headers.size());
+    table->horizontalHeader()->setVisible(true);
+    table->setHorizontalHeaderLabels(headers);
+    table->verticalHeader()->setVisible(false);
+    table->setRowCount(this->shapes_.size());
 
-  int idx = 0;
-  for (auto& id : id_list) {
-    int i = QString::fromStdString(id).toInt();
-    auto name = QString::fromStdString(subjects[i]->get_display_name());
+    int idx = 0;
+    for (auto& id : id_list) {
+      int i = QString::fromStdString(id).toInt();
+      auto name = QString::fromStdString(subjects[i]->get_display_name());
 
-    QTableWidgetItem* new_item = new QTableWidgetItem(QString(name));
-    table->setItem(idx, 0, new_item);
+      QTableWidgetItem* new_item = new QTableWidgetItem(QString(name));
+      table->setItem(idx, 0, new_item);
 
-    auto mesh_group = shapes[i]->get_groomed_meshes(true);
-    if (!mesh_group.valid()) {
-      emit warning("Warning: Couldn't load groomed mesh for " + name);
-      continue;
-    }
-    Mesh base(mesh_group.meshes()[0]->get_poly_data());
-    std::string filename = "deepssm/model/predictions/FT_Predictions/predicted_ft_" + id + ".particles";
-    if (QFileInfo(QString::fromStdString(filename)).exists()) {
-      if (idx < this->shapes_.size()) {
-        auto shape = this->shapes_[idx++];
-        MeshGroup group = shape->get_reconstructed_meshes();
-        if (group.valid()) {
-          Mesh m(group.meshes()[0]->get_poly_data());
-          m.distance(base);
-          double average_distance = mean(m.getField("distance", Mesh::FieldType::Point));
+      auto mesh_group = shapes[i]->get_groomed_meshes(true);
+      if (!mesh_group.valid()) {
+        emit warning("Warning: Couldn't load groomed mesh for " + name);
+        continue;
+      }
+      Mesh base(mesh_group.meshes()[0]->get_poly_data());
+      std::string filename = "deepssm/model/test_predictions/FT_Predictions/predicted_ft_" + id + ".particles";
+      if (QFileInfo(QString::fromStdString(filename)).exists()) {
+        if (idx < this->shapes_.size()) {
+          auto shape = this->shapes_[idx++];
+          MeshGroup group = shape->get_reconstructed_meshes();
+          if (group.valid()) {
+            Mesh m(group.meshes()[0]->get_poly_data());
+            auto field = m.distance(base)[0];
+            field->SetName("deepssm_error");
 
-          QTableWidgetItem* new_item = new QTableWidgetItem(QString::number(average_distance));
-          table->setItem(idx - 1, 1, new_item);
+            double average_distance = mean(field);
 
-          auto field = m.getField("distance", Mesh::FieldType::Point);
-          field->SetName("deepssm_error");
-          group.meshes()[0]->get_poly_data()->GetPointData()->AddArray(field);
-        } else {
-          QTableWidgetItem* new_item = new QTableWidgetItem("computing...");
-          table->setItem(idx - 1, 1, new_item);
+            QTableWidgetItem* new_item = new QTableWidgetItem(QString::number(average_distance));
+            table->setItem(idx - 1, 1, new_item);
+
+            group.meshes()[0]->get_poly_data()->GetPointData()->AddArray(field);
+          } else {
+            QTableWidgetItem* new_item = new QTableWidgetItem("computing...");
+            table->setItem(idx - 1, 1, new_item);
+          }
         }
       }
     }
+  } catch (std::exception& e) {
+    emit error(e.what());
   }
 
   emit update_view();

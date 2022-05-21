@@ -518,8 +518,10 @@ void Shape::load_feature(DisplayMode display_mode, std::string feature) {
     if (scalar_array) {
       auto point_features = get_point_features(feature);
       if (point_features.size() == 0) {
-        auto original_meshes = this->get_original_meshes(true).meshes();
-        this->load_feature_from_mesh(feature, original_meshes[d]);
+        auto original_meshes = this->get_original_meshes(true);
+        if (original_meshes.valid()) {
+          load_feature_from_mesh(feature, original_meshes.meshes()[d]);
+        }
       }
       return;
     }

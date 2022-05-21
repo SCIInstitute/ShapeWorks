@@ -2010,6 +2010,7 @@ void ShapeWorksStudioApp::update_view_combo() {
   if (tool_state == Session::DEEPSSM_C) {
     set_view_combo_item_enabled(DisplayMode::Original, false);
     set_view_combo_item_enabled(DisplayMode::Groomed, false);
+    set_view_combo_item_enabled(DisplayMode::Reconstructed, true);
   }
 
   std::string mode = AnalysisTool::MODE_ALL_SAMPLES_C;
