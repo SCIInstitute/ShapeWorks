@@ -1,3 +1,31 @@
+# ShapeWorks Studio Data Module
+
+![ShapeWorks Studio Data Module](../img/studio/studio_data.png){: width="300" }
+
+# Importing data
+
+There are multiple ways to import data into studio:
+
+1. From the command line:
+
+```
+  ShapeWorksStudio [file1] [file2]...
+```  
+
+2. File -> Import Shapes
+3. Click the `plus` / Import button in the Table panel
+4. Drag and drop supported files over the Studio window
+
+# Landmarks
+
+Studio supports adding, manipulating and moving anatomical landmarks for each input shape.  Landmarks should be corresponding between shapes and can be used for alignment/registration as well as initial particle position placement.
+
+![Studio Landmarks](../img/studio/studio_landmarks.png){: width="500" }
+
+
+*Below is a demonstration of the landmarks functionality.*
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_landmarks.mp4" autoplay muted loop controls style="width:100%"></p>
+
 
 # Using Constraints in Studio
 
