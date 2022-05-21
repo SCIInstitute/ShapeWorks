@@ -1310,6 +1310,7 @@ StudioParticles AnalysisTool::convert_from_combined(const Eigen::VectorXd& point
       new_world[i] = points[idx++];
     }
     particles.set_world_particles(d, new_world);
+    particles.set_local_particles(d, new_world);
   }
 
   return particles;
