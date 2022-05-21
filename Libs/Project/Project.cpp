@@ -36,6 +36,7 @@ Project::~Project() = default;
 
 //---------------------------------------------------------------------------
 bool Project::load(const std::string& filename) {
+  landmarks_loaded_ = false;
   try {
     this->wb_->load(filename);
     this->filename_ = filename;
@@ -520,7 +521,6 @@ void Project::load_landmark_definitions() {
   xlnt::worksheet ws = this->wb_->sheet_by_title("landmarks");
 
   auto rows = ws.rows(false);
-
   for (int i = ws.lowest_row(); i < ws.highest_row(); i++) {
     std::string name = rows[i][0].to_string();
     auto f = std::find(domain_names.begin(), domain_names.end(), name);
