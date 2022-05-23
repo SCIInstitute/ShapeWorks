@@ -714,7 +714,7 @@ void Shape::set_point_features(std::string feature, Eigen::VectorXf values) {
 
   if (group.valid()) {
     for (auto mesh : group.meshes()) {
-      mesh->interpolate_scalars_to_mesh(feature, this->get_global_correspondence_points(), values);
+      mesh->interpolate_scalars_to_mesh(feature, this->get_local_correspondence_points(), values);
     }
   }
 }
