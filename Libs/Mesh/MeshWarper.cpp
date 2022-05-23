@@ -58,8 +58,11 @@ void MeshWarper::set_reference_mesh(vtkSmartPointer<vtkPolyData> reference_mesh,
     }
   }
 
+  // clone with DeepCopy for thread safety
+  incoming_reference_mesh_ = vtkSmartPointer<vtkPolyData>::New();
+  incoming_reference_mesh_->DeepCopy(reference_mesh);
+
   this->landmarks_points_ = landmarks;
-  this->incoming_reference_mesh_ = reference_mesh;
   this->reference_particles_ = reference_particles;
 
   // mark that the warp needs to be generated
