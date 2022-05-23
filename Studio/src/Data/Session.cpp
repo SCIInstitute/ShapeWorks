@@ -120,7 +120,6 @@ bool Session::save_project(QString filename) {
   QProgressDialog progress("Saving Project...", "Abort", 0, 100, this->parent_);
   progress.setWindowModality(Qt::WindowModal);
   progress.setMinimumDuration(2000);
-  progress.show();
 
   this->preferences_.set_saved();
 
