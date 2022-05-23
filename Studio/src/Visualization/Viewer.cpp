@@ -887,6 +887,7 @@ void Viewer::update_points() {
 
   // reset
   glyph_actor_->SetUserTransform(vtkSmartPointer<vtkTransform>::New());
+  arrow_glyph_actor_->SetUserTransform(vtkSmartPointer<vtkTransform>::New());
 
   bool reverse = false;
   if (session_->get_display_mode() == DisplayMode::Original || session_->get_display_mode() == DisplayMode::Groomed) {
@@ -894,6 +895,7 @@ void Viewer::update_points() {
       auto transform = shape_->get_alignment(alignment_domain);
       reverse = Viewer::is_reverse(transform);
       glyph_actor_->SetUserTransform(transform);
+      arrow_glyph_actor_->SetUserTransform(transform);
     } else {
       if (!shape_->has_alignment()) {
         vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
@@ -901,6 +903,7 @@ void Viewer::update_points() {
         transform->Inverse();
         reverse = Viewer::is_reverse(transform);
         glyph_actor_->SetUserTransform(transform);
+        arrow_glyph_actor_->SetUserTransform(transform);
       }
     }
   }
