@@ -48,14 +48,20 @@ Studio provides a number of preference options.
 | Option | Description |
 | --- | ----------- |
 | Color Scheme | Base foreground and background colors for viewers |
-| Orientation Marker Type | Medical, Triad, or None |
-| Orientation Marker Corner | Upper Right, Upper Left, Lower Left, Lower Right |
-| PCA Range | Number of standard deviations for PCA slider |
+| Color Map | Color map used for scalar ranges |
+| Reverse Color Map | Option to reverse the color map |
+| Discrete Color Mode | Option to use discrete colors for color map |
+| Groom Output | Folder name for groom output |
+| Optimize Output | Folder name for optimize particle output |
 | Mesh Cache Enabled | Whether to use a cache of meshes |
-| Mesh Cache Epsilon | Determination of how much different a mesh must be before it is considered a different mesh, for caching purposes |
 | Mesh Cache Memory to Use | Percentage of phyisical memory to allow mesh cache to use |
 | Mesh Parallel Reconstruction | Whether to use parallelized mesh reconstruction |
 | Mesh Parallel Number of Threads | How many threads to use for parallelized mesh reconstruction |
+| Orientation Marker Type | Medical, Triad, or None |
+| Orientation Marker Corner | Upper Right, Upper Left, Lower Left, Lower Right |
+| PCA Range | Number of standard deviations for PCA slider |
+| Number of PCA Steps | Number of steps for PCA slider bar |
+| Geodesics Cache Size Multiplier |  Multiplier value for geodesics caching |
 | Log Location | A display of where the current log file is located |
 
 <br/>
@@ -66,13 +72,16 @@ At the bottom of the viewers are the controls for the viewers:
 
 ![ShapeWorks Studio Viewer Controls](../img/studio/studio_viewer_controls.png)
 
-Each button has tooltips with descriptions.  The controls from left to right are
+Each button has tooltips with descriptions.  The controls from left to right are:
 
 * Autoview / reset view
+* Cutting plane visibility
+* Landmark visibility
 * Glyph visibility with dropdown for glyph size and detail
 * Isosurface visibility with dropdown for surface opacity (of each domain)
 * View mode (original/groomed/reconstructed)
-* Center (whether to center each object based on center of mass)
+* Align (whether to align each object based on the alignment strategy)
+* Compare mode (e.g. compare original vs groomed)
 * Number of views in lightbox (1,2,4,9,16,25,36,49,64)
 
 Additionally, when feature volumes or meshes with scalars are loaded, the extended panel will be displayed:
@@ -80,6 +89,16 @@ Additionally, when feature volumes or meshes with scalars are loaded, the extend
 ![ShapeWorks Studio Viewer Extended Controls](../img/studio/studio_viewer_controls_extended.png)
 
 This adds the feature map / scalar selection and a checkbox to apply a uniform scale to all viewers, vs local scale for each.  Additionally, the auto range can be turned off and specified range can be set.
+
+When image volumes are provided, another extended panel will be displayed:
+
+![ShapeWorks Studio Viewer Image Controls](../img/studio/studio_viewer_controls_image.png)
+
+* Image selection
+* Plane direction (X/Y/Z)
+* Enabled 2D/3D viewere mode
+* Shared Brightness/Contrast between viewers
+* Sync slice position between viewers
 
 ## Keyboard Shortcuts
 
@@ -102,34 +121,64 @@ Additionally, after selecting a point, you may select another point by pressing 
 ![ShapeWorks Studio Particle Selection2](../img/studio/studio_particle_selection2.png)
 
 
-## File menus
+## Menus
+### File Menu
 
-Studio's file menu is shown below.
-
-![ShapeWorks Studio File Menu](../img/studio/studio_file_menu.png){: width="200" }
+![ShapeWorks Studio File Menu](../img/studio/studio_file_menu.png){: width="300" }
 
 * `New Project` - Create a new project
 * `Open Project` - Open a project from disk
+* `Show Project folder` - Open Explorer/Finder for project location (windows/mac)
 * `Save Project` - Save project to disk
 * `Save Project As` - Save a copy of the project to a new file
 * `Import Shapes...` - Import new shapes
 * `Export` - See export below
-* Up to 4 recent projects are shown at the bottom
+* Up to 8 recent projects are shown at the bottom
+
+### Export Menu
 
 The File -> Export menu is shown below.
 
 ![ShapeWorks Studio Export Menu](../img/studio/studio_export_menu.png){: width="200" }
 
 * Export Current Mesh - Export the current mesh as a VTK mesh file
-* Export Mesh Scalars - Export the mesh scalars as a CSV file
+* Export Current Particles - Export the currently display particles as an "X Y Z" particles file
+* Export Current Particle Scalars - Export the currently displayed particle scalars as a CSV file
+* Export Current Mesh Scalars - Export the currently displayed mesh scalars as a CSV file
+* Export All Subjects Particle Scalars - Export the particle scalars for all subjects
 * Export Eigenvectors - Export the PCA eigenvectors
 * Export Eigenvalues - Export the PCA eigenvalues
-* Export Variance Graph - Export the variance graph as a PNG file
 * Export PCA Component Scores - Export the raw PCA component scores for each subject as a CSV file
-* Export PCA Mode Points - Export the PCA mode points at each step of the PCA slider
+* Export PCA Mode Particles - Export the PCA mode particles at each step of the PCA slider
+* Export PCA Montage - Launch export dialog for exporting montage of PCA images
+* Export Screenshot - Launch export dialog for exporting current display
 
+### Export Screenshot Dialog
+
+![ShapeWorks Studio Export Screenshot](../img/studio/studio_image_export.png){: width="600" }
+
+The Export Screenshot dialog allows you to export the currently displayed image using a variety of options
+
+| Option | Description |
+| --- | ----------- |
+| Show Corner Widget | Show or hide the orientation widget |
+| Transparent Background | Enables transparent background in image export |
+| Show Color Scale | Show or hide color scale, when applicable |
+| Override Window Size | Override the window size and choose a resolution for export |
+
+### Export PCA Montage
+
+![ShapeWorks Studio Export PCA Montage](../img/studio/studio_pca_montage.png){: width="600" }
+
+The PCA Montage exporter allows you to create a multi-image montage across PCA modes. Options are similar to the screenshot export with the addition of controls:
+
+| Option | Description |
+| --- | ----------- |
+| PCA Modes | Comma separated list of modes or ranges to include |
+| PCA Images | Number of images to export on either side of the mean |
+| PCA Range | Standard deviation range of PCA export |
 
 ## Project setup
-ShapeWorks Studio and the `shapeworks` commands `groom` and `optimize` are using a new project format based off of XLSX. The new spreadsheet format profiles a uniform, easy to edit, easy to organize way of inputing data into shapeworks for grooming, optimizing and analyzing data.
+ShapeWorks Studio and the `shapeworks` commands `groom` and `optimize` store project data in an XLSX spreadsheet. The spreadsheet format profiles a uniform, easy to edit, easy to organize way of inputing data into shapeworks for grooming, optimizing and analyzing data.
 See [Here](../workflow/parameters.md) for more details regaring the project sheet and the python API available to generate the project sheet. 
 

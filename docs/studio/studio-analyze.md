@@ -14,6 +14,10 @@ The Group mode allows for group comparison to quantify and visualize population-
 
 ![ShapeWorks Studio Analysis View Panel Group Display](../img/studio/studio_analyze_view_group.png)
 
+Additionally an LDA chart is generated for group differences:
+
+![ShapeWorks Studio LDA Chart](../img/studio/studio_lda.png){: width="300" }
+
 ### Samples
 
 The Samples tab of the view panel allows you to view all of the samples in your cohort, view a single sample by index, or view the median sample.
@@ -29,6 +33,12 @@ The PCA tab of the View panel shows reconstructed shapes (surface meshes) along 
 `Eigenvalue` - This shows the eigenvalue of the currently selected mode.  This is a unitless measure of how much variance is explained by this mode.  The modes are sorted in decreasing order of eigenvalue, corresponding to the most variance explained first.
 
 ![ShapeWorks Studio Analysis View Panel PCA Display](../img/studio/studio_analyze_view_pca.png)
+
+### Show Difference to Mean
+
+This checkbox allows for visualization from any surface to the mean.  Arrow glyphs can be shown to display the difference as well.
+
+![Difference to mean display](../img/studio/studio_difference_to_mean.png)
 
 ## Metrics Panel
 
@@ -53,3 +63,9 @@ The surface reconstruction panel provides options for the surface reconstruction
 Below is an example of the difference in using this option.
 
 ![ShapeWorks Studio Surface Reconstruction Result](../img/studio/studio_analyze_surface_reconstruction_result.png)
+
+## Particles Panel ##
+
+![ShapeWorks Studio Particles Panel](../img/studio/studio_good_bad.png)
+
+The *Particles Panel* enabled the display of "good/bad particles" in ShapeWorks Studio.  A *maximum angle* parameter is given (default 45 degrees).  When a particle's surface normal across subjects (averaged) exceeds this angle, the particle will be marked "bad" and shown in red.  Good particles are shown in green.  This can help in identifying problems with correspondence as it is typically expected that surface normals for given particles should be similar across subjects.
