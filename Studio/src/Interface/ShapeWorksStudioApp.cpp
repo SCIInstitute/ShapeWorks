@@ -610,6 +610,12 @@ void ShapeWorksStudioApp::handle_pca_update() {
 }
 
 //---------------------------------------------------------------------------
+void ShapeWorksStudioApp::clear_message()
+{
+  current_message_ = "";
+}
+
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_message(QString str) {
   if (str != current_message_) {
     STUDIO_LOG_MESSAGE(str);
@@ -1696,9 +1702,7 @@ void ShapeWorksStudioApp::update_alignment_options() {
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::save_project(QString filename) {
   session_->parameters().set(ShapeWorksStudioApp::SETTING_ZOOM_C, std::to_string(ui_->zoom_slider->value()));
-
   session_->parameters().set("notes", data_tool_->get_notes());
-
   session_->parameters().set("analysis_mode", analysis_tool_->get_analysis_mode());
 
   data_tool_->store_data();
@@ -1708,6 +1712,7 @@ void ShapeWorksStudioApp::save_project(QString filename) {
   deepssm_tool_->store_params();
 
   if (session_->save_project(filename)) {
+    clear_message();
     handle_message("Project Saved");
   }
 

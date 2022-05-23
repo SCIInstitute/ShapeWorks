@@ -909,7 +909,7 @@ void Viewer::update_points() {
   }
 
   if (session_->should_difference_vectors_show()) {
-    /// TODO:  probalby need reverse arrows?
+    /// TODO:  probably need reverse arrows?
   } else {
     if (reverse) {
       glyphs_->SetSourceConnection(reverse_sphere_->GetOutputPort());
@@ -1231,7 +1231,6 @@ void Viewer::initialize_surfaces() {
       unclipped_surface_mappers_[i]->ScalarVisibilityOff();
 
       unclipped_surface_actors_[i] = vtkSmartPointer<vtkActor>::New();
-      // clipped_surface_actors_[i]->GetProperty()->SetOpacity(0.5);
       unclipped_surface_actors_[i]->GetProperty()->SetColor(EXCLUDED_COLOR[0], EXCLUDED_COLOR[1], EXCLUDED_COLOR[2]);
       unclipped_surface_actors_[i]->SetMapper(unclipped_surface_mappers_[i]);
 
