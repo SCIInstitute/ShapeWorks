@@ -37,7 +37,7 @@ public:
   //! Load params from project
   void load_params();
   //! Store params to project
-  void store_params(bool all_same = false);
+  void store_params();
 
   //! Disable action buttons
   void disable_actions();
@@ -87,7 +87,7 @@ private:
 
   void update_page();
   void update_domain_box();
-  void domains_same_changed();
+  void apply_to_all_domains_changed();
 
   void update_reflect_columns();
   void update_reflect_choices();

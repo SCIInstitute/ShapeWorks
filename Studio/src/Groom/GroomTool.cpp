@@ -35,7 +35,7 @@ GroomTool::GroomTool(Preferences& prefs) : preferences_(prefs) {
           &GroomTool::alignment_option_changed);
 
   connect(ui_->convert_mesh_checkbox, &QCheckBox::stateChanged, this, &GroomTool::update_page);
-  connect(ui_->apply_to_all_domains, &QCheckBox::stateChanged, this, &GroomTool::domains_same_changed);
+  connect(ui_->apply_to_all_domains, &QCheckBox::stateChanged, this, &GroomTool::apply_to_all_domains_changed);
 
   ui_->image_label->setAttribute(Qt::WA_TransparentForMouseEvents);
   ui_->mesh_label->setAttribute(Qt::WA_TransparentForMouseEvents);
@@ -204,8 +204,8 @@ void GroomTool::update_domain_box() {
 }
 
 //---------------------------------------------------------------------------
-void GroomTool::domains_same_changed() {
-  store_params(true);
+void GroomTool::apply_to_all_domains_changed() {
+  store_params();
   // store as global settings immediately
   for (const auto& domain_name : session_->get_project()->get_domain_names()) {
     auto params = GroomParameters(session_->get_project(), domain_name);
@@ -369,7 +369,7 @@ void GroomTool::set_ui_from_params(GroomParameters params) {
 }
 
 //---------------------------------------------------------------------------
-void GroomTool::store_params(bool all_same) {
+void GroomTool::store_params() {
   auto params = GroomParameters(session_->get_project(), current_domain_);
 
   params.set_alignment_enabled(ui_->alignment_image_checkbox->isChecked());
@@ -416,11 +416,13 @@ void GroomTool::store_params(bool all_same) {
 
   params.save_to_project();
 
-  if (all_same) {
+  if (ui_->apply_to_all_domains->isChecked()) {
     for (const auto& domain_name : session_->get_project()->get_domain_names()) {
       params.set_domain_name(domain_name);
       params.save_to_project();
     }
+    params.set_domain_name("");
+    params.save_to_project();
   }
 
   // global settings
