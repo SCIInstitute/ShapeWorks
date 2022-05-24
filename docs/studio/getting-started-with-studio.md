@@ -100,6 +100,9 @@ When image volumes are provided, another extended panel will be displayed:
 * Shared Brightness/Contrast between viewers
 * Sync slice position between viewers
 
+![ShapeWorks Studio Viewer Image Support](../img/studio/studio_image_support.png)
+
+
 ## Keyboard Shortcuts
 
 The keyboard shortcuts are available from the Help -> Keyboard Shortcuts menu item.
