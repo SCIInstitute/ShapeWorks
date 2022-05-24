@@ -1173,7 +1173,11 @@ void ShapeWorksStudioApp::handle_opacity_changed() {
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_alignment_changed() {
-  visualizer_->set_alignment_domain(ui_->alignment_combo->currentIndex() - 1);
+  int alignment_domain = ui_->alignment_combo->currentIndex() - 1;
+  if (!ui_->alignment_combo->isVisible()) {
+    alignment_domain = -1;
+  }
+  visualizer_->set_alignment_domain(alignment_domain);
   update_display(true);
   visualizer_->reset_camera();
 }
@@ -1218,12 +1222,9 @@ void ShapeWorksStudioApp::update_display(bool force) {
 
   std::string mode = AnalysisTool::MODE_ALL_SAMPLES_C;
 
-  std::string tool_state = session_->get_tool_state();
-  bool analysis_mode = tool_state == Session::DATA_C;
 
   int num_domains = session_->get_domains_per_shape();
-  ui_->alignment_combo->setVisible(!analysis_mode && num_domains > 1);
-  // ui_->center_checkbox->setVisible(!analysis_mode);
+  ui_->alignment_combo->setVisible(!session_->is_analysis_mode() && num_domains > 1);
 
   if (session_->is_analysis_mode()) {
     mode = analysis_tool_->get_analysis_mode();
@@ -1243,7 +1244,7 @@ void ShapeWorksStudioApp::update_display(bool force) {
   update_view_mode();
   update_view_combo();
 
-  if (tool_state == Session::DEEPSSM_C) {
+  if (session_->get_tool_state() == Session::DEEPSSM_C) {
     visualizer_->display_shapes(deepssm_tool_->get_shapes());
   } else {
     current_display_mode_ = mode;
@@ -1690,7 +1691,7 @@ void ShapeWorksStudioApp::update_recent_files() {
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::update_alignment_options() {
   int num_domains = session_->get_domains_per_shape();
-  ui_->alignment_combo->setVisible(num_domains > 1);
+  ui_->alignment_combo->setVisible(!session_->is_analysis_mode() && num_domains > 1);
   ui_->alignment_combo->clear();
   ui_->alignment_combo->addItem("Global");
   auto domain_names = session_->get_project()->get_domain_names();

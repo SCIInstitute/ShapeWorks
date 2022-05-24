@@ -213,8 +213,12 @@ void Viewer::set_visualizer(Visualizer* visualizer) { visualizer_ = visualizer; 
 
 //-----------------------------------------------------------------------------
 void Viewer::display_vector_field() {
-  auto vecs = shape_->get_particles().get_difference_vectors(session_->get_difference_particles());
-  if (!session_->should_difference_vectors_show() || vecs.size() == 0) {
+  Eigen::VectorXd vecs;
+  if (session_->should_difference_vectors_show()) {
+    vecs = shape_->get_particles().get_difference_vectors(session_->get_difference_particles());
+  }
+
+  if (vecs.size() == 0) {
     // restore things to normal
     glyphs_->ScalingOn();
     glyphs_->ClampingOff();
@@ -829,7 +833,7 @@ void Viewer::update_points() {
 
   Eigen::VectorXd correspondence_points;
   if (session_->get_display_mode() == DisplayMode::Reconstructed) {
-    correspondence_points = shape_->get_global_correspondence_points_for_display();
+    correspondence_points = shape_->get_correspondence_points_for_display();
   } else {
     correspondence_points = shape_->get_local_correspondence_points();
   }
@@ -890,22 +894,11 @@ void Viewer::update_points() {
   arrow_glyph_actor_->SetUserTransform(vtkSmartPointer<vtkTransform>::New());
 
   bool reverse = false;
-  if (session_->get_display_mode() == DisplayMode::Original || session_->get_display_mode() == DisplayMode::Groomed) {
-    if (visualizer_->get_center()) {
-      auto transform = shape_->get_alignment(alignment_domain);
-      reverse = Viewer::is_reverse(transform);
-      glyph_actor_->SetUserTransform(transform);
-      arrow_glyph_actor_->SetUserTransform(transform);
-    } else {
-      if (!shape_->has_alignment()) {
-        vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
-        transform->DeepCopy(shape_->get_original_transform());
-        transform->Inverse();
-        reverse = Viewer::is_reverse(transform);
-        glyph_actor_->SetUserTransform(transform);
-        arrow_glyph_actor_->SetUserTransform(transform);
-      }
-    }
+  if (visualizer_->get_center()) {
+    auto transform = shape_->get_alignment(alignment_domain);
+    reverse = Viewer::is_reverse(transform);
+    glyph_actor_->SetUserTransform(transform);
+    arrow_glyph_actor_->SetUserTransform(transform);
   }
 
   if (session_->should_difference_vectors_show()) {

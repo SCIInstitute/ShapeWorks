@@ -677,6 +677,9 @@ Eigen::VectorXf Shape::get_point_features(std::string feature) {
 
 //---------------------------------------------------------------------------
 vtkSmartPointer<vtkTransform> Shape::get_groomed_transform(int domain) {
+  if (!subject_) {
+    return nullptr;
+  }
   auto transforms = this->subject_->get_groomed_transforms();
   if (domain < 0) {  // global alignment is stored at the end
     domain = transforms.size() - 1;
@@ -744,23 +747,23 @@ vtkSmartPointer<vtkTransform> Shape::get_reconstruction_transform(int domain) {
 }
 
 //---------------------------------------------------------------------------
-Eigen::VectorXd Shape::get_global_correspondence_points_for_display() {
-  auto worlds = this->particles_.get_world_particles();
+Eigen::VectorXd Shape::get_correspondence_points_for_display() {
+  auto locals = this->particles_.get_local_particles();
   int size = 0;
-  for (int i = 0; i < worlds.size(); i++) {
-    size += worlds[i].size();
+  for (int i = 0; i < locals.size(); i++) {
+    size += locals[i].size();
   }
   Eigen::VectorXd points;
   points.resize(size);
 
   int idx = 0;
-  for (int i = 0; i < worlds.size(); i++) {
-    for (int j = 0; j < worlds[i].size(); j += 3) {
+  for (int i = 0; i < locals.size(); i++) {
+    for (int j = 0; j < locals[i].size(); j += 3) {
       double p[3];
-      p[0] = worlds[i][j + 0];
-      p[1] = worlds[i][j + 1];
-      p[2] = worlds[i][j + 2];
-      if (this->reconstruction_transforms_.size() > i) {
+      p[0] = locals[i][j + 0];
+      p[1] = locals[i][j + 1];
+      p[2] = locals[i][j + 2];
+      if (this->reconstruction_transforms_.size() > i && !subject_) { // only computed shapes
         double* pt = this->reconstruction_transforms_[i]->TransformPoint(p);
         points[idx++] = pt[0];
         points[idx++] = pt[1];
