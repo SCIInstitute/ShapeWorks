@@ -39,6 +39,8 @@ nav:
    - 'Ellipsoid Joint Generation':           'new/ellipsoid-joint-generation.md'
 - ShapeWorks Studio:
    - 'Getting Started': 'studio/getting-started-with-studio.md'
+   - 'Viewer Controls': 'studio/studio-viewer.md'
+   - 'Export Options': 'studio/studio-export.md'
    - 'Data Module': 'studio/studio-data.md'
    - 'Groom Module': 'studio/studio-groom.md'
    - 'Optimize Module': 'studio/studio-optimize.md'

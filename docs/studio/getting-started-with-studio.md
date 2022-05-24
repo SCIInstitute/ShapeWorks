@@ -68,61 +68,9 @@ Studio provides a number of preference options.
 
 ## Viewer Controls
 
-At the bottom of the viewers are the controls for the viewers:
-
 ![ShapeWorks Studio Viewer Controls](../img/studio/studio_viewer_controls.png)
 
-Each button has tooltips with descriptions.  The controls from left to right are:
-
-* Autoview / reset view
-* Cutting plane visibility
-* Landmark visibility
-* Glyph visibility with dropdown for glyph size and detail
-* Isosurface visibility with dropdown for surface opacity (of each domain)
-* View mode (original/groomed/reconstructed)
-* Align (whether to align each object based on the alignment strategy)
-* Compare mode (e.g. compare original vs groomed)
-* Number of views in lightbox (1,2,4,9,16,25,36,49,64)
-
-Additionally, when feature volumes or meshes with scalars are loaded, the extended panel will be displayed:
-
-![ShapeWorks Studio Viewer Extended Controls](../img/studio/studio_viewer_controls_extended.png)
-
-This adds the feature map / scalar selection and a checkbox to apply a uniform scale to all viewers, vs local scale for each.  Additionally, the auto range can be turned off and specified range can be set.
-
-When image volumes are provided, another extended panel will be displayed:
-
-![ShapeWorks Studio Viewer Image Controls](../img/studio/studio_viewer_controls_image.png)
-
-* Image selection
-* Plane direction (X/Y/Z)
-* Enabled 2D/3D viewere mode
-* Shared Brightness/Contrast between viewers
-* Sync slice position between viewers
-
-![ShapeWorks Studio Viewer Image Support](../img/studio/studio_image_support.png)
-
-
-## Keyboard Shortcuts
-
-The keyboard shortcuts are available from the Help -> Keyboard Shortcuts menu item.
-
-![ShapeWorks Studio Keyboard Shortcuts](../img/studio/studio_keyboard_shortcuts.png)
-
-### Point selection 
-
-As shown in the keyboard shortcuts panel, you can hover over a particle and press the '1' key.  This will select this point on all viewers.
-
-The selected point will become white and all other points will change to a color based on the distance to the chosen point.
-
-![ShapeWorks Studio Particle Selection](../img/studio/studio_particle_selection.png)
-
-To turn off this display, press '1' while hovering over something other than a particle.
-
-Additionally, after selecting a point, you may select another point by pressing '2' while hovering.  This will set the first point to white, the second point to yellow and the rest to black.  This is an easy way to see how particlar particles vary and correspond across shapes.
-
-![ShapeWorks Studio Particle Selection2](../img/studio/studio_particle_selection2.png)
-
+See [Studio Viewer Controls](studio-viewer.md) for details on viewer controls.
 
 ## Menus
 ### File Menu
@@ -140,46 +88,7 @@ Additionally, after selecting a point, you may select another point by pressing 
 
 ### Export Menu
 
-The File -> Export menu is shown below.
-
-![ShapeWorks Studio Export Menu](../img/studio/studio_export_menu.png){: width="200" }
-
-* Export Current Mesh - Export the current mesh as a VTK mesh file
-* Export Current Particles - Export the currently display particles as an "X Y Z" particles file
-* Export Current Particle Scalars - Export the currently displayed particle scalars as a CSV file
-* Export Current Mesh Scalars - Export the currently displayed mesh scalars as a CSV file
-* Export All Subjects Particle Scalars - Export the particle scalars for all subjects
-* Export Eigenvectors - Export the PCA eigenvectors
-* Export Eigenvalues - Export the PCA eigenvalues
-* Export PCA Component Scores - Export the raw PCA component scores for each subject as a CSV file
-* Export PCA Mode Particles - Export the PCA mode particles at each step of the PCA slider
-* Export PCA Montage - Launch export dialog for exporting montage of PCA images
-* Export Screenshot - Launch export dialog for exporting current display
-
-### Export Screenshot Dialog
-
-![ShapeWorks Studio Export Screenshot](../img/studio/studio_image_export.png){: width="600" }
-
-The Export Screenshot dialog allows you to export the currently displayed image using a variety of options
-
-| Option | Description |
-| --- | ----------- |
-| Show Corner Widget | Show or hide the orientation widget |
-| Transparent Background | Enables transparent background in image export |
-| Show Color Scale | Show or hide color scale, when applicable |
-| Override Window Size | Override the window size and choose a resolution for export |
-
-### Export PCA Montage
-
-![ShapeWorks Studio Export PCA Montage](../img/studio/studio_pca_montage.png){: width="600" }
-
-The PCA Montage exporter allows you to create a multi-image montage across PCA modes. Options are similar to the screenshot export with the addition of controls:
-
-| Option | Description |
-| --- | ----------- |
-| PCA Modes | Comma separated list of modes or ranges to include |
-| PCA Images | Number of images to export on either side of the mean |
-| PCA Range | Standard deviation range of PCA export |
+See [Studio Export Options](studio-export.md) for details on export options.
 
 ## Project setup
 ShapeWorks Studio and the `shapeworks` commands `groom` and `optimize` store project data in an XLSX spreadsheet. The spreadsheet format profiles a uniform, easy to edit, easy to organize way of inputing data into shapeworks for grooming, optimizing and analyzing data.
