@@ -60,7 +60,7 @@ def Run_Pipeline(args):
     sorted_indices = np.argsort(distances)
     sorted_mesh_files = np.array(mesh_files)[sorted_indices]
     # Make 5 batches
-    batch_size = math.ceil(len(mesh_files))
+    batch_size = math.ceil(len(mesh_files)/5)
     batches = [sorted_mesh_files[i:i + batch_size] for i in range(0, len(sorted_mesh_files), batch_size)]
     print("Created " + str(len(batches))+ " batches of size " + str(len(batches[0])))
     
