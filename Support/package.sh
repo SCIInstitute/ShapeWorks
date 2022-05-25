@@ -44,7 +44,7 @@ rm -rf "package/$VERSION"
 mkdir -p "package/$VERSION"
 
 BASE_LIB=${INSTALL_DEP_DIR}/lib
-cp -a $INSTALL_DEP_DIR/* "package/${VERSION}"
+cp -a $INSTALL_DEP_DIR/lib "package/${VERSION}"
 cp -a $INSTALL_DIR/* "package/${VERSION}"
 cp -a Examples "package/${VERSION}"
 cp -a Python "package/${VERSION}"
