@@ -83,7 +83,7 @@ def Run_Pipeline(args):
         "save_init_splits" : 0,
         "verbosity" : 0,
         "multiscale": 1,
-        "multiscale_particles": 4,
+        "multiscale_particles": 8,
       }
     # If running a tiny test, reduce some parameters
     if args.tiny_test:
