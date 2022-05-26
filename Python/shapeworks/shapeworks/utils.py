@@ -298,6 +298,20 @@ def check_results(args, project_spreadsheet):
         print("Done with test, verification succeeded.")
         exit()
 
+def check_results_pattern(args, project_spreadsheet, pattern):
+    # If tiny test or verify, check results and exit
+    particle_dir = project_spreadsheet.replace(".xlsx", "_particles/")
+    world_point_files = []
+    for file in sorted(os.listdir(particle_dir)):
+        if pattern in file:
+            world_point_files.append(particle_dir + file)
+    if args.tiny_test or args.verify:
+        print("Verifying shape model")
+        if not verify(args, world_point_files):
+            exit(-1)
+        print("Done with test, verification succeeded.")
+        exit()
+        
 def findMeanShape(shapeModelDir):
     fileList = sorted(glob.glob(shapeModelDir + '/*local.particles'))
     for i in range(len(fileList)):
