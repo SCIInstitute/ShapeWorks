@@ -223,7 +223,7 @@ def Run_Pipeline(args):
     subprocess.check_call(optimize_cmd)
 
     # If tiny test or verify, check results and exit
-    sw.utils.check_results(args, spreadsheet_file)
+    sw.utils.check_results_pattern(args, spreadsheet_file, "c_world")
 
     print("\nStep 4. Analysis - Launch ShapeWorksStudio")
     """
