@@ -312,6 +312,11 @@ void Viewer::compute_point_differences(const Eigen::VectorXd& vecs, vtkSmartPoin
   for (size_t i = 0; i < mesh_group.meshes().size(); i++) {
     auto poly_data = mesh_group.meshes()[i]->get_poly_data();
 
+    if (!poly_data || poly_data->GetNumberOfPoints() == 0) {
+      locators.push_back(nullptr);
+      continue;
+    }
+
     auto normals = vtkSmartPointer<vtkPolyDataNormals>::New();
     normals->SetInputData(poly_data);
     normals->Update();
@@ -328,10 +333,17 @@ void Viewer::compute_point_differences(const Eigen::VectorXd& vecs, vtkSmartPoin
   double minmag = std::numeric_limits<double>::max();
   double maxmag = std::numeric_limits<double>::min();
 
+  bool any_valid = false;
   // Compute difference vector dot product with normal.  Length of vector is
   // stored in the "scalars" so that the vtk color mapping and glyph scaling happens properly.
   for (vtkIdType i = 0; i < point_set->GetNumberOfPoints(); i++) {
     int domain = shape_->get_particles().get_domain_for_combined_id(i);
+
+    if (!locators[domain]) {
+      vectors->InsertNextTuple3(0, 0, 0);
+      magnitudes->InsertNextTuple1(0);
+      continue;
+    }
 
     auto id = locators[domain]->FindClosestPoint(point_set->GetPoint(i));
     double* normal = polys[domain]->GetPointData()->GetNormals()->GetTuple(id);
@@ -346,7 +358,7 @@ void Viewer::compute_point_differences(const Eigen::VectorXd& vecs, vtkSmartPoin
     }
     minmag = std::min<float>(minmag, mag);
     maxmag = std::max<float>(maxmag, mag);
-
+    any_valid = true;
     vectors->InsertNextTuple3(normal[0] * mag, normal[1] * mag, normal[2] * mag);
     magnitudes->InsertNextTuple1(mag);
   }
@@ -356,8 +368,10 @@ void Viewer::compute_point_differences(const Eigen::VectorXd& vecs, vtkSmartPoin
     maxmag = session_->get_feature_range_max();
   }
 
-  update_difference_lut(minmag, maxmag);
-  visualizer_->update_feature_range(minmag, maxmag);
+  if (any_valid) {
+    update_difference_lut(minmag, maxmag);
+    visualizer_->update_feature_range(minmag, maxmag);
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -370,7 +384,7 @@ void Viewer::compute_surface_differences(vtkSmartPointer<vtkFloatArray> magnitud
 
   for (size_t i = 0; i < mesh_group.meshes().size(); i++) {
     auto poly_data = mesh_group.meshes()[i]->get_poly_data();
-    if (!poly_data || poly_data->GetNumberOfPoints() < 0) {
+    if (!poly_data || poly_data->GetNumberOfPoints() == 0) {
       return;
     }
 
