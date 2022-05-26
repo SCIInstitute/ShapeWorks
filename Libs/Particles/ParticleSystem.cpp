@@ -94,7 +94,7 @@ bool ParticleSystem::EvaluationCompare(const ParticleSystem& other) const
     std::cout << "Comparing generalization: " << gen1[0] << " vs " << gen2[0] << ": ";
     double diff = std::abs(gen1[0] - gen2[0]);
     if ((diff > 0.1 * gen1[0] || diff > 0.1 * gen2[0]) && !epsEqual(gen1[0], gen2[0], 0.1)) {
-      std::cout << "different\n";
+      std::cout << "different (" << diff << ")\n";
       good = false;
     } else {
       std::cout << "ok\n";
@@ -109,8 +109,8 @@ bool ParticleSystem::EvaluationCompare(const ParticleSystem& other) const
   if (spec1.size() > 0 && spec2.size() > 0) {
     std::cout << "Comparing specificity: " << spec1[0] << " vs " << spec2[0] << ": ";
     double diff = std::abs(spec1[0] - spec2[0]);
-    if (diff > 0.20 * spec1[0] || diff > 0.20 * spec2[0]) {
-      std::cout << "different\n";
+    if (diff > 0.25 * spec1[0] || diff > 0.25 * spec2[0]) {
+      std::cout << "different (" << diff << ")\n";
       good = false;
     } else {
       std::cout << "ok\n";
