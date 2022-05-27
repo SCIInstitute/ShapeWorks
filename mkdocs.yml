@@ -26,8 +26,8 @@ nav:
 - Workflow:
    - 'How to Groom Your Dataset?':           'workflow/groom.md'
    - Shape Model Optimization:
-      - 'How to Optimize Your Shape Model?' :   'workflow/optimize.md'
-      - 'How to Step Up Optimization?':          'workflow/parameters.md'
+      - 'How to Optimize Your Shape Model?': 'workflow/optimize.md'
+      - 'Optimization Parameters':           'workflow/parameters.md'
    - 'How to Analyze Your Shape Model?' :    'workflow/analyze.md'     
 - What is New?:
    - 'New in ShapeWorks Studio':             'new/new-studio.md'
