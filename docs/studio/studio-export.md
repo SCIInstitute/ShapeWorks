@@ -40,3 +40,11 @@ The PCA Montage exporter allows you to create a multi-image montage across PCA m
 | PCA Modes | Comma separated list of modes or ranges to include |
 | PCA Images | Number of images to export on either side of the mean |
 | PCA Range | Standard deviation range of PCA export |
+
+### Creating Videos
+
+The best way to create videos from ShapeWorks Studio is to use a dedicated stand-alone screen video recording tool.  This gives full control over changes in camera angle, display options (e.g. PCA modes, slider animation), compression levels, video formats, etc.  We recommend the following tools:
+
+* [MacOS built in screen recording ](https://support.apple.com/en-us/HT208721)
+
+* [OBS Studio for Windows, MacOS and Linux](https://obsproject.com)
