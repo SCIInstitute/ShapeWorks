@@ -12,12 +12,12 @@ Image Grooming Parameters
 | Isolate | Isolate the largest object in a segmentation.  This removes extraneous noise voxels that would result in disjoint objects. |
 | Fill Holes | Fill small holes in segmentation |
 | Crop | Crop image down to ROI of segmentation |
-| Pad | Pad image with zeroes.  Typically combined with cropping |
+| Pad | Pad image with zeroes by a given number of voxels.  Typically combined with cropping |
 | Antialias | Perform anti-aliasing to reduce segmentation stairstep effect |
 | Resample | Resample image spacing either to isotropic (recommended) or any given spacing |
 | Distance Transform | Create a distance transform for image based optimization |
 | Blur | Perform smoothing on the distance transform using a gaussian blur |
-| Convert to Mesh | Optionally convert to mesh at the end of Image Grooming.  This enabled the Mesh Grooming pipeline and will run the optimization on meshes |
+| Convert to Mesh | Optionally convert to mesh at the end of Image Grooming.  This enables the Mesh Grooming pipeline and will run the optimization on meshes |
 
 
 Mesh Grooming Parameters
