@@ -958,10 +958,10 @@ void Viewer::update_actors() {
     if (arrows_visible_) {
       renderer_->AddActor(arrow_glyph_actor_);
     }
+  }
 
-    if (arrows_visible_ || showing_feature_map()) {
-      renderer_->AddActor(scalar_bar_actor_);
-    }
+  if ((show_glyphs_ && arrows_visible_) || showing_feature_map()) {
+    renderer_->AddActor(scalar_bar_actor_);
   }
 
   if (show_surface_ && meshes_.valid()) {
