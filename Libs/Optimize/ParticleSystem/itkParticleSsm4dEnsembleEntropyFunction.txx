@@ -1,0 +1,311 @@
+#pragma once
+
+#include "ParticleImageDomainWithGradients.h"
+#include "vnl/algo/vnl_symmetric_eigensystem.h"
+#include "itkParticleGaussianModeWriter.h"
+#include "Libs/Utils/Utils.h"
+#include <string>
+
+namespace itk
+{
+template <unsigned int VDimension>
+void
+ParticleSsm4dEnsembleEntropyFunction<VDimension>
+::WriteModes(const std::string &prefix, int n) const
+{
+    typename ParticleGaussianModeWriter<VDimension>::Pointer writer =
+            ParticleGaussianModeWriter<VDimension>::New();
+    writer->SetShapeMatrix(m_ShapeMatrix);
+    writer->SetFileName(prefix.c_str());
+    writer->SetNumberOfModes(n);
+    writer->Update();
+}
+
+template <unsigned int VDimension>
+void ParticleSsm4dEnsembleEntropyFunction<VDimension>::ComputeCovarianceMatrices()
+{
+    // Compute  for each  time cohort and shape cohort
+    const unsigned int num_N = m_ShapeMatrix->cols(); // N subjects
+    const unsigned int num_T = m_ShapeMatrix->GetDomainsPerShape();
+    const unsigned int num_dims    = m_ShapeMatrix->rows() / num_T; // (dM X T) / T = dM
+
+    // 1. Iterate over time instances
+    tbb::parallel_for(tbb::blocked_range<size_t>{0, num_T}, [&](const tbb::blocked_range<size_t>& r) 
+    {
+        for (size_t time_point = r.begin(); time_point < r.end(); ++time_point) { // Iterate t = 1....T
+            // 1. Build the Matrix
+            vnl_matrix_type z;
+            z.clear();
+            z.set_size(num_dims, num_N);
+            z.fill(0.0);
+            unsigned int row_idx_start = time_point * num_dims;
+            z = m_ShapeMatrix->extract(num_dims, num_N, row_idx_start, 0);
+
+            if (m_Time_PointsUpdate->at(time_point).rows() != num_dims || m_Time_PointsUpdate->at(time_point).cols() != num_N)
+            {
+                m_PointsUpdate->at(time_point).set_size(num_dims, num_N);
+                m_PointsUpdate->at(time_point).fill(0.0);
+            }
+            vnl_matrix_type points_minus_mean_ti;
+            points_minus_mean_ti.clear();
+            points_minus_mean_ti.set_size(num_dims, num_N);
+            points_minus_mean_ti.fill(0.0);
+            vnl_matrix_type inv_cov_ti;
+            inv_cov_ti.clear();
+
+            m_points_mean_time_cohort->at(time_point).clear();
+            m_points_mean_time_cohort->at(time_point).set_size(num_dims, 1);
+
+            double _total = 0.0;
+            for (unsigned int j = 0; j < num_dims; j++)
+            {
+                double total = 0.0;
+                for (unsigned int i = 0; i < num_N; i++)
+                {
+                    total += z(j, i);
+                }
+                m_points_mean_time_cohort->at(time_point).put(j,0, total/(double)num_N);
+                _total += total;
+            }
+
+            for (unsigned int j = 0; j < num_dims; j++)
+            {
+                for (unsigned int i = 0; i < num_N; i++)
+                {
+                    points_minus_mean_ti(j, i) = z(j, i) - m_points_mean_time_cohort->at(time_point).get(j,0);
+                }
+            }
+            
+            vnl_diag_matrix<double> W_ti;
+            vnl_matrix_type gramMat_ti(num_N, num_N, 0.0);
+            vnl_matrix_type pinvMat_ti(num_N, num_N, 0.0); //gramMat inverse
+
+            if (this->m_UseMeanEnergy)
+            {
+                pinvMat_ti.set_identity();
+                m_InverseCovMatrices_time_cohort->at(time_point).clear();
+            }
+            else
+            {
+                gramMat_ti = points_minus_mean_ti.transpose()* points_minus_mean_ti;
+
+                vnl_svd <double> svd(gramMat_ti);
+
+                vnl_matrix_type UG = svd.U();
+                W_ti = svd.W();
+
+                vnl_diag_matrix<double> invLambda_ti = svd.W();
+
+                invLambda_ti.set_diagonal(invLambda_ti.get_diagonal()/(double)(num_N-1) + m_MinimumVariance);
+                invLambda_ti.invert_in_place();
+
+                pinvMat_ti = (UG * invLambda_ti) * UG.transpose();
+
+                vnl_matrix_type projMat_ti = points_minus_mean_ti * UG;
+                const auto lhs = projMat_ti * invLambda_ti;
+                const auto rhs = invLambda_ti * projMat_ti.transpose();
+
+                inv_cov_ti.set_size(num_dims, num_dims);
+                Utils::multiply_into(*inv_cov_ti, lhs, rhs);
+            }
+            // Update Gradient points update infor
+            m_Time_PointsUpdate->at(time_point).update(points_minus_mean_ti * pinvMat_ti);
+            double currentEnergy_ti = 0.0;
+            if (m_UseMeanEnergy)
+                currentEnergy_ti = points_minus_mean_ti.frobenius_norm();
+            else
+            {
+                m_MinimumEigenValue_time_cohort[time_point] = W_ti(0)*W_ti(0) + m_MinimumVariance;
+                for (unsigned int i = 0; i < num_N; i++)
+                {
+                    double val_i = W_ti(i)*W_ti(i) + m_MinimumVariance;
+                    if ( val_i < m_MinimumEigenValue_time_cohort[time_point])
+                        m_MinimumEigenValue_time_cohort[time_point] = val_i;
+                    currentEnergy_ti += log(val_i);
+                }
+            }
+            currentEnergy_ti /= 2.0;
+            if (m_UseMeanEnergy){
+                m_MinimumEigenValue_time_cohort[time_point] = currentEnergy_ti / 2.0;
+            }
+            // Update Inv Covariance Matrix
+            m_InverseCovMatrices_time_cohort->at(time_point) = inv_cov_ti;
+        }
+    });
+
+    // 2. Iterate over subject instances
+    tbb::parallel_for(tbb::blocked_range<size_t>{0, num_N}, [&](const tbb::blocked_range<size_t>& r)
+    {
+        for (size_t sub = r.begin(); sub < r.end(); ++sub) { // Iterate n = 1....N
+            // 1. Build the Matrix
+            vnl_matrix_type z;
+            z.clear();
+            z.set_size(num_dims, num_T);
+            z.fill(0.0);
+            for(unsigned int t = 0; t < num_T; t++){
+                unsigned int row_start = num_dims * t;
+                vnl_matrix_type time_vec = m_ShapeMatrix->extract(num_dims, 1, row_start, sub);
+                z.set_columns(t, time_vec);
+            }
+
+
+            if (m_Shape_PointsUpdate->at(sub).rows() != num_dims || m_Shape_PointsUpdate->at(sub).cols() != num_T)
+            {
+                m_Shape_PointsUpdate->at(sub).set_size(num_dims, num_T);
+                m_Shape_PointsUpdate->at(sub).fill(0.0);
+            }
+
+            vnl_matrix_type points_minus_mean_n;
+            points_minus_mean_n.clear();
+            points_minus_mean_n.set_size(num_dims, num_T);
+            points_minus_mean_n.fill(0.0);
+            vnl_matrix_type inv_cov_n;
+            inv_cov_n.clear();
+
+            m_points_mean_shape_cohort->at(sub).clear();
+            m_points_mean_shape_cohort->at(sub).set_size(num_dims, 1);
+
+            double _total = 0.0;
+            for (unsigned int j = 0; j < num_dims; j++)
+            {
+                double total = 0.0;
+                for (unsigned int i = 0; i < num_T; i++)
+                {
+                    total += z(j, i);
+                }
+                m_points_mean_shape_cohort->at(sub).put(j,0, total/(double)num_T);
+                _total += total;
+            }
+
+            for (unsigned int j = 0; j < num_dims; j++)
+            {
+                for (unsigned int i = 0; i < num_T; i++)
+                {
+                    points_minus_mean_n(j, i) = z(j, i) - m_points_mean_shape_cohort->at(sub).get(j,0);
+                }
+            }
+            
+            vnl_diag_matrix<double> W_n;
+            vnl_matrix_type gramMat_n(num_T, num_T, 0.0);
+            vnl_matrix_type pinvMat_n(num_T, num_T, 0.0); //gramMat inverse
+
+            if (this->m_UseMeanEnergy)
+            {
+                pinvMat_n.set_identity();
+                m_InverseCovMatrices_shape_cohort->at(sub).clear();
+            }
+            else
+            {
+                gramMat_n = points_minus_mean_n.transpose()* points_minus_mean_n;
+
+                vnl_svd <double> svd(gramMat_n);
+
+                vnl_matrix_type UG = svd.U();
+                W_n = svd.W();
+
+                vnl_diag_matrix<double> invLambda_n = svd.W();
+
+                invLambda_n.set_diagonal(invLambda_n.get_diagonal()/(double)(num_T-1) + m_MinimumVariance);
+                invLambda_n.invert_in_place();
+
+                pinvMat_n = (UG * invLambda_n) * UG.transpose();
+
+                vnl_matrix_type projMat_n = points_minus_mean_n * UG;
+                const auto lhs = projMat_n * invLambda_n;
+                const auto rhs = invLambda_n * projMat_n.transpose();
+                inv_cov_n.set_size(num_dims, num_dims);
+                Utils::multiply_into(*inv_cov_n, lhs, rhs);
+            }
+            m_Shape_PointsUpdate->at(sub).update(points_minus_mean_n * pinvMat_n);
+            double currentEnergy_n = 0.0;
+
+            if (m_UseMeanEnergy)
+                currentEnergy_n = points_minus_mean_n.frobenius_norm();
+            else
+            {
+                m_MinimumEigenValue_shape_cohort[sub] = W_n(0)*W_n(0) + m_MinimumVariance;
+                for (unsigned int i = 0; i < num_T; i++)
+                {
+                    double val_i = W_n(i)*W_n(i) + m_MinimumVariance;
+                    if ( val_i < m_MinimumEigenValue_shape_cohort[sub])
+                        m_MinimumEigenValue_shape_cohort[sub] = val_i;
+                    currentEnergy_n += log(val_i);
+                }
+            }
+
+            currentEnergy_n /= 2.0;
+            if (m_UseMeanEnergy)
+                m_MinimumEigenValue_shape_cohort[sub] = currentEnergy_n / 2.0;
+            // Update Inv Covariance Matrix
+            m_InverseCovMatrices_shape_cohort->at(sub) = inv_cov_n;
+      }
+    });
+}
+
+template <unsigned int VDimension>
+typename ParticleSsm4dEnsembleEntropyFunction<VDimension>::VectorType
+ParticleSsm4dEnsembleEntropyFunction<VDimension>
+::Evaluate(unsigned int idx, unsigned int d, const ParticleSystemType * system,
+           double &maxdt, double &energy) const
+{
+
+    // const unsigned int DomainsPerShape = m_ShapeMatrix->GetDomainsPerShape();
+
+    const unsigned int num_N = m_ShapeMatrix->cols(); // N subjects
+    const unsigned int num_T = m_ShapeMatrix->GetDomainsPerShape();
+    
+    const unsigned int cur_sub = d / num_T;
+    const unsigned int cur_time_point = d % num_T;
+
+    maxdt  = m_MinimumEigenValue_shape_cohort[cur_sub] + m_MinimumEigenValue_time_cohort[cur_time_point];
+
+    VectorType gradE;
+    unsigned int shape_matrix_start_idx = 0;
+
+    int dom = d % num_T;
+    for (int i = 0; i < dom; i++)
+        shape_matrix_start_idx += system->GetNumberOfParticles(i) * VDimension;
+    shape_matrix_start_idx += idx*VDimension;
+
+    unsigned int particle_idx = VDimension * idx;
+
+    vnl_matrix_type Xi_time_cohort(3,1,0.0);
+    Xi_time_cohort(0,0) = m_ShapeMatrix->operator()(shape_matrix_start_idx  , cur_sub) - m_points_mean_time_cohort->at(cur_time_point).get(particle_idx, 0);
+    Xi_time_cohort(1,0) = m_ShapeMatrix->operator()(shape_matrix_start_idx+1, cur_sub) - m_points_mean_time_cohort->at(cur_time_point).get(particle_idx+1, 0);
+    Xi_time_cohort(2,0) = m_ShapeMatrix->operator()(shape_matrix_start_idx+2, cur_sub) - m_points_mean_time_cohort->at(cur_time_point).get(particle_idx+2, 0);
+    vnl_matrix_type tmp1_time(3, 3, 0.0);
+    if (this->m_UseMeanEnergy)
+        tmp1_time.set_identity();
+    else
+        tmp1_time = m_InverseCovMatrices_time_cohort->at(cur_time_point).extract(3,3,particle_idx, particle_idx);
+    vnl_matrix_type tmp_time = Xi_time_cohort.transpose()*tmp1_time;
+    tmp_time *= Xi_time_cohort;
+
+
+    vnl_matrix_type Xi_shape_cohort(3,1,0.0);
+    Xi_shape_cohort(0,0) = m_ShapeMatrix->operator()(shape_matrix_start_idx  , cur_sub) - m_points_mean_shape_cohort->at(cur_sub).get(particle_idx, 0);
+    Xi_shape_cohort(1,0) = m_ShapeMatrix->operator()(shape_matrix_start_idx+1, cur_sub) - m_points_mean_shape_cohort->at(cur_sub).get(particle_idx+1, 0);
+    Xi_shape_cohort(2,0) = m_ShapeMatrix->operator()(shape_matrix_start_idx+2, cur_sub) - m_points_mean_shape_cohort->at(cur_sub).get(particle_idx+2, 0);
+    vnl_matrix_type tmp1_shape(3, 3, 0.0);
+    if (this->m_UseMeanEnergy)
+        tmp1_shape.set_identity();
+    else
+        tmp1_shape = m_InverseCovMatrices_shape_cohort->at(cur_sub).extract(3,3,particle_idx, particle_idx);
+    vnl_matrix_type tmp_shape = Xi_shape_cohort.transpose()*tmp1_shape;
+    tmp_shape *= Xi_shape_cohort;
+
+
+    // Net Energy
+    energy = tmp_time(0,0) + tmp_shape(0, 0); 
+
+    // Net Gradient
+    for (unsigned int i = 0; i< VDimension; i++)
+    {
+        gradE[i] = m_Time_PointsUpdate->at(cur_time_point).get(particle_idx + i, cur_sub) + m_Shape_PointsUpdate->at(cur_sub).get(particle_idx + i, cur_time_point);
+    }
+
+
+    return system->TransformVector(gradE,
+                                   system->GetInversePrefixTransform(d) *
+                                   system->GetInverseTransform(d));
+}

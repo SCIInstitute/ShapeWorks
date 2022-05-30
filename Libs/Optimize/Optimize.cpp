@@ -380,6 +380,12 @@ shapeworks::DomainType Optimize::GetDomainType()
 }
 
 //---------------------------------------------------------------------------
+void Optimize::SetSsm4d(bool value)
+{
+  this->m_use_ssm_4d  = value;
+}
+
+//---------------------------------------------------------------------------
 void Optimize::SetNumberOfParticles(std::vector<int> number_of_particles)
 {
   this->m_number_of_particles = number_of_particles;
@@ -567,6 +573,11 @@ void Optimize::InitializeSampler()
   m_sampler->GetOmegaGradientFunction()->SetFlatCutoff(flat_cutoff);
   m_sampler->GetOmegaGradientFunction()->SetNeighborhoodToSigmaRatio(nbhd_to_sigma);
 
+  m_sampler->GetSsm4dEnsembleEntropyFunction()->SetMinimumVariance(m_starting_regularization);
+  m_sampler->GetSsm4dEnsembleEntropyFunction()->SetRecomputeCovarianceInterval(1);
+  m_sampler->GetSsm4dEnsembleEntropyFunction()->SetHoldMinimumVariance(false);
+  m_sampler->GetSsm4dEnsembleEntropyFunction()->SetSsmInfo(m_domains_per_shape);
+
   m_sampler->GetEnsembleEntropyFunction()->SetMinimumVariance(m_starting_regularization);
   m_sampler->GetEnsembleEntropyFunction()->SetRecomputeCovarianceInterval(1);
   m_sampler->GetEnsembleEntropyFunction()->SetHoldMinimumVariance(false);
@@ -591,6 +602,7 @@ void Optimize::InitializeSampler()
   m_sampler->SetCorrespondenceOn();
 
   m_sampler->SetAdaptivityMode(m_adaptivity_mode);
+  m_sampler->GetSsm4dEnsembleEntropyFunction()->SetRecomputeCovarianceInterval(m_recompute_regularization_interval);
   m_sampler->GetEnsembleEntropyFunction()
     ->SetRecomputeCovarianceInterval(m_recompute_regularization_interval);
   m_sampler->GetMeshBasedGeneralEntropyGradientFunction()
@@ -687,13 +699,18 @@ void Optimize::Initialize()
   m_sampler->SetCorrespondenceOn();
 
   if (m_use_shape_statistics_in_init) {
-    if (m_mesh_based_attributes) {
+    if(m_use_ssm_4d){
+      std::cout << "-----Using Shape Statistics in 4D Ensemble Entropy during Initialization----" << std::endl;
+      m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::Ssm4dEnsembleEntropy);
+    }
+    else if (m_mesh_based_attributes) {
       m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::MeshBasedGeneralEntropy);
     }
     else {
       m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::EnsembleEntropy);
     }
 
+    m_sampler->GetSsm4dEnsembleEntropyFunction()->SetMinimumVarianceDecay(m_starting_regularization, m_ending_regularization, m_iterations_per_split);
     m_sampler->GetEnsembleEntropyFunction()->SetMinimumVarianceDecay(m_starting_regularization,
                                                                      m_ending_regularization,
                                                                      m_iterations_per_split);
@@ -705,7 +722,11 @@ void Optimize::Initialize()
   }
   else {
     // force to mean
-    if ((m_attributes_per_domain.size() > 0 &&
+    if(m_use_ssm_4d){
+      std::cout << "-----Mean forcing the 4D Ensemble Entropy during Initialization----" << std::endl;
+      m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::Ssm4dEnsembleEntropyMean);
+    }
+    else if ((m_attributes_per_domain.size() > 0 &&
          *std::max_element(m_attributes_per_domain.begin(),
                            m_attributes_per_domain.end()) > 0) || m_mesh_based_attributes) {
       m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::MeshBasedGeneralMeanEnergy);
@@ -986,6 +1007,7 @@ void Optimize::RunOptimize()
   }
 
   // Set up the minimum variance decay
+  m_sampler->GetSsm4dEnsembleEntropyFunction()->SetMinimumVarianceDecay(m_starting_regularization, m_ending_regularization, m_optimization_iterations - m_optimization_iterations_completed);
   m_sampler->GetEnsembleEntropyFunction()->SetMinimumVarianceDecay(m_starting_regularization,
                                                                    m_ending_regularization,
                                                                    m_optimization_iterations -
@@ -1030,10 +1052,22 @@ void Optimize::RunOptimize()
     }
   }
   else if (m_starting_regularization == m_ending_regularization) {
-    m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::MeanEnergy);     // mean force
+    if (m_use_ssm_4d){
+      std::cout << " -------- Ssm4dEnsembleEntropyMean set for Optimization ---------" << std::endl;
+      m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::Ssm4dEnsembleEntropyMean);
+    }
+    else{
+      m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::MeanEnergy);     // mean force
+    }
   }
   else {
-    m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::EnsembleEntropy);
+    if (m_use_ssm_4d){
+      std::cout << " -------- Ssm4dEnsembleEntropy set for Optimization ---------" << std::endl;
+      m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::Ssm4dEnsembleEntropy);
+    }
+    else{
+      m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::EnsembleEntropy);
+    }
   }
 
   if (m_sampler->GetParticleSystem()->GetNumberOfDomains() == 1) {

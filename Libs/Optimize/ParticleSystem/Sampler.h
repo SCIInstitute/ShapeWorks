@@ -19,6 +19,7 @@
 #include "itkParticleShapeLinearRegressionMatrixAttribute.h"
 #include "itkParticleShapeMixedEffectsMatrixAttribute.h"
 #include "itkParticleMeshBasedGeneralEntropyGradientFunction.h"
+#include "itkParticleSsm4dEnsembleEntropyFunction.h"
 
 #include "itkParticleModifiedCotangentEntropyGradientFunction.h"
 #include "itkParticleConstrainedModifiedCotangentEntropyGradientFunction.h"
@@ -250,6 +251,14 @@ public:
     else if (mode == shapeworks::CorrespondenceMode::EnsembleMixedEffectsEntropy) {
       m_LinkingFunction->SetFunctionB(m_EnsembleMixedEffectsEntropyFunction);
     }
+    else if (mode == shapeworks::CorrespondenceMode::Ssm4dEnsembleEntropy) {
+      m_LinkingFunction->SetFunctionB(m_Ssm4dEnsembleEntropyFunction);
+      m_Ssm4dEnsembleEntropyFunction->UseEntropy(); 
+    }
+    else if (mode == shapeworks::CorrespondenceMode::Ssm4dEnsembleEntropyMean) {
+      m_LinkingFunction->SetFunctionB(m_Ssm4dEnsembleEntropyFunction);
+      m_Ssm4dEnsembleEntropyFunction->UseMeanEnergy(); 
+    }
     else if (mode == shapeworks::CorrespondenceMode::MeshBasedGeneralEntropy) {
       m_LinkingFunction->SetFunctionB(m_MeshBasedGeneralEntropyGradientFunction);
       m_MeshBasedGeneralEntropyGradientFunction->UseEntropy();
@@ -327,6 +336,9 @@ public:
   itk::ParticleEnsembleEntropyFunction<Dimension>* GetEnsembleEntropyFunction()
   { return m_EnsembleEntropyFunction.GetPointer(); }
 
+  itk::ParticleEnsembleEntropyFunction<Dimension>* GetSsm4dEnsembleEntropyFunction()
+  { return m_Ssm4dEnsembleEntropyFunction.GetPointer(); }
+
   itk::ParticleEnsembleEntropyFunction<Dimension>* GetEnsembleRegressionEntropyFunction()
   { return m_EnsembleRegressionEntropyFunction.GetPointer(); }
 
@@ -339,6 +351,9 @@ public:
 
   const itk::ParticleDualVectorFunction<Dimension>* GetLinkingFunction() const
   { return m_LinkingFunction.GetPointer(); }
+
+  const itk::ParticleSsm4dEnsembleEntropyFunction<Dimension>* GetSsm4dEnsembleEntropyFunction() const
+  { return m_Ssm4dEnsembleEntropyFunction.GetPointer(); }
 
   const itk::ParticleEnsembleEntropyFunction<Dimension>* GetEnsembleEntropyFunction() const
   { return m_EnsembleEntropyFunction.GetPointer(); }
@@ -516,6 +531,7 @@ protected:
   itk::ParticleEnsembleEntropyFunction<Dimension>::Pointer m_EnsembleEntropyFunction;
   itk::ParticleEnsembleEntropyFunction<Dimension>::Pointer m_EnsembleRegressionEntropyFunction;
   itk::ParticleEnsembleEntropyFunction<Dimension>::Pointer m_EnsembleMixedEffectsEntropyFunction;
+  itk::ParticleSsm4dEnsembleEntropyFunction<Dimension>::Pointer m_Ssm4dEnsembleEntropyFunction;
 
   itk::ParticleShapeMatrixAttribute<double, Dimension>::Pointer m_ShapeMatrix;
 

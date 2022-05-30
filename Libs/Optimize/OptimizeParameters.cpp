@@ -35,6 +35,12 @@ void OptimizeParameters::set_number_of_particles(std::vector<int> number_of_part
 }
 
 //---------------------------------------------------------------------------
+bool OptimizeParameters::get_use_ssm_4d() { return this->params_.get("ssm_4d", false); }
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_use_ssm_4d(bool value) { this->params_.set("ssm_4d", value);}
+
+//---------------------------------------------------------------------------
 double OptimizeParameters::get_initial_relative_weighting() {
   return this->params_.get("initial_relative_weighting", 0.05);
 }
@@ -252,6 +258,9 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
   bool normals_enabled = this->get_use_normals()[0];
   optimize->SetDomainsPerShape(domains_per_shape);
   optimize->SetNumberOfParticles(this->get_number_of_particles());
+  optimize->SetSsm4d(this->get_use_ssm_4d());
+  // debug 
+  std::cout << "SSM 4D Flag set as " << this->get_use_ssm_4d() << std::endl;
   optimize->SetInitialRelativeWeighting(this->get_initial_relative_weighting());
   optimize->SetRelativeWeighting(this->get_relative_weighting());
   optimize->SetStartingRegularization(this->get_starting_regularization());

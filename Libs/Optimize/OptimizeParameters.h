@@ -16,6 +16,9 @@ class OptimizeParameters {
   std::string get_optimize_output_prefix();
   void set_optimize_output_prefix(std::string prefix);
 
+  bool get_use_ssm_4d();
+  void set_use_ssm_4d(bool value);
+
   std::vector<int> get_number_of_particles();
   void set_number_of_particles(std::vector<int> number_of_particles);
 

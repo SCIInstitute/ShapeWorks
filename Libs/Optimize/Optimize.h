@@ -98,6 +98,9 @@ public:
   //! Return the number of domains per shape
   int GetDomainsPerShape();
 
+  //! Set flag for 4D SSM Optimization with time points
+  void SetSsm4d(bool value);
+
   void SetDomainType(shapeworks::DomainType type);
   shapeworks::DomainType GetDomainType();
 
@@ -377,6 +380,7 @@ protected:
   bool m_use_cutting_planes = false;
   bool m_optimizing = false;
   bool m_use_regression = false;
+  bool m_use_ssm_4d = false;
   bool m_use_mixed_effects = false;
 
   // IO Parameters
