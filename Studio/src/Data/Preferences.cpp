@@ -220,7 +220,7 @@ void Preferences::set_optimize_file_template(QString optimize_file_template) {
 
 //-----------------------------------------------------------------------------
 QSize Preferences::get_export_override_size() {
-  return settings_.value("Export/override_size", QSize(1024, 1204)).toSize();
+  return settings_.value("Export/override_size", QSize(1024, 1024)).toSize();
 }
 
 //-----------------------------------------------------------------------------
