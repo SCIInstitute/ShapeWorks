@@ -32,19 +32,19 @@ void ParticleSsm4dEnsembleEntropyFunction<VDimension>::ComputeCovarianceMatrices
     // 1. Iterate over time instances
     tbb::parallel_for(tbb::blocked_range<size_t>{0, num_T}, [&](const tbb::blocked_range<size_t>& r) 
     {
-        for (size_t time_point = r.begin(); time_point < r.end(); ++time_point) { // Iterate t = 1....T
+        for (size_t time_inst = r.begin(); time_inst < r.end(); ++time_inst) { // Iterate t = 1....T
             // 1. Build the Matrix
             vnl_matrix_type z;
             z.clear();
             z.set_size(num_dims, num_N);
             z.fill(0.0);
-            unsigned int row_idx_start = time_point * num_dims;
+            unsigned int row_idx_start = time_inst * num_dims;
             z = m_ShapeMatrix->extract(num_dims, num_N, row_idx_start, 0);
 
-            if (m_Time_PointsUpdate->at(time_point).rows() != num_dims || m_Time_PointsUpdate->at(time_point).cols() != num_N)
+            if (m_Time_PointsUpdate->at(time_inst).rows() != num_dims || m_Time_PointsUpdate->at(time_inst).cols() != num_N)
             {
-                m_PointsUpdate->at(time_point).set_size(num_dims, num_N);
-                m_PointsUpdate->at(time_point).fill(0.0);
+                m_Time_PointsUpdate->at(time_inst).set_size(num_dims, num_N);
+                m_Time_PointsUpdate->at(time_inst).fill(0.0);
             }
             vnl_matrix_type points_minus_mean_ti;
             points_minus_mean_ti.clear();
@@ -53,8 +53,8 @@ void ParticleSsm4dEnsembleEntropyFunction<VDimension>::ComputeCovarianceMatrices
             vnl_matrix_type inv_cov_ti;
             inv_cov_ti.clear();
 
-            m_points_mean_time_cohort->at(time_point).clear();
-            m_points_mean_time_cohort->at(time_point).set_size(num_dims, 1);
+            m_points_mean_time_cohort->at(time_inst).clear();
+            m_points_mean_time_cohort->at(time_inst).set_size(num_dims, 1);
 
             double _total = 0.0;
             for (unsigned int j = 0; j < num_dims; j++)
@@ -64,7 +64,7 @@ void ParticleSsm4dEnsembleEntropyFunction<VDimension>::ComputeCovarianceMatrices
                 {
                     total += z(j, i);
                 }
-                m_points_mean_time_cohort->at(time_point).put(j,0, total/(double)num_N);
+                m_points_mean_time_cohort->at(time_inst).put(j,0, total/(double)num_N);
                 _total += total;
             }
 
@@ -72,7 +72,7 @@ void ParticleSsm4dEnsembleEntropyFunction<VDimension>::ComputeCovarianceMatrices
             {
                 for (unsigned int i = 0; i < num_N; i++)
                 {
-                    points_minus_mean_ti(j, i) = z(j, i) - m_points_mean_time_cohort->at(time_point).get(j,0);
+                    points_minus_mean_ti(j, i) = z(j, i) - m_points_mean_time_cohort->at(time_inst).get(j,0);
                 }
             }
             
@@ -83,7 +83,7 @@ void ParticleSsm4dEnsembleEntropyFunction<VDimension>::ComputeCovarianceMatrices
             if (this->m_UseMeanEnergy)
             {
                 pinvMat_ti.set_identity();
-                m_InverseCovMatrices_time_cohort->at(time_point).clear();
+                m_InverseCovMatrices_time_cohort->at(time_inst).clear();
             }
             else
             {
@@ -109,27 +109,27 @@ void ParticleSsm4dEnsembleEntropyFunction<VDimension>::ComputeCovarianceMatrices
                 Utils::multiply_into(*inv_cov_ti, lhs, rhs);
             }
             // Update Gradient points update infor
-            m_Time_PointsUpdate->at(time_point).update(points_minus_mean_ti * pinvMat_ti);
+            m_Time_PointsUpdate->at(time_inst).update(points_minus_mean_ti * pinvMat_ti);
             double currentEnergy_ti = 0.0;
             if (m_UseMeanEnergy)
                 currentEnergy_ti = points_minus_mean_ti.frobenius_norm();
             else
             {
-                m_MinimumEigenValue_time_cohort[time_point] = W_ti(0)*W_ti(0) + m_MinimumVariance;
+                m_MinimumEigenValue_time_cohort[time_inst] = W_ti(0)*W_ti(0) + m_MinimumVariance;
                 for (unsigned int i = 0; i < num_N; i++)
                 {
                     double val_i = W_ti(i)*W_ti(i) + m_MinimumVariance;
-                    if ( val_i < m_MinimumEigenValue_time_cohort[time_point])
-                        m_MinimumEigenValue_time_cohort[time_point] = val_i;
+                    if ( val_i < m_MinimumEigenValue_time_cohort[time_inst])
+                        m_MinimumEigenValue_time_cohort[time_inst] = val_i;
                     currentEnergy_ti += log(val_i);
                 }
             }
             currentEnergy_ti /= 2.0;
             if (m_UseMeanEnergy){
-                m_MinimumEigenValue_time_cohort[time_point] = currentEnergy_ti / 2.0;
+                m_MinimumEigenValue_time_cohort[time_inst] = currentEnergy_ti / 2.0;
             }
             // Update Inv Covariance Matrix
-            m_InverseCovMatrices_time_cohort->at(time_point) = inv_cov_ti;
+            m_InverseCovMatrices_time_cohort->at(time_inst) = inv_cov_ti;
         }
     });
 
@@ -308,4 +308,6 @@ ParticleSsm4dEnsembleEntropyFunction<VDimension>
     return system->TransformVector(gradE,
                                    system->GetInversePrefixTransform(d) *
                                    system->GetInverseTransform(d));
+}
+
 }

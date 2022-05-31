@@ -30,10 +30,11 @@ Sampler::Sampler() {
   m_MeshFiles.push_back("");
 
   m_LinkingFunction = itk::ParticleDualVectorFunction<Dimension>::New();
-  m_Ssm4dEnsembleEntropyFunction = itk::ParticleSsm4dEnsembleEntropyFunction<Dimension>::New();
   m_EnsembleEntropyFunction = itk::ParticleEnsembleEntropyFunction<Dimension>::New();
   m_EnsembleRegressionEntropyFunction = itk::ParticleEnsembleEntropyFunction<Dimension>::New();
   m_EnsembleMixedEffectsEntropyFunction = itk::ParticleEnsembleEntropyFunction<Dimension>::New();
+  
+  m_Ssm4dEnsembleEntropyFunction = itk::ParticleSsm4dEnsembleEntropyFunction<Dimension>::New();
   m_MeshBasedGeneralEntropyGradientFunction = itk::ParticleMeshBasedGeneralEntropyGradientFunction<Dimension>::New();
 
   m_ShapeMatrix = itk::ParticleShapeMatrixAttribute<double, Dimension>::New();

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef ITKPARTICLESSM4DENSEMBLEENTROPYFUNCTION_H
+#define ITKPARTICLESSM4DENSEMBLEENTROPYFUNCTION_H
 
 #include "itkParticleShapeMatrixAttribute.h"
 #include "itkParticleVectorFunction.h"
@@ -242,7 +243,7 @@ protected:
   typename ShapeMatrixType::Pointer m_ShapeMatrix;
 
   virtual void ComputeCovarianceMatrices();
-  std::shared_ptr<vnl_matrix_type> m_PointsUpdate;
+  // std::shared_ptr<vnl_matrix_type> m_PointsUpdate;
   double m_MinimumVariance;
   // double m_MinimumEigenValue;
   std::vector<double> m_MinimumEigenValue_time_cohort;
@@ -269,4 +270,14 @@ protected:
 } //end namespace
 
 
+#if ITK_TEMPLATE_EXPLICIT
+#include "Templates/itkParticleSsm4dEnsembleEntropyFunction+-.h"
+#endif
+
+#if ITK_TEMPLATE_TXX
 #include "itkParticleSsm4dEnsembleEntropyFunction.txx"
+#endif
+
+#include "itkParticleSsm4dEnsembleEntropyFunction.txx"
+
+#endif
