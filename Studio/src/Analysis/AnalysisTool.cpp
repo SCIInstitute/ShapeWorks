@@ -102,6 +102,7 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
 
   ui_->lda_panel->hide();
   ui_->lda_graph->hide();
+  ui_->lda_hint_label->hide();
   group_lda_job_ = QSharedPointer<StatsGroupLDAJob>::create();
   connect(group_lda_job_.data(), &StatsGroupLDAJob::progress, this, &AnalysisTool::handle_lda_progress);
   connect(group_lda_job_.data(), &StatsGroupLDAJob::finished, this, &AnalysisTool::handle_lda_complete);
@@ -990,6 +991,7 @@ void AnalysisTool::update_lda_graph() {
     }
   } else {
     ui_->lda_graph->setVisible(false);
+    ui_->lda_hint_label->setVisible(false);
   }
 }
 
@@ -1239,14 +1241,14 @@ void AnalysisTool::handle_lda_progress(double progress) {
   } else {
     ui_->lda_progress->setMaximum(0);
   }
-  ui_->lda_progress->setVisible(progress < 1);
+  ui_->lda_progress_widget->setVisible(progress < 1);
   ui_->lda_progress->setValue(progress * 100);
   ui_->lda_progress->update();
 }
 
 //---------------------------------------------------------------------------
 void AnalysisTool::handle_lda_complete() {
-  ui_->lda_progress->setVisible(false);
+  ui_->lda_progress_widget->setVisible(false);
   ui_->lda_label->setVisible(false);
   group_lda_job_running_ = false;
 
@@ -1255,6 +1257,7 @@ void AnalysisTool::handle_lda_complete() {
 
   group_lda_job_->plot(ui_->lda_graph, left_group, right_group);
   ui_->lda_graph->setVisible(true);
+  ui_->lda_hint_label->setVisible(true);
 }
 
 //---------------------------------------------------------------------------
