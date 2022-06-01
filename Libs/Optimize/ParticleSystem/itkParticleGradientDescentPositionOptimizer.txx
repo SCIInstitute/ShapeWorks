@@ -61,7 +61,7 @@ namespace itk
   {
     /// uncomment this to run single threaded
     //tbb::task_scheduler_init init(1);
-
+    std::cout << "inside gauss siedel update " << std::endl;
     if (this->m_AbortProcessing) {
       return;
     }
@@ -83,7 +83,7 @@ namespace itk
 
     const double pi = std::acos(-1.0);
     unsigned int numdomains = m_ParticleSystem->GetNumberOfDomains();
-
+    std::cout << "Number of domains are : " << numdomains << std::endl;
     unsigned int counter = 0;
 
     double maxchange = 0.0;

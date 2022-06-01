@@ -260,7 +260,7 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
   optimize->SetNumberOfParticles(this->get_number_of_particles());
   optimize->SetSsm4d(this->get_use_ssm_4d());
   // debug 
-  std::cout << "SSM 4D Flag set as " << this->get_use_ssm_4d() << std::endl;
+  std::cout << "-----SSM 4D Flag set as " << this->get_use_ssm_4d() << std::endl;
   optimize->SetInitialRelativeWeighting(this->get_initial_relative_weighting());
   optimize->SetRelativeWeighting(this->get_relative_weighting());
   optimize->SetStartingRegularization(this->get_starting_regularization());

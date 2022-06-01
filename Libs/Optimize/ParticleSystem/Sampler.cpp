@@ -279,6 +279,7 @@ void Sampler::Execute() {
   if (this->GetInitializing() == true) return;
 
   // this->GetOptimizer()->SetShapeMatrix(this->m_ShapeMatrix);
+  std::cout << "Before start optimization" << std::endl;
   this->GetOptimizer()->StartOptimization();
 }
 

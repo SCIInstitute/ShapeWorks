@@ -336,7 +336,7 @@ public:
   itk::ParticleEnsembleEntropyFunction<Dimension>* GetEnsembleEntropyFunction()
   { return m_EnsembleEntropyFunction.GetPointer(); }
 
-  itk::ParticleEnsembleEntropyFunction<Dimension>* GetSsm4dEnsembleEntropyFunction()
+  itk::ParticleSsm4dEnsembleEntropyFunction<Dimension>* GetSsm4dEnsembleEntropyFunction()
   { return m_Ssm4dEnsembleEntropyFunction.GetPointer(); }
 
   itk::ParticleEnsembleEntropyFunction<Dimension>* GetEnsembleRegressionEntropyFunction()
@@ -352,8 +352,8 @@ public:
   const itk::ParticleDualVectorFunction<Dimension>* GetLinkingFunction() const
   { return m_LinkingFunction.GetPointer(); }
 
-  const itk::ParticleSsm4dEnsembleEntropyFunction<Dimension>* GetSsm4dEnsembleEntropyFunction() const
-  { return m_Ssm4dEnsembleEntropyFunction.GetPointer(); }
+  // const itk::ParticleSsm4dEnsembleEntropyFunction<Dimension>* GetSsm4dEnsembleEntropyFunction() const
+  // { return m_Ssm4dEnsembleEntropyFunction.GetPointer(); }
 
   const itk::ParticleEnsembleEntropyFunction<Dimension>* GetEnsembleEntropyFunction() const
   { return m_EnsembleEntropyFunction.GetPointer(); }

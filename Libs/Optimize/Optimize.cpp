@@ -878,6 +878,7 @@ void Optimize::Initialize()
     m_saturation_counter = 0;
     m_sampler->GetOptimizer()->SetMaximumNumberOfIterations(m_iterations_per_split);
     m_sampler->GetOptimizer()->SetNumberOfIterations(0);
+    std::cout << "Before sampler execute in init" << std::endl;
     m_sampler->Execute();
 
     if (m_save_init_splits == true) {

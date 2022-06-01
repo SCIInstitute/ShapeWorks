@@ -25,15 +25,18 @@ template <unsigned int VDimension>
 void ParticleSsm4dEnsembleEntropyFunction<VDimension>::ComputeCovarianceMatrices()
 {
     // Compute  for each  time cohort and shape cohort
+    std::cout << "inside ssm 4d entropy covariance calculation" << std::endl;
+
     const unsigned int num_N = m_ShapeMatrix->cols(); // N subjects
     const unsigned int num_T = m_ShapeMatrix->GetDomainsPerShape();
     const unsigned int num_dims    = m_ShapeMatrix->rows() / num_T; // (dM X T) / T = dM
-
+    this->SetSsmInfo(num_T);
     // 1. Iterate over time instances
     tbb::parallel_for(tbb::blocked_range<size_t>{0, num_T}, [&](const tbb::blocked_range<size_t>& r) 
     {
         for (size_t time_inst = r.begin(); time_inst < r.end(); ++time_inst) { // Iterate t = 1....T
             // 1. Build the Matrix
+            std::cout << "---Building cov for time_inst = " << time_inst << std::endl;
             vnl_matrix_type z;
             z.clear();
             z.set_size(num_dims, num_N);
@@ -106,7 +109,7 @@ void ParticleSsm4dEnsembleEntropyFunction<VDimension>::ComputeCovarianceMatrices
                 const auto rhs = invLambda_ti * projMat_ti.transpose();
 
                 inv_cov_ti.set_size(num_dims, num_dims);
-                Utils::multiply_into(*inv_cov_ti, lhs, rhs);
+                Utils::multiply_into(inv_cov_ti, lhs, rhs);
             }
             // Update Gradient points update infor
             m_Time_PointsUpdate->at(time_inst).update(points_minus_mean_ti * pinvMat_ti);
@@ -132,12 +135,14 @@ void ParticleSsm4dEnsembleEntropyFunction<VDimension>::ComputeCovarianceMatrices
             m_InverseCovMatrices_time_cohort->at(time_inst) = inv_cov_ti;
         }
     });
+    std::cout << "--Time Cov matrix done -----" << std::endl;
 
     // 2. Iterate over subject instances
     tbb::parallel_for(tbb::blocked_range<size_t>{0, num_N}, [&](const tbb::blocked_range<size_t>& r)
     {
         for (size_t sub = r.begin(); sub < r.end(); ++sub) { // Iterate n = 1....N
             // 1. Build the Matrix
+            std::cout << "---Building cov for sub = " << sub << std::endl;
             vnl_matrix_type z;
             z.clear();
             z.set_size(num_dims, num_T);
@@ -214,7 +219,7 @@ void ParticleSsm4dEnsembleEntropyFunction<VDimension>::ComputeCovarianceMatrices
                 const auto lhs = projMat_n * invLambda_n;
                 const auto rhs = invLambda_n * projMat_n.transpose();
                 inv_cov_n.set_size(num_dims, num_dims);
-                Utils::multiply_into(*inv_cov_n, lhs, rhs);
+                Utils::multiply_into(inv_cov_n, lhs, rhs);
             }
             m_Shape_PointsUpdate->at(sub).update(points_minus_mean_n * pinvMat_n);
             double currentEnergy_n = 0.0;

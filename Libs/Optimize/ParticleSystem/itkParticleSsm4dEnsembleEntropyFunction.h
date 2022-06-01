@@ -113,6 +113,7 @@ public:
   /** Called before each iteration of a solver. */
   virtual void BeforeIteration()
   {
+    std::cout << "Inside Before Iteration 4d ssm" << std::endl;
     m_ShapeMatrix->BeforeIteration();
 
     if (m_Counter == 0)
