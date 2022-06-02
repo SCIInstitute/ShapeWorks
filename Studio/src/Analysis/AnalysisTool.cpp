@@ -455,7 +455,7 @@ bool AnalysisTool::compute_stats() {
 
   update_difference_particles();
 
-  compute_shape_evaluations();
+  // compute_shape_evaluations();
 
   stats_ready_ = true;
   std::vector<double> vals;
