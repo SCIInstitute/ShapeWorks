@@ -1,8 +1,5 @@
 import glob
 import os
-from re import sub
-from sys import prefix
-from turtle import pos
 import shapeworks as sw
 from pathlib import Path
 import pandas as pd
@@ -14,11 +11,17 @@ MODEL_TYPE = PRE_ABLATION
 
 
 PROJECT_DIR = '/home/sci/nawazish.khan/SSM-4D/'
-meshes_dir = f'{PROJECT_DIR}/meshes/'
+meshes_dir = f'{PROJECT_DIR}/old-meshes/'
 meshes_pre_groom_dir = f'{PROJECT_DIR}/pre_groomed_meshes/'
 shape_models_dir = f'{PROJECT_DIR}/shape_models/'
 cur_model_dir = f'{shape_models_dir}/{MODEL_TYPE}/'
 
+DIRS = [meshes_pre_groom_dir]
+def make_dirs(dirs):
+    for dir in dirs:
+        if not os.path.exists(dir):
+            os.makedirs(dir)
+make_dirs(DIRS)
 def build_shapes_info_json():
     all_meshes, mesh_names = sort_files_from_dir(files_dir=meshes_dir)
     subj_set = set()
@@ -68,13 +71,13 @@ def create_project_with_shapes(model_type='pre'):
 
 def pre_groom():
     input_meshes, shape_names = sort_files_from_dir(files_dir=meshes_dir, mid_sub_string=MODEL_TYPE)
-    print(f'Loaded {len(input_meshes)} shapes -----')
+    print(f'Loaded {len(input_meshes)} shapes from {meshes_dir}-----')
     meshes = []
     idx = 0
     for mesh_file in input_meshes:
         print(mesh_file)
         mesh = sw.Mesh(mesh_file)
-        mesh.smooth(iterations=2, relaxation=1.0)
+        mesh.smooth(iterations=17, relaxation=1.0)
         translation = np.eye(4) # Identity
         translation[:3,-1] = -mesh.center() # Translate center to (0,0,0)
         mesh.applyTransform(translation)
@@ -88,6 +91,7 @@ def pre_groom():
 
 def get_rigid_transforms(meshes, rigid_mesh_available=False, apply_transform=False):
     # Find ref mesh and save it
+    print('Rigid Transforming...')
     if not rigid_mesh_available:
         ref_index = sw.find_reference_mesh_index(meshes)
         ref_mesh = meshes[ref_index].copy().write(cur_model_dir + '/rigid_reference.vtk')  # Base Model Reference
