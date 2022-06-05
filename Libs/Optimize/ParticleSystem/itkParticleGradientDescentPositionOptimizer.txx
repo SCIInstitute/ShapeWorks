@@ -128,6 +128,8 @@ namespace itk
             // must clone this as we are in a thread and the gradient function is not thread-safe
             localGradientFunction = m_GradientFunction->Clone();
 
+            std::cout << localGradientFunction->GetRelativeEnergyScaling();
+
             // Tell function which domain we are working on.
             localGradientFunction->SetDomainNumber(dom);
 

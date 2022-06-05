@@ -72,6 +72,8 @@ class ParticleVectorFunction : public LightObject {
   virtual void SetDomainNumber(unsigned int i) { m_DomainNumber = i; }
   virtual int GetDomainNumber() const { return m_DomainNumber; }
 
+  double GetRelativeEnergyScaling(){return 1.0;}
+
   virtual typename ParticleVectorFunction<VDimension>::Pointer Clone() {
     std::cerr << "Error: base class ParticleVectorFunction Clone method called!\n";
     std::cerr << "Threaded run of current parameters not supported!\n";

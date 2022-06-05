@@ -267,7 +267,7 @@ void ParticleSystem::CorrespondenceBasedAllParticleSplitting(double epsilon, dou
             }
             PointType av({xm/lists.size(), ym/lists.size(), zm/lists.size()});
             averages.push_back(av);
-            std::cout << av <<std::endl;
+            //std::cout << av <<std::endl;
         }
         size_t counter = 0;
         std::ofstream outfile;
@@ -283,6 +283,9 @@ void ParticleSystem::CorrespondenceBasedAllParticleSplitting(double epsilon, dou
           // While the random vector updated violates plane constraints
           // Breaks when it doesn't violate for any domain
           std::vector<PointType> newposs_good;
+
+          //Debuggg
+          std::vector<vnl_vector_fixed<double, VDimension> > dbgoriginal;
 
           while (true) {
             // Generate random unit vector
@@ -316,6 +319,36 @@ void ParticleSystem::CorrespondenceBasedAllParticleSplitting(double epsilon, dou
                 this->GetDomain(local_domain)->ApplyConstraints(newpos, -1);
               }
               newposs_good.push_back(newpos);
+
+              // debuggg
+              PointType splitting_vec_PT = (newpos-lists[j][i])*delta;
+              vnl_vector_fixed<double, VDimension> splitting_vec({splitting_vec_PT[0], splitting_vec_PT[1], splitting_vec_PT[2]});
+              vnl_vector_fixed<double, VDimension> normupdateVector = splitting_vec / splitting_vec.magnitude();
+              dbgoriginal.push_back(normupdateVector);
+
+              if (this->GetDomain(dom_to_process+j*domains_per_shape)->GetConstraints()->isAnyViolated(newpos)) {
+                good = false;
+                std::cout << "violation " << lists[j][i] << " new point " << std::endl;
+                break;
+              }
+            }
+
+            //Debuggg
+            bool viol = false;
+            for(size_t l = 0; l < dbgoriginal.size(); l++){
+              for(size_t m = 0; m < dbgoriginal.size(); m++){
+                  vnl_vector_fixed<double, VDimension> dbgpro1 = dbgoriginal[l];
+                  vnl_vector_fixed<double, VDimension> dbgpro2 = dbgoriginal[m];
+                  double cosangle = dbgpro1[0]*dbgpro2[0] + dbgpro1[1]*dbgpro2[1] + dbgpro1[2]*dbgpro2[2];
+                  if(acos(cosangle)*180/3.14 > 50) {
+                      std::cout << acos(cosangle)*180/3.14 << "\t m " << m << "\t l " << l << "\t split " << lists[0].size();
+                      //viol = true;
+                  }
+              }
+              if(viol == true) {
+                  std::cout << std::endl;
+                  viol = false;
+              }
             }
 
             if (good) {
@@ -351,7 +384,7 @@ void ParticleSystem::CorrespondenceBasedAllParticleSplitting(double epsilon, dou
             }
             PointType av({xm/lists.size(), ym/lists.size(), zm/lists.size()});
             averages.push_back(av);
-            std::cout << av <<std::endl;
+            //std::cout << av <<std::endl;
         }
 
         size_t counter = 0;

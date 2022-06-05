@@ -9,6 +9,8 @@
 <procrustes_interval> 1 </procrustes_interval>
 <verbosity>0</verbosity>
 
+<initial_relative_weighting> 5 <initial_relative_weighting>
+
 <output_dir>
 output
 </output_dir>
