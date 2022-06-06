@@ -817,7 +817,9 @@ void Optimize::Initialize()
     m_saturation_counter = 0;
     m_sampler->GetOptimizer()->SetMaximumNumberOfIterations(m_iterations_per_split);
     m_sampler->GetOptimizer()->SetNumberOfIterations(0);
+    m_sampler->GetOptimizer()->SetInitializationMode(true);
     m_sampler->Execute();
+    m_sampler->GetOptimizer()->SetInitializationMode(false);
 
     if (m_save_init_splits == true) {
       std::stringstream ss;

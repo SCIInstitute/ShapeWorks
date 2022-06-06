@@ -326,11 +326,11 @@ void ParticleSystem::CorrespondenceBasedAllParticleSplitting(double epsilon, dou
               vnl_vector_fixed<double, VDimension> normupdateVector = splitting_vec / splitting_vec.magnitude();
               dbgoriginal.push_back(normupdateVector);
 
-              if (this->GetDomain(dom_to_process+j*domains_per_shape)->GetConstraints()->isAnyViolated(newpos)) {
-                good = false;
-                std::cout << "violation " << lists[j][i] << " new point " << std::endl;
-                break;
-              }
+//              if (this->GetDomain(dom_to_process+j*domains_per_shape)->GetConstraints()->isAnyViolated(newpos)) {
+//                good = false;
+//                std::cout << "violation " << lists[j][i] << " new point " << std::endl;
+//                break;
+//              }
             }
 
             //Debuggg
@@ -342,7 +342,7 @@ void ParticleSystem::CorrespondenceBasedAllParticleSplitting(double epsilon, dou
                   double cosangle = dbgpro1[0]*dbgpro2[0] + dbgpro1[1]*dbgpro2[1] + dbgpro1[2]*dbgpro2[2];
                   if(acos(cosangle)*180/3.14 > 50) {
                       std::cout << acos(cosangle)*180/3.14 << "\t m " << m << "\t l " << l << "\t split " << lists[0].size();
-                      //viol = true;
+                      viol = true;
                   }
               }
               if(viol == true) {

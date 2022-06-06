@@ -365,7 +365,7 @@ public:
     {
         m_RelativeEnergyScaling = r;
     }
-    double GetRelativeEnergyScaling() const
+    double GetRelativeEnergyScaling() const override
     {
         return m_RelativeEnergyScaling;
     }

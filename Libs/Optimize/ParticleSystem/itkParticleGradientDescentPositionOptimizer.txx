@@ -99,6 +99,14 @@ namespace itk
 
       maxchange = 0.0;
 
+      // Computes domain particle spacing and compares it to expected spacing
+      if(m_initialization_mode){
+          std::cout << m_GradientFunction->GetRelativeEnergyScaling();
+      }
+      else{
+          std::cout << "optimization ";
+      }
+
       const auto accTimerBegin = std::chrono::steady_clock::now();
       m_GradientFunction->SetParticleSystem(m_ParticleSystem);
         if (counter % global_iteration == 0)
@@ -127,8 +135,6 @@ namespace itk
 
             // must clone this as we are in a thread and the gradient function is not thread-safe
             localGradientFunction = m_GradientFunction->Clone();
-
-            std::cout << localGradientFunction->GetRelativeEnergyScaling();
 
             // Tell function which domain we are working on.
             localGradientFunction->SetDomainNumber(dom);
