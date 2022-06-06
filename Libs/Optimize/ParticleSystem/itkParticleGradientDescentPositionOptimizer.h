@@ -113,7 +113,14 @@ public:
   itkGetObjectMacro(GradientFunction, GradientFunctionType);
   itkSetObjectMacro(GradientFunction, GradientFunctionType);
 
+  /// Determines if this is an initialization (true) or an optimization (false)
   void SetInitializationMode(bool b){m_initialization_mode = b;}
+
+  /// Sets predicted_particle spacing vector
+  void SetPredictedParticleSpacing(const std::vector<double> &epsilons){m_predicted_particle_spacing = epsilons;}
+
+  /// Sets predicted_particle spacing vector
+  void SetCheckIterations(size_t si){check_iterations = si;}
 
 protected:
   ParticleGradientDescentPositionOptimizer();
@@ -136,7 +143,11 @@ private:
   double m_TimeStep;
   std::vector< std::vector<double> > m_TimeSteps;
   unsigned int m_verbosity;
+
+  // Adaptive Initialization variables
   bool m_initialization_mode;
+  std::vector<double> m_predicted_particle_spacing;
+  size_t check_iterations;
 
   void ResetTimeStepVectors();
 };

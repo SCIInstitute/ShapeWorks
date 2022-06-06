@@ -736,9 +736,17 @@ void Optimize::Initialize()
     }
   }
 
+  // Splitting options
   bool correspondence_split = true;
   double epsilon = this->m_spacing;
   double delta = 0.5;
+
+  // Adaptive Initialization params
+  bool adaptive_initialization = true;
+  size_t particles_before_adaptive_initialization = 16; // # of particles before adaptive initialization starts
+  size_t check_iterations = 50;
+
+  m_sampler->GetOptimizer()->SetCheckIterations(check_iterations);
 
   while (flag_split) {
 
@@ -751,6 +759,19 @@ void Optimize::Initialize()
       }
     }
     m_sampler->GetParticleSystem()->SynchronizePositions();
+
+    // Gets surface area
+    std::vector<double> areas = m_sampler->GetAreas();
+    std::vector<double> predicted_side_lengths;
+
+    // Compute predicted_side_lengths
+    for (int i = 0; i < n; i++) {
+        int d = i % m_domains_per_shape;
+        predicted_side_lengths.push_back(PredictSideLength(m_sampler->GetParticleSystem()->GetNumberOfParticles(i), areas[i]));
+    }
+
+    m_sampler->SetPredictedParticleSpacing(predicted_side_lengths);
+    m_sampler->GetOptimizer()->SetPredictedParticleSpacing(predicted_side_lengths);
 
     this->m_split_number++;
 
@@ -817,7 +838,7 @@ void Optimize::Initialize()
     m_saturation_counter = 0;
     m_sampler->GetOptimizer()->SetMaximumNumberOfIterations(m_iterations_per_split);
     m_sampler->GetOptimizer()->SetNumberOfIterations(0);
-    m_sampler->GetOptimizer()->SetInitializationMode(true);
+    if(adaptive_initialization && m_sampler->GetParticleSystem()->GetNumberOfParticles(0) >= particles_before_adaptive_initialization) m_sampler->GetOptimizer()->SetInitializationMode(true);
     m_sampler->Execute();
     m_sampler->GetOptimizer()->SetInitializationMode(false);
 
@@ -864,6 +885,15 @@ void Optimize::Initialize()
   if (m_verbosity_level > 0) {
     std::cout << "Finished initialization!!!" << std::endl;
   }
+}
+
+double Optimize::PredictSideLength(size_t particleCount, double area){
+    if(particleCount < 20){
+        return 0.8773826753 * sqrt(area/static_cast<double>(particleCount));
+    }
+    else{
+        return sqrt(area/(20.6457288071 + (0.19245008973*(static_cast<double>(particleCount)-20))/2 ));
+    }
 }
 
 //---------------------------------------------------------------------------

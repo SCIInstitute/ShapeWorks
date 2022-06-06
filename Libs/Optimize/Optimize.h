@@ -304,6 +304,9 @@ public:
   //! transform a point if necessary
   vnl_vector_fixed<double, 3> TransformPoint(int domain, vnl_vector_fixed<double, 3> input);
 
+  // Predicts Hexagonal Side Lengths
+  double PredictSideLength(size_t particleCount, double area);
+
 protected:
 
   //! Set the iteration callback. Derived classes should override to set their own callback

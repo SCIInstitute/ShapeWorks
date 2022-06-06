@@ -456,6 +456,12 @@ public:
 
   void SetMeshFFCMode(bool mesh_ffc_mode) {m_meshFFCMode = mesh_ffc_mode;}
 
+  /// Returns areas vector
+  std::vector<double> GetAreas(){return m_areas;}
+
+  /// Sets predicted_particle spacing vector
+  void SetPredictedParticleSpacing(const std::vector<double> &epsilons){m_predicted_particle_spacing = epsilons;}
+
 protected:
 
   void GenerateData();
@@ -527,7 +533,7 @@ protected:
 
   itk::ParticleMeshBasedGeneralEntropyGradientFunction<Dimension>::Pointer m_MeshBasedGeneralEntropyGradientFunction;
 
-  bool initialize_ffcs(size_t dom);
+  std::shared_ptr<Mesh> initialize_ffcs(size_t dom);
 
 private:
   Sampler(const Sampler&); //purposely not implemented
@@ -551,6 +557,8 @@ private:
   std::vector<FFCType> m_FFCs;
   std::vector<vtkSmartPointer<vtkPolyData>> m_meshes;
   bool m_meshFFCMode = false;
+  std::vector<double> m_areas;
+  std::vector<double> m_predicted_particle_spacing;
 
   unsigned int m_verbosity;
 };

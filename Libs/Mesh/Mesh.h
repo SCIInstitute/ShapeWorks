@@ -6,6 +6,9 @@
 class vtkCellLocator;
 class vtkKdTreePointLocator;
 
+#include <vtkPointData.h>
+#include <vtkMassProperties.h>
+
 namespace shapeworks {
 
 /**
@@ -248,6 +251,14 @@ class Mesh {
 
   /// Clips the mesh according to a field value
   vtkSmartPointer<vtkPolyData> clipByField(const std::string& name, double value);
+  \
+  /// Returns surface area in squared-units
+  double getSurfaceArea(){
+      vtkSmartPointer<vtkMassProperties> massProperties = vtkSmartPointer<vtkMassProperties>::New();
+      massProperties->SetInputData(this->getVTKMesh());
+
+      return massProperties->GetSurfaceArea();
+  }
 
  private:
   friend struct SharedCommandData;

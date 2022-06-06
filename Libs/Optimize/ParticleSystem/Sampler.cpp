@@ -88,6 +88,8 @@ void Sampler::AllocateDomainsAndNeighborhoods() {
   for (unsigned int i = 0; i < this->m_DomainList.size(); i++) {
     auto domain = m_DomainList[i];
 
+    m_areas.push_back(1.); // Fills areas vector
+
     // Adding spheres to constraint object
     if (m_Spheres.size() > i) {
       for (unsigned int j = 0; j < m_Spheres[i].size(); j++) {
@@ -113,11 +115,20 @@ void Sampler::AllocateDomainsAndNeighborhoods() {
       auto imageDomain = static_cast<ParticleImplicitSurfaceDomain<ImageType::PixelType>*>(domain.get());
 
 
-      // Adding free-form constraints to constraint object
-      // std::cout << "m_FFCs.size() " << m_FFCs.size() << std::endl;
+      // Computing surface area for expected particle spacing determination
+      std::shared_ptr<Mesh> surfaceAreaMesh = std::make_shared<Mesh>(m_meshes[i]);
+
+      // Adding free-form constraints to constraint object and applying FFCs to the surface area mesh
       if (m_FFCs.size() > i) {
-        initialize_ffcs(i);
+        std::shared_ptr<Mesh> ffcmesh = initialize_ffcs(i);
+
+        surfaceAreaMesh = std::make_shared<Mesh>(ffcmesh->clipByField("inout", 0.0));
+        //surfaceAreaMesh->write("dev/mesh_FFC_Clipped_" + std::to_string(i) + ".vtk");
       }
+
+      double SurfaceArea = surfaceAreaMesh->getSurfaceArea();
+
+      m_areas[i] = SurfaceArea;
 
       if (m_AttributesPerDomain.size() > 0 && m_AttributesPerDomain[i % m_DomainsPerShape] > 0) {
         TriMesh* themesh = TriMesh::read(m_MeshFiles[i].c_str());
@@ -415,7 +426,7 @@ void Sampler::AddImage(ImageType::Pointer image, double narrow_band, std::string
   m_DomainList.push_back(domain);
 }
 
-bool Sampler::initialize_ffcs(size_t dom) {
+std::shared_ptr<Mesh> Sampler::initialize_ffcs(size_t dom) {
   auto mesh = std::make_shared<Mesh>(m_meshes[dom]);
   if (m_verbosity >= 1) std::cout << "dom " << dom << " point count " << mesh->numPoints() << " faces " << mesh->numFaces() << std::endl;
 
@@ -434,7 +445,7 @@ bool Sampler::initialize_ffcs(size_t dom) {
   mutil.visualizeVectorFieldForFFCs(mesh);
 #endif
 
-  return true;
+  return mesh;
 }
 
 }  // namespace shapeworks

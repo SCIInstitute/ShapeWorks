@@ -100,11 +100,13 @@ namespace itk
       maxchange = 0.0;
 
       // Computes domain particle spacing and compares it to expected spacing
-      if(m_initialization_mode){
-          std::cout << m_GradientFunction->GetRelativeEnergyScaling();
-      }
-      else{
-          std::cout << "optimization ";
+      if(m_initialization_mode && counter%check_iterations == 0){
+          //std::cout << "Initialization" << std::endl;
+          //m_GradientFunction->GetRelativeEnergyScaling();
+          for(size_t i = 0; i < m_predicted_particle_spacing.size(); i++){
+              std::cout << m_predicted_particle_spacing[i] << " ";
+          }
+          std::cout << std::endl;
       }
 
       const auto accTimerBegin = std::chrono::steady_clock::now();
