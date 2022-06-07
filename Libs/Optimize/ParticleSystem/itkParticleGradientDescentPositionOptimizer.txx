@@ -103,10 +103,24 @@ namespace itk
       if(m_initialization_mode && counter%check_iterations == 0){
           //std::cout << "Initialization" << std::endl;
           //m_GradientFunction->GetRelativeEnergyScaling();
-          for(size_t i = 0; i < m_predicted_particle_spacing.size(); i++){
-              std::cout << m_predicted_particle_spacing[i] << " ";
+          double av_ratio_predicted_true = 0;
+
+          for(size_t d = 0; d < m_ParticleSystem->GetDomainsPerShape(); d++){ // For each domain
+
+              // skip any flagged domains
+              if (m_ParticleSystem->GetDomainFlag(d) == true) {
+                continue;
+              }
+
+              double maxDistNN = m_ParticleSystem->ComputeMaxDistNearestNeighbors(d);
+
+              std::cout << "(" << m_predicted_particle_spacing[d] << ", " << maxDistNN << ", " << maxDistNN/m_predicted_particle_spacing[d] << ") ";
+
+              av_ratio_predicted_true += maxDistNN/m_predicted_particle_spacing[d];
           }
           std::cout << std::endl;
+
+          // Initialization decay scheme
       }
 
       const auto accTimerBegin = std::chrono::steady_clock::now();

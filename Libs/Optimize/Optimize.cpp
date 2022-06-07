@@ -743,8 +743,8 @@ void Optimize::Initialize()
 
   // Adaptive Initialization params
   bool adaptive_initialization = true;
-  size_t particles_before_adaptive_initialization = 16; // # of particles before adaptive initialization starts
-  size_t check_iterations = 50;
+  size_t particles_before_adaptive_initialization = 8; // # of particles before adaptive initialization starts, starts at >= this_value
+  size_t check_iterations = 50; // The initialization optimization will check every check_iterations iterations for sampling quality
 
   m_sampler->GetOptimizer()->SetCheckIterations(check_iterations);
 
