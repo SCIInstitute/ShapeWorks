@@ -263,8 +263,8 @@ void Visualizer::update_lut() {
   auto good_bad = session_->get_good_bad_particles();
   bool good_bad_active = session_->get_show_good_bad_particles() && good_bad.size() == num_points && analysis_mode;
 
-  bool single_point_selected_mode = analysis_mode && selected_point_one_ >= 0 && selected_point_two_ < 0;
-  bool dual_point_selected_mode = analysis_mode && selected_point_one_ >= 0 && selected_point_two_ >= 0;
+  bool single_point_selected_mode = selected_point_one_ >= 0 && selected_point_two_ < 0;
+  bool dual_point_selected_mode = selected_point_one_ >= 0 && selected_point_two_ >= 0;
 
   if (single_point_selected_mode) {
     setup_single_selected_point_lut();
