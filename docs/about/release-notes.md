@@ -1,6 +1,9 @@
 # Release Notes
 
-## ShapeWorks 6.3.0 - 2022-06-XX
+## ShapeWorks 6.3.0 - 2022-06-09
+
+
+![](../img/about/release6.3.png)
 
 ### What is new?
   * **ShapeWorks Back-end**
@@ -28,13 +31,13 @@
     * The femur use case has been refactored into a single use case where alignment transforms and cutting plane constraints are passed in optimization.
     * Grooming added for multiple domain use cases. The pipeline demonstrates alignment w.r.t domain 1 ellipsoids.
     * DeepSSM Use Case:
-      * The DeepSSM use case has been updated to demonstrate the full pipeline, including training data generation instead of relying on the femur use case to create a training shape model.
-      * The use case now demonstrates how to optimize validation particles via fixed domain optimization where the training particles are unchanged.
-      * Image-to-image registration tools have been added to prepare DeepSSM input images without requiring corresponding segmentations or meshes. This allows for true inference with DeepSSM.
+        * The DeepSSM use case has been updated to demonstrate the full pipeline, including training data generation instead of relying on the femur use case to create a training shape model.
+        * The use case now demonstrates how to optimize validation particles via fixed domain optimization where the training particles are unchanged.
+        * Image-to-image registration tools have been added to prepare DeepSSM input images without requiring corresponding segmentations or meshes. This allows for true inference with DeepSSM.
     * Incremental Use Case:
-      * A new use case has been added, demonstrating how a shape model can be optimized incrementally on 3D supershapes. This approach is beneficial when the cohort of shapes is very large, and single optimization would be slow, and when the dataset is small but contains a large amount of shape variation.
-      * Functionality has been added to select the order of shape optimization based on the distance of each shape to all others in the cohort. This allows for particles to be fit to inlier shapes first, then outliers.
-      * Documentation has been added that explains the use case and quantitatively demonstrates the benefit of incremental optimization.
+        * A new use case has been added, demonstrating how a shape model can be optimized incrementally on 3D supershapes. This approach is beneficial when the cohort of shapes is very large, and single optimization would be slow, and when the dataset is small but contains a large amount of shape variation.
+        * Functionality has been added to select the order of shape optimization based on the distance of each shape to all others in the cohort. This allows for particles to be fit to inlier shapes first, then outliers.
+        * Documentation has been added that explains the use case and quantitatively demonstrates the benefit of incremental optimization.
     * Added a Studio use case for constraints and a pseudo-tutorial for it in the documentation.
 
 ### Fixes
