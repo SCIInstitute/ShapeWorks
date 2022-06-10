@@ -30,10 +30,11 @@ void ColorMap::construct_lookup_table(vtkSmartPointer<vtkLookupTable> lut) {
       color_transfer->AddRGBPoint(ratio, color.GetRed() / 255.0, color.GetGreen() / 255.0, color.GetBlue() / 255.0);
     }
 
-    lut->SetNumberOfTableValues(100);
-    for (int i = 0; i < 100; i++) {
+    constexpr double num_values = 250;
+    lut->SetNumberOfTableValues(num_values);
+    for (int i = 0; i < num_values; i++) {
       double rgb[3];
-      color_transfer->GetColor(i / 99.0, rgb);
+      color_transfer->GetColor(i / (num_values-1), rgb);
       lut->SetTableValue(i, rgb[0], rgb[1], rgb[2]);
     }
   }

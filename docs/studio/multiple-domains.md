@@ -15,7 +15,7 @@ In this example, we have defined two domains, `left_atrium` and `appendage`.  Th
 
 ## Grooming Multiple Domains
 
-When multiple domains are present, grooming options will be available on a per-domain basis with a combobox at the top of the grooming panel.  This allows for different grooming options depending on the anatomy type.
+When multiple domains are present, grooming options will be available on a per-domain basis with a combobox at the top of the grooming panel.  This allows for different grooming options depending on the anatomy type.  You may also apply the same grooming to all domains using the `Apply grooming parameters to all domains` checkbox.
 
 ![ShapeWorks Project with Multiple Domains - Groom](../img/studio/studio_multiple_domain_groom.png){: width="300" }
 

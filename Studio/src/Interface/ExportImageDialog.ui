@@ -243,8 +243,8 @@
              <widget class="QLabel" name="label">
               <property name="text">
                <string>Enter mode numbers and/or 
-anges separated by
-commas (e.g. 1, 4-6, 9)</string>
+ranges separated by commas
+(e.g. 1, 4-6, 9)</string>
               </property>
              </widget>
             </item>

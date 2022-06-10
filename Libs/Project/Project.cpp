@@ -21,7 +21,17 @@ static std::string replace_string(std::string subject, const std::string& search
 }
 
 //---------------------------------------------------------------------------
+static int get_parameter_row(xlnt::worksheet ws, std::string key) {
+  auto rows = ws.rows(false);
+  for (int i = ws.lowest_row(); i < ws.highest_row(); i++) {
+    if (rows[i][0].to_string() == key) {
+      return i + 1;
+    }
+  }
+  return ws.highest_row() + 1;
+}
 
+//---------------------------------------------------------------------------
 Project::Project() {
   set_default_landmark_colors();
   this->wb_ = std::make_unique<xlnt::workbook>();
@@ -36,6 +46,7 @@ Project::~Project() = default;
 
 //---------------------------------------------------------------------------
 bool Project::load(const std::string& filename) {
+  landmarks_loaded_ = false;
   try {
     this->wb_->load(filename);
     this->filename_ = filename;
@@ -342,7 +353,8 @@ void Project::store_subjects() {
     int seg_count = 0;
     while (seg_files.size() > original_columns.size()) {
       auto domain_types = get_original_domain_types();
-      if (domain_types.size() > original_columns.size() && domain_types[original_columns.size()] == DomainType::Contour) {
+      if (domain_types.size() > original_columns.size() &&
+          domain_types[original_columns.size()] == DomainType::Contour) {
         original_columns.push_back(get_new_file_column(CONTOUR_PREFIX, seg_count));
       } else {
         original_columns.push_back(get_new_file_column(SHAPE_PREFIX, seg_count));
@@ -520,7 +532,6 @@ void Project::load_landmark_definitions() {
   xlnt::worksheet ws = this->wb_->sheet_by_title("landmarks");
 
   auto rows = ws.rows(false);
-
   for (int i = ws.lowest_row(); i < ws.highest_row(); i++) {
     std::string name = rows[i][0].to_string();
     auto f = std::find(domain_names.begin(), domain_names.end(), name);
@@ -740,7 +751,9 @@ Parameters Project::get_parameters(const std::string& name, std::string domain_n
   for (int i = ws.lowest_row(); i < ws.highest_row(); i++) {
     std::string key = rows[i][0].to_string();
     std::string value = rows[i][value_column].to_string();
-    map[key] = value;
+    if (value != "") {
+      map[key] = value;
+    }
   }
   params.set_map(map);
   return params;
@@ -767,11 +780,10 @@ void Project::set_parameters(const std::string& name, Parameters params, std::st
       value_column = this->get_index_for_column("value_" + domain_name, true, sheet);
     }
 
-    int row = 2;  // skip header
     for (const auto& kv : params.get_map()) {
+      int row = get_parameter_row(ws, kv.first);
       ws.cell(xlnt::cell_reference(key_column, row)).value(kv.first);
       ws.cell(xlnt::cell_reference(value_column, row)).value(kv.second);
-      row++;
     }
   } catch (xlnt::exception& e) {
     std::cerr << std::string("Error storing parameters: ") << std::string(e.what()) << ", "

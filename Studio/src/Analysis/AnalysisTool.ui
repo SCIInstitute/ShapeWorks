@@ -822,7 +822,7 @@ QWidget#particles_panel {
                         </property>
                        </widget>
                       </item>
-                      <item row="1" column="0">
+                      <item row="2" column="0">
                        <widget class="QWidget" name="lda_progress_widget" native="true">
                         <layout class="QGridLayout" name="gridLayout_21">
                          <item row="2" column="1">
@@ -846,6 +846,16 @@ QWidget#particles_panel {
                           </widget>
                          </item>
                         </layout>
+                       </widget>
+                      </item>
+                      <item row="1" column="0">
+                       <widget class="QLabel" name="lda_hint_label">
+                        <property name="text">
+                         <string>(Resize or pop-out panel for a larger graph)</string>
+                        </property>
+                        <property name="alignment">
+                         <set>Qt::AlignCenter</set>
+                        </property>
                        </widget>
                       </item>
                      </layout>

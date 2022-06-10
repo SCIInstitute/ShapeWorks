@@ -6,8 +6,7 @@ cmake_minimum_required(VERSION 3.11)
 SET(SHAPEWORKS_MAJOR_VERSION 6 CACHE INTERNAL "Major version number" FORCE)
 SET(SHAPEWORKS_MINOR_VERSION 3 CACHE INTERNAL "Minor version number" FORCE)
 SET(SHAPEWORKS_PATCH_VERSION 0 CACHE INTERNAL "Patch version number" FORCE)
-SET(SHAPEWORKS_VERSION_STRING "6.3.0-dev")
-
+SET(SHAPEWORKS_VERSION_STRING "6.3.0")
 
 
 # First, check that files were checked out properly using git-lfs

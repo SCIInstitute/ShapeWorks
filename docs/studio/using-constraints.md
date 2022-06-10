@@ -1,3 +1,4 @@
+
 # Using Constraints in Studio
 
 ShapeWorks Studio supports grooming, optimization and analysis of shapes with constraints, i.e. explicit inclusion and exclusion areas of the surfaces. These constraints can be defined in Studio as cutting-plane or free-form constraints. In other words, when you define a constraint, particles will be limited to the allowed area and will not cross into the disallowed region.

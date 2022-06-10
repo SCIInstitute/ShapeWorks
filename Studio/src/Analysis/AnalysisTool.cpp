@@ -102,6 +102,7 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
 
   ui_->lda_panel->hide();
   ui_->lda_graph->hide();
+  ui_->lda_hint_label->hide();
   group_lda_job_ = QSharedPointer<StatsGroupLDAJob>::create();
   connect(group_lda_job_.data(), &StatsGroupLDAJob::progress, this, &AnalysisTool::handle_lda_progress);
   connect(group_lda_job_.data(), &StatsGroupLDAJob::finished, this, &AnalysisTool::handle_lda_complete);
@@ -823,7 +824,7 @@ ShapeHandle AnalysisTool::get_mean_shape() {
 
     if (!groups_active()) {
       for (int i = 0; i < shapes.size(); i++) {
-        shapes[i]->load_feature(Session::MODE_RECONSTRUCTION_C, feature_map_);
+        shapes[i]->load_feature(DisplayMode::Reconstructed, feature_map_);
         auto value = shapes[i]->get_point_features(feature_map_);
         if (value.rows() != sum.rows()) {
           ready = false;
@@ -844,7 +845,7 @@ ShapeHandle AnalysisTool::get_mean_shape() {
       sum_right.setZero();
 
       Q_FOREACH (auto shape, group1_list_) {
-        shape->load_feature(Session::MODE_RECONSTRUCTION_C, feature_map_);
+        shape->load_feature(DisplayMode::Reconstructed, feature_map_);
         auto value = shape->get_point_features(feature_map_);
         if (value.rows() != sum.rows()) {
           ready = false;
@@ -855,7 +856,7 @@ ShapeHandle AnalysisTool::get_mean_shape() {
       Eigen::VectorXf left_mean = sum_left / static_cast<double>(group1_list_.size());
 
       Q_FOREACH (auto shape, group2_list_) {
-        shape->load_feature(Session::MODE_RECONSTRUCTION_C, feature_map_);
+        shape->load_feature(DisplayMode::Reconstructed, feature_map_);
         auto value = shape->get_point_features(feature_map_);
         if (value.rows() != sum.rows()) {
           ready = false;
@@ -990,6 +991,7 @@ void AnalysisTool::update_lda_graph() {
     }
   } else {
     ui_->lda_graph->setVisible(false);
+    ui_->lda_hint_label->setVisible(false);
   }
 }
 
@@ -1239,14 +1241,14 @@ void AnalysisTool::handle_lda_progress(double progress) {
   } else {
     ui_->lda_progress->setMaximum(0);
   }
-  ui_->lda_progress->setVisible(progress < 1);
+  ui_->lda_progress_widget->setVisible(progress < 1);
   ui_->lda_progress->setValue(progress * 100);
   ui_->lda_progress->update();
 }
 
 //---------------------------------------------------------------------------
 void AnalysisTool::handle_lda_complete() {
-  ui_->lda_progress->setVisible(false);
+  ui_->lda_progress_widget->setVisible(false);
   ui_->lda_label->setVisible(false);
   group_lda_job_running_ = false;
 
@@ -1255,6 +1257,7 @@ void AnalysisTool::handle_lda_complete() {
 
   group_lda_job_->plot(ui_->lda_graph, left_group, right_group);
   ui_->lda_graph->setVisible(true);
+  ui_->lda_hint_label->setVisible(true);
 }
 
 //---------------------------------------------------------------------------
@@ -1310,6 +1313,7 @@ StudioParticles AnalysisTool::convert_from_combined(const Eigen::VectorXd& point
       new_world[i] = points[idx++];
     }
     particles.set_world_particles(d, new_world);
+    particles.set_local_particles(d, new_world);
   }
 
   return particles;

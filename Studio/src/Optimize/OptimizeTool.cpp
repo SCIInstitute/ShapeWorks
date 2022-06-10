@@ -25,6 +25,9 @@ OptimizeTool::OptimizeTool(Preferences& prefs) : preferences_(prefs) {
   ui_ = new Ui_OptimizeTool;
   ui_->setupUi(this);
 
+  connect(ui_->optimize_open_button, &QPushButton::toggled, ui_->optimize_content, &QWidget::setVisible);
+  connect(ui_->optimize_header, &QPushButton::clicked, ui_->optimize_open_button, &QPushButton::toggle);
+
   connect(ui_->use_normals, &QCheckBox::toggled, this, &OptimizeTool::update_ui_elements);
   connect(ui_->procrustes, &QCheckBox::toggled, this, &OptimizeTool::update_ui_elements);
   connect(ui_->multiscale, &QCheckBox::toggled, this, &OptimizeTool::update_ui_elements);
