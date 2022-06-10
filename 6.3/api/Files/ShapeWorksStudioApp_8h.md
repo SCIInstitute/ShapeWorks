@@ -63,6 +63,7 @@ class SplashScreen;
 class WheelEventForwarder;
 class StatusBarWidget;
 class PythonWorker;
+class CompareWidget;
 
 
 class ShapeWorksStudioApp : public QMainWindow {
@@ -135,6 +136,7 @@ class ShapeWorksStudioApp : public QMainWindow {
 
   void handle_color_scheme();
   void handle_pca_update();
+  void clear_message();
   void handle_message(QString str);
   void handle_status(QString str);
   void handle_error(QString str);
@@ -142,6 +144,7 @@ class ShapeWorksStudioApp : public QMainWindow {
   void handle_progress(int amt);
   void handle_new_mesh();
   void handle_clear_cache();
+  void handle_compare_settings_changed();
 
   void update_feature_map_selection(const QString& feature_map);
   void update_feature_map_scale();
@@ -171,23 +174,15 @@ class ShapeWorksStudioApp : public QMainWindow {
   void reset_num_viewers();
 
   void update_view_combo();
+  void update_compare_menu();
+
   bool should_reconstruct_view_show();
 
   static bool write_particle_file(std::string filename, Eigen::VectorXd particles);
 
   static QString get_mesh_file_filter();
 
-  enum VIEW_MODE { ORIGINAL = 0, GROOMED = 1, RECONSTRUCTED = 2 };
-
-  enum DISPLAY_MODE { ALL_SAMPLES = 0, MEAN = 1, PCA = 2, SINGLE_SAMPLE = 3 };
-
-  static const std::string MODE_ORIGINAL_C;
-  static const std::string MODE_GROOMED_C;
-  static const std::string MODE_RECONSTRUCTION_C;
-
   static const std::string SETTING_ZOOM_C;
-
-  std::string get_view_mode();
 
   void set_view_combo_item_enabled(int item, bool value);
   bool is_view_combo_item_enabled(int item);
@@ -205,8 +200,6 @@ class ShapeWorksStudioApp : public QMainWindow {
   void update_display(bool force = false);
 
   void compute_mode_shape();
-
-  bool set_view_mode(std::string view_mode);
 
   bool set_feature_map(std::string feature_map);
   std::string get_feature_map();
@@ -226,10 +219,11 @@ class ShapeWorksStudioApp : public QMainWindow {
 
   void create_glyph_submenu();
   void create_iso_submenu();
+  void create_compare_submenu();
 
   Ui_ShapeWorksStudioApp* ui_;
 
-  QActionGroup* action_group_;
+  QActionGroup* action_group_ = nullptr;
 
   QSharedPointer<Lightbox> lightbox_;
   QSharedPointer<DataTool> data_tool_;
@@ -239,6 +233,7 @@ class ShapeWorksStudioApp : public QMainWindow {
   QSharedPointer<DeepSSMTool> deepssm_tool_;
   QSharedPointer<Visualizer> visualizer_;
   QSharedPointer<PreferencesWindow> preferences_window_;
+  CompareWidget* compare_widget_ = nullptr;
   vtkSmartPointer<StudioVtkOutputWindow> studio_vtk_output_window_;
 
   // all the preferences
@@ -280,4 +275,4 @@ class ShapeWorksStudioApp : public QMainWindow {
 
 -------------------------------
 
-Updated on 2022-05-17 at 01:05:36 +0000
+Updated on 2022-06-10 at 06:08:18 +0000

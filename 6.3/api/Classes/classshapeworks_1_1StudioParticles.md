@@ -27,7 +27,7 @@ Representation of correspondence points for a shape including multiple domains. 
 | Eigen::VectorXd | **[get_local_particles](../Classes/classshapeworks_1_1StudioParticles.md#function-get-local-particles)**(int domain) |
 | Eigen::VectorXd | **[get_world_particles](../Classes/classshapeworks_1_1StudioParticles.md#function-get-world-particles)**(int domain) |
 | Eigen::VectorXd | **[get_raw_world_particles](../Classes/classshapeworks_1_1StudioParticles.md#function-get-raw-world-particles)**(int domain)<br>Get untransformed original world particles from optimizer.  |
-| Eigen::VectorXd | **[get_combined_local_particles](../Classes/classshapeworks_1_1StudioParticles.md#function-get-combined-local-particles)**() |
+| Eigen::VectorXd | **[get_combined_local_particles](../Classes/classshapeworks_1_1StudioParticles.md#function-get-combined-local-particles)**() const |
 | Eigen::VectorXd | **[get_combined_global_particles](../Classes/classshapeworks_1_1StudioParticles.md#function-get-combined-global-particles)**() const |
 | void | **[set_combined_global_particles](../Classes/classshapeworks_1_1StudioParticles.md#function-set-combined-global-particles)**(const Eigen::VectorXd & particles) |
 | std::vector< itk::Point< double > > | **[get_local_points](../Classes/classshapeworks_1_1StudioParticles.md#function-get-local-points)**(int domain) |
@@ -141,7 +141,7 @@ Get untransformed original world particles from optimizer.
 ### function get_combined_local_particles
 
 ```cpp
-Eigen::VectorXd get_combined_local_particles()
+Eigen::VectorXd get_combined_local_particles() const
 ```
 
 
@@ -218,4 +218,4 @@ Eigen::VectorXd get_difference_vectors(
 
 -------------------------------
 
-Updated on 2022-05-17 at 01:05:35 +0000
+Updated on 2022-06-10 at 06:08:17 +0000

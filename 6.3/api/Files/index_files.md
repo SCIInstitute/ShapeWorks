@@ -174,6 +174,7 @@ title: Files
             * **file [Studio/src/Data/Session.h](../Files/Session_8h.md#file-session.h)** 
             * **file [Studio/src/Data/Shape.h](../Files/Shape_8h.md#file-shape.h)** 
             * **file [Studio/src/Data/ShapeWorksWorker.h](../Files/ShapeWorksWorker_8h.md#file-shapeworksworker.h)** 
+            * **file [Studio/src/Data/StudioEnums.h](../Files/StudioEnums_8h.md#file-studioenums.h)** 
             * **file [Studio/src/Data/StudioLog.h](../Files/StudioLog_8h.md#file-studiolog.h)** 
             * **file [Studio/src/Data/StudioMesh.h](../Files/StudioMesh_8h.md#file-studiomesh.h)** 
             * **file [Studio/src/Data/StudioParticles.h](../Files/StudioParticles_8h.md#file-studioparticles.h)** 
@@ -188,6 +189,7 @@ title: Files
             * **file [Studio/src/Groom/GroomTool.h](../Files/GroomTool_8h.md#file-groomtool.h)** 
             * **file [Studio/src/Groom/QGroom.h](../Files/QGroom_8h.md#file-qgroom.h)** 
         * **dir [Studio/src/Interface](../Files/dir_efdc2f3bb304c468939ff6eb3a94c2bf.md#dir-studio/src/interface)** 
+            * **file [Studio/src/Interface/CompareWidget.h](../Files/CompareWidget_8h.md#file-comparewidget.h)** 
             * **file [Studio/src/Interface/ExportImageDialog.h](../Files/ExportImageDialog_8h.md#file-exportimagedialog.h)** 
             * **file [Studio/src/Interface/KeyboardShortcuts.h](../Files/KeyboardShortcuts_8h.md#file-keyboardshortcuts.h)** 
             * **file [Studio/src/Interface/LogWindow.h](../Files/LogWindow_8h.md#file-logwindow.h)** 
@@ -234,4 +236,4 @@ title: Files
 
 -------------------------------
 
-Updated on 2022-05-17 at 01:05:36 +0000
+Updated on 2022-06-10 at 06:08:18 +0000

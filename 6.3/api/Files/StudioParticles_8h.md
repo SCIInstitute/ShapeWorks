@@ -58,7 +58,7 @@ class StudioParticles {
   Eigen::VectorXd get_world_particles(int domain);
   Eigen::VectorXd get_raw_world_particles(int domain);
 
-  Eigen::VectorXd get_combined_local_particles();
+  Eigen::VectorXd get_combined_local_particles() const;
   Eigen::VectorXd get_combined_global_particles() const;
   void set_combined_global_particles(const Eigen::VectorXd &particles);
 
@@ -93,4 +93,4 @@ class StudioParticles {
 
 -------------------------------
 
-Updated on 2022-05-17 at 01:05:36 +0000
+Updated on 2022-06-10 at 06:08:18 +0000

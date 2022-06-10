@@ -52,10 +52,6 @@ class Visualizer : public QObject {
 
   void set_session(SessionHandle session);
 
-  void set_display_mode(std::string mode);
-
-  std::string get_display_mode();
-
   void set_center(bool center);
 
   bool get_center();
@@ -123,6 +119,8 @@ class Visualizer : public QObject {
 
   vtkSmartPointer<vtkTransform> get_transform(QSharedPointer<Shape> shape, int alignment_domain, int domain);
 
+  vtkSmartPointer<vtkTransform> get_transform(QSharedPointer<Shape> shape, DisplayMode display_mode, int alignment_domain, int domain);
+
   void set_opacities(std::vector<float> opacities);
 
   std::vector<float> get_opacities();
@@ -188,4 +186,4 @@ class Visualizer : public QObject {
 
 -------------------------------
 
-Updated on 2022-05-17 at 01:05:36 +0000
+Updated on 2022-06-10 at 06:08:18 +0000

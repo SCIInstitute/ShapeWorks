@@ -50,8 +50,7 @@ Inherits from QWidget
 | | **[~DeepSSMTool](../Classes/classshapeworks_1_1DeepSSMTool.md#function-~deepssmtool)**() |
 | void | **[set_session](../Classes/classshapeworks_1_1DeepSSMTool.md#function-set-session)**(QSharedPointer< [Session](../Classes/classshapeworks_1_1Session.md) > session)<br>set the pointer to the session  |
 | void | **[set_app](../Classes/classshapeworks_1_1DeepSSMTool.md#function-set-app)**([ShapeWorksStudioApp](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md) * app)<br>set the pointer to the application  |
-| void | **[set_active](../Classes/classshapeworks_1_1DeepSSMTool.md#function-set-active)**(bool active)<br>Set if this tool is active.  |
-| bool | **[get_active](../Classes/classshapeworks_1_1DeepSSMTool.md#function-get-active)**()<br>Return if this tool is active.  |
+| bool | **[is_active](../Classes/classshapeworks_1_1DeepSSMTool.md#function-is-active)**()<br>Return if this tool is active.  |
 | void | **[load_params](../Classes/classshapeworks_1_1DeepSSMTool.md#function-load-params)**() |
 | void | **[store_params](../Classes/classshapeworks_1_1DeepSSMTool.md#function-store-params)**() |
 | void | **[shutdown](../Classes/classshapeworks_1_1DeepSSMTool.md#function-shutdown)**() |
@@ -236,20 +235,10 @@ void set_app(
 
 set the pointer to the application 
 
-### function set_active
+### function is_active
 
 ```cpp
-void set_active(
-    bool active
-)
-```
-
-Set if this tool is active. 
-
-### function get_active
-
-```cpp
-bool get_active()
+bool is_active()
 ```
 
 Return if this tool is active. 
@@ -300,4 +289,4 @@ std::string get_display_feature()
 
 -------------------------------
 
-Updated on 2022-05-17 at 01:05:34 +0000
+Updated on 2022-06-10 at 06:08:16 +0000

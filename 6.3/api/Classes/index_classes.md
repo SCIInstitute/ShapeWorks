@@ -54,6 +54,7 @@ title: Classes
 * **struct [SimilarityTransform3D](../Classes/structSimilarityTransform3D.md)** 
 * **class [SurfaceReconstructor](../Classes/classSurfaceReconstructor.md)** 
 * **struct [Triangle](../Classes/structTriangle.md)** 
+* **namespace [Ui](../Namespaces/namespaceUi.md)** 
 * **class [Utils](../Classes/classUtils.md)** 
 * **struct [VTKEXPORT](../Classes/structVTKEXPORT.md)** 
 * **class [Vis](../Classes/classVis.md)** 
@@ -118,6 +119,8 @@ title: Classes
     * **class [ColorMap](../Classes/classshapeworks_1_1ColorMap.md)** 
     * **class [ColorMaps](../Classes/classshapeworks_1_1ColorMaps.md)** 
     * **class [Command](../Classes/classshapeworks_1_1Command.md)** 
+    * **class [CompareSettings](../Classes/classshapeworks_1_1CompareSettings.md)** 
+    * **class [CompareWidget](../Classes/classshapeworks_1_1CompareWidget.md)** 
     * **class [Constraint](../Classes/classshapeworks_1_1Constraint.md)** 
     * **class [Constraints](../Classes/classshapeworks_1_1Constraints.md)** 
     * **class [ContourDomain](../Classes/classshapeworks_1_1ContourDomain.md)** 
@@ -251,4 +254,4 @@ title: Classes
 
 -------------------------------
 
-Updated on 2022-05-17 at 01:05:36 +0000
+Updated on 2022-06-10 at 06:08:18 +0000

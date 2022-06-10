@@ -30,6 +30,7 @@ title: Studio/src/Utils/StudioUtils.h
 #include <Libs/Project/Project.h>
 class QWidget;
 
+#include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
 
 #include <QImage>
@@ -46,6 +47,8 @@ class StudioUtils {
   static QStringList to_string_list(std::vector<std::string> vector);
 
   static QImage vtk_image_to_qimage(vtkSmartPointer<vtkImageData> image_data);
+
+  static vtkSmartPointer<vtkPolyData> reverse_poly_data(vtkSmartPointer<vtkPolyData> poly_data);
 };
 
 }  // namespace shapeworks
@@ -54,4 +57,4 @@ class StudioUtils {
 
 -------------------------------
 
-Updated on 2022-05-17 at 01:05:36 +0000
+Updated on 2022-06-10 at 06:08:18 +0000

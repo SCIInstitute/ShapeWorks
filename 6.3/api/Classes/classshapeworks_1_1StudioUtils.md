@@ -20,6 +20,7 @@ Utilities for Studio.
 | bool | **[ask_multiple_domains_as_single](../Classes/classshapeworks_1_1StudioUtils.md#function-ask-multiple-domains-as-single)**(QWidget * parent, std::shared_ptr< [Project](../Classes/classshapeworks_1_1Project.md) > project) |
 | QStringList | **[to_string_list](../Classes/classshapeworks_1_1StudioUtils.md#function-to-string-list)**(std::vector< std::string > vector)<br>convert a vector of std::string to QStringList  |
 | QImage | **[vtk_image_to_qimage](../Classes/classshapeworks_1_1StudioUtils.md#function-vtk-image-to-qimage)**(vtkSmartPointer< vtkImageData > image_data)<br>convert vtkImageData to QImage  |
+| vtkSmartPointer< vtkPolyData > | **[reverse_poly_data](../Classes/classshapeworks_1_1StudioUtils.md#function-reverse-poly-data)**(vtkSmartPointer< vtkPolyData > poly_data)<br>reverse a poly data  |
 
 ## Public Functions Documentation
 
@@ -53,6 +54,16 @@ static QImage vtk_image_to_qimage(
 
 convert vtkImageData to QImage 
 
+### function reverse_poly_data
+
+```cpp
+static vtkSmartPointer< vtkPolyData > reverse_poly_data(
+    vtkSmartPointer< vtkPolyData > poly_data
+)
+```
+
+reverse a poly data 
+
 -------------------------------
 
-Updated on 2022-05-17 at 01:05:35 +0000
+Updated on 2022-06-10 at 06:08:17 +0000

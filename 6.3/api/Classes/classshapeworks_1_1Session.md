@@ -142,9 +142,11 @@ Inherits from QObject, QEnableSharedFromThis< Session >
 | void | **[set_good_bad_particles](../Classes/classshapeworks_1_1Session.md#function-set-good-bad-particles)**(const std::vector< bool > & good_bad) |
 | void | **[set_difference_particles](../Classes/classshapeworks_1_1Session.md#function-set-difference-particles)**([StudioParticles](../Classes/classshapeworks_1_1StudioParticles.md) particles) |
 | [StudioParticles](../Classes/classshapeworks_1_1StudioParticles.md) | **[get_difference_particles](../Classes/classshapeworks_1_1Session.md#function-get-difference-particles)**() |
+| void | **[set_compare_settings](../Classes/classshapeworks_1_1Session.md#function-set-compare-settings)**([CompareSettings](../Classes/classshapeworks_1_1CompareSettings.md) settings) |
+| [CompareSettings](../Classes/classshapeworks_1_1CompareSettings.md) | **[get_compare_settings](../Classes/classshapeworks_1_1Session.md#function-get-compare-settings)**() |
 | void | **[trigger_repaint](../Classes/classshapeworks_1_1Session.md#function-trigger-repaint)**() |
-| void | **[set_display_mode](../Classes/classshapeworks_1_1Session.md#function-set-display-mode)**(std::string mode)<br>set display mode (original, groomed, reconstructed)  |
-| std::string | **[get_display_mode](../Classes/classshapeworks_1_1Session.md#function-get-display-mode)**()<br>return the current display mode  |
+| void | **[set_display_mode](../Classes/classshapeworks_1_1Session.md#function-set-display-mode)**(DisplayMode mode)<br>set display mode (original, groomed, reconstructed)  |
+| DisplayMode | **[get_display_mode](../Classes/classshapeworks_1_1Session.md#function-get-display-mode)**()<br>return the current display mode  |
 | bool | **[is_supported_file_format](../Classes/classshapeworks_1_1Session.md#function-is-supported-file-format)**(std::string filename) |
 | Point3 | **[get_point](../Classes/classshapeworks_1_1Session.md#function-get-point)**(const Eigen::VectorXd & points, int i) |
 
@@ -152,9 +154,6 @@ Inherits from QObject, QEnableSharedFromThis< Session >
 
 |                | Name           |
 | -------------- | -------------- |
-| const std::string | **[MODE_ORIGINAL_C](../Classes/classshapeworks_1_1Session.md#variable-mode-original-c)**  |
-| const std::string | **[MODE_GROOMED_C](../Classes/classshapeworks_1_1Session.md#variable-mode-groomed-c)**  |
-| const std::string | **[MODE_RECONSTRUCTION_C](../Classes/classshapeworks_1_1Session.md#variable-mode-reconstruction-c)**  |
 | const std::string | **[DATA_C](../Classes/classshapeworks_1_1Session.md#variable-data-c)**  |
 | const std::string | **[GROOM_C](../Classes/classshapeworks_1_1Session.md#variable-groom-c)**  |
 | const std::string | **[OPTIMIZE_C](../Classes/classshapeworks_1_1Session.md#variable-optimize-c)**  |
@@ -1078,6 +1077,22 @@ inline StudioParticles get_difference_particles()
 ```
 
 
+### function set_compare_settings
+
+```cpp
+void set_compare_settings(
+    CompareSettings settings
+)
+```
+
+
+### function get_compare_settings
+
+```cpp
+CompareSettings get_compare_settings()
+```
+
+
 ### function trigger_repaint
 
 ```cpp
@@ -1089,7 +1104,7 @@ void trigger_repaint()
 
 ```cpp
 void set_display_mode(
-    std::string mode
+    DisplayMode mode
 )
 ```
 
@@ -1098,7 +1113,7 @@ set display mode (original, groomed, reconstructed)
 ### function get_display_mode
 
 ```cpp
-std::string get_display_mode()
+DisplayMode get_display_mode()
 ```
 
 return the current display mode 
@@ -1123,27 +1138,6 @@ static Point3 get_point(
 
 
 ## Public Attributes Documentation
-
-### variable MODE_ORIGINAL_C
-
-```cpp
-static const std::string MODE_ORIGINAL_C;
-```
-
-
-### variable MODE_GROOMED_C
-
-```cpp
-static const std::string MODE_GROOMED_C;
-```
-
-
-### variable MODE_RECONSTRUCTION_C
-
-```cpp
-static const std::string MODE_RECONSTRUCTION_C;
-```
-
 
 ### variable DATA_C
 
@@ -1182,4 +1176,4 @@ static const std::string DEEPSSM_C;
 
 -------------------------------
 
-Updated on 2022-05-17 at 01:05:35 +0000
+Updated on 2022-06-10 at 06:08:16 +0000

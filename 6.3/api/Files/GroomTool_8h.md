@@ -105,6 +105,8 @@ private:
   void set_ui_from_params(GroomParameters params);
 
   void update_page();
+  void update_domain_box();
+  void apply_to_all_domains_changed();
 
   void update_reflect_columns();
   void update_reflect_choices();
@@ -132,4 +134,4 @@ private:
 
 -------------------------------
 
-Updated on 2022-05-17 at 01:05:36 +0000
+Updated on 2022-06-10 at 06:08:18 +0000

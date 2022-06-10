@@ -47,10 +47,14 @@ class GroomParameters {
 public:
 
   explicit GroomParameters(ProjectHandle project, std::string domain_name = "");
+  void set_domain_name(std::string domain_name);
   void save_to_project();
 
   std::string get_groom_output_prefix();
   void set_groom_output_prefix(std::string prefix);
+
+  bool get_groom_all_domains_the_same();
+  void set_groom_all_domains_the_same(bool value);
 
   bool get_alignment_enabled();
   void set_alignment_enabled(bool value);
@@ -175,4 +179,4 @@ private:
 
 -------------------------------
 
-Updated on 2022-05-17 at 01:05:35 +0000
+Updated on 2022-06-10 at 06:08:17 +0000

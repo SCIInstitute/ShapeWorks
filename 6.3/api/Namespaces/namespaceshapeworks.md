@@ -16,6 +16,8 @@ title: shapeworks
 | class | **[shapeworks::ColorMap](../Classes/classshapeworks_1_1ColorMap.md)**  |
 | class | **[shapeworks::ColorMaps](../Classes/classshapeworks_1_1ColorMaps.md)**  |
 | class | **[shapeworks::Command](../Classes/classshapeworks_1_1Command.md)**  |
+| class | **[shapeworks::CompareSettings](../Classes/classshapeworks_1_1CompareSettings.md)**  |
+| class | **[shapeworks::CompareWidget](../Classes/classshapeworks_1_1CompareWidget.md)**  |
 | class | **[shapeworks::Constraint](../Classes/classshapeworks_1_1Constraint.md)**  |
 | class | **[shapeworks::Constraints](../Classes/classshapeworks_1_1Constraints.md)**  |
 | class | **[shapeworks::ContourDomain](../Classes/classshapeworks_1_1ContourDomain.md)**  |
@@ -145,6 +147,7 @@ title: shapeworks
 | enum| **[ArrayTransferOptions](../Namespaces/namespaceshapeworks.md#enum-arraytransferoptions)** { COPY_ARRAY, SHARE_ARRAY, MOVE_ARRAY}<br>ways of tranferring Arrays to Python, copy being the least efficient but most conservative  |
 | enum| **[LandmarkColumns](../Namespaces/namespaceshapeworks.md#enum-landmarkcolumns)** { VISIBLE_E, COLOR_E, NAME_E, POSITION_E, SET_BUTTON_E, COMMENT_E, END_E} |
 | enum| **[LandmarkVisibility](../Namespaces/namespaceshapeworks.md#enum-landmarkvisibility)** { ALL_VISIBLE_E, NONE_VISIBLE_E, SOME_VISIBLE_E} |
+| enum| **[DisplayMode](../Namespaces/namespaceshapeworks.md#enum-displaymode)** { Original = 0, Groomed = 1, Reconstructed = 2} |
 | enum class| **[MessageType](../Namespaces/namespaceshapeworks.md#enum-messagetype)** { normal, warning, error, debug} |
 | using itk::Index< 3 > | **[Coord](../Namespaces/namespaceshapeworks.md#using-coord)** <br>Simple names for common types used in the framework.  |
 | using itk::Size< 3 > | **[Dims](../Namespaces/namespaceshapeworks.md#using-dims)**  |
@@ -348,6 +351,8 @@ title: shapeworks
 | template <int NRows,int NCols,typename T \> <br>Eigen::Map< Eigen::Matrix< T, NRows, NCols, Eigen::RowMajor > > | **[wrapDataWithEigen](../Namespaces/namespaceshapeworks.md#function-wrapdatawitheigen)**(T * data) |
 | template <typename T \> <br>Eigen::Map< Eigen::Matrix< T, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor > > | **[wrapDataWithEigen](../Namespaces/namespaceshapeworks.md#function-wrapdatawitheigen)**(T * data, size_t nrows, size_t ncols)<br>Wrap a data pointer of the specified size with Eigen::Matrix.  |
 | template <unsigned NRows,unsigned NCols,typename T \> <br>itk::Matrix< T, NRows, NCols > | **[wrapDataWithItk](../Namespaces/namespaceshapeworks.md#function-wrapdatawithitk)**(T * data) |
+| std::string | **[display_mode_to_string](../Namespaces/namespaceshapeworks.md#function-display-mode-to-string)**(DisplayMode display_mode) |
+| DisplayMode | **[string_to_display_mode](../Namespaces/namespaceshapeworks.md#function-string-to-display-mode)**(std::string str) |
 
 ## Attributes
 
@@ -440,6 +445,17 @@ ways of tranferring Arrays to Python, copy being the least efficient but most co
 | ALL_VISIBLE_E | |   |
 | NONE_VISIBLE_E | |   |
 | SOME_VISIBLE_E | |   |
+
+
+
+
+### enum DisplayMode
+
+| Enumerator | Value | Description |
+| ---------- | ----- | ----------- |
+| Original | 0|   |
+| Groomed | 1|   |
+| Reconstructed | 2|   |
 
 
 
@@ -2365,6 +2381,24 @@ itk::Matrix< T, NRows, NCols > wrapDataWithItk(
 Wrap data pointer with itk::Matrix. Handy for efficiently going back and forth between Python numpy arrays. WARNING: This function actually just copies data. 
 
 
+### function display_mode_to_string
+
+```cpp
+std::string display_mode_to_string(
+    DisplayMode display_mode
+)
+```
+
+
+### function string_to_display_mode
+
+```cpp
+DisplayMode string_to_display_mode(
+    std::string str
+)
+```
+
+
 
 ## Attributes Documentation
 
@@ -2381,4 +2415,4 @@ pi that doesn't depend on deprecated or non-std lib defines
 
 -------------------------------
 
-Updated on 2022-05-17 at 01:05:34 +0000
+Updated on 2022-06-10 at 06:08:15 +0000

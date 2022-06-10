@@ -69,6 +69,8 @@ summary: 3D Viewer
 | bool | **[is_ready](../Classes/classshapeworks_1_1Viewer.md#function-is-ready)**() |
 | vtkFloatArray * | **[get_particle_scalars](../Classes/classshapeworks_1_1Viewer.md#function-get-particle-scalars)**() |
 | vtkSmartPointer< vtkPolyData > | **[get_particle_poly_data](../Classes/classshapeworks_1_1Viewer.md#function-get-particle-poly-data)**() |
+| void | **[insert_compare_meshes](../Classes/classshapeworks_1_1Viewer.md#function-insert-compare-meshes)**() |
+| void | **[set_scalar_visibility](../Classes/classshapeworks_1_1Viewer.md#function-set-scalar-visibility)**(vtkSmartPointer< vtkPolyData > poly_data, vtkSmartPointer< vtkPolyDataMapper > mapper, std::string scalar) |
 | bool | **[is_reverse](../Classes/classshapeworks_1_1Viewer.md#function-is-reverse)**(vtkSmartPointer< vtkTransform > transform) |
 
 ## Detailed Description
@@ -490,6 +492,24 @@ vtkSmartPointer< vtkPolyData > get_particle_poly_data()
 ```
 
 
+### function insert_compare_meshes
+
+```cpp
+void insert_compare_meshes()
+```
+
+
+### function set_scalar_visibility
+
+```cpp
+void set_scalar_visibility(
+    vtkSmartPointer< vtkPolyData > poly_data,
+    vtkSmartPointer< vtkPolyDataMapper > mapper,
+    std::string scalar
+)
+```
+
+
 ### function is_reverse
 
 ```cpp
@@ -501,4 +521,4 @@ static bool is_reverse(
 
 -------------------------------
 
-Updated on 2022-05-17 at 01:05:35 +0000
+Updated on 2022-06-10 at 06:08:17 +0000

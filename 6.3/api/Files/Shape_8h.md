@@ -30,6 +30,7 @@ title: Studio/src/Data/Shape.h
 
 #include <Data/MeshGroup.h>
 #include <Data/MeshManager.h>
+#include <Data/StudioEnums.h>
 #include <Data/StudioMesh.h>
 #include <Data/StudioParticles.h>
 #include <Libs/Optimize/ParticleSystem/Constraints.h>
@@ -63,7 +64,7 @@ class Shape {
 
   QString get_display_name();
 
-  MeshGroup get_meshes(const std::string& display_mode, bool wait = false);
+  MeshGroup get_meshes(DisplayMode display_mode, bool wait = false);
 
   void set_annotations(QStringList annotations, bool only_overwrite_blank = true);
   QStringList get_annotations();
@@ -71,6 +72,8 @@ class Shape {
   void set_mesh_manager(QSharedPointer<MeshManager> mesh_manager);
 
   void set_subject(std::shared_ptr<shapeworks::Subject> subject);
+
+  bool is_subject();
 
   std::shared_ptr<shapeworks::Subject> get_subject();
 
@@ -103,7 +106,7 @@ class Shape {
 
   Eigen::VectorXd get_global_correspondence_points();
 
-  Eigen::VectorXd get_global_correspondence_points_for_display();
+  Eigen::VectorXd get_correspondence_points_for_display();
 
   Eigen::VectorXd get_local_correspondence_points();
 
@@ -155,7 +158,7 @@ class Shape {
 
   vtkSmartPointer<vtkTransform> get_alignment(int domain = 0);
 
-  void load_feature(std::string display_mode, std::string feature);
+  void load_feature(DisplayMode display_mode, std::string feature);
 
   std::shared_ptr<Image> get_image_volume(std::string image_volume_name);
 
@@ -220,7 +223,7 @@ class Shape {
 
   Eigen::MatrixXd landmarks_;
 
-  //vtkSmartPointer<vtkImageData> image_volume_;
+  // vtkSmartPointer<vtkImageData> image_volume_;
   std::shared_ptr<Image> image_volume_;
   std::string image_volume_filename_;
 
@@ -232,4 +235,4 @@ class Shape {
 
 -------------------------------
 
-Updated on 2022-05-17 at 01:05:36 +0000
+Updated on 2022-06-10 at 06:08:18 +0000

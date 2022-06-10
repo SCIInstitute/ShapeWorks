@@ -14,9 +14,12 @@ title: shapeworks::GroomParameters
 |                | Name           |
 | -------------- | -------------- |
 | | **[GroomParameters](../Classes/classshapeworks_1_1GroomParameters.md#function-groomparameters)**(ProjectHandle project, std::string domain_name ="") |
+| void | **[set_domain_name](../Classes/classshapeworks_1_1GroomParameters.md#function-set-domain-name)**(std::string domain_name) |
 | void | **[save_to_project](../Classes/classshapeworks_1_1GroomParameters.md#function-save-to-project)**() |
 | std::string | **[get_groom_output_prefix](../Classes/classshapeworks_1_1GroomParameters.md#function-get-groom-output-prefix)**() |
 | void | **[set_groom_output_prefix](../Classes/classshapeworks_1_1GroomParameters.md#function-set-groom-output-prefix)**(std::string prefix) |
+| bool | **[get_groom_all_domains_the_same](../Classes/classshapeworks_1_1GroomParameters.md#function-get-groom-all-domains-the-same)**() |
+| void | **[set_groom_all_domains_the_same](../Classes/classshapeworks_1_1GroomParameters.md#function-set-groom-all-domains-the-same)**(bool value) |
 | bool | **[get_alignment_enabled](../Classes/classshapeworks_1_1GroomParameters.md#function-get-alignment-enabled)**() |
 | void | **[set_alignment_enabled](../Classes/classshapeworks_1_1GroomParameters.md#function-set-alignment-enabled)**(bool value) |
 | std::string | **[get_alignment_method](../Classes/classshapeworks_1_1GroomParameters.md#function-get-alignment-method)**() |
@@ -110,6 +113,15 @@ explicit GroomParameters(
 ```
 
 
+### function set_domain_name
+
+```cpp
+void set_domain_name(
+    std::string domain_name
+)
+```
+
+
 ### function save_to_project
 
 ```cpp
@@ -129,6 +141,22 @@ std::string get_groom_output_prefix()
 ```cpp
 void set_groom_output_prefix(
     std::string prefix
+)
+```
+
+
+### function get_groom_all_domains_the_same
+
+```cpp
+bool get_groom_all_domains_the_same()
+```
+
+
+### function set_groom_all_domains_the_same
+
+```cpp
+void set_groom_all_domains_the_same(
+    bool value
 )
 ```
 
@@ -728,4 +756,4 @@ static const std::string GROOM_ALIGNMENT_LANDMARK_C;
 
 -------------------------------
 
-Updated on 2022-05-17 at 01:05:34 +0000
+Updated on 2022-06-10 at 06:08:16 +0000

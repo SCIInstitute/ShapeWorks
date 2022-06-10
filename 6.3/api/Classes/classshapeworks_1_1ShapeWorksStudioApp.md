@@ -67,6 +67,7 @@ Inherits from QMainWindow
 | void | **[handle_open_recent](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-open-recent)**() |
 | void | **[handle_color_scheme](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-color-scheme)**() |
 | void | **[handle_pca_update](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-pca-update)**() |
+| void | **[clear_message](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-clear-message)**() |
 | void | **[handle_message](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-message)**(QString str) |
 | void | **[handle_status](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-status)**(QString str) |
 | void | **[handle_error](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-error)**(QString str) |
@@ -74,6 +75,7 @@ Inherits from QMainWindow
 | void | **[handle_progress](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-progress)**(int amt) |
 | void | **[handle_new_mesh](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-new-mesh)**() |
 | void | **[handle_clear_cache](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-clear-cache)**() |
+| void | **[handle_compare_settings_changed](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-compare-settings-changed)**() |
 | void | **[update_feature_map_selection](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-update-feature-map-selection)**(const QString & feature_map) |
 | void | **[update_feature_map_scale](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-update-feature-map-scale)**() |
 | void | **[image_combo_changed](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-image-combo-changed)**(const QString & image_name) |
@@ -455,6 +457,13 @@ void handle_pca_update()
 ```
 
 
+### slot clear_message
+
+```cpp
+void clear_message()
+```
+
+
 ### slot handle_message
 
 ```cpp
@@ -511,6 +520,13 @@ void handle_new_mesh()
 
 ```cpp
 void handle_clear_cache()
+```
+
+
+### slot handle_compare_settings_changed
+
+```cpp
+void handle_compare_settings_changed()
 ```
 
 
@@ -660,4 +676,4 @@ void dropEvent(
 
 -------------------------------
 
-Updated on 2022-05-17 at 01:05:35 +0000
+Updated on 2022-06-10 at 06:08:17 +0000

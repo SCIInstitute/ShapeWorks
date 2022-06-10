@@ -540,7 +540,7 @@
   
     <li class="md-nav__item">
       <a href="../../workflow/parameters.html" class="md-nav__link">
-        How to Step Up Optimization?
+        Optimization Parameters
       </a>
     </li>
   
@@ -723,14 +723,14 @@
       
       
         <label class="md-nav__link" for="__nav_6">
-          ShapeWorks Tools
+          ShapeWorks Studio
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" aria-label="ShapeWorks Tools" data-md-level="1">
+      <nav class="md-nav" aria-label="ShapeWorks Studio" data-md-level="1">
         <label class="md-nav__title" for="__nav_6">
           <span class="md-nav__icon md-icon"></span>
-          ShapeWorks Tools
+          ShapeWorks Studio
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -740,8 +740,120 @@
   
   
     <li class="md-nav__item">
-      <a href="../../tools/ShapeWorksCommands.html" class="md-nav__link">
-        ShapeWorks Commands
+      <a href="../../studio/getting-started-with-studio.html" class="md-nav__link">
+        Getting Started
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../studio/studio-viewer.html" class="md-nav__link">
+        Viewer Controls
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../studio/studio-export.html" class="md-nav__link">
+        Export Options
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../studio/studio-data.html" class="md-nav__link">
+        Data Module
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../studio/studio-groom.html" class="md-nav__link">
+        Groom Module
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../studio/studio-optimize.html" class="md-nav__link">
+        Optimize Module
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../studio/studio-analyze.html" class="md-nav__link">
+        Analyze Module
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../studio/deepssm-in-studio.html" class="md-nav__link">
+        DeepSSM Module
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../studio/multiple-domains.html" class="md-nav__link">
+        Multiple Domains SSM
       </a>
     </li>
   
@@ -771,14 +883,14 @@
       
       
         <label class="md-nav__link" for="__nav_7">
-          ShapeWorks Studio
+          ShapeWorks Tools
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" aria-label="ShapeWorks Studio" data-md-level="1">
+      <nav class="md-nav" aria-label="ShapeWorks Tools" data-md-level="1">
         <label class="md-nav__title" for="__nav_7">
           <span class="md-nav__icon md-icon"></span>
-          ShapeWorks Studio
+          ShapeWorks Tools
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -788,50 +900,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../../studio/getting-started-with-studio.html" class="md-nav__link">
-        Getting Started With ShapeWorks Studio
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../studio/multiple-domains.html" class="md-nav__link">
-        Multiple Domains SSM
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../studio/deepssm-in-studio.html" class="md-nav__link">
-        DeepSSM in Studio
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../studio/using-constraints.html" class="md-nav__link">
-        Using Constraints in Studio
+      <a href="../../tools/ShapeWorksCommands.html" class="md-nav__link">
+        ShapeWorks Commands
       </a>
     </li>
   
@@ -2161,6 +2231,13 @@
           <li class="md-nav__item">
   <a href="#enum-landmarkvisibility" class="md-nav__link">
     enum LandmarkVisibility
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#enum-displaymode" class="md-nav__link">
+    enum DisplayMode
   </a>
   
 </li>
@@ -3564,6 +3641,20 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#function-display_mode_to_string" class="md-nav__link">
+    function display_mode_to_string
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-string_to_display_mode" class="md-nav__link">
+    function string_to_display_mode
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -3636,6 +3727,14 @@
 <tr>
 <td>class</td>
 <td><strong><a href="../Classes/classshapeworks_1_1Command.html">shapeworks::Command</a></strong></td>
+</tr>
+<tr>
+<td>class</td>
+<td><strong><a href="../Classes/classshapeworks_1_1CompareSettings.html">shapeworks::CompareSettings</a></strong></td>
+</tr>
+<tr>
+<td>class</td>
+<td><strong><a href="../Classes/classshapeworks_1_1CompareWidget.html">shapeworks::CompareWidget</a></strong></td>
 </tr>
 <tr>
 <td>class</td>
@@ -4143,6 +4242,10 @@
 <tr>
 <td>enum</td>
 <td ALL_VISIBLE_E_="ALL_VISIBLE_E," NONE_VISIBLE_E_="NONE_VISIBLE_E," SOME_VISIBLE_E="SOME_VISIBLE_E"><strong><a href="namespaceshapeworks.html#enum-landmarkvisibility">LandmarkVisibility</a></strong></td>
+</tr>
+<tr>
+<td>enum</td>
+<td Original="Original"><strong><a href="namespaceshapeworks.html#enum-displaymode">DisplayMode</a></strong></td>
 </tr>
 <tr>
 <td>enum class</td>
@@ -4947,6 +5050,14 @@
 <td>template &lt;unsigned NRows,unsigned NCols,typename T > <br>itk::Matrix&lt; T, NRows, NCols &gt;</td>
 <td><strong><a href="namespaceshapeworks.html#function-wrapdatawithitk">wrapDataWithItk</a></strong>(T * data)</td>
 </tr>
+<tr>
+<td>std::string</td>
+<td><strong><a href="namespaceshapeworks.html#function-display-mode-to-string">display_mode_to_string</a></strong>(DisplayMode display_mode)</td>
+</tr>
+<tr>
+<td>DisplayMode</td>
+<td><strong><a href="namespaceshapeworks.html#function-string-to-display-mode">string_to_display_mode</a></strong>(std::string str)</td>
+</tr>
 </tbody>
 </table>
 <h2 id="attributes">Attributes</h2>
@@ -5192,6 +5303,33 @@
 <tr>
 <td>SOME_VISIBLE_E</td>
 <td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="enum-displaymode">enum DisplayMode</h3>
+<table>
+<thead>
+<tr>
+<th>Enumerator</th>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Original</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td>Groomed</td>
+<td>1</td>
+<td></td>
+</tr>
+<tr>
+<td>Reconstructed</td>
+<td>2</td>
 <td></td>
 </tr>
 </tbody>
@@ -6343,13 +6481,23 @@
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <p>Wrap data pointer with itk::Matrix. Handy for efficiently going back and forth between Python numpy arrays. WARNING: This function actually just copies data. </p>
+<h3 id="function-display_mode_to_string">function display_mode_to_string</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">display_mode_to_string</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">DisplayMode</span><span class="w"> </span><span class="n">display_mode</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-string_to_display_mode">function string_to_display_mode</h3>
+<div class="highlight"><pre><span></span><code><span class="n">DisplayMode</span><span class="w"> </span><span class="n">string_to_display_mode</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">str</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
 <h2 id="attributes-documentation">Attributes Documentation</h2>
 <h3 id="variable-pi">variable Pi</h3>
 <div class="highlight"><pre><span></span><code><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">Pi</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">atan</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">4.0</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
 <p>pi that doesn't depend on deprecated or non-std lib defines </p>
 <hr />
-<p>Updated on 2022-05-17 at 01:05:34 +0000</p>
+<p>Updated on 2022-06-10 at 06:08:15 +0000</p>
 
               
             </article>

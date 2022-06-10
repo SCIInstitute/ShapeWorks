@@ -31,8 +31,6 @@ Inherits from QObject
 | | **[~Visualizer](../Classes/classshapeworks_1_1Visualizer.md#function-~visualizer)**() |
 | void | **[set_lightbox](../Classes/classshapeworks_1_1Visualizer.md#function-set-lightbox)**(LightboxHandle lightbox)<br>set the lightbox  |
 | void | **[set_session](../Classes/classshapeworks_1_1Visualizer.md#function-set-session)**(SessionHandle session)<br>set the session  |
-| void | **[set_display_mode](../Classes/classshapeworks_1_1Visualizer.md#function-set-display-mode)**(std::string mode)<br>set display mode (original, groomed, reconstructed)  |
-| std::string | **[get_display_mode](../Classes/classshapeworks_1_1Visualizer.md#function-get-display-mode)**()<br>return the current display mode  |
 | void | **[set_center](../Classes/classshapeworks_1_1Visualizer.md#function-set-center)**(bool center)<br>turn automatic centering on/off  |
 | bool | **[get_center](../Classes/classshapeworks_1_1Visualizer.md#function-get-center)**()<br>get centering on/off  |
 | void | **[set_alignment_domain](../Classes/classshapeworks_1_1Visualizer.md#function-set-alignment-domain)**(int domain)<br>set the alignment domain  |
@@ -70,6 +68,7 @@ Inherits from QObject
 | void | **[update_feature_range](../Classes/classshapeworks_1_1Visualizer.md#function-update-feature-range)**(double * range)<br>Update the feature range with a given range.  |
 | void | **[update_feature_range](../Classes/classshapeworks_1_1Visualizer.md#function-update-feature-range)**(double min, double max)<br>Update the feature range with a given range.  |
 | vtkSmartPointer< vtkTransform > | **[get_transform](../Classes/classshapeworks_1_1Visualizer.md#function-get-transform)**(QSharedPointer< [Shape](../Classes/classshapeworks_1_1Shape.md) > shape, int alignment_domain, int domain)<br>Request the transform for a given shape and domain.  |
+| vtkSmartPointer< vtkTransform > | **[get_transform](../Classes/classshapeworks_1_1Visualizer.md#function-get-transform)**(QSharedPointer< [Shape](../Classes/classshapeworks_1_1Shape.md) > shape, DisplayMode display_mode, int alignment_domain, int domain)<br>Request the transform for a given shape and domain and display mode.  |
 | void | **[set_opacities](../Classes/classshapeworks_1_1Visualizer.md#function-set-opacities)**(std::vector< float > opacities)<br>Set domain opacities.  |
 | std::vector< float > | **[get_opacities](../Classes/classshapeworks_1_1Visualizer.md#function-get-opacities)**()<br>Get domain opacities.  |
 | double | **[get_current_glyph_size](../Classes/classshapeworks_1_1Visualizer.md#function-get-current-glyph-size)**()<br>Get the current glyph size.  |
@@ -149,24 +148,6 @@ void set_session(
 ```
 
 set the session 
-
-### function set_display_mode
-
-```cpp
-void set_display_mode(
-    std::string mode
-)
-```
-
-set display mode (original, groomed, reconstructed) 
-
-### function get_display_mode
-
-```cpp
-std::string get_display_mode()
-```
-
-return the current display mode 
 
 ### function set_center
 
@@ -481,6 +462,19 @@ vtkSmartPointer< vtkTransform > get_transform(
 
 Request the transform for a given shape and domain. 
 
+### function get_transform
+
+```cpp
+vtkSmartPointer< vtkTransform > get_transform(
+    QSharedPointer< Shape > shape,
+    DisplayMode display_mode,
+    int alignment_domain,
+    int domain
+)
+```
+
+Request the transform for a given shape and domain and display mode. 
+
 ### function set_opacities
 
 ```cpp
@@ -549,4 +543,4 @@ Return render window size.
 
 -------------------------------
 
-Updated on 2022-05-17 at 01:05:35 +0000
+Updated on 2022-06-10 at 06:08:17 +0000

@@ -11,6 +11,7 @@ title: Studio/src/Interface
 
 | Name           |
 | -------------- |
+| **[Studio/src/Interface/CompareWidget.h](../Files/CompareWidget_8h.md#file-comparewidget.h)**  |
 | **[Studio/src/Interface/ExportImageDialog.h](../Files/ExportImageDialog_8h.md#file-exportimagedialog.h)**  |
 | **[Studio/src/Interface/KeyboardShortcuts.h](../Files/KeyboardShortcuts_8h.md#file-keyboardshortcuts.h)**  |
 | **[Studio/src/Interface/LogWindow.h](../Files/LogWindow_8h.md#file-logwindow.h)**  |
@@ -27,4 +28,4 @@ title: Studio/src/Interface
 
 -------------------------------
 
-Updated on 2022-05-17 at 01:05:36 +0000
+Updated on 2022-06-10 at 06:08:18 +0000

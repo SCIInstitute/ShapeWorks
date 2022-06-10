@@ -29,9 +29,9 @@ title: Studio/src/Visualization/Viewer.h
 #pragma once
 
 #include <Data/Shape.h>
+#include <Visualization/ColorMap.h>
 #include <Visualization/ColorSchemes.h>
 #include <Visualization/SliceView.h>
-#include <Visualization/ColorMap.h>
 
 #include <QPointF>
 #include <QSharedPointer>
@@ -176,6 +176,10 @@ class Viewer {
 
   vtkSmartPointer<vtkPolyData> get_particle_poly_data();
 
+  void insert_compare_meshes();
+
+  void set_scalar_visibility(vtkSmartPointer<vtkPolyData> poly_data, vtkSmartPointer<vtkPolyDataMapper> mapper, std::string scalar);
+
  private:
   void initialize_surfaces();
 
@@ -221,6 +225,10 @@ class Viewer {
   std::vector<vtkSmartPointer<vtkActor>> unclipped_surface_actors_;
   std::vector<vtkSmartPointer<vtkLookupTable>> ffc_luts_;
 
+  // for comparing to other shapes (e.g. original vs groomed)
+  std::vector<vtkSmartPointer<vtkPolyDataMapper>> compare_mappers_;
+  std::vector<vtkSmartPointer<vtkActor>> compare_actors_;
+
   vtkSmartPointer<vtkLookupTable> lut_;
   vtkSmartPointer<vtkLookupTable> surface_lut_;
 
@@ -244,6 +252,7 @@ class Viewer {
   bool loading_displayed_ = false;
 
   MeshGroup meshes_;
+  MeshGroup compare_meshes_;
 
   Visualizer* visualizer_{nullptr};
 
@@ -270,4 +279,4 @@ class Viewer {
 
 -------------------------------
 
-Updated on 2022-05-17 at 01:05:36 +0000
+Updated on 2022-06-10 at 06:08:18 +0000

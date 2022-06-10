@@ -26,11 +26,12 @@ Representation of a single shape/patient/subject.
 | | **[Shape](../Classes/classshapeworks_1_1Shape.md#function-shape)**() |
 | | **[~Shape](../Classes/classshapeworks_1_1Shape.md#function-~shape)**() |
 | QString | **[get_display_name](../Classes/classshapeworks_1_1Shape.md#function-get-display-name)**() |
-| [MeshGroup](../Classes/classshapeworks_1_1MeshGroup.md) | **[get_meshes](../Classes/classshapeworks_1_1Shape.md#function-get-meshes)**(const std::string & display_mode, bool wait =false) |
+| [MeshGroup](../Classes/classshapeworks_1_1MeshGroup.md) | **[get_meshes](../Classes/classshapeworks_1_1Shape.md#function-get-meshes)**(DisplayMode display_mode, bool wait =false) |
 | void | **[set_annotations](../Classes/classshapeworks_1_1Shape.md#function-set-annotations)**(QStringList annotations, bool only_overwrite_blank =true) |
 | QStringList | **[get_annotations](../Classes/classshapeworks_1_1Shape.md#function-get-annotations)**() |
 | void | **[set_mesh_manager](../Classes/classshapeworks_1_1Shape.md#function-set-mesh-manager)**(QSharedPointer< [MeshManager](../Classes/classshapeworks_1_1MeshManager.md) > mesh_manager) |
 | void | **[set_subject](../Classes/classshapeworks_1_1Shape.md#function-set-subject)**(std::shared_ptr< [shapeworks::Subject](../Classes/classshapeworks_1_1Subject.md) > subject) |
+| bool | **[is_subject](../Classes/classshapeworks_1_1Shape.md#function-is-subject)**() |
 | std::shared_ptr< [shapeworks::Subject](../Classes/classshapeworks_1_1Subject.md) > | **[get_subject](../Classes/classshapeworks_1_1Shape.md#function-get-subject)**() |
 | void | **[import_original_image](../Classes/classshapeworks_1_1Shape.md#function-import-original-image)**(const std::string & filename)<br>Import the original raw image file.  |
 | [MeshGroup](../Classes/classshapeworks_1_1MeshGroup.md) | **[get_original_meshes](../Classes/classshapeworks_1_1Shape.md#function-get-original-meshes)**(bool wait =false)<br>Retrieve the original meshes.  |
@@ -47,7 +48,7 @@ Representation of a single shape/patient/subject.
 | [StudioParticles](../Classes/classshapeworks_1_1StudioParticles.md) | **[get_particles](../Classes/classshapeworks_1_1Shape.md#function-get-particles)**() |
 | void | **[set_particle_transform](../Classes/classshapeworks_1_1Shape.md#function-set-particle-transform)**(vtkSmartPointer< vtkTransform > transform) |
 | Eigen::VectorXd | **[get_global_correspondence_points](../Classes/classshapeworks_1_1Shape.md#function-get-global-correspondence-points)**()<br>Get the global correspondence points.  |
-| Eigen::VectorXd | **[get_global_correspondence_points_for_display](../Classes/classshapeworks_1_1Shape.md#function-get-global-correspondence-points-for-display)**()<br>Get the global correspondence points for display.  |
+| Eigen::VectorXd | **[get_correspondence_points_for_display](../Classes/classshapeworks_1_1Shape.md#function-get-correspondence-points-for-display)**()<br>Get the global correspondence points for display.  |
 | Eigen::VectorXd | **[get_local_correspondence_points](../Classes/classshapeworks_1_1Shape.md#function-get-local-correspondence-points)**()<br>Get the local correspondence points.  |
 | void | **[clear_reconstructed_mesh](../Classes/classshapeworks_1_1Shape.md#function-clear-reconstructed-mesh)**() |
 | int | **[get_id](../Classes/classshapeworks_1_1Shape.md#function-get-id)**()<br>Get the id of this shape.  |
@@ -79,7 +80,7 @@ Representation of a single shape/patient/subject.
 | vtkSmartPointer< vtkTransform > | **[get_procrustest_transform](../Classes/classshapeworks_1_1Shape.md#function-get-procrustest-transform)**(int domain =0) |
 | std::vector< vtkSmartPointer< vtkTransform > > | **[get_procrustest_transforms](../Classes/classshapeworks_1_1Shape.md#function-get-procrustest-transforms)**() |
 | vtkSmartPointer< vtkTransform > | **[get_alignment](../Classes/classshapeworks_1_1Shape.md#function-get-alignment)**(int domain =0) |
-| void | **[load_feature](../Classes/classshapeworks_1_1Shape.md#function-load-feature)**(std::string display_mode, std::string feature) |
+| void | **[load_feature](../Classes/classshapeworks_1_1Shape.md#function-load-feature)**(DisplayMode display_mode, std::string feature) |
 | std::shared_ptr< [Image](../Classes/classshapeworks_1_1Image.md) > | **[get_image_volume](../Classes/classshapeworks_1_1Shape.md#function-get-image-volume)**(std::string image_volume_name) |
 | Eigen::VectorXf | **[get_point_features](../Classes/classshapeworks_1_1Shape.md#function-get-point-features)**(std::string feature) |
 | void | **[set_point_features](../Classes/classshapeworks_1_1Shape.md#function-set-point-features)**(std::string feature, Eigen::VectorXf values) |
@@ -119,7 +120,7 @@ QString get_display_name()
 
 ```cpp
 MeshGroup get_meshes(
-    const std::string & display_mode,
+    DisplayMode display_mode,
     bool wait =false
 )
 ```
@@ -157,6 +158,13 @@ void set_mesh_manager(
 void set_subject(
     std::shared_ptr< shapeworks::Subject > subject
 )
+```
+
+
+### function is_subject
+
+```cpp
+bool is_subject()
 ```
 
 
@@ -304,10 +312,10 @@ Eigen::VectorXd get_global_correspondence_points()
 
 Get the global correspondence points. 
 
-### function get_global_correspondence_points_for_display
+### function get_correspondence_points_for_display
 
 ```cpp
-Eigen::VectorXd get_global_correspondence_points_for_display()
+Eigen::VectorXd get_correspondence_points_for_display()
 ```
 
 Get the global correspondence points for display. 
@@ -564,7 +572,7 @@ vtkSmartPointer< vtkTransform > get_alignment(
 
 ```cpp
 void load_feature(
-    std::string display_mode,
+    DisplayMode display_mode,
     std::string feature
 )
 ```
@@ -663,4 +671,4 @@ std::vector< std::shared_ptr< VtkMeshWrapper > > get_groomed_mesh_wrappers()
 
 -------------------------------
 
-Updated on 2022-05-17 at 01:05:35 +0000
+Updated on 2022-06-10 at 06:08:17 +0000
