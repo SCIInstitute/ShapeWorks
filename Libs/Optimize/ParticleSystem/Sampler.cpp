@@ -127,7 +127,6 @@ void Sampler::AllocateDomainsAndNeighborhoods() {
       }
 
       double SurfaceArea = surfaceAreaMesh->getSurfaceArea();
-
       m_areas[i] = SurfaceArea;
 
       if (m_AttributesPerDomain.size() > 0 && m_AttributesPerDomain[i % m_DomainsPerShape] > 0) {
@@ -173,11 +172,6 @@ void Sampler::AllocateDomainsAndNeighborhoods() {
     else if(domain->GetDomainType() == shapeworks::DomainType::Mesh){
 
         if(m_meshFFCMode == 1){
-            // Adding free-form constraints to constraint object
-            //std::cout << "m_FFCs.size() " << m_FFCs.size() << std::endl;
-            if (m_FFCs.size() > i) {
-               initialize_ffcs(i);
-            }
 
             // Adding cutting planes to constraint object
             if (m_CuttingPlanes.size() > i) {

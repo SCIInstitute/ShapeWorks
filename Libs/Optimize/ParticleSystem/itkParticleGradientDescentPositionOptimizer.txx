@@ -122,6 +122,13 @@ namespace itk
 
           // Initialization decay scheme
       }
+      double factor = 10.0;
+      if(m_initialization_mode && counter == 0){
+          m_GradientFunction->SetRelativeEnergyScaling(m_GradientFunction->GetRelativeEnergyScaling() * factor);
+      }
+      if(m_initialization_mode && counter == 50){
+          m_GradientFunction->SetRelativeEnergyScaling(m_GradientFunction->GetRelativeEnergyScaling()/factor);
+      }
 
       const auto accTimerBegin = std::chrono::steady_clock::now();
       m_GradientFunction->SetParticleSystem(m_ParticleSystem);

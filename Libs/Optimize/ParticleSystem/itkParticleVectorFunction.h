@@ -73,6 +73,7 @@ class ParticleVectorFunction : public LightObject {
   virtual int GetDomainNumber() const { return m_DomainNumber; }
 
   virtual double GetRelativeEnergyScaling() const {return 1.0;}
+  virtual void SetRelativeEnergyScaling(double r) {return;}
 
   virtual typename ParticleVectorFunction<VDimension>::Pointer Clone() {
     std::cerr << "Error: base class ParticleVectorFunction Clone method called!\n";
