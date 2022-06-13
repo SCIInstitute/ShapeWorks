@@ -2236,6 +2236,20 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#enum-landmarkcolumns_1" class="md-nav__link">
+    enum LandmarkColumns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#enum-landmarkvisibility_1" class="md-nav__link">
+    enum LandmarkVisibility
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#enum-displaymode" class="md-nav__link">
     enum DisplayMode
   </a>
@@ -3786,7 +3800,19 @@
 </tr>
 <tr>
 <td>class</td>
+<td><strong><a href="../Classes/classshapeworks_1_1GroomAlignment.html">shapeworks::GroomAlignment</a></strong></td>
+</tr>
+<tr>
+<td>class</td>
 <td><strong><a href="../Classes/classshapeworks_1_1GroomCommandGroup.html">shapeworks::GroomCommandGroup</a></strong></td>
+</tr>
+<tr>
+<td>class</td>
+<td><strong><a href="../Classes/classshapeworks_1_1GroomImage.html">shapeworks::GroomImage</a></strong></td>
+</tr>
+<tr>
+<td>class</td>
+<td><strong><a href="../Classes/classshapeworks_1_1GroomMesh.html">shapeworks::GroomMesh</a></strong></td>
 </tr>
 <tr>
 <td>class</td>
@@ -3830,11 +3856,19 @@
 </tr>
 <tr>
 <td>class</td>
-<td><strong><a href="../Classes/classshapeworks_1_1LandmarkDefinition.html">shapeworks::LandmarkDefinition</a></strong> <br>Landmark class containing properties of each landmark.</td>
+<td><strong><a href="../Classes/classshapeworks_1_1Landmark.html">shapeworks::Landmark</a></strong></td>
+</tr>
+<tr>
+<td>class</td>
+<td><strong><a href="../Classes/classshapeworks_1_1LandmarkDefinition.html">shapeworks::LandmarkDefinition</a></strong> <br><a href="../Classes/classshapeworks_1_1Landmark.html">Landmark</a> class containing properties of each landmark.</td>
 </tr>
 <tr>
 <td>class</td>
 <td><strong><a href="../Classes/classshapeworks_1_1LandmarkItemDelegate.html">shapeworks::LandmarkItemDelegate</a></strong></td>
+</tr>
+<tr>
+<td>class</td>
+<td><strong><a href="../Classes/classshapeworks_1_1Landmarks.html">shapeworks::Landmarks</a></strong> <br>Representation of the project's landmarks.</td>
 </tr>
 <tr>
 <td>class</td>
@@ -4023,6 +4057,14 @@
 <tr>
 <td>class</td>
 <td><strong><a href="../Classes/classshapeworks_1_1PlaneConstraint.html">shapeworks::PlaneConstraint</a></strong> <br><a href="">PlaneConstraint</a>.</td>
+</tr>
+<tr>
+<td>class</td>
+<td><strong><a href="../Classes/classshapeworks_1_1PlaneInfo.html">shapeworks::PlaneInfo</a></strong></td>
+</tr>
+<tr>
+<td>class</td>
+<td><strong><a href="../Classes/classshapeworks_1_1PlaneTableModel.html">shapeworks::PlaneTableModel</a></strong></td>
 </tr>
 <tr>
 <td>class</td>
@@ -4237,11 +4279,19 @@
 </tr>
 <tr>
 <td>enum</td>
-<td COLOR_E_="COLOR_E," COMMENT_E_="COMMENT_E," END_E="END_E" NAME_E_="NAME_E," POSITION_E_="POSITION_E," SET_BUTTON_E_="SET_BUTTON_E," VISIBLE_E_="VISIBLE_E,"><strong><a href="namespaceshapeworks.html#enum-landmarkcolumns">LandmarkColumns</a></strong></td>
+<td COLOR_E_="COLOR_E," COMMENT_E_="COMMENT_E," END_E="END_E" END_E_="END_E," NAME_E_="NAME_E," POSITION_E_="POSITION_E," SET_BUTTON_E_="SET_BUTTON_E," VISIBLE_E_="VISIBLE_E,"><strong><a href="namespaceshapeworks.html#enum-landmarkcolumns">LandmarkColumns</a></strong></td>
 </tr>
 <tr>
 <td>enum</td>
-<td ALL_VISIBLE_E_="ALL_VISIBLE_E," NONE_VISIBLE_E_="NONE_VISIBLE_E," SOME_VISIBLE_E="SOME_VISIBLE_E"><strong><a href="namespaceshapeworks.html#enum-landmarkvisibility">LandmarkVisibility</a></strong></td>
+<td ALL_VISIBLE_E_="ALL_VISIBLE_E," NONE_VISIBLE_E_="NONE_VISIBLE_E," SOME_VISIBLE_E="SOME_VISIBLE_E" SOME_VISIBLE_E_="SOME_VISIBLE_E,"><strong><a href="namespaceshapeworks.html#enum-landmarkvisibility">LandmarkVisibility</a></strong></td>
+</tr>
+<tr>
+<td>enum</td>
+<td COLOR_E_="COLOR_E," COMMENT_E_="COMMENT_E," END_E="END_E" END_E_="END_E," NAME_E_="NAME_E," POSITION_E_="POSITION_E," SET_BUTTON_E_="SET_BUTTON_E," VISIBLE_E_="VISIBLE_E,"><strong><a href="namespaceshapeworks.html#enum-landmarkcolumns">LandmarkColumns</a></strong></td>
+</tr>
+<tr>
+<td>enum</td>
+<td ALL_VISIBLE_E_="ALL_VISIBLE_E," NONE_VISIBLE_E_="NONE_VISIBLE_E," SOME_VISIBLE_E="SOME_VISIBLE_E" SOME_VISIBLE_E_="SOME_VISIBLE_E,"><strong><a href="namespaceshapeworks.html#enum-landmarkvisibility">LandmarkVisibility</a></strong></td>
 </tr>
 <tr>
 <td>enum</td>
@@ -5278,6 +5328,41 @@
 <td></td>
 <td></td>
 </tr>
+<tr>
+<td>VISIBLE_E</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>COLOR_E</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>NAME_E</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>POSITION_E</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>SET_BUTTON_E</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>COMMENT_E</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>END_E</td>
+<td></td>
+<td></td>
+</tr>
 </tbody>
 </table>
 <h3 id="enum-landmarkvisibility">enum LandmarkVisibility</h3>
@@ -5290,6 +5375,145 @@
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>ALL_VISIBLE_E</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>NONE_VISIBLE_E</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>SOME_VISIBLE_E</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>ALL_VISIBLE_E</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>NONE_VISIBLE_E</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>SOME_VISIBLE_E</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="enum-landmarkcolumns_1">enum LandmarkColumns</h3>
+<table>
+<thead>
+<tr>
+<th>Enumerator</th>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>VISIBLE_E</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>COLOR_E</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>NAME_E</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>POSITION_E</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>SET_BUTTON_E</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>COMMENT_E</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>END_E</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>VISIBLE_E</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>COLOR_E</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>NAME_E</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>POSITION_E</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>SET_BUTTON_E</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>COMMENT_E</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>END_E</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="enum-landmarkvisibility_1">enum LandmarkVisibility</h3>
+<table>
+<thead>
+<tr>
+<th>Enumerator</th>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ALL_VISIBLE_E</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>NONE_VISIBLE_E</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>SOME_VISIBLE_E</td>
+<td></td>
+<td></td>
+</tr>
 <tr>
 <td>ALL_VISIBLE_E</td>
 <td></td>
@@ -6497,7 +6721,7 @@
 </code></pre></div>
 <p>pi that doesn't depend on deprecated or non-std lib defines </p>
 <hr />
-<p>Updated on 2022-06-11 at 15:59:58 +0000</p>
+<p>Updated on 2022-06-13 at 01:32:49 -0600</p>
 
               
             </article>

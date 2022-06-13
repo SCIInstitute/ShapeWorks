@@ -4169,8 +4169,7 @@
 <p><strong>Options:</strong></p>
 <p><strong>-h, --help:</strong> show this help message and exit</p>
 <p><strong>--name=STRING:</strong> Filename of other mesh.</p>
-<p><strong>--method=CHOICE:</strong> Method used to compute distance (point-to-point or point-to-cell) [default: point-to-cell]. (choose from 'point-to-point', 'point-to-cell')</p>
-<p><strong>--ids=BOOL:</strong> Set shared field to the ids of the closest points/cells instead of the distances [default: false].</p>
+<p><strong>--method=CHOICE:</strong> Method used to compute distance [default: point-to-point]. (choose from 'point-to-point', 'point-to-cell')</p>
 <p><strong>--summary=BOOL:</strong> Print largest distance of any point in mesh to target [default: true].  </p>
 <p><a href="#top">Back to Top</a></p>
 <p><a href="#mesh-commands">Back to Mesh Commands</a></p>
@@ -4181,8 +4180,7 @@
 <p><strong>Description:</strong> prints the mean of the given field  </p>
 <p><strong>Options:</strong></p>
 <p><strong>-h, --help:</strong> show this help message and exit</p>
-<p><strong>--name=STRING:</strong> Name of scalar field.</p>
-<p><strong>--type=CHOICE:</strong> Type of field to fetch (point or face). (choose from 'point', 'face')  </p>
+<p><strong>--name=STRING:</strong> Name of scalar field.  </p>
 <p><a href="#top">Back to Top</a></p>
 <p><a href="#mesh-commands">Back to Mesh Commands</a></p>
 <h3 id="field-names">field-names</h3>
@@ -4201,8 +4199,7 @@
 <p><strong>Description:</strong> prints the range of the given field  </p>
 <p><strong>Options:</strong></p>
 <p><strong>-h, --help:</strong> show this help message and exit</p>
-<p><strong>--name=STRING:</strong> Name of scalar field.</p>
-<p><strong>--type=CHOICE:</strong> Type of field to fetch (point or face). (choose from 'point', 'face')  </p>
+<p><strong>--name=STRING:</strong> Name of scalar field.  </p>
 <p><a href="#top">Back to Top</a></p>
 <p><a href="#mesh-commands">Back to Mesh Commands</a></p>
 <h3 id="field-std">field-std</h3>
@@ -4212,8 +4209,7 @@
 <p><strong>Description:</strong> prints the standard deviation of the given field  </p>
 <p><strong>Options:</strong></p>
 <p><strong>-h, --help:</strong> show this help message and exit</p>
-<p><strong>--name=STRING:</strong> Name of scalar field.</p>
-<p><strong>--type=CHOICE:</strong> Type of field to fetch (point or face). (choose from 'point', 'face')  </p>
+<p><strong>--name=STRING:</strong> Name of scalar field.  </p>
 <p><a href="#top">Back to Top</a></p>
 <p><a href="#mesh-commands">Back to Mesh Commands</a></p>
 <h3 id="fill-holes">fill-holes</h3>
@@ -4264,8 +4260,7 @@
 <p><strong>Description:</strong> gets field of mesh with given name  </p>
 <p><strong>Options:</strong></p>
 <p><strong>-h, --help:</strong> show this help message and exit</p>
-<p><strong>--name=STRING:</strong> Name of scalar field.</p>
-<p><strong>--type=CHOICE:</strong> Type of field to get (point or face). (choose from 'point', 'face')  </p>
+<p><strong>--name=STRING:</strong> Name of scalar field.  </p>
 <p><a href="#top">Back to Top</a></p>
 <p><a href="#mesh-commands">Back to Mesh Commands</a></p>
 <h3 id="get-field-value">get-field-value</h3>
@@ -4343,7 +4338,7 @@
 <p><strong>--sx=DOUBLE:</strong> Spacing of output image in x-direction [default: unit spacing].</p>
 <p><strong>--sy=DOUBLE:</strong> Spacing of output image in y-direction [default: unit spacing].</p>
 <p><strong>--sz=DOUBLE:</strong> Spacing of output image in z-direction [default: unit spacing].</p>
-<p><strong>--pad=INT:</strong> Number of pixels to pad the output region [default: 1].  </p>
+<p><strong>--pad=DOUBLE:</strong> Pad the region to extract [default: 0.0].  </p>
 <p><a href="#top">Back to Top</a></p>
 <p><a href="#mesh-commands">Back to Mesh Commands</a></p>
 <h3 id="mesh-to-image">mesh-to-image</h3>
@@ -4433,8 +4428,7 @@
 <p><strong>Description:</strong> adds the current field to the current mesh with the given name.  </p>
 <p><strong>Options:</strong></p>
 <p><strong>-h, --help:</strong> show this help message and exit</p>
-<p><strong>--name=STRING:</strong> Name of scalar field.</p>
-<p><strong>--type=CHOICE:</strong> Type of field to set (point or face). (choose from 'point', 'face')  </p>
+<p><strong>--name=STRING:</strong> Name of scalar field.  </p>
 <p><a href="#top">Back to Top</a></p>
 <p><a href="#mesh-commands">Back to Mesh Commands</a></p>
 <h3 id="set-field-value">set-field-value</h3>
@@ -4504,7 +4498,6 @@
 <p><strong>-h, --help:</strong> show this help message and exit</p>
 <p><strong>--reference_mesh=STRING:</strong>  Name of reference mesh.</p>
 <p><strong>--reference_points=STRING:</strong>  Name of reference points.</p>
-<p><strong>--landmark_file=STRING:</strong>  Optional Argument to specify the name of Landmark file, if landmarks are available for warping</p>
 <p><strong>--target_points <list of strings>:</strong>  Names of target points (must be followed by <code>--</code>), ex: "... --target_points *.particles -- ...</p>
 <p><strong>--save_dir=STRING:</strong> Optional: Path to the directory where the mesh files will be saved  </p>
 <p><a href="#top">Back to Top</a></p>
