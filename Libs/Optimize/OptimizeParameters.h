@@ -79,6 +79,12 @@ class OptimizeParameters {
   bool get_use_landmarks();
   void set_use_landmarks(bool value);
 
+  bool get_shared_boundary_enabled();
+  bool set_shared_boundary_enabled(bool value);
+
+  double get_shared_boundary_weight();
+  double set_shared_boundary_weight(double value);
+  
   bool get_use_fixed_subjects();
   void set_use_fixed_subjects(bool value);
   std::string get_fixed_subjects_column();

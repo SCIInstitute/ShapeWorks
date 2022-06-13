@@ -246,6 +246,18 @@ std::string OptimizeParameters::get_fixed_subjects_choice() { return params_.get
 void OptimizeParameters::set_fixed_subjects_choice(std::string choice) { params_.set("fixed_subjects_choice", choice); }
 
 //---------------------------------------------------------------------------
+bool OptimizeParameters::set_shared_boundary_enabled(bool value) { this->params_.set("shared_boundary_enabled", value); }
+
+//---------------------------------------------------------------------------
+bool OptimizeParameters::get_shared_boundary_enabled() { return params_.get("shared_boundary_enabled", false); }
+
+//---------------------------------------------------------------------------
+double OptimizeParameters::set_shared_boundary_weight(double value) { this->params_.set("shared_boundary_weight", value); }
+
+//---------------------------------------------------------------------------
+double OptimizeParameters::get_shared_boundary_weight() { return params_.get("shared_boundary_weight", 0.5); }
+
+//---------------------------------------------------------------------------
 bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
   optimize->SetVerbosity(this->get_verbosity());
   int domains_per_shape = this->project_->get_number_of_domains_per_subject();
@@ -265,8 +277,11 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
   optimize->SetMeshFFCMode(this->get_mesh_ffc_mode());
 
   // TODO Remove this once Studio has controls for shared boundary
-  optimize->SetSharedBoundaryEnabled(true);
-  optimize->SetSharedBoundaryWeight(0.5);
+  // optimize->SetSharedBoundaryEnabled(true);
+  // optimize->SetSharedBoundaryWeight(0.5);
+
+  optimize->SetSharedBoundaryEnabled(this->get_shared_boundary_enabled());
+  optimize->SetSharedBoundaryWeight(this->get_shared_boundary_weight());
 
   std::vector<bool> use_normals;
   std::vector<bool> use_xyz;
