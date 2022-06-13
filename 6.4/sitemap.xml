@@ -176,11 +176,6 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Classes/classGlobal.html</loc>
-         <lastmod>2022-06-13</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
          <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Classes/classLegacyMeshGenerator.html</loc>
          <lastmod>2022-06-13</lastmod>
          <changefreq>daily</changefreq>
@@ -561,22 +556,7 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Classes/classshapeworks_1_1GroomAlignment.html</loc>
-         <lastmod>2022-06-13</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
          <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Classes/classshapeworks_1_1GroomCommandGroup.html</loc>
-         <lastmod>2022-06-13</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
-         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Classes/classshapeworks_1_1GroomImage.html</loc>
-         <lastmod>2022-06-13</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
-         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Classes/classshapeworks_1_1GroomMesh.html</loc>
          <lastmod>2022-06-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
@@ -631,11 +611,6 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Classes/classshapeworks_1_1Landmark.html</loc>
-         <lastmod>2022-06-13</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
          <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Classes/classshapeworks_1_1LandmarkDefinition.html</loc>
          <lastmod>2022-06-13</lastmod>
          <changefreq>daily</changefreq>
@@ -652,11 +627,6 @@
     </url>
     <url>
          <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Classes/classshapeworks_1_1LandmarkWidget.html</loc>
-         <lastmod>2022-06-13</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
-         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Classes/classshapeworks_1_1Landmarks.html</loc>
          <lastmod>2022-06-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
@@ -872,16 +842,6 @@
     </url>
     <url>
          <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Classes/classshapeworks_1_1PlaneConstraint.html</loc>
-         <lastmod>2022-06-13</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
-         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Classes/classshapeworks_1_1PlaneInfo.html</loc>
-         <lastmod>2022-06-13</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
-         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Classes/classshapeworks_1_1PlaneTableModel.html</loc>
          <lastmod>2022-06-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
@@ -1441,26 +1401,6 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/Global_8h.html</loc>
-         <lastmod>2022-06-13</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
-         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/GroomAlignment_8h.html</loc>
-         <lastmod>2022-06-13</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
-         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/GroomImage_8h.html</loc>
-         <lastmod>2022-06-13</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
-         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/GroomMesh_8h.html</loc>
-         <lastmod>2022-06-13</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
          <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/GroomParameters_8h.html</loc>
          <lastmod>2022-06-13</lastmod>
          <changefreq>daily</changefreq>
@@ -1527,11 +1467,6 @@
     </url>
     <url>
          <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/LandmarkWidget_8h.html</loc>
-         <lastmod>2022-06-13</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
-         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/Landmarks_8h.html</loc>
          <lastmod>2022-06-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
@@ -1626,6 +1561,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/Module_8dox.html</loc>
+         <lastmod>2022-06-13</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/OptimizationVisualizer_8h.html</loc>
          <lastmod>2022-06-13</lastmod>
          <changefreq>daily</changefreq>
@@ -1647,11 +1587,6 @@
     </url>
     <url>
          <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/Optimize_8h.html</loc>
-         <lastmod>2022-06-13</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
-         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/Overview_8dox.html</loc>
          <lastmod>2022-06-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
@@ -1727,11 +1662,6 @@
     </url>
     <url>
          <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/PlaneConstraint_8h.html</loc>
-         <lastmod>2022-06-13</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
-         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/PlaneTableModel_8h.html</loc>
          <lastmod>2022-06-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
@@ -2001,182 +1931,162 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/bin_2Documentation_2Doxygen_2Module_8dox.html</loc>
+         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_15d8e205eb0e69868bf0703ef3760a37.html</loc>
          <lastmod>2022-06-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/code_2Documentation_2Doxygen_2Module_8dox.html</loc>
+         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_217db32785bc9a56b002739d3e5efbb6.html</loc>
          <lastmod>2022-06-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_0d6dcc6d5df1fd3d3bccf1e77b62959b.html</loc>
+         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_36d0ece48b2c599ca7cdf3fcf70a4111.html</loc>
          <lastmod>2022-06-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_10424771f6a262e50315a09e8b2bd9a3.html</loc>
+         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_3c387d8f52af5a1c9b80596228515621.html</loc>
          <lastmod>2022-06-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_1b9bde9e8bcb867599949113f2bdd2a5.html</loc>
+         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_3e441cbfff25a2e63cb70556b317072d.html</loc>
          <lastmod>2022-06-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_2dba964ac8d35ee2b73d07c3398d03ee.html</loc>
+         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_409787ee32d93aa6a212981d92e6dc9a.html</loc>
          <lastmod>2022-06-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_36240504c08e57f076881a3fb4a95f20.html</loc>
+         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_486a45e6ebc11931a27093b877e14af3.html</loc>
          <lastmod>2022-06-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_392252d3263d830764b835f935e42d37.html</loc>
+         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_4ea27a77bf632cd63100af8008b8abf4.html</loc>
          <lastmod>2022-06-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_3f2aeec9c7c878ca07fbf4e7262f152c.html</loc>
+         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_502f02e7679d4b0b85423ea2b48b81cb.html</loc>
          <lastmod>2022-06-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_46e862a5ac462f7be96c385f5f7ea1d7.html</loc>
+         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_55e6ce8615c819fee18162671e1bdfe2.html</loc>
          <lastmod>2022-06-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_55dd09ea5eb3d41c580bfa8e99cbc98a.html</loc>
+         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_637230a14b7eb9dd0045894e3626aeed.html</loc>
          <lastmod>2022-06-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_63319d77c710ac903ec06d30a495a580.html</loc>
+         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_6cd87311705ab44b460cce19838a0cf5.html</loc>
          <lastmod>2022-06-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_69bd03084155054f5d382ef462099146.html</loc>
+         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_6dabbda62b442fabee487c4141c09499.html</loc>
          <lastmod>2022-06-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_720ddc5c113bb27270f3aaf47adf4baa.html</loc>
+         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_6e6cb9563333489fde7459b1f95e59a5.html</loc>
          <lastmod>2022-06-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_82b7eea2627757703ae9d649bc5dbcc3.html</loc>
+         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_73a09fceee206218e6d903b3c5deb969.html</loc>
          <lastmod>2022-06-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_85437404c76aaafe9c9d27fadf09a713.html</loc>
+         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_85be493154e47884a39224bf31e366f0.html</loc>
          <lastmod>2022-06-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_872a66bfca900cf3b352d7fa402e7751.html</loc>
+         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_8c1195e4829fa17630c4278c41da729a.html</loc>
          <lastmod>2022-06-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_8b0a57a5f9c87d7f95a67c8e50dd7805.html</loc>
+         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_8c7b8cb8b689625715d68fff39675b66.html</loc>
          <lastmod>2022-06-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_8fed0776758098ce30d5aa2d3debb7a2.html</loc>
+         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_8f268951dfa1af237c8fb7830f5f1164.html</loc>
          <lastmod>2022-06-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_925225c0eef11af96a0fb8df2dcb7a5d.html</loc>
+         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_9e4ba78685e6608cfdea07960abd189c.html</loc>
          <lastmod>2022-06-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_964794cfbc0200ee98d033e96f05265a.html</loc>
+         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_b61e4180fa497c41c4b364a945b36efe.html</loc>
          <lastmod>2022-06-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_9ecbc4e1f736ca640622fadff39dff6e.html</loc>
+         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_baf8d66207f3fc39faf866e67ca98ce2.html</loc>
          <lastmod>2022-06-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_a889af563de662e6568ebda1f8c410f4.html</loc>
+         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_c13ed27a749775eeb2d59234813cae48.html</loc>
          <lastmod>2022-06-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_b23654212ee2e801f3acf694e99fc6b4.html</loc>
+         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_c8a30dba58b805ee2d567ab327483fca.html</loc>
          <lastmod>2022-06-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_b411e2045bdee07628d0d58438795fa9.html</loc>
+         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_c8ce71b7fc76205395f44c2291e69b75.html</loc>
          <lastmod>2022-06-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_c292d0d9f58edd2738b3a726b968950c.html</loc>
+         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_cb8980ab440f994989990a6313097edf.html</loc>
          <lastmod>2022-06-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_c89c29973a5cfaead106d4a97e3032da.html</loc>
+         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_d77cc112773b74d11448b7fad9142c8e.html</loc>
          <lastmod>2022-06-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_ca024e1e317bddf8f5c3fbf04807e20e.html</loc>
+         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_dec1a63a19e4f4a11987b8b8502ff5c9.html</loc>
          <lastmod>2022-06-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_d636eff8c67aac1071ab05c0f0b00c59.html</loc>
+         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_efdc2f3bb304c468939ff6eb3a94c2bf.html</loc>
          <lastmod>2022-06-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_dcf71d18a8c9bcac3d5e841f31ca458f.html</loc>
+         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_f02d5d8e81e1edd3722111e50e18938d.html</loc>
          <lastmod>2022-06-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_e2530fdd25284f834f8437552c23cc88.html</loc>
+         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_f61e18dd1eaf83b576d05cfa79718e5e.html</loc>
          <lastmod>2022-06-13</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_e3a1760e9bf597c410142040ba98286a.html</loc>
-         <lastmod>2022-06-13</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
-         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_ea9658a0b2dcf1e0678dd2881ea8a9f7.html</loc>
-         <lastmod>2022-06-13</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
-         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_ec75ec4ccaa74e64f2f250059b2be5cf.html</loc>
-         <lastmod>2022-06-13</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
-         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_f34156dd64edde617f7946d05bb2afa0.html</loc>
-         <lastmod>2022-06-13</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
-         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_fba537b80af807d5d79f951b79947834.html</loc>
+         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/dir_f6c26397dfcef1d1f5f1786f8168e7dd.html</loc>
          <lastmod>2022-06-13</lastmod>
          <changefreq>daily</changefreq>
     </url>

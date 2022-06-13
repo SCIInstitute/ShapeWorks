@@ -19,7 +19,8 @@ ShapeWorks is a free, open-source suite of software tools that uses a flexible m
  <!--![](img/about/release5.5.png)-->
  <!--![](img/about/release6.0.png)-->
  <!--![](img/about/release6.1.png)-->
-![](img/about/release6.2.png)
+ <!--![](img/about/release6.2.png)-->
+![](img/about/release6.3.png)
 
 !!! note "Release Notes"    
     Please visit [Release Notes](about/release-notes.md) to know about the ShapeWorks' cutting-edge features and improvements.
@@ -73,6 +74,9 @@ In particular, ShapeWorks explicitly models the inherent trade-off between the m
 ShapeWorks has been effective in various applications, including psychology, biological phenotyping, cardiology, and orthopedics. [See relevant papers](users/papers.md) and [ShapeWorks Success Stories](getting-started/sw-stories.md). 
 
 Now enjoy some tour videos for different recent software releases.
+
+*ShapeWorks 6.3 tour - Landmarks, cutting planes, free form constratins in Studio, and more ...*
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/ShapeWorks6.3.mp4" autoplay muted loop controls style="width:100%"></p>
 
 *ShapeWorks 6.2 tour - DeepSSM in Studio, multi-domain alignments, shape evaluation charts, scalar and opacity controls, and more ...*
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/ShapeWorks6.2.mp4" autoplay muted loop controls style="width:100%"></p>

@@ -8,7 +8,7 @@ summary: Landmark class containing properties of each landmark.
 
 
 
-[Landmark](../Classes/classshapeworks_1_1Landmark.md) class containing properties of each landmark. 
+Landmark class containing properties of each landmark. 
 
 
 `#include <Project.h>`
@@ -78,4 +78,4 @@ std::string comment_;
 
 -------------------------------
 
-Updated on 2022-06-13 at 01:32:49 -0600
+Updated on 2022-06-13 at 08:58:03 +0000
