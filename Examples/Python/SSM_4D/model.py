@@ -7,14 +7,15 @@ import numpy as np
 import json
 PRE_ABLATION = 'pre'
 POST_ABLATION = 'post'
-MODEL_TYPE = PRE_ABLATION
+JOINT = ''
+MODEL_TYPE = JOINT
 
 
 PROJECT_DIR = '/home/sci/nawazish.khan/SSM-4D/'
 meshes_dir = f'{PROJECT_DIR}/old-meshes/'
 meshes_pre_groom_dir = f'{PROJECT_DIR}/pre_groomed_meshes/'
 shape_models_dir = f'{PROJECT_DIR}/shape_models/'
-cur_model_dir = f'{shape_models_dir}/{MODEL_TYPE}/'
+cur_model_dir = f'{shape_models_dir}/pre/'
 
 DIRS = [meshes_pre_groom_dir]
 def make_dirs(dirs):
@@ -84,7 +85,7 @@ def pre_groom():
         print('smoothing , translation done')
         meshes.append(mesh)
         idx += 1
-    groomed_meshes = get_rigid_transforms(meshes=meshes, apply_transform=True)
+    groomed_meshes = get_rigid_transforms(meshes=meshes, rigid_mesh_available=True, apply_transform=True)
     print("------Writing groomed meshes----")
     groomed_mesh_files = sorted(sw.utils.save_meshes(meshes_pre_groom_dir, groomed_meshes, shape_names, extension='vtk', compressed=False, verbose=True))
 
@@ -100,6 +101,7 @@ def get_rigid_transforms(meshes, rigid_mesh_available=False, apply_transform=Fal
         try:
             print(f'----Loading existing Ref Mesh for Rigid Transform-----')
             ref_mesh = sw.Mesh(cur_model_dir + '/rigid_reference.vtk')
+            print('Rigid Mesh Loaded')
         except:
             print('Reference Mesh does not exist')
     rigid_transforms = []
