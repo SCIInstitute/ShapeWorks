@@ -718,25 +718,21 @@ void Optimize::Initialize()
   m_sampler->GetLinkingFunction()->SetRelativeGradientScaling(m_initial_relative_weighting);
   m_sampler->GetLinkingFunction()->SetRelativeEnergyScaling(m_initial_relative_weighting);
 
-  // Debuggg
-  //std::cout << "Before adding single point" << std::endl;
-  //m_sampler->GetParticleSystem()->PrintParticleSystem();
-
   this->AddSinglePoint();
 
-  // Debuggg
-  //std::cout << "After adding single point" << std::endl;
-  //m_sampler->GetParticleSystem()->PrintParticleSystem();
-
   m_sampler->GetParticleSystem()->SynchronizePositions();
-
-  // Debuggg
-  //m_sampler->GetParticleSystem()->PrintParticleSystem();
 
   this->m_split_number = 0;
 
   int n = m_sampler->GetParticleSystem()->GetNumberOfDomains();
 
+  // Adaptive Initialization params
+  bool adaptive_initialization = true;
+  size_t particles_before_adaptive_initialization = 8; // # of particles before adaptive initialization starts, starts at >= this_value
+  size_t check_iterations = 50; // The initialization optimization will check every check_iterations iterations for sampling quality
+  double initialization_start_scaling_factor = 3.;
+
+  m_sampler->GetOptimizer()->SetInitializationStartScalingFactor(initialization_start_scaling_factor);
 
   /*Old vector randomization
   vnl_vector_fixed<double, 3> random;
@@ -857,7 +853,9 @@ void Optimize::Initialize()
     m_saturation_counter = 0;
     m_sampler->GetOptimizer()->SetMaximumNumberOfIterations(m_iterations_per_split);
     m_sampler->GetOptimizer()->SetNumberOfIterations(0);
+    if(adaptive_initialization && m_sampler->GetParticleSystem()->GetNumberOfParticles(0) >= particles_before_adaptive_initialization) m_sampler->GetOptimizer()->SetInitializationMode(true);
     m_sampler->Execute();
+    m_sampler->GetOptimizer()->SetInitializationMode(false);
 
     if (m_save_init_splits == true) {
       std::stringstream ss;

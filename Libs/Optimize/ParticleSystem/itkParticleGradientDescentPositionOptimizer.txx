@@ -86,6 +86,9 @@ namespace itk
 
     unsigned int counter = 0;
 
+    // Max particle spacing btwn nearest neighbors
+    double prev_av_maxDistNN = 0;
+
     double maxchange = 0.0;
     while (m_StopOptimization == false) // iterations loop
     {
@@ -98,6 +101,43 @@ namespace itk
       minimumTimeStep = dampening;
 
       maxchange = 0.0;
+
+    // Computes domain particle spacing and compares it to expected spacing
+    if(m_initialization_mode && counter%m_check_iterations == 0){
+     //std::cout << "Initialization" << std::endl;
+     //m_GradientFunction->GetRelativeEnergyScaling();
+     double av_maxDistNN = 0;
+
+     for(size_t d = 0; d < m_ParticleSystem->GetDomainsPerShape(); d++){ // For each domain
+
+         // skip any flagged domains
+         if (m_ParticleSystem->GetDomainFlag(d) == true) {
+           continue;
+         }
+
+         double maxDistNN = m_ParticleSystem->ComputeMaxDistNearestNeighbors(d);
+
+         std::cout << "maxDistNN " << maxDistNN << " ratio_prev " << maxDistNN/prev_av_maxDistNN << std::endl;
+
+         av_maxDistNN  += maxDistNN;
+     }
+
+     double margin = 0.0001;
+     if(av_maxDistNN/prev_av_maxDistNN > 1.0 - margin && av_maxDistNN/prev_av_maxDistNN < 1.0 + margin){
+      std::cout << "Converged" << std::endl;
+      break;
+     }
+
+     prev_av_maxDistNN = av_maxDistNN;
+    }
+
+    // Initialization decay scheme
+    if(m_initialization_mode && counter == 0){
+     m_GradientFunction->SetRelativeEnergyScaling(m_GradientFunction->GetRelativeEnergyScaling() * m_initialization_start_scaling_factor);
+    }
+    if(m_initialization_mode && counter == m_check_iterations){
+     m_GradientFunction->SetRelativeEnergyScaling(m_GradientFunction->GetRelativeEnergyScaling()/m_initialization_start_scaling_factor);
+    }
 
       const auto accTimerBegin = std::chrono::steady_clock::now();
       m_GradientFunction->SetParticleSystem(m_ParticleSystem);
