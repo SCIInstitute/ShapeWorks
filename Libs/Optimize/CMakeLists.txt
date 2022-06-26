@@ -30,6 +30,7 @@ target_link_libraries(Optimize
   ${Boost_LIBRARIES}
   geometry-central
   nlohmann_json::nlohmann_json
+  Python3::Python
   )
 
 # Create an interface library that will bring pybind11::embed along

@@ -71,54 +71,58 @@ function install_conda() {
   conda config --add channels conda-forge
   
   # create and activate shapeworks env
-  if ! conda create --yes --name $CONDAENV python=3.7.8; then return 1; fi
+  if ! conda create --yes --name $CONDAENV python=3.9.13; then return 1; fi
   eval "$(conda shell.bash hook)"
   if ! conda activate $CONDAENV; then return 1; fi
   
   # install conda into the shell
   conda init
 
+  echo "*** first conda install"
   # install shapeworks deps
   if ! conda install --yes \
-    cmake=3.18.2 \
-    gtest=1.10.0 \
-    colorama=0.4.3 \
-    requests=2.24.0 \
-    geotiff=1.6.0 \
-    numpy=1.19.1 \
-    git-lfs=2.11.0 \
-    openblas=0.3.6 \
-    doxygen=1.8.20 \
-    graphviz=2.38.0 \
-    vtk=8.2.0 \
-    scikit-learn=0.21.3 \
-    tbb=2019.9 \
-    tbb-devel=2019.9 \
-    boost=1.72.0 \
-    openexr=2.5.3 \
-    pybind11=2.5.0 \
-    notebook=6.1.5 \
-    nbformat=4.4.0 \
-    nlohmann_json=3.10.5 \
-    pkg-config=0.29.2
+    cmake \
+    gtest \
+    colorama \
+    requests \
+    geotiff \
+    numpy \
+    openblas \
+    doxygen \
+    graphviz \
+    vtk=9.1.0 \
+    scikit-learn \
+    tbb \
+    tbb-devel \
+    boost \
+    openexr \
+    ilmbase \
+    pybind11 \
+    notebook \
+    nbformat \
+    nlohmann_json \
+    pkg-config
   then return 1; fi
 
+  echo "*** second conda install"
   # linux (only) deps
   if [[ "$(uname)" == "Linux" ]]; then
     if ! conda install --yes \
-      zlib=1.2.11 \
-      patchelf=0.13                          # required by install_python_module.sh
+      zlib \
+      patchelf                          # required by install_python_module.sh
     then return 1; fi
   fi
 
+  echo "*** third conda install"
+
   # linux and mac (only) deps
-  if [[ "$(uname)" == "Linux" || "$(uname)" == "Darwin" ]]; then
-    if ! conda install --yes \
-      openmp=8.0.1 \
-      ncurses=6.2 \
-      libuuid=2.32.1
-    then return 1; fi
-  fi
+#  if [[ "$(uname)" == "Linux" || "$(uname)" == "Darwin" ]]; then
+#    if ! conda install --yes \
+#      openmp=8.0.1 \
+#      ncurses=6.2 \
+#      libuuid=2.32.1
+#    then return 1; fi
+#  fi
 
   # pip is needed in sub-environments or the base env's pip will silently install to base
   if ! conda install --yes pip=21.2.4; then return 1; fi

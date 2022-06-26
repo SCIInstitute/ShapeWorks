@@ -13,13 +13,10 @@
 
 #include <set>
 
-// tbb
-#include <tbb/mutex.h>
-
 namespace shapeworks {
 
 // for concurrent access
-static tbb::mutex mutex;
+static std::mutex mutex;
 
 //---------------------------------------------------------------------------
 vtkSmartPointer<vtkPolyData> MeshWarper::build_mesh(const Eigen::MatrixXd& particles) {
@@ -79,7 +76,7 @@ bool MeshWarper::get_warp_available() { return this->warp_available_; }
 
 //---------------------------------------------------------------------------
 bool MeshWarper::check_warp_ready() {
-  tbb::mutex::scoped_lock lock(mutex);
+  std::scoped_lock lock(mutex);
 
   if (!this->needs_warp_) {
     // warp already done

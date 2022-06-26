@@ -1,3 +1,5 @@
+#include <tbb/tbb.h>
+
 #include <QApplication>
 #include <QResource>
 #include <QMessageBox>
@@ -15,7 +17,6 @@
 #include <QSurfaceFormat>
 #include <QVTKOpenGLNativeWidget.h>
 
-#include <tbb/tbb.h>
 
 #ifdef _WIN32
 #include <windows.h>

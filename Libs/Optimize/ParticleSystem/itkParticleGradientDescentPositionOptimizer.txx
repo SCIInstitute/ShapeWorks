@@ -14,8 +14,6 @@ const int global_iteration = 1;
 #include <chrono>
 
 #include <tbb/parallel_for.h>
-#include <tbb/task_scheduler_init.h>
-
 
 namespace itk
 {
