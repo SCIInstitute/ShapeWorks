@@ -196,7 +196,9 @@ function install_conda() {
   fi
 
   # Set the python path for studio
+  conda activate $CONDAENV
   mkdir -p $HOME/.shapeworks ; python -c "import sys; print('\n'.join(sys.path))" > $HOME/.shapeworks/python_path.txt
+  python -c "import sys; print(sys.prefix)" > $HOME/.shapeworks/python_home.txt
   
   return 0
 }

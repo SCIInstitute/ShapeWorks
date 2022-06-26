@@ -1,63 +1,40 @@
 // pybind
+#include <pybind11/eigen.h>
 #include <pybind11/embed.h>
 #include <pybind11/stl.h>
-#include <pybind11/eigen.h>
 namespace py = pybind11;
-using namespace pybind11::literals; // to bring in the `_a` literal
+using namespace pybind11::literals;  // to bring in the `_a` literal
 
-#include <sstream>
-#include <iostream>
-
-#include <QProcess>
-#include <QMessageBox>
-#include <QFileInfo>
-
-#include <Data/StudioLog.h>
 #include <Data/Shape.h>
+#include <Data/StudioLog.h>
 #include <Python/PythonWorker.h>
+
+#include <QFileInfo>
+#include <QMessageBox>
+#include <QProcess>
+#include <iostream>
+#include <sstream>
 
 namespace shapeworks {
 
 //---------------------------------------------------------------------------
 class PythonLogger {
-public:
+ public:
+  void set_callback(const std::function<void(std::string)>& callback) { this->callback_ = callback; }
 
-  void set_callback(const std::function<void(std::string)>& callback)
-  {
-    this->callback_ = callback;
-  }
+  void set_progress_callback(const std::function<void(double)>& callback) { this->progress_callback_ = callback; }
 
-  void set_progress_callback(const std::function<void(double)>& callback)
-  {
-    this->progress_callback_ = callback;
-  }
+  void cpp_log(std::string msg) { this->callback_(msg); }
 
-  void cpp_log(std::string msg)
-  {
-    this->callback_(msg);
-  }
+  void cpp_progress(double progress) { this->progress_callback_(progress * 100); }
 
-  void cpp_progress(double progress)
-  {
-    this->progress_callback_(progress * 100);
-  }
+  void clear_abort() { this->aborted_ = false; }
 
-  void clear_abort()
-  {
-    this->aborted_ = false;
-  }
+  void set_abort() { this->aborted_ = true; }
 
-  void set_abort()
-  {
-    this->aborted_ = true;
-  }
+  bool check_abort() { return this->aborted_; }
 
-  bool check_abort()
-  {
-    return this->aborted_;
-  }
-
-private:
+ private:
   std::function<void(std::string)> callback_;
   std::function<void(double)> progress_callback_;
   std::atomic<bool> aborted_{false};
@@ -66,15 +43,14 @@ private:
 //---------------------------------------------------------------------------
 PYBIND11_EMBEDDED_MODULE(logger, m) {
   py::class_<PythonLogger, std::shared_ptr<PythonLogger>>(m, "PythonLogger")
-  .def(py::init<>())
-  .def("log", &PythonLogger::cpp_log)
-  .def("check_abort", &PythonLogger::check_abort)
-  .def("progress", &PythonLogger::cpp_progress);
+      .def(py::init<>())
+      .def("log", &PythonLogger::cpp_log)
+      .def("check_abort", &PythonLogger::check_abort)
+      .def("progress", &PythonLogger::cpp_progress);
 };
 
 //---------------------------------------------------------------------------
-PythonWorker::PythonWorker()
-{
+PythonWorker::PythonWorker() {
   this->python_logger_ = QSharedPointer<PythonLogger>::create();
 
   // create singular Python thread and move this object to the new thread
@@ -84,22 +60,19 @@ PythonWorker::PythonWorker()
 }
 
 //---------------------------------------------------------------------------
-PythonWorker::~PythonWorker()
-{
+PythonWorker::~PythonWorker() {
   this->end_python();
   this->thread_->wait();
   delete this->thread_;
 }
 
 //---------------------------------------------------------------------------
-void PythonWorker::set_vtk_output_window(vtkSmartPointer<StudioVtkOutputWindow> output_window)
-{
+void PythonWorker::set_vtk_output_window(vtkSmartPointer<StudioVtkOutputWindow> output_window) {
   this->studio_vtk_output_window_ = output_window;
 }
 
 //---------------------------------------------------------------------------
-void PythonWorker::start_job(QSharedPointer<Job> job)
-{
+void PythonWorker::start_job(QSharedPointer<Job> job) {
   if (this->init()) {
     try {
       this->current_job_ = job;
@@ -116,8 +89,7 @@ void PythonWorker::start_job(QSharedPointer<Job> job)
 }
 
 //---------------------------------------------------------------------------
-void PythonWorker::run_job(QSharedPointer<Job> job)
-{
+void PythonWorker::run_job(QSharedPointer<Job> job) {
   emit job->progress(0);
   emit job->message("Running Task: " + job->name());
 
@@ -126,13 +98,11 @@ void PythonWorker::run_job(QSharedPointer<Job> job)
   job->moveToThread(this->thread_);
 
   // run on python thread
-  QMetaObject::invokeMethod(this, "start_job", Qt::QueuedConnection,
-                            Q_ARG(QSharedPointer<Job>, job));
+  QMetaObject::invokeMethod(this, "start_job", Qt::QueuedConnection, Q_ARG(QSharedPointer<Job>, job));
 }
 
 //---------------------------------------------------------------------------
-bool PythonWorker::init()
-{
+bool PythonWorker::init() {
   std::string script = "install_shapeworks.sh";
 #ifdef _WIN32
   script = "install_shapeworks.bat";
@@ -140,8 +110,7 @@ bool PythonWorker::init()
 
   if (this->initialized_) {
     if (!this->initialized_success_) {
-      emit error_message(
-        QString::fromStdString("Unable to initialize Python.  Please run " + script));
+      emit error_message(QString::fromStdString("Unable to initialize Python.  Please run " + script));
     }
     return this->initialized_success_;
   }
@@ -154,39 +123,51 @@ bool PythonWorker::init()
   home = qgetenv("USERPROFILE");
 #endif
 
+  // read pythonhome generated by:
+  // python -c "import sys; print(sys.prefix)" > $HOME/.shapeworks/python_home.txt
+  QString python_home_file = home + "/.shapeworks/python_home.txt";
+  std::cerr << "Reading python home from " << python_home_file.toStdString() << "\n";
+
+  QFile qfile(python_home_file);
+  QString python_home;
+  if (qfile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+    python_home = QString(qfile.readAll()).toUtf8().trimmed();
+  } else {
+    emit error_message(QString::fromStdString("Unable to initialize Python.  Could not find python_home file. Please run " + script));
+    this->initialized_success_ = false;
+    return false;
+  }
+
   // read list generated by something like this:
   // python -c "import sys; print('\n'.join(sys.path))" > $HOME/.shapeworks/python_path.txt
   std::vector<std::string> python_path;
   std::fstream file;
-  QString python_home;
-  file.open(home.toStdString() + "/.shapeworks/python_path.txt", std::ios::in);
+
+  std::string python_path_file = home.toStdString() + "/.shapeworks/python_path.txt";
+  file.open(python_path_file, std::ios::in);
+  std::cerr << "Reading python path from " << python_path_file << "\n";
   if (file.is_open()) {
     std::string line;
     while (getline(file, line)) {
-      if (QFileInfo(QString::fromStdString(line) + "/python.exe").exists()) {
-        python_home = QString::fromStdString(line);
-      }
+      std::cerr << "Adding to python path: " << line << "\n";
       python_path.push_back(line);
     }
     file.close();
-  }
-  else {
-    emit error_message(
-      QString::fromStdString("Unable to initialize Python.  Please run " + script));
+  } else {
+    emit error_message(QString::fromStdString("Unable to initialize Python.  Could not find python_path file.  Please run " + script));
 
     this->initialized_success_ = false;
     return false;
   }
 
+  std::cerr << "PYTHONHOME = " << python_home.toStdString() << "\n";
+  qputenv("PYTHONHOME", python_home.toUtf8());
+
 #ifdef _WIN32
   if (python_home.isEmpty()) {
-    emit error_message(QString::fromStdString(
-                         "Unable to initialize Python\nPlease run install_shapeworks.bat"));
+    emit error_message(QString::fromStdString("Unable to initialize Python\nPlease run install_shapeworks.bat"));
     return false;
-  }
-  else {
-    qputenv("PYTHONHOME", python_home.toUtf8());
-
+  } else {
     std::fstream file;
     QString path;
     file.open(home.toStdString() + "/.shapeworks/path.txt", std::ios::in);
@@ -201,7 +182,7 @@ bool PythonWorker::init()
     qputenv("PATH", path.toUtf8());
     STUDIO_LOG_MESSAGE("Setting PATH for Python to: " + path.toUtf8());
   }
-#endif // ifdef _WIN32
+#endif  // ifdef _WIN32
 
   try {
     py::initialize_interpreter();
@@ -218,10 +199,9 @@ bool PythonWorker::init()
     py::module py_matplot_lib = py::module::import("matplotlib");
     py_matplot_lib.attr("use")("agg");
 
-    this->python_logger_->set_callback(
-      std::bind(&PythonWorker::incoming_python_message, this, std::placeholders::_1));
+    this->python_logger_->set_callback(std::bind(&PythonWorker::incoming_python_message, this, std::placeholders::_1));
     this->python_logger_->set_progress_callback(
-      std::bind(&PythonWorker::incoming_python_progress, this, std::placeholders::_1));
+        std::bind(&PythonWorker::incoming_python_progress, this, std::placeholders::_1));
     py::module logger = py::module::import("logger");
 
     py::module sw_utils = py::module::import("shapeworks.utils");
@@ -229,9 +209,9 @@ bool PythonWorker::init()
     py::object get_version = sw_utils.attr("get_api_version");
     std::string version = get_version().cast<std::string>();
     if (version != PythonWorker::python_api_version) {
-      emit error_message(
-        QString::fromStdString("Unable to initialize Python. Expected API version " + std::string(PythonWorker::python_api_version) +
-                               " but found API version " + version + ". Please run " + script));
+      emit error_message(QString::fromStdString("Unable to initialize Python. Expected API version " +
+                                                std::string(PythonWorker::python_api_version) +
+                                                " but found API version " + version + ". Please run " + script));
       this->initialized_success_ = false;
       return false;
     }
@@ -245,14 +225,12 @@ bool PythonWorker::init()
     STUDIO_LOG_MESSAGE("Embedded Python Interpreter Initialized");
   } catch (py::error_already_set& e) {
     emit error_message(QString::fromStdString("Unable to initialize Python:\n") + e.what());
-    emit error_message(
-      QString::fromStdString("Unable to initialize Python.  Please run " + script));
+    emit error_message(QString::fromStdString("Unable to initialize Python.  Please run " + script));
     this->initialized_success_ = false;
     return false;
   } catch (const std::exception& e) {
     emit error_message(QString::fromStdString("Unable to initialize Python:\n") + e.what());
-    emit error_message(
-      QString::fromStdString("Unable to initialize Python.  Please run " + script));
+    emit error_message(QString::fromStdString("Unable to initialize Python.  Please run " + script));
     this->initialized_success_ = false;
     return false;
   }
@@ -262,21 +240,18 @@ bool PythonWorker::init()
 }
 
 //---------------------------------------------------------------------------
-void PythonWorker::incoming_python_message(std::string message_string)
-{
+void PythonWorker::incoming_python_message(std::string message_string) {
   emit this->current_job_->message(QString::fromStdString(message_string));
 }
 
 //---------------------------------------------------------------------------
-void PythonWorker::end_python()
-{
+void PythonWorker::end_python() {
   // send to python thread
   QMetaObject::invokeMethod(this, "finalize_python");
 }
 
 //---------------------------------------------------------------------------
-void PythonWorker::finalize_python()
-{
+void PythonWorker::finalize_python() {
   if (this->initialized_success_) {
     py::finalize_interpreter();
   }
@@ -284,14 +259,8 @@ void PythonWorker::finalize_python()
 }
 
 //---------------------------------------------------------------------------
-void PythonWorker::incoming_python_progress(double value)
-{
-  emit this->current_job_->progress(value);
-}
+void PythonWorker::incoming_python_progress(double value) { emit this->current_job_->progress(value); }
 
 //---------------------------------------------------------------------------
-void PythonWorker::abort_job()
-{
-  this->python_logger_->set_abort();
-}
-}
+void PythonWorker::abort_job() { this->python_logger_->set_abort(); }
+}  // namespace shapeworks
