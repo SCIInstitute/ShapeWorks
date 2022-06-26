@@ -22,7 +22,7 @@ JKQTPLOTTER_VER="v2019.11.3-high_dpi"
 OpenVDB_VER="v8.2.0"
 libigl_VER="v2.3.0"
 geometry_central_VER="8b20898f6c7be1eab827a9f720c8fd45e58ae63c" # This library isn't using tagged versions
-ACVD_VER="8880802204ce0ccd3944dcfa62ba687203a75fa5" # This library isn't using tagged version
+ACVD_VER="012917d300f1dde8552981e5a30031a23937625f" # This library isn't using tagged version
 
 WIN_CFLAGS="-FS /Zi /GL /MD /O2 /Ob3 /DNDEBUG /EHsc"  # windows release compilation flags
 WIN_LFLAGS="-LTCG /DEBUG" # windows release compilation flags

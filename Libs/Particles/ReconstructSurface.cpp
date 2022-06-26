@@ -1062,7 +1062,7 @@ void ReconstructSurface<TransformType>::samplesAlongPCAModes(const std::vector<s
 
     // writing stds on file
     std::string stdfilename = cur_path + "/" + prefix + "mode-" + modeStr + "_stds.txt";
-    ofstream ofs(stdfilename.c_str());
+    std::ofstream ofs(stdfilename.c_str());
 
     if (!ofs)
       throw std::runtime_error("Could not open file for output: " + stdfilename);
