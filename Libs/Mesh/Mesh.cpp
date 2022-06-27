@@ -174,6 +174,7 @@ Mesh& Mesh::write(const std::string& pathname, bool binaryFile) {
   try {
     if (StringUtils::hasSuffix(pathname, ".vtk")) {
       auto writer = vtkSmartPointer<vtkPolyDataWriter>::New();
+      writer->SetFileVersion(42);
       writer->SetFileName(pathname.c_str());
       writer->SetInputData(this->poly_data_);
       writer->WriteArrayMetaDataOff();  // needed for older readers to read these files

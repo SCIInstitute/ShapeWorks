@@ -298,6 +298,7 @@ FEMesh* FEVTKimport::Load(istream &stream)
 FEMesh* FEVTKimport::Load(vtkPolyData* polydata)
 {
   vtkSmartPointer<vtkPolyDataWriter> writer = vtkSmartPointer<vtkPolyDataWriter>::New();
+  writer->SetFileVersion(42);
   writer->SetInputData(polydata);
   writer->SetWriteToOutputString(true);
   writer->Update();
