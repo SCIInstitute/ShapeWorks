@@ -97,7 +97,6 @@ function install_conda() {
     boost=1.72.0 \
     openexr=2.5.3 \
     pybind11=2.5.0 \
-    notebook=6.1.5 \
     nlohmann_json=3.10.5 \
     pkg-config=0.29.2
   then return 1; fi
@@ -121,7 +120,9 @@ function install_conda() {
 
   # pip is needed in sub-environments or the base env's pip will silently install to base
   if ! conda install --yes pip=21.2.4; then return 1; fi
-  
+
+  which pip
+  if ! pip install notebook==6.1.5;                     then return 1; fi
   if ! pip install trimesh==3.9.28;                     then return 1; fi
   if ! pip install termcolor==1.1.0;                    then return 1; fi
   if ! pip install grip==4.5.2;                         then return 1; fi
