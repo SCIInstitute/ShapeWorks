@@ -180,7 +180,7 @@ function install_conda() {
 
 
   # for spell check markdown cells in jupyter notebooks and table of contents (toc2)
-  conda install --yes jupyter_contrib_nbextensions=0.5.1
+  if ! pip install jupyter_contrib_nbextensions==0.5.1;   then return 1; fi
   jupyter contrib nbextension install --user
   jupyter nbextension enable spellchecker/main
   jupyter nbextension enable toc2/main
