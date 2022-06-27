@@ -10,11 +10,10 @@ def sw2vtkTest():
   vtkMesh = sw2vtkMesh(swMesh)
 
   fieldNames = swMesh.getFieldNames()
-
   for name in fieldNames:
     swField = swMesh.getField(name, Mesh.Point)
     swField.resize(swField.shape[0], 1)
-    vtkField = vtkMesh.field_arrays.get_array(name)
+    vtkField = vtkMesh.field_data.get_array(name)
     vtkField.resize(vtkField.shape[0], 1)
     if (not np.array_equal(swField, vtkField)):
       return False
