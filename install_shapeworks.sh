@@ -78,51 +78,37 @@ function install_conda() {
   # install conda into the shell
   conda init
 
-  echo "*** first conda install"
   # install shapeworks deps
   if ! conda install --yes \
-    cmake \
-    gtest \
-    colorama \
-    requests \
-    geotiff \
-    numpy \
-    openblas \
-    doxygen \
-    graphviz \
+    cmake=3.23.2 \
+    gtest=1.11.0 \
+    colorama=0.4.4 \
+    requests=2.27.1 \
+    geotiff=1.7.1 \
+    numpy=1.22.4 \
+    openblas=0.3.20 \
+    doxygen=1.9.2 \
+    graphviz=4.0.0 \
     vtk=9.1.0 \
-    scikit-learn \
-    tbb \
-    tbb-devel \
-    boost \
-    openexr \
-    ilmbase \
-    pybind11 \
-    notebook \
-    nbformat \
-    nlohmann_json \
-    pkg-config
+    scikit-learn=1.1.1 \
+    tbb=2021.5.0 \
+    tbb-devel=2021.5.0 \
+    boost=1.78.0 \
+    openexr=3.1.5 \
+    ilmbase=2.5.5 \
+    pybind11=2.9.2 \
+    nlohmann_json=3.10.5 \
+    pkg-config=0.29.2
   then return 1; fi
 
-  echo "*** second conda install"
   # linux (only) deps
   if [[ "$(uname)" == "Linux" ]]; then
     if ! conda install --yes \
-      zlib \
-      patchelf                          # required by install_python_module.sh
+      zlib=1.2.12 \
+      patchelf=0.14.5                          # required by install_python_module.sh
     then return 1; fi
   fi
 
-  echo "*** third conda install"
-
-  # linux and mac (only) deps
-#  if [[ "$(uname)" == "Linux" || "$(uname)" == "Darwin" ]]; then
-#    if ! conda install --yes \
-#      openmp=8.0.1 \
-#      ncurses=6.2 \
-#      libuuid=2.32.1
-#    then return 1; fi
-#  fi
 
   # pip is needed in sub-environments or the base env's pip will silently install to base
   if ! conda install --yes pip=21.2.4; then return 1; fi
