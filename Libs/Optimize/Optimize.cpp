@@ -727,7 +727,7 @@ void Optimize::Initialize()
   int n = m_sampler->GetParticleSystem()->GetNumberOfDomains();
 
   // Adaptive Initialization params
-  bool adaptive_initialization = true;
+  bool adaptive_initialization = false;
   size_t particles_before_adaptive_initialization = 8; // # of particles before adaptive initialization starts, starts at >= this_value
   size_t check_iterations = 50; // The initialization optimization will check every check_iterations iterations for sampling quality
   double initialization_start_scaling_factor = 3.;
