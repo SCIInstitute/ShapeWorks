@@ -27,21 +27,21 @@ function install_pytorch() {
     pip install torch torchvision torchaudio
   elif ! [ -x "$(command -v nvidia-smi)" ]; then
     echo 'Could not find nvidia-smi, using cpu-only PyTorch'
-    pip install torch==1.7.1+cpu torchvision==0.8.2+cpu torchaudio===0.7.2 -f https://download.pytorch.org/whl/torch_stable.html
+    pip install torch==1.11.0+cpu torchvision==0.12.0+cpu torchaudio==0.11.0 -f https://download.pytorch.org/whl/torch_stable.html
   else
     CUDA=`nvidia-smi | grep CUDA | sed -e "s/.*CUDA Version: //" -e "s/ .*//"`
     echo "Found CUDA Version: ${CUDA}"
     if [[ "$CUDA" == "9.2" ]]; then
-        pip install torch==1.7.1+cu92 torchvision==0.8.2+cu92 torchaudio==0.7.2 -f https://download.pytorch.org/whl/torch_stable.html
+        pip install torch==1.11.0+cu92 torchvision==0.12.0+cu92 torchaudio==0.11.0 -f https://download.pytorch.org/whl/torch_stable.html
     elif [[ "$CUDA" == "10.1" ]]; then
-        pip install torch==1.7.1+cu101 torchvision==0.8.2+cu101 torchaudio==0.7.2 -f https://download.pytorch.org/whl/torch_stable.html
+        pip install torch==1.11.0+cu101 torchvision==0.12.0+cu101 torchaudio==0.11.0 -f https://download.pytorch.org/whl/torch_stable.html
     elif [[ "$CUDA" == "10.2" ]]; then
-        pip install torch===1.7.1 torchvision===0.8.2 torchaudio===0.7.2 -f https://download.pytorch.org/whl/torch_stable.html
+        pip install torch==1.11.0 torchvision==0.12.0 torchaudio==0.11.0 -f https://download.pytorch.org/whl/torch_stable.html
     elif [[ "$CUDA" == "11.0" || "$CUDA" == "11.1" || "$CUDA" == "11.2" ]]; then
-        pip install torch===1.7.1+cu110 torchvision===0.8.2+cu110 torchaudio===0.7.2 -f https://download.pytorch.org/whl/torch_stable.html
+        pip install torch==1.11.0+cu110 torchvision==0.12.0+cu110 torchaudio==0.11.0 -f https://download.pytorch.org/whl/torch_stable.html
     else
         echo "CUDA version not compatible, using cpu-only"
-        pip install torch==1.7.1+cpu torchvision==0.8.2+cpu torchaudio===0.7.2 -f https://download.pytorch.org/whl/torch_stable.html
+        pip install torch==1.11.0+cpu torchvision==0.12.0+cpu torchaudio==0.11.0 -f https://download.pytorch.org/whl/torch_stable.html
     fi
   fi
 }
