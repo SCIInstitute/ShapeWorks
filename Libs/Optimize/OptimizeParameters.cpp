@@ -322,6 +322,16 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
     throw std::invalid_argument("No subjects to optimize");
   }
 
+  for (auto s : subjects) {
+    if (this->abort_load_) {
+      return false;
+    }
+    auto files = s->get_groomed_filenames();
+    if (files.empty()) {
+      throw std::invalid_argument("No groomed inputs for optimization");
+    }
+  }
+
   if (get_use_landmarks()) {
     // landmarks/point files
     std::vector<std::string> point_files;
