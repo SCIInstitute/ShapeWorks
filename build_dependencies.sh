@@ -338,13 +338,7 @@ show_shapeworks_build()
     FINDQT="-DQt5_DIR=`qmake -query QT_INSTALL_PREFIX`"
   fi
 
-  _VXL_DIR=""
-  if [[ $OSTYPE == "msys" ]]; then
-      # since VXL built in INSTALL_DIR on Windows, need to tell CMake where to find it
-      _VXL_DIR="-DVXL_DIR=${VXL_DIR}"
-  fi
-
-  echo "cmake -DCMAKE_CXX_FLAGS="$FLAGS" -DCMAKE_PREFIX_PATH=${INSTALL_DIR} ${_VXL_DIR} ${OPENMP_FLAG} -DBuild_Studio=${BUILD_GUI} ${FIND_QT} -Wno-dev -Wno-deprecated -DCMAKE_BUILD_TYPE=${BUILD_TYPE} ${SRC}"
+  echo "cmake -DCMAKE_CXX_FLAGS="$FLAGS" -DCMAKE_PREFIX_PATH=${INSTALL_DIR} ${OPENMP_FLAG} -DBuild_Studio=${BUILD_GUI} ${FIND_QT} -Wno-dev -Wno-deprecated -DCMAKE_BUILD_TYPE=${BUILD_TYPE} ${SRC}"
 }
 
 # determine if we can build using the specified or discovered version of Qt
@@ -426,7 +420,6 @@ build_all()
   # echo dependency directories for easy reference in case the user is independently building ShapeWorks
   echo ""
   echo "Dependency paths:"
-  echo "  VXL_DIR: ${VXL_DIR}"
   echo "  VTK_DIR: ${VTK_DIR}"
   echo "  ITK_DIR: ${ITK_DIR}"
   echo "  EIGEN_DIR: ${EIGEN_DIR}"
