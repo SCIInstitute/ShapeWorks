@@ -41,7 +41,7 @@ jobs:
         cd $HOME && tar -xJf MacOSX10.13.sdk.tar.xz
         
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         lfs: true
 
