@@ -15,12 +15,12 @@ VTK_VER="v9.1.0"
 VTK_VER_STR="9.1"
 ITK_VER="v5.2.1"
 ITK_VER_STR="5.2"
-EIGEN_VER="3.3.7"
-QT_MIN_VER="5.9.8"  # NOTE: 5.x is required, but this restriction is a clever way to ensure the anaconda version of Qt (5.9.6 or 5.9.7) isn't used since it won't work on most systems.
+EIGEN_VER="3.4.0"
+QT_MIN_VER="5.12.12"
 XLNT_VER="v1.5.0"
 JKQTPLOTTER_VER="v2019.11.3-high_dpi"
-OpenVDB_VER="v8.2.0"
-libigl_VER="v2.3.0"
+OpenVDB_VER="v9.1.0"
+libigl_VER="v2.4.0"
 geometry_central_VER="8b20898f6c7be1eab827a9f720c8fd45e58ae63c" # This library isn't using tagged versions
 ACVD_VER="012917d300f1dde8552981e5a30031a23937625f" # This library isn't using tagged version
 
@@ -125,10 +125,18 @@ build_vtk()
   cd vtk
   git checkout -f tags/${VTK_VER}
 
+  EGL_FLAG=""
+  if [ "$(uname)" == "Linux" ]; then
+      # We build VTK with EGL support because pyvista was built against VTK with EGL
+      # support and if it uses our vtk shared library, it will fail if the symbols are not available
+      EGL_FLAG="-DVTK_OPENGL_HAS_EGL=True"
+  fi
+
+  
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
   mkdir -p build && cd build
   if [[ $OSTYPE == "msys" ]]; then
-      cmake -DCMAKE_CXX_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_C_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_SHARED_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_EXE_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DVTK_Group_Qt:BOOL=${BUILD_GUI} -DVTK_QT_VERSION=5 -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DVTK_PYTHON_VERSION=3 -DVTK_GROUP_ENABLE_Qt=YES -DVTK_MODULE_ENABLE_VTK_GUISupportQtQuick:STRING=DONT_WANT -DVTK_OPENGL_HAS_EGL=True -Wno-dev ..
+      cmake -DCMAKE_CXX_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_C_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_SHARED_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_EXE_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DVTK_Group_Qt:BOOL=${BUILD_GUI} -DVTK_QT_VERSION=5 -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DVTK_PYTHON_VERSION=3 -DVTK_GROUP_ENABLE_Qt=YES -DVTK_MODULE_ENABLE_VTK_GUISupportQtQuick:STRING=DONT_WANT ${EGL_FLAG} -Wno-dev ..
       cmake --build . --config ${BUILD_TYPE} --parallel || exit 1
       cmake --build . --config ${BUILD_TYPE} --target install
       VTK_DIR="${INSTALL_DIR}/lib/cmake/vtk-${VTK_VER_STR}"
