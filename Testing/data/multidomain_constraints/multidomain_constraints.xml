@@ -10,7 +10,6 @@
 <save_init_splits>0</save_init_splits>
 <verbosity>1</verbosity>
 
-<!-- needed to fully turn on cutting planes -->
 <adaptivity_mode> 0 </adaptivity_mode>
 
 <domains_per_shape> 2 </domains_per_shape>
