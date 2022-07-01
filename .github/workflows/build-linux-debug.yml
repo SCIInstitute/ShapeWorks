@@ -38,6 +38,9 @@ jobs:
       with:
         lfs: true
 
+    - name: Workaround for permission issue
+      run: git config --global --add safe.directory /__w/ShapeWorks/ShapeWorks
+
     - name: Get tags
       run: git fetch --unshallow origin +refs/tags/*:refs/tags/*
 
