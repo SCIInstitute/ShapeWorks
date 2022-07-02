@@ -28,7 +28,7 @@ else
     fi
 
     export SDKROOT=$HOME/MacOSX10.13.sdk # only needed for MacOS obviously
-    ./build_dependencies.sh --build-type=$BUILD_TYPE --num-procs=3
+    ./build_dependencies.sh --build-type=$BUILD_TYPE --num-procs=4
     rm -rf $BUILD_DIR
 
     echo "Create and store cache"
