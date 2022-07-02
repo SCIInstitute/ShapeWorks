@@ -502,7 +502,8 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
 //---------------------------------------------------------------------------
 bool OptimizeParameters::is_subject_fixed(std::shared_ptr<Subject> subject) {
   auto table = subject->get_table_values();
-  if (table.find(get_fixed_subjects_column()) != table.end()) {
+  auto fixed_subjects_column = get_fixed_subjects_column();
+  if (fixed_subjects_column != "" && table.find(fixed_subjects_column) != table.end()) {
     if (table[get_fixed_subjects_column()] == get_fixed_subjects_choice()) {
       return true;
     }
