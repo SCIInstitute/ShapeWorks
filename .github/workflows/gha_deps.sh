@@ -23,7 +23,7 @@ else
 	export FILE="${DEP_FILE}"
     fi
     export SDKROOT=$HOME/MacOSX10.13.sdk # only needed for MacOS obviously
-    ./build_dependencies.sh --build-type=$BUILD_TYPE --num-procs=1
+    ./build_dependencies.sh --build-type=$BUILD_TYPE --num-procs=3
     rm -rf $BUILD_DIR
 
     echo "Create and store cache"
