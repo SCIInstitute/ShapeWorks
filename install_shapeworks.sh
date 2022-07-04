@@ -94,7 +94,7 @@ function install_conda() {
     scikit-learn=1.1.1 \
     tbb=2021.5.0 \
     tbb-devel=2021.5.0 \
-    boost=1.74.0 \  # conda's VTK requires 1.74.0
+    boost=1.74.0 \
     openexr=3.1.5 \
     ilmbase=2.5.5 \
     pybind11=2.9.2 \
