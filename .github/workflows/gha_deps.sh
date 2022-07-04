@@ -27,8 +27,13 @@ else
 	export VTK_EXTRA_OPTIONS="-DOPENGL_EGL_INCLUDE_DIR:PATH=/usr/include -DOPENGL_opengl_LIBRARY=/usr/lib/x86_64-linux-gnu/libGL.so -DOPENGL_glx_LIBRARY=/usr/lib/x86_64-linux-gnu/libGL.so"
     fi
 
+    NPROCS=4
     export SDKROOT=$HOME/MacOSX10.13.sdk # only needed for MacOS obviously
-    ./build_dependencies.sh --build-type=$BUILD_TYPE --num-procs=4
+    if [[ "$PLATFORM" == "linux" ]]; then
+	# GHA runner is running out of resources with 4 now on linux
+	NPROCS=2
+    fi
+    ./build_dependencies.sh --build-type=$BUILD_TYPE --num-procs=$NPROCS
     rm -rf $BUILD_DIR
 
     echo "Create and store cache"
