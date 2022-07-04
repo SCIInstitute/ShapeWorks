@@ -28,7 +28,7 @@ else
     fi
 
     NPROCS=4
-    export SDKROOT=$HOME/MacOSX10.13.sdk # only needed for MacOS obviously
+    export SDKROOT=$HOME/MacOSX10.15.sdk # only needed for MacOS obviously
     if [[ "$PLATFORM" == "linux" ]]; then
 	# GHA runner is running out of resources with 4 now on linux
 	NPROCS=2
