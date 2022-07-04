@@ -37,7 +37,7 @@ jobs:
 
     - name: Acquire 10.15 SDK
       run: |
-        curl -L -o $HOME/MacOSX10.13.sdk.tar.xz https://github.com/phracker/MacOSX-SDKs/releases/download/11.3/MacOSX10.15.sdk.tar.xz
+        curl -L -o $HOME/MacOSX10.15.sdk.tar.xz https://github.com/phracker/MacOSX-SDKs/releases/download/11.3/MacOSX10.15.sdk.tar.xz
         cd $HOME && tar -xJf MacOSX10.15.sdk.tar.xz
         
     - name: Checkout code
