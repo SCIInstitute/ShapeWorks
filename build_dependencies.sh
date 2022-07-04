@@ -20,7 +20,7 @@ QT_MIN_VER="5.12.12"
 XLNT_VER="v1.5.0"
 JKQTPLOTTER_VER="v2019.11.3-high_dpi"
 OpenVDB_VER="v9.1.0"
-libigl_VER="v2.4.0"
+libigl_VER="v2.3.0"
 geometry_central_VER="8b20898f6c7be1eab827a9f720c8fd45e58ae63c" # This library isn't using tagged versions
 ACVD_VER="012917d300f1dde8552981e5a30031a23937625f" # This library isn't using tagged version
 
@@ -168,7 +168,7 @@ build_itk()
       cmake --build . --config ${BUILD_TYPE} --parallel || exit 1
       cmake --build . --config ${BUILD_TYPE} --target install
   else
-      cmake -DCMAKE_CXX_FLAGS="$FLAGS" -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DBUILD_EXAMPLES:BOOL=OFF -DModule_ITKVtkGlue:BOOL=ON -DModule_ITKDeprecated:BOOL=ON -DITK_USE_SYSTEM_EIGEN=on -DEigen3_DIR=${EIGEN_DIR} -DVTK_DIR=${VTK_DIR} -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -Wno-dev ..
+      cmake -DCMAKE_CXX_FLAGS="$FLAGS" -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DBUILD_EXAMPLES:BOOL=OFF -DModule_ITKVtkGlue:BOOL=ON -DModule_ITKDeprecated:BOOL=ON -DITK_USE_SYSTEM_EIGEN=on -DEigen3_DIR=${EIGEN_DIR} -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -Wno-dev ..
       make -j${NUM_PROCS} install || exit 1
   fi
 
@@ -393,9 +393,9 @@ build_all()
     build_openvdb
   fi
 
-  if [[ -z $VTK_DIR ]]; then
-    build_vtk
-  fi
+#  if [[ -z $VTK_DIR ]]; then
+#    build_vtk
+#  fi
 
   if [[ -z $EIGEN_DIR ]]; then
     build_eigen

@@ -82,6 +82,7 @@ function install_conda() {
   if ! conda install --yes \
     cmake=3.23.2 \
     gtest=1.11.0 \
+    gmock=1.11.0 \
     colorama=0.4.4 \
     requests=2.27.1 \
     geotiff=1.7.1 \
@@ -89,11 +90,11 @@ function install_conda() {
     openblas=0.3.20 \
     doxygen=1.9.2 \
     graphviz=4.0.0 \
-    vtk=9.1.0 \
+    'vtk=9.1.0=qt*' \
     scikit-learn=1.1.1 \
     tbb=2021.5.0 \
     tbb-devel=2021.5.0 \
-    boost=1.78.0 \
+    boost=1.74.0 \  # conda's VTK requires 1.74.0
     openexr=3.1.5 \
     ilmbase=2.5.5 \
     pybind11=2.9.2 \
@@ -122,7 +123,7 @@ function install_conda() {
   if ! pip install matplotlib==3.5.2;                   then return 1; fi
   if ! pip install itk==5.2.1.post1;                    then return 1; fi
   if ! pip install itkwidgets==0.32.1;                  then return 1; fi
-  if ! pip install itk-elastix==0.14.1;                 then return 1; fi
+  if ! pip install itk-elastix==0.13.0;                 then return 1; fi
   if ! pip install SimpleITK==2.1.1.2;                  then return 1; fi
   if ! pip install bokeh==2.4.3;                        then return 1; fi
   if ! pip install seaborn==0.11.2;                     then return 1; fi
