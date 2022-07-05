@@ -127,14 +127,6 @@ build_vtk()
   cd vtk
   git checkout -f tags/${VTK_VER}
 
-  EGL_FLAG=""
-  if [ "$(uname)" == "Linux" ]; then
-      # We build VTK with EGL support because pyvista was built against VTK with EGL
-      # support and if it uses our vtk shared library, it will fail if the symbols are not available
-      EGL_FLAG="-DVTK_OPENGL_HAS_EGL=True"
-  fi
-
-  
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
   mkdir -p build && cd build
   if [[ $OSTYPE == "msys" ]]; then
@@ -144,7 +136,7 @@ build_vtk()
       VTK_DIR="${INSTALL_DIR}/lib/cmake/vtk-${VTK_VER_STR}"
       VTK_DIR=$(echo $VTK_DIR | sed s/\\\\/\\//g)
   else
-      cmake -DCMAKE_CXX_FLAGS="$FLAGS" -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DVTK_Group_Qt:BOOL=${BUILD_GUI} -DVTK_QT_VERSION=5 -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DVTK_PYTHON_VERSION=3 -DVTK_GROUP_ENABLE_Qt=YES -DVTK_MODULE_ENABLE_VTK_GUISupportQtQuick:STRING=DONT_WANT ${EGL_FLAG} ${VTK_EXTRA_OPTIONS} -Wno-dev ..
+      cmake -DCMAKE_CXX_FLAGS="$FLAGS" -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DVTK_Group_Qt:BOOL=${BUILD_GUI} -DVTK_QT_VERSION=5 -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DVTK_PYTHON_VERSION=3 -DVTK_GROUP_ENABLE_Qt=YES -DVTK_MODULE_ENABLE_VTK_GUISupportQtQuick:STRING=DONT_WANT ${VTK_EXTRA_OPTIONS} -Wno-dev ..
       make -j${NUM_PROCS} install || exit 1
       VTK_DIR=${INSTALL_DIR}/lib/cmake/vtk-${VTK_VER_STR}
   fi
@@ -393,9 +385,9 @@ build_all()
     build_openvdb
   fi
 
-#  if [[ -z $VTK_DIR ]]; then
-#    build_vtk
-#  fi
+  if [[ -z $VTK_DIR ]]; then
+    build_vtk
+  fi
 
   if [[ -z $EIGEN_DIR ]]; then
     build_eigen
