@@ -23,10 +23,6 @@ else
 	export FILE="${DEP_FILE}"
     fi
 
-    if [[ "$PLATFORM" == "linux" ]]; then
-	export VTK_EXTRA_OPTIONS="-DOPENGL_EGL_INCLUDE_DIR:PATH=/usr/include -DOPENGL_opengl_LIBRARY=/usr/lib/x86_64-linux-gnu/libGL.so -DOPENGL_glx_LIBRARY=/usr/lib/x86_64-linux-gnu/libGL.so"
-    fi
-
     NPROCS=4
     export SDKROOT=$HOME/MacOSX10.15.sdk # only needed for MacOS obviously
     if [[ "$PLATFORM" == "linux" ]]; then
