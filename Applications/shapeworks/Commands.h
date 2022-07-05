@@ -96,6 +96,7 @@ COMMAND_DECLARE(WarpMesh, MeshCommand);
 // Misc Commands
 COMMAND_DECLARE(Seed, ShapeworksCommand);
 COMMAND_DECLARE(OptimizeCommand, OptimizeCommandGroup);
+COMMAND_DECLARE(LdsAnalyzeCommand, LdsAnalyzeCommandGroup);
 COMMAND_DECLARE(GroomCommand, GroomCommandGroup);
 
 } // shapeworks
