@@ -52,7 +52,7 @@ class LDS_Analysis:
             loglikelihoods[i] = lds.loglikelihood(particles_tensor, observations_mask=particles_mask)
             end_log = timer()
             print(f'Iteration {i}, log-likelihood = {loglikelihoods[i]} computed in {(end_log - start_log)/60} minutes \n\n')
-        np.savtxt(f'{self.out_dir}/log_likelihood_{em_iterations}.txt', loglikelihoods)
+        np.savetxt(f'{self.out_dir}/log_likelihood_{em_iterations}.txt', loglikelihoods)
         if plot_likelihood:
             plt.figure()
             plt.plot(loglikelihoods)
