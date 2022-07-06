@@ -86,7 +86,11 @@ def _filter_correct(observation_matrix, observation_covariance, observation_offs
 
         corrected_state_mean = predicted_state_mean + (kalman_gain @ (observation - predicted_observation_mean)) # L, 
         
-        corrected_state_covariance = predicted_state_covariance - (kalman_gain @ (observation_matrix @ predicted_state_covariance)) # L X L
+        # corrected_state_covariance = predicted_state_covariance - (kalman_gain @ (observation_matrix @ predicted_state_covariance)) # L X L
+        # Joseph form - reduces risk of neg diag values
+        temp_matrix = torch.eye(predicted_state_covariance.size()[0]).to(DEVICE) - (kalman_gain @ observation_matrix) # L x L
+        corrected_state_covariance = (temp_matrix @ (predicted_state_covariance @ temp_matrix.T)) + (kalman_gain @ (observation_covariance @ kalman_gain.T))
+            
     else:
         # Observation is masked
         n_dim_state = predicted_state_covariance.size()[0]
