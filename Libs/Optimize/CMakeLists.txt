@@ -1,5 +1,7 @@
 FILE(GLOB ParticleSystem_sources ./ParticleSystem/*.t* ./ParticleSystem/*.cxx ./ParticleSystem/*.cpp ./ParticleSystem/*.h)
 
+include_directories(${_Python3_INCLUDE_DIR})
+
 add_library(Optimize STATIC
   ${ParticleSystem_sources}
   Optimize.cpp
@@ -30,7 +32,6 @@ target_link_libraries(Optimize
   ${Boost_LIBRARIES}
   geometry-central
   nlohmann_json::nlohmann_json
-  Python3::Python
   )
 
 # Create an interface library that will bring pybind11::embed along
