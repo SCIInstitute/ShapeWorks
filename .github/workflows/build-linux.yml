@@ -24,6 +24,9 @@ jobs:
     
     steps:
 
+    - name: Try tar
+      run: tar --use-compress-program=pigz -czvf tmp.tar.gz /tmp
+      
     - name: Install SSH Key
       uses: shimataro/ssh-key-action@v2
       with:
