@@ -33,7 +33,7 @@ compress_file() {
     else
 	df -h
 	which tar
-	tar --use-compress-program=pigz -cf "$1" "$2"
+	LD_LIBRARY_PATH=/lib/x86_64-linux-gnu tar --use-compress-program=pigz -cf "$1" "$2"
     fi
 }
 
@@ -46,7 +46,7 @@ decompress_file() {
 	df -h
 	which tar
 	if tar -tzf "$1" >/dev/null ; then
-	    tar --use-compress-program=pigz -xf "$1"
+	    LD_LIBRARY_PATH=/lib/x86_64-linux-gnu tar --use-compress-program=pigz -xf "$1"
 	fi
     fi
 }
