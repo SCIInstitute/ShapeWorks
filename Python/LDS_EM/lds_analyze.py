@@ -14,7 +14,7 @@ class LDS_Analysis:
     def __init__(self, model_name, em_iterations, T, d, M, L, scaling=True) -> None:
         self.model_name = model_name
         self.out_dir = f'{SHAPE_MODELS_DIR}/{self.model_name}_LDS_Analysis_L_{L}/'
-        if os.path.exists(self.out_dir):
+        if not os.path.exists(self.out_dir):
             os.makedirs(self.out_dir)
         self.particles_data = load_correspondences(shapes_desc_file=f'{PROJECT_DIR}/description.json', 
                                                 correspondences_dir=f'{SHAPE_MODELS_DIR}/{self.model_name}_particles/',
@@ -62,4 +62,4 @@ class LDS_Analysis:
         return lds
 
 print('new model l = 320')
-analyze_cross_entropy_model = LDS_Analysis(model_name='pre_post_model_2500', em_iterations=10, T=25, d=3, M=256, L=16, scaling=False)
+analyze_cross_entropy_model = LDS_Analysis(model_name='pre_post_model_2500', em_iterations=100, T=25, d=3, M=256, L=16, scaling=False)

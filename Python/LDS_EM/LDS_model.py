@@ -249,7 +249,7 @@ def _em_observation_covariance(observations, observation_offsets, transition_mat
         return (1.0 / n_obs) * res
     else:
         return res
-    # dM X dM 
+    # dM X dM
 
 
 def _em_transition_covariance(transition_matrices, transition_offsets, smoothed_state_means, smoothed_state_covariances, pairwise_covariances):
