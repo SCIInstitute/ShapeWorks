@@ -29,7 +29,7 @@ else
 	# GHA runner is running out of resources with 4 now on linux
 	NPROCS=2
     fi
-    ./build_dependencies.sh --build-type=$BUILD_TYPE --num-procs=$NPROCS
+    ./build_dependencies.sh --build-type=$BUILD_TYPE --num-procs=$NPROCS --clean-after
     rm -rf $BUILD_DIR
 
     echo "Create and store cache"

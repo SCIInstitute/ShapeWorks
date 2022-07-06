@@ -5,6 +5,7 @@ set -x   #tracing execution for debugging (echos all commands from script)
 
 # defaults
 BUILD_CLEAN=0
+CLEAN_AFTER=0
 NUM_PROCS=8
 BUILD_GUI=1
 BUILD_STUDIO=0
@@ -52,6 +53,7 @@ usage()
   echo "                          : By default uses a subdirectory of the current directory called 'dependencies/install'."
   echo "  -n,--num-procs=<num>    : Number of processors to use for parallel builds (default is 8)."
   echo "  --build-type=<type>     : Build type (Debug, Release, RelWithDebInfo, MinSizeRel), default is Release"
+  echo "  --clean-after           : Clean build folders after build to save disk space"
   echo ""
   echo "Example: ./build_dependencies.sh --num-procs=8 --install-dir=/path/to/desired/installation"
   echo "Build results are saved in ${BUILD_LOG}."
@@ -84,6 +86,8 @@ parse_command_line()
       --no-gui )              BUILD_GUI=0
                               ;;
       --clean )               BUILD_CLEAN=1
+                              ;;
+      --clean-after )         CLEAN_AFTER=1
                               ;;
       -h | --help )           usage
                               exit
@@ -130,16 +134,17 @@ build_vtk()
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
   mkdir -p build && cd build
   if [[ $OSTYPE == "msys" ]]; then
-      cmake -DCMAKE_CXX_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_C_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_SHARED_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_EXE_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DVTK_Group_Qt:BOOL=${BUILD_GUI} -DVTK_QT_VERSION=5 -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DVTK_PYTHON_VERSION=3 -DVTK_GROUP_ENABLE_Qt=YES -DVTK_MODULE_ENABLE_VTK_GUISupportQtQuick:STRING=DONT_WANT -Wno-dev ..
+      cmake -DCMAKE_CXX_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_C_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_SHARED_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_EXE_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DVTK_Group_Qt:BOOL=${BUILD_GUI} -DVTK_QT_VERSION=5 -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DVTK_PYTHON_VERSION=3 -DVTK_GROUP_ENABLE_Qt=YES -DVTK_MODULE_ENABLE_VTK_GUISupportQtQuick:STRING=DONT_WANT -DBUILD_EXAMPLES:BOOL=OFF -Wno-dev ..
       cmake --build . --config ${BUILD_TYPE} --parallel || exit 1
       cmake --build . --config ${BUILD_TYPE} --target install
       VTK_DIR="${INSTALL_DIR}/lib/cmake/vtk-${VTK_VER_STR}"
       VTK_DIR=$(echo $VTK_DIR | sed s/\\\\/\\//g)
   else
-      cmake -DCMAKE_CXX_FLAGS="$FLAGS" -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DVTK_Group_Qt:BOOL=${BUILD_GUI} -DVTK_QT_VERSION=5 -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DVTK_PYTHON_VERSION=3 -DVTK_GROUP_ENABLE_Qt=YES -DVTK_MODULE_ENABLE_VTK_GUISupportQtQuick:STRING=DONT_WANT ${VTK_EXTRA_OPTIONS} -Wno-dev ..
+      cmake -DCMAKE_CXX_FLAGS="$FLAGS" -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DVTK_Group_Qt:BOOL=${BUILD_GUI} -DVTK_QT_VERSION=5 -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DVTK_PYTHON_VERSION=3 -DVTK_GROUP_ENABLE_Qt=YES -DVTK_MODULE_ENABLE_VTK_GUISupportQtQuick:STRING=DONT_WANT -DBUILD_EXAMPLES:BOOL=OFF ${VTK_EXTRA_OPTIONS} -Wno-dev ..
       make -j${NUM_PROCS} install || exit 1
       VTK_DIR=${INSTALL_DIR}/lib/cmake/vtk-${VTK_VER_STR}
   fi
+  if [[ $CLEAN_AFTER = 1 ]]; then make clean; fi
 }
 
 build_itk()
@@ -165,6 +170,7 @@ build_itk()
   fi
 
   ITK_DIR=${INSTALL_DIR}/lib/cmake/ITK-${ITK_VER_STR}
+  if [[ $CLEAN_AFTER = 1 ]]; then make clean; fi
 }
 
 build_eigen()
@@ -222,6 +228,7 @@ build_xlnt()
   mv third-party/libstudxml/version.bak third-party/libstudxml/version
 
   XLNT_DIR=${INSTALL_DIR}
+  if [[ $CLEAN_AFTER = 1 ]]; then make clean; fi
 }
 
 build_jkqtplotter()
@@ -248,6 +255,7 @@ build_jkqtplotter()
   fi
 
   JKQTPLOTTER_DIR=${INSTALL_DIR}
+  if [[ $CLEAN_AFTER = 1 ]]; then make clean; fi
 }
 
 build_openvdb()
@@ -277,6 +285,7 @@ build_openvdb()
   fi
 
   OpenVDB_DIR=${INSTALL_DIR}/lib/cmake/OpenVDB/
+  if [[ $CLEAN_AFTER = 1 ]]; then make clean; fi
 }
 
 build_igl()
@@ -325,6 +334,7 @@ build_acvd()
   fi
 
   ACVD_DIR=${INSTALL_DIR}
+  if [[ $CLEAN_AFTER = 1 ]]; then make clean; fi
 }
 
 show_shapeworks_build()
