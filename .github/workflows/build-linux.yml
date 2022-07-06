@@ -36,6 +36,9 @@ jobs:
     - name: Conda info
       run: conda info
 
+    - name: ldd tar
+      run: ldd /bin/tar
+
     - name: Try tar
       run: tar --use-compress-program=pigz -cvf tmp.tar.gz /tmp
 
@@ -56,12 +59,18 @@ jobs:
     - name: Check space2
       run: df -h
 
+    - name: ldd tar
+      run: ldd /bin/tar
+
     - name: Try tar
       run: tar --use-compress-program=pigz -cvf tmp.tar.gz /tmp
       
     - name: Restore Caches
       shell: bash -l {0}
       run: .github/workflows/restore_caches.sh
+
+    - name: ldd tar
+      run: ldd /bin/tar
 
     - name: Try tar
       run: tar --use-compress-program=pigz -cvf tmp.tar.gz /tmp
@@ -70,6 +79,9 @@ jobs:
       shell: bash -l {0}
       run: .github/workflows/gha_conda.sh
 
+    - name: ldd tar
+      run: ldd /bin/tar
+      
     - name: Try tar
       run: tar --use-compress-program=pigz -cvf tmp.tar.gz /tmp
       
