@@ -25,7 +25,7 @@ jobs:
     steps:
 
     - name: Try tar
-      run: tar --use-compress-program=pigz -czvf tmp.tar.gz /tmp
+      run: tar --use-compress-program=pigz -cvf tmp.tar.gz /tmp
       
     - name: Install SSH Key
       uses: shimataro/ssh-key-action@v2
@@ -35,6 +35,9 @@ jobs:
 
     - name: Conda info
       run: conda info
+
+    - name: Try tar
+      run: tar --use-compress-program=pigz -cvf tmp.tar.gz /tmp
 
     - name: Check space1
       run: df -h
@@ -53,14 +56,23 @@ jobs:
     - name: Check space2
       run: df -h
 
+    - name: Try tar
+      run: tar --use-compress-program=pigz -cvf tmp.tar.gz /tmp
+      
     - name: Restore Caches
       shell: bash -l {0}
       run: .github/workflows/restore_caches.sh
-    
+
+    - name: Try tar
+      run: tar --use-compress-program=pigz -cvf tmp.tar.gz /tmp
+      
     - name: Conda Installs
       shell: bash -l {0}
       run: .github/workflows/gha_conda.sh
 
+    - name: Try tar
+      run: tar --use-compress-program=pigz -cvf tmp.tar.gz /tmp
+      
     - name: Check space3
       run: df -h
 
