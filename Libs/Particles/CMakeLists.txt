@@ -3,7 +3,6 @@
 set(Particles_sources
  ParticleSystem.cpp
  ParticleShapeStatistics.cpp
- LdsAnalyze.cpp
  ShapeEvaluation.cpp
  ReconstructSurface.cpp
  ParticleNormalEvaluation.cpp
@@ -12,7 +11,6 @@ set(Particles_sources
 set(Particles_headers
  ParticleSystem.h
  ParticleShapeStatistics.h
- LdsAnalyze.h
  itkParticlePositionReader.h
  itkParticlePositionWriter.h
  EvaluationUtil.h

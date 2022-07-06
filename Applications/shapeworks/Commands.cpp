@@ -176,5 +176,4 @@ bool GroomCommand::execute(const optparse::Values& options, SharedCommandData& s
   }
 }
 
-///////////////////////////////////////////////////////////////////////////////
 } // shapeworks
