@@ -14,6 +14,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     PLATFORM="mac"
 else
     PLATFORM="linux"
+    export LD_LIBRARY_PATH=/lib/x86_64-linux-gnu
 fi
 
 echo "VERSION = $VERSION"
@@ -78,7 +79,6 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     install_name_tool -add_rpath @executable_path/../../../../lib ShapeWorksStudio.app/Contents/MacOS/ShapeWorksStudio
     QT_LIB_LOCATION="@executable_path/ShapeWorksStudio.app/Contents/Frameworks"
     QT_LOADER_LIB_LOCATION="@loader_path/ShapeWorksStudio.app/Contents/Frameworks"
-
 
     # copy platform plugins for Studio
     cp -a ShapeWorksStudio.app/Contents/PlugIns .
