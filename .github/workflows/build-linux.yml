@@ -58,8 +58,8 @@ jobs:
       shell: bash -l {0}
       run: .github/workflows/gha_conda.sh
 
-    - name: Check space3
-      run: df -h
+    - name: try import vtk
+      run: python -c "import vtk"
 
     - name: Build Dependencies
       shell: bash -l {0}
@@ -86,8 +86,8 @@ jobs:
       shell: bash -l {0}
       run: conda activate shapeworks && cd build && make install
       
-    - name: Remove Qt SQL Stuff
-      run: mv /usr/local/plugins/sqldrivers/libqsqlmysql.so /usr/local/plugins/sqldrivers/libqsqlpsql.so /tmp
+#    - name: Remove Qt SQL Stuff
+#      run: mv /usr/local/plugins/sqldrivers/libqsqlmysql.so /usr/local/plugins/sqldrivers/libqsqlpsql.so /tmp
 
     - name: Build Binary Package
       shell: bash -l {0}
@@ -99,8 +99,8 @@ jobs:
       shell: bash -l {0}
       run: conda activate shapeworks && source ./devenv.sh ./build/bin && cd build && ctest -VV
   
-    - name: Replace Qt SQL Stuff
-      run: mv /tmp/lib*.so /usr/local/plugins/sqldrivers
+#    - name: Replace Qt SQL Stuff
+#      run: mv /tmp/lib*.so /usr/local/plugins/sqldrivers
 
     - name: Copy artifact
       shell: bash -l {0}
