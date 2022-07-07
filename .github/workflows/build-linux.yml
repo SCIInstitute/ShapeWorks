@@ -59,7 +59,8 @@ jobs:
       run: .github/workflows/gha_conda.sh
 
     - name: try import vtk
-      run: python -c "import vtk"
+      shell: bash -l {0}
+      run: conda activate shapeworks && python -c "import vtk"
 
     - name: Build Dependencies
       shell: bash -l {0}
