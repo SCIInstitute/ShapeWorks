@@ -14,7 +14,6 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     PLATFORM="mac"
 else
     PLATFORM="linux"
-    export LD_LIBRARY_PATH=/lib/x86_64-linux-gnu
 fi
 
 echo "VERSION = $VERSION"
