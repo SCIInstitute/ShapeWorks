@@ -3,16 +3,18 @@ import numpy as np
 import torch
 from timeit import default_timer as timer
 
-DEVICE = 'cuda:0'
-# torch.set_default_dtype(torch.float64)
+from Constants import DEVICE
+
 def log_multivariate_normal_density(X, means, covars, min_covar=1.e-6):
     """Log probability for full covariance matrices. """
-
+    # print(f'Computing Log-Probability now, sizes are X= {X.size()}, means = {means.size()}, covars = {covars.size()}')
     n_samples, n_dim = X.size()
     nmix = len(means)
     log_prob = torch.empty(n_samples, nmix).to(DEVICE)
     start_log_time = timer()
     for c, (mu, cv) in enumerate(zip(means, covars)):
+        
+        # print(f'c={c}, cv.size() = {cv.size()} \n cv = \n{cv}')
         try:
             cv_chol, info = torch.linalg.cholesky_ex(cv, check_errors=True)
         except RuntimeError:
@@ -34,8 +36,9 @@ def log_multivariate_normal_density(X, means, covars, min_covar=1.e-6):
         log_prob[:, c] = - .5 * (torch.sum(cv_sol ** 2, 1) + n_dim * torch.log(torch.tensor(2 * np.pi)) + cv_log_det)
     end_log_time = timer()
     # print(f'---- Log Probability computed in {end_log_time-start_log_time} seconds ------')
-    return log_prob
 
+    log_prob_filtered = torch.nan_to_num(log_prob)
+    return log_prob_filtered
 
 def repeat(times, M):
     result = []

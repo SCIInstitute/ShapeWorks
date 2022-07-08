@@ -3,11 +3,17 @@ import glob
 from pathlib import Path
 import json
 import numpy as np
+# import subprocess
+# import shapeworks as sw
+# import matplotlib.pyplot as plt
+# import math
+
 PRE_ABLATION = 'pre'
 POST_ABLATION = 'post'
 JOINT = ''
 MODEL_TYPE = JOINT
 NUM_TIME_POINTS = 25
+DEVICE = 'cuda:1'
 
 # Define dimensions
 # N = 28 # number of samples
@@ -113,3 +119,69 @@ def load_correspondences(shapes_desc_file, correspondences_dir, T=25, d=3, M=256
 
 
     
+
+
+
+# def reconstruct_meshes_command(input_meshes_files, local_point_files, world_point_files, out_dir):
+#         reconstructed_meshes_dir = f"{out_dir}/reconstructed_meshes/"
+#         if not os.path.exists(reconstructed_meshes_dir):
+#             os.makedirs(reconstructed_meshes_dir)
+#         existing_reconst_meshes, _ = sort_files_from_dir(files_dir=reconstructed_meshes_dir)
+#         median_shape_idx  = compute_median_shape(world_point_files=local_point_files)
+#         if len(existing_reconst_meshes) != 0:
+#             print(f'---------- Reconstructed Meshes Exist Already, Returning it ----------')
+#             return existing_reconst_meshes, median_shape_idx
+#         else:
+#             print('---------- Reconstructed Mesh Files not found, Reconstructing now -----------')
+#         execCommand = ["shapeworks", "warp-mesh", "--reference_mesh", input_meshes_files[median_shape_idx], 
+#                     "--reference_points", local_point_files[median_shape_idx], "--save_dir", reconstructed_meshes_dir, "--target_points" ]
+#         for fl in local_point_files:
+#             execCommand.append(fl)
+#         execCommand.append('--')
+#         subprocess.check_call(execCommand)
+#         print(f"---------- Mesh Reconstruction done at {reconstructed_meshes_dir} ----------")
+#         reconstructed_mesh_files, _ = sort_files_from_dir(files_dir=reconstructed_meshes_dir)
+#         if len(reconstructed_mesh_files) == 0:
+#             raise ValueError('Mesh Reconstruction not done')
+#         return reconstructed_mesh_files, 
+
+    
+# def compute_median_shape( world_point_files):
+#         """
+#             Utility function to find the median shape of the cohort, the one with Minimum L1 Norm
+#         """
+#         median_shape_idx = -1
+#         min_sum = 1e10
+#         shape_matrix = build_shape_matrix(world_point_files)
+#         num_shapes = shape_matrix.shape[1]
+#         for i in range(0, num_shapes):
+#             cur_sum = 0.0
+#             for j in range(0, num_shapes):
+#                 if i != j:
+#                     cur_sum += find_norm(shape_matrix, i, j)
+#             if cur_sum < min_sum:
+#                 min_sum = cur_sum
+#                 median_shape_idx = i
+#         if median_shape_idx == -1:
+#             raise ValueError('Median shape not found for Reconstruction, Cannot proceed further with Mesh Warping')
+#         return median_shape_idx
+
+
+# def build_shape_matrix(world_point_files):
+#         """
+#             Utility function to build the shape matrix from the set of particles (world)
+#         """
+#         particle_sys = sw.ParticleSystem(world_point_files)
+#         return particle_sys.Particles()
+
+
+
+# def find_norm(self, shape_matrix, a, b):
+#         """
+#             Utility function to compute norm between two shape vectors 'a' and 'b' of the cohort
+#         """
+#         norm = 0.0
+#         for i in range(0, shape_matrix.shape[0]):
+#             norm += (math.fabs(shape_matrix[i, a] - shape_matrix[i, b]))
+#         return norm
+

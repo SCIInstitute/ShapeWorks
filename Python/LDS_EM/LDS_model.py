@@ -2,12 +2,11 @@ from timeit import default_timer as timer
 import torch
 import warnings
 import numpy as np
-from scipy import linalg
-from utils import *
+from utils import log_multivariate_normal_density
+from npd import nearestPD, isPD
+from Constants import DEVICE
 
 VERBOSE=1
-DEVICE='cuda:0'
-# torch.set_default_dtype(torch.float64)
 
 def _last_dims(X, t, ndims=2):
     if len(X.size()) == ndims + 1:
@@ -20,6 +19,7 @@ def _last_dims(X, t, ndims=2):
 
 
 def _loglikelihoods(observation_matrices, observation_offsets, observation_covariance, predicted_state_means, predicted_state_covariances, observations, observations_mask):
+    print(f'----Inside _loglikelihoods-----')
     n_samples = observations.shape[0]
     n_timesteps = observations.shape[1]
     loglikelihoods = torch.zeros(n_samples, n_timesteps).to(DEVICE)
@@ -32,13 +32,20 @@ def _loglikelihoods(observation_matrices, observation_offsets, observation_covar
                 observation_offset = _last_dims(observation_offsets, t, ndims=1)
                 predicted_state_mean = _last_dims(predicted_state_means[n], t, ndims=1)
                 predicted_state_covariance = _last_dims(predicted_state_covariances, t)
+                if torch.isnan(observation_covariance).any():
+                    warnings.warn(f'---Nan Values found in Observation Cov in log-likelihood calculation ------')
+                if torch.isnan(predicted_state_covariance).any():
+                    warnings.warn(f'---Nan Values found in  predicted_state_covariance in log-likelihood calculation ------')
+                    
 
                 predicted_observation_mean = (observation_matrix @ predicted_state_mean) + observation_offset
                 predicted_observation_covariance = (observation_matrix @ (predicted_state_covariance @ observation_matrix.T)) + observation_covariance
-                
+                if torch.isnan(predicted_observation_covariance).any():
+                    warnings.warn(f'---Nan Values found in  predicted_observation_covariance ------')
                 loglikelihoods[n, t] = log_multivariate_normal_density(observation[None, :], predicted_observation_mean[None, :], predicted_observation_covariance[None, :, :])
-                                                                        
-    return loglikelihoods
+
+    loglikelihoods_filtered = torch.nan_to_num(loglikelihoods)                                                           
+    return loglikelihoods_filtered
     # N X T
 
 
@@ -54,6 +61,7 @@ def _filter_predict(transition_matrix, transition_covariance, transition_offset,
     predicted_state_mean = (transition_matrix@current_state_mean) + transition_offset
 
     predicted_state_covariance = (transition_matrix @ (current_state_covariance @ transition_matrix.T)) + transition_covariance
+    predicted_state_covariance = nearestPD(predicted_state_covariance)
 
     return (predicted_state_mean, predicted_state_covariance)
     # L,     LXL
@@ -71,12 +79,21 @@ def _filter_correct(observation_matrix, observation_covariance, observation_offs
         print('~~~~~~~Filter Correction .......')
     if not np.any(observation_mask):
         # Input is not masked
-        predicted_observation_mean = observation_matrix @ predicted_state_mean + observation_offset # dM, 
+        predicted_observation_mean = (observation_matrix @ predicted_state_mean + observation_offset).double() # dM, 
+        # if torch.isnan(observation_covariance).any():
+        #     warnings.warn(f'---Nan Values found in observation_covariance inside filter correct ------')
+        # if torch.isnan(predicted_state_covariance).any():
+        #     warnings.warn(f'---Nan Values found in predicted_state_covariance inside filter correct ------')
         
         predicted_observation_covariance = (observation_matrix @ (predicted_state_covariance @ observation_matrix.T)) + observation_covariance # dM X dM
+        # if torch.isnan(predicted_observation_covariance).any():
+        #     warnings.warn(f'---Nan Values found in predicted_observation_covariance inside filter correct ------')
         
         try:
-            pred_ob_c_inv = torch.linalg.pinv(predicted_observation_covariance)
+            # pred_ob_c_inv = torch.linalg.pinv(predicted_observation_covariance)
+            dM = observation_covariance.size()[0]
+            I = torch.eye(dM).to(DEVICE)
+            pred_ob_c_inv = torch.linalg.lstsq(predicted_observation_covariance, I).solution
         except:
             print(f'inside filer correct exception {torch.sum(predicted_observation_covariance)}')
             predicted_observation_covariance_pd = nearestPD(predicted_observation_covariance)
@@ -90,6 +107,7 @@ def _filter_correct(observation_matrix, observation_covariance, observation_offs
         # Joseph form - reduces risk of neg diag values
         temp_matrix = torch.eye(predicted_state_covariance.size()[0]).to(DEVICE) - (kalman_gain @ observation_matrix) # L x L
         corrected_state_covariance = (temp_matrix @ (predicted_state_covariance @ temp_matrix.T)) + (kalman_gain @ (observation_covariance @ kalman_gain.T))
+        corrected_state_covariance = nearestPD(corrected_state_covariance)
             
     else:
         # Observation is masked
@@ -159,8 +177,13 @@ def _smooth_update(transition_matrix, filtered_state_mean, filtered_state_covari
     # NextStCov: L X L
     if VERBOSE==3:
         print('~~~~~~~Smooth Updating .......')
+    if torch.isnan(predicted_state_covariance).any():
+        warnings.warn(f'---Nan Values found in predicted_state_covariance ------')
     try:
-        pred_st_cov_inv = torch.linalg.pinv(predicted_state_covariance)
+        # pred_st_cov_inv = torch.linalg.pinv(predicted_state_covariance)
+        dim_l = predicted_state_covariance.size()[0]
+        I = torch.eye(dim_l).to(DEVICE)
+        pred_st_cov_inv = torch.linalg.lstsq(predicted_state_covariance, I).solution
     except:
         pred_st_cov_pd = nearestPD(predicted_state_covariance)
         pred_st_cov_inv = torch.linalg.pinv(pred_st_cov_pd, hermitian=True)
@@ -170,6 +193,7 @@ def _smooth_update(transition_matrix, filtered_state_mean, filtered_state_covari
     smoothed_state_mean = filtered_state_mean + (kalman_smoothing_gain @ (next_smoothed_state_mean - predicted_state_mean)) # L, 
     smoothed_state_covariance = filtered_state_covariance + (kalman_smoothing_gain @ ((next_smoothed_state_covariance - predicted_state_covariance) @ kalman_smoothing_gain.T)) # L X L
     
+    smoothed_state_covariance = nearestPD(smoothed_state_covariance)
     return (smoothed_state_mean, smoothed_state_covariance, kalman_smoothing_gain)
     # L,    L X L,     L X L
 
@@ -188,7 +212,9 @@ def _smooth(transition_matrices, filtered_state_means, filtered_state_covariance
     kalman_smoothing_gains = torch.zeros(n_timesteps - 1, n_dim_state, n_dim_state).to(DEVICE) # return this
 
     smoothed_state_means[:, -1] = filtered_state_means[:, -1]
-    smoothed_state_covariances[-1] = filtered_state_covariances[-1]
+    tt = filtered_state_covariances[-1]
+    smoothed_state_covariances[-1] = nearestPD(tt)
+
 
     # TODO: take sample invariant quanities out of loop so it runs faster
     for n in range(n_samples):
@@ -208,7 +234,11 @@ def _smooth_pair(smoothed_state_covariances, kalman_smoothing_gain):
     n_timesteps, n_dim_state, _ = smoothed_state_covariances.size()
     pairwise_covariances = torch.zeros(n_timesteps, n_dim_state, n_dim_state).to(DEVICE)
     for t in range(1, n_timesteps):
-        pairwise_covariances[t] = smoothed_state_covariances[t] @ kalman_smoothing_gain[t - 1].T
+        # pairwise_covariances[t] = smoothed_state_covariances[t] @ kalman_smoothing_gain[t - 1].T
+        tt = smoothed_state_covariances[t] @ kalman_smoothing_gain[t - 1].T
+        pairwise_covariances[t] = nearestPD(tt)
+
+
     return pairwise_covariances
     # T X L X L
 
@@ -223,9 +253,14 @@ def _em_observation_matrix(observations, observation_offsets, smoothed_state_mea
                 # if not masked
                 observation_offset = _last_dims(observation_offsets, t, ndims=1)
                 res1 += torch.outer(observations[n,t] - observation_offset, smoothed_state_means[n, t])
-                res2 += smoothed_state_covariances[t] + torch.outer(smoothed_state_means[n, t], smoothed_state_means[n, t])
+                res2 += (smoothed_state_covariances[t] + torch.outer(smoothed_state_means[n, t], smoothed_state_means[n, t]))
+    if torch.isnan(res2).any():
+        warnings.warn(f'---Nan Values found in res2 ------')
     try:
-        res2_inv = torch.linalg.pinv(res2)
+        # res2_inv = torch.linalg.pinv(res2)
+        I = torch.eye(n_dim_state).to(DEVICE)
+        res2_inv = torch.linalg.lstsq(res2, I).solution
+
     except:
         res2_pd = nearestPD(res2)
         res2_inv = torch.linalg.pinv(res2_pd, hermitian=True)
@@ -246,7 +281,13 @@ def _em_observation_covariance(observations, observation_offsets, transition_mat
                 # if not masked input
                 transition_matrix = _last_dims(transition_matrices, t) # dM X L SEE difference in initialization
                 transition_offset = _last_dims(observation_offsets, t, ndims=1) # dM, 
+                # if torch.isnan(transition_matrix).any():
+                #     print('transition_matrix is nan in em_obs_covariance')
+                # if torch.isnan(transition_offset).any():
+                #     print('transition_offset is nan in em_obs_covariance')
                 err = observations[n, t] - (transition_matrix @ smoothed_state_means[n, t]) - transition_offset # dM
+                # if torch.isnan(err).any():
+                #     print('error is nan in em_obs_covariance')
                 res += (torch.outer(err, err) + (transition_matrix @ (smoothed_state_covariances[t] @ transition_matrix.T))) # dM X dM
                 n_obs += 1
     if n_obs > 0:
@@ -264,8 +305,13 @@ def _em_transition_covariance(transition_matrices, transition_offsets, smoothed_
         for t in range(n_timesteps - 1):
             transition_matrix = _last_dims(transition_matrices, t)
             transition_offset = _last_dims(transition_offsets, t, ndims=1)
+            # if torch.isnan(transition_matrix).any():
+            #     print('transition_matrix is nan in _em_transition_covariance')
+            # if torch.isnan(transition_offset).any():
+            #     print('transition_matrix is nan in _em_transition_covariance')
             err = smoothed_state_means[n, t + 1] - (transition_matrix @ smoothed_state_means[n, t]) - transition_offset # L, 
-            
+            # if torch.isnan(err).any():
+            #     print('err is nan in _em_transition_covariance')
             Vt1t_A = pairwise_covariances[t + 1] @ transition_matrix.T # 
             res += (torch.outer(err, err) + (transition_matrix @ (smoothed_state_covariances[t] @ transition_matrix.T)) + smoothed_state_covariances[t + 1] - Vt1t_A - Vt1t_A.T) # L X L 
 
@@ -316,9 +362,9 @@ def _em_observation_offset(observation_matrices, smoothed_state_means, observati
                 observation_offset += (observations[n,t] - (observation_matrix @ smoothed_state_means[n,t]))
                 n_obs += 1
     if n_obs > 0:
-        return (1.0 / n_obs) * observation_offset
+        return ((1.0 / n_obs) * observation_offset).double()
     else:
-        return observation_offset
+        return observation_offset.double()
     # dM, 
 
 def _time_varying_em(observations, transition_offsets, observation_offsets, smoothed_state_means, smoothed_state_covariances, pairwise_covariances, given={}, observations_mask=None):
@@ -363,6 +409,10 @@ def _time_varying_em(observations, transition_offsets, observation_offsets, smoo
     else:
         observation_offset = _em_observation_offset(observation_matrix, smoothed_state_means, observations, observations_mask)
 
+    print('At end of EM iteration ---- ')
+    transition_covariance = nearestPD(transition_covariance)
+    observation_covariance = nearestPD(observation_covariance)
+    initial_state_covariance = nearestPD(initial_state_covariance)
     return (transition_matrix, observation_matrix, transition_offset, observation_offset, transition_covariance, observation_covariance, initial_state_mean,initial_state_covariance)
 
 def _time_varying_em_transition_matrix(transition_offsets, smoothed_state_means, smoothed_state_covariances, pairwise_covariances):
@@ -377,8 +427,12 @@ def _time_varying_em_transition_matrix(transition_offsets, smoothed_state_means,
             res2[t-1] += (smoothed_state_covariances[t - 1] + torch.outer(smoothed_state_means[n, t - 1], smoothed_state_means[n, t - 1]))
     updated_matrix = torch.zeros(n_timesteps, n_dim_state, n_dim_state).to(DEVICE)
     for t in range(n_timesteps):
+        if torch.isnan(res2[t]).any():
+            warnings.warn(f'---Nan Values found in res2[{t}] ------')
         try:
-            res2_t_inv = torch.linalg.pinv(res2[t]) # L X L 
+            # res2_t_inv = torch.linalg.pinv(res2[t]) # L X L 
+            I = torch.eye(n_dim_state).to(DEVICE)
+            res2_t_inv = torch.linalg.lstsq(res2[t], I).solution
         except:
             res2_t_pd = nearestPD(res2[t])
             res2_t_inv = torch.linalg.pinv(res2_t_pd, hermitian=True) # L X L 
@@ -392,22 +446,20 @@ class LDS(object):
     def __init__(self, transition_matrices=None, observation_matrices=None,
             em_vars=['transition_covariance', 'observation_covariance',
                      'initial_state_mean', 'initial_state_covariance'], 
-            n_dim_state=None, n_dim_obs=None, device='cuda:0') -> None:
+            n_dim_state=None, n_dim_obs=None) -> None:
         self.n_dim_state = n_dim_state
         self.n_dim_obs = n_dim_obs
-        self.device = device
+        self.transition_matrices = torch.from_numpy(transition_matrices).double().to(DEVICE) # initialized with initial_A of shape (T-1, L, L)
+        self.observation_matrices = torch.from_numpy(observation_matrices).double().to(DEVICE) # initialized with initial_W of shape (T, dM, L)
 
-        self.transition_matrices = torch.from_numpy(transition_matrices).float().to(device) # initialized with initial_A of shape (T-1, L, L)
-        self.observation_matrices = torch.from_numpy(observation_matrices).float().to(device) # initialized with initial_W of shape (T, dM, L)
+        self.transition_covariance = torch.eye(self.n_dim_state).to(DEVICE)
+        self.observation_covariance = torch.eye(self.n_dim_obs).to(DEVICE)
 
-        self.transition_covariance = torch.eye(self.n_dim_state).to(self.device)
-        self.observation_covariance = torch.eye(self.n_dim_obs).to(self.device)
+        self.transition_offsets = torch.zeros(self.n_dim_state).to(DEVICE)
+        self.observation_offsets = torch.zeros(self.n_dim_obs).to(DEVICE)
 
-        self.transition_offsets = torch.zeros(self.n_dim_state).to(self.device)
-        self.observation_offsets = torch.zeros(self.n_dim_obs).to(self.device)
-
-        self.initial_state_mean = torch.zeros(self.n_dim_state).to(self.device)
-        self.initial_state_covariance = torch.eye(self.n_dim_state).to(self.device)
+        self.initial_state_mean = torch.zeros(self.n_dim_state).to(DEVICE)
+        self.initial_state_covariance = torch.eye(self.n_dim_state).to(DEVICE)
 
         self.random_state = 0
         self.em_vars = em_vars

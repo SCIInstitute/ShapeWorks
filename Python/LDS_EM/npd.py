@@ -1,9 +1,10 @@
 import numpy as np
 import torch
-DEVICE = 'cuda:0'
-# torch.set_default_dtype(torch.float64)
+from Constants import DEVICE
 
 def nearestPD(A):
+    if isPD(A):
+        return A
     B = (A + A.T) / 2
     _, s, V = torch.linalg.svd(B)
     H = V.T @ (torch.diag(s) @ V)
