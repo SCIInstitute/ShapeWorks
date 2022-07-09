@@ -1,16 +1,2827 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <title>Redirecting</title>
-  <noscript>
-    <meta http-equiv="refresh" content="1; url=../../6.3/workflow/groom.html" />
-  </noscript>
-  <script>
-    window.location.replace("../../6.3/workflow/groom.html" + window.location.hash);
-  </script>
-</head>
-<body>
-  Redirecting to <a href="../../6.3/workflow/groom.html">../../6.3/workflow/groom.html</a>...
-</body>
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="The official documentation of ShapeWorks">
+      
+      
+        <meta name="author" content="Shireen Elhabian et al.">
+      
+      
+        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.3/workflow/groom.html">
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.8">
+    
+    
+      
+        <title>How to Groom Your Dataset? - ShapeWorks</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.644de097.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.e6a45f82.min.css">
+        
+      
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../css/custom.css">
+    
+    <script>__md_scope=new URL("..",location),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+  
+
+
+  
+  
+
+
+  <script>window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)},ga.l=+new Date,ga("create","UA-36723568-3","auto"),ga("set","anonymizeIp",!0),ga("send","pageview"),document.addEventListener("DOMContentLoaded",function(){document.forms.search&&document.forms.search.query.addEventListener("blur",function(){var e;this.value&&(e=document.location.pathname,ga("send","pageview",e+"?q="+this.value))}),"undefined"!=typeof location$&&location$.subscribe(function(e){ga("send","pageview",e.pathname)})})</script>
+  <script async src="https://www.google-analytics.com/analytics.js"></script>
+
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="" data-md-color-accent="">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#how-to-groom-your-dataset" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-component="outdated" hidden>
+        <aside class="md-banner md-banner--warning">
+          
+        </aside>
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../index.html" title="ShapeWorks" class="md-header__button md-logo" aria-label="ShapeWorks" data-md-component="logo">
+      
+  <img src="../assets/shapeworks-logo-small.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            ShapeWorks
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              How to Groom Your Dataset?
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <form class="md-header__option" data-md-component="palette">
+        
+          
+          
+          <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="" data-md-color-accent=""  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+          
+            <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 9a3 3 0 0 1 3 3 3 3 0 0 1-3 3 3 3 0 0 1-3-3 3 3 0 0 1 3-3m0-4.5c5 0 9.27 3.11 11 7.5-1.73 4.39-6 7.5-11 7.5S2.73 16.39 1 12c1.73-4.39 6-7.5 11-7.5M3.18 12a9.821 9.821 0 0 0 17.64 0 9.821 9.821 0 0 0-17.64 0z"/></svg>
+            </label>
+          
+        
+          
+          
+          <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="" data-md-color-accent=""  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
+          
+            <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0 8a5 5 0 0 1-5-5 5 5 0 0 1 5-5 5 5 0 0 1 5 5 5 5 0 0 1-5 5m0-12.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5z"/></svg>
+            </label>
+          
+        
+      </form>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/SCIInstitute/ShapeWorks" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    SCIInstitute/ShapeWorks
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../index.html" title="ShapeWorks" class="md-nav__button md-logo" aria-label="ShapeWorks" data-md-component="logo">
+      
+  <img src="../assets/shapeworks-logo-small.png" alt="logo">
+
+    </a>
+    ShapeWorks
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/SCIInstitute/ShapeWorks" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.1.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    SCIInstitute/ShapeWorks
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../index.html" class="md-nav__link">
+        Home
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2">
+          Getting Started
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Getting Started" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          Getting Started
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/shapes.html" class="md-nav__link">
+        Shapes, What & From Where?
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/workflow.html" class="md-nav__link">
+        Shape Modeling Workflow
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/sw-stories.html" class="md-nav__link">
+        ShapeWorks Success Stories
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/interfaces.html" class="md-nav__link">
+        ShapeWorks Interfaces
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/examples.html" class="md-nav__link">
+        Examples
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/how-tos.html" class="md-nav__link">
+        How-Tos
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3">
+          For Users
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="For Users" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          For Users
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../users/install.html" class="md-nav__link">
+        How to Install ShapeWorks?
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../users/citation.html" class="md-nav__link">
+        How to Cite ShapeWorks?
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../users/papers.html" class="md-nav__link">
+        Revelant Papers
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4">
+          Workflow
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Workflow" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          Workflow
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          How to Groom Your Dataset?
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="groom.html" class="md-nav__link md-nav__link--active">
+        How to Groom Your Dataset?
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#common-pre-processing-steps-for-segmentations" class="md-nav__link">
+    Common Pre-Processing Steps for Segmentations
+  </a>
+  
+    <nav class="md-nav" aria-label="Common Pre-Processing Steps for Segmentations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#resampling-images-and-segmentations" class="md-nav__link">
+    Resampling images and segmentations
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#aligning-segmentations" class="md-nav__link">
+    Aligning segmentations
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clip-segmentations" class="md-nav__link">
+    Clip segmentations
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cropping-and-padding-segmentations" class="md-nav__link">
+    Cropping and padding segmentations
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#converting-segmentations-to-smooth-signed-distance-transforms" class="md-nav__link">
+    Converting segmentations to smooth signed distance transforms
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#common-pre-processing-steps-for-meshes" class="md-nav__link">
+    Common Pre-Processing Steps for Meshes
+  </a>
+  
+    <nav class="md-nav" aria-label="Common Pre-Processing Steps for Meshes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#reflect-meshes" class="md-nav__link">
+    Reflect meshes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#meshes-to-volumes" class="md-nav__link">
+    Meshes to volumes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#remesh" class="md-nav__link">
+    Remesh
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#aligning-meshes" class="md-nav__link">
+    Aligning meshes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#extract-shared-boundary" class="md-nav__link">
+    Extract Shared Boundary
+  </a>
+  
+    <nav class="md-nav" aria-label="Extract Shared Boundary">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#input-shapes-with-shared-surface" class="md-nav__link">
+    Input shapes with shared surface
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#output-extracted-surfaces" class="md-nav__link">
+    Output extracted surfaces
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#extract-contour" class="md-nav__link">
+    Extract Contour
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#smoothing" class="md-nav__link">
+    Smoothing
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4_2" type="checkbox" id="__nav_4_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4_2">
+          Shape Model Optimization
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Shape Model Optimization" data-md-level="2">
+        <label class="md-nav__title" for="__nav_4_2">
+          <span class="md-nav__icon md-icon"></span>
+          Shape Model Optimization
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="optimize.html" class="md-nav__link">
+        How to Optimize Your Shape Model?
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="parameters.html" class="md-nav__link">
+        Optimization Parameters
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="analyze.html" class="md-nav__link">
+        How to Analyze Your Shape Model?
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5">
+          What is New?
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="What is New?" data-md-level="1">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          What is New?
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../new/new-studio.html" class="md-nav__link">
+        New in ShapeWorks Studio
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../new/openvdb.html" class="md-nav__link">
+        ShapeWorks Takes ~85% Less Memory
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../new/sw-meshes.html" class="md-nav__link">
+        ShapeWorks Directly on Meshes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../new/shapeworks-command.html" class="md-nav__link">
+        ShapeWorks Command
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../new/ssm-eval.html" class="md-nav__link">
+        Shape Model Evaluation
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../new/shapeworks-python.html" class="md-nav__link">
+        ShapeWorks in Python
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../new/ellipsoid-joint-generation.html" class="md-nav__link">
+        Ellipsoid Joint Generation
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_6" type="checkbox" id="__nav_6" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_6">
+          ShapeWorks Studio
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="ShapeWorks Studio" data-md-level="1">
+        <label class="md-nav__title" for="__nav_6">
+          <span class="md-nav__icon md-icon"></span>
+          ShapeWorks Studio
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../studio/getting-started-with-studio.html" class="md-nav__link">
+        Getting Started
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../studio/studio-viewer.html" class="md-nav__link">
+        Viewer Controls
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../studio/studio-export.html" class="md-nav__link">
+        Export Options
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../studio/studio-data.html" class="md-nav__link">
+        Data Module
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../studio/studio-groom.html" class="md-nav__link">
+        Groom Module
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../studio/studio-optimize.html" class="md-nav__link">
+        Optimize Module
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../studio/studio-analyze.html" class="md-nav__link">
+        Analyze Module
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../studio/deepssm-in-studio.html" class="md-nav__link">
+        DeepSSM Module
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../studio/multiple-domains.html" class="md-nav__link">
+        Multiple Domains SSM
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_7" type="checkbox" id="__nav_7" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_7">
+          ShapeWorks Tools
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="ShapeWorks Tools" data-md-level="1">
+        <label class="md-nav__title" for="__nav_7">
+          <span class="md-nav__icon md-icon"></span>
+          ShapeWorks Tools
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tools/ShapeWorksCommands.html" class="md-nav__link">
+        ShapeWorks Commands
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_8" type="checkbox" id="__nav_8" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_8">
+          ShapeWorks in Python
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="ShapeWorks in Python" data-md-level="1">
+        <label class="md-nav__title" for="__nav_8">
+          <span class="md-nav__icon md-icon"></span>
+          ShapeWorks in Python
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../notebooks/getting-started-with-notebooks.html" class="md-nav__link">
+        Getting Started with Jupyter Notebooks
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../notebooks/getting-started-with-segmentations.html" class="md-nav__link">
+        Getting Started with Segmentations
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../notebooks/getting-started-with-meshes.html" class="md-nav__link">
+        Getting Started with Meshes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../notebooks/getting-started-with-exploring-segmentations.html" class="md-nav__link">
+        Getting Started with Exploring Segmentations
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../notebooks/getting-started-with-data-augmentation.html" class="md-nav__link">
+        Getting Started with Data Augmentation
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../notebooks/getting-started-with-shape-cohort-generation.html" class="md-nav__link">
+        Getting Started with Shape Cohort Generator
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../notebooks/array-passing-without-copying.html" class="md-nav__link">
+        Array passing without copying
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../notebooks/create-and-apply-image-transforms.html" class="md-nav__link">
+        Transforms can be used to center image data or to align two images
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../notebooks/create-and-apply-mesh-transforms.html" class="md-nav__link">
+        Transforms can also be used to align two meshes
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_9" type="checkbox" id="__nav_9" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_9">
+          Deep Learning & SSMs
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Deep Learning & SSMs" data-md-level="1">
+        <label class="md-nav__title" for="__nav_9">
+          <span class="md-nav__icon md-icon"></span>
+          Deep Learning & SSMs
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deep-learning/pytorch-gpu.html" class="md-nav__link">
+        PyTorch GPU Support for ShapeWorks
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deep-learning/data-augmentation.html" class="md-nav__link">
+        Data Augmentation for Deep Learning
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deep-learning/deep-ssm.html" class="md-nav__link">
+        SSMs Directly from Images
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10" type="checkbox" id="__nav_10" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_10">
+          Use Cases
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Use Cases" data-md-level="1">
+        <label class="md-nav__title" for="__nav_10">
+          <span class="md-nav__icon md-icon"></span>
+          Use Cases
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/use-cases.html" class="md-nav__link">
+        Getting Started with Use Cases
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10_2" type="checkbox" id="__nav_10_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_10_2">
+          Segmentation Based Use Cases
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Segmentation Based Use Cases" data-md-level="2">
+        <label class="md-nav__title" for="__nav_10_2">
+          <span class="md-nav__icon md-icon"></span>
+          Segmentation Based Use Cases
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/segmentation-based/ellipsoid.html" class="md-nav__link">
+        Ellipsoid: Basic Example
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/segmentation-based/left-atrium.html" class="md-nav__link">
+        Left Atrium: Shape Model from Segmentations
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/segmentation-based/ellipsoid-multiple-domain.html" class="md-nav__link">
+        Shape Model for Multiple Domains from Segmentations
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10_3" type="checkbox" id="__nav_10_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_10_3">
+          Mesh Based Use Cases
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Mesh Based Use Cases" data-md-level="2">
+        <label class="md-nav__title" for="__nav_10_3">
+          <span class="md-nav__icon md-icon"></span>
+          Mesh Based Use Cases
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/mesh-based/ellipsoid_mesh.html" class="md-nav__link">
+        Ellipsoid Mesh: Basic Example
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/mesh-based/lumps.html" class="md-nav__link">
+        Lumps: Shape Model directly from Mesh
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/mesh-based/thin-cavity-bean.html" class="md-nav__link">
+        Thin Cavity Bean: Shape Model with Geodesic Distances
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/mesh-based/ellipsoid-multiple-domain-mesh.html" class="md-nav__link">
+        Shape Model for Multiple Domains directly from Mesh
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10_4" type="checkbox" id="__nav_10_4" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_10_4">
+          Contour Based Use Cases
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Contour Based Use Cases" data-md-level="2">
+        <label class="md-nav__title" for="__nav_10_4">
+          <span class="md-nav__icon md-icon"></span>
+          Contour Based Use Cases
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/contour-based/supershapes-contour.html" class="md-nav__link">
+        Supershapes:Shape Model for Contour Domains
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10_5" type="checkbox" id="__nav_10_5" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_10_5">
+          Constraints Based Use Cases
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Constraints Based Use Cases" data-md-level="2">
+        <label class="md-nav__title" for="__nav_10_5">
+          <span class="md-nav__icon md-icon"></span>
+          Constraints Based Use Cases
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/constraint-based/ellipsoid-cutting-planes.html" class="md-nav__link">
+        Ellipsoid: Shape Model with Cutting Planes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/constraint-based/femur-cutting-planes.html" class="md-nav__link">
+        Femur:Shape Model with Cutting Planes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/constraint-based/femur-cutting-planes-studio.html" class="md-nav__link">
+        Studio Femur: Shape Model from Meshes with Cutting Planes Using Studio
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10_6" type="checkbox" id="__nav_10_6" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_10_6">
+          Multi-Step Optimization Use Cases
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Multi-Step Optimization Use Cases" data-md-level="2">
+        <label class="md-nav__title" for="__nav_10_6">
+          <span class="md-nav__icon md-icon"></span>
+          Multi-Step Optimization Use Cases
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/multistep/fixed-domain-ellipsoid.html" class="md-nav__link">
+        Fixed Domains Ellipsoid: Shape Model on New Shapes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/multistep/incremental_supershapes.html" class="md-nav__link">
+        Incremental Supershapes: Building a Shape Model Incrementally
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10_7" type="checkbox" id="__nav_10_7" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_10_7">
+          Statistics Based Use Cases
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Statistics Based Use Cases" data-md-level="2">
+        <label class="md-nav__title" for="__nav_10_7">
+          <span class="md-nav__icon md-icon"></span>
+          Statistics Based Use Cases
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/stats-based/ellipsoid-pca.html" class="md-nav__link">
+        Ellipsoid: Shape Statistics in Python
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/stats-based/femur-pvalues.html" class="md-nav__link">
+        Femur: Group Difference Statistics in Python
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/stats-based/ellipsoid-evaluate.html" class="md-nav__link">
+        Ellipsoid: Shape Evaluation in Python
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10_8" type="checkbox" id="__nav_10_8" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_10_8">
+          Deep Learning Based Use Cases
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Deep Learning Based Use Cases" data-md-level="2">
+        <label class="md-nav__title" for="__nav_10_8">
+          <span class="md-nav__icon md-icon"></span>
+          Deep Learning Based Use Cases
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/deep-learning-based/deep-ssm-femur.html" class="md-nav__link">
+        Femur SSM Directly from Images
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10_9" type="checkbox" id="__nav_10_9" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_10_9">
+          Shared Boundary Use Cases
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Shared Boundary Use Cases" data-md-level="2">
+        <label class="md-nav__title" for="__nav_10_9">
+          <span class="md-nav__icon md-icon"></span>
+          Shared Boundary Use Cases
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/shared-boundary-based/peanut.html" class="md-nav__link">
+        Peanut:Shape Model of Multiple Domains with Shared Boundaries
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../use-cases/right-ventricle.html" class="md-nav__link">
+        Right Ventricle: Highly Variable Shapes
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_11" type="checkbox" id="__nav_11" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_11">
+          For Developers
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="For Developers" data-md-level="1">
+        <label class="md-nav__title" for="__nav_11">
+          <span class="md-nav__icon md-icon"></span>
+          For Developers
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dev/build.html" class="md-nav__link">
+        How to Build ShapeWorks from Source?
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dev/contribute.html" class="md-nav__link">
+        How to Contribute to ShapeWorks?
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dev/commands.html" class="md-nav__link">
+        How to Add ShapeWorks Commands?
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dev/python-apis.html" class="md-nav__link">
+        How to Add Python APIs?
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dev/tests.html" class="md-nav__link">
+        How to Add and Run Unit Tests?
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dev/new-use-case.html" class="md-nav__link">
+        How to Add New Use Cases?
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dev/datasets.html" class="md-nav__link">
+        How to Add New Datasets?
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dev/new-notebook.html" class="md-nav__link">
+        How to Add New Notebooks?
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dev/modify-datasets.html" class="md-nav__link">
+        When Modifying Existing Datasets
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dev/docs.html" class="md-nav__link">
+        Getting Started with Documentation
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dev/gh-actions.html" class="md-nav__link">
+        Getting Started with GitHub Actions
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dev/markdown.html" class="md-nav__link">
+        Getting Started with Markdown
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dev/paths.html" class="md-nav__link">
+        Adding to PATH Environment Variable
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_12" type="checkbox" id="__nav_12" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_12">
+          API Reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="API Reference" data-md-level="1">
+        <label class="md-nav__title" for="__nav_12">
+          <span class="md-nav__icon md-icon"></span>
+          API Reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/Modules/index_groups.html" class="md-nav__link">
+        Groups
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/Namespaces/index_namespaces.html" class="md-nav__link">
+        Namespaces
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/Classes/index_classes.html" class="md-nav__link">
+        Classes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/Files/index_files.html" class="md-nav__link">
+        Files
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_13" type="checkbox" id="__nav_13" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_13">
+          About
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="About" data-md-level="1">
+        <label class="md-nav__title" for="__nav_13">
+          <span class="md-nav__icon md-icon"></span>
+          About
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../about/team.html" class="md-nav__link">
+        Meet ShapeWorkers!
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../about/release-notes.html" class="md-nav__link">
+        Release Notes
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../about/license.html" class="md-nav__link">
+        License
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../about/contact.html" class="md-nav__link">
+        Contact Us
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#common-pre-processing-steps-for-segmentations" class="md-nav__link">
+    Common Pre-Processing Steps for Segmentations
+  </a>
+  
+    <nav class="md-nav" aria-label="Common Pre-Processing Steps for Segmentations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#resampling-images-and-segmentations" class="md-nav__link">
+    Resampling images and segmentations
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#aligning-segmentations" class="md-nav__link">
+    Aligning segmentations
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clip-segmentations" class="md-nav__link">
+    Clip segmentations
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cropping-and-padding-segmentations" class="md-nav__link">
+    Cropping and padding segmentations
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#converting-segmentations-to-smooth-signed-distance-transforms" class="md-nav__link">
+    Converting segmentations to smooth signed distance transforms
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#common-pre-processing-steps-for-meshes" class="md-nav__link">
+    Common Pre-Processing Steps for Meshes
+  </a>
+  
+    <nav class="md-nav" aria-label="Common Pre-Processing Steps for Meshes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#reflect-meshes" class="md-nav__link">
+    Reflect meshes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#meshes-to-volumes" class="md-nav__link">
+    Meshes to volumes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#remesh" class="md-nav__link">
+    Remesh
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#aligning-meshes" class="md-nav__link">
+    Aligning meshes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#extract-shared-boundary" class="md-nav__link">
+    Extract Shared Boundary
+  </a>
+  
+    <nav class="md-nav" aria-label="Extract Shared Boundary">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#input-shapes-with-shared-surface" class="md-nav__link">
+    Input shapes with shared surface
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#output-extracted-surfaces" class="md-nav__link">
+    Output extracted surfaces
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#extract-contour" class="md-nav__link">
+    Extract Contour
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#smoothing" class="md-nav__link">
+    Smoothing
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+<a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/workflow/groom.md" title="Edit this page" class="md-content__button md-icon">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
+</a>
+
+
+
+<h1 id="how-to-groom-your-dataset">How to Groom Your Dataset?</h1>
+<p>ShapeWorks needs suitable distance transforms or meshes for establishing shape correspondence. The groom stage has the pipeline to generate aligned distance transforms from binary segmentations or groomed meshes from unaligned meshes.  Common grooming steps are outlined below. For descriptions of the ShapeWorks commands used, see: <a href="http://sciinstitute.github.io/ShapeWorks/tools/ShapeWorksCommands.html">ShapeWorks Commands</a>.</p>
+<h2 id="common-pre-processing-steps-for-segmentations">Common Pre-Processing Steps for Segmentations</h2>
+<h3 id="resampling-images-and-segmentations">Resampling images and segmentations</h3>
+<p>This grooming step resamples all the binary volumes, which in a raw setting could be in different physical spaces (different dimensions and voxel spacing). This grooming step brings all segmentations to the same voxel spacing, typically isotropic spacing (e.g., 1,1,1).</p>
+<p>A smaller voxel spacing than the original spacing improves the resolution of the segmentations and reduces the aliasing (i.e., staircase) artifact resulting from the thresholding/binarization process. </p>
+<div class="admonition note">
+<p class="admonition-title">Resampling both images and segmentations</p>
+<p>If your dataset contains both images (e.g., CTs, MRIs) and binary segmentations, it is recommended that resampling is performed on both to keep them aligned for subsequent analyses that might entail/need imaging data. </p>
+</div>
+<p>Since image resampling entails interpolation, directly resampling binary segmentations will not result in a binary segmentation, but rather an interpolated version that does not have two distinct labels (i.e., foreground and background).</p>
+<p>To mitigate this behavior, we need first to convert the binary segmentations (with zero-one voxels) to a continuous-valued (gray-scale) image. This can be done by either antialiasing the segmentations, which smooths the foreground-background interface, or converting a segmentation to a signed distance transform, where each voxel encodes the physical distance to the closest surface point (zero-one interface) with the sign indicating whether the voxel is inside or outside the foreground region.</p>
+<p>Here is a resampling pipeline example for binary segmentation that uses antialiasing:</p>
+<ul>
+<li><code>antialias</code> the binary segmentation to convert it to a smooth continuous-valued image</li>
+<li><code>resample</code> the antialiased image using the same (and possible smaller) voxel spacing for all dimensions</li>
+<li><code>binarize</code> (aka thresholding) the resampled image to results in a binary segmentation with the desired voxel spacing</li>
+</ul>
+<p>Here is an example of resampling an ellipsoid with spacing (1,1,2) to have spacing (1,1,1):</p>
+<p><div class="highlight"><pre><span></span><code><span class="n">antialias_iterations</span> <span class="o">=</span> <span class="mi">30</span>
+<span class="n">shape_seg</span>            <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">Image</span><span class="p">(</span><span class="n">in_shape_filename</span><span class="p">)</span>
+
+<span class="n">shape_seg</span><span class="o">.</span><span class="n">antialias</span><span class="p">(</span><span class="n">antialias_iterations</span><span class="p">)</span>
+<span class="n">shape_seg</span><span class="o">.</span><span class="n">resample</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">sw</span><span class="o">.</span><span class="n">InterpolationType</span><span class="o">.</span><span class="n">Linear</span><span class="p">)</span>
+<span class="n">shape_seg</span><span class="o">.</span><span class="n">binarize</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">out_shape_filename</span><span class="p">)</span>
+</code></pre></div>
+<img alt="Resample example" src="../img/workflow/resampling.png" /></p>
+<div class="admonition note">
+<p class="admonition-title">Resampling images</p>
+<p>Images are already given as a continued-valued grid of pixels. Hence, images can be directly resampled without any pre- or post-processing steps.</p>
+</div>
+<p><em>Resampling images reduces pixelation and smooths out intensity noise.</em> <br />
+<img alt="Isoresampling for images" src="../img/new/isoresample_img.png" /></p>
+<p><em>Resampling segmentations smooths out shape boundaries and reduces binarization aliasing.</em>
+<img alt="Isoresampling for segmentations" src="../img/new/isoresample_seg.png" /></p>
+<h3 id="aligning-segmentations">Aligning segmentations</h3>
+<p>Rigidly aligning a cohort of shapes entails removing differences across these shapes pertaining to global transformations, i.e., translation and rotation. This step requires a reference coordinate frame to align all shapes to, where one of the shapes can be selected as a reference.</p>
+<p>Rigid alignment (aka registration) is an optimization process that might get stuck in a bad local minima if shapes are significantly out of alignment. To bring shapes closer, we can remove translation differences using center-of-mass alignment. This factors out translations to reduce the risk of misalignment and allow for a medoid sample to be automatically selected as the reference for subsequent rigid alignment.</p>
+<div class="admonition note">
+<p class="admonition-title">Applying transformation to segmentations</p>
+<p>Applying a transformation to segmentations entails interpolation due to image resampling in the new coordinate frame. Similar to the resampling workflow, we will first antialias the segmentation to convert it to a continuous-valued image with a smooth foreground-background interface, then apply the transformation, and finally binarize the tranformed image.</p>
+</div>
+<p>Hence, the shapes alignment pipeline includes the following steps:</p>
+<ul>
+<li><em>Center-of-mass alignment for segmentations:</em> <ul>
+<li><code>antialias</code> the binary segmentation to convert it to a smooth continuous-valued image</li>
+<li><code>translate</code> the binary segmentation so that the center of the image doamin is the center of mass of the shape.</li>
+<li><code>binarize</code> (aka thresholding) to get a binary segmentation</li>
+</ul>
+</li>
+<li>
+<p><code>recenter</code> moves the center of the image (which is now the center of mass) to (0,0,0)</p>
+</li>
+<li>
+<p><em>Reference shape selection:</em> One option for a reference is to select the shape that is closest to all other samples in the given cohort, i.e., the medoid shape. If shape instances are misaligned (i.e., do not share the same coordinate frame), translational and rotational differences should be factored out before reference selection.</p>
+<ul>
+<li>Use the pymodule function <code>find_reference_image_index</code> that perform pairwise rigid registration using the iterative closest point method and selects the sample that is closest to all other samples after factoring out global transformation differences.
+<!-- computes the mean shape, computes the distance to mean shape, select the shape sample that is closest to the mean shape and returns it's index.--></li>
+</ul>
+</li>
+<li>
+<p><em>Rigid alignment:</em></p>
+<ul>
+<li><code>antialias</code> the binary segmentation and reference to convert them to a smooth continuous-valued image</li>
+<li><code>createTransform</code>: compute the rigid transformation parameters that would align a segmentation 
+to the reference shape</li>
+<li><code>applyTransform</code>: apply the rigid transformation to the segmentation and make it have the same cooridnate system as the reference </li>
+<li><code>binarize</code> (aka thresholding) to get a binary segmentation</li>
+</ul>
+</li>
+</ul>
+<p>Here is an example of performing center of mass alignment on one ellipsoid:</p>
+<div class="highlight"><pre><span></span><code><span class="n">shape_seg</span>            <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">Image</span><span class="p">(</span><span class="n">in_shape_filename</span><span class="p">)</span>
+<span class="n">antialias_iterations</span> <span class="o">=</span> <span class="mi">30</span>
+<span class="n">translation_vector</span>   <span class="o">=</span>  <span class="n">shape_seg</span><span class="o">.</span><span class="n">center</span><span class="p">()</span> <span class="o">-</span> <span class="n">shape_seg</span><span class="o">.</span><span class="n">centerOfMass</span><span class="p">()</span> 
+
+<span class="n">shape_seg</span><span class="o">.</span><span class="n">antialias</span><span class="p">(</span><span class="n">antialias_iterations</span><span class="p">)</span>
+         <span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="n">translation_vector</span><span class="p">)</span>
+         <span class="o">.</span><span class="n">binarize</span><span class="p">()</span><span class="o">.</span><span class="n">recenter</span><span class="p">()</span>
+         <span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">out_shape_filename</span><span class="p">)</span>
+</code></pre></div>
+<p><img alt="Center of mass alignment example" src="../img/workflow/com.png" /></p>
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/nb-groom-com-pv.mp4" autoplay muted loop controls style="width:100%"></p>
+
+<p>Finding the reference:</p>
+<div class="highlight"><pre><span></span><code><span class="n">ref_index</span> <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">find_reference_image_index</span><span class="p">(</span><span class="n">shape_seg_list</span><span class="p">)</span>
+<span class="n">ref_seg</span>   <span class="o">=</span> <span class="n">shape_seg_list</span><span class="p">[</span><span class="n">ref_index</span><span class="p">]</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;reference.nrrd&#39;</span><span class="p">)</span>
+</code></pre></div>
+<p><img alt="Reference selection example" src="../img/workflow/ref.png" /></p>
+<p>Rigid alignment:</p>
+<div class="highlight"><pre><span></span><code><span class="n">antialias_iterations</span> <span class="o">=</span> <span class="mi">30</span>
+
+<span class="n">ref_seg</span>    <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">Image</span><span class="p">(</span><span class="n">ref_shape_filename</span><span class="p">)</span>
+<span class="n">shape_seg</span>  <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">Image</span><span class="p">(</span><span class="n">in_shape_filename</span><span class="p">)</span>
+
+<span class="n">ref_seg</span><span class="o">.</span><span class="n">antialias</span><span class="p">(</span><span class="n">antialias_iterations</span><span class="p">)</span>
+<span class="n">shape_seg</span><span class="o">.</span><span class="n">antialias</span><span class="p">(</span><span class="n">antialias_iterations</span><span class="p">)</span>
+
+<span class="n">iso_value</span>      <span class="o">=</span> <span class="mf">1e-20</span>
+<span class="n">icp_iterations</span> <span class="o">=</span> <span class="mi">200</span>
+<span class="n">rigidTransform</span> <span class="o">=</span> <span class="n">shape_seg</span><span class="o">.</span><span class="n">createTransform</span><span class="p">(</span><span class="n">ref_seg</span><span class="p">,</span> <span class="n">sw</span><span class="o">.</span><span class="n">TransformType</span><span class="o">.</span><span class="n">IterativeClosestPoint</span><span class="p">,</span> <span class="n">iso_value</span><span class="p">,</span> <span class="n">icp_iterations</span><span class="p">)</span>
+
+<span class="n">shape_seg</span><span class="o">.</span><span class="n">applyTransform</span><span class="p">(</span><span class="n">rigidTransform</span><span class="p">,</span>
+                         <span class="n">ref_seg</span><span class="o">.</span><span class="n">origin</span><span class="p">(),</span>  <span class="n">ref_seg</span><span class="o">.</span><span class="n">dims</span><span class="p">(),</span>
+                         <span class="n">ref_seg</span><span class="o">.</span><span class="n">spacing</span><span class="p">(),</span> <span class="n">ref_seg</span><span class="o">.</span><span class="n">coordsys</span><span class="p">(),</span>
+                         <span class="n">sw</span><span class="o">.</span><span class="n">InterpolationType</span><span class="o">.</span><span class="n">Linear</span><span class="p">)</span>
+
+<span class="n">shape_seg</span><span class="o">.</span><span class="n">binarize</span><span class="p">()</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">out_shape_filename</span><span class="p">)</span>
+</code></pre></div>
+<p><img alt="Rigid alignment example" src="../img/workflow/rigid.png" /></p>
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/nb-groom-align.mp4" autoplay muted loop controls style="width:100%"></p>
+
+<h3 id="clip-segmentations">Clip segmentations</h3>
+<p>In some cases, binary segmentations need to be clipped with a cutting plane so that only the desired part of the shape is reflected in the shape model. To perform this step, you can use <code>clip</code> defined the cutting plane defined using three points.</p>
+<p>Example of clipping:</p>
+<div class="highlight"><pre><span></span><code><span class="n">shape_seg</span>            <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">Image</span><span class="p">(</span><span class="n">in_shape_filename</span><span class="p">)</span>
+<span class="n">cutting_plane_point_1</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="n">cutting_plane_point_2</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="n">cutting_plane_point_3</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+
+<span class="n">shape_seg</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">cutting_plane_point_1</span><span class="p">,</span>
+               <span class="n">cutting_plane_point_2</span><span class="p">,</span>
+               <span class="n">cutting_plane_point_3</span><span class="p">,</span><span class="err">!</span><span class="p">[](</span><span class="err">!</span><span class="p">[](</span><span class="err">!</span><span class="p">[]()))</span>
+              <span class="p">)</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">out_shape_filename</span><span class="p">)</span>
+</code></pre></div>
+<p><img alt="RClip segmentation example" src="../img/workflow/clip.png" /></p>
+<h3 id="cropping-and-padding-segmentations">Cropping and padding segmentations</h3>
+<p>In many cases, image boundaries are not tight around shapes. This leaves too much irrelevant background voxels that might increase the memory footprint when optimizing the shape model. We can remove this irrelevant background while keeping our segmentations intact and avoid cropped segmentations to touch image boundaries, which results in artifical holes in the shape boundary and does not allow particles to be distributed in regions touching the image boundary. </p>
+<p>This cropping and padding step entails the following steps:</p>
+<ul>
+<li><code>ImageUtils.boundingBox</code>: computes the smallest bounding box (ShapeWorks region) that fits all segmentations in the given shape cohort. Note that this step should be applied to at segmentations that share the same coordinate frame (i.e., aligned)</li>
+<li><code>crop</code> the segmentation using the computed bounding box</li>
+<li><code>pad</code> the cropped segmentation to ensure the shape is not touching the image boundary</li>
+</ul>
+<p>Example of cropping and padding:</p>
+<p><div class="highlight"><pre><span></span><code><span class="n">iso_value</span>         <span class="o">=</span> <span class="mf">0.5</span> <span class="c1"># a threshold value between 0 and 1 for binary segmentations</span>
+<span class="n">padding_size</span>      <span class="o">=</span> <span class="mi">10</span>  <span class="c1"># number of voxels to pad for each dimension</span>
+<span class="n">padding_value</span>     <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># the constant value used to pad the segmentations</span>
+
+<span class="n">segs_bounding_box</span> <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">ImageUtils</span><span class="o">.</span><span class="n">boundingBox</span><span class="p">(</span><span class="n">shape_seg_list</span><span class="p">,</span> <span class="n">iso_value</span><span class="p">)</span>
+<span class="n">shape_seg</span>         <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">Image</span><span class="p">(</span><span class="n">in_shape_filename</span><span class="p">)</span>
+
+<span class="n">shape_seg</span><span class="o">.</span><span class="n">crop</span><span class="p">(</span><span class="n">segs_bounding_box</span><span class="p">)</span>
+         <span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="n">padding_size</span><span class="p">,</span> <span class="n">padding_value</span><span class="p">)</span>
+         <span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">out_shape_filename</span><span class="p">)</span>
+</code></pre></div>
+<img alt="Cropping and padding example" src="../img/workflow/crop.png" /></p>
+<h3 id="converting-segmentations-to-smooth-signed-distance-transforms">Converting segmentations to smooth signed distance transforms</h3>
+<p>For numerical computations for correspondences optimization, we need to convert binary segmentations to a continuous-valued image that satisfies the following requirements.</p>
+<ul>
+<li>smooth for gradient updates stability</li>
+<li>reflect the shape's surface (i.e., foreground-background) interface</li>
+<li>provide a signal for the particle to snap (move back) to the surface in case particles gets off the surface during optimization, which is a typical scenario when using gradient descent based optimization</li>
+</ul>
+<p>An antialiased segmentation satisfies the first two requirements. However, if a particles leaves the surface (i.e., the zero-level set) during model optimization, which is typical in gradient descent based optimization, it would be challenging to snap it back to the surface.</p>
+<p>A representation that satisfies all the requirements is the <em>signed distance transform</em>. </p>
+<ul>
+<li>A signed distance transform assigns to each voxel the physical distance to the closest point on the surface (i.e., the minimum distance from that voxel to nearest voxel on the foreground-background interface).</li>
+<li>The sign is used to indicate whether that voxel is inside or outside the foreground object.</li>
+<li>The zero-level set (zero-distance to the surface) indicates the foreground-background interface (i.e., the shape's surface).</li>
+<li>The gradient of a signed distance transform at a voxels indicates what direction to move in from that voxels to most rapidly increase the value of this distance. Hence, we can use the negative of this gradient as a signal to move a particle back to the surface.</li>
+</ul>
+<p>The <code>computeDT</code> API needs an <code>iso_value</code> that defines the foreground-background interface. To create  a smoother interface, we first antialias the segmentation then compute the distance transform at the zero-level set. We then need to smooth the DT as it will have some remaining aliasing effect of binarization. </p>
+<p>So the steps are:</p>
+<ul>
+<li><code>antialias</code> the binary segmentation to convert it to a smooth continuous-valued image</li>
+<li><code>computeDT</code>: Compute distance transform</li>
+<li><code>gaussianBlur</code>: Apply smoothing by convolving the image with a 3D gaussian filter with a given sigma (in physical coordinates)</li>
+<li>Save the distance transform</li>
+</ul>
+<p><div class="highlight"><pre><span></span><code><span class="n">iso_value</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">sigma</span>     <span class="o">=</span> <span class="mf">1.3</span>
+
+<span class="n">shape_seg</span> <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">Image</span><span class="p">(</span><span class="n">in_shape_filename</span><span class="p">)</span>
+
+<span class="n">shape_seg</span><span class="o">.</span><span class="n">antialias</span><span class="p">(</span><span class="n">antialias_iterations</span><span class="p">)</span>
+         <span class="o">.</span><span class="n">computeDT</span><span class="p">(</span><span class="n">iso_value</span><span class="p">)</span>
+         <span class="o">.</span><span class="n">gaussianBlur</span><span class="p">(</span><span class="n">sigma</span><span class="p">)</span>
+         <span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">out_shape_filename</span><span class="p">)</span>
+</code></pre></div>
+<img alt="Distance transform example" src="../img/workflow/dt.png" /></p>
+<p><em>Gaussian blur with a small sigma. Note aliasing left-overs!</em></p>
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/nb-groom-dt-smooth-small-sigma2.mp4" autoplay muted loop controls style="width:100%"></p>
+
+<p><em>Gaussian blur with a larger sigma. Note a smooth surface.</em></p>
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/nb-groom-dt-smooth.mp4" autoplay muted loop controls style="width:100%"></p>
+
+<div class="admonition note">
+<p class="admonition-title">Caution when using Gaussian blur</p>
+<p>The <code>gaussianBlur</code> method could be use for blobby-like structures. However, for shapes with thin features and high curvature regions, the gaussian blurring method could impact the underlying geometrical features. For these shapes, topology-preserving smoothing is recommended. Topology-preserving smoothing is currently under developement and will be released soon.</p>
+</div>
+<h2 id="common-pre-processing-steps-for-meshes">Common Pre-Processing Steps for Meshes</h2>
+<h3 id="reflect-meshes">Reflect meshes</h3>
+<p>It is common in medical imaging data to have a left and right anatomy. To align and model all such shapes, we must reflect some meshes so that all are oriented the same.</p>
+<ul>
+<li><code>reflect</code>: reflects the mesh across the given axis (typically x-axis for anatomy)</li>
+</ul>
+<p>Here is an example of reflecting a mesh:</p>
+<div class="highlight"><pre><span></span><code><span class="n">shape_mesh</span> <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">Mesh</span><span class="p">(</span><span class="n">in_mesh_filename</span><span class="p">)</span>
+<span class="n">shape_mesh</span><span class="o">.</span><span class="n">reflect</span><span class="p">(</span><span class="n">sw</span><span class="o">.</span><span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">out_mesh_filename</span><span class="p">)</span>
+</code></pre></div>
+<p><img alt="Reflect mesh example" src="../img/workflow/reflect.png" /></p>
+<h3 id="meshes-to-volumes">Meshes to volumes</h3>
+<p>Meshes can be converted to binary segmentations if desired so that grooming can be done on segmentations and optimization on distance transforms. </p>
+<p>The steps to convert meshes to volumes are:</p>
+<ul>
+<li><code>toImage</code> convert the mesh to a signed distance transform</li>
+<li><code>binarize</code> (aka thresholding) to get a binary segmentation</li>
+</ul>
+<p>Example of turning a mesh to a segmentation:</p>
+<div class="highlight"><pre><span></span><code><span class="n">shape_mesh</span> <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">Mesh</span><span class="p">(</span><span class="n">in_mesh_filename</span><span class="p">)</span>
+<span class="n">shape_seg</span>  <span class="o">=</span> <span class="n">shape_mesh</span><span class="o">.</span><span class="n">toImage</span><span class="p">()</span>
+                       <span class="o">.</span><span class="n">binarize</span><span class="p">()</span>
+                       <span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">out_shape_filename</span><span class="p">)</span>
+</code></pre></div>
+<p><img alt="Mesh to volume example" src="../img/workflow/mesh2seg.png" /></p>
+<p>For list of commands, check out <a href="http://sciinstitute.github.io/ShapeWorks/tools/ShapeWorksCommands.html">ShapeWorks Commands</a></p>
+<h3 id="remesh">Remesh</h3>
+<p>Remeshing creates meshes with evenly spaced vertices. 
+- <code>remeshPercent</code> remeshes the mesh to have a given percent of the current number of vertices</p>
+<p><div class="highlight"><pre><span></span><code><span class="n">mesh</span><span class="o">.</span><span class="n">remeshPercent</span><span class="p">(</span><span class="n">percentage</span><span class="o">=</span><span class="mf">0.80</span><span class="p">,</span> <span class="n">adaptivity</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+</code></pre></div>
+<img alt="Remeshing" src="https://sci.utah.edu/~shapeworks/doc-resources/pngs/remeshing.png" /></p>
+<h3 id="aligning-meshes">Aligning meshes</h3>
+<p>Rigidly aligning a cohort of shapes entails removing differences across these shapes pertaining to global transformations, i.e., translation and rotation. This step requires a reference coordinate frame to align all shapes to, where one of the shapes can be selected as a reference.</p>
+<p>Hence, the shapes alignment pipeline includes the following steps:</p>
+<ul>
+<li><em>Reference shape selection:</em> One option for a reference is to select the shape that is closest to all other samples in the given cohort, i.e., the medoid shape. If shape instances are misaligned (i.e., do not share the same coordinate frame), translational and rotational differences should be factored out before reference selection.</li>
+<li>
+<p>Use the pymodule function <code>find_reference_mesh_index</code> that perform pairwise rigid registration using the iterative closest point method and selects the sample that is closest to all other samples after factoring out global transformation differences.
+  <!-- computes the mean shape, computes the distance to mean shape, select the shape sample that is closest to the mean shape and returns it's index.-->
+</p>
+</li>
+<li>
+<p><em>Rigid alignment:</em></p>
+</li>
+<li><code>createTransform</code>: compute the rigid transformation parameters that would align a segmentation 
+    to the reference shape</li>
+<li><code>applyTransform</code>: apply the rigid transformation to the segmentation and make it have the same cooridnate system as the reference </li>
+</ul>
+<p>Here is an example of performing reference selection and rigid alignment on a list of meshes:</p>
+<p><div class="highlight"><pre><span></span><code><span class="c1"># reference selection </span>
+<span class="n">ref_index</span> <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">find_reference_mesh_index</span><span class="p">(</span><span class="n">mesh_list</span><span class="p">)</span>
+<span class="n">ref_mesh</span> <span class="o">=</span> <span class="n">mesh_list</span><span class="p">[</span><span class="n">ref_index</span><span class="p">]</span>
+<span class="c1"># align all meshes in the list to the reference </span>
+<span class="k">for</span> <span class="n">mesh</span> <span class="ow">in</span> <span class="n">mesh_list</span><span class="p">:</span>
+    <span class="c1"># compute rigid transformation</span>
+    <span class="n">rigid_transform</span> <span class="o">=</span> <span class="n">mesh</span><span class="o">.</span><span class="n">createTransform</span><span class="p">(</span><span class="n">ref_mesh</span><span class="p">,</span> <span class="n">sw</span><span class="o">.</span><span class="n">Mesh</span><span class="o">.</span><span class="n">AlignmentType</span><span class="o">.</span><span class="n">Rigid</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+    <span class="c1"># apply rigid transform</span>
+    <span class="n">mesh</span><span class="o">.</span><span class="n">applyTransform</span><span class="p">(</span><span class="n">rigid_transform</span><span class="p">)</span>
+</code></pre></div>
+<img alt="Mesh alignment" src="https://sci.utah.edu/~shapeworks/doc-resources/pngs/mesh_alignment.png" /></p>
+<h3 id="extract-shared-boundary">Extract Shared Boundary</h3>
+<p>In this step, we ingest the two original shapes and the output consists of three new shapes, two of which correspond to the original shapes and one for the shared boundary. Let us designate the original meshes as Lo and Ro. Then:</p>
+<ol>
+<li>Find all the triangles in Lo that are close to Ro, and construct a mesh with these triangles called Ls. A triangle with vertices v0, v1 and v2 is considered close to a mesh if the shortest euclidean distance to the mesh for all the three vertices is below a small threshold. We similarly find all the triangles in Ro that are close to Lo and designate this mesh as Rs</li>
+<li>Find the remainder of the mesh in Lo after removing the triangles in Ls and designate this as Lr. Similarly, we find the remainder of the mesh in Ro after removing the triangles in Rs and designate this as Rr.</li>
+<li>Arbitrary designed Rs as the shared surface M.</li>
+<li>Snap all the points on the boundary loop of Lr to the boundary loop of M</li>
+<li>Return three new shapes Lr, M and Rr</li>
+</ol>
+<div class="highlight"><pre><span></span><code> <span class="n">extracted_l</span><span class="p">,</span><span class="n">extracted_r</span><span class="p">,</span><span class="n">extracted_s</span> <span class="o">=</span> 
+ <span class="n">sw</span><span class="o">.</span><span class="n">MeshUtils</span><span class="o">.</span><span class="n">sharedBoundaryExtractor</span><span class="p">(</span><span class="n">mesh_l</span><span class="p">,</span><span class="n">mesh_r</span><span class="p">,</span><span class="n">tol</span><span class="p">)</span>
+</code></pre></div>
+<h4 id="input-shapes-with-shared-surface">Input shapes with shared surface</h4>
+<p><img alt="Shared Boundary Input" src="../img/workflow/peanut_shared_input.png" /></p>
+<h4 id="output-extracted-surfaces">Output extracted surfaces</h4>
+<p><img alt="Shared Boundary Output" src="../img/workflow/peanut_shared_output.png" /></p>
+<h3 id="extract-contour">Extract Contour</h3>
+<p>The boundary loop of the shared surface M obtained using the <code>sharedBoundaryExtractor</code> is computed. 
+<div class="highlight"><pre><span></span><code><span class="n">output_contour</span> <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">MeshUtils</span><span class="o">.</span><span class="n">boundaryLoopExtractor</span><span class="p">(</span><span class="n">extracted_shared_meshes</span><span class="p">)</span>
+</code></pre></div>
+<img alt="Shared Surface Contour" src="../img/workflow/peanut_shared_contour.png" /></p>
+<h3 id="smoothing">Smoothing</h3>
+<p>Laplacian Smoothing allows you to reduce noise on a mesh’s surface with minimal changes to its shape.The effect is to "relax" the mesh, making the cells better shaped and the vertices more evenly distributed.
+<div class="highlight"><pre><span></span><code><span class="n">mesh</span><span class="o">.</span><span class="n">smooth</span><span class="p">(</span><span class="n">iterations</span><span class="p">,</span> <span class="n">relaxation</span><span class="p">)</span>
+</code></pre></div>
+<img alt="Mesh Smoothing" src="../img/workflow/femur_smooth.png" /></p>
+
+              
+            </article>
+          </div>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    <nav class="md-footer__inner md-grid" aria-label="Footer">
+      
+        
+        <a href="../users/papers.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: Revelant Papers" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              Revelant Papers
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="optimize.html" class="md-footer__link md-footer__link--next" aria-label="Next: How to Optimize Your Shape Model?" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              How to Optimize Your Shape Model?
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright © 1998 - 2022 Scientific Computing and Imaging Institute. All rights reserved. This project is supported by the National Institutes of Health under grant numbers NIBIB-U24EB029011, NIAMS-R01AR076120, NHLBI-R01HL135568, NIBIB-R01EB016701, and NIGMS-P41GM103545. Software maintenance and support are provided within the funding period.
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.5e67fbfe.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.c44cc438.min.js"></script>
+      
+        <script src="../assets/mathjaxhelper.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
 </html>
