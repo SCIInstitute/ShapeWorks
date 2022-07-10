@@ -21,7 +21,10 @@ class LDS_Analysis:
                                                 correspondences_dir=f'{SHAPE_MODELS_DIR}/{self.model_name}_particles/',
                                                 T=T, d=d, M=M)
         self.train_test_split_ratio = train_test_split_ratio
-        self.scaling_obj = MinMaxScaler()
+        if scaling:
+            self.scaling_obj = MinMaxScaler()
+        else:
+            self.scaling_obj = None
         if scaling:
             self.scaled_particles_data = self.scaling_obj.fit_transform(self.particles_data.reshape(-1, self.particles_data.shape[-1])).reshape(self.particles_data.shape)
         else:
@@ -33,8 +36,10 @@ class LDS_Analysis:
     
     def build_lds_model(self, em_iterations, T=25, d=3, M=256, L=32, plot_likelihood=True):
         P = d * M
-        initial_A = repeat(T-1, np.eye(L))
-        initial_W = repeat(T, np.random.normal(0.0, 1.0, (P, L)))
+        # initial_A = repeat(T-1, np.eye(L))
+        print('using normal weightss')
+        initial_A = repeat(T-1, np.random.laplace(0, 0.00001, (L, L)))
+        initial_W = repeat(T, np.random.laplace(0, 0.00001, (P, L)))
         lds = LDS(n_dim_obs=P, n_dim_state=L,
                         transition_matrices = initial_A, 
                         observation_matrices = initial_W,
@@ -81,6 +86,10 @@ class LDS_Analysis:
         test_particles_mask = np.zeros(self.test_data.shape)
         self.reconstructed_results = self.lds_model.reconstruct(observations=test_particles_tensor,
                                         observations_mask=test_particles_mask)
+        if self.scaling_obj is not None:
+            reconst_np = self.reconstructed_results.to('cpu').numpy()
+            reconstructed_results_np_scaled = self.scaling_obj.fit_transform(reconst_np.reshape(-1, reconst_np.shape[-1])).reshape(reconst_np.shape)
+            self.reconstructed_results = torch.from_numpy(reconstructed_results_np_scaled).double().to(DEVICE)
         print(f'Reconstruction done - reconstructed_results size = {self.reconstructed_results.size()}')
 
         mse_vals = torch.mean(((test_particles_tensor-self.reconstructed_results)**2), 2)

@@ -7,6 +7,7 @@ from npd import nearestPD, isPD
 from Constants import DEVICE
 
 VERBOSE=1
+THRESHOLD = 1e-4
 
 def _last_dims(X, t, ndims=2):
     if len(X.size()) == ndims + 1:
@@ -633,6 +634,13 @@ class LDS(object):
                 (self.transition_matrices,  self.observation_matrices, self.transition_offsets, self.observation_offsets,
                  self.transition_covariance, self.observation_covariance, self.initial_state_mean, self.initial_state_covariance) = (_time_varying_em(X, self.transition_offsets,
                                                                             self.observation_offsets, smoothed_state_means, smoothed_state_covariances, sigma_pair_smooth, given=given, observations_mask=observations_mask))
+        
+        # self.transition_covariance = self.transition_covariance * THRESHOLD
+        # self.observation_covariance = self.observation_covariance * THRESHOLD
+        # self.initial_state_covariance = self.initial_state_covariance * THRESHOLD
+        print(f'Min values of covs: transition_covariance= {torch.min(self.transition_covariance)} \n observation_covariance = {torch.min(self.observation_covariance)} initial_state_covariance= {torch.min(self.initial_state_covariance)}')
+        print(f'Max values of covs: transition_covariance= {torch.max(self.transition_covariance)} \n observation_covariance = {torch.max(self.observation_covariance)} initial_state_covariance= {torch.max(self.initial_state_covariance)}')
+        
         return self
 
     def loglikelihood(self, X, observations_mask):
