@@ -69,10 +69,10 @@ class Mesh {
                  double backSearchRadius = 0);
 
   /// applies laplacian smoothing
-  Mesh& smooth(int iterations = 0, double relaxation = 0.0);
+  Mesh& smooth(int iterations = 0, double relaxation = 0.0, bool edgeSmoothening = 0,double edgeAngle = 180);
 
   /// applies vtk windowed sinc smoothing
-  Mesh& smoothSinc(int iterations = 0, double passband = 0.0);
+  Mesh& smoothSinc(int iterations = 2, double passband = 0.0, bool edgeSmoothening = 0,double edgeAngle = 180);
 
   /// applies remeshing using approximated centroidal voronoi diagrams for a given number of vertices and adaptivity
   Mesh& remesh(int numVertices, double adaptivity = 1.0);

@@ -274,7 +274,7 @@ Mesh& Mesh::coverage(const Mesh& otherMesh, bool allowBackIntersections, double 
   return *this;
 }
 
-Mesh& Mesh::smooth(int iterations, double relaxation) {
+Mesh& Mesh::smooth(int iterations, double relaxation, bool edgeSmoothening, double edgeAngle) {
   auto smoother = vtkSmartPointer<vtkSmoothPolyDataFilter>::New();
 
   smoother->SetInputData(this->poly_data_);
@@ -283,6 +283,11 @@ Mesh& Mesh::smooth(int iterations, double relaxation) {
     smoother->SetRelaxationFactor(relaxation);
     smoother->FeatureEdgeSmoothingOff();
     smoother->BoundarySmoothingOn();
+    if(edgeSmoothening){
+    smoother->SetEdgeAngle(edgeAngle);  
+    }
+    
+
   }
   smoother->Update();
   this->poly_data_ = smoother->GetOutput();
@@ -294,13 +299,18 @@ Mesh& Mesh::smooth(int iterations, double relaxation) {
   return *this;
 }
 
-Mesh& Mesh::smoothSinc(int iterations, double passband) {
+Mesh& Mesh::smoothSinc(int iterations, double passband,bool edgeSmoothening, double edgeAngle) {
   auto smoother = vtkSmartPointer<vtkWindowedSincPolyDataFilter>::New();
   smoother->SetInputData(this->poly_data_);
   // minimum of 2.  See docs of vtkWindowedSincPolyDataFilter for explanation
   iterations = std::max<int>(iterations, 2);
   smoother->SetNumberOfIterations(iterations);
+  smoother->BoundarySmoothingOn();
   smoother->SetPassBand(passband);
+  if(edgeSmoothening){
+    smoother->SetEdgeAngle(edgeAngle);  
+    }
+  smoother->NonManifoldSmoothingOn();
   smoother->Update();
   this->poly_data_ = smoother->GetOutput();
 

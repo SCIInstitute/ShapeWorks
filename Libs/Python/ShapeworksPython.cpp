@@ -951,12 +951,12 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def("smooth",
        &Mesh::smooth,
        "applies laplacian smoothing",
-       "iterations"_a=0, "relaxation"_a=0.0)
+       "iterations"_a=0, "relaxation"_a=0.0, "edgeSmoothening"_a=0, "edgeAngle"_a=180)
 
   .def("smoothSinc",
        &Mesh::smoothSinc,
        "applies windowed sinc smoothing",
-       "iterations"_a=0, "passband"_a=0.0)
+       "iterations"_a=2, "passband"_a=0.0, "edgeSmoothening"_a=0, "edgeAngle"_a=180)
 
   .def("remesh",
        &Mesh::remesh,
