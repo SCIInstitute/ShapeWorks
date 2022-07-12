@@ -32,6 +32,7 @@
 #include <vtkClipPolyData.h>
 #include <vtkDijkstraGraphGeodesicPath.h>
 #include <vtkDoubleArray.h>
+#include <vtkFeatureEdges.h>
 #include <vtkFillHolesFilter.h>
 #include <vtkGenericCell.h>
 #include <vtkImageData.h>
@@ -48,6 +49,7 @@
 #include <vtkPlaneCollection.h>
 #include <vtkPointData.h>
 #include <vtkPointLocator.h>
+#include <vtkPolyDataConnectivityFilter.h>
 #include <vtkPolyDataNormals.h>
 #include <vtkPolyDataReader.h>
 #include <vtkPolyDataToImageStencil.h>
@@ -479,6 +481,132 @@ Mesh& Mesh::fixElement() {
 
   this->invalidateLocators();
   return *this;
+}
+
+Mesh& Mesh::fixNonManifold() {
+  std::cerr << "attempt to fix non-manifold\n";
+  auto features = vtkSmartPointer<vtkFeatureEdges>::New();
+  features->SetInputData(this->poly_data_);
+  features->BoundaryEdgesOff();
+  features->FeatureEdgesOff();
+  features->NonManifoldEdgesOn();
+  features->ManifoldEdgesOff();
+  features->Update();
+
+  vtkSmartPointer<vtkPolyData> nonmanifold = features->GetOutput();
+  std::cerr << "Number of non-manifold points: " << nonmanifold->GetNumberOfPoints() << "\n";
+  std::cerr << "Number of non-manifold cells: " << nonmanifold->GetNumberOfCells() << "\n";
+
+  if (nonmanifold->GetNumberOfPoints() == 0 && nonmanifold->GetNumberOfCells() == 0) {
+    return *this;
+  }
+
+  std::vector<int> remove;
+  for (int j = 0; j < poly_data_->GetNumberOfPoints(); j++) {
+    double p2[3];
+    poly_data_->GetPoint(j, p2);
+    for (int i = 0; i < nonmanifold->GetNumberOfPoints(); i++) {
+      double p[3];
+      nonmanifold->GetPoint(i, p);
+      if (p[0] == p2[0] && p[1] == p2[1] && p[2] == p2[2]) {
+        remove.push_back(j);
+      }
+    }
+  }
+  std::cerr << "Removing " << remove.size() << " non-manifold vertices\n";
+
+  vtkSmartPointer<vtkPolyData> new_poly_data = vtkSmartPointer<vtkPolyData>::New();
+  vtkSmartPointer<vtkPoints> vtk_pts = vtkSmartPointer<vtkPoints>::New();
+  vtkSmartPointer<vtkCellArray> vtk_triangles = vtkSmartPointer<vtkCellArray>::New();
+  for (int i = 0; i < poly_data_->GetNumberOfCells(); i++) {
+    vtkSmartPointer<vtkIdList> list = vtkIdList::New();
+    poly_data_->GetCellPoints(i, list);
+    bool match = false;
+    for (int j = 0; j < list->GetNumberOfIds(); j++) {
+      int id = list->GetId(j);
+      for (unsigned int k = 0; k < remove.size(); k++) {
+        if (id == remove[k]) {
+          match = true;
+        }
+      }
+    }
+    if (match) {
+      poly_data_->DeleteCell(i);
+    }
+  }
+
+  poly_data_->RemoveDeletedCells();
+
+  //  fillHoles();
+
+  features = vtkSmartPointer<vtkFeatureEdges>::New();
+  features->SetInputData(poly_data_);
+  features->NonManifoldEdgesOn();
+  features->BoundaryEdgesOff();
+  features->FeatureEdgesOff();
+  features->Update();
+  nonmanifold = features->GetOutput();
+  std::cerr << "After: number of non-manifold points: " << nonmanifold->GetNumberOfPoints() << "\n";
+  std::cerr << "After: number of non-manifold cells: " << nonmanifold->GetNumberOfCells() << "\n";
+
+  std::cerr << "Before triangle filter:\n";
+  detectNonManifold();
+
+  vtkSmartPointer<vtkTriangleFilter> triangle_filter = vtkSmartPointer<vtkTriangleFilter>::New();
+  triangle_filter->SetInputData(poly_data_);
+  triangle_filter->Update();
+  poly_data_ = triangle_filter->GetOutput();
+
+  std::cerr << "After triangle filter: ";
+  detectTriangular();
+
+  std::cerr << "Before connect filter:\n";
+  detectNonManifold();
+
+  auto connectivityFilter = vtkSmartPointer<vtkPolyDataConnectivityFilter>::New();
+  connectivityFilter->SetExtractionModeToLargestRegion();
+  connectivityFilter->SetInputData(poly_data_);
+  connectivityFilter->Update();
+  this->poly_data_ = connectivityFilter->GetOutput();
+
+  std::cerr << "done with fixing:\n";
+  detectNonManifold();
+
+  std::cerr << "At end of fix non-manifold: ";
+  detectTriangular();
+
+  this->invalidateLocators();
+  return *this;
+}
+
+bool Mesh::detectNonManifold() {
+  auto features = vtkSmartPointer<vtkFeatureEdges>::New();
+  features->SetInputData(this->poly_data_);
+  features->BoundaryEdgesOff();
+  features->FeatureEdgesOff();
+  features->NonManifoldEdgesOn();
+  features->ManifoldEdgesOff();
+  features->Update();
+
+  vtkSmartPointer<vtkPolyData> nonmanifold = features->GetOutput();
+  std::cerr << "Detect Number of non-manifold points: " << nonmanifold->GetNumberOfPoints() << "\n";
+  std::cerr << "Detect Number of non-manifold cells: " << nonmanifold->GetNumberOfCells() << "\n";
+  if (nonmanifold->GetNumberOfPoints() != 0 || nonmanifold->GetNumberOfCells() != 0) {
+    return true;
+  }
+  return false;
+}
+
+bool Mesh::detectTriangular() {
+  for (vtkIdType i = 0; i < poly_data_->GetNumberOfCells(); i++) {
+    vtkCell* cell = poly_data_->GetCell(i);
+    if (cell->GetNumberOfPoints() != 3) {
+      std::cerr << "Warning: non-triangular cell found (id = " << i << ", n = " << cell->GetNumberOfPoints() << ")\n";
+      return false;
+    }
+  }
+  std::cerr << "Mesh is fully triangular\n";
+  return true;
 }
 
 std::vector<Field> Mesh::distance(const Mesh& target, const DistanceMethod method) const {

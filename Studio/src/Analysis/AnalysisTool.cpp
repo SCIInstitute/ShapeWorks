@@ -1002,7 +1002,7 @@ void AnalysisTool::update_difference_particles() {
   }
 
   // start with a copy from the first shape so that the sizes of domains are already filled out
-  StudioParticles target = session_->get_shapes()[1]->get_particles();
+  StudioParticles target = session_->get_shapes()[0]->get_particles();
   auto all_particles = target.get_combined_global_particles();
 
   Eigen::VectorXd mean = stats_.Mean();
@@ -1110,6 +1110,7 @@ void AnalysisTool::initialize_mesh_warper() {
       STUDIO_LOG_ERROR("Unable to set reference mesh, stats returned invalid median index");
       return;
     }
+    std::cerr << "median: " << median << "\n";
     QSharedPointer<Shape> median_shape = session_->get_shapes()[median];
 
     auto mesh_group = median_shape->get_groomed_meshes(true);
@@ -1129,7 +1130,9 @@ void AnalysisTool::initialize_mesh_warper() {
       Mesh mesh(poly_data);
       median_shape->get_constraints(i).clipMesh(mesh);
 
+      //std::cerr << "domain: " << i << "\n";
       session_->get_mesh_manager()->get_mesh_warper(i)->set_reference_mesh(mesh.getVTKMesh(), points);
+      //session_->get_mesh_manager()->get_mesh_warper(i)->generate_warp();
     }
   }
 }

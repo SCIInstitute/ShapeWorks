@@ -114,6 +114,15 @@ class Mesh {
   /// fix element winding of mesh
   Mesh& fixElement();
 
+  /// Attempt to fix non-manifold edges
+  Mesh& fixNonManifold();
+
+  /// Detect if mesh contain non-manifold edges
+  bool detectNonManifold();
+
+  /// Detect if mesh is triangular;
+  bool detectTriangular();
+
   /// Computes distance from each vertex to closest cell or point in target
   /// mesh, specified as PointToCell (default) or PointToPoint. Returns Fields
   /// containing distance to target and ids of the associated cells or points.
