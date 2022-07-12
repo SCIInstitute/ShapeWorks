@@ -1,20 +1,24 @@
 from Constants import *
 import subprocess
 import shapeworks as sw
-import matplotlib.pyplot as plt
 import math
+import json
+from pathlib import Path
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+plt.style.use('plot_style.txt')
 
-def reconstruct_meshes_command(input_meshes_files, local_point_files, world_point_files, out_dir):
-        reconstructed_meshes_dir = f"{out_dir}/reconstructed_meshes/"
+def reconstruct_meshes_command(input_meshes_files, local_point_files, out_dir):
+        reconstructed_meshes_dir = f"{out_dir}/{RECONSTRUCTED_DIR_NAME}/"
         if not os.path.exists(reconstructed_meshes_dir):
             os.makedirs(reconstructed_meshes_dir)
         existing_reconst_meshes, _ = sort_files_from_dir(files_dir=reconstructed_meshes_dir)
-        median_shape_idx  = compute_median_shape(world_point_files=local_point_files)
         if len(existing_reconst_meshes) != 0:
             print(f'---------- Reconstructed Meshes Exist Already, Returning it ----------')
-            return existing_reconst_meshes, median_shape_idx
+            return existing_reconst_meshes
         else:
             print('---------- Reconstructed Mesh Files not found, Reconstructing now -----------')
+        median_shape_idx  = compute_median_shape(world_point_files=local_point_files)
         execCommand = ["shapeworks", "warp-mesh", "--reference_mesh", input_meshes_files[median_shape_idx], 
                     "--reference_points", local_point_files[median_shape_idx], "--save_dir", reconstructed_meshes_dir, "--target_points" ]
         for fl in local_point_files:
@@ -25,7 +29,7 @@ def reconstruct_meshes_command(input_meshes_files, local_point_files, world_poin
         reconstructed_mesh_files, _ = sort_files_from_dir(files_dir=reconstructed_meshes_dir)
         if len(reconstructed_mesh_files) == 0:
             raise ValueError('Mesh Reconstruction not done')
-        return reconstructed_mesh_files, 
+        return reconstructed_mesh_files
 
     
 def compute_median_shape( world_point_files):
@@ -58,7 +62,7 @@ def build_shape_matrix(world_point_files):
 
 
 
-def find_norm(self, shape_matrix, a, b):
+def find_norm(shape_matrix, a, b):
         """
             Utility function to compute norm between two shape vectors 'a' and 'b' of the cohort
         """
@@ -68,13 +72,7 @@ def find_norm(self, shape_matrix, a, b):
         return norm
 
 
-def compute_surface_surface_distance_metric(groomed_mesh_files, local_point_files, world_point_files, out_dir):
-        reconstructed_mesh_files, mean_idx = reconstruct_meshes_command(input_meshes_files=groomed_mesh_files, local_point_files=local_point_files, world_point_files=world_point_files, out_dir=out_dir)
-        reconstruct_meshes_with_distance_dir = f"{out_dir}/reconstructed_meshes_with_distance/"
-        if not os.path.exists(reconstruct_meshes_with_distance_dir):
-            os.makedirs(reconstruct_meshes_with_distance_dir)
-        print('-----Mesh Warping done, Now computing Surface-Surface distance metric-----')
-
+def compute_distance(groomed_mesh_files, reconstructed_mesh_files):
         errors = []
         idx = 0
         for groomed_mesh_file, reconst_mesh_file in zip(groomed_mesh_files, reconstructed_mesh_files):
@@ -84,24 +82,101 @@ def compute_surface_surface_distance_metric(groomed_mesh_files, local_point_file
                 errors = np.ones(shape=(len(groomed_mesh_files), len(reconst_mesh.points()))) * np.NaN
             dists_and_indexes = reconst_mesh.distance(target=groomed_mesh, method=sw.Mesh.DistanceMethod.PointToCell)
             distances = np.array(dists_and_indexes[0])
-            fn = Path(reconst_mesh_file).stem
-            out_file_name = f"{reconstruct_meshes_with_distance_dir}/{fn}.vtk"
-            reconst_mesh.setField('distance', distances, sw.Mesh.Point)
-            reconst_mesh.write(out_file_name)
             errors[idx, :] = distances
             idx += 1
-
-        print('---------Reconstructed meshes written with distance----------')
-        print('Global error (Reconstructed vs. groomed) mean={} rms={} max={}'.format(np.mean(errors), np.sqrt(np.mean(errors**2)), np.max(errors)))
-        mean_model_path = reconstructed_mesh_files[mean_idx]
-        mean_mesh = sw.Mesh(mean_model_path)
-        mean_mesh.setField('mean_error_map', np.mean(errors, axis=0), sw.Mesh.Point)
-        mean_mesh.setField('rms_error_map', np.sqrt(np.mean(errors**2, axis=0)), sw.Mesh.Point)
-        mean_mesh.setField('max_error_map', np.max(errors, axis=0), sw.Mesh.Point)
-        mean_with_dist_fn = f"{out_dir}/mean_mesh_with_distance.vtk"
-        mean_mesh.write(mean_with_dist_fn)
-        print(f"---------- Reconstructed mesh written with all error maps at {mean_model_path} -----------")
-        mean_error = np.mean(errors, axis=0)
+        mean_error = np.mean(errors, axis=1)
+        print(f'mean error shape= {mean_error.shape}')
         return mean_error
 
+def create_project_file_for_time_point(time_point, model_name, mesh_files, particle_files):
+    print(f'Creating Project for model {model_name} and t = {time_point}')
+    project_location = SHAPE_MODELS_DIR
+    project_file_path = f'{SHAPE_MODELS_DIR}/{model_name}_T_{time_point}.xlsx'
+    project_subjects = []
+    pre = True
+    for idx, mesh_file in enumerate(mesh_files):
+        subject = sw.Subject()
+        subject.set_number_of_domains(1)
+        rel_mesh_files = sw.utils.get_relative_paths([mesh_file], project_location)
+        rel_groom_files = sw.utils.get_relative_paths([mesh_file], project_location)
+        rel_local_particle_files = sw.utils.get_relative_paths([particle_files[idx]], project_location)
+        rel_world_particle_files = sw.utils.get_relative_paths([particle_files[idx]], project_location)
+        if pre:
+            group_val = 'pre'
+            pre = False
+        else:
+            group_val = 'post'
+            pre = True
+        sub_group_dict = {"group_type": group_val}
+        subject.set_group_values(sub_group_dict)
+        subject.set_groomed_filenames(rel_groom_files)
+        subject.set_original_filenames(rel_mesh_files)
+        subject.set_world_particle_filenames(rel_world_particle_files)
+        subject.set_local_particle_filenames(rel_local_particle_files)
+        project_subjects.append(subject)
+    shapeworks_project = sw.Project()
+    shapeworks_project.set_subjects(project_subjects)
+    shapeworks_project.save(project_file_path)
+     
+def reconstruction_error_from_shape_model(shapes_desc_fn=f'{PROJECT_DIR}/description.json'):
+    """
+        Model A: Shape Model generated from Image Registration
+        Model B: Proposed Shape Model with Cross-Entropy 
+    """
+    with open(shapes_desc_fn) as json_file:
+        shapes_desc_file = json.load(json_file)
+    model_A_meshes_dir = f'{PROJECT_DIR}/{MODEL_A}_meshes/'
+    model_A_particles_dir = f'{SHAPE_MODELS_DIR}/{MODEL_A}_particles/'
+    model_A_errors = []
+    model_B_meshes_dir = f'{PROJECT_DIR}/{MODEL_B}_meshes/'
+    model_B_particles_dir = f'{SHAPE_MODELS_DIR}/{MODEL_B}_particles/'
+    model_B_errors = []
 
+    model_A_mesh_files_all, _ = sort_files_from_dir(files_dir=model_A_meshes_dir, mid_sub_string='.shift', ext='.vtk' ,exclude_keyword='base')
+    model_A_local_point_files, _ = sort_files_from_dir(files_dir=model_A_particles_dir, mid_sub_string='_groomed_local', ext='.particles', exclude_keyword='base')
+
+    model_B_mesh_files_all, _ = sort_files_from_dir(files_dir=model_B_meshes_dir, ext='.vtk', exclude_keyword='base')
+    model_B_local_point_files, _ = sort_files_from_dir(files_dir=model_B_particles_dir, mid_sub_string='_local', ext='.particles')
+    print(f'{len(model_A_mesh_files_all)} {len(model_B_mesh_files_all)} {len(model_A_local_point_files)} {len(model_B_local_point_files)} ')
+    assert len(model_A_mesh_files_all) == len(model_B_mesh_files_all)
+    assert len(model_A_local_point_files) == len(model_B_local_point_files)
+
+    print('Reconstructing meshes')
+    _ = reconstruct_meshes_command(input_meshes_files=model_A_mesh_files_all, local_point_files=model_A_local_point_files, out_dir=model_A_particles_dir)
+    _ = reconstruct_meshes_command(input_meshes_files=model_B_mesh_files_all, local_point_files=model_B_local_point_files, out_dir=model_B_particles_dir)
+
+
+    for time_point in range(NUM_TIME_POINTS):
+        print(f'-------Time Point = {time_point}--------')
+        model_A_groomed_files , model_B_groomed_files, model_A_reconstructed_files, model_B_reconstructed_files = [], [], [], []
+        model_A_particle_files, model_B_particle_files = [], []
+        for subject in shapes_desc_file['ALL_SUBJECTS']:
+            pre_fn = Path(shapes_desc_file[subject]['PRE_ABLATION_TIME_POINTS'][time_point]).stem
+            post_fn = Path(shapes_desc_file[subject]['POST_ABLATION_TIME_POINTS'][time_point]).stem
+            model_A_groomed_files.append(f'{model_A_meshes_dir}/{pre_fn}.shift.vtk') # Model A meshes are saved as .shift
+            model_A_groomed_files.append(f'{model_A_meshes_dir}/{post_fn}.shift.vtk')
+            model_A_reconstructed_files.append(f'{model_A_particles_dir}/{RECONSTRUCTED_DIR_NAME}/{pre_fn}_groomed_local.vtk')
+            model_A_reconstructed_files.append(f'{model_A_particles_dir}/{RECONSTRUCTED_DIR_NAME}/{post_fn}_groomed_local.vtk')
+            model_A_particle_files.append(f'{model_A_particles_dir}/{pre_fn}_groomed_local.particles')
+            model_A_particle_files.append(f'{model_A_particles_dir}/{post_fn}_groomed_local.particles')
+
+            model_B_groomed_files.append(f'{model_B_meshes_dir}/{pre_fn}.vtk')
+            model_B_groomed_files.append(f'{model_B_meshes_dir}/{post_fn}.vtk')
+            model_B_reconstructed_files.append(f'{model_B_particles_dir}/{RECONSTRUCTED_DIR_NAME}/{pre_fn}_local.vtk')
+            model_B_reconstructed_files.append(f'{model_B_particles_dir}/{RECONSTRUCTED_DIR_NAME}/{post_fn}_local.vtk')
+            model_B_particle_files.append(f'{model_B_particles_dir}/{pre_fn}_local.particles')
+            model_B_particle_files.append(f'{model_B_particles_dir}/{post_fn}_local.particles')
+
+        create_project_file_for_time_point(time_point=time_point, model_name=MODEL_A, mesh_files=model_A_groomed_files, particle_files=model_A_particle_files)
+        create_project_file_for_time_point(time_point=time_point, model_name=MODEL_B, mesh_files=model_B_groomed_files, particle_files=model_B_particle_files)
+        model_A_errors.append(compute_distance(groomed_mesh_files=model_A_groomed_files, reconstructed_mesh_files=model_A_reconstructed_files))
+        model_B_errors.append(compute_distance(groomed_mesh_files=model_B_groomed_files, reconstructed_mesh_files=model_B_reconstructed_files))
+
+
+    model_A_errors = np.array(model_A_errors)
+    model_B_errors = np.array(model_B_errors)
+    np.savetxt(f'{PROJECT_DIR}/{MODEL_A}_reconst_error.txt', model_A_errors)
+    np.savetxt(f'{PROJECT_DIR}/{MODEL_B}_reconst_error.txt', model_B_errors)
+    print('Results Saved')
+
+reconstruction_error_from_shape_model()

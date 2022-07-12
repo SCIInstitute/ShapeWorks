@@ -9,7 +9,8 @@ POST_ABLATION = 'post'
 JOINT = ''
 MODEL_TYPE = JOINT
 NUM_TIME_POINTS = 25
-DEVICE = 'cuda:1'
+DEVICE = 'cuda:0'
+SEED_VAL = 37
 
 # Define dimensions
 # N = 28 # number of samples
@@ -20,8 +21,15 @@ DEVICE = 'cuda:1'
 # T = 25   # number of time points
 
 # Set up Paths here
-PROJECT_DIR = '/home/sci/nawazish.khan/SSM-4D/'
-SHAPE_MODELS_DIR = f'{PROJECT_DIR}shape_models/'
+# PROJECT_DIR = '/home/sci/nawazish.khan/SSM-4D/'
+# SHAPE_MODELS_DIR = f'{PROJECT_DIR}shape_models/'
+PROJECT_DIR = '/home/sci/nawazish.khan/Public/SSM-4D/SSM-4D/'
+SHAPE_MODELS_DIR = f'{PROJECT_DIR}final_shape_models/'
+MODEL_A = 'model_A'
+MODEL_B = 'model_B'
+RECONSTRUCTED_DIR_NAME = 'reconstructed_meshes'
+# Model A: Shape Model generated from Image Registration
+# Model B: Proposed Shape Model with Cross-Entropy 
 
 
 DEFAULT_OPT_PARAMS = {
@@ -52,10 +60,17 @@ def make_dirs(dirs):
         if not os.path.exists(dir):
             os.makedirs(dir)
 
-def sort_files_from_dir(files_dir, file_prefix='', mid_sub_string='', file_postfix='', ext='.vtk'):
+def sort_files_from_dir(files_dir, file_prefix='', mid_sub_string='', file_postfix='', ext='.vtk', exclude_keyword=None):
     loaded_files_path = (glob.glob(f'{files_dir}/{file_prefix}*{mid_sub_string}*{file_postfix}{ext}'))
     sorted_files_path = sorted(loaded_files_path, key = lambda x : os.path.splitext(os.path.basename(x))[0])
     sorted_files_name = [Path(x).stem for x in sorted_files_path]
+    if exclude_keyword is not None:
+        for fp in sorted_files_path:
+            if exclude_keyword in fp:
+                sorted_files_path.remove(fp)
+        for fn in sorted_files_name:
+            if exclude_keyword in fn:
+                sorted_files_name.remove(fn)
     return sorted_files_path, sorted_files_name
 
 def build_shapes_info_json(meshes_dir):
@@ -84,26 +99,31 @@ def build_shapes_info_json(meshes_dir):
     return shapes_info
 
 
-def load_correspondences(shapes_desc_file, correspondences_dir, T=25, d=3, M=256):
+def load_correspondences(shapes_desc_file, correspondences_dir, T=25, d=3, M=256, baseline_model=False):
     with open(shapes_desc_file) as json_file:
         shapes_desc_file = json.load(json_file)
     num_subjects = len(shapes_desc_file['ALL_SUBJECTS']) * 2 # PRE + POST for each patient
     corres_data = np.zeros((num_subjects, T, d*M))
     n = 0
+    suffx = ''
+    particle_system_type = 'world'
+    if baseline_model:
+        suffx = '_groomed'
+
     for subject in shapes_desc_file['ALL_SUBJECTS']:
         t = 0
         for shape_path in shapes_desc_file[subject]['PRE_ABLATION_TIME_POINTS']:
             sub_name = Path(shape_path).stem
-            part_file_path = f'{correspondences_dir}/{sub_name}_local.particles'
+            part_file_path = f'{correspondences_dir}/{sub_name}{suffx}_{particle_system_type}.particles'
             particles = np.loadtxt(part_file_path).flatten()
             corres_data[n][t] = particles
             t += 1
         assert t == T
         n += 1
         t = 0
-        for shape_path in shapes_desc_file[subject]['PRE_ABLATION_TIME_POINTS']:
+        for shape_path in shapes_desc_file[subject]['POST_ABLATION_TIME_POINTS']:
             sub_name = Path(shape_path).stem
-            part_file_path = f'{correspondences_dir}/{sub_name}_local.particles'
+            part_file_path = f'{correspondences_dir}/{sub_name}{suffx}_{particle_system_type}.particles'
             particles = np.loadtxt(part_file_path).flatten()
             corres_data[n][t] = particles
             t += 1
