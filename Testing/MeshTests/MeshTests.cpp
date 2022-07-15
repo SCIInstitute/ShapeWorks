@@ -744,11 +744,6 @@ TEST(MeshTests, warpTest4) {
 }
 
 TEST(MeshTests, warpTest5) {
-  mesh_warp_test("/mesh_warp/lv_shared1.vtk", "/mesh_warp/lv_shared1.particles", "/mesh_warp/lv_shared1.particles",
-                 "/mesh_warp/lv_shared1_baseline.vtk");
-}
-
-TEST(MeshTests, warpTest6) {
   mesh_warp_test("/mesh_warp/lv_shared2.vtk", "/mesh_warp/lv_shared2.particles", "/mesh_warp/lv_shared2.particles",
                  "/mesh_warp/lv_shared2_baseline.vtk");
 }
