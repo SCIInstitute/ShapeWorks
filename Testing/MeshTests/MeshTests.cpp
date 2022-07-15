@@ -718,6 +718,7 @@ void mesh_warp_test(std::string ref_mesh, std::string ref_particles, std::string
   ASSERT_TRUE(warper.get_warp_available());
 
   Mesh output = warper.build_mesh(movingPoints);
+  output.write("/tmp/baseline.vtk");
   ASSERT_TRUE(output == baseline);
 }
 
@@ -735,6 +736,21 @@ TEST(MeshTests, warpTest3) {
   // because it demonstrated a crash in the mesh warping code
   mesh_warp_test("/mesh_warp/mesh_warp3.ply", "/mesh_warp/mesh_warp3.particles", "/mesh_warp/mesh_warp3b.particles",
                  "/mesh_warp/mesh_warp3_baseline.vtk");
+}
+
+TEST(MeshTests, warpTest4) {
+  mesh_warp_test("/mesh_warp/lv_shared1.vtk", "/mesh_warp/lv_shared1.particles", "/mesh_warp/lv_shared1.particles",
+                 "/mesh_warp/lv_shared1_baseline.vtk");
+}
+
+TEST(MeshTests, warpTest5) {
+  mesh_warp_test("/mesh_warp/lv_shared1.vtk", "/mesh_warp/lv_shared1.particles", "/mesh_warp/lv_shared1.particles",
+                 "/mesh_warp/lv_shared1_baseline.vtk");
+}
+
+TEST(MeshTests, warpTest6) {
+  mesh_warp_test("/mesh_warp/lv_shared2.vtk", "/mesh_warp/lv_shared2.particles", "/mesh_warp/lv_shared2.particles",
+                 "/mesh_warp/lv_shared2_baseline.vtk");
 }
 
 TEST(MeshTests, findReferenceMeshTest) {
