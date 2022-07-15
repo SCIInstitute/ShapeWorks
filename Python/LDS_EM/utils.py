@@ -5,6 +5,7 @@ from timeit import default_timer as timer
 import seaborn as sns
 from matplotlib import pyplot as plt
 import pandas as pd
+import xml.etree.ElementTree as ET
 
 
 
@@ -128,3 +129,52 @@ def plot_box_plots(file_1, file_2, label_1, label_2, xlabel, ylabel, plot_name, 
     fig.set_size_inches(22.5, 10.5)
     ax = sns.boxplot(x=xlabel, y=ylabel, hue=legend_name, data=df, linewidth=2.5)
     plt.savefig(plot_name)
+
+
+def plot_box_plots_k_fold(file_1, file_2, label_1, label_2, xlabel, ylabel, plot_name, legend_name='Model Type', reverse=False):
+    plt.style.use('plot_style.txt')
+    model_A_rmse = np.loadtxt(file_1)
+    model_B_rmse = np.loadtxt(file_2)
+    assert model_A_rmse.shape == model_B_rmse.shape
+    rmse_cols = np.zeros(2 * model_A_rmse.shape[0] * model_A_rmse.shape[1])
+    time_point_cols = []
+    model_type_cols = []
+    S, T = model_A_rmse.shape
+    if reverse:
+        temp = T
+        T = S
+        S = temp
+    start_idx = 0
+
+    for t in range(0, T):
+        model_A_rmses_at_t = model_A_rmse[:, t]
+        t_col = [t+1] * S
+        model_col = [f'{label_1}'] * S
+        time_point_cols += t_col
+        model_type_cols += model_col
+        rmse_cols[start_idx:start_idx+S] = model_A_rmses_at_t
+        start_idx = start_idx + S
+    assert start_idx == (T * S)
+    for t in range(0, T):
+        model_B_rmses_at_t = model_B_rmse[:, t]
+        t_col = [t+1] * S
+        model_col = [f'{label_2}'] * S
+        time_point_cols += t_col
+        model_type_cols += model_col
+        rmse_cols[start_idx:start_idx+S] = model_B_rmses_at_t
+        start_idx = start_idx + S
+
+    df = pd.DataFrame(list(zip(time_point_cols, rmse_cols, model_type_cols)), columns=[f'{xlabel}', f'{ylabel}', f'{legend_name}'])
+    fig = plt.gcf()
+    fig.set_size_inches(22.5, 10.5)
+    ax = sns.boxplot(x=xlabel, y=ylabel, hue=legend_name, data=df, linewidth=2.5)
+    plt.savefig(plot_name)
+
+
+def create_analyze_xml(xmlfilename, particle_files):
+    with open(xmlfilename, 'w') as file:
+        file.write('<point_files>\n')
+        for fn in particle_files:
+            file.write(f'{fn}\n')
+        file.write('</point_files>')
+    print('XML File Created====')

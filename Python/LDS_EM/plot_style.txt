@@ -12,7 +12,7 @@ legend.title_fontsize: 12
 xtick.labelsize: 12
 ytick.labelsize: 12
 axes.labelsize: 12
-font.size: 10
+font.size: 15
 axes.prop_cycle : (cycler('color', ['bc80bd' ,'fb8072', 'b3de69','fdb462','fccde5','8dd3c7','ffed6f','bebada','80b1d3', 'ccebc5', 'd9d9d9']))
 mathtext.fontset: stix
 font.family: STIXGeneral
@@ -33,8 +33,10 @@ axes.formatter.limits: -4, 4
 axes.labelcolor: black
 axes.edgecolor: black
 axes.linewidth: 0.6
-axes.spines.right : False
-axes.spines.top : False
+axes.spines.right : True
+axes.spines.top : True
+axes.spines.bottom = True
+axes.spines.left = True
 axes.grid: False
 figure.titlesize: 18
-figure.dpi: 300
+figure.dpi: 650

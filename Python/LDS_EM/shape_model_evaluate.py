@@ -88,7 +88,7 @@ def compute_distance(groomed_mesh_files, reconstructed_mesh_files):
         print(f'mean error shape= {mean_error.shape}')
         return mean_error
 
-def create_project_file_for_time_point(time_point, model_name, mesh_files, particle_files):
+def create_project_file_for_time_point(time_point, model_name, mesh_files, particle_files_local, particle_files_world):
     print(f'Creating Project for model {model_name} and t = {time_point}')
     project_location = SHAPE_MODELS_DIR
     project_file_path = f'{SHAPE_MODELS_DIR}/{model_name}_T_{time_point}.xlsx'
@@ -99,8 +99,8 @@ def create_project_file_for_time_point(time_point, model_name, mesh_files, parti
         subject.set_number_of_domains(1)
         rel_mesh_files = sw.utils.get_relative_paths([mesh_file], project_location)
         rel_groom_files = sw.utils.get_relative_paths([mesh_file], project_location)
-        rel_local_particle_files = sw.utils.get_relative_paths([particle_files[idx]], project_location)
-        rel_world_particle_files = sw.utils.get_relative_paths([particle_files[idx]], project_location)
+        rel_local_particle_files = sw.utils.get_relative_paths([particle_files_local[idx]], project_location)
+        rel_world_particle_files = sw.utils.get_relative_paths([particle_files_world[idx]], project_location)
         if pre:
             group_val = 'pre'
             pre = False
@@ -118,7 +118,7 @@ def create_project_file_for_time_point(time_point, model_name, mesh_files, parti
     shapeworks_project.set_subjects(project_subjects)
     shapeworks_project.save(project_file_path)
      
-def reconstruction_error_from_shape_model(shapes_desc_fn=f'{PROJECT_DIR}/description.json'):
+def reconstruction_error_from_shape_model(shapes_desc_fn=f'{PROJECT_DIR}/description.json', compute_distance_metrics=False):
     """
         Model A: Shape Model generated from Image Registration
         Model B: Proposed Shape Model with Cross-Entropy 
@@ -149,34 +149,42 @@ def reconstruction_error_from_shape_model(shapes_desc_fn=f'{PROJECT_DIR}/descrip
     for time_point in range(NUM_TIME_POINTS):
         print(f'-------Time Point = {time_point}--------')
         model_A_groomed_files , model_B_groomed_files, model_A_reconstructed_files, model_B_reconstructed_files = [], [], [], []
-        model_A_particle_files, model_B_particle_files = [], []
+        model_A_particle_files_local, model_A_particle_files_world, model_B_particle_files_local, model_B_particle_files_world = [], [], [], []
         for subject in shapes_desc_file['ALL_SUBJECTS']:
             pre_fn = Path(shapes_desc_file[subject]['PRE_ABLATION_TIME_POINTS'][time_point]).stem
             post_fn = Path(shapes_desc_file[subject]['POST_ABLATION_TIME_POINTS'][time_point]).stem
-            model_A_groomed_files.append(f'{model_A_meshes_dir}/{pre_fn}.shift.vtk') # Model A meshes are saved as .shift
-            model_A_groomed_files.append(f'{model_A_meshes_dir}/{post_fn}.shift.vtk')
+            model_A_groomed_files.append(f'{model_A_meshes_dir}/{pre_fn}.vtk') # Model A meshes are saved as .shift
+            model_A_groomed_files.append(f'{model_A_meshes_dir}/{post_fn}.vtk')
             model_A_reconstructed_files.append(f'{model_A_particles_dir}/{RECONSTRUCTED_DIR_NAME}/{pre_fn}_groomed_local.vtk')
             model_A_reconstructed_files.append(f'{model_A_particles_dir}/{RECONSTRUCTED_DIR_NAME}/{post_fn}_groomed_local.vtk')
-            model_A_particle_files.append(f'{model_A_particles_dir}/{pre_fn}_groomed_local.particles')
-            model_A_particle_files.append(f'{model_A_particles_dir}/{post_fn}_groomed_local.particles')
+            model_A_particle_files_local.append(f'{model_A_particles_dir}/{pre_fn}_groomed_local.particles')
+            model_A_particle_files_local.append(f'{model_A_particles_dir}/{post_fn}_groomed_local.particles')
+            model_A_particle_files_world.append(f'{model_A_particles_dir}/{pre_fn}_groomed_world.particles')
+            model_A_particle_files_world.append(f'{model_A_particles_dir}/{post_fn}_groomed_world.particles')
 
             model_B_groomed_files.append(f'{model_B_meshes_dir}/{pre_fn}.vtk')
             model_B_groomed_files.append(f'{model_B_meshes_dir}/{post_fn}.vtk')
             model_B_reconstructed_files.append(f'{model_B_particles_dir}/{RECONSTRUCTED_DIR_NAME}/{pre_fn}_local.vtk')
             model_B_reconstructed_files.append(f'{model_B_particles_dir}/{RECONSTRUCTED_DIR_NAME}/{post_fn}_local.vtk')
-            model_B_particle_files.append(f'{model_B_particles_dir}/{pre_fn}_local.particles')
-            model_B_particle_files.append(f'{model_B_particles_dir}/{post_fn}_local.particles')
+            model_B_particle_files_local.append(f'{model_B_particles_dir}/{pre_fn}_local.particles')
+            model_B_particle_files_local.append(f'{model_B_particles_dir}/{post_fn}_local.particles')
+            model_B_particle_files_world.append(f'{model_B_particles_dir}/{pre_fn}_world.particles')
+            model_B_particle_files_world.append(f'{model_B_particles_dir}/{post_fn}_world.particles')
 
-        create_project_file_for_time_point(time_point=time_point, model_name=MODEL_A, mesh_files=model_A_groomed_files, particle_files=model_A_particle_files)
-        create_project_file_for_time_point(time_point=time_point, model_name=MODEL_B, mesh_files=model_B_groomed_files, particle_files=model_B_particle_files)
-        model_A_errors.append(compute_distance(groomed_mesh_files=model_A_groomed_files, reconstructed_mesh_files=model_A_reconstructed_files))
-        model_B_errors.append(compute_distance(groomed_mesh_files=model_B_groomed_files, reconstructed_mesh_files=model_B_reconstructed_files))
+        create_project_file_for_time_point(time_point=time_point, model_name=MODEL_A, mesh_files=model_A_groomed_files, 
+                                            particle_files_local=model_A_particle_files_local, particle_files_world=model_A_particle_files_world)
+        create_project_file_for_time_point(time_point=time_point, model_name=MODEL_B, mesh_files=model_B_groomed_files, 
+                                            particle_files_local=model_B_particle_files_local, particle_files_world=model_B_particle_files_world)
+        if compute_distance_metrics:
+            model_A_errors.append(compute_distance(groomed_mesh_files=model_A_groomed_files, reconstructed_mesh_files=model_A_reconstructed_files))
+            model_B_errors.append(compute_distance(groomed_mesh_files=model_B_groomed_files, reconstructed_mesh_files=model_B_reconstructed_files))
 
 
-    model_A_errors = np.array(model_A_errors)
-    model_B_errors = np.array(model_B_errors)
-    np.savetxt(f'{PROJECT_DIR}/{MODEL_A}_reconst_error.txt', model_A_errors)
-    np.savetxt(f'{PROJECT_DIR}/{MODEL_B}_reconst_error.txt', model_B_errors)
-    print('Results Saved')
+    if compute_distance_metrics:
+        model_A_errors = np.array(model_A_errors)
+        model_B_errors = np.array(model_B_errors)
+        np.savetxt(f'{PROJECT_DIR}/{MODEL_A}_reconst_error.txt', model_A_errors)
+        np.savetxt(f'{PROJECT_DIR}/{MODEL_B}_reconst_error.txt', model_B_errors)
+        print('Results Saved')
 
-reconstruction_error_from_shape_model()
+reconstruction_error_from_shape_model(compute_distance_metrics=False)

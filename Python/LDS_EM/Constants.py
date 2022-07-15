@@ -3,14 +3,19 @@ import glob
 from pathlib import Path
 import json
 import numpy as np
+from SetCudaDevice import CUDA_DEVICE
 
 PRE_ABLATION = 'pre'
 POST_ABLATION = 'post'
 JOINT = ''
 MODEL_TYPE = JOINT
 NUM_TIME_POINTS = 25
-DEVICE = 'cuda:0'
+DEVICE = CUDA_DEVICE
+print(f'Device set {DEVICE}')
 SEED_VAL = 37
+ON_PARTICLE = 'reduce dim on particle'
+ON_SUB_AND_TIME = 'reduce dim on subject and time'
+ON_LAST_AXIS = 'reduce the last axis directly'
 
 # Define dimensions
 # N = 28 # number of samples
@@ -18,7 +23,7 @@ SEED_VAL = 37
 # M = 256 # number of correspondence points
 # L = 2 # dimension of latent space
 # P = d*M  # dimension of observation space 
-# T = 25   # number of time points
+# T = 25   # number of time pointse
 
 # Set up Paths here
 # PROJECT_DIR = '/home/sci/nawazish.khan/SSM-4D/'
@@ -99,10 +104,11 @@ def build_shapes_info_json(meshes_dir):
     return shapes_info
 
 
-def load_correspondences(shapes_desc_file, correspondences_dir, T=25, d=3, M=256, baseline_model=False):
+def load_correspondences(shapes_desc_file, correspondences_dir, T=25, d=3, M=256, baseline_model=False, return_desc=False):
     with open(shapes_desc_file) as json_file:
         shapes_desc_file = json.load(json_file)
     num_subjects = len(shapes_desc_file['ALL_SUBJECTS']) * 2 # PRE + POST for each patient
+    subjects_array, patient_types = [], []
     corres_data = np.zeros((num_subjects, T, d*M))
     n = 0
     suffx = ''
@@ -111,6 +117,8 @@ def load_correspondences(shapes_desc_file, correspondences_dir, T=25, d=3, M=256
         suffx = '_groomed'
 
     for subject in shapes_desc_file['ALL_SUBJECTS']:
+        subjects_array.append(subject)
+        patient_types.append('PRE_ABLATION_TIME_POINTS')
         t = 0
         for shape_path in shapes_desc_file[subject]['PRE_ABLATION_TIME_POINTS']:
             sub_name = Path(shape_path).stem
@@ -120,6 +128,8 @@ def load_correspondences(shapes_desc_file, correspondences_dir, T=25, d=3, M=256
             t += 1
         assert t == T
         n += 1
+        subjects_array.append(subject)
+        patient_types.append('POST_ABLATION_TIME_POINTS')
         t = 0
         for shape_path in shapes_desc_file[subject]['POST_ABLATION_TIME_POINTS']:
             sub_name = Path(shape_path).stem
@@ -130,8 +140,15 @@ def load_correspondences(shapes_desc_file, correspondences_dir, T=25, d=3, M=256
         assert t == T
         n += 1
     assert n == num_subjects
+    assert len(subjects_array) == num_subjects
+    assert len(patient_types) == num_subjects
+
     print(f'Correspondence Particles loaded: shape = {corres_data.shape}')
-    return corres_data
+    if return_desc:
+        return corres_data, subjects_array, patient_types
+    else:
+        return corres_data
+    
 
 
     
