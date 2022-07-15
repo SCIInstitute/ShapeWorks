@@ -397,7 +397,6 @@ vtkSmartPointer<vtkPolyData> MeshWarper::clean_mesh(vtkSmartPointer<vtkPolyData>
   clean->PointMergingOn();
   clean->SetInputData(mesh);
   clean->Update();
-  std::cerr << "running clean mesh!\n";
   return clean->GetOutput();
 }
 
@@ -475,8 +474,8 @@ bool MeshWarper::generate_warp() {
   Mesh(reference_mesh_).detectTriangular();
 
   // Mesh(incoming_reference_mesh_).write("/tmp/incoming.vtk");
-  Mesh(reference_mesh_).write("/tmp/input_to_igl.vtk");
-  Mesh(reference_mesh_).write("/tmp/input_to_igl.stl");
+  //Mesh(reference_mesh_).write("/tmp/input_to_igl.vtk");
+  //Mesh(reference_mesh_).write("/tmp/input_to_igl.stl");
 
   // perform warp
   if (!MeshWarper::generate_warp_matrix(vertices, this->faces_, this->vertices_, this->warp_)) {
