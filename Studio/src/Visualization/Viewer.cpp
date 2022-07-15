@@ -651,7 +651,9 @@ void Viewer::display_shape(QSharedPointer<Shape> shape) {
       MeshHandle mesh = meshes_.meshes()[i];
 
       vtkSmartPointer<vtkPolyData> poly_data = mesh->get_poly_data();
-
+      if (!poly_data) {
+        continue;
+      }
       auto feature_map = get_displayed_feature_map();
 
       if (session_->should_difference_vectors_show()) {
@@ -978,7 +980,10 @@ void Viewer::update_actors() {
       cell_picker_->AddPickList(unclipped_surface_actors_[i]);
       prop_picker_->AddPickList(unclipped_surface_actors_[i]);
       point_placer_->AddProp(unclipped_surface_actors_[i]);
-      point_placer_->GetPolys()->AddItem(meshes_.meshes()[i]->get_poly_data());
+      auto poly_data = meshes_.meshes()[i]->get_poly_data();
+      if (poly_data) {
+        point_placer_->GetPolys()->AddItem(poly_data);
+      }
     }
   }
 
