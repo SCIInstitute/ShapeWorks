@@ -502,48 +502,6 @@ class LDS(object):
 
         return (states, observations)
 
-    # def predict(self, partial_observations, n_timesteps, initial_state=None, random_state=None):
-    #     # initialize parameters
-    #     transition_matrices = self.transition_matrices 
-    #     transition_offsets = self.transition_offsets
-    #     transition_covariance = self.transition_covariance
-    #     observation_matrices = self.observation_matrices
-    #     observation_offsets = self.observation_offsets
-    #     observation_covariance = self.observation_covariance
-    #     initial_state_mean = self.initial_state_mean
-    #     initial_state_covariance = self.initial_state_covariance
-
-    #     n_dim_state = transition_matrices.size()[-2]
-    #     n_dim_obs = observation_matrices.size()[-2]
-    #     n_samples = partial_observations.size()[0]
-    #     n_partial = partial_observations.size()[1]
-    #     partial_states = self.smooth(partial_observations)[0] # TODO check mask here
-    #     states = torch.zeros(n_samples, n_timesteps, n_dim_state).to(DEVICE)
-    #     states[:, :n_partial] = partial_states
-    #     observations = torch.zeros(n_samples, n_timesteps, n_dim_obs).to(DEVICE)
-    #     observations[:, :n_partial] = partial_observations
-
-    #     # logic for selecting initial state
-    #     if initial_state is None:
-    #         initial_state = torch.distributions.multivariate_normal.MultivariateNormal(initial_state_mean, initial_state_covariance).sample()
-
-    #     # logic for generating samples
-    #     for n in range(n_samples):
-    #         for t in range(n_partial, n_timesteps):
-    #             if t == 0:
-    #                 states[n,t] = initial_state
-    #             else:
-    #                 transition_matrix = _last_dims(transition_matrices, t - 1)
-    #                 transition_offset = _last_dims(transition_offsets, t - 1, ndims=1)
-    #                 transition_covariance = _last_dims(transition_covariance, t - 1)
-    #                 states[n,t] = (transition_matrix @ states[n,t - 1]) + transition_offset + torch.distributions.multivariate_normal.MultivariateNormal(torch.zeros(n_dim_state).to(DEVICE), transition_covariance).sample()
-
-    #             observation_matrix = _last_dims(observation_matrices, t)
-    #             observation_offset = _last_dims(observation_offsets, t, ndims=1)
-    #             observation_covariance = _last_dims(observation_covariance, t)
-    #             observations[n, t] = (observation_matrix @ states[n, t])+ observation_offset + torch.distributions.multivariate_normal.MultivariateNormal(torch.zeros(n_dim_obs).to(DEVICE), observation_covariance).sample()
-
-    #     return (states, observations)
 
     def reconstruct(self, observations, random_state=None, observations_mask=None):
         # initialize parameters
@@ -577,23 +535,6 @@ class LDS(object):
                 reconstructed[n, t] = (observation_matrix @ smoothed_state_means[n, t]) + observation_offset
         return reconstructed
 
-    # def smooth(self, X, observations_mask):
-    #     # initialize parameters
-    #     transition_matrices = self.transition_matrices 
-    #     transition_offsets = self.transition_offsets
-    #     transition_covariance = self.transition_covariance
-    #     observation_matrices = self.observation_matrices
-    #     observation_offsets = self.observation_offsets
-    #     observation_covariance = self.observation_covariance
-    #     initial_state_mean = self.initial_state_mean
-    #     initial_state_covariance = self.initial_state_covariance
-
-    #     (predicted_state_means, predicted_state_covariances, _, filtered_state_means, filtered_state_covariances) = (_filter(transition_matrices, observation_matrices, transition_covariance, observation_covariance,
-    #                                                                                                      transition_offsets, observation_offsets, initial_state_mean, initial_state_covariance, X, observations_mask))
-    #     (smoothed_state_means, smoothed_state_covariances) = (_smooth(transition_matrices, filtered_state_means, filtered_state_covariances, predicted_state_means, predicted_state_covariances)[:2])
-        
-    #     return (smoothed_state_means, smoothed_state_covariances)
-    #     # L,       L X  L 
 
     def em(self, X, y=None, n_iter=10, em_vars=None, observations_mask=None):
 

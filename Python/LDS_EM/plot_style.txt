@@ -33,10 +33,10 @@ axes.formatter.limits: -4, 4
 axes.labelcolor: black
 axes.edgecolor: black
 axes.linewidth: 0.6
-axes.spines.right : True
-axes.spines.top : True
-axes.spines.bottom = True
-axes.spines.left = True
+axes.spines.right: True
+axes.spines.top: True
+axes.spines.bottom: True
+axes.spines.left: True
 axes.grid: False
 figure.titlesize: 18
 figure.dpi: 650

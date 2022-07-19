@@ -81,7 +81,7 @@ def interpolate(text_file, mesh_file, out_file, label="val"):
 	table_points.Update()
 	points = table_points.GetOutput()
 	points.GetPointData().SetActiveScalars(label)
-	range = points.GetPointData().GetScalars().GetRange()
+	# range = points.GetPointData().GetScalars().GetRange()
 	# read mesh
 	reader = vtk.vtkPolyDataReader()
 	reader.SetFileName(mesh_file)
@@ -179,8 +179,8 @@ def add_uncertainty_to_mesh(mesh_file, particles, uncertainty):
 	text_file.close()
 	interpolate(scalar_file, mesh_file, mesh_file, "uncertainty")
 
-def add_RRMSE_to_mesh(mesh_file, particles, rrmse):
-	scalar_file = 'temp.txt'
+def add_RRMSE_to_mesh(mesh_file, particles, rrmse, model_name):
+	scalar_file = f'temp_{model_name}.txt'
 	text_file = open(scalar_file, "w+")
 	text_file.write("x	y	z	rrmse\n")
 	for index in range(particles.shape[0]):
@@ -190,7 +190,7 @@ def add_RRMSE_to_mesh(mesh_file, particles, rrmse):
 		out += str(rrmse[index]) + '\n'
 		text_file.write(out)
 	text_file.close()
-	interpolate(scalar_file, mesh_file, mesh_file.replace("UT", "RRMSE/UT"), "RRMSE")
+	interpolate(scalar_file, mesh_file, mesh_file.replace("input", "RRMSE"), "RRMSE")
 
 def RMSD(mesh_file):
 	mesh = sw.Mesh(mesh_file)

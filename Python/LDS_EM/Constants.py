@@ -12,11 +12,17 @@ MODEL_TYPE = JOINT
 NUM_TIME_POINTS = 25
 DEVICE = CUDA_DEVICE
 print(f'Device set {DEVICE}')
-SEED_VAL = 37
+# SEED_VAL = 37
+SEED_VAL = 1091
+
 ON_PARTICLE = 'reduce dim on particle'
 ON_SUB_AND_TIME = 'reduce dim on subject and time'
+ON_SUBJECT = 'reduce all test subjects error'
 ON_LAST_AXIS = 'reduce the last axis directly'
-
+RMSE_REL = 'Relative Root Mean Squared Error'
+MSE_REL = 'Relative Mean Squared Error'
+MSE = 'Mean Squared Error'
+RMSE = 'Root Mean Squared Error'
 # Define dimensions
 # N = 28 # number of samples
 # d = 3 # dimension of correspondence points
@@ -148,6 +154,12 @@ def load_correspondences(shapes_desc_file, correspondences_dir, T=25, d=3, M=256
         return corres_data, subjects_array, patient_types
     else:
         return corres_data
+
+def print_result(result_string):
+    print(f'\n ++--------------------------------------------------------------------------------------------------------++ \n')
+    print(result_string)
+    print(f'\n ++--------------------------------------------------------------------------------------------------------++ \n')
+
     
 
 

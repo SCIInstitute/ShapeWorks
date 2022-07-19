@@ -153,8 +153,8 @@ def reconstruction_error_from_shape_model(shapes_desc_fn=f'{PROJECT_DIR}/descrip
         for subject in shapes_desc_file['ALL_SUBJECTS']:
             pre_fn = Path(shapes_desc_file[subject]['PRE_ABLATION_TIME_POINTS'][time_point]).stem
             post_fn = Path(shapes_desc_file[subject]['POST_ABLATION_TIME_POINTS'][time_point]).stem
-            model_A_groomed_files.append(f'{model_A_meshes_dir}/{pre_fn}.vtk') # Model A meshes are saved as .shift
-            model_A_groomed_files.append(f'{model_A_meshes_dir}/{post_fn}.vtk')
+            model_A_groomed_files.append(f'{model_A_meshes_dir}/{pre_fn}.shift.vtk') # Model A meshes are saved as .shift
+            model_A_groomed_files.append(f'{model_A_meshes_dir}/{post_fn}.shift.vtk')
             model_A_reconstructed_files.append(f'{model_A_particles_dir}/{RECONSTRUCTED_DIR_NAME}/{pre_fn}_groomed_local.vtk')
             model_A_reconstructed_files.append(f'{model_A_particles_dir}/{RECONSTRUCTED_DIR_NAME}/{post_fn}_groomed_local.vtk')
             model_A_particle_files_local.append(f'{model_A_particles_dir}/{pre_fn}_groomed_local.particles')
@@ -183,8 +183,8 @@ def reconstruction_error_from_shape_model(shapes_desc_fn=f'{PROJECT_DIR}/descrip
     if compute_distance_metrics:
         model_A_errors = np.array(model_A_errors)
         model_B_errors = np.array(model_B_errors)
-        np.savetxt(f'{PROJECT_DIR}/{MODEL_A}_reconst_error.txt', model_A_errors)
-        np.savetxt(f'{PROJECT_DIR}/{MODEL_B}_reconst_error.txt', model_B_errors)
+        np.savetxt(f'{PROJECT_DIR}/{MODEL_A}_reconst_error_new.txt', model_A_errors)
+        np.savetxt(f'{PROJECT_DIR}/{MODEL_B}_reconst_error_new.txt', model_B_errors)
         print('Results Saved')
 
-reconstruction_error_from_shape_model(compute_distance_metrics=False)
+reconstruction_error_from_shape_model(compute_distance_metrics=True)
