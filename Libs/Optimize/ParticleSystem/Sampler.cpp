@@ -184,6 +184,11 @@ void Sampler::AllocateDomainsAndNeighborhoods() {
     // END TEST CUTTING PLANE
     m_ParticleSystem->AddDomain(domain);
     m_ParticleSystem->SetNeighborhood(i, m_NeighborhoodList[i]);
+
+    // Add meshes for geodesic distance querying to the particle system
+    auto mesh = std::make_shared<shapeworks::VtkMeshWrapper>(m_meshes[i], true, 1);
+    m_ParticleSystem->AddMeshWrapper(mesh);
+
   }
 }
 

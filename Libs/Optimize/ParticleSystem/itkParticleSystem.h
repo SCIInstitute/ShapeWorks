@@ -18,6 +18,8 @@
 #include "vnl/vnl_inverse.h"
 #include "vnl/vnl_matrix_fixed.h"
 #include "vnl/vnl_vector_fixed.h"
+#include "Mesh.h"
+#include "VtkMeshWrapper.h"
 
 namespace itk {
 /** \class ParticleSystem
@@ -374,6 +376,11 @@ class ParticleSystem : public DataObject {
     m_Domains, m_Positions, and m_Transform lists. */
   void SetNumberOfDomains(unsigned int);
 
+  /** Adds a MeshWrapper for geodesic distance computation */
+  void AddMeshWrapper(std::shared_ptr<shapeworks::VtkMeshWrapper> mesh) {GeoMeshes.push_back(mesh);}
+
+  std::vector<std::vector<size_t> > Compute6NN(size_t domain);
+
  protected:
   ParticleSystem();
   void PrintSelf(std::ostream &os, Indent indent) const;
@@ -458,6 +465,9 @@ class ParticleSystem : public DataObject {
   std::vector<std::vector<bool>> m_FixedParticleFlags;
 
   std::mt19937 m_rand{42};
+
+  // Meshes to query geo distances
+  std::vector<std::shared_ptr<shapeworks::VtkMeshWrapper> > GeoMeshes;
 };
 
 }  // end namespace itk
