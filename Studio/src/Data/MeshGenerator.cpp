@@ -115,11 +115,8 @@ MeshHandle MeshGenerator::build_mesh_from_image(ImageType::Pointer image, float 
     marching->SetValue(0, iso_value);
     marching->Update();
 
-    auto normals = vtkSmartPointer<vtkPolyDataNormals>::New();
-    normals->SetInputConnection(marching->GetOutputPort());
-    normals->Update();
+    mesh->set_poly_data(Mesh(marching->GetOutput()).clean().computeNormals().getVTKMesh());
 
-    mesh->set_poly_data(normals->GetOutput());
   } catch (itk::ExceptionObject& excep) {
     std::cerr << "Exception caught!" << std::endl;
     std::cerr << excep << std::endl;
