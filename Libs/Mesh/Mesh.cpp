@@ -1304,6 +1304,8 @@ bool Mesh::prepareFFCFields(std::vector<std::vector<Eigen::Vector3d>> boundaries
     points = getIGLMesh(V, F);
   }
 
+  poly_data_->BuildLinks();
+
   for (size_t bound = 0; bound < boundaries.size(); bound++) {
     // std::cout << "Boundaries " << bound << " size " << boundaries[bound].size() << std::endl;
 
@@ -1336,33 +1338,43 @@ bool Mesh::prepareFFCFields(std::vector<std::vector<Eigen::Vector3d>> boundaries
         boundaryVerts.push_back(ptid);
       }
 
+      bool connected = isVertexConnected(ptid, lastId);
+
+      //connected = true;
       /* AKM: I'm not convinced this dijkstra stuff is necessary.  It's super slow with multiple dense boundaries.
-       * Assuming the free form constraint is defined by the user in Studio, it will be very dense already and there is
-       * no
-       * requirement of vtkSelectPolyData that a contigious set of vertices be supplied.  Indeed, they need not even be
-       * vertices */
+       * Assuming the free form constraint is defined by the user in Studio, it will be very dense already and there
+       * is no requirement of vtkSelectPolyData that a contigious set of vertices be supplied.  Indeed, they need not
+       * even be vertices */
 
       // If the current and last vertices are different, then add all vertices in the path to the boundaryVerts list
       if (lastId != ptid) {
-        // std::cout << pt[0] << " " << pt[1] << " " << pt[2] << " -> " << ptdob[0] << " " << ptdob[1] << " " <<
-        // ptdob[2] << std::endl;
-        // Add points in path
-        dijkstra->SetStartVertex(lastId);
-        dijkstra->SetEndVertex(ptid);
-        dijkstra->Update();
-        vtkSmartPointer<vtkIdList> idL = dijkstra->GetIdList();
-        for (size_t j = 1; j < idL->GetNumberOfIds(); j++) {
-          vtkIdType id = idL->GetId(j);
+        if (connected) {
           Point3 pathpt;
           pathpt = getPoint(ptid);
           selectionPoints->InsertNextPoint(pathpt[0], pathpt[1], pathpt[2]);
-          boundaryVerts.push_back(id);
+          //std::cerr << "ADDING " << ptid << "\n";
+          boundaryVerts.push_back(ptid);
+        } else {
+          // Add points in path
+          //std::cerr << "Using DIJKSTRA to find path from " << lastId << " to " << ptid << "\n";
+          dijkstra->SetStartVertex(ptid);
+          dijkstra->SetEndVertex(lastId);
+          dijkstra->Update();
+          vtkSmartPointer<vtkIdList> idL = dijkstra->GetIdList();
+          // std::cerr << "DIJKSTRA PATH: " << idL << "\n";
+          for (size_t j = 1; j < idL->GetNumberOfIds(); j++) {
+            vtkIdType id = idL->GetId(j);
+            Point3 pathpt;
+            pathpt = getPoint(ptid);
+            selectionPoints->InsertNextPoint(pathpt[0], pathpt[1], pathpt[2]);
+            //std::cerr << "ADDING DIJKSTRA " << id << "\n";
+            boundaryVerts.push_back(id);
+          }
         }
       }
+
       lastId = ptid;
     }
-
-    // std::cout << "Number of boundary vertices " << boundaryVerts.size() << std::endl;
 
     if (selectionPoints->GetNumberOfPoints() < 3) {
       /// TODO: log an event that this occurred.  It's not really fatal as we may be applying to a mesh where this
@@ -1417,6 +1429,28 @@ Eigen::Vector3d Mesh::computeBarycentricCoordinates(const Eigen::Vector3d& pt, i
   Eigen::Vector3d bary;
   this->poly_data_->GetCell(face)->EvaluatePosition(pt.data(), closest, sub_id, pcoords, dist2, bary.data());
   return bary;
+}
+
+bool Mesh::isVertexConnected(int v1, int v2) {
+  vtkNew<vtkIdList> cells;
+
+  // get all of the cells the first vertex belongs to
+  poly_data_->GetPointCells(v1, cells);
+
+  auto num_cells = cells->GetNumberOfIds();
+  // for each cell
+  for (int cellNum = 0; cellNum < num_cells; cellNum++) {
+    int cell_id = cells->GetId(cellNum);
+    auto cell = poly_data_->GetCell(cell_id);
+    // get vertices belonging to this cell
+    auto point_ids = cell->GetPointIds();
+    for (int pid = 0; pid < point_ids->GetNumberOfIds(); pid++) {
+      if (v2 == point_ids->GetId(pid)) {
+        return true;
+      }
+    }
+  }
+  return false;
 }
 
 double Mesh::getFFCValue(Eigen::Vector3d query) const {
