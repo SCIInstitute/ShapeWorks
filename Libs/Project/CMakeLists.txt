@@ -1,8 +1,9 @@
 set(SOURCES
+  JsonProjectWriter.cpp
+  Parameters.cpp
   Project.cpp
   ProjectUtils.cpp
   Subject.cpp
-  Parameters.cpp
   Variant.cpp
   )
 
