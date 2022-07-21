@@ -96,6 +96,9 @@ class Mesh {
   /// finds holes in a mesh and closes them
   Mesh& fillHoles();
 
+  /// clean mesh
+  Mesh& clean();
+
   /// samples image data values at point locations specified by image
   Mesh& probeVolume(const Image& image);
 

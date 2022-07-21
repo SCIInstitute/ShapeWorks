@@ -412,6 +412,19 @@ Mesh& Mesh::fillHoles() {
   return *this;
 }
 
+Mesh &Mesh::clean() {
+  auto clean = vtkSmartPointer<vtkCleanPolyData>::New();
+  clean->ConvertPolysToLinesOff();
+  clean->ConvertLinesToPointsOff();
+  clean->ConvertStripsToPolysOff();
+  clean->PointMergingOn();
+  clean->SetInputData(poly_data_);
+  clean->Update();
+  poly_data_ = clean->GetOutput();
+  invalidateLocators();
+  return *this;
+}
+
 Mesh& Mesh::probeVolume(const Image& image) {
   auto probeFilter = vtkSmartPointer<vtkProbeFilter>::New();
   probeFilter->SetInputData(this->poly_data_);
