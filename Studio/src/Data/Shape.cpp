@@ -281,9 +281,7 @@ bool Shape::import_constraints(QStringList filenames) {
 bool Shape::store_constraints() {
   auto filenames = subject_->get_constraints_filenames();
   while (filenames.size() < subject_->get_original_filenames().size()) {
-    std::string filename = subject_->get_original_filenames()[filenames.size()];
-    filename = StringUtils::getBaseFilenameWithoutExtension(filename) + "_constraints.json";
-    filenames.push_back(filename);
+    filenames.push_back("");
   }
 
   if (constraints_.empty()) {
@@ -293,6 +291,11 @@ bool Shape::store_constraints() {
   bool has_constraints = false;
 
   for (int i = 0; i < filenames.size(); i++) {
+    if (filenames[i] == "") {
+      std::string filename = subject_->get_original_filenames()[i];
+      filename = StringUtils::getBaseFilenameWithoutExtension(filename) + "_constraints.json";
+      filenames[i] = filename;
+    }
     if (get_constraints(i).hasConstraints()) {
       has_constraints = true;
     }
