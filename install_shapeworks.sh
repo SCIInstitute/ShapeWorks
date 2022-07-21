@@ -97,8 +97,6 @@ function install_conda() {
     boost=1.72.0 \
     openexr=2.5.3 \
     pybind11=2.5.0 \
-    notebook=6.1.5 \
-    nbformat=4.4.0 \
     nlohmann_json=3.10.5 \
     pkg-config=0.29.2
   then return 1; fi
@@ -122,7 +120,9 @@ function install_conda() {
 
   # pip is needed in sub-environments or the base env's pip will silently install to base
   if ! conda install --yes pip=21.2.4; then return 1; fi
-  
+
+  which pip
+  if ! pip install notebook==6.1.5;                     then return 1; fi
   if ! pip install trimesh==3.9.28;                     then return 1; fi
   if ! pip install termcolor==1.1.0;                    then return 1; fi
   if ! pip install grip==4.5.2;                         then return 1; fi
@@ -180,7 +180,7 @@ function install_conda() {
 
 
   # for spell check markdown cells in jupyter notebooks and table of contents (toc2)
-  conda install --yes jupyter_contrib_nbextensions=0.5.1
+  if ! pip install jupyter_contrib_nbextensions==0.5.1;   then return 1; fi
   jupyter contrib nbextension install --user
   jupyter nbextension enable spellchecker/main
   jupyter nbextension enable toc2/main
@@ -196,7 +196,9 @@ function install_conda() {
   fi
 
   # Set the python path for studio
+  conda activate $CONDAENV
   mkdir -p $HOME/.shapeworks ; python -c "import sys; print('\n'.join(sys.path))" > $HOME/.shapeworks/python_path.txt
+  python -c "import sys; print(sys.prefix)" > $HOME/.shapeworks/python_home.txt
   
   return 0
 }

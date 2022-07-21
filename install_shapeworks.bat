@@ -76,5 +76,6 @@ call jupyter nbextension enable toc2/main
 
 md %USERPROFILE%\.shapeworks
 python -c "import sys; print('\n'.join(sys.path))" > %USERPROFILE%\.shapeworks\python_path.txt
+python -c "import sys; print(sys.prefix)" > %USERPROFILE%\.shapeworks\python_home.txt
 echo %PATH% > %USERPROFILE%\.shapeworks\path.txt
 call conda info
