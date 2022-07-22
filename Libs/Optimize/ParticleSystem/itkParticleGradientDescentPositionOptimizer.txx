@@ -274,4 +274,118 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>::Augm
   m_ParticleSystem->GetDomain(dom)->GetConstraints()->UpdateMus(upd_pt, c);
 }
 
+// ------------------------------------------------------------------------
+template<class TGradientNumericType, unsigned int VDimension>
+std::vector<std::vector<size_t> > ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>::ComputeNeighborhoodsForAllParticles(std::vector<PointType> list){
+
+}
+
+template<class TGradientNumericType, unsigned int VDimension>
+bool ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>:: CorrespondenceCorrection(){
+    // Parameters
+    double cutoff_factor = 2.;
+
+    size_t num_doms = this->GetNumberOfDomains();
+
+    std::vector< std::vector <std::vector<PointType> > >lists;
+
+    // For each shape, for corresponding domains, populate all particles. i over shapes, j over domains in each shape, k over particles
+    for (size_t i = 0; i < m_DomainsPerShape; i++){
+        std::vector <std::vector<PointType> > lists_for_shape;
+
+        for (size_t j = i; j < num_doms; j += m_DomainsPerShape) {
+          std::vector<PointType> list;
+
+          for (auto k = 0; k < GetPositions(j)->GetSize(); k++) {
+            list.push_back(GetPositions(j)->Get(k));
+          }
+          lists_for_shape.push_back(list);
+        }
+
+        lists.push_back(lists_for_shape);
+    }
+
+    // Compute mean shape coordinates
+    std::vector <std::vector<PointType> > mean;
+    for (size_t i = 0; i < m_DomainsPerShape; i++){
+
+        std::vector<PointType> mean_dom_i;
+
+        if(m_DomainsPerShape>=1) for (auto k = 0; k < GetPositions(0)->GetSize(); k++) mean_dom_i.push_back(0.);
+
+        for (size_t j = i; j < num_doms; j += m_DomainsPerShape) {
+
+          for (auto k = 0; k < GetPositions(j)->GetSize(); k++) {
+            auto pt = lists[i][j][k];
+             mean_dom_i[k][0] += pt[0]; mean_dom_i[k][1] += pt[1]; mean_dom_i[k][2] += pt[2];
+          }
+        }
+
+        if(m_DomainsPerShape>=1) {
+            for (auto k = 0; k < GetPositions(0)->GetSize(); k++){
+                mean_dom_i[k][0] = mean_dom_i[k][0]/GetPositions(0)->GetSize();
+                mean_dom_i[k][1] = mean_dom_i[k][1]/GetPositions(0)->GetSize();
+                mean_dom_i[k][2] = mean_dom_i[k][2]/GetPositions(0)->GetSize();
+            }
+        }
+
+        mean.push_back(mean_dom_i);
+    }
+
+    // Compute neighborhood metric
+    double units_per_domain;
+    std::vector< std::vector <std::vector<PointType> > > pairwise_dists_per_domain;
+    for (size_t i = 0; i < m_DomainsPerShape; i++){
+        std::vector<PointType> list = mean[i];
+        std::vector <std::vector<PointType> > pairwise_dists;
+
+        double maxDistNN = 0;
+
+        for(size_t i = 0; i < list.size(); i++){
+            std::vector<PointType> i_dists;
+            size_t closest_particle = 0;
+            double closest_particle_distance = (list[i]-list[0]).GetNorm();
+            for(size_t j = 1; j < list.size(); j++){
+                double dist = (list[i]-list[j]).GetNorm();
+                i_dists.push_back(dist);
+                if(dist < closest_particle_distance){
+                    closest_particle_distance = dist;
+                    closest_particle = j;
+                }
+            }
+            pairwise_dists.push_back(i_dists);
+            if(closest_particle_distance > maxDistNN){
+                maxDistNN = closest_particle_distance;
+            }
+        }
+        pairwise_dists_per_domain.push_back(pairwise_dists);
+
+        units_by_domain.push_back(maxDistNN);
+    }
+
+    // Compute cuttoffs
+    double cuttoffs;
+
+    // Compute neighborhoods
+    std::vector< std::vector< std::vector <std::pair<double, size_t> > > > neighbors_by_domain;
+    for (size_t i = 0; i < m_DomainsPerShape; i++){
+        cuttoff.push_back(units_per_domain[i]*factor);
+        std::vector <std::vector<PointType> > pairwise_dists = pairwise_dists_of_domain[i];
+        std::vector< std::vector <std::pair<double, size_t> > > neighbors_of_domain;
+
+        for(size_t i = 0; i < pairwise_dists.size(); i++){
+            std::vector <std::pair<double, size_t> > neighbors_of_particle_i;
+            for(size_t j = 1; j < pairwise_dists.size(); j++){
+                if(pairwise_dists[i][j] < cuttoffs[i]){
+                    std::pair<double, size_t> pair;
+                    pair.first = pairwise_dists[i][j];
+                    pair.second = j;
+                    neighbors_of_particle_i.push_back(pair);
+                }
+            }
+            std::sort(neighbors_of_particle_i.begin(), neighbors_of_particle_i.end());
+        }
+    }
+}
+
 } // end namespace
