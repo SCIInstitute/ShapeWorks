@@ -10,6 +10,9 @@ namespace shapeworks {
  */
 class JsonProjectWriter {
  public:
-  static bool writeProject(ProjectHandle project, std::string filename);
+  static bool write_project(ProjectHandle project, std::string filename);
+
+private:
+
 };
 }  // namespace shapeworks
