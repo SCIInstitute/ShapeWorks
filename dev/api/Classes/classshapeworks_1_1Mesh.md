@@ -50,6 +50,7 @@ title: shapeworks::Mesh
 | MeshTransform | **[createTransform](../Classes/classshapeworks_1_1Mesh.md#function-createtransform)**(const [Mesh](../Classes/classshapeworks_1_1Mesh.md) & target, AlignmentType align =Similarity, unsigned iterations =10) |
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[applyTransform](../Classes/classshapeworks_1_1Mesh.md#function-applytransform)**(const MeshTransform transform)<br>applies the given transformation to the mesh  |
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[fillHoles](../Classes/classshapeworks_1_1Mesh.md#function-fillholes)**()<br>finds holes in a mesh and closes them  |
+| [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[clean](../Classes/classshapeworks_1_1Mesh.md#function-clean)**()<br>clean mesh  |
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[probeVolume](../Classes/classshapeworks_1_1Mesh.md#function-probevolume)**(const [Image](../Classes/classshapeworks_1_1Image.md) & image)<br>samples image data values at point locations specified by image  |
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[clip](../Classes/classshapeworks_1_1Mesh.md#function-clip)**(const Plane plane)<br>clips a mesh using a cutting plane  |
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[translate](../Classes/classshapeworks_1_1Mesh.md#function-translate)**(const Vector3 & v)<br>helper to translate mesh  |
@@ -380,6 +381,14 @@ Mesh & fillHoles()
 ```
 
 finds holes in a mesh and closes them 
+
+### function clean
+
+```cpp
+Mesh & clean()
+```
+
+clean mesh 
 
 ### function probeVolume
 
@@ -843,4 +852,4 @@ friend struct SharedCommandData();
 
 -------------------------------
 
-Updated on 2022-07-22 at 16:39:13 +0000
+Updated on 2022-07-22 at 21:16:04 +0000
