@@ -321,7 +321,7 @@ double ParticleSystem::ComputeMaxDistNearestNeighbors(size_t dom){
         size_t closest_particle = 0;
         double closest_particle_distance = (list[i]-list[0]).GetNorm();
         for(size_t j = 1; j < list.size(); j++){
-            double dist = (list[i]-list[0]).GetNorm();
+            double dist = (list[i]-list[j]).GetNorm();
             if(dist < closest_particle_distance){
                 closest_particle_distance = dist;
                 closest_particle = j;
