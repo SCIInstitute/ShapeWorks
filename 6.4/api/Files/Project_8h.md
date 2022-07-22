@@ -29,14 +29,14 @@ title: Libs/Project/Project.h
 ```cpp
 #pragma once
 
-#include <string>
-#include <vector>
 #include <map>
 #include <memory>
 #include <set>
+#include <string>
+#include <vector>
 
-#include "Subject.h"
 #include "Parameters.h"
+#include "Subject.h"
 
 // forward declaration
 namespace xlnt {
@@ -49,7 +49,7 @@ class Project;
 using ProjectHandle = std::shared_ptr<Project>;
 
 class LandmarkDefinition {
-public:
+ public:
   std::string domain_;
   int domain_id_ = -1;
   int landmark_id = -1;
@@ -60,11 +60,8 @@ public:
 };
 
 
-
 class Project {
-
-public:
-
+ public:
   Project();
   ~Project();
 
@@ -108,8 +105,7 @@ public:
 
   Parameters get_parameters(const std::string& name, std::string domain_name = "");
 
-  void
-  set_parameters(const std::string& name, Parameters params, std::string domain_name = "");
+  void set_parameters(const std::string& name, Parameters params, std::string domain_name = "");
 
   void clear_parameters(const std::string& name);
 
@@ -137,8 +133,7 @@ public:
 
   void set_groomed_domain_types(std::vector<DomainType> domain_types);
 
-private:
-
+ private:
   void load_landmark_definitions();
   void store_landmark_definitions();
 
@@ -178,11 +173,9 @@ private:
   std::vector<std::string> get_list(std::vector<std::string> columns, int subject);
   void set_list(std::vector<std::string> columns, int subject, std::vector<std::string> values);
 
-  void
-  set_map(int subject, const std::string& prefix, const std::map<std::string, std::string>& map);
+  void set_map(int subject, const std::string& prefix, const std::map<std::string, std::string>& map);
 
-  std::vector<std::vector<double>>
-  get_transform_list(std::vector<std::string> columns, int subject);
+  std::vector<std::vector<double>> get_transform_list(std::vector<std::string> columns, int subject);
 
   void set_transform_list(const std::vector<std::string>& columns, int subject,
                           std::vector<std::vector<double>> transforms);
@@ -201,8 +194,7 @@ private:
 
   void load_subjects();
 
-  int get_index_for_column(const std::string& name, bool create_if_not_found = false,
-                           int sheet = 0) const;
+  int get_index_for_column(const std::string& name, bool create_if_not_found = false, int sheet = 0) const;
 
   void save_string_column(const std::string& name, std::vector<std::string> items);
 
@@ -220,7 +212,6 @@ private:
   std::string filename_;
 
   std::vector<std::string> default_landmark_colors_;
-
 
   bool originals_present_{false};
   bool groomed_present_{false};
@@ -245,10 +236,10 @@ private:
   const int supported_version_{2};
   int version_{2};
 };
-}
+}  // namespace shapeworks
 ```
 
 
 -------------------------------
 
-Updated on 2022-07-21 at 19:15:50 +0000
+Updated on 2022-07-22 at 16:39:13 +0000

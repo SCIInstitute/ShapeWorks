@@ -27,19 +27,17 @@ title: Libs/Project/Subject.h
 ```cpp
 #pragma once
 
+#include <Libs/Optimize/ParticleSystem/DomainType.h>
+
+#include <map>
 #include <string>
 #include <vector>
-#include <map>
-
-#include <Libs/Optimize/ParticleSystem/DomainType.h>
 
 namespace shapeworks {
 
 
 class Subject {
-
-public:
-
+ public:
   Subject();
   ~Subject();
 
@@ -91,8 +89,7 @@ public:
   std::string get_display_name();
   void set_display_name(std::string display_name);
 
-private:
-
+ private:
   int number_of_domains_ = 0;
 
   std::string display_name_;
@@ -114,10 +111,10 @@ private:
   std::vector<DomainType> original_domain_types_;
   std::vector<DomainType> groomed_domain_types_;
 };
-}
+}  // namespace shapeworks
 ```
 
 
 -------------------------------
 
-Updated on 2022-07-21 at 19:15:50 +0000
+Updated on 2022-07-22 at 16:39:13 +0000
