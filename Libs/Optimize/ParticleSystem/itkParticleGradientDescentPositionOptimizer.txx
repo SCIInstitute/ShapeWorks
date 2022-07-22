@@ -284,6 +284,8 @@ template<class TGradientNumericType, unsigned int VDimension>
 bool ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>:: CorrespondenceCorrection(){
     // Parameters
     double cutoff_factor = 2.;
+    double maximumUpdateAllowed = std::numeric_limits<double>::max();
+    double energy = 0;
 
     size_t num_doms = this->GetNumberOfDomains();
 
@@ -293,6 +295,7 @@ bool ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>:
     for (size_t i = 0; i < m_DomainsPerShape; i++){
         std::vector <std::vector<PointType> > lists_for_shape;
 
+        // For domain i in all shapes
         for (size_t j = i; j < num_doms; j += m_DomainsPerShape) {
           std::vector<PointType> list;
 
@@ -366,7 +369,7 @@ bool ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>:
     // Compute cuttoffs
     double cuttoffs;
 
-    // Compute neighborhoods
+    // Compute non-repeated neighborhoods
     std::vector< std::vector< std::vector <std::pair<double, size_t> > > > neighbors_by_domain;
     for (size_t i = 0; i < m_DomainsPerShape; i++){
         cuttoff.push_back(units_per_domain[i]*factor);
@@ -375,7 +378,7 @@ bool ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>:
 
         for(size_t i = 0; i < pairwise_dists.size(); i++){
             std::vector <std::pair<double, size_t> > neighbors_of_particle_i;
-            for(size_t j = 1; j < pairwise_dists.size(); j++){
+            for(size_t j = i; j < pairwise_dists.size(); j++){
                 if(pairwise_dists[i][j] < cuttoffs[i]){
                     std::pair<double, size_t> pair;
                     pair.first = pairwise_dists[i][j];
@@ -384,6 +387,46 @@ bool ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>:
                 }
             }
             std::sort(neighbors_of_particle_i.begin(), neighbors_of_particle_i.end());
+        }
+    }
+
+    // Perform swap tests
+    for (size_t i = 0; i < m_DomainsPerShape; i++){
+        std::vector< std::vector <std::pair<double, size_t> > > neighbors_in_domain = neighbors_by_domain[i];
+
+        // For domain i in all shapes
+        for (size_t j = i; j < num_doms; j += m_DomainsPerShape) {
+
+            for(size_t piind = 0; piind < neighbors_in_domain.size(); piind++){
+                for(size_t njind = 0; njind < neighbors_in_domain[pi].size(); njind++){
+                    // Compute gradient before swap
+                    m_GradientFunction->BeforeEvaluate(piind, j, m_ParticleSystem);
+                    m_GradientFunction->BeforeEvaluate(njind, j, m_ParticleSystem);
+                    double pi_before = m_GradientFunction->Evaluate(piind, j, m_ParticleSystem, maximumUpdateAllowed, energy).magnitude();
+                    double nj_before = m_GradientFunction->Evaluate(njind, j, m_ParticleSystem, maximumUpdateAllowed, energy).magnitude();
+
+                    // Swap pi and nj
+                    auto pi = m_ParticleSystem->GetPositions(piind, j);
+                    auto nj = m_ParticleSystem->GetPositions(njind, j);
+                    m_ParticleSystem->SetPositions(nj, piind, j);
+                    m_ParticleSystem->SetPositions(pi, njind, j);
+
+                    m_GradientFunction->BeforeEvaluate(piind, j, m_ParticleSystem);
+                    m_GradientFunction->BeforeEvaluate(njind, j, m_ParticleSystem);
+
+                    double pi_after = m_GradientFunction->Evaluate(piind, j, m_ParticleSystem, maximumUpdateAllowed, energy).magnitude();
+                    double nj_after = m_GradientFunction->Evaluate(njind, j, m_ParticleSystem, maximumUpdateAllowed, energy).magnitude();
+
+                    // If gradients have decreased in magniture, leave as is
+                    if(pi_before > pi_after && nj_before > nj_after){
+                        std::cout << "Particle swap of " << piind << " and " << njind << std::endl;
+                    }
+                    else{ // Else, switch positions back
+                        m_ParticleSystem->SetPositions(pi, piind, j);
+                        m_ParticleSystem->SetPositions(nj, njind, j);
+                    }
+                }
+            }
         }
     }
 }
