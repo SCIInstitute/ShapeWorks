@@ -299,9 +299,6 @@ class Mesh {
   Eigen::Vector3d computeBarycentricCoordinates(const Eigen::Vector3d& pt, int face)
       const;  // // WARNING: Copied directly from Meshwrapper. TODO: When refactoring, take this into account.
 
-  //! Are two vertices connected
-  bool isVertexConnected(int v1, int v2);
-
 };
 
 /// stream insertion operators for Mesh

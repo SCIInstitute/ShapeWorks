@@ -1414,28 +1414,6 @@ Eigen::Vector3d Mesh::computeBarycentricCoordinates(const Eigen::Vector3d& pt, i
   return bary;
 }
 
-bool Mesh::isVertexConnected(int v1, int v2) {
-  vtkNew<vtkIdList> cells;
-
-  // get all of the cells the first vertex belongs to
-  poly_data_->GetPointCells(v1, cells);
-
-  auto num_cells = cells->GetNumberOfIds();
-  // for each cell
-  for (int cellNum = 0; cellNum < num_cells; cellNum++) {
-    int cell_id = cells->GetId(cellNum);
-    auto cell = poly_data_->GetCell(cell_id);
-    // get vertices belonging to this cell
-    auto point_ids = cell->GetPointIds();
-    for (int pid = 0; pid < point_ids->GetNumberOfIds(); pid++) {
-      if (v2 == point_ids->GetId(pid)) {
-        return true;
-      }
-    }
-  }
-  return false;
-}
-
 double Mesh::getFFCValue(Eigen::Vector3d query) const {
   this->updateCellLocator();
 
