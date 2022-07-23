@@ -103,6 +103,8 @@ class Mesh {
 
   Mesh& fillHoles();
 
+  Mesh& clean();
+
   Mesh& probeVolume(const Image& image);
 
   Mesh& clip(const Plane plane);
@@ -242,6 +244,7 @@ class Mesh {
 
   Eigen::Vector3d computeBarycentricCoordinates(const Eigen::Vector3d& pt, int face)
       const;  // // WARNING: Copied directly from Meshwrapper. TODO: When refactoring, take this into account.
+
 };
 
 std::ostream& operator<<(std::ostream& os, const Mesh& mesh);
@@ -257,4 +260,4 @@ class MeshReader {
 
 -------------------------------
 
-Updated on 2022-07-09 at 13:02:49 -0600
+Updated on 2022-07-23 at 17:50:04 -0600

@@ -27,7 +27,7 @@ Inherited by [shapeworks::QMeshWarper](../Classes/classshapeworks_1_1QMeshWarper
 | vtkSmartPointer< vtkPolyData > | **[build_mesh](../Classes/classshapeworks_1_1MeshWarper.md#function-build-mesh)**(const Eigen::MatrixXd & particles)<br>Build a mesh for a given set of particles.  |
 | Eigen::MatrixXd | **[extract_landmarks](../Classes/classshapeworks_1_1MeshWarper.md#function-extract-landmarks)**(vtkSmartPointer< vtkPolyData > warped_mesh)<br>Return the landmarks (matrix [Nx3]) from the warped builded mesh.  |
 | bool | **[is_contour](../Classes/classshapeworks_1_1MeshWarper.md#function-is-contour)**()<br>Return if set as a contour.  |
-| std::map< int, int > | **[get_landmarks_map](../Classes/classshapeworks_1_1MeshWarper.md#function-get-landmarks-map)**()<br>Return the map of landmarks to vertices.  |
+| std::map< int, int > | **[get_landmarks_map](../Classes/classshapeworks_1_1MeshWarper.md#function-get-landmarks-map)**()<br>Return the map of landmarks id (Key) to vertice index (Value)  |
 | const Eigen::MatrixXd & | **[get_warp_matrix](../Classes/classshapeworks_1_1MeshWarper.md#function-get-warp-matrix)**() const<br>Return the warp matrix.  |
 | bool | **[has_bad_particles](../Classes/classshapeworks_1_1MeshWarper.md#function-has-bad-particles)**() const<br>Return true if warping has removed any bad particle(s)  |
 | vtkSmartPointer< vtkPolyData > | **[get_reference_mesh](../Classes/classshapeworks_1_1MeshWarper.md#function-get-reference-mesh)**()<br>Return the reference mesh which has been cleaned and vertices added.  |
@@ -122,7 +122,7 @@ Return if set as a contour.
 inline std::map< int, int > get_landmarks_map()
 ```
 
-Return the map of landmarks to vertices. 
+Return the map of landmarks id (Key) to vertice index (Value) 
 
 ### function get_warp_matrix
 
@@ -183,4 +183,4 @@ For overriding to handle progress updates.
 
 -------------------------------
 
-Updated on 2022-07-09 at 13:02:49 -0600
+Updated on 2022-07-23 at 17:50:04 -0600

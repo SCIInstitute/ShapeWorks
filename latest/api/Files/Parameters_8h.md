@@ -36,9 +36,7 @@ namespace shapeworks {
 
 
 class Parameters {
-
-public:
-
+ public:
   static constexpr const char* ANALYSIS_PARAMS = "analysis";
   static constexpr const char* GROOM_PARAMS = "groom";
   static constexpr const char* OPTIMIZE_PARAMS = "optimize";
@@ -60,14 +58,13 @@ public:
 
   void reset_parameters();
 
-private:
-
+ private:
   std::map<std::string, std::string> map_;
 };
-}
+}  // namespace shapeworks
 ```
 
 
 -------------------------------
 
-Updated on 2022-07-09 at 13:02:49 -0600
+Updated on 2022-07-23 at 17:50:05 -0600

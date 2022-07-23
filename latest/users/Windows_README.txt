@@ -1,4 +1,13 @@
 ==========================================
+ ShapeWorks   v6.3.1 - 2022-07-22
+==========================================
+
+### Fixes
+  * Fix Studio python problem causing crash on group differences (#1781)
+  * Fix Studio slow/hanging on certain free form constraints (#1817, #1801)
+  * Fix crashes on certain projects (#1800, #1815)
+
+==========================================
  ShapeWorks   v6.3.0 - 2022-06-09
 ==========================================
 

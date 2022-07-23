@@ -109,7 +109,7 @@ class MeshWarper {
 
   bool warp_available_ = false;
 
-  std::map<int, int> landmarks_map_;  // map landmark vertex(point) id in (clean)Reference mesh to the landmarks id
+  std::map<int, int> landmarks_map_;  // map the landmarks id (Key) to the vertex(point) id (Value) belonging to the clean Reference mesh
   vtkSmartPointer<vtkPolyData> incoming_reference_mesh_;
   vtkSmartPointer<vtkPolyData> reference_mesh_;
   Eigen::MatrixXd reference_particles_;
@@ -121,4 +121,4 @@ class MeshWarper {
 
 -------------------------------
 
-Updated on 2022-07-09 at 13:02:49 -0600
+Updated on 2022-07-23 at 17:50:04 -0600

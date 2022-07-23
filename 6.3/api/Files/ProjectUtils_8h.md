@@ -27,26 +27,25 @@ title: Libs/Project/ProjectUtils.h
 ```cpp
 #pragma once
 
-#include <vtkTransform.h>
 #include <vtkSmartPointer.h>
+#include <vtkTransform.h>
 
 #include <vector>
 
 namespace shapeworks {
 
 class ProjectUtils {
-public:
-
+ public:
   // convert a list of doubles from a spreadsheet to a vtkTransform
   static vtkSmartPointer<vtkTransform> convert_transform(std::vector<double> list);
 
   // convert a vtkTransform to a list of doubles (e.g. for project spreadsheet)
   static std::vector<double> convert_transform(vtkSmartPointer<vtkTransform> transform);
 };
-}
+}  // namespace shapeworks
 ```
 
 
 -------------------------------
 
-Updated on 2022-07-09 at 13:02:49 -0600
+Updated on 2022-07-23 at 17:50:05 -0600

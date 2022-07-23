@@ -27,15 +27,14 @@ title: Libs/Project/Variant.h
 ```cpp
 #pragma once
 
-#include <string>
 #include <sstream>
+#include <string>
 #include <vector>
 
 namespace shapeworks {
 
-template<typename T>
-std::string variant_to_string(T begin, T end)
-{
+template <typename T>
+std::string variant_to_string(T begin, T end) {
   std::stringstream ss;
   bool first = true;
   for (; begin != end; begin++) {
@@ -49,19 +48,17 @@ std::string variant_to_string(T begin, T end)
 }
 
 
-
 class Variant {
-public:
-
+ public:
   Variant() : str_(), valid_(false) {}
   Variant(const std::string& v) : str_(v), valid_(true) {}
   Variant(int v) : str_(std::to_string(v)), valid_(true) {}
   Variant(double v) : str_(std::to_string(v)), valid_(true) {}
   Variant(const char* v) : str_(v), valid_(true) {}
   Variant(bool v) : str_(v ? "true" : "false"), valid_(true) {}
-  Variant(std::vector<double> v) : str_(variant_to_string(v.begin(),v.end())), valid_(true) {}
-  Variant(std::vector<int> v) : str_(variant_to_string(v.begin(),v.end())), valid_(true) {}
-  Variant(std::vector<bool> v) : str_(variant_to_string(v.begin(),v.end())), valid_(true) {}
+  Variant(std::vector<double> v) : str_(variant_to_string(v.begin(), v.end())), valid_(true) {}
+  Variant(std::vector<int> v) : str_(variant_to_string(v.begin(), v.end())), valid_(true) {}
+  Variant(std::vector<bool> v) : str_(variant_to_string(v.begin(), v.end())), valid_(true) {}
 
   operator std::string();
   operator bool();
@@ -75,15 +72,14 @@ public:
   operator std::vector<int>();
   operator std::vector<bool>();
 
-private:
-
+ private:
   const std::string str_;
   bool valid_;
 };
-}
+}  // namespace shapeworks
 ```
 
 
 -------------------------------
 
-Updated on 2022-07-09 at 13:02:49 -0600
+Updated on 2022-07-23 at 17:50:05 -0600
