@@ -30,9 +30,9 @@ class Procrustes3D {
   typedef TransformMatrixListType::iterator TransformMatrixIteratorType;
 
  public:
-  Procrustes3D() : m_Scaling(true), m_RotationTranslation(true) {}
-  Procrustes3D(bool do_scaling, bool do_rotation_translation)
-      : m_Scaling(do_scaling), m_RotationTranslation(do_rotation_translation) {}
+  Procrustes3D() : m_Scaling(true), m_RotationTranslation(true), m_TranslationOnly(true) {}
+  Procrustes3D(bool do_scaling, bool do_rotation_translation, bool do_translation_only)
+      : m_Scaling(do_scaling), m_RotationTranslation(do_rotation_translation), m_TranslationOnly(do_translation_only) {}
 
   bool GetScaling() const { return m_Scaling; }
   void ScalingOn() { m_Scaling = true; }
@@ -41,6 +41,10 @@ class Procrustes3D {
   bool GetRotationTranslation() const { return m_RotationTranslation; }
   void RotationTranslationOn() { m_RotationTranslation = true; }
   void RotationTranslationOff() { m_RotationTranslation = false; }
+
+  bool GetTranslationOnly() const { return m_TranslationOnly; }
+  void TranslationOn() { m_TranslationOnly = true; }
+  void TranslationOff() { m_TranslationOnly = false; }
 
   // Align a list of shapes using Generalized Procrustes Analysis
   void AlignShapes(SimilarityTransformListType& transforms, ShapeListType& shapes);
@@ -84,4 +88,5 @@ class Procrustes3D {
   bool m_Scaling;              // a flag to factor out scaling
   bool m_RotationTranslation;  // a flag for rotation + translation + (scale depending on m_Scaling), if false, the
                                // transformation will only be scaling
+  bool m_TranslationOnly;
 };

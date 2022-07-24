@@ -42,6 +42,11 @@ public:
 
   //! Loads a set of point files and pre-computes some statistics.
   int ImportPoints(std::vector<Eigen::VectorXd> points, std::vector<int> group_ids);
+  int ComputeWithinModesForMca();
+  int ComputeBetweenModesForMca();
+  int MultiLevelPrincipalComponentProjections();
+  int ImportPointsAndComputeMlpca(std::vector<Eigen::VectorXd> points, unsigned int dps);
+  void SetNumberOfParticlesAr(std::vector<int> num_particles_ar); // Set
 
   //! Loads a set of point files and pre-computes some statistics.
   int ReadPointFiles(const std::string &s);
@@ -70,6 +75,9 @@ public:
 
   //! Returns the number of dimensions (this is number of points times Dimension)
   int NumberOfDimensions() const { return m_numDimensions; }
+  int DomainsNumber() { return m_dps; }
+  int NumberOfPoints() { return m_numPoints; }
+  std::vector<int> NumberOfPointsArray() { return m_num_particles_ar; }
 
   //! Returns the group ids
   int GroupID(unsigned int i) const { return m_groupIDs[i]; }
@@ -79,10 +87,20 @@ public:
   const Eigen::MatrixXd &Eigenvectors() const { return m_eigenvectors; }
   const std::vector<double> &Eigenvalues() const { return m_eigenvalues; }
 
+  //! Returns the eigenvectors/values for Multi-Level Analysis
+  const Eigen::MatrixXd &BetweenEigenvectors() { return m_betweenEigenvectors; }
+  const std::vector<double> &BetweenEigenvalues() { return m_betweenEigenvalues; }
+  const Eigen::MatrixXd &WithinEigenvectors() { return m_withinEigenvectors; }
+  const std::vector<double> &WithinEigenvalues() { return m_withinEigenvalues; }
+
   //! Returns the mean shape.
   const Eigen::VectorXd &Mean() const { return m_mean; }
   const Eigen::VectorXd &Group1Mean() const { return m_mean1; }
   const Eigen::VectorXd &Group2Mean() const { return m_mean2; }
+  const Eigen::VectorXd &WithinMean() { return m_mean_within; }
+  const Eigen::VectorXd &BetweenMean() { return m_mean_between; }
+  // TODO: Add Group Differences for Multi-Level Analysis
+
 
   //! Returns group2 - group1 mean
   const Eigen::VectorXd &NormalizedGroupDifference() const { return m_groupdiffnorm; }
@@ -132,6 +150,12 @@ private:
 
   void compute_good_bad_points();
 
+
+  unsigned int m_dps;
+  unsigned int m_N;
+  unsigned int m_numPoints;
+  std::vector<int> m_num_particles_ar;
+  // TODO: Resolve diff between m_dps and m_domainsPerShape, also m_N, and m_numPoints
   unsigned int m_numSamples1;
   unsigned int m_numSamples2;
   unsigned int m_numSamples;
@@ -141,6 +165,18 @@ private:
 
   Eigen::MatrixXd m_eigenvectors;
   std::vector<double> m_eigenvalues;
+  
+  Eigen::MatrixXd m_betweenEigenvectors;
+  Eigen::MatrixXd m_withinEigenvectors;
+  std::vector<double> m_betweenEigenvalues;
+  std::vector<double> m_withinEigenvalues;
+  Eigen::MatrixXd m_pointsMinusMean_for_between;
+  Eigen::MatrixXd m_pointsMinusMean_for_within;
+  Eigen::VectorXd m_mean_within;
+  Eigen::VectorXd m_mean_between;
+  Eigen::MatrixXd m_super_matrix;
+  std::vector<Eigen::MatrixXd> m_shapes_mca;
+
   Eigen::VectorXd m_mean;
   Eigen::VectorXd m_mean1;
   Eigen::VectorXd m_mean2;
@@ -162,9 +198,12 @@ private:
   std::vector<std::string> m_pointsfiles;
 
   Eigen::MatrixXd m_Matrix;
+  Eigen::MatrixXd m_MatrixBetween;
+  Eigen::MatrixXd m_MatrixWithin;
 
   Eigen::MatrixXd m_group_1_matrix;
   Eigen::MatrixXd m_group_2_matrix;
+  // TODO: Add GD's for Multi-Level Analysis
 
   // 0 = bad, 1 = good
   std::vector<bool> m_goodPoints;

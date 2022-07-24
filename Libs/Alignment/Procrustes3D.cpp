@@ -238,6 +238,19 @@ void Procrustes3D::ConstructTransformMatrix(SimilarityTransform3D& transform, Tr
     transformMatrix(2, 3) = 0.0;
     transformMatrix(3, 3) = 1.0;
   }
+
+  if (m_TranslationOnly == true) {
+    transformMatrix(0, 3) = transform.translation(0) * transformMatrix(0, 0) +
+                            transform.translation(1) * transformMatrix(0, 1) +
+                            transform.translation(2) * transformMatrix(0, 2);
+    transformMatrix(1, 3) = transform.translation(0) * transformMatrix(1, 0) +
+                            transform.translation(1) * transformMatrix(1, 1) +
+                            transform.translation(2) * transformMatrix(1, 2);
+    transformMatrix(2, 3) = transform.translation(0) * transformMatrix(2, 0) +
+                            transform.translation(1) * transformMatrix(2, 1) +
+                            transform.translation(2) * transformMatrix(2, 2);
+    transformMatrix(3, 3) = 1.0;
+  } 
 }
 
 //---------------------------------------------------------------------------

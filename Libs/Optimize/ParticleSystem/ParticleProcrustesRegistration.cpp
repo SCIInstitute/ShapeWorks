@@ -36,7 +36,7 @@ void ParticleProcrustesRegistration::RunRegistration(int d) {
 
   // Run alignment
   Procrustes3D::SimilarityTransformListType transforms;
-  Procrustes3D procrustes(m_Scaling, m_RotationTranslation);
+  Procrustes3D procrustes(m_Scaling, m_RotationTranslation, m_TranslationOnly);
   procrustes.AlignShapes(transforms, shapelist);
 
   // Construct transform matrices for each particle system.

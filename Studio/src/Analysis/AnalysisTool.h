@@ -66,18 +66,23 @@ class AnalysisTool : public QWidget {
   void set_labels(QString which, QString value);
 
   int get_pca_mode();
+  int getMCAMode();
 
   double get_group_ratio();
 
   double get_pca_value();
+  double get_mca_value();
 
   bool pca_animate();
+  int get_mca_level();
+  bool mcaAnimate();
 
   int get_sample_number();
 
   bool compute_stats();
 
   void update_slider();
+  void updateMcaSlider();
 
   void reset_stats();
   void enable_actions(bool newly_enabled = false);
@@ -86,7 +91,9 @@ class AnalysisTool : public QWidget {
   ShapeHandle get_mean_shape();
 
   StudioParticles get_shape_points(int mode, double value);
+  StudioParticles get_mlca_shape_points(int mode, double value, int level);
   ShapeHandle get_mode_shape(int mode, double value);
+  ShapeHandle get_mca_mode_shape(int mode, double value, int level);
 
   ParticleShapeStatistics get_stats();
   void load_settings();
@@ -101,6 +108,7 @@ class AnalysisTool : public QWidget {
   static const std::string MODE_ALL_SAMPLES_C;
   static const std::string MODE_MEAN_C;
   static const std::string MODE_PCA_C;
+  static const std::string MODE_MCA_C;
   static const std::string MODE_SINGLE_SAMPLE_C;
   static const std::string MODE_REGRESSION_C;
 
@@ -132,6 +140,13 @@ class AnalysisTool : public QWidget {
   void handle_reconstruction_complete();
 
   void on_reconstructionButton_clicked();
+  
+  //MCA
+  void on_mcaSlider_valueChanged();
+  void on_mcaModeSpinBox_valueChanged(int i);
+  void handle_mca_animate_state_changed();
+  void handle_mca_timer();
+  void on_mca_between_radio_toggled();
 
   //! Set the currently selected feature map
   void set_feature_map(const std::string& feature_map);
@@ -175,6 +190,7 @@ class AnalysisTool : public QWidget {
 
   void update_view();
   void pca_update();
+  void mca_update();
   void progress(int);
   void message(QString);
   void error(QString);
@@ -189,7 +205,9 @@ class AnalysisTool : public QWidget {
   bool active_ = false;
 
   void pca_labels_changed(QString value, QString eigen, QString lambda);
+  void mca_labels_changed(QString value, QString eigen, QString lambda);
   void compute_mode_shape();
+  void compute_mca_mode_shape();
   void update_analysis_mode();
   void update_interface();
 
@@ -223,11 +241,19 @@ class AnalysisTool : public QWidget {
   Eigen::VectorXd eval_compactness_;
   Eigen::VectorXd eval_generalization_;
 
+
+  std::vector<int> number_of_particles_ar;
+
   vnl_vector<double> empty_shape_;
   Eigen::VectorXd temp_shape_;
+  Eigen::VectorXd temp_shape_mca;
 
   bool pca_animate_direction_ = true;
   QTimer pca_animate_timer_;
+
+
+  bool mca_animate_direction_ = true;
+  QTimer mca_animate_timer_;
 
   bool group_animate_direction_ = true;
   QTimer group_animate_timer_;
