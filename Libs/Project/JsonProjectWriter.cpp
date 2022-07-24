@@ -68,6 +68,11 @@ static json create_data_object(ProjectHandle project) {
     assign_keys(j, "world_particles", subject->get_world_particle_filenames(), domains);
     assign_transforms(j, "alignment", subject->get_groomed_transforms(), domains);
     assign_transforms(j, "procrustes", subject->get_procrustes_transforms(), domains);
+
+    // write out extra values
+    for (auto& [key, value] : subject->get_extra_values()) {
+      j[key] = value;
+    }
   }
 
   return list;
