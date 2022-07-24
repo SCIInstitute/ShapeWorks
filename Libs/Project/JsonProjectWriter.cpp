@@ -7,7 +7,7 @@ using json = nlohmann::json;
 namespace shapeworks {
 
 //---------------------------------------------------------------------------
-static void assign_keys(json &j, std::string prefix, std::vector<std::string> filenames,
+static void assign_keys(json& j, std::string prefix, std::vector<std::string> filenames,
                         std::vector<std::string> domains) {
   if (filenames.empty()) {
     return;
@@ -32,7 +32,7 @@ static std::string transform_to_string(std::vector<double> transform) {
 }
 
 //---------------------------------------------------------------------------
-static void assign_transforms(json &j, std::string prefix, std::vector<std::vector<double>> transforms,
+static void assign_transforms(json& j, std::string prefix, std::vector<std::vector<double>> transforms,
                               std::vector<std::string> domains) {
   if (transforms.empty()) {
     return;
@@ -48,7 +48,7 @@ static void assign_transforms(json &j, std::string prefix, std::vector<std::vect
 }
 
 //---------------------------------------------------------------------------
-static json create_data_sheet(ProjectHandle project) {
+static json create_data_object(ProjectHandle project) {
   // json j;
 
   auto subjects = project->get_subjects();
@@ -74,26 +74,67 @@ static json create_data_sheet(ProjectHandle project) {
 }
 
 //---------------------------------------------------------------------------
+static json create_parameter_object(Parameters params) {
+  json j;
+  for (const auto& kv : params.get_map()) {
+    j[kv.first] = kv.second;
+  }
+  return j;
+}
+
+//---------------------------------------------------------------------------
+static json create_parameter_map_object(std::map<std::string, Parameters> parameter_map) {
+  json j;
+  for (auto& [key, params] : parameter_map) {
+    json item;
+    for (const auto& kv : params.get_map()) {
+      item[kv.first] = kv.second;
+    }
+    j[key] = create_parameter_object(params);
+  }
+
+  return j;
+}
+
+//---------------------------------------------------------------------------
+static json create_landmark_definition_object(ProjectHandle project) {
+  std::vector<json> list;
+
+  auto all_definitions = project->get_all_landmark_definitions();
+  auto domains = project->get_domain_names();
+
+  for (int d = 0; d < all_definitions.size(); d++) {
+    auto definitions = all_definitions[d];
+
+    for (int i = 0; i < definitions.size(); i++) {
+      auto def = definitions[i];
+      json item;
+      item["domain"] = domains[d];
+      item["name"] = def.name_;
+      item["visible"] = def.visible_ ? "true" : "false";
+      item["color"] = def.color_;
+      item["comment"] = def.comment_;
+      list.push_back(list);
+    }
+  }
+
+  return list;
+}
+
+//---------------------------------------------------------------------------
 bool JsonProjectWriter::write_project(ProjectHandle project, std::string filename) {
   json j;
 
-  json data_sheet;
-  json groom_sheet;
-  json optimize_sheet;
-  json studio_sheet;
-  json project_sheet;
-  json analysis_sheet;
-  json deepssm_sheet;
   json landmarks_sheet;
 
-  j["data"] = create_data_sheet(project);
-  j["groom"] = groom_sheet;
-  j["optimize"] = optimize_sheet;
-  j["studio"] = studio_sheet;
-  j["project"] = project_sheet;
-  j["analysis"] = analysis_sheet;
-  j["deepssm"] = deepssm_sheet;
-  j["landmarks"] = landmarks_sheet;
+  j["data"] = create_data_object(project);
+  j["groom"] = create_parameter_map_object(project->get_parameter_map("groom"));
+  j["optimize"] = create_parameter_object(project->get_parameters("optimize"));
+  j["studio"] = create_parameter_object(project->get_parameters("studio"));
+  j["project"] = create_parameter_object(project->get_parameters("project"));
+  j["analysis"] = create_parameter_object(project->get_parameters("analysis"));
+  j["deepssm"] = create_parameter_object(project->get_parameters("deepssm"));
+  j["landmarks"] = create_landmark_definition_object(project);
 
   std::ofstream file(filename);
   if (!file.good()) {

@@ -101,6 +101,9 @@ class Project {
   //! Retrieve parameters based on key
   Parameters get_parameters(const std::string& name, std::string domain_name = "");
 
+  //! Retrieve parameter map based on key
+  std::map<std::string, Parameters> get_parameter_map(const std::string& name);
+
   //! Store parameters based on key
   void set_parameters(const std::string& name, Parameters params, std::string domain_name = "");
 
