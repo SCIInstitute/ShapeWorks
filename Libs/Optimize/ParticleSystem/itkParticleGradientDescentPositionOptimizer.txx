@@ -67,6 +67,9 @@ namespace itk
     }
     const double factor = 1.1;
 
+    // Particle swap check reset
+    m_swapped = false;
+
     // NOTE: THIS METHOD WILL NOT WORK AS WRITTEN IF PARTICLES ARE
     // ADDED TO THE SYSTEM DURING OPTIMIZATION.
 
@@ -232,10 +235,24 @@ namespace itk
       if (maxchange < m_Tolerance) {
         std::cerr << "Iteration " << m_NumberOfIterations << ", maxchange = " << maxchange << std::endl;
         m_StopOptimization = true;
+
+        // Particle swap check
+        if(!m_swapped){
+            CorrespondenceCorrection();
+            m_MaximumNumberOfIterations = m_NumberOfIterations + 100;
+            m_swapped = true;
+            m_StopOptimization = false;
+        }
       }
 
       if (m_NumberOfIterations >= m_MaximumNumberOfIterations) {
         m_StopOptimization = true;
+      }
+
+      // Particle swap check
+      if(m_NumberOfIterations == size_t(m_MaximumNumberOfIterations/2) && !m_swapped){
+          CorrespondenceCorrection();
+          m_swapped = true;
       }
 
     } // end while stop optimization
@@ -283,7 +300,7 @@ bool ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>:
     double maximumUpdateAllowed = std::numeric_limits<double>::max();
     double energy = 0;
 
-    size_t num_doms = this->GetNumberOfDomains();
+    size_t num_doms = m_ParticleSystem->GetNumberOfDomains();
     size_t domains_per_shape = m_ParticleSystem->GetDomainsPerShape();
 
     std::vector< std::vector <std::vector<PointType> > >lists;
@@ -378,7 +395,7 @@ bool ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>:
             for(size_t j = i; j < pairwise_dists.size(); j++){
                 if(pairwise_dists[i][j].GetPointDimension() < cuttoffs[i]){
                     std::pair<double, size_t> pair;
-                    pair.first = pairwise_dists[i][j];
+                    pair.first = pairwise_dists[i][j].GetPointDimension();
                     pair.second = j;
                     neighbors_of_particle_i.push_back(pair);
                 }
@@ -388,6 +405,7 @@ bool ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>:
     }
 
     // Perform swap tests
+    bool swapped = false;
     for (size_t i = 0; i < domains_per_shape; i++){
         std::vector< std::vector <std::pair<double, size_t> > > neighbors_in_domain = neighbors_by_domain[i];
 
@@ -417,6 +435,7 @@ bool ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>:
                     // If gradients have decreased in magniture, leave as is
                     if(pi_before > pi_after && nj_before > nj_after){
                         std::cout << "Particle swap of " << piind << " and " << njind << std::endl;
+                        swapped = true;
                     }
                     else{ // Else, switch positions back
                         m_ParticleSystem->SetPosition(pi, piind, j);
@@ -426,6 +445,7 @@ bool ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>:
             }
         }
     }
+    return swapped;
 }
 
 } // end namespace

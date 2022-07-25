@@ -144,6 +144,9 @@ private:
   std::vector< std::vector<double> > m_TimeSteps;
   unsigned int m_verbosity;
 
+  // Particle swap check
+  bool m_swapped = false;
+
   void ResetTimeStepVectors();
 };
 
