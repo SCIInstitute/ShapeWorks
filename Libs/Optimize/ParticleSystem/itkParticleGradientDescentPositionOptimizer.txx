@@ -275,32 +275,29 @@ ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>::Augm
 }
 
 // ------------------------------------------------------------------------
-template<class TGradientNumericType, unsigned int VDimension>
-std::vector<std::vector<size_t> > ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>::ComputeNeighborhoodsForAllParticles(std::vector<PointType> list){
-
-}
 
 template<class TGradientNumericType, unsigned int VDimension>
-bool ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>:: CorrespondenceCorrection(){
+bool ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>::CorrespondenceCorrection(){
     // Parameters
     double cutoff_factor = 2.;
     double maximumUpdateAllowed = std::numeric_limits<double>::max();
     double energy = 0;
 
     size_t num_doms = this->GetNumberOfDomains();
+    size_t domains_per_shape = m_ParticleSystem->GetDomainsPerShape();
 
     std::vector< std::vector <std::vector<PointType> > >lists;
 
     // For each shape, for corresponding domains, populate all particles. i over shapes, j over domains in each shape, k over particles
-    for (size_t i = 0; i < m_DomainsPerShape; i++){
+    for (size_t i = 0; i < domains_per_shape; i++){
         std::vector <std::vector<PointType> > lists_for_shape;
 
         // For domain i in all shapes
-        for (size_t j = i; j < num_doms; j += m_DomainsPerShape) {
+        for (size_t j = i; j < num_doms; j += domains_per_shape) {
           std::vector<PointType> list;
 
-          for (auto k = 0; k < GetPositions(j)->GetSize(); k++) {
-            list.push_back(GetPositions(j)->Get(k));
+          for (auto k = 0; k < m_ParticleSystem->GetPositions(j)->GetSize(); k++) {
+            list.push_back(m_ParticleSystem->GetPositions(j)->Get(k));
           }
           lists_for_shape.push_back(list);
         }
@@ -310,25 +307,25 @@ bool ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>:
 
     // Compute mean shape coordinates
     std::vector <std::vector<PointType> > mean;
-    for (size_t i = 0; i < m_DomainsPerShape; i++){
+    for (size_t i = 0; i < domains_per_shape; i++){
 
         std::vector<PointType> mean_dom_i;
 
-        if(m_DomainsPerShape>=1) for (auto k = 0; k < GetPositions(0)->GetSize(); k++) mean_dom_i.push_back(0.);
+        if(domains_per_shape>=1) for (auto k = 0; k < m_ParticleSystem->GetPositions(0)->GetSize(); k++) mean_dom_i.push_back(0.);
 
-        for (size_t j = i; j < num_doms; j += m_DomainsPerShape) {
+        for (size_t j = i; j < num_doms; j += domains_per_shape) {
 
-          for (auto k = 0; k < GetPositions(j)->GetSize(); k++) {
+          for (auto k = 0; k < m_ParticleSystem->GetPositions(j)->GetSize(); k++) {
             auto pt = lists[i][j][k];
              mean_dom_i[k][0] += pt[0]; mean_dom_i[k][1] += pt[1]; mean_dom_i[k][2] += pt[2];
           }
         }
 
-        if(m_DomainsPerShape>=1) {
-            for (auto k = 0; k < GetPositions(0)->GetSize(); k++){
-                mean_dom_i[k][0] = mean_dom_i[k][0]/GetPositions(0)->GetSize();
-                mean_dom_i[k][1] = mean_dom_i[k][1]/GetPositions(0)->GetSize();
-                mean_dom_i[k][2] = mean_dom_i[k][2]/GetPositions(0)->GetSize();
+        if(domains_per_shape>=1) {
+            for (auto k = 0; k < m_ParticleSystem->GetPositions(0)->GetSize(); k++){
+                mean_dom_i[k][0] = mean_dom_i[k][0]/m_ParticleSystem->GetPositions(0)->GetSize();
+                mean_dom_i[k][1] = mean_dom_i[k][1]/m_ParticleSystem->GetPositions(0)->GetSize();
+                mean_dom_i[k][2] = mean_dom_i[k][2]/m_ParticleSystem->GetPositions(0)->GetSize();
             }
         }
 
@@ -336,9 +333,9 @@ bool ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>:
     }
 
     // Compute neighborhood metric
-    double units_per_domain;
+    std::vector<double> units_per_domain;
     std::vector< std::vector <std::vector<PointType> > > pairwise_dists_per_domain;
-    for (size_t i = 0; i < m_DomainsPerShape; i++){
+    for (size_t i = 0; i < domains_per_shape; i++){
         std::vector<PointType> list = mean[i];
         std::vector <std::vector<PointType> > pairwise_dists;
 
@@ -363,23 +360,23 @@ bool ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>:
         }
         pairwise_dists_per_domain.push_back(pairwise_dists);
 
-        units_by_domain.push_back(maxDistNN);
+        units_per_domain.push_back(maxDistNN);
     }
 
     // Compute cuttoffs
-    double cuttoffs;
+    std::vector<double> cuttoffs;
 
     // Compute non-repeated neighborhoods
     std::vector< std::vector< std::vector <std::pair<double, size_t> > > > neighbors_by_domain;
-    for (size_t i = 0; i < m_DomainsPerShape; i++){
-        cuttoff.push_back(units_per_domain[i]*factor);
-        std::vector <std::vector<PointType> > pairwise_dists = pairwise_dists_of_domain[i];
+    for (size_t i = 0; i < domains_per_shape; i++){
+        cuttoffs.push_back(units_per_domain[i]*cutoff_factor);
+        std::vector <std::vector<PointType> > pairwise_dists = pairwise_dists_per_domain[i];
         std::vector< std::vector <std::pair<double, size_t> > > neighbors_of_domain;
 
         for(size_t i = 0; i < pairwise_dists.size(); i++){
             std::vector <std::pair<double, size_t> > neighbors_of_particle_i;
             for(size_t j = i; j < pairwise_dists.size(); j++){
-                if(pairwise_dists[i][j] < cuttoffs[i]){
+                if(pairwise_dists[i][j].GetPointDimension() < cuttoffs[i]){
                     std::pair<double, size_t> pair;
                     pair.first = pairwise_dists[i][j];
                     pair.second = j;
@@ -391,14 +388,14 @@ bool ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>:
     }
 
     // Perform swap tests
-    for (size_t i = 0; i < m_DomainsPerShape; i++){
+    for (size_t i = 0; i < domains_per_shape; i++){
         std::vector< std::vector <std::pair<double, size_t> > > neighbors_in_domain = neighbors_by_domain[i];
 
         // For domain i in all shapes
-        for (size_t j = i; j < num_doms; j += m_DomainsPerShape) {
+        for (size_t j = i; j < num_doms; j += domains_per_shape) {
 
             for(size_t piind = 0; piind < neighbors_in_domain.size(); piind++){
-                for(size_t njind = 0; njind < neighbors_in_domain[pi].size(); njind++){
+                for(size_t njind = 0; njind < neighbors_in_domain[piind].size(); njind++){
                     // Compute gradient before swap
                     m_GradientFunction->BeforeEvaluate(piind, j, m_ParticleSystem);
                     m_GradientFunction->BeforeEvaluate(njind, j, m_ParticleSystem);
@@ -406,10 +403,10 @@ bool ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>:
                     double nj_before = m_GradientFunction->Evaluate(njind, j, m_ParticleSystem, maximumUpdateAllowed, energy).magnitude();
 
                     // Swap pi and nj
-                    auto pi = m_ParticleSystem->GetPositions(piind, j);
-                    auto nj = m_ParticleSystem->GetPositions(njind, j);
-                    m_ParticleSystem->SetPositions(nj, piind, j);
-                    m_ParticleSystem->SetPositions(pi, njind, j);
+                    auto pi = m_ParticleSystem->GetPosition(piind, j);
+                    auto nj = m_ParticleSystem->GetPosition(njind, j);
+                    m_ParticleSystem->SetPosition(nj, piind, j);
+                    m_ParticleSystem->SetPosition(pi, njind, j);
 
                     m_GradientFunction->BeforeEvaluate(piind, j, m_ParticleSystem);
                     m_GradientFunction->BeforeEvaluate(njind, j, m_ParticleSystem);
@@ -422,8 +419,8 @@ bool ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>:
                         std::cout << "Particle swap of " << piind << " and " << njind << std::endl;
                     }
                     else{ // Else, switch positions back
-                        m_ParticleSystem->SetPositions(pi, piind, j);
-                        m_ParticleSystem->SetPositions(nj, njind, j);
+                        m_ParticleSystem->SetPosition(pi, piind, j);
+                        m_ParticleSystem->SetPosition(nj, njind, j);
                     }
                 }
             }

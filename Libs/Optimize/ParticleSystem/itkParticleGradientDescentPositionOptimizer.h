@@ -114,7 +114,10 @@ public:
   itkSetObjectMacro(GradientFunction, GradientFunctionType);
 
   // Computes neighborhoods for each particle. Designed to be used on the mean shape
-  std::vector<std::vector<size_t> > ComputeNeighborhoodsForAllParticles(std::vector<PointType> list);
+  std::vector<std::vector<size_t> > ComputeNeighborhoodsForAllParticles(std::vector<PointType> list){
+      PointType p;
+      double d = p.GetPointDimension();
+  }
 
   // Computes whether the correspondence is good or not. If not, it fixes it
   bool CorrespondenceCorrection();
