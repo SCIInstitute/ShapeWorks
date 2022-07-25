@@ -401,7 +401,9 @@ bool ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>:
                 }
             }
             std::sort(neighbors_of_particle_i.begin(), neighbors_of_particle_i.end());
+            neighbors_of_domain.push_back(neighbors_of_particle_i);
         }
+        neighbors_by_domain.push_back(neighbors_of_domain);
     }
 
     // Perform swap tests
@@ -433,7 +435,7 @@ bool ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>:
                     double nj_after = m_GradientFunction->Evaluate(njind, j, m_ParticleSystem, maximumUpdateAllowed, energy).magnitude();
 
                     // If gradients have decreased in magniture, leave as is
-                    if(pi_before > pi_after && nj_before > nj_after){
+                    if(pi_before < pi_after && nj_before < nj_after){
                         std::cout << "Particle swap of " << piind << " and " << njind << std::endl;
                         swapped = true;
                     }
