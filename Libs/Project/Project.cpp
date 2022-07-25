@@ -999,14 +999,17 @@ std::vector<std::string> Project::get_extra_columns() const {
   std::vector<std::string> list;
 
   for (int i = 0; i < headers.length(); i++) {
-    bool match = false;
-    for (const auto& prefix : matching_columns_) {
-      if (headers[i].to_string().substr(0, prefix.size()) == prefix) {
-        match = true;
+    auto header = headers[i].to_string();
+    if (header != "") {
+      bool match = false;
+      for (const auto& prefix : matching_columns_) {
+        if (header.substr(0, prefix.size()) == prefix) {
+          match = true;
+        }
       }
-    }
-    if (!match) {
-      list.push_back(headers[i].to_string());
+      if (!match) {
+        list.push_back(header);
+      }
     }
   }
   return list;

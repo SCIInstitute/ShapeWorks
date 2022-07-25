@@ -26,7 +26,11 @@ static void assign_keys(json& j, std::string prefix, std::vector<std::string> fi
 static std::string transform_to_string(std::vector<double> transform) {
   std::string str;
   for (int j = 0; j < transform.size(); j++) {
-    str = str + " " + std::to_string(transform[j]);
+    if (j == 0) {
+      str = std::to_string(transform[j]);
+    } else {
+      str = str + " " + std::to_string(transform[j]);
+    }
   }
   return str;
 }
@@ -37,7 +41,7 @@ static void assign_transforms(json& j, std::string prefix, std::vector<std::vect
   if (transforms.empty()) {
     return;
   }
-  if (transforms.size() != domains.size()) {
+  if (transforms.size() != domains.size() && transforms.size() != domains.size() + 1) {
     throw std::runtime_error(prefix + " filenames and number of domains mismatch");
   }
   for (int i = 0; i < domains.size(); i++) {
@@ -49,18 +53,16 @@ static void assign_transforms(json& j, std::string prefix, std::vector<std::vect
 
 //---------------------------------------------------------------------------
 static json create_data_object(ProjectHandle project) {
-  // json j;
-
   auto subjects = project->get_subjects();
-
   auto domains = project->get_domain_names();
 
   std::vector<json> list;
   for (int i = 0; i < subjects.size(); i++) {
-    std::shared_ptr<Subject> subject = subjects[i];
+    auto subject = subjects[i];
     json j;
     j["name"] = subject->get_display_name();
 
+    /// TODO: need to handle different domain types
     assign_keys(j, "shape", subject->get_original_filenames(), domains);
     assign_keys(j, "landmarks_file", subject->get_landmarks_filenames(), domains);
     assign_keys(j, "groomed", subject->get_groomed_filenames(), domains);
@@ -73,6 +75,7 @@ static json create_data_object(ProjectHandle project) {
     for (auto& [key, value] : subject->get_extra_values()) {
       j[key] = value;
     }
+    list.push_back(j);
   }
 
   return list;
@@ -91,13 +94,8 @@ static json create_parameter_object(Parameters params) {
 static json create_parameter_map_object(std::map<std::string, Parameters> parameter_map) {
   json j;
   for (auto& [key, params] : parameter_map) {
-    json item;
-    for (const auto& kv : params.get_map()) {
-      item[kv.first] = kv.second;
-    }
     j[key] = create_parameter_object(params);
   }
-
   return j;
 }
 
@@ -119,7 +117,7 @@ static json create_landmark_definition_object(ProjectHandle project) {
       item["visible"] = def.visible_ ? "true" : "false";
       item["color"] = def.color_;
       item["comment"] = def.comment_;
-      list.push_back(list);
+      list.push_back(item);
     }
   }
 

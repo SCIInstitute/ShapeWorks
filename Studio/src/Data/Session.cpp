@@ -26,6 +26,8 @@
 #include <Data/Session.h>
 #include <Data/Shape.h>
 #include <Data/StudioLog.h>
+#include <ExcelProjectWriter.h>
+#include <JsonProjectWriter.h>
 #include <Libs/Project/Project.h>
 #include <Utils/AnalysisUtils.h>
 #include <Utils/StudioUtils.h>
@@ -95,73 +97,83 @@ void Session::set_parent(QWidget* parent) { this->parent_ = parent; }
 
 //---------------------------------------------------------------------------
 bool Session::save_project(QString filename) {
-  if (filename == "") {
-    filename = this->filename_;
-  }
-  this->filename_ = QFileInfo(filename).absoluteFilePath();
-
-  QFileInfo fi(filename);
-  if (fi.exists()) {
-    if (!fi.isWritable()) {
-      QMessageBox::warning(nullptr, "Read only", "The file is in read only mode");
-      return false;
-    }
-  } else {
-    // open file
-    QFile file(filename);
-    if (!file.open(QIODevice::WriteOnly)) {
-      QMessageBox::warning(0, "Read only", "The file is in read only mode");
-      return false;
-    }
-  }
-
-  this->set_project_path(QFileInfo(filename).absolutePath());
-
   QProgressDialog progress("Saving Project...", "Abort", 0, 100, this->parent_);
   progress.setWindowModality(Qt::WindowModal);
   progress.setMinimumDuration(2000);
 
-  this->preferences_.set_saved();
-
-  progress.setValue(5);
-  QApplication::processEvents();
-
-  // original files
-  if (this->original_present()) {
-    std::vector<std::string> original_list;
-    for (int i = 0; i < this->shapes_.size(); i++) {
-      original_list.push_back(this->shapes_[i]->get_original_filename_with_path().toStdString());
+  try {
+    if (filename == "") {
+      filename = this->filename_;
     }
-    // this->session_->set_original_files(original_list);
-  }
+    this->filename_ = QFileInfo(filename).absoluteFilePath();
 
-  // landmarks
-  for (int i = 0; i < shapes_.size(); i++) {
-    shapes_[i]->store_landmarks();
-  }
-
-  // constraints
-  for (int i = 0; i < shapes_.size(); i++) {
-    shapes_[i]->store_constraints();
-  }
-
-  // correspondence points
-  if (this->unsaved_particle_files_ && this->particles_present()) {
-    for (int i = 0; i < this->shapes_.size(); i++) {
-      auto local_files = this->shapes_[i]->get_subject()->get_local_particle_filenames();
-      auto world_files = this->shapes_[i]->get_subject()->get_world_particle_filenames();
-      auto particles = this->shapes_[i]->get_particles();
-      for (int i = 0; i < local_files.size(); i++) {
-        this->save_particles_file(local_files[i], particles.get_local_particles(i));
-        this->save_particles_file(world_files[i], particles.get_raw_world_particles(i));
+    QFileInfo fi(filename);
+    if (fi.exists()) {
+      if (!fi.isWritable()) {
+        QMessageBox::warning(nullptr, "Read only", "The file is in read only mode");
+        return false;
+      }
+    } else {
+      // open file
+      QFile file(filename);
+      if (!file.open(QIODevice::WriteOnly)) {
+        QMessageBox::warning(0, "Read only", "The file is in read only mode");
+        return false;
       }
     }
-    this->unsaved_particle_files_ = false;
+
+    this->set_project_path(QFileInfo(filename).absolutePath());
+
+    this->preferences_.set_saved();
+
+    progress.setValue(5);
+    QApplication::processEvents();
+
+    // original files
+    if (this->original_present()) {
+      std::vector<std::string> original_list;
+      for (int i = 0; i < this->shapes_.size(); i++) {
+        original_list.push_back(this->shapes_[i]->get_original_filename_with_path().toStdString());
+      }
+      // this->session_->set_original_files(original_list);
+    }
+
+    // landmarks
+    for (int i = 0; i < shapes_.size(); i++) {
+      shapes_[i]->store_landmarks();
+    }
+
+    // constraints
+    for (int i = 0; i < shapes_.size(); i++) {
+      shapes_[i]->store_constraints();
+    }
+
+    // correspondence points
+    if (this->unsaved_particle_files_ && this->particles_present()) {
+      for (int i = 0; i < this->shapes_.size(); i++) {
+        auto local_files = this->shapes_[i]->get_subject()->get_local_particle_filenames();
+        auto world_files = this->shapes_[i]->get_subject()->get_world_particle_filenames();
+        auto particles = this->shapes_[i]->get_particles();
+        for (int i = 0; i < local_files.size(); i++) {
+          this->save_particles_file(local_files[i], particles.get_local_particles(i));
+          this->save_particles_file(world_files[i], particles.get_raw_world_particles(i));
+        }
+      }
+      this->unsaved_particle_files_ = false;
+    }
+
+    this->project_->set_parameters(Parameters::STUDIO_PARAMS, this->params_);
+
+    this->project_->save(filename.toStdString());
+
+    JsonProjectWriter::write_project(project_, "/tmp/project.json");
+    ExcelProjectWriter::write_project(project_, "/tmp/project.xlsx");
+
+  } catch (std::exception& e) {
+    QMessageBox::warning(0, "Error saving project", QString("Error saving project: ") + e.what());
+    return false;
   }
 
-  this->project_->set_parameters(Parameters::STUDIO_PARAMS, this->params_);
-
-  this->project_->save(filename.toStdString());
   progress.setValue(100);
   return true;
 }
