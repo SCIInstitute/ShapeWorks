@@ -40,5 +40,7 @@
 	<string>False</string>
         <key>NSRequiresAquaSystemAppearance</key>
         <string>true</string>
+	<key>com.apple.security.cs.disable-library-validation</key>
+	<true/>
 </dict>
 </plist>

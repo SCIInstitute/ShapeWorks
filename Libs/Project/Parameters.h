@@ -13,9 +13,7 @@ namespace shapeworks {
  * Used to store parameters for various tools
  */
 class Parameters {
-
-public:
-
+ public:
   static constexpr const char* ANALYSIS_PARAMS = "analysis";
   static constexpr const char* GROOM_PARAMS = "groom";
   static constexpr const char* OPTIMIZE_PARAMS = "optimize";
@@ -44,8 +42,7 @@ public:
   //! reset parameters to blank
   void reset_parameters();
 
-private:
-
+ private:
   std::map<std::string, std::string> map_;
 };
-}
+}  // namespace shapeworks

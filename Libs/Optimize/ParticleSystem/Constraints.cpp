@@ -693,7 +693,7 @@ void Constraints::Write(std::string filename) {
 
   std::ofstream file(filename);
   if (!file.good()) {
-    throw std::runtime_error("Unable to open " + filename + " for writing");
+    throw std::runtime_error("Unable to open \"" + filename + "\" for writing");
   }
   file << j.dump(4);
 }

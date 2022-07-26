@@ -319,8 +319,8 @@ void Viewer::compute_point_differences(const Eigen::VectorXd& vecs, vtkSmartPoin
 
     auto normals = vtkSmartPointer<vtkPolyDataNormals>::New();
     normals->SetInputData(poly_data);
-    normals->Update();
     normals->SetSplitting(false);  // must be sure not to split normals
+    normals->Update();
     poly_data = normals->GetOutput();
     polys.push_back(poly_data);
 
