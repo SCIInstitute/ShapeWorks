@@ -333,7 +333,7 @@ bool ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>:
         for (size_t j = i; j < num_doms; j += domains_per_shape) {
 
           for (auto k = 0; k < m_ParticleSystem->GetPositions(j)->GetSize(); k++) {
-            auto pt = lists[i][j][k];
+            auto pt = lists[i][j/domains_per_shape][k];
              mean_dom_i[k][0] += pt[0]; mean_dom_i[k][1] += pt[1]; mean_dom_i[k][2] += pt[2];
           }
         }
@@ -419,8 +419,10 @@ bool ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>:
                     // Compute gradient before swap
                     m_GradientFunction->BeforeEvaluate(piind, j, m_ParticleSystem);
                     m_GradientFunction->BeforeEvaluate(njind, j, m_ParticleSystem);
-                    double pi_before = m_GradientFunction->Evaluate(piind, j, m_ParticleSystem, maximumUpdateAllowed, energy).magnitude();
-                    double nj_before = m_GradientFunction->Evaluate(njind, j, m_ParticleSystem, maximumUpdateAllowed, energy).magnitude();
+                    //double pi_before = m_GradientFunction->Evaluate(piind, j, m_ParticleSystem, maximumUpdateAllowed, energy).magnitude();
+                    //double nj_before = m_GradientFunction->Evaluate(njind, j, m_ParticleSystem, maximumUpdateAllowed, energy).magnitude();
+                    double pi_before = m_GradientFunction->Energy(piind, j, m_ParticleSystem);
+                    double nj_before = m_GradientFunction->Energy(njind, j, m_ParticleSystem);
 
                     // Swap pi and nj
                     auto pi = m_ParticleSystem->GetPosition(piind, j);
@@ -431,11 +433,13 @@ bool ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>:
                     m_GradientFunction->BeforeEvaluate(piind, j, m_ParticleSystem);
                     m_GradientFunction->BeforeEvaluate(njind, j, m_ParticleSystem);
 
-                    double pi_after = m_GradientFunction->Evaluate(piind, j, m_ParticleSystem, maximumUpdateAllowed, energy).magnitude();
-                    double nj_after = m_GradientFunction->Evaluate(njind, j, m_ParticleSystem, maximumUpdateAllowed, energy).magnitude();
+                    //double pi_after = m_GradientFunction->Evaluate(piind, j, m_ParticleSystem, maximumUpdateAllowed, energy).magnitude();
+                    //double nj_after = m_GradientFunction->Evaluate(njind, j, m_ParticleSystem, maximumUpdateAllowed, energy).magnitude();
+                    double pi_after = m_GradientFunction->Energy(piind, j, m_ParticleSystem);
+                    double nj_after = m_GradientFunction->Energy(njind, j, m_ParticleSystem);
 
                     // If gradients have decreased in magniture, leave as is
-                    if(pi_before < pi_after && nj_before < nj_after){
+                    if(pi_before > pi_after && nj_before > nj_after){
                         std::cout << "Particle swap of " << piind << " and " << njind << std::endl;
                         swapped = true;
                     }
