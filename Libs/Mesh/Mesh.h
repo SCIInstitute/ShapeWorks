@@ -96,6 +96,9 @@ class Mesh {
   /// finds holes in a mesh and closes them
   Mesh& fillHoles();
 
+  /// clean mesh
+  Mesh& clean();
+
   /// samples image data values at point locations specified by image
   Mesh& probeVolume(const Image& image);
 
@@ -295,6 +298,7 @@ class Mesh {
   /// Computes baricentric coordinates given a query point and a face number
   Eigen::Vector3d computeBarycentricCoordinates(const Eigen::Vector3d& pt, int face)
       const;  // // WARNING: Copied directly from Meshwrapper. TODO: When refactoring, take this into account.
+
 };
 
 /// stream insertion operators for Mesh

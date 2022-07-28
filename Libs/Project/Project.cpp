@@ -608,7 +608,8 @@ void Project::determine_domain_types() {
   // determine original domain types
   original_domain_types_.clear();
   auto original_columns = get_matching_columns(input_prefixes_);
-  for (const auto& col : original_columns) {
+  for (int i = 0; i < original_columns.size(); i++) {
+    auto col = original_columns[i];
     if (starts_with(col, SEGMENTATION_PREFIX)) {
       original_domain_types_.push_back(DomainType::Image);
     } else if (starts_with(col, MESH_PREFIX)) {
@@ -618,22 +619,23 @@ void Project::determine_domain_types() {
     } else {
       // determine by file type of first subject
       auto original_filenames = subjects_[0]->get_original_filenames();
-      if (!original_filenames.empty()) {
-        original_domain_types_.push_back(determine_domain_type(original_filenames[0]));
+      if (i < original_filenames.size()) {
+        original_domain_types_.push_back(determine_domain_type(original_filenames[i]));
       }
     }
   }
 
   groomed_domain_types_.clear();
   auto groomed_columns = get_matching_columns(GROOMED_PREFIX);
-  for (const auto& col : groomed_columns) {
+  for (int i = 0; i < groomed_columns.size(); i++) {
+    auto col = groomed_columns[i];
     if (starts_with(col, GROOMED_CONTOUR_PREFIX)) {
       groomed_domain_types_.push_back(DomainType::Contour);
     } else {
       // determine by file type of first subject
       auto groomed_filenames = subjects_[0]->get_groomed_filenames();
-      if (!groomed_filenames.empty()) {
-        groomed_domain_types_.push_back(determine_domain_type(groomed_filenames[0]));
+      if (i < groomed_filenames.size()) {
+        groomed_domain_types_.push_back(determine_domain_type(groomed_filenames[i]));
       }
     }
   }
@@ -903,7 +905,7 @@ std::vector<std::string> Project::get_feature_names() {
                 }
               }
             } catch (std::exception& e) {
-              std::cerr << std::string("Error reading: ") + filename;
+              std::cerr << std::string("Error reading features from mesh: ") + filename << "\n";
             }
           }
         }
