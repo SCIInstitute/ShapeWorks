@@ -93,7 +93,9 @@ class ShapeWorksStudioApp : public QMainWindow {
   void on_auto_view_button_clicked();
 
   void handle_pca_changed();
+  void handle_mca_changed(); 
   void handle_slider_update();
+  void handle_mca_slider_update();
 
   void handle_project_changed();
   void handle_points_changed();
@@ -112,6 +114,7 @@ class ShapeWorksStudioApp : public QMainWindow {
 
   void handle_color_scheme();
   void handle_pca_update();
+  void handle_mca_update();
   void clear_message();
   void handle_message(QString str);
   void handle_status(QString str);
@@ -176,6 +179,7 @@ class ShapeWorksStudioApp : public QMainWindow {
   void update_display(bool force = false);
 
   void compute_mode_shape();
+  void compute_mca_mode_shape();
 
   bool set_feature_map(std::string feature_map);
   std::string get_feature_map();

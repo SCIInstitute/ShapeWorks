@@ -7,6 +7,7 @@ namespace shapeworks {
   //---------------------------------------------------------------------------
 void ParticleProcrustesRegistration::RunRegistration(int d) {
   // DOES NOT Assume all domains have the same number of particles.
+  std::cout << "----Running Procrsutes Registration..........." << std::endl;
   const int totalDomains = m_ParticleSystem->GetNumberOfDomains();
   const int numPoints = m_ParticleSystem->GetNumberOfParticles(d);
   const int numShapes = totalDomains / m_DomainsPerShape;

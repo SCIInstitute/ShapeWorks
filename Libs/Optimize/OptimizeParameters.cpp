@@ -97,6 +97,67 @@ void OptimizeParameters::set_use_normals(std::vector<bool> use_normals) {
 }
 
 //---------------------------------------------------------------------------
+void OptimizeParameters::set_use_mlpca_optimize(bool use_mlpca_optimize)
+{
+  this->params_.set("mlpca_optimize", use_mlpca_optimize);
+}
+
+//---------------------------------------------------------------------------
+bool OptimizeParameters::get_use_mlpca_optimize()
+{
+  bool use_mlpca_optimize = this->params_.get("mlpca_optimize", false);
+  return use_mlpca_optimize;
+}
+
+//---------------------------------------------------------------------------
+std::vector<double> OptimizeParameters::get_starting_regularization_multilevel()
+{
+  return this->params_.get("starting_regularization_multilevel", {1000.0});
+}
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_starting_regularization_multilevel(std::vector<double> reg_params_start)
+{
+  return this->params_.set("starting_regularization_multilevel", reg_params_start);
+}
+
+//---------------------------------------------------------------------------
+std::vector<double> OptimizeParameters::get_ending_regularization_multilevel()
+{
+  return this->params_.get("ending_regularization_multilevel", {10.0});
+}
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_ending_regularization_multilevel(std::vector<double> reg_params_end)
+{
+  return this->params_.set("ending_regularization_multilevel", reg_params_end);
+}
+
+//---------------------------------------------------------------------------
+double OptimizeParameters::get_starting_regularization_between()
+{
+  return this->params_.get("starting_regularization_between", 1000.0);
+}
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_starting_regularization_between(double value)
+{
+  this->params_.set("starting_regularization_between", value);
+}
+
+//---------------------------------------------------------------------------
+double OptimizeParameters::get_ending_regularization_between()
+{
+  return this->params_.get("ending_regularization_between", 10.0);
+}
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_ending_regularization_between(double value)
+{
+  this->params_.set("ending_regularization_between", value);
+}
+
+//---------------------------------------------------------------------------
 double OptimizeParameters::get_normals_strength() { return this->params_.get("normals_strength", 10); }
 
 //---------------------------------------------------------------------------
@@ -259,6 +320,7 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
   optimize->SetVerbosity(this->get_verbosity());
   int domains_per_shape = this->project_->get_number_of_domains_per_subject();
   bool normals_enabled = this->get_use_normals()[0];
+  bool use_mlpca_optimize = this->get_use_mlpca_optimize();
   optimize->SetDomainsPerShape(domains_per_shape);
   optimize->SetNumberOfParticles(this->get_number_of_particles());
   optimize->SetInitialRelativeWeighting(this->get_initial_relative_weighting());
@@ -299,6 +361,17 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
     }
   }
 
+  optimize->SetMlpcaOptimize(use_mlpca_optimize);
+  if(use_mlpca_optimize)
+  {
+    //Set reg parameters for each organ indiviually
+
+    optimize->SetStartingRegularizationMultilevelWithin(this->get_starting_regularization_multilevel());
+    optimize->SetEndingRegularizationMultilevelWithin(this->get_ending_regularization_multilevel());
+    optimize->SetStartingRegularizationMultilevelBetween(this->get_starting_regularization_between());
+    optimize->SetEndingRegularizationMultilevelBetween(this->get_ending_regularization_between());
+
+  }
   optimize->SetUseNormals(use_normals);
   optimize->SetUseXYZ(use_xyz);
   optimize->SetUseMeshBasedAttributes(normals_enabled);
@@ -317,6 +390,8 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
   optimize->SetProcrustesInterval(procrustes_interval);
   optimize->SetProcrustesScaling(get_use_procrustes_scaling());
   optimize->SetProcrustesRotationTranslation(get_use_procrustes_rotation_translation());
+  optimize->SetProcrustesTranslationOnly(get_use_procrustes_translation_only());
+
 
   int multiscale_particles = 0;
   if (this->get_use_multiscale()) {

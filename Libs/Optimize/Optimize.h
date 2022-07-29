@@ -189,6 +189,7 @@ public:
   void SetProcrustesScaling(bool procrustes_scaling);
   //! Set if procrustes rotation/translation should be used
   void SetProcrustesRotationTranslation(bool procrustes_rotation_translation);
+  void SetProcrustesTranslationOnly(bool procrustes_translation_only);
   //! Set the relative weighting (TODO: details)
   void SetRelativeWeighting(double relative_weighting);
   //! Set the initial relative weigting (TODO: details)
@@ -198,6 +199,15 @@ public:
   //! Set the ending regularization (TODO: details)
   void SetEndingRegularization(double ending_regularization);
   //! Set the interval for recomputing regularization (TODO: details)
+
+  void SetStartingRegularizationMultilevelWithin(std::vector<double> reg_params_start);
+  //! Set the ending regularization (TODO: details)
+  void SetEndingRegularizationMultilevelWithin(std::vector<double> reg_params_end);
+  void SetStartingRegularizationMultilevelBetween(double reg_params_start);
+  //! Set the ending regularization (TODO: details)
+  void SetEndingRegularizationMultilevelBetween(double reg_params_end);
+
+
   void SetRecomputeRegularizationInterval(int recompute_regularization_interval);
   //! Set if initialization splits should be saved or not
   void SetSaveInitSplits(bool save_init_splits);
@@ -212,6 +222,7 @@ public:
   void SetUseRegression(bool use_regression);
   //! Set if mixed effects should be used (TODO: details)
   void SetUseMixedEffects(bool use_mixed_effects);
+  void SetMlpcaOptimize(bool use_mlpca_optimize);
 
   //! For good/bad analysis, set the normal angle to use (TODO: details)
   void SetNormalAngle(double normal_angle);
@@ -377,6 +388,7 @@ protected:
   bool m_use_cutting_planes = false;
   bool m_optimizing = false;
   bool m_use_regression = false;
+  bool m_use_mlpca_optimize = false;
   bool m_use_mixed_effects = false;
 
   // IO Parameters
@@ -413,10 +425,17 @@ protected:
   unsigned int m_procrustes_interval = 3;
   bool m_procrustes_scaling = true;
   bool m_procrustes_rotation_translation = true;
+  bool m_procrustes_translation_only = false;
   double m_relative_weighting = 1.0;
   double m_initial_relative_weighting = 0.05;
   double m_starting_regularization = 1000;
   double m_ending_regularization = 1.0;
+  
+  std::vector<double> m_ending_regularization_multilevel;
+  std::vector<double> m_starting_regularization_multilevel;
+  double m_starting_regularization_multilevel_between = 1000;
+  double m_ending_regularization_multilevel_between = 1.0;
+
   int m_recompute_regularization_interval = 1;
   bool m_save_init_splits = false;
   unsigned int m_checkpointing_interval = 50;

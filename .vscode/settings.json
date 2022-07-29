@@ -1,0 +1,9 @@
+{
+    "files.associations": {
+        "*.txx": "cpp",
+        "iostream": "cpp",
+        "*.expression": "cpp",
+        "alignedvector3": "cpp",
+        "fft": "cpp"
+    }
+}

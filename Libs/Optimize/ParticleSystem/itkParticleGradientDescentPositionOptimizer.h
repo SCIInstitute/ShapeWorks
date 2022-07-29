@@ -8,6 +8,7 @@
 #include <vector>
 #include "vnl/vnl_vector_fixed.h"
 #include "itkParticleVectorFunction.h"
+#include "itkParticleDualVectorFunction.h"
 #include "ParticleImageDomainWithGradients.h"
 #include <algorithm>
 #include <limits>
@@ -54,6 +55,7 @@ public:
 
   /** Type of the gradient function. */
   typedef ParticleVectorFunction<VDimension> GradientFunctionType;
+  typedef ParticleDualVectorFunction<VDimension> DualGradientFunctionType;
   
   /** Numerical vector type. */
   typedef typename GradientFunctionType::VectorType VectorType;
@@ -66,7 +68,16 @@ public:
   {
     this->StartAdaptiveGaussSeidelOptimization();
   }
+  void StartMlpcaOptimization(bool flag_b)
+  {
+    this->m_mlpca_optimize = true;
+    this->StartMlpcaBasedAdaptiveGaussSeidelOptimization(flag_b);
+  }
   void StartAdaptiveGaussSeidelOptimization();
+
+  void StartMlpcaBasedAdaptiveGaussSeidelOptimization(bool flag_b);
+  void StartMlpcaBasedAdaptiveGaussSeidelOptimizationV1(bool flag_b);
+
 
   void AugmentedLagrangianConstraints(VectorType& gradient, const PointType& pt, const size_t& dom,
                                       const double& maximumUpdateAllowed);
@@ -133,6 +144,9 @@ private:
   double m_Tolerance;
   double m_TimeStep;
   std::vector< std::vector<double> > m_TimeSteps;
+  std::vector< std::vector<double> > m_TimeStepsWithin;
+  std::vector< std::vector<double> > m_TimeStepsBetween;
+  bool m_mlpca_optimize;
   unsigned int m_verbosity;
 
   void ResetTimeStepVectors();

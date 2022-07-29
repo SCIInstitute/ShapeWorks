@@ -704,7 +704,10 @@ StudioParticles AnalysisTool::get_mlca_shape_points(int mode, double value, int 
   }
 
   if(level == 1){
-    temp_shape_mca = stats_.Mean() + (e * (value * lambda));
+    // temp_shape_mca = stats_.Mean() + (e * (value * lambda));
+    temp_shape_mca = stats_.Mean() + stats_.WithinMean() + (e * (value * lambda));
+
+
     // this->temp_shape_mca = this->stats_.WithinMean() + (e * (value * lambda));
 
   }

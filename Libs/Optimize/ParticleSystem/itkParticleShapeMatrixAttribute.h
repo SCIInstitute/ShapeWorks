@@ -74,7 +74,7 @@ public:
 
         int numRows = 0;
         for (int i = 0; i < m_DomainsPerShape; i++)
-            numRows += VDimension * ps->GetNumberOfParticles(i);
+            {numRows += VDimension * ps->GetNumberOfParticles(i); m_numberOfParticlesAll[i] = ps->GetNumberOfParticles(i);}
 
         if (numRows > this->rows())
             this->ResizeMatrix(numRows, this->cols());
@@ -146,9 +146,11 @@ public:
     /** Set/Get the number of domains per shape.  This can only be safely done
       before shapes are initialized with points! */
     void SetDomainsPerShape(int i)
-    { m_DomainsPerShape = i; }
+    { m_DomainsPerShape = i; m_numberOfParticlesAll.resize(m_DomainsPerShape); }
     int GetDomainsPerShape() const
     { return m_DomainsPerShape; }
+    std::vector<int> GetAllNumberOfParticles() const
+    { return m_numberOfParticlesAll; }
 
 
     virtual void BeforeIteration() {}
@@ -173,6 +175,7 @@ protected:
     {   Superclass::PrintSelf(os,indent);  }
 
     int m_DomainsPerShape;
+    std::vector<int> m_numberOfParticlesAll;
 private:
     ParticleShapeMatrixAttribute(const Self&); //purposely not implemented
     void operator=(const Self&); //purposely not implemented
