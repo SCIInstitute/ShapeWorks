@@ -722,6 +722,7 @@ void Constraints::clipMesh(Mesh &mesh)
   }
 
   if (getFreeformConstraint().isSet()) {
+    std::cout << "Constraints::clipMesh call" << std::endl;
     auto& ffc = getFreeformConstraint();
     mesh.prepareFFCFields(ffc.boundaries(), ffc.getQueryPoint(), true);
     mesh = Mesh(mesh.clipByField("inout", 1.0));

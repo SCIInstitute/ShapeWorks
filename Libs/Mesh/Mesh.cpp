@@ -1308,6 +1308,8 @@ bool Mesh::prepareFFCFields(std::vector<std::vector<Eigen::Vector3d>> boundaries
     poly_data_->GetPointData()->RemoveArray("inout");
   }
 
+  //std::cout << "Running prepareFFCFields" << std::endl;
+
   // Extract mesh vertices and faces
   Eigen::MatrixXd V;
   Eigen::MatrixXi F;
@@ -1385,6 +1387,7 @@ bool Mesh::prepareFFCFields(std::vector<std::vector<Eigen::Vector3d>> boundaries
       continue;
     }
 
+    //std::cout << "Computing inout" << std::endl;
     vtkSmartPointer<vtkDoubleArray> inout = computeInOutForFFCs(query, halfmesh);
 
     if (!onlyGenerateInOut) {
@@ -1397,8 +1400,8 @@ bool Mesh::prepareFFCFields(std::vector<std::vector<Eigen::Vector3d>> boundaries
   }  // Per boundary for loop end
 
   // Write mesh for debug purposes
-  //    std::string fnin = "dev/mesh_" + std::to_string(dom) + "_" + std::to_string(num) + "_in.vtk";
-  //    this->write(fnin);
+      std::string fnin = "dev/mesh_" + std::to_string(query[0]) + "_" + std::to_string(query[2]) + "_in.vtk";
+      this->write(fnin);
 
   this->invalidateLocators();
   return true;
@@ -1510,9 +1513,11 @@ vtkSmartPointer<vtkDoubleArray> Mesh::computeInOutForFFCs(Eigen::Vector3d query,
   double fullp[3];
   this->poly_data_->GetPoint(fulli, fullp);
 
+  std::cout << query[0] << " " << query[1] << " " << query[2] << " half " << halfp[0] << " " << halfp[1] << " " << halfp[2] << " full mesh " <<  fullp[0] << " " << fullp[1] << " " << fullp[2] << std::endl;
   if (halfp[0] != fullp[0] || halfp[1] != fullp[1] || halfp[2] != fullp[2]) {
     halfmeshisin = false;  // If the closest point in halfmesh is not the closest point in fullmesh, then halfmesh is
                            // not the in mesh.
+    //std::cout << "Swap" << std::endl;
   }
 
   vtkSmartPointer<vtkDoubleArray> inout = vtkSmartPointer<vtkDoubleArray>::New();

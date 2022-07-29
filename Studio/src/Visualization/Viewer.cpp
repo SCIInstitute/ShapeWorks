@@ -705,7 +705,6 @@ void Viewer::display_shape(QSharedPointer<Shape> shape) {
             if (ffc.getDefinition() != poly_data) {
               ffc.computeBoundaries();
               ffc.applyToPolyData(poly_data);
-              ffc.setDefinition(poly_data);
             }
           } catch (std::exception& e) {
             STUDIO_SHOW_ERROR(QString("Unable to apply free form constraints: ") + e.what());

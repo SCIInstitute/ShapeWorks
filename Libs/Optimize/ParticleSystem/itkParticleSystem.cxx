@@ -235,7 +235,7 @@ void ParticleSystem::AdvancedAllParticleSplitting(double epsilon, unsigned int d
   size_t num_doms = this->GetNumberOfDomains();
 
   for (size_t domain = 0; domain < num_doms; domain++) {
-    this->GetDomain(domain)->GetConstraints()->InitializeLagrangianParameters(1, 1, 1);
+    this->GetDomain(domain)->GetConstraints()->InitializeLagrangianParameters(0, 0, 0);
   }
 
   std::vector<std::vector<PointType> > lists;

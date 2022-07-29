@@ -36,6 +36,7 @@ void FreeFormConstraint::applyToPolyData(vtkSmartPointer<vtkPolyData> polyData) 
     return;
   }
 
+  std::cout << "FreeFormConstraint::applyToPolyData call" << std::endl;
   mesh.prepareFFCFields(boundaries_, queryPoint_, true);
   auto inout = mesh.getField("inout", Mesh::FieldType::Point);
 
