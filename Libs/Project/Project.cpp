@@ -57,9 +57,9 @@ bool Project::load(const std::string& filename) {
     return false;
   }
 
-  load_subjects();
   determine_domain_names();
   determine_domain_types();
+  load_subjects();
 
   Parameters project_parameters = get_parameters(Parameters::PROJECT_PARAMS);
 
