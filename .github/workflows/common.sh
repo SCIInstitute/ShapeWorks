@@ -1,3 +1,8 @@
+
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    alias readlink='greadink'
+fi
+
 # absolute path to this script
 SCRIPT=$(readlink -f $0)
 # absolute path this script is located
