@@ -11,6 +11,10 @@ namespace shapeworks {
 
 class ProjectUtils {
  public:
+
+  using StringMap = std::map<std::string, std::string>;
+  using StringList = std::vector<std::string>;
+
   // convert a list of doubles from a spreadsheet to a vtkTransform
   static vtkSmartPointer<vtkTransform> convert_transform(std::vector<double> list);
 
@@ -38,6 +42,11 @@ class ProjectUtils {
                                                  std::vector<std::string> domain_names,
                                                  std::map<std::string, std::string> key_map);
 
+  static std::map<std::string, std::string> get_value_map(std::string prefix,
+                                                          std::map<std::string, std::string> key_map);
+
+  static std::map<std::string, std::string> get_extra_columns(std::map<std::string, std::string> key_map);
+
  public:
   static DomainType determine_domain_type(std::string filename);
 
@@ -55,6 +64,11 @@ class ProjectUtils {
   static constexpr const char* GROOMED_TRANSFORMS_PREFIX = "alignment_";
   static constexpr const char* PROCRUSTES_TRANSFORMS_PREFIX = "procrustes_";
   static constexpr const char* IMAGE_PREFIX = "image_";
+  static constexpr const char* FEATURE_PREFIX = "feature_";
+  static constexpr const char* GROUP_PREFIX = "group_";
+
+  static constexpr const char* LOCAL_PARTICLES = "local_particles";
+  static constexpr const char* WORLD_PARTICLES = "world_particles";
 
 
 };

@@ -23,7 +23,7 @@ static std::vector<std::string> get_keys(json item) {
 }
 
 //---------------------------------------------------------------------------
-static std::map<std::string,std::string> get_key_map(json item) {
+static std::map<std::string, std::string> get_key_map(json item) {
   std::map<std::string, std::string> key_map;
   for (auto& [key, value] : item.items()) {
     key_map[key] = value;
@@ -60,20 +60,30 @@ static void read_subjects(ProjectHandle project, const json& j) {
     }
     subject->set_number_of_domains(domains.size());
 
-    auto get_list = [&](auto prefix) {
-      return ProjectUtils::get_matching_values({prefix}, domains, key_map);
-    };
+    auto get_list = [&](auto prefix) { return ProjectUtils::get_matching_values({prefix}, domains, key_map); };
 
-
-    subject->set_original_filenames(ProjectUtils::get_matching_values(ProjectUtils::get_input_prefixes(), domains, key_map));
-    subject->set_groomed_filenames(ProjectUtils::get_matching_values(ProjectUtils::get_groomed_prefixes(), domains, key_map));
+    subject->set_original_filenames(
+        ProjectUtils::get_matching_values(ProjectUtils::get_input_prefixes(), domains, key_map));
+    subject->set_groomed_filenames(
+        ProjectUtils::get_matching_values(ProjectUtils::get_groomed_prefixes(), domains, key_map));
     subject->set_landmarks_filenames(get_list(ProjectUtils::LANDMARKS_FILE_PREFIX));
     subject->set_constraints_filenames(get_list(ProjectUtils::CONSTRAINTS_PREFIX));
-    subject->set_groomed_transforms(ProjectUtils::get_transforms(ProjectUtils::GROOMED_TRANSFORMS_PREFIX, domains, key_map));
-    subject->set_procrustes_transforms(ProjectUtils::get_transforms(ProjectUtils::PROCRUSTES_TRANSFORMS_PREFIX, domains, key_map));
+    subject->set_groomed_transforms(
+        ProjectUtils::get_transforms(ProjectUtils::GROOMED_TRANSFORMS_PREFIX, domains, key_map));
+    subject->set_procrustes_transforms(
+        ProjectUtils::get_transforms(ProjectUtils::PROCRUSTES_TRANSFORMS_PREFIX, domains, key_map));
     subject->set_image_filenames(get_list(ProjectUtils::IMAGE_PREFIX));
 
+    subject->set_feature_filenames(ProjectUtils::get_value_map(ProjectUtils::FEATURE_PREFIX, key_map));
+    subject->set_group_values(ProjectUtils::get_value_map(ProjectUtils::GROUP_PREFIX, key_map));
 
+    subject->set_local_particle_filenames(get_list(ProjectUtils::LOCAL_PARTICLES));
+    subject->set_world_particle_filenames(get_list(ProjectUtils::WORLD_PARTICLES));
+
+    // extra
+    subject->set_extra_values(ProjectUtils::get_extra_columns(key_map));
+    // table values
+    subject->set_table_values(key_map);
 
     subjects.push_back(subject);
   }
@@ -87,6 +97,9 @@ bool JsonProjectReader::read_project(ProjectHandle project, std::string filename
   json j = json::parse(ifs);
 
   read_subjects(project, j);
+
+  // needs to read landmark definitions
+
 
   return true;
 }

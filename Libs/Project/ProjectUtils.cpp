@@ -105,6 +105,12 @@ void ProjectUtils::determine_domain_types(std::shared_ptr<Project> project,
 }
 
 //---------------------------------------------------------------------------
+std::vector<std::string> ProjectUtils::get_input_prefixes()
+{
+  return input_prefixes;
+}
+
+//---------------------------------------------------------------------------
 std::vector<std::string> ProjectUtils::get_groomed_prefixes() {
   return {ProjectUtils::GROOMED_PREFIX, GROOMED_CONTOUR_PREFIX};
 }
@@ -162,6 +168,51 @@ std::vector<std::vector<double>> ProjectUtils::get_transforms(std::string prefix
     transforms.push_back(values);
   }
   return transforms;
+}
+
+//---------------------------------------------------------------------------
+std::map<std::string, std::string> ProjectUtils::get_value_map(std::string prefix,
+                                                               std::map<std::string, std::string> key_map) {
+  std::map<std::string, std::string> map;
+  for (auto& [key, value] : key_map) {
+    if (key.substr(0, prefix.length()) == prefix) {
+      std::string name = key.substr(prefix.length());
+      map[name] = value;
+    }
+  }
+  return map;
+}
+
+//---------------------------------------------------------------------------
+std::map<std::string, std::string> ProjectUtils::get_extra_columns(std::map<std::string, std::string> key_map) {
+  std::vector<std::string> prefixes = {SEGMENTATION_PREFIX,
+                                       SHAPE_PREFIX,
+                                       MESH_PREFIX,
+                                       CONTOUR_PREFIX,
+                                       GROOMED_PREFIX,
+                                       GROOMED_CONTOUR_PREFIX,
+                                       LANDMARKS_FILE_PREFIX,
+                                       CONSTRAINTS_PREFIX,
+                                       GROOMED_TRANSFORMS_PREFIX,
+                                       PROCRUSTES_TRANSFORMS_PREFIX,
+                                       IMAGE_PREFIX,
+                                       FEATURE_PREFIX,
+                                       GROUP_PREFIX,
+                                       LOCAL_PARTICLES,
+                                       WORLD_PARTICLES};
+  std::map<std::string, std::string> map;
+  for (auto& [key, value] : key_map) {
+    bool match = false;
+    for (const auto& prefix : prefixes) {
+      if (key.substr(0, prefix.size()) == prefix) {
+        match = true;
+      }
+    }
+    if (!match) {
+      map[key] = value;
+    }
+  }
+  return map;
 }
 
 //---------------------------------------------------------------------------
