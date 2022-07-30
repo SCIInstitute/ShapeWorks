@@ -104,8 +104,11 @@ class Project {
   //! Retrieve parameters based on key
   Parameters get_parameters(const std::string& name, std::string domain_name = "");
 
-  //! Retrieve parameter map based on key
+  //! Retrieve full parameter map for a given name
   std::map<std::string, Parameters> get_parameter_map(const std::string& name);
+
+  //! Set parameter map for a given name
+  void set_parameter_map(const std::string& name, std::map<std::string, Parameters> map);
 
   //! Store parameters based on key
   void set_parameters(const std::string& name, Parameters params, std::string domain_name = "");
@@ -127,6 +130,9 @@ class Project {
 
   //! Return all landmark definitions
   std::vector<std::vector<LandmarkDefinition>> get_all_landmark_definitions();
+
+  //! Set all landmark definitions
+  void set_landmark_definitions(std::vector<std::vector<LandmarkDefinition>> defs);
 
   //! Return if landmarks are present
   bool get_landmarks_present();

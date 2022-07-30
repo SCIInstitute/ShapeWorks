@@ -92,15 +92,90 @@ static void read_subjects(ProjectHandle project, const json& j) {
 }
 
 //---------------------------------------------------------------------------
+static void read_landmark_definitions(ProjectHandle project, const json& j) {
+  if (!j.contains("landmarks")) {
+    return;
+  }
+
+  auto landmarks = j["landmarks"];
+
+  std::vector<std::vector<LandmarkDefinition>> definitions;
+
+  auto domain_names = project->get_domain_names();
+  definitions.resize(domain_names.size());
+
+  for (auto landmark : landmarks) {
+    LandmarkDefinition def;
+    def.name_ = landmark["name"];
+    def.domain_ = landmark["domain"];
+
+    auto f = std::find(domain_names.begin(), domain_names.end(), def.domain_);
+    if (f == domain_names.end()) {
+      // skip, nonexistent domain
+      continue;
+    }
+    int domain_id = f - domain_names.begin();
+    def.domain_id_ = domain_id;
+    def.visible_ = landmark["visible"] == "true";
+    def.color_ = landmark["color"];
+    def.comment_ = landmark["comment"];
+    definitions[domain_id].push_back(def);
+  }
+
+  project->set_landmark_definitions(definitions);
+}
+
+//---------------------------------------------------------------------------
+static Parameters read_parameters(json j, std::string name) {
+  Parameters p;
+  if (!j.contains(name)) {
+    return p;
+  }
+
+  ProjectUtils::StringMap map;
+  for (auto& [key, value] : j[name].items()) {
+    map[key] = value;
+  }
+
+  p.set_map(map);
+  return p;
+}
+
+//---------------------------------------------------------------------------
+static std::map<std::string, Parameters> read_parameter_map(json j, std::string name) {
+  std::map<std::string, Parameters> map;
+  if (!j.contains(name)) {
+    return map;
+  }
+
+  for (auto& [domain, params] : j[name].items()) {
+    map[domain] = read_parameters(j[name], domain);
+  }
+  return map;
+}
+
+//---------------------------------------------------------------------------
 bool JsonProjectReader::read_project(ProjectHandle project, std::string filename) {
-  std::ifstream ifs(filename);
-  json j = json::parse(ifs);
+  try {
+    std::ifstream ifs(filename);
+    json j = json::parse(ifs);
 
-  read_subjects(project, j);
+    read_subjects(project, j);
 
-  // needs to read landmark definitions
+    read_landmark_definitions(project, j);
 
+    // read parameter sheets
+    project->set_parameter_map("groom", read_parameter_map(j, "groom)"));
+    project->set_parameters("optimize", read_parameters(j, "optimize)"));
+    project->set_parameters("studio", read_parameters(j, "studio"));
+    project->set_parameters("project", read_parameters(j, "project"));
+    project->set_parameters("analysis", read_parameters(j, "analysis"));
+    project->set_parameters("deepssm", read_parameters(j, "deepssm"));
 
+  } catch (std::exception& e) {
+    std::cerr << "Error reading " << filename << " : " << e.what() << "\n";
+    return false;
+  }
   return true;
 }
 

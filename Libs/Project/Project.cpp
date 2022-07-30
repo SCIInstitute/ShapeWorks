@@ -476,6 +476,12 @@ std::vector<LandmarkDefinition> Project::get_landmarks(int domain_id) {
 std::vector<std::vector<LandmarkDefinition>> Project::get_all_landmark_definitions() { return landmark_definitions_; }
 
 //---------------------------------------------------------------------------
+void Project::set_landmark_definitions(std::vector<std::vector<LandmarkDefinition>> defs) {
+  landmark_definitions_ = defs;
+  landmarks_loaded_ = true;
+}
+
+//---------------------------------------------------------------------------
 bool Project::get_landmarks_present() {
   for (const auto& def : landmark_definitions_) {
     if (!def.empty()) {
@@ -798,6 +804,12 @@ std::map<std::string, Parameters> Project::get_parameter_map(const std::string& 
     map[domains[i]] = get_parameters(name, domains[i]);
   }
   return map;
+}
+
+void Project::set_parameter_map(const std::string& name, std::map<std::string, Parameters> map) {
+  for (auto& [domain, params] : map) {
+    set_parameters(name, params, domain);
+  }
 }
 
 //---------------------------------------------------------------------------
