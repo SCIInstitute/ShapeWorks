@@ -5,6 +5,7 @@ set(SOURCES
   JsonProjectWriter.cpp
   Parameters.cpp
   Project.cpp
+  ProjectReader.cpp
   ProjectUtils.cpp
   Subject.cpp
   Variant.cpp

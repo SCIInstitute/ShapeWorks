@@ -5,6 +5,8 @@
 
 #include <vector>
 
+#include "Project.h"
+
 namespace shapeworks {
 
 class ProjectUtils {
@@ -14,5 +16,46 @@ class ProjectUtils {
 
   // convert a vtkTransform to a list of doubles (e.g. for project spreadsheet)
   static std::vector<double> convert_transform(vtkSmartPointer<vtkTransform> transform);
+
+  //! determine domain names from a subject's keys
+  static std::vector<std::string> determine_domain_names(std::vector<std::string> keys);
+
+  //! determine and set domain types
+  static void determine_domain_types(std::shared_ptr<Project> project, std::map<std::string, std::string> key_map);
+
+  static std::vector<std::string> get_input_prefixes();
+
+  static std::vector<std::string> get_groomed_prefixes();
+
+  static std::vector<std::string> get_original_keys(std::vector<std::string> domain_names,
+                                                    std::map<std::string, std::string> key_map);
+
+  static std::vector<std::string> get_matching_values(std::vector<std::string> prefixes,
+                                                      std::vector<std::string> domain_names,
+                                                      std::map<std::string, std::string> key_map);
+
+  static std::vector<std::vector<double>> get_transforms(std::string prefix,
+                                                 std::vector<std::string> domain_names,
+                                                 std::map<std::string, std::string> key_map);
+
+ public:
+  static DomainType determine_domain_type(std::string filename);
+
+  static constexpr const char* SEGMENTATION_PREFIX = "segmentation_";
+  static constexpr const char* SHAPE_PREFIX = "shape_";
+  static constexpr const char* MESH_PREFIX = "mesh_";
+  static constexpr const char* CONTOUR_PREFIX = "contour_";
+
+  static constexpr const char* GROOMED_PREFIX = "groomed_";
+  static constexpr const char* GROOMED_CONTOUR_PREFIX = "groomed_contour_";
+
+  static constexpr const char* LANDMARKS_FILE_PREFIX = "landmarks_file_";
+  static constexpr const char* CONSTRAINTS_PREFIX = "constraints_";
+
+  static constexpr const char* GROOMED_TRANSFORMS_PREFIX = "alignment_";
+  static constexpr const char* PROCRUSTES_TRANSFORMS_PREFIX = "procrustes_";
+  static constexpr const char* IMAGE_PREFIX = "image_";
+
+
 };
 }  // namespace shapeworks

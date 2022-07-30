@@ -68,6 +68,9 @@ class Project {
   //! Return the domain names (e.g. femur, pelvis, etc)
   std::vector<std::string> get_domain_names();
 
+  //! Set the domain names
+  void set_domain_names(std::vector<std::string> domain_names);
+
   //! Return the Subjects (as a reference)
   std::vector<std::shared_ptr<Subject>>& get_subjects();
 
@@ -153,6 +156,7 @@ class Project {
   void set_default_landmark_colors();
 
   void determine_domain_types();
+  void determine_domain_names();
 
   DomainType determine_domain_type(std::string filename);
 
@@ -243,6 +247,7 @@ class Project {
   bool landmarks_loaded_{false};
   std::vector<std::vector<LandmarkDefinition>> landmark_definitions_;
 
+  std::vector<std::string> domain_names_;
   std::vector<DomainType> original_domain_types_;
   std::vector<DomainType> groomed_domain_types_;
 

@@ -58,6 +58,7 @@ bool Project::load(const std::string& filename) {
   }
 
   load_subjects();
+  determine_domain_names();
   determine_domain_types();
 
   Parameters project_parameters = get_parameters(Parameters::PROJECT_PARAMS);
@@ -450,6 +451,7 @@ void Project::store_subjects() {
     }
   }
 
+  determine_domain_names();
   determine_domain_types();
   originals_present_ = !original_columns.empty();
   groomed_present_ = groomed_present;
@@ -639,6 +641,33 @@ void Project::determine_domain_types() {
       }
     }
   }
+}
+
+//---------------------------------------------------------------------------
+void Project::determine_domain_names() {
+  auto seg_columns = get_matching_columns(input_prefixes_);
+  if (!seg_columns.empty()) {
+    std::vector<std::string> names;
+    for (auto&& item : seg_columns) {
+      names.push_back(get_column_identifier(item));
+    }
+    set_domain_names(names);
+    return;
+  }
+
+  auto groom_columns = get_matching_columns(GROOMED_PREFIX);
+  if (!groom_columns.empty()) {
+    std::vector<std::string> names;
+    for (auto&& item : groom_columns) {
+      names.push_back(item.erase(0, std::strlen(GROOMED_PREFIX)));
+    }
+    set_domain_names(names);
+    return;
+  }
+
+  // default 1
+  std::vector<std::string> list{"1"};
+  set_domain_names(list);
 }
 
 //---------------------------------------------------------------------------
@@ -1025,29 +1054,10 @@ std::string Project::get_filename() { return filename_; }
 void Project::set_filename(std::string filename) { filename_ = filename; }
 
 //---------------------------------------------------------------------------
-std::vector<std::string> Project::get_domain_names() {
-  auto seg_columns = get_matching_columns(input_prefixes_);
-  if (!seg_columns.empty()) {
-    std::vector<std::string> names;
-    for (auto&& item : seg_columns) {
-      names.push_back(get_column_identifier(item));
-    }
-    return names;
-  }
+std::vector<std::string> Project::get_domain_names() { return domain_names_; }
 
-  auto groom_columns = get_matching_columns(GROOMED_PREFIX);
-  if (!groom_columns.empty()) {
-    std::vector<std::string> names;
-    for (auto&& item : groom_columns) {
-      names.push_back(item.erase(0, std::strlen(GROOMED_PREFIX)));
-    }
-    return names;
-  }
-
-  // default 1
-  std::vector<std::string> list{"1"};
-  return list;
-}
+//---------------------------------------------------------------------------
+void Project::set_domain_names(std::vector<std::string> domain_names) { domain_names_ = domain_names; }
 
 //---------------------------------------------------------------------------
 int Project::get_or_create_worksheet(std::string name) {
