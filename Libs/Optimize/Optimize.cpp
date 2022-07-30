@@ -287,11 +287,9 @@ void Optimize::SetParameters()
   this->m_procrustes->SetScaling(this->m_procrustes_scaling);
   this->m_procrustes->SetRotationTranslation(this->m_procrustes_rotation_translation);
 
-
   this->SetIterationCallback();
   this->PrintStartMessage("Initializing variables...");
   this->InitializeSampler();
-  std::cout << "Sampler initialized" << std::endl;
   this->PrintDoneMessage();
 
   if (m_use_normals.size() > 0) {
