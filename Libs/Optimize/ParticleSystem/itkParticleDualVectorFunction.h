@@ -4,7 +4,6 @@
 #include "itkObjectFactory.h"
 #include "itkWeakPointer.h"
 #include "itkParticleSystem.h"
-#include "itkParticleEnsembleMlpcaEntropyFunction.h"
 #include "vnl/vnl_vector_fixed.h"
 
 namespace itk
@@ -27,7 +26,6 @@ public:
     typedef SmartPointer<Self>  Pointer;
     typedef SmartPointer<const Self>  ConstPointer;
     typedef ParticleVectorFunction<VDimension> Superclass;
-    typedef ParticleEnsembleMlpcaEntropyFunction<VDimension> MlpcaCorrespondenceFunctionType;
     itkTypeMacro( ParticleDualVectorFunction, ParticleVectorFunction);
 
     /** Type of particle system. */
@@ -140,7 +138,6 @@ public:
         return ansB;
     }
 
-    
     virtual double Energy(unsigned int idx, unsigned int d, const ParticleSystemType *system) const
     {
         double ansA = 0.0;
@@ -185,8 +182,6 @@ public:
 
         return 0.0;
     }
-    
-    
     virtual VectorType Evaluate(unsigned int idx, unsigned int d,
                                 const ParticleSystemType *system,
                                 double &maxmove, double &energy) const
@@ -309,12 +304,8 @@ public:
         }
         m_AverageGradMagA = 0.0;
         m_AverageGradMagB = 0.0;
-        m_AverageBetweenGradMagB = 0.0;
-        m_AverageWithinGradMagB = 0.0;
         m_AverageEnergyA = 0.0;
         m_Counter = 0.0;
-        m_CounterBetween = 0.0;
-        m_CounterWithin = 0.0;
     }
 
     /** Some subclasses may require a pointer to the particle system and its
@@ -419,15 +410,9 @@ public:
         copy->m_RelativeEnergyScaling = this->m_RelativeEnergyScaling;
         copy->m_AverageGradMagA = this->m_AverageGradMagA;
         copy->m_AverageGradMagB = this->m_AverageGradMagB;
-        copy->m_AverageWithinGradMagB = this->m_AverageWithinGradMagB;
-        copy->m_AverageBetweenGradMagB = this->m_AverageBetweenGradMagB;
         copy->m_AverageEnergyA = this->m_AverageEnergyA;
         copy->m_AverageEnergyB = this->m_AverageEnergyB;
-        copy->m_AverageWithinEnergyB = this->m_AverageWithinEnergyB;
-        copy->m_AverageBetweenEnergyB = this->m_AverageBetweenEnergyB;
         copy->m_Counter = this->m_Counter;
-        copy->m_CounterWithin = this->m_CounterWithin;
-        copy->m_CounterBetween = this->m_CounterBetween;
 
         if (this->m_FunctionA) copy->m_FunctionA = this->m_FunctionA->Clone();
         if (this->m_FunctionB) copy->m_FunctionB = this->m_FunctionB->Clone();
@@ -456,16 +441,10 @@ protected:
     double m_RelativeEnergyScaling;
     double m_AverageGradMagA;
     double m_AverageGradMagB;
-    double m_AverageWithinGradMagB;
-    double m_AverageBetweenGradMagB;
     double m_AverageEnergyA;
     double m_AverageEnergyB;
-    double m_AverageBetweenEnergyB;
-    double m_AverageWithinEnergyB;
     double m_Counter;
 
-    double m_CounterBetween;
-    double m_CounterWithin;
 
     typename ParticleVectorFunction<VDimension>::Pointer m_FunctionA;
     typename ParticleVectorFunction<VDimension>::Pointer m_FunctionB;

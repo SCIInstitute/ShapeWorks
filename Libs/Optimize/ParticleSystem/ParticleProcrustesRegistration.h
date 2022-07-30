@@ -38,15 +38,10 @@ class ParticleProcrustesRegistration {
   bool GetRotationTranslation() const { return m_RotationTranslation; }
   void SetRotationTranslation(bool rotationTranslation) { m_RotationTranslation = rotationTranslation; }
 
-  bool GetTranslationOnly() const { return m_TranslationOnly; }
-  void SetTranslationOnly(bool translationOnly) { m_TranslationOnly = translationOnly; 
-  std::cout << "Procrustes Translation Set to " << translationOnly << std::endl;}
-
  private:
   int m_DomainsPerShape = 1;
   bool m_Scaling = true;
   bool m_RotationTranslation = true;
-  bool m_TranslationOnly = false;
   ParticleSystemType *m_ParticleSystem = nullptr;
 };
 

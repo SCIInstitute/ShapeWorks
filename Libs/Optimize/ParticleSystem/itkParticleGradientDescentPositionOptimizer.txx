@@ -53,7 +53,6 @@ namespace itk
         m_TimeSteps[i][j] = 1.0;
       }
     }
-
   }
 
   template <class TGradientNumericType, unsigned int VDimension>
@@ -242,9 +241,7 @@ namespace itk
 
     } // end while stop optimization
   }
-
-
-
+  
 template<class TGradientNumericType, unsigned int VDimension>
 void
 ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>::AugmentedLagrangianConstraints(

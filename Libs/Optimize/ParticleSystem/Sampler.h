@@ -237,7 +237,6 @@ public:
   /** This method sets the optimization function for correspondences between surfaces (domains). */
   virtual void SetCorrespondenceMode(shapeworks::CorrespondenceMode mode)
   {
-    std::cout << "inside correspondence mode and mode is " << std::endl;
     if (mode == shapeworks::CorrespondenceMode::MeanEnergy) {
       m_LinkingFunction->SetFunctionB(m_EnsembleEntropyFunction);
       m_EnsembleEntropyFunction->UseMeanEnergy();
