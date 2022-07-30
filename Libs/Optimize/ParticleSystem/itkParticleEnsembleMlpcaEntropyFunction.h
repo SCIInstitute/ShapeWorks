@@ -216,16 +216,23 @@ protected:
 
   std::shared_ptr<vnl_matrix_type> m_PointsUpdate_rel_pose;
   std::shared_ptr<vnl_matrix_type> m_PointsUpdate_shape_dev;
-  double m_MinimumVariance;
-  double m_MinimumEigenValue;
-  double m_CurrentEnergy;
+  double m_MinimumVariance_rel_pose;
+  double m_MinimumEigenValue_rel_pose;
+  std::vector<double> m_MinimumEigenValue_shape_dev_ar;
+  double m_CurrentEnergy_rel_pose;
+  std::vector<double> m_CurrentEnergy_shape_dev_ar;
   bool m_HoldMinimumVariance;
-  double m_MinimumVarianceDecayConstant;
+  double m_MinimumVarianceDecayConstant_rel_pose;
+
+  std::vector<double> m_MinimumVariance_shape_dev_ar;
+  std::vector<double> m_MinimumVarianceDecayConstant_shape_dev_ar;
   int m_RecomputeCovarianceInterval;
   int m_Counter;
   bool m_UseMeanEnergy;
 
   unsigned int m_total_organs;
+  std::vector<int> m_num_particles_ar;
+
 
   std::shared_ptr<vnl_matrix_type> m_super_matrix;
 

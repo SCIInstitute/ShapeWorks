@@ -29,9 +29,11 @@ ParticleEnsembleMlpcaEntropyFunction<VDimension>
 {
     // Helper function to dinf centroid for each organ given the shape vector
     centroid_results.set_size(VDimension * m_total_organs, 1);
+    centroid_results.fill(0.0);
+
     // 1. Transform 3M vector to M X 3 matrix
     vnl_matrix_type temp_matrix;
-    unsigned int M = centroid_results.rows();
+    unsigned int M = shape_vector.rows();
     temp_matrix.set_size(M, VDimension);
     temp_matrix.fill(0.0);
     for(unsigned int i = 0; i < M; i++){
@@ -42,10 +44,11 @@ ParticleEnsembleMlpcaEntropyFunction<VDimension>
     for(unsigned int k = 0; k < m_total_organs; k++){
         // Extract organ block 
         vnl_matrix_type temp_k;
-        temp_k.set_size(num_particles_ar[k], 3);
+        temp_k.set_size(m_num_particles_ar[k], 3);
         temp_k.clear();
         temp_k.fill(0.0);
-        unsigned int idx = num_particles_ar[k] * k;
+        unsigned int idx = 0;
+        for(unsigned int k_prev = 0; k_prev < k; k_prev++){ idx += m_num_particles_ar[k_prev];}
         temp_matrix.extract(temp_k, idx, 0);
         // find mean
         Eigen::MatrixXd temp_eigen = Eigen::Map<Eigen::MatrixXd>(temp_k.data_block(), temp_k.rows(), temp_k.cols());
@@ -54,9 +57,8 @@ ParticleEnsembleMlpcaEntropyFunction<VDimension>
         centroid_results.put(k * VDimension, 0, centroid_k(0, 0));
         centroid_results.put(k * VDimension + 1, 0, centroid_k(0, 1));
         centroid_results.put(k * VDimension + 2, 0, centroid_k(0, 2));
-        
     }
-
+    return;
 }
 
 template <unsigned int VDimension>
@@ -67,7 +69,7 @@ ParticleEnsembleMlpcaEntropyFunction<VDimension>
     std::cout << "********Computing Shape Pose Deviation Terms********" << std::endl;
     m_total_organs = m_ShapeMatrix->GetDomainsPerShape(); // K
     unsigned int N  = m_ShapeMatrix->cols(); // num_samples --> N
-    std::vector<int> num_particles = m_ShapeMatrix->GetAllNumberOfParticles();
+    m_num_particles_ar = m_ShapeMatrix->GetAllNumberOfParticles();
     unsigned int total_particles = std::accumulate(num_particles.begin(), num_particles.end(), 0);
     unsigned int total_particles_ = (int)(m_ShapeMatrix->rows() / (VDimension)); // M
     if(total_particles != total_particles_){
@@ -77,19 +79,18 @@ ParticleEnsembleMlpcaEntropyFunction<VDimension>
     std::cout << "K = " << m_total_organs << " N = " << N << " M = " << M << std::endl;
 
     m_InverseCovMatrix_shape_dev->clear();
-    m_InverseCovMatrix_rel_pose->clear();
+    m_InverseCovMatrix_rel_pose->clear(); // Single Matrix
 
-    m_PointsUpdate_rel_pose->clear();
+    m_PointsUpdate_rel_pose->clear(); // Single Matrix
     m_PointsUpdate_shape_dev->clear();
 
-    m_points_mean_rel_pose->clear();
+    m_points_mean_rel_pose->clear(); // Single Matrix
     m_points_mean_shape_dev->clear();
 
     for(unsigned int i = 0; i < m_total_organs; i++){
       vnl_matrix_type inv_cov_matrix_temp;
       vnl_matrix_type points_update_temp;
       vnl_matrix_type mean_temp;
-
       m_InverseCovMatrix_shape_dev->push_back(inv_cov_matrix_temp);
       m_PointsUpdate_shape_dev->push_back(points_update_temp);
       m_points_mean_shape_dev->push_back(mean_temp);
@@ -130,8 +131,12 @@ ParticleEnsembleMlpcaEntropyFunction<VDimension>
             // Convert to standard form and find residual from its mean
             // Convert to Objective dimensions : -----> 3m X N
             vnl_matrix_type z_shape_dev_k_objective;
-            z_shape_dev_k_objective.set_size(VDimension * num_particles[k], N);
+            vnl_matrix_type points_update_shape_dev_k;
+            unsigned int num_dims = num_particles[k] * VDimension;
+            z_shape_dev_k_objective.set_size(num_dims, N);
             z_shape_dev_k_objective.fill(0.0);
+            points_update_shape_dev_k.set_size(num_dims, N);
+            points_update_shape_dev_k.fill(0.0);
 
             for(unsigned int i = 0; i < N; i++){
                 for(unsigned int j = 0; j < num_particles[k]; j++){
@@ -143,198 +148,148 @@ ParticleEnsembleMlpcaEntropyFunction<VDimension>
             }
 
             // Compute mean for this objective
-            vnl_matrix_type temp;
-            temp.clear();
-            temp.set_size(VDimension * num_particles[k], 1);
-            temp.fill(0);
+            vnl_matrix_type mean_shape_dev_k;
+            mean_shape_dev_k.clear();
+            mean_shape_dev_k.set_size(num_dims, 1);
+            mean_shape_dev_k.fill(0);
             for(unsigned int x = 0; x < N; x++){
-                temp += z_shape_dev_k_objective.get_n_columns(x, 1);
+                mean_shape_dev_k += z_shape_dev_k_objective.get_n_columns(x, 1);
             }
-            temp /= N;
-            m_points_mean_shape_dev->at(k) = temp;
+            mean_shape_dev_k /= N;
+            m_points_mean_shape_dev->at(k) = mean_shape_dev_k;
             // Subtract mean from the objective
             for(unsigned int x = 0; x < N; x++){
-                vnl_matrix_type change_within = z_shape_dev_k_objective.get_n_columns(x, 1) - temp;
-                z_shape_dev_k_objective.update(change_within, 0, x);
+                vnl_matrix_type diff_ = z_shape_dev_k_objective.get_n_columns(x, 1) - mean_shape_dev_k;
+                z_shape_dev_k_objective.update(diff_, 0, x);
             }
 
-            // Perform svd and compute gradients for the shape deviations
-            vnl_diag_matrix<double> W_k;
-            vnl_matrix_type InverseCovMatrix_k;
-            vnl_matrix_type gramMat_k(N, N, 0.0); // ---> N X N
-            vnl_matrix_type pinvMat_k(N, N, 0.0); //gramMat inverse ---> N X N
-            unsigned int num_dims = num_particles[k] * VDimension;
+            // Perform svd and compute gradient updates for the shape deviations
+            vnl_diag_matrix<double> W_shape_dev_k;
+            vnl_matrix_type InverseCovMatrix_shape_dev_k;
+            vnl_matrix_type gramMat_shape_dev_k(N, N, 0.0); // ---> N X N
+            vnl_matrix_type pinvMat_shape_dev_k(N, N, 0.0); //gramMat inverse ---> N X N
+
             if (this->m_UseMeanEnergy)
             {
-                pinvMat_k.set_identity();
-                InverseCovMatrix_k.clear();
+                pinvMat_shape_dev_k.set_identity();
+                InverseCovMatrix_shape_dev_k.clear();
             }
             else
             {
-                gramMat_k = z_shape_dev_k_objective.transpose()* z_shape_dev_k_objective; // Y'Y where Y = z_shape_dev - mean --> N X N
-                vnl_svd<double> svd(gramMat_k);
+                gramMat_shape_dev_k = z_shape_dev_k_objective.transpose()* z_shape_dev_k_objective; // Y'Y where Y = z_shape_dev - mean --> N X N
+                vnl_svd<double> svd(gramMat_shape_dev_k);
                 vnl_matrix_type UG = svd.U(); // ---> N X N
-                W_k = svd.W(); // ---> N X N
+                W_shape_dev_k = svd.W(); // ---> N X N
                 vnl_diag_matrix<double> invLambda_k = svd.W(); // ----> N X N
-                invLambda_k.set_diagonal(invLambda_k.get_diagonal()/(double)(N-1) + m_MinimumVariance_within_ar[k]); 
+                invLambda_k.set_diagonal(invLambda_k.get_diagonal()/(double)(N-1) + m_MinimumVariance_shape_dev_ar[k]); 
                 invLambda_k.invert_in_place();
-                pinvMat_k = (UG * invLambda_k) * UG.transpose(); // ---> N X N
-                vnl_matrix_type projMat_k = points_minus_mean_k * UG; // 3m X N   X   N X N ---> 3m X N
+                pinvMat_shape_dev_k = (UG * invLambda_k) * UG.transpose(); // ---> N X N
+                vnl_matrix_type projMat_k = z_shape_dev_k_objective * UG; // 3m X N   X   N X N ---> 3m X N
                 const auto lhs = projMat_k * invLambda_k; // ---> 3m X N
                 const auto rhs = invLambda_k * projMat_k.transpose(); //---> N X 3m invLambda doesn't need to be transposed since its a diagonal matrix
-                InverseCovMatrix_k.set_size(num_dims, num_dims); //---> 3m X 3m 
-                Utils::multiply_into(InverseCovMatrix_k, lhs, rhs);
+                InverseCovMatrix_shape_dev_k.set_size(num_dims, num_dims); //---> 3m X 3m 
+                Utils::multiply_into(InverseCovMatrix_shape_dev_k, lhs, rhs);
             }
-            .update(z_k_between_residual * pinvMat_k); // ---> 3m X N   X  N X N ---> 3m X N update the gradient
+            points_update_shape_dev_k.update(z_shape_dev_k_objective * pinvMat_shape_dev_k); // ---> 3m X N   X  N X N ---> 3m X N update the gradient
 
-            m_CurrentBetweenResidualEnergies.at(k) = 0.0;
+            m_CurrentEnergy_shape_dev_ar.at(k) = 0.0;
             if (m_UseMeanEnergy)
-                m_CurrentBetweenResidualEnergies.at(k) = points_minus_mean_k.frobenius_norm();
+                m_CurrentEnergy_shape_dev_ar.at(k) = z_shape_dev_k_objective.frobenius_norm();
             else
             {
-                m_MinimumBetweenResidualEigenValues.at(k) = W_k(0)*W_k(0) + m_MinimumVariance_within_ar[k];
-                for (unsigned int i = 0; i < num_samples; i++)
+                m_CurrentEnergy_shape_dev_ar.at(k) = W_shape_dev_k(0)*W_shape_dev_k(0) + m_MinimumVariance_shape_dev_ar[k];
+                for (unsigned int i = 0; i < N; i++)
                 {
-                    double val_i = W_k(i)*W_k(i) + m_MinimumVariance_within_ar[k];
-                    if ( val_i < m_MinimumBetweenResidualEigenValues.at(k))
-                         m_MinimumBetweenResidualEigenValues.at(k) = val_i;
-                    m_CurrentBetweenResidualEnergies.at(k) += log(val_i);
+                    double val_i = W_shape_dev_k(i)*W_shape_dev_k(i) + m_MinimumVariance_shape_dev_ar[k];
+                    if ( val_i < m_MinimumEigenValue_shape_dev_ar.at(k))
+                         m_MinimumEigenValue_shape_dev_ar.at(k) = val_i;
+                    m_CurrentEnergy_shape_dev_ar.at(k) += log(val_i);
                 }
             }
-            m_CurrentBetweenResidualEnergies.at(k) /= 2.0;
+            m_CurrentEnergy_shape_dev_ar.at(k) /= 2.0;
             if (m_UseMeanEnergy)
-                m_MinimumBetweenResidualEigenValues.at(k) = m_CurrentBetweenResidualEnergies.at(k) / 2.0;
+                m_MinimumEigenValue_shape_dev_ar.at(k) = m_MinimumEigenValue_shape_dev_ar.at(k) / 2.0;
 
-            m_PointsUpdateAllBetween->at(k) = PointsUpdate_k;
-            m_InverseCovMatricesAllBetween->at(k) = InverseCovMatrix_k;
-            m_points_meanAllBetween->at(k) = points_mean_k;
+            m_PointsUpdate_shape_dev->at(k) = points_update_shape_dev_k;
+            m_InverseCovMatrix_shape_dev->at(k) = InverseCovMatrix_shape_dev_k;
+            m_points_mean_shape_dev->at(k) = mean_shape_dev_k;
         }
     });
 
     // 3. Perform all the computations for the between part
-
+    vnl_matrix_type z_rel_pose_objective;
+    m_PointsUpdate_rel_pose->set_size(1, 1);
+    z_rel_pose_objective.set_size(VDimension * m_total_organs, N); // 3K X N
+    z_rel_pose_objective.fill(0.0);
+    // A. Build Rel Pose Objective Matrix
     for (unsigned int n = 0; n < N; n++){
-        vnl_matrix_type vec_n, centers_n;
-        vec_n.set_size(VDimension * M, 1);
-        vec_n.clear();
-        m_ShapeMatrix->extract(vec_n, 0, n);
+        vnl_matrix_type centers_n;
+        vnl_matrix_type vec_n = m_ShapeMatrix->get_n_columns(n, 1);
         this->ComputeCentroidForShapeVector(vec_n, centers_n);
-        
+        z_rel_pose_objective.set_columns(n, centers_n);
     }
-
-
-
-
-
-
-}
-
-
-template <unsigned int VDimension>
-void
-ParticleEnsembleMlpcaEntropyFunction<VDimension>
-::ComputeCovarianceMatrix()
-{
-    // NOTE: This code requires that indices be contiguous, i.e. it wont work if
-    // you start deleting particles.
-    const unsigned int num_samples = m_ShapeMatrix->cols();
-    const unsigned int num_dims    = m_ShapeMatrix->rows();
-
-
-    // Do we need to resize the covariance matrix?
-    if (m_PointsUpdate->rows() != num_dims || m_PointsUpdate->cols() != num_samples)
-    {
-        m_PointsUpdate->set_size(num_dims, num_samples);
-        m_PointsUpdate->fill(0.0);
+    // Find mean
+    vnl_matrix_type points_mean_rel_pose;
+    points_mean_rel_pose.set_size(VDimension * m_total_organs, N);
+    points_mean_rel_pose.fill(0.0);
+    for(unsigned int x = 0; x < N; x++){
+        points_mean_rel_pose += z_rel_pose_objective.get_n_columns(x, 1);
     }
-    vnl_matrix_type points_minus_mean;
-    points_minus_mean.clear();
-    points_minus_mean.set_size(num_dims, num_samples);
-    points_minus_mean.fill(0.0);
-
-    m_points_mean->clear();
-    m_points_mean->set_size(num_dims, 1);
-
-    // Compute the covariance matrix.
-    // (A is D' in Davies paper)
-    // Compute the mean shape vector.
-    double _total = 0.0;
-    for (unsigned int j = 0; j < num_dims; j++)
-    {
-        double total = 0.0;
-        for (unsigned int i = 0; i < num_samples; i++)
-        {
-            total += m_ShapeMatrix->operator()(j, i);
-        }
-        m_points_mean->put(j,0, total/(double)num_samples);
-        _total += total;
+    points_mean_rel_pose /= N;
+    m_points_mean_rel_pose = points_mean_rel_pose.transpose().transpose();
+    // Subtract mean from the objective
+    for(unsigned int x = 0; x < N; x++){
+        vnl_matrix_type diff = z_rel_pose_objective.get_n_columns(x, 1) - points_mean_rel_pose;
+        z_rel_pose_objective.update(diff, 0, x);
     }
+    // Perform svd and find inv covariance matrix
+    vnl_diag_matrix<double> W_rel_pose;
 
-
-    for (unsigned int j = 0; j < num_dims; j++)
-    {
-        for (unsigned int i = 0; i < num_samples; i++)
-        {
-            points_minus_mean(j, i) = m_ShapeMatrix->operator()(j, i) - m_points_mean->get(j,0);
-        }
-    }
-
-
-    vnl_diag_matrix<double> W;
-
-    vnl_matrix_type gramMat(num_samples, num_samples, 0.0);
-    vnl_matrix_type pinvMat(num_samples, num_samples, 0.0); //gramMat inverse
+    vnl_matrix_type gramMat_rel_pose(N, N, 0.0);
+    vnl_matrix_type pinvMat_rel_pose(N, N, 0.0); //gramMat inverse
 
     if (this->m_UseMeanEnergy)
     {
-        pinvMat.set_identity();
-        m_InverseCovMatrix->clear();
+        pinvMat_rel_pose.set_identity();
+        m_InverseCovMatrix_rel_pose->clear();
     }
     else
     {
-        gramMat = points_minus_mean.transpose()* points_minus_mean;
+        gramMat_rel_pose = z_rel_pose_objective.transpose()* z_rel_pose_objective;
 
-        vnl_svd <double> svd(gramMat);
+        vnl_svd <double> svd(gramMat_rel_pose);
 
         vnl_matrix_type UG = svd.U();
-        W = svd.W();
+        W_rel_pose = svd.W();
 
         vnl_diag_matrix<double> invLambda = svd.W();
-
-        invLambda.set_diagonal(invLambda.get_diagonal()/(double)(num_samples-1) + m_MinimumVariance);
+        invLambda.set_diagonal(invLambda.get_diagonal()/(double)(N-1) + m_MinimumVariance_rel_pose);
         invLambda.invert_in_place();
-
-        pinvMat = (UG * invLambda) * UG.transpose();
-
-        vnl_matrix_type projMat = points_minus_mean * UG;
+        pinvMat_rel_pose = (UG * invLambda) * UG.transpose();
+        vnl_matrix_type projMat = z_rel_pose_objective * UG;
         const auto lhs = projMat * invLambda;
         const auto rhs = invLambda * projMat.transpose(); // invLambda doesn't need to be transposed since its a diagonal matrix
-        m_InverseCovMatrix->set_size(num_dims, num_dims);
-        Utils::multiply_into(*m_InverseCovMatrix, lhs, rhs);
+        m_InverseCovMatrix_rel_pose->set_size(VDimension * m_total_organs, VDimension * m_total_organs);
+        Utils::multiply_into(*m_InverseCovMatrix_rel_pose, lhs, rhs);
     }
-    m_PointsUpdate->update(points_minus_mean * pinvMat);
-
-//     std::cout << m_PointsUpdate.extract(num_dims, num_samples,0,0) << std::endl;
-
-    m_CurrentEnergy = 0.0;
-
+    m_PointsUpdate_rel_pose->update(z_rel_pose_objective * pinvMat_rel_pose);
+    m_CurrentEnergy_rel_pose = 0.0;
     if (m_UseMeanEnergy)
-        m_CurrentEnergy = points_minus_mean.frobenius_norm();
+        m_CurrentEnergy_rel_pose = z_rel_pose_objective.frobenius_norm();
     else
     {
-        m_MinimumEigenValue = W(0)*W(0) + m_MinimumVariance;
-        for (unsigned int i = 0; i < num_samples; i++)
+        m_MinimumEigenValue_rel_pose = W_rel_pose(0)*W_rel_pose(0) + m_MinimumVariance_rel_pose;
+        for (unsigned int i = 0; i < N; i++)
         {
-            double val_i = W(i)*W(i) + m_MinimumVariance;
-            if ( val_i < m_MinimumEigenValue)
-                m_MinimumEigenValue = val_i;
-            m_CurrentEnergy += log(val_i);
+            double val_i = W_rel_pose(i)*W_rel_pose(i) + m_MinimumVariance_rel_pose;
+            if ( val_i < m_MinimumEigenValue_rel_pose)
+                m_MinimumEigenValue_rel_pose = val_i;
+            m_CurrentEnergy_rel_pose += log(val_i);
         }
     }
-
-    m_CurrentEnergy /= 2.0;
+    m_CurrentEnergy_rel_pose /= 2.0;
     if (m_UseMeanEnergy)
-        m_MinimumEigenValue = m_CurrentEnergy / 2.0;
+        m_MinimumEigenValue_rel_pose = m_CurrentEnergy_rel_pose / 2.0;
 }
 
 template <unsigned int VDimension>
@@ -343,49 +298,62 @@ ParticleEnsembleMlpcaEntropyFunction<VDimension>
 ::Evaluate(unsigned int idx, unsigned int d, const ParticleSystemType * system,
            double &maxdt, double &energy) const
 {
-    // NOTE: This code requires that indices be contiguous, i.e. it won't work if
-    // you start deleting particles.
-    const unsigned int DomainsPerShape = m_ShapeMatrix->GetDomainsPerShape();
-
-    maxdt  = m_MinimumEigenValue;
+    // d / dps ---> Subject idx (n)
+    // d % dps ---> Organ idx (k)
+    const unsigned int K = m_ShapeMatrix->GetDomainsPerShape();
+    const unsigned int cur_organ = d % K;
+    const unsigned int cur_sub = d / K;
+    maxdt  = m_MinimumEigenValue_rel_pose + m_MinimumEigenValue_shape_dev_ar.at(cur_organ);
 
     VectorType gradE;
     unsigned int k = 0;
-    int dom = d % DomainsPerShape;
-    for (int i = 0; i < dom; i++)
+    for (int i = 0; i < cur_organ; i++)
         k += system->GetNumberOfParticles(i) * VDimension;
     k += idx*VDimension;
 
-    vnl_matrix_type Xi(3,1,0.0);
-    Xi(0,0) = m_ShapeMatrix->operator()(k  , d/DomainsPerShape) - m_points_mean->get(k, 0);
-    Xi(1,0) = m_ShapeMatrix->operator()(k+1, d/DomainsPerShape) - m_points_mean->get(k+1, 0);
-    Xi(2,0) = m_ShapeMatrix->operator()(k+2, d/DomainsPerShape) - m_points_mean->get(k+2, 0);
+    vnl_matrix_type Xi_shape_dev(3,1,0.0);
+    vnl_matrix_type centroid_new;
+    vnl_matrix_type cur_sub_shape_vector = m_ShapeMatrix->get_n_columns(cur_sub, 1);
+    this->ComputeCentroidForShapeVector(cur_sub_shape_vector, centroid_new);
+    Xi_shape_dev(0,0) = m_ShapeMatrix->operator()(k  , cur_sub) - centroid_new(cur_organ*VDimension, 0) - m_points_mean_shape_dev->at(cur_organ).get(k, 0);
+    Xi_shape_dev(1,0) = m_ShapeMatrix->operator()(k  , cur_sub) - centroid_new(cur_organ*VDimension + 1, 0) - m_points_mean_shape_dev->at(cur_organ).get(k+1, 0);
+    Xi_shape_dev(2,0) = m_ShapeMatrix->operator()(k  , cur_sub) - centroid_new(cur_organ*VDimension + 2, 0) - m_points_mean_shape_dev->at(cur_organ).get(k+2, 0);
 
-    // (shape_matrix - (within_whole z) )- mean of between
-    // (between_comp) - mean of between
-    //
-    //Another idea think about getting organ mean of that subject
-    // similar computation with within
-    // multiply with corresponding inv covariances and sum up     
-    vnl_matrix_type tmp1(3, 3, 0.0);
+    vnl_matrix_type tmp1_shape_dev(3, 3, 0.0);
 
     if (this->m_UseMeanEnergy)
-        tmp1.set_identity();
+        tmp1_shape_dev.set_identity();
     else
-        tmp1 = m_InverseCovMatrix->extract(3,3,k,k);
+        tmp1_shape_dev1 = m_InverseCovMatrix_shape_dev->at(cur_organ).extract(3,3,k,k);
+    vnl_matrix_type tmp_shape_dev = Xi_shape_dev.transpose()*tmp1_shape_dev;
 
-    vnl_matrix_type tmp = Xi.transpose()*tmp1;
+    tmp_shape_dev *= Xi_shape_dev;
 
-    tmp *= Xi;
+    double shape_dev_energy = tmp_shape_dev(0,0);
 
-    energy = tmp(0,0);
+
+
+    vnl_matrix_type Xi_rel_pose(3,1,0.0);
+    Xi_rel_pose(0,0) = centroid_new(cur_organ*VDimension, 0) - m_points_mean_rel_pose->get(cur_organ*VDimension, 0);
+    Xi_rel_pose(1,0) = centroid_new(cur_organ*VDimension + 1, 0) - m_points_mean_rel_pose->get(cur_organ*VDimension+1, 0);
+    Xi_rel_pose(2,0) = centroid_new(cur_organ*VDimension + 2, 0) - m_points_mean_rel_pose->get(cur_organ*VDimension+2, 0);
+
+    vnl_matrix_type tmp1_rel_pose(3, 3, 0.0);
+
+    if (this->m_UseMeanEnergy)
+        tmp1_rel_pose.set_identity();
+    else
+        tmp1_rel_pose = m_InverseCovMatrix_rel_pose->extract(3,3,cur_organ*VDimension,cur_organ*VDimension);
+    vnl_matrix_type tmp_rel_pose = Xi_rel_pose.transpose()*tmp1_rel_pose;
+
+    tmp_rel_pose *= Xi_rel_pose;
+
+    energy = tmp_shape_dev(0, 0) + tmp_rel_pose(0, 0);
 
     for (unsigned int i = 0; i< VDimension; i++)
     {
-        gradE[i] = m_PointsUpdate->get(k + i, d / DomainsPerShape);
+        gradE[i] = m_PointsUpdate_rel_pose->get(cur_organ*VDimension+i, cur_sub) + m_PointsUpdate_shape_dev->at(cur_organ).get(k+i, cur_sub);
     }
-
-
     return system->TransformVector(gradE,
                                    system->GetInversePrefixTransform(d) *
                                    system->GetInverseTransform(d));
