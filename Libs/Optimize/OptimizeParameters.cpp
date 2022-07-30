@@ -184,15 +184,6 @@ bool OptimizeParameters::get_use_procrustes_rotation_translation() {
 void OptimizeParameters::set_use_procrustes_rotation_translation(bool value) {
   this->params_.set("procrustes_rotation_translation", value);
 }
-//---------------------------------------------------------------------------
-bool OptimizeParameters::get_use_procrustes_translation_only() {
-  return this->params_.get("procrustes_translation_only", true);
-}
-
-//---------------------------------------------------------------------------
-void OptimizeParameters::set_use_procrustes_translation_only(bool value) {
-  this->params_.set("procrustes_translation_only", value);
-}
 
 //---------------------------------------------------------------------------
 int OptimizeParameters::get_procrustes_interval() { return this->params_.get("procrustes_interval", 10); }
@@ -390,7 +381,6 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
   optimize->SetProcrustesInterval(procrustes_interval);
   optimize->SetProcrustesScaling(get_use_procrustes_scaling());
   optimize->SetProcrustesRotationTranslation(get_use_procrustes_rotation_translation());
-  optimize->SetProcrustesTranslationOnly(get_use_procrustes_translation_only());
 
 
   int multiscale_particles = 0;

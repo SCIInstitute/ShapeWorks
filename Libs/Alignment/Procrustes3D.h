@@ -31,7 +31,7 @@ class Procrustes3D {
 
  public:
   Procrustes3D() : m_Scaling(true), m_RotationTranslation(true) {}
-  Procrustes3D(bool do_scaling, bool do_rotation_translation, bool do_translation_only)
+  Procrustes3D(bool do_scaling, bool do_rotation_translation)
       : m_Scaling(do_scaling), m_RotationTranslation(do_rotation_translation) {}
 
   bool GetScaling() const { return m_Scaling; }
@@ -41,7 +41,6 @@ class Procrustes3D {
   bool GetRotationTranslation() const { return m_RotationTranslation; }
   void RotationTranslationOn() { m_RotationTranslation = true; }
   void RotationTranslationOff() { m_RotationTranslation = false; }
-
 
   // Align a list of shapes using Generalized Procrustes Analysis
   void AlignShapes(SimilarityTransformListType& transforms, ShapeListType& shapes);
