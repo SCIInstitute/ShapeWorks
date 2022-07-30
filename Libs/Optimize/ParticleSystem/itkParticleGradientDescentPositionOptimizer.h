@@ -68,11 +68,7 @@ public:
   {
     this->StartAdaptiveGaussSeidelOptimization();
   }
-  void StartMlpcaOptimization(bool flag_b)
-  {
-    this->m_mlpca_optimize = true;
-    this->StartMlpcaBasedAdaptiveGaussSeidelOptimization(flag_b);
-  }
+  
   void StartAdaptiveGaussSeidelOptimization();
 
   void StartMlpcaBasedAdaptiveGaussSeidelOptimization(bool flag_b);

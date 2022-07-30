@@ -185,7 +185,6 @@ void Procrustes3D::ConstructTransformMatrices(SimilarityTransformListType& trans
 void Procrustes3D::ConstructTransformMatrix(SimilarityTransform3D& transform, TransformMatrixType& transformMatrix) {
   // Transform from Configuration space to Procrustes space.  Translation
   // followed by rotation and scaling.
-  
   if (!m_Scaling) {
     transform.scale = 1.0;
   }
