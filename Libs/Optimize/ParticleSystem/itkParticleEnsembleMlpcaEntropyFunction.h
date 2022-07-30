@@ -78,6 +78,20 @@ public:
   const ShapeMatrixType *GetShapeMatrix() const
   {   return  m_ShapeMatrix.GetPointer();  }
 
+  void SetDomainsPerShapeInfo(int dps)
+  {
+    m_total_organs = m_ShapeMatrix->GetDomainsPerShape();
+    std::cout << "Setting DPS Info...\ndps = " << dps << " m_total_organs = " << m_total_organs << std::endl;
+    m_MinimumEigenValue_rel_pose = 0.0;
+    m_MinimumEigenValue_shape_dev_ar.resize(m_total_organs, 0.0);
+    m_MinimumVarianceDecayConstant_rel_pose = 1.0;
+    m_MinimumVarianceDecayConstant_shape_dev_ar.resize(m_total_organs);
+    m_MinimumVariance_rel_pose = 1.0e-5;
+    m_MinimumVariance_shape_dev_ar.resize(m_total_organs);
+    std::fill(m_MinimumVarianceDecayConstant_shape_dev_ar.begin(), m_MinimumVarianceDecayConstant_shape_dev_ar.end(), 1.0);
+    std::fill(m_MinimumVariance_shape_dev_ar.begin(), m_MinimumVariance_shape_dev_ar.end(),  1.0e-5);
+  }
+
   /** Called before each iteration of a solver. */
   virtual void BeforeIteration()
   {
@@ -110,7 +124,20 @@ public:
   { m_MinimumVariance = d;}
   double GetMinimumVariance() const
   { return m_MinimumVariance; }
+
+  void SetMinimumVariance_rel_pose( double d)
+  { m_MinimumVariance_rel_pose = d;}
+  double GetMinimumVariance_rel_pose() const
+  { return m_MinimumVariance_rel_pose; }
+
+  void SetMinimumVariance_shape_dev_ar( std::vector<double> d)
+  { 
+    for (unsigned int i = 0; i < d.size(); i++){ m_MinimumVariance_shape_dev_ar[i] = d[i]; }
+  }
+  std::vector<double> GetMinimumVariance_shape_dev_ar() const
+  { return m_MinimumVariance_shape_dev_ar; }
   
+
   void SetMinimumVarianceDecay(double initial_value, double final_value, double time_period)
   {
     m_MinimumVarianceDecayConstant =  exp(log(final_value / initial_value) / time_period);
@@ -122,6 +149,17 @@ public:
     return m_MinimumVarianceDecayConstant;
   }
   
+  void SetMinimumVarianceDecay_shape_dev_ar(std::vector <double> initial_values, std::vector <double> final_values, double time_period)
+  {
+    unsigned int n = initial_values.size();
+    for (unsigned int i = 0; i < n; i++)
+    {
+      m_MinimumVarianceDecayConstant_shape_dev_ar[i] = exp(log(final_values[i] / initial_values[i]) / time_period);
+      m_MinimumVariance_shape_dev_ar[i] = initial_values[i];
+    }
+    m_HoldMinimumVariance_shape_dev = false;
+  }
+   
   void PrintShapeMatrix()
   {
       m_ShapeMatrix->PrintMatrix();
@@ -148,10 +186,27 @@ public:
     typename ParticleEnsembleMlpcaEntropyFunction<VDimension>::Pointer copy = ParticleEnsembleMlpcaEntropyFunction<VDimension>::New();
 
     copy->m_PointsUpdate = this->m_PointsUpdate;
+    copy->m_PointsUpdate_shape_dev = this->m_PointsUpdate_shape_dev;
+    copy->m_PointsUpdate_rel_pose = this->m_PointsUpdate_rel_pose;
+
     copy->m_MinimumVariance = this->m_MinimumVariance;
+    copy->m_MinimumVariance_shape_dev_ar = this->m_MinimumVariance_shape_dev_ar;
+    copy->m_MinimumVariance_rel_pose = this->m_MinimumVariance_rel_pose;
+
     copy->m_MinimumEigenValue = this->m_MinimumEigenValue;
+    copy->m_MinimumEigenValue_shape_dev_ar = this->m_MinimumEigenValue_shape_dev_ar;
+    copy->m_MinimumEigenValue_rel_pose = this->m_MinimumEigenValue_rel_pose;
+
     copy->m_CurrentEnergy = this->m_CurrentEnergy;
+    copy->m_CurrentEnergy_shape_dev_ar = this->m_CurrentEnergy_shape_dev_ar;
+    copy->m_CurrentEnergy_rel_pose = this->m_CurrentEnergy_rel_pose;
+
     copy->m_HoldMinimumVariance = this->m_HoldMinimumVariance;
+    copy->m_HoldMinimumVariance_shape_dev = this->m_HoldMinimumVariance_shape_dev;
+    copy->m_HoldMinimumVariance_rel_pose = this->m_HoldMinimumVariance_rel_pose;
+
+    
+
     copy->m_MinimumVarianceDecayConstant = this->m_MinimumVarianceDecayConstant;
     copy->m_RecomputeCovarianceInterval = this->m_RecomputeCovarianceInterval;
     copy->m_Counter = m_Counter;
@@ -160,8 +215,6 @@ public:
     copy->m_ParticleSystem = this->m_ParticleSystem;
 
     copy->m_ShapeMatrix = this->m_ShapeMatrix;
-    copy->m_shape_dev_matrix = this->m_shape_dev_matrix;
-    copy->m_rel_pose_matrix = this->m_rel_pose_matrix;
 
     copy->m_super_matrix = this->m_super_matrix;
 
@@ -182,22 +235,27 @@ protected:
   {
     // m_MinimumVarianceBase = 1.0;//exp(log(1.0e-5)/10000.0);
     m_HoldMinimumVariance = true;
+    m_HoldMinimumVariance_rel_pose = true;
+    m_HoldMinimumVariance_shape_dev = true;
+
     m_MinimumVariance = 1.0e-5;
     m_MinimumEigenValue = 0.0;
     m_MinimumVarianceDecayConstant = 1.0;//log(2.0) / 50000.0;
+
+
     m_RecomputeCovarianceInterval = 1;
     m_Counter = 0;
     m_UseMeanEnergy = true;
 
     m_super_matrix = std::make_shared<vnl_matrix_type>(10, 10); 
 
-    m_PointsUpdate_rel_pose = std::make_shared<vnl_matrix_type>(10, 10);
+    m_PointsUpdate_rel_pose = std::make_shared<std::vector<vnl_matrix_type>>();
     m_PointsUpdate_shape_dev = std::make_shared<vnl_matrix_type>(10, 10);
 
+    m_InverseCovMatrix_shape_dev = std::make_shared<std::vector<vnl_matrix_type>>();
     m_InverseCovMatrix_rel_pose = std::make_shared<vnl_matrix_type>(10, 10);
-    m_InverseCovMatrix_shape_dev = std::make_shared<vnl_matrix_type>(10, 10);
 
-    m_points_mean_shape_dev = std::make_shared<vnl_matrix_type>(10, 10);
+    m_points_mean_shape_dev = std::make_shared<std::vector<vnl_matrix_type>>();
     m_points_mean_rel_pose= std::make_shared<vnl_matrix_type>(10, 10);
 
   }
@@ -205,8 +263,6 @@ protected:
   void operator=(const ParticleEnsembleMlpcaEntropyFunction &);
   ParticleEnsembleMlpcaEntropyFunction(const ParticleEnsembleMlpcaEntropyFunction &);
   typename ShapeMatrixType::Pointer m_ShapeMatrix;
-  typename ShapeMatrixType::Pointer m_shape_dev_matrix;
-  typename ShapeMatrixType::Pointer m_rel_pose_matrix;
 
 
 
@@ -215,17 +271,28 @@ protected:
   virtual void ComputeCentroidForShapeVector(vnl_matrix_type &shape_vector, vnl_matrix_type &centroid_results);
 
   std::shared_ptr<vnl_matrix_type> m_PointsUpdate_rel_pose;
-  std::shared_ptr<vnl_matrix_type> m_PointsUpdate_shape_dev;
+  std::shared_ptr<std::vector<vnl_matrix_type>> m_PointsUpdate_shape_dev;
+
+  double m_MinimumVariance;
   double m_MinimumVariance_rel_pose;
+  std::vector<double> m_MinimumVariance_shape_dev_ar;
+
+  double m_MinimumEigenValue;
   double m_MinimumEigenValue_rel_pose;
   std::vector<double> m_MinimumEigenValue_shape_dev_ar;
-  double m_CurrentEnergy_rel_pose;
-  std::vector<double> m_CurrentEnergy_shape_dev_ar;
-  bool m_HoldMinimumVariance;
-  double m_MinimumVarianceDecayConstant_rel_pose;
 
-  std::vector<double> m_MinimumVariance_shape_dev_ar;
+  double m_CurrentEnergy;
+  double m_CurrentEnergy_rel_pose;
+  std::vector<double> m_CurrentEnergy_shape_dev_ar
+  
+  bool m_HoldMinimumVariance;
+  bool m_HoldMinimumVariance_shape_dev;
+  bool m_HoldMinimumVariance_rel_pose;
+
+  double m_MinimumVarianceDecayConstant;
+  double m_MinimumVarianceDecayConstant_rel_pose;
   std::vector<double> m_MinimumVarianceDecayConstant_shape_dev_ar;
+  
   int m_RecomputeCovarianceInterval;
   int m_Counter;
   bool m_UseMeanEnergy;
@@ -233,14 +300,13 @@ protected:
   unsigned int m_total_organs;
   std::vector<int> m_num_particles_ar;
 
-
   std::shared_ptr<vnl_matrix_type> m_super_matrix;
 
   std::shared_ptr<vnl_matrix_type> m_points_mean_rel_pose; 
   std::shared_ptr<vnl_matrix_type> m_InverseCovMatrix_rel_pose; 
 
-  std::shared_ptr<vnl_matrix_type> m_points_mean_shape_dev; 
-  std::shared_ptr<vnl_matrix_type> m_InverseCovMatrix_shape_dev; 
+  std::shared_ptr<std::vector<vnl_matrix_type>> m_points_mean_shape_dev; 
+  std::shared_ptr<std::vector<vnl_matrix_type>> m_InverseCovMatrix_shape_dev; 
 
 };
 
