@@ -286,8 +286,6 @@ void Optimize::SetParameters()
   this->m_procrustes->SetDomainsPerShape(this->m_domains_per_shape);
   this->m_procrustes->SetScaling(this->m_procrustes_scaling);
   this->m_procrustes->SetRotationTranslation(this->m_procrustes_rotation_translation);
-  this->m_procrustes->SetTranslationOnly(this->m_procrustes_translation_only);
-  std::cout << "----Inside Optimize, procrustes trans set to " << m_procrustes_translation_only << std::endl;
 
 
   this->SetIterationCallback();
@@ -2159,10 +2157,6 @@ void Optimize::SetProcrustesScaling(bool procrustes_scaling)
 void Optimize::SetProcrustesRotationTranslation(bool procrustes_rotation_translation)
 { this->m_procrustes_rotation_translation = procrustes_rotation_translation; }
 
-
-//---------------------------------------------------------------------------
-void Optimize::SetProcrustesTranslationOnly(bool procrustes_translation_only)
-{ this->m_procrustes_translation_only = procrustes_translation_only; }
 
 //---------------------------------------------------------------------------
 void Optimize::SetRelativeWeighting(double relative_weighting)

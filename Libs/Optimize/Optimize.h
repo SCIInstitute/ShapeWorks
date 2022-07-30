@@ -189,7 +189,6 @@ public:
   void SetProcrustesScaling(bool procrustes_scaling);
   //! Set if procrustes rotation/translation should be used
   void SetProcrustesRotationTranslation(bool procrustes_rotation_translation);
-  void SetProcrustesTranslationOnly(bool procrustes_translation_only);
   //! Set the relative weighting (TODO: details)
   void SetRelativeWeighting(double relative_weighting);
   //! Set the initial relative weigting (TODO: details)
@@ -425,7 +424,6 @@ protected:
   unsigned int m_procrustes_interval = 3;
   bool m_procrustes_scaling = true;
   bool m_procrustes_rotation_translation = true;
-  bool m_procrustes_translation_only = false;
   double m_relative_weighting = 1.0;
   double m_initial_relative_weighting = 0.05;
   double m_starting_regularization = 1000;

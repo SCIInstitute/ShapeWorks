@@ -185,7 +185,6 @@ void Procrustes3D::ConstructTransformMatrices(SimilarityTransformListType& trans
 void Procrustes3D::ConstructTransformMatrix(SimilarityTransform3D& transform, TransformMatrixType& transformMatrix) {
   // Transform from Configuration space to Procrustes space.  Translation
   // followed by rotation and scaling.
-  std:: cout << "----------Performing Procrustes Translation only and RotationTranslation  " << m_TranslationOnly << " and  " << m_RotationTranslation <<  std::endl;
   if (!m_Scaling) {
     transform.scale = 1.0;
   }
@@ -239,18 +238,6 @@ void Procrustes3D::ConstructTransformMatrix(SimilarityTransform3D& transform, Tr
     transformMatrix(3, 3) = 1.0;
   }
 
-  if (m_TranslationOnly == true) {
-    transformMatrix(0, 3) = transform.translation(0) * transformMatrix(0, 0) +
-                            transform.translation(1) * transformMatrix(0, 1) +
-                            transform.translation(2) * transformMatrix(0, 2);
-    transformMatrix(1, 3) = transform.translation(0) * transformMatrix(1, 0) +
-                            transform.translation(1) * transformMatrix(1, 1) +
-                            transform.translation(2) * transformMatrix(1, 2);
-    transformMatrix(2, 3) = transform.translation(0) * transformMatrix(2, 0) +
-                            transform.translation(1) * transformMatrix(2, 1) +
-                            transform.translation(2) * transformMatrix(2, 2);
-    transformMatrix(3, 3) = 1.0;
-  } 
 }
 
 //---------------------------------------------------------------------------
