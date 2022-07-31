@@ -11,7 +11,6 @@ namespace shapeworks {
 
 class ProjectUtils {
  public:
-
   using StringMap = std::map<std::string, std::string>;
   using StringList = std::vector<std::string>;
 
@@ -22,30 +21,25 @@ class ProjectUtils {
   static std::vector<double> convert_transform(vtkSmartPointer<vtkTransform> transform);
 
   //! determine domain names from a subject's keys
-  static std::vector<std::string> determine_domain_names(std::vector<std::string> keys);
+  static StringList determine_domain_names(StringList keys);
 
   //! determine and set domain types
-  static void determine_domain_types(std::shared_ptr<Project> project, std::map<std::string, std::string> key_map);
+  static void determine_domain_types(std::shared_ptr<Project> project, StringMap key_map);
 
-  static std::vector<std::string> get_input_prefixes();
+  static StringList get_input_prefixes();
 
-  static std::vector<std::string> get_groomed_prefixes();
+  static StringList get_groomed_prefixes();
 
-  static std::vector<std::string> get_original_keys(std::vector<std::string> domain_names,
-                                                    std::map<std::string, std::string> key_map);
+  static StringList get_original_keys(StringList domain_names, StringMap key_map);
 
-  static std::vector<std::string> get_matching_values(std::vector<std::string> prefixes,
-                                                      std::vector<std::string> domain_names,
-                                                      std::map<std::string, std::string> key_map);
+  static StringList get_matching_values(StringList prefixes, StringList domain_names, StringMap key_map);
 
-  static std::vector<std::vector<double>> get_transforms(std::string prefix,
-                                                 std::vector<std::string> domain_names,
-                                                 std::map<std::string, std::string> key_map);
+  static std::vector<std::vector<double>> get_transforms(std::string prefix, StringList domain_names,
+                                                         StringMap key_map);
 
-  static std::map<std::string, std::string> get_value_map(std::string prefix,
-                                                          std::map<std::string, std::string> key_map);
+  static StringMap get_value_map(std::string prefix, StringMap key_map);
 
-  static std::map<std::string, std::string> get_extra_columns(std::map<std::string, std::string> key_map);
+  static StringMap get_extra_columns(StringMap key_map);
 
  public:
   static DomainType determine_domain_type(std::string filename);
@@ -69,7 +63,5 @@ class ProjectUtils {
 
   static constexpr const char* LOCAL_PARTICLES = "local_particles";
   static constexpr const char* WORLD_PARTICLES = "world_particles";
-
-
 };
 }  // namespace shapeworks

@@ -5,8 +5,11 @@
 
 namespace shapeworks {
 
-static std::vector<std::string> input_prefixes{ProjectUtils::SEGMENTATION_PREFIX, ProjectUtils::SHAPE_PREFIX,
-                                               ProjectUtils::MESH_PREFIX, ProjectUtils::CONTOUR_PREFIX};
+using StringList = ProjectUtils::StringList;
+using StringMap = ProjectUtils::StringMap;
+
+static StringList input_prefixes{ProjectUtils::SEGMENTATION_PREFIX, ProjectUtils::SHAPE_PREFIX,
+                                 ProjectUtils::MESH_PREFIX, ProjectUtils::CONTOUR_PREFIX};
 
 //---------------------------------------------------------------------------
 vtkSmartPointer<vtkTransform> shapeworks::ProjectUtils::convert_transform(std::vector<double> list) {
@@ -37,8 +40,8 @@ std::vector<double> ProjectUtils::convert_transform(vtkSmartPointer<vtkTransform
 }
 
 //---------------------------------------------------------------------------
-std::vector<std::string> ProjectUtils::determine_domain_names(std::vector<std::string> keys) {
-  std::vector<std::string> domain_names;
+StringList ProjectUtils::determine_domain_names(StringList keys) {
+  StringList domain_names;
 
   // check for original first
   for (const auto& key : keys) {
@@ -70,8 +73,7 @@ std::vector<std::string> ProjectUtils::determine_domain_names(std::vector<std::s
 }
 
 //---------------------------------------------------------------------------
-void ProjectUtils::determine_domain_types(std::shared_ptr<Project> project,
-                                          std::map<std::string, std::string> key_map) {
+void ProjectUtils::determine_domain_types(std::shared_ptr<Project> project, StringMap key_map) {
   auto domain_names = project->get_domain_names();
 
   std::vector<DomainType> original_domain_types;
@@ -105,20 +107,14 @@ void ProjectUtils::determine_domain_types(std::shared_ptr<Project> project,
 }
 
 //---------------------------------------------------------------------------
-std::vector<std::string> ProjectUtils::get_input_prefixes()
-{
-  return input_prefixes;
-}
+StringList ProjectUtils::get_input_prefixes() { return input_prefixes; }
 
 //---------------------------------------------------------------------------
-std::vector<std::string> ProjectUtils::get_groomed_prefixes() {
-  return {ProjectUtils::GROOMED_PREFIX, GROOMED_CONTOUR_PREFIX};
-}
+StringList ProjectUtils::get_groomed_prefixes() { return {ProjectUtils::GROOMED_PREFIX, GROOMED_CONTOUR_PREFIX}; }
 
 //---------------------------------------------------------------------------
-std::vector<std::string> ProjectUtils::get_original_keys(std::vector<std::string> domain_names,
-                                                         std::map<std::string, std::string> key_map) {
-  std::vector<std::string> original_keys;
+StringList ProjectUtils::get_original_keys(StringList domain_names, StringMap key_map) {
+  StringList original_keys;
   for (const auto& domain : domain_names) {
     for (auto& [key, value] : key_map) {
       if (key == std::string(SEGMENTATION_PREFIX) + "_" + domain) {
@@ -136,10 +132,8 @@ std::vector<std::string> ProjectUtils::get_original_keys(std::vector<std::string
 }
 
 //---------------------------------------------------------------------------
-std::vector<std::string> ProjectUtils::get_matching_values(std::vector<std::string> prefixes,
-                                                           std::vector<std::string> domain_names,
-                                                           std::map<std::string, std::string> key_map) {
-  std::vector<std::string> values;
+StringList ProjectUtils::get_matching_values(StringList prefixes, StringList domain_names, StringMap key_map) {
+  StringList values;
   for (const auto& domain : domain_names) {
     for (auto& [key, value] : key_map) {
       for (const auto& prefix : prefixes) {
@@ -153,8 +147,8 @@ std::vector<std::string> ProjectUtils::get_matching_values(std::vector<std::stri
 }
 
 //---------------------------------------------------------------------------
-std::vector<std::vector<double>> ProjectUtils::get_transforms(std::string prefix, std::vector<std::string> domain_names,
-                                                              std::map<std::string, std::string> key_map) {
+std::vector<std::vector<double>> ProjectUtils::get_transforms(std::string prefix, StringList domain_names,
+                                                              StringMap key_map) {
   auto list = get_matching_values({prefix}, domain_names, key_map);
 
   std::vector<std::vector<double>> transforms;
@@ -171,9 +165,8 @@ std::vector<std::vector<double>> ProjectUtils::get_transforms(std::string prefix
 }
 
 //---------------------------------------------------------------------------
-std::map<std::string, std::string> ProjectUtils::get_value_map(std::string prefix,
-                                                               std::map<std::string, std::string> key_map) {
-  std::map<std::string, std::string> map;
+StringMap ProjectUtils::get_value_map(std::string prefix, StringMap key_map) {
+  StringMap map;
   for (auto& [key, value] : key_map) {
     if (key.substr(0, prefix.length()) == prefix) {
       std::string name = key.substr(prefix.length());
@@ -184,23 +177,23 @@ std::map<std::string, std::string> ProjectUtils::get_value_map(std::string prefi
 }
 
 //---------------------------------------------------------------------------
-std::map<std::string, std::string> ProjectUtils::get_extra_columns(std::map<std::string, std::string> key_map) {
-  std::vector<std::string> prefixes = {SEGMENTATION_PREFIX,
-                                       SHAPE_PREFIX,
-                                       MESH_PREFIX,
-                                       CONTOUR_PREFIX,
-                                       GROOMED_PREFIX,
-                                       GROOMED_CONTOUR_PREFIX,
-                                       LANDMARKS_FILE_PREFIX,
-                                       CONSTRAINTS_PREFIX,
-                                       GROOMED_TRANSFORMS_PREFIX,
-                                       PROCRUSTES_TRANSFORMS_PREFIX,
-                                       IMAGE_PREFIX,
-                                       FEATURE_PREFIX,
-                                       GROUP_PREFIX,
-                                       LOCAL_PARTICLES,
-                                       WORLD_PARTICLES};
-  std::map<std::string, std::string> map;
+StringMap ProjectUtils::get_extra_columns(StringMap key_map) {
+  StringList prefixes = {SEGMENTATION_PREFIX,
+                         SHAPE_PREFIX,
+                         MESH_PREFIX,
+                         CONTOUR_PREFIX,
+                         GROOMED_PREFIX,
+                         GROOMED_CONTOUR_PREFIX,
+                         LANDMARKS_FILE_PREFIX,
+                         CONSTRAINTS_PREFIX,
+                         GROOMED_TRANSFORMS_PREFIX,
+                         PROCRUSTES_TRANSFORMS_PREFIX,
+                         IMAGE_PREFIX,
+                         FEATURE_PREFIX,
+                         GROUP_PREFIX,
+                         LOCAL_PARTICLES,
+                         WORLD_PARTICLES};
+  StringMap map;
   for (auto& [key, value] : key_map) {
     bool match = false;
     for (const auto& prefix : prefixes) {

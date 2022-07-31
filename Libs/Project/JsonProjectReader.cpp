@@ -10,13 +10,11 @@ using json = nlohmann::ordered_json;
 namespace shapeworks {
 
 //---------------------------------------------------------------------------
-
 //---------------------------------------------------------------------------
 static std::vector<std::string> get_keys(json item) {
   std::vector<std::string> keys;
   std::map<std::string, std::string> key_map;
   for (auto& [key, value] : item.items()) {
-    std::cerr << "key: " << key << ", value = " << value << "\n";
     keys.push_back(key);
   }
   return keys;
