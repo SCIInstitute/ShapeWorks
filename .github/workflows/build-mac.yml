@@ -33,7 +33,7 @@ jobs:
         sudo chown -R $UID $CONDA
         conda init zsh
         source ~/.zshrc
-        brew install ccache md5sha1sum pigz gnu-tar coreutils
+        brew install ccache pigz gnu-tar coreutils
 
     - name: Acquire 10.13 SDK
       run: |

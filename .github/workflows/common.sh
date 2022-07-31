@@ -1,13 +1,12 @@
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
-    SCRIPT=$(greadlink -f $0)
-    SCRIPT_PATH=`dirname $SCRIPT`
-else
-    # absolute path to this script
-    SCRIPT=$(readlink -f $0)
-    # absolute path this script is located
-    SCRIPT_PATH=`dirname $SCRIPT`
+    PATH="$(brew --prefix)/opt/coreutils/libexec/gnubin:$PATH"
 fi
+
+# absolute path to this script
+SCRIPT=$(readlink -f $0)
+# absolute path this script is located
+SCRIPT_PATH=`dirname $SCRIPT`
 
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
