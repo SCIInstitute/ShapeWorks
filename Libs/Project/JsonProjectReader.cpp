@@ -9,6 +9,8 @@ using json = nlohmann::ordered_json;
 
 namespace shapeworks {
 
+using namespace project::prefixes;
+
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------
 static std::vector<std::string> get_keys(json item) {
@@ -58,25 +60,23 @@ static void read_subjects(ProjectHandle project, const json& j) {
     }
     subject->set_number_of_domains(domains.size());
 
-    auto get_list = [&](auto prefix) { return ProjectUtils::get_matching_values({prefix}, domains, key_map); };
+    auto get_list = [&](auto prefix) { return ProjectUtils::get_values({prefix}, domains, key_map); };
 
     subject->set_original_filenames(
-        ProjectUtils::get_matching_values(ProjectUtils::get_input_prefixes(), domains, key_map));
+        ProjectUtils::get_values(ProjectUtils::get_input_prefixes(), domains, key_map));
     subject->set_groomed_filenames(
-        ProjectUtils::get_matching_values(ProjectUtils::get_groomed_prefixes(), domains, key_map));
-    subject->set_landmarks_filenames(get_list(ProjectUtils::LANDMARKS_FILE_PREFIX));
-    subject->set_constraints_filenames(get_list(ProjectUtils::CONSTRAINTS_PREFIX));
-    subject->set_groomed_transforms(
-        ProjectUtils::get_transforms(ProjectUtils::GROOMED_TRANSFORMS_PREFIX, domains, key_map));
-    subject->set_procrustes_transforms(
-        ProjectUtils::get_transforms(ProjectUtils::PROCRUSTES_TRANSFORMS_PREFIX, domains, key_map));
-    subject->set_image_filenames(get_list(ProjectUtils::IMAGE_PREFIX));
+        ProjectUtils::get_values(ProjectUtils::get_groomed_prefixes(), domains, key_map));
+    subject->set_landmarks_filenames(get_list(LANDMARKS_FILE_PREFIX));
+    subject->set_constraints_filenames(get_list(CONSTRAINTS_PREFIX));
+    subject->set_groomed_transforms(ProjectUtils::get_transforms(GROOMED_TRANSFORMS_PREFIX, domains, key_map));
+    subject->set_procrustes_transforms(ProjectUtils::get_transforms(PROCRUSTES_TRANSFORMS_PREFIX, domains, key_map));
+    subject->set_image_filenames(get_list(IMAGE_PREFIX));
 
-    subject->set_feature_filenames(ProjectUtils::get_value_map(ProjectUtils::FEATURE_PREFIX, key_map));
-    subject->set_group_values(ProjectUtils::get_value_map(ProjectUtils::GROUP_PREFIX, key_map));
+    subject->set_feature_filenames(ProjectUtils::get_value_map(FEATURE_PREFIX, key_map));
+    subject->set_group_values(ProjectUtils::get_value_map(GROUP_PREFIX, key_map));
 
-    subject->set_local_particle_filenames(get_list(ProjectUtils::LOCAL_PARTICLES));
-    subject->set_world_particle_filenames(get_list(ProjectUtils::WORLD_PARTICLES));
+    subject->set_local_particle_filenames(get_list(LOCAL_PARTICLES));
+    subject->set_world_particle_filenames(get_list(WORLD_PARTICLES));
 
     // extra
     subject->set_extra_values(ProjectUtils::get_extra_columns(key_map));

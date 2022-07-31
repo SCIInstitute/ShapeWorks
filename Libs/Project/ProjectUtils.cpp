@@ -8,8 +8,9 @@ namespace shapeworks {
 using StringList = ProjectUtils::StringList;
 using StringMap = ProjectUtils::StringMap;
 
-static StringList input_prefixes{ProjectUtils::SEGMENTATION_PREFIX, ProjectUtils::SHAPE_PREFIX,
-                                 ProjectUtils::MESH_PREFIX, ProjectUtils::CONTOUR_PREFIX};
+using namespace project::prefixes;
+
+static StringList input_prefixes{SEGMENTATION_PREFIX, SHAPE_PREFIX, MESH_PREFIX, CONTOUR_PREFIX};
 
 //---------------------------------------------------------------------------
 vtkSmartPointer<vtkTransform> shapeworks::ProjectUtils::convert_transform(std::vector<double> list) {
@@ -110,7 +111,7 @@ void ProjectUtils::determine_domain_types(std::shared_ptr<Project> project, Stri
 StringList ProjectUtils::get_input_prefixes() { return input_prefixes; }
 
 //---------------------------------------------------------------------------
-StringList ProjectUtils::get_groomed_prefixes() { return {ProjectUtils::GROOMED_PREFIX, GROOMED_CONTOUR_PREFIX}; }
+StringList ProjectUtils::get_groomed_prefixes() { return {GROOMED_PREFIX, GROOMED_CONTOUR_PREFIX}; }
 
 //---------------------------------------------------------------------------
 StringList ProjectUtils::get_original_keys(StringList domain_names, StringMap key_map) {
@@ -132,7 +133,7 @@ StringList ProjectUtils::get_original_keys(StringList domain_names, StringMap ke
 }
 
 //---------------------------------------------------------------------------
-StringList ProjectUtils::get_matching_values(StringList prefixes, StringList domain_names, StringMap key_map) {
+StringList ProjectUtils::get_values(StringList prefixes, StringList domain_names, StringMap key_map) {
   StringList values;
   for (const auto& domain : domain_names) {
     for (auto& [key, value] : key_map) {
@@ -149,7 +150,7 @@ StringList ProjectUtils::get_matching_values(StringList prefixes, StringList dom
 //---------------------------------------------------------------------------
 std::vector<std::vector<double>> ProjectUtils::get_transforms(std::string prefix, StringList domain_names,
                                                               StringMap key_map) {
-  auto list = get_matching_values({prefix}, domain_names, key_map);
+  auto list = get_values({prefix}, domain_names, key_map);
 
   std::vector<std::vector<double>> transforms;
   for (int i = 0; i < list.size(); i++) {
