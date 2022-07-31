@@ -52,9 +52,9 @@ static void assign_transforms(json& j, std::string prefix, std::vector<std::vect
 }
 
 //---------------------------------------------------------------------------
-static json create_data_object(ProjectHandle project) {
-  auto subjects = project->get_subjects();
-  auto domains = project->get_domain_names();
+static json create_data_object(Project& project) {
+  auto subjects = project.get_subjects();
+  auto domains = project.get_domain_names();
 
   std::vector<json> list;
   for (int i = 0; i < subjects.size(); i++) {
@@ -100,11 +100,11 @@ static json create_parameter_map_object(std::map<std::string, Parameters> parame
 }
 
 //---------------------------------------------------------------------------
-static json create_landmark_definition_object(ProjectHandle project) {
+static json create_landmark_definition_object(Project& project) {
   std::vector<json> list;
 
-  auto all_definitions = project->get_all_landmark_definitions();
-  auto domains = project->get_domain_names();
+  auto all_definitions = project.get_all_landmark_definitions();
+  auto domains = project.get_domain_names();
 
   for (int d = 0; d < all_definitions.size(); d++) {
     auto definitions = all_definitions[d];
@@ -125,18 +125,18 @@ static json create_landmark_definition_object(ProjectHandle project) {
 }
 
 //---------------------------------------------------------------------------
-bool JsonProjectWriter::write_project(ProjectHandle project, std::string filename) {
+bool JsonProjectWriter::write_project(Project& project, std::string filename) {
   json j;
 
   json landmarks_sheet;
 
   j["data"] = create_data_object(project);
-  j["groom"] = create_parameter_map_object(project->get_parameter_map("groom"));
-  j["optimize"] = create_parameter_object(project->get_parameters("optimize"));
-  j["studio"] = create_parameter_object(project->get_parameters("studio"));
-  j["project"] = create_parameter_object(project->get_parameters("project"));
-  j["analysis"] = create_parameter_object(project->get_parameters("analysis"));
-  j["deepssm"] = create_parameter_object(project->get_parameters("deepssm"));
+  j["groom"] = create_parameter_map_object(project.get_parameter_map("groom"));
+  j["optimize"] = create_parameter_object(project.get_parameters("optimize"));
+  j["studio"] = create_parameter_object(project.get_parameters("studio"));
+  j["project"] = create_parameter_object(project.get_parameters("project"));
+  j["analysis"] = create_parameter_object(project.get_parameters("analysis"));
+  j["deepssm"] = create_parameter_object(project.get_parameters("deepssm"));
   j["landmarks"] = create_landmark_definition_object(project);
 
   std::ofstream file(filename);

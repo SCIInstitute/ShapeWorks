@@ -74,8 +74,8 @@ StringList ProjectUtils::determine_domain_names(StringList keys) {
 }
 
 //---------------------------------------------------------------------------
-void ProjectUtils::determine_domain_types(std::shared_ptr<Project> project, StringMap key_map) {
-  auto domain_names = project->get_domain_names();
+void ProjectUtils::determine_domain_types(Project &project, StringMap key_map) {
+  auto domain_names = project.get_domain_names();
 
   std::vector<DomainType> original_domain_types;
   for (const auto& domain : domain_names) {
@@ -91,7 +91,7 @@ void ProjectUtils::determine_domain_types(std::shared_ptr<Project> project, Stri
       }
     }
   }
-  project->set_original_domain_types(original_domain_types);
+  project.set_original_domain_types(original_domain_types);
 
   // groomed types
   std::vector<DomainType> groomed_domain_types;
@@ -104,7 +104,7 @@ void ProjectUtils::determine_domain_types(std::shared_ptr<Project> project, Stri
       }
     }
   }
-  project->set_groomed_domain_types(groomed_domain_types);
+  project.set_groomed_domain_types(groomed_domain_types);
 }
 
 //---------------------------------------------------------------------------
@@ -138,7 +138,7 @@ StringList ProjectUtils::get_values(StringList prefixes, StringList domain_names
   for (const auto& domain : domain_names) {
     for (auto& [key, value] : key_map) {
       for (const auto& prefix : prefixes) {
-        if (key == prefix + "_" + domain) {
+        if (key == prefix + domain) {
           values.push_back(value);
         }
       }

@@ -10,7 +10,7 @@ namespace shapeworks {
  */
 class JsonProjectReader {
  public:
-  static bool read_project(ProjectHandle project, std::string filename);
+  static bool read_project(Project &project, std::string filename);
 
 private:
 

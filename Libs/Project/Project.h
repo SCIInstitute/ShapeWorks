@@ -62,6 +62,9 @@ class Project {
   //! Return the number of subjects in the project
   int get_number_of_subjects();
 
+  //! Return the number of subjects in the project
+  int xl_get_number_of_subjects();
+
   //! Return the number of domains
   int get_number_of_domains_per_subject();
 

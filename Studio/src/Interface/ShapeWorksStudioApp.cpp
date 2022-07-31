@@ -276,8 +276,9 @@ void ShapeWorksStudioApp::on_actionShow_Tool_Window_triggered() {
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_open_project_triggered() {
-  QString filename = QFileDialog::getOpenFileName(this, tr("Open Project..."), preferences_.get_last_directory(),
-                                                  tr("XLSX files (*.xlsx)"));
+  auto type = tr("ShapeWorks Project (*.swproj);;XLSX files (*.xlsx)");
+
+  QString filename = QFileDialog::getOpenFileName(this, tr("Open Project..."), preferences_.get_last_directory(), type);
   if (filename.isEmpty()) {
     return;
   }
@@ -322,7 +323,11 @@ bool ShapeWorksStudioApp::on_action_save_project_triggered() {
 
 //---------------------------------------------------------------------------
 bool ShapeWorksStudioApp::on_action_save_project_as_triggered() {
-  QString filename = ExportUtils::get_save_filename(this, tr("Save Project As..."), tr("XLSX files (*.xlsx)"), ".xlsx");
+  auto type = tr("ShapeWorks Project (*.swproj);;XLSX files (*.xlsx)");
+
+  QString filename = ExportUtils::get_save_filename(this, tr("Save Project As..."), type, ".swproj");
+  //QString filename = ExportUtils::get_save_filename(this, tr("Save Project As..."), tr("XLSX files (*.xlsx)"), ".xlsx");
+
   if (filename.isEmpty()) {
     return false;
   }
@@ -464,7 +469,8 @@ void ShapeWorksStudioApp::enable_possible_actions() {
   bool original_present = session_->get_project()->get_originals_present();
 
   auto filename = session_->get_filename();
-  bool save_enabled = filename == "" || filename.endsWith(".xlsx");
+  bool save_enabled = filename == "" || filename.endsWith(".xlsx", Qt::CaseInsensitive) ||
+                      filename.endsWith(".swproj", Qt::CaseInsensitive);
   ui_->action_save_project->setEnabled(save_enabled);
   // ui_->action_save_project_as->setEnabled(original_present);
   ui_->action_save_project_as->setEnabled(true);
@@ -610,10 +616,7 @@ void ShapeWorksStudioApp::handle_pca_update() {
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::clear_message()
-{
-  current_message_ = "";
-}
+void ShapeWorksStudioApp::clear_message() { current_message_ = ""; }
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_message(QString str) {
@@ -1222,7 +1225,6 @@ void ShapeWorksStudioApp::update_display(bool force) {
 
   std::string mode = AnalysisTool::MODE_ALL_SAMPLES_C;
 
-
   int num_domains = session_->get_domains_per_shape();
   ui_->alignment_combo->setVisible(!session_->is_analysis_mode() && num_domains > 1);
 
@@ -1239,7 +1241,6 @@ void ShapeWorksStudioApp::update_display(bool force) {
     block_update_ = false;
     return;
   }
-
 
   update_view_mode();
   update_view_combo();

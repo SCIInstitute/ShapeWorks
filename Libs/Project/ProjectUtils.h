@@ -48,7 +48,7 @@ class ProjectUtils {
   static StringList determine_domain_names(StringList keys);
 
   //! determine and set domain types
-  static void determine_domain_types(std::shared_ptr<Project> project, StringMap key_map);
+  static void determine_domain_types(Project& project, StringMap key_map);
 
   //! return a list of the input prefixes
   static StringList get_input_prefixes();

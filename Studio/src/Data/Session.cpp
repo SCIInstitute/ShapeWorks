@@ -167,10 +167,10 @@ bool Session::save_project(QString filename) {
 
     this->project_->save(filename.toStdString());
 
-    ExcelProjectWriter::write_project(project_, "/tmp/project.xlsx");
-    JsonProjectWriter::write_project(project_, "/tmp/project.json");
-    auto proj = std::make_shared<Project>();
-    JsonProjectReader::read_project(proj, "/tmp/project.json");
+    //ExcelProjectWriter::write_project(project_, "/tmp/project.xlsx");
+    //JsonProjectWriter::write_project(project_, "/tmp/project.json");
+    //auto proj = std::make_shared<Project>();
+    //JsonProjectReader::read_project(proj, "/tmp/project.json");
 
   } catch (std::exception& e) {
     QMessageBox::warning(0, "Error saving project", QString("Error saving project: ") + e.what());
@@ -202,7 +202,7 @@ bool Session::load_project(QString filename) {
   // clear the project out first
   this->filename_ = QFileInfo(filename).absoluteFilePath();
 
-  if (filename.endsWith(".xlsx", Qt::CaseInsensitive)) {
+  if (filename.endsWith(".xlsx", Qt::CaseInsensitive) || filename.endsWith(".swproj", Qt::CaseInsensitive)) {
     return this->load_xl_project(filename);
   }
 

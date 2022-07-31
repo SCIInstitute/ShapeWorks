@@ -8,6 +8,9 @@
 #include <xlnt/workbook/workbook_view.hpp>
 #include <xlnt/xlnt.hpp>
 
+#include "JsonProjectReader.h"
+#include "JsonProjectWriter.h"
+
 using namespace shapeworks;
 
 //---------------------------------------------------------------------------
@@ -46,6 +49,10 @@ Project::~Project() = default;
 
 //---------------------------------------------------------------------------
 bool Project::load(const std::string& filename) {
+  if (StringUtils::hasSuffix(filename, "swproj")) {
+    return JsonProjectReader::read_project(*this, filename);
+  }
+
   landmarks_loaded_ = false;
   try {
     wb_->load(filename);
@@ -72,6 +79,10 @@ bool Project::load(const std::string& filename) {
 //---------------------------------------------------------------------------
 bool Project::save(const std::string& filename) {
   try {
+    if (StringUtils::hasSuffix(filename, "swproj")) {
+      return JsonProjectWriter::write_project(*this, filename);
+    }
+
     xlnt::worksheet ws = wb_->sheet_by_index(0);
     ws.title("data");
 
@@ -107,7 +118,10 @@ bool Project::save(const std::string& filename) {
 std::vector<std::string> Project::get_headers() { return get_matching_columns(""); }
 
 //---------------------------------------------------------------------------
-int Project::get_number_of_subjects() {
+int Project::get_number_of_subjects() { return subjects_.size(); }
+
+//---------------------------------------------------------------------------
+int Project::xl_get_number_of_subjects() {
   auto original_columns = get_matching_columns(input_prefixes_);
   auto groomed_columns = get_matching_columns(GROOMED_PREFIX);
   auto local_particle_files = get_matching_columns(LOCAL_PARTICLES);
@@ -130,8 +144,22 @@ int Project::get_number_of_domains_per_subject() { return get_domain_names().siz
 std::vector<std::shared_ptr<Subject>>& Project::get_subjects() { return subjects_; }
 
 //---------------------------------------------------------------------------
+void Project::set_subjects(const std::vector<std::shared_ptr<Subject>>& subjects) {
+  subjects_ = subjects;
 
-void Project::set_subjects(const std::vector<std::shared_ptr<Subject>>& subjects) { subjects_ = subjects; }
+  if (subjects_.empty()) {
+    originals_present_ = false;
+    groomed_present_ = false;
+    particles_present_ = false;
+    return;
+  }
+
+  auto subject = subjects_[0];
+  originals_present_ = !subject->get_original_filenames().empty();
+  groomed_present_ = !subject->get_groomed_filenames().empty();
+  particles_present_ = !subject->get_world_particle_filenames().empty();
+
+}
 
 //---------------------------------------------------------------------------
 std::vector<std::string> Project::get_matching_columns(const std::string& prefix) {
@@ -188,7 +216,7 @@ std::string Project::get_subject_value(int column, int subject_id) {
 
 //---------------------------------------------------------------------------
 void Project::load_subjects() {
-  int num_subjects = get_number_of_subjects();
+  int num_subjects = xl_get_number_of_subjects();
 
   subjects_.clear();
 
