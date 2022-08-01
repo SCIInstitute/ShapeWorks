@@ -34,7 +34,7 @@ Sampler::Sampler() {
   m_EnsembleRegressionEntropyFunction = itk::ParticleEnsembleEntropyFunction<Dimension>::New();
   m_EnsembleMixedEffectsEntropyFunction = itk::ParticleEnsembleEntropyFunction<Dimension>::New();
   m_MeshBasedGeneralEntropyGradientFunction = itk::ParticleMeshBasedGeneralEntropyGradientFunction<Dimension>::New();
-  m_MlpcaBasedEnsembleEntropyFunction = itk::ParticleEnsembleMlpcaEntropyFunction<Dimension>::New();
+  m_MultiLevelBasedEnsembleEntropyFunction = itk::ParticleEnsembleMultiLevelEntropyFunction<Dimension>::New();
 
   m_ShapeMatrix = itk::ParticleShapeMatrixAttribute<double, Dimension>::New();
   m_GeneralShapeMatrix = itk::ParticleGeneralShapeMatrix<double, Dimension>::New();
@@ -51,7 +51,7 @@ Sampler::Sampler() {
   m_MeshBasedGeneralEntropyGradientFunction->SetShapeData(m_GeneralShapeMatrix);
   m_MeshBasedGeneralEntropyGradientFunction->SetShapeGradient(m_GeneralShapeGradMatrix);
 
-  m_MlpcaBasedEnsembleEntropyFunction->SetShapeMatrix(m_ShapeMatrix);
+  m_MultiLevelBasedEnsembleEntropyFunction->SetShapeMatrix(m_ShapeMatrix);
 
   m_ParticleSystem->RegisterAttribute(m_ShapeMatrix);
   m_ParticleSystem->RegisterAttribute(m_LinearRegressionShapeMatrix);

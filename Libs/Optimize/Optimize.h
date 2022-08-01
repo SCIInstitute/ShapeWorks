@@ -199,12 +199,10 @@ public:
   void SetEndingRegularization(double ending_regularization);
   //! Set the interval for recomputing regularization (TODO: details)
 
-  void SetStartingRegularizationMultilevelWithin(std::vector<double> reg_params_start);
-  //! Set the ending regularization (TODO: details)
-  void SetEndingRegularizationMultilevelWithin(std::vector<double> reg_params_end);
-  void SetStartingRegularizationMultilevelBetween(double reg_params_start);
-  //! Set the ending regularization (TODO: details)
-  void SetEndingRegularizationMultilevelBetween(double reg_params_end);
+  void SetStartingRegularizationShapeDevAr(std::vector<double> reg_params_start);
+  void SetEndingRegularizationShapeDevAr(std::vector<double> reg_params_end);
+  void SetStartingRegularizationRelPose(double reg_params_start);
+  void SetEndingRegularizationRelPose(double reg_params_end);
 
 
   void SetRecomputeRegularizationInterval(int recompute_regularization_interval);
@@ -221,7 +219,7 @@ public:
   void SetUseRegression(bool use_regression);
   //! Set if mixed effects should be used (TODO: details)
   void SetUseMixedEffects(bool use_mixed_effects);
-  void SetMlpcaOptimize(bool use_mlpca_optimize);
+  void SetMultiLevelOptimize(bool use_multi_level_optimize);
 
   //! For good/bad analysis, set the normal angle to use (TODO: details)
   void SetNormalAngle(double normal_angle);
@@ -387,7 +385,7 @@ protected:
   bool m_use_cutting_planes = false;
   bool m_optimizing = false;
   bool m_use_regression = false;
-  bool m_use_mlpca_optimize = false;
+  bool m_use_multi_level_optimize = false;
   bool m_use_mixed_effects = false;
 
   // IO Parameters
@@ -429,10 +427,10 @@ protected:
   double m_starting_regularization = 1000;
   double m_ending_regularization = 1.0;
   
-  std::vector<double> m_ending_regularization_multilevel;
-  std::vector<double> m_starting_regularization_multilevel;
-  double m_starting_regularization_multilevel_between = 1000;
-  double m_ending_regularization_multilevel_between = 1.0;
+  std::vector<double> m_ending_regularization_shape_dev_ar;
+  std::vector<double> m_starting_regularization_shape_dev_ar;
+  double m_starting_regularization_rel_pose = 1000;
+  double m_ending_regularization_rel_pose = 1.0;
 
   int m_recompute_regularization_interval = 1;
   bool m_save_init_splits = false;

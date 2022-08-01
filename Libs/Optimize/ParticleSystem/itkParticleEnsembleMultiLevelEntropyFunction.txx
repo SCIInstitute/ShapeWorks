@@ -1,5 +1,5 @@
-#ifndef __itkParticleEnsembleMlpcaEntropyFunction_txx
-#define __itkParticleEnsembleMlpcaEntropyFunction_txx
+#ifndef __itkParticleEnsembleMultiLevelEntropyFunction_txx
+#define __itkParticleEnsembleMultiLevelEntropyFunction_txx
 
 #include "ParticleImageDomainWithGradients.h"
 #include "vnl/algo/vnl_symmetric_eigensystem.h"
@@ -11,7 +11,7 @@ namespace itk
 {
 template <unsigned int VDimension>
 void
-ParticleEnsembleMlpcaEntropyFunction<VDimension>
+ParticleEnsembleMultiLevelEntropyFunction<VDimension>
 ::WriteModes(const std::string &prefix, int n) const
 {
     typename ParticleGaussianModeWriter<VDimension>::Pointer writer =
@@ -24,8 +24,8 @@ ParticleEnsembleMlpcaEntropyFunction<VDimension>
 
 template <unsigned int VDimension>
 void
-ParticleEnsembleMlpcaEntropyFunction<VDimension>
-::ComputeCentroidForShapeVector(vnl_matrix_type &shape_vector, vnl_matrix_type &centroid_results)
+ParticleEnsembleMultiLevelEntropyFunction<VDimension>
+::ComputeCentroidForShapeVector(const vnl_matrix_type &shape_vector, vnl_matrix_type &centroid_results) const
 {
     // Helper function to dinf centroid for each organ given the shape vector
     centroid_results.set_size(VDimension * m_total_organs, 1);
@@ -52,8 +52,8 @@ ParticleEnsembleMlpcaEntropyFunction<VDimension>
         temp_matrix.extract(temp_k, idx, 0);
         // find mean
         Eigen::MatrixXd temp_eigen = Eigen::Map<Eigen::MatrixXd>(temp_k.data_block(), temp_k.rows(), temp_k.cols());
-        auto centroid_k = temp_eigen.colwise().sum();
-        centroid_k = centroid_k / temp_eigen.rows(); // 1 X 3
+        Eigen::MatrixXd centroid_k = temp_eigen.colwise().sum();
+        centroid_k = (1/temp_eigen.rows()) * centroid_k; // 1 X 3
         centroid_results.put(k * VDimension, 0, centroid_k(0, 0));
         centroid_results.put(k * VDimension + 1, 0, centroid_k(0, 1));
         centroid_results.put(k * VDimension + 2, 0, centroid_k(0, 2));
@@ -63,14 +63,14 @@ ParticleEnsembleMlpcaEntropyFunction<VDimension>
 
 template <unsigned int VDimension>
 void
-ParticleEnsembleMlpcaEntropyFunction<VDimension>
+ParticleEnsembleMultiLevelEntropyFunction<VDimension>
 ::ComputeShapeRelPoseDeviations()
 {
     std::cout << "********Computing Shape Pose Deviation Terms********" << std::endl;
     m_total_organs = m_ShapeMatrix->GetDomainsPerShape(); // K
     unsigned int N  = m_ShapeMatrix->cols(); // num_samples --> N
     m_num_particles_ar = m_ShapeMatrix->GetAllNumberOfParticles();
-    unsigned int total_particles = std::accumulate(num_particles.begin(), num_particles.end(), 0);
+    unsigned int total_particles = std::accumulate(m_num_particles_ar.begin(), m_num_particles_ar.end(), 0);
     unsigned int total_particles_ = (int)(m_ShapeMatrix->rows() / (VDimension)); // M
     if(total_particles != total_particles_){
         std::cerr << "Particles inconsistent while building ShapeMatrix....."<< std::endl;
@@ -113,18 +113,18 @@ ParticleEnsembleMlpcaEntropyFunction<VDimension>
         for(size_t k = r.begin(); k < r.end(); ++k){
             //Part A: Build objective Matrix containing deviations of particles from COM of organ k
             vnl_matrix_type centering_matrix; // Build centering matrix for within
-            centering_matrix.set_size(num_particles[k], num_particles[k]); // M_k X M_k
+            centering_matrix.set_size(m_num_particles_ar[k], m_num_particles_ar[k]); // M_k X M_k
             centering_matrix.set_identity();
             vnl_matrix_type ones_m_k;
-            ones_m_k.set_size(num_particles[k], 1); // m X 1
+            ones_m_k.set_size(m_num_particles_ar[k], 1); // m X 1
             ones_m_k.fill(1.0);
-            centering_matrix = centering_matrix - (ones_m_k * ones_m_k.transpose()) * (1.0 / ((double)num_particles[k]));
+            centering_matrix = centering_matrix - (ones_m_k * ones_m_k.transpose()) * (1.0 / ((double)m_num_particles_ar[k]));
             
             vnl_matrix_type z_k;
-            z_k.set_size(num_particles[k], VDimension * N);
+            z_k.set_size(m_num_particles_ar[k], VDimension * N);
             z_k.fill(0.0);
             unsigned int row = 0;
-            for(unsigned int x = 0; x < k; x++){ row += num_particles[x];} // k * num_particles[k]
+            for(unsigned int x = 0; x < k; x++){ row += m_num_particles_ar[x];} // k * m_num_particles_ar[k]
             m_super_matrix->extract(z_k, row, 0); // Extract sub matrix for the kth organ from the super matrix
             vnl_matrix_type z_shape_dev_k = centering_matrix.transpose() * z_k; // ----->  m  X 3N
             // Raw matrix of shape deviations done here
@@ -132,14 +132,14 @@ ParticleEnsembleMlpcaEntropyFunction<VDimension>
             // Convert to Objective dimensions : -----> 3m X N
             vnl_matrix_type z_shape_dev_k_objective;
             vnl_matrix_type points_update_shape_dev_k;
-            unsigned int num_dims = num_particles[k] * VDimension;
+            unsigned int num_dims = m_num_particles_ar[k] * VDimension;
             z_shape_dev_k_objective.set_size(num_dims, N);
             z_shape_dev_k_objective.fill(0.0);
             points_update_shape_dev_k.set_size(num_dims, N);
             points_update_shape_dev_k.fill(0.0);
 
             for(unsigned int i = 0; i < N; i++){
-                for(unsigned int j = 0; j < num_particles[k]; j++){
+                for(unsigned int j = 0; j < m_num_particles_ar[k]; j++){
                     unsigned int r = j * VDimension;
                     z_shape_dev_k_objective.put(j * VDimension, i, z_shape_dev_k.get(j, i * VDimension));
                     z_shape_dev_k_objective.put(j * VDimension + 1, i, z_shape_dev_k.get(j, i * VDimension + 1));
@@ -231,12 +231,14 @@ ParticleEnsembleMlpcaEntropyFunction<VDimension>
     // Find mean
     vnl_matrix_type points_mean_rel_pose;
     points_mean_rel_pose.set_size(VDimension * m_total_organs, N);
+    m_points_mean_rel_pose->set_size(VDimension * m_total_organs, N);
+    m_points_mean_rel_pose->fill(0.0);
     points_mean_rel_pose.fill(0.0);
     for(unsigned int x = 0; x < N; x++){
         points_mean_rel_pose += z_rel_pose_objective.get_n_columns(x, 1);
     }
     points_mean_rel_pose /= N;
-    m_points_mean_rel_pose = points_mean_rel_pose.transpose().transpose();
+    m_points_mean_rel_pose->update(points_mean_rel_pose, 0, 0);
     // Subtract mean from the objective
     for(unsigned int x = 0; x < N; x++){
         vnl_matrix_type diff = z_rel_pose_objective.get_n_columns(x, 1) - points_mean_rel_pose;
@@ -293,8 +295,8 @@ ParticleEnsembleMlpcaEntropyFunction<VDimension>
 }
 
 template <unsigned int VDimension>
-typename ParticleEnsembleMlpcaEntropyFunction<VDimension>::VectorType
-ParticleEnsembleMlpcaEntropyFunction<VDimension>
+typename ParticleEnsembleMultiLevelEntropyFunction<VDimension>::VectorType
+ParticleEnsembleMultiLevelEntropyFunction<VDimension>
 ::Evaluate(unsigned int idx, unsigned int d, const ParticleSystemType * system,
            double &maxdt, double &energy) const
 {
@@ -324,7 +326,7 @@ ParticleEnsembleMlpcaEntropyFunction<VDimension>
     if (this->m_UseMeanEnergy)
         tmp1_shape_dev.set_identity();
     else
-        tmp1_shape_dev1 = m_InverseCovMatrix_shape_dev->at(cur_organ).extract(3,3,k,k);
+        tmp1_shape_dev = m_InverseCovMatrix_shape_dev->at(cur_organ).extract(3,3,k,k);
     vnl_matrix_type tmp_shape_dev = Xi_shape_dev.transpose()*tmp1_shape_dev;
 
     tmp_shape_dev *= Xi_shape_dev;

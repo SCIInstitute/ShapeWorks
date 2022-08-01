@@ -1,5 +1,5 @@
-#ifndef __itkParticleEnsembleMlpcaEntropyFunction_h
-#define __itkParticleEnsembleMlpcaEntropyFunction_h
+#ifndef __itkParticleEnsembleMultiLevelEntropyFunction_h
+#define __itkParticleEnsembleMultiLevelEntropyFunction_h
 
 #include "itkParticleShapeMatrixAttribute.h"
 #include "itkParticleVectorFunction.h"
@@ -11,19 +11,19 @@ namespace itk
 {
 
 /**
- * \class ParticleEnsembleMlpcaEntropyFunction
+ * \class ParticleEnsembleMultiLevelEntropyFunction
  *
  */
 template <unsigned int VDimension>
-class ParticleEnsembleMlpcaEntropyFunction : public ParticleVectorFunction<VDimension>
+class ParticleEnsembleMultiLevelEntropyFunction : public ParticleVectorFunction<VDimension>
 {
 public:
  /** Standard class typedefs. */
-  typedef ParticleEnsembleMlpcaEntropyFunction Self;
+  typedef ParticleEnsembleMultiLevelEntropyFunction Self;
   typedef SmartPointer<Self>  Pointer;
   typedef SmartPointer<const Self>  ConstPointer;
   typedef ParticleVectorFunction<VDimension> Superclass;
-  itkTypeMacro( ParticleEnsembleMlpcaEntropyFunction, ParticleVectorFunction);
+  itkTypeMacro( ParticleEnsembleMultiLevelEntropyFunction, ParticleVectorFunction);
 
   /** Type of particle system. */
   typedef typename Superclass::ParticleSystemType ParticleSystemType;
@@ -99,7 +99,8 @@ public:
 
     if (m_Counter == 0)
       {
-      this->ComputeCovarianceMatrix();
+      // this->ComputeCovarianceMatrix();
+      this->ComputeShapeRelPoseDeviations();
       }
   }
 
@@ -148,6 +149,18 @@ public:
   {
     return m_MinimumVarianceDecayConstant;
   }
+
+  void SetMinimumVarianceDecay_rel_pose(double initial_value, double final_value, double time_period)
+  {
+    m_MinimumVarianceDecayConstant_rel_pose =  exp(log(final_value / initial_value) / time_period);
+    m_MinimumVariance_rel_pose = initial_value;
+    m_HoldMinimumVariance_rel_pose = false;
+  }
+
+  bool GetMinimumVarianceDecayConstant_rel_pose() const
+  {
+    return m_MinimumVarianceDecayConstant_rel_pose;
+  }
   
   void SetMinimumVarianceDecay_shape_dev_ar(std::vector <double> initial_values, std::vector <double> final_values, double time_period)
   {
@@ -176,6 +189,17 @@ public:
   void SetHoldMinimumVariance(bool b)
   { m_HoldMinimumVariance = b; }
 
+  bool GetHoldMinimumVariance_shape_dev() const
+  { return m_HoldMinimumVariance_shape_dev; }
+  void SetHoldMinimumVariance_shape_dev(bool b)
+  { m_HoldMinimumVariance_shape_dev = b; }
+
+
+  bool GetHoldMinimumVariance_rel_pose() const
+  { return m_HoldMinimumVariance_rel_pose; }
+  void SetHoldMinimumVariance_rel_pose(bool b)
+  { m_HoldMinimumVariance_rel_pose = b; }
+
   void SetRecomputeCovarianceInterval(int i)
   { m_RecomputeCovarianceInterval = i; }
   int GetRecomputeCovarianceInterval() const
@@ -183,9 +207,8 @@ public:
 
   virtual typename ParticleVectorFunction<VDimension>::Pointer Clone()
   {
-    typename ParticleEnsembleMlpcaEntropyFunction<VDimension>::Pointer copy = ParticleEnsembleMlpcaEntropyFunction<VDimension>::New();
+    typename ParticleEnsembleMultiLevelEntropyFunction<VDimension>::Pointer copy = ParticleEnsembleMultiLevelEntropyFunction<VDimension>::New();
 
-    copy->m_PointsUpdate = this->m_PointsUpdate;
     copy->m_PointsUpdate_shape_dev = this->m_PointsUpdate_shape_dev;
     copy->m_PointsUpdate_rel_pose = this->m_PointsUpdate_rel_pose;
 
@@ -231,7 +254,7 @@ public:
   }
 
 protected:
-  ParticleEnsembleMlpcaEntropyFunction()
+  ParticleEnsembleMultiLevelEntropyFunction()
   {
     // m_MinimumVarianceBase = 1.0;//exp(log(1.0e-5)/10000.0);
     m_HoldMinimumVariance = true;
@@ -249,8 +272,8 @@ protected:
 
     m_super_matrix = std::make_shared<vnl_matrix_type>(10, 10); 
 
-    m_PointsUpdate_rel_pose = std::make_shared<std::vector<vnl_matrix_type>>();
-    m_PointsUpdate_shape_dev = std::make_shared<vnl_matrix_type>(10, 10);
+    m_PointsUpdate_shape_dev = std::make_shared<std::vector<vnl_matrix_type>>();
+    m_PointsUpdate_rel_pose = std::make_shared<vnl_matrix_type>(10, 10);
 
     m_InverseCovMatrix_shape_dev = std::make_shared<std::vector<vnl_matrix_type>>();
     m_InverseCovMatrix_rel_pose = std::make_shared<vnl_matrix_type>(10, 10);
@@ -259,16 +282,16 @@ protected:
     m_points_mean_rel_pose= std::make_shared<vnl_matrix_type>(10, 10);
 
   }
-  virtual ~ParticleEnsembleMlpcaEntropyFunction() {}
-  void operator=(const ParticleEnsembleMlpcaEntropyFunction &);
-  ParticleEnsembleMlpcaEntropyFunction(const ParticleEnsembleMlpcaEntropyFunction &);
+  virtual ~ParticleEnsembleMultiLevelEntropyFunction() {}
+  void operator=(const ParticleEnsembleMultiLevelEntropyFunction &);
+  ParticleEnsembleMultiLevelEntropyFunction(const ParticleEnsembleMultiLevelEntropyFunction &);
   typename ShapeMatrixType::Pointer m_ShapeMatrix;
 
 
 
-  virtual void ComputeCovarianceMatrix();
+  // virtual void ComputeCovarianceMatrix();
   virtual void ComputeShapeRelPoseDeviations();
-  virtual void ComputeCentroidForShapeVector(vnl_matrix_type &shape_vector, vnl_matrix_type &centroid_results);
+  virtual void ComputeCentroidForShapeVector(const vnl_matrix_type &shape_vector, vnl_matrix_type &centroid_results) const;
 
   std::shared_ptr<vnl_matrix_type> m_PointsUpdate_rel_pose;
   std::shared_ptr<std::vector<vnl_matrix_type>> m_PointsUpdate_shape_dev;
@@ -283,7 +306,7 @@ protected:
 
   double m_CurrentEnergy;
   double m_CurrentEnergy_rel_pose;
-  std::vector<double> m_CurrentEnergy_shape_dev_ar
+  std::vector<double> m_CurrentEnergy_shape_dev_ar;
   
   bool m_HoldMinimumVariance;
   bool m_HoldMinimumVariance_shape_dev;
@@ -314,13 +337,13 @@ protected:
 } //end namespace
 
 #if ITK_TEMPLATE_EXPLICIT
-#include "Templates/itkParticleEnsembleMlpcaEntropyFunction+-.h"
+#include "Templates/itkParticleEnsembleMultiLevelEntropyFunction+-.h"
 #endif
 
 #if ITK_TEMPLATE_TXX
-#include "itkParticleEnsembleMlpcaEntropyFunction.txx"
+#include "itkParticleEnsembleMultiLevelEntropyFunction.txx"
 #endif
 
-#include "itkParticleEnsembleMlpcaEntropyFunction.txx"
+#include "itkParticleEnsembleMultiLevelEntropyFunction.txx"
 
 #endif

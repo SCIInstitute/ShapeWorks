@@ -47,20 +47,19 @@ class OptimizeParameters {
   void set_use_normals(std::vector<bool> use_normals);
   
   // Multi-level Optimization Parameters
-  bool get_use_mlpca_optimize();
-  void set_use_mlpca_optimize(bool value);
+  bool get_use_multi_level_optimize();
+  void set_use_multi_level_optimize(bool value);
 
-  std::vector<double> get_starting_regularization_multilevel();
-  void set_starting_regularization_multilevel(std::vector<double> reg_params_start);
-
-  std::vector<double> get_ending_regularization_multilevel();
-  void set_ending_regularization_multilevel(std::vector<double> reg_params_end);
-
-  double get_starting_regularization_between();
-  void set_starting_regularization_between(double value);
-
-  double get_ending_regularization_between();
-  void set_ending_regularization_between(double value);
+  // Shape Dev
+  std::vector<double> get_starting_regularization_shape_dev_ar();
+  void set_starting_regularization_shape_dev_ar(std::vector<double> reg_params_start);
+  std::vector<double> get_ending_regularization_shape_dev_ar();
+  void set_ending_regularization_shape_dev_ar(std::vector<double> reg_params_end);
+  // Rel Pose
+  double get_starting_regularization_rel_pose();
+  void set_starting_regularization_rel_pose(double value);
+  double get_ending_regularization_rel_pose();
+  void set_ending_regularization_rel_pose(double value);
 
   double get_normals_strength();
   void set_normals_strength(double value);

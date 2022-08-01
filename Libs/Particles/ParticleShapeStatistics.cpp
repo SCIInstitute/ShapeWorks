@@ -410,7 +410,7 @@ int ParticleShapeStatistics::ImportPointsAndComputeMlpca(std::vector<Eigen::Vect
   }
 
  std::cout << "Between Covariance Matrix computed " << std::endl;
- std::cout << "MLPCA base part done" << std::endl;
+ std::cout << "Multi Level base part done" << std::endl;
 //  std::cout << "writing within compactness" << std::endl;
 //  std::string fn = "/home/sci/nawazish.khan/Desktop/result/within_compactness.txt";
 //  std::ofstream outfile;

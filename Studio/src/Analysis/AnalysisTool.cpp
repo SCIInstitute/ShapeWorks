@@ -531,7 +531,7 @@ bool AnalysisTool::compute_stats() {
   stats_.SetNumberOfParticlesAr(number_of_particles_ar);
   if(dps> 1)
   {
-    std::cout << "importing points for mlpca" << std::endl;
+    std::cout << "importing points for Multi Level" << std::endl;
     stats_.ImportPointsAndComputeMlpca(points, dps);
   }
   stats_.ComputeModes();

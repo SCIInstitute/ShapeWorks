@@ -16,7 +16,7 @@
 #include "CorrespondenceMode.h"
 #include "itkParticleDualVectorFunction.h"
 #include "itkParticleEnsembleEntropyFunction.h"
-#include "itkParticleEnsembleMlpcaEntropyFunction.h"
+#include "itkParticleEnsembleMultiLevelEntropyFunction.h"
 #include "itkParticleShapeLinearRegressionMatrixAttribute.h"
 #include "itkParticleShapeMixedEffectsMatrixAttribute.h"
 #include "itkParticleMeshBasedGeneralEntropyGradientFunction.h"
@@ -259,17 +259,17 @@ public:
       m_LinkingFunction->SetFunctionB(m_MeshBasedGeneralEntropyGradientFunction);
       m_MeshBasedGeneralEntropyGradientFunction->UseMeanEnergy();
     }
-    else if (mode == shapeworks::CorrespondenceMode::MlpcaBasedEnsembleEntropy) {
+    else if (mode == shapeworks::CorrespondenceMode::MultiLevelBasedEnsembleEntropy) {
       std::cout << "mode IS --> G " << std::endl;
-      std::cout << "Linking set to mlpca ensemble entropy BEFORE" << std::endl;
-      m_LinkingFunction->SetFunctionB(m_MlpcaBasedEnsembleEntropyFunction);
-      m_MlpcaBasedEnsembleEntropyFunction->UseEntropy();
+      std::cout << "Linking set to Multi Level Ensemble Entropy" << std::endl;
+      m_LinkingFunction->SetFunctionB(m_MultiLevelBasedEnsembleEntropyFunction);
+      m_MultiLevelBasedEnsembleEntropyFunction->UseEntropy();
     }
-    // else if (mode == shapeworks::CorrespondenceMode::MlpcaBasedEnsembleEntropyMeanEnergy) {
+    // else if (mode == shapeworks::CorrespondenceMode::MultiLevelBasedEnsembleEntropyMeanEnergy) {
     //   std::cout << "mode IS --> H " << std::endl;
-    //   std::cout << "Linking set to mlpca ensemble Mean Energy entropy BEFORE" << std::endl;
-    //   m_LinkingFunction->SetFunctionB(m_MlpcaBasedEnsembleEntropyFunction);
-    //   m_MlpcaBasedEnsembleEntropyFunction->UseMeanEnergy();
+    //   std::cout << "Linking set to Multi Level ensemble Mean Energy entropy BEFORE" << std::endl;
+    //   m_LinkingFunction->SetFunctionB(m_MultiLevelBasedEnsembleEntropyFunction);
+    //   m_MultiLevelBasedEnsembleEntropyFunction->UseMeanEnergy();
     // }
 
     m_CorrespondenceMode = mode;
@@ -340,8 +340,8 @@ public:
   itk::ParticleEnsembleEntropyFunction<Dimension>* GetEnsembleEntropyFunction()
   { return m_EnsembleEntropyFunction.GetPointer(); }
 
-  itk::ParticleEnsembleMlpcaEntropyFunction<Dimension>* GetEnsembleMlpcaEntropyFunction()
-  { return m_MlpcaBasedEnsembleEntropyFunction.GetPointer(); }
+  itk::ParticleEnsembleMultiLevelEntropyFunction<Dimension>* GetEnsembleMultiLevelEntropyFunction()
+  { return m_MultiLevelBasedEnsembleEntropyFunction.GetPointer(); }
 
   itk::ParticleEnsembleEntropyFunction<Dimension>* GetEnsembleRegressionEntropyFunction()
   { return m_EnsembleRegressionEntropyFunction.GetPointer(); }
@@ -532,7 +532,7 @@ protected:
   itk::ParticleEnsembleEntropyFunction<Dimension>::Pointer m_EnsembleEntropyFunction;
   itk::ParticleEnsembleEntropyFunction<Dimension>::Pointer m_EnsembleRegressionEntropyFunction;
   itk::ParticleEnsembleEntropyFunction<Dimension>::Pointer m_EnsembleMixedEffectsEntropyFunction;
-  itk::ParticleEnsembleMlpcaEntropyFunction<Dimension>::Pointer m_MlpcaBasedEnsembleEntropyFunction;
+  itk::ParticleEnsembleMultiLevelEntropyFunction<Dimension>::Pointer m_MultiLevelBasedEnsembleEntropyFunction;
 
   itk::ParticleShapeMatrixAttribute<double, Dimension>::Pointer m_ShapeMatrix;
 
