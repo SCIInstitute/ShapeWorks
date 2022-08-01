@@ -44,8 +44,13 @@ static void assign_transforms(json& j, std::string prefix, std::vector<std::vect
   if (transforms.size() != domains.size() && transforms.size() != domains.size() + 1) {
     throw std::runtime_error(prefix + " filenames and number of domains mismatch");
   }
-  for (int i = 0; i < domains.size(); i++) {
-    std::string key = prefix + "_" + domains[i];
+  for (int i = 0; i < transforms.size(); i++) {
+    std::string key = prefix + "_";
+    if (i < domains.size()) {
+      key = key + domains[i];
+    } else {
+      key = key + "global";
+    }
     std::string value = transform_to_string(transforms[i]);
     j[key] = value;
   }

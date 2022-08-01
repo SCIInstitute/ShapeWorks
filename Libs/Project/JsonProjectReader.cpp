@@ -10,17 +10,15 @@ using json = nlohmann::ordered_json;
 namespace shapeworks {
 
 using namespace project::prefixes;
+using namespace project::types;
 
 //---------------------------------------------------------------------------
-//---------------------------------------------------------------------------
-static std::vector<std::string> get_keys(json item) {
-  std::vector<std::string> keys;
-  std::map<std::string, std::string> key_map;
-  for (auto& [key, value] : item.items()) {
-    keys.push_back(key);
-  }
-  return keys;
-}
+class JsonProjectReader::JsonContainer {
+ public:
+  JsonContainer(){};
+  ~JsonContainer(){};
+  json j;
+};
 
 //---------------------------------------------------------------------------
 static std::map<std::string, std::string> get_key_map(json item) {
@@ -32,61 +30,14 @@ static std::map<std::string, std::string> get_key_map(json item) {
 }
 
 //---------------------------------------------------------------------------
-static void read_subjects(Project& project, const json& j) {
+void JsonProjectReader::read_subjects() {
+  auto& j = container_->j;
+
   if (!j.contains("data")) {
     return;
   }
 
-  auto data = j["data"];
-  std::vector<std::shared_ptr<Subject>> subjects;
-  bool first = true;
-  std::vector<std::string> original_keys;
-  for (const auto& item : data) {
-    auto subject = std::make_shared<Subject>();
-
-    auto key_map = get_key_map(item);
-
-    if (first) {
-      auto keys = get_keys(item);
-      auto domain_names = ProjectUtils::determine_domain_names(keys);
-      project.set_domain_names(domain_names);
-      ProjectUtils::determine_domain_types(project, key_map);
-      original_keys = ProjectUtils::get_original_keys(domain_names, key_map);
-    }
-
-    auto domains = project.get_domain_names();
-    if (item.contains("name")) {
-      subject->set_display_name(item["name"]);
-    }
-    subject->set_number_of_domains(domains.size());
-
-    auto get_list = [&](auto prefix) { return ProjectUtils::get_values({prefix}, domains, key_map); };
-
-    subject->set_original_filenames(
-        ProjectUtils::get_values(ProjectUtils::get_input_prefixes(), domains, key_map));
-    subject->set_groomed_filenames(
-        ProjectUtils::get_values(ProjectUtils::get_groomed_prefixes(), domains, key_map));
-    subject->set_landmarks_filenames(get_list(LANDMARKS_FILE_PREFIX));
-    subject->set_constraints_filenames(get_list(CONSTRAINTS_PREFIX));
-    subject->set_groomed_transforms(ProjectUtils::get_transforms(GROOMED_TRANSFORMS_PREFIX, domains, key_map));
-    subject->set_procrustes_transforms(ProjectUtils::get_transforms(PROCRUSTES_TRANSFORMS_PREFIX, domains, key_map));
-    subject->set_image_filenames(get_list(IMAGE_PREFIX));
-
-    subject->set_feature_filenames(ProjectUtils::get_value_map(FEATURE_PREFIX, key_map));
-    subject->set_group_values(ProjectUtils::get_value_map(GROUP_PREFIX, key_map));
-
-    subject->set_local_particle_filenames(get_list(LOCAL_PARTICLES));
-    subject->set_world_particle_filenames(get_list(WORLD_PARTICLES));
-
-    // extra
-    subject->set_extra_values(ProjectUtils::get_extra_columns(key_map));
-    // table values
-    subject->set_table_values(key_map);
-
-    subjects.push_back(subject);
-  }
-
-  project.set_subjects(subjects);
+  load_subjects(object_to_map_list(j["data"]));
 }
 
 //---------------------------------------------------------------------------
@@ -153,28 +104,53 @@ static std::map<std::string, Parameters> read_parameter_map(json j, std::string 
 }
 
 //---------------------------------------------------------------------------
-bool JsonProjectReader::read_project(Project &project, std::string filename) {
+JsonProjectReader::JsonProjectReader(Project& project) : ProjectReader(project), container_(new JsonContainer) {}
+
+//---------------------------------------------------------------------------
+JsonProjectReader::~JsonProjectReader() {}
+
+//---------------------------------------------------------------------------
+bool JsonProjectReader::read_project(std::string filename) {
   try {
     std::ifstream ifs(filename);
-    json j = json::parse(ifs);
+    container_->j = json::parse(ifs);
+    auto& j = container_->j;
 
-    read_subjects(project, j);
+    read_subjects();
 
-    read_landmark_definitions(project, j);
+    read_landmark_definitions(project_, j);
 
     // read parameter sheets
-    project.set_parameter_map("groom", read_parameter_map(j, "groom)"));
-    project.set_parameters("optimize", read_parameters(j, "optimize)"));
-    project.set_parameters("studio", read_parameters(j, "studio"));
-    project.set_parameters("project", read_parameters(j, "project"));
-    project.set_parameters("analysis", read_parameters(j, "analysis"));
-    project.set_parameters("deepssm", read_parameters(j, "deepssm"));
+    project_.set_parameter_map("groom", read_parameter_map(j, "groom)"));
+    project_.set_parameters("optimize", read_parameters(j, "optimize)"));
+    project_.set_parameters("studio", read_parameters(j, "studio"));
+    project_.set_parameters("project_", read_parameters(j, "project_"));
+    project_.set_parameters("analysis", read_parameters(j, "analysis"));
+    project_.set_parameters("deepssm", read_parameters(j, "deepssm"));
 
   } catch (std::exception& e) {
     std::cerr << "Error reading " << filename << " : " << e.what() << "\n";
     return false;
   }
   return true;
+}
+
+//---------------------------------------------------------------------------
+StringMapList JsonProjectReader::object_to_map_list(std::string name) {
+  StringMapList list;
+  auto& j = container_->j;
+  if (!j.contains("data")) {
+    return list;
+  }
+
+  auto data = j["data"];
+  for (const auto& item : data) {
+    auto subject = std::make_shared<Subject>();
+    auto key_map = get_key_map(item);
+    list.push_back(key_map);
+  }
+
+  return list;
 }
 
 }  // namespace shapeworks

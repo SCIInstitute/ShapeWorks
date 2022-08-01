@@ -31,12 +31,22 @@ static constexpr const char* GROUP_PREFIX = "group_";
 static constexpr const char* LOCAL_PARTICLES = "local_particles";
 static constexpr const char* WORLD_PARTICLES = "world_particles";
 
+static constexpr const char* LOCAL_PARTICLES_PREFIX = "local_particles_";
+static constexpr const char* WORLD_PARTICLES_PREFIX = "world_particles_";
+
 }  // namespace project::prefixes
+
+namespace project::types {
+  using StringMap = std::map<std::string, std::string>;
+  using StringList = std::vector<std::string>;
+  using StringMapList = std::vector<StringMap>;
+}
 
 class ProjectUtils {
  public:
-  using StringMap = std::map<std::string, std::string>;
-  using StringList = std::vector<std::string>;
+
+  using StringList = project::types::StringList;
+  using StringMap = project::types::StringMap;
 
   // convert a list of doubles from a spreadsheet to a vtkTransform
   static vtkSmartPointer<vtkTransform> convert_transform(std::vector<double> list);

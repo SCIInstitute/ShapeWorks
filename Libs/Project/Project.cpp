@@ -49,14 +49,15 @@ Project::~Project() = default;
 
 //---------------------------------------------------------------------------
 bool Project::load(const std::string& filename) {
+  filename_ = filename;
   if (StringUtils::hasSuffix(filename, "swproj")) {
-    return JsonProjectReader::read_project(*this, filename);
+    JsonProjectReader reader(*this);
+    return reader.read_project(filename);
   }
 
   landmarks_loaded_ = false;
   try {
     wb_->load(filename);
-    filename_ = filename;
   } catch (xlnt::exception& e) {
     std::cerr << std::string("Error reading xlsx: ") << std::string(e.what()) << ", "
               << "\n";
@@ -65,8 +66,8 @@ bool Project::load(const std::string& filename) {
   }
 
   determine_domain_names();
-  determine_domain_types();
   load_subjects();
+  determine_domain_types();
 
   Parameters project_parameters = get_parameters(Parameters::PROJECT_PARAMS);
 
@@ -1090,7 +1091,6 @@ std::vector<std::string> Project::get_extra_columns() const {
 std::string Project::get_filename() { return filename_; }
 
 //---------------------------------------------------------------------------
-
 void Project::set_filename(std::string filename) { filename_ = filename; }
 
 //---------------------------------------------------------------------------
