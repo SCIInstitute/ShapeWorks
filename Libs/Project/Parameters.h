@@ -21,6 +21,12 @@ class Parameters {
   static constexpr const char* PROJECT_PARAMS = "project";
   static constexpr const char* DEEPSSM_PARAMS = "deepssm";
 
+  //! default constructor
+  Parameters();
+
+  //! construct from map
+  explicit Parameters(std::map<std::string, std::string> map);
+
   //! get a parameter based on a key, return default if it doesn't exist
   Variant get(std::string key, Variant default_value);
 

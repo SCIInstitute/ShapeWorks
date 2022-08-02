@@ -1,8 +1,6 @@
 #pragma once
 
-#include "Project.h"
 #include "ProjectReader.h"
-#include "ProjectUtils.h"
 
 namespace shapeworks {
 
@@ -12,18 +10,17 @@ namespace shapeworks {
  */
 class ExcelProjectReader : public ProjectReader {
  public:
-  using StringMapList = project::types::StringMapList;
-
   ExcelProjectReader(Project &project);
 
-  bool read_project(std::string filename);
+  bool read_project(std::string filename) override;
+
+  StringMap get_parameters(std::string name) override;
+
+  StringMultiMap get_multi_parameters(std::string name) override;
 
  private:
-  void load_subjects();
-
-  // ready a sheet into a vector of maps
-  StringMapList sheet_to_map(std::string name);
-
-  std::unique_ptr<xlnt::workbook> wb_;
+  // pimpl container
+  class Container;
+  std::unique_ptr<Container> container_;
 };
 }  // namespace shapeworks

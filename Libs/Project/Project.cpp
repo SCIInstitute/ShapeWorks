@@ -835,6 +835,7 @@ std::map<std::string, Parameters> Project::get_parameter_map(const std::string& 
   return map;
 }
 
+//---------------------------------------------------------------------------
 void Project::set_parameter_map(const std::string& name, std::map<std::string, Parameters> map) {
   for (auto& [domain, params] : map) {
     set_parameters(name, params, domain);

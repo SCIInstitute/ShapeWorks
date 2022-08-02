@@ -1,11 +1,8 @@
 #pragma once
 
-#include "Project.h"
 #include "ProjectReader.h"
-#include "ProjectUtils.h"
 
 namespace shapeworks {
-
 
 //! JSON file format reader for Project
 /*!
@@ -13,22 +10,18 @@ namespace shapeworks {
  */
 class JsonProjectReader : public ProjectReader {
  public:
-  using StringMap = project::types::StringMap;
-  using StringMapList = project::types::StringMapList;
-
   JsonProjectReader(Project &project);
   ~JsonProjectReader();
 
-  bool read_project(std::string filename);
+  bool read_project(std::string filename) override;
 
-  void read_subjects();
+  StringMap get_parameters(std::string name) override;
+
+  StringMultiMap get_multi_parameters(std::string name) override;
 
  private:
-  class JsonContainer;
-  // Pointer to the internal implementation
-  std::unique_ptr<JsonContainer> container_;
-
-  // ready a sheet into a vector of maps
-  StringMapList object_to_map_list(std::string name);
+  // pimpl container
+  class Container;
+  std::unique_ptr<Container> container_;
 };
 }  // namespace shapeworks

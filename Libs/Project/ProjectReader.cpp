@@ -66,7 +66,55 @@ void ProjectReader::load_subjects(StringMapList list) {
 }
 
 //---------------------------------------------------------------------------
-std::vector<std::string> ProjectReader::get_keys(project::types::StringMap map) {
+void ProjectReader::load_parameters() {
+  for (auto i : {"optimize", "studio", "project", "analysis", "deepssm"}) {
+    load_parameter(i, get_parameters(i));
+  }
+
+  // handle groom multi-map
+  std::map<std::string, Parameters> map;
+  for (auto& [key, value] : get_multi_parameters("groom")) {
+    map[key] = Parameters(value);
+  }
+  project_.set_parameter_map("groom", map);
+}
+
+//---------------------------------------------------------------------------
+void ProjectReader::load_parameter(std::string name, StringMap map) {
+  Parameters p(map);
+  project_.set_parameters(name, p);
+}
+
+//---------------------------------------------------------------------------
+void ProjectReader::load_landmark_definitions(StringMapList list) {
+  std::vector<std::vector<LandmarkDefinition>> definitions;
+
+  auto domain_names = project_.get_domain_names();
+  definitions.resize(domain_names.size());
+
+  for (auto landmark : list) {
+    LandmarkDefinition def;
+    def.name_ = landmark["name"];
+    def.domain_ = landmark["domain"];
+
+    auto f = std::find(domain_names.begin(), domain_names.end(), def.domain_);
+    if (f == domain_names.end()) {
+      // skip, nonexistent domain
+      continue;
+    }
+    int domain_id = f - domain_names.begin();
+    def.domain_id_ = domain_id;
+    def.visible_ = landmark["visible"] == "true";
+    def.color_ = landmark["color"];
+    def.comment_ = landmark["comment"];
+    definitions[domain_id].push_back(def);
+  }
+
+  project_.set_landmark_definitions(definitions);
+}
+
+//---------------------------------------------------------------------------
+StringList ProjectReader::get_keys(StringMap map) {
   std::vector<std::string> keys;
   for (auto& [key, value] : map) {
     keys.push_back(key);
@@ -75,6 +123,6 @@ std::vector<std::string> ProjectReader::get_keys(project::types::StringMap map) 
 }
 
 //---------------------------------------------------------------------------
-bool ProjectReader::contains(project::types::StringMap map, std::string key) { return map.find(key) != map.end(); }
+bool ProjectReader::contains(StringMap map, std::string key) { return map.find(key) != map.end(); }
 
 }  // namespace shapeworks

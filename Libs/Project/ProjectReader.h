@@ -11,14 +11,34 @@ namespace shapeworks {
  */
 class ProjectReader {
  public:
+  using StringMapList = project::types::StringMapList;
+  using StringMap = project::types::StringMap;
+  using StringList = project::types::StringList;
+  using StringMultiMap = project::types::StringMultiMap;
+
+  //! Constructor
   ProjectReader(Project &project);
 
+  //! Read a project from a file
+  virtual bool read_project(std::string filename) = 0;
+
+  virtual StringMap get_parameters(std::string name) = 0;
+
+  virtual StringMultiMap get_multi_parameters(std::string name) = 0;
+
  protected:
-  void load_subjects(project::types::StringMapList list);
+  //! Load subjects from string map list
+  void load_subjects(StringMapList list);
 
-  static std::vector<std::string> get_keys(project::types::StringMap map);
+  void load_parameters();
 
-  bool contains(project::types::StringMap map, std::string key);
+  void load_parameter(std::string name, StringMap map);
+
+  void load_landmark_definitions(StringMapList list);
+
+  static StringList get_keys(StringMap map);
+
+  bool contains(StringMap map, std::string key);
 
   Project &project_;
 };

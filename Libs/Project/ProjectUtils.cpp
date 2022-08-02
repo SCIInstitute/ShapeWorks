@@ -74,7 +74,7 @@ StringList ProjectUtils::determine_domain_names(StringList keys) {
 }
 
 //---------------------------------------------------------------------------
-void ProjectUtils::determine_domain_types(Project &project, StringMap key_map) {
+void ProjectUtils::determine_domain_types(Project& project, StringMap key_map) {
   auto domain_names = project.get_domain_names();
 
   std::vector<DomainType> original_domain_types;
@@ -220,6 +220,9 @@ DomainType ProjectUtils::determine_domain_type(std::string filename) {
   }
   return DomainType::Image;
 }
+
+//---------------------------------------------------------------------------
+bool ProjectUtils::starts_with(std::string str, std::string prefix) { return str.substr(0, prefix.size()) == prefix; }
 
 }  // namespace shapeworks
 //---------------------------------------------------------------------------

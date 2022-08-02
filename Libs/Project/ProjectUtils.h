@@ -40,6 +40,7 @@ namespace project::types {
   using StringMap = std::map<std::string, std::string>;
   using StringList = std::vector<std::string>;
   using StringMapList = std::vector<StringMap>;
+  using StringMultiMap = std::map<std::string, StringMap>;
 }
 
 class ProjectUtils {
@@ -84,5 +85,8 @@ class ProjectUtils {
 
   //! determine the domain type, given a filename
   static DomainType determine_domain_type(std::string filename);
+
+  static bool starts_with(std::string str, std::string prefix);
+
 };
 }  // namespace shapeworks
