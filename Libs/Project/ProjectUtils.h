@@ -88,5 +88,10 @@ class ProjectUtils {
 
   static bool starts_with(std::string str, std::string prefix);
 
+  static std::string transform_to_string(std::vector<double> transform);
+
+  static std::vector<std::string> convert_domain_types(std::vector<DomainType> domain_types);
+  static std::vector<std::string> convert_groomed_domain_types(std::vector<DomainType> domain_types);
+
 };
 }  // namespace shapeworks

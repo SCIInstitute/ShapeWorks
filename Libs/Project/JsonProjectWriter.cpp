@@ -2,37 +2,30 @@
 
 #include <fstream>
 #include <nlohmann/json.hpp>
+
+#include "ProjectUtils.h"
 using json = nlohmann::ordered_json;
 
 namespace shapeworks {
 
 //---------------------------------------------------------------------------
-static void assign_keys(json& j, std::string prefix, std::vector<std::string> filenames,
+static void assign_keys(json& j, std::vector<std::string> prefixes, std::vector<std::string> filenames,
                         std::vector<std::string> domains) {
   if (filenames.empty()) {
     return;
   }
+  auto prefix = prefixes[0];
   if (filenames.size() != domains.size()) {
     throw std::runtime_error(prefix + " filenames and number of domains mismatch");
   }
   for (int i = 0; i < domains.size(); i++) {
+    if (prefixes.size() == domains.size()) {
+      prefix = prefixes[i];
+    }
     std::string key = prefix + "_" + domains[i];
     std::string value = filenames[i];
     j[key] = value;
   }
-}
-
-//---------------------------------------------------------------------------
-static std::string transform_to_string(std::vector<double> transform) {
-  std::string str;
-  for (int j = 0; j < transform.size(); j++) {
-    if (j == 0) {
-      str = std::to_string(transform[j]);
-    } else {
-      str = str + " " + std::to_string(transform[j]);
-    }
-  }
-  return str;
 }
 
 //---------------------------------------------------------------------------
@@ -51,7 +44,7 @@ static void assign_transforms(json& j, std::string prefix, std::vector<std::vect
     } else {
       key = key + "global";
     }
-    std::string value = transform_to_string(transforms[i]);
+    std::string value = ProjectUtils::transform_to_string(transforms[i]);
     j[key] = value;
   }
 }
@@ -67,14 +60,16 @@ static json create_data_object(Project& project) {
     json j;
     j["name"] = subject->get_display_name();
 
-    /// TODO: need to handle different domain types
-    assign_keys(j, "shape", subject->get_original_filenames(), domains);
-    assign_keys(j, "landmarks_file", subject->get_landmarks_filenames(), domains);
-    assign_keys(j, "groomed", subject->get_groomed_filenames(), domains);
-    assign_keys(j, "local_particles", subject->get_local_particle_filenames(), domains);
-    assign_keys(j, "world_particles", subject->get_world_particle_filenames(), domains);
-    assign_transforms(j, "alignment", subject->get_groomed_transforms(), domains);
-    assign_transforms(j, "procrustes", subject->get_procrustes_transforms(), domains);
+    auto original_prefixes = ProjectUtils::convert_domain_types(project.get_original_domain_types());
+    auto groomed_prefixes = ProjectUtils::convert_groomed_domain_types(project.get_groomed_domain_types());
+
+    assign_keys(j, original_prefixes, subject->get_original_filenames(), domains);
+    assign_keys(j, {"landmarks_file"}, subject->get_landmarks_filenames(), domains);
+    assign_keys(j, groomed_prefixes, subject->get_groomed_filenames(), domains);
+    assign_keys(j, {"local_particles"}, subject->get_local_particle_filenames(), domains);
+    assign_keys(j, {"world_particles"}, subject->get_world_particle_filenames(), domains);
+    assign_transforms(j, {"alignment"}, subject->get_groomed_transforms(), domains);
+    assign_transforms(j, {"procrustes"}, subject->get_procrustes_transforms(), domains);
 
     // write out extra values
     for (auto& [key, value] : subject->get_extra_values()) {

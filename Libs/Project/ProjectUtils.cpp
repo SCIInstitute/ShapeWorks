@@ -224,6 +224,45 @@ DomainType ProjectUtils::determine_domain_type(std::string filename) {
 //---------------------------------------------------------------------------
 bool ProjectUtils::starts_with(std::string str, std::string prefix) { return str.substr(0, prefix.size()) == prefix; }
 
+//---------------------------------------------------------------------------
+std::string ProjectUtils::transform_to_string(std::vector<double> transform) {
+  std::string str;
+  for (int j = 0; j < transform.size(); j++) {
+    if (j == 0) {
+      str = std::to_string(transform[j]);
+    } else {
+      str = str + " " + std::to_string(transform[j]);
+    }
+  }
+  return str;
+}
+
+//---------------------------------------------------------------------------
+std::vector<std::string> ProjectUtils::convert_domain_types(std::vector<DomainType> domain_types) {
+  std::vector<std::string> list;
+  for (auto& i : domain_types) {
+    if (i == DomainType::Contour) {
+      list.push_back("contour");
+    } else {
+      list.push_back("shape");
+    }
+  }
+  return list;
+}
+
+//---------------------------------------------------------------------------
+std::vector<std::string> ProjectUtils::convert_groomed_domain_types(std::vector<DomainType> domain_types) {
+  std::vector<std::string> list;
+  for (auto& i : domain_types) {
+    if (i == DomainType::Contour) {
+      list.push_back("groomed_contour");
+    } else {
+      list.push_back("groomed");
+    }
+  }
+  return list;
+}
+
 }  // namespace shapeworks
 //---------------------------------------------------------------------------
 //---------------------------------------------------------------------------

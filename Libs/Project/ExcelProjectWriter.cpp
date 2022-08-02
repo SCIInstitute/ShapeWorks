@@ -1,5 +1,6 @@
 #include "ExcelProjectWriter.h"
 
+#include "ProjectUtils.h"
 #include <xlnt/workbook/workbook_view.hpp>
 #include <xlnt/xlnt.hpp>
 
@@ -45,15 +46,19 @@ static void set_value(xlnt::worksheet& ws, const std::string& column_name, int s
 }
 
 //---------------------------------------------------------------------------
-static void assign_keys(xlnt::worksheet& ws, int subject_id, std::string prefix, std::vector<std::string> filenames,
+static void assign_keys(xlnt::worksheet& ws, int subject_id, std::vector<std::string> prefixes, std::vector<std::string> filenames,
                         std::vector<std::string> domains) {
   if (filenames.empty()) {
     return;
   }
+  auto prefix = prefixes[0];
   if (filenames.size() != domains.size()) {
     throw std::runtime_error(prefix + " filenames and number of domains mismatch");
   }
   for (int i = 0; i < domains.size(); i++) {
+    if (prefixes.size() == domains.size()) {
+      prefix = prefixes[i];
+    }
     std::string key = prefix + "_" + domains[i];
     std::string value = filenames[i];
     set_value(ws, key, subject_id, value);
@@ -90,9 +95,9 @@ static void assign_transforms(xlnt::worksheet& ws, int subject_id, std::string p
 }
 
 //---------------------------------------------------------------------------
-static void store_subjects(ProjectHandle project, xlnt::workbook& wb) {
-  auto subjects = project->get_subjects();
-  auto domains = project->get_domain_names();
+static void store_subjects(Project& project, xlnt::workbook& wb) {
+  auto subjects = project.get_subjects();
+  auto domains = project.get_domain_names();
 
   xlnt::worksheet ws = wb.sheet_by_index(0);
   ws.title("data");
@@ -101,14 +106,16 @@ static void store_subjects(ProjectHandle project, xlnt::workbook& wb) {
     auto subject = subjects[i];
 
     set_value(ws, "name", i, subject->get_display_name());
-    /// TODO: need to handle different domain types
-    assign_keys(ws, i, "shape", subject->get_original_filenames(), domains);
-    assign_keys(ws, i, "landmarks_file", subject->get_landmarks_filenames(), domains);
-    assign_keys(ws, i, "groomed", subject->get_groomed_filenames(), domains);
-    assign_keys(ws, i, "local_particles", subject->get_local_particle_filenames(), domains);
-    assign_keys(ws, i, "world_particles", subject->get_world_particle_filenames(), domains);
-    assign_transforms(ws, i, "alignment", subject->get_groomed_transforms(), domains);
-    assign_transforms(ws, i, "procrustes", subject->get_procrustes_transforms(), domains);
+
+    auto original_prefixes = ProjectUtils::convert_domain_types(project.get_original_domain_types());
+    auto groomed_prefixes = ProjectUtils::convert_groomed_domain_types(project.get_groomed_domain_types());
+    assign_keys(ws, i, original_prefixes, subject->get_original_filenames(), domains);
+    assign_keys(ws, i, {"landmarks_file"}, subject->get_landmarks_filenames(), domains);
+    assign_keys(ws, i, groomed_prefixes, subject->get_groomed_filenames(), domains);
+    assign_keys(ws, i, {"local_particles"}, subject->get_local_particle_filenames(), domains);
+    assign_keys(ws, i, {"world_particles"}, subject->get_world_particle_filenames(), domains);
+    assign_transforms(ws, i, {"alignment"}, subject->get_groomed_transforms(), domains);
+    assign_transforms(ws, i, {"procrustes"}, subject->get_procrustes_transforms(), domains);
 
     // write out extra values
     for (auto& [key, value] : subject->get_extra_values()) {
@@ -165,7 +172,7 @@ static void create_parameter_map_sheet(xlnt::workbook& wb, std::string name,
 }
 
 //---------------------------------------------------------------------------
-static void store_landmark_definitions(ProjectHandle project, xlnt::workbook& wb) {
+static void store_landmark_definitions(Project& project, xlnt::workbook& wb) {
   std::string name = "landmarks";
   if (wb.contains(name)) {
     wb.remove_sheet(wb.sheet_by_title(name));
@@ -174,7 +181,7 @@ static void store_landmark_definitions(ProjectHandle project, xlnt::workbook& wb
   int id = get_or_create_worksheet(wb, name);
   auto ws = wb.sheet_by_index(id);
 
-  auto domain_names = project->get_domain_names();
+  auto domain_names = project.get_domain_names();
 
   ws.cell(xlnt::cell_reference(1, 1)).value("domain");
   ws.cell(xlnt::cell_reference(2, 1)).value("name");
@@ -182,7 +189,7 @@ static void store_landmark_definitions(ProjectHandle project, xlnt::workbook& wb
   ws.cell(xlnt::cell_reference(4, 1)).value("color");
   ws.cell(xlnt::cell_reference(5, 1)).value("comment");
 
-  auto all_definitions = project->get_all_landmark_definitions();
+  auto all_definitions = project.get_all_landmark_definitions();
 
   int row = 2;
   for (int domain_id = 0; domain_id < all_definitions.size(); domain_id++) {
@@ -199,17 +206,17 @@ static void store_landmark_definitions(ProjectHandle project, xlnt::workbook& wb
 }
 
 //---------------------------------------------------------------------------
-bool ExcelProjectWriter::write_project(ProjectHandle project, std::string filename) {
+bool ExcelProjectWriter::write_project(Project &project, std::string filename) {
   auto wb = xlnt::workbook{};
 
   store_subjects(project, wb);
 
-  create_parameter_map_sheet(wb, "groom", project->get_parameter_map("groom"));
-  create_parameter_sheet(wb, "optimize", project->get_parameters("optimize"));
-  create_parameter_sheet(wb, "studio", project->get_parameters("studio"));
-  create_parameter_sheet(wb, "project", project->get_parameters("project"));
-  create_parameter_sheet(wb, "analysis", project->get_parameters("analysis"));
-  create_parameter_sheet(wb, "deepssm", project->get_parameters("deepssm"));
+  create_parameter_map_sheet(wb, "groom", project.get_parameter_map("groom"));
+  create_parameter_sheet(wb, "optimize", project.get_parameters("optimize"));
+  create_parameter_sheet(wb, "studio", project.get_parameters("studio"));
+  create_parameter_sheet(wb, "project", project.get_parameters("project"));
+  create_parameter_sheet(wb, "analysis", project.get_parameters("analysis"));
+  create_parameter_sheet(wb, "deepssm", project.get_parameters("deepssm"));
 
   store_landmark_definitions(project, wb);
 

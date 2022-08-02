@@ -10,7 +10,7 @@ namespace shapeworks {
  */
 class ExcelProjectWriter {
  public:
-  static bool write_project(ProjectHandle project, std::string filename);
+  static bool write_project(Project& project, std::string filename);
 
 private:
 
