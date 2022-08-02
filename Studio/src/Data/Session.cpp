@@ -390,8 +390,6 @@ bool Session::load_light_project(QString filename) {
 
   this->renumber_shapes();
 
-  this->project_->store_subjects();
-
   std::cerr << "Old XML parameter file loaded\n";
   return true;
 }
@@ -555,7 +553,7 @@ void Session::load_original_files(std::vector<std::string> filenames) {
   }
 
   this->renumber_shapes();
-  this->project_->store_subjects();
+  this->project_->update_subjects();
   if (filenames.size() > 0) {
     emit data_changed();
   }
@@ -592,7 +590,7 @@ void Session::load_groomed_files(std::vector<std::string> file_names, double iso
     this->shapes_[i]->get_subject()->set_groomed_filenames(groomed_filenames);
   }
 
-  this->project_->store_subjects();
+  this->project_->update_subjects();
   if (file_names.size() > 0) {
     emit data_changed();
   }
@@ -638,7 +636,7 @@ bool Session::load_point_files(std::vector<std::string> local, std::vector<std::
     this->shapes_[i]->set_annotations(list);
   }
 
-  this->project_->store_subjects();
+  this->project_->update_subjects();
   if (local.size() > 0) {
     emit data_changed();
   }
@@ -762,7 +760,7 @@ void Session::remove_shapes(QList<int> list) {
 
   this->project_->get_subjects();
   this->renumber_shapes();
-  this->project_->store_subjects();
+  this->project_->update_subjects();
   emit data_changed();
 }
 

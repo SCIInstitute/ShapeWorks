@@ -11,6 +11,7 @@ namespace shapeworks {
 class ExcelProjectReader : public ProjectReader {
  public:
   ExcelProjectReader(Project &project);
+  ~ExcelProjectReader();
 
   bool read_project(std::string filename) override;
 

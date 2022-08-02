@@ -1751,7 +1751,7 @@ PYBIND11_MODULE(shapeworks_py, m)
       "name"_a)
 
   .def("store_subjects",
-      &Project::store_subjects)
+      &Project::update_subjects)
 
   .def("get_supported_version",
       &Project::get_supported_version)

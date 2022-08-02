@@ -166,12 +166,14 @@ std::vector<std::vector<double>> ProjectUtils::get_transforms(std::string prefix
 }
 
 //---------------------------------------------------------------------------
-StringMap ProjectUtils::get_value_map(std::string prefix, StringMap key_map) {
+StringMap ProjectUtils::get_value_map(std::vector<std::string> prefixes, StringMap key_map) {
   StringMap map;
   for (auto& [key, value] : key_map) {
-    if (key.substr(0, prefix.length()) == prefix) {
-      std::string name = key.substr(prefix.length());
-      map[name] = value;
+    for (const auto& prefix : prefixes) {
+      if (key.substr(0, prefix.length()) == prefix) {
+        std::string name = key.substr(prefix.length());
+        map[name] = value;
+      }
     }
   }
   return map;

@@ -19,6 +19,9 @@ class ProjectReader {
   //! Constructor
   ProjectReader(Project &project);
 
+  //! Destructor
+  virtual ~ProjectReader() = default;
+
   //! Read a project from a file
   virtual bool read_project(std::string filename) = 0;
 

@@ -48,8 +48,8 @@ void ProjectReader::load_subjects(StringMapList list) {
     subject->set_procrustes_transforms(ProjectUtils::get_transforms(PROCRUSTES_TRANSFORMS_PREFIX, domains, key_map));
     subject->set_image_filenames(get_list(IMAGE_PREFIX));
 
-    subject->set_feature_filenames(ProjectUtils::get_value_map(FEATURE_PREFIX, key_map));
-    subject->set_group_values(ProjectUtils::get_value_map(GROUP_PREFIX, key_map));
+    subject->set_feature_filenames(ProjectUtils::get_value_map({IMAGE_PREFIX, FEATURE_PREFIX}, key_map));
+    subject->set_group_values(ProjectUtils::get_value_map({GROUP_PREFIX}, key_map));
 
     subject->set_local_particle_filenames(get_list(LOCAL_PARTICLES_PREFIX));
     subject->set_world_particle_filenames(get_list(WORLD_PARTICLES_PREFIX));
@@ -124,5 +124,6 @@ StringList ProjectReader::get_keys(StringMap map) {
 
 //---------------------------------------------------------------------------
 bool ProjectReader::contains(StringMap map, std::string key) { return map.find(key) != map.end(); }
+//---------------------------------------------------------------------------
 
 }  // namespace shapeworks

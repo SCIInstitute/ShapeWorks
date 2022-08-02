@@ -387,7 +387,7 @@ void ShapeWorksStudioApp::import_files(QStringList file_names) {
 
     session_->load_original_files(list);
 
-    session_->get_project()->store_subjects();
+    session_->get_project()->update_subjects();
 
     update_table();
     enable_possible_actions();

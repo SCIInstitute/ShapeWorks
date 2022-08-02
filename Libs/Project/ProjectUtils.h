@@ -77,8 +77,8 @@ class ProjectUtils {
   static std::vector<std::vector<double>> get_transforms(std::string prefix, StringList domain_names,
                                                          StringMap key_map);
 
-  //! get a map<string,string> for a prefix from a key_map (e.g. group_, or feature_)
-  static StringMap get_value_map(std::string prefix, StringMap key_map);
+  //! get a map<string,string> for a list of prefixes from a key_map (e.g. group_, or feature_)
+  static StringMap get_value_map(std::vector<std::string> prefix, StringMap key_map);
 
   //! get any extra columns that don't match prefixes
   static StringMap get_extra_columns(StringMap key_map);

@@ -115,6 +115,9 @@ class ExcelProjectReader::Container {
 ExcelProjectReader::ExcelProjectReader(Project &project) : ProjectReader(project), container_(new Container) {}
 
 //---------------------------------------------------------------------------
+ExcelProjectReader::~ExcelProjectReader() {}
+
+//---------------------------------------------------------------------------
 bool ExcelProjectReader::read_project(std::string filename) {
   container_->wb.load(filename);
 

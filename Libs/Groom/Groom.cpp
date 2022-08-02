@@ -78,8 +78,7 @@ bool Groom::run() {
   }
   increment_progress(10);  // alignment complete
 
-  // store back to project
-  this->project_->store_subjects();
+  project_->update_subjects();
   return success;
 }
 
