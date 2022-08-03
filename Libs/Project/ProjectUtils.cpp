@@ -97,9 +97,9 @@ void ProjectUtils::determine_domain_types(Project& project, StringMap key_map) {
   std::vector<DomainType> groomed_domain_types;
   for (const auto& domain : domain_names) {
     for (auto& [key, value] : key_map) {
-      if (key == std::string(GROOMED_CONTOUR_PREFIX) + "_" + domain) {
+      if (key == std::string(GROOMED_CONTOUR_PREFIX) + domain) {
         groomed_domain_types.push_back(DomainType::Contour);
-      } else if (key == std::string(GROOMED_PREFIX) + "_" + domain) {
+      } else if (key == std::string(GROOMED_PREFIX) + domain) {
         groomed_domain_types.push_back(determine_domain_type(value));
       }
     }
