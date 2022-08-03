@@ -701,7 +701,7 @@ void Optimize::Initialize()
 
   if (m_use_shape_statistics_in_init) {
     if(m_use_multi_level_optimize){
-      std::cout << "correspondence mode set in opt init" << std::endl;
+      std::cout << "correspondence mode set in Initialization Mode of Opt...." << std::endl;
       m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::MultiLevelBasedEnsembleEntropy);
     } 
     else if (m_mesh_based_attributes) {
@@ -732,9 +732,9 @@ void Optimize::Initialize()
   }
   else {
     // force to mean
-    // if (m_use_multi_level_optimize){
-    //   m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::MultiLevelBasedEnsembleEntropyMeanEnergy);
-    // }
+    if (m_use_multi_level_optimize){
+      m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::MultiLevelBasedEnsembleEntropyMeanEnergy);
+    }
     if ((m_attributes_per_domain.size() > 0 &&
          *std::max_element(m_attributes_per_domain.begin(),
                            m_attributes_per_domain.end()) > 0) || m_mesh_based_attributes) {
@@ -744,7 +744,6 @@ void Optimize::Initialize()
       m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::MeanEnergy);
     }
   }
-  m_sampler->GetLinkingFunction()->SetRelativeGradientScaling(m_initial_relative_weighting);
   m_sampler->GetLinkingFunction()->SetRelativeGradientScaling(m_initial_relative_weighting);
   m_sampler->GetLinkingFunction()->SetRelativeEnergyScaling(m_initial_relative_weighting);
 
@@ -2153,7 +2152,6 @@ void Optimize::SetProcrustesScaling(bool procrustes_scaling)
 //---------------------------------------------------------------------------
 void Optimize::SetProcrustesRotationTranslation(bool procrustes_rotation_translation)
 { this->m_procrustes_rotation_translation = procrustes_rotation_translation; }
-
 
 //---------------------------------------------------------------------------
 void Optimize::SetRelativeWeighting(double relative_weighting)

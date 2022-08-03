@@ -182,6 +182,7 @@ public:
 
         return 0.0;
     }
+    
     virtual VectorType Evaluate(unsigned int idx, unsigned int d,
                                 const ParticleSystemType *system,
                                 double &maxmove, double &energy) const
@@ -444,7 +445,6 @@ protected:
     double m_AverageEnergyA;
     double m_AverageEnergyB;
     double m_Counter;
-
 
     typename ParticleVectorFunction<VDimension>::Pointer m_FunctionA;
     typename ParticleVectorFunction<VDimension>::Pointer m_FunctionB;

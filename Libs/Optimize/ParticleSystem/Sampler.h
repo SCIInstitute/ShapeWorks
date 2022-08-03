@@ -265,12 +265,12 @@ public:
       m_LinkingFunction->SetFunctionB(m_MultiLevelBasedEnsembleEntropyFunction);
       m_MultiLevelBasedEnsembleEntropyFunction->UseEntropy();
     }
-    // else if (mode == shapeworks::CorrespondenceMode::MultiLevelBasedEnsembleEntropyMeanEnergy) {
-    //   std::cout << "mode IS --> H " << std::endl;
-    //   std::cout << "Linking set to Multi Level ensemble Mean Energy entropy BEFORE" << std::endl;
-    //   m_LinkingFunction->SetFunctionB(m_MultiLevelBasedEnsembleEntropyFunction);
-    //   m_MultiLevelBasedEnsembleEntropyFunction->UseMeanEnergy();
-    // }
+    else if (mode == shapeworks::CorrespondenceMode::MultiLevelBasedEnsembleEntropyMeanEnergy) {
+      std::cout << "mode IS --> H " << std::endl;
+      std::cout << "Linking set to Multi Level ensemble Mean Energy entropy BEFORE" << std::endl;
+      m_LinkingFunction->SetFunctionB(m_MultiLevelBasedEnsembleEntropyFunction);
+      m_MultiLevelBasedEnsembleEntropyFunction->UseMeanEnergy();
+    }
 
     m_CorrespondenceMode = mode;
   }

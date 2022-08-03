@@ -61,7 +61,6 @@ namespace itk
   {
     /// uncomment this to run single threaded
     //tbb::task_scheduler_init init(1);
-    std::cout << " Inside original Optimization function " << std::endl;
 
     if (this->m_AbortProcessing) {
       return;
@@ -241,7 +240,6 @@ namespace itk
 
     } // end while stop optimization
   }
-  
 template<class TGradientNumericType, unsigned int VDimension>
 void
 ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>::AugmentedLagrangianConstraints(
