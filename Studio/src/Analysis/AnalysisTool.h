@@ -91,7 +91,7 @@ class AnalysisTool : public QWidget {
   ShapeHandle get_mean_shape();
 
   StudioParticles get_shape_points(int mode, double value);
-  StudioParticles get_mlca_shape_points(int mode, double value, int level);
+  StudioParticles get_multi_level_shape_points(int mode, double value, int level);
   ShapeHandle get_mode_shape(int mode, double value);
   ShapeHandle get_mca_mode_shape(int mode, double value, int level);
 

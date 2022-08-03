@@ -42,10 +42,10 @@ public:
 
   //! Loads a set of point files and pre-computes some statistics.
   int ImportPoints(std::vector<Eigen::VectorXd> points, std::vector<int> group_ids);
-  int ComputeWithinModesForMca();
-  int ComputeBetweenModesForMca();
+  int ComputeShapeDevModesForMca();
+  int ComputeRelPoseModesForMca();
   int MultiLevelPrincipalComponentProjections();
-  int ImportPointsAndComputeMlpca(std::vector<Eigen::VectorXd> points, unsigned int dps);
+  int ImportPointsAndComputeMultiLevelPCA(std::vector<Eigen::VectorXd> points, unsigned int dps);
   void SetNumberOfParticlesAr(std::vector<int> num_particles_ar); // Set
 
   //! Loads a set of point files and pre-computes some statistics.
@@ -88,17 +88,17 @@ public:
   const std::vector<double> &Eigenvalues() const { return m_eigenvalues; }
 
   //! Returns the eigenvectors/values for Multi-Level Analysis
-  const Eigen::MatrixXd &BetweenEigenvectors() { return m_betweenEigenvectors; }
-  const std::vector<double> &BetweenEigenvalues() { return m_betweenEigenvalues; }
-  const Eigen::MatrixXd &WithinEigenvectors() { return m_withinEigenvectors; }
-  const std::vector<double> &WithinEigenvalues() { return m_withinEigenvalues; }
+  const Eigen::MatrixXd &EigenvectorsRelPose() { return m_Eigenvectors_rel_pose; }
+  const std::vector<double> &EigenvaluesShapeDev() { return m_Eigenvalues_shape_dev; }
+  const Eigen::MatrixXd &EigenvectorsShapeDev() { return m_Eigenvectors_shape_dev; }
+  const std::vector<double> &EigenvaluesRelPose() { return m_Eigenvalues_shape_dev; }
 
   //! Returns the mean shape.
   const Eigen::VectorXd &Mean() const { return m_mean; }
   const Eigen::VectorXd &Group1Mean() const { return m_mean1; }
   const Eigen::VectorXd &Group2Mean() const { return m_mean2; }
-  const Eigen::VectorXd &WithinMean() { return m_mean_within; }
-  const Eigen::VectorXd &BetweenMean() { return m_mean_between; }
+  const Eigen::VectorXd &MeanShapeDev() { return m_mean_shape_dev; }
+  const Eigen::VectorXd &MeanRelPose() { return m_mean_rel_pose; }
   // TODO: Add Group Differences for Multi-Level Analysis
 
 
@@ -166,16 +166,15 @@ private:
   Eigen::MatrixXd m_eigenvectors;
   std::vector<double> m_eigenvalues;
   
-  Eigen::MatrixXd m_betweenEigenvectors;
-  Eigen::MatrixXd m_withinEigenvectors;
-  std::vector<double> m_betweenEigenvalues;
-  std::vector<double> m_withinEigenvalues;
-  Eigen::MatrixXd m_pointsMinusMean_for_between;
-  Eigen::MatrixXd m_pointsMinusMean_for_within;
-  Eigen::VectorXd m_mean_within;
-  Eigen::VectorXd m_mean_between;
+  Eigen::MatrixXd m_Eigenvectors_rel_pose;
+  Eigen::MatrixXd m_Eigenvectors_shape_dev;
+  std::vector<double> m_Eigenvalues_rel_pose;
+  std::vector<double> m_Eigenvalues_shape_dev;
+  Eigen::MatrixXd m_pointsMinusMean_for_rel_pose;
+  Eigen::MatrixXd m_pointsMinusMean_for_shape_dev;
+  Eigen::VectorXd m_mean_shape_dev;
+  Eigen::VectorXd m_mean_rel_pose;
   Eigen::MatrixXd m_super_matrix;
-  std::vector<Eigen::MatrixXd> m_shapes_mca;
 
   Eigen::VectorXd m_mean;
   Eigen::VectorXd m_mean1;
@@ -198,9 +197,6 @@ private:
   std::vector<std::string> m_pointsfiles;
 
   Eigen::MatrixXd m_Matrix;
-  Eigen::MatrixXd m_MatrixBetween;
-  Eigen::MatrixXd m_MatrixWithin;
-
   Eigen::MatrixXd m_group_1_matrix;
   Eigen::MatrixXd m_group_2_matrix;
   // TODO: Add GD's for Multi-Level Analysis

@@ -6,6 +6,7 @@
 
 #include <vnl/algo/vnl_symmetric_eigensystem.h>
 #include <tinyxml.h>
+#define watch(x) std::cout << (#x) << " =  " << (x) << std::endl
 
 namespace shapeworks{
 
@@ -207,6 +208,7 @@ int ParticleShapeStatistics::ImportPoints(std::vector<Eigen::VectorXd> points, s
   return 0;
 }
 
+//---------------------------------------------------------------------------
 void ParticleShapeStatistics::SetNumberOfParticlesAr(std::vector<int> num_particles_ar)
 {
   this->m_num_particles_ar = num_particles_ar;
@@ -216,353 +218,143 @@ void ParticleShapeStatistics::SetNumberOfParticlesAr(std::vector<int> num_partic
   std::cout << std::endl <<  "Number of Particles Array Set for Multi-level Analysis" << std::endl;
 }
 
-
-int ParticleShapeStatistics::ImportPointsAndComputeMlpca(std::vector<Eigen::VectorXd> points, unsigned int dps)
+//---------------------------------------------------------------------------
+int ParticleShapeStatistics::ImportPointsAndComputeMultiLevelPCA(std::vector<Eigen::VectorXd> points, unsigned int dps)
 {
   // debug
-  std::cout << "importing points now for MCA dps value " << dps <<" "<< m_domainsPerShape << std::endl;
-  unsigned int num_points = (int)(points[0].size() / (3 * dps));
+  bool debug = false;
+  unsigned int num_points = (int)(points[0].size() / (3 * dps)); // M_total
   m_dps = dps;
   m_numPoints = num_points;
-  m_N = points.size();
-  std::cout << "num_points = " << num_points << "num_samples m_N  = " << m_N << std::endl;
-  std::cout << "points[0].size() = " << points[0].size() << std::endl;
-
-
-  unsigned int n = m_N * VDimension; 
-  // std::cout << " n " << n << std::endl;
-  // unsigned int m = num_points * dps;
+  m_N = points.size(); // Number of Subjects
+  if (debug){
+    watch(num_points);
+    watch(m_N);
+    std::cout << "points[0].size() = " << points[0].size() << std::endl;
+  }
+  unsigned int n = m_N * VDimension; // for super matrix
   unsigned int m = 0;
   for(unsigned int idx = 0; idx < dps; idx++) { m += (this->m_num_particles_ar[idx]); }
-  std::cout << "m " << m << std::endl;
-
+  if (debug) watch(m);
   m_super_matrix.resize(m, n);
-  m_shapes_mca.clear();
-  std::cout << "cleared" <<std::endl;
-
   for(unsigned int i = 0; i < points.size(); i++){
-    // unsigned int p = num_points * m_dps; // or = m_super_matrix.rows()
     unsigned int p = m_super_matrix.rows();
-    // std::cout << "While building shape matrix, p = " << p << " and m_super_matrix.rows() = "<< m_super_matrix.rows() << std::endl;
     for(unsigned int j= 0; j < p; j++){
       m_super_matrix(j, i * VDimension) = points[i][j * VDimension];
       m_super_matrix(j, i * VDimension + 1) = points[i][j * VDimension + 1];
       m_super_matrix(j, i * VDimension + 2) = points[i][j * VDimension + 2];
     }
   }
-  
-  std::cout << " Super matrix constructed " << std::endl;
-
-  // Step 2. Compute within covariance matrix
-
-  // 2.a Compute centered matrix for each domain
-  
-  Eigen::MatrixXd z_within_centred;
-  z_within_centred.resize(m, n);
-  z_within_centred.fill(0.0);
-
+  Eigen::MatrixXd z_shape_dev_centred;
+  Eigen::MatrixXd z_rel_pose_centred;
+  z_shape_dev_centred.resize(m, n);
+  z_rel_pose_centred.resize(m_dps, n);
+  z_shape_dev_centred.fill(0.0);
+  z_rel_pose_centred.fill(0.0);
   for(unsigned int k = 0; k < m_dps; k++){
-    // extract shape matrix of kth domain
-    std::cout << "start k = " << k << std::endl;
-    Eigen::MatrixXd z_k;
-    // z_k.set_size(num_points, n);
-    // m_super_matrix.extract(z_k, k * num_points, 0);
-
-    z_k.resize(this->m_num_particles_ar[k], n);
     unsigned int row = 0;
     for(unsigned int idx = 0; idx < k; idx++){ row += this->m_num_particles_ar[idx]; }
-    std::cout << "row = " << row << std::endl;
-    z_k = m_super_matrix.block(row, 0, z_k.rows(), z_k.cols());
-    std::cout << "extract done for k = " << k << std::endl;
-
-    // m_shapes_mca.push_back(z_k); // keep track of shape matriz of each domain
-    // compute column-wise mean(of each sample)
-    Eigen::MatrixXd mean_k;
-    mean_k.resize(n, 1);
-    mean_k.fill(0.0);
-    for (unsigned int j = 0; j < n; j++){
-      Eigen::MatrixXd z_k_i = z_k.col(j);
-      mean_k(j, 0) = z_k_i.mean();
-    }
-
-    Eigen::MatrixXd ones_m_k;
-    // ones_m_k.set_size(num_points, 1);
-    ones_m_k.resize(this->m_num_particles_ar[k], 1);
-    ones_m_k.fill(1.0);
-
-    Eigen::MatrixXd z_k_centred = z_k - (ones_m_k * mean_k.transpose());
-
-    // z_within_centred.update(z_k_centred, k * num_points, 0);
-    // z_within_centred.update(z_k_centred, row, 0);
-    z_within_centred.block(row, 0, z_k_centred.rows(), z_k_centred.cols()) = z_k_centred;
-    std::cout << "update done " << std::endl;
-
+    Eigen::MatrixXd z_k = m_super_matrix.block(row, 0, this->m_num_particles_ar[k], m_super_matrix.cols());
+    // COM for each sub
+    Eigen::MatrixXd mean_k = z_k.colwise().mean();
+    z_rel_pose_centred.row(k) = mean_k;
+    Eigen::MatrixXd z_shape_dev_centred_k = z_k.rowwise() - mean_k;
+    z_shape_dev_centred.block(row, 0, z_shape_dev_centred_k.rows(), z_shape_dev_centred_k.cols()) = z_shape_dev_centred_k;
   }
-
-  Eigen::MatrixXd z_within_objective;
-  // unsigned int M = num_points * VDimension * m_dps;
+  Eigen::MatrixXd z_shape_dev_objective;
   unsigned int M = 0;
   for(unsigned int idx = 0; idx < dps; idx++) { M += (this->m_num_particles_ar[idx] * VDimension); }
-  z_within_objective.resize(M, m_N);
-  this->m_MatrixWithin.resize(M, m_N);
-  // 2.a Compute within objective matrix
-
+  z_shape_dev_objective.resize(M, m_N);
   for(unsigned int i = 0; i < m_N; i++){
-    // unsigned int p = num_points * m_dps;
     unsigned int p = m;
     for(unsigned int j = 0; j < p; j++){
-      z_within_objective(j * VDimension, i) = z_within_centred(j, i * VDimension);
-      z_within_objective(j * VDimension + 1, i) = z_within_centred(j, i * VDimension + 1);
-      z_within_objective(j * VDimension + 2, i) = z_within_centred(j, i * VDimension + 2);
-
-      //Copy to Eigen matrix for Evaluation Computation
-      this->m_MatrixWithin(j * VDimension, i) = z_within_centred(j, i * VDimension);
-      this->m_MatrixWithin(j * VDimension + 1, i) = z_within_centred(j, i * VDimension + 1);
-      this->m_MatrixWithin(j * VDimension + 2, i) = z_within_centred(j, i * VDimension + 2);
+      z_shape_dev_objective(j * VDimension, i) = z_shape_dev_centred(j, i * VDimension);
+      z_shape_dev_objective(j * VDimension + 1, i) = z_shape_dev_centred(j, i * VDimension + 1);
+      z_shape_dev_objective(j * VDimension + 2, i) = z_shape_dev_centred(j, i * VDimension + 2);
     }
   }
+  m_pointsMinusMean_for_shape_dev.resize(M, m_N);
+  m_pointsMinusMean_for_shape_dev.fill(0.0);
+  m_mean_shape_dev = z_shape_dev_objective.rowwise().mean();
+  m_pointsMinusMean_for_shape_dev = z_shape_dev_objective.colwise() - m_mean_shape_dev;
 
-  std::cout << "Within objective computed " << std::endl;
-
-  // 2..b compute within covariance matrix
-  m_pointsMinusMean_for_within.resize(M, m_N);
-  m_pointsMinusMean_for_within.fill(0.0);
-  m_mean_within.resize(M);
-  m_mean_within.fill(0.0);
-
-  for(unsigned int i = 0; i < M; i++){
-    Eigen::MatrixXd p_i = z_within_objective.row(i);
-    m_mean_within(i) = p_i.mean();
-    for(unsigned int j = 0; j < m_N; j++){
-      m_pointsMinusMean_for_within(i, j) = z_within_objective(i, j) - m_mean_within(i);
-    }
-  }
-
-  std::cout << "Within Covariance Matrix computed " << std::endl;
-
-  // Step 3.Compute Between Covariance matrix
-
-  Eigen::MatrixXd z_between_centred;
-  z_between_centred.resize(m, n);
-
-  for (unsigned int i = 0; i < n; i++){
-    Eigen::MatrixXd p_i = m_super_matrix.col(i);
-    double col_mean = p_i.mean();
-    for (unsigned int j = 0; j < m; j++){
-      z_between_centred(j, i) = m_super_matrix(j, i) - col_mean;
-    }
-  }
-  std::cout << "between means done before covariance" << std::endl;
-
-  Eigen::MatrixXd z_between;
-  z_between.resize(m_dps, n);
-  z_between.fill(0.0);
-  for(unsigned int k = 0; k < m_dps ; k++){
-    Eigen::MatrixXd z_between_k_mean;
-    z_between_k_mean.resize(1, n);;
-    for(unsigned int i = 0; i < n; i++){
-      Eigen::MatrixXd mean_temp_vec;
-      // mean_temp_vec.set_size(num_points, 1);
-      mean_temp_vec.resize(this->m_num_particles_ar[k], 1);
-      // z_between_centred.extract(mean_temp_vec, k * num_points, i);
-      unsigned int row = 0;
-      for(unsigned int idx = 0; idx < k; idx++){ row += this->m_num_particles_ar[idx]; }
-      // z_between_centred.extract(mean_temp_vec, row, i);
-      mean_temp_vec = z_between_centred.block(row, i, mean_temp_vec.rows(), mean_temp_vec.cols());
-      z_between_k_mean(0, i) = mean_temp_vec.mean();
-    }
-    // z_between.update(z_between_k_mean, k, 0);
-    z_between.block(k, 0, z_between_k_mean.rows(), z_between_k_mean.cols()) = z_between_k_mean;
-
-  }
-  std::cout << "z_between formed" << std::endl;
-  Eigen::MatrixXd z_between_objective;
-  z_between_objective.resize(m_dps * VDimension, m_N);
-  this->m_MatrixBetween.resize(m_dps * VDimension, m_N);
+  Eigen::MatrixXd z_rel_pose_objective;
+  z_rel_pose_objective.resize(m_dps * VDimension, m_N);
   for(unsigned int k = 0; k < m_dps; k++){
     for(unsigned int i = 0; i < m_N; i++){
-      z_between_objective(k * VDimension, i) = z_between(k, i * VDimension);
-      z_between_objective(k * VDimension + 1, i) = z_between(k, i * VDimension + 1);
-      z_between_objective(k * VDimension + 2, i) = z_between(k, i * VDimension + 2);
-
-      //Copy to eigen matrix for Evaluation computation
-      this->m_MatrixBetween(k * VDimension, i) = z_between(k, i * VDimension);
-      this->m_MatrixBetween(k * VDimension + 1, i) = z_between(k, i * VDimension + 1);
-      this->m_MatrixBetween(k * VDimension + 2, i) = z_between(k, i * VDimension + 2);
+      z_rel_pose_objective(k * VDimension, i) = z_rel_pose_centred(k, i * VDimension);
+      z_rel_pose_objective(k * VDimension + 1, i) = z_rel_pose_centred(k, i * VDimension + 1);
+      z_rel_pose_objective(k * VDimension + 2, i) = z_rel_pose_centred(k, i * VDimension + 2);
     }
   }
-  std::cout << "z_between objective done" << std::endl;
-  
-
-  //3.b between covariance matrix
-
-  m_pointsMinusMean_for_between.resize(m_dps * VDimension, m_N);
-  m_pointsMinusMean_for_between.fill(0.0);
-  m_mean_between.resize(m_dps * VDimension);
-  m_mean_between.fill(0.0);
-
-  for(unsigned int i = 0; i < m_dps * VDimension; i++){
-    Eigen::MatrixXd d_i = z_between_objective.row(i);
-    m_mean_between(i) = d_i.mean();
-    for(unsigned int j = 0; j < m_N; j++){
-      m_pointsMinusMean_for_between(i, j) = z_between_objective(i, j) - m_mean_between(i);
-    }
-  }
-
- std::cout << "Between Covariance Matrix computed " << std::endl;
- std::cout << "Multi Level base part done" << std::endl;
-//  std::cout << "writing within compactness" << std::endl;
-//  std::string fn = "/home/sci/nawazish.khan/Desktop/result/within_compactness.txt";
-//  std::ofstream outfile;
-//  outfile.open(fn.c_str());
-
-//   Eigen::MatrixXd WithinMatrix = m_MatrixWithin;
-
-//   const int N = WithinMatrix.cols();
-//   const int D = WithinMatrix.rows();
-//   const int num_modes = N-1; // the number of modes is one less than the number of samples
-
-//   if (num_modes < 1) {
-//     std::cout << "no modes" << std::endl;
-//   }
-//   Eigen::MatrixXd Y = WithinMatrix;
-
-//   // Compute Within subspace here
-  
-//   const Eigen::VectorXd mu = Y.rowwise().mean();
-//   Y.colwise() -= mu;
-
-//   Eigen::JacobiSVD<Eigen::MatrixXd> svd(Y);
-//   const auto S = svd.singularValues().array().pow(2) / (N * D);
-
-//   // Compute cumulative sum
-//   Eigen::VectorXd cumsum(num_modes);
-//   cumsum(0) = S(0);
-//   for (int i = 1; i < num_modes; i++) {
-//     cumsum(i) = cumsum(i-1) + S(i);
-//   }
-//   cumsum /= S.sum();
-//   outfile << cumsum << "\n";
-//   outfile.close();
-
-
-//  std::cout << "gen ml file opened" << std::endl;
-//  std::cout << "writing between  part compactness" << std::endl;
-//   std::string fn1 = "/home/sci/nawazish.khan/Desktop/result/between_compactness.txt";
-//  std::ofstream outfile1;
-//  outfile1.open(fn1.c_str());
-
-//  Eigen::MatrixXd BetweenMatrix = m_MatrixBetween;
-
-//    const int N1 = BetweenMatrix.cols();
-//   const int D1 = BetweenMatrix.rows();
-//   const int num_modes1 = N1-1; // the number of modes is one less than the number of samples
-
-//   if (num_modes1 < 1) {
-//     std::cout << "no modes" << std::endl;
-//   }
-//   Eigen::MatrixXd Y1 = BetweenMatrix;
-
-//   // Compute Within subspace here
-  
-//   const Eigen::VectorXd mu1 = Y1.rowwise().mean();
-//   Y1.colwise() -= mu1;
-//   std::cout << "before svd done of Y" << std::endl;
-
-
-//   Eigen::JacobiSVD<Eigen::MatrixXd> svd1(Y1);
-//   std::cout << "svd done of Y" << std::endl;
-//   const auto S1 = svd1.singularValues().array().pow(2) / (N1 * D1);
-
-//   // Compute cumulative sum
-//   Eigen::VectorXd cumsum1(num_modes1);
-//   cumsum1(0) = S1(0);
-//   for (int i = 1; i < num_modes1; i++) {
- 
-//     cumsum1(i) = cumsum1(i-1) + S1(i);
-//   }
-//   cumsum1 /= S1.sum();
-//   outfile1 << cumsum1 << "\n";
-//   outfile1.close();
-//   std::cout << "done " << std::endl;
-
+  m_pointsMinusMean_for_rel_pose.resize(m_dps * VDimension, m_N);
+  m_pointsMinusMean_for_rel_pose.fill(0.0);
+  m_mean_rel_pose = z_rel_pose_objective.rowwise().mean();
+  m_pointsMinusMean_for_rel_pose = z_rel_pose_objective.colwise() - m_mean_rel_pose;
+  std::cout << "Multi Level base part done" << std::endl;
 }
 
-
-int ParticleShapeStatistics::ComputeWithinModesForMca()
+//---------------------------------------------------------------------------
+int ParticleShapeStatistics::ComputeShapeDevModesForMca()
 {
-  std::cout << "Computing stats for within modes of variation " << std::endl;
-  unsigned int m = m_pointsMinusMean_for_within.rows();
-  std::cout << "m_N = " << m_N << "m_numSamples = " << m_numSamples << " m = " << m << " m_numDimensions = " << m_numDimensions <<  std::endl;
-
-  Eigen::MatrixXd A = m_pointsMinusMean_for_within.transpose()
-                          * m_pointsMinusMean_for_within * (1.0 / ((double) (m_N - 1)));
+  unsigned int m = m_pointsMinusMean_for_shape_dev.rows();
+  Eigen::MatrixXd A = m_pointsMinusMean_for_shape_dev.transpose()
+                          * m_pointsMinusMean_for_shape_dev * (1.0 / ((double) (m_N - 1)));
   
   vnl_matrix<double> vnlA = vnl_matrix<double>(A.data(), A.rows(), A.cols());
   vnl_symmetric_eigensystem<double> symEigen(vnlA);
-  std::cout << "Eigen decomp done" << std::endl;
+  Eigen::MatrixXd shape_dev_eigenSymEigenV = Eigen::Map<Eigen::MatrixXd>(symEigen.V.transpose().data_block(), symEigen.V.rows(), symEigen.V.cols());
+  Eigen::VectorXd shape_dev_eigenSymEigenD = Eigen::Map<Eigen::VectorXd>(symEigen.D.data_block(), symEigen.D.rows(), 1);
 
-  Eigen::MatrixXd within_eigenSymEigenV = Eigen::Map<Eigen::MatrixXd>(symEigen.V.transpose().data_block(), symEigen.V.rows(), symEigen.V.cols());
-  Eigen::VectorXd within_eigenSymEigenD = Eigen::Map<Eigen::VectorXd>(symEigen.D.data_block(), symEigen.D.rows(), 1);
-
-  m_withinEigenvectors = m_pointsMinusMean_for_within * within_eigenSymEigenV;
-  m_withinEigenvalues.resize(m_N);
+  m_Eigenvectors_shape_dev = m_pointsMinusMean_for_shape_dev * shape_dev_eigenSymEigenV;
+  m_Eigenvalues_shape_dev.resize(m_N);
 
   for (unsigned int i = 0; i < m_N; i++) {
     double total = 0.0f;
     for (unsigned int j = 0; j < m; j++) {
-      total += m_withinEigenvectors(j, i) * m_withinEigenvectors(j, i);
+      total += m_Eigenvectors_shape_dev(j, i) * m_Eigenvectors_shape_dev(j, i);
     }
     total = sqrt(total);
 
     for (unsigned int j = 0; j < m; j++) {
-      m_withinEigenvectors(j, i) = m_withinEigenvectors(j, i) / (total + 1.0e-15);
+      m_Eigenvectors_shape_dev(j, i) = m_Eigenvectors_shape_dev(j, i) / (total + 1.0e-15);
     }
-
-    m_withinEigenvalues[i] = within_eigenSymEigenD(i);
+    m_Eigenvalues_shape_dev[i] = shape_dev_eigenSymEigenD(i);
   }
-  std::cout << " Within stats done" << std::endl;
   return 0;
 }
 
-int ParticleShapeStatistics::ComputeBetweenModesForMca()
+//---------------------------------------------------------------------------
+int ParticleShapeStatistics::ComputeRelPoseModesForMca()
 {
-  std::cout << "Computing stats for between modes of variation " << std::endl;
-  unsigned int m = m_pointsMinusMean_for_between.rows();
-  std::cout << "m_N = " << m_N << "m_numSamples = " << m_numSamples << " m = " << m << " m_numDimensions = " << m_numDimensions <<  std::endl;
-
-  Eigen::MatrixXd A = m_pointsMinusMean_for_between.transpose()
-                         * m_pointsMinusMean_for_between * (1.0 / ((double) (m_N - 1)));
+  unsigned int m = m_pointsMinusMean_for_rel_pose.rows();
+  Eigen::MatrixXd A = m_pointsMinusMean_for_rel_pose.transpose()
+                         * m_pointsMinusMean_for_rel_pose * (1.0 / ((double) (m_N - 1)));
   vnl_matrix<double> vnlA = vnl_matrix<double>(A.data(), A.rows(), A.cols());
   vnl_symmetric_eigensystem<double> symEigen(vnlA);
-  std::cout << "Eigen decomp done" << std::endl;
+  Eigen::MatrixXd rel_pose_eigenSymEigenV = Eigen::Map<Eigen::MatrixXd>(symEigen.V.transpose().data_block(), symEigen.V.rows(), symEigen.V.cols());
+  Eigen::VectorXd rel_pose_eigenSymEigenD = Eigen::Map<Eigen::VectorXd>(symEigen.D.data_block(), symEigen.D.rows(), 1);
 
-  Eigen::MatrixXd between_eigenSymEigenV = Eigen::Map<Eigen::MatrixXd>(symEigen.V.transpose().data_block(), symEigen.V.rows(), symEigen.V.cols());
-  Eigen::VectorXd between_eigenSymEigenD = Eigen::Map<Eigen::VectorXd>(symEigen.D.data_block(), symEigen.D.rows(), 1);
-
-  m_betweenEigenvectors = m_pointsMinusMean_for_between * between_eigenSymEigenV;
-  m_betweenEigenvalues.resize(m_N);
+  m_Eigenvectors_rel_pose = m_pointsMinusMean_for_rel_pose * rel_pose_eigenSymEigenV;
+  m_Eigenvalues_rel_pose.resize(m_N);
 
   for (unsigned int i = 0; i < m_N; i++) {
     double total = 0.0f;
     for (unsigned int j = 0; j < m; j++) {
-      total += m_betweenEigenvectors(j, i) * m_betweenEigenvectors(j, i);
+      total += m_Eigenvectors_rel_pose(j, i) * m_Eigenvectors_rel_pose(j, i);
     }
     total = sqrt(total);
 
     for (unsigned int j = 0; j < m; j++) {
-      m_betweenEigenvectors(j, i) = m_betweenEigenvectors(j, i) / (total + 1.0e-15);
+      m_Eigenvectors_rel_pose(j, i) = m_Eigenvectors_rel_pose(j, i) / (total + 1.0e-15);
     }
 
-    m_betweenEigenvalues[i] = between_eigenSymEigenD(i);
+    m_Eigenvalues_rel_pose[i] = rel_pose_eigenSymEigenD(i);
   }
-
-  std::cout << " Between stats done " << std::endl;
   return 0;
 }
 
-
-
+//---------------------------------------------------------------------------
 int ParticleShapeStatistics::ReadPointFiles(const std::string &s)
 {
   TiXmlDocument doc(s.c_str());

@@ -532,12 +532,12 @@ bool AnalysisTool::compute_stats() {
   if(dps> 1)
   {
     std::cout << "importing points for Multi Level" << std::endl;
-    stats_.ImportPointsAndComputeMlpca(points, dps);
+    stats_.ImportPointsAndComputeMultiLevelPCA(points, dps);
   }
   stats_.ComputeModes();
   if(dps > 1){
-      stats_.ComputeBetweenModesForMca();
-      stats_.ComputeWithinModesForMca();
+      stats_.ComputeRelPoseModesForMca();
+      stats_.ComputeShapeDevModesForMca();
   }
 
   update_difference_particles();
@@ -651,26 +651,20 @@ StudioParticles AnalysisTool::get_shape_points(int mode, double value) {
 
 
 //---------------------------------------------------------------------------
-StudioParticles AnalysisTool::get_mlca_shape_points(int mode, double value, int level)
+StudioParticles AnalysisTool::get_multi_level_shape_points(int mode, double value, int level)
 {
  Eigen::MatrixXd eigenvectors;
  std::vector<double> eigenvalues;
  if(level == 1)
  {
-   // Within Organ Analysis
-   eigenvectors = stats_.WithinEigenvectors();
-   eigenvalues = stats_.WithinEigenvalues();
-   std:: cout << "Computing Within Stats" << std::endl;
-   std::cout << "eigvec size " << eigenvectors.rows() << " X " <<  eigenvectors.cols() << std::endl;
-
+   eigenvectors = stats_.EigenvectorsShapeDev();
+   eigenvalues = stats_.EigenvaluesShapeDev();
+  //  std::cout << "eigvec size " << eigenvectors.rows() << " X " <<  eigenvectors.cols() << std::endl;
  }
  else if (level == 2)
  {
-   // Between Organ Analysis
-   eigenvectors = stats_.BetweenEigenvectors();
-   eigenvalues = stats_.BetweenEigenvalues();
-   std:: cout << "Computing Between Stats " << std::endl;
-   std::cout << "eigvec size " << eigenvectors.rows() << " X " <<  eigenvectors.cols() << std::endl;
+   eigenvectors = stats_.EigenvectorsRelPose();
+   eigenvalues = stats_.EigenvaluesRelPose();
  }
 
  if (!compute_stats() || eigenvectors.size() <= 1) {
@@ -682,7 +676,6 @@ StudioParticles AnalysisTool::get_mlca_shape_points(int mode, double value, int 
   unsigned int m = eigenvectors.cols() - (mode + 1);
   Eigen::VectorXd e = eigenvectors.col(m);
   double lambda = sqrt(eigenvalues[m]);
-  std::cout << "within lambda " << lambda << std::endl;
   mca_labels_changed(QString::number(value, 'g', 2), QString::number(eigenvalues[m]), QString::number(value * lambda));
   std::vector<double> vals;
   for (int i = eigenvalues.size() - 1; i > 0; i--) {
@@ -693,7 +686,6 @@ StudioParticles AnalysisTool::get_mlca_shape_points(int mode, double value, int 
   for (size_t i = 0; i < mode + 1; ++i) {
     cumulation += vals[i];
   }
-  std::cout << "sum = " << sum << std::endl;
   if (sum > 0) {
     ui_->mca_explained_variance->setText(QString::number(vals[mode] / sum * 100, 'f', 1) + "%");
     ui_->mca_cumulative_explained_variance->setText(QString::number(cumulation / sum * 100, 'f', 1) + "%");
@@ -702,45 +694,28 @@ StudioParticles AnalysisTool::get_mlca_shape_points(int mode, double value, int 
     ui_->mca_explained_variance->setText("");
     ui_->mca_cumulative_explained_variance->setText("");
   }
-
   if(level == 1){
-    // temp_shape_mca = stats_.Mean() + (e * (value * lambda));
-    temp_shape_mca = stats_.Mean() + stats_.WithinMean() + (e * (value * lambda));
-
-
-    // this->temp_shape_mca = this->stats_.WithinMean() + (e * (value * lambda));
-
+    temp_shape_mca = stats_.Mean() + (e * (value * lambda));
   }
   else if(level == 2){
-    std::cout << "Computing temp shape for between" << std::endl;
     Eigen::VectorXd e_between;
     unsigned int sz = stats_.Mean().size();
-    // unsigned int num_points = this->stats_.NumberOfPoints();
     std::vector<int> number_of_points_ar = stats_.NumberOfPointsArray();
     e_between.resize(sz);
-    std::cout << "between eigen vector size changed" << std::endl;
     unsigned int D = stats_.DomainsNumber();
-    // std::cout << "D = " << D << " num_points = " << num_points << std::endl;
-    std::cout << "D = " << D  << std::endl;
-
     for(unsigned int i = 0; i < D; i++){
-    int num_points = number_of_particles_ar[i];
-    int row = 0;
-    for(int idx = 0; idx < i; idx++){ row += (3 * number_of_particles_ar[idx]); }
-      for(unsigned int j = 0; j < num_points; j++){
-        // e_between((i * num_points * 3) + (j * 3)) = e(i * 3);
-        // e_between((i * num_points * 3) + (j * 3) + 1) = e(i * 3 + 1);
-        // e_between((i * num_points * 3) + (j * 3) + 2) = e(i * 3 + 2);
-        e_between((row) + (j * 3)) = e(i * 3);
-        e_between((row) + (j * 3) + 1) = e(i * 3 + 1);
-        e_between((row) + (j * 3) + 2) = e(i * 3 + 2);
-      }
+      int num_points = number_of_particles_ar[i];
+      int row = 0;
+      for(int idx = 0; idx < i; idx++){ row += (3 * number_of_particles_ar[idx]); }
+        for(unsigned int j = 0; j < num_points; j++){
+          e_between((row) + (j * 3)) = e(i * 3);
+          e_between((row) + (j * 3) + 1) = e(i * 3 + 1);
+          e_between((row) + (j * 3) + 2) = e(i * 3 + 2);
+        }
     }
-    std::cout << "between eig vec done " << std::endl;
     temp_shape_mca = stats_.Mean() + (e_between * (value * lambda));
   }
 
-  // see what this does
   return convert_from_combined(temp_shape_mca);
 }
 
@@ -753,7 +728,7 @@ ShapeHandle AnalysisTool::get_mode_shape(int mode, double value) {
 ShapeHandle AnalysisTool::get_mca_mode_shape(int mode, double value, int level)
 {
   // return this->(this->get_mca_shape_points(mode, value, level));
-  return create_shape_from_points(get_mlca_shape_points(mode, value, level));
+  return create_shape_from_points(get_multi_level_shape_points(mode, value, level));
 
 }
 
