@@ -80,13 +80,13 @@ void ProjectUtils::determine_domain_types(Project& project, StringMap key_map) {
   std::vector<DomainType> original_domain_types;
   for (const auto& domain : domain_names) {
     for (auto& [key, value] : key_map) {
-      if (key == std::string(SEGMENTATION_PREFIX) + "_" + domain) {
+      if (key == std::string(SEGMENTATION_PREFIX) +  domain) {
         original_domain_types.push_back(DomainType::Image);
-      } else if (key == std::string(MESH_PREFIX) + "_" + domain) {
+      } else if (key == std::string(MESH_PREFIX) + domain) {
         original_domain_types.push_back(DomainType::Mesh);
-      } else if (key == std::string(CONTOUR_PREFIX) + "_" + domain) {
+      } else if (key == std::string(CONTOUR_PREFIX) + domain) {
         original_domain_types.push_back(DomainType::Contour);
-      } else if (key == std::string(SHAPE_PREFIX) + "_" + domain) {
+      } else if (key == std::string(SHAPE_PREFIX) + domain) {
         original_domain_types.push_back(determine_domain_type(value));
       }
     }

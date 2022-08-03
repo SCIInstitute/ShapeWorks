@@ -14,16 +14,6 @@
 using namespace shapeworks;
 
 //---------------------------------------------------------------------------
-static std::string replace_string(std::string subject, const std::string& search, const std::string& replace) {
-  size_t pos = 0;
-  while ((pos = subject.find(search, pos)) != std::string::npos) {
-    subject.replace(pos, search.length(), replace);
-    pos += replace.length();
-  }
-  return subject;
-}
-
-//---------------------------------------------------------------------------
 Project::Project() { set_default_landmark_colors(); }
 
 //---------------------------------------------------------------------------
@@ -100,7 +90,7 @@ void Project::update_subjects() {
   originals_present_ = !subject->get_original_filenames().empty();
   groomed_present_ = !subject->get_groomed_filenames().empty();
   particles_present_ = !subject->get_world_particle_filenames().empty();
-  images_present_ = !subject->get_image_filenames().empty();
+  images_present_ = !subject->get_feature_filenames().empty();
   determine_feature_names();
 }
 
@@ -124,7 +114,7 @@ std::vector<std::vector<LandmarkDefinition>> Project::get_all_landmark_definitio
 //---------------------------------------------------------------------------
 void Project::set_landmark_definitions(std::vector<std::vector<LandmarkDefinition>> defs) {
   landmark_definitions_ = defs;
-  }
+}
 
 //---------------------------------------------------------------------------
 bool Project::get_landmarks_present() {
@@ -223,8 +213,6 @@ void Project::determine_feature_names() {
   // combine
   feature_names_.insert(feature_names_.end(), mesh_scalars.begin(), mesh_scalars.end());
 }
-
-
 
 //---------------------------------------------------------------------------
 bool Project::get_originals_present() const { return originals_present_; }

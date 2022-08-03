@@ -1674,11 +1674,6 @@ PYBIND11_MODULE(shapeworks_py, m)
       &Project::get_headers,
       "Return the headers of the subject sheet")
 
-  .def("get_string_column",
-      &Project::get_string_column,
-      "Return a column by name",
-      "name"_a)
-
   .def("get_number_of_subjects",
       &Project::get_number_of_subjects,
       "Return the number of subjects in the project")
@@ -1838,15 +1833,6 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def("get_number_of_domains",
       &Subject::get_number_of_domains,
       "Get the number of domains")
-
-  .def("set_image_filenames",
-      &Subject::set_image_filenames,
-      "Set image filenames",
-      "filenames"_a)
-
-  .def("get_image_filenames",
-      &Subject::get_image_filenames,
-      "Get image filenames")
 
   .def("get_feature_filenames",
       &Subject::get_feature_filenames,
