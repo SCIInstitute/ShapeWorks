@@ -182,7 +182,7 @@ public:
 
         return 0.0;
     }
-    
+
     virtual VectorType Evaluate(unsigned int idx, unsigned int d,
                                 const ParticleSystemType *system,
                                 double &maxmove, double &energy) const
