@@ -256,9 +256,12 @@ int ParticleShapeStatistics::ImportPointsAndComputeMultiLevelPCA(std::vector<Eig
     for(unsigned int idx = 0; idx < k; idx++){ row += this->m_num_particles_ar[idx]; }
     Eigen::MatrixXd z_k = m_super_matrix.block(row, 0, this->m_num_particles_ar[k], m_super_matrix.cols());
     // COM for each sub
-    Eigen::MatrixXd mean_k = z_k.colwise().mean();
+    auto mean_k = z_k.colwise().mean();
     z_rel_pose_centred.row(k) = mean_k;
-    Eigen::MatrixXd z_shape_dev_centred_k = z_k.rowwise() - mean_k;
+    Eigen::MatrixXd z_shape_dev_centred_k;
+    z_shape_dev_centred_k.resize(this->m_num_particles_ar[k], m_super_matrix.cols());
+    z_shape_dev_centred_k.fill(0.0);
+    z_shape_dev_centred_k = z_k.rowwise() - mean_k;
     z_shape_dev_centred.block(row, 0, z_shape_dev_centred_k.rows(), z_shape_dev_centred_k.cols()) = z_shape_dev_centred_k;
   }
   Eigen::MatrixXd z_shape_dev_objective;
