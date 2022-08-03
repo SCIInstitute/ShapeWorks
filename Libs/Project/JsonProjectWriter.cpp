@@ -11,6 +11,14 @@ namespace shapeworks {
 //---------------------------------------------------------------------------
 static void assign_keys(json& j, std::vector<std::string> prefixes, std::vector<std::string> filenames,
                         std::vector<std::string> domains) {
+  assert(!prefixes.empty());
+  assert(!domains.empty());
+  if (prefixes.empty()) {
+    throw std::runtime_error("Empty prefixes");
+  }
+  if (domains.empty()) {
+    throw std::runtime_error("Empty domains");
+  }
   if (filenames.empty() || prefixes.empty()) {
     return;
   }

@@ -14,7 +14,10 @@
 using namespace shapeworks;
 
 //---------------------------------------------------------------------------
-Project::Project() { set_default_landmark_colors(); }
+Project::Project() {
+  set_default_landmark_colors();
+  domain_names_ = {"1"}; // default domain name
+}
 
 //---------------------------------------------------------------------------
 Project::~Project() = default;
@@ -41,6 +44,7 @@ bool Project::load(const std::string& filename) {
 //---------------------------------------------------------------------------
 bool Project::save(const std::string& filename) {
   filename_ = filename;
+  update_subjects();
   if (StringUtils::hasSuffix(filename, "swproj")) {
     return JsonProjectWriter::write_project(*this, filename);
   } else {
@@ -91,6 +95,16 @@ void Project::update_subjects() {
   groomed_present_ = !subject->get_groomed_filenames().empty();
   particles_present_ = !subject->get_world_particle_filenames().empty();
   images_present_ = !subject->get_feature_filenames().empty();
+
+  while (original_domain_types_.size() < subject->get_original_filenames().size()) {
+    int index = original_domain_types_.size();
+    original_domain_types_.push_back(ProjectUtils::determine_domain_type(subject->get_original_filenames()[index]));
+  }
+  while (groomed_domain_types_.size() < subject->get_groomed_filenames().size()) {
+    int index = groomed_domain_types_.size();
+    groomed_domain_types_.push_back(ProjectUtils::determine_domain_type(subject->get_groomed_filenames()[index]));
+  }
+
   determine_feature_names();
 }
 

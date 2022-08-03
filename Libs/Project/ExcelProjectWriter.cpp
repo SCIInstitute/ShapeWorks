@@ -1,8 +1,9 @@
 #include "ExcelProjectWriter.h"
 
-#include "ProjectUtils.h"
 #include <xlnt/workbook/workbook_view.hpp>
 #include <xlnt/xlnt.hpp>
+
+#include "ProjectUtils.h"
 
 namespace shapeworks {
 
@@ -46,8 +47,16 @@ static void set_value(xlnt::worksheet& ws, const std::string& column_name, int s
 }
 
 //---------------------------------------------------------------------------
-static void assign_keys(xlnt::worksheet& ws, int subject_id, std::vector<std::string> prefixes, std::vector<std::string> filenames,
-                        std::vector<std::string> domains) {
+static void assign_keys(xlnt::worksheet& ws, int subject_id, std::vector<std::string> prefixes,
+                        std::vector<std::string> filenames, std::vector<std::string> domains) {
+  assert(!prefixes.empty());
+  assert(!domains.empty());
+  if (prefixes.empty()) {
+    throw std::runtime_error("Empty prefixes");
+  }
+  if (domains.empty()) {
+    throw std::runtime_error("Empty domains");
+  }
   if (filenames.empty()) {
     return;
   }
@@ -104,9 +113,7 @@ static void store_subjects(Project& project, xlnt::workbook& wb) {
 
   for (int i = 0; i < subjects.size(); i++) {
     auto subject = subjects[i];
-
     set_value(ws, "name", i, subject->get_display_name());
-
     auto original_prefixes = ProjectUtils::convert_domain_types(project.get_original_domain_types());
     auto groomed_prefixes = ProjectUtils::convert_groomed_domain_types(project.get_groomed_domain_types());
     assign_keys(ws, i, original_prefixes, subject->get_original_filenames(), domains);
@@ -206,12 +213,13 @@ static void store_landmark_definitions(Project& project, xlnt::workbook& wb) {
 }
 
 //---------------------------------------------------------------------------
-bool ExcelProjectWriter::write_project(Project &project, std::string filename) {
+bool ExcelProjectWriter::write_project(Project& project, std::string filename) {
   auto wb = xlnt::workbook{};
 
   store_subjects(project, wb);
 
   create_parameter_map_sheet(wb, "groom", project.get_parameter_map("groom"));
+
   create_parameter_sheet(wb, "optimize", project.get_parameters("optimize"));
   create_parameter_sheet(wb, "studio", project.get_parameters("studio"));
   create_parameter_sheet(wb, "project", project.get_parameters("project"));
