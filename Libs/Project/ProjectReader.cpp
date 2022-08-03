@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "ProjectReader.h"
 
 namespace shapeworks {
