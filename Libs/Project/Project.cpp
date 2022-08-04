@@ -67,6 +67,18 @@ std::vector<std::string> Project::get_headers() {
 }
 
 //---------------------------------------------------------------------------
+std::vector<std::string> Project::get_string_column(const std::string& name) const {
+  std::vector<std::string> list;
+  for (const auto& subject : subjects_) {
+    auto map = subject->get_table_values();
+    if (map.find(name) != map.end()) {
+      list.push_back(map[name]);
+    }
+  }
+  return list;
+}
+
+//---------------------------------------------------------------------------
 int Project::get_number_of_subjects() { return subjects_.size(); }
 
 //---------------------------------------------------------------------------

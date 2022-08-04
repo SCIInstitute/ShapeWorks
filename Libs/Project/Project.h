@@ -51,6 +51,9 @@ class Project {
   //! Return the headers of the subject sheet
   std::vector<std::string> get_headers();
 
+  //! Return a column by name
+  std::vector<std::string> get_string_column(const std::string& name) const;
+
   //! Return the number of subjects in the project
   int get_number_of_subjects();
 
