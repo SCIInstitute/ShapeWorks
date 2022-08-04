@@ -16,7 +16,7 @@ using namespace shapeworks;
 //---------------------------------------------------------------------------
 Project::Project() {
   set_default_landmark_colors();
-  domain_names_ = {"1"}; // default domain name
+  domain_names_ = {"1"};  // default domain name
 }
 
 //---------------------------------------------------------------------------
@@ -104,7 +104,9 @@ void Project::update_subjects() {
     int index = groomed_domain_types_.size();
     groomed_domain_types_.push_back(ProjectUtils::determine_domain_type(subject->get_groomed_filenames()[index]));
   }
-
+  while (domain_names_.size() < original_domain_types_.size()) {
+    domain_names_.push_back(std::to_string(domain_names_.size() + 1));
+  }
   determine_feature_names();
 }
 

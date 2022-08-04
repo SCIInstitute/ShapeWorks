@@ -62,7 +62,8 @@ static void assign_keys(xlnt::worksheet& ws, int subject_id, std::vector<std::st
   }
   auto prefix = prefixes[0];
   if (filenames.size() != domains.size()) {
-    throw std::runtime_error(prefix + " filenames and number of domains mismatch");
+    throw std::runtime_error(prefix + " filenames (" + std::to_string(filenames.size()) + ") and number of domains (" +
+                             std::to_string(domains.size()) + ") mismatch");
   }
   for (int i = 0; i < domains.size(); i++) {
     if (prefixes.size() == domains.size()) {
