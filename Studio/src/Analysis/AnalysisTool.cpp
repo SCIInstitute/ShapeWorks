@@ -476,7 +476,6 @@ bool AnalysisTool::compute_stats() {
   group2_list_.clear();
   auto domain_names = session_->get_project()->get_domain_names();
   unsigned int dps = domain_names.size();
-  std::cout << "DPS is " << dps << std::endl;
   number_of_particles_ar.resize(dps);
   bool flag_get_num_part = false;
 
@@ -699,9 +698,11 @@ StudioParticles AnalysisTool::get_multi_level_shape_points(int mode, double valu
   }
   else if(level == 2){
     Eigen::VectorXd e_between;
+    Eigen::VectorXd e_rel_pose_mean_reshaped;
     unsigned int sz = stats_.Mean().size();
     std::vector<int> number_of_points_ar = stats_.NumberOfPointsArray();
     e_between.resize(sz);
+    e_rel_pose_mean_reshaped.resize(sz);
     unsigned int D = stats_.DomainsNumber();
     for(unsigned int i = 0; i < D; i++){
       int num_points = number_of_particles_ar[i];
@@ -711,9 +712,13 @@ StudioParticles AnalysisTool::get_multi_level_shape_points(int mode, double valu
           e_between((row) + (j * 3)) = e(i * 3);
           e_between((row) + (j * 3) + 1) = e(i * 3 + 1);
           e_between((row) + (j * 3) + 2) = e(i * 3 + 2);
+          e_rel_pose_mean_reshaped((row) + (j * 3)) = stats_.MeanRelPose()(i * 3);
+          e_rel_pose_mean_reshaped((row) + (j * 3) + 1) = stats_.MeanRelPose()(i * 3 + 1);
+          e_rel_pose_mean_reshaped((row) + (j * 3) + 2) = stats_.MeanRelPose()(i * 3 + 2);
         }
     }
     temp_shape_mca = stats_.Mean() + (e_between * (value * lambda));
+    // temp_shape_mca = (stats_.Mean() - stats_.MeanShapeDev()) +  (e_between * (value * lambda));
   }
 
   return convert_from_combined(temp_shape_mca);

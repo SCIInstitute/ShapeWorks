@@ -212,10 +212,6 @@ int ParticleShapeStatistics::ImportPoints(std::vector<Eigen::VectorXd> points, s
 void ParticleShapeStatistics::SetNumberOfParticlesAr(std::vector<int> num_particles_ar)
 {
   this->m_num_particles_ar = num_particles_ar;
-  for(int i = 0; i < num_particles_ar.size(); i++){
-    std::cout << num_particles_ar[i] << " ";
-  }
-  std::cout << std::endl <<  "Number of Particles Array Set for Multi-level Analysis" << std::endl;
 }
 
 //---------------------------------------------------------------------------
@@ -245,6 +241,11 @@ int ParticleShapeStatistics::ImportPointsAndComputeMultiLevelPCA(std::vector<Eig
       m_super_matrix(j, i * VDimension + 2) = points[i][j * VDimension + 2];
     }
   }
+
+  Eigen::MatrixXd grand_mean;
+  grand_mean.resize(1, n);
+  grand_mean = m_super_matrix.colwise().mean();
+
   Eigen::MatrixXd z_shape_dev_centred;
   Eigen::MatrixXd z_rel_pose_centred;
   z_shape_dev_centred.resize(m, n);
@@ -257,11 +258,12 @@ int ParticleShapeStatistics::ImportPointsAndComputeMultiLevelPCA(std::vector<Eig
     Eigen::MatrixXd z_k = m_super_matrix.block(row, 0, this->m_num_particles_ar[k], m_super_matrix.cols());
     // COM for each sub
     auto mean_k = z_k.colwise().mean();
-    z_rel_pose_centred.row(k) = mean_k;
+    z_rel_pose_centred.row(k) = (mean_k - grand_mean);
     Eigen::MatrixXd z_shape_dev_centred_k;
     z_shape_dev_centred_k.resize(this->m_num_particles_ar[k], m_super_matrix.cols());
     z_shape_dev_centred_k.fill(0.0);
-    z_shape_dev_centred_k = z_k.rowwise() - mean_k;
+    auto diff_vec = (mean_k - grand_mean);
+    z_shape_dev_centred_k = z_k.rowwise() - diff_vec;
     z_shape_dev_centred.block(row, 0, z_shape_dev_centred_k.rows(), z_shape_dev_centred_k.cols()) = z_shape_dev_centred_k;
   }
   Eigen::MatrixXd z_shape_dev_objective;
@@ -294,7 +296,6 @@ int ParticleShapeStatistics::ImportPointsAndComputeMultiLevelPCA(std::vector<Eig
   m_pointsMinusMean_for_rel_pose.fill(0.0);
   m_mean_rel_pose = z_rel_pose_objective.rowwise().mean();
   m_pointsMinusMean_for_rel_pose = z_rel_pose_objective.colwise() - m_mean_rel_pose;
-  std::cout << "Multi Level base part done" << std::endl;
 }
 
 //---------------------------------------------------------------------------
