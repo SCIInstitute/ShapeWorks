@@ -73,6 +73,7 @@ static json create_data_object(Project& project) {
 
     assign_keys(j, original_prefixes, subject->get_original_filenames(), domains);
     assign_keys(j, {"landmarks_file"}, subject->get_landmarks_filenames(), domains);
+    assign_keys(j, {"constraints"}, subject->get_constraints_filenames(), domains);
     assign_keys(j, groomed_prefixes, subject->get_groomed_filenames(), domains);
     assign_keys(j, {"local_particles"}, subject->get_local_particle_filenames(), domains);
     assign_keys(j, {"world_particles"}, subject->get_world_particle_filenames(), domains);
