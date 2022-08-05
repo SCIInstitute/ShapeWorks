@@ -540,7 +540,6 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle* docHandle, Optimize* o
             std::cout << "ffcssize " << ffcs.size() << std::endl;
           }
             if (index < ffcs.size()) {
-              std::cout << "OptimizeParameterFile::read_mesh_inputs call" << std::endl;
               mesh.prepareFFCFields(ffcs[index].boundaries, ffcs[index].query);
               mesh = Mesh(mesh.clipByField("inout", 0.0));
             }
