@@ -413,7 +413,7 @@ TEST(OptimizeTests, multi_domain_constraint) {
 
 //---------------------------------------------------------------------------
 TEST(OptimizeTests, embedded_python_test) {
-  setupenv(std::string(TEST_DATA_DIR) + "/optimize/simple");
+  setupenv(std::string(TEST_DATA_DIR) + "/simple");
 
   // run with parameter file
   std::string paramfile = std::string("python_embedded.xml");
