@@ -1290,6 +1290,7 @@ void ShapeWorksStudioApp::on_view_mode_combobox_currentIndexChanged(QString disp
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::open_project(QString filename) {
+  preferences_.set_last_directory(QFileInfo(filename).absolutePath());
   new_session();
   handle_message("Loading Project: " + filename);
   handle_progress(-1);  // busy

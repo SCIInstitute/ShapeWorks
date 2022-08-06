@@ -61,13 +61,19 @@ class ExcelProjectReader::Container {
     auto rows = ws.rows(false);
     auto headers = rows[0];
 
-    for (int h = 0; h < headers.length(); h++) {
+    for (int h = 1; h < headers.length(); h++) {
+      if (headers[h].to_string().empty()) {
+        continue;
+      }
       StringMap map;
       auto header = rows[0][h].to_string();
       std::string domain;
       std::string prefix = "value_";
       if (ProjectUtils::starts_with(header, prefix)) {
         domain = header.substr(prefix.length());
+      }
+      if (header == "value") {
+        domain = "1"; // default
       }
       for (int i = ws.lowest_row(); i < ws.highest_row(); i++) {
         std::string key = rows[i][0].to_string();

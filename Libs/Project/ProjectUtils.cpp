@@ -80,7 +80,7 @@ void ProjectUtils::determine_domain_types(Project& project, StringMap key_map) {
   std::vector<DomainType> original_domain_types;
   for (const auto& domain : domain_names) {
     for (auto& [key, value] : key_map) {
-      if (key == std::string(SEGMENTATION_PREFIX) +  domain) {
+      if (key == std::string(SEGMENTATION_PREFIX) + domain) {
         original_domain_types.push_back(DomainType::Image);
       } else if (key == std::string(MESH_PREFIX) + domain) {
         original_domain_types.push_back(DomainType::Mesh);
@@ -265,7 +265,6 @@ std::vector<std::string> ProjectUtils::convert_groomed_domain_types(std::vector<
   return list;
 }
 
+//---------------------------------------------------------------------------
+
 }  // namespace shapeworks
-//---------------------------------------------------------------------------
-//---------------------------------------------------------------------------
-//---------------------------------------------------------------------------

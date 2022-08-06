@@ -118,6 +118,12 @@ static void store_subjects(Project& project, xlnt::workbook& wb) {
     auto original_prefixes = ProjectUtils::convert_domain_types(project.get_original_domain_types());
     auto groomed_prefixes = ProjectUtils::convert_groomed_domain_types(project.get_groomed_domain_types());
     assign_keys(ws, i, original_prefixes, subject->get_original_filenames(), domains);
+    for (auto& [key, value] : subject->get_feature_filenames()) {
+      set_value(ws, "image_" + key, i, value);
+    }
+    for (auto& [key, value] : subject->get_group_values()) {
+      set_value(ws, "group_" + key, i, value);
+    }
     assign_keys(ws, i, {"landmarks_file"}, subject->get_landmarks_filenames(), domains);
     assign_keys(ws, i, {"constraints"}, subject->get_constraints_filenames(), domains);
     assign_keys(ws, i, groomed_prefixes, subject->get_groomed_filenames(), domains);

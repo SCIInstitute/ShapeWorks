@@ -263,6 +263,10 @@ Parameters Project::get_parameters(const std::string& name, std::string domain_n
 
   std::map<std::string, Parameters> param_map = parameters_[name];
 
+  if (param_map.size() == 1) {
+    return param_map.begin()->second;
+  }
+
   if (param_map.find(domain_name) == param_map.end()) {
     return params;
   }

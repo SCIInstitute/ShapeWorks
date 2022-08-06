@@ -55,7 +55,9 @@ class JsonProjectReader::Container {
       return map;
     }
     for (auto& [key, value] : j[name].items()) {
-      map[key] = value.get<StringMap>();
+      if (!value.is_null()) {
+        map[key] = value.get<StringMap>();
+      }
     }
     return map;
   }
@@ -69,7 +71,7 @@ JsonProjectReader::~JsonProjectReader() {}
 
 //---------------------------------------------------------------------------
 bool JsonProjectReader::read_project(std::string filename) {
-  try {
+  //try {
     std::ifstream ifs(filename);
     container_->j = json::parse(ifs);
 
@@ -77,10 +79,12 @@ bool JsonProjectReader::read_project(std::string filename) {
     load_landmark_definitions(container_->object_to_map_list("landmarks"));
     load_parameters();
 
+    /*
   } catch (std::exception& e) {
     std::cerr << "Error reading " << filename << " : " << e.what() << "\n";
     return false;
   }
+  */
   return true;
 }
 

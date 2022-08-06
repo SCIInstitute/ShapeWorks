@@ -72,6 +72,12 @@ static json create_data_object(Project& project) {
     auto groomed_prefixes = ProjectUtils::convert_groomed_domain_types(project.get_groomed_domain_types());
 
     assign_keys(j, original_prefixes, subject->get_original_filenames(), domains);
+    for (auto& [key, value] : subject->get_feature_filenames()) {
+      j["image_" + key] = value;
+    }
+    for (auto& [key, value] : subject->get_group_values()) {
+      j["group_" + key] = value;
+    }
     assign_keys(j, {"landmarks_file"}, subject->get_landmarks_filenames(), domains);
     assign_keys(j, {"constraints"}, subject->get_constraints_filenames(), domains);
     assign_keys(j, groomed_prefixes, subject->get_groomed_filenames(), domains);
