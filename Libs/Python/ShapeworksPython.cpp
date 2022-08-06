@@ -1292,6 +1292,12 @@ PYBIND11_MODULE(shapeworks_py, m)
       },
       "Return the map of landmarks to vertices.")
 
+  .def("getGoodParticlesIndices",
+      [](MeshWarper &w) -> decltype(auto) {
+        return w.get_good_particle_indices();
+      },
+      "Return the indexes of good particles.")
+
   .def("buildMesh",
       [](MeshWarper &w, const Eigen::MatrixXd &particles) -> decltype(auto) {
           return Mesh(w.build_mesh(particles));
