@@ -255,7 +255,11 @@ bool Session::load_light_project(QString filename) {
   if (elem) {
     domains_per_shape = atoi(elem->GetText());
   }
-  // this->project_->get_number_of_domains_per_subject()
+  std::vector<std::string> domain_names;
+  for (int i=0;i<domains_per_shape;i++) {
+    domain_names.push_back(std::to_string(i));
+  }
+  project_->set_domain_names(domain_names);
 
   // setup XML
   std::vector<std::string> import_files, groom_files, local_point_files, global_point_files;
