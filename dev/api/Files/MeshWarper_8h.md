@@ -58,7 +58,9 @@ class MeshWarper {
 
   bool is_contour() { return this->is_contour_; }
 
-  std::map<int, int> get_landmarks_map() { return landmarks_map_; }
+  std::map<int, int> get_landmarks_map() const { return landmarks_map_; }
+
+  std::vector<int> get_good_particle_indices() const { return good_particles_; }
 
   const Eigen::MatrixXd& get_warp_matrix() const { return this->warp_; }
 
@@ -121,4 +123,4 @@ class MeshWarper {
 
 -------------------------------
 
-Updated on 2022-08-01 at 07:24:47 +0000
+Updated on 2022-08-06 at 18:42:33 +0000

@@ -47,7 +47,8 @@ Inherits from QObject, [shapeworks::MeshWarper](../Classes/classshapeworks_1_1Me
 | vtkSmartPointer< vtkPolyData > | **[build_mesh](../Classes/classshapeworks_1_1MeshWarper.md#function-build-mesh)**(const Eigen::MatrixXd & particles)<br>Build a mesh for a given set of particles.  |
 | Eigen::MatrixXd | **[extract_landmarks](../Classes/classshapeworks_1_1MeshWarper.md#function-extract-landmarks)**(vtkSmartPointer< vtkPolyData > warped_mesh)<br>Return the landmarks (matrix [Nx3]) from the warped builded mesh.  |
 | bool | **[is_contour](../Classes/classshapeworks_1_1MeshWarper.md#function-is-contour)**()<br>Return if set as a contour.  |
-| std::map< int, int > | **[get_landmarks_map](../Classes/classshapeworks_1_1MeshWarper.md#function-get-landmarks-map)**()<br>Return the map of landmarks id (Key) to vertice index (Value)  |
+| std::map< int, int > | **[get_landmarks_map](../Classes/classshapeworks_1_1MeshWarper.md#function-get-landmarks-map)**() const<br>Return the map of landmarks id (Key) to vertice index (Value)  |
+| std::vector< int > | **[get_good_particle_indices](../Classes/classshapeworks_1_1MeshWarper.md#function-get-good-particle-indices)**() const<br>Return the indexes of good particles (those that really control the warping)  |
 | const Eigen::MatrixXd & | **[get_warp_matrix](../Classes/classshapeworks_1_1MeshWarper.md#function-get-warp-matrix)**() const<br>Return the warp matrix.  |
 | bool | **[has_bad_particles](../Classes/classshapeworks_1_1MeshWarper.md#function-has-bad-particles)**() const<br>Return true if warping has removed any bad particle(s)  |
 | vtkSmartPointer< vtkPolyData > | **[get_reference_mesh](../Classes/classshapeworks_1_1MeshWarper.md#function-get-reference-mesh)**()<br>Return the reference mesh which has been cleaned and vertices added.  |
@@ -99,4 +100,4 @@ For overriding to handle progress updates.
 
 -------------------------------
 
-Updated on 2022-08-01 at 07:24:46 +0000
+Updated on 2022-08-06 at 18:42:32 +0000
