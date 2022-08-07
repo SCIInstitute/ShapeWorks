@@ -66,7 +66,6 @@ void
 ParticleEnsembleMultiLevelEntropyFunction<VDimension>
 ::ComputeShapeRelPoseDeviations()
 {
-    std::cout << "********Computing Shape Pose Deviation Terms********" << std::endl;
     m_total_organs = m_ShapeMatrix->GetDomainsPerShape(); // K
     unsigned int N  = m_ShapeMatrix->cols(); // num_samples --> N
     m_num_particles_ar = m_ShapeMatrix->GetAllNumberOfParticles();
@@ -105,8 +104,12 @@ ParticleEnsembleMultiLevelEntropyFunction<VDimension>
             m_super_matrix->put(j, i * VDimension + 2, m_ShapeMatrix->get(j * VDimension + 2, i));
         }
     }
-    vnl_matrix_type super_matrix = m_super_matrix->transpose().transpose();
-
+    vnl_matrix_type ones_M;
+    ones_M.set_size(M, 1); // M X 1
+    ones_M.fill(1.0);
+    vnl_matrix_type super_matrix_temp = m_super_matrix->transpose().transpose();
+    vnl_matrix_type grand_mean = ((ones_M.transpose() * super_matrix_temp) * (1.0/((double)total_particles))); // --> 1 X 3N
+    super_matrix_temp.clear();
     // 2. Perform all computations for shape deviations for each organ
     tbb::parallel_for(tbb::blocked_range<size_t>{0, m_total_organs},
     [&](const tbb::blocked_range<size_t>& r){
@@ -119,7 +122,7 @@ ParticleEnsembleMultiLevelEntropyFunction<VDimension>
             ones_m_k.set_size(m_num_particles_ar[k], 1); // m X 1
             ones_m_k.fill(1.0);
             centering_matrix = centering_matrix - (ones_m_k * ones_m_k.transpose()) * (1.0 / ((double)m_num_particles_ar[k]));
-            
+
             vnl_matrix_type z_k;
             z_k.set_size(m_num_particles_ar[k], VDimension * N);
             z_k.fill(0.0);
@@ -127,8 +130,13 @@ ParticleEnsembleMultiLevelEntropyFunction<VDimension>
             for(unsigned int x = 0; x < k; x++){ row += m_num_particles_ar[x];} // k * m_num_particles_ar[k]
             m_super_matrix->extract(z_k, row, 0); // Extract sub matrix for the kth organ from the super matrix
             vnl_matrix_type z_shape_dev_k = centering_matrix.transpose() * z_k; // ----->  m  X 3N
-            // Raw matrix of shape deviations done here
-            // Convert to standard form and find residual from its mean
+            vnl_matrix_type grand_mean_k;
+            grand_mean_k.set_size(m_num_particles_ar[k], VDimension * N);
+            grand_mean_k.fill(0.0);
+            for(unsigned int t = 0; t < m_num_particles_ar[k]; t++){
+                grand_mean_k.set_row(t, grand_mean.get_row(0));
+            }
+            z_shape_dev_k = z_shape_dev_k + grand_mean_k;
             // Convert to Objective dimensions : -----> 3m X N
             vnl_matrix_type z_shape_dev_k_objective;
             vnl_matrix_type points_update_shape_dev_k;
