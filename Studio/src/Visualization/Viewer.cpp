@@ -636,6 +636,9 @@ void Viewer::display_shape(QSharedPointer<Shape> shape) {
   renderer_->RemoveAllViewProps();
 
   number_of_domains_ = session_->get_domains_per_shape();
+  if (meshes_.valid()) {
+    number_of_domains_ = std::max<int>(number_of_domains_, meshes_.meshes().size());
+  }
   initialize_surfaces();
 
   if (!meshes_.valid()) {
