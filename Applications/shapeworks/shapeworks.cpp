@@ -105,6 +105,7 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(Seed::getCommand());
   shapeworks.addCommand(OptimizeCommand::getCommand());
   shapeworks.addCommand(GroomCommand::getCommand());
+  shapeworks.addCommand(AnalyzeCommand::getCommand());
 
   try {
     return shapeworks.run(argc, argv);

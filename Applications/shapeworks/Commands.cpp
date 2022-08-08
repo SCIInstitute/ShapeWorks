@@ -176,4 +176,37 @@ bool GroomCommand::execute(const optparse::Values& options, SharedCommandData& s
   }
 }
 
+///////////////////////////////////////////////////////////////////////////////
+// Analyze
+///////////////////////////////////////////////////////////////////////////////
+void AnalyzeCommand::buildParser()
+{
+  const std::string prog = "analyze";
+  const std::string desc = "analyze a shapeworks project";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--name").action("store").type("string").set_default("").help("Path to parameter file.");
+
+  Command::buildParser();
+}
+
+bool AnalyzeCommand::execute(const optparse::Values& options, SharedCommandData& sharedData)
+{
+  const std::string& projectFile(static_cast<std::string>(options.get("name")));
+
+  if (projectFile.length() == 0) {
+    std::cerr << "Must specify project name\n";
+    return false;
+  }
+
+  try {
+    ProjectHandle project = std::make_shared<Project>();
+    project->load(projectFile);
+    return true;
+  }
+  catch (std::exception& e) {
+    std::cerr << "Error: " << e.what() << "\n";
+    return false;
+  }
+}
 } // shapeworks
