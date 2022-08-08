@@ -109,13 +109,18 @@ public:
   {
     m_ShapeMatrix->AfterIteration();
     // Update the annealing parameter.
-    if (m_HoldMinimumVariance != true && !m_UseMeanEnergy)
+    if ((m_HoldMinimumVariance != true || m_HoldMinimumVariance_shape_dev != true || m_HoldMinimumVariance_rel_pose != true) && !m_UseMeanEnergy)
       {
       m_Counter ++;
       if (m_Counter >=  m_RecomputeCovarianceInterval)
         {
         m_Counter = 0;
+        for (unsigned int k = 0; k < m_HoldMinimumVariance_shape_dev.size(); k++)
+        {
+          m_MinimumVariance_shape_dev_ar[k] *= m_MinimumVariance_shape_dev_ar[k];
+        }
         m_MinimumVariance *= m_MinimumVarianceDecayConstant;
+        m_MinimumVariance_rel_pose *= m_MinimumVariance_rel_pose; 
         }
       }
   }
@@ -291,7 +296,7 @@ protected:
 
   // virtual void ComputeCovarianceMatrix();
   virtual void ComputeShapeRelPoseDeviations();
-  virtual void ComputeCentroidForShapeVector(const vnl_matrix_type &shape_vector, vnl_matrix_type &centroid_results) const;
+  virtual void ComputeCentroidForShapeVector(const vnl_matrix_type &shape_vector, vnl_matrix_type &centroid_results, vnl_matrix_type &shape_center_all) const;
 
   std::shared_ptr<vnl_matrix_type> m_PointsUpdate_rel_pose;
   std::shared_ptr<std::vector<vnl_matrix_type>> m_PointsUpdate_shape_dev;

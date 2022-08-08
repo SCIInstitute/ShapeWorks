@@ -25,11 +25,15 @@ ParticleEnsembleMultiLevelEntropyFunction<VDimension>
 template <unsigned int VDimension>
 void
 ParticleEnsembleMultiLevelEntropyFunction<VDimension>
-::ComputeCentroidForShapeVector(const vnl_matrix_type &shape_vector, vnl_matrix_type &centroid_results) const
+::ComputeCentroidForShapeVector(const vnl_matrix_type &shape_vector, vnl_matrix_type &centroid_results, vnl_matrix_type &shape_center_all) const
 {
     // Helper function to dinf centroid for each organ given the shape vector
     centroid_results.set_size(VDimension * m_total_organs, 1);
     centroid_results.fill(0.0);
+
+    shape_center_all.clear();
+    shape_center_all.set_size(1, VDimension);
+    shape_center_all.fill(0.0);
 
     // 1. Transform 3M vector to M X 3 matrix
     vnl_matrix_type temp_matrix;
@@ -52,12 +56,17 @@ ParticleEnsembleMultiLevelEntropyFunction<VDimension>
         temp_matrix.extract(temp_k, idx, 0);
         // find mean
         Eigen::MatrixXd temp_eigen = Eigen::Map<Eigen::MatrixXd>(temp_k.data_block(), temp_k.rows(), temp_k.cols());
-        Eigen::MatrixXd centroid_k = temp_eigen.colwise().sum();
+        Eigen::MatrixXd centroid_k = temp_eigen.colwise().mean();
         centroid_k = (1/temp_eigen.rows()) * centroid_k; // 1 X 3
         centroid_results.put(k * VDimension, 0, centroid_k(0, 0));
         centroid_results.put(k * VDimension + 1, 0, centroid_k(0, 1));
         centroid_results.put(k * VDimension + 2, 0, centroid_k(0, 2));
     }
+    Eigen::MatrixXd all_shapes = Eigen::Map<Eigen::MatrixXd>(temp_matrix.data_block(), temp_matrix.rows(), temp_matrix.cols());
+    Eigen::MatrixXd centroid_all = all_shapes.colwise().mean();
+    shape_center_all.put(0, 0, centroid_all(0, 0));
+    shape_center_all.put(0, 1, centroid_all(0, 1));
+    shape_center_all.put(0, 2, centroid_all(0, 2));
     return;
 }
 
@@ -66,6 +75,7 @@ void
 ParticleEnsembleMultiLevelEntropyFunction<VDimension>
 ::ComputeShapeRelPoseDeviations()
 {
+    std::cout << " Multi - Level Covariance Matrix Computation " << std::endl;
     m_total_organs = m_ShapeMatrix->GetDomainsPerShape(); // K
     unsigned int N  = m_ShapeMatrix->cols(); // num_samples --> N
     m_num_particles_ar = m_ShapeMatrix->GetAllNumberOfParticles();
@@ -232,8 +242,18 @@ ParticleEnsembleMultiLevelEntropyFunction<VDimension>
     // A. Build Rel Pose Objective Matrix
     for (unsigned int n = 0; n < N; n++){
         vnl_matrix_type centers_n;
+        vnl_matrix_type temp;
         vnl_matrix_type vec_n = m_ShapeMatrix->get_n_columns(n, 1);
-        this->ComputeCentroidForShapeVector(vec_n, centers_n);
+        this->ComputeCentroidForShapeVector(vec_n, centers_n, temp);
+        vnl_matrix_type all_center;
+        all_center.set_size(VDimension * m_total_organs, 1);
+        all_center.fill(0.0);
+        for (unsigned int k = 0; k < m_total_organs; k++){
+            all_center.put(k*VDimension, 0, temp(0, 0));
+            all_center.put(k*VDimension+1, 0, temp(0, 1));
+            all_center.put(k*VDimension+2, 0, temp(0, 2));
+        }
+        centers_n = centers_n + all_center;
         z_rel_pose_objective.set_columns(n, centers_n);
     }
     // Find mean
@@ -323,11 +343,12 @@ ParticleEnsembleMultiLevelEntropyFunction<VDimension>
 
     vnl_matrix_type Xi_shape_dev(3,1,0.0);
     vnl_matrix_type centroid_new;
+    vnl_matrix_type shape_center_all_organ;
     vnl_matrix_type cur_sub_shape_vector = m_ShapeMatrix->get_n_columns(cur_sub, 1);
-    this->ComputeCentroidForShapeVector(cur_sub_shape_vector, centroid_new);
-    Xi_shape_dev(0,0) = m_ShapeMatrix->operator()(k  , cur_sub) - centroid_new(cur_organ*VDimension, 0) - m_points_mean_shape_dev->at(cur_organ).get(k, 0);
-    Xi_shape_dev(1,0) = m_ShapeMatrix->operator()(k  , cur_sub) - centroid_new(cur_organ*VDimension + 1, 0) - m_points_mean_shape_dev->at(cur_organ).get(k+1, 0);
-    Xi_shape_dev(2,0) = m_ShapeMatrix->operator()(k  , cur_sub) - centroid_new(cur_organ*VDimension + 2, 0) - m_points_mean_shape_dev->at(cur_organ).get(k+2, 0);
+    this->ComputeCentroidForShapeVector(cur_sub_shape_vector, centroid_new, shape_center_all_organ);
+    Xi_shape_dev(0,0) = m_ShapeMatrix->operator()(k  , cur_sub) - centroid_new(cur_organ*VDimension, 0) + shape_center_all_organ(0, 0) - m_points_mean_shape_dev->at(cur_organ).get(k, 0);
+    Xi_shape_dev(1,0) = m_ShapeMatrix->operator()(k  , cur_sub) - centroid_new(cur_organ*VDimension + 1, 0)  + shape_center_all_organ(0, 1) - m_points_mean_shape_dev->at(cur_organ).get(k+1, 0);
+    Xi_shape_dev(2,0) = m_ShapeMatrix->operator()(k  , cur_sub) - centroid_new(cur_organ*VDimension + 2, 0)  + shape_center_all_organ(0, 2) - m_points_mean_shape_dev->at(cur_organ).get(k+2, 0);
 
     vnl_matrix_type tmp1_shape_dev(3, 3, 0.0);
 
@@ -344,9 +365,9 @@ ParticleEnsembleMultiLevelEntropyFunction<VDimension>
 
 
     vnl_matrix_type Xi_rel_pose(3,1,0.0);
-    Xi_rel_pose(0,0) = centroid_new(cur_organ*VDimension, 0) - m_points_mean_rel_pose->get(cur_organ*VDimension, 0);
-    Xi_rel_pose(1,0) = centroid_new(cur_organ*VDimension + 1, 0) - m_points_mean_rel_pose->get(cur_organ*VDimension+1, 0);
-    Xi_rel_pose(2,0) = centroid_new(cur_organ*VDimension + 2, 0) - m_points_mean_rel_pose->get(cur_organ*VDimension+2, 0);
+    Xi_rel_pose(0,0) = centroid_new(cur_organ*VDimension, 0)  - shape_center_all_organ(0, 0)  - m_points_mean_rel_pose->get(cur_organ*VDimension, 0);
+    Xi_rel_pose(1,0) = centroid_new(cur_organ*VDimension + 1, 0)  - shape_center_all_organ(0, 1) - m_points_mean_rel_pose->get(cur_organ*VDimension+1, 0);
+    Xi_rel_pose(2,0) = centroid_new(cur_organ*VDimension + 2, 0)  - shape_center_all_organ(0, 2) - m_points_mean_rel_pose->get(cur_organ*VDimension+2, 0);
 
     vnl_matrix_type tmp1_rel_pose(3, 3, 0.0);
 
