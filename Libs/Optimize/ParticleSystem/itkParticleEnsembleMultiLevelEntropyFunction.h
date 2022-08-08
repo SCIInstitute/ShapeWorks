@@ -115,7 +115,7 @@ public:
       if (m_Counter >=  m_RecomputeCovarianceInterval)
         {
         m_Counter = 0;
-        for (unsigned int k = 0; k < m_HoldMinimumVariance_shape_dev.size(); k++)
+        for (unsigned int k = 0; k < m_MinimumVariance_shape_dev_ar.size(); k++)
         {
           m_MinimumVariance_shape_dev_ar[k] *= m_MinimumVariance_shape_dev_ar[k];
         }
