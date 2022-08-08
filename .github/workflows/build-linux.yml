@@ -83,7 +83,7 @@ jobs:
 
     - name: Copy artifact
       shell: bash -l {0}
-      run: .github/workflows/copy_artifact.sh artifact-${{github.sha}}-linux /__w/ShapeWorks/ShapeWorks/artifacts
+      run: cd  /__w/ShapeWorks/ShapeWorks/artifacts && ${GITHUB_WORKSPACE}/.github/workflows/copy_artifact.sh artifact-${{github.sha}}-linux *
       
     - uses: actions/upload-artifact@v2
       with:

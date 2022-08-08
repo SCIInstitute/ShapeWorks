@@ -166,7 +166,11 @@ void GroomTool::update_page() {
   int domain_id = ui_->domain_box->currentIndex();
 
   auto subjects = session_->get_project()->get_subjects();
-  if (session_->get_project()->get_original_domain_types().size() > domain_id) {
+  int num_domains = session_->get_project()->get_original_domain_types().size();
+  if (domain_id < 0) {
+    domain_id = 0;
+  }
+  if (domain_id < num_domains) {
     bool is_image = session_->get_project()->get_original_domain_types()[domain_id] == DomainType::Image;
     bool is_mesh = session_->get_project()->get_original_domain_types()[domain_id] == DomainType::Mesh;
 
