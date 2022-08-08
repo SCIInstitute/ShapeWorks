@@ -49,7 +49,10 @@ class MeshWarper {
   bool is_contour() { return this->is_contour_; }
 
   //! Return the map of landmarks id (Key) to vertice index (Value)
-  std::map<int, int> get_landmarks_map() { return landmarks_map_; }
+  std::map<int, int> get_landmarks_map() const { return landmarks_map_; }
+
+  //! Return the indexes of good particles (those that really control the warping)
+  std::vector<int> get_good_particle_indices() const { return good_particles_; }
 
   //! Return the warp matrix
   const Eigen::MatrixXd& get_warp_matrix() const { return this->warp_; }

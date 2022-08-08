@@ -129,7 +129,7 @@ void OptimizeTool::handle_optimize_complete() {
   session_->update_procrustes_transforms(procrustes_transforms);
 
   session_->calculate_reconstructed_samples();
-  session_->get_project()->store_subjects();
+  session_->get_project()->update_subjects();
   emit progress(100);
 
   QString duration = QString::number(elapsed_timer_.elapsed() / 1000.0, 'f', 1);
