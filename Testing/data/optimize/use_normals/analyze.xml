@@ -1,27 +1,27 @@
 <point_files>
-optimize_particles/sphere10_DT_world.particles
-optimize_particles/sphere20_DT_world.particles
-optimize_particles/sphere30_DT_world.particles
-optimize_particles/sphere40_DT_world.particles
+optimize_particles/sphere10_DT_50_world.particles
+optimize_particles/sphere20_DT_50_world.particles
+optimize_particles/sphere30_DT_50_world.particles
+optimize_particles/sphere40_DT_50_world.particles
 </point_files>
 
 <distance_transform_files>
-  sphere10_DT.nrrd
-  sphere20_DT.nrrd
-  sphere30_DT.nrrd
-  sphere40_DT.nrrd
+../shared/spheres_50/sphere10_DT_50.nrrd
+../shared/spheres_50/sphere20_DT_50.nrrd
+../shared/spheres_50/sphere30_DT_50.nrrd
+../shared/spheres_50/sphere40_DT_50.nrrd
 </distance_transform_files>
 
 <world_point_files>
-optimize_particles/sphere10_DT_world.particles
-optimize_particles/sphere20_DT_world.particles
-optimize_particles/sphere30_DT_world.particles
-optimize_particles/sphere40_DT_world.particles
+optimize_particles/sphere10_DT_50_world.particles
+optimize_particles/sphere20_DT_50_world.particles
+optimize_particles/sphere30_DT_50_world.particles
+optimize_particles/sphere40_DT_50_world.particles
 </world_point_files>
 
 <local_point_files>
-optimize_particles/sphere10_DT_local.particles
-optimize_particles/sphere20_DT_local.particles
-optimize_particles/sphere30_DT_local.particles
-optimize_particles/sphere40_DT_local.particles
+optimize_particles/sphere10_DT_50_local.particles
+optimize_particles/sphere20_DT_50_local.particles
+optimize_particles/sphere30_DT_50_local.particles
+optimize_particles/sphere40_DT_50_local.particles
 </local_point_files>

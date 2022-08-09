@@ -4,11 +4,11 @@
 
 <point_files>
 optimize_particles/sphere10_DT_world.particles
-optimize_particles/sphere10_O_DT_world.particles
+optimize_particles/sphere10_DT_50_world.particles
 optimize_particles/sphere20_DT_world.particles
-optimize_particles/sphere20_O_DT_world.particles
+optimize_particles/sphere20_DT_50_world.particles
 optimize_particles/sphere30_DT_world.particles
-optimize_particles/sphere30_O_DT_world.particles
+optimize_particles/sphere30_DT_50_world.particles
 optimize_particles/sphere40_DT_world.particles
-optimize_particles/sphere40_O_DT_world.particles
+optimize_particles/sphere40_DT_50_world.particles
 </point_files>

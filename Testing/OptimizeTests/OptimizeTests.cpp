@@ -354,7 +354,7 @@ TEST(OptimizeTests, multi_domain_constraint) {
 
   // make sure we clean out at least one output file
   std::remove("optimize_particles/sphere10_DT_world.particles");
-  std::remove("optimize_particles/sphere10_O_DT_world.particles");
+  std::remove("optimize_particles/sphere10_DT_50_world.particles");
 
   // run with parameter file
   Optimize app;
@@ -392,12 +392,6 @@ TEST(OptimizeTests, embedded_python_test) {
 //---------------------------------------------------------------------------
 TEST(OptimizeTests, project_test) {
   setupenv(std::string(TEST_DATA_DIR) + "/optimize/sphere");
-
-  // prep/groom
-  prep_distance_transform("sphere10.nrrd", "sphere10_DT.nrrd");
-  prep_distance_transform("sphere20.nrrd", "sphere20_DT.nrrd");
-  prep_distance_transform("sphere30.nrrd", "sphere30_DT.nrrd");
-  prep_distance_transform("sphere40.nrrd", "sphere40_DT.nrrd");
 
   // make sure we clean out at least one necessary file to make sure we re-run
   std::remove("optimize_particles/sphere10_DT_world.particles");
