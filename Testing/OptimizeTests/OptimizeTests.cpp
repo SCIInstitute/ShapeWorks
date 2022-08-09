@@ -93,12 +93,6 @@ static bool check_constraint_violations(Optimize &app, double slack) {
 TEST(OptimizeTests, sample) {
   setupenv(std::string(TEST_DATA_DIR) + "/optimize/sphere");
 
-  // prep/groom
-  prep_distance_transform("sphere10.nrrd", "sphere10_DT.nrrd");
-  prep_distance_transform("sphere20.nrrd", "sphere20_DT.nrrd");
-  prep_distance_transform("sphere30.nrrd", "sphere30_DT.nrrd");
-  prep_distance_transform("sphere40.nrrd", "sphere40_DT.nrrd");
-
   // make sure we clean out at least one necessary file to make sure we re-run
   std::remove("optimize_particles/sphere10_DT_world.particles");
 
@@ -167,12 +161,6 @@ TEST(OptimizeTests, open_mesh_test) {
 TEST(OptimizeTests, fixed_domain) {
   setupenv(std::string(TEST_DATA_DIR) + "/optimize/fixed_domain");
 
-  // prep/groom
-  prep_distance_transform("sphere10.nrrd", "sphere10_DT.nrrd");
-  prep_distance_transform("sphere20.nrrd", "sphere20_DT.nrrd");
-  prep_distance_transform("sphere30.nrrd", "sphere30_DT.nrrd");
-  prep_distance_transform("sphere40.nrrd", "sphere40_DT.nrrd");
-
   // make sure we clean out the output file of interest
   std::remove("optimize_particles/sphere10_DT_world.particles");
 
@@ -238,12 +226,6 @@ TEST(OptimizeTests, fixed_mesh_domain_test) {
 //---------------------------------------------------------------------------
 TEST(OptimizeTests, use_normals_test) {
   setupenv(std::string(TEST_DATA_DIR) + "/optimize/use_normals");
-
-  // prep/groom
-  prep_distance_transform("sphere10.nrrd", "sphere10_DT.nrrd");
-  prep_distance_transform("sphere20.nrrd", "sphere20_DT.nrrd");
-  prep_distance_transform("sphere30.nrrd", "sphere30_DT.nrrd");
-  prep_distance_transform("sphere40.nrrd", "sphere40_DT.nrrd");
 
   // make sure we clean out at least one output file
   std::remove("optimize_particles/sphere10_DT_world.particles");
@@ -311,12 +293,6 @@ TEST(OptimizeTests, mesh_use_normals_test) {
 TEST(OptimizeTests, cutting_plane_test) {
   setupenv(std::string(TEST_DATA_DIR) + "/optimize/cutting_plane_multi");
 
-  // prep/groom
-  prep_distance_transform("sphere10.nrrd", "sphere10_DT.nrrd");
-  prep_distance_transform("sphere20.nrrd", "sphere20_DT.nrrd");
-  prep_distance_transform("sphere30.nrrd", "sphere30_DT.nrrd");
-  prep_distance_transform("sphere40.nrrd", "sphere40_DT.nrrd");
-
   // make sure we clean out at least one output file
   std::remove("optimize_particles/sphere10_DT_world.particles");
 
@@ -350,12 +326,6 @@ TEST(OptimizeTests, ffc_test) {
   std::string test_location = std::string(TEST_DATA_DIR) + std::string("/optimize/ffc");
   chdir(test_location.c_str());
 
-  // prep/groom
-  prep_distance_transform("sphere10.nrrd", "sphere10_DT.nrrd");
-  prep_distance_transform("sphere20.nrrd", "sphere20_DT.nrrd");
-  prep_distance_transform("sphere30.nrrd", "sphere30_DT.nrrd");
-  prep_distance_transform("sphere40.nrrd", "sphere40_DT.nrrd");
-
   // make sure we clean out at least one output file
   std::remove("optimize_particles/sphere10_DT_world.particles");
 
@@ -381,12 +351,6 @@ TEST(OptimizeTests, ffc_test) {
 //---------------------------------------------------------------------------
 TEST(OptimizeTests, multi_domain_constraint) {
   setupenv(std::string(TEST_DATA_DIR) + "/optimize/multidomain_constraints");
-
-  // prep/groom
-  prep_distance_transform("sphere10.nrrd", "sphere10_DT.nrrd");
-  prep_distance_transform("sphere20.nrrd", "sphere20_DT.nrrd");
-  prep_distance_transform("sphere30.nrrd", "sphere30_DT.nrrd");
-  prep_distance_transform("sphere40.nrrd", "sphere40_DT.nrrd");
 
   // make sure we clean out at least one output file
   std::remove("optimize_particles/sphere10_DT_world.particles");
