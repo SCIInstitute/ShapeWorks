@@ -14,7 +14,7 @@ TEST(GroomTests, basic_test)
   chdir(test_location.c_str());
 
   // make sure we clean out at least one necessary file to make sure we re-run
-  std::remove("sphere10_DT.nrrd");
+  std::remove("../shared/sphere/sphere10_DT.nrrd");
 
   ProjectHandle project = std::make_shared<Project>();
   project->load("groom.xlsx");
@@ -23,7 +23,7 @@ TEST(GroomTests, basic_test)
   ASSERT_TRUE(success);
 
   Image image("groomed/sphere10_DT.nrrd");
-  Image ground_truth("sphere10_DT_baseline.nrrd");
+  Image ground_truth("../shared/spheres/sphere10_DT_baseline.nrrd");
 
   ASSERT_TRUE(image == ground_truth);
 
