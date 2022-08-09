@@ -4,6 +4,7 @@ set(Vis_sources
 set(Vis_headers
   Vis.h)
 add_library(Analyze STATIC
+  Analyze.cpp
   ${Vis_sources}
   ${Vis_headers})
 target_include_directories(Analyze PUBLIC

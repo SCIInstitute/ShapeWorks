@@ -19,7 +19,8 @@ namespace shapeworks {
 QString ExportUtils::get_save_filename(ShapeWorksStudioApp* parent, QString title, QString filetypes,
                                        QString default_ext) {
   QString last_directory = parent->prefs().get_last_directory();
-  QString filename = QFileDialog::getSaveFileName(parent, title, last_directory, filetypes);
+  //QString filename = QFileDialog::getSaveFileName(parent, title, last_directory, filetypes);
+  QString filename = QFileDialog::getSaveFileName(parent, title, last_directory, "*.*");
   if (filename.isEmpty()) {
     return "";
   }

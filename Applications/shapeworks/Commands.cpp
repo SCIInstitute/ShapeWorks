@@ -3,6 +3,7 @@
 #include <Libs/Optimize/OptimizeParameters.h>
 #include <Libs/Optimize/OptimizeParameterFile.h>
 #include <Libs/Groom/Groom.h>
+#include <Libs/Analyze/Analyze.h>
 #include <Libs/Utils/StringUtils.h>
 #include <ShapeworksUtils.h>
 #include <boost/filesystem.hpp>
@@ -202,6 +203,10 @@ bool AnalyzeCommand::execute(const optparse::Values& options, SharedCommandData&
   try {
     ProjectHandle project = std::make_shared<Project>();
     project->load(projectFile);
+
+    Analyze analyze(project);
+    analyze.run();
+
     return true;
   }
   catch (std::exception& e) {
