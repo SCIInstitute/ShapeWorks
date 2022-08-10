@@ -128,7 +128,7 @@ TEST(OptimizeTests, open_mesh_test) {
   setupenv(std::string(TEST_DATA_DIR) + "/optimize/hemisphere");
 
   // make sure we clean out at least one necessary file to make sure we re-run
-  std::remove("optimize_particles/hemisphere00_groomed_world.particles");
+  std::remove("optimize_particles/hemisphere00_world.particles");
 
   // run with parameter file
   Optimize app;
@@ -196,7 +196,7 @@ TEST(OptimizeTests, fixed_mesh_domain_test) {
   setupenv(std::string(TEST_DATA_DIR) + "/optimize/fixed_mesh_domain");
 
   // make sure we clean out the output file of interest
-  std::remove("optimize_particles/id0000_ss3_groomed_world.particles");
+  std::remove("optimize_particles/id0000_ss3_world.particles");
 
   // run with parameter file
   Optimize app;
@@ -261,7 +261,7 @@ TEST(OptimizeTests, mesh_use_normals_test) {
   setupenv(std::string(TEST_DATA_DIR) + "/optimize/mesh_use_normals");
 
   // make sure we clean out at least one output file
-  std::remove("optimize_particles/sphere_00_groomed_world.particles");
+  std::remove("optimize_particles/sphere_00_world.particles");
 
   // run with parameter file
   Optimize app;
@@ -465,10 +465,10 @@ TEST(OptimizeTests, mesh_ffc_test) {
   setupenv(std::string(TEST_DATA_DIR) + "/optimize/mesh_constraints");
 
   // make sure we clean out at least one output file
-  std::remove("optimize_particles/sphere10_groomed_world.particles");
-  std::remove("optimize_particles/sphere20_groomed_world.particles");
-  std::remove("optimize_particles/sphere30_groomed_world.particles");
-  std::remove("optimize_particles/sphere40_groomed_world.particles");
+  std::remove("optimize_particles/sphere10_world.particles");
+  std::remove("optimize_particles/sphere20_world.particles");
+  std::remove("optimize_particles/sphere30_world.particles");
+  std::remove("optimize_particles/sphere40_world.particles");
 
   // run with parameter file
   Optimize app;
@@ -499,10 +499,10 @@ TEST(OptimizeTests, mesh_ffc_test_aug_lag) {
   setupenv(std::string(TEST_DATA_DIR) + "/optimize/mesh_constraints_aug_lag");
 
   // make sure we clean out at least one output file
-  std::remove("optimize_particles/sphere10_groomed_world.particles");
-  std::remove("optimize_particles/sphere20_groomed_world.particles");
-  std::remove("optimize_particles/sphere30_groomed_world.particles");
-  std::remove("optimize_particles/sphere40_groomed_world.particles");
+  std::remove("optimize_particles/sphere10_world.particles");
+  std::remove("optimize_particles/sphere20_world.particles");
+  std::remove("optimize_particles/sphere30_world.particles");
+  std::remove("optimize_particles/sphere40_world.particles");
 
   // run with parameter file
   Optimize app;
