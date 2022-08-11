@@ -11,7 +11,6 @@
 
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
-#include <QSharedPointer>
 #include <QString>
 
 namespace shapeworks {
@@ -36,7 +35,7 @@ class Shape {
 
   ~Shape();
 
-  QString get_display_name();
+  std::string get_display_name();
 
   MeshGroup get_meshes(DisplayMode display_mode, bool wait = false);
 
@@ -166,7 +165,7 @@ class Shape {
   void generate_meshes(std::vector<std::string> filenames, MeshGroup& mesh_list, bool save_transform,
                        bool wait = false);
 
-  static bool import_point_file(QString filename, Eigen::VectorXd& points);
+  static bool import_point_file(std::string filename, Eigen::VectorXd& points);
 
   void apply_feature_to_points(std::string feature, ImageType::Pointer image);
   void load_feature_from_mesh(std::string feature, MeshHandle mesh);

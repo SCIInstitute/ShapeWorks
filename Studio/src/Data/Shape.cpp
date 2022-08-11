@@ -14,15 +14,11 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QMessageBox>
-#include <QTextStream>
 
 // vtk
 #include <Libs/Optimize/ParticleSystem/VtkMeshWrapper.h>
 #include <vtkKdTreePointLocator.h>
 #include <vtkPointData.h>
-
-#include <Eigen/Dense>
-#include <Eigen/Sparse>
 
 using ReaderType = itk::ImageFileReader<ImageType>;
 
@@ -39,9 +35,9 @@ Shape::Shape() {
 }
 
 //---------------------------------------------------------------------------
-QString Shape::get_display_name() {
+std::string Shape::get_display_name() {
   if (subject_ && subject_->get_display_name() != "") {
-    return QString::fromStdString(subject_->get_display_name());
+    return subject_->get_display_name();
   }
 
   return "";
@@ -161,7 +157,7 @@ void Shape::clear_reconstructed_mesh() {
 bool Shape::import_global_point_files(QStringList filenames) {
   for (int i = 0; i < filenames.size(); i++) {
     Eigen::VectorXd points;
-    if (!Shape::import_point_file(filenames[i], points)) {
+    if (!Shape::import_point_file(filenames[i].toStdString(), points)) {
       throw std::invalid_argument("Unable to import point file: " + filenames[i].toStdString());
     }
     this->global_point_filenames_.push_back(filenames[i].toStdString());
@@ -175,7 +171,7 @@ bool Shape::import_global_point_files(QStringList filenames) {
 bool Shape::import_local_point_files(QStringList filenames) {
   for (int i = 0; i < filenames.size(); i++) {
     Eigen::VectorXd points;
-    if (!Shape::import_point_file(filenames[i], points)) {
+    if (!Shape::import_point_file(filenames[i].toStdString(), points)) {
       throw std::invalid_argument("Unable to import point file: " + filenames[i].toStdString());
     }
     this->local_point_filenames_.push_back(filenames[i].toStdString());
@@ -194,7 +190,7 @@ bool Shape::import_landmarks_files(QStringList filenames) {
       continue;
     }
     Eigen::VectorXd points;
-    if (!Shape::import_point_file(filenames[i], points)) {
+    if (!Shape::import_point_file(filenames[i].toStdString(), points)) {
       throw std::invalid_argument("Unable to load landmarks file: " + filenames[i].toStdString());
     }
     total_count += points.size() / 3;
@@ -473,8 +469,8 @@ void Shape::generate_meshes(std::vector<std::string> filenames, MeshGroup& mesh_
 }
 
 //---------------------------------------------------------------------------
-bool Shape::import_point_file(QString filename, Eigen::VectorXd& points) {
-  return ParticleSystem::ReadParticleFile(filename.toStdString(), points);
+bool Shape::import_point_file(std::string filename, Eigen::VectorXd& points) {
+  return ParticleSystem::ReadParticleFile(filename, points);
 }
 
 //---------------------------------------------------------------------------

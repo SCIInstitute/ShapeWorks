@@ -47,7 +47,7 @@ void ExportUtils::export_all_subjects_particle_scalars(ShapeWorksStudioApp* pare
   QFileInfo fi(filename);
   QString base = fi.path() + QDir::separator() + fi.completeBaseName();
   for (const auto& shape : session->get_shapes()) {
-    QString shape_filename = base + "_" + shape->get_display_name() + "." + fi.completeSuffix();
+    QString shape_filename = base + "_" + QString::fromStdString(shape->get_display_name()) + "." + fi.completeSuffix();
 
     auto display_mode = session->get_display_mode();
     auto mesh_group = shape->get_meshes(display_mode, true);
