@@ -98,6 +98,7 @@ function install_conda() {
     openexr=2.5.3 \
     pybind11=2.5.0 \
     nlohmann_json=3.10.5 \
+    spdlog=1.10.0 \
     pkg-config=0.29.2
   then return 1; fi
 
