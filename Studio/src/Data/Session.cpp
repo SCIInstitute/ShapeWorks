@@ -1106,7 +1106,7 @@ Axis Session::get_image_axis() {
   if (axis == Axis::invalid) {
     axis = Axis::Z;
   }
-  return toAxis(axis_string);
+  return axis;
 }
 
 //---------------------------------------------------------------------------
