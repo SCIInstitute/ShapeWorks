@@ -36,11 +36,8 @@ class DeepSSMTool : public QWidget {
   /// set the pointer to the application
   void set_app(ShapeWorksStudioApp* app);
 
-  //! Set if this tool is active
-  void set_active(bool active);
-
   //! Return if this tool is active
-  bool get_active();
+  bool is_active();
 
   void load_params();
   void store_params();

@@ -51,10 +51,10 @@ QString Shape::get_display_name() {
 Shape::~Shape() = default;
 
 //---------------------------------------------------------------------------
-MeshGroup Shape::get_meshes(const std::string& display_mode, bool wait) {
-  if (display_mode == Session::MODE_ORIGINAL_C) {
+MeshGroup Shape::get_meshes(DisplayMode display_mode, bool wait) {
+  if (display_mode == DisplayMode::Original) {
     return this->get_original_meshes(wait);
-  } else if (display_mode == Session::MODE_GROOMED_C) {
+  } else if (display_mode == DisplayMode::Groomed) {
     return this->get_groomed_meshes(wait);
   }
   return this->get_reconstructed_meshes(wait);
@@ -93,6 +93,12 @@ void Shape::set_subject(std::shared_ptr<Subject> subject) {
 }
 
 //---------------------------------------------------------------------------
+bool Shape::is_subject()
+{
+  return subject_ != nullptr;
+}
+
+//---------------------------------------------------------------------------
 std::shared_ptr<Subject> Shape::get_subject() { return this->subject_; }
 
 //---------------------------------------------------------------------------
@@ -106,6 +112,7 @@ MeshGroup Shape::get_original_meshes(bool wait) {
   if (!this->subject_) {
     std::cerr << "Error: asked for original mesh when none is present!\n";
     assert(0);
+    return original_meshes_;
   }
 
   if (!this->original_meshes_.valid()) {
@@ -130,10 +137,10 @@ MeshGroup Shape::get_groomed_meshes(bool wait) {
 //---------------------------------------------------------------------------
 MeshGroup Shape::get_reconstructed_meshes(bool wait) {
   if (!this->reconstructed_meshes_.valid()) {
-    auto worlds = this->particles_.get_world_particles();
-    this->reconstructed_meshes_.set_number_of_meshes(worlds.size());
-    for (int i = 0; i < worlds.size(); i++) {
-      MeshHandle mesh = this->mesh_manager_->get_mesh(worlds[i], i);
+    auto locals = this->particles_.get_local_particles();
+    this->reconstructed_meshes_.set_number_of_meshes(locals.size());
+    for (int i = 0; i < locals.size(); i++) {
+      MeshHandle mesh = this->mesh_manager_->get_mesh(locals[i], i);
       if (mesh) {
         this->reconstructed_meshes_.set_mesh(i, mesh);
       }
@@ -274,9 +281,7 @@ bool Shape::import_constraints(QStringList filenames) {
 bool Shape::store_constraints() {
   auto filenames = subject_->get_constraints_filenames();
   while (filenames.size() < subject_->get_original_filenames().size()) {
-    std::string filename = subject_->get_original_filenames()[filenames.size()];
-    filename = StringUtils::getBaseFilenameWithoutExtension(filename) + "_constraints.json";
-    filenames.push_back(filename);
+    filenames.push_back("");
   }
 
   if (constraints_.empty()) {
@@ -286,6 +291,11 @@ bool Shape::store_constraints() {
   bool has_constraints = false;
 
   for (int i = 0; i < filenames.size(); i++) {
+    if (filenames[i] == "") {
+      std::string filename = subject_->get_original_filenames()[i];
+      filename = StringUtils::getBaseFilenameWithoutExtension(filename) + "_constraints.json";
+      filenames[i] = filename;
+    }
     if (get_constraints(i).hasConstraints()) {
       has_constraints = true;
     }
@@ -491,7 +501,7 @@ bool Shape::import_point_file(QString filename, Eigen::VectorXd& points) {
 }
 
 //---------------------------------------------------------------------------
-void Shape::load_feature(std::string display_mode, std::string feature) {
+void Shape::load_feature(DisplayMode display_mode, std::string feature) {
   auto group = get_meshes(display_mode);
   if (!group.valid()) {
     // not ready yet
@@ -512,8 +522,10 @@ void Shape::load_feature(std::string display_mode, std::string feature) {
     if (scalar_array) {
       auto point_features = get_point_features(feature);
       if (point_features.size() == 0) {
-        auto original_meshes = this->get_original_meshes(true).meshes();
-        this->load_feature_from_mesh(feature, original_meshes[d]);
+        auto original_meshes = this->get_original_meshes(true);
+        if (original_meshes.valid()) {
+          load_feature_from_mesh(feature, original_meshes.meshes()[d]);
+        }
       }
       return;
     }
@@ -525,7 +537,7 @@ void Shape::load_feature(std::string display_mode, std::string feature) {
       // first check if we have particle scalars for this feature
       auto point_features = get_point_features(feature);
       if (point_features.size() > 0 &&
-          display_mode == Session::MODE_RECONSTRUCTION_C) {  // already loaded as particle scalars
+          display_mode == DisplayMode::Reconstructed) {  // already loaded as particle scalars
         set_point_features(feature, point_features);
       } else {
         // next check if there is a feature filename
@@ -668,6 +680,9 @@ Eigen::VectorXf Shape::get_point_features(std::string feature) {
 
 //---------------------------------------------------------------------------
 vtkSmartPointer<vtkTransform> Shape::get_groomed_transform(int domain) {
+  if (!subject_) {
+    return nullptr;
+  }
   auto transforms = this->subject_->get_groomed_transforms();
   if (domain < 0) {  // global alignment is stored at the end
     domain = transforms.size() - 1;
@@ -701,11 +716,11 @@ std::vector<vtkSmartPointer<vtkTransform>> Shape::get_procrustest_transforms() {
 void Shape::set_point_features(std::string feature, Eigen::VectorXf values) {
   this->point_features_[feature] = values;
 
-  auto group = this->get_meshes(Session::MODE_RECONSTRUCTION_C);
+  auto group = this->get_meshes(DisplayMode::Reconstructed);
 
   if (group.valid()) {
     for (auto mesh : group.meshes()) {
-      mesh->interpolate_scalars_to_mesh(feature, this->get_global_correspondence_points(), values);
+      mesh->interpolate_scalars_to_mesh(feature, this->get_local_correspondence_points(), values);
     }
   }
 }
@@ -735,23 +750,23 @@ vtkSmartPointer<vtkTransform> Shape::get_reconstruction_transform(int domain) {
 }
 
 //---------------------------------------------------------------------------
-Eigen::VectorXd Shape::get_global_correspondence_points_for_display() {
-  auto worlds = this->particles_.get_world_particles();
+Eigen::VectorXd Shape::get_correspondence_points_for_display() {
+  auto locals = this->particles_.get_local_particles();
   int size = 0;
-  for (int i = 0; i < worlds.size(); i++) {
-    size += worlds[i].size();
+  for (int i = 0; i < locals.size(); i++) {
+    size += locals[i].size();
   }
   Eigen::VectorXd points;
   points.resize(size);
 
   int idx = 0;
-  for (int i = 0; i < worlds.size(); i++) {
-    for (int j = 0; j < worlds[i].size(); j += 3) {
+  for (int i = 0; i < locals.size(); i++) {
+    for (int j = 0; j < locals[i].size(); j += 3) {
       double p[3];
-      p[0] = worlds[i][j + 0];
-      p[1] = worlds[i][j + 1];
-      p[2] = worlds[i][j + 2];
-      if (this->reconstruction_transforms_.size() > i) {
+      p[0] = locals[i][j + 0];
+      p[1] = locals[i][j + 1];
+      p[2] = locals[i][j + 2];
+      if (this->reconstruction_transforms_.size() > i && !subject_) { // only computed shapes
         double* pt = this->reconstruction_transforms_[i]->TransformPoint(p);
         points[idx++] = pt[0];
         points[idx++] = pt[1];

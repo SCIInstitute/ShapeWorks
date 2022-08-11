@@ -46,6 +46,7 @@ call pip install mkdocs==1.1.2
 call pip install python-markdown-math==0.8
 call pip install fontawesome-markdown==0.2.6
 call pip install pymdown-extensions==8.0.1
+call pip install jinja2==3.0.3
 
 REM install the local GirderConnector code as a package
 call pip install Python/DatasetUtilsPackage
@@ -75,5 +76,6 @@ call jupyter nbextension enable toc2/main
 
 md %USERPROFILE%\.shapeworks
 python -c "import sys; print('\n'.join(sys.path))" > %USERPROFILE%\.shapeworks\python_path.txt
+python -c "import sys; print(sys.prefix)" > %USERPROFILE%\.shapeworks\python_home.txt
 echo %PATH% > %USERPROFILE%\.shapeworks\path.txt
 call conda info

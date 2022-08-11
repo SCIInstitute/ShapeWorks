@@ -33,7 +33,7 @@ jobs:
         sudo chown -R $UID $CONDA
         conda init zsh
         source ~/.zshrc
-        brew install ccache md5sha1sum pigz gnu-tar
+        brew install ccache pigz gnu-tar coreutils
 
     - name: Acquire 10.15 SDK
       run: |
@@ -127,5 +127,5 @@ jobs:
 
     - name: Copy artifact
       shell: bash -l {0}
-      run: .github/workflows/copy_artifact.sh artifact-${{github.sha}}-mac ${{runner.workspace}}/ShapeWorks/artifacts
+      run: cd ${{runner.workspace}}/ShapeWorks && ${GITHUB_WORKSPACE}/.github/workflows/copy_artifact.sh artifact-${{github.sha}}-mac artifacts
       

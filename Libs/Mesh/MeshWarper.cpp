@@ -55,8 +55,11 @@ void MeshWarper::set_reference_mesh(vtkSmartPointer<vtkPolyData> reference_mesh,
     }
   }
 
+  // clone with DeepCopy for thread safety
+  incoming_reference_mesh_ = vtkSmartPointer<vtkPolyData>::New();
+  incoming_reference_mesh_->DeepCopy(reference_mesh);
+
   this->landmarks_points_ = landmarks;
-  this->incoming_reference_mesh_ = reference_mesh;
   this->reference_particles_ = reference_particles;
 
   // mark that the warp needs to be generated
@@ -482,8 +485,8 @@ bool MeshWarper::find_landmarks_vertices_on_ref_mesh() {
   for (int i = 0; i < this->landmarks_points_.rows(); i++) {
     double p[3]{this->landmarks_points_(i, 0), this->landmarks_points_(i, 1), this->landmarks_points_(i, 2)};
     int id = tree->FindClosestPoint(p);
-    landmarks_map_.insert({id, i});
-    // std::cout << "Vertex id: " << id << " Landmark id: " << i <<  std::endl;
+    landmarks_map_.insert({i, id});
+    //  std::cout << "Landmark id: " << i << " Vertex id: " << id << std::endl;
   }
   return true;
 }
@@ -522,8 +525,8 @@ Eigen::MatrixXd MeshWarper::extract_landmarks(vtkSmartPointer<vtkPolyData> warpe
 
     for (auto ids : landmarks_map_)
     {
-        auto id_landmark = ids.second;
-        auto id_vertice = ids.first;
+        auto id_landmark = ids.first;
+        auto id_vertice = ids.second;
 
         landmarks(id_landmark, 0) = data_array->GetComponent(id_vertice, 0);
         landmarks(id_landmark, 1) = data_array->GetComponent(id_vertice, 1);

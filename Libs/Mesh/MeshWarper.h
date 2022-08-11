@@ -48,8 +48,11 @@ class MeshWarper {
   //! Return if set as a contour
   bool is_contour() { return this->is_contour_; }
 
-  //! Return the map of landmarks to vertices
-  std::map<int, int> get_landmarks_map() { return landmarks_map_; }
+  //! Return the map of landmarks id (Key) to vertice index (Value)
+  std::map<int, int> get_landmarks_map() const { return landmarks_map_; }
+
+  //! Return the indexes of good particles (those that really control the warping)
+  std::vector<int> get_good_particle_indices() const { return good_particles_; }
 
   //! Return the warp matrix
   const Eigen::MatrixXd& get_warp_matrix() const { return this->warp_; }
@@ -117,7 +120,7 @@ class MeshWarper {
 
   bool warp_available_ = false;
 
-  std::map<int, int> landmarks_map_;  // map landmark vertex(point) id in (clean)Reference mesh to the landmarks id
+  std::map<int, int> landmarks_map_;  // map the landmarks id (Key) to the vertex(point) id (Value) belonging to the clean Reference mesh
   //! Reference mesh as it was given to us
   vtkSmartPointer<vtkPolyData> incoming_reference_mesh_;
   //! Processed reference mesh

@@ -26,8 +26,8 @@ nav:
 - Workflow:
    - 'How to Groom Your Dataset?':           'workflow/groom.md'
    - Shape Model Optimization:
-      - 'How to Optimize Your Shape Model?' :   'workflow/optimize.md'
-      - 'How to Step Up Optimization?':          'workflow/parameters.md'
+      - 'How to Optimize Your Shape Model?': 'workflow/optimize.md'
+      - 'Optimization Parameters':           'workflow/parameters.md'
    - 'How to Analyze Your Shape Model?' :    'workflow/analyze.md'     
 - What is New?:
    - 'New in ShapeWorks Studio':             'new/new-studio.md'
@@ -37,13 +37,18 @@ nav:
    - 'Shape Model Evaluation':               'new/ssm-eval.md'
    - 'ShapeWorks in Python':                 'new/shapeworks-python.md'
    - 'Ellipsoid Joint Generation':           'new/ellipsoid-joint-generation.md'
+- ShapeWorks Studio:
+   - 'Getting Started': 'studio/getting-started-with-studio.md'
+   - 'Viewer Controls': 'studio/studio-viewer.md'
+   - 'Export Options': 'studio/studio-export.md'
+   - 'Data Module': 'studio/studio-data.md'
+   - 'Groom Module': 'studio/studio-groom.md'
+   - 'Optimize Module': 'studio/studio-optimize.md'
+   - 'Analyze Module': 'studio/studio-analyze.md'
+   - 'DeepSSM Module': 'studio/deepssm-in-studio.md'
+   - 'Multiple Domains SSM': 'studio/multiple-domains.md'
 - ShapeWorks Tools:
    - 'ShapeWorks Commands': 'tools/ShapeWorksCommands.md'
-- ShapeWorks Studio:
-   - 'Getting Started With ShapeWorks Studio': 'studio/getting-started-with-studio.md'
-   - 'Multiple Domains SSM': 'studio/multiple-domains.md'
-   - 'DeepSSM in Studio': 'studio/deepssm-in-studio.md'
-   - 'Using Constraints in Studio': 'studio/using-constraints.md'
 - ShapeWorks in Python:
    - 'Getting Started with Notebooks' :               'notebooks/getting-started-with-notebooks.ipynb'
    - 'Getting Started with Segmentations' :           'notebooks/getting-started-with-segmentations.ipynb'

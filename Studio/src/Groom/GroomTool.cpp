@@ -27,16 +27,20 @@ GroomTool::GroomTool(Preferences& prefs) : preferences_(prefs) {
   connect(ui_->mesh_header, &QPushButton::clicked, ui_->mesh_open_button, &QPushButton::toggle);
   connect(ui_->alignment_open_button, &QPushButton::toggled, ui_->alignment_content, &QWidget::setVisible);
   connect(ui_->alignment_header, &QPushButton::clicked, ui_->alignment_open_button, &QPushButton::toggle);
+  connect(ui_->domain_open_button, &QPushButton::toggled, ui_->domain_content, &QWidget::setVisible);
+  connect(ui_->domain_header, &QPushButton::clicked, ui_->domain_open_button, &QPushButton::toggle);
 
   connect(ui_->alignment_image_checkbox, &QCheckBox::stateChanged, this, &GroomTool::alignment_checkbox_changed);
   connect(ui_->alignment_box, qOverload<int>(&QComboBox::currentIndexChanged), this,
           &GroomTool::alignment_option_changed);
 
   connect(ui_->convert_mesh_checkbox, &QCheckBox::stateChanged, this, &GroomTool::update_page);
+  connect(ui_->apply_to_all_domains, &QCheckBox::stateChanged, this, &GroomTool::apply_to_all_domains_changed);
 
   ui_->image_label->setAttribute(Qt::WA_TransparentForMouseEvents);
   ui_->mesh_label->setAttribute(Qt::WA_TransparentForMouseEvents);
   ui_->alignment_label->setAttribute(Qt::WA_TransparentForMouseEvents);
+  ui_->domain_label->setAttribute(Qt::WA_TransparentForMouseEvents);
 
   ui_->alignment_image_checkbox->setToolTip("Pre-alignment options");
   ui_->isolate_checkbox->setToolTip("Isolate the largest object in the image segmentation");
@@ -138,22 +142,23 @@ void GroomTool::on_autopad_checkbox_stateChanged(int state) {
 
 //---------------------------------------------------------------------------
 void GroomTool::handle_error(QString msg) {
-  this->groom_is_running_ = false;
+  groom_is_running_ = false;
   emit error_message(msg);
-  this->enable_actions();
+  emit progress(100);
+  enable_actions();
 }
 
 //---------------------------------------------------------------------------
 void GroomTool::handle_progress(int val) {
-  if (this->groom_is_running_) {
+  if (groom_is_running_) {
     emit progress(val);
   }
 }
 
 //---------------------------------------------------------------------------
 void GroomTool::on_restore_defaults_clicked() {
-  this->session_->get_project()->clear_parameters(Parameters::GROOM_PARAMS);
-  this->load_params();
+  session_->get_project()->clear_parameters(Parameters::GROOM_PARAMS);
+  load_params();
 }
 
 //---------------------------------------------------------------------------
@@ -161,7 +166,11 @@ void GroomTool::update_page() {
   int domain_id = ui_->domain_box->currentIndex();
 
   auto subjects = session_->get_project()->get_subjects();
-  if (session_->get_project()->get_original_domain_types().size() > domain_id) {
+  int num_domains = session_->get_project()->get_original_domain_types().size();
+  if (domain_id < 0) {
+    domain_id = 0;
+  }
+  if (domain_id < num_domains) {
     bool is_image = session_->get_project()->get_original_domain_types()[domain_id] == DomainType::Image;
     bool is_mesh = session_->get_project()->get_original_domain_types()[domain_id] == DomainType::Mesh;
 
@@ -170,12 +179,48 @@ void GroomTool::update_page() {
     } else {
       ui_->image_panel->hide();
     }
-    if (is_mesh || (is_image && this->ui_->convert_mesh_checkbox->isChecked())) {
+    if (is_mesh || (is_image && ui_->convert_mesh_checkbox->isChecked())) {
       ui_->mesh_panel->show();
     } else {
       ui_->mesh_panel->hide();
     }
   }
+}
+
+//---------------------------------------------------------------------------
+void GroomTool::update_domain_box() {
+  auto domain_names = session_->get_project()->get_domain_names();
+  ui_->domain_panel->setVisible(domain_names.size() > 1);
+
+  if (domain_names.size() != ui_->domain_box->count()) {
+    ui_->domain_box->clear();
+    for (auto& item : domain_names) {
+      ui_->domain_box->addItem(QString::fromStdString(item));
+    }
+  }
+
+  ui_->domain_box->setEnabled(!ui_->apply_to_all_domains->isChecked());
+  ui_->current_domain_label->setEnabled(!ui_->apply_to_all_domains->isChecked());
+  if (ui_->apply_to_all_domains->isChecked()) {
+    current_domain_ = "";
+    ui_->domain_box->clear();
+  }
+}
+
+//---------------------------------------------------------------------------
+void GroomTool::apply_to_all_domains_changed() {
+  store_params();
+  // store as global settings immediately
+  for (const auto& domain_name : session_->get_project()->get_domain_names()) {
+    auto params = GroomParameters(session_->get_project(), domain_name);
+    params.set_groom_all_domains_the_same(ui_->apply_to_all_domains->isChecked());
+    params.save_to_project();
+  }
+  auto params = GroomParameters(session_->get_project(), "");
+  params.set_groom_all_domains_the_same(ui_->apply_to_all_domains->isChecked());
+  params.save_to_project();
+
+  update_domain_box();
 }
 
 //---------------------------------------------------------------------------
@@ -187,17 +232,17 @@ void GroomTool::update_reflect_columns() {
   auto headers = project->get_headers();
 
   QStringList reflect_columns;
-  for (const auto &header : headers) {
+  for (const auto& header : headers) {
     if (header != "") {
       reflect_columns << QString::fromStdString(header);
     }
   }
 
-  if (reflect_columns != this->reflect_columns_) {
-    this->ui_->reflect_column->clear();
-    this->ui_->reflect_column->addItems(reflect_columns);
+  if (reflect_columns != reflect_columns_) {
+    ui_->reflect_column->clear();
+    ui_->reflect_column->addItems(reflect_columns);
   }
-  this->reflect_columns_ = reflect_columns;
+  reflect_columns_ = reflect_columns;
 }
 
 //---------------------------------------------------------------------------
@@ -222,19 +267,19 @@ void GroomTool::load_params() {
   auto params = GroomParameters(session_->get_project(), current_domain_);
   set_ui_from_params(params);
 
-  this->update_page();
-  this->update_reflect_columns();
+  update_page();
+  update_reflect_columns();
 }
 
 //---------------------------------------------------------------------------
 void GroomTool::disable_actions() {
   ui_->skip_button->setEnabled(false);
-  // this->ui_->run_groom_button->setEnabled(false);
+  // ui_->run_groom_button->setEnabled(false);
 }
 
 //---------------------------------------------------------------------------
 void GroomTool::enable_actions() {
-  // this->ui_->run_groom_button->setEnabled(true);
+  // ui_->run_groom_button->setEnabled(true);
 
   if (groom_is_running_) {
     ui_->skip_button->setEnabled(false);
@@ -247,6 +292,8 @@ void GroomTool::enable_actions() {
 
 //---------------------------------------------------------------------------
 void GroomTool::set_ui_from_params(GroomParameters params) {
+  ui_->apply_to_all_domains->setChecked(params.get_groom_all_domains_the_same());
+
   ui_->alignment_image_checkbox->setChecked(params.get_alignment_enabled());
 
   auto alignment = params.get_alignment_method();
@@ -373,17 +420,27 @@ void GroomTool::store_params() {
 
   params.save_to_project();
 
+  if (ui_->apply_to_all_domains->isChecked()) {
+    for (const auto& domain_name : session_->get_project()->get_domain_names()) {
+      params.set_domain_name(domain_name);
+      params.save_to_project();
+    }
+    params.set_domain_name("");
+    params.save_to_project();
+  }
+
   // global settings
   for (const auto& domain_name : session_->get_project()->get_domain_names()) {
     params = GroomParameters(session_->get_project(), domain_name);
     params.set_groom_output_prefix(preferences_.get_groom_file_template().toStdString());
+    params.set_groom_all_domains_the_same(ui_->apply_to_all_domains->isChecked());
     params.save_to_project();
   }
 }
 
 //---------------------------------------------------------------------------
 void GroomTool::on_run_groom_button_clicked() {
-  if (this->groom_is_running_) {
+  if (groom_is_running_) {
     shutdown_threads();
     groom_is_running_ = false;
     enable_actions();
@@ -436,7 +493,7 @@ void GroomTool::on_run_groom_button_clicked() {
   worker->moveToThread(thread);
   connect(thread, SIGNAL(started()), worker, SLOT(process()));
   connect(worker, &ShapeworksWorker::finished, this, &GroomTool::handle_thread_complete);
-  connect(this->groom_.data(), &QGroom::progress, this, &GroomTool::handle_progress);
+  connect(groom_.data(), &QGroom::progress, this, &GroomTool::handle_progress);
   connect(worker, &ShapeworksWorker::error_message, this, &GroomTool::handle_error);
   connect(worker, &ShapeworksWorker::message, this, &GroomTool::message);
   connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
@@ -450,13 +507,11 @@ void GroomTool::on_run_groom_button_clicked() {
 void GroomTool::handle_thread_complete() {
   emit progress(95);
 
-  QString duration = QString::number(this->timer_.elapsed() / 1000.0, 'f', 1);
+  QString duration = QString::number(timer_.elapsed() / 1000.0, 'f', 1);
   emit message("Groom Complete.  Duration: " + duration + " seconds");
 
   // trigger reload of meshes
-  Q_FOREACH (auto shape, session_->get_shapes()) {
-    shape->reset_groomed_mesh();
-  }
+  Q_FOREACH (auto shape, session_->get_shapes()) { shape->reset_groomed_mesh(); }
 
   emit progress(100);
   emit groom_complete();
@@ -502,24 +557,18 @@ void GroomTool::on_skip_button_clicked() {
 //---------------------------------------------------------------------------
 void GroomTool::set_session(QSharedPointer<Session> session) {
   session_ = session;
-  this->update_reflect_choices();
+  ui_->domain_box->clear();
+  update_reflect_choices();
+  load_params();
 }
 
 //---------------------------------------------------------------------------
 void GroomTool::activate() {
   auto subjects = session_->get_project()->get_subjects();
 
-  auto domain_names = session_->get_project()->get_domain_names();
-  ui_->domain_box->setVisible(domain_names.size() > 1);
+  update_domain_box();
 
-  if (domain_names.size() != ui_->domain_box->count()) {
-    ui_->domain_box->clear();
-    for (auto&& item : domain_names) {
-      ui_->domain_box->addItem(QString::fromStdString(item));
-    }
-  }
-
-  this->update_page();
+  update_page();
 }
 
 //---------------------------------------------------------------------------
@@ -540,7 +589,7 @@ void GroomTool::reflect_checkbox_changed(int state) {
 //---------------------------------------------------------------------------
 void GroomTool::reflect_column_changed(int index) {
   ui_->reflect_column->setCurrentIndex(index);
-  this->update_reflect_choices();
+  update_reflect_choices();
 }
 
 //---------------------------------------------------------------------------
@@ -559,7 +608,7 @@ void GroomTool::shutdown_threads() {
 
   for (size_t i = 0; i < threads_.size(); i++) {
     if (threads_[i]->isRunning()) {
-      std::cerr << "waiting...\n";
+      std::cerr << "waiting for grooming thread...\n";
       threads_[i]->wait(1000);
       std::cerr << "done waiting...\n";
     }

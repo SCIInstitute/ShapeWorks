@@ -338,7 +338,9 @@ bool Groom::run_mesh_pipeline(Mesh& mesh, GroomParameters params) {
     if (params.get_remesh_percent_mode()) {
       num_vertices = total_vertices * params.get_remesh_percent() / 100.0;
     }
-    mesh.remesh(num_vertices, params.get_remesh_gradation());
+    num_vertices = std::max<int>(num_vertices, 25);
+    double gradation = clamp<double>(params.get_remesh_gradation(), 0.0, 2.0);
+    mesh.remesh(num_vertices, gradation);
     this->increment_progress();
   }
 

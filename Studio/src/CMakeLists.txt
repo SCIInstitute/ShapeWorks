@@ -91,6 +91,7 @@ SET(STUDIO_DATA_SRCS
   Data/PreferencesWindow.cpp
   Data/Session.cpp
   Data/Shape.cpp
+  Data/StudioEnums.cpp
   Data/StudioLog.cpp
   Data/StudioMesh.cpp
   Data/StudioParticles.cpp
@@ -186,6 +187,7 @@ SET(STUDIO_UTILS_MOC_HDRS
   )
 
 SET(STUDIO_INTERFACE_SRCS
+  Interface/CompareWidget.cpp
   Interface/ExportImageDialog.cpp
   Interface/KeyboardShortcuts.cpp
   Interface/LogWindow.cpp
@@ -196,6 +198,7 @@ SET(STUDIO_INTERFACE_SRCS
   Interface/WheelEventForwarder.cpp
   )
 SET(STUDIO_INTERFACE_MOC_HDRS
+  Interface/CompareWidget.h
   Interface/ExportImageDialog.h
   Interface/KeyboardShortcuts.h
   Interface/LogWindow.h

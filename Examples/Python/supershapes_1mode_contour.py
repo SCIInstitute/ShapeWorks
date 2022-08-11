@@ -83,12 +83,13 @@ def Run_Pipeline(args):
         "save_init_splits" : 0,
         "verbosity" : 0,
         "multiscale": 1,
-        "multiscale_particles": 4,
+        "multiscale_particles": 8,
       }
     # If running a tiny test, reduce some parameters
     if args.tiny_test:
         parameter_dictionary["number_of_particles"] = 32
         parameter_dictionary["optimization_iterations"] = 25
+        parameter_dictionary["multiscale_particles"] = 4
 
     # Add param dictionary to spreadsheet
     for key in parameter_dictionary:

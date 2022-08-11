@@ -102,7 +102,7 @@ void StudioParticles::set_world_particles(int domain, Eigen::VectorXd particles)
 }
 
 //---------------------------------------------------------------------------
-Eigen::VectorXd StudioParticles::get_combined_local_particles() { return combine(local_particles_); }
+Eigen::VectorXd StudioParticles::get_combined_local_particles() const { return combine(local_particles_); }
 
 //---------------------------------------------------------------------------
 Eigen::VectorXd StudioParticles::get_combined_global_particles() const {

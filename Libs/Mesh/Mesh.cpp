@@ -413,6 +413,19 @@ Mesh& Mesh::fillHoles() {
   return *this;
 }
 
+Mesh &Mesh::clean() {
+  auto clean = vtkSmartPointer<vtkCleanPolyData>::New();
+  clean->ConvertPolysToLinesOff();
+  clean->ConvertLinesToPointsOff();
+  clean->ConvertStripsToPolysOff();
+  clean->PointMergingOn();
+  clean->SetInputData(poly_data_);
+  clean->Update();
+  poly_data_ = clean->GetOutput();
+  invalidateLocators();
+  return *this;
+}
+
 Mesh& Mesh::probeVolume(const Image& image) {
   auto probeFilter = vtkSmartPointer<vtkProbeFilter>::New();
   probeFilter->SetInputData(this->poly_data_);
@@ -1306,7 +1319,6 @@ bool Mesh::prepareFFCFields(std::vector<std::vector<Eigen::Vector3d>> boundaries
   }
 
   for (size_t bound = 0; bound < boundaries.size(); bound++) {
-    // std::cout << "Boundaries " << bound << " size " << boundaries[bound].size() << std::endl;
 
     // Creating cutting loop
     vtkPoints* selectionPoints = vtkPoints::New();
@@ -1337,33 +1349,16 @@ bool Mesh::prepareFFCFields(std::vector<std::vector<Eigen::Vector3d>> boundaries
         boundaryVerts.push_back(ptid);
       }
 
-      /* AKM: I'm not convinced this dijkstra stuff is necessary.  It's super slow with multiple dense boundaries.
-       * Assuming the free form constraint is defined by the user in Studio, it will be very dense already and there is
-       * no
-       * requirement of vtkSelectPolyData that a contigious set of vertices be supplied.  Indeed, they need not even be
-       * vertices */
-
       // If the current and last vertices are different, then add all vertices in the path to the boundaryVerts list
       if (lastId != ptid) {
-        // std::cout << pt[0] << " " << pt[1] << " " << pt[2] << " -> " << ptdob[0] << " " << ptdob[1] << " " <<
-        // ptdob[2] << std::endl;
-        // Add points in path
-        dijkstra->SetStartVertex(lastId);
-        dijkstra->SetEndVertex(ptid);
-        dijkstra->Update();
-        vtkSmartPointer<vtkIdList> idL = dijkstra->GetIdList();
-        for (size_t j = 1; j < idL->GetNumberOfIds(); j++) {
-          vtkIdType id = idL->GetId(j);
-          Point3 pathpt;
-          pathpt = getPoint(ptid);
-          selectionPoints->InsertNextPoint(pathpt[0], pathpt[1], pathpt[2]);
-          boundaryVerts.push_back(id);
-        }
+        Point3 pathpt;
+        pathpt = getPoint(ptid);
+        selectionPoints->InsertNextPoint(pathpt[0], pathpt[1], pathpt[2]);
+        boundaryVerts.push_back(ptid);
       }
+
       lastId = ptid;
     }
-
-    // std::cout << "Number of boundary vertices " << boundaryVerts.size() << std::endl;
 
     if (selectionPoints->GetNumberOfPoints() < 3) {
       /// TODO: log an event that this occurred.  It's not really fatal as we may be applying to a mesh where this

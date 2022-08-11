@@ -32,6 +32,7 @@
 #include <Data/StudioLog.h>
 #include <DeepSSM/DeepSSMTool.h>
 #include <Groom/GroomTool.h>
+#include <Interface/CompareWidget.h>
 #include <Interface/ExportImageDialog.h>
 #include <Interface/KeyboardShortcuts.h>
 #include <Interface/ShapeWorksStudioApp.h>
@@ -138,7 +139,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
 
   // set to import
   ui_->action_import_mode->setChecked(true);
-  ui_->stacked_widget->setCurrentIndex(VIEW_MODE::ORIGINAL);
+  ui_->stacked_widget->setCurrentIndex(DisplayMode::Original);
 
   action_group_ = new QActionGroup(this);
   action_group_->addAction(ui_->action_import_mode);
@@ -190,6 +191,9 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
 
   connect(ui_->alignment_combo, qOverload<int>(&QComboBox::currentIndexChanged), this,
           &ShapeWorksStudioApp::handle_alignment_changed);
+
+  create_compare_submenu();
+
   // regression tool TODO
   /*analysis_tool_ = QSharedPointer<AnalysisTool> (new AnalysisTool());
      analysis_tool_->set_project( session_ );
@@ -200,12 +204,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
 
   update_from_preferences();
   update_display();
-
-  // setup modes
   update_view_combo();
-  // set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, true);
-  // set_view_combo_item_enabled(VIEW_MODE::GROOMED, false);
-  // set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, should_reconstruct_view_show());
 
   connect(ui_->features, qOverload<const QString&>(&QComboBox::currentIndexChanged), this,
           &ShapeWorksStudioApp::update_feature_map_selection);
@@ -354,9 +353,8 @@ void ShapeWorksStudioApp::on_action_import_triggered() {
   preferences_.set_last_directory(QFileInfo(filenames[0]).absolutePath());
 
   // need to re-run everything if something new is added.
-  set_view_mode(Session::MODE_ORIGINAL_C);
+  session_->set_display_mode(DisplayMode::Original);
 
-  visualizer_->set_display_mode(ui_->view_mode_combobox->currentText().toStdString());
   import_files(filenames);
 
   visualizer_->update_lut();
@@ -612,6 +610,12 @@ void ShapeWorksStudioApp::handle_pca_update() {
 }
 
 //---------------------------------------------------------------------------
+void ShapeWorksStudioApp::clear_message()
+{
+  current_message_ = "";
+}
+
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_message(QString str) {
   if (str != current_message_) {
     STUDIO_LOG_MESSAGE(str);
@@ -753,6 +757,21 @@ void ShapeWorksStudioApp::create_iso_submenu() {
 }
 
 //---------------------------------------------------------------------------
+void ShapeWorksStudioApp::create_compare_submenu() {
+  compare_widget_ = new CompareWidget(this);
+  connect(compare_widget_, &CompareWidget::settings_changed, this,
+          &ShapeWorksStudioApp::handle_compare_settings_changed);
+  connect(ui_->compare, &QToolButton::toggled, this, &ShapeWorksStudioApp::handle_compare_settings_changed);
+
+  QMenu* menu = new QMenu();
+
+  QWidgetAction* widget_action = new QWidgetAction(compare_widget_);
+  widget_action->setDefaultWidget(compare_widget_);
+  menu->addAction(widget_action);
+  ui_->compare->setMenu(menu);
+}
+
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_new_mesh() {
   visualizer_->handle_new_mesh();
 
@@ -773,6 +792,15 @@ void ShapeWorksStudioApp::handle_clear_cache() {
   handle_pca_changed();
   if (session_) {
     session_->handle_clear_cache();
+  }
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::handle_compare_settings_changed() {
+  if (session_) {
+    auto settings = compare_widget_->get_settings();
+    settings.compare_enabled_ = ui_->compare->isChecked();
+    session_->set_compare_settings(settings);
   }
 }
 
@@ -841,7 +869,7 @@ void ShapeWorksStudioApp::new_session() {
   update_display(true);
   visualizer_->update_viewer_properties();
 
-  ui_->view_mode_combobox->setCurrentIndex(VIEW_MODE::ORIGINAL);
+  ui_->view_mode_combobox->setCurrentIndex(DisplayMode::Original);
 }
 
 //---------------------------------------------------------------------------
@@ -859,7 +887,7 @@ void ShapeWorksStudioApp::update_tool_mode() {
   if (tool_state == Session::ANALYSIS_C) {
     ui_->stacked_widget->setCurrentWidget(analysis_tool_.data());
     ui_->controlsDock->setWindowTitle("Analysis");
-    set_view_mode(Session::MODE_RECONSTRUCTION_C);
+    session_->set_display_mode(DisplayMode::Reconstructed);
     on_actionShow_Tool_Window_triggered();
     update_display(true);
     ui_->action_analysis_mode->setChecked(true);
@@ -867,14 +895,14 @@ void ShapeWorksStudioApp::update_tool_mode() {
     ui_->stacked_widget->setCurrentWidget(groom_tool_.data());
     groom_tool_->activate();
     ui_->controlsDock->setWindowTitle("Groom");
-    set_view_mode(Session::MODE_ORIGINAL_C);
+    session_->set_display_mode(DisplayMode::Original);
     ui_->action_groom_mode->setChecked(true);
   } else if (tool_state == Session::OPTIMIZE_C) {
     ui_->stacked_widget->setCurrentWidget(optimize_tool_.data());
     optimize_tool_->activate();
     ui_->controlsDock->setWindowTitle("Optimize");
     if (session_->groomed_present()) {
-      set_view_mode(Session::MODE_GROOMED_C);
+      session_->set_display_mode(DisplayMode::Groomed);
     }
     update_display();
     ui_->action_optimize_mode->setChecked(true);
@@ -883,10 +911,10 @@ void ShapeWorksStudioApp::update_tool_mode() {
     ui_->controlsDock->setWindowTitle("DeepSSM");
     update_display();
     ui_->action_deepssm_mode->setChecked(true);
-    set_view_mode(Session::MODE_RECONSTRUCTION_C);
+    session_->set_display_mode(DisplayMode::Reconstructed);
   } else {  // DATA
     ui_->stacked_widget->setCurrentWidget(data_tool_.data());
-    // ui_->stacked_widget->setCurrentIndex(VIEW_MODE::ORIGINAL);
+    // ui_->stacked_widget->setCurrentIndex(DisplayMode::Original);
     ui_->controlsDock->setWindowTitle("Data");
     ui_->action_import_mode->setChecked(true);
     update_display();
@@ -901,15 +929,14 @@ void ShapeWorksStudioApp::update_tool_mode() {
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::update_view_mode() {
-  auto view_mode = get_view_mode();
-  ui_->view_mode_combobox->setCurrentText(QString::fromStdString(view_mode));
+  auto view_mode = session_->get_display_mode();
+  ui_->view_mode_combobox->setCurrentText(QString::fromStdString(display_mode_to_string(view_mode)));
   update_view_combo();
 
   auto feature_map = get_feature_map();
   ui_->features->setCurrentText(QString::fromStdString(feature_map));
 
   if (visualizer_) {
-    visualizer_->set_display_mode(view_mode);
     if (feature_map == "-none-") {
       feature_map = "";
     }
@@ -921,7 +948,10 @@ void ShapeWorksStudioApp::update_view_mode() {
     }
 
     std::string feature_map_override = "";
-    if (session_->get_tool_state() == Session::DEEPSSM_C) {
+
+    if (session_->get_compare_settings().compare_enabled_ && session_->get_compare_settings().surface_distance_mode_) {
+      feature_map_override = "distance";
+    } else if (session_->get_tool_state() == Session::DEEPSSM_C) {
       if (deepssm_tool_->get_display_feature() != "") {
         feature_map_override = deepssm_tool_->get_display_feature();
       }
@@ -950,11 +980,6 @@ void ShapeWorksStudioApp::update_view_mode() {
     update_feature_map_scale();
     update_display(true);
   }
-}
-
-//---------------------------------------------------------------------------
-std::string ShapeWorksStudioApp::get_view_mode() {
-  return session_->parameters().get("view_state", Session::MODE_ORIGINAL_C);
 }
 
 //---------------------------------------------------------------------------
@@ -1012,13 +1037,11 @@ void ShapeWorksStudioApp::handle_project_changed() {
     lightbox_->clear_renderers();
   }
 
-  set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, session_->original_present());
-  set_view_combo_item_enabled(VIEW_MODE::GROOMED, session_->groomed_present());
-  set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, should_reconstruct_view_show());
-
   if (session_->particles_present()) {
     session_->handle_clear_cache();
   }
+
+  update_view_combo();
   update_table();
   update_scrollbar();
   update_display();
@@ -1064,9 +1087,9 @@ void ShapeWorksStudioApp::handle_optimize_complete() {
   analysis_tool_->reset_stats();
   analysis_tool_->initialize_mesh_warper();
   session_->handle_clear_cache();
-  set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, should_reconstruct_view_show());
-  ui_->view_mode_combobox->setCurrentIndex(VIEW_MODE::GROOMED);
-  visualizer_->set_display_mode(ui_->view_mode_combobox->currentText().toStdString());
+  update_view_combo();
+  ui_->view_mode_combobox->setCurrentIndex(DisplayMode::Groomed);
+  session_->set_display_mode(DisplayMode::Groomed);
   visualizer_->set_mean(analysis_tool_->get_mean_shape_points().get_combined_global_particles());
   visualizer_->update_lut();
   update_display();
@@ -1079,7 +1102,7 @@ void ShapeWorksStudioApp::handle_optimize_complete() {
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_reconstruction_complete() {
   session_->handle_clear_cache();
-  set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, should_reconstruct_view_show());
+  update_view_combo();
   visualizer_->set_mean(analysis_tool_->get_mean_shape_points().get_combined_global_particles());
   visualizer_->update_lut();
   update_display(true);
@@ -1095,8 +1118,8 @@ void ShapeWorksStudioApp::handle_groom_start() {
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_groom_complete() {
-  set_view_combo_item_enabled(VIEW_MODE::GROOMED, true);
-  ui_->view_mode_combobox->setCurrentIndex(VIEW_MODE::GROOMED);
+  update_view_combo();
+  ui_->view_mode_combobox->setCurrentIndex(DisplayMode::Groomed);
   session_->handle_clear_cache();
   update_display(true);
   visualizer_->reset_camera();
@@ -1150,7 +1173,11 @@ void ShapeWorksStudioApp::handle_opacity_changed() {
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_alignment_changed() {
-  visualizer_->set_alignment_domain(ui_->alignment_combo->currentIndex() - 1);
+  int alignment_domain = ui_->alignment_combo->currentIndex() - 1;
+  if (!ui_->alignment_combo->isVisible()) {
+    alignment_domain = -1;
+  }
+  visualizer_->set_alignment_domain(alignment_domain);
   update_display(true);
   visualizer_->reset_camera();
 }
@@ -1195,13 +1222,11 @@ void ShapeWorksStudioApp::update_display(bool force) {
 
   std::string mode = AnalysisTool::MODE_ALL_SAMPLES_C;
 
-  bool analysis_mode = ui_->action_analysis_mode->isChecked();
 
   int num_domains = session_->get_domains_per_shape();
-  ui_->alignment_combo->setVisible(!analysis_mode && num_domains > 1);
-  ui_->center_checkbox->setVisible(!analysis_mode);
+  ui_->alignment_combo->setVisible(!session_->is_analysis_mode() && num_domains > 1);
 
-  if (analysis_mode) {
+  if (session_->is_analysis_mode()) {
     mode = analysis_tool_->get_analysis_mode();
   }
 
@@ -1215,48 +1240,32 @@ void ShapeWorksStudioApp::update_display(bool force) {
     return;
   }
 
-  std::string tool_state = session_->get_tool_state();
 
   update_view_mode();
+  update_view_combo();
 
-  set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, should_reconstruct_view_show());
-
-  if (tool_state == Session::DEEPSSM_C) {
+  if (session_->get_tool_state() == Session::DEEPSSM_C) {
     visualizer_->display_shapes(deepssm_tool_->get_shapes());
-    set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, false);
-    set_view_combo_item_enabled(VIEW_MODE::GROOMED, false);
   } else {
     current_display_mode_ = mode;
 
     visualizer_->set_mean(analysis_tool_->get_mean_shape_points().get_combined_global_particles());
 
     if (mode == AnalysisTool::MODE_ALL_SAMPLES_C) {
-      set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, session_->original_present());
-      set_view_combo_item_enabled(VIEW_MODE::GROOMED, session_->groomed_present());
-
       session_->calculate_reconstructed_samples();
       visualizer_->display_samples();
     } else {
       if (mode == AnalysisTool::MODE_MEAN_C) {
-        set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, false);
-        set_view_combo_item_enabled(VIEW_MODE::GROOMED, false);
-        set_view_mode(Session::MODE_RECONSTRUCTION_C);
+        session_->set_display_mode(DisplayMode::Reconstructed);
         visualizer_->display_shape(analysis_tool_->get_mean_shape());
       } else if (mode == AnalysisTool::MODE_PCA_C) {
-        set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, false);
-        set_view_combo_item_enabled(VIEW_MODE::GROOMED, false);
-        set_view_mode(Session::MODE_RECONSTRUCTION_C);
+        session_->set_display_mode(DisplayMode::Reconstructed);
         compute_mode_shape();
         visualizer_->reset_camera();
       } else if (mode == AnalysisTool::MODE_SINGLE_SAMPLE_C) {
-        set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, session_->original_present());
-        set_view_combo_item_enabled(VIEW_MODE::GROOMED, session_->groomed_present());
         visualizer_->display_sample(analysis_tool_->get_sample_number());
         visualizer_->reset_camera();
-      } else {  //?
-        set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, session_->original_present());
-        set_view_combo_item_enabled(VIEW_MODE::GROOMED, session_->groomed_present());
-      }  // TODO regression?
+      }
     }
   }
 
@@ -1273,7 +1282,8 @@ void ShapeWorksStudioApp::update_display(bool force) {
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_view_mode_combobox_currentIndexChanged(QString disp_mode) {
-  set_view_mode(disp_mode.toStdString());
+  session_->set_display_mode(string_to_display_mode(disp_mode.toStdString()));
+  update_compare_menu();
   visualizer_->reset_camera();
 }
 
@@ -1353,6 +1363,13 @@ void ShapeWorksStudioApp::open_project(QString filename) {
 
   session_->set_loading(false);
 
+  if (ui_->action_analysis_mode->isChecked() && !ui_->action_analysis_mode->isEnabled()) {
+    on_action_import_mode_triggered();
+  }
+  if (ui_->action_optimize_mode->isChecked() && !ui_->action_optimize_mode->isEnabled()) {
+    on_action_import_mode_triggered();
+  }
+
   handle_project_changed();
 
   if (session_->is_light_project()) {
@@ -1366,7 +1383,7 @@ void ShapeWorksStudioApp::open_project(QString filename) {
 
   // final check after loading that the view mode isn't set to something invalid
   if (!is_view_combo_item_enabled(ui_->view_mode_combobox->currentIndex())) {
-    set_view_mode(Session::MODE_ORIGINAL_C);
+    session_->set_display_mode(DisplayMode::Original);
   }
 
   update_display(true);
@@ -1383,7 +1400,7 @@ void ShapeWorksStudioApp::on_action_preferences_triggered() { preferences_window
 void ShapeWorksStudioApp::on_action_export_current_mesh_triggered() {
   bool single = StudioUtils::ask_multiple_domains_as_single(this, session_->get_project());
 
-  QString filename = ExportUtils::get_save_filename(this,tr("Export Current Mesh"), get_mesh_file_filter(), ".vtk");
+  QString filename = ExportUtils::get_save_filename(this, tr("Export Current Mesh"), get_mesh_file_filter(), ".vtk");
   if (filename.isEmpty()) {
     return;
   }
@@ -1492,8 +1509,8 @@ bool ShapeWorksStudioApp::write_scalars(vtkSmartPointer<vtkPolyData> poly_data, 
 void ShapeWorksStudioApp::on_action_export_current_particles_triggered() {
   bool single = StudioUtils::ask_multiple_domains_as_single(this, session_->get_project());
 
-  QString filename =
-      ExportUtils::get_save_filename(this,tr("Export Current Particles"), tr("Particle files (*.particles)"), ".particles");
+  QString filename = ExportUtils::get_save_filename(this, tr("Export Current Particles"),
+                                                    tr("Particle files (*.particles)"), ".particles");
   if (filename.isEmpty()) {
     return;
   }
@@ -1528,7 +1545,7 @@ void ShapeWorksStudioApp::on_action_export_current_particles_triggered() {
 void ShapeWorksStudioApp::on_action_export_mesh_scalars_triggered() {
   bool single = StudioUtils::ask_multiple_domains_as_single(this, session_->get_project());
 
-  QString filename = ExportUtils::get_save_filename(this,tr("Export Mesh Scalars"), tr("CSV files (*.csv)"), ".csv");
+  QString filename = ExportUtils::get_save_filename(this, tr("Export Mesh Scalars"), tr("CSV files (*.csv)"), ".csv");
   if (filename.isEmpty()) {
     return;
   }
@@ -1562,7 +1579,8 @@ void ShapeWorksStudioApp::on_action_export_mesh_scalars_triggered() {
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::action_export_particle_scalars_triggered() {
-  QString filename = ExportUtils::get_save_filename(this,tr("Export Particle Scalars"), tr("CSV files (*.csv)"), ".csv");
+  QString filename =
+      ExportUtils::get_save_filename(this, tr("Export Particle Scalars"), tr("CSV files (*.csv)"), ".csv");
   if (filename.isEmpty()) {
     return;
   }
@@ -1651,18 +1669,6 @@ void ShapeWorksStudioApp::compute_mode_shape() {
 }
 
 //---------------------------------------------------------------------------
-bool ShapeWorksStudioApp::set_view_mode(std::string view_mode) {
-  if (view_mode != get_view_mode()) {
-    if (!session_->is_loading()) {
-      session_->parameters().set("view_state", view_mode);
-    }
-    update_view_mode();
-    return true;
-  }
-  return false;
-}
-
-//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::update_recent_files() {
   QStringList recent_files = preferences_.get_recent_files();
   QStringList recent_paths = preferences_.get_recent_paths();
@@ -1685,7 +1691,7 @@ void ShapeWorksStudioApp::update_recent_files() {
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::update_alignment_options() {
   int num_domains = session_->get_domains_per_shape();
-  ui_->alignment_combo->setVisible(num_domains > 1);
+  ui_->alignment_combo->setVisible(!session_->is_analysis_mode() && num_domains > 1);
   ui_->alignment_combo->clear();
   ui_->alignment_combo->addItem("Global");
   auto domain_names = session_->get_project()->get_domain_names();
@@ -1697,9 +1703,7 @@ void ShapeWorksStudioApp::update_alignment_options() {
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::save_project(QString filename) {
   session_->parameters().set(ShapeWorksStudioApp::SETTING_ZOOM_C, std::to_string(ui_->zoom_slider->value()));
-
   session_->parameters().set("notes", data_tool_->get_notes());
-
   session_->parameters().set("analysis_mode", analysis_tool_->get_analysis_mode());
 
   data_tool_->store_data();
@@ -1709,6 +1713,7 @@ void ShapeWorksStudioApp::save_project(QString filename) {
   deepssm_tool_->store_params();
 
   if (session_->save_project(filename)) {
+    clear_message();
     handle_message("Project Saved");
   }
 
@@ -1742,8 +1747,8 @@ void ShapeWorksStudioApp::on_auto_view_button_clicked() {
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_actionExport_PCA_Mesh_triggered() {
-  QString filename =
-      ExportUtils::get_save_filename(this,tr("Export PCA Mesh"), tr("Supported types (*.vtk *.ply *.vtp *.obj *.stl)"), ".vtk");
+  QString filename = ExportUtils::get_save_filename(this, tr("Export PCA Mesh"),
+                                                    tr("Supported types (*.vtk *.ply *.vtp *.obj *.stl)"), ".vtk");
   if (filename.isEmpty()) {
     return;
   }
@@ -1780,7 +1785,8 @@ void ShapeWorksStudioApp::on_actionExport_PCA_Mesh_triggered() {
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_actionExport_Eigenvalues_triggered() {
-  QString filename = ExportUtils::get_save_filename(this,tr("Export Eigenvalue EVAL file"), tr("EVAL files (*.eval)"), ".eval");
+  QString filename =
+      ExportUtils::get_save_filename(this, tr("Export Eigenvalue EVAL file"), tr("EVAL files (*.eval)"), ".eval");
   if (filename.isEmpty()) {
     return;
   }
@@ -1797,7 +1803,8 @@ void ShapeWorksStudioApp::on_actionExport_Eigenvalues_triggered() {
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_actionExport_Eigenvectors_triggered() {
-  QString filename = ExportUtils::get_save_filename(this,tr("Export Eigenvector EVAL file"), tr("EVAL files (*.eval)"), ".eval");
+  QString filename =
+      ExportUtils::get_save_filename(this, tr("Export Eigenvector EVAL file"), tr("EVAL files (*.eval)"), ".eval");
   if (filename.isEmpty()) {
     return;
   }
@@ -1820,8 +1827,8 @@ void ShapeWorksStudioApp::on_actionExport_Eigenvectors_triggered() {
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_actionExport_PCA_Mode_Points_triggered() {
-  QString filename =
-      ExportUtils::get_save_filename(this,tr("Save PCA Mode Particle files"), tr("Particle files (*.particles)"), ".particles");
+  QString filename = ExportUtils::get_save_filename(this, tr("Save PCA Mode Particle files"),
+                                                    tr("Particle files (*.particles)"), ".particles");
   if (filename.isEmpty()) {
     return;
   }
@@ -1995,20 +2002,55 @@ void ShapeWorksStudioApp::reset_num_viewers() {
 void ShapeWorksStudioApp::update_view_combo() {
   if (ui_->view_mode_combobox->count() == 0) {
     // initialize
-    ui_->view_mode_combobox->addItem(Session::MODE_ORIGINAL_C.c_str());
-    ui_->view_mode_combobox->addItem(Session::MODE_GROOMED_C.c_str());
-    ui_->view_mode_combobox->addItem(Session::MODE_RECONSTRUCTION_C.c_str());
-    ui_->view_mode_combobox->setCurrentIndex(VIEW_MODE::ORIGINAL);
+    ui_->view_mode_combobox->addItem(display_mode_to_string(DisplayMode::Original).c_str());
+    ui_->view_mode_combobox->addItem(display_mode_to_string(DisplayMode::Groomed).c_str());
+    ui_->view_mode_combobox->addItem(display_mode_to_string(DisplayMode::Reconstructed).c_str());
+    ui_->view_mode_combobox->setCurrentIndex(DisplayMode::Original);
   }
 
-  set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, session_->original_present());
-  set_view_combo_item_enabled(VIEW_MODE::GROOMED, session_->groomed_present());
-  set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, should_reconstruct_view_show());
+  set_view_combo_item_enabled(DisplayMode::Original, session_->original_present());
+  set_view_combo_item_enabled(DisplayMode::Groomed, session_->groomed_present());
+  set_view_combo_item_enabled(DisplayMode::Reconstructed, should_reconstruct_view_show());
+
+  std::string tool_state = session_->get_tool_state();
+  if (tool_state == Session::DEEPSSM_C) {
+    set_view_combo_item_enabled(DisplayMode::Original, false);
+    set_view_combo_item_enabled(DisplayMode::Groomed, false);
+    set_view_combo_item_enabled(DisplayMode::Reconstructed, true);
+  }
+
+  std::string mode = AnalysisTool::MODE_ALL_SAMPLES_C;
+  bool analysis_mode = ui_->action_analysis_mode->isChecked();
+  if (analysis_mode) {
+    mode = analysis_tool_->get_analysis_mode();
+  }
+  if (mode == AnalysisTool::MODE_MEAN_C || mode == AnalysisTool::MODE_PCA_C) {
+    set_view_combo_item_enabled(DisplayMode::Original, false);
+    set_view_combo_item_enabled(DisplayMode::Groomed, false);
+  }
 
   int current = ui_->view_mode_combobox->currentIndex();
   while (current > 0 && !is_view_combo_item_enabled(current)) {
     current--;
-    ui_->view_mode_combobox->setCurrentIndex(current);
+  }
+  ui_->view_mode_combobox->setCurrentIndex(current);
+
+  update_compare_menu();
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::update_compare_menu() {
+  compare_widget_->set_available(DisplayMode::Original, is_view_combo_item_enabled(DisplayMode::Original));
+  compare_widget_->set_available(DisplayMode::Groomed, is_view_combo_item_enabled(DisplayMode::Groomed));
+  compare_widget_->set_available(DisplayMode::Reconstructed, is_view_combo_item_enabled(DisplayMode::Reconstructed));
+
+  compare_widget_->set_available(static_cast<DisplayMode>(ui_->view_mode_combobox->currentIndex()), false);
+
+  if (compare_widget_->check_any_available()) {
+    ui_->compare->setEnabled(true);
+  } else {
+    ui_->compare->setChecked(false);
+    ui_->compare->setEnabled(false);
   }
 }
 

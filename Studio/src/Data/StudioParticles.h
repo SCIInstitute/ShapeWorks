@@ -36,7 +36,7 @@ class StudioParticles {
   //! Get untransformed original world particles from optimizer
   Eigen::VectorXd get_raw_world_particles(int domain);
 
-  Eigen::VectorXd get_combined_local_particles();
+  Eigen::VectorXd get_combined_local_particles() const;
   Eigen::VectorXd get_combined_global_particles() const;
   void set_combined_global_particles(const Eigen::VectorXd &particles);
 
