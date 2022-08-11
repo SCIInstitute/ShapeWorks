@@ -813,10 +813,10 @@ void ShapeWorksStudioApp::new_session() {
   session_->set_parent(this);
   setWindowTitle(session_->get_display_name());
 
-  connect(session_->get_mesh_manager().data(), &MeshManager::error_encountered, this,
+  connect(session_->get_mesh_manager().get(), &MeshManager::error_encountered, this,
           &ShapeWorksStudioApp::handle_error);
-  connect(session_->get_mesh_manager().data(), &MeshManager::progress, this, &ShapeWorksStudioApp::handle_progress);
-  connect(session_->get_mesh_manager().data(), &MeshManager::status, this, &ShapeWorksStudioApp::handle_status);
+  connect(session_->get_mesh_manager().get(), &MeshManager::progress, this, &ShapeWorksStudioApp::handle_progress);
+  connect(session_->get_mesh_manager().get(), &MeshManager::status, this, &ShapeWorksStudioApp::handle_status);
 
   connect(session_.data(), &Session::data_changed, this, &ShapeWorksStudioApp::handle_project_changed);
   connect(session_.data(), &Session::points_changed, this, &ShapeWorksStudioApp::handle_points_changed);

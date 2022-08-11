@@ -626,11 +626,11 @@ void Viewer::display_shape(std::shared_ptr<Shape> shape) {
   }
   mesh_ready_ = true;
 
-  QStringList annotations = shape->get_annotations();
-  corner_annotation_->SetText(0, (annotations[0]).toStdString().c_str());
-  corner_annotation_->SetText(1, (annotations[1]).toStdString().c_str());
-  corner_annotation_->SetText(2, (annotations[2]).toStdString().c_str());
-  corner_annotation_->SetText(3, (annotations[3]).toStdString().c_str());
+  auto annotations = shape->get_annotations();
+  corner_annotation_->SetText(0, (annotations[0]).c_str());
+  corner_annotation_->SetText(1, (annotations[1]).c_str());
+  corner_annotation_->SetText(2, (annotations[2]).c_str());
+  corner_annotation_->SetText(3, (annotations[3]).c_str());
   corner_annotation_->GetTextProperty()->SetColor(0.50, 0.5, 0.5);
 
   renderer_->RemoveAllViewProps();

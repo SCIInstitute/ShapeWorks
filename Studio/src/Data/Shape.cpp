@@ -26,12 +26,8 @@ namespace shapeworks {
 
 //---------------------------------------------------------------------------
 Shape::Shape() {
-  this->id_ = 0;
-
-  this->corner_annotations_ << "";
-  this->corner_annotations_ << "";
-  this->corner_annotations_ << "";
-  this->corner_annotations_ << "";
+  id_ = 0;
+  corner_annotations_ = {"", "", "", ""};
 }
 
 //---------------------------------------------------------------------------
@@ -57,7 +53,7 @@ MeshGroup Shape::get_meshes(DisplayMode display_mode, bool wait) {
 }
 
 //---------------------------------------------------------------------------
-void Shape::set_annotations(QStringList annotations, bool only_overwrite_blank) {
+void Shape::set_annotations(std::vector<std::string> annotations, bool only_overwrite_blank) {
   if (only_overwrite_blank && !this->corner_annotations_.empty() && this->corner_annotations_[0] != "") {
     return;  // don't override
   }
@@ -65,10 +61,10 @@ void Shape::set_annotations(QStringList annotations, bool only_overwrite_blank) 
 }
 
 //---------------------------------------------------------------------------
-QStringList Shape::get_annotations() { return this->corner_annotations_; }
+std::vector<std::string> Shape::get_annotations() { return this->corner_annotations_; }
 
 //---------------------------------------------------------------------------
-void Shape::set_mesh_manager(QSharedPointer<MeshManager> mesh_manager) { this->mesh_manager_ = mesh_manager; }
+void Shape::set_mesh_manager(std::shared_ptr<MeshManager> mesh_manager) { this->mesh_manager_ = mesh_manager; }
 
 //---------------------------------------------------------------------------
 void Shape::set_subject(std::shared_ptr<Subject> subject) {
@@ -80,27 +76,24 @@ void Shape::set_subject(std::shared_ptr<Subject> subject) {
   if (!this->subject_->get_original_filenames().empty()) {
     /// TODO: Show multiple lines of filenames for multiple domains?
     std::string filename = this->subject_->get_original_filenames()[0];
-    this->corner_annotations_[0] = QFileInfo(QString::fromStdString(filename)).fileName();
+    this->corner_annotations_[0] = StringUtils::getFilename(filename);
   }
 
   if (subject->get_display_name() != "") {
-    this->corner_annotations_[0] = QString::fromStdString(subject->get_display_name());
+    this->corner_annotations_[0] = subject->get_display_name();
   }
 }
 
 //---------------------------------------------------------------------------
-bool Shape::is_subject()
-{
-  return subject_ != nullptr;
-}
+bool Shape::is_subject() { return subject_ != nullptr; }
 
 //---------------------------------------------------------------------------
 std::shared_ptr<Subject> Shape::get_subject() { return this->subject_; }
 
 //---------------------------------------------------------------------------
 void Shape::import_original_image(const std::string& filename) {
-  this->subject_->set_original_filenames(std::vector<std::string>{filename});
-  this->corner_annotations_[0] = QFileInfo(QString::fromStdString(filename)).fileName();
+  subject_->set_original_filenames({filename});
+  corner_annotations_[0] = StringUtils::getFilename(filename);
 }
 
 //---------------------------------------------------------------------------
@@ -154,13 +147,13 @@ void Shape::clear_reconstructed_mesh() {
 }
 
 //---------------------------------------------------------------------------
-bool Shape::import_global_point_files(QStringList filenames) {
+bool Shape::import_global_point_files(std::vector<std::string> filenames) {
   for (int i = 0; i < filenames.size(); i++) {
     Eigen::VectorXd points;
-    if (!Shape::import_point_file(filenames[i].toStdString(), points)) {
-      throw std::invalid_argument("Unable to import point file: " + filenames[i].toStdString());
+    if (!Shape::import_point_file(filenames[i], points)) {
+      throw std::invalid_argument("Unable to import point file: " + filenames[i]);
     }
-    this->global_point_filenames_.push_back(filenames[i].toStdString());
+    this->global_point_filenames_.push_back(filenames[i]);
     this->particles_.set_world_particles(i, points);
   }
   this->subject_->set_world_particle_filenames(this->global_point_filenames_);
@@ -168,13 +161,13 @@ bool Shape::import_global_point_files(QStringList filenames) {
 }
 
 //---------------------------------------------------------------------------
-bool Shape::import_local_point_files(QStringList filenames) {
+bool Shape::import_local_point_files(std::vector<std::string> filenames) {
   for (int i = 0; i < filenames.size(); i++) {
     Eigen::VectorXd points;
-    if (!Shape::import_point_file(filenames[i].toStdString(), points)) {
-      throw std::invalid_argument("Unable to import point file: " + filenames[i].toStdString());
+    if (!Shape::import_point_file(filenames[i], points)) {
+      throw std::invalid_argument("Unable to import point file: " + filenames[i]);
     }
-    this->local_point_filenames_.push_back(filenames[i].toStdString());
+    this->local_point_filenames_.push_back(filenames[i]);
     this->particles_.set_local_particles(i, points);
   }
   this->subject_->set_local_particle_filenames(this->local_point_filenames_);
@@ -182,7 +175,7 @@ bool Shape::import_local_point_files(QStringList filenames) {
 }
 
 //---------------------------------------------------------------------------
-bool Shape::import_landmarks_files(QStringList filenames) {
+bool Shape::import_landmarks_files(std::vector<std::string> filenames) {
   std::vector<Eigen::VectorXd> all_points;
   int total_count = 0;
   for (int i = 0; i < filenames.size(); i++) {
@@ -190,8 +183,8 @@ bool Shape::import_landmarks_files(QStringList filenames) {
       continue;
     }
     Eigen::VectorXd points;
-    if (!Shape::import_point_file(filenames[i].toStdString(), points)) {
-      throw std::invalid_argument("Unable to load landmarks file: " + filenames[i].toStdString());
+    if (!Shape::import_point_file(filenames[i], points)) {
+      throw std::invalid_argument("Unable to load landmarks file: " + filenames[i]);
     }
     total_count += points.size() / 3;
 
@@ -257,12 +250,12 @@ bool Shape::store_landmarks() {
 }
 
 //---------------------------------------------------------------------------
-bool Shape::import_constraints(QStringList filenames) {
+bool Shape::import_constraints(std::vector<std::string> filenames) {
   for (int i = 0; i < filenames.size(); i++) {
     Constraints constraints;
     try {
-      if (!filenames[i].isEmpty()) {
-        constraints.Read(filenames[i].toStdString());
+      if (!(filenames[i] == "")) {
+        constraints.Read(filenames[i]);
       }
     } catch (std::exception& e) {
       STUDIO_SHOW_ERROR(e.what());
@@ -327,67 +320,64 @@ int Shape::get_id() { return this->id_; }
 void Shape::set_id(int id) { this->id_ = id; }
 
 //---------------------------------------------------------------------------
-QString Shape::get_original_filename() {
+std::string Shape::get_original_filename() {
   if (this->subject_->get_original_filenames().size() < 1) {
     return "";
   }
-  auto string = QString::fromStdString(this->subject_->get_original_filenames()[0]);
-  QFileInfo info(string);
-  return info.fileName();
+
+  return StringUtils::getFilename(subject_->get_original_filenames()[0]);
 }
 
 //---------------------------------------------------------------------------
-QString Shape::get_original_filename_with_path() {
+std::string Shape::get_original_filename_with_path() {
   if (this->subject_->get_original_filenames().size() < 1) {
     return "";
   }
-  return QString::fromStdString(this->subject_->get_original_filenames()[0]);
+  return subject_->get_original_filenames()[0];
 }
 
 //---------------------------------------------------------------------------
-std::vector<QString> Shape::get_original_filenames() {
+std::vector<std::string> Shape::get_original_filenames() {
   if (this->subject_->get_original_filenames().size() < 1) {
-    return std::vector<QString>();
+    return std::vector<std::string>();
   }
 
-  std::vector<QString> filenames;
+  std::vector<std::string> filenames;
   for (auto&& name : this->subject_->get_original_filenames()) {
-    filenames.push_back(QFileInfo(QString::fromStdString(name)).fileName());
+    filenames.push_back(StringUtils::getFilename(name));
   }
 
   return filenames;
 }
 
 //---------------------------------------------------------------------------
-std::vector<QString> Shape::get_original_filenames_with_path() {
+std::vector<std::string> Shape::get_original_filenames_with_path() {
   if (this->subject_->get_original_filenames().size() < 1) {
-    return std::vector<QString>();
+    return std::vector<std::string>();
   }
 
-  std::vector<QString> filenames;
+  std::vector<std::string> filenames;
   for (auto&& name : this->subject_->get_original_filenames()) {
-    filenames.push_back(QString::fromStdString(name));
+    filenames.push_back(name);
   }
 
   return filenames;
 }
 
 //---------------------------------------------------------------------------
-QString Shape::get_groomed_filename() {
+std::string Shape::get_groomed_filename() {
   if (this->subject_->get_groomed_filenames().size() < 1) {
     return "";
   }
-  auto string = QString::fromStdString(this->subject_->get_groomed_filenames()[0]);
-  QFileInfo info(string);
-  return info.fileName();
+  return StringUtils::getFilename(subject_->get_groomed_filenames()[0]);
 }
 
 //---------------------------------------------------------------------------
-QString Shape::get_groomed_filename_with_path(int domain) {
+std::string Shape::get_groomed_filename_with_path(int domain) {
   if (domain >= this->subject_->get_groomed_filenames().size()) {
     return "";
   }
-  return QString::fromStdString(this->subject_->get_groomed_filenames()[domain]);
+  return subject_->get_groomed_filenames()[domain];
 }
 
 //---------------------------------------------------------------------------
@@ -450,7 +440,7 @@ void Shape::generate_meshes(std::vector<std::string> filenames, MeshGroup& mesh_
       mesh_group.set_mesh(i, new_mesh);
 
       if (new_mesh->get_poly_data()->GetNumberOfPoints() < 1) {
-        STUDIO_SHOW_ERROR("Error: Mesh contained no points: " + QString::fromStdString(filenames[i]));
+        STUDIO_SHOW_ERROR(QString::fromStdString("Error: Mesh contained no points: " + filenames[i]));
       } else {
         // generate a basic centering transform
         auto com = vtkSmartPointer<vtkCenterOfMass>::New();
@@ -525,16 +515,16 @@ void Shape::load_feature(DisplayMode display_mode, std::string feature) {
           }
         } else {
           // read the feature
-          QString filename = QString::fromStdString(filenames[feature]);
+          std::string filename = filenames[feature];
           try {
             ReaderType::Pointer reader = ReaderType::New();
-            reader->SetFileName(filename.toStdString());
+            reader->SetFileName(filename);
             reader->Update();
             ImageType::Pointer image = reader->GetOutput();
             group.meshes()[d]->apply_feature_map(feature, image);
             apply_feature_to_points(feature, image);
           } catch (itk::ExceptionObject& excep) {
-            QMessageBox::warning(0, "Unable to open file", "Error opening file: \"" + filename + "\"");
+            QMessageBox::warning(0, "Unable to open file", "Error opening file: \"" + QString::fromStdString(filename) + "\"");
           }
         }
       }
@@ -739,7 +729,7 @@ Eigen::VectorXd Shape::get_correspondence_points_for_display() {
       p[0] = locals[i][j + 0];
       p[1] = locals[i][j + 1];
       p[2] = locals[i][j + 2];
-      if (this->reconstruction_transforms_.size() > i && !subject_) { // only computed shapes
+      if (this->reconstruction_transforms_.size() > i && !subject_) {  // only computed shapes
         double* pt = this->reconstruction_transforms_[i]->TransformPoint(p);
         points[idx++] = pt[0];
         points[idx++] = pt[1];

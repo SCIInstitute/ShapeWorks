@@ -7,6 +7,8 @@
 #include <Libs/Mesh/MeshUtils.h>
 #include <Libs/Utils/StringUtils.h>
 
+#include <boost/algorithm/string/join.hpp>
+
 #include <QApplication>
 #include <QDir>
 #include <QFile>
@@ -45,9 +47,9 @@ const std::string Session::DEEPSSM_C("deepssm");
 
 //---------------------------------------------------------------------------
 Session::Session(QWidget* parent, Preferences& prefs)
-    : parent_(parent), preferences_(prefs), mesh_manager_(QSharedPointer<MeshManager>(new MeshManager(preferences_))) {
+    : parent_(parent), preferences_(prefs), mesh_manager_(std::shared_ptr<MeshManager>(new MeshManager(preferences_))) {
   this->parent_ = nullptr;
-  connect(this->mesh_manager_.data(), &MeshManager::new_mesh, this, &Session::handle_new_mesh);
+  connect(this->mesh_manager_.get(), &MeshManager::new_mesh, this, &Session::handle_new_mesh);
 }
 
 //---------------------------------------------------------------------------
@@ -134,7 +136,7 @@ bool Session::save_project(QString filename) {
     if (this->original_present()) {
       std::vector<std::string> original_list;
       for (int i = 0; i < this->shapes_.size(); i++) {
-        original_list.push_back(this->shapes_[i]->get_original_filename_with_path().toStdString());
+        original_list.push_back(this->shapes_[i]->get_original_filename_with_path());
       }
       // this->session_->set_original_files(original_list);
     }
@@ -426,16 +428,16 @@ bool Session::load_xl_project(QString filename) {
     auto landmark_files = subjects[i]->get_landmarks_filenames();
     auto constraints_files = subjects[i]->get_constraints_filenames();
 
-    if (!shape->import_local_point_files(StudioUtils::to_string_list(locals))) {
+    if (!shape->import_local_point_files(locals)) {
       return false;
     }
-    if (!shape->import_global_point_files(StudioUtils::to_string_list(worlds))) {
+    if (!shape->import_global_point_files(worlds)) {
       return false;
     }
-    if (!shape->import_landmarks_files(StudioUtils::to_string_list(landmark_files))) {
+    if (!shape->import_landmarks_files(landmark_files)) {
       return false;
     }
-    if (!shape->import_constraints(StudioUtils::to_string_list(constraints_files))) {
+    if (!shape->import_constraints(constraints_files)) {
       return false;
     }
 
@@ -576,12 +578,12 @@ void Session::load_groomed_files(std::vector<std::string> file_names, double iso
       this->shapes_.push_back(shape);
     }
 
-    QStringList list;
-    list << QFileInfo(QString::fromStdString(file_names[counter])).fileName();
-    list << "";
-    list << "";
-    list << "";
-    this->shapes_[i]->set_annotations(list);
+    std::vector<std::string> list;
+    list.push_back(StringUtils::getFilename(file_names[counter]));
+    list.push_back("");
+    list.push_back("");
+    list.push_back("");
+    shapes_[i]->set_annotations(list);
 
     std::vector<std::string> groomed_filenames;
     for (int j = 0; j < domains_per_shape; j++) {
@@ -615,25 +617,26 @@ bool Session::load_point_files(std::vector<std::string> local, std::vector<std::
     }
 
     auto base = QString::fromStdString(world[counter]).remove("_world.particles").toStdString();
-    QStringList list;
-    list << QString::fromStdString(StringUtils::getFilename(base));
-    list << "";
-    list << "";
-    list << "";
+    std::vector<std::string> list;
+    list.push_back(StringUtils::getFilename(base));
+    list.push_back("");
+    list.push_back("");
+    list.push_back("");
 
-    QStringList local_filenames;
-    QStringList world_filenames;
+    std::vector<std::string> local_filenames;
+    std::vector<std::string> world_filenames;
     // only single domain supported so far
     for (int j = 0; j < domains_per_shape; j++) {
-      local_filenames << QString::fromStdString(local[counter + j]);
-      world_filenames << QString::fromStdString(world[counter + j]);
+      local_filenames.push_back(local[counter + j]);
+      world_filenames.push_back(world[counter + j]);
     }
     counter += domains_per_shape;
     if (!this->shapes_[i]->import_local_point_files(local_filenames)) {
-      emit error("Unable to load point files: " + local_filenames.join(", "));
+      std::string message = "Unable to load point files: " + boost::algorithm::join(local_filenames,", ");
+      emit error(QString::fromStdString(message));
     }
     if (!this->shapes_[i]->import_global_point_files(world_filenames)) {
-      emit error("Unable to load point files: " + local_filenames.join(", "));
+      emit error(QString::fromStdString("Unable to load point files: " + boost::algorithm::join(local_filenames,", ")));
     }
     this->shapes_[i]->set_annotations(list);
   }

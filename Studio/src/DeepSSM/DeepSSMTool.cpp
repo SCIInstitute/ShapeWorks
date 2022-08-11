@@ -328,15 +328,15 @@ void DeepSSMTool::show_training_meshes() {
       auto subject = std::make_shared<Subject>();
       shape->set_subject(subject);
       shape->set_mesh_manager(this->session_->get_mesh_manager());
-      shape->import_local_point_files({filenames[i]});
-      shape->import_global_point_files({filenames[i]});
+      shape->import_local_point_files({filenames[i].toStdString()});
+      shape->import_global_point_files({filenames[i].toStdString()});
       shape->load_feature_from_scalar_file(scalar_filenames[i].toStdString(), "deepssm_error");
       shape->get_reconstructed_meshes();
-      QStringList list;
-      list << names[i];
-      list << "";
-      list << "";
-      list << "";
+      std::vector<std::string> list;
+      list.push_back(names[i].toStdString());
+      list.push_back("");
+      list.push_back("");
+      list.push_back("");
       shape->set_annotations(list);
 
       this->shapes_.push_back(shape);
@@ -366,14 +366,14 @@ void DeepSSMTool::show_testing_meshes() {
       subject->set_display_name(id);
       shape->set_subject(subject);
       shape->set_mesh_manager(this->session_->get_mesh_manager());
-      shape->import_local_point_files(QStringList(filename));
-      shape->import_global_point_files(QStringList(filename));
+      shape->import_local_point_files({filename.toStdString()});
+      shape->import_global_point_files({filename.toStdString()});
       shape->get_reconstructed_meshes();
-      QStringList list;
-      list << shapes[i]->get_annotations()[0];
-      list << "";
-      list << "";
-      list << "";
+      std::vector<std::string> list;
+      list.push_back(shapes[i]->get_annotations()[0]);
+      list.push_back("");
+      list.push_back("");
+      list.push_back("");
       shape->set_annotations(list);
 
       this->shapes_.push_back(shape);
@@ -496,22 +496,22 @@ void DeepSSMTool::show_augmentation_meshes() {
       bool is_generated = line.contains("Generated");
       if ((is_generated && show_generated) || (!is_generated && show_original)) {
         auto image_file = line.split(',')[0].toStdString();
-        QString particle_file = line.split(',')[1];
+        std::string particle_file = (line.split(',')[1]).toStdString();
 
         auto subject = std::make_shared<Subject>();
         ShapeHandle shape = ShapeHandle(new Shape());
         shape->set_subject(subject);
         shape->set_mesh_manager(this->session_->get_mesh_manager());
-        shape->import_local_point_files(QStringList(particle_file));
-        shape->import_global_point_files(QStringList(particle_file));
+        shape->import_local_point_files({particle_file});
+        shape->import_global_point_files({particle_file});
 
         shape->get_reconstructed_meshes();
 
-        QStringList list;
-        list << QFileInfo(particle_file).baseName();
-        list << "";
-        list << "";
-        list << "";
+        std::vector<std::string> list;
+        list.push_back((QFileInfo(QString::fromStdString(particle_file)).baseName()).toStdString());
+        list.push_back("");
+        list.push_back("");
+        list.push_back("");
         shape->set_annotations(list);
 
         this->shapes_.push_back(shape);

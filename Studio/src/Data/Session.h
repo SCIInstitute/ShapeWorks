@@ -127,7 +127,7 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
 
   static bool is_supported_file_format(std::string filename);
 
-  QSharedPointer<MeshManager> get_mesh_manager() { return this->mesh_manager_; }
+  std::shared_ptr<MeshManager> get_mesh_manager() { return this->mesh_manager_; }
 
   shapeworks::Parameters& parameters();
 
@@ -296,7 +296,7 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
 
   StudioParticles difference_particles_;
 
-  QSharedPointer<MeshManager> mesh_manager_;
+  std::shared_ptr<MeshManager> mesh_manager_;
 
   bool groups_available_{false};
   bool is_light_project_{false};

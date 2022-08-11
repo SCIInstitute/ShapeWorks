@@ -11,7 +11,7 @@
 
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
-#include <QString>
+#include <string>
 
 namespace shapeworks {
 
@@ -39,10 +39,10 @@ class Shape {
 
   MeshGroup get_meshes(DisplayMode display_mode, bool wait = false);
 
-  void set_annotations(QStringList annotations, bool only_overwrite_blank = true);
-  QStringList get_annotations();
+  void set_annotations(std::vector<std::string> annotations, bool only_overwrite_blank = true);
+  std::vector<std::string> get_annotations();
 
-  void set_mesh_manager(QSharedPointer<MeshManager> mesh_manager);
+  void set_mesh_manager(std::shared_ptr<MeshManager> mesh_manager);
 
   void set_subject(std::shared_ptr<shapeworks::Subject> subject);
 
@@ -66,19 +66,19 @@ class Shape {
   void reset_groomed_mesh();
 
   /// Import global correspondence point files
-  bool import_global_point_files(QStringList filenames);
+  bool import_global_point_files(std::vector<std::string> filenames);
 
   /// Import local correspondence point files
-  bool import_local_point_files(QStringList filenames);
+  bool import_local_point_files(std::vector<std::string> filenames);
 
   /// Import landmarks files
-  bool import_landmarks_files(QStringList filenames);
+  bool import_landmarks_files(std::vector<std::string> filenames);
 
   //! Store landmarks
   bool store_landmarks();
 
   //! import constraints
-  bool import_constraints(QStringList filenames);
+  bool import_constraints(std::vector<std::string> filenames);
 
   //! Store constraints
   bool store_constraints();
@@ -105,20 +105,20 @@ class Shape {
   /// Set the id of this shape
   void set_id(int id);
 
-  std::vector<QString> get_original_filenames();
-  std::vector<QString> get_original_filenames_with_path();
+  std::vector<std::string> get_original_filenames();
+  std::vector<std::string> get_original_filenames_with_path();
 
-  QString get_original_filename();
-  QString get_original_filename_with_path();
+  std::string get_original_filename();
+  std::string get_original_filename_with_path();
 
-  QString get_groomed_filename();
-  QString get_groomed_filename_with_path(int domain);
+  std::string get_groomed_filename();
+  std::string get_groomed_filename_with_path(int domain);
 
-  QString get_global_point_filename();
-  QString get_global_point_filename_with_path();
+  std::string get_global_point_filename();
+  std::string get_global_point_filename_with_path();
 
-  QString get_local_point_filename();
-  QString get_local_point_filename_with_path();
+  std::string get_local_point_filename();
+  std::string get_local_point_filename_with_path();
 
   void set_transform(vtkSmartPointer<vtkTransform> transform);
   vtkSmartPointer<vtkTransform> get_transform(int domain = 0);
@@ -191,9 +191,9 @@ class Shape {
 
   std::vector<vtkSmartPointer<vtkTransform>> reconstruction_transforms_;
 
-  QStringList corner_annotations_;
+  std::vector<std::string> corner_annotations_;
 
-  QSharedPointer<MeshManager> mesh_manager_;
+  std::shared_ptr<MeshManager> mesh_manager_;
 
   Eigen::MatrixXd landmarks_;
 

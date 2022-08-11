@@ -109,7 +109,7 @@ void ShapeworksWorker::process()
           std::vector<std::string> distance_transforms;
           std::vector<std::vector<itk::Point<double>>> local, global;
           for (auto& s : shapes) {
-            distance_transforms.push_back(s->get_groomed_filename_with_path(i).toStdString());
+            distance_transforms.push_back(s->get_groomed_filename_with_path(i));
             auto particles = s->get_particles();
             local.push_back(particles.get_local_points(i));
             global.push_back(particles.get_world_points(i));
