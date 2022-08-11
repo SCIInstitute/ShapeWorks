@@ -4,12 +4,14 @@ set(Common_sources
   ShapeworksUtils.cpp
   Region.cpp
   Exception.cpp
+  Logging.cpp
   )
 set(Common_headers
   Shapeworks.h
   ShapeworksUtils.h
   Region.h
   Exception.h
+  Logging.h
   )
 add_library(Common STATIC
   ${Common_sources}
@@ -20,6 +22,7 @@ target_include_directories(Common PUBLIC
 target_link_libraries(Common
   ${ITK_LIBRARIES}
   ${VTK_LIBRARIES}
+  spdlog::spdlog
   )
 
 # Install
