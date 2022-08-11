@@ -44,7 +44,7 @@ class DeepSSMTool : public QWidget {
 
   void shutdown();
 
-  QVector<QSharedPointer<Shape>> get_shapes();
+  ShapeList get_shapes();
 
   void resizeEvent(QResizeEvent* event) override;
 
@@ -103,7 +103,7 @@ class DeepSSMTool : public QWidget {
   QSharedPointer<DeepSSMJob> deep_ssm_;
   QElapsedTimer timer_;
 
-  QVector<QSharedPointer<Shape>> shapes_;
+  ShapeList shapes_;
   QPixmap violin_plot_;
   QPixmap training_plot_;
 };

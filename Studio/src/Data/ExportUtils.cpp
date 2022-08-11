@@ -127,7 +127,7 @@ bool ExportUtils::write_scalars(ShapeWorksStudioApp* app, vtkSmartPointer<vtkPol
 }
 
 //---------------------------------------------------------------------------
-bool ExportUtils::write_particle_scalars(ShapeWorksStudioApp* app, QSharedPointer<Shape> shape, QString filename) {
+bool ExportUtils::write_particle_scalars(ShapeWorksStudioApp* app, std::shared_ptr<Shape> shape, QString filename) {
   if (!shape) {
     app->handle_error("No shape to export");
     return false;

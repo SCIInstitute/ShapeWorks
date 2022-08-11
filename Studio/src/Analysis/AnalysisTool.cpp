@@ -432,9 +432,6 @@ bool AnalysisTool::compute_stats() {
       } else {
         // we don't include it
       }
-    } else {
-      points.push_back(shape->get_global_correspondence_points());
-      group_ids.push_back(shape->get_group_id());
     }
   }
 
@@ -1110,7 +1107,7 @@ void AnalysisTool::initialize_mesh_warper() {
       STUDIO_LOG_ERROR("Unable to set reference mesh, stats returned invalid median index");
       return;
     }
-    QSharedPointer<Shape> median_shape = session_->get_shapes()[median];
+    std::shared_ptr<Shape> median_shape = session_->get_shapes()[median];
 
     auto mesh_group = median_shape->get_groomed_meshes(true);
 

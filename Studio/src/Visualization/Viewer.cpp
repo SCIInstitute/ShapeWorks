@@ -604,7 +604,7 @@ std::vector<vtkSmartPointer<vtkActor>> Viewer::get_unclipped_surface_actors() { 
 MeshGroup Viewer::get_meshes() { return meshes_; }
 
 //-----------------------------------------------------------------------------
-void Viewer::display_shape(QSharedPointer<Shape> shape) {
+void Viewer::display_shape(std::shared_ptr<Shape> shape) {
   visible_ = true;
 
   shape_ = shape;
@@ -1217,7 +1217,7 @@ void Viewer::update_opacities() {
 }
 
 //-----------------------------------------------------------------------------
-QSharedPointer<Shape> Viewer::get_shape() { return shape_; }
+std::shared_ptr<Shape> Viewer::get_shape() { return shape_; }
 
 //-----------------------------------------------------------------------------
 void Viewer::initialize_surfaces() {

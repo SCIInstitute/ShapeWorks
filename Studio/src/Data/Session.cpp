@@ -383,9 +383,7 @@ bool Session::load_light_project(QString filename) {
       group_ids.push_back(group_id);
     }
 
-    for (int i = 0; i < this->shapes_.size(); i++) {
-      this->shapes_[i]->set_group_id(group_ids[i]);
-    }
+    /// TODO: set groups from XML
   }
 
   set_display_mode(DisplayMode::Reconstructed);
@@ -419,7 +417,7 @@ bool Session::load_xl_project(QString filename) {
 
   // auto landmark_definitions = project_->get_all_landmark_definitions();
   for (int i = 0; i < num_subjects; i++) {
-    QSharedPointer<Shape> shape = QSharedPointer<Shape>(new Shape());
+    std::shared_ptr<Shape> shape = std::shared_ptr<Shape>(new Shape());
     shape->set_mesh_manager(mesh_manager_);
     shape->set_subject(subjects[i]);
 
@@ -454,7 +452,7 @@ bool Session::load_xl_project(QString filename) {
     }
     for (int domain_id = 0; domain_id < domain_names.size(); domain_id++) {
     }
-    shapes_ << shape;
+    shapes_.push_back(shape);
   }
 
   groups_available_ = project_->get_group_names().size() > 0;
@@ -544,7 +542,7 @@ void Session::load_original_files(std::vector<std::string> filenames) {
       return;
     }
 
-    QSharedPointer<Shape> shape = QSharedPointer<Shape>(new Shape());
+    std::shared_ptr<Shape> shape = std::shared_ptr<Shape>(new Shape());
 
     std::shared_ptr<Subject> subject = std::make_shared<Subject>();
     subject->set_number_of_domains(1);
@@ -570,7 +568,7 @@ void Session::load_groomed_files(std::vector<std::string> file_names, double iso
   int counter = 0;
   for (int i = 0; i < num_subjects; i++) {
     if (this->shapes_.size() <= i) {
-      auto shape = QSharedPointer<Shape>(new Shape);
+      auto shape = std::shared_ptr<Shape>(new Shape);
       std::shared_ptr<Subject> subject = std::make_shared<Subject>();
       shape->set_mesh_manager(this->mesh_manager_);
       shape->set_subject(subject);
@@ -607,7 +605,7 @@ bool Session::load_point_files(std::vector<std::string> local, std::vector<std::
   int counter = 0;
   for (int i = 0; i < num_subjects; i++) {
     if (this->shapes_.size() <= i) {
-      auto shape = QSharedPointer<Shape>(new Shape);
+      auto shape = std::shared_ptr<Shape>(new Shape);
       std::shared_ptr<Subject> subject = std::make_shared<Subject>();
       subject->set_number_of_domains(domains_per_shape);
       shape->set_mesh_manager(this->mesh_manager_);
@@ -651,11 +649,11 @@ bool Session::load_point_files(std::vector<std::string> local, std::vector<std::
 //---------------------------------------------------------------------------
 bool Session::update_particles(std::vector<StudioParticles> particles) {
   for (int i = 0; i < particles.size(); i++) {
-    QSharedPointer<Shape> shape;
+    std::shared_ptr<Shape> shape;
     if (this->shapes_.size() > i) {
       shape = this->shapes_[i];
     } else {
-      shape = QSharedPointer<Shape>(new Shape);
+      shape = std::shared_ptr<Shape>(new Shape);
       std::shared_ptr<Subject> subject = std::make_shared<Subject>();
       shape->set_mesh_manager(this->mesh_manager_);
       shape->set_subject(subject);
@@ -688,7 +686,7 @@ ParticleSystem Session::get_local_particle_system(int domain) {
 void Session::update_procrustes_transforms(std::vector<std::vector<std::vector<double>>> transforms) {
   for (size_t i = 0; i < transforms.size(); i++) {
     if (this->shapes_.size() > i) {
-      QSharedPointer<Shape> shape = this->shapes_[i];
+      std::shared_ptr<Shape> shape = this->shapes_[i];
       if (shape->get_subject()) {
         shape->get_subject()->set_procrustes_transforms(transforms[i]);
       }
@@ -751,7 +749,7 @@ bool Session::is_light_project() { return this->is_light_project_; }
 bool Session::get_groomed_present() { return this->project_->get_groomed_present(); }
 
 //---------------------------------------------------------------------------
-QVector<QSharedPointer<Shape>> Session::get_shapes() { return this->shapes_; }
+ShapeList Session::get_shapes() { return this->shapes_; }
 
 //---------------------------------------------------------------------------
 void Session::remove_shapes(QList<int> list) {

@@ -105,7 +105,7 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   void remove_shapes(QList<int> list);
 
   /// return all shapes
-  QVector<QSharedPointer<Shape>> get_shapes();
+  ShapeList get_shapes();
 
   void calculate_reconstructed_samples();
 
@@ -292,7 +292,7 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   QString project_path_;
 
   /// collection of shapes
-  QVector<QSharedPointer<Shape>> shapes_;
+  ShapeList shapes_;
 
   StudioParticles difference_particles_;
 

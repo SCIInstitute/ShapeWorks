@@ -524,7 +524,7 @@ void DeepSSMTool::show_augmentation_meshes() {
 }
 
 //---------------------------------------------------------------------------
-QVector<QSharedPointer<Shape>> DeepSSMTool::get_shapes() { return this->shapes_; }
+ShapeList DeepSSMTool::get_shapes() { return this->shapes_; }
 
 //---------------------------------------------------------------------------
 void DeepSSMTool::load_plots() {

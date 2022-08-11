@@ -395,29 +395,6 @@ QString Shape::get_groomed_filename_with_path(int domain) {
 }
 
 //---------------------------------------------------------------------------
-QList<Shape::Point> Shape::get_exclusion_sphere_centers() { return this->exclusion_sphere_centers_; }
-
-//---------------------------------------------------------------------------
-void Shape::set_exclusion_sphere_centers(QList<Shape::Point> centers) { this->exclusion_sphere_centers_ = centers; }
-
-//---------------------------------------------------------------------------
-QList<double> Shape::get_exclusion_sphere_radii() { return this->exclusion_sphere_radii_; }
-
-//---------------------------------------------------------------------------
-void Shape::set_exclusion_sphere_radii(QList<double> radii) { this->exclusion_sphere_radii_ = radii; }
-
-//---------------------------------------------------------------------------
-int Shape::get_group_id() { return this->group_id_; }
-
-//---------------------------------------------------------------------------
-void Shape::set_group_id(int id) {
-  if (this->subject_) {
-    this->subject_->set_group_values({{"group", std::to_string(id)}});
-  }
-  this->group_id_ = id;
-}
-
-//---------------------------------------------------------------------------
 void Shape::set_transform(vtkSmartPointer<vtkTransform> transform) { this->transform_ = transform; }
 
 //---------------------------------------------------------------------------

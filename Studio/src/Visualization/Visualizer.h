@@ -60,7 +60,7 @@ class Visualizer : public QObject {
   void display_sample(int i);
 
   void display_shape(ShapeHandle shape);
-  void display_shapes(QVector<QSharedPointer<Shape>> shapes);
+  void display_shapes(ShapeList shapes);
 
   void set_selected_point_one(int id);
   void set_selected_point_two(int id);
@@ -115,10 +115,10 @@ class Visualizer : public QObject {
   void update_feature_range(double min, double max);
 
   //! Request the transform for a given shape and domain
-  vtkSmartPointer<vtkTransform> get_transform(QSharedPointer<Shape> shape, int alignment_domain, int domain);
+  vtkSmartPointer<vtkTransform> get_transform(std::shared_ptr<Shape> shape, int alignment_domain, int domain);
 
   //! Request the transform for a given shape and domain and display mode
-  vtkSmartPointer<vtkTransform> get_transform(QSharedPointer<Shape> shape, DisplayMode display_mode, int alignment_domain, int domain);
+  vtkSmartPointer<vtkTransform> get_transform(std::shared_ptr<Shape> shape, DisplayMode display_mode, int alignment_domain, int domain);
 
   //! Set domain opacities
   void set_opacities(std::vector<float> opacities);

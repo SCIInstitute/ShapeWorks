@@ -58,7 +58,7 @@ void Visualizer::set_center(bool center) { center_ = center; }
 //-----------------------------------------------------------------------------
 void Visualizer::display_samples() {
   update_viewer_properties();
-  QVector<QSharedPointer<Shape>> shapes = session_->get_shapes();
+  auto shapes = session_->get_shapes();
   display_shapes(shapes);
 }
 
@@ -87,7 +87,7 @@ void Visualizer::update_ffc_mode() {
 }
 
 //-----------------------------------------------------------------------------
-void Visualizer::display_shapes(QVector<QSharedPointer<Shape>> shapes) {
+void Visualizer::display_shapes(ShapeList shapes) {
   lightbox_->set_shapes(shapes);
   lightbox_->redraw();
   update_viewer_properties();
@@ -95,7 +95,7 @@ void Visualizer::display_shapes(QVector<QSharedPointer<Shape>> shapes) {
 
 //-----------------------------------------------------------------------------
 void Visualizer::display_shape(ShapeHandle shape) {
-  QVector<ShapeHandle> shapes;
+  std::vector<ShapeHandle> shapes;
   shapes.push_back(shape);
   lightbox_->set_shapes(shapes);
   update_viewer_properties();
@@ -184,8 +184,8 @@ std::vector<vtkSmartPointer<vtkPolyData>> Visualizer::get_current_meshes_transfo
 //-----------------------------------------------------------------------------
 void Visualizer::display_sample(int i) {
   update_viewer_properties();
-  QVector<ShapeHandle> display_shapes;
-  QVector<ShapeHandle> shapes = session_->get_shapes();
+  std::vector<ShapeHandle> display_shapes;
+  std::vector<ShapeHandle> shapes = session_->get_shapes();
   if (i < shapes.size()) {
     display_shapes.push_back(shapes[i]);
   }
@@ -408,7 +408,7 @@ int Visualizer::get_alignment_domain() { return alignment_domain_; }
 
 //-----------------------------------------------------------------------------
 void Visualizer::clear_viewers() {
-  QVector<ShapeHandle> shapes;
+  std::vector<ShapeHandle> shapes;
   lightbox_->set_shapes(shapes);
 }
 
@@ -452,12 +452,12 @@ void Visualizer::set_uniform_feature_range(bool value) { feature_range_uniform_ 
 bool Visualizer::get_uniform_feature_range(void) { return feature_range_uniform_; }
 
 //-----------------------------------------------------------------------------
-vtkSmartPointer<vtkTransform> Visualizer::get_transform(QSharedPointer<Shape> shape, int alignment_domain, int domain) {
+vtkSmartPointer<vtkTransform> Visualizer::get_transform(std::shared_ptr<Shape> shape, int alignment_domain, int domain) {
   return get_transform(shape, session_->get_display_mode(), alignment_domain, domain);
 }
 
 //-----------------------------------------------------------------------------
-vtkSmartPointer<vtkTransform> Visualizer::get_transform(QSharedPointer<Shape> shape, DisplayMode display_mode, int alignment_domain, int domain)
+vtkSmartPointer<vtkTransform> Visualizer::get_transform(std::shared_ptr<Shape> shape, DisplayMode display_mode, int alignment_domain, int domain)
 {
   auto transform = vtkSmartPointer<vtkTransform>::New();
 

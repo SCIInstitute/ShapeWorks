@@ -128,7 +128,7 @@ void DataTool::update_table() {
     return;
   }
 
-  QVector<QSharedPointer<Shape>> shapes = session_->get_shapes();
+  auto shapes = session_->get_shapes();
 
   auto project = session_->get_project();
   auto headers = project->get_headers();

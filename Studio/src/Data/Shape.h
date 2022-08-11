@@ -17,8 +17,8 @@
 namespace shapeworks {
 
 class Shape;
-using ShapeHandle = QSharedPointer<Shape>;
-using ShapeList = QVector<ShapeHandle>;
+using ShapeHandle = std::shared_ptr<Shape>;
+using ShapeList = std::vector<ShapeHandle>;
 class VtkMeshWrapper;
 
 //! Representation of a single shape/patient/subject.
@@ -121,15 +121,6 @@ class Shape {
   QString get_local_point_filename();
   QString get_local_point_filename_with_path();
 
-  QList<Point> get_exclusion_sphere_centers();
-  void set_exclusion_sphere_centers(QList<Point> centers);
-
-  QList<double> get_exclusion_sphere_radii();
-  void set_exclusion_sphere_radii(QList<double> radii);
-
-  int get_group_id();
-  void set_group_id(int id);
-
   void set_transform(vtkSmartPointer<vtkTransform> transform);
   vtkSmartPointer<vtkTransform> get_transform(int domain = 0);
   vtkSmartPointer<vtkTransform> get_inverse_transform(int domain = 0);
@@ -187,8 +178,6 @@ class Shape {
   MeshGroup reconstructed_meshes_;
   std::vector<std::shared_ptr<VtkMeshWrapper>> groomed_mesh_wrappers_;
 
-  int group_id_ = 1;
-
   std::string override_feature_;
 
   std::vector<std::string> global_point_filenames_;
@@ -197,12 +186,8 @@ class Shape {
   std::map<std::string, Eigen::VectorXf> point_features_;
   StudioParticles particles_;
 
-  QList<Point> exclusion_sphere_centers_;
-  QList<double> exclusion_sphere_radii_;
-
   std::shared_ptr<shapeworks::Subject> subject_;
 
-  std::vector<Point> vectors_;
   vtkSmartPointer<vtkTransform> transform_ = vtkSmartPointer<vtkTransform>::New();
 
   std::vector<vtkSmartPointer<vtkTransform>> reconstruction_transforms_;
@@ -213,7 +198,6 @@ class Shape {
 
   Eigen::MatrixXd landmarks_;
 
-  // vtkSmartPointer<vtkImageData> image_volume_;
   std::shared_ptr<Image> image_volume_;
   std::string image_volume_filename_;
 
