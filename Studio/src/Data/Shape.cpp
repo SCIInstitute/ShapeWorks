@@ -1,4 +1,3 @@
-// qt
 #include <Data/MeshGenerator.h>
 #include <Data/Shape.h>
 #include <Data/StudioLog.h>
@@ -10,10 +9,8 @@
 #include <itkOrientImageFilter.h>
 #include <vtkCenterOfMass.h>
 
-#include <QDebug>
-#include <QFile>
-#include <QFileInfo>
 #include <QMessageBox>
+#include <boost/filesystem.hpp>
 
 // vtk
 #include <Libs/Optimize/ParticleSystem/VtkMeshWrapper.h>
@@ -524,7 +521,8 @@ void Shape::load_feature(DisplayMode display_mode, std::string feature) {
             group.meshes()[d]->apply_feature_map(feature, image);
             apply_feature_to_points(feature, image);
           } catch (itk::ExceptionObject& excep) {
-            QMessageBox::warning(0, "Unable to open file", "Error opening file: \"" + QString::fromStdString(filename) + "\"");
+            QMessageBox::warning(0, "Unable to open file",
+                                 "Error opening file: \"" + QString::fromStdString(filename) + "\"");
           }
         }
       }
@@ -752,26 +750,26 @@ void Shape::set_reconstruction_transforms(std::vector<vtkSmartPointer<vtkTransfo
 
 //---------------------------------------------------------------------------
 void Shape::load_feature_from_scalar_file(std::string filename, std::string feature_name) {
-  QString qfilename = QString::fromStdString(filename);
-
-  if (!QFile(qfilename).exists()) {
+  if (!boost::filesystem::exists(filename)) {
     return;
   }
 
-  QFile file(qfilename);
-  if (!file.open(QIODevice::ReadOnly)) {
-    STUDIO_LOG_ERROR("Unable to open scalar file: " + qfilename);
+  std::ifstream in(filename);
+  if (!in.good()) {
+    STUDIO_LOG_ERROR(QString::fromStdString("Unable to open scalar file: " + filename));
     return;
   }
 
-  auto data = QString(file.readAll()).trimmed();
-  auto lines = data.split('\n');
-  file.close();
+  std::vector<float> floats;
+  while (in.good()) {
+    float line;
+    in >> line;
+    floats.push_back(line);
+  }
 
-  Eigen::VectorXf values(lines.size());
-  for (int i = 0; i < lines.size(); i++) {
-    float value = QString(lines[i]).toFloat();
-    values[i] = value;
+  Eigen::VectorXf values(floats.size());
+  for (int i = 0; i < floats.size(); i++) {
+    values[i] = floats[i];
   }
 
   this->set_point_features(feature_name, values);
