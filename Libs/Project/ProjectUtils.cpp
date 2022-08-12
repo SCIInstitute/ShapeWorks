@@ -181,7 +181,8 @@ StringMap ProjectUtils::get_value_map(std::vector<std::string> prefixes, StringM
 
 //---------------------------------------------------------------------------
 StringMap ProjectUtils::get_extra_columns(StringMap key_map) {
-  StringList prefixes = {SEGMENTATION_PREFIX,
+  StringList prefixes = {"name",
+                         SEGMENTATION_PREFIX,
                          SHAPE_PREFIX,
                          MESH_PREFIX,
                          CONTOUR_PREFIX,

@@ -232,7 +232,8 @@ void Project::determine_feature_names() {
             }
           }
         } catch (std::exception& e) {
-          std::cerr << std::string("Error reading features from mesh: ") + filename << "\n";
+          /// TODO: convert to new logging
+          std::cerr << std::string("Unable to read features from mesh: ") + filename << "\n";
         }
       }
     }
