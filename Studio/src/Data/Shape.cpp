@@ -1,6 +1,6 @@
 #include <Data/MeshGenerator.h>
 #include <Data/Shape.h>
-#include <Data/StudioLog.h>
+#include <Logging.h>
 #include <Libs/Image/Image.h>
 #include <Libs/Project/ProjectUtils.h>
 #include <Libs/Utils/StringUtils.h>
@@ -255,7 +255,7 @@ bool Shape::import_constraints(std::vector<std::string> filenames) {
         constraints.Read(filenames[i]);
       }
     } catch (std::exception& e) {
-      STUDIO_SHOW_ERROR(e.what());
+      SW_SHOW_ERROR(e.what());
       return false;
     }
     constraints_.push_back(constraints);
@@ -297,7 +297,7 @@ bool Shape::store_constraints() {
     try {
       get_constraints(i).Write(filenames[i]);
     } catch (std::exception& e) {
-      STUDIO_SHOW_ERROR(e.what());
+      SW_SHOW_ERROR(e.what());
       return false;
     }
   }
@@ -437,7 +437,7 @@ void Shape::generate_meshes(std::vector<std::string> filenames, MeshGroup& mesh_
       mesh_group.set_mesh(i, new_mesh);
 
       if (new_mesh->get_poly_data()->GetNumberOfPoints() < 1) {
-        STUDIO_SHOW_ERROR(QString::fromStdString("Error: Mesh contained no points: " + filenames[i]));
+        SW_SHOW_ERROR("Error: Mesh contained no points: " + filenames[i]);
       } else {
         // generate a basic centering transform
         auto com = vtkSmartPointer<vtkCenterOfMass>::New();
@@ -756,7 +756,7 @@ void Shape::load_feature_from_scalar_file(std::string filename, std::string feat
 
   std::ifstream in(filename);
   if (!in.good()) {
-    STUDIO_LOG_ERROR(QString::fromStdString("Unable to open scalar file: " + filename));
+    SW_LOG_ERROR("Unable to open scalar file: " + filename);
     return;
   }
 

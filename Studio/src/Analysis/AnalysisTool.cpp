@@ -13,7 +13,7 @@
 #include <Data/Session.h>
 #include <Data/Shape.h>
 #include <Data/ShapeWorksWorker.h>
-#include <Data/StudioLog.h>
+#include <Logging.h>
 #include <Data/StudioMesh.h>
 #include <Interface/ShapeWorksStudioApp.h>
 #include <Job/GroupPvalueJob.h>
@@ -1094,7 +1094,7 @@ void AnalysisTool::initialize_mesh_warper() {
     int median = stats_.ComputeMedianShape(-32);  //-32 = both groups
 
     if (median < 0 || median >= session_->get_num_shapes()) {
-      STUDIO_LOG_ERROR("Unable to set reference mesh, stats returned invalid median index");
+      SW_LOG_ERROR("Unable to set reference mesh, stats returned invalid median index");
       return;
     }
     std::shared_ptr<Shape> median_shape = session_->get_shapes()[median];
@@ -1102,7 +1102,7 @@ void AnalysisTool::initialize_mesh_warper() {
     auto mesh_group = median_shape->get_groomed_meshes(true);
 
     if (!mesh_group.valid()) {
-      STUDIO_LOG_ERROR("Unable to set reference mesh, groomed mesh is unavailable");
+      SW_LOG_ERROR("Unable to set reference mesh, groomed mesh is unavailable");
       return;
     }
     auto meshes = mesh_group.meshes();

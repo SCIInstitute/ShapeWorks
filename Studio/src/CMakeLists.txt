@@ -92,7 +92,6 @@ SET(STUDIO_DATA_SRCS
   Data/Session.cpp
   Data/Shape.cpp
   Data/StudioEnums.cpp
-  Data/StudioLog.cpp
   Data/StudioMesh.cpp
   Data/StudioParticles.cpp
   Data/SurfaceReconstructor.cpp
@@ -113,7 +112,6 @@ SET(STUDIO_DATA_MOC_HDRS
   Data/Session.h
   Data/ShapeWorksWorker.h
   Data/Worker.h
-  Data/StudioLog.h
   )
 
 SET(STUDIO_JOB_SRCS

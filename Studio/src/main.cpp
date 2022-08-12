@@ -1,5 +1,5 @@
 #include <Applications/Configuration.h>
-#include <Data/StudioLog.h>
+#include <Logging.h>
 #include <Interface/ShapeWorksStudioApp.h>
 #include <QVTKOpenGLNativeWidget.h>
 #include <Logging.h>
@@ -65,7 +65,7 @@ int main(int argc, char** argv) {
 
 #ifdef _WIN32
     QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-    STUDIO_LOG_MESSAGE("ShapeWorks Studio win32 initializing...");
+    SW_LOG_MESSAGE("ShapeWorks Studio win32 initializing...");
     init_crash_handler();
     ::SetErrorMode(0);
 #endif
@@ -82,9 +82,9 @@ int main(int argc, char** argv) {
     studio_app->initialize_vtk();
     studio_app->show();
 
-    if (!shapeworks::StudioLog::Instance().check_log_open()) {
+    if (!shapeworks::Logging::Instance().check_log_open()) {
       QMessageBox::warning(NULL, "ShapeWorks Studio",
-                           "Unable to open log file: " + shapeworks::StudioLog::Instance().get_log_filename());
+                           "Unable to open log file: " + QString::fromStdString(shapeworks::Logging::Instance().get_log_filename()));
     }
 
     if (argc > 1) {

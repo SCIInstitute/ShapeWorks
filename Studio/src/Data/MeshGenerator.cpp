@@ -4,7 +4,7 @@
 #include <Data/LegacyMeshGenerator.h>
 #include <Data/MeshGenerator.h>
 #include <Data/QMeshWarper.h>
-#include <Data/StudioLog.h>
+#include <Logging.h>
 #include <Libs/Mesh/Mesh.h>
 #include <Libs/Mesh/MeshUtils.h>
 #include <Libs/Utils/StringUtils.h>
@@ -78,8 +78,8 @@ MeshHandle MeshGenerator::build_mesh_from_points(const Eigen::VectorXd& shape, i
     auto poly_data = mesh_warpers[domain]->build_mesh(points);
 
     if (!poly_data) {
-      std::string message = std::string("Unable to warp mesh");
-      STUDIO_LOG_ERROR(QString::fromStdString(message));
+      std::string message = "Unable to warp mesh";
+      SW_LOG_ERROR(message);
       mesh->set_error_message(message);
       return mesh;
     }
@@ -146,8 +146,8 @@ MeshHandle MeshGenerator::build_mesh_from_file(std::string filename, float iso_v
     try {
       mesh->set_poly_data(MeshUtils::threadSafeReadMesh(filename).clean().computeNormals().getVTKMesh());
     } catch (std::exception& e) {
-      std::string message = std::string("Error reading: ") + filename;
-      STUDIO_LOG_ERROR(QString::fromStdString(message));
+      std::string message = "Error reading: " + filename;
+      SW_LOG_ERROR(message);
       mesh->set_error_message(message);
     }
   } else {
@@ -170,8 +170,7 @@ MeshHandle MeshGenerator::build_mesh_from_file(std::string filename, float iso_v
 
       mesh = this->build_mesh_from_image(image, iso_value);
     } catch (itk::ExceptionObject& excep) {
-      std::cerr << "Exception caught!" << std::endl;
-      std::cerr << excep << std::endl;
+      SW_LOG_ERROR(excep.what());
       mesh->set_error_message(std::string("Exception: ") + excep.what());
     }
   }

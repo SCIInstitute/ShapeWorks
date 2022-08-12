@@ -1,7 +1,7 @@
 #include <Data/Session.h>
 #include <Data/Shape.h>
 #include <Data/ShapeWorksWorker.h>
-#include <Data/StudioLog.h>
+#include <Logging.h>
 #include <Data/StudioMesh.h>
 #include <Groom/GroomTool.h>
 #include <Libs/Groom/GroomParameters.h>

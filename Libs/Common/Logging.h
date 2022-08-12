@@ -52,11 +52,9 @@ class Logging {
   void set_message_callback(std::function<void(std::string)> callback);
 
  private:
-  std::string create_header(const int line, const char* filename);
 
-  std::string get_current_datetime();
-
-  std::ofstream log_;  //! log file
+  //! log file, if used
+  std::ofstream log_;
 
   std::string log_filename_;
 

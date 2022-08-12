@@ -15,7 +15,7 @@
 #include <Data/Session.h>
 #include <Data/Shape.h>
 #include <Data/ShapeWorksWorker.h>
-#include <Data/StudioLog.h>
+#include <Logging.h>
 #include <DeepSSM/DeepSSMJob.h>
 #include <DeepSSM/DeepSSMParameters.h>
 #include <DeepSSM/DeepSSMTool.h>

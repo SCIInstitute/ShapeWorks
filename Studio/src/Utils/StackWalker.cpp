@@ -1,6 +1,6 @@
 #ifdef _WIN32
 
-#include <Data/StudioLog.h>
+#include <Logging.h>
 
 /**********************************************************************
  * 
@@ -1354,6 +1354,6 @@ void StackWalker::OnSymInit(LPCSTR szSearchPath, DWORD symOptions, LPCSTR szUser
 void StackWalker::OnOutput(LPCSTR buffer)
 {
   //OutputDebugStringA(buffer);
-  STUDIO_LOG_MESSAGE(QString::fromStdString(std::string(buffer)));
+  SW_LOG_MESSAGE(QString::fromStdString(std::string(buffer)));
 }
 #endif

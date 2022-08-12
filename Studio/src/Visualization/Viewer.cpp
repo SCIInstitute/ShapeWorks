@@ -33,7 +33,7 @@
 
 // shapeworks
 #include <Data/Shape.h>
-#include <Data/StudioLog.h>
+#include <Logging.h>
 #include <Utils/StudioUtils.h>
 #include <Visualization/LandmarkWidget.h>
 #include <Visualization/Lightbox.h>
@@ -708,7 +708,7 @@ void Viewer::display_shape(std::shared_ptr<Shape> shape) {
               ffc.setDefinition(poly_data);
             }
           } catch (std::exception& e) {
-            STUDIO_SHOW_ERROR(QString("Unable to apply free form constraints: ") + e.what());
+            SW_SHOW_ERROR(std::string("Unable to apply free form constraints: ") + e.what());
           }
         }
 
@@ -1121,7 +1121,7 @@ int Viewer::handle_pick(int* click_pos) {
       vtkIdType glyph_id = input_ids->GetTuple1(input_id);
 
       if (glyph_id >= 0) {
-        STUDIO_LOG_MESSAGE("picked correspondence point :" + QString::number(glyph_id));
+        SW_LOG_MESSAGE("picked correspondence point :" + std::to_string(glyph_id));
         return glyph_id;
       }
     }

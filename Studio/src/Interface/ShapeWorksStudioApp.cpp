@@ -30,7 +30,7 @@
 #include <Data/Preferences.h>
 #include <Data/Session.h>
 #include <Data/Shape.h>
-#include <Data/StudioLog.h>
+#include <Logging.h>
 #include <DeepSSM/DeepSSMTool.h>
 #include <Groom/GroomTool.h>
 #include <Interface/CompareWidget.h>
@@ -299,7 +299,7 @@ void ShapeWorksStudioApp::on_action_show_project_folder_triggered() {
 
   if (!process.waitForFinished()) {
     QString error = QString("Could not open project: ") + process.errorString() + ".";
-    STUDIO_LOG_ERROR(error);
+    SW_LOG_ERROR(error.toStdString());
   }
 }
 
@@ -629,7 +629,6 @@ void ShapeWorksStudioApp::handle_status(QString str) {
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_error(std::string str) {
-  SW_LOG_ERROR(str);
   auto qstr = QString::fromStdString(str);
   set_message(MessageType::error, qstr);
   current_message_ = qstr;
@@ -638,7 +637,6 @@ void ShapeWorksStudioApp::handle_error(std::string str) {
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_warning(QString str) {
-  STUDIO_LOG_MESSAGE(str);
   set_message(MessageType::warning, str);
   current_message_ = str;
   error_message_dialog_.showMessage("Warning:\n" + str, "warning");
@@ -1648,7 +1646,7 @@ void ShapeWorksStudioApp::closeEvent(QCloseEvent* event) {
 
   optimize_tool_->shutdown_threads();
   deepssm_tool_->shutdown();
-  STUDIO_CLOSE_LOG();
+  SW_CLOSE_LOG();
 }
 
 //---------------------------------------------------------------------------

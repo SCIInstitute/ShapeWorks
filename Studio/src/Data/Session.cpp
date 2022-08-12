@@ -27,7 +27,7 @@
 #include <Data/MeshManager.h>
 #include <Data/Session.h>
 #include <Data/Shape.h>
-#include <Data/StudioLog.h>
+#include <Logging.h>
 #include <ExcelProjectWriter.h>
 #include <JsonProjectWriter.h>
 #include <JsonProjectReader.h>
@@ -308,9 +308,7 @@ bool Session::load_light_project(QString filename) {
   elem = docHandle.FirstChild("distance_transform_files").Element();
   if (elem && elem->GetText()) {
     if (!local_particles_found) {
-      QString message = "Error, distance_transform_files specified, but not local_particle_files";
-      STUDIO_LOG_ERROR(message);
-      QMessageBox::critical(nullptr, "ShapeWorksStudio", message, QMessageBox::Ok);
+      SW_LOG_ERROR("Error, distance_transform_files specified, but not local_particle_files");
       return false;
     }
     groom_files.clear();  // if someone specifies both, prefer the distance transforms
@@ -318,9 +316,7 @@ bool Session::load_light_project(QString filename) {
     inputsBuffer.str(elem->GetText());
     while (inputsBuffer >> distance_transform_filename) {
       if (!QFile::exists(QString::fromStdString(distance_transform_filename))) {
-        QString message = "File does not exist: " + QString::fromStdString(distance_transform_filename);
-        STUDIO_LOG_ERROR(message);
-        QMessageBox::critical(nullptr, "ShapeWorksStudio", message, QMessageBox::Ok);
+        SW_LOG_ERROR("File does not exist: " + distance_transform_filename);
         return false;
       }
 
@@ -333,18 +329,15 @@ bool Session::load_light_project(QString filename) {
   elem = docHandle.FirstChild("mesh_files").Element();
   if (elem && elem->GetText()) {
     if (!local_particles_found) {
-      QString message = "Error, mesh_files specified, but not local_particle_files";
-      STUDIO_LOG_ERROR(message);
-      QMessageBox::critical(nullptr, "ShapeWorksStudio", message, QMessageBox::Ok);
+      SW_LOG_ERROR("Error, mesh_files specified, but not local_particle_files");
       return false;
     }
     std::string mesh_filename;
     inputsBuffer.str(elem->GetText());
     while (inputsBuffer >> mesh_filename) {
       if (!QFile::exists(QString::fromStdString(mesh_filename))) {
-        QString message = "File does not exist: " + QString::fromStdString(mesh_filename);
-        STUDIO_LOG_ERROR(message);
-        QMessageBox::critical(nullptr, "ShapeWorksStudio", message, QMessageBox::Ok);
+        std::string message = "File does not exist: " + mesh_filename;
+        SW_LOG_ERROR(message);
         return false;
       }
       groom_files.push_back(mesh_filename);
@@ -355,17 +348,13 @@ bool Session::load_light_project(QString filename) {
 
   if (!groom_files.empty()) {
     if (groom_files.size() != local_point_files.size()) {
-      QString message = "Error, mismatch in number of distance_transforms and particle files";
-      STUDIO_LOG_ERROR(message);
-      QMessageBox::critical(nullptr, "ShapeWorksStudio", message, QMessageBox::Ok);
+      SW_LOG_ERROR("Error, mismatch in number of distance_transforms and particle files");
       return false;
     }
   }
 
   if (local_point_files.size() != global_point_files.size()) {
-    QString message = "Error, mismatch in number of local and world particle files";
-    STUDIO_LOG_ERROR(message);
-    QMessageBox::critical(nullptr, "ShapeWorksStudio", message, QMessageBox::Ok);
+    SW_LOG_ERROR("Error, mismatch in number of local and world particle files");
     return false;
   }
 
@@ -538,9 +527,7 @@ void Session::load_original_files(std::vector<std::string> filenames) {
   for (int i = 0; i < filenames.size(); i++) {
     QString filename = QString::fromStdString(filenames[i]);
     if (!QFile::exists(filename)) {
-      QString message = "File does not exist: " + filename;
-      STUDIO_LOG_MESSAGE(message);
-      QMessageBox::critical(NULL, "ShapeWorksStudio", message, QMessageBox::Ok);
+      SW_LOG_MESSAGE("File does not exist: " + filename.toStdString());
       return;
     }
 

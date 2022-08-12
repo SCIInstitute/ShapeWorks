@@ -6,7 +6,7 @@ namespace py = pybind11;
 using namespace pybind11::literals;  // to bring in the `_a` literal
 
 #include <Data/Shape.h>
-#include <Data/StudioLog.h>
+#include <Logging.h>
 #include <Python/PythonWorker.h>
 #include <Logging.h>
 
@@ -222,7 +222,7 @@ bool PythonWorker::init() {
     // must reset the output window so that vtkPython's from conda's python doesn't take over
     vtkOutputWindow::SetInstance(this->studio_vtk_output_window_);
 
-    STUDIO_LOG_MESSAGE("Embedded Python Interpreter Initialized");
+    SW_LOG_MESSAGE("Embedded Python Interpreter Initialized");
   } catch (py::error_already_set& e) {
     SW_LOG_ERROR("Unable to initialize Python:\n" + std::string(e.what()));
     SW_LOG_ERROR("Unable to initialize Python.  Please run " + script);
