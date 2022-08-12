@@ -23,7 +23,7 @@ find_package(Python3 3.7 EXACT REQUIRED)
 if (NOT APPLE)
   option(USE_OPENMP      "Build using OpenMP" ON)
 endif()
-option(Build_Studio    "Build studio"       OFF)
+option(Build_Studio    "Build studio"       ON)
 option(BUILD_TESTS     "Build tests"        ON)
 
 if ("${Build_Studio}")
