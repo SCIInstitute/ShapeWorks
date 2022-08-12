@@ -55,6 +55,8 @@ else
     exit 1
 fi
 python Python/RunShapeWorksAutoDoc.py --md_filename docs/tools/ShapeWorksCommands.md
+pip list
+echo "running mkdocs build"
 mkdocs build
 mv site Documentation
 cp -a Documentation bin/
