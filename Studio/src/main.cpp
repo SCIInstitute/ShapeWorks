@@ -1,19 +1,18 @@
 #include <Applications/Configuration.h>
-#include <Logging.h>
 #include <Interface/ShapeWorksStudioApp.h>
-#include <QVTKOpenGLNativeWidget.h>
 #include <Logging.h>
+#include <QVTKOpenGLNativeWidget.h>
 #include <itkMacro.h>
 #include <tbb/tbb.h>
 #include <vtkObject.h>
 
 #include <QApplication>
+#include <QDateTime>
 #include <QDir>
 #include <QMessageBox>
 #include <QResource>
-#include <QSurfaceFormat>
-#include <QDateTime>
 #include <QStandardPaths>
+#include <QSurfaceFormat>
 #include <iostream>
 
 #ifdef _WIN32
@@ -24,7 +23,6 @@
 using namespace shapeworks;
 
 static void new_log() {
-
   QDateTime date_time = QDateTime::currentDateTime();
   QString session_name = date_time.toString("yyyy-MM-dd_HH_mm_ss");
 
@@ -54,9 +52,9 @@ int main(int argc, char** argv) {
   try {
     new_log();
     SW_LOG_MESSAGE("ShapeWorks Studio " SHAPEWORKS_VERSION " initializing...");
-    SW_LOG_DEBUG("debug");
-    SW_LOG_WARNING("warning");
-    SW_LOG_ERROR("error");
+    // SW_LOG_DEBUG("debug");
+    // SW_LOG_WARNING("warning");
+    // SW_LOG_ERROR("error");
 
     // needed to ensure appropriate OpenGL context is created for VTK rendering.
     QSurfaceFormat format = QVTKOpenGLNativeWidget::defaultFormat();
@@ -72,7 +70,6 @@ int main(int argc, char** argv) {
     init_crash_handler();
     ::SetErrorMode(0);
 #endif
-
 
     QApplication app(argc, argv);
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);

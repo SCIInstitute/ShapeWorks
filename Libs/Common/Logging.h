@@ -52,14 +52,12 @@ class Logging {
   void set_message_callback(std::function<void(std::string)> callback);
 
  private:
-
   std::string log_filename_;
   bool log_open_ = false;
 
   std::function<void(std::string)> error_callback_;
 
   std::function<void(std::string)> message_callback_;
-
 };
 
 //! Log stack macro
