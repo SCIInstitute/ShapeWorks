@@ -406,7 +406,6 @@ bool Session::load_xl_project(QString filename) {
 
   auto domain_names = project_->get_domain_names();
 
-  // auto landmark_definitions = project_->get_all_landmark_definitions();
   for (int i = 0; i < num_subjects; i++) {
     std::shared_ptr<Shape> shape = std::shared_ptr<Shape>(new Shape());
     shape->set_mesh_manager(mesh_manager_);
@@ -440,8 +439,6 @@ bool Session::load_xl_project(QString filename) {
         project_->new_landmark(domain_id);
         landmark_definitions = project_->get_landmarks(domain_id);
       }
-    }
-    for (int domain_id = 0; domain_id < domain_names.size(); domain_id++) {
     }
     shapes_.push_back(shape);
   }
