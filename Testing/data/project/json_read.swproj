@@ -1,7 +1,7 @@
 {
     "data": [
         {
-            "name": "1",
+            "name": "195916_R_FM_align",
             "shape_femur": "195916_R_FM_align.nrrd",
             "shape_pelvis": "195916_R_PV_align.ply",
             "groomed_femur": "groomed/195916_R_FM_align_DT.nrrd",
@@ -16,7 +16,7 @@
             "procrustes_pelvis": "1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000"
         },
         {
-            "name": "2",
+            "name": "187609_R_FM_align",
             "shape_femur": "187609_R_FM_align.nrrd",
             "shape_pelvis": "187609_R_PV_align.ply",
             "groomed_femur": "groomed/187609_R_FM_align_DT.nrrd",
@@ -31,7 +31,7 @@
             "procrustes_pelvis": "1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000"
         },
         {
-            "name": "3",
+            "name": "190402_R_FM_align",
             "shape_femur": "190402_R_FM_align.nrrd",
             "shape_pelvis": "190402_R_PV_align.ply",
             "groomed_femur": "groomed/190402_R_FM_align_DT.nrrd",
@@ -46,7 +46,7 @@
             "procrustes_pelvis": "1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000"
         },
         {
-            "name": "4",
+            "name": "194992_R_FM_align",
             "shape_femur": "194992_R_FM_align.nrrd",
             "shape_pelvis": "194992_R_PV_align.ply",
             "groomed_femur": "groomed/194992_R_FM_align_DT.nrrd",
