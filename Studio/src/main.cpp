@@ -2,6 +2,7 @@
 #include <Data/StudioLog.h>
 #include <Interface/ShapeWorksStudioApp.h>
 #include <QVTKOpenGLNativeWidget.h>
+#include <Logging.h>
 #include <itkMacro.h>
 #include <tbb/tbb.h>
 #include <vtkObject.h>
@@ -11,6 +12,8 @@
 #include <QMessageBox>
 #include <QResource>
 #include <QSurfaceFormat>
+#include <QDateTime>
+#include <QStandardPaths>
 #include <iostream>
 
 #ifdef _WIN32
@@ -18,11 +21,39 @@
 #include <windows.h>
 #endif
 
+using namespace shapeworks;
+
+static void new_log() {
+
+  QDateTime date_time = QDateTime::currentDateTime();
+  QString session_name = date_time.toString("yyyy-MM-dd_HH_mm_ss");
+
+  auto app_data_path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+  QString path = app_data_path + QDir::separator() + "shapeworks" + QDir::separator() + "logs";
+
+  QDir dir(path);
+  if (!dir.exists()) {
+    dir.mkpath(".");
+  }
+
+  // clean out old logs
+  QStringList logs = dir.entryList(QDir::Files, QDir::Time);
+
+  for (int i = 100; i < logs.size(); i++) {
+    dir.remove(logs[i]);
+  }
+
+  QString logfile = path + QDir::separator() + "studio-" + session_name + ".txt";
+
+  Logging::Instance().open_file_log(logfile.toStdString());
+}
+
 int main(int argc, char** argv) {
   // tbb::task_scheduler_init init(1);
 
   try {
-    STUDIO_LOG_MESSAGE("ShapeWorks Studio " SHAPEWORKS_VERSION " initializing...");
+    new_log();
+    SW_LOG_MESSAGE("ShapeWorks Studio " SHAPEWORKS_VERSION " initializing...");
 
     // needed to ensure appropriate OpenGL context is created for VTK rendering.
     QSurfaceFormat format = QVTKOpenGLNativeWidget::defaultFormat();
@@ -38,6 +69,7 @@ int main(int argc, char** argv) {
     init_crash_handler();
     ::SetErrorMode(0);
 #endif
+
 
     QApplication app(argc, argv);
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);

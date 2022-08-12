@@ -18,6 +18,7 @@ using namespace pybind11::literals; // to bring in the `_a` literal
 // shapeworks
 #include <DeepSSM/DeepSSMJob.h>
 #include <DeepSSM/DeepSSMParameters.h>
+#include <Logging.h>
 
 namespace shapeworks {
 
@@ -138,22 +139,22 @@ void DeepSSMJob::run_training()
 
   double train_split = (100.0 - params.get_validation_split()) / 100.0;
 
-  emit message("DeepSSM: Loading Train/Validation Loaders");
+  SW_LOG_MESSAGE("DeepSSM: Loading Train/Validation Loaders");
   py::object get_train_val_loaders = py_deep_ssm_utils.attr("getTrainValLoaders");
   get_train_val_loaders(loader_dir, aug_data_csv, batch_size, down_factor, down_dir, train_split);
 
-  emit message("DeepSSM: Loading Test Loader");
+  SW_LOG_MESSAGE("DeepSSM: Loading Test Loader");
   py::object get_test_loader = py_deep_ssm_utils.attr("getTestLoader");
   get_test_loader(loader_dir, test_img_list, down_factor, down_dir);
 
   py::object prepare_config_file = py_deep_ssm_utils.attr("prepareConfigFile");
-  emit message("DeepSSM: Preparing Config File");
+  SW_LOG_MESSAGE("DeepSSM: Preparing Config File");
   std::string config_file = "deepssm/configuration.json";
   prepare_config_file(config_file, "model",
                       num_dims, out_dir, loader_dir, aug_dir, epochs,
                       learning_rate, decay_lr, fine_tune, fine_tune_epochs, fine_tune_learning_rate);
 
-  emit message("DeepSSM: Training");
+  SW_LOG_MESSAGE("DeepSSM: Training");
   py::object train_deep_ssm = py_deep_ssm_utils.attr("trainDeepSSM");
   train_deep_ssm(config_file);
 }
@@ -182,7 +183,7 @@ void DeepSSMJob::run_testing()
   py::module py_deep_ssm_utils = py::module::import("DeepSSMUtils");
 
   std::string config_file = "deepssm/configuration.json";
-  emit message("DeepSSM: Testing");
+  SW_LOG_MESSAGE("DeepSSM: Testing");
   py::object test_deep_ssm = py_deep_ssm_utils.attr("testDeepSSM");
   test_deep_ssm(config_file);
 }
@@ -190,7 +191,7 @@ void DeepSSMJob::run_testing()
 //---------------------------------------------------------------------------
 void DeepSSMJob::python_message(std::string str)
 {
-  emit message(QString::fromStdString(str));
+  SW_LOG_MESSAGE(str);
 }
 
 //---------------------------------------------------------------------------

@@ -22,12 +22,6 @@ public:
                    QSharedPointer<Optimize> optimize,
                    QSharedPointer<OptimizeParameters> optimize_parameters,
                    QSharedPointer<Session> session,
-                   std::vector<std::vector<itk::Point<double>>> local_pts =
-                   std::vector<std::vector<itk::Point<double>>>(),
-                   std::vector<std::vector<itk::Point<double>>> global_pts =
-                   std::vector<std::vector<itk::Point<double>>>(),
-                   std::vector<std::string> distance_transform =
-                   std::vector<std::string>(),
                    double maxAngle = 45.,
                    float decimationPercent = 0.3f,
                    int numClusters = 5);
@@ -39,9 +33,6 @@ public Q_SLOTS:
 Q_SIGNALS:
   void result_ready();
   void failure();
-  void error_message(QString);
-  void warning_message(QString);
-  void message(QString);
   void finished();
 
 private:
@@ -51,9 +42,6 @@ private:
   QSharedPointer<OptimizeParameters> optimize_parameters_;
   QSharedPointer<Session> session_;
   ThreadType type_;
-  std::vector<std::vector<itk::Point<double>>> local_pts_;
-  std::vector<std::vector<itk::Point<double>>> global_pts_;
-  std::vector<std::string> distance_transform_;
   float decimation_percent_;
   double max_angle_;
   int num_clusters_;

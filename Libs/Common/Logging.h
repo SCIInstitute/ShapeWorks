@@ -1,7 +1,7 @@
 #pragma once
 
-#include <string>
 #include <fstream>
+#include <string>
 
 namespace shapeworks {
 
@@ -12,8 +12,14 @@ class Logging {
   //! Return the singleton instance
   static Logging& Instance();
 
-  //! Create a new session
+  //! Create a file log
   void open_file_log(std::string filename);
+
+  //! Return if the log is open
+  bool check_log_open();
+
+  //! Return the log filename
+  std::string get_log_filename();
 
   //! Log a message, use SW_LOG_MESSAGE macro
   void log_message(std::string message, const int line, const char* file);
@@ -39,11 +45,11 @@ class Logging {
   //! Flush log to disk
   void flush_log();
 
-  //! Return if the log is open
-  bool check_log_open();
+  //! Set an error callback function to be called whenever an error is raised
+  void set_error_callback(std::function<void(std::string)> callback);
 
-  //! Return the log filename
-  std::string get_log_filename();
+  //! Set an message callback function to be called whenever an message is posted
+  void set_message_callback(std::function<void(std::string)> callback);
 
  private:
   std::string create_header(const int line, const char* filename);
@@ -54,11 +60,10 @@ class Logging {
 
   std::string log_filename_;
 
-  //! Datetime format used
-  static const std::string datetime_format_;
+  std::function<void(std::string)> error_callback_;
 
-  //! Datetime format used
-  static const std::string log_datetime_format_;
+  std::function<void(std::string)> message_callback_;
+
 };
 
 //! Log stack macro
@@ -66,6 +71,9 @@ class Logging {
 
 //! Log message macro
 #define SW_LOG_MESSAGE(message) shapeworks::Logging::Instance().log_message(message, __LINE__, __FILE__)
+
+//! Log warning macro
+#define SW_LOG_WARNING(message) shapeworks::Logging::Instance().log_message(message, __LINE__, __FILE__)
 
 //! Log error macro
 #define SW_LOG_ERROR(message) shapeworks::Logging::Instance().log_error(message, __LINE__, __FILE__)
@@ -75,6 +83,9 @@ class Logging {
 
 //! Log show message macro
 #define SW_SHOW_MESSAGE(message) shapeworks::Logging::Instance().show_message(message, __LINE__, __FILE__)
+
+//! Don't write to log, but set status
+#define SW_SET_STATUS(message) shapeworks::Logging::Instance().show_message(message, __LINE__, __FILE__)
 
 //! Close session macro
 #define SW_CLOSE_LOG() shapeworks::Logging::Instance().close_log();

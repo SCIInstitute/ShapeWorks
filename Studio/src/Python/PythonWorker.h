@@ -45,9 +45,6 @@ class PythonWorker : public QObject {
  Q_SIGNALS:
 
   void result_ready();
-  void error_message(QString);
-  void warning_message(QString);
-  void message(QString);
   void finished();
 
  private:

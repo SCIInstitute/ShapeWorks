@@ -50,8 +50,6 @@ public:
 Q_SIGNALS:
   void groom_start();
   void groom_complete();
-  void error_message(QString);
-  void message(QString);
   void progress(int);
 
 public Q_SLOTS:

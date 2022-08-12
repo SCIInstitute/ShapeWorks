@@ -1,29 +1,25 @@
 #pragma once
 
-#include <QObject>
 #include <vtkOutputWindow.h>
+
+#include <QObject>
 
 namespace shapeworks {
 
 //! Implementation of vtkOutputWindow to capture and display VTK error messages
 class StudioVtkOutputWindow : public QObject, public vtkOutputWindow {
-Q_OBJECT;
+  Q_OBJECT;
 
-public:
+ public:
   static StudioVtkOutputWindow* New();
 
-vtkTypeMacro(StudioVtkOutputWindow, vtkOutputWindow);
+  vtkTypeMacro(StudioVtkOutputWindow, vtkOutputWindow);
 
   StudioVtkOutputWindow();
 
   void DisplayErrorText(const char* text) override;
   void DisplayWarningText(const char* text) override;
 
-Q_SIGNALS:
-  void warning(QString message);
-  void error(QString message);
-
-private:
-
+ private:
 };
-}
+}  // namespace shapeworks

@@ -245,7 +245,6 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
 
   void handle_clear_cache();
   void handle_new_mesh();
-  void handle_message(QString s);
   void handle_thread_complete();
 
  signals:
@@ -257,8 +256,6 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   void ffc_changed();
   void update_display();
   void new_mesh();
-  void message(QString);
-  void error(QString);
   void feature_range_changed();
   void update_view_mode();
   void image_slice_settings_changed();

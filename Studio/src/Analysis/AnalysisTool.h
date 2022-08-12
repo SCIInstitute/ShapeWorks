@@ -176,9 +176,6 @@ class AnalysisTool : public QWidget {
   void update_view();
   void pca_update();
   void progress(int);
-  void message(QString);
-  void error(QString);
-  void warning(QString);
   void reconstruction_complete();
 
  private:

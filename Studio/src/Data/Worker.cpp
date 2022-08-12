@@ -1,6 +1,7 @@
 #include <QThread>
 
 #include <Data/Worker.h>
+#include <Logging.h>
 
 namespace shapeworks {
 
@@ -41,7 +42,7 @@ void Worker::process()
   try {
     this->job_->run();
   } catch (std::exception& e) {
-    emit this->job_->error_message(e.what());
+    SW_LOG_ERROR(e.what());
   }
   emit this->job_->finished();
 }

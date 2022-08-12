@@ -5,6 +5,8 @@
 #include <Interface/ShapeWorksStudioApp.h>
 #include <StringUtils.h>
 #include <Utils/StudioUtils.h>
+#include <Logging.h>
+
 #include <vtkPointData.h>
 #include <vtkPolyData.h>
 
@@ -58,7 +60,7 @@ void ExportUtils::export_all_subjects_particle_scalars(ShapeWorksStudioApp* pare
     }
 
     ExportUtils::write_particle_scalars(parent, shape, shape_filename);
-    parent->handle_message("Wrote: " + shape_filename);
+    SW_LOG_MESSAGE("Wrote: " + shape_filename.toStdString());
 
     if (progress.wasCanceled()) {
       break;
@@ -70,14 +72,14 @@ void ExportUtils::export_all_subjects_particle_scalars(ShapeWorksStudioApp* pare
 //---------------------------------------------------------------------------
 bool ExportUtils::write_scalars(ShapeWorksStudioApp* app, vtkSmartPointer<vtkPolyData> poly_data, QString filename) {
   if (!poly_data || !poly_data->GetPointData()->GetScalars()) {
-    app->handle_error("Error, no scalars to export");
+    SW_LOG_ERROR("Error, no scalars to export");
     return false;
   }
 
   std::ofstream output;
   output.open(filename.toStdString().c_str());
   if (output.bad()) {
-    app->handle_error("Error writing to file: " + filename);
+    SW_LOG_ERROR("Error writing to file: " + filename.toStdString());
     return false;
   }
   output << "point,x,y,z";
@@ -136,7 +138,7 @@ bool ExportUtils::write_particle_scalars(ShapeWorksStudioApp* app, std::shared_p
   std::ofstream output;
   output.open(filename.toStdString().c_str());
   if (output.bad()) {
-    app->handle_error("Error writing to file: " + filename);
+    SW_LOG_ERROR("Error writing to file: " + filename.toStdString());
     return false;
   }
   output << "point,x,y,z";

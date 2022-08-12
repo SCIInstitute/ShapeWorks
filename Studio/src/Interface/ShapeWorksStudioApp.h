@@ -113,9 +113,9 @@ class ShapeWorksStudioApp : public QMainWindow {
   void handle_color_scheme();
   void handle_pca_update();
   void clear_message();
-  void handle_message(QString str);
+  void handle_message(std::string str);
   void handle_status(QString str);
-  void handle_error(QString str);
+  void handle_error(std::string str);
   void handle_warning(QString str);
   void handle_progress(int amt);
   void handle_new_mesh();

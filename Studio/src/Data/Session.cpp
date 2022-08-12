@@ -35,6 +35,9 @@
 #include <Utils/AnalysisUtils.h>
 #include <Utils/StudioUtils.h>
 #include <Visualization/Visualizer.h>
+
+#include <Logging.h>
+
 #include <tinyxml.h>
 
 namespace shapeworks {
@@ -59,11 +62,8 @@ Session::~Session() = default;
 void Session::handle_new_mesh() { emit new_mesh(); }
 
 //---------------------------------------------------------------------------
-void Session::handle_message(QString s) { emit message(s); }
-
-//---------------------------------------------------------------------------
 void Session::handle_thread_complete() {
-  emit message("Reconstruction initialization complete.");
+  SW_LOG_MESSAGE("Reconstruction initialization complete.");
   this->calculate_reconstructed_samples();
   emit update_display();
 }
@@ -633,10 +633,10 @@ bool Session::load_point_files(std::vector<std::string> local, std::vector<std::
     counter += domains_per_shape;
     if (!this->shapes_[i]->import_local_point_files(local_filenames)) {
       std::string message = "Unable to load point files: " + boost::algorithm::join(local_filenames,", ");
-      emit error(QString::fromStdString(message));
+      SW_LOG_ERROR(message);
     }
     if (!this->shapes_[i]->import_global_point_files(world_filenames)) {
-      emit error(QString::fromStdString("Unable to load point files: " + boost::algorithm::join(local_filenames,", ")));
+      SW_LOG_ERROR("Unable to load point files: " + boost::algorithm::join(local_filenames,", "));
     }
     this->shapes_[i]->set_annotations(list);
   }

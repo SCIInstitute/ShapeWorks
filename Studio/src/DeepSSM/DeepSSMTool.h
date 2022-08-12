@@ -73,9 +73,6 @@ class DeepSSMTool : public QWidget {
 
   void update_view();
   void progress(int);
-  void message(QString);
-  void error(QString);
-  void warning(QString);
 
  private:
   void update_meshes();
