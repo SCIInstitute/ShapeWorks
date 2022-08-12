@@ -1,31 +1,45 @@
 #include "Logging.h"
 
+#include <spdlog/cfg/helpers.h>
+#include <spdlog/details/os.h>
 #include <spdlog/fmt/bundled/chrono.h>
 
 #include <boost/date_time.hpp>
 #include <boost/date_time/date_facet.hpp>
 #include <iostream>
 
+#include "spdlog/sinks/basic_file_sink.h"
+#include "spdlog/sinks/stdout_color_sinks.h"
 #include "spdlog/spdlog.h"
+
+namespace spd = spdlog;
 
 namespace shapeworks {
 
 //-----------------------------------------------------------------------------
 static std::string get_current_datetime() {
   auto now = boost::posix_time::second_clock::local_time();
-  return fmt::format("yyyy-MM-dd HH:mm:ss.zzz", to_tm(now));
+  // return fmt::format("{yyyy-MM-dd HH:mm:ss.zzz}", to_tm(now));
+  return fmt::format("{:%d-%b-%Y %H:%M:%S}", to_tm(now));
+  // fmt::print("{:%d-%b-%Y %H:%M:%S}\n", to_tm(now));
 }
 
 //-----------------------------------------------------------------------------
 static std::string create_header(const int line, const char *filename) {
   const char *name = (strrchr(filename, '/') ? strrchr(filename, '/') + 1 : filename);
   const char *name2 = (strrchr(name, '\\') ? strrchr(name, '\\') + 1 : name);
-  std::string header = "[" + get_current_datetime() + "|" + name2 + "|" + std::to_string(line) + "]";
+  std::string header = "[" + std::string(name2) + "|" + std::to_string(line) + "]";
   return header;
 }
 
 //-----------------------------------------------------------------------------
-Logging::Logging() {}
+Logging::Logging() {
+  auto env_val = spd::details::os::getenv("SW_LOG_LEVEL");
+  if (!env_val.empty()) {
+    spd::cfg::helpers::load_levels(env_val);
+  }
+  spdlog::flush_every(std::chrono::seconds(3));
+}
 
 //-----------------------------------------------------------------------------
 Logging &Logging::Instance() {
@@ -35,42 +49,47 @@ Logging &Logging::Instance() {
 
 //-----------------------------------------------------------------------------
 void Logging::open_file_log(std::string filename) {
-  if (log_.is_open()) {
-    SW_CLOSE_LOG();
+  try {
+    auto logger = spd::basic_logger_mt("file", filename);
+    logger->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%l] %v");
+    logger->set_level(spdlog::get_level());
+    std::cerr << "file: " << filename << "\n";
+    log_open_ = true;
+  } catch (const spdlog::spdlog_ex &ex) {
+    spd::error(std::string("Log file init failed: ") + ex.what());
   }
+
   log_filename_ = filename;
-  log_.open(filename);
-  log_.flush();
 }
 
 //-----------------------------------------------------------------------------
-bool Logging::check_log_open() { return log_.is_open(); }
+bool Logging::check_log_open() { return log_open_; }
 
 //-----------------------------------------------------------------------------
 std::string Logging::get_log_filename() { return log_filename_; }
 
 //-----------------------------------------------------------------------------
 void Logging::log_message(std::string message, const int line, const char *file) {
-  if (log_.is_open()) {
-    log_ << message << "\n";
-    log_.flush();
+  spd::info(message);
+  if (log_open_) {
+    spdlog::get("file")->info(message);
   }
-  std::cerr << message << "\n";
 }
 
 //-----------------------------------------------------------------------------
 void Logging::log_stack(std::string message) {
-  log_ << message;
-  log_.flush();
-  std::cerr << message;
+  spd::error(message);
+  if (log_open_) {
+    spdlog::get("file")->error(message);
+  }
 }
 
 //-----------------------------------------------------------------------------
 void Logging::log_error(std::string message, const int line, const char *file) {
-  std::string str = create_header(line, file) + std::string(" ERROR: ") + message;
-  log_ << str << "\n";
-  std::cerr << str << "\n";
-  log_.flush();
+  spd::error(message);
+  if (log_open_) {
+    spdlog::get("file")->error(message);
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -91,27 +110,29 @@ void Logging::show_message(std::string message, const int line, const char *file
 
 //-----------------------------------------------------------------------------
 void Logging::log_debug(std::string message, const int line, const char *file) {
-  std::string str = create_header(line, file) + std::string(" DEBUG: ") + message;
-  log_ << str << "\n";
-  log_.flush();
+  std::string str = create_header(line, file) + " " + message;
+  spd::debug(str);
+  if (log_open_) {
+    spdlog::get("file")->debug(str);
+  }
+}
+
+//-----------------------------------------------------------------------------
+void Logging::log_warning(std::string message, const int line, const char *file) {
+  spd::warn(message);
+  if (log_open_) {
+    spdlog::get("file")->warn(message);
+  }
 }
 
 //-----------------------------------------------------------------------------
 void Logging::close_log() {
-  if (!log_.is_open()) {
+  if (!log_open_) {
     return;
   }
 
   SW_LOG_MESSAGE("Log Closed");
-}
-
-//-----------------------------------------------------------------------------
-void Logging::flush_log() {
-  if (!log_.is_open()) {
-    return;
-  }
-
-  log_.flush();
+  log_open_ = false;
 }
 
 //-----------------------------------------------------------------------------

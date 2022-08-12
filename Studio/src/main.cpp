@@ -54,6 +54,9 @@ int main(int argc, char** argv) {
   try {
     new_log();
     SW_LOG_MESSAGE("ShapeWorks Studio " SHAPEWORKS_VERSION " initializing...");
+    SW_LOG_DEBUG("debug");
+    SW_LOG_WARNING("warning");
+    SW_LOG_ERROR("error");
 
     // needed to ensure appropriate OpenGL context is created for VTK rendering.
     QSurfaceFormat format = QVTKOpenGLNativeWidget::defaultFormat();
@@ -81,11 +84,6 @@ int main(int argc, char** argv) {
     studio_app->setWindowIcon(QIcon(ICON_FILE));
     studio_app->initialize_vtk();
     studio_app->show();
-
-    if (!shapeworks::Logging::Instance().check_log_open()) {
-      QMessageBox::warning(NULL, "ShapeWorks Studio",
-                           "Unable to open log file: " + QString::fromStdString(shapeworks::Logging::Instance().get_log_filename()));
-    }
 
     if (argc > 1) {
       QString filename = QString(argv[1]);

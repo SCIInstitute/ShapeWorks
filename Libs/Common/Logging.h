@@ -39,11 +39,11 @@ class Logging {
   //! Log a debug message, use SW_LOG_DEBUG macro
   void log_debug(std::string message, const int line, const char* file);
 
+  //! Log a warning message, use SW_LOG_WARNING macro
+  void log_warning(std::string message, const int line, const char* file);
+
   //! Close the log, use SW_CLOSE_LOG macro
   void close_log();
-
-  //! Flush log to disk
-  void flush_log();
 
   //! Set an error callback function to be called whenever an error is raised
   void set_error_callback(std::function<void(std::string)> callback);
@@ -53,10 +53,8 @@ class Logging {
 
  private:
 
-  //! log file, if used
-  std::ofstream log_;
-
   std::string log_filename_;
+  bool log_open_ = false;
 
   std::function<void(std::string)> error_callback_;
 
@@ -71,10 +69,13 @@ class Logging {
 #define SW_LOG_MESSAGE(message) shapeworks::Logging::Instance().log_message(message, __LINE__, __FILE__)
 
 //! Log warning macro
-#define SW_LOG_WARNING(message) shapeworks::Logging::Instance().log_message(message, __LINE__, __FILE__)
+#define SW_LOG_WARNING(message) shapeworks::Logging::Instance().log_warning(message, __LINE__, __FILE__)
 
 //! Log error macro
 #define SW_LOG_ERROR(message) shapeworks::Logging::Instance().log_error(message, __LINE__, __FILE__)
+
+//! Log debug macro
+#define SW_LOG_DEBUG(message) shapeworks::Logging::Instance().log_debug(message, __LINE__, __FILE__)
 
 //! Log show error macro
 #define SW_SHOW_ERROR(message) shapeworks::Logging::Instance().show_error(message, __LINE__, __FILE__)

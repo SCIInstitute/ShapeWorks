@@ -1279,7 +1279,7 @@ void ShapeWorksStudioApp::on_view_mode_combobox_currentIndexChanged(QString disp
 void ShapeWorksStudioApp::open_project(QString filename) {
   preferences_.set_last_directory(QFileInfo(filename).absolutePath());
   new_session();
-  handle_message("Loading Project: " + filename.toStdString());
+  SW_LOG_MESSAGE("Loading Project: " + filename.toStdString());
   handle_progress(-1);  // busy
   QApplication::processEvents();
 
@@ -1379,7 +1379,7 @@ void ShapeWorksStudioApp::open_project(QString filename) {
 
   create_iso_submenu();
   handle_progress(100);
-  handle_message("Project loaded: " + filename.toStdString());
+  SW_LOG_MESSAGE("Project loaded: " + filename.toStdString());
 }
 
 //---------------------------------------------------------------------------

@@ -453,7 +453,7 @@ bool Session::load_xl_project(QString filename) {
 
 //---------------------------------------------------------------------------
 void Session::set_project_path(QString relative_path) {
-  std::cerr << "Setting project path to " << relative_path.toStdString() << "\n";
+  SW_LOG_MESSAGE("Setting project path to " + relative_path.toStdString());
 
   QDir old_path = QDir(this->project_path_);
   QDir new_path = QDir(relative_path);
