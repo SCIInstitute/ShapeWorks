@@ -91,7 +91,7 @@ public:
   const Eigen::MatrixXd &EigenvectorsRelPose() { return m_Eigenvectors_rel_pose; }
   const std::vector<double> &EigenvaluesShapeDev() { return m_Eigenvalues_shape_dev; }
   const Eigen::MatrixXd &EigenvectorsShapeDev() { return m_Eigenvectors_shape_dev; }
-  const std::vector<double> &EigenvaluesRelPose() { return m_Eigenvalues_shape_dev; }
+  const std::vector<double> &EigenvaluesRelPose() { return m_Eigenvalues_rel_pose; }
 
   //! Returns the mean shape.
   const Eigen::VectorXd &Mean() const { return m_mean; }

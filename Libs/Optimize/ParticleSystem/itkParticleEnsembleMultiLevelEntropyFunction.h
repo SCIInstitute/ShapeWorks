@@ -83,11 +83,15 @@ public:
     m_total_organs = m_ShapeMatrix->GetDomainsPerShape();
     std::cout << "Setting DPS Info...\ndps = " << dps << " m_total_organs = " << m_total_organs << std::endl;
     m_MinimumEigenValue_rel_pose = 0.0;
-    m_MinimumEigenValue_shape_dev_ar.resize(m_total_organs, 0.0);
+    m_MinimumEigenValue_shape_dev_ar.resize(dps, 0.0);
     m_MinimumVarianceDecayConstant_rel_pose = 1.0;
-    m_MinimumVarianceDecayConstant_shape_dev_ar.resize(m_total_organs);
+    m_MinimumVarianceDecayConstant_shape_dev_ar.resize(dps);
     m_MinimumVariance_rel_pose = 1.0e-5;
-    m_MinimumVariance_shape_dev_ar.resize(m_total_organs);
+    m_MinimumVariance_shape_dev_ar.resize(dps);
+    
+    m_CurrentEnergy_shape_dev_ar.resize(dps, 0.0);
+    
+    
     std::fill(m_MinimumVarianceDecayConstant_shape_dev_ar.begin(), m_MinimumVarianceDecayConstant_shape_dev_ar.end(), 1.0);
     std::fill(m_MinimumVariance_shape_dev_ar.begin(), m_MinimumVariance_shape_dev_ar.end(),  1.0e-5);
   }
@@ -117,12 +121,13 @@ public:
         m_Counter = 0;
         for (unsigned int k = 0; k < m_MinimumVariance_shape_dev_ar.size(); k++)
         {
-          m_MinimumVariance_shape_dev_ar[k] *= m_MinimumVariance_shape_dev_ar[k];
+          m_MinimumVariance_shape_dev_ar[k] *= m_MinimumVarianceDecayConstant_shape_dev_ar[k];
         }
         m_MinimumVariance *= m_MinimumVarianceDecayConstant;
         m_MinimumVariance_rel_pose *= m_MinimumVariance_rel_pose; 
         }
       }
+      std::cout << "After Iteration done " << std::endl;
   }
 
   /** */
@@ -236,8 +241,14 @@ public:
     
 
     copy->m_MinimumVarianceDecayConstant = this->m_MinimumVarianceDecayConstant;
+    copy->m_MinimumVarianceDecayConstant_shape_dev_ar = this->m_MinimumVarianceDecayConstant_shape_dev_ar;
+    copy->m_MinimumVarianceDecayConstant_rel_pose = this->m_MinimumVarianceDecayConstant_rel_pose;
+
     copy->m_RecomputeCovarianceInterval = this->m_RecomputeCovarianceInterval;
     copy->m_Counter = m_Counter;
+
+    copy->m_total_organs = this->m_total_organs;
+    copy->m_num_particles_ar = this->m_num_particles_ar;
 
     copy->m_DomainNumber = this->m_DomainNumber;
     copy->m_ParticleSystem = this->m_ParticleSystem;

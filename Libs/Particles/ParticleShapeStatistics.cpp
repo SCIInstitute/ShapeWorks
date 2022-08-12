@@ -212,6 +212,10 @@ int ParticleShapeStatistics::ImportPoints(std::vector<Eigen::VectorXd> points, s
 void ParticleShapeStatistics::SetNumberOfParticlesAr(std::vector<int> num_particles_ar)
 {
   this->m_num_particles_ar = num_particles_ar;
+  for(int i = 0; i < num_particles_ar.size(); i++){
+    std::cout << num_particles_ar[i] << " ";
+  }
+  std::cout << std::endl <<  "Number of Particles Array Set for Multi-level Analysis" << std::endl;
 }
 
 //---------------------------------------------------------------------------
@@ -242,13 +246,17 @@ int ParticleShapeStatistics::ImportPointsAndComputeMultiLevelPCA(std::vector<Eig
     }
   }
 
-  Eigen::MatrixXd grand_mean;
-  grand_mean.resize(1, n);
+  Eigen::RowVectorXd grand_mean;
+  grand_mean.resize(n);
+  grand_mean.fill(0.0);
   grand_mean = m_super_matrix.colwise().mean();
   Eigen::MatrixXd z_rel_pose_matrix;
   z_rel_pose_matrix.resize(m_super_matrix.rows(), m_super_matrix.cols());
+  z_rel_pose_matrix.fill(0.0);
   for(unsigned int r=0; r < m_super_matrix.rows(); r++){
-    z_rel_pose_matrix.row(r) = m_super_matrix.row(r) - grand_mean;
+    for (unsigned int c=0; c < m_N; c++){
+      z_rel_pose_matrix(r, c) = m_super_matrix(r, c) - grand_mean(c);
+    }
   }
 
 
@@ -261,20 +269,30 @@ int ParticleShapeStatistics::ImportPointsAndComputeMultiLevelPCA(std::vector<Eig
   for(unsigned int k = 0; k < m_dps; k++){
     unsigned int row = 0;
     for(unsigned int idx = 0; idx < k; idx++){ row += this->m_num_particles_ar[idx]; }
-    Eigen::MatrixXd z_k = m_super_matrix.block(row, 0, this->m_num_particles_ar[k], m_super_matrix.cols());
-    Eigen::MatrixXd z_k_rel_pose = z_rel_pose_matrix.block(row, 0, this->m_num_particles_ar[k], z_rel_pose_matrix.cols());
+    Eigen::MatrixXd z_k = m_super_matrix.block(row, 0, this->m_num_particles_ar[k], n);
+    Eigen::MatrixXd z_k_rel_pose = z_rel_pose_matrix.block(row, 0, this->m_num_particles_ar[k], n);
 
     // COM for each sub
-    auto mean_k = z_k.colwise().mean();
-    auto mean_z_k = z_k_rel_pose.colwise().mean();
-    z_rel_pose_centred.row(k) = mean_z_k;
+    Eigen::RowVectorXd mean_k;
+    mean_k.resize(n);
+    mean_k.fill(0.0);
+    mean_k = z_k.colwise().mean();
+    // Eigen::RowVectorXd mean_z_k;
+    // mean_z_k.resize(n);
+    // mean_z_k = z_k_rel_pose.colwise().mean();
+    for(unsigned int x = 0; x < n; x++){
+      z_rel_pose_centred(k, x) = mean_k(x);
+    }
 
     Eigen::MatrixXd z_shape_dev_centred_k;
-    z_shape_dev_centred_k.resize(this->m_num_particles_ar[k], m_super_matrix.cols());
+    z_shape_dev_centred_k.resize(this->m_num_particles_ar[k], n);
     z_shape_dev_centred_k.fill(0.0);
-    auto diff_vec = (mean_k - grand_mean);
+    Eigen::RowVectorXd diff_vec;
+    // diff_vec = (mean_k - grand_mean);
+    diff_vec = (mean_k);
     z_shape_dev_centred_k = z_k.rowwise() - diff_vec;
     z_shape_dev_centred.block(row, 0, z_shape_dev_centred_k.rows(), z_shape_dev_centred_k.cols()) = z_shape_dev_centred_k;
+    
   }
   Eigen::MatrixXd z_shape_dev_objective;
   unsigned int M = 0;
@@ -307,6 +325,140 @@ int ParticleShapeStatistics::ImportPointsAndComputeMultiLevelPCA(std::vector<Eig
   m_mean_rel_pose = z_rel_pose_objective.rowwise().mean();
   m_pointsMinusMean_for_rel_pose = z_rel_pose_objective.colwise() - m_mean_rel_pose;
 }
+
+// //---------------------------------------------------------------------------
+// int ParticleShapeStatistics::ImportPointsAndComputeMultiLevelPCA(std::vector<Eigen::VectorXd> points, unsigned int dps)
+// {
+//   // debug
+//   // old version - v1
+//   std::cout << "importing points now for MCA dps value " << dps <<" "<< m_domainsPerShape << std::endl;
+//   unsigned int num_points = (int)(points[0].size() / (3 * dps)); // M_total
+//   this->m_dps = dps;
+//   this->m_numPoints = num_points;
+//   this->m_N = points.size(); // Number of Subjects
+
+//   unsigned int n = m_N * VDimension; // for super matrix
+//   unsigned int m = 0;
+//   for(unsigned int idx = 0; idx < dps; idx++) { m += (this->m_num_particles_ar[idx]); }
+//   std::cout << "m " << m << std::endl;
+//   m_super_matrix.resize(m, n);
+//   for(unsigned int i = 0; i < points.size(); i++){
+//     unsigned int p = m_super_matrix.rows();
+//     for(unsigned int j= 0; j < p; j++){
+//       m_super_matrix(j, i * VDimension) = points[i][j * VDimension];
+//       m_super_matrix(j, i * VDimension + 1) = points[i][j * VDimension + 1];
+//       m_super_matrix(j, i * VDimension + 2) = points[i][j * VDimension + 2];
+//     }
+//   }
+
+//   Eigen::MatrixXd z_shape_dev_centred;
+//   z_shape_dev_centred.resize(m, n);
+//   z_shape_dev_centred.fill(0.0);
+
+//   for(unsigned int k = 0; k < m_dps; k++){
+//     Eigen::MatrixXd z_k;
+//     z_k.resize(this->m_num_particles_ar[k], n);
+//     unsigned int row = 0;
+//     for(unsigned int idx = 0; idx < k; idx++){ row += this->m_num_particles_ar[idx]; }
+//     z_k = m_super_matrix.block(row, 0, z_k.rows(), z_k.cols());
+
+//     Eigen::MatrixXd mean_k;
+//     mean_k.resize(n, 1);
+//     mean_k.fill(0.0);
+//     for (unsigned int j = 0; j < n; j++){
+//       Eigen::MatrixXd z_k_i = z_k.col(j);
+//       mean_k(j, 0) = z_k_i.mean();
+//     }
+//     Eigen::MatrixXd ones_m_k;
+//     ones_m_k.resize(this->m_num_particles_ar[k], 1);
+//     ones_m_k.fill(1.0);
+//     Eigen::MatrixXd z_k_centred = z_k - (ones_m_k * mean_k.transpose());
+//     z_shape_dev_centred.block(row, 0, z_k_centred.rows(), z_k_centred.cols()) = z_k_centred;
+//     std::cout << "update done " << std::endl;
+//   }
+
+//   Eigen::MatrixXd z_shape_dev_objective;
+//   unsigned int M = 0;
+//   for(unsigned int idx = 0; idx < dps; idx++) { M += (this->m_num_particles_ar[idx] * VDimension); }
+//   z_shape_dev_objective.resize(M, m_N);
+//   for(unsigned int i = 0; i < m_N; i++){
+//     unsigned int p = m;
+//     for(unsigned int j = 0; j < p; j++){
+//       z_shape_dev_objective(j * VDimension, i) = z_shape_dev_centred(j, i * VDimension);
+//       z_shape_dev_objective(j * VDimension + 1, i) = z_shape_dev_centred(j, i * VDimension + 1);
+//       z_shape_dev_objective(j * VDimension + 2, i) = z_shape_dev_centred(j, i * VDimension + 2);
+//     }
+//   }
+
+//   // 2..b compute within covariance matrix
+//   m_pointsMinusMean_for_shape_dev.resize(M, m_N);
+//   m_pointsMinusMean_for_shape_dev.fill(0.0);
+//   m_mean_shape_dev.resize(M);
+//   m_mean_shape_dev.fill(0.0);
+
+//   for(unsigned int i = 0; i < M; i++){
+//     Eigen::MatrixXd p_i = z_shape_dev_objective.row(i);
+//     m_mean_shape_dev(i) = p_i.mean();
+//     for(unsigned int j = 0; j < m_N; j++){
+//       m_pointsMinusMean_for_shape_dev(i, j) = z_shape_dev_objective(i, j) - m_mean_shape_dev(i);
+//     }
+//   }
+
+//   std::cout << "Within Covariance Matrix computed " << std::endl;
+  
+//   Eigen::MatrixXd z_rel_pose_centred;
+//   z_rel_pose_centred.resize(m, n);
+
+//   for (unsigned int i = 0; i < n; i++){
+//     Eigen::MatrixXd p_i = m_super_matrix.col(i);
+//     double col_mean = p_i.mean();
+//     for (unsigned int j = 0; j < m; j++){
+//       z_rel_pose_centred(j, i) = m_super_matrix(j, i) - col_mean;
+//     }
+//   }
+//   std::cout << "between means done before covariance" << std::endl;
+
+//   Eigen::MatrixXd z_rel_pose;
+//   z_rel_pose.resize(m_dps, n);
+//   z_rel_pose.fill(0.0);
+//   for(unsigned int k = 0; k < m_dps ; k++){
+//     Eigen::MatrixXd z_rel_pose_k_mean;
+//     z_rel_pose_k_mean.resize(1, n);;
+//     for(unsigned int i = 0; i < n; i++){
+//       Eigen::MatrixXd mean_temp_vec;
+//       mean_temp_vec.resize(this->m_num_particles_ar[k], 1);
+//       unsigned int row = 0;
+//       for(unsigned int idx = 0; idx < k; idx++){ row += this->m_num_particles_ar[idx]; }
+//       mean_temp_vec = z_rel_pose_centred.block(row, i, mean_temp_vec.rows(), mean_temp_vec.cols());
+//       z_rel_pose_k_mean(0, i) = mean_temp_vec.mean();
+//     }
+//     z_rel_pose.block(k, 0, z_rel_pose_k_mean.rows(), z_rel_pose_k_mean.cols()) = z_rel_pose_k_mean;
+//   }
+
+//   Eigen::MatrixXd z_rel_pose_objective;
+//   z_rel_pose_objective.resize(m_dps * VDimension, m_N);
+//   for(unsigned int k = 0; k < m_dps; k++){
+//     for(unsigned int i = 0; i < m_N; i++){
+//       z_rel_pose_objective(k * VDimension, i) = z_rel_pose(k, i * VDimension);
+//       z_rel_pose_objective(k * VDimension + 1, i) = z_rel_pose(k, i * VDimension + 1);
+//       z_rel_pose_objective(k * VDimension + 2, i) = z_rel_pose(k, i * VDimension + 2);
+//     }
+//   }
+
+//   m_pointsMinusMean_for_rel_pose.resize(m_dps * VDimension, m_N);
+//   m_pointsMinusMean_for_rel_pose.fill(0.0);
+//   m_mean_rel_pose.resize(m_dps * VDimension);
+//   m_mean_rel_pose.fill(0.0);
+
+//   for(unsigned int i = 0; i < m_dps * VDimension; i++){
+//     Eigen::MatrixXd d_i = z_rel_pose_objective.row(i);
+//     m_mean_rel_pose(i) = d_i.mean();
+//     for(unsigned int j = 0; j < m_N; j++){
+//       m_pointsMinusMean_for_rel_pose(i, j) = z_rel_pose_objective(i, j) - m_mean_rel_pose(i);
+//     }
+//   }
+//   std::cout << "Between Covariance Matrix computed " << std::endl;
+// }
 
 //---------------------------------------------------------------------------
 int ParticleShapeStatistics::ComputeShapeDevModesForMca()

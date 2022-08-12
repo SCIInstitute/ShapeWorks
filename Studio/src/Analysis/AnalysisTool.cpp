@@ -476,6 +476,7 @@ bool AnalysisTool::compute_stats() {
   group2_list_.clear();
   auto domain_names = session_->get_project()->get_domain_names();
   unsigned int dps = domain_names.size();
+  std::cout << "DPS is " << dps << std::endl;
   number_of_particles_ar.resize(dps);
   bool flag_get_num_part = false;
 
@@ -530,7 +531,7 @@ bool AnalysisTool::compute_stats() {
   stats_.SetNumberOfParticlesAr(number_of_particles_ar);
   if(dps> 1)
   {
-    std::cout << "importing points for Multi Level" << std::endl;
+    std::cout << "importing points for Multi Level dps = " << dps <<  std::endl;
     stats_.ImportPointsAndComputeMultiLevelPCA(points, dps);
   }
   stats_.ComputeModes();
@@ -698,24 +699,24 @@ StudioParticles AnalysisTool::get_multi_level_shape_points(int mode, double valu
   }
   else if(level == 2){
     Eigen::VectorXd e_between;
-    Eigen::VectorXd e_rel_pose_mean_reshaped;
+    // Eigen::VectorXd e_rel_pose_mean_reshaped;
     unsigned int sz = stats_.Mean().size();
     std::vector<int> number_of_points_ar = stats_.NumberOfPointsArray();
     e_between.resize(sz);
-    e_rel_pose_mean_reshaped.resize(sz);
+    // e_rel_pose_mean_reshaped.resize(sz);
     unsigned int D = stats_.DomainsNumber();
     for(unsigned int i = 0; i < D; i++){
       int num_points = number_of_particles_ar[i];
       int row = 0;
       for(int idx = 0; idx < i; idx++){ row += (3 * number_of_particles_ar[idx]); }
-        for(unsigned int j = 0; j < num_points; j++){
+      for(unsigned int j = 0; j < num_points; j++){
           e_between((row) + (j * 3)) = e(i * 3);
           e_between((row) + (j * 3) + 1) = e(i * 3 + 1);
           e_between((row) + (j * 3) + 2) = e(i * 3 + 2);
-          e_rel_pose_mean_reshaped((row) + (j * 3)) = stats_.MeanRelPose()(i * 3);
-          e_rel_pose_mean_reshaped((row) + (j * 3) + 1) = stats_.MeanRelPose()(i * 3 + 1);
-          e_rel_pose_mean_reshaped((row) + (j * 3) + 2) = stats_.MeanRelPose()(i * 3 + 2);
-        }
+          // e_rel_pose_mean_reshaped((row) + (j * 3)) = stats_.MeanRelPose()(i * 3);
+          // e_rel_pose_mean_reshaped((row) + (j * 3) + 1) = stats_.MeanRelPose()(i * 3 + 1);
+          // e_rel_pose_mean_reshaped((row) + (j * 3) + 2) = stats_.MeanRelPose()(i * 3 + 2);
+      }
     }
     temp_shape_mca = stats_.Mean() + (e_between * (value * lambda));
     // temp_shape_mca = (stats_.Mean() - stats_.MeanShapeDev()) +  (e_between * (value * lambda));
@@ -1567,6 +1568,8 @@ void AnalysisTool::set_active(bool active) {
   if (!active) {
     ui_->pcaAnimateCheckBox->setChecked(false);
     pca_animate_timer_.stop();
+    ui_->mcaAnimateCheckBox->setChecked(false);
+    mca_animate_timer_.stop();
   }
   active_ = active;
   update_interface();
