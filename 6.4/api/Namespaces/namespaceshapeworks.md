@@ -7,6 +7,12 @@ title: shapeworks
 
 
 
+## Namespaces
+
+| Name           |
+| -------------- |
+| **[shapeworks::project](../Namespaces/namespaceshapeworks_1_1project.md)**  |
+
 ## Classes
 
 |                | Name           |
@@ -25,6 +31,8 @@ title: shapeworks
 | class | **[shapeworks::DeepSSMJob](../Classes/classshapeworks_1_1DeepSSMJob.md)** <br>Qt Wrapper for DeepSSM.  |
 | class | **[shapeworks::DeepSSMParameters](../Classes/classshapeworks_1_1DeepSSMParameters.md)**  |
 | class | **[shapeworks::DeepSSMTool](../Classes/classshapeworks_1_1DeepSSMTool.md)**  |
+| class | **[shapeworks::ExcelProjectReader](../Classes/classshapeworks_1_1ExcelProjectReader.md)** <br>Excel file format reader for [Project]().  |
+| class | **[shapeworks::ExcelProjectWriter](../Classes/classshapeworks_1_1ExcelProjectWriter.md)** <br>Excel file format writer for [Project]().  |
 | class | **[shapeworks::Executable](../Classes/classshapeworks_1_1Executable.md)**  |
 | class | **[shapeworks::ExportImageDialog](../Classes/classshapeworks_1_1ExportImageDialog.md)**  |
 | class | **[shapeworks::ExportUtils](../Classes/classshapeworks_1_1ExportUtils.md)** <br>Export utilities for Studio.  |
@@ -40,6 +48,8 @@ title: shapeworks
 | class | **[shapeworks::ImageUtils](../Classes/classshapeworks_1_1ImageUtils.md)** <br>Helper functions for image.  |
 | class | **[shapeworks::IndexRegion](../Classes/classshapeworks_1_1IndexRegion.md)** <br>Indices into a 3d region of memory (can be negative, e.g., for the purpose of padding an image)  |
 | class | **[shapeworks::Job](../Classes/classshapeworks_1_1Job.md)**  |
+| class | **[shapeworks::JsonProjectReader](../Classes/classshapeworks_1_1JsonProjectReader.md)** <br>JSON file format reader for [Project]().  |
+| class | **[shapeworks::JsonProjectWriter](../Classes/classshapeworks_1_1JsonProjectWriter.md)** <br>JSON file format writer for [Project]().  |
 | class | **[shapeworks::KeyboardShortcuts](../Classes/classshapeworks_1_1KeyboardShortcuts.md)**  |
 | class | **[shapeworks::LandmarkDefinition](../Classes/classshapeworks_1_1LandmarkDefinition.md)** <br>Landmark class containing properties of each landmark.  |
 | class | **[shapeworks::LandmarkItemDelegate](../Classes/classshapeworks_1_1LandmarkItemDelegate.md)**  |
@@ -93,6 +103,7 @@ title: shapeworks
 | class | **[shapeworks::PlaneWidget](../Classes/classshapeworks_1_1PlaneWidget.md)** <br>[PlaneWidget]().  |
 | class | **[shapeworks::PreferencesWindow](../Classes/classshapeworks_1_1PreferencesWindow.md)** <br>Qt UI dialog to control preferences.  |
 | class | **[shapeworks::Project](../Classes/classshapeworks_1_1Project.md)** <br>Representation of a project.  |
+| class | **[shapeworks::ProjectReader](../Classes/classshapeworks_1_1ProjectReader.md)** <br>Base class for [Project](../Classes/classshapeworks_1_1Project.md) readers.  |
 | class | **[shapeworks::ProjectUtils](../Classes/classshapeworks_1_1ProjectUtils.md)**  |
 | class | **[shapeworks::PythonWorker](../Classes/classshapeworks_1_1PythonWorker.md)**  |
 | class | **[shapeworks::QGroom](../Classes/classshapeworks_1_1QGroom.md)** <br>Qt Wrapper for [Groom](../Classes/classshapeworks_1_1Groom.md).  |
@@ -2415,4 +2426,4 @@ pi that doesn't depend on deprecated or non-std lib defines
 
 -------------------------------
 
-Updated on 2022-08-08 at 20:30:42 +0000
+Updated on 2022-08-13 at 03:03:49 +0000

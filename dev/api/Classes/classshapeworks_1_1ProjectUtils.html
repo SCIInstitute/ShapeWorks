@@ -2151,9 +2151,43 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#public-types" class="md-nav__link">
+    Public Types
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#public-functions" class="md-nav__link">
     Public Functions
   </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#public-types-documentation" class="md-nav__link">
+    Public Types Documentation
+  </a>
+  
+    <nav class="md-nav" aria-label="Public Types Documentation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#using-stringlist" class="md-nav__link">
+    using StringList
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-stringmap" class="md-nav__link">
+    using StringMap
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -2175,6 +2209,104 @@
           <li class="md-nav__item">
   <a href="#function-convert_transform_1" class="md-nav__link">
     function convert_transform
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-determine_domain_names" class="md-nav__link">
+    function determine_domain_names
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-determine_domain_types" class="md-nav__link">
+    function determine_domain_types
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_input_prefixes" class="md-nav__link">
+    function get_input_prefixes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_groomed_prefixes" class="md-nav__link">
+    function get_groomed_prefixes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_original_keys" class="md-nav__link">
+    function get_original_keys
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_values" class="md-nav__link">
+    function get_values
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_transforms" class="md-nav__link">
+    function get_transforms
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_value_map" class="md-nav__link">
+    function get_value_map
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_extra_columns" class="md-nav__link">
+    function get_extra_columns
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-determine_domain_type" class="md-nav__link">
+    function determine_domain_type
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-starts_with" class="md-nav__link">
+    function starts_with
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-transform_to_string" class="md-nav__link">
+    function transform_to_string
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-convert_domain_types" class="md-nav__link">
+    function convert_domain_types
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-convert_groomed_domain_types" class="md-nav__link">
+    function convert_groomed_domain_types
   </a>
   
 </li>
@@ -2203,6 +2335,25 @@
 
 
 <h1 id="shapeworksprojectutils">shapeworks::ProjectUtils</h1>
+<h2 id="public-types">Public Types</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>using project::types::StringList</td>
+<td><strong><a href="classshapeworks_1_1ProjectUtils.html#using-stringlist">StringList</a></strong></td>
+</tr>
+<tr>
+<td>using project::types::StringMap</td>
+<td><strong><a href="classshapeworks_1_1ProjectUtils.html#using-stringmap">StringMap</a></strong></td>
+</tr>
+</tbody>
+</table>
 <h2 id="public-functions">Public Functions</h2>
 <table>
 <thead>
@@ -2220,8 +2371,71 @@
 <td>std::vector&lt; double &gt;</td>
 <td><strong><a href="classshapeworks_1_1ProjectUtils.html#function-convert-transform">convert_transform</a></strong>(vtkSmartPointer&lt; vtkTransform &gt; transform)</td>
 </tr>
+<tr>
+<td>StringList</td>
+<td><strong><a href="classshapeworks_1_1ProjectUtils.html#function-determine-domain-names">determine_domain_names</a></strong>(StringList keys)<br>determine domain names from a subject's keys</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1ProjectUtils.html#function-determine-domain-types">determine_domain_types</a></strong>(<a href="classshapeworks_1_1Project.html">Project</a> &amp; project, StringMap key_map)<br>determine and set domain types</td>
+</tr>
+<tr>
+<td>StringList</td>
+<td><strong><a href="classshapeworks_1_1ProjectUtils.html#function-get-input-prefixes">get_input_prefixes</a></strong>()<br>return a list of the input prefixes</td>
+</tr>
+<tr>
+<td>StringList</td>
+<td><strong><a href="classshapeworks_1_1ProjectUtils.html#function-get-groomed-prefixes">get_groomed_prefixes</a></strong>()<br>return a list of the groomed prefixes</td>
+</tr>
+<tr>
+<td>StringList</td>
+<td><strong><a href="classshapeworks_1_1ProjectUtils.html#function-get-original-keys">get_original_keys</a></strong>(StringList domain_names, StringMap key_map)<br>extract original keys from key_map given an ordered list of domain names</td>
+</tr>
+<tr>
+<td>StringList</td>
+<td><strong><a href="classshapeworks_1_1ProjectUtils.html#function-get-values">get_values</a></strong>(StringList prefixes, StringList domain_names, StringMap key_map)<br>get the values for a list of prefixes from key_map, ordered by domain_names</td>
+</tr>
+<tr>
+<td>std::vector&lt; std::vector&lt; double &gt; &gt;</td>
+<td><strong><a href="classshapeworks_1_1ProjectUtils.html#function-get-transforms">get_transforms</a></strong>(std::string prefix, StringList domain_names, StringMap key_map)<br>get the transforms for a prefix from key_map, ordered by domain_names</td>
+</tr>
+<tr>
+<td>StringMap</td>
+<td><strong><a href="classshapeworks_1_1ProjectUtils.html#function-get-value-map">get_value_map</a></strong>(std::vector&lt; std::string &gt; prefix, StringMap key_map)<br>get a map<string,string> for a list of prefixes from a key_map (e.g. group_, or feature_)</td>
+</tr>
+<tr>
+<td>StringMap</td>
+<td><strong><a href="classshapeworks_1_1ProjectUtils.html#function-get-extra-columns">get_extra_columns</a></strong>(StringMap key_map)<br>get any extra columns that don't match prefixes</td>
+</tr>
+<tr>
+<td>DomainType</td>
+<td><strong><a href="classshapeworks_1_1ProjectUtils.html#function-determine-domain-type">determine_domain_type</a></strong>(std::string filename)<br>determine the domain type, given a filename</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1ProjectUtils.html#function-starts-with">starts_with</a></strong>(std::string str, std::string prefix)</td>
+</tr>
+<tr>
+<td>std::string</td>
+<td><strong><a href="classshapeworks_1_1ProjectUtils.html#function-transform-to-string">transform_to_string</a></strong>(std::vector&lt; double &gt; transform)</td>
+</tr>
+<tr>
+<td>std::vector&lt; std::string &gt;</td>
+<td><strong><a href="classshapeworks_1_1ProjectUtils.html#function-convert-domain-types">convert_domain_types</a></strong>(std::vector&lt; DomainType &gt; domain_types)</td>
+</tr>
+<tr>
+<td>std::vector&lt; std::string &gt;</td>
+<td><strong><a href="classshapeworks_1_1ProjectUtils.html#function-convert-groomed-domain-types">convert_groomed_domain_types</a></strong>(std::vector&lt; DomainType &gt; domain_types)</td>
+</tr>
 </tbody>
 </table>
+<h2 id="public-types-documentation">Public Types Documentation</h2>
+<h3 id="using-stringlist">using StringList</h3>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ProjectUtils</span><span class="o">::</span><span class="n">StringList</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">project</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">StringList</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="using-stringmap">using StringMap</h3>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ProjectUtils</span><span class="o">::</span><span class="n">StringMap</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">project</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">StringMap</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-convert_transform">function convert_transform</h3>
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkTransform</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">convert_transform</span><span class="p">(</span><span class="w"></span>
@@ -2233,8 +2447,92 @@
 <span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkTransform</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">transform</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
+<h3 id="function-determine_domain_names">function determine_domain_names</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">StringList</span><span class="w"> </span><span class="n">determine_domain_names</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">StringList</span><span class="w"> </span><span class="n">keys</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>determine domain names from a subject's keys </p>
+<h3 id="function-determine_domain_types">function determine_domain_types</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">determine_domain_types</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">Project</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">project</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">StringMap</span><span class="w"> </span><span class="n">key_map</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>determine and set domain types </p>
+<h3 id="function-get_input_prefixes">function get_input_prefixes</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">StringList</span><span class="w"> </span><span class="n">get_input_prefixes</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<p>return a list of the input prefixes </p>
+<h3 id="function-get_groomed_prefixes">function get_groomed_prefixes</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">StringList</span><span class="w"> </span><span class="n">get_groomed_prefixes</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<p>return a list of the groomed prefixes </p>
+<h3 id="function-get_original_keys">function get_original_keys</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">StringList</span><span class="w"> </span><span class="n">get_original_keys</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">StringList</span><span class="w"> </span><span class="n">domain_names</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">StringMap</span><span class="w"> </span><span class="n">key_map</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>extract original keys from key_map given an ordered list of domain names </p>
+<h3 id="function-get_values">function get_values</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">StringList</span><span class="w"> </span><span class="n">get_values</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">StringList</span><span class="w"> </span><span class="n">prefixes</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">StringList</span><span class="w"> </span><span class="n">domain_names</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">StringMap</span><span class="w"> </span><span class="n">key_map</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>get the values for a list of prefixes from key_map, ordered by domain_names </p>
+<h3 id="function-get_transforms">function get_transforms</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_transforms</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">prefix</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">StringList</span><span class="w"> </span><span class="n">domain_names</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">StringMap</span><span class="w"> </span><span class="n">key_map</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>get the transforms for a prefix from key_map, ordered by domain_names </p>
+<h3 id="function-get_value_map">function get_value_map</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">StringMap</span><span class="w"> </span><span class="n">get_value_map</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">prefix</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">StringMap</span><span class="w"> </span><span class="n">key_map</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>get a map<string,string> for a list of prefixes from a key_map (e.g. group_, or feature_) </p>
+<h3 id="function-get_extra_columns">function get_extra_columns</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">StringMap</span><span class="w"> </span><span class="n">get_extra_columns</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">StringMap</span><span class="w"> </span><span class="n">key_map</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>get any extra columns that don't match prefixes </p>
+<h3 id="function-determine_domain_type">function determine_domain_type</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">DomainType</span><span class="w"> </span><span class="n">determine_domain_type</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">filename</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>determine the domain type, given a filename </p>
+<h3 id="function-starts_with">function starts_with</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">starts_with</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">str</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">prefix</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-transform_to_string">function transform_to_string</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">transform_to_string</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">transform</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-convert_domain_types">function convert_domain_types</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">convert_domain_types</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">DomainType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">domain_types</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-convert_groomed_domain_types">function convert_groomed_domain_types</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">convert_groomed_domain_types</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">DomainType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">domain_types</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
 <hr />
-<p>Updated on 2022-08-08 at 20:30:43 +0000</p>
+<p>Updated on 2022-08-13 at 03:03:50 +0000</p>
 
               
             </article>

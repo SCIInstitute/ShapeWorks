@@ -62,9 +62,6 @@ class Subject {
   void set_number_of_domains(int number_of_domains);
   int get_number_of_domains();
 
-  void set_image_filenames(std::vector<std::string> filenames);
-  std::vector<std::string> get_image_filenames();
-
   std::map<std::string, std::string> get_feature_filenames() const;
   void set_feature_filenames(const std::map<std::string, std::string>& feature_filenames);
 
@@ -93,7 +90,6 @@ class Subject {
   int number_of_domains_ = 0;
 
   std::string display_name_;
-  std::vector<std::string> image_filenames_;
   std::vector<std::string> original_filenames_;
   std::vector<std::string> groomed_filenames_;
   std::vector<std::string> local_particle_filenames_;
@@ -117,4 +113,4 @@ class Subject {
 
 -------------------------------
 
-Updated on 2022-08-08 at 20:30:44 +0000
+Updated on 2022-08-13 at 03:03:51 +0000

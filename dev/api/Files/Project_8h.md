@@ -11,7 +11,6 @@ title: Libs/Project/Project.h
 
 | Name           |
 | -------------- |
-| **[xlnt](../Namespaces/namespacexlnt.md)**  |
 | **[shapeworks](../Namespaces/namespaceshapeworks.md)**  |
 
 ## Classes
@@ -37,11 +36,6 @@ title: Libs/Project/Project.h
 
 #include "Parameters.h"
 #include "Subject.h"
-
-// forward declaration
-namespace xlnt {
-class workbook;
-}
 
 namespace shapeworks {
 
@@ -83,9 +77,13 @@ class Project {
 
   std::vector<std::string> get_domain_names();
 
+  void set_domain_names(std::vector<std::string> domain_names);
+
   std::vector<std::shared_ptr<Subject>>& get_subjects();
 
   void set_subjects(const std::vector<std::shared_ptr<Subject>>& subjects);
+
+  void update_subjects();
 
   bool get_originals_present() const;
 
@@ -105,11 +103,13 @@ class Project {
 
   Parameters get_parameters(const std::string& name, std::string domain_name = "");
 
+  std::map<std::string, Parameters> get_parameter_map(const std::string& name);
+
+  void set_parameter_map(const std::string& name, std::map<std::string, Parameters> map);
+
   void set_parameters(const std::string& name, Parameters params, std::string domain_name = "");
 
   void clear_parameters(const std::string& name);
-
-  void store_subjects();
 
   int get_supported_version() const;
 
@@ -118,6 +118,8 @@ class Project {
   std::vector<LandmarkDefinition> get_landmarks(int domain_id);
 
   std::vector<std::vector<LandmarkDefinition>> get_all_landmark_definitions();
+
+  void set_landmark_definitions(std::vector<std::vector<LandmarkDefinition>> defs);
 
   bool get_landmarks_present();
 
@@ -134,76 +136,14 @@ class Project {
   void set_groomed_domain_types(std::vector<DomainType> domain_types);
 
  private:
-  void load_landmark_definitions();
-  void store_landmark_definitions();
-
   void set_default_landmark_colors();
 
-  void determine_domain_types();
-
-  DomainType determine_domain_type(std::string filename);
-
-  static bool starts_with(std::string str, std::string prefix);
-
-  int get_or_create_worksheet(std::string name);
-  std::string get_new_file_column(std::string name, int idx);
-
-  // e.g. "la" for "groomed_la"
-  std::string get_column_identifier(std::string name);
-
-  // known prefixes
-  static constexpr const char* SEGMENTATION_PREFIX = "segmentation_";
-  static constexpr const char* SHAPE_PREFIX = "shape_";
-  static constexpr const char* MESH_PREFIX = "mesh_";
-  static constexpr const char* CONTOUR_PREFIX = "contour_";
-  static constexpr const char* GROOMED_PREFIX = "groomed_";
-  static constexpr const char* GROOMED_CONTOUR_PREFIX = "groomed_contour_";
-  static constexpr const char* GROOMED_TRANSFORMS_PREFIX = "alignment_";
-  static constexpr const char* PROCRUSTES_TRANSFORMS_PREFIX = "procrustes_";
-  static constexpr const char* FEATURE_PREFIX = "feature_";
-  static constexpr const char* LOCAL_PARTICLES = "local_particles";
-  static constexpr const char* WORLD_PARTICLES = "world_particles";
-  static constexpr const char* GROUP_PREFIX = "group_";
-  static constexpr const char* IMAGE_PREFIX = "image_";
-  static constexpr const char* NAME = "name";
-  static constexpr const char* LANDMARKS_FILE_PREFIX = "landmarks_file_";
-  static constexpr const char* CONSTRAINTS_PREFIX = "constraints_";
-
-  std::vector<std::string> get_file_list(std::vector<std::string> columns, int subject);
-  std::vector<std::string> get_list(std::vector<std::string> columns, int subject);
-  void set_list(std::vector<std::string> columns, int subject, std::vector<std::string> values);
-
-  void set_map(int subject, const std::string& prefix, const std::map<std::string, std::string>& map);
-
-  std::vector<std::vector<double>> get_transform_list(std::vector<std::string> columns, int subject);
-
-  void set_transform_list(const std::vector<std::string>& columns, int subject,
-                          std::vector<std::vector<double>> transforms);
-
-  std::vector<std::string> get_matching_columns(const std::string& prefix);
-
-  std::vector<std::string> get_matching_columns(const std::vector<std::string>& prefixes);
-
-  std::vector<std::string> get_extra_columns() const;
-
-  std::string get_value(int column, int subject_id);
-  void set_value(int column, int subject_id, const std::string& value);
-
-  void set_value(const std::string& column_name, int subject_id, const std::string& value);
-  std::string get_subject_value(int column, int subject_id);
-
-  void load_subjects();
-
-  int get_index_for_column(const std::string& name, bool create_if_not_found = false, int sheet = 0) const;
-
-  void save_string_column(const std::string& name, std::vector<std::string> items);
+  void determine_feature_names();
 
   std::string get_next_landmark_name(int domain_id);
   std::string get_next_landmark_color(int domain_id);
 
   int num_domains_per_subject_ = 1;
-
-  std::unique_ptr<xlnt::workbook> wb_;
 
   std::vector<std::shared_ptr<Subject>> subjects_;
 
@@ -216,22 +156,19 @@ class Project {
   bool originals_present_{false};
   bool groomed_present_{false};
   bool particles_present_{false};
-
-  std::set<std::string> matching_columns_;
-  std::vector<std::string> mesh_scalars_;
+  bool images_present_{false};
 
   std::vector<std::string> feature_names_;
+  std::vector<std::string> image_names_;
 
-  // to avoid re-reading from mesh files each time the list of names is requested
-  bool feature_names_read_done_{false};
-
-  std::vector<std::string> input_prefixes_;
-
-  bool landmarks_loaded_{false};
   std::vector<std::vector<LandmarkDefinition>> landmark_definitions_;
 
+  std::vector<std::string> domain_names_;
   std::vector<DomainType> original_domain_types_;
   std::vector<DomainType> groomed_domain_types_;
+
+  // map of type (e.g. groom, optimize) to map (domain->Parameters)
+  std::map<std::string, std::map<std::string, Parameters>> parameters_;
 
   const int supported_version_{2};
   int version_{2};
@@ -242,4 +179,4 @@ class Project {
 
 -------------------------------
 
-Updated on 2022-08-08 at 20:30:44 +0000
+Updated on 2022-08-13 at 03:03:51 +0000

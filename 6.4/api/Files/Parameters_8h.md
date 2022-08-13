@@ -44,6 +44,10 @@ class Parameters {
   static constexpr const char* PROJECT_PARAMS = "project";
   static constexpr const char* DEEPSSM_PARAMS = "deepssm";
 
+  Parameters();
+
+  explicit Parameters(std::map<std::string, std::string> map);
+
   Variant get(std::string key, Variant default_value);
 
   bool key_exists(std::string key);
@@ -67,4 +71,4 @@ class Parameters {
 
 -------------------------------
 
-Updated on 2022-08-08 at 20:30:44 +0000
+Updated on 2022-08-13 at 03:03:51 +0000

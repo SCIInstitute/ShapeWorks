@@ -33,8 +33,6 @@ Representation of a single subject.  [More...](#detailed-description)
 | std::vector< std::string > | **[get_constraints_filenames](../Classes/classshapeworks_1_1Subject.md#function-get-constraints-filenames)**()<br>Set the constratins filenames.  |
 | void | **[set_number_of_domains](../Classes/classshapeworks_1_1Subject.md#function-set-number-of-domains)**(int number_of_domains)<br>Set the number of domains.  |
 | int | **[get_number_of_domains](../Classes/classshapeworks_1_1Subject.md#function-get-number-of-domains)**()<br>Get the number of domains.  |
-| void | **[set_image_filenames](../Classes/classshapeworks_1_1Subject.md#function-set-image-filenames)**(std::vector< std::string > filenames)<br>Set image filenames.  |
-| std::vector< std::string > | **[get_image_filenames](../Classes/classshapeworks_1_1Subject.md#function-get-image-filenames)**()<br>Get image filenames.  |
 | std::map< std::string, std::string > | **[get_feature_filenames](../Classes/classshapeworks_1_1Subject.md#function-get-feature-filenames)**() const<br>Get the feature map filenames.  |
 | void | **[set_feature_filenames](../Classes/classshapeworks_1_1Subject.md#function-set-feature-filenames)**(const std::map< std::string, std::string > & feature_filenames)<br>Set the feature map filenames.  |
 | std::vector< std::vector< double > > | **[get_groomed_transforms](../Classes/classshapeworks_1_1Subject.md#function-get-groomed-transforms)**() const<br>Get the groomed transforms (one vector per domain)  |
@@ -204,24 +202,6 @@ int get_number_of_domains()
 
 Get the number of domains. 
 
-### function set_image_filenames
-
-```cpp
-void set_image_filenames(
-    std::vector< std::string > filenames
-)
-```
-
-Set image filenames. 
-
-### function get_image_filenames
-
-```cpp
-std::vector< std::string > get_image_filenames()
-```
-
-Get image filenames. 
-
 ### function get_feature_filenames
 
 ```cpp
@@ -369,4 +349,4 @@ Set the display name.
 
 -------------------------------
 
-Updated on 2022-08-08 at 20:30:44 +0000
+Updated on 2022-08-13 at 03:03:50 +0000

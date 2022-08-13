@@ -128,6 +128,8 @@ title: Classes
     * **class [DeepSSMJob](../Classes/classshapeworks_1_1DeepSSMJob.md)** <br>Qt Wrapper for DeepSSM. 
     * **class [DeepSSMParameters](../Classes/classshapeworks_1_1DeepSSMParameters.md)** 
     * **class [DeepSSMTool](../Classes/classshapeworks_1_1DeepSSMTool.md)** 
+    * **class [ExcelProjectReader](../Classes/classshapeworks_1_1ExcelProjectReader.md)** <br>Excel file format reader for [Project](). 
+    * **class [ExcelProjectWriter](../Classes/classshapeworks_1_1ExcelProjectWriter.md)** <br>Excel file format writer for [Project](). 
     * **class [Executable](../Classes/classshapeworks_1_1Executable.md)** 
     * **class [ExportImageDialog](../Classes/classshapeworks_1_1ExportImageDialog.md)** 
     * **class [ExportUtils](../Classes/classshapeworks_1_1ExportUtils.md)** <br>Export utilities for Studio. 
@@ -143,6 +145,8 @@ title: Classes
     * **class [ImageUtils](../Classes/classshapeworks_1_1ImageUtils.md)** <br>Helper functions for image. 
     * **class [IndexRegion](../Classes/classshapeworks_1_1IndexRegion.md)** <br>Indices into a 3d region of memory (can be negative, e.g., for the purpose of padding an image) 
     * **class [Job](../Classes/classshapeworks_1_1Job.md)** 
+    * **class [JsonProjectReader](../Classes/classshapeworks_1_1JsonProjectReader.md)** <br>JSON file format reader for [Project](). 
+    * **class [JsonProjectWriter](../Classes/classshapeworks_1_1JsonProjectWriter.md)** <br>JSON file format writer for [Project](). 
     * **class [KeyboardShortcuts](../Classes/classshapeworks_1_1KeyboardShortcuts.md)** 
     * **class [LandmarkDefinition](../Classes/classshapeworks_1_1LandmarkDefinition.md)** <br>Landmark class containing properties of each landmark. 
     * **class [LandmarkItemDelegate](../Classes/classshapeworks_1_1LandmarkItemDelegate.md)** 
@@ -196,6 +200,7 @@ title: Classes
     * **class [PlaneWidget](../Classes/classshapeworks_1_1PlaneWidget.md)** <br>[PlaneWidget](). 
     * **class [PreferencesWindow](../Classes/classshapeworks_1_1PreferencesWindow.md)** <br>Qt UI dialog to control preferences. 
     * **class [Project](../Classes/classshapeworks_1_1Project.md)** <br>Representation of a project. 
+    * **class [ProjectReader](../Classes/classshapeworks_1_1ProjectReader.md)** <br>Base class for [Project](../Classes/classshapeworks_1_1Project.md) readers. 
     * **class [ProjectUtils](../Classes/classshapeworks_1_1ProjectUtils.md)** 
     * **class [PythonWorker](../Classes/classshapeworks_1_1PythonWorker.md)** 
     * **class [QGroom](../Classes/classshapeworks_1_1QGroom.md)** <br>Qt Wrapper for [Groom](../Classes/classshapeworks_1_1Groom.md). 
@@ -241,6 +246,9 @@ title: Classes
     * **class [VtkMeshWrapper](../Classes/classshapeworks_1_1VtkMeshWrapper.md)** 
     * **class [WheelEventForwarder](../Classes/classshapeworks_1_1WheelEventForwarder.md)** 
     * **class [Worker](../Classes/classshapeworks_1_1Worker.md)** 
+    * **namespace [project](../Namespaces/namespaceshapeworks_1_1project.md)** 
+        * **namespace [prefixes](../Namespaces/namespaceshapeworks_1_1project_1_1prefixes.md)** 
+        * **namespace [types](../Namespaces/namespaceshapeworks_1_1project_1_1types.md)** 
     * **class [shapeworks_exception](../Classes/classshapeworks_1_1shapeworks__exception.md)** 
 * **namespace [std](../Namespaces/namespacestd.md)** 
 * **namespace [utils](../Namespaces/namespaceutils.md)** 
@@ -248,10 +256,9 @@ title: Classes
 * **class [vec3d](../Classes/classvec3d.md)** 
 * **class [vec6d](../Classes/classvec6d.md)** 
 * **class [vtkPolyDataToImageData](../Classes/classvtkPolyDataToImageData.md)** 
-* **namespace [xlnt](../Namespaces/namespacexlnt.md)** 
 
 
 
 -------------------------------
 
-Updated on 2022-08-08 at 20:30:44 +0000
+Updated on 2022-08-13 at 03:03:51 +0000

@@ -17,6 +17,8 @@ Parameter settings.  [More...](#detailed-description)
 
 |                | Name           |
 | -------------- | -------------- |
+| | **[Parameters](../Classes/classshapeworks_1_1Parameters.md#function-parameters)**()<br>default constructor  |
+| | **[Parameters](../Classes/classshapeworks_1_1Parameters.md#function-parameters)**(std::map< std::string, std::string > map)<br>construct from map  |
 | [Variant](../Classes/classshapeworks_1_1Variant.md) | **[get](../Classes/classshapeworks_1_1Parameters.md#function-get)**(std::string key, [Variant](../Classes/classshapeworks_1_1Variant.md) default_value)<br>get a parameter based on a key, return default if it doesn't exist  |
 | bool | **[key_exists](../Classes/classshapeworks_1_1Parameters.md#function-key-exists)**(std::string key)<br>return if a key exists or not  |
 | void | **[set](../Classes/classshapeworks_1_1Parameters.md#function-set)**(std::string key, [Variant](../Classes/classshapeworks_1_1Variant.md) value)<br>set a parameter based on a key  |
@@ -47,6 +49,24 @@ Parameter settings.
 Store key/variant combinations Used to store parameters for various tools 
 
 ## Public Functions Documentation
+
+### function Parameters
+
+```cpp
+Parameters()
+```
+
+default constructor 
+
+### function Parameters
+
+```cpp
+explicit Parameters(
+    std::map< std::string, std::string > map
+)
+```
+
+construct from map 
 
 ### function get
 
@@ -162,4 +182,4 @@ static constexpr const char * DEEPSSM_PARAMS = "deepssm";
 
 -------------------------------
 
-Updated on 2022-08-08 at 20:30:43 +0000
+Updated on 2022-08-13 at 03:03:50 +0000

@@ -25,6 +25,7 @@ String utility functions.
 | bool | **[hasSuffix](../Classes/classshapeworks_1_1StringUtils.md#function-hassuffix)**(std::string const & filename, std::string const & suffix) |
 | std::vector< std::string > | **[getFileNamesFromPaths](../Classes/classshapeworks_1_1StringUtils.md#function-getfilenamesfrompaths)**(const std::vector< std::string > & paths) |
 | std::string | **[safeString](../Classes/classshapeworks_1_1StringUtils.md#function-safestring)**(const char * s) |
+| std::string | **[replace_string](../Classes/classshapeworks_1_1StringUtils.md#function-replace-string)**(std::string str, const std::string & search, const std::string & replace)<br>Replace a search string with a replacement.  |
 
 ## Public Functions Documentation
 
@@ -103,6 +104,18 @@ static inline std::string safeString(
 ```
 
 
+### function replace_string
+
+```cpp
+static std::string replace_string(
+    std::string str,
+    const std::string & search,
+    const std::string & replace
+)
+```
+
+Replace a search string with a replacement. 
+
 -------------------------------
 
-Updated on 2022-08-08 at 20:30:43 +0000
+Updated on 2022-08-13 at 03:03:50 +0000

@@ -12,14 +12,14 @@
         <meta name="author" content="Shireen Elhabian et al.">
       
       
-        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Namespaces/namespacexlnt.html">
+        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/ExcelProjectReader_8h.html">
       
       <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.8">
     
     
       
-        <title>xlnt - ShapeWorks</title>
+        <title>Libs/Project/ExcelProjectReader.h - ShapeWorks</title>
       
     
     
@@ -81,7 +81,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#xlnt" class="md-skip">
+        <a href="#libsprojectexcelprojectreaderh" class="md-skip">
           Skip to content
         </a>
       
@@ -119,7 +119,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              xlnt
+              Libs/Project/ExcelProjectReader.h
             
           </span>
         </div>
@@ -1992,7 +1992,7 @@
   
   
     <li class="md-nav__item">
-      <a href="index_namespaces.html" class="md-nav__link">
+      <a href="../Namespaces/index_namespaces.html" class="md-nav__link">
         Namespaces
       </a>
     </li>
@@ -2020,7 +2020,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../Files/index_files.html" class="md-nav__link">
+      <a href="index_files.html" class="md-nav__link">
         Files
       </a>
     </li>
@@ -2144,6 +2144,35 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#namespaces" class="md-nav__link">
+    Namespaces
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#classes" class="md-nav__link">
+    Classes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#source-code" class="md-nav__link">
+    Source code
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -2154,15 +2183,69 @@
             <article class="md-content__inner md-typeset">
               
                 
-<a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/api/Namespaces/namespacexlnt.md" title="Edit this page" class="md-content__button md-icon">
+<a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/api/Files/ExcelProjectReader_8h.md" title="Edit this page" class="md-content__button md-icon">
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
 </a>
 
 
 
-<h1 id="xlnt">xlnt</h1>
+<h1 id="libsprojectexcelprojectreaderh">Libs/Project/ExcelProjectReader.h</h1>
+<h2 id="namespaces">Namespaces</h2>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong><a href="../Namespaces/namespaceshapeworks.html">shapeworks</a></strong></td>
+</tr>
+</tbody>
+</table>
+<h2 id="classes">Classes</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>class</td>
+<td><strong><a href="../Classes/classshapeworks_1_1ExcelProjectReader.html">shapeworks::ExcelProjectReader</a></strong> <br>Excel file format reader for <a href="">Project</a>.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="source-code">Source code</h2>
+<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ProjectReader.h&quot;</span><span class="cp"></span>
+
+<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ExcelProjectReader</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">ProjectReader</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w"> </span><span class="k">public</span><span class="o">:</span><span class="w"></span>
+<span class="w">  </span><span class="n">ExcelProjectReader</span><span class="p">(</span><span class="n">Project</span><span class="w"> </span><span class="o">&amp;</span><span class="n">project</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="o">~</span><span class="n">ExcelProjectReader</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">read_project</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">filename</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">  </span><span class="n">StringMap</span><span class="w"> </span><span class="nf">get_parameters</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">  </span><span class="n">StringMultiMap</span><span class="w"> </span><span class="nf">get_multi_parameters</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="p">;</span><span class="w"></span>
+
+<span class="w"> </span><span class="k">private</span><span class="o">:</span><span class="w"></span>
+<span class="w">  </span><span class="c1">// pimpl container</span>
+<span class="w">  </span><span class="k">class</span><span class="w"> </span><span class="nc">Container</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">Container</span><span class="o">&gt;</span><span class="w"> </span><span class="n">container_</span><span class="p">;</span><span class="w"></span>
+<span class="p">};</span><span class="w"></span>
+<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
+</code></pre></div>
 <hr />
-<p>Updated on 2022-08-08 at 20:30:44 +0000</p>
+<p>Updated on 2022-08-13 at 03:03:51 +0000</p>
 
               
             </article>

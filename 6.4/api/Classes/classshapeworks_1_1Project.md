@@ -28,8 +28,10 @@ Representation of a project.  [More...](#detailed-description)
 | int | **[get_number_of_subjects](../Classes/classshapeworks_1_1Project.md#function-get-number-of-subjects)**()<br>Return the number of subjects in the project.  |
 | int | **[get_number_of_domains_per_subject](../Classes/classshapeworks_1_1Project.md#function-get-number-of-domains-per-subject)**()<br>Return the number of domains.  |
 | std::vector< std::string > | **[get_domain_names](../Classes/classshapeworks_1_1Project.md#function-get-domain-names)**()<br>Return the domain names (e.g. femur, pelvis, etc)  |
+| void | **[set_domain_names](../Classes/classshapeworks_1_1Project.md#function-set-domain-names)**(std::vector< std::string > domain_names)<br>Set the domain names.  |
 | std::vector< std::shared_ptr< [Subject](../Classes/classshapeworks_1_1Subject.md) > > & | **[get_subjects](../Classes/classshapeworks_1_1Project.md#function-get-subjects)**()<br>Return the Subjects (as a reference)  |
 | void | **[set_subjects](../Classes/classshapeworks_1_1Project.md#function-set-subjects)**(const std::vector< std::shared_ptr< [Subject](../Classes/classshapeworks_1_1Subject.md) >> & subjects)<br>Set the Subjects.  |
+| void | **[update_subjects](../Classes/classshapeworks_1_1Project.md#function-update-subjects)**() |
 | bool | **[get_originals_present](../Classes/classshapeworks_1_1Project.md#function-get-originals-present)**() const<br>Return if originals are present.  |
 | bool | **[get_groomed_present](../Classes/classshapeworks_1_1Project.md#function-get-groomed-present)**() const<br>Return if groomed files are present.  |
 | bool | **[get_particles_present](../Classes/classshapeworks_1_1Project.md#function-get-particles-present)**() const<br>Return if particle files are present.  |
@@ -39,13 +41,15 @@ Representation of a project.  [More...](#detailed-description)
 | std::vector< std::string > | **[get_group_names](../Classes/classshapeworks_1_1Project.md#function-get-group-names)**()<br>Get group names.  |
 | std::vector< std::string > | **[get_group_values](../Classes/classshapeworks_1_1Project.md#function-get-group-values)**(const std::string & group_name) const<br>Get possible group values.  |
 | [Parameters](../Classes/classshapeworks_1_1Parameters.md) | **[get_parameters](../Classes/classshapeworks_1_1Project.md#function-get-parameters)**(const std::string & name, std::string domain_name ="")<br>Retrieve parameters based on key.  |
+| std::map< std::string, [Parameters](../Classes/classshapeworks_1_1Parameters.md) > | **[get_parameter_map](../Classes/classshapeworks_1_1Project.md#function-get-parameter-map)**(const std::string & name)<br>Retrieve full parameter map for a given name.  |
+| void | **[set_parameter_map](../Classes/classshapeworks_1_1Project.md#function-set-parameter-map)**(const std::string & name, std::map< std::string, [Parameters](../Classes/classshapeworks_1_1Parameters.md) > map)<br>Set parameter map for a given name.  |
 | void | **[set_parameters](../Classes/classshapeworks_1_1Project.md#function-set-parameters)**(const std::string & name, [Parameters](../Classes/classshapeworks_1_1Parameters.md) params, std::string domain_name ="")<br>Store parameters based on key.  |
 | void | **[clear_parameters](../Classes/classshapeworks_1_1Project.md#function-clear-parameters)**(const std::string & name)<br>Clear parameters based on key.  |
-| void | **[store_subjects](../Classes/classshapeworks_1_1Project.md#function-store-subjects)**()<br>Store from subject list to spreadsheet.  |
 | int | **[get_supported_version](../Classes/classshapeworks_1_1Project.md#function-get-supported-version)**() const<br>Get the supported version (this version of the code)  |
 | int | **[get_version](../Classes/classshapeworks_1_1Project.md#function-get-version)**() const<br>Get the version of the currently loaded project.  |
 | std::vector< [LandmarkDefinition](../Classes/classshapeworks_1_1LandmarkDefinition.md) > | **[get_landmarks](../Classes/classshapeworks_1_1Project.md#function-get-landmarks)**(int domain_id)<br>Return the set of landmarks definitions for a particular domain.  |
 | std::vector< std::vector< [LandmarkDefinition](../Classes/classshapeworks_1_1LandmarkDefinition.md) > > | **[get_all_landmark_definitions](../Classes/classshapeworks_1_1Project.md#function-get-all-landmark-definitions)**()<br>Return all landmark definitions.  |
+| void | **[set_landmark_definitions](../Classes/classshapeworks_1_1Project.md#function-set-landmark-definitions)**(std::vector< std::vector< [LandmarkDefinition](../Classes/classshapeworks_1_1LandmarkDefinition.md) >> defs)<br>Set all landmark definitions.  |
 | bool | **[get_landmarks_present](../Classes/classshapeworks_1_1Project.md#function-get-landmarks-present)**()<br>Return if landmarks are present.  |
 | void | **[set_landmarks](../Classes/classshapeworks_1_1Project.md#function-set-landmarks)**(int domain_id, std::vector< [LandmarkDefinition](../Classes/classshapeworks_1_1LandmarkDefinition.md) > landmarks)<br>Set landmarks for this project.  |
 | void | **[new_landmark](../Classes/classshapeworks_1_1Project.md#function-new-landmark)**(int domain_id)<br>Add a new landmark.  |
@@ -160,6 +164,16 @@ std::vector< std::string > get_domain_names()
 
 Return the domain names (e.g. femur, pelvis, etc) 
 
+### function set_domain_names
+
+```cpp
+void set_domain_names(
+    std::vector< std::string > domain_names
+)
+```
+
+Set the domain names. 
+
 ### function get_subjects
 
 ```cpp
@@ -177,6 +191,13 @@ void set_subjects(
 ```
 
 Set the Subjects. 
+
+### function update_subjects
+
+```cpp
+void update_subjects()
+```
+
 
 ### function get_originals_present
 
@@ -255,6 +276,27 @@ Parameters get_parameters(
 
 Retrieve parameters based on key. 
 
+### function get_parameter_map
+
+```cpp
+std::map< std::string, Parameters > get_parameter_map(
+    const std::string & name
+)
+```
+
+Retrieve full parameter map for a given name. 
+
+### function set_parameter_map
+
+```cpp
+void set_parameter_map(
+    const std::string & name,
+    std::map< std::string, Parameters > map
+)
+```
+
+Set parameter map for a given name. 
+
 ### function set_parameters
 
 ```cpp
@@ -276,14 +318,6 @@ void clear_parameters(
 ```
 
 Clear parameters based on key. 
-
-### function store_subjects
-
-```cpp
-void store_subjects()
-```
-
-Store from subject list to spreadsheet. 
 
 ### function get_supported_version
 
@@ -318,6 +352,16 @@ std::vector< std::vector< LandmarkDefinition > > get_all_landmark_definitions()
 ```
 
 Return all landmark definitions. 
+
+### function set_landmark_definitions
+
+```cpp
+void set_landmark_definitions(
+    std::vector< std::vector< LandmarkDefinition >> defs
+)
+```
+
+Set all landmark definitions. 
 
 ### function get_landmarks_present
 
@@ -386,4 +430,4 @@ Get the groomed domain types.
 
 -------------------------------
 
-Updated on 2022-08-08 at 20:30:43 +0000
+Updated on 2022-08-13 at 03:03:50 +0000
