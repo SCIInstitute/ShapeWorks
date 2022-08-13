@@ -1,5 +1,8 @@
-#include <algorithm>
 #include "ProjectReader.h"
+
+#include <StringUtils.h>
+
+#include <algorithm>
 
 namespace shapeworks {
 
@@ -29,9 +32,7 @@ void ProjectReader::load_subjects(StringMapList list) {
     }
 
     auto domains = project_.get_domain_names();
-    if (contains(item, "name")) {
-      subject->set_display_name(item["name"]);
-    }
+
     subject->set_number_of_domains(domains.size());
 
     auto get_list = [&](auto prefix) { return ProjectUtils::get_values({prefix}, domains, key_map); };
@@ -58,6 +59,21 @@ void ProjectReader::load_subjects(StringMapList list) {
     subject->set_extra_values(ProjectUtils::get_extra_columns(key_map));
     // table values
     subject->set_table_values(key_map);
+
+    std::string name;
+    if (contains(item, "name")) {
+      name = item["item"];
+    }
+    if (name == "") {
+      if (subject->get_original_filenames().size() != 0) {
+        name = StringUtils::getBaseFilenameWithoutExtension(subject->get_original_filenames()[0]);
+      } else if (subject->get_groomed_filenames().size() != 0) {
+        name = StringUtils::getBaseFilenameWithoutExtension(subject->get_groomed_filenames()[0]);
+      } else if (subject->get_local_particle_filenames().size() > 0) {
+        name = StringUtils::getBaseFilenameWithoutExtension(subject->get_local_particle_filenames()[0]);
+      }
+    }
+    subject->set_display_name(name);
 
     subjects.push_back(subject);
   }

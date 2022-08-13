@@ -71,20 +71,13 @@ JsonProjectReader::~JsonProjectReader() {}
 
 //---------------------------------------------------------------------------
 bool JsonProjectReader::read_project(std::string filename) {
-  //try {
-    std::ifstream ifs(filename);
-    container_->j = json::parse(ifs);
+  std::ifstream ifs(filename);
+  container_->j = json::parse(ifs);
 
-    load_subjects(container_->object_to_map_list("data"));
-    load_landmark_definitions(container_->object_to_map_list("landmarks"));
-    load_parameters();
+  load_subjects(container_->object_to_map_list("data"));
+  load_landmark_definitions(container_->object_to_map_list("landmarks"));
+  load_parameters();
 
-    /*
-  } catch (std::exception& e) {
-    std::cerr << "Error reading " << filename << " : " << e.what() << "\n";
-    return false;
-  }
-  */
   return true;
 }
 
