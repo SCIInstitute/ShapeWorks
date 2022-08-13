@@ -2423,6 +2423,27 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#function-setinitializationmode" class="md-nav__link">
+    function SetInitializationMode
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-setcheckiterations" class="md-nav__link">
+    function SetCheckIterations
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-setinitializationstartscalingfactor" class="md-nav__link">
+    function SetInitializationStartScalingFactor
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2646,6 +2667,18 @@
 <td></td>
 <td><strong><a href="classitk_1_1ParticleGradientDescentPositionOptimizer.html#function-itksetobjectmacro">itkSetObjectMacro</a></strong>(GradientFunction , <a href="classitk_1_1ParticleGradientDescentPositionOptimizer.html#typedef-gradientfunctiontype">GradientFunctionType</a> )</td>
 </tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classitk_1_1ParticleGradientDescentPositionOptimizer.html#function-setinitializationmode">SetInitializationMode</a></strong>(bool b)<br>Determines if this is an initialization (true) or an optimization (false)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classitk_1_1ParticleGradientDescentPositionOptimizer.html#function-setcheckiterations">SetCheckIterations</a></strong>(size_t si)<br>Sets the number of iterations when we check for convergence.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classitk_1_1ParticleGradientDescentPositionOptimizer.html#function-setinitializationstartscalingfactor">SetInitializationStartScalingFactor</a></strong>(double si)<br>Sets the scaling factor at the beginning of the initialization.</td>
+</tr>
 </tbody>
 </table>
 <h2 id="protected-functions">Protected Functions</h2>
@@ -2852,6 +2885,24 @@
 <span class="w">    </span><span class="n">GradientFunctionType</span><span class="w"> </span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
+<h3 id="function-setinitializationmode">function SetInitializationMode</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetInitializationMode</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">b</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>Determines if this is an initialization (true) or an optimization (false) </p>
+<h3 id="function-setcheckiterations">function SetCheckIterations</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetCheckIterations</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">si</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>Sets the number of iterations when we check for convergence. </p>
+<h3 id="function-setinitializationstartscalingfactor">function SetInitializationStartScalingFactor</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetInitializationStartScalingFactor</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">si</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>Sets the scaling factor at the beginning of the initialization. </p>
 <h2 id="protected-functions-documentation">Protected Functions Documentation</h2>
 <h3 id="function-particlegradientdescentpositionoptimizer">function ParticleGradientDescentPositionOptimizer</h3>
 <div class="highlight"><pre><span></span><code><span class="n">ParticleGradientDescentPositionOptimizer</span><span class="p">()</span><span class="w"></span>
@@ -2876,7 +2927,7 @@
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">ParticleGradientDescentPositionOptimizer</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-08-13 at 03:03:49 +0000</p>
+<p>Updated on 2022-08-13 at 05:00:35 +0000</p>
 
               
             </article>

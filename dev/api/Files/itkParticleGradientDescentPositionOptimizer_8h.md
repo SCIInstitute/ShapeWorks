@@ -110,6 +110,12 @@ public:
   itkGetObjectMacro(GradientFunction, GradientFunctionType);
   itkSetObjectMacro(GradientFunction, GradientFunctionType);
 
+  void SetInitializationMode(bool b){m_initialization_mode = b;}
+
+  void SetCheckIterations(size_t si){m_check_iterations = si;}
+
+  void SetInitializationStartScalingFactor(double si){m_initialization_start_scaling_factor = si;}
+
 protected:
   ParticleGradientDescentPositionOptimizer();
   ParticleGradientDescentPositionOptimizer(const ParticleGradientDescentPositionOptimizer &);
@@ -132,6 +138,11 @@ private:
   std::vector< std::vector<double> > m_TimeSteps;
   unsigned int m_verbosity;
 
+  // Adaptive Initialization variables
+  bool m_initialization_mode = false;
+  size_t m_check_iterations = 50;
+  double m_initialization_start_scaling_factor;
+
   void ResetTimeStepVectors();
 };
 
@@ -144,4 +155,4 @@ private:
 
 -------------------------------
 
-Updated on 2022-08-13 at 03:03:51 +0000
+Updated on 2022-08-13 at 05:00:37 +0000

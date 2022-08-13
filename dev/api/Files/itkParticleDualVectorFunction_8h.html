@@ -2556,14 +2556,15 @@
 <span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">SetBOn</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">  </span><span class="n">m_BOn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">;</span><span class="w">  </span><span class="p">}</span><span class="w"></span>
 <span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">GetBOn</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_BOn</span><span class="p">;</span><span class="w">  </span><span class="p">}</span><span class="w"></span>
 
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">SetRelativeEnergyScaling</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">r</span><span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">SetRelativeEnergyScaling</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">r</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
 <span class="w">    </span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="n">m_RelativeEnergyScaling</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">r</span><span class="p">;</span><span class="w"></span>
 <span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">GetRelativeEnergyScaling</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">GetRelativeEnergyScaling</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
 <span class="w">    </span><span class="p">{</span><span class="w"></span>
 <span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">m_RelativeEnergyScaling</span><span class="p">;</span><span class="w"></span>
 <span class="w">    </span><span class="p">}</span><span class="w"></span>
+
 
 <span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">SetRelativeGradientScaling</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">r</span><span class="p">)</span><span class="w"></span>
 <span class="w">    </span><span class="p">{</span><span class="w"></span>
@@ -2649,7 +2650,7 @@
 <span class="p">}</span><span class="w"> </span><span class="c1">//end namespace</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-08-13 at 03:03:51 +0000</p>
+<p>Updated on 2022-08-13 at 05:00:37 +0000</p>
 
               
             </article>

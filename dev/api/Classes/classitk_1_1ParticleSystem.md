@@ -111,6 +111,7 @@ Inherits from DataObject
 | void | **[SetDomainsPerShape](../Classes/classitk_1_1ParticleSystem.md#function-setdomainspershape)**(unsigned int num) |
 | unsigned int | **[GetDomainsPerShape](../Classes/classitk_1_1ParticleSystem.md#function-getdomainspershape)**() const |
 | void | **[SetNumberOfDomains](../Classes/classitk_1_1ParticleSystem.md#function-setnumberofdomains)**(unsigned int ) |
+| double | **[ComputeMaxDistNearestNeighbors](../Classes/classitk_1_1ParticleSystem.md#function-computemaxdistnearestneighbors)**(size_t dom) |
 
 ## Protected Functions
 
@@ -1073,6 +1074,15 @@ void SetNumberOfDomains(
 Set the number of domains. This method modifies the size of the m_Domains, m_Positions, and m_Transform lists. 
 
 
+### function ComputeMaxDistNearestNeighbors
+
+```cpp
+double ComputeMaxDistNearestNeighbors(
+    size_t dom
+)
+```
+
+
 ## Protected Functions Documentation
 
 ### function ParticleSystem
@@ -1214,4 +1224,4 @@ static constexpr int VDimension = 3;
 
 -------------------------------
 
-Updated on 2022-08-13 at 03:03:49 +0000
+Updated on 2022-08-13 at 05:00:35 +0000

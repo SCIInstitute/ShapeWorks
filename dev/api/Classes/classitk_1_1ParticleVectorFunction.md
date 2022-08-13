@@ -45,6 +45,8 @@ Inherited by [itk::ParticleDualVectorFunction< VDimension >](../Classes/classitk
 | virtual void | **[SetDomainNumber](../Classes/classitk_1_1ParticleVectorFunction.md#function-setdomainnumber)**(unsigned int i) |
 | virtual int | **[GetDomainNumber](../Classes/classitk_1_1ParticleVectorFunction.md#function-getdomainnumber)**() const |
 | virtual [ParticleVectorFunction](../Classes/classitk_1_1ParticleVectorFunction.md)< VDimension >::Pointer | **[Clone](../Classes/classitk_1_1ParticleVectorFunction.md#function-clone)**() |
+| virtual double | **[GetRelativeEnergyScaling](../Classes/classitk_1_1ParticleVectorFunction.md#function-getrelativeenergyscaling)**() const |
+| virtual void | **[SetRelativeEnergyScaling](../Classes/classitk_1_1ParticleVectorFunction.md#function-setrelativeenergyscaling)**(double r) |
 
 ## Protected Functions
 
@@ -306,6 +308,28 @@ inline virtual ParticleVectorFunction< VDimension >::Pointer Clone()
 **Reimplemented by**: [itk::ParticleConstrainedModifiedCotangentEntropyGradientFunction::Clone](../Classes/classitk_1_1ParticleConstrainedModifiedCotangentEntropyGradientFunction.md#function-clone), [itk::ParticleConstrainedModifiedCotangentEntropyGradientFunction::Clone](../Classes/classitk_1_1ParticleConstrainedModifiedCotangentEntropyGradientFunction.md#function-clone), [itk::ParticleCurvatureEntropyGradientFunction::Clone](../Classes/classitk_1_1ParticleCurvatureEntropyGradientFunction.md#function-clone), [itk::ParticleCurvatureEntropyGradientFunction::Clone](../Classes/classitk_1_1ParticleCurvatureEntropyGradientFunction.md#function-clone), [itk::ParticleDualVectorFunction::Clone](../Classes/classitk_1_1ParticleDualVectorFunction.md#function-clone), [itk::ParticleDualVectorFunction::Clone](../Classes/classitk_1_1ParticleDualVectorFunction.md#function-clone), [itk::ParticleEnsembleEntropyFunction::Clone](../Classes/classitk_1_1ParticleEnsembleEntropyFunction.md#function-clone), [itk::ParticleEnsembleEntropyFunction::Clone](../Classes/classitk_1_1ParticleEnsembleEntropyFunction.md#function-clone), [itk::ParticleEntropyGradientFunction::Clone](../Classes/classitk_1_1ParticleEntropyGradientFunction.md#function-clone), [itk::ParticleEntropyGradientFunction::Clone](../Classes/classitk_1_1ParticleEntropyGradientFunction.md#function-clone), [itk::ParticleEntropyGradientFunction::Clone](../Classes/classitk_1_1ParticleEntropyGradientFunction.md#function-clone), [itk::ParticleMeshBasedGeneralEntropyGradientFunction::Clone](../Classes/classitk_1_1ParticleMeshBasedGeneralEntropyGradientFunction.md#function-clone), [itk::ParticleMeshBasedGeneralEntropyGradientFunction::Clone](../Classes/classitk_1_1ParticleMeshBasedGeneralEntropyGradientFunction.md#function-clone), [itk::ParticleModifiedCotangentEntropyGradientFunction::Clone](../Classes/classitk_1_1ParticleModifiedCotangentEntropyGradientFunction.md#function-clone), [itk::ParticleModifiedCotangentEntropyGradientFunction::Clone](../Classes/classitk_1_1ParticleModifiedCotangentEntropyGradientFunction.md#function-clone), [itk::ParticleOmegaGradientFunction::Clone](../Classes/classitk_1_1ParticleOmegaGradientFunction.md#function-clone), [itk::ParticleOmegaGradientFunction::Clone](../Classes/classitk_1_1ParticleOmegaGradientFunction.md#function-clone)
 
 
+### function GetRelativeEnergyScaling
+
+```cpp
+inline virtual double GetRelativeEnergyScaling() const
+```
+
+
+**Reimplemented by**: [itk::ParticleDualVectorFunction::GetRelativeEnergyScaling](../Classes/classitk_1_1ParticleDualVectorFunction.md#function-getrelativeenergyscaling)
+
+
+### function SetRelativeEnergyScaling
+
+```cpp
+inline virtual void SetRelativeEnergyScaling(
+    double r
+)
+```
+
+
+**Reimplemented by**: [itk::ParticleDualVectorFunction::SetRelativeEnergyScaling](../Classes/classitk_1_1ParticleDualVectorFunction.md#function-setrelativeenergyscaling), [itk::ParticleDualVectorFunction::SetRelativeEnergyScaling](../Classes/classitk_1_1ParticleDualVectorFunction.md#function-setrelativeenergyscaling)
+
+
 ## Protected Functions Documentation
 
 ### function ParticleVectorFunction
@@ -358,4 +382,4 @@ unsigned int m_DomainNumber;
 
 -------------------------------
 
-Updated on 2022-08-13 at 03:03:49 +0000
+Updated on 2022-08-13 at 05:00:35 +0000

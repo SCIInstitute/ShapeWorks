@@ -55,6 +55,9 @@ Inherits from Object
 | | **[itkSetObjectMacro](../Classes/classitk_1_1ParticleGradientDescentPositionOptimizer.md#function-itksetobjectmacro)**([ParticleSystem](../Classes/classitk_1_1ParticleSystem.md) , [ParticleSystemType](../Classes/classitk_1_1ParticleGradientDescentPositionOptimizer.md#typedef-particlesystemtype) ) |
 | | **[itkGetObjectMacro](../Classes/classitk_1_1ParticleGradientDescentPositionOptimizer.md#function-itkgetobjectmacro)**(GradientFunction , [GradientFunctionType](../Classes/classitk_1_1ParticleGradientDescentPositionOptimizer.md#typedef-gradientfunctiontype) ) |
 | | **[itkSetObjectMacro](../Classes/classitk_1_1ParticleGradientDescentPositionOptimizer.md#function-itksetobjectmacro)**(GradientFunction , [GradientFunctionType](../Classes/classitk_1_1ParticleGradientDescentPositionOptimizer.md#typedef-gradientfunctiontype) ) |
+| void | **[SetInitializationMode](../Classes/classitk_1_1ParticleGradientDescentPositionOptimizer.md#function-setinitializationmode)**(bool b)<br>Determines if this is an initialization (true) or an optimization (false)  |
+| void | **[SetCheckIterations](../Classes/classitk_1_1ParticleGradientDescentPositionOptimizer.md#function-setcheckiterations)**(size_t si)<br>Sets the number of iterations when we check for convergence.  |
+| void | **[SetInitializationStartScalingFactor](../Classes/classitk_1_1ParticleGradientDescentPositionOptimizer.md#function-setinitializationstartscalingfactor)**(double si)<br>Sets the scaling factor at the beginning of the initialization.  |
 
 ## Protected Functions
 
@@ -408,6 +411,36 @@ itkSetObjectMacro(
 ```
 
 
+### function SetInitializationMode
+
+```cpp
+inline void SetInitializationMode(
+    bool b
+)
+```
+
+Determines if this is an initialization (true) or an optimization (false) 
+
+### function SetCheckIterations
+
+```cpp
+inline void SetCheckIterations(
+    size_t si
+)
+```
+
+Sets the number of iterations when we check for convergence. 
+
+### function SetInitializationStartScalingFactor
+
+```cpp
+inline void SetInitializationStartScalingFactor(
+    double si
+)
+```
+
+Sets the scaling factor at the beginning of the initialization. 
+
 ## Protected Functions Documentation
 
 ### function ParticleGradientDescentPositionOptimizer
@@ -454,4 +487,4 @@ inline virtual ~ParticleGradientDescentPositionOptimizer()
 
 -------------------------------
 
-Updated on 2022-08-13 at 03:03:49 +0000
+Updated on 2022-08-13 at 05:00:35 +0000

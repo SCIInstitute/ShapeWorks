@@ -54,8 +54,8 @@ Inherits from [itk::ParticleVectorFunction< VDimension >](../Classes/classitk_1_
 | void | **[SetBOff](../Classes/classitk_1_1ParticleDualVectorFunction.md#function-setboff)**() |
 | void | **[SetBOn](../Classes/classitk_1_1ParticleDualVectorFunction.md#function-setbon)**(bool s) |
 | bool | **[GetBOn](../Classes/classitk_1_1ParticleDualVectorFunction.md#function-getbon)**() const |
-| void | **[SetRelativeEnergyScaling](../Classes/classitk_1_1ParticleDualVectorFunction.md#function-setrelativeenergyscaling)**(double r) |
-| double | **[GetRelativeEnergyScaling](../Classes/classitk_1_1ParticleDualVectorFunction.md#function-getrelativeenergyscaling)**() const |
+| virtual void | **[SetRelativeEnergyScaling](../Classes/classitk_1_1ParticleDualVectorFunction.md#function-setrelativeenergyscaling)**(double r) override |
+| virtual double | **[GetRelativeEnergyScaling](../Classes/classitk_1_1ParticleDualVectorFunction.md#function-getrelativeenergyscaling)**() const override |
 | void | **[SetRelativeGradientScaling](../Classes/classitk_1_1ParticleDualVectorFunction.md#function-setrelativegradientscaling)**(double r) |
 | double | **[GetRelativeGradientScaling](../Classes/classitk_1_1ParticleDualVectorFunction.md#function-getrelativegradientscaling)**() const |
 | double | **[GetAverageGradMagA](../Classes/classitk_1_1ParticleDualVectorFunction.md#function-getaveragegradmaga)**() const |
@@ -454,10 +454,13 @@ inline bool GetBOn() const
 ### function SetRelativeEnergyScaling
 
 ```cpp
-inline void SetRelativeEnergyScaling(
+inline virtual void SetRelativeEnergyScaling(
     double r
-)
+) override
 ```
+
+
+**Reimplements**: [itk::ParticleVectorFunction::SetRelativeEnergyScaling](../Classes/classitk_1_1ParticleVectorFunction.md#function-setrelativeenergyscaling)
 
 
 The relative scaling scales the gradient B relative to A. By default this value is 1.0. 
@@ -466,8 +469,11 @@ The relative scaling scales the gradient B relative to A. By default this value 
 ### function GetRelativeEnergyScaling
 
 ```cpp
-inline double GetRelativeEnergyScaling() const
+inline virtual double GetRelativeEnergyScaling() const override
 ```
+
+
+**Reimplements**: [itk::ParticleVectorFunction::GetRelativeEnergyScaling](../Classes/classitk_1_1ParticleVectorFunction.md#function-getrelativeenergyscaling)
 
 
 ### function SetRelativeGradientScaling
@@ -639,4 +645,4 @@ ParticleVectorFunction< VDimension >::Pointer m_FunctionB;
 
 -------------------------------
 
-Updated on 2022-08-13 at 03:03:49 +0000
+Updated on 2022-08-13 at 05:00:35 +0000

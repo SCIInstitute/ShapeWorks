@@ -2796,12 +2796,12 @@
 <td><strong><a href="classitk_1_1ParticleDualVectorFunction.html#function-getbon">GetBOn</a></strong>() const</td>
 </tr>
 <tr>
-<td>void</td>
-<td><strong><a href="classitk_1_1ParticleDualVectorFunction.html#function-setrelativeenergyscaling">SetRelativeEnergyScaling</a></strong>(double r)</td>
+<td>virtual void</td>
+<td><strong><a href="classitk_1_1ParticleDualVectorFunction.html#function-setrelativeenergyscaling">SetRelativeEnergyScaling</a></strong>(double r) override</td>
 </tr>
 <tr>
-<td>double</td>
-<td><strong><a href="classitk_1_1ParticleDualVectorFunction.html#function-getrelativeenergyscaling">GetRelativeEnergyScaling</a></strong>() const</td>
+<td>virtual double</td>
+<td><strong><a href="classitk_1_1ParticleDualVectorFunction.html#function-getrelativeenergyscaling">GetRelativeEnergyScaling</a></strong>() const override</td>
 </tr>
 <tr>
 <td>void</td>
@@ -3149,14 +3149,16 @@
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">GetBOn</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-setrelativeenergyscaling">function SetRelativeEnergyScaling</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetRelativeEnergyScaling</span><span class="p">(</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetRelativeEnergyScaling</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">r</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
 </code></pre></div>
+<p><strong>Reimplements</strong>: <a href="classitk_1_1ParticleVectorFunction.html#function-setrelativeenergyscaling">itk::ParticleVectorFunction::SetRelativeEnergyScaling</a></p>
 <p>The relative scaling scales the gradient B relative to A. By default this value is 1.0. </p>
 <h3 id="function-getrelativeenergyscaling">function GetRelativeEnergyScaling</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">GetRelativeEnergyScaling</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">GetRelativeEnergyScaling</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
 </code></pre></div>
+<p><strong>Reimplements</strong>: <a href="classitk_1_1ParticleVectorFunction.html#function-getrelativeenergyscaling">itk::ParticleVectorFunction::GetRelativeEnergyScaling</a></p>
 <h3 id="function-setrelativegradientscaling">function SetRelativeGradientScaling</h3>
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetRelativeGradientScaling</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">r</span><span class="w"></span>
@@ -3233,7 +3235,7 @@
 <div class="highlight"><pre><span></span><code><span class="n">ParticleVectorFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_FunctionB</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-08-13 at 03:03:49 +0000</p>
+<p>Updated on 2022-08-13 at 05:00:35 +0000</p>
 
               
             </article>

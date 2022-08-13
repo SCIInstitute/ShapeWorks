@@ -123,6 +123,8 @@ Inherits from [itk::ParticleVectorFunction< VDimension >](../Classes/classitk_1_
 | virtual [ParticleSystemType](../Classes/classitk_1_1ParticleVectorFunction.md#typedef-particlesystemtype) * | **[GetParticleSystem](../Classes/classitk_1_1ParticleVectorFunction.md#function-getparticlesystem)**() const |
 | virtual void | **[SetDomainNumber](../Classes/classitk_1_1ParticleVectorFunction.md#function-setdomainnumber)**(unsigned int i) |
 | virtual int | **[GetDomainNumber](../Classes/classitk_1_1ParticleVectorFunction.md#function-getdomainnumber)**() const |
+| virtual double | **[GetRelativeEnergyScaling](../Classes/classitk_1_1ParticleVectorFunction.md#function-getrelativeenergyscaling)**() const |
+| virtual void | **[SetRelativeEnergyScaling](../Classes/classitk_1_1ParticleVectorFunction.md#function-setrelativeenergyscaling)**(double r) |
 
 **Protected Functions inherited from [itk::ParticleVectorFunction< VDimension >](../Classes/classitk_1_1ParticleVectorFunction.md)**
 
@@ -730,4 +732,4 @@ int num_samples;
 
 -------------------------------
 
-Updated on 2022-08-13 at 03:03:49 +0000
+Updated on 2022-08-13 at 05:00:35 +0000

@@ -362,14 +362,15 @@ public:
     void SetBOn(bool s) {  m_BOn = s;  }
     bool GetBOn() const { return m_BOn;  }
 
-    void SetRelativeEnergyScaling(double r)
+    void SetRelativeEnergyScaling(double r) override
     {
         m_RelativeEnergyScaling = r;
     }
-    double GetRelativeEnergyScaling() const
+    double GetRelativeEnergyScaling() const override
     {
         return m_RelativeEnergyScaling;
     }
+
 
     void SetRelativeGradientScaling(double r)
     {
@@ -458,4 +459,4 @@ protected:
 
 -------------------------------
 
-Updated on 2022-08-13 at 03:03:51 +0000
+Updated on 2022-08-13 at 05:00:37 +0000

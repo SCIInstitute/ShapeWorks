@@ -273,6 +273,9 @@ class ParticleSystem : public DataObject {
 
   void SetNumberOfDomains(unsigned int);
 
+  // Returns the maximum distance between nearest neighbors in domain dom
+  double ComputeMaxDistNearestNeighbors(size_t dom);
+
  protected:
   ParticleSystem();
   void PrintSelf(std::ostream &os, Indent indent) const;
@@ -333,4 +336,4 @@ class ParticleSystem : public DataObject {
 
 -------------------------------
 
-Updated on 2022-08-13 at 03:03:51 +0000
+Updated on 2022-08-13 at 05:00:37 +0000
