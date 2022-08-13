@@ -114,9 +114,4 @@ void Subject::set_constraints_filenames(std::vector<std::string> filenames) { co
 
 //---------------------------------------------------------------------------
 std::vector<std::string> Subject::get_constraints_filenames() { return constraints_filenames_; }
-
 //---------------------------------------------------------------------------
-void Subject::set_image_filenames(std::vector<std::string> filenames) { image_filenames_ = filenames; }
-
-//---------------------------------------------------------------------------
-std::vector<std::string> Subject::get_image_filenames() { return image_filenames_; }

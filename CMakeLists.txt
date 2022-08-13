@@ -15,7 +15,7 @@ if (NOT "${HASH}" STREQUAL "bb94438a695c749b264180019abbbb97")
   message( FATAL_ERROR "MD5 hash of '${CMAKE_CURRENT_SOURCE_DIR}/Testing/data/icp_baseline.nrrd' is incorrect.  This most likely means that git-lfs was not installed when ShapeWorks was cloned." )
 endif()
 
-set(CMAKE_CXX_STANDARD 14)             # available options are [98, 11, 14, 17. 20]
+set(CMAKE_CXX_STANDARD 17)             # available options are [98, 11, 14, 17. 20]
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/CMake")
 find_package(Python3 3.7 EXACT REQUIRED)

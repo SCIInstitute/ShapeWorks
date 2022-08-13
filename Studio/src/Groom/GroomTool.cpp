@@ -249,15 +249,23 @@ void GroomTool::update_reflect_columns() {
 void GroomTool::update_reflect_choices() {
   auto project = session_->get_project();
   auto column = ui_->reflect_column->currentText();
-  auto subjects = session_->get_project()->get_subjects();
 
-  auto rows = project->get_string_column(column.toStdString());
+  auto& subjects = project->get_subjects();
+
+  auto contains = [](std::map<std::string, std::string> map, std::string key) -> bool {
+    return map.find(key) != map.end();
+  };
+
+  QStringList list;
+  for (int row = 0; row < subjects.size(); row++) {
+    auto values = subjects[row]->get_table_values();
+    std::string value;
+    if (contains(values, column.toStdString())) {
+      list << QString::fromStdString(values[column.toStdString()]);
+    }
+  }
 
   ui_->reflect_choice->clear();
-  QStringList list;
-  for (int row = 0; row < rows.size(); row++) {
-    list << QString::fromStdString(rows[row]);
-  }
   list.removeDuplicates();
   Q_FOREACH (auto item, list) { ui_->reflect_choice->addItem(item); }
 }
