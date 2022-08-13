@@ -235,7 +235,7 @@ void ParticleSystem::AdvancedAllParticleSplitting(double epsilon, unsigned int d
   size_t num_doms = this->GetNumberOfDomains();
 
   for (size_t domain = 0; domain < num_doms; domain++) {
-    this->GetDomain(domain)->GetConstraints()->InitializeLagrangianParameters(1, 1, 1);
+    this->GetDomain(domain)->GetConstraints()->InitializeLagrangianParameters(0, 0, 0);
   }
 
   std::vector<std::vector<PointType> > lists;
@@ -307,6 +307,32 @@ void ParticleSystem::AdvancedAllParticleSplitting(double epsilon, unsigned int d
       }  // while end
     }    // for end
   }      // if end
+}
+
+double ParticleSystem::ComputeMaxDistNearestNeighbors(size_t dom){
+    std::vector<PointType> list;
+    for (auto k = 0; k < GetPositions(dom)->GetSize(); k++) {
+      list.push_back(GetPositions(dom)->Get(k));
+    }
+
+    double maxDistNN = 0;
+
+    for(size_t i = 0; i < list.size(); i++){
+        size_t closest_particle = 0;
+        double closest_particle_distance = (list[i]-list[0]).GetNorm();
+        for(size_t j = 1; j < list.size(); j++){
+            double dist = (list[i]-list[j]).GetNorm();
+            if(dist < closest_particle_distance){
+                closest_particle_distance = dist;
+                closest_particle = j;
+            }
+        }
+        if(closest_particle_distance > maxDistNN){
+            maxDistNN = closest_particle_distance;
+        }
+    }
+
+    return maxDistNN;
 }
 
 void ParticleSystem::RegisterAttribute(ParticleAttribute<3> *attr) {
