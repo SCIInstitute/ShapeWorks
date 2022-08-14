@@ -18,7 +18,7 @@ ITK_VER="v5.2.1"
 ITK_VER_STR="5.2"
 EIGEN_VER="3.4.0"
 QT_MIN_VER="5.12.12"
-XLNT_VER="v1.5.0"
+XLNT_VER="538f80794c7d736afc0a452d21313606cc5538fc"
 JKQTPLOTTER_VER="v2019.11.3-high_dpi"
 OpenVDB_VER="v9.1.0"
 libigl_VER="v2.3.0"
@@ -205,6 +205,8 @@ build_xlnt()
   git clone https://github.com/tfussell/xlnt.git
   cd xlnt
   git checkout -f tags/${XLNT_VER}
+  git submodule init
+  git submodule update
 
   # move conflicting file out of the way so it builds on osx
   mv third-party/libstudxml/version third-party/libstudxml/version.bak

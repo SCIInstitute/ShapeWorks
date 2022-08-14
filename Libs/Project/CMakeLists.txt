@@ -1,8 +1,13 @@
 set(SOURCES
+  ExcelProjectReader.cpp
+  ExcelProjectWriter.cpp
+  JsonProjectReader.cpp
+  JsonProjectWriter.cpp
+  Parameters.cpp
   Project.cpp
+  ProjectReader.cpp
   ProjectUtils.cpp
   Subject.cpp
-  Parameters.cpp
   Variant.cpp
   )
 

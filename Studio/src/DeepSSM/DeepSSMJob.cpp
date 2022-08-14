@@ -224,9 +224,9 @@ std::vector<std::string> DeepSSMJob::get_list(FileType file_type, SplitType spli
       list.push_back(std::to_string(id));
     }
     else if (file_type == FileType::IMAGE) {
-      auto image_filenames = subjects[id]->get_image_filenames();
+      auto image_filenames = subjects[id]->get_feature_filenames();
       if (!image_filenames.empty()) {
-        list.push_back(image_filenames[0]);
+        list.push_back(image_filenames.begin()->second);
       }
     }
     else {

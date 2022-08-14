@@ -1757,7 +1757,7 @@ PYBIND11_MODULE(shapeworks_py, m)
       "name"_a)
 
   .def("store_subjects",
-      &Project::store_subjects)
+      &Project::update_subjects)
 
   .def("get_supported_version",
       &Project::get_supported_version)
@@ -1844,15 +1844,6 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def("get_number_of_domains",
       &Subject::get_number_of_domains,
       "Get the number of domains")
-
-  .def("set_image_filenames",
-      &Subject::set_image_filenames,
-      "Set image filenames",
-      "filenames"_a)
-
-  .def("get_image_filenames",
-      &Subject::get_image_filenames,
-      "Get image filenames")
 
   .def("get_feature_filenames",
       &Subject::get_feature_filenames,

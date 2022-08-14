@@ -20,6 +20,9 @@ class StringUtils {
 
   // safely convert a const char* to string, allowing for nullptr
   static std::string safeString(const char* s) { return s == nullptr ? std::string() : s; }
+
+  //! Replace a search string with a replacement
+  static std::string replace_string(std::string str, const std::string& search, const std::string& replace);
 };
 
 }  // namespace shapeworks

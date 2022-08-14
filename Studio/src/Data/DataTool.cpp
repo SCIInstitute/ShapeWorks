@@ -52,7 +52,6 @@ DataTool::DataTool(Preferences& prefs) : preferences_(prefs) {
   ui_->constraints_label->setAttribute(Qt::WA_TransparentForMouseEvents);
   ui_->notes_label->setAttribute(Qt::WA_TransparentForMouseEvents);
 
-
   ui_->landmark_help->setText("Place landmarks using " + click_message);
   ui_->plane_contraints_instruction_->setText("• Place 3 points to define a plane on a shape using " + click_message +
                                               "\n" + "• Slide plane along normal with shift+click\n" +
@@ -64,7 +63,7 @@ DataTool::DataTool(Preferences& prefs) : preferences_(prefs) {
   ui_->notes_open_button->toggle();
 
   // table on
-  //ui_->table_open_button->toggle();
+  // ui_->table_open_button->toggle();
 
   landmark_table_model_ = std::make_shared<LandmarkTableModel>(this);
   connect(ui_->new_landmark_button, &QPushButton::clicked, landmark_table_model_.get(),
@@ -133,6 +132,7 @@ void DataTool::update_table() {
 
   auto project = session_->get_project();
   auto headers = project->get_headers();
+  auto& subjects = project->get_subjects();
 
   QStringList table_headers;
   for (const std::string& header : headers) {
@@ -146,10 +146,18 @@ void DataTool::update_table() {
   ui_->table->setHorizontalHeaderLabels(table_headers);
   ui_->table->verticalHeader()->setVisible(true);
 
-  for (int h = 0; h < table_headers.size(); h++) {
-    auto rows = project->get_string_column(table_headers[h].toStdString());
-    for (int row = 0; row < shapes.size() && row < rows.size(); row++) {
-      QTableWidgetItem* new_item = new QTableWidgetItem(QString::fromStdString(rows[row]));
+  auto contains = [](std::map<std::string, std::string> map, std::string key) -> bool {
+    return map.find(key) != map.end();
+  };
+
+  for (int row = 0; row < subjects.size(); row++) {
+    auto values = subjects[row]->get_table_values();
+    for (int h = 0; h < table_headers.size(); h++) {
+      std::string value;
+      if (contains(values, headers[h])) {
+        value = values[headers[h]];
+      }
+      QTableWidgetItem* new_item = new QTableWidgetItem(QString::fromStdString(value));
       ui_->table->setItem(row, h, new_item);
     }
   }
