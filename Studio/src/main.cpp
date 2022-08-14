@@ -5,6 +5,8 @@
 #include <QMessageBox>
 #include <QDir>
 
+#include <itkMacro.h>
+
 #include <Interface/ShapeWorksStudioApp.h>
 #include <Applications/Configuration.h>
 #include <Data/StudioLog.h>
