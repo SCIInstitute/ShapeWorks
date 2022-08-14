@@ -30,7 +30,7 @@ Representation of a project.  [More...](#detailed-description)
 | std::vector< std::string > | **[get_domain_names](../Classes/classshapeworks_1_1Project.md#function-get-domain-names)**()<br>Return the domain names (e.g. femur, pelvis, etc)  |
 | void | **[set_domain_names](../Classes/classshapeworks_1_1Project.md#function-set-domain-names)**(std::vector< std::string > domain_names)<br>Set the domain names.  |
 | std::vector< std::shared_ptr< [Subject](../Classes/classshapeworks_1_1Subject.md) > > & | **[get_subjects](../Classes/classshapeworks_1_1Project.md#function-get-subjects)**()<br>Return the Subjects (as a reference)  |
-| void | **[set_subjects](../Classes/classshapeworks_1_1Project.md#function-set-subjects)**(const std::vector< std::shared_ptr< [Subject](../Classes/classshapeworks_1_1Subject.md) >> & subjects)<br>Set the Subjects.  |
+| void | **[set_subjects](../Classes/classshapeworks_1_1Project.md#function-set-subjects)**(const std::vector< std::shared_ptr< [Subject](../Classes/classshapeworks_1_1Subject.md) > > & subjects)<br>Set the Subjects.  |
 | void | **[update_subjects](../Classes/classshapeworks_1_1Project.md#function-update-subjects)**() |
 | bool | **[get_originals_present](../Classes/classshapeworks_1_1Project.md#function-get-originals-present)**() const<br>Return if originals are present.  |
 | bool | **[get_groomed_present](../Classes/classshapeworks_1_1Project.md#function-get-groomed-present)**() const<br>Return if groomed files are present.  |
@@ -49,7 +49,7 @@ Representation of a project.  [More...](#detailed-description)
 | int | **[get_version](../Classes/classshapeworks_1_1Project.md#function-get-version)**() const<br>Get the version of the currently loaded project.  |
 | std::vector< [LandmarkDefinition](../Classes/classshapeworks_1_1LandmarkDefinition.md) > | **[get_landmarks](../Classes/classshapeworks_1_1Project.md#function-get-landmarks)**(int domain_id)<br>Return the set of landmarks definitions for a particular domain.  |
 | std::vector< std::vector< [LandmarkDefinition](../Classes/classshapeworks_1_1LandmarkDefinition.md) > > | **[get_all_landmark_definitions](../Classes/classshapeworks_1_1Project.md#function-get-all-landmark-definitions)**()<br>Return all landmark definitions.  |
-| void | **[set_landmark_definitions](../Classes/classshapeworks_1_1Project.md#function-set-landmark-definitions)**(std::vector< std::vector< [LandmarkDefinition](../Classes/classshapeworks_1_1LandmarkDefinition.md) >> defs)<br>Set all landmark definitions.  |
+| void | **[set_landmark_definitions](../Classes/classshapeworks_1_1Project.md#function-set-landmark-definitions)**(std::vector< std::vector< [LandmarkDefinition](../Classes/classshapeworks_1_1LandmarkDefinition.md) > > defs)<br>Set all landmark definitions.  |
 | bool | **[get_landmarks_present](../Classes/classshapeworks_1_1Project.md#function-get-landmarks-present)**()<br>Return if landmarks are present.  |
 | void | **[set_landmarks](../Classes/classshapeworks_1_1Project.md#function-set-landmarks)**(int domain_id, std::vector< [LandmarkDefinition](../Classes/classshapeworks_1_1LandmarkDefinition.md) > landmarks)<br>Set landmarks for this project.  |
 | void | **[new_landmark](../Classes/classshapeworks_1_1Project.md#function-new-landmark)**(int domain_id)<br>Add a new landmark.  |
@@ -186,7 +186,7 @@ Return the Subjects (as a reference)
 
 ```cpp
 void set_subjects(
-    const std::vector< std::shared_ptr< Subject >> & subjects
+    const std::vector< std::shared_ptr< Subject > > & subjects
 )
 ```
 
@@ -357,7 +357,7 @@ Return all landmark definitions.
 
 ```cpp
 void set_landmark_definitions(
-    std::vector< std::vector< LandmarkDefinition >> defs
+    std::vector< std::vector< LandmarkDefinition > > defs
 )
 ```
 
@@ -430,4 +430,4 @@ Get the groomed domain types.
 
 -------------------------------
 
-Updated on 2022-08-14 at 05:20:46 +0000
+Updated on 2022-08-14 at 23:37:09 +0000

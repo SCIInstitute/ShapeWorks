@@ -33,7 +33,6 @@ The MeshManager handles all aspects of mesh generation and caching. It houses th
 
 ```cpp
 #pragma once
-
 #include <vtkSmartPointer.h>
 
 #include <QWaitCondition>
@@ -116,4 +115,4 @@ private:
 
 -------------------------------
 
-Updated on 2022-08-14 at 05:20:46 +0000
+Updated on 2022-08-14 at 23:37:10 +0000

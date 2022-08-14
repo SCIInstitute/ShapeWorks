@@ -89,7 +89,7 @@ title: shapeworks::Mesh
 | bool | **[compareField](../Classes/classshapeworks_1_1Mesh.md#function-comparefield)**(const [Mesh](../Classes/classshapeworks_1_1Mesh.md) & other_mesh, const std::string & name1, const std::string & name2 ="", const double eps =-1.0) const<br>compare field of meshes to be (eps)equal (same field for both if only one specified)  |
 | bool | **[compare](../Classes/classshapeworks_1_1Mesh.md#function-compare)**(const [Mesh](../Classes/classshapeworks_1_1Mesh.md) & other_mesh, const double eps =-1.0) const<br>compare meshes  |
 | bool | **[operator==](../Classes/classshapeworks_1_1Mesh.md#function-operator==)**(const [Mesh](../Classes/classshapeworks_1_1Mesh.md) & other) const<br>compare meshes  |
-| bool | **[prepareFFCFields](../Classes/classshapeworks_1_1Mesh.md#function-prepareffcfields)**(std::vector< std::vector< Eigen::Vector3d >> boundaries, Eigen::Vector3d query, bool onlyGenerateInOut =false)<br>Prepares the mesh for FFCs by setting scalar and vector fields.  |
+| bool | **[prepareFFCFields](../Classes/classshapeworks_1_1Mesh.md#function-prepareffcfields)**(std::vector< std::vector< Eigen::Vector3d > > boundaries, Eigen::Vector3d query, bool onlyGenerateInOut =false)<br>Prepares the mesh for FFCs by setting scalar and vector fields.  |
 | double | **[getFFCValue](../Classes/classshapeworks_1_1Mesh.md#function-getffcvalue)**(Eigen::Vector3d query) const<br>Gets values for FFCs.  |
 | Eigen::Vector3d | **[getFFCGradient](../Classes/classshapeworks_1_1Mesh.md#function-getffcgradient)**(Eigen::Vector3d query) const<br>Gets gradients for FFCs.  |
 | MeshPoints | **[getIGLMesh](../Classes/classshapeworks_1_1Mesh.md#function-getiglmesh)**(Eigen::MatrixXd & V, Eigen::MatrixXi & F) const<br>Formats mesh into an IGL format.  |
@@ -783,7 +783,7 @@ compare meshes
 
 ```cpp
 bool prepareFFCFields(
-    std::vector< std::vector< Eigen::Vector3d >> boundaries,
+    std::vector< std::vector< Eigen::Vector3d > > boundaries,
     Eigen::Vector3d query,
     bool onlyGenerateInOut =false
 )
@@ -846,10 +846,12 @@ getSupportedTypes
 ### friend SharedCommandData
 
 ```cpp
-friend struct SharedCommandData();
+friend struct SharedCommandData(
+    SharedCommandData 
+);
 ```
 
 
 -------------------------------
 
-Updated on 2022-08-14 at 05:20:46 +0000
+Updated on 2022-08-14 at 23:37:10 +0000

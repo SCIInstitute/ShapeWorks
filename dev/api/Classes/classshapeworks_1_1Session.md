@@ -65,7 +65,7 @@ Inherits from QObject, QEnableSharedFromThis< Session >
 | bool | **[update_particles](../Classes/classshapeworks_1_1Session.md#function-update-particles)**(std::vector< [StudioParticles](../Classes/classshapeworks_1_1StudioParticles.md) > particles) |
 | int | **[get_num_particles](../Classes/classshapeworks_1_1Session.md#function-get-num-particles)**()<br>Return the total number of particles for all domains, combined.  |
 | [ParticleSystem](../Classes/classshapeworks_1_1ParticleSystem.md) | **[get_local_particle_system](../Classes/classshapeworks_1_1Session.md#function-get-local-particle-system)**(int domain) |
-| void | **[update_procrustes_transforms](../Classes/classshapeworks_1_1Session.md#function-update-procrustes-transforms)**(std::vector< std::vector< std::vector< double >>> transforms) |
+| void | **[update_procrustes_transforms](../Classes/classshapeworks_1_1Session.md#function-update-procrustes-transforms)**(std::vector< std::vector< std::vector< double > > > transforms) |
 | bool | **[is_light_project](../Classes/classshapeworks_1_1Session.md#function-is-light-project)**() |
 | bool | **[get_groomed_present](../Classes/classshapeworks_1_1Session.md#function-get-groomed-present)**() |
 | void | **[remove_shapes](../Classes/classshapeworks_1_1Session.md#function-remove-shapes)**(QList< int > list)<br>remove shapes  |
@@ -482,7 +482,7 @@ ParticleSystem get_local_particle_system(
 
 ```cpp
 void update_procrustes_transforms(
-    std::vector< std::vector< std::vector< double >>> transforms
+    std::vector< std::vector< std::vector< double > > > transforms
 )
 ```
 
@@ -1176,4 +1176,4 @@ static const std::string DEEPSSM_C;
 
 -------------------------------
 
-Updated on 2022-08-14 at 05:20:46 +0000
+Updated on 2022-08-14 at 23:37:09 +0000

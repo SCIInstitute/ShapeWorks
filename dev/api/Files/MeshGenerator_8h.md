@@ -34,7 +34,6 @@ The MeshGenerator performs the actual work of reconstructing a mesh from a shape
 
 ```cpp
 #pragma once
-
 #include <QSharedPointer>
 
 #include "vnl/vnl_vector.h"
@@ -92,4 +91,4 @@ private:
 
 -------------------------------
 
-Updated on 2022-08-14 at 05:20:46 +0000
+Updated on 2022-08-14 at 23:37:10 +0000

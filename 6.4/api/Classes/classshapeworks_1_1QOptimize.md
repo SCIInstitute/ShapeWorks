@@ -63,7 +63,7 @@ Inherits from QObject, [shapeworks::Optimize](../Classes/classshapeworks_1_1Opti
 | void | **[SetIterationCallbackFunction](../Classes/classshapeworks_1_1Optimize.md#function-setiterationcallbackfunction)**(const std::function< void(void)> & f) |
 | void | **[AbortOptimization](../Classes/classshapeworks_1_1Optimize.md#function-abortoptimization)**()<br>Abort optimization.  |
 | bool | **[GetAborted](../Classes/classshapeworks_1_1Optimize.md#function-getaborted)**()<br>Return if the optimization was aborted.  |
-| void | **[SetCutPlanes](../Classes/classshapeworks_1_1Optimize.md#function-setcutplanes)**(std::vector< std::array< itk::Point< double >, 3 >> cut_planes)<br>Set cutting planes.  |
+| void | **[SetCutPlanes](../Classes/classshapeworks_1_1Optimize.md#function-setcutplanes)**(std::vector< std::array< itk::Point< double >, 3 > > cut_planes)<br>Set cutting planes.  |
 | void | **[SetVerbosity](../Classes/classshapeworks_1_1Optimize.md#function-setverbosity)**(int verbosity_level)<br>Set the verbosity level (0-5)  |
 | void | **[SetDomainsPerShape](../Classes/classshapeworks_1_1Optimize.md#function-setdomainspershape)**(int domains_per_shape)<br>Set the number of domains per shape.  |
 | int | **[GetDomainsPerShape](../Classes/classshapeworks_1_1Optimize.md#function-getdomainspershape)**()<br>Return the number of domains per shape.  |
@@ -390,4 +390,4 @@ virtual void IterateCallback(
 
 -------------------------------
 
-Updated on 2022-08-14 at 05:20:46 +0000
+Updated on 2022-08-14 at 23:37:09 +0000

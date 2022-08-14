@@ -22,13 +22,13 @@ title: shapeworks::MeshUtils
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) | **[threadSafeReadMesh](../Classes/classshapeworks_1_1MeshUtils.md#function-threadsafereadmesh)**(std::string filename)<br>Thread safe reading of a mesh, uses a lock.  |
 | void | **[threadSafeWriteMesh](../Classes/classshapeworks_1_1MeshUtils.md#function-threadsafewritemesh)**(std::string filename, [Mesh](../Classes/classshapeworks_1_1Mesh.md) mesh)<br>Thread safe writing of a mesh, uses a lock.  |
 | [PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md) | **[boundingBox](../Classes/classshapeworks_1_1MeshUtils.md#function-boundingbox)**(const std::vector< std::string > & filenames, bool center =false)<br>calculate bounding box incrementally for meshes  |
-| [PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md) | **[boundingBox](../Classes/classshapeworks_1_1MeshUtils.md#function-boundingbox)**(const std::vector< std::reference_wrapper< const [Mesh](../Classes/classshapeworks_1_1Mesh.md) >> & meshes, bool center =false)<br>calculate bounding box incrementally for meshes  |
+| [PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md) | **[boundingBox](../Classes/classshapeworks_1_1MeshUtils.md#function-boundingbox)**(const std::vector< std::reference_wrapper< const [Mesh](../Classes/classshapeworks_1_1Mesh.md) > > & meshes, bool center =false)<br>calculate bounding box incrementally for meshes  |
 | size_t | **[findReferenceMesh](../Classes/classshapeworks_1_1MeshUtils.md#function-findreferencemesh)**(std::vector< [Mesh](../Classes/classshapeworks_1_1Mesh.md) > & meshes)<br>determine the reference mesh  |
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) | **[boundaryLoopExtractor](../Classes/classshapeworks_1_1MeshUtils.md#function-boundaryloopextractor)**([Mesh](../Classes/classshapeworks_1_1Mesh.md) mesh)<br>boundary loop extractor for a given mesh  |
 | std::array< [Mesh](../Classes/classshapeworks_1_1Mesh.md), 3 > | **[sharedBoundaryExtractor](../Classes/classshapeworks_1_1MeshUtils.md#function-sharedboundaryextractor)**(const [Mesh](../Classes/classshapeworks_1_1Mesh.md) & mesh_l, const [Mesh](../Classes/classshapeworks_1_1Mesh.md) & mesh_r, double tol)<br>shared boundary extractor for the left and right mesh  |
-| void | **[generateNormals](../Classes/classshapeworks_1_1MeshUtils.md#function-generatenormals)**(const std::vector< std::reference_wrapper< [Mesh](../Classes/classshapeworks_1_1Mesh.md) >> & meshes, bool forceRegen =false)<br>generates and adds normals for points and faces for each mesh in given set of meshes  |
+| void | **[generateNormals](../Classes/classshapeworks_1_1MeshUtils.md#function-generatenormals)**(const std::vector< std::reference_wrapper< [Mesh](../Classes/classshapeworks_1_1Mesh.md) > > & meshes, bool forceRegen =false)<br>generates and adds normals for points and faces for each mesh in given set of meshes  |
 | Field | **[computeMeanNormals](../Classes/classshapeworks_1_1MeshUtils.md#function-computemeannormals)**(const std::vector< std::string > & filenames, bool autoGenerateNormals =true)<br>computes average normals for each point in given set of meshes  |
-| Field | **[computeMeanNormals](../Classes/classshapeworks_1_1MeshUtils.md#function-computemeannormals)**(const std::vector< std::reference_wrapper< const [Mesh](../Classes/classshapeworks_1_1Mesh.md) >> & meshes)<br>computes average normals for each point in given set of meshes  |
+| Field | **[computeMeanNormals](../Classes/classshapeworks_1_1MeshUtils.md#function-computemeannormals)**(const std::vector< std::reference_wrapper< const [Mesh](../Classes/classshapeworks_1_1Mesh.md) > > & meshes)<br>computes average normals for each point in given set of meshes  |
 | void | **[visualizeVectorFieldForFFCs](../Classes/classshapeworks_1_1MeshUtils.md#function-visualizevectorfieldforffcs)**(std::shared_ptr< [Mesh](../Classes/classshapeworks_1_1Mesh.md) > mesh)<br>This function visualizes vector and scalar fields for FFCs.  |
 | vtkSmartPointer< vtkActor > | **[getArrow](../Classes/classshapeworks_1_1MeshUtils.md#function-getarrow)**(Eigen::Vector3d start, Eigen::Vector3d end)<br>Used as an auxiliary function for vector field visualizations.  |
 
@@ -93,7 +93,7 @@ calculate bounding box incrementally for meshes
 
 ```cpp
 static PhysicalRegion boundingBox(
-    const std::vector< std::reference_wrapper< const Mesh >> & meshes,
+    const std::vector< std::reference_wrapper< const Mesh > > & meshes,
     bool center =false
 )
 ```
@@ -136,7 +136,7 @@ shared boundary extractor for the left and right mesh
 
 ```cpp
 static void generateNormals(
-    const std::vector< std::reference_wrapper< Mesh >> & meshes,
+    const std::vector< std::reference_wrapper< Mesh > > & meshes,
     bool forceRegen =false
 )
 ```
@@ -158,7 +158,7 @@ computes average normals for each point in given set of meshes
 
 ```cpp
 static Field computeMeanNormals(
-    const std::vector< std::reference_wrapper< const Mesh >> & meshes
+    const std::vector< std::reference_wrapper< const Mesh > > & meshes
 )
 ```
 
@@ -187,4 +187,4 @@ Used as an auxiliary function for vector field visualizations.
 
 -------------------------------
 
-Updated on 2022-08-14 at 05:20:46 +0000
+Updated on 2022-08-14 at 23:37:10 +0000

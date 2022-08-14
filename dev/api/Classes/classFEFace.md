@@ -15,7 +15,7 @@ Inherits from [FEItem](../Classes/classFEItem.md)
 
 |                | Name           |
 | -------------- | -------------- |
-| enum| **[@1](../Classes/classFEFace.md#enum-@1)** { MAX_NODES = 9} |
+| enum| **[@2](../Classes/classFEFace.md#enum-@2)** { MAX_NODES = 9} |
 
 ## Public Functions
 
@@ -70,7 +70,7 @@ Inherits from [FEItem](../Classes/classFEItem.md)
 
 ## Public Types Documentation
 
-### enum @1
+### enum @2
 
 | Enumerator | Value | Description |
 | ---------- | ----- | ----------- |
@@ -225,4 +225,4 @@ the elements to which this face belongs
 
 -------------------------------
 
-Updated on 2022-08-14 at 05:20:46 +0000
+Updated on 2022-08-14 at 23:37:09 +0000

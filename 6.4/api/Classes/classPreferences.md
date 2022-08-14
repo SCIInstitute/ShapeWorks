@@ -21,7 +21,7 @@ Inherits from QObject
 | -------------- | -------------- |
 | enum| **[OrientationMarkerType](../Classes/classPreferences.md#enum-orientationmarkertype)** { medical = 0, triad = 1, none = 2} |
 | enum| **[OrientationMarkerCorner](../Classes/classPreferences.md#enum-orientationmarkercorner)** { upper_right = 0, lower_right = 1, lower_left = 2, upper_left = 3} |
-| enum| **[@0](../Classes/classPreferences.md#enum-@0)** { MAX_RECENT_FILES = 64} |
+| enum| **[@4](../Classes/classPreferences.md#enum-@4)** { MAX_RECENT_FILES = 64} |
 
 ## Public Signals
 
@@ -137,7 +137,7 @@ The [Preferences](../Classes/classPreferences.md) singleton controls all prefere
 
 
 
-### enum @0
+### enum @4
 
 | Enumerator | Value | Description |
 | ---------- | ----- | ----------- |
@@ -700,4 +700,4 @@ QString get_export_pca_modes()
 
 -------------------------------
 
-Updated on 2022-08-14 at 05:20:46 +0000
+Updated on 2022-08-14 at 23:37:09 +0000

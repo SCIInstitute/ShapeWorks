@@ -66,11 +66,11 @@ Inherits from [itk::KernelTransform2< TScalarType, 3 >](../Classes/classitk_1_1K
 | typedef Superclass::NumberOfParametersType | **[NumberOfParametersType](../Classes/classitk_1_1KernelTransform2.md#typedef-numberofparameterstype)**  |
 | typedef Superclass::InputVnlVectorType | **[InputVnlVectorType](../Classes/classitk_1_1KernelTransform2.md#typedef-inputvnlvectortype)**  |
 | typedef Superclass::OutputVnlVectorType | **[OutputVnlVectorType](../Classes/classitk_1_1KernelTransform2.md#typedef-outputvnlvectortype)**  |
-| typedef [Superclass](../Classes/classitk_1_1AdvancedTransform.md) ::[NonZeroJacobianIndicesType](../Classes/classitk_1_1KernelTransform2.md#typedef-nonzerojacobianindicestype) | **[NonZeroJacobianIndicesType](../Classes/classitk_1_1KernelTransform2.md#typedef-nonzerojacobianindicestype)**  |
+| typedef [Superclass::NonZeroJacobianIndicesType](../Classes/classitk_1_1AdvancedTransform.md#typedef-nonzerojacobianindicestype) | **[NonZeroJacobianIndicesType](../Classes/classitk_1_1KernelTransform2.md#typedef-nonzerojacobianindicestype)**  |
 | typedef Superclass::SpatialJacobianType | **[SpatialJacobianType](../Classes/classitk_1_1KernelTransform2.md#typedef-spatialjacobiantype)**  |
-| typedef [Superclass](../Classes/classitk_1_1AdvancedTransform.md) ::JacobianOfSpatialJacobianType | **[JacobianOfSpatialJacobianType](../Classes/classitk_1_1KernelTransform2.md#typedef-jacobianofspatialjacobiantype)**  |
+| typedef Superclass::JacobianOfSpatialJacobianType | **[JacobianOfSpatialJacobianType](../Classes/classitk_1_1KernelTransform2.md#typedef-jacobianofspatialjacobiantype)**  |
 | typedef Superclass::SpatialHessianType | **[SpatialHessianType](../Classes/classitk_1_1KernelTransform2.md#typedef-spatialhessiantype)**  |
-| typedef [Superclass](../Classes/classitk_1_1AdvancedTransform.md) ::JacobianOfSpatialHessianType | **[JacobianOfSpatialHessianType](../Classes/classitk_1_1KernelTransform2.md#typedef-jacobianofspatialhessiantype)**  |
+| typedef Superclass::JacobianOfSpatialHessianType | **[JacobianOfSpatialHessianType](../Classes/classitk_1_1KernelTransform2.md#typedef-jacobianofspatialhessiantype)**  |
 | typedef Superclass::InternalMatrixType | **[InternalMatrixType](../Classes/classitk_1_1KernelTransform2.md#typedef-internalmatrixtype)**  |
 | typedef DefaultStaticMeshTraits< TScalarType, NDimensions, NDimensions, TScalarType, TScalarType > | **[PointSetTraitsType](../Classes/classitk_1_1KernelTransform2.md#typedef-pointsettraitstype)**  |
 | typedef PointSet< InputPointType, NDimensions, [PointSetTraitsType](../Classes/classitk_1_1KernelTransform2.md#typedef-pointsettraitstype) > | **[PointSetType](../Classes/classitk_1_1KernelTransform2.md#typedef-pointsettype)**  |
@@ -479,4 +479,4 @@ Compute the contribution of the landmarks weighted by the kernel function to the
 
 -------------------------------
 
-Updated on 2022-08-14 at 05:20:45 +0000
+Updated on 2022-08-14 at 23:37:08 +0000

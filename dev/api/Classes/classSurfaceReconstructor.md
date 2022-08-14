@@ -29,7 +29,7 @@ title: SurfaceReconstructor
 |                | Name           |
 | -------------- | -------------- |
 | | **[SurfaceReconstructor](../Classes/classSurfaceReconstructor.md#function-surfacereconstructor)**() |
-| void | **[initializeReconstruction](../Classes/classSurfaceReconstructor.md#function-initializereconstruction)**(std::vector< std::vector< itk::Point< double >>> local_pts, std::vector< std::vector< itk::Point< double >>> global_pts, std::vector< std::string > distance_transforms, double maxAngle, float decimationPercent, int numClusters) |
+| void | **[initializeReconstruction](../Classes/classSurfaceReconstructor.md#function-initializereconstruction)**(std::vector< std::vector< itk::Point< double > > > local_pts, std::vector< std::vector< itk::Point< double > > > global_pts, std::vector< std::string > distance_transforms, double maxAngle, float decimationPercent, int numClusters) |
 | bool | **[hasDenseMean](../Classes/classSurfaceReconstructor.md#function-hasdensemean)**() |
 | void | **[setMean](../Classes/classSurfaceReconstructor.md#function-setmean)**(vtkSmartPointer< vtkPoints > sparseMean, vtkSmartPointer< vtkPolyData > denseMean, std::vector< bool > goodPoints) |
 | void | **[writeMeanInfo](../Classes/classSurfaceReconstructor.md#function-writemeaninfo)**(std::string baseName) |
@@ -126,8 +126,8 @@ SurfaceReconstructor()
 
 ```cpp
 void initializeReconstruction(
-    std::vector< std::vector< itk::Point< double >>> local_pts,
-    std::vector< std::vector< itk::Point< double >>> global_pts,
+    std::vector< std::vector< itk::Point< double > > > local_pts,
+    std::vector< std::vector< itk::Point< double > > > global_pts,
     std::vector< std::string > distance_transforms,
     double maxAngle,
     float decimationPercent,
@@ -226,4 +226,4 @@ vtkSmartPointer< vtkPolyData > build_mesh(
 
 -------------------------------
 
-Updated on 2022-08-14 at 05:20:46 +0000
+Updated on 2022-08-14 at 23:37:09 +0000

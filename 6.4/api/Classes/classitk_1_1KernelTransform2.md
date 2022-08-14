@@ -34,11 +34,11 @@ Inherits from [itk::AdvancedTransform< TScalarType, NDimensions, NDimensions >](
 | typedef Superclass::OutputCovariantVectorType | **[OutputCovariantVectorType](../Classes/classitk_1_1KernelTransform2.md#typedef-outputcovariantvectortype)**  |
 | typedef Superclass::InputVnlVectorType | **[InputVnlVectorType](../Classes/classitk_1_1KernelTransform2.md#typedef-inputvnlvectortype)**  |
 | typedef Superclass::OutputVnlVectorType | **[OutputVnlVectorType](../Classes/classitk_1_1KernelTransform2.md#typedef-outputvnlvectortype)**  |
-| typedef [Superclass](../Classes/classitk_1_1AdvancedTransform.md) ::[NonZeroJacobianIndicesType](../Classes/classitk_1_1KernelTransform2.md#typedef-nonzerojacobianindicestype) | **[NonZeroJacobianIndicesType](../Classes/classitk_1_1KernelTransform2.md#typedef-nonzerojacobianindicestype)**  |
+| typedef [Superclass::NonZeroJacobianIndicesType](../Classes/classitk_1_1AdvancedTransform.md#typedef-nonzerojacobianindicestype) | **[NonZeroJacobianIndicesType](../Classes/classitk_1_1KernelTransform2.md#typedef-nonzerojacobianindicestype)**  |
 | typedef Superclass::SpatialJacobianType | **[SpatialJacobianType](../Classes/classitk_1_1KernelTransform2.md#typedef-spatialjacobiantype)**  |
-| typedef [Superclass](../Classes/classitk_1_1AdvancedTransform.md) ::JacobianOfSpatialJacobianType | **[JacobianOfSpatialJacobianType](../Classes/classitk_1_1KernelTransform2.md#typedef-jacobianofspatialjacobiantype)**  |
+| typedef Superclass::JacobianOfSpatialJacobianType | **[JacobianOfSpatialJacobianType](../Classes/classitk_1_1KernelTransform2.md#typedef-jacobianofspatialjacobiantype)**  |
 | typedef Superclass::SpatialHessianType | **[SpatialHessianType](../Classes/classitk_1_1KernelTransform2.md#typedef-spatialhessiantype)**  |
-| typedef [Superclass](../Classes/classitk_1_1AdvancedTransform.md) ::JacobianOfSpatialHessianType | **[JacobianOfSpatialHessianType](../Classes/classitk_1_1KernelTransform2.md#typedef-jacobianofspatialhessiantype)**  |
+| typedef Superclass::JacobianOfSpatialHessianType | **[JacobianOfSpatialHessianType](../Classes/classitk_1_1KernelTransform2.md#typedef-jacobianofspatialhessiantype)**  |
 | typedef Superclass::InternalMatrixType | **[InternalMatrixType](../Classes/classitk_1_1KernelTransform2.md#typedef-internalmatrixtype)**  |
 | typedef DefaultStaticMeshTraits< TScalarType, NDimensions, NDimensions, TScalarType, TScalarType > | **[PointSetTraitsType](../Classes/classitk_1_1KernelTransform2.md#typedef-pointsettraitstype)**  |
 | typedef PointSet< InputPointType, NDimensions, [PointSetTraitsType](../Classes/classitk_1_1KernelTransform2.md#typedef-pointsettraitstype) > | **[PointSetType](../Classes/classitk_1_1KernelTransform2.md#typedef-pointsettype)**  |
@@ -351,7 +351,7 @@ typedef Superclass::OutputVnlVectorType itk::KernelTransform2< TScalarType, NDim
 ### typedef NonZeroJacobianIndicesType
 
 ```cpp
-typedef Superclass ::NonZeroJacobianIndicesType itk::KernelTransform2< TScalarType, NDimensions >::NonZeroJacobianIndicesType;
+typedef Superclass::NonZeroJacobianIndicesType itk::KernelTransform2< TScalarType, NDimensions >::NonZeroJacobianIndicesType;
 ```
 
 
@@ -368,7 +368,7 @@ typedef Superclass::SpatialJacobianType itk::KernelTransform2< TScalarType, NDim
 ### typedef JacobianOfSpatialJacobianType
 
 ```cpp
-typedef Superclass ::JacobianOfSpatialJacobianType itk::KernelTransform2< TScalarType, NDimensions >::JacobianOfSpatialJacobianType;
+typedef Superclass::JacobianOfSpatialJacobianType itk::KernelTransform2< TScalarType, NDimensions >::JacobianOfSpatialJacobianType;
 ```
 
 
@@ -382,7 +382,7 @@ typedef Superclass::SpatialHessianType itk::KernelTransform2< TScalarType, NDime
 ### typedef JacobianOfSpatialHessianType
 
 ```cpp
-typedef Superclass ::JacobianOfSpatialHessianType itk::KernelTransform2< TScalarType, NDimensions >::JacobianOfSpatialHessianType;
+typedef Superclass::JacobianOfSpatialHessianType itk::KernelTransform2< TScalarType, NDimensions >::JacobianOfSpatialHessianType;
 ```
 
 
@@ -787,6 +787,9 @@ virtual void GetJacobian(
 ```
 
 
+**Reimplements**: [itk::AdvancedTransform::GetJacobian](../Classes/classitk_1_1AdvancedTransform.md#function-getjacobian)
+
+
 Compute the Jacobian of the transformation. 
 
 
@@ -998,6 +1001,14 @@ inline virtual void GetJacobianOfSpatialJacobian(
 ```
 
 
+**Reimplements**: [itk::AdvancedTransform::GetJacobianOfSpatialJacobian](../Classes/classitk_1_1AdvancedTransform.md#function-getjacobianofspatialjacobian)
+
+
+Compute the Jacobian of the spatial Jacobian of the transformation.
+
+The Jacobian of the spatial Jacobian is the derivative of the spatial Jacobian to the transformation parameters \(\mu\), evaluated at a point \(p\). 
+
+
 ### function GetJacobianOfSpatialJacobian
 
 ```cpp
@@ -1010,6 +1021,12 @@ inline virtual void GetJacobianOfSpatialJacobian(
 ```
 
 
+**Reimplements**: [itk::AdvancedTransform::GetJacobianOfSpatialJacobian](../Classes/classitk_1_1AdvancedTransform.md#function-getjacobianofspatialjacobian)
+
+
+Compute both the spatial Jacobian and the Jacobian of the spatial Jacobian of the transformation. 
+
+
 ### function GetJacobianOfSpatialHessian
 
 ```cpp
@@ -1019,6 +1036,14 @@ inline virtual void GetJacobianOfSpatialHessian(
     NonZeroJacobianIndicesType & nonZeroJacobianIndices
 ) const
 ```
+
+
+**Reimplements**: [itk::AdvancedTransform::GetJacobianOfSpatialHessian](../Classes/classitk_1_1AdvancedTransform.md#function-getjacobianofspatialhessian)
+
+
+Compute the Jacobian of the spatial Hessian of the transformation.
+
+The Jacobian of the spatial Hessian is the derivative of the spatial Hessian to the transformation parameters \(\mu\), evaluated at a point \(p\). 
 
 
 ### function GetJacobianOfSpatialHessian
@@ -1031,6 +1056,12 @@ inline virtual void GetJacobianOfSpatialHessian(
     NonZeroJacobianIndicesType & nonZeroJacobianIndices
 ) const
 ```
+
+
+**Reimplements**: [itk::AdvancedTransform::GetJacobianOfSpatialHessian](../Classes/classitk_1_1AdvancedTransform.md#function-getjacobianofspatialhessian)
+
+
+Compute both the spatial Hessian and the Jacobian of the spatial Hessian of the transformation. 
 
 
 ## Protected Functions Documentation
@@ -1408,4 +1439,4 @@ The Jacobian can be computed much faster for some of the derived kerbel transfor
 
 -------------------------------
 
-Updated on 2022-08-14 at 05:20:44 +0000
+Updated on 2022-08-14 at 23:37:08 +0000

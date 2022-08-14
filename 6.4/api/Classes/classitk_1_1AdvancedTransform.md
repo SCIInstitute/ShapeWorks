@@ -31,8 +31,8 @@ Inherits from Transform< TScalarType, 3, 3 >
 | typedef Superclass::JacobianType | **[JacobianType](../Classes/classitk_1_1AdvancedTransform.md#typedef-jacobiantype)**  |
 | typedef Superclass::InputVectorType | **[InputVectorType](../Classes/classitk_1_1AdvancedTransform.md#typedef-inputvectortype)**  |
 | typedef Superclass::OutputVectorType | **[OutputVectorType](../Classes/classitk_1_1AdvancedTransform.md#typedef-outputvectortype)**  |
-| typedef Superclass ::InputCovariantVectorType | **[InputCovariantVectorType](../Classes/classitk_1_1AdvancedTransform.md#typedef-inputcovariantvectortype)**  |
-| typedef Superclass ::OutputCovariantVectorType | **[OutputCovariantVectorType](../Classes/classitk_1_1AdvancedTransform.md#typedef-outputcovariantvectortype)**  |
+| typedef Superclass::InputCovariantVectorType | **[InputCovariantVectorType](../Classes/classitk_1_1AdvancedTransform.md#typedef-inputcovariantvectortype)**  |
+| typedef Superclass::OutputCovariantVectorType | **[OutputCovariantVectorType](../Classes/classitk_1_1AdvancedTransform.md#typedef-outputcovariantvectortype)**  |
 | typedef Superclass::InputVnlVectorType | **[InputVnlVectorType](../Classes/classitk_1_1AdvancedTransform.md#typedef-inputvnlvectortype)**  |
 | typedef Superclass::OutputVnlVectorType | **[OutputVnlVectorType](../Classes/classitk_1_1AdvancedTransform.md#typedef-outputvnlvectortype)**  |
 | typedef Superclass::InputPointType | **[InputPointType](../Classes/classitk_1_1AdvancedTransform.md#typedef-inputpointtype)**  |
@@ -206,14 +206,14 @@ typedef Superclass::OutputVectorType itk::AdvancedTransform< TScalarType, NInput
 ### typedef InputCovariantVectorType
 
 ```cpp
-typedef Superclass ::InputCovariantVectorType itk::AdvancedTransform< TScalarType, NInputDimensions, NOutputDimensions >::InputCovariantVectorType;
+typedef Superclass::InputCovariantVectorType itk::AdvancedTransform< TScalarType, NInputDimensions, NOutputDimensions >::InputCovariantVectorType;
 ```
 
 
 ### typedef OutputCovariantVectorType
 
 ```cpp
-typedef Superclass ::OutputCovariantVectorType itk::AdvancedTransform< TScalarType, NInputDimensions, NOutputDimensions >::OutputCovariantVectorType;
+typedef Superclass::OutputCovariantVectorType itk::AdvancedTransform< TScalarType, NInputDimensions, NOutputDimensions >::OutputCovariantVectorType;
 ```
 
 
@@ -431,7 +431,7 @@ virtual void GetJacobian(
 ```
 
 
-**Reimplemented by**: [itk::KernelTransform2::GetJacobian](../Classes/classitk_1_1KernelTransform2.md#function-getjacobian)
+**Reimplemented by**: [itk::KernelTransform2::GetJacobian](../Classes/classitk_1_1KernelTransform2.md#function-getjacobian), [itk::KernelTransform2::GetJacobian](../Classes/classitk_1_1KernelTransform2.md#function-getjacobian)
 
 
 This returns a sparse version of the Jacobian of the transformation.
@@ -530,7 +530,7 @@ virtual void GetJacobianOfSpatialJacobian(
 ```
 
 
-**Reimplemented by**: [itk::KernelTransform2::GetJacobianOfSpatialJacobian](../Classes/classitk_1_1KernelTransform2.md#function-getjacobianofspatialjacobian)
+**Reimplemented by**: [itk::KernelTransform2::GetJacobianOfSpatialJacobian](../Classes/classitk_1_1KernelTransform2.md#function-getjacobianofspatialjacobian), [itk::KernelTransform2::GetJacobianOfSpatialJacobian](../Classes/classitk_1_1KernelTransform2.md#function-getjacobianofspatialjacobian)
 
 
 Compute the Jacobian of the spatial Jacobian of the transformation.
@@ -550,7 +550,7 @@ virtual void GetJacobianOfSpatialJacobian(
 ```
 
 
-**Reimplemented by**: [itk::KernelTransform2::GetJacobianOfSpatialJacobian](../Classes/classitk_1_1KernelTransform2.md#function-getjacobianofspatialjacobian)
+**Reimplemented by**: [itk::KernelTransform2::GetJacobianOfSpatialJacobian](../Classes/classitk_1_1KernelTransform2.md#function-getjacobianofspatialjacobian), [itk::KernelTransform2::GetJacobianOfSpatialJacobian](../Classes/classitk_1_1KernelTransform2.md#function-getjacobianofspatialjacobian)
 
 
 Compute both the spatial Jacobian and the Jacobian of the spatial Jacobian of the transformation. 
@@ -567,7 +567,7 @@ virtual void GetJacobianOfSpatialHessian(
 ```
 
 
-**Reimplemented by**: [itk::KernelTransform2::GetJacobianOfSpatialHessian](../Classes/classitk_1_1KernelTransform2.md#function-getjacobianofspatialhessian)
+**Reimplemented by**: [itk::KernelTransform2::GetJacobianOfSpatialHessian](../Classes/classitk_1_1KernelTransform2.md#function-getjacobianofspatialhessian), [itk::KernelTransform2::GetJacobianOfSpatialHessian](../Classes/classitk_1_1KernelTransform2.md#function-getjacobianofspatialhessian)
 
 
 Compute the Jacobian of the spatial Hessian of the transformation.
@@ -587,7 +587,7 @@ virtual void GetJacobianOfSpatialHessian(
 ```
 
 
-**Reimplemented by**: [itk::KernelTransform2::GetJacobianOfSpatialHessian](../Classes/classitk_1_1KernelTransform2.md#function-getjacobianofspatialhessian)
+**Reimplemented by**: [itk::KernelTransform2::GetJacobianOfSpatialHessian](../Classes/classitk_1_1KernelTransform2.md#function-getjacobianofspatialhessian), [itk::KernelTransform2::GetJacobianOfSpatialHessian](../Classes/classitk_1_1KernelTransform2.md#function-getjacobianofspatialhessian)
 
 
 Compute both the spatial Hessian and the Jacobian of the spatial Hessian of the transformation. 
@@ -636,4 +636,4 @@ bool m_HasNonZeroJacobianOfSpatialHessian;
 
 -------------------------------
 
-Updated on 2022-08-14 at 05:20:44 +0000
+Updated on 2022-08-14 at 23:37:08 +0000

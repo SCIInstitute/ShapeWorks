@@ -30,12 +30,12 @@ Inherited by [shapeworks::ParticleImageDomainWithGradients< T >](../Classes/clas
 | -------------- | -------------- |
 | void | **[SetImage](../Classes/classshapeworks_1_1ParticleImageDomain.md#function-setimage)**([ImageType](../Classes/classshapeworks_1_1ParticleImageDomain.md#using-imagetype) * I, double narrow_band) |
 | virtual double | **[GetSurfaceArea](../Classes/classshapeworks_1_1ParticleImageDomain.md#function-getsurfacearea)**() const override |
-| [PointType](../Classes/classshapeworks_1_1ParticleImageDomain.md#using-pointtype) | **[GetOrigin](../Classes/classshapeworks_1_1ParticleImageDomain.md#function-getorigin)**() const |
+| [PointType](../Classes/classshapeworks_1_1ParticleDomain.md#using-pointtype) | **[GetOrigin](../Classes/classshapeworks_1_1ParticleImageDomain.md#function-getorigin)**() const |
 | ImageType::SizeType | **[GetSize](../Classes/classshapeworks_1_1ParticleImageDomain.md#function-getsize)**() const |
 | ImageType::SpacingType | **[GetSpacing](../Classes/classshapeworks_1_1ParticleImageDomain.md#function-getspacing)**() const |
 | ImageType::RegionType::IndexType | **[GetIndex](../Classes/classshapeworks_1_1ParticleImageDomain.md#function-getindex)**() const |
-| virtual [PointType](../Classes/classshapeworks_1_1ParticleImageDomain.md#using-pointtype) | **[GetValidLocationNear](../Classes/classshapeworks_1_1ParticleImageDomain.md#function-getvalidlocationnear)**([PointType](../Classes/classshapeworks_1_1ParticleImageDomain.md#using-pointtype) p) const override |
-| T | **[Sample](../Classes/classshapeworks_1_1ParticleImageDomain.md#function-sample)**(const [PointType](../Classes/classshapeworks_1_1ParticleImageDomain.md#using-pointtype) & p) const |
+| virtual [PointType](../Classes/classshapeworks_1_1ParticleDomain.md#using-pointtype) | **[GetValidLocationNear](../Classes/classshapeworks_1_1ParticleImageDomain.md#function-getvalidlocationnear)**([PointType](../Classes/classshapeworks_1_1ParticleDomain.md#using-pointtype) p) const override |
+| T | **[Sample](../Classes/classshapeworks_1_1ParticleImageDomain.md#function-sample)**(const [PointType](../Classes/classshapeworks_1_1ParticleDomain.md#using-pointtype) & p) const |
 | virtual double | **[GetMaxDiameter](../Classes/classshapeworks_1_1ParticleImageDomain.md#function-getmaxdiameter)**() const override |
 | virtual void | **[DeleteImages](../Classes/classshapeworks_1_1ParticleImageDomain.md#function-deleteimages)**() override |
 | virtual void | **[UpdateZeroCrossingPoint](../Classes/classshapeworks_1_1ParticleImageDomain.md#function-updatezerocrossingpoint)**() override |
@@ -49,7 +49,7 @@ Inherited by [shapeworks::ParticleImageDomainWithGradients< T >](../Classes/clas
 | virtual | **[~ParticleImageDomain](../Classes/classshapeworks_1_1ParticleImageDomain.md#function-~particleimagedomain)**() |
 | void | **[PrintSelf](../Classes/classshapeworks_1_1ParticleImageDomain.md#function-printself)**(std::ostream & os, itk::Indent indent) const |
 | openvdb::math::Transform::Ptr | **[transform](../Classes/classshapeworks_1_1ParticleImageDomain.md#function-transform)**() const |
-| openvdb::Vec3R | **[ToVDBCoord](../Classes/classshapeworks_1_1ParticleImageDomain.md#function-tovdbcoord)**(const [PointType](../Classes/classshapeworks_1_1ParticleImageDomain.md#using-pointtype) & p) const |
+| openvdb::Vec3R | **[ToVDBCoord](../Classes/classshapeworks_1_1ParticleImageDomain.md#function-tovdbcoord)**(const [PointType](../Classes/classshapeworks_1_1ParticleDomain.md#using-pointtype) & p) const |
 
 ## Additional inherited members
 
@@ -340,4 +340,4 @@ inline openvdb::Vec3R ToVDBCoord(
 
 -------------------------------
 
-Updated on 2022-08-14 at 05:20:45 +0000
+Updated on 2022-08-14 at 23:37:09 +0000

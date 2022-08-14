@@ -44,7 +44,7 @@ Inherits from QObject
 | void | **[update_ffc_mode](../Classes/classshapeworks_1_1Visualizer.md#function-update-ffc-mode)**() |
 | void | **[display_sample](../Classes/classshapeworks_1_1Visualizer.md#function-display-sample)**(int i) |
 | void | **[display_shape](../Classes/classshapeworks_1_1Visualizer.md#function-display-shape)**(ShapeHandle shape) |
-| void | **[display_shapes](../Classes/classshapeworks_1_1Visualizer.md#function-display-shapes)**(QVector< QSharedPointer< [Shape](../Classes/classshapeworks_1_1Shape.md) >> shapes) |
+| void | **[display_shapes](../Classes/classshapeworks_1_1Visualizer.md#function-display-shapes)**(QVector< QSharedPointer< [Shape](../Classes/classshapeworks_1_1Shape.md) > > shapes) |
 | void | **[set_selected_point_one](../Classes/classshapeworks_1_1Visualizer.md#function-set-selected-point-one)**(int id) |
 | void | **[set_selected_point_two](../Classes/classshapeworks_1_1Visualizer.md#function-set-selected-point-two)**(int id) |
 | void | **[set_mean](../Classes/classshapeworks_1_1Visualizer.md#function-set-mean)**(const Eigen::VectorXd & mean) |
@@ -263,7 +263,7 @@ void display_shape(
 
 ```cpp
 void display_shapes(
-    QVector< QSharedPointer< Shape >> shapes
+    QVector< QSharedPointer< Shape > > shapes
 )
 ```
 
@@ -543,4 +543,4 @@ Return render window size.
 
 -------------------------------
 
-Updated on 2022-08-14 at 05:20:46 +0000
+Updated on 2022-08-14 at 23:37:09 +0000

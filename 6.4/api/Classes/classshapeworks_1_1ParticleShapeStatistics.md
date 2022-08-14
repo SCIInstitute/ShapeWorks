@@ -19,7 +19,7 @@ title: shapeworks::ParticleShapeStatistics
 | | **[ParticleShapeStatistics](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-particleshapestatistics)**() |
 | | **[ParticleShapeStatistics](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-particleshapestatistics)**(std::shared_ptr< [Project](../Classes/classshapeworks_1_1Project.md) > project) |
 | | **[~ParticleShapeStatistics](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-~particleshapestatistics)**() |
-| int | **[DoPCA](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-dopca)**(std::vector< std::vector< Point >> global_pts, int domainsPerShape =1) |
+| int | **[DoPCA](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-dopca)**(std::vector< std::vector< Point > > global_pts, int domainsPerShape =1) |
 | int | **[DoPCA](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-dopca)**([ParticleSystem](../Classes/classshapeworks_1_1ParticleSystem.md) particleSystem, int domainsPerShape =1) |
 | | **[itkStaticConstMacro](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-itkstaticconstmacro)**(Dimension , unsigned int , VDimension )<br>Dimensionality of the domain of the particle system.  |
 | int | **[ImportPoints](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-importpoints)**(std::vector< Eigen::VectorXd > points, std::vector< int > group_ids)<br>Loads a set of point files and pre-computes some statistics.  |
@@ -101,7 +101,7 @@ inline ~ParticleShapeStatistics()
 
 ```cpp
 int DoPCA(
-    std::vector< std::vector< Point >> global_pts,
+    std::vector< std::vector< Point > > global_pts,
     int domainsPerShape =1
 )
 ```
@@ -433,4 +433,4 @@ static constexpr static int VDimension = 3;
 
 -------------------------------
 
-Updated on 2022-08-14 at 05:20:45 +0000
+Updated on 2022-08-14 at 23:37:09 +0000

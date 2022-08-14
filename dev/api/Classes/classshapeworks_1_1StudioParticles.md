@@ -18,8 +18,8 @@ Representation of correspondence points for a shape including multiple domains. 
 |                | Name           |
 | -------------- | -------------- |
 | | **[StudioParticles](../Classes/classshapeworks_1_1StudioParticles.md#function-studioparticles)**() |
-| void | **[set_local_particles](../Classes/classshapeworks_1_1StudioParticles.md#function-set-local-particles)**(int domain, std::vector< itk::Point< double >> particles) |
-| void | **[set_world_particles](../Classes/classshapeworks_1_1StudioParticles.md#function-set-world-particles)**(int domain, std::vector< itk::Point< double >> particles) |
+| void | **[set_local_particles](../Classes/classshapeworks_1_1StudioParticles.md#function-set-local-particles)**(int domain, std::vector< itk::Point< double > > particles) |
+| void | **[set_world_particles](../Classes/classshapeworks_1_1StudioParticles.md#function-set-world-particles)**(int domain, std::vector< itk::Point< double > > particles) |
 | void | **[set_local_particles](../Classes/classshapeworks_1_1StudioParticles.md#function-set-local-particles)**(int domain, Eigen::VectorXd particles) |
 | void | **[set_world_particles](../Classes/classshapeworks_1_1StudioParticles.md#function-set-world-particles)**(int domain, Eigen::VectorXd particles) |
 | std::vector< Eigen::VectorXd > | **[get_local_particles](../Classes/classshapeworks_1_1StudioParticles.md#function-get-local-particles)**() |
@@ -34,7 +34,7 @@ Representation of correspondence points for a shape including multiple domains. 
 | std::vector< itk::Point< double > > | **[get_world_points](../Classes/classshapeworks_1_1StudioParticles.md#function-get-world-points)**(int domain) |
 | int | **[get_domain_for_combined_id](../Classes/classshapeworks_1_1StudioParticles.md#function-get-domain-for-combined-id)**(int id)<br>Return which domain a particle belongs to when they are concatenated together.  |
 | void | **[set_transform](../Classes/classshapeworks_1_1StudioParticles.md#function-set-transform)**(vtkSmartPointer< vtkTransform > transform) |
-| void | **[set_procrustes_transforms](../Classes/classshapeworks_1_1StudioParticles.md#function-set-procrustes-transforms)**(std::vector< vtkSmartPointer< vtkTransform >> transforms) |
+| void | **[set_procrustes_transforms](../Classes/classshapeworks_1_1StudioParticles.md#function-set-procrustes-transforms)**(std::vector< vtkSmartPointer< vtkTransform > > transforms) |
 | Eigen::VectorXd | **[get_difference_vectors](../Classes/classshapeworks_1_1StudioParticles.md#function-get-difference-vectors)**(const [StudioParticles](../Classes/classshapeworks_1_1StudioParticles.md) & other) |
 
 ## Detailed Description
@@ -61,7 +61,7 @@ StudioParticles()
 ```cpp
 void set_local_particles(
     int domain,
-    std::vector< itk::Point< double >> particles
+    std::vector< itk::Point< double > > particles
 )
 ```
 
@@ -71,7 +71,7 @@ void set_local_particles(
 ```cpp
 void set_world_particles(
     int domain,
-    std::vector< itk::Point< double >> particles
+    std::vector< itk::Point< double > > particles
 )
 ```
 
@@ -202,7 +202,7 @@ void set_transform(
 
 ```cpp
 void set_procrustes_transforms(
-    std::vector< vtkSmartPointer< vtkTransform >> transforms
+    std::vector< vtkSmartPointer< vtkTransform > > transforms
 )
 ```
 
@@ -218,4 +218,4 @@ Eigen::VectorXd get_difference_vectors(
 
 -------------------------------
 
-Updated on 2022-08-14 at 05:20:46 +0000
+Updated on 2022-08-14 at 23:37:09 +0000

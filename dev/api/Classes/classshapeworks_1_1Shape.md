@@ -74,7 +74,7 @@ Representation of a single shape/patient/subject.
 | vtkSmartPointer< vtkTransform > | **[get_inverse_transform](../Classes/classshapeworks_1_1Shape.md#function-get-inverse-transform)**(int domain =0) |
 | bool | **[has_alignment](../Classes/classshapeworks_1_1Shape.md#function-has-alignment)**() |
 | vtkSmartPointer< vtkTransform > | **[get_original_transform](../Classes/classshapeworks_1_1Shape.md#function-get-original-transform)**(int domain =0) |
-| void | **[set_reconstruction_transforms](../Classes/classshapeworks_1_1Shape.md#function-set-reconstruction-transforms)**(std::vector< vtkSmartPointer< vtkTransform >> transforms) |
+| void | **[set_reconstruction_transforms](../Classes/classshapeworks_1_1Shape.md#function-set-reconstruction-transforms)**(std::vector< vtkSmartPointer< vtkTransform > > transforms) |
 | vtkSmartPointer< vtkTransform > | **[get_reconstruction_transform](../Classes/classshapeworks_1_1Shape.md#function-get-reconstruction-transform)**(int domain) |
 | vtkSmartPointer< vtkTransform > | **[get_groomed_transform](../Classes/classshapeworks_1_1Shape.md#function-get-groomed-transform)**(int domain =0) |
 | vtkSmartPointer< vtkTransform > | **[get_procrustest_transform](../Classes/classshapeworks_1_1Shape.md#function-get-procrustest-transform)**(int domain =0) |
@@ -520,7 +520,7 @@ vtkSmartPointer< vtkTransform > get_original_transform(
 
 ```cpp
 void set_reconstruction_transforms(
-    std::vector< vtkSmartPointer< vtkTransform >> transforms
+    std::vector< vtkSmartPointer< vtkTransform > > transforms
 )
 ```
 
@@ -671,4 +671,4 @@ std::vector< std::shared_ptr< VtkMeshWrapper > > get_groomed_mesh_wrappers()
 
 -------------------------------
 
-Updated on 2022-08-14 at 05:20:46 +0000
+Updated on 2022-08-14 at 23:37:09 +0000

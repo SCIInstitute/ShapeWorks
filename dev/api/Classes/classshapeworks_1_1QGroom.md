@@ -51,9 +51,9 @@ Inherits from QObject, [shapeworks::Groom](../Classes/classshapeworks_1_1Groom.m
 
 |                | Name           |
 | -------------- | -------------- |
-| tbb::atomic< float > | **[progress_](../Classes/classshapeworks_1_1Groom.md#variable-progress-)**  |
-| tbb::atomic< int > | **[total_ops_](../Classes/classshapeworks_1_1Groom.md#variable-total-ops-)**  |
-| tbb::atomic< int > | **[progress_counter_](../Classes/classshapeworks_1_1Groom.md#variable-progress-counter-)**  |
+| std::atomic< float > | **[progress_](../Classes/classshapeworks_1_1Groom.md#variable-progress-)**  |
+| std::atomic< int > | **[total_ops_](../Classes/classshapeworks_1_1Groom.md#variable-total-ops-)**  |
+| std::atomic< int > | **[progress_counter_](../Classes/classshapeworks_1_1Groom.md#variable-progress-counter-)**  |
 
 
 ## Detailed Description
@@ -103,4 +103,4 @@ call to be overridden by subclasses
 
 -------------------------------
 
-Updated on 2022-08-14 at 05:20:46 +0000
+Updated on 2022-08-14 at 23:37:09 +0000

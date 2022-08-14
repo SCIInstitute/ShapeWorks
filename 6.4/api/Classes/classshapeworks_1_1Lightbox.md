@@ -27,7 +27,7 @@ Inherits from QObject
 | -------------- | -------------- |
 | | **[Lightbox](../Classes/classshapeworks_1_1Lightbox.md#function-lightbox)**() |
 | | **[~Lightbox](../Classes/classshapeworks_1_1Lightbox.md#function-~lightbox)**() |
-| void | **[set_shapes](../Classes/classshapeworks_1_1Lightbox.md#function-set-shapes)**(QVector< QSharedPointer< [Shape](../Classes/classshapeworks_1_1Shape.md) >> shapes) |
+| void | **[set_shapes](../Classes/classshapeworks_1_1Lightbox.md#function-set-shapes)**(QVector< QSharedPointer< [Shape](../Classes/classshapeworks_1_1Shape.md) > > shapes) |
 | QVector< ShapeHandle > | **[get_shapes](../Classes/classshapeworks_1_1Lightbox.md#function-get-shapes)**() |
 | void | **[set_interactor](../Classes/classshapeworks_1_1Lightbox.md#function-set-interactor)**(vtkRenderWindowInteractor * interactor) |
 | void | **[set_render_window](../Classes/classshapeworks_1_1Lightbox.md#function-set-render-window)**(vtkRenderWindow * render_window) |
@@ -96,7 +96,7 @@ Lightbox()
 
 ```cpp
 void set_shapes(
-    QVector< QSharedPointer< Shape >> shapes
+    QVector< QSharedPointer< Shape > > shapes
 )
 ```
 
@@ -329,4 +329,4 @@ vtkRenderWindow * get_render_window()
 
 -------------------------------
 
-Updated on 2022-08-14 at 05:20:45 +0000
+Updated on 2022-08-14 at 23:37:08 +0000

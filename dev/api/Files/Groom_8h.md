@@ -30,8 +30,6 @@ title: Libs/Groom/Groom.h
 #include <GroomParameters.h>
 #include <Libs/Image/Image.h>
 #include <Libs/Project/Project.h>
-#include <tbb/atomic.h>
-#include <tbb/mutex.h>
 
 namespace shapeworks {
 
@@ -56,9 +54,9 @@ class Groom {
  protected:
   virtual void update_progress(){};
 
-  tbb::atomic<float> progress_ = 0;
-  tbb::atomic<int> total_ops_ = 0;
-  tbb::atomic<int> progress_counter_ = 0;
+  std::atomic<float> progress_ = 0;
+  std::atomic<int> total_ops_ = 0;
+  std::atomic<int> progress_counter_ = 0;
 
  private:
   int get_total_ops();
@@ -109,7 +107,7 @@ class Groom {
 
   bool abort_ = false;
 
-  tbb::mutex mutex_;
+  std::mutex mutex_;
 };
 }  // namespace shapeworks
 ```
@@ -117,4 +115,4 @@ class Groom {
 
 -------------------------------
 
-Updated on 2022-08-14 at 05:20:46 +0000
+Updated on 2022-08-14 at 23:37:10 +0000

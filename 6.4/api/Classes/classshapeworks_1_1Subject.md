@@ -36,10 +36,10 @@ Representation of a single subject.  [More...](#detailed-description)
 | std::map< std::string, std::string > | **[get_feature_filenames](../Classes/classshapeworks_1_1Subject.md#function-get-feature-filenames)**() const<br>Get the feature map filenames.  |
 | void | **[set_feature_filenames](../Classes/classshapeworks_1_1Subject.md#function-set-feature-filenames)**(const std::map< std::string, std::string > & feature_filenames)<br>Set the feature map filenames.  |
 | std::vector< std::vector< double > > | **[get_groomed_transforms](../Classes/classshapeworks_1_1Subject.md#function-get-groomed-transforms)**() const<br>Get the groomed transforms (one vector per domain)  |
-| void | **[set_groomed_transforms](../Classes/classshapeworks_1_1Subject.md#function-set-groomed-transforms)**(std::vector< std::vector< double >> transforms)<br>Set the groomed transforms (one vector per domain)  |
+| void | **[set_groomed_transforms](../Classes/classshapeworks_1_1Subject.md#function-set-groomed-transforms)**(std::vector< std::vector< double > > transforms)<br>Set the groomed transforms (one vector per domain)  |
 | void | **[set_groomed_transform](../Classes/classshapeworks_1_1Subject.md#function-set-groomed-transform)**(int i, std::vector< double > transform)<br>Set the i-th groomed transform.  |
 | std::vector< std::vector< double > > | **[get_procrustes_transforms](../Classes/classshapeworks_1_1Subject.md#function-get-procrustes-transforms)**() const<br>Get the procrustes transforms (one vector per domain)  |
-| void | **[set_procrustes_transforms](../Classes/classshapeworks_1_1Subject.md#function-set-procrustes-transforms)**(std::vector< std::vector< double >> transforms)<br>Set the procrustes transforms (one vector per domain)  |
+| void | **[set_procrustes_transforms](../Classes/classshapeworks_1_1Subject.md#function-set-procrustes-transforms)**(std::vector< std::vector< double > > transforms)<br>Set the procrustes transforms (one vector per domain)  |
 | std::map< std::string, std::string > | **[get_group_values](../Classes/classshapeworks_1_1Subject.md#function-get-group-values)**() const<br>Get the group values.  |
 | std::string | **[get_group_value](../Classes/classshapeworks_1_1Subject.md#function-get-group-value)**(std::string group_name)<br>Get a specific group value.  |
 | void | **[set_group_values](../Classes/classshapeworks_1_1Subject.md#function-set-group-values)**(const std::map< std::string, std::string > & group_values)<br>Set the group values.  |
@@ -232,7 +232,7 @@ Get the groomed transforms (one vector per domain)
 
 ```cpp
 void set_groomed_transforms(
-    std::vector< std::vector< double >> transforms
+    std::vector< std::vector< double > > transforms
 )
 ```
 
@@ -261,7 +261,7 @@ Get the procrustes transforms (one vector per domain)
 
 ```cpp
 void set_procrustes_transforms(
-    std::vector< std::vector< double >> transforms
+    std::vector< std::vector< double > > transforms
 )
 ```
 
@@ -349,4 +349,4 @@ Set the display name.
 
 -------------------------------
 
-Updated on 2022-08-14 at 05:20:46 +0000
+Updated on 2022-08-14 at 23:37:09 +0000

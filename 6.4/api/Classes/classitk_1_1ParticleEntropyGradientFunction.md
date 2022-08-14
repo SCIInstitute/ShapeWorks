@@ -15,7 +15,7 @@ This function returns an estimate of the gradient of the entropy of a particle d
 
 Inherits from [itk::ParticleVectorFunction< VDimension >](../Classes/classitk_1_1ParticleVectorFunction.md), LightObject
 
-Inherited by [itk::ParticleConstrainedModifiedCotangentEntropyGradientFunction< TGradientNumericType, VDimension >](../Classes/classitk_1_1ParticleConstrainedModifiedCotangentEntropyGradientFunction.md), [itk::ParticleCurvatureEntropyGradientFunction< TGradientNumericType, VDimension >](../Classes/classitk_1_1ParticleCurvatureEntropyGradientFunction.md), [itk::ParticleModifiedCotangentEntropyGradientFunction< TGradientNumericType, VDimension >](../Classes/classitk_1_1ParticleModifiedCotangentEntropyGradientFunction.md), [itk::ParticleOmegaGradientFunction< TGradientNumericType, VDimension >](../Classes/classitk_1_1ParticleOmegaGradientFunction.md)
+Inherited by [itk::ParticleConstrainedModifiedCotangentEntropyGradientFunction< TGradientNumericType, VDimension >](../Classes/classitk_1_1ParticleConstrainedModifiedCotangentEntropyGradientFunction.md), [itk::ParticleCurvatureEntropyGradientFunction< TGradientNumericType, VDimension >](../Classes/classitk_1_1ParticleCurvatureEntropyGradientFunction.md), [itk::ParticleCurvatureEntropyGradientFunction< TGradientNumericType, VDimension >](../Classes/classitk_1_1ParticleCurvatureEntropyGradientFunction.md), [itk::ParticleModifiedCotangentEntropyGradientFunction< TGradientNumericType, VDimension >](../Classes/classitk_1_1ParticleModifiedCotangentEntropyGradientFunction.md), [itk::ParticleOmegaGradientFunction< TGradientNumericType, VDimension >](../Classes/classitk_1_1ParticleOmegaGradientFunction.md)
 
 ## Public Types
 
@@ -268,7 +268,7 @@ virtual VectorType Evaluate(
 **Reimplements**: [itk::ParticleVectorFunction::Evaluate](../Classes/classitk_1_1ParticleVectorFunction.md#function-evaluate)
 
 
-**Reimplemented by**: [itk::ParticleConstrainedModifiedCotangentEntropyGradientFunction::Evaluate](../Classes/classitk_1_1ParticleConstrainedModifiedCotangentEntropyGradientFunction.md#function-evaluate), [itk::ParticleCurvatureEntropyGradientFunction::Evaluate](../Classes/classitk_1_1ParticleCurvatureEntropyGradientFunction.md#function-evaluate), [itk::ParticleCurvatureEntropyGradientFunction::Evaluate](../Classes/classitk_1_1ParticleCurvatureEntropyGradientFunction.md#function-evaluate), [itk::ParticleModifiedCotangentEntropyGradientFunction::Evaluate](../Classes/classitk_1_1ParticleModifiedCotangentEntropyGradientFunction.md#function-evaluate), [itk::ParticleModifiedCotangentEntropyGradientFunction::Evaluate](../Classes/classitk_1_1ParticleModifiedCotangentEntropyGradientFunction.md#function-evaluate), [itk::ParticleOmegaGradientFunction::Evaluate](../Classes/classitk_1_1ParticleOmegaGradientFunction.md#function-evaluate), [itk::ParticleOmegaGradientFunction::Evaluate](../Classes/classitk_1_1ParticleOmegaGradientFunction.md#function-evaluate)
+**Reimplemented by**: [itk::ParticleModifiedCotangentEntropyGradientFunction::Evaluate](../Classes/classitk_1_1ParticleModifiedCotangentEntropyGradientFunction.md#function-evaluate), [itk::ParticleOmegaGradientFunction::Evaluate](../Classes/classitk_1_1ParticleOmegaGradientFunction.md#function-evaluate)
 
 
 The first argument is a pointer to the particle system. The second argument is the index of the domain within that particle system. The third argument is the index of the particle location within the given domain. 
@@ -290,7 +290,7 @@ inline virtual VectorType Evaluate(
 **Reimplements**: [itk::ParticleVectorFunction::Evaluate](../Classes/classitk_1_1ParticleVectorFunction.md#function-evaluate)
 
 
-**Reimplemented by**: [itk::ParticleConstrainedModifiedCotangentEntropyGradientFunction::Evaluate](../Classes/classitk_1_1ParticleConstrainedModifiedCotangentEntropyGradientFunction.md#function-evaluate), [itk::ParticleCurvatureEntropyGradientFunction::Evaluate](../Classes/classitk_1_1ParticleCurvatureEntropyGradientFunction.md#function-evaluate), [itk::ParticleCurvatureEntropyGradientFunction::Evaluate](../Classes/classitk_1_1ParticleCurvatureEntropyGradientFunction.md#function-evaluate), [itk::ParticleModifiedCotangentEntropyGradientFunction::Evaluate](../Classes/classitk_1_1ParticleModifiedCotangentEntropyGradientFunction.md#function-evaluate), [itk::ParticleModifiedCotangentEntropyGradientFunction::Evaluate](../Classes/classitk_1_1ParticleModifiedCotangentEntropyGradientFunction.md#function-evaluate), [itk::ParticleOmegaGradientFunction::Evaluate](../Classes/classitk_1_1ParticleOmegaGradientFunction.md#function-evaluate), [itk::ParticleOmegaGradientFunction::Evaluate](../Classes/classitk_1_1ParticleOmegaGradientFunction.md#function-evaluate)
+**Reimplemented by**: [itk::ParticleModifiedCotangentEntropyGradientFunction::Evaluate](../Classes/classitk_1_1ParticleModifiedCotangentEntropyGradientFunction.md#function-evaluate), [itk::ParticleOmegaGradientFunction::Evaluate](../Classes/classitk_1_1ParticleOmegaGradientFunction.md#function-evaluate)
 
 
 ### function Energy
@@ -307,7 +307,7 @@ inline virtual double Energy(
 **Reimplements**: [itk::ParticleVectorFunction::Energy](../Classes/classitk_1_1ParticleVectorFunction.md#function-energy)
 
 
-**Reimplemented by**: [itk::ParticleConstrainedModifiedCotangentEntropyGradientFunction::Energy](../Classes/classitk_1_1ParticleConstrainedModifiedCotangentEntropyGradientFunction.md#function-energy), [itk::ParticleCurvatureEntropyGradientFunction::Energy](../Classes/classitk_1_1ParticleCurvatureEntropyGradientFunction.md#function-energy), [itk::ParticleCurvatureEntropyGradientFunction::Energy](../Classes/classitk_1_1ParticleCurvatureEntropyGradientFunction.md#function-energy), [itk::ParticleModifiedCotangentEntropyGradientFunction::Energy](../Classes/classitk_1_1ParticleModifiedCotangentEntropyGradientFunction.md#function-energy), [itk::ParticleModifiedCotangentEntropyGradientFunction::Energy](../Classes/classitk_1_1ParticleModifiedCotangentEntropyGradientFunction.md#function-energy), [itk::ParticleOmegaGradientFunction::Energy](../Classes/classitk_1_1ParticleOmegaGradientFunction.md#function-energy), [itk::ParticleOmegaGradientFunction::Energy](../Classes/classitk_1_1ParticleOmegaGradientFunction.md#function-energy)
+**Reimplemented by**: [itk::ParticleModifiedCotangentEntropyGradientFunction::Energy](../Classes/classitk_1_1ParticleModifiedCotangentEntropyGradientFunction.md#function-energy), [itk::ParticleOmegaGradientFunction::Energy](../Classes/classitk_1_1ParticleOmegaGradientFunction.md#function-energy)
 
 
 ### function ResetBuffers
@@ -480,7 +480,7 @@ inline virtual ParticleVectorFunction< VDimension >::Pointer Clone()
 **Reimplements**: [itk::ParticleVectorFunction::Clone](../Classes/classitk_1_1ParticleVectorFunction.md#function-clone)
 
 
-**Reimplemented by**: [itk::ParticleConstrainedModifiedCotangentEntropyGradientFunction::Clone](../Classes/classitk_1_1ParticleConstrainedModifiedCotangentEntropyGradientFunction.md#function-clone), [itk::ParticleConstrainedModifiedCotangentEntropyGradientFunction::Clone](../Classes/classitk_1_1ParticleConstrainedModifiedCotangentEntropyGradientFunction.md#function-clone), [itk::ParticleCurvatureEntropyGradientFunction::Clone](../Classes/classitk_1_1ParticleCurvatureEntropyGradientFunction.md#function-clone), [itk::ParticleCurvatureEntropyGradientFunction::Clone](../Classes/classitk_1_1ParticleCurvatureEntropyGradientFunction.md#function-clone), [itk::ParticleModifiedCotangentEntropyGradientFunction::Clone](../Classes/classitk_1_1ParticleModifiedCotangentEntropyGradientFunction.md#function-clone), [itk::ParticleModifiedCotangentEntropyGradientFunction::Clone](../Classes/classitk_1_1ParticleModifiedCotangentEntropyGradientFunction.md#function-clone), [itk::ParticleOmegaGradientFunction::Clone](../Classes/classitk_1_1ParticleOmegaGradientFunction.md#function-clone), [itk::ParticleOmegaGradientFunction::Clone](../Classes/classitk_1_1ParticleOmegaGradientFunction.md#function-clone)
+**Reimplemented by**: [itk::ParticleConstrainedModifiedCotangentEntropyGradientFunction::Clone](../Classes/classitk_1_1ParticleConstrainedModifiedCotangentEntropyGradientFunction.md#function-clone), [itk::ParticleCurvatureEntropyGradientFunction::Clone](../Classes/classitk_1_1ParticleCurvatureEntropyGradientFunction.md#function-clone), [itk::ParticleModifiedCotangentEntropyGradientFunction::Clone](../Classes/classitk_1_1ParticleModifiedCotangentEntropyGradientFunction.md#function-clone), [itk::ParticleOmegaGradientFunction::Clone](../Classes/classitk_1_1ParticleOmegaGradientFunction.md#function-clone)
 
 
 ## Protected Functions Documentation
@@ -556,4 +556,4 @@ SigmaCacheType::Pointer m_SpatialSigmaCache;
 
 -------------------------------
 
-Updated on 2022-08-14 at 05:20:44 +0000
+Updated on 2022-08-14 at 23:37:08 +0000

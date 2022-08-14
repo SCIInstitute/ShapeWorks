@@ -21,13 +21,13 @@ Inherits from [itk::ParticleRegionNeighborhood< TImage::ImageDimension >](../Cla
 | typedef TImage | **[ImageType](../Classes/classitk_1_1ParticleSurfaceNeighborhood.md#typedef-imagetype)**  |
 | typedef [ParticleSurfaceNeighborhood](../Classes/classitk_1_1ParticleSurfaceNeighborhood.md) | **[Self](../Classes/classitk_1_1ParticleSurfaceNeighborhood.md#typedef-self)**  |
 | typedef [ParticleRegionNeighborhood](../Classes/classitk_1_1ParticleRegionNeighborhood.md)< TImage::ImageDimension > | **[Superclass](../Classes/classitk_1_1ParticleSurfaceNeighborhood.md#typedef-superclass)**  |
-| typedef SmartPointer< [Self](../Classes/classitk_1_1ParticleNeighborhood.md#typedef-self) > | **[Pointer](../Classes/classitk_1_1ParticleSurfaceNeighborhood.md#typedef-pointer)**  |
-| typedef SmartPointer< const [Self](../Classes/classitk_1_1ParticleNeighborhood.md#typedef-self) > | **[ConstPointer](../Classes/classitk_1_1ParticleSurfaceNeighborhood.md#typedef-constpointer)**  |
-| typedef WeakPointer< const [Self](../Classes/classitk_1_1ParticleNeighborhood.md#typedef-self) > | **[ConstWeakPointer](../Classes/classitk_1_1ParticleSurfaceNeighborhood.md#typedef-constweakpointer)**  |
+| typedef SmartPointer< [Self](../Classes/classitk_1_1ParticleSurfaceNeighborhood.md) > | **[Pointer](../Classes/classitk_1_1ParticleSurfaceNeighborhood.md#typedef-pointer)**  |
+| typedef SmartPointer< const [Self](../Classes/classitk_1_1ParticleSurfaceNeighborhood.md) > | **[ConstPointer](../Classes/classitk_1_1ParticleSurfaceNeighborhood.md#typedef-constpointer)**  |
+| typedef WeakPointer< const [Self](../Classes/classitk_1_1ParticleSurfaceNeighborhood.md) > | **[ConstWeakPointer](../Classes/classitk_1_1ParticleSurfaceNeighborhood.md#typedef-constweakpointer)**  |
 | typedef ImageType::PixelType | **[NumericType](../Classes/classitk_1_1ParticleSurfaceNeighborhood.md#typedef-numerictype)**  |
-| typedef Superclass::PointTreeType | **[PointTreeType](../Classes/classitk_1_1ParticleSurfaceNeighborhood.md#typedef-pointtreetype)**  |
+| typedef [Superclass::PointTreeType](../Classes/classitk_1_1ParticleRegionNeighborhood.md#typedef-pointtreetype) | **[PointTreeType](../Classes/classitk_1_1ParticleSurfaceNeighborhood.md#typedef-pointtreetype)**  |
 | typedef vnl_vector_fixed< NumericType, TImage::ImageDimension > | **[GradientVectorType](../Classes/classitk_1_1ParticleSurfaceNeighborhood.md#typedef-gradientvectortype)**  |
-| typedef Superclass::PointType | **[PointType](../Classes/classitk_1_1ParticleSurfaceNeighborhood.md#typedef-pointtype)**  |
+| typedef [Superclass::PointType](../Classes/classitk_1_1ParticleRegionNeighborhood.md#typedef-pointtype) | **[PointType](../Classes/classitk_1_1ParticleSurfaceNeighborhood.md#typedef-pointtype)**  |
 | typedef Superclass::PointContainerType | **[PointContainerType](../Classes/classitk_1_1ParticleSurfaceNeighborhood.md#typedef-pointcontainertype)**  |
 | typedef [shapeworks::ParticleImplicitSurfaceDomain](../Classes/classshapeworks_1_1ParticleImplicitSurfaceDomain.md)< typename TImage::PixelType > | **[DomainType](../Classes/classitk_1_1ParticleSurfaceNeighborhood.md#typedef-domaintype)**  |
 | typedef Superclass::PointVectorType | **[PointVectorType](../Classes/classitk_1_1ParticleSurfaceNeighborhood.md#typedef-pointvectortype)**  |
@@ -37,10 +37,10 @@ Inherits from [itk::ParticleRegionNeighborhood< TImage::ImageDimension >](../Cla
 |                | Name           |
 | -------------- | -------------- |
 | | **[itkStaticConstMacro](../Classes/classitk_1_1ParticleSurfaceNeighborhood.md#function-itkstaticconstmacro)**(Dimension , unsigned int , TImage::ImageDimension ) |
-| | **[itkNewMacro](../Classes/classitk_1_1ParticleSurfaceNeighborhood.md#function-itknewmacro)**([Self](../Classes/classitk_1_1ParticleNeighborhood.md#typedef-self) ) |
+| | **[itkNewMacro](../Classes/classitk_1_1ParticleSurfaceNeighborhood.md#function-itknewmacro)**([Self](../Classes/classitk_1_1ParticleSurfaceNeighborhood.md) ) |
 | | **[itkTypeMacro](../Classes/classitk_1_1ParticleSurfaceNeighborhood.md#function-itktypemacro)**([ParticleSurfaceNeighborhood](../Classes/classitk_1_1ParticleSurfaceNeighborhood.md) , [ParticleRegionNeighborhood](../Classes/classitk_1_1ParticleRegionNeighborhood.md) ) |
-| virtual [PointVectorType](../Classes/classitk_1_1ParticleNeighborhood.md#typedef-pointvectortype) | **[FindNeighborhoodPoints](../Classes/classitk_1_1ParticleSurfaceNeighborhood.md#function-findneighborhoodpoints)**(const [PointType](../Classes/classitk_1_1ParticleNeighborhood.md#typedef-pointtype) & , int idx, std::vector< double > & , std::vector< double > & , double ) const override |
-| virtual [PointVectorType](../Classes/classitk_1_1ParticleNeighborhood.md#typedef-pointvectortype) | **[FindNeighborhoodPoints](../Classes/classitk_1_1ParticleSurfaceNeighborhood.md#function-findneighborhoodpoints)**(const [PointType](../Classes/classitk_1_1ParticleNeighborhood.md#typedef-pointtype) & , int idx, std::vector< double > & , double ) const override |
+| virtual PointVectorType | **[FindNeighborhoodPoints](../Classes/classitk_1_1ParticleSurfaceNeighborhood.md#function-findneighborhoodpoints)**(const [PointType](../Classes/classitk_1_1ParticleSurfaceNeighborhood.md#typedef-pointtype) & , int idx, std::vector< double > & , std::vector< double > & , double ) const override |
+| virtual PointVectorType | **[FindNeighborhoodPoints](../Classes/classitk_1_1ParticleSurfaceNeighborhood.md#function-findneighborhoodpoints)**(const [PointType](../Classes/classitk_1_1ParticleSurfaceNeighborhood.md#typedef-pointtype) & , int idx, std::vector< double > & , double ) const override |
 | void | **[SetWeightingEnabled](../Classes/classitk_1_1ParticleSurfaceNeighborhood.md#function-setweightingenabled)**(bool is_enabled) |
 | bool | **[IsWeightingEnabled](../Classes/classitk_1_1ParticleSurfaceNeighborhood.md#function-isweightingenabled)**() const |
 | void | **[SetForceEuclidean](../Classes/classitk_1_1ParticleSurfaceNeighborhood.md#function-setforceeuclidean)**(bool is_enabled) |
@@ -277,9 +277,6 @@ virtual PointVectorType FindNeighborhoodPoints(
 ```
 
 
-**Reimplements**: [itk::ParticleNeighborhood::FindNeighborhoodPoints](../Classes/classitk_1_1ParticleNeighborhood.md#function-findneighborhoodpoints)
-
-
 Compile a list of points that are within a specified radius of a given point. This implementation uses a PowerOfTwoTree to sort points according to location. 
 
 
@@ -293,12 +290,6 @@ virtual PointVectorType FindNeighborhoodPoints(
     double 
 ) const override
 ```
-
-
-**Reimplements**: [itk::ParticleNeighborhood::FindNeighborhoodPoints](../Classes/classitk_1_1ParticleNeighborhood.md#function-findneighborhoodpoints)
-
-
-This method finds neighborhood points as in the previous method, but also computes a vector of weights associated with each of those points. 
 
 
 ### function SetWeightingEnabled
@@ -361,4 +352,4 @@ inline virtual ~ParticleSurfaceNeighborhood()
 
 -------------------------------
 
-Updated on 2022-08-14 at 05:20:45 +0000
+Updated on 2022-08-14 at 23:37:08 +0000

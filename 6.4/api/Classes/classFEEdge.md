@@ -15,7 +15,7 @@ Inherits from [FEItem](../Classes/classFEItem.md)
 
 |                | Name           |
 | -------------- | -------------- |
-| enum| **[@0](../Classes/classFEEdge.md#enum-@0)** { MAX_NODES = 3} |
+| enum| **[@1](../Classes/classFEEdge.md#enum-@1)** { MAX_NODES = 3} |
 
 ## Public Functions
 
@@ -61,7 +61,7 @@ Inherits from [FEItem](../Classes/classFEItem.md)
 
 ## Public Types Documentation
 
-### enum @0
+### enum @1
 
 | Enumerator | Value | Description |
 | ---------- | ----- | ----------- |
@@ -136,4 +136,4 @@ the two adjacent edges (if there are more edges incident to a node, the neighbou
 
 -------------------------------
 
-Updated on 2022-08-14 at 05:20:46 +0000
+Updated on 2022-08-14 at 23:37:09 +0000

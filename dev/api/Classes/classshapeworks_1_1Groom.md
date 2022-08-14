@@ -37,9 +37,9 @@ Inherited by [shapeworks::QGroom](../Classes/classshapeworks_1_1QGroom.md)
 
 |                | Name           |
 | -------------- | -------------- |
-| tbb::atomic< float > | **[progress_](../Classes/classshapeworks_1_1Groom.md#variable-progress-)**  |
-| tbb::atomic< int > | **[total_ops_](../Classes/classshapeworks_1_1Groom.md#variable-total-ops-)**  |
-| tbb::atomic< int > | **[progress_counter_](../Classes/classshapeworks_1_1Groom.md#variable-progress-counter-)**  |
+| std::atomic< float > | **[progress_](../Classes/classshapeworks_1_1Groom.md#variable-progress-)**  |
+| std::atomic< int > | **[total_ops_](../Classes/classshapeworks_1_1Groom.md#variable-total-ops-)**  |
+| std::atomic< int > | **[progress_counter_](../Classes/classshapeworks_1_1Groom.md#variable-progress-counter-)**  |
 
 ## Detailed Description
 
@@ -136,24 +136,24 @@ call to be overridden by subclasses
 ### variable progress_
 
 ```cpp
-tbb::atomic< float > progress_ = 0;
+std::atomic< float > progress_ = 0;
 ```
 
 
 ### variable total_ops_
 
 ```cpp
-tbb::atomic< int > total_ops_ = 0;
+std::atomic< int > total_ops_ = 0;
 ```
 
 
 ### variable progress_counter_
 
 ```cpp
-tbb::atomic< int > progress_counter_ = 0;
+std::atomic< int > progress_counter_ = 0;
 ```
 
 
 -------------------------------
 
-Updated on 2022-08-14 at 05:20:45 +0000
+Updated on 2022-08-14 at 23:37:08 +0000

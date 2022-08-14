@@ -14,7 +14,7 @@ title: shapeworks::ParticleNormalEvaluation
 |                | Name           |
 | -------------- | -------------- |
 | std::vector< bool > | **[evaluate_particle_normals](../Classes/classshapeworks_1_1ParticleNormalEvaluation.md#function-evaluate-particle-normals)**(const Eigen::MatrixXd & particles, const Eigen::MatrixXd & normals, double max_angle_degrees) |
-| Eigen::MatrixXd | **[compute_particle_normals](../Classes/classshapeworks_1_1ParticleNormalEvaluation.md#function-compute-particle-normals)**(const Eigen::MatrixXd & particles, std::vector< std::shared_ptr< [VtkMeshWrapper](../Classes/classshapeworks_1_1VtkMeshWrapper.md) >> meshes)<br>Compute normals at particle positions.  |
+| Eigen::MatrixXd | **[compute_particle_normals](../Classes/classshapeworks_1_1ParticleNormalEvaluation.md#function-compute-particle-normals)**(const Eigen::MatrixXd & particles, std::vector< std::shared_ptr< [VtkMeshWrapper](../Classes/classshapeworks_1_1VtkMeshWrapper.md) > > meshes)<br>Compute normals at particle positions.  |
 
 ## Public Functions Documentation
 
@@ -34,7 +34,7 @@ static std::vector< bool > evaluate_particle_normals(
 ```cpp
 static Eigen::MatrixXd compute_particle_normals(
     const Eigen::MatrixXd & particles,
-    std::vector< std::shared_ptr< VtkMeshWrapper >> meshes
+    std::vector< std::shared_ptr< VtkMeshWrapper > > meshes
 )
 ```
 
@@ -42,4 +42,4 @@ Compute normals at particle positions.
 
 -------------------------------
 
-Updated on 2022-08-14 at 05:20:45 +0000
+Updated on 2022-08-14 at 23:37:09 +0000

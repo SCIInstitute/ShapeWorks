@@ -15,7 +15,7 @@ Inherits from vtkAbstractWidget
 
 |                | Name           |
 | -------------- | -------------- |
-| enum| **[@0](../Classes/classshapeworks_1_1PaintWidget.md#enum-@0)** { Start, Paint, Erase} |
+| enum| **[@5](../Classes/classshapeworks_1_1PaintWidget.md#enum-@5)** { Start, Paint, Erase} |
 
 ## Public Functions
 
@@ -68,7 +68,7 @@ Inherits from vtkAbstractWidget
 
 ## Protected Types Documentation
 
-### enum @0
+### enum @5
 
 | Enumerator | Value | Description |
 | ---------- | ----- | ----------- |
@@ -377,4 +377,4 @@ Viewer * viewer_;
 
 -------------------------------
 
-Updated on 2022-08-14 at 05:20:45 +0000
+Updated on 2022-08-14 at 23:37:09 +0000

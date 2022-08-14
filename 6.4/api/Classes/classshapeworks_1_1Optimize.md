@@ -37,7 +37,7 @@ Inherited by [shapeworks::QOptimize](../Classes/classshapeworks_1_1QOptimize.md)
 | bool | **[GetAborted](../Classes/classshapeworks_1_1Optimize.md#function-getaborted)**()<br>Return if the optimization was aborted.  |
 | virtual std::vector< std::vector< itk::Point< double > > > | **[GetLocalPoints](../Classes/classshapeworks_1_1Optimize.md#function-getlocalpoints)**()<br>Return the local points.  |
 | virtual std::vector< std::vector< itk::Point< double > > > | **[GetGlobalPoints](../Classes/classshapeworks_1_1Optimize.md#function-getglobalpoints)**()<br>Return the global points.  |
-| void | **[SetCutPlanes](../Classes/classshapeworks_1_1Optimize.md#function-setcutplanes)**(std::vector< std::array< itk::Point< double >, 3 >> cut_planes)<br>Set cutting planes.  |
+| void | **[SetCutPlanes](../Classes/classshapeworks_1_1Optimize.md#function-setcutplanes)**(std::vector< std::array< itk::Point< double >, 3 > > cut_planes)<br>Set cutting planes.  |
 | void | **[SetVerbosity](../Classes/classshapeworks_1_1Optimize.md#function-setverbosity)**(int verbosity_level)<br>Set the verbosity level (0-5)  |
 | void | **[SetDomainsPerShape](../Classes/classshapeworks_1_1Optimize.md#function-setdomainspershape)**(int domains_per_shape)<br>Set the number of domains per shape.  |
 | int | **[GetDomainsPerShape](../Classes/classshapeworks_1_1Optimize.md#function-getdomainspershape)**()<br>Return the number of domains per shape.  |
@@ -403,7 +403,7 @@ Return the global points.
 
 ```cpp
 void SetCutPlanes(
-    std::vector< std::array< itk::Point< double >, 3 >> cut_planes
+    std::vector< std::array< itk::Point< double >, 3 > > cut_planes
 )
 ```
 
@@ -2158,4 +2158,4 @@ std::shared_ptr< Project > project_;
 
 -------------------------------
 
-Updated on 2022-08-14 at 05:20:45 +0000
+Updated on 2022-08-14 at 23:37:09 +0000

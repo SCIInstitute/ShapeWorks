@@ -14,8 +14,6 @@ title: itk::ParticleNeighborhood
 
 Inherits from DataObject
 
-Inherited by [itk::ParticleRegionNeighborhood< TImage::ImageDimension >](../Classes/classitk_1_1ParticleRegionNeighborhood.md)
-
 ## Public Types
 
 |                | Name           |
@@ -240,9 +238,6 @@ inline virtual PointVectorType FindNeighborhoodPoints(
 ```
 
 
-**Reimplemented by**: [itk::ParticleSurfaceNeighborhood::FindNeighborhoodPoints](../Classes/classitk_1_1ParticleSurfaceNeighborhood.md#function-findneighborhoodpoints)
-
-
 This method finds neighborhood points as in the previous method, but also computes a vector of weights associated with each of those points. 
 
 
@@ -257,9 +252,6 @@ inline virtual PointVectorType FindNeighborhoodPoints(
     double 
 ) const
 ```
-
-
-**Reimplemented by**: [itk::ParticleSurfaceNeighborhood::FindNeighborhoodPoints](../Classes/classitk_1_1ParticleSurfaceNeighborhood.md#function-findneighborhoodpoints)
 
 
 This method finds neighborhood points as in the previous method, but also computes a vector of distances associated with each of those points. 
@@ -371,4 +363,4 @@ inline virtual ~ParticleNeighborhood()
 
 -------------------------------
 
-Updated on 2022-08-14 at 05:20:45 +0000
+Updated on 2022-08-14 at 23:37:08 +0000
