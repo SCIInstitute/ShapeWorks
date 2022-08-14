@@ -48,7 +48,7 @@ def sw2vtkMesh(swMesh, verbose = False):
 
     for name in fieldNames:
         field = swMesh.getField(name, sw.Mesh.FieldType.Point)
-        vtkMesh.field_arrays.append(field, name)
+        vtkMesh.field_data.set_array(field, name)
 
     if verbose:
         print('shapeworks mesh header information: ')

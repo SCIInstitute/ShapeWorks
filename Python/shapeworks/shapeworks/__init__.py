@@ -1,3 +1,4 @@
+import vtk
 from .setup_path import *
 setup_binary_path()
 

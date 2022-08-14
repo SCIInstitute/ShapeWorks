@@ -1,3 +1,5 @@
+#include <Optimize/QOptimize.h>
+
 // qt
 #include <QFileDialog>
 #include <QIntValidator>
@@ -15,7 +17,6 @@
 #include <Data/ShapeWorksWorker.h>
 #include <Interface/Style.h>
 #include <Optimize/OptimizeTool.h>
-#include <Optimize/QOptimize.h>
 #include <ui_OptimizeTool.h>
 
 using namespace shapeworks;

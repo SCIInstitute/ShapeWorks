@@ -159,7 +159,8 @@ Optional:
   -DCMAKE_INSTALL_PREFIX=<path>       default: ./install
   -DCMAKE_BUILD_TYPE=[Debug|Release]  default: Release (only required is default generator is used)
 ```
-:fa-info-circle: See **Examples** below for common values of the variables.
+
+See **Examples** below for common values of the variables.
 
 #### Building
 - **Makefiles:** 

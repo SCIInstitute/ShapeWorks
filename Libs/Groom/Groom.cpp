@@ -6,9 +6,7 @@
 #include <Libs/Project/ProjectUtils.h>
 #include <Libs/Utils/StringUtils.h>
 #include <itkRegionOfInterestImageFilter.h>
-#include <tbb/mutex.h>
 #include <tbb/parallel_for.h>
-#include <tbb/task_scheduler_init.h>
 #include <vtkCenterOfMass.h>
 #include <vtkLandmarkTransform.h>
 #include <vtkPointSet.h>
@@ -19,7 +17,7 @@
 using namespace shapeworks;
 
 // for concurrent access
-static tbb::mutex mutex;
+static std::mutex mutex;
 
 typedef float PixelType;
 typedef itk::Image<PixelType, 3> ImageType;
@@ -38,7 +36,7 @@ bool Groom::run() {
   if (subjects.empty()) {
     throw std::invalid_argument("No subjects to groom");
   }
-  tbb::atomic<bool> success = true;
+  std::atomic<bool> success = true;
 
   tbb::parallel_for(tbb::blocked_range<size_t>{0, subjects.size()}, [&](const tbb::blocked_range<size_t>& r) {
     for (size_t i = r.begin(); i < r.end(); ++i) {
@@ -103,7 +101,7 @@ bool Groom::image_pipeline(std::shared_ptr<Subject> subject, size_t domain) {
 
     {
       // lock for project data structure
-      tbb::mutex::scoped_lock lock(mutex_);
+      std::scoped_lock lock(mutex_);
 
       // update groomed filenames
       std::vector<std::string> groomed_filenames = subject->get_groomed_filenames();
@@ -156,7 +154,7 @@ bool Groom::image_pipeline(std::shared_ptr<Subject> subject, size_t domain) {
 
   {
     // lock for project data structure
-    tbb::mutex::scoped_lock lock(mutex_);
+    std::scoped_lock lock(mutex_);
 
     subject->set_groomed_transform(domain, ProjectUtils::convert_transform(transform));
 
@@ -303,7 +301,7 @@ bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject, size_t domain) {
 
   {
     // lock for project data structure
-    tbb::mutex::scoped_lock lock(mutex_);
+    std::scoped_lock lock(mutex_);
 
     // store transform
     subject->set_groomed_transform(domain, ProjectUtils::convert_transform(transform));
@@ -393,7 +391,7 @@ bool Groom::contour_pipeline(std::shared_ptr<Subject> subject, size_t domain) {
 
   {
     // lock for project data structure
-    tbb::mutex::scoped_lock lock(mutex_);
+    std::scoped_lock lock(mutex_);
 
     // store transform
     subject->set_groomed_transform(domain, ProjectUtils::convert_transform(transform));
@@ -462,7 +460,7 @@ int Groom::get_total_ops() {
 
 //---------------------------------------------------------------------------
 void Groom::increment_progress(int amount) {
-  tbb::mutex::scoped_lock lock(mutex);
+  std::scoped_lock lock(mutex);
   this->progress_counter_ += amount;
   this->progress_ = static_cast<float>(this->progress_counter_) / static_cast<float>(this->total_ops_) * 100.0;
   this->update_progress();
@@ -713,7 +711,7 @@ int Groom::find_reference_landmarks(std::vector<vtkSmartPointer<vtkPoints>> land
   // map of pair to distance value
   std::map<size_t, double> results;
   // mutex for access to results
-  tbb::mutex mutex;
+  std::mutex mutex;
 
   tbb::parallel_for(tbb::blocked_range<size_t>{0, pairs.size()}, [&](const tbb::blocked_range<size_t>& r) {
     for (size_t i = r.begin(); i < r.end(); ++i) {
@@ -730,7 +728,7 @@ int Groom::find_reference_landmarks(std::vector<vtkSmartPointer<vtkPoints>> land
       double distance = Groom::compute_landmark_distance(landmarks[pair.second], transformed);
       {
         // lock and store results
-        tbb::mutex::scoped_lock lock(mutex);
+        std::scoped_lock lock(mutex);
         results[i] = distance;
       }
     }
