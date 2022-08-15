@@ -694,17 +694,32 @@ StudioParticles AnalysisTool::get_multi_level_shape_points(int mode, double valu
     ui_->mca_explained_variance->setText("");
     ui_->mca_cumulative_explained_variance->setText("");
   }
+  Eigen::VectorXd shape_dev_mean = stats_.MeanShapeDev(); // 3M
+  Eigen::VectorXd rel_pose_mean_ = stats_.MeanRelPose(); // 3K 
+  Eigen::VectorXd e_rel_pose_mean_reshaped; // 3M
+  unsigned int D = stats_.DomainsNumber();
+  unsigned int sz = stats_.Mean().size();
+  std::vector<int> number_of_points_ar = stats_.NumberOfPointsArray();
+  e_rel_pose_mean_reshaped.resize(sz);
+  for(unsigned int i = 0; i < D; i++){
+      int num_points = number_of_particles_ar[i];
+      int row = 0;
+      for(int idx = 0; idx < i; idx++){ row += (3 * number_of_particles_ar[idx]); }
+      for(unsigned int j = 0; j < num_points; j++){
+          e_rel_pose_mean_reshaped((row) + (j * 3)) = rel_pose_mean_(i * 3);
+          e_rel_pose_mean_reshaped((row) + (j * 3) + 1) = rel_pose_mean_(i * 3 + 1);
+          e_rel_pose_mean_reshaped((row) + (j * 3) + 2) = rel_pose_mean_(i * 3 + 2);
+      }
+  }
+  Eigen::VectorXd new_mean = shape_dev_mean + e_rel_pose_mean_reshaped;
+
   if(level == 1){
-    temp_shape_mca = stats_.Mean() + (e * (value * lambda));
+    // temp_shape_mca = stats_.Mean() + (e * (value * lambda));
+    temp_shape_mca = new_mean + 0.5 * (e * (value * lambda));
   }
   else if(level == 2){
     Eigen::VectorXd e_between;
-    // Eigen::VectorXd e_rel_pose_mean_reshaped;
-    unsigned int sz = stats_.Mean().size();
-    std::vector<int> number_of_points_ar = stats_.NumberOfPointsArray();
     e_between.resize(sz);
-    // e_rel_pose_mean_reshaped.resize(sz);
-    unsigned int D = stats_.DomainsNumber();
     for(unsigned int i = 0; i < D; i++){
       int num_points = number_of_particles_ar[i];
       int row = 0;
@@ -713,9 +728,6 @@ StudioParticles AnalysisTool::get_multi_level_shape_points(int mode, double valu
           e_between((row) + (j * 3)) = e(i * 3);
           e_between((row) + (j * 3) + 1) = e(i * 3 + 1);
           e_between((row) + (j * 3) + 2) = e(i * 3 + 2);
-          // e_rel_pose_mean_reshaped((row) + (j * 3)) = stats_.MeanRelPose()(i * 3);
-          // e_rel_pose_mean_reshaped((row) + (j * 3) + 1) = stats_.MeanRelPose()(i * 3 + 1);
-          // e_rel_pose_mean_reshaped((row) + (j * 3) + 2) = stats_.MeanRelPose()(i * 3 + 2);
       }
     }
     temp_shape_mca = stats_.Mean() + (e_between * (value * lambda));
