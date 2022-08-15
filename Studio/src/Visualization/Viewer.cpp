@@ -636,6 +636,9 @@ void Viewer::display_shape(std::shared_ptr<Shape> shape) {
   renderer_->RemoveAllViewProps();
 
   number_of_domains_ = session_->get_domains_per_shape();
+  if (meshes_.valid()) {
+    number_of_domains_ = std::max<int>(number_of_domains_, meshes_.meshes().size());
+  }
   initialize_surfaces();
 
   if (!meshes_.valid()) {
@@ -705,7 +708,6 @@ void Viewer::display_shape(std::shared_ptr<Shape> shape) {
             if (ffc.getDefinition() != poly_data) {
               ffc.computeBoundaries();
               ffc.applyToPolyData(poly_data);
-              ffc.setDefinition(poly_data);
             }
           } catch (std::exception& e) {
             SW_SHOW_ERROR(std::string("Unable to apply free form constraints: ") + e.what());

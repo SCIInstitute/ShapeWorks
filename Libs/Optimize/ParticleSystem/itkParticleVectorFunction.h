@@ -78,6 +78,9 @@ class ParticleVectorFunction : public LightObject {
     return nullptr;
   }
 
+  virtual double GetRelativeEnergyScaling() const {return 1.0;}
+  virtual void SetRelativeEnergyScaling(double r) {return;}
+
  protected:
   ParticleVectorFunction() : m_ParticleSystem(0), m_DomainNumber(0) {}
   virtual ~ParticleVectorFunction() {}

@@ -691,6 +691,6 @@ def check_results(args, mean_dist):
             print("Test failed.")
             exit(-1)
         print("Done with test, verification succeeded.")
-        exit()
+        exit(0)
     else:
         return

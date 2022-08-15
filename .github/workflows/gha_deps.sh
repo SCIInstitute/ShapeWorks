@@ -22,8 +22,14 @@ else
 	export BUILD_DIR="/c/bdeps"
 	export FILE="${DEP_FILE}"
     fi
-    export SDKROOT=$HOME/MacOSX10.13.sdk # only needed for MacOS obviously
-    ./build_dependencies.sh --build-type=$BUILD_TYPE
+
+    NPROCS=4
+    export SDKROOT=$HOME/MacOSX10.15.sdk # only needed for MacOS obviously
+    if [[ "$PLATFORM" == "linux" ]]; then
+	# GHA runner is running out of resources with 4 now on linux
+	NPROCS=2
+    fi
+    ./build_dependencies.sh --build-type=$BUILD_TYPE --num-procs=$NPROCS --clean-after
     rm -rf $BUILD_DIR
 
     echo "Create and store cache"

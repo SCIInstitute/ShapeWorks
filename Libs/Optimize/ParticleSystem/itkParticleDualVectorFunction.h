@@ -361,14 +361,15 @@ public:
 
     /** The relative scaling scales the gradient B relative to A.  By default
       this value is 1.0. */
-    void SetRelativeEnergyScaling(double r)
+    void SetRelativeEnergyScaling(double r) override
     {
         m_RelativeEnergyScaling = r;
     }
-    double GetRelativeEnergyScaling() const
+    double GetRelativeEnergyScaling() const override
     {
         return m_RelativeEnergyScaling;
     }
+
 
     void SetRelativeGradientScaling(double r)
     {

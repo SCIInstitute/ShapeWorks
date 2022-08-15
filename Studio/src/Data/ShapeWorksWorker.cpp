@@ -1,15 +1,13 @@
+// must come first
+#include <Libs/Optimize/Optimize.h>
+// must come first
+
 #include <Data/Shape.h>
 #include <Data/ShapeWorksWorker.h>
 #include <Data/SurfaceReconstructor.h>
 #include <Groom/QGroom.h>
-#include <Libs/Optimize/Optimize.h>
 #include <Libs/Optimize/OptimizeParameters.h>
 #include <Logging.h>
-
-#include <QMessageBox>
-#include <QProcess>
-#include <iostream>
-#include <sstream>
 
 namespace shapeworks {
 

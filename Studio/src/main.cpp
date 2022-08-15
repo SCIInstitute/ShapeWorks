@@ -1,10 +1,17 @@
+#include <tbb/tbb.h>
+
+#include <QApplication>
+#include <QResource>
+#include <QMessageBox>
+#include <QDir>
+
+#include <itkMacro.h>
+
+#include <Interface/ShapeWorksStudioApp.h>
 #include <Applications/Configuration.h>
 #include <Interface/ShapeWorksStudioApp.h>
 #include <Logging.h>
 #include <QVTKOpenGLNativeWidget.h>
-#include <itkMacro.h>
-#include <tbb/tbb.h>
-#include <vtkObject.h>
 
 #include <QApplication>
 #include <QDateTime>

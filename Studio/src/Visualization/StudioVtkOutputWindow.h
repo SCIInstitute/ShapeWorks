@@ -19,6 +19,7 @@ class StudioVtkOutputWindow : public QObject, public vtkOutputWindow {
 
   void DisplayErrorText(const char* text) override;
   void DisplayWarningText(const char* text) override;
+  void DisplayGenericWarningText(const char* text) override;
 
  private:
 };

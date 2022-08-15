@@ -90,6 +90,9 @@ void Logging::log_error(std::string message, const int line, const char *file) {
   if (log_open_) {
     spdlog::get("file")->error(message);
   }
+  if (error_callback_) {
+    error_callback_(message);
+  }
 }
 
 //-----------------------------------------------------------------------------

@@ -36,7 +36,7 @@ ROOT=`pwd`
 
 BUILD="/c/build"
 CONDA_LOC="/c/Miniconda3/envs/shapeworks"
-cp ${CONDA_LOC}/python*.dll ${CONDA_LOC}/Library/bin/zlib.dll ${CONDA_LOC}/Library/bin/tbb.dll ${CONDA_LOC}/Library/bin/half.dll ${CONDA_LOC}/Library/bin/boost_filesystem.dll $BUILD/bin/Release
+cp ${CONDA_LOC}/python*.dll ${CONDA_LOC}/Library/bin/zlib.dll ${CONDA_LOC}/Library/bin/tbb12.dll ${CONDA_LOC}/Library/bin/zstd.dll ${CONDA_LOC}/Library/bin/libpng16.dll ${CONDA_LOC}/Library/bin/half.dll ${CONDA_LOC}/Library/bin/boost_filesystem.dll $BUILD/bin/Release
 
 
 cp -r $BUILD/bin/Release bin
@@ -55,6 +55,8 @@ else
     exit 1
 fi
 python Python/RunShapeWorksAutoDoc.py --md_filename docs/tools/ShapeWorksCommands.md
+pip list
+echo "running mkdocs build"
 mkdocs build
 mv site Documentation
 cp -a Documentation bin/

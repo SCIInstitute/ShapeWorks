@@ -16,4 +16,12 @@ void StudioVtkOutputWindow::DisplayErrorText(const char* text) { SW_LOG_ERROR(te
 //---------------------------------------------------------------------------
 void StudioVtkOutputWindow::DisplayWarningText(const char* text) { SW_LOG_WARNING(text); }
 
+//---------------------------------------------------------------------------
+void StudioVtkOutputWindow::DisplayGenericWarningText(const char* text) { SW_LOG_WARNING(text); }
+
+//---------------------------------------------------------------------------
+void StudioVtkOutputWindow::DisplayDebugText(const char* text) { SW_LOG_DEBUG(text); }
+
+//---------------------------------------------------------------------------
+
 }  // namespace shapeworks

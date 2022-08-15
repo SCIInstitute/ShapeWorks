@@ -422,6 +422,9 @@ bool AnalysisTool::compute_stats() {
       } else {
         // we don't include it
       }
+    } else {
+      points.push_back(shape->get_global_correspondence_points());
+      group_ids.push_back(1);
     }
   }
 

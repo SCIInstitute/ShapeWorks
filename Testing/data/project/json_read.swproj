@@ -1,0 +1,122 @@
+{
+    "data": [
+        {
+            "name": "195916_R_FM_align",
+            "shape_femur": "195916_R_FM_align.nrrd",
+            "shape_pelvis": "195916_R_PV_align.ply",
+            "groomed_femur": "groomed/195916_R_FM_align_DT.nrrd",
+            "groomed_pelvis": "groomed/195916_R_PV_align_groomed.vtk",
+            "local_particles_femur": "md_groomed_particles/195916_R_FM_align_DT_local.particles",
+            "local_particles_pelvis": "md_groomed_particles/195916_R_PV_align_groomed_local.particles",
+            "world_particles_femur": "md_groomed_particles/195916_R_FM_align_DT_world.particles",
+            "world_particles_pelvis": "md_groomed_particles/195916_R_PV_align_groomed_world.particles",
+            "alignment_femur": "1.000000 0.000000 0.000000 47.794629 0.000000 1.000000 0.000000 268.696963 0.000000 0.000000 1.000000 -98.714226 0.000000 0.000000 0.000000 1.000000",
+            "alignment_pelvis": "1.000000 0.000000 0.000000 98.102368 0.000000 1.000000 0.000000 269.657034 0.000000 0.000000 1.000000 -105.629893 0.000000 0.000000 0.000000 1.000000",
+            "procrustes_femur": "1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000",
+            "procrustes_pelvis": "1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000"
+        },
+        {
+            "name": "187609_R_FM_align",
+            "shape_femur": "187609_R_FM_align.nrrd",
+            "shape_pelvis": "187609_R_PV_align.ply",
+            "groomed_femur": "groomed/187609_R_FM_align_DT.nrrd",
+            "groomed_pelvis": "groomed/187609_R_PV_align_groomed.vtk",
+            "local_particles_femur": "md_groomed_particles/187609_R_FM_align_DT_local.particles",
+            "local_particles_pelvis": "md_groomed_particles/187609_R_PV_align_groomed_local.particles",
+            "world_particles_femur": "md_groomed_particles/187609_R_FM_align_DT_world.particles",
+            "world_particles_pelvis": "md_groomed_particles/187609_R_PV_align_groomed_world.particles",
+            "alignment_femur": "1.000000 0.000000 0.000000 49.847550 0.000000 1.000000 0.000000 267.561580 0.000000 0.000000 1.000000 -93.155784 0.000000 0.000000 0.000000 1.000000",
+            "alignment_pelvis": "1.000000 0.000000 0.000000 105.997390 0.000000 1.000000 0.000000 274.731934 0.000000 0.000000 1.000000 -99.155577 0.000000 0.000000 0.000000 1.000000",
+            "procrustes_femur": "1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000",
+            "procrustes_pelvis": "1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000"
+        },
+        {
+            "name": "190402_R_FM_align",
+            "shape_femur": "190402_R_FM_align.nrrd",
+            "shape_pelvis": "190402_R_PV_align.ply",
+            "groomed_femur": "groomed/190402_R_FM_align_DT.nrrd",
+            "groomed_pelvis": "groomed/190402_R_PV_align_groomed.vtk",
+            "local_particles_femur": "md_groomed_particles/190402_R_FM_align_DT_local.particles",
+            "local_particles_pelvis": "md_groomed_particles/190402_R_PV_align_groomed_local.particles",
+            "world_particles_femur": "md_groomed_particles/190402_R_FM_align_DT_world.particles",
+            "world_particles_pelvis": "md_groomed_particles/190402_R_PV_align_groomed_world.particles",
+            "alignment_femur": "1.000000 0.000000 0.000000 47.557745 0.000000 1.000000 0.000000 266.817885 0.000000 0.000000 1.000000 -95.259654 0.000000 0.000000 0.000000 1.000000",
+            "alignment_pelvis": "1.000000 0.000000 0.000000 98.588050 0.000000 1.000000 0.000000 271.255633 0.000000 0.000000 1.000000 -104.248986 0.000000 0.000000 0.000000 1.000000",
+            "procrustes_femur": "1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000",
+            "procrustes_pelvis": "1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000"
+        },
+        {
+            "name": "194992_R_FM_align",
+            "shape_femur": "194992_R_FM_align.nrrd",
+            "shape_pelvis": "194992_R_PV_align.ply",
+            "groomed_femur": "groomed/194992_R_FM_align_DT.nrrd",
+            "groomed_pelvis": "groomed/194992_R_PV_align_groomed.vtk",
+            "local_particles_femur": "md_groomed_particles/194992_R_FM_align_DT_local.particles",
+            "local_particles_pelvis": "md_groomed_particles/194992_R_PV_align_groomed_local.particles",
+            "world_particles_femur": "md_groomed_particles/194992_R_FM_align_DT_world.particles",
+            "world_particles_pelvis": "md_groomed_particles/194992_R_PV_align_groomed_world.particles",
+            "alignment_femur": "1.000000 0.000000 0.000000 44.666445 0.000000 1.000000 0.000000 271.148390 0.000000 0.000000 1.000000 -94.535728 0.000000 0.000000 0.000000 1.000000",
+            "alignment_pelvis": "1.000000 0.000000 0.000000 94.594323 0.000000 1.000000 0.000000 267.177279 0.000000 0.000000 1.000000 -101.790912 0.000000 0.000000 0.000000 1.000000",
+            "procrustes_femur": "1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000",
+            "procrustes_pelvis": "1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000"
+        }
+    ],
+    "groom": {
+        "femur": null,
+        "pelvis": null
+    },
+    "optimize": {
+        "ending_regularization": "1.000000",
+        "geodesic_cache_multiplier": "0",
+        "initial_relative_weighting": "0.050000",
+        "iterations_per_split": "1000",
+        "multiscale": "false",
+        "multiscale_particles": "32",
+        "narrow_band": "400.000000",
+        "normals_strength": "10.000000",
+        "number_of_particles": "128 64",
+        "optimization_iterations": "200",
+        "optimize_output_prefix": "<project>_particles",
+        "procrustes": "false",
+        "procrustes_interval": "10",
+        "procrustes_rotation_translation": "true",
+        "procrustes_scaling": "false",
+        "relative_weighting": "1.000000",
+        "starting_regularization": "10.000000",
+        "use_geodesic_distance": "false",
+        "use_landmarks": "false",
+        "use_normals": "1"
+    },
+    "studio": {
+        "analysis_mode": "mean",
+        "feature_map": "-none-",
+        "notes": "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\np, li { white-space: pre-wrap; }\n</style></head><body style=\" font-family:'.AppleSystemUIFont'; font-size:13pt; font-weight:400; font-style:normal;\">\n<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>",
+        "tool_state": "optimize",
+        "view_state": "Groomed",
+        "zoom_state": "2"
+    },
+    "project": {
+        "version": "2"
+    },
+    "analysis": {
+        "reconstruction_clusters": "3",
+        "reconstruction_decimation": "0.300000",
+        "reconstruction_max_angle": "60.000000"
+    },
+    "deepssm": {
+        "aug_num_dims": "3",
+        "aug_num_samples": "3",
+        "aug_percent_variability": "0.950000",
+        "aug_sampler_type": "Gaussian",
+        "testing_split": "20.000000",
+        "train_batch_size": "8",
+        "train_decay_learning_rate": "true",
+        "train_epochs": "100",
+        "train_fine_tuning": "true",
+        "train_fine_tuning_epochs": "2",
+        "train_fine_tuning_learning_rate": "0.001000",
+        "train_learning_rate": "0.001000",
+        "validation_split": "20.000000"
+    },
+    "landmarks": []
+}

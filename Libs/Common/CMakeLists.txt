@@ -23,6 +23,7 @@ target_link_libraries(Common
   ${ITK_LIBRARIES}
   ${VTK_LIBRARIES}
   spdlog::spdlog
+  ${Boost_LIBRARIES}
   )
 
 # Install
