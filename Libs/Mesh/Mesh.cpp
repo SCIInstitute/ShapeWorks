@@ -1303,6 +1303,8 @@ vtkSmartPointer<vtkPolyData> Mesh::clipByField(const std::string& name, double v
 // TODO: Use Mesh's functions for many of the items in these functions copied from Meshwrapper.
 bool Mesh::prepareFFCFields(std::vector<std::vector<Eigen::Vector3d>> boundaries, Eigen::Vector3d query,
                             bool onlyGenerateInOut) {
+  std::cout << "Mesh::prepareFFCFields------------------------"  << std::endl;
+
   if (poly_data_->GetPointData()->GetArray("inout")) {
     // clear out any old versions of the inout array or else they will get merged in
     poly_data_->GetPointData()->RemoveArray("inout");
@@ -1318,6 +1320,8 @@ bool Mesh::prepareFFCFields(std::vector<std::vector<Eigen::Vector3d>> boundaries
   }
 
   for (size_t bound = 0; bound < boundaries.size(); bound++) {
+
+    std::cout << "Bound = " << bound << " of size " << boundaries[bound].size() << std::endl;
 
     // Creating cutting loop
     vtkPoints* selectionPoints = vtkPoints::New();
@@ -1359,6 +1363,8 @@ bool Mesh::prepareFFCFields(std::vector<std::vector<Eigen::Vector3d>> boundaries
       lastId = ptid;
     }
 
+    std::cout << "Selector num points " << selectionPoints->GetNumberOfPoints() << std::endl;
+
     if (selectionPoints->GetNumberOfPoints() < 3) {
       /// TODO: log an event that this occurred.  It's not really fatal as we may be applying to a mesh where this
       /// doesn't apply
@@ -1382,10 +1388,13 @@ bool Mesh::prepareFFCFields(std::vector<std::vector<Eigen::Vector3d>> boundaries
     if (halfmesh->GetNumberOfPoints() == 0) {
       /// TODO: log an event that this occurred.  It's not really fatal as we may be applying to a mesh where this
       /// doesn't apply
+      std::cout << "zero points in field, so exit"  << std::endl;
       continue;
     }
 
+    std::cout << "Computing inout"  << std::endl;
     vtkSmartPointer<vtkDoubleArray> inout = computeInOutForFFCs(query, halfmesh);
+    std::cout << "Inout computed"  << std::endl;
 
     if (!onlyGenerateInOut) {
       auto values = vtkSmartPointer<vtkDoubleArray>::New();
@@ -1397,8 +1406,8 @@ bool Mesh::prepareFFCFields(std::vector<std::vector<Eigen::Vector3d>> boundaries
   }  // Per boundary for loop end
 
   // Write mesh for debug purposes
-  //    std::string fnin = "dev/mesh_" + std::to_string(query[0]) + "_" + std::to_string(query[2]) + "_in.vtk";
-  //    this->write(fnin);
+      std::string fnin = "dev/mesh_" + std::to_string(query[0]) + "_" + std::to_string(query[2]) + "_in.vtk";
+      this->write(fnin);
 
   this->invalidateLocators();
   return true;
