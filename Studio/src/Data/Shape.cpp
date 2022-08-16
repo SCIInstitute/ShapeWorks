@@ -683,10 +683,10 @@ void Shape::set_point_features(std::string feature, Eigen::VectorXf values) {
 }
 
 //---------------------------------------------------------------------------
-void Shape::set_particles(StudioParticles particles) { particles_ = particles; }
+void Shape::set_particles(Particles particles) { particles_ = particles; }
 
 //---------------------------------------------------------------------------
-StudioParticles Shape::get_particles() { return particles_; }
+Particles Shape::get_particles() { return particles_; }
 
 //---------------------------------------------------------------------------
 void Shape::set_particle_transform(vtkSmartPointer<vtkTransform> transform) {

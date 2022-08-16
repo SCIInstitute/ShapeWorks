@@ -1,15 +1,14 @@
-# Build
-set(Vis_sources
-  Vis.cpp)
-set(Vis_headers
-  Vis.h)
+
 add_library(Analyze STATIC
   Analyze.cpp
-  ${Vis_sources}
-  ${Vis_headers})
+  Particles.cpp
+  Vis.cpp
+  )
+
 target_include_directories(Analyze PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
   $<INSTALL_INTERFACE:include>)
+
 target_link_libraries(Analyze PUBLIC
   Mesh
   Utils)
@@ -17,6 +16,7 @@ target_link_libraries(Analyze PUBLIC
 # set
 set_target_properties(Analyze PROPERTIES PUBLIC_HEADER
   "${Analyze_headers}")
+
 install(TARGETS Analyze
   ARCHIVE DESTINATION lib
   RUNTIME DESTINATION lib

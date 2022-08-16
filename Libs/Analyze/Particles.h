@@ -18,9 +18,9 @@ namespace shapeworks {
  * The StudioParticles class encapsulates the correspondence points
  * for a shape, including multiple domains, local and global points
  */
-class StudioParticles {
+class Particles {
  public:
-  StudioParticles();
+  Particles();
 
   void set_local_particles(int domain, std::vector<itk::Point<double>> particles);
   void set_world_particles(int domain, std::vector<itk::Point<double>> particles);
@@ -49,7 +49,7 @@ class StudioParticles {
   void set_transform(vtkSmartPointer<vtkTransform> transform);
   void set_procrustes_transforms(std::vector<vtkSmartPointer<vtkTransform>> transforms);
 
-  Eigen::VectorXd get_difference_vectors(const StudioParticles& other);
+  Eigen::VectorXd get_difference_vectors(const Particles& other);
 
  private:
   void transform_global_particles();

@@ -116,11 +116,11 @@ void QOptimize::IterateCallback(itk::Object* caller, const itk::EventObject& e)
 }
 
 //---------------------------------------------------------------------------
-std::vector<StudioParticles> QOptimize::GetParticles()
+std::vector<Particles> QOptimize::GetParticles()
 {
   QMutexLocker locker(&qmutex_);
 
-  std::vector<StudioParticles> particles;
+  std::vector<Particles> particles;
 
   int num_domains_per_subject = this->GetDomainsPerShape();
   int num_subjects = this->GetNumShapes() / num_domains_per_subject;

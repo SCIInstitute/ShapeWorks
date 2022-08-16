@@ -491,9 +491,9 @@ bool AnalysisTool::compute_stats() {
 }
 
 //-----------------------------------------------------------------------------
-StudioParticles AnalysisTool::get_mean_shape_points() {
+Particles AnalysisTool::get_mean_shape_points() {
   if (!compute_stats()) {
-    return StudioParticles();
+    return Particles();
   }
 
   if (ui_->group1_button->isChecked() || ui_->difference_button->isChecked()) {
@@ -514,9 +514,9 @@ StudioParticles AnalysisTool::get_mean_shape_points() {
 }
 
 //-----------------------------------------------------------------------------
-StudioParticles AnalysisTool::get_shape_points(int mode, double value) {
+Particles AnalysisTool::get_shape_points(int mode, double value) {
   if (!compute_stats() || stats_.Eigenvectors().size() <= 1) {
-    return StudioParticles();
+    return Particles();
   }
   if (mode + 2 > stats_.Eigenvalues().size()) {
     mode = stats_.Eigenvalues().size() - 2;
@@ -868,7 +868,7 @@ ShapeHandle AnalysisTool::get_mean_shape() {
 }
 
 //---------------------------------------------------------------------------
-ShapeHandle AnalysisTool::create_shape_from_points(StudioParticles points) {
+ShapeHandle AnalysisTool::create_shape_from_points(Particles points) {
   ShapeHandle shape = ShapeHandle(new Shape());
   shape->set_mesh_manager(session_->get_mesh_manager());
   shape->set_particles(points);
@@ -992,7 +992,7 @@ void AnalysisTool::update_difference_particles() {
   }
 
   // start with a copy from the first shape so that the sizes of domains are already filled out
-  StudioParticles target = session_->get_shapes()[1]->get_particles();
+  Particles target = session_->get_shapes()[1]->get_particles();
   auto all_particles = target.get_combined_global_particles();
 
   Eigen::VectorXd mean = stats_.Mean();
@@ -1288,8 +1288,8 @@ void AnalysisTool::set_active(bool active) {
 bool AnalysisTool::get_active() { return active_; }
 
 //---------------------------------------------------------------------------
-StudioParticles AnalysisTool::convert_from_combined(const Eigen::VectorXd& points) {
-  StudioParticles particles;
+Particles AnalysisTool::convert_from_combined(const Eigen::VectorXd& points) {
+  Particles particles;
   if (session_->get_shapes().empty()) {
     return particles;
   }

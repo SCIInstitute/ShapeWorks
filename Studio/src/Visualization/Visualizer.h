@@ -72,7 +72,7 @@ class Visualizer : public QObject {
 
   void update_lut();
 
-  StudioParticles get_current_shape();
+  Particles get_current_shape();
 
   vtkFloatArray* get_current_particle_scalars();
   vtkSmartPointer<vtkPolyData> get_current_particle_poly_data();
@@ -175,7 +175,7 @@ class Visualizer : public QObject {
   int selected_point_two_;
 
   Eigen::VectorXd cached_mean_;
-  StudioParticles current_shape_;
+  Particles current_shape_;
 
   double feature_range_[2] = {0, 0};
   double feature_manual_range_[2] = {0, 0};

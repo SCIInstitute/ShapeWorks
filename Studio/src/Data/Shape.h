@@ -4,7 +4,7 @@
 #include <Data/MeshManager.h>
 #include <Data/StudioEnums.h>
 #include <Data/StudioMesh.h>
-#include <Data/StudioParticles.h>
+#include <Libs/Analyze/Particles.h>
 #include <Libs/Optimize/ParticleSystem/Constraints.h>
 #include <Libs/Project/Subject.h>
 #include <itkMatrixOffsetTransformBase.h>
@@ -83,8 +83,8 @@ class Shape {
   //! Store constraints
   bool store_constraints();
 
-  void set_particles(StudioParticles particles);
-  StudioParticles get_particles();
+  void set_particles(Particles particles);
+  Particles get_particles();
 
   void set_particle_transform(vtkSmartPointer<vtkTransform> transform);
 
@@ -183,7 +183,7 @@ class Shape {
   std::vector<std::string> local_point_filenames_;
 
   std::map<std::string, Eigen::VectorXf> point_features_;
-  StudioParticles particles_;
+  Particles particles_;
 
   std::shared_ptr<shapeworks::Subject> subject_;
 

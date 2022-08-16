@@ -634,7 +634,7 @@ bool Session::load_point_files(std::vector<std::string> local, std::vector<std::
 }
 
 //---------------------------------------------------------------------------
-bool Session::update_particles(std::vector<StudioParticles> particles) {
+bool Session::update_particles(std::vector<Particles> particles) {
   for (int i = 0; i < particles.size(); i++) {
     std::shared_ptr<Shape> shape;
     if (this->shapes_.size() > i) {
@@ -939,7 +939,7 @@ double Session::get_auto_glyph_size() { return this->auto_glyph_size_; }
 
 //---------------------------------------------------------------------------
 void Session::clear_particles() {
-  std::vector<StudioParticles> particles(this->get_num_shapes());
+  std::vector<Particles> particles(this->get_num_shapes());
   this->update_particles(particles);
 }
 

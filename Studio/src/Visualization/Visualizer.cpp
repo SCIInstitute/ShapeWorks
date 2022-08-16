@@ -105,12 +105,12 @@ void Visualizer::display_shape(ShapeHandle shape) {
 }
 
 //-----------------------------------------------------------------------------
-StudioParticles Visualizer::get_current_shape() {
+Particles Visualizer::get_current_shape() {
   auto shapes = lightbox_->get_shapes();
   if (shapes.size() > 0) {
     return shapes[0]->get_particles();
   }
-  StudioParticles particles;
+  Particles particles;
   return particles;
 }
 
