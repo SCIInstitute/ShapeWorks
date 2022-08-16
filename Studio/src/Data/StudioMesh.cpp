@@ -1,6 +1,5 @@
 #include <Data/StudioMesh.h>
 #include <StringUtils.h>
-
 #include <itkImageRegionIteratorWithIndex.h>
 #include <itkLinearInterpolateImageFunction.h>
 #include <itkNearestNeighborInterpolateImageFunction.h>
@@ -115,7 +114,6 @@ void StudioMesh::interpolate_scalars_to_mesh(std::string name, Eigen::VectorXd p
     return;
   }
 
-
   vtkSmartPointer<vtkPolyData> point_data = vtkSmartPointer<vtkPolyData>::New();
   point_data->SetPoints(vtk_points);
 
@@ -129,8 +127,6 @@ void StudioMesh::interpolate_scalars_to_mesh(std::string name, Eigen::VectorXd p
   }
 
   auto points = this->poly_data_->GetPoints();
-
-
 
   vtkFloatArray* scalars = vtkFloatArray::New();
   scalars->SetNumberOfValues(points->GetNumberOfPoints());

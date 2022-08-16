@@ -1,29 +1,23 @@
 #pragma once
 
-/**
- * @file MeshWorkQueue.h
- * @brief Provides concurrent access to a list of shapes to work needing reconstruction
- *
- */
-
 // stl
 #include <list>
 
 // qt
-#include <QMutex>
 #include <QMetaType>
+#include <QMutex>
 
-// vnl
-#include "vnl/vnl_vector.h"
-
+// eigen
 #include <Eigen/Eigen>
-
 
 namespace shapeworks {
 
-class MeshWorkItem
-{
-public:
+/**
+ * @brief Provides concurrent access to a list of shapes to work needing reconstruction
+ *
+ */
+class MeshWorkItem {
+ public:
   std::string filename;
   Eigen::VectorXd points;
   int domain{0};
@@ -35,12 +29,8 @@ public:
   friend bool operator==(const MeshWorkItem &a, const MeshWorkItem &b);
 };
 
-
-class MeshWorkQueue
-{
-
-public:
-
+class MeshWorkQueue {
+ public:
   using WorkList = std::list<MeshWorkItem>;
 
   MeshWorkQueue();
@@ -48,7 +38,7 @@ public:
 
   void push(const MeshWorkItem &item);
 
-  MeshWorkItem* get_next_work_item();
+  MeshWorkItem *get_next_work_item();
 
   bool is_inside(const MeshWorkItem &item);
 
@@ -58,9 +48,8 @@ public:
 
   int size();
 
-private:
-
-  bool in_inside_list(const MeshWorkItem &item, const WorkList& list);
+ private:
+  bool in_inside_list(const MeshWorkItem &item, const WorkList &list);
 
   // for concurrent access
   QMutex mutex_;
@@ -69,6 +58,6 @@ private:
 
   WorkList processing_list_;
 };
-}
+}  // namespace shapeworks
 
 Q_DECLARE_METATYPE(shapeworks::MeshWorkItem);

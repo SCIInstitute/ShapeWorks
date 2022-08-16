@@ -1,41 +1,36 @@
 #pragma once
 
-/*
- * Shapeworks license
- */
+#include <Data/MeshWorkQueue.h>
+#include <Data/StudioMesh.h>
 
-/**
- * @file MeshCache.h
- * @brief Thread safe cache for meshes index by shape
- *
- * The MeshCache implements a std::map keyed by shape (list of points) with MeshHandle values.
- * It is thread-safe and can be used from any thread.
- */
-
-#include <list>
-#include <map>
-
+// qt
 #include <QMutex>
 
-#include <vnl/vnl_vector.h>
-
-#include <Data/StudioMesh.h>
-#include <Data/MeshWorkQueue.h>
-#include <Data/Preferences.h>
+// std
+#include <list>
+#include <map>
 
 namespace shapeworks {
 
 // mesh cache type
 using CacheMap = std::map<MeshWorkItem, MeshHandle>;
 
-// LRC list
+// LRU list
 using CacheList = std::list<MeshWorkItem>;
 
+/**
+ * @brief Thread safe cache for meshes index by shape
+ *
+ * The MeshCache implements a std::map keyed by shape (list of points) with MeshHandle values.
+ * It is thread-safe and can be used from any thread.
+ */
 class MeshCache {
+ public:
+  MeshCache();
 
-public:
+  void set_cache_enabled(bool enabled) { cache_enabled_ = enabled; }
 
-  MeshCache(Preferences& prefs);
+  void set_memory_percent(int percent) { cache_memory_percent_ = percent; }
 
   MeshHandle get_mesh(const MeshWorkItem& vector);
 
@@ -43,17 +38,12 @@ public:
 
   void clear();
 
-  static Preferences* pref_ref_;
-
-private:
-
+ private:
   void freeSpaceForAmount(size_t allocation);
 
   static long long get_total_physical_memory();
   static long long get_total_addressable_memory();
   static long long get_total_addressable_physical_memory();
-
-  Preferences& preferences_;
 
   // mesh cache
   CacheMap mesh_cache_;
@@ -62,12 +52,15 @@ private:
   CacheList cache_list_;
 
   // size of memory in use by the cache
-  size_t memory_size_;
+  size_t current_memory_size_ = 0;
 
   // maximum memory
-  long long max_memory_;
+  long long max_memory_ = 0;
 
   // for concurrent access
   QMutex mutex_;
+
+  bool cache_enabled_ = true;
+  int cache_memory_percent_ = 0;
 };
-}
+}  // namespace shapeworks

@@ -8,7 +8,6 @@
 
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
-#include <QSharedPointer>
 #include <QString>
 
 using PixelType = float;

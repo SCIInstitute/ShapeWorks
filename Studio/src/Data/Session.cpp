@@ -50,9 +50,11 @@ const std::string Session::DEEPSSM_C("deepssm");
 
 //---------------------------------------------------------------------------
 Session::Session(QWidget* parent, Preferences& prefs)
-    : parent_(parent), preferences_(prefs), mesh_manager_(std::shared_ptr<MeshManager>(new MeshManager(preferences_))) {
+    : parent_(parent), preferences_(prefs), mesh_manager_(new MeshManager()) {
   this->parent_ = nullptr;
   connect(this->mesh_manager_.get(), &MeshManager::new_mesh, this, &Session::handle_new_mesh);
+  // clear cache sets the mesh manager cache seettings
+  handle_clear_cache();
 }
 
 //---------------------------------------------------------------------------
@@ -70,13 +72,18 @@ void Session::handle_thread_complete() {
 
 //---------------------------------------------------------------------------
 void Session::handle_clear_cache() {
-  this->mesh_manager_->clear_cache();
+  mesh_manager_->set_cache_enabled(preferences_.get_cache_enabled());
+  mesh_manager_->set_cache_memory_percent(preferences_.get_memory_cache_percent());
+  mesh_manager_->set_parallel_enabled(preferences_.get_parallel_enabled());
+  mesh_manager_->set_num_threads(preferences_.get_num_threads());
 
-  for (auto& s : this->shapes_) {
+  mesh_manager_->clear_cache();
+
+  for (auto& s : shapes_) {
     s->clear_reconstructed_mesh();
   }
 
-  this->calculate_reconstructed_samples();
+  calculate_reconstructed_samples();
 }
 
 //---------------------------------------------------------------------------
