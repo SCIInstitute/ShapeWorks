@@ -8,7 +8,6 @@
 
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
-#include <QString>
 
 using PixelType = float;
 using ImageType = itk::Image<PixelType, 3>;
@@ -26,6 +25,7 @@ using MeshList = std::vector<MeshHandle>;
  * The Mesh class represents a single mesh generated from an image file or set of particles.
  * It is responsible for loading the image and generating a mesh from it.
  *
+ * TODO: Merge this functionality with Libs/Mesh/Mesh class
  */
 class StudioMesh {
  public:
@@ -35,14 +35,8 @@ class StudioMesh {
   //! Destructor
   ~StudioMesh();
 
-  //! Get the dimensions as a string for display (if loaded from an image)
-  QString get_dimension_string();
-
   //! Get the mesh polydata
   vtkSmartPointer<vtkPolyData> get_poly_data();
-
-  //! Get the center transform
-  vnl_vector<double> get_center_transform();
 
   //! Set the poly data directly
   void set_poly_data(vtkSmartPointer<vtkPolyData> poly_data);
@@ -77,11 +71,6 @@ class StudioMesh {
   static constexpr const char* const FFC_PAINT = "ffc_paint";
 
  private:
-  // metadata
-  int dimensions_[3];
-  vnl_vector<double> center_transform_;
-
-  // the polydata
   vtkSmartPointer<vtkPolyData> poly_data_;
 
   vtkSmartPointer<vtkStaticPointLocator> locator_;

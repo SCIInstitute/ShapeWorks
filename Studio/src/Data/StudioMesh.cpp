@@ -28,30 +28,20 @@ StudioMesh::StudioMesh() {}
 StudioMesh::~StudioMesh() {}
 
 //---------------------------------------------------------------------------
-void StudioMesh::set_poly_data(vtkSmartPointer<vtkPolyData> poly_data) { this->poly_data_ = poly_data; }
+void StudioMesh::set_poly_data(vtkSmartPointer<vtkPolyData> poly_data) { poly_data_ = poly_data; }
 
 //---------------------------------------------------------------------------
-void StudioMesh::set_error_message(std::string error_message) { this->error_message_ = error_message; }
+void StudioMesh::set_error_message(std::string error_message) { error_message_ = error_message; }
 
 //---------------------------------------------------------------------------
-std::string StudioMesh::get_error_message() { return this->error_message_; }
+std::string StudioMesh::get_error_message() { return error_message_; }
 
 //---------------------------------------------------------------------------
-QString StudioMesh::get_dimension_string() {
-  QString str = "[" + QString::number(this->dimensions_[0]) + ", " + QString::number(this->dimensions_[1]) + ", " +
-                QString::number(this->dimensions_[2]) + "]";
-  return str;
-}
-
-//---------------------------------------------------------------------------
-vtkSmartPointer<vtkPolyData> StudioMesh::get_poly_data() { return this->poly_data_; }
-
-//---------------------------------------------------------------------------
-vnl_vector<double> StudioMesh::get_center_transform() { return this->center_transform_; }
+vtkSmartPointer<vtkPolyData> StudioMesh::get_poly_data() { return poly_data_; }
 
 //---------------------------------------------------------------------------
 void StudioMesh::apply_feature_map(std::string name, ImageType::Pointer image) {
-  if (!this->poly_data_ || name == "") {
+  if (!poly_data_ || name == "") {
     return;
   }
 
@@ -60,7 +50,7 @@ void StudioMesh::apply_feature_map(std::string name, ImageType::Pointer image) {
 
   auto region = image->GetLargestPossibleRegion();
 
-  auto points = this->poly_data_->GetPoints();
+  auto points = poly_data_->GetPoints();
 
   vtkFloatArray* scalars = vtkFloatArray::New();
   scalars->SetNumberOfValues(points->GetNumberOfPoints());
@@ -84,8 +74,8 @@ void StudioMesh::apply_feature_map(std::string name, ImageType::Pointer image) {
     scalars->SetValue(i, pixel);
   }
 
-  this->poly_data_->GetPointData()->AddArray(scalars);
-  this->poly_data_->GetPointData()->SetScalars(scalars);
+  poly_data_->GetPointData()->AddArray(scalars);
+  poly_data_->GetPointData()->SetScalars(scalars);
 }
 
 //---------------------------------------------------------------------------
@@ -122,11 +112,11 @@ void StudioMesh::interpolate_scalars_to_mesh(std::string name, Eigen::VectorXd p
   point_locator->SetDivisions(100, 100, 100);
   point_locator->BuildLocator();
 
-  if (!this->poly_data_) {
+  if (!poly_data_) {
     return;
   }
 
-  auto points = this->poly_data_->GetPoints();
+  auto points = poly_data_->GetPoints();
 
   vtkFloatArray* scalars = vtkFloatArray::New();
   scalars->SetNumberOfValues(points->GetNumberOfPoints());
@@ -179,7 +169,7 @@ void StudioMesh::interpolate_scalars_to_mesh(std::string name, Eigen::VectorXd p
     scalars->SetValue(i, weighted_scalar);
   }
 
-  this->poly_data_->GetPointData()->AddArray(scalars);
+  poly_data_->GetPointData()->AddArray(scalars);
 }
 
 //---------------------------------------------------------------------------
@@ -242,7 +232,7 @@ bool StudioMesh::has_ffc_paint() {
 //---------------------------------------------------------------------------
 void StudioMesh::apply_scalars(MeshHandle mesh) {
   vtkSmartPointer<vtkPolyData> from_mesh = mesh->get_poly_data();
-  vtkSmartPointer<vtkPolyData> to_mesh = this->get_poly_data();
+  vtkSmartPointer<vtkPolyData> to_mesh = get_poly_data();
 
   // Create the tree
   vtkSmartPointer<vtkKdTreePointLocator> kd_tree = vtkSmartPointer<vtkKdTreePointLocator>::New();
