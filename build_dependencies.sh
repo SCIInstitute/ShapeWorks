@@ -17,7 +17,7 @@ VTK_VER_STR="9.1"
 ITK_VER="v5.2.1"
 ITK_VER_STR="5.2"
 EIGEN_VER="3.4.0"
-QT_MIN_VER="5.12.12"
+QT_MIN_VER="5.15.4"
 XLNT_VER="538f80794c7d736afc0a452d21313606cc5538fc"
 JKQTPLOTTER_VER="v2019.11.3-high_dpi"
 OpenVDB_VER="v9.1.0"
@@ -36,10 +36,9 @@ usage()
   echo "usage: ./build_dependencies.sh [[-n=<num-procs>] [-i=<install_path>] [-b=<build_path>] [--clean] [--no-gui] | [-h | --help]]"
   echo ""
   echo "If using Anaconda to install prerequisites please first run:"
-  echo "source ./conda_installs.sh"
+  echo "source ./install_shapeworks.sh"
   echo ""
-  echo "For GUI applications, please make sure at least version $QT_MIN_VER of Qt5 is installed and that its qmake is in the path."
-  echo "Download Qt5 from: https://download.qt.io/archive/qt/"
+  echo "For GUI applications, please make sure the ShapeWorks conda env bin dir is at the head of the path."
   echo ""
   echo "Arguments:"
   echo "  -h,--help               : Show this screen."
@@ -380,8 +379,7 @@ verify_qt()
 
     # inform user
     if [[ $QT_VERSION_OK = 0 ]]; then
-      echo '## For GUI applications, please make sure at least version $QT_MIN_VER of Qt5 is installed and that its qmake is in the path.' >&2
-      echo '## Download Qt5 from: https://download.qt.io/archive/qt/' >&2
+	echo "For GUI applications, please make sure the ShapeWorks conda env bin dir is at the head of the path." >&2
       exit 1
     fi
   fi
