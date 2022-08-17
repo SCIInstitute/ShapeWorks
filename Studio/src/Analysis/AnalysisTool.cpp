@@ -9,18 +9,17 @@
 
 // shapeworks
 #include <Analysis/AnalysisTool.h>
-#include <QMeshWarper.h>
 #include <Data/Session.h>
-#include <Shape.h>
 #include <Data/ShapeWorksWorker.h>
-#include <Logging.h>
-#include <StudioMesh.h>
 #include <Interface/ShapeWorksStudioApp.h>
 #include <Job/GroupPvalueJob.h>
 #include <Job/ParticleNormalEvaluationJob.h>
 #include <Job/StatsGroupLDAJob.h>
 #include <Logging.h>
 #include <Python/PythonWorker.h>
+#include <QMeshWarper.h>
+#include <Shape.h>
+#include <StudioMesh.h>
 #include <Visualization/Lightbox.h>
 #include <jkqtplotter/graphs/jkqtpscatter.h>
 #include <jkqtplotter/jkqtplotter.h>
@@ -408,7 +407,7 @@ bool AnalysisTool::compute_stats() {
   group1_list_.clear();
   group2_list_.clear();
 
-  Q_FOREACH (ShapeHandle shape, session_->get_shapes()) {
+  for (auto& shape : session_->get_shapes()) {
     if (groups_enabled) {
       auto value = shape->get_subject()->get_group_value(group_set);
       if (value == left_group) {

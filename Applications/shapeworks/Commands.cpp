@@ -205,7 +205,7 @@ bool AnalyzeCommand::execute(const optparse::Values& options, SharedCommandData&
     project->load(projectFile);
 
     Analyze analyze(project);
-    analyze.runOfflineAnalysis();
+    analyze.run_offline_analysis();
 
     return true;
   }
