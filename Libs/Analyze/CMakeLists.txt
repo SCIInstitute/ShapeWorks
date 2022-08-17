@@ -2,6 +2,7 @@
 add_library(Analyze STATIC
   Analyze.cpp
   Particles.cpp
+  StudioMesh.cpp
   Vis.cpp
   )
 

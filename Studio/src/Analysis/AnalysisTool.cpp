@@ -14,7 +14,7 @@
 #include <Data/Shape.h>
 #include <Data/ShapeWorksWorker.h>
 #include <Logging.h>
-#include <Data/StudioMesh.h>
+#include <StudioMesh.h>
 #include <Interface/ShapeWorksStudioApp.h>
 #include <Job/GroupPvalueJob.h>
 #include <Job/ParticleNormalEvaluationJob.h>

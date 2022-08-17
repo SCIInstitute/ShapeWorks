@@ -5,7 +5,7 @@
 #include <Data/Shape.h>
 #include <Data/ShapeWorksWorker.h>
 #include <Logging.h>
-#include <Data/StudioMesh.h>
+#include <StudioMesh.h>
 #include <ui_DataTool.h>
 
 #include <QDebug>

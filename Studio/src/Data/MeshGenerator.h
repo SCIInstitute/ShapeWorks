@@ -11,7 +11,7 @@
 
 #include "vnl/vnl_vector.h"
 
-#include <Data/StudioMesh.h>
+#include <StudioMesh.h>
 #include <Data/Preferences.h>
 #include <Data/MeshWorkQueue.h>
 

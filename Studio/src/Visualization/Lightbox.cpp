@@ -1,5 +1,5 @@
 #include <Data/Shape.h>
-#include <Data/StudioMesh.h>
+#include <StudioMesh.h>
 #include <Visualization/Lightbox.h>
 #include <Visualization/SliceView.h>
 #include <Visualization/StudioInteractorStyle.h>

@@ -92,7 +92,6 @@ SET(STUDIO_DATA_SRCS
   Data/Session.cpp
   Data/Shape.cpp
   Data/StudioEnums.cpp
-  Data/StudioMesh.cpp
   Data/SurfaceReconstructor.cpp
   Data/vtkPolyDataToImageData.cpp
   Data/ShapeWorksWorker.cpp

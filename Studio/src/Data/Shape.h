@@ -3,7 +3,7 @@
 #include <Data/MeshGroup.h>
 #include <Data/MeshManager.h>
 #include <Data/StudioEnums.h>
-#include <Data/StudioMesh.h>
+#include <StudioMesh.h>
 #include <Libs/Analyze/Particles.h>
 #include <Libs/Optimize/ParticleSystem/Constraints.h>
 #include <Libs/Project/Subject.h>

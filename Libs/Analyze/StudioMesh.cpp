@@ -1,5 +1,5 @@
 // shapeworks
-#include <Data/StudioMesh.h>
+#include "StudioMesh.h"
 #include <StringUtils.h>
 
 // itk

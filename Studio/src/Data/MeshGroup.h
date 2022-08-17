@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Data/StudioMesh.h>
+#include <StudioMesh.h>
 
 namespace shapeworks {
 
