@@ -1,5 +1,5 @@
-#include <Data/MeshManager.h>
-#include <Data/Shape.h>
+#include <MeshManager.h>
+#include <Shape.h>
 #include <Utils/StudioUtils.h>
 #include <Visualization/Visualizer.h>
 #include <vtkAppendPolyData.h>

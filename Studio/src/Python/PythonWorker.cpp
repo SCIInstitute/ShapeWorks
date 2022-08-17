@@ -5,7 +5,7 @@
 namespace py = pybind11;
 using namespace pybind11::literals;  // to bring in the `_a` literal
 
-#include <Data/Shape.h>
+#include <Shape.h>
 #include <Logging.h>
 #include <Python/PythonWorker.h>
 #include <Logging.h>

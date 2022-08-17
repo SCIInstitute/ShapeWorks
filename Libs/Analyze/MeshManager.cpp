@@ -3,8 +3,8 @@
 #include <QThread>
 
 // vtk
-#include <Data/MeshManager.h>
-#include <Data/QMeshWarper.h>
+#include <MeshManager.h>
+#include <QMeshWarper.h>
 #include <Logging.h>
 #include <vtkPolyData.h>
 

@@ -1,5 +1,5 @@
 
-#include <Data/MeshWorker.h>
+#include <MeshWorker.h>
 
 namespace shapeworks {
 

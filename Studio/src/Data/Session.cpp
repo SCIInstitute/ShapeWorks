@@ -24,9 +24,9 @@
 #include <unistd.h>
 #endif
 
-#include <Data/MeshManager.h>
+#include <MeshManager.h>
 #include <Data/Session.h>
-#include <Data/Shape.h>
+#include <Shape.h>
 #include <Logging.h>
 #include <ExcelProjectWriter.h>
 #include <JsonProjectWriter.h>

@@ -1,4 +1,4 @@
-#include <Data/MeshGroup.h>
+#include <MeshGroup.h>
 #include <vtkAppendPolyData.h>
 
 using namespace shapeworks;

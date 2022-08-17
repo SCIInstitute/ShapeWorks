@@ -20,7 +20,7 @@
 #endif  // ifndef __APPLE__
 #endif  // ifdef _WIN32
 
-#include <Data/MeshCache.h>
+#include <MeshCache.h>
 #include <Logging.h>
 #include <vtkPolyData.h>
 

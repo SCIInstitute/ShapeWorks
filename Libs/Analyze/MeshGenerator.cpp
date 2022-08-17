@@ -1,9 +1,11 @@
-#include <Data/SurfaceReconstructor.h>
+#include <SurfaceReconstructor.h>
 
-#include <Data/ItkToVtk.h>
-#include <Data/LegacyMeshGenerator.h>
-#include <Data/MeshGenerator.h>
-#include <Data/QMeshWarper.h>
+#include <ItkToVtk.h>
+#include <LegacyMeshGenerator.h>
+#include <MeshGenerator.h>
+
+#include <QMeshWarper.h>
+
 #include <Logging.h>
 #include <Libs/Mesh/Mesh.h>
 #include <Libs/Mesh/MeshUtils.h>

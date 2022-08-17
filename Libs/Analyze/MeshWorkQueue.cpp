@@ -1,4 +1,4 @@
-#include <Data/MeshWorkQueue.h>
+#include <MeshWorkQueue.h>
 
 namespace shapeworks {
 

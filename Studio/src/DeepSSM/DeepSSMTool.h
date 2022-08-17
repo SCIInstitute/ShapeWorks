@@ -7,7 +7,7 @@
 
 // studio
 #include <Data/Preferences.h>
-#include <Data/Shape.h>
+#include <Shape.h>
 
 class Ui_DeepSSMTool;
 class QLabel;

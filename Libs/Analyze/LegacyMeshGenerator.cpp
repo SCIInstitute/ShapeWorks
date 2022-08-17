@@ -1,8 +1,4 @@
-/*
- * Shapeworks license
- */
-
-#include <Data/LegacyMeshGenerator.h>
+#include <LegacyMeshGenerator.h>
 
 // vtk
 #include <vtkContourFilter.h>
@@ -16,7 +12,7 @@
 #include <vtkWindowedSincPolyDataFilter.h>
 #include <vtkDecimatePro.h>
 #include <vtkButterflySubdivisionFilter.h>
-#include <Data/vtkPolyDataToImageData.h>
+#include <vtkPolyDataToImageData.h>
 
 #include <vtkMetaImageWriter.h>
 

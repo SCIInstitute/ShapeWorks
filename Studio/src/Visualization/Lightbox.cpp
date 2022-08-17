@@ -1,4 +1,4 @@
-#include <Data/Shape.h>
+#include <Shape.h>
 #include <StudioMesh.h>
 #include <Visualization/Lightbox.h>
 #include <Visualization/SliceView.h>

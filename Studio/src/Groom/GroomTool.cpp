@@ -1,5 +1,5 @@
 #include <Data/Session.h>
-#include <Data/Shape.h>
+#include <Shape.h>
 #include <Data/ShapeWorksWorker.h>
 #include <Groom/GroomTool.h>
 #include <Libs/Groom/GroomParameters.h>

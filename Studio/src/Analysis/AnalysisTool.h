@@ -13,7 +13,7 @@
 // Studio
 #include <Analysis/ShapeEvaluationJob.h>
 #include <Data/Preferences.h>
-#include <Data/Shape.h>
+#include <Shape.h>
 #include <Visualization/Visualizer.h>
 
 class Ui_AnalysisTool;

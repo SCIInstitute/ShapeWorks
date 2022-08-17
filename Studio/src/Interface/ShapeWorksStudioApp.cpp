@@ -18,7 +18,7 @@
 
 // shapeworks
 #include <Applications/Configuration.h>
-#include <Data/SurfaceReconstructor.h>
+#include <SurfaceReconstructor.h>
 #include <Libs/Mesh/Mesh.h>
 #include <Libs/Utils/StringUtils.h>
 #include <Logging.h>
@@ -29,7 +29,7 @@
 #include <Data/ExportUtils.h>
 #include <Data/Preferences.h>
 #include <Data/Session.h>
-#include <Data/Shape.h>
+#include <Shape.h>
 #include <Logging.h>
 #include <DeepSSM/DeepSSMTool.h>
 #include <Groom/GroomTool.h>

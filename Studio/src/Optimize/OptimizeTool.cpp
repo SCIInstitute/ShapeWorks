@@ -13,7 +13,7 @@
 // studio
 #include <Data/Preferences.h>
 #include <Data/Session.h>
-#include <Data/Shape.h>
+#include <Shape.h>
 #include <Data/ShapeWorksWorker.h>
 #include <Interface/Style.h>
 #include <Logging.h>

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Data/MeshWorkQueue.h>
+#include <MeshWorkQueue.h>
 #include <StudioMesh.h>
 
 // qt

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Data/Shape.h>
+#include <Shape.h>
 #include <Visualization/ColorMap.h>
 #include <Visualization/ColorSchemes.h>
 #include <Visualization/SliceView.h>

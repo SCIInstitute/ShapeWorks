@@ -32,7 +32,7 @@
 #include <vtkUnsignedLongArray.h>
 
 // shapeworks
-#include <Data/Shape.h>
+#include <Shape.h>
 #include <Logging.h>
 #include <Utils/StudioUtils.h>
 #include <Visualization/LandmarkWidget.h>

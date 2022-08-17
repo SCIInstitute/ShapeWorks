@@ -1,10 +1,10 @@
 #pragma once
 
-#include <Data/MeshCache.h>
-#include <Data/MeshGenerator.h>
-#include <Data/MeshWorkQueue.h>
-#include <Data/MeshWorker.h>
-#include <Data/Preferences.h>
+#include <MeshCache.h>
+#include <MeshGenerator.h>
+#include <MeshWorkQueue.h>
+#include <MeshWorker.h>
+
 #include <vtkSmartPointer.h>
 
 #include <QThreadPool>

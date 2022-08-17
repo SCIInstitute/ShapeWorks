@@ -73,27 +73,14 @@ QT5_ADD_RESOURCES(STUDIO_RSCS ${UI_RESOURCES_RCC})
 
 
 SET(STUDIO_DATA_SRCS
-  Data/CustomSurfaceReconstructionFilter.cpp
   Data/LandmarkItemDelegate.cpp
   Data/LandmarkTableModel.cpp
   Data/DataTool.cpp
   Data/ExportUtils.cpp
-  Data/LegacyMeshGenerator.cpp
-  Data/MeshCache.cpp
-  Data/MeshGenerator.cpp
-  Data/MeshGroup.cpp
-  Data/MeshManager.cpp
   Data/MeshSettings.cpp
-  Data/MeshWorkQueue.cpp
-  Data/MeshWorker.cpp
-  Data/QMeshWarper.cpp
   Data/Preferences.cpp
   Data/PreferencesWindow.cpp
   Data/Session.cpp
-  Data/Shape.cpp
-  Data/StudioEnums.cpp
-  Data/SurfaceReconstructor.cpp
-  Data/vtkPolyDataToImageData.cpp
   Data/ShapeWorksWorker.cpp
   Data/Worker.cpp
   )
@@ -102,9 +89,6 @@ SET(STUDIO_DATA_MOC_HDRS
   Data/LandmarkItemDelegate.h
   Data/LandmarkTableModel.h
   Data/DataTool.h
-  Data/MeshManager.h
-  Data/QMeshWarper.h
-  Data/MeshWorker.h
   Data/Preferences.h
   Data/PreferencesWindow.h
   Data/Session.h

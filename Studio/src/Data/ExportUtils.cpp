@@ -1,7 +1,7 @@
 #include "ExportUtils.h"
 
 #include <Data/Session.h>
-#include <Data/Shape.h>
+#include <Shape.h>
 #include <Interface/ShapeWorksStudioApp.h>
 #include <StringUtils.h>
 #include <Utils/StudioUtils.h>

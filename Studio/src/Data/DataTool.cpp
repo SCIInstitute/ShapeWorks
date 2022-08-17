@@ -2,7 +2,7 @@
 #include <Data/LandmarkItemDelegate.h>
 #include <Data/LandmarkTableModel.h>
 #include <Data/Session.h>
-#include <Data/Shape.h>
+#include <Shape.h>
 #include <Data/ShapeWorksWorker.h>
 #include <Logging.h>
 #include <StudioMesh.h>

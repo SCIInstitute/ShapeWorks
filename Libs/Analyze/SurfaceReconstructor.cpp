@@ -1,4 +1,4 @@
-#include <Data/SurfaceReconstructor.h>
+#include <SurfaceReconstructor.h>
 
 #include <itkImage.h>
 #include <itkNrrdImageIOFactory.h>

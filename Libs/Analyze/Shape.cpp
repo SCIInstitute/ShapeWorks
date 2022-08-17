@@ -1,10 +1,13 @@
-#include <Data/MeshGenerator.h>
-#include <Data/Shape.h>
+#include <MeshGenerator.h>
+#include <MeshGroup.h>
+
+#include <Shape.h>
 #include <Libs/Image/Image.h>
 #include <Libs/Project/ProjectUtils.h>
 #include <Libs/Utils/StringUtils.h>
+#include <Libs/Particles/ParticleSystem.h>
 #include <Logging.h>
-#include <Visualization/Visualizer.h>
+
 #include <itkImageFileReader.h>
 #include <itkOrientImageFilter.h>
 #include <vtkCenterOfMass.h>

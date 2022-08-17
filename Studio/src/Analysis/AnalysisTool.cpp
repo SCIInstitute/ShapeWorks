@@ -9,9 +9,9 @@
 
 // shapeworks
 #include <Analysis/AnalysisTool.h>
-#include <Data/QMeshWarper.h>
+#include <QMeshWarper.h>
 #include <Data/Session.h>
-#include <Data/Shape.h>
+#include <Shape.h>
 #include <Data/ShapeWorksWorker.h>
 #include <Logging.h>
 #include <StudioMesh.h>

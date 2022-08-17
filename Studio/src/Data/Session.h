@@ -1,7 +1,7 @@
 #pragma once
 
-#include <Data/StudioEnums.h>
-#include <Data/MeshManager.h>
+#include <StudioEnums.h>
+#include <MeshManager.h>
 #include <Data/Preferences.h>
 #include <Libs/Analyze/Particles.h>
 #include <Libs/Particles/ParticleSystem.h>

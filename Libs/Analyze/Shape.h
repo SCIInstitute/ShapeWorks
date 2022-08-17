@@ -1,8 +1,8 @@
 #pragma once
 
-#include <Data/MeshGroup.h>
-#include <Data/MeshManager.h>
-#include <Data/StudioEnums.h>
+#include <MeshGroup.h>
+#include <MeshManager.h>
+#include <StudioEnums.h>
 #include <StudioMesh.h>
 #include <Libs/Analyze/Particles.h>
 #include <Libs/Optimize/ParticleSystem/Constraints.h>
