@@ -7,8 +7,6 @@
 #include <Libs/Mesh/MeshUtils.h>
 #include <Libs/Utils/StringUtils.h>
 
-#include <boost/algorithm/string/join.hpp>
-
 #include <QApplication>
 #include <QDir>
 #include <QFile>
@@ -16,6 +14,7 @@
 #include <QMessageBox>
 #include <QProgressDialog>
 #include <QXmlStreamWriter>
+#include <boost/algorithm/string/join.hpp>
 
 #ifdef _WIN32
 #include <direct.h>
@@ -24,20 +23,17 @@
 #include <unistd.h>
 #endif
 
-#include <MeshManager.h>
 #include <Data/Session.h>
-#include <Shape.h>
-#include <Logging.h>
 #include <ExcelProjectWriter.h>
-#include <JsonProjectWriter.h>
 #include <JsonProjectReader.h>
+#include <JsonProjectWriter.h>
 #include <Libs/Project/Project.h>
+#include <Logging.h>
+#include <MeshManager.h>
+#include <Shape.h>
 #include <Utils/AnalysisUtils.h>
 #include <Utils/StudioUtils.h>
 #include <Visualization/Visualizer.h>
-
-#include <Logging.h>
-
 #include <tinyxml.h>
 
 namespace shapeworks {
@@ -176,10 +172,10 @@ bool Session::save_project(QString filename) {
 
     this->project_->save(filename.toStdString());
 
-    //ExcelProjectWriter::write_project(project_, "/tmp/project.xlsx");
-    //JsonProjectWriter::write_project(project_, "/tmp/project.json");
-    //auto proj = std::make_shared<Project>();
-    //JsonProjectReader::read_project(proj, "/tmp/project.json");
+    // ExcelProjectWriter::write_project(project_, "/tmp/project.xlsx");
+    // JsonProjectWriter::write_project(project_, "/tmp/project.json");
+    // auto proj = std::make_shared<Project>();
+    // JsonProjectReader::read_project(proj, "/tmp/project.json");
 
   } catch (std::exception& e) {
     QMessageBox::warning(0, "Error saving project", QString("Error saving project: ") + e.what());
@@ -265,7 +261,7 @@ bool Session::load_light_project(QString filename) {
     domains_per_shape = atoi(elem->GetText());
   }
   std::vector<std::string> domain_names;
-  for (int i=0;i<domains_per_shape;i++) {
+  for (int i = 0; i < domains_per_shape; i++) {
     domain_names.push_back(std::to_string(i));
   }
   project_->set_domain_names(domain_names);
@@ -408,13 +404,8 @@ bool Session::load_xl_project(QString filename) {
 
   auto subjects = project_->get_subjects();
 
-  std::vector<std::string> local_point_files;
-  std::vector<std::string> global_point_files;
-
-  auto domain_names = project_->get_domain_names();
-
   for (int i = 0; i < num_subjects; i++) {
-    std::shared_ptr<Shape> shape = std::shared_ptr<Shape>(new Shape());
+    auto shape = std::make_shared<Shape>();
     shape->set_mesh_manager(mesh_manager_);
     shape->set_subject(subjects[i]);
 
@@ -623,11 +614,11 @@ bool Session::load_point_files(std::vector<std::string> local, std::vector<std::
     }
     counter += domains_per_shape;
     if (!this->shapes_[i]->import_local_point_files(local_filenames)) {
-      std::string message = "Unable to load point files: " + boost::algorithm::join(local_filenames,", ");
+      std::string message = "Unable to load point files: " + boost::algorithm::join(local_filenames, ", ");
       SW_LOG_ERROR(message);
     }
     if (!this->shapes_[i]->import_global_point_files(world_filenames)) {
-      SW_LOG_ERROR("Unable to load point files: " + boost::algorithm::join(local_filenames,", "));
+      SW_LOG_ERROR("Unable to load point files: " + boost::algorithm::join(local_filenames, ", "));
     }
     this->shapes_[i]->set_annotations(list);
   }
