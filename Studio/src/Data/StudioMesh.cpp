@@ -1,23 +1,19 @@
+// shapeworks
 #include <Data/StudioMesh.h>
 #include <StringUtils.h>
+
+// itk
 #include <itkImageRegionIteratorWithIndex.h>
 #include <itkLinearInterpolateImageFunction.h>
-#include <itkNearestNeighborInterpolateImageFunction.h>
-#include <itkOrientImageFilter.h>
-#include <itkVTKImageExport.h>
+
+// vtk
 #include <vtkFloatArray.h>
 #include <vtkKdTreePointLocator.h>
 #include <vtkPointData.h>
 #include <vtkPointLocator.h>
 #include <vtkStaticPointLocator.h>
-#include <vtkTriangleFilter.h>
 
-#include <QMessageBox>
-#include <QTextStream>
-
-using NearestNeighborInterpolatorType = itk::NearestNeighborInterpolateImageFunction<ImageType, double>;
 using LinearInterpolatorType = itk::LinearInterpolateImageFunction<ImageType, double>;
-using TransformType = vtkSmartPointer<vtkTransform>;
 
 namespace shapeworks {
 
@@ -212,13 +208,12 @@ void StudioMesh::paint_ffc(double world_pos[], double radius, bool inclusive) {
   auto scalars = get_or_create_array(FFC_PAINT, 1.0);
 
   vtkNew<vtkIdList> result;
-  /// find vertices within paint sphere
+  // find vertices within paint sphere
   locator_->FindPointsWithinRadius(radius, world_pos, result);
   for (vtkIdType i = 0; i < result->GetNumberOfIds(); i++) {
     vtkIdType point_ind = result->GetId(i);
     float value = inclusive ? 1 : 0;
     scalars->SetTuple1(point_ind, value);
-    // std::cerr << "paint " << point_ind << " to " << value << "\n";
   }
   scalars->Modified();
 }
