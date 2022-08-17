@@ -1,17 +1,14 @@
 #include <Data/Session.h>
 #include <Data/Shape.h>
 #include <Data/ShapeWorksWorker.h>
-#include <Logging.h>
-#include <Data/StudioMesh.h>
 #include <Groom/GroomTool.h>
 #include <Libs/Groom/GroomParameters.h>
+#include <Logging.h>
 #include <ui_GroomTool.h>
 
 #include <QDebug>
 #include <QMessageBox>
 #include <QThread>
-#include <Logging.h>
-
 
 namespace shapeworks {
 
