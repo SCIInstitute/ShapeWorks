@@ -299,7 +299,7 @@ void ShapeWorksStudioApp::on_action_show_project_folder_triggered() {
 
   if (!process.waitForFinished()) {
     QString error = QString("Could not open project: ") + process.errorString() + ".";
-    SW_LOG_ERROR(error.toStdString());
+    SW_ERROR(error.toStdString());
   }
 }
 
@@ -1279,7 +1279,7 @@ void ShapeWorksStudioApp::on_view_mode_combobox_currentIndexChanged(QString disp
 void ShapeWorksStudioApp::open_project(QString filename) {
   preferences_.set_last_directory(QFileInfo(filename).absolutePath());
   new_session();
-  SW_LOG_MESSAGE("Loading Project: " + filename.toStdString());
+  SW_LOG("Loading Project: " + filename.toStdString());
   handle_progress(-1);  // busy
   QApplication::processEvents();
 
@@ -1379,7 +1379,7 @@ void ShapeWorksStudioApp::open_project(QString filename) {
 
   create_iso_submenu();
   handle_progress(100);
-  SW_LOG_MESSAGE("Project loaded: " + filename.toStdString());
+  SW_LOG("Project loaded: " + filename.toStdString());
 }
 
 //---------------------------------------------------------------------------
@@ -1545,7 +1545,7 @@ void ShapeWorksStudioApp::on_action_export_mesh_scalars_triggered() {
   } else {
     auto meshes = visualizer_->get_current_meshes_transformed();
     if (meshes.empty()) {
-      SW_LOG_ERROR("Error exporting mesh: not ready yet");
+      SW_ERROR("Error exporting mesh: not ready yet");
       return;
     }
 

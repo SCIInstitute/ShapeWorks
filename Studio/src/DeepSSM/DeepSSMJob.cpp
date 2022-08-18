@@ -139,22 +139,22 @@ void DeepSSMJob::run_training()
 
   double train_split = (100.0 - params.get_validation_split()) / 100.0;
 
-  SW_LOG_MESSAGE("DeepSSM: Loading Train/Validation Loaders");
+  SW_LOG("DeepSSM: Loading Train/Validation Loaders");
   py::object get_train_val_loaders = py_deep_ssm_utils.attr("getTrainValLoaders");
   get_train_val_loaders(loader_dir, aug_data_csv, batch_size, down_factor, down_dir, train_split);
 
-  SW_LOG_MESSAGE("DeepSSM: Loading Test Loader");
+  SW_LOG("DeepSSM: Loading Test Loader");
   py::object get_test_loader = py_deep_ssm_utils.attr("getTestLoader");
   get_test_loader(loader_dir, test_img_list, down_factor, down_dir);
 
   py::object prepare_config_file = py_deep_ssm_utils.attr("prepareConfigFile");
-  SW_LOG_MESSAGE("DeepSSM: Preparing Config File");
+  SW_LOG("DeepSSM: Preparing Config File");
   std::string config_file = "deepssm/configuration.json";
   prepare_config_file(config_file, "model",
                       num_dims, out_dir, loader_dir, aug_dir, epochs,
                       learning_rate, decay_lr, fine_tune, fine_tune_epochs, fine_tune_learning_rate);
 
-  SW_LOG_MESSAGE("DeepSSM: Training");
+  SW_LOG("DeepSSM: Training");
   py::object train_deep_ssm = py_deep_ssm_utils.attr("trainDeepSSM");
   train_deep_ssm(config_file);
 }
@@ -183,7 +183,7 @@ void DeepSSMJob::run_testing()
   py::module py_deep_ssm_utils = py::module::import("DeepSSMUtils");
 
   std::string config_file = "deepssm/configuration.json";
-  SW_LOG_MESSAGE("DeepSSM: Testing");
+  SW_LOG("DeepSSM: Testing");
   py::object test_deep_ssm = py_deep_ssm_utils.attr("testDeepSSM");
   test_deep_ssm(config_file);
 }
@@ -191,7 +191,7 @@ void DeepSSMJob::run_testing()
 //---------------------------------------------------------------------------
 void DeepSSMJob::python_message(std::string str)
 {
-  SW_LOG_MESSAGE(str);
+  SW_LOG(str);
 }
 
 //---------------------------------------------------------------------------

@@ -1,14 +1,16 @@
 #pragma once
 
-#include <fstream>
-#include <string>
+#include <spdlog/fmt/fmt.h>
 
 namespace shapeworks {
 
+//! ShapeWorks Logging Interface
+/*!
+ * The Logging class supports univeral console and file logging.
+ *
+ */
 class Logging {
  public:
-  Logging();
-
   //! Return the singleton instance
   static Logging& Instance();
 
@@ -21,25 +23,25 @@ class Logging {
   //! Return the log filename
   std::string get_log_filename();
 
-  //! Log a message, use SW_LOG_MESSAGE macro
+  //! Log a message, use SW_LOG macro
   void log_message(std::string message, const int line, const char* file);
 
   //! Log a stack trace message, use SW_LOG_STACK macro
   void log_stack(std::string message);
 
-  //! Log an error, use SW_LOG_ERROR macro
+  //! Log an error, use SW_ERROR macro
   void log_error(std::string message, const int line, const char* file);
 
-  //! Log an error, use SW_SHOW_ERROR macro
-  void show_error(std::string message, const int line, const char* file);
-
-  //! Log a message, use SW_SHOW_MESSAGE macro
+  //! Log a message, use SW_MESSAGE macro
   void show_message(std::string message, const int line, const char* file);
 
-  //! Log a debug message, use SW_LOG_DEBUG macro
+  //! Log a message, use SW_STATUS macro
+  void show_status(std::string message, const int line, const char* file);
+
+  //! Log a debug message, use SW_DEBUG macro
   void log_debug(std::string message, const int line, const char* file);
 
-  //! Log a warning message, use SW_LOG_WARNING macro
+  //! Log a warning message, use SW_WARN macro
   void log_warning(std::string message, const int line, const char* file);
 
   //! Close the log, use SW_CLOSE_LOG macro
@@ -52,6 +54,9 @@ class Logging {
   void set_message_callback(std::function<void(std::string)> callback);
 
  private:
+  //! Constructor
+  Logging();
+
   std::string log_filename_;
   bool log_open_ = false;
 
@@ -64,25 +69,28 @@ class Logging {
 #define SW_LOG_STACK(message) shapeworks::Logging::Instance().log_stack(message)
 
 //! Log message macro
-#define SW_LOG_MESSAGE(message) shapeworks::Logging::Instance().log_message(message, __LINE__, __FILE__)
+#define SW_LOG(message, ...) \
+  shapeworks::Logging::Instance().log_message(fmt::format(message, ##__VA_ARGS__), __LINE__, __FILE__)
 
 //! Log warning macro
-#define SW_LOG_WARNING(message) shapeworks::Logging::Instance().log_warning(message, __LINE__, __FILE__)
+#define SW_WARN(message, ...) \
+  shapeworks::Logging::Instance().log_warning(fmt::format(message, ##__VA_ARGS__), __LINE__, __FILE__)
 
 //! Log error macro
-#define SW_LOG_ERROR(message) shapeworks::Logging::Instance().log_error(message, __LINE__, __FILE__)
+#define SW_ERROR(message, ...) \
+  shapeworks::Logging::Instance().log_error(fmt::format(message, ##__VA_ARGS__), __LINE__, __FILE__)
 
 //! Log debug macro
-#define SW_LOG_DEBUG(message) shapeworks::Logging::Instance().log_debug(message, __LINE__, __FILE__)
-
-//! Log show error macro
-#define SW_SHOW_ERROR(message) shapeworks::Logging::Instance().show_error(message, __LINE__, __FILE__)
+#define SW_DEBUG(message, ...) \
+  shapeworks::Logging::Instance().log_debug(fmt::format(message, ##__VA_ARGS__), __LINE__, __FILE__)
 
 //! Log show message macro
-#define SW_SHOW_MESSAGE(message) shapeworks::Logging::Instance().show_message(message, __LINE__, __FILE__)
+#define SW_MESSAGE(message, ...) \
+  shapeworks::Logging::Instance().show_message(fmt::format(message, ##__VA_ARGS__), __LINE__, __FILE__)
 
-//! Don't write to log, but set status
-#define SW_SET_STATUS(message) shapeworks::Logging::Instance().show_message(message, __LINE__, __FILE__)
+//! Don't write to log, but set status (e.g. in the Studio statusbar)
+#define SW_STATUS(message, ...) \
+  shapeworks::Logging::Instance().show_status(fmt::format(message, ##__VA_ARGS__), __LINE__, __FILE__)
 
 //! Close session macro
 #define SW_CLOSE_LOG() shapeworks::Logging::Instance().close_log();

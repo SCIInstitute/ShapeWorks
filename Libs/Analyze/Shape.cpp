@@ -255,7 +255,7 @@ bool Shape::import_constraints(std::vector<std::string> filenames) {
         constraints.Read(filenames[i]);
       }
     } catch (std::exception& e) {
-      SW_SHOW_ERROR(e.what());
+      SW_ERROR(e.what());
       return false;
     }
     constraints_.push_back(constraints);
@@ -297,7 +297,7 @@ bool Shape::store_constraints() {
     try {
       get_constraints(i).Write(filenames[i]);
     } catch (std::exception& e) {
-      SW_SHOW_ERROR(e.what());
+      SW_ERROR(e.what());
       return false;
     }
   }
@@ -437,7 +437,7 @@ void Shape::generate_meshes(std::vector<std::string> filenames, MeshGroup& mesh_
       mesh_group.set_mesh(i, new_mesh);
 
       if (new_mesh->get_poly_data()->GetNumberOfPoints() < 1) {
-        SW_SHOW_ERROR("Error: Mesh contained no points: " + filenames[i]);
+        SW_ERROR("Error: Mesh contained no points: " + filenames[i]);
       } else {
         // generate a basic centering transform
         auto com = vtkSmartPointer<vtkCenterOfMass>::New();
@@ -521,7 +521,7 @@ void Shape::load_feature(DisplayMode display_mode, std::string feature) {
             group.meshes()[d]->apply_feature_map(feature, image);
             apply_feature_to_points(feature, image);
           } catch (itk::ExceptionObject& excep) {
-            SW_LOG_ERROR("Unable to open file: " + filename);
+            SW_ERROR("Unable to open file: " + filename);
           }
         }
       }
@@ -755,7 +755,7 @@ void Shape::load_feature_from_scalar_file(std::string filename, std::string feat
 
   std::ifstream in(filename);
   if (!in.good()) {
-    SW_LOG_ERROR("Unable to open scalar file: " + filename);
+    SW_ERROR("Unable to open scalar file: " + filename);
     return;
   }
 

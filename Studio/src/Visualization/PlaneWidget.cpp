@@ -374,7 +374,7 @@ void PlaneWidget::flip_plane(int domain, int plane_id) {
   auto &points = plane.points();
 
   if (points.size() != 3) {
-    SW_SHOW_ERROR("Plane doesn't have 3 points");
+    SW_ERROR("Plane doesn't have 3 points");
     return;
   }
 
@@ -389,7 +389,7 @@ void PlaneWidget::apply_plane(int domain, int plane_id) {
   auto &plane = get_plane_reference(domain, plane_id);
   auto session = viewer_->get_session();
   if (plane.points().size() != 3) {
-    SW_SHOW_ERROR("Can't apply plane that doesn't have 3 points");
+    SW_ERROR("Can't apply plane that doesn't have 3 points");
     return;
   }
 
@@ -468,7 +468,7 @@ void PlaneWidget::finalize_plane_offset(int domain, int plane_id) {
 
   if (plane.points()[0] == plane.points()[1] || plane.points()[1] == plane.points()[2] ||
       plane.points()[0] == plane.points()[2]) {
-    SW_LOG_MESSAGE("Plane finalizing found co-incident points, reverting plane");
+    SW_LOG("Plane finalizing found co-incident points, reverting plane");
     plane = original;
   }
 

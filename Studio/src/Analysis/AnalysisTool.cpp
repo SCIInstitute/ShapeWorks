@@ -157,7 +157,7 @@ void AnalysisTool::handle_reconstruction_complete() {
 
   session_->calculate_reconstructed_samples();
   emit progress(100);
-  SW_LOG_MESSAGE("Reconstruction Complete");
+  SW_LOG("Reconstruction Complete");
   emit reconstruction_complete();
   /// TODO: Studio
   /// ui_->run_optimize_button->setEnabled(true);
@@ -168,7 +168,7 @@ void AnalysisTool::handle_reconstruction_complete() {
 //---------------------------------------------------------------------------
 void AnalysisTool::on_reconstructionButton_clicked() {
   store_settings();
-  SW_LOG_MESSAGE("Please wait: running reconstruction step...");
+  SW_LOG("Please wait: running reconstruction step...");
   emit progress(5);
   QThread* thread = new QThread;
 
@@ -371,7 +371,7 @@ void AnalysisTool::group_p_values_clicked() {
     handle_group_pvalues_complete();
   } else {
     if (group1_list_.size() < 3 || group2_list_.size() < 3) {
-      SW_LOG_ERROR("Unable to compute p-values with less than 3 shapes per group");
+      SW_ERROR("Unable to compute p-values with less than 3 shapes per group");
       return;
     }
     group_pvalue_job_ = QSharedPointer<GroupPvalueJob>::create(stats_);
@@ -435,7 +435,7 @@ bool AnalysisTool::compute_stats() {
   size_t point_size = points[0].size();
   for (auto&& p : points) {
     if (p.size() != point_size) {
-      SW_LOG_ERROR("Inconsistency in data, particle files must contain the same number of points");
+      SW_ERROR("Inconsistency in data, particle files must contain the same number of points");
       return false;
     }
   }
@@ -1096,7 +1096,7 @@ void AnalysisTool::initialize_mesh_warper() {
     int median = stats_.ComputeMedianShape(-32);  //-32 = both groups
 
     if (median < 0 || median >= session_->get_num_shapes()) {
-      SW_LOG_ERROR("Unable to set reference mesh, stats returned invalid median index");
+      SW_ERROR("Unable to set reference mesh, stats returned invalid median index");
       return;
     }
     std::shared_ptr<Shape> median_shape = session_->get_shapes()[median];
@@ -1104,7 +1104,7 @@ void AnalysisTool::initialize_mesh_warper() {
     auto mesh_group = median_shape->get_groomed_meshes(true);
 
     if (!mesh_group.valid()) {
-      SW_LOG_ERROR("Unable to set reference mesh, groomed mesh is unavailable");
+      SW_ERROR("Unable to set reference mesh, groomed mesh is unavailable");
       return;
     }
     auto meshes = mesh_group.meshes();

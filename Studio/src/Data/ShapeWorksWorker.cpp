@@ -35,51 +35,51 @@ void ShapeworksWorker::process() {
       try {
         this->groom_->run();
       } catch (itk::ExceptionObject& ex) {
-        SW_LOG_ERROR(std::string("ITK Exception: ") + ex.GetDescription());
+        SW_ERROR(std::string("ITK Exception: ") + ex.GetDescription());
         return;
       } catch (std::runtime_error& e) {
-        SW_LOG_ERROR(e.what());
+        SW_ERROR(e.what());
         return;
       } catch (std::exception& e) {
-        SW_LOG_ERROR(e.what());
+        SW_ERROR(e.what());
         return;
       }
       if (this->groom_->get_aborted()) {
-        SW_LOG_MESSAGE("Groom Aborted!");
+        SW_LOG("Groom Aborted!");
         return;
       }
       break;
     case ShapeworksWorker::OptimizeType:
       try {
-        SW_LOG_MESSAGE("Loading data...");
+        SW_LOG("Loading data...");
         this->optimize_parameters_->set_up_optimize(this->optimize_.data());
-        SW_LOG_MESSAGE("Optimizing correspondence...");
+        SW_LOG("Optimizing correspondence...");
         this->optimize_->Run();
       } catch (std::runtime_error e) {
         std::cerr << "Exception: " << e.what() << "\n";
-        SW_LOG_ERROR(std::string("Error: ") + e.what());
+        SW_ERROR(std::string("Error: ") + e.what());
         emit failure();
         emit finished();
         return;
       } catch (itk::ExceptionObject& ex) {
         std::cerr << "ITK Exception: " << ex << std::endl;
-        SW_LOG_ERROR(std::string("ITK Exception: ") + ex.GetDescription());
+        SW_ERROR(std::string("ITK Exception: ") + ex.GetDescription());
         emit failure();
         emit finished();
         return;
       } catch (std::exception& e) {
-        SW_LOG_ERROR(e.what());
+        SW_ERROR(e.what());
         emit failure();
         emit finished();
         return;
       } catch (...) {
-        SW_LOG_ERROR("Error during optimization!");
+        SW_ERROR("Error during optimization!");
         emit failure();
         emit finished();
         return;
       }
       if (this->optimize_->GetAborted()) {
-        SW_LOG_MESSAGE("Optimization Aborted!");
+        SW_LOG("Optimization Aborted!");
         emit failure();
         return;
       }
@@ -87,7 +87,7 @@ void ShapeworksWorker::process() {
       break;
     case ShapeworksWorker::ReconstructType:
       try {
-        SW_LOG_MESSAGE("Warping to mean space...");
+        SW_LOG("Warping to mean space...");
         for (int i = 0; i < this->session_->get_domains_per_shape(); i++) {
           auto shapes = this->session_->get_shapes();
           std::vector<std::string> distance_transforms;
@@ -103,22 +103,22 @@ void ShapeworksWorker::process() {
         }
       } catch (std::runtime_error e) {
         if (std::string(e.what()).find_first_of("Warning") != std::string::npos) {
-          SW_LOG_WARNING(e.what());
+          SW_WARN(e.what());
         } else {
-          SW_LOG_ERROR(e.what());
+          SW_ERROR(e.what());
           emit finished();
           return;
         }
       } catch (std::exception& e) {
         if (std::string(e.what()).find_first_of("Warning") != std::string::npos) {
-          SW_LOG_WARNING(e.what());
+          SW_WARN(e.what());
         } else {
-          SW_LOG_ERROR(e.what());
+          SW_ERROR(e.what());
           emit finished();
           return;
         }
       } catch (...) {
-        SW_LOG_ERROR("Error during optimization!");
+        SW_ERROR("Error during optimization!");
         emit finished();
         return;
       }

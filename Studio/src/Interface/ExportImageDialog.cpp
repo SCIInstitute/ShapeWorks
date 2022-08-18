@@ -94,12 +94,12 @@ void ExportImageDialog::export_clicked() {
     }
     prefs_.set_last_directory(QFileInfo(filename).absolutePath());
     if (pixmap_.save(filename)) {
-      SW_SHOW_MESSAGE("Saved: " + filename.toStdString());
+      SW_MESSAGE("Saved: " + filename.toStdString());
     } else {
-      SW_SHOW_ERROR("Error saving: " + filename.toStdString());
+      SW_ERROR("Error saving: " + filename.toStdString());
     }
   } catch (std::exception& e) {
-    SW_LOG_ERROR("Error saving: " + filename.toStdString() + " : " + e.what());
+    SW_ERROR("Error saving: " + filename.toStdString() + " : " + e.what());
   }
 
   accept();

@@ -141,7 +141,7 @@ void GroomTool::on_autopad_checkbox_stateChanged(int state) {
 //---------------------------------------------------------------------------
 void GroomTool::handle_error(QString msg) {
   groom_is_running_ = false;
-  SW_LOG_ERROR(msg.toStdString());
+  SW_ERROR(msg.toStdString());
   emit progress(100);
   enable_actions();
 }
@@ -364,7 +364,7 @@ void GroomTool::set_ui_from_params(GroomParameters params) {
               params.set_spacing({spacing[0], spacing[1], spacing[2]});
             }
           } catch (std::exception& e) {
-            SW_LOG_ERROR(e.what());
+            SW_ERROR(e.what());
           }
         }
       }
@@ -486,7 +486,7 @@ void GroomTool::on_run_groom_button_clicked() {
 
   timer_.start();
 
-  SW_LOG_MESSAGE("Please wait: running groom step...");
+  SW_LOG("Please wait: running groom step...");
   emit progress(0);
 
   groom_ = QSharedPointer<QGroom>(new QGroom(session_->get_project()));
@@ -512,7 +512,7 @@ void GroomTool::handle_thread_complete() {
   emit progress(95);
 
   std::string duration = QString::number(timer_.elapsed() / 1000.0, 'f', 1).toStdString();
-  SW_LOG_MESSAGE("Groom Complete.  Duration: " + duration + " seconds");
+  SW_LOG("Groom Complete.  Duration: " + duration + " seconds");
 
   // trigger reload of meshes
   Q_FOREACH (auto shape, session_->get_shapes()) { shape->reset_groomed_mesh(); }
@@ -554,7 +554,7 @@ void GroomTool::on_skip_button_clicked() {
   groom_->set_skip_grooming(true);
   groom_->run();
 
-  SW_LOG_MESSAGE("Skipped Grooming");
+  SW_LOG("Skipped Grooming");
   emit groom_complete();
 }
 

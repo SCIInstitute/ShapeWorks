@@ -61,7 +61,7 @@ void Session::handle_new_mesh() { emit new_mesh(); }
 
 //---------------------------------------------------------------------------
 void Session::handle_thread_complete() {
-  SW_LOG_MESSAGE("Reconstruction initialization complete.");
+  SW_LOG("Reconstruction initialization complete.");
   this->calculate_reconstructed_samples();
   emit update_display();
 }
@@ -311,7 +311,7 @@ bool Session::load_light_project(QString filename) {
   elem = docHandle.FirstChild("distance_transform_files").Element();
   if (elem && elem->GetText()) {
     if (!local_particles_found) {
-      SW_LOG_ERROR("Error, distance_transform_files specified, but not local_particle_files");
+      SW_ERROR("Error, distance_transform_files specified, but not local_particle_files");
       return false;
     }
     groom_files.clear();  // if someone specifies both, prefer the distance transforms
@@ -319,7 +319,7 @@ bool Session::load_light_project(QString filename) {
     inputsBuffer.str(elem->GetText());
     while (inputsBuffer >> distance_transform_filename) {
       if (!QFile::exists(QString::fromStdString(distance_transform_filename))) {
-        SW_LOG_ERROR("File does not exist: " + distance_transform_filename);
+        SW_ERROR("File does not exist: " + distance_transform_filename);
         return false;
       }
 
@@ -332,7 +332,7 @@ bool Session::load_light_project(QString filename) {
   elem = docHandle.FirstChild("mesh_files").Element();
   if (elem && elem->GetText()) {
     if (!local_particles_found) {
-      SW_LOG_ERROR("Error, mesh_files specified, but not local_particle_files");
+      SW_ERROR("Error, mesh_files specified, but not local_particle_files");
       return false;
     }
     std::string mesh_filename;
@@ -340,7 +340,7 @@ bool Session::load_light_project(QString filename) {
     while (inputsBuffer >> mesh_filename) {
       if (!QFile::exists(QString::fromStdString(mesh_filename))) {
         std::string message = "File does not exist: " + mesh_filename;
-        SW_LOG_ERROR(message);
+        SW_ERROR(message);
         return false;
       }
       groom_files.push_back(mesh_filename);
@@ -351,13 +351,13 @@ bool Session::load_light_project(QString filename) {
 
   if (!groom_files.empty()) {
     if (groom_files.size() != local_point_files.size()) {
-      SW_LOG_ERROR("Error, mismatch in number of distance_transforms and particle files");
+      SW_ERROR("Error, mismatch in number of distance_transforms and particle files");
       return false;
     }
   }
 
   if (local_point_files.size() != global_point_files.size()) {
-    SW_LOG_ERROR("Error, mismatch in number of local and world particle files");
+    SW_ERROR("Error, mismatch in number of local and world particle files");
     return false;
   }
 
@@ -448,7 +448,7 @@ bool Session::load_xl_project(QString filename) {
 
 //---------------------------------------------------------------------------
 void Session::set_project_path(QString relative_path) {
-  SW_LOG_MESSAGE("Setting project path to " + relative_path.toStdString());
+  SW_LOG("Setting project path to " + relative_path.toStdString());
 
   QDir old_path = QDir(this->project_path_);
   QDir new_path = QDir(relative_path);
@@ -522,7 +522,7 @@ void Session::load_original_files(std::vector<std::string> filenames) {
   for (int i = 0; i < filenames.size(); i++) {
     QString filename = QString::fromStdString(filenames[i]);
     if (!QFile::exists(filename)) {
-      SW_LOG_MESSAGE("File does not exist: " + filename.toStdString());
+      SW_LOG("File does not exist: " + filename.toStdString());
       return;
     }
 
@@ -615,10 +615,10 @@ bool Session::load_point_files(std::vector<std::string> local, std::vector<std::
     counter += domains_per_shape;
     if (!this->shapes_[i]->import_local_point_files(local_filenames)) {
       std::string message = "Unable to load point files: " + boost::algorithm::join(local_filenames, ", ");
-      SW_LOG_ERROR(message);
+      SW_ERROR(message);
     }
     if (!this->shapes_[i]->import_global_point_files(world_filenames)) {
-      SW_LOG_ERROR("Unable to load point files: " + boost::algorithm::join(local_filenames, ", "));
+      SW_ERROR("Unable to load point files: " + boost::algorithm::join(local_filenames, ", "));
     }
     this->shapes_[i]->set_annotations(list);
   }

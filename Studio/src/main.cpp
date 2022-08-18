@@ -58,10 +58,10 @@ int main(int argc, char** argv) {
 
   try {
     new_log();
-    SW_LOG_MESSAGE("ShapeWorks Studio " SHAPEWORKS_VERSION " initializing...");
-    // SW_LOG_DEBUG("debug");
-    // SW_LOG_WARNING("warning");
-    // SW_LOG_ERROR("error");
+    SW_LOG("ShapeWorks Studio " SHAPEWORKS_VERSION " initializing...");
+    // SW_DEBUG("debug");
+    // SW_WARN("warning");
+    // SW_ERROR("error");
 
     // needed to ensure appropriate OpenGL context is created for VTK rendering.
     QSurfaceFormat format = QVTKOpenGLNativeWidget::defaultFormat();
@@ -73,7 +73,7 @@ int main(int argc, char** argv) {
 
 #ifdef _WIN32
     QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-    SW_LOG_MESSAGE("ShapeWorks Studio win32 initializing...");
+    SW_LOG("ShapeWorks Studio win32 initializing...");
     init_crash_handler();
     ::SetErrorMode(0);
 #endif

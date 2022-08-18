@@ -135,7 +135,7 @@ static LONG __stdcall CrashHandlerExceptionFilter(EXCEPTION_POINTERS* pExPtrs)
   }
 #endif
 
-  SW_LOG_ERROR("Program crashed, stacktrace:");
+  SW_ERROR("Program crashed, stacktrace:");
 
   StackWalkerToConsole sw;  // output to console
   sw.ShowCallstack(GetCurrentThread(), pExPtrs->ContextRecord);
@@ -150,7 +150,7 @@ static LONG __stdcall CrashHandlerExceptionFilter(EXCEPTION_POINTERS* pExPtrs)
      pExPtrs->ExceptionRecord->ExceptionFlags,
      pExPtrs->ExceptionRecord->ExceptionAddress);
 
-  SW_LOG_ERROR("Program crashed, end of stacktrace");
+  SW_ERROR("Program crashed, end of stacktrace");
   STUDIO_CLOSE_LOG();
 
   // attempt to open the log file with notepad
@@ -216,9 +216,9 @@ int f(int i)
 
 int init_crash_handler()
 {
-  //SW_LOG_MESSAGE("Showing a simple callstack of the current thread:\n\n\n");
+  //SW_LOG("Showing a simple callstack of the current thread:\n\n\n");
   //StackWalkTest();
-  SW_LOG_MESSAGE("Windows Crash Handler Initialized");
+  SW_LOG("Windows Crash Handler Initialized");
 
 #ifdef EXCEPTION_FILTER_TEST
   //printf("\n\n\nShow a the callstack from inside an execption-handler:\n\n\n");

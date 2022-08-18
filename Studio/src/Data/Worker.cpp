@@ -42,7 +42,7 @@ void Worker::process()
   try {
     this->job_->run();
   } catch (std::exception& e) {
-    SW_LOG_ERROR(e.what());
+    SW_ERROR(e.what());
   }
   emit this->job_->finished();
 }

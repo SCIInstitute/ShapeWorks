@@ -96,7 +96,7 @@ void MeshManager::check_error_status(MeshHandle mesh) {
     error_emitted_ = true;
     std::string message =
         "Error during mesh construction:\n\n" + mesh->get_error_message() + "\n\nFurther messages will be suppressed\n";
-    SW_LOG_ERROR(message);
+    SW_ERROR(message);
   }
 }
 

@@ -100,12 +100,12 @@ OptimizeTool::~OptimizeTool() {}
 
 //---------------------------------------------------------------------------
 void OptimizeTool::handle_error(QString msg) {
-  SW_LOG_MESSAGE(msg.toStdString());
+  SW_LOG(msg.toStdString());
   update_run_button();
 }
 
 //---------------------------------------------------------------------------
-void OptimizeTool::handle_warning(QString msg) { SW_LOG_WARNING(msg.toStdString()); }
+void OptimizeTool::handle_warning(QString msg) { SW_WARN(msg.toStdString()); }
 
 //---------------------------------------------------------------------------
 void OptimizeTool::handle_progress(int val, QString progress_message) {
@@ -135,7 +135,7 @@ void OptimizeTool::handle_optimize_complete() {
   emit progress(100);
 
   QString duration = QString::number(elapsed_timer_.elapsed() / 1000.0, 'f', 1);
-  SW_LOG_MESSAGE("Optimize Complete.  Duration: " + duration.toStdString() + " seconds");
+  SW_LOG("Optimize Complete.  Duration: " + duration.toStdString() + " seconds");
   emit optimize_complete();
   update_run_button();
 }
@@ -146,7 +146,7 @@ void OptimizeTool::handle_optimize_failed() {
   emit progress(100);
 
   std::string duration = QString::number(elapsed_timer_.elapsed() / 1000.0, 'f', 1).toStdString();
-  SW_LOG_MESSAGE("Optimize Failed.  Duration: " + duration + " seconds");
+  SW_LOG("Optimize Failed.  Duration: " + duration + " seconds");
   emit optimize_complete();
   update_run_button();
 }
@@ -160,12 +160,12 @@ void OptimizeTool::on_run_optimize_button_clicked() {
     ui_->run_optimize_button->setText("Aborting...");
     optimization_is_running_ = false;
     shutdown_threads();
-    SW_LOG_MESSAGE("Aborted Optimize");
+    SW_LOG("Aborted Optimize");
     return;
   }
 
   if (session_->get_filename() == "") {
-    SW_LOG_ERROR("Project must be saved before running Optimize");
+    SW_ERROR("Project must be saved before running Optimize");
     ui_->run_optimize_button->setEnabled(true);
     return;
   } else {
@@ -176,7 +176,7 @@ void OptimizeTool::on_run_optimize_button_clicked() {
   emit optimize_start();
 
   store_params();
-  SW_LOG_MESSAGE("Please wait: running optimize step...");
+  SW_LOG("Please wait: running optimize step...");
 
   elapsed_timer_.start();
   optimize_ = QSharedPointer<QOptimize>::create();
@@ -209,7 +209,7 @@ void OptimizeTool::on_run_optimize_button_clicked() {
 }
 
 //---------------------------------------------------------------------------
-void OptimizeTool::handle_message(QString s) { SW_LOG_MESSAGE(s.toStdString()); }
+void OptimizeTool::handle_message(QString s) { SW_LOG(s.toStdString()); }
 
 //---------------------------------------------------------------------------
 void OptimizeTool::on_restoreDefaults_clicked() {

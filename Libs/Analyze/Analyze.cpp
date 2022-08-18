@@ -1,7 +1,6 @@
 #include "Analyze.h"
 
 #include <Logging.h>
-#include <spdlog/fmt/fmt.h>
 
 #include <iostream>
 
@@ -12,7 +11,7 @@ Analyze::Analyze(ProjectHandle project) : project_(project), mesh_manager_(new M
 
 //---------------------------------------------------------------------------
 void Analyze::run_offline_analysis() {
-  SW_LOG_MESSAGE("ShapeWorks Offline Analysis");
+  SW_LOG("ShapeWorks Offline Analysis");
   if (!project_->get_particles_present()) {
     throw std::runtime_error("Project has not been optimized, please run optimize first");
   }
@@ -32,11 +31,10 @@ void Analyze::run_offline_analysis() {
   double increment = range / half_steps;
 
   int num_modes = get_num_modes();
-  SW_LOG_MESSAGE(fmt::format("number of modes: {}", num_modes));
+  SW_LOG("number of modes: {}", num_modes);
   for (int mode = num_modes; mode > 0; mode--) {
     double eigen_value = stats_.Eigenvalues()[mode];
-
-    SW_LOG_MESSAGE(fmt::format("eigen value [{}]: {}", mode, eigen_value));
+    SW_LOG("eigen value [{}]: {}", mode, eigen_value);
   }
 }
 
@@ -52,7 +50,7 @@ bool Analyze::update_shapes() {
 
   auto subjects = project_->get_subjects();
 
-  SW_LOG_MESSAGE(fmt::format("number of subjects: {}", num_subjects));
+  SW_LOG("number of subjects: {}", num_subjects);
 
   for (int i = 0; i < num_subjects; i++) {
     auto shape = std::make_shared<Shape>();
@@ -92,15 +90,15 @@ bool Analyze::update_shapes() {
   }
 
   std::cerr << "shapes_.size() - 1 = " << shapes_.size() - 1 << "\n";
-  SW_LOG_MESSAGE(fmt::format("get_num_modes() = {}", get_num_modes()));
-  SW_LOG_MESSAGE("Successfully loaded shapes");
+  SW_LOG("get_num_modes() = {}", get_num_modes());
+  SW_LOG("Successfully loaded shapes");
 
   return true;
 }
 
 //---------------------------------------------------------------------------
 bool Analyze::compute_stats() {
-  SW_LOG_MESSAGE("Computing stats...");
+  SW_LOG("Computing stats...");
 
   std::vector<Eigen::VectorXd> points;
   std::vector<int> group_ids;
@@ -144,7 +142,7 @@ bool Analyze::compute_stats() {
   size_t point_size = points[0].size();
   for (auto&& p : points) {
     if (p.size() != point_size) {
-      SW_LOG_ERROR("Inconsistency in data, particle files must contain the same number of points");
+      SW_ERROR("Inconsistency in data, particle files must contain the same number of points");
       return false;
     }
   }
@@ -152,7 +150,7 @@ bool Analyze::compute_stats() {
   stats_.ImportPoints(points, group_ids);
   stats_.ComputeModes();
 
-  SW_LOG_MESSAGE("Computed stats successfully");
+  SW_LOG("Computed stats successfully");
   return true;
 }
 

@@ -710,7 +710,7 @@ void Viewer::display_shape(std::shared_ptr<Shape> shape) {
               ffc.applyToPolyData(poly_data);
             }
           } catch (std::exception& e) {
-            SW_SHOW_ERROR(std::string("Unable to apply free form constraints: ") + e.what());
+            SW_ERROR(std::string("Unable to apply free form constraints: ") + e.what());
           }
         }
 
@@ -1123,7 +1123,7 @@ int Viewer::handle_pick(int* click_pos) {
       vtkIdType glyph_id = input_ids->GetTuple1(input_id);
 
       if (glyph_id >= 0) {
-        SW_LOG_MESSAGE("picked correspondence point :" + std::to_string(glyph_id));
+        SW_LOG("picked correspondence point :" + std::to_string(glyph_id));
         return glyph_id;
       }
     }

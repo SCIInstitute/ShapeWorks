@@ -43,7 +43,7 @@ void ParticleNormalEvaluationJob::run() {
 
   int good_count = std::count(good_bad.begin(), good_bad.end(), true);
 
-  SW_LOG_MESSAGE("ParticleNormalEvaluationJob: found " + std::to_string(good_count) + "/" +
+  SW_LOG("ParticleNormalEvaluationJob: found " + std::to_string(good_count) + "/" +
                      std::to_string(good_bad.size()) + " good particles");
 
   emit progress(1.0);

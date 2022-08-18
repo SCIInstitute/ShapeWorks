@@ -139,7 +139,7 @@ void MeshCache::freeSpaceForAmount(size_t allocation) {
     auto item = cache_list_.back();
     current_memory_size_ -= item.memory_size;
     cache_list_.pop_back();
-    SW_LOG_MESSAGE("erasing item for " + std::to_string(item.memory_size / 1024) + " kb savings");
+    SW_LOG("erasing item for {}kb savings", item.memory_size / 1024);
     mesh_cache_.erase(item);
   }
 }

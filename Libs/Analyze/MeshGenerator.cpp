@@ -81,7 +81,7 @@ MeshHandle MeshGenerator::build_mesh_from_points(const Eigen::VectorXd& shape, i
 
     if (!poly_data) {
       std::string message = "Unable to warp mesh";
-      SW_LOG_ERROR(message);
+      SW_ERROR(message);
       mesh->set_error_message(message);
       return mesh;
     }
@@ -149,7 +149,7 @@ MeshHandle MeshGenerator::build_mesh_from_file(std::string filename, float iso_v
       mesh->set_poly_data(MeshUtils::threadSafeReadMesh(filename).clean().computeNormals().getVTKMesh());
     } catch (std::exception& e) {
       std::string message = "Error reading: " + filename;
-      SW_LOG_ERROR(message);
+      SW_ERROR(message);
       mesh->set_error_message(message);
     }
   } else {
@@ -172,7 +172,7 @@ MeshHandle MeshGenerator::build_mesh_from_file(std::string filename, float iso_v
 
       mesh = this->build_mesh_from_image(image, iso_value);
     } catch (itk::ExceptionObject& excep) {
-      SW_LOG_ERROR(excep.what());
+      SW_ERROR(excep.what());
       mesh->set_error_message(std::string("Exception: ") + excep.what());
     }
   }

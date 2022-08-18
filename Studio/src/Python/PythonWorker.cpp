@@ -78,9 +78,9 @@ void PythonWorker::start_job(QSharedPointer<Job> job) {
     try {
       this->current_job_ = job;
       this->current_job_->run();
-      SW_LOG_MESSAGE(current_job_->get_completion_message().toStdString());
+      SW_LOG(current_job_->get_completion_message().toStdString());
     } catch (py::error_already_set& e) {
-      SW_LOG_ERROR(e.what());
+      SW_ERROR(e.what());
     }
   }
 
@@ -91,7 +91,7 @@ void PythonWorker::start_job(QSharedPointer<Job> job) {
 //---------------------------------------------------------------------------
 void PythonWorker::run_job(QSharedPointer<Job> job) {
   emit job->progress(0);
-  SW_LOG_MESSAGE("Running Task: " + job->name().toStdString());
+  SW_LOG("Running Task: " + job->name().toStdString());
 
   job->start_timer();
   this->current_job_ = job;
@@ -110,13 +110,13 @@ bool PythonWorker::init() {
 
   if (this->initialized_) {
     if (!this->initialized_success_) {
-      SW_LOG_ERROR("Unable to initialize Python.  Please run " + script);
+      SW_ERROR("Unable to initialize Python.  Please run " + script);
     }
     return this->initialized_success_;
   }
   this->initialized_ = true;
 
-  SW_LOG_MESSAGE("Initializing Python!");
+  SW_LOG("Initializing Python!");
 
   QString home = qgetenv("HOME");
 #ifdef _WIN32
@@ -133,7 +133,7 @@ bool PythonWorker::init() {
   if (qfile.open(QIODevice::ReadOnly | QIODevice::Text)) {
     python_home = QString(qfile.readAll()).toUtf8().trimmed();
   } else {
-    SW_LOG_ERROR("Unable to initialize Python.  Could not find python_home file. Please run " + script);
+    SW_ERROR("Unable to initialize Python.  Could not find python_home file. Please run " + script);
     this->initialized_success_ = false;
     return false;
   }
@@ -154,7 +154,7 @@ bool PythonWorker::init() {
     }
     file.close();
   } else {
-    SW_LOG_ERROR("Unable to initialize Python.  Could not find python_path file.  Please run " + script);
+    SW_ERROR("Unable to initialize Python.  Could not find python_path file.  Please run " + script);
 
     this->initialized_success_ = false;
     return false;
@@ -165,7 +165,7 @@ bool PythonWorker::init() {
 
 #ifdef _WIN32
   if (python_home.isEmpty()) {
-    SW_LOG_ERROR("Unable to initialize Python\nPlease run install_shapeworks.bat");
+    SW_ERROR("Unable to initialize Python\nPlease run install_shapeworks.bat");
     return false;
   } else {
     std::fstream file;
@@ -180,7 +180,7 @@ bool PythonWorker::init() {
     }
 
     qputenv("PATH", path.toUtf8());
-    SW_LOG_MESSAGE("Setting PATH for Python to: " + path.toUtf8());
+    SW_LOG("Setting PATH for Python to: " + path.toUtf8());
   }
 #endif  // ifdef _WIN32
 
@@ -209,7 +209,7 @@ bool PythonWorker::init() {
     py::object get_version = sw_utils.attr("get_api_version");
     std::string version = get_version().cast<std::string>();
     if (version != PythonWorker::python_api_version) {
-      SW_LOG_ERROR("Unable to initialize Python. Expected API version " +
+      SW_ERROR("Unable to initialize Python. Expected API version " +
                                                 std::string(PythonWorker::python_api_version) +
                                                 " but found API version " + version + ". Please run " + script);
       this->initialized_success_ = false;
@@ -222,15 +222,15 @@ bool PythonWorker::init() {
     // must reset the output window so that vtkPython's from conda's python doesn't take over
     vtkOutputWindow::SetInstance(this->studio_vtk_output_window_);
 
-    SW_LOG_MESSAGE("Embedded Python Interpreter Initialized");
+    SW_LOG("Embedded Python Interpreter Initialized");
   } catch (py::error_already_set& e) {
-    SW_LOG_ERROR("Unable to initialize Python:\n" + std::string(e.what()));
-    SW_LOG_ERROR("Unable to initialize Python.  Please run " + script);
+    SW_ERROR("Unable to initialize Python:\n" + std::string(e.what()));
+    SW_ERROR("Unable to initialize Python.  Please run " + script);
     this->initialized_success_ = false;
     return false;
   } catch (const std::exception& e) {
-    SW_LOG_ERROR("Unable to initialize Python:\n" + std::string(e.what()));
-    SW_LOG_ERROR("Unable to initialize Python.  Please run " + script);
+    SW_ERROR("Unable to initialize Python:\n" + std::string(e.what()));
+    SW_ERROR("Unable to initialize Python.  Please run " + script);
     this->initialized_success_ = false;
     return false;
   }
@@ -241,7 +241,7 @@ bool PythonWorker::init() {
 
 //---------------------------------------------------------------------------
 void PythonWorker::incoming_python_message(std::string message_string) {
-  SW_LOG_MESSAGE(message_string);
+  SW_LOG(message_string);
 }
 
 //---------------------------------------------------------------------------

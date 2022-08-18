@@ -258,7 +258,7 @@ void DeepSSMTool::populate_table_from_csv(QTableWidget* table, QString filename,
   }
   QFile file(filename);
   if (!file.open(QIODevice::ReadOnly)) {
-    SW_LOG_ERROR("Unable to open file: " + filename.toStdString());
+    SW_ERROR("Unable to open file: " + filename.toStdString());
     return;
   }
 
@@ -418,7 +418,7 @@ void DeepSSMTool::update_testing_meshes() {
 
       auto mesh_group = shapes[i]->get_groomed_meshes(true);
       if (!mesh_group.valid()) {
-        SW_LOG_WARNING("Warning: Couldn't load groomed mesh for " + name.toStdString());
+        SW_WARN("Warning: Couldn't load groomed mesh for " + name.toStdString());
         continue;
       }
       Mesh base(mesh_group.meshes()[0]->get_poly_data());
@@ -446,7 +446,7 @@ void DeepSSMTool::update_testing_meshes() {
       }
     }
   } catch (std::exception& e) {
-    SW_LOG_ERROR(e.what());
+    SW_ERROR(e.what());
   }
 
   emit update_view();
@@ -484,7 +484,7 @@ void DeepSSMTool::show_augmentation_meshes() {
     QFile file(filename);
 
     if (!file.open(QIODevice::ReadOnly)) {
-      SW_LOG_ERROR("Unable to open file: " + filename.toStdString());
+      SW_ERROR("Unable to open file: " + filename.toStdString());
       return;
     }
 
@@ -605,18 +605,18 @@ void DeepSSMTool::run_tool(DeepSSMTool::ToolMode type) {
   this->current_tool_ = type;
   emit progress(-1);
   if (type == DeepSSMTool::ToolMode::DeepSSM_AugmentationType) {
-    SW_LOG_MESSAGE("Please Wait: Running Data Augmentation...");
+    SW_LOG("Please Wait: Running Data Augmentation...");
     // clean
     QFile("deepssm/Augmentation/TotalData.csv").remove();
   } else if (type == DeepSSMTool::ToolMode::DeepSSM_TrainingType) {
-    SW_LOG_MESSAGE("Please Wait: Running Training...");
+    SW_LOG("Please Wait: Running Training...");
     // clean
     QDir dir("deepssm/model");
     dir.removeRecursively();
 
     this->show_training_meshes();
   } else {
-    SW_LOG_MESSAGE("Please Wait: Running Testing...");
+    SW_LOG("Please Wait: Running Testing...");
   }
 
   this->load_plots();

@@ -3,26 +3,13 @@
 #include <spdlog/cfg/helpers.h>
 #include <spdlog/details/os.h>
 #include <spdlog/fmt/bundled/chrono.h>
-
-#include <boost/date_time.hpp>
-#include <boost/date_time/date_facet.hpp>
-#include <iostream>
-
-#include "spdlog/sinks/basic_file_sink.h"
-#include "spdlog/sinks/stdout_color_sinks.h"
-#include "spdlog/spdlog.h"
+#include <spdlog/sinks/basic_file_sink.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
+#include <spdlog/spdlog.h>
 
 namespace spd = spdlog;
 
 namespace shapeworks {
-
-//-----------------------------------------------------------------------------
-static std::string get_current_datetime() {
-  auto now = boost::posix_time::second_clock::local_time();
-  // return fmt::format("{yyyy-MM-dd HH:mm:ss.zzz}", to_tm(now));
-  return fmt::format("{:%d-%b-%Y %H:%M:%S}", to_tm(now));
-  // fmt::print("{:%d-%b-%Y %H:%M:%S}\n", to_tm(now));
-}
 
 //-----------------------------------------------------------------------------
 static std::string create_header(const int line, const char *filename) {
@@ -38,7 +25,7 @@ Logging::Logging() {
   if (!env_val.empty()) {
     spd::cfg::helpers::load_levels(env_val);
   }
-  spdlog::flush_every(std::chrono::seconds(3));
+  spd::flush_every(std::chrono::seconds(3));
 }
 
 //-----------------------------------------------------------------------------
@@ -52,10 +39,9 @@ void Logging::open_file_log(std::string filename) {
   try {
     auto logger = spd::basic_logger_mt("file", filename);
     logger->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%l] %v");
-    logger->set_level(spdlog::get_level());
-    std::cerr << "file: " << filename << "\n";
+    logger->set_level(spd::get_level());
     log_open_ = true;
-  } catch (const spdlog::spdlog_ex &ex) {
+  } catch (const spd::spdlog_ex &ex) {
     spd::error(std::string("Log file init failed: ") + ex.what());
   }
 
@@ -72,7 +58,7 @@ std::string Logging::get_log_filename() { return log_filename_; }
 void Logging::log_message(std::string message, const int line, const char *file) {
   spd::info(message);
   if (log_open_) {
-    spdlog::get("file")->info(message);
+    spd::get("file")->info(message);
   }
 }
 
@@ -80,7 +66,7 @@ void Logging::log_message(std::string message, const int line, const char *file)
 void Logging::log_stack(std::string message) {
   spd::error(message);
   if (log_open_) {
-    spdlog::get("file")->error(message);
+    spd::get("file")->error(message);
   }
 }
 
@@ -88,16 +74,8 @@ void Logging::log_stack(std::string message) {
 void Logging::log_error(std::string message, const int line, const char *file) {
   spd::error(message);
   if (log_open_) {
-    spdlog::get("file")->error(message);
+    spd::get("file")->error(message);
   }
-  if (error_callback_) {
-    error_callback_(message);
-  }
-}
-
-//-----------------------------------------------------------------------------
-void Logging::show_error(std::string message, const int line, const char *file) {
-  log_error(message, line, file);
   if (error_callback_) {
     error_callback_(message);
   }
@@ -112,11 +90,19 @@ void Logging::show_message(std::string message, const int line, const char *file
 }
 
 //-----------------------------------------------------------------------------
+void Logging::show_status(std::string message, const int line, const char *file) {
+  log_message(message, line, file);
+  if (message_callback_) {
+    message_callback_(message);
+  }
+}
+
+//-----------------------------------------------------------------------------
 void Logging::log_debug(std::string message, const int line, const char *file) {
   std::string str = create_header(line, file) + " " + message;
   spd::debug(str);
   if (log_open_) {
-    spdlog::get("file")->debug(str);
+    spd::get("file")->debug(str);
   }
 }
 
@@ -124,7 +110,7 @@ void Logging::log_debug(std::string message, const int line, const char *file) {
 void Logging::log_warning(std::string message, const int line, const char *file) {
   spd::warn(message);
   if (log_open_) {
-    spdlog::get("file")->warn(message);
+    spd::get("file")->warn(message);
   }
 }
 
@@ -134,7 +120,7 @@ void Logging::close_log() {
     return;
   }
 
-  SW_LOG_MESSAGE("Log Closed");
+  SW_LOG("Log Closed");
   log_open_ = false;
 }
 
