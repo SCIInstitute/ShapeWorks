@@ -22,9 +22,23 @@ class Analyze {
 
   int get_num_modes();
 
+  Particles get_mean_shape_points();
+  ShapeHandle get_mean_shape();
+
+  Particles get_shape_points(int mode, double value);
+  ShapeHandle get_mode_shape(int mode, double value);
+
+  bool groups_active() { return false; }
+
+  ShapeHandle create_shape_from_points(Particles points);
+
  private:
+
   bool update_shapes();
   bool compute_stats();
+
+  //! Break apart combined points into per-domain
+  Particles convert_from_combined(const Eigen::VectorXd& points);
 
   ProjectHandle project_;
 
@@ -38,5 +52,7 @@ class Analyze {
   std::shared_ptr<MeshManager> mesh_manager_;
 
   ParticleShapeStatistics stats_;
+  bool stats_ready_ = false;
+
 };
 }  // namespace shapeworks

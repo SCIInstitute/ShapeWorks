@@ -73,11 +73,11 @@ MeshHandle MeshManager::get_mesh(const MeshWorkItem& item, bool wait) {
 }
 
 //---------------------------------------------------------------------------
-MeshHandle MeshManager::get_mesh(const Eigen::VectorXd& points, int domain) {
+MeshHandle MeshManager::get_mesh(const Eigen::VectorXd& points, int domain, bool wait) {
   MeshWorkItem item;
   item.points = points;
   item.domain = domain;
-  return get_mesh(item);
+  return get_mesh(item, wait);
 }
 
 //---------------------------------------------------------------------------

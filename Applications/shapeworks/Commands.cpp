@@ -1,11 +1,13 @@
 #include "Commands.h"
+
 #include <Libs/Optimize/Optimize.h>
-#include <Libs/Optimize/OptimizeParameters.h>
-#include <Libs/Optimize/OptimizeParameterFile.h>
-#include <Libs/Groom/Groom.h>
 #include <Libs/Analyze/Analyze.h>
+#include <Libs/Groom/Groom.h>
+#include <Libs/Optimize/OptimizeParameterFile.h>
+#include <Libs/Optimize/OptimizeParameters.h>
 #include <Libs/Utils/StringUtils.h>
 #include <ShapeworksUtils.h>
+
 #include <boost/filesystem.hpp>
 #include <limits>
 
@@ -42,19 +44,21 @@ bool Example::execute(const optparse::Values &options, SharedCommandData &shared
 ///////////////////////////////////////////////////////////////////////////////
 // Seed
 ///////////////////////////////////////////////////////////////////////////////
-void Seed::buildParser()
-{
+void Seed::buildParser() {
   const std::string prog = "seed";
   const std::string desc = "sets the seed for random number generation (useful for debugging)";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--value").action("store").type("int").set_default(std::chrono::system_clock::now().time_since_epoch().count()).help("Value of seed.");
+  parser.add_option("--value")
+      .action("store")
+      .type("int")
+      .set_default(std::chrono::system_clock::now().time_since_epoch().count())
+      .help("Value of seed.");
 
   Command::buildParser();
 }
 
-bool Seed::execute(const optparse::Values& options, SharedCommandData& sharedData)
-{
+bool Seed::execute(const optparse::Values& options, SharedCommandData& sharedData) {
   int value = static_cast<int>(options.get("value"));
 
   ShapeworksUtils::setRngSeed(value);
@@ -65,8 +69,7 @@ bool Seed::execute(const optparse::Values& options, SharedCommandData& sharedDat
 ///////////////////////////////////////////////////////////////////////////////
 // Optimize
 ///////////////////////////////////////////////////////////////////////////////
-void OptimizeCommand::buildParser()
-{
+void OptimizeCommand::buildParser() {
   const std::string prog = "optimize";
   const std::string desc = "generate a particle system";
   parser.prog(prog).description(desc);
@@ -76,12 +79,10 @@ void OptimizeCommand::buildParser()
   Command::buildParser();
 }
 
-bool OptimizeCommand::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
+bool OptimizeCommand::execute(const optparse::Values& options, SharedCommandData& sharedData) {
   const std::string& projectFile(static_cast<std::string>(options.get("name")));
 
-  if (projectFile.length() == 0)
-  {
+  if (projectFile.length() == 0) {
     std::cerr << "Must specify project name\n";
     return false;
   }
@@ -115,13 +116,11 @@ bool OptimizeCommand::execute(const optparse::Values &options, SharedCommandData
       }
 
       return success;
-    }
-    catch (std::exception& e) {
+    } catch (std::exception& e) {
       std::cerr << "Error: " << e.what() << "\n";
       return false;
     }
-  }
-  else {
+  } else {
     OptimizeParameterFile param;
     param.load_parameter_file(projectFile.c_str(), &app);
     return app.Run();
@@ -131,8 +130,7 @@ bool OptimizeCommand::execute(const optparse::Values &options, SharedCommandData
 ///////////////////////////////////////////////////////////////////////////////
 // Groom
 ///////////////////////////////////////////////////////////////////////////////
-void GroomCommand::buildParser()
-{
+void GroomCommand::buildParser() {
   const std::string prog = "groom";
   const std::string desc = "groom a shapeworks project";
   parser.prog(prog).description(desc);
@@ -142,8 +140,7 @@ void GroomCommand::buildParser()
   Command::buildParser();
 }
 
-bool GroomCommand::execute(const optparse::Values& options, SharedCommandData& sharedData)
-{
+bool GroomCommand::execute(const optparse::Values& options, SharedCommandData& sharedData) {
   const std::string& projectFile(static_cast<std::string>(options.get("name")));
 
   if (projectFile.length() == 0) {
@@ -170,8 +167,7 @@ bool GroomCommand::execute(const optparse::Values& options, SharedCommandData& s
       project->save(projectFile);
     }
     return success;
-  }
-  catch (std::exception& e) {
+  } catch (std::exception& e) {
     std::cerr << "Error: " << e.what() << "\n";
     return false;
   }
@@ -180,8 +176,7 @@ bool GroomCommand::execute(const optparse::Values& options, SharedCommandData& s
 ///////////////////////////////////////////////////////////////////////////////
 // Analyze
 ///////////////////////////////////////////////////////////////////////////////
-void AnalyzeCommand::buildParser()
-{
+void AnalyzeCommand::buildParser() {
   const std::string prog = "analyze";
   const std::string desc = "analyze a shapeworks project";
   parser.prog(prog).description(desc);
@@ -192,8 +187,7 @@ void AnalyzeCommand::buildParser()
   Command::buildParser();
 }
 
-bool AnalyzeCommand::execute(const optparse::Values& options, SharedCommandData& sharedData)
-{
+bool AnalyzeCommand::execute(const optparse::Values& options, SharedCommandData& sharedData) {
   const std::string& projectFile(static_cast<std::string>(options.get("name")));
   const std::string& outputFile(static_cast<std::string>(options.get("output")));
 
@@ -215,10 +209,9 @@ bool AnalyzeCommand::execute(const optparse::Values& options, SharedCommandData&
     analyze.run_offline_analysis(outputFile);
 
     return true;
-  }
-  catch (std::exception& e) {
+  } catch (std::exception& e) {
     std::cerr << "Error: " << e.what() << "\n";
     return false;
   }
 }
-} // shapeworks
+}  // namespace shapeworks

@@ -128,7 +128,7 @@ MeshGroup Shape::get_reconstructed_meshes(bool wait) {
     auto locals = particles_.get_local_particles();
     reconstructed_meshes_.set_number_of_meshes(locals.size());
     for (int i = 0; i < locals.size(); i++) {
-      MeshHandle mesh = mesh_manager_->get_mesh(locals[i], i);
+      MeshHandle mesh = mesh_manager_->get_mesh(locals[i], i, wait);
       if (mesh) {
         reconstructed_meshes_.set_mesh(i, mesh);
       }
