@@ -71,7 +71,7 @@ void OptimizeCommand::buildParser()
   const std::string desc = "generate a particle system";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--name").action("store").type("string").set_default("").help("Path to parameter file.");
+  parser.add_option("--name").action("store").type("string").set_default("").help("Path to project file.");
 
   Command::buildParser();
 }
@@ -137,7 +137,7 @@ void GroomCommand::buildParser()
   const std::string desc = "groom a shapeworks project";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--name").action("store").type("string").set_default("").help("Path to parameter file.");
+  parser.add_option("--name").action("store").type("string").set_default("").help("Path to project file.");
 
   Command::buildParser();
 }
@@ -186,7 +186,8 @@ void AnalyzeCommand::buildParser()
   const std::string desc = "analyze a shapeworks project";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--name").action("store").type("string").set_default("").help("Path to parameter file.");
+  parser.add_option("--name").action("store").type("string").set_default("").help("Path to project file.");
+  parser.add_option("--output").action("store").type("string").set_default("").help("Path to output file.");
 
   Command::buildParser();
 }
@@ -194,9 +195,15 @@ void AnalyzeCommand::buildParser()
 bool AnalyzeCommand::execute(const optparse::Values& options, SharedCommandData& sharedData)
 {
   const std::string& projectFile(static_cast<std::string>(options.get("name")));
+  const std::string& outputFile(static_cast<std::string>(options.get("output")));
 
   if (projectFile.length() == 0) {
     std::cerr << "Must specify project name\n";
+    return false;
+  }
+
+  if (outputFile.empty()) {
+    std::cerr << "No output file specified, must pass `--outputname <filename>`\n";
     return false;
   }
 
@@ -205,7 +212,7 @@ bool AnalyzeCommand::execute(const optparse::Values& options, SharedCommandData&
     project->load(projectFile);
 
     Analyze analyze(project);
-    analyze.run_offline_analysis();
+    analyze.run_offline_analysis(outputFile);
 
     return true;
   }

@@ -16,7 +16,7 @@ class Analyze {
  public:
   Analyze(ProjectHandle project);
 
-  void run_offline_analysis();
+  void run_offline_analysis(std::string outfile);
 
   ShapeList get_shapes();
 

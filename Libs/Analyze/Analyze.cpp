@@ -2,7 +2,8 @@
 
 #include <Logging.h>
 
-#include <iostream>
+#include <nlohmann/json.hpp>
+using json = nlohmann::ordered_json;
 
 namespace shapeworks {
 
@@ -10,25 +11,19 @@ namespace shapeworks {
 Analyze::Analyze(ProjectHandle project) : project_(project), mesh_manager_(new MeshManager()) {}
 
 //---------------------------------------------------------------------------
-void Analyze::run_offline_analysis() {
+void Analyze::run_offline_analysis(std::string outfile) {
   SW_LOG("ShapeWorks Offline Analysis");
   if (!project_->get_particles_present()) {
     throw std::runtime_error("Project has not been optimized, please run optimize first");
   }
 
-  {
-  int mode = 10;
-  double eigen_value = 42.323423523532;
-  SW_LOG("eigen value [{}]: {:.4}", mode, eigen_value);
-  }
-
-  SW_DEBUG("debug");
-
-  // load data
+  // load data from the project
   update_shapes();
+
   // compute stats
   compute_stats();
 
+  json j;
   // export json file index
 
   // export pca meshes
@@ -39,11 +34,18 @@ void Analyze::run_offline_analysis() {
   double increment = range / half_steps;
 
   int num_modes = get_num_modes();
+  j["number_of_modes"] = num_modes;
   SW_LOG("number of modes: {}", num_modes);
   for (int mode = num_modes; mode > 0; mode--) {
     double eigen_value = stats_.Eigenvalues()[mode];
     SW_LOG("eigen value [{}]: {}", mode, eigen_value);
   }
+
+  std::ofstream file(outfile);
+  if (!file.good()) {
+    throw std::runtime_error("Unable to open " + outfile + " for writing");
+  }
+  file << j.dump(4);
 }
 
 //---------------------------------------------------------------------------
@@ -97,9 +99,7 @@ bool Analyze::update_shapes() {
     shapes_.push_back(shape);
   }
 
-  std::cerr << "shapes_.size() - 1 = " << shapes_.size() - 1 << "\n";
-  SW_LOG("get_num_modes() = {}", get_num_modes());
-  SW_LOG("Successfully loaded shapes");
+  SW_DEBUG("Successfully loaded shapes");
 
   return true;
 }
