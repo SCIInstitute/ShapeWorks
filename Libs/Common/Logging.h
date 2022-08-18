@@ -4,9 +4,59 @@
 
 namespace shapeworks {
 
-//! ShapeWorks Logging Interface
-/*!
+/**
+ * \class Logging
+ * \ingroup Group-Common
+ *
+ * \brief ShapeWorks Logging Library
+ *
  * The Logging class supports univeral console and file logging.
+ *
+ * To use the ShapeWorks logging library, use the pre-defined macros:
+ *
+ * Normal log message:
+ * \code
+ * SW_LOG("message")
+ * \endcode
+ *
+ * Warning:
+ * \code
+ * SW_WARN("warning")
+ * \endcode
+ *
+ * Error:
+ * \code
+ * SW_ERROR("error")
+ * \endcode
+ *
+ * Debug:
+ * \code
+ * SW_DEBUG("debug")
+ * \endcode
+ *
+ * Output (assuming it was line 25 of Analyze.cpp and SW_LOG_LEVEL=debug):
+ * \code
+ * [2022-08-18 11:40:01.021] [debug] [Analyze.cpp|25] debug
+ * \endcode
+ *
+ * The logging macros using the fmt library.  Read more here:
+ *
+ * https://github.com/fmtlib/fmt
+ *
+ * Example:
+ * \code
+ * int mode = 10;
+ * double eigen_value = 42.3;
+ * SW_LOG("eigen value [{}]: {}", mode, eigen_value);
+ * \endcode
+ *
+ * Output:
+ * \code
+ * [2022-08-18 11:37:42.613] [info] eigen value [10]: 42.32
+ * \endcode
+ *
+ *
+ *
  *
  */
 class Logging {

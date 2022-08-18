@@ -16,6 +16,14 @@ void Analyze::run_offline_analysis() {
     throw std::runtime_error("Project has not been optimized, please run optimize first");
   }
 
+  {
+  int mode = 10;
+  double eigen_value = 42.323423523532;
+  SW_LOG("eigen value [{}]: {:.4}", mode, eigen_value);
+  }
+
+  SW_DEBUG("debug");
+
   // load data
   update_shapes();
   // compute stats
