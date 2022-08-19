@@ -155,6 +155,55 @@ def load_correspondences(shapes_desc_file, correspondences_dir, T=25, d=3, M=256
     else:
         return corres_data
 
+def save_scaled_correspondences(scaling_obj, shapes_desc_file, correspondences_dir, T=25, d=3, M=256, baseline_model=False, return_desc=False):
+    with open(shapes_desc_file) as json_file:
+        shapes_desc_file = json.load(json_file)
+    num_subjects = len(shapes_desc_file['ALL_SUBJECTS']) * 2 # PRE + POST for each patient
+    subjects_array, patient_types = [], []
+    corres_data = np.zeros((num_subjects, T, d*M))
+    n = 0
+    suffx = ''
+    particle_system_type = 'world'
+    if baseline_model:
+        suffx = '_groomed'
+
+    for subject in shapes_desc_file['ALL_SUBJECTS']:
+        subjects_array.append(subject)
+        patient_types.append('PRE_ABLATION_TIME_POINTS')
+        t = 0
+        for shape_path in shapes_desc_file[subject]['PRE_ABLATION_TIME_POINTS']:
+            sub_name = Path(shape_path).stem
+            part_file_path = f'{correspondences_dir}/{sub_name}{suffx}_{particle_system_type}.particles'
+            part_scaled_file_path = f'{correspondences_dir}/{sub_name}{suffx}_{particle_system_type}_scaled.particles'
+            particles = np.loadtxt(part_file_path).flatten()
+            particles_scaled = scaling_obj.fit_transform(np.loadtxt(part_file_path))
+            np.savetxt(part_scaled_file_path, particles_scaled)
+            corres_data[n][t] = particles
+            t += 1
+        assert t == T
+        n += 1
+        subjects_array.append(subject)
+        patient_types.append('POST_ABLATION_TIME_POINTS')
+        t = 0
+        for shape_path in shapes_desc_file[subject]['POST_ABLATION_TIME_POINTS']:
+            sub_name = Path(shape_path).stem
+            part_file_path = f'{correspondences_dir}/{sub_name}{suffx}_{particle_system_type}.particles'
+            part_scaled_file_path = f'{correspondences_dir}/{sub_name}{suffx}_{particle_system_type}_scaled.particles'
+
+            particles = np.loadtxt(part_file_path).flatten()
+            particles_scaled = scaling_obj.fit_transform(np.loadtxt(part_file_path))
+            np.savetxt(part_scaled_file_path, particles_scaled)
+            corres_data[n][t] = particles
+            t += 1
+        assert t == T
+        n += 1
+    assert n == num_subjects
+    assert len(subjects_array) == num_subjects
+    assert len(patient_types) == num_subjects
+
+    print(f'Correspondence Particles Saved: shape = {corres_data.shape}')
+    return
+    
 def print_result(result_string):
     print(f'\n ++--------------------------------------------------------------------------------------------------------++ \n')
     print(result_string)
