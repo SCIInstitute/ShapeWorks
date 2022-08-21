@@ -105,7 +105,6 @@ namespace itk
             m_GradientFunction->BeforeIteration();
         counter++;
       
-      std::cout << "GD-- Befor e Iteration  done " << std::endl;
 
         // Iterate over each domain
       const auto domains_per_shape = m_ParticleSystem->GetDomainsPerShape();
@@ -124,14 +123,12 @@ namespace itk
               }
 
           const shapeworks::ParticleDomain *domain = m_ParticleSystem->GetDomain(dom);
-          std::cout << "GD-- 1 ... " << std::endl;
           
 
             typename GradientFunctionType::Pointer localGradientFunction = m_GradientFunction;
 
             // must clone this as we are in a thread and the gradient function is not thread-safe
             localGradientFunction = m_GradientFunction->Clone();
-            std::cout << "GD-- 2 ... Cloning " << std::endl;
 
 
             // Tell function which domain we are working on.
@@ -142,12 +139,10 @@ namespace itk
               if (m_TimeSteps[dom][k] < minimumTimeStep) {
                 m_TimeSteps[dom][k] = minimumTimeStep;
               }
-              std::cout << "GD-- 3 ... Before  Before Evaluate " << std::endl;
 
               // Compute gradient update.
               double energy = 0.0;
               localGradientFunction->BeforeEvaluate(k, dom, m_ParticleSystem);
-              std::cout << "GD-- 3 ... After Before Evaluate " << std::endl;
 
               // maximumUpdateAllowed is set based on some fraction of the distance between particles
               // This is to avoid particles shooting past their neighbors
