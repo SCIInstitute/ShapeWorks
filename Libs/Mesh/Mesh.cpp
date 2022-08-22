@@ -1319,6 +1319,9 @@ bool Mesh::prepareFFCFields(std::vector<std::vector<Eigen::Vector3d>> boundaries
     points = getIGLMesh(V, F);
   }
 
+  std::vector<size_t> allBoundaryVerts;
+  std::vector< std::vector<size_t> > perVertBoundaryVerts;
+
   for (size_t bound = 0; bound < boundaries.size(); bound++) {
 
     std::cout << "Bound = " << bound << " of size " << boundaries[bound].size() << std::endl;
@@ -1350,6 +1353,7 @@ bool Mesh::prepareFFCFields(std::vector<std::vector<Eigen::Vector3d>> boundaries
         pathpt = getPoint(ptid);
         selectionPoints->InsertNextPoint(pathpt[0], pathpt[1], pathpt[2]);
         boundaryVerts.push_back(ptid);
+        allBoundaryVerts.push_back(ptid);
       }
 
       // If the current and last vertices are different, then add all vertices in the path to the boundaryVerts list
@@ -1358,52 +1362,25 @@ bool Mesh::prepareFFCFields(std::vector<std::vector<Eigen::Vector3d>> boundaries
         pathpt = getPoint(ptid);
         selectionPoints->InsertNextPoint(pathpt[0], pathpt[1], pathpt[2]);
         boundaryVerts.push_back(ptid);
+        allBoundaryVerts.push_back(ptid);
       }
 
       lastId = ptid;
     }
-
-    std::cout << "Selector num points " << selectionPoints->GetNumberOfPoints() << std::endl;
-
-    if (selectionPoints->GetNumberOfPoints() < 3) {
-      /// TODO: log an event that this occurred.  It's not really fatal as we may be applying to a mesh where this
-      /// doesn't apply
-      continue;
-    }
-
-    auto select = vtkSmartPointer<vtkSelectPolyData>::New();
-    select->SetLoop(selectionPoints);
-    select->SetInputData(this->poly_data_);
-    select->GenerateSelectionScalarsOn();
-    select->SetSelectionModeToLargestRegion();
-
-    // Clipping mesh
-    auto selectclip = vtkSmartPointer<vtkClipPolyData>::New();
-    selectclip->SetInputConnection(select->GetOutputPort());
-    selectclip->SetValue(0.0);
-    selectclip->Update();
-
-    MeshType halfmesh = selectclip->GetOutput();
-
-    if (halfmesh->GetNumberOfPoints() == 0) {
-      /// TODO: log an event that this occurred.  It's not really fatal as we may be applying to a mesh where this
-      /// doesn't apply
-      std::cout << "zero points in field, so exit"  << std::endl;
-      continue;
-    }
+    perVertBoundaryVerts.push_back(boundaryVerts);
+  }  // Per boundary for loop end
 
     std::cout << "Computing inout"  << std::endl;
-    vtkSmartPointer<vtkDoubleArray> inout = computeInOutForFFCs(query, halfmesh);
+    vtkSmartPointer<vtkDoubleArray> inout = computeInOutForFFCs(allBoundaryVerts, query,
+                                                                V, F);
     std::cout << "Inout computed"  << std::endl;
 
     if (!onlyGenerateInOut) {
       auto values = vtkSmartPointer<vtkDoubleArray>::New();
-      auto absvalues = setDistanceToBoundaryValueFieldForFFCs(values, points, boundaryVerts, inout, V, F);
+      auto absvalues = setDistanceToBoundaryValueFieldForFFCs(values, points, allBoundaryVerts, inout, V, F);
       this->poly_data_->GetPointData()->SetActiveScalars("value");
       std::vector<Eigen::Matrix3d> face_grad = this->setGradientFieldForFFCs(absvalues, V, F);
     }
-
-  }  // Per boundary for loop end
 
   // Write mesh for debug purposes
       std::string fnin = "dev/mesh_" + std::to_string(query[0]) + "_" + std::to_string(query[2]) + "_in.vtk";
@@ -1492,72 +1469,116 @@ vtkSmartPointer<vtkPoints> Mesh::getIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi&
   return points;
 }
 
-vtkSmartPointer<vtkDoubleArray> Mesh::computeInOutForFFCs(Eigen::Vector3d query, MeshType halfmesh) {
-  // Finding which half is in and which is out.
-  bool halfmeshisin = true;
-  auto* arr =
-      vtkDoubleArray::SafeDownCast(poly_data_->GetPointData()->GetArray("inout"));  // Check if an inout already exists
+vtkSmartPointer<vtkDoubleArray> Mesh::computeInOutForFFCs(std::vector<size_t> allBoundaryVerts, Eigen::Vector3d query,
+                                                          Eigen::MatrixXd V, Eigen::MatrixXi F) {
 
-  // Create half-mesh tree
-  auto kdhalf_locator = vtkSmartPointer<vtkKdTreePointLocator>::New();
-  kdhalf_locator->SetDataSet(halfmesh);
-  kdhalf_locator->BuildLocator();
+  // Find a face that is inside by checking around the qury point
+  this->updateCellLocator();
 
-  // Create full-mesh tree
-  updatePointLocator();
+  double closestPoint[3];
+  vtkIdType cellId;
+  int subId;
+  double dist;
+  this->cellLocator->FindClosestPoint(query.data(), closestPoint, cellId, subId, dist);
 
-  // Checking which mesh is closer to the query point. Recall that the query point must not necessarely lie on the mesh,
-  // so we check both the half mesh and the full mesh.
-  double querypt[3] = {query[0], query[1], query[2]};
+  std::cout << "cellId " << cellId << " this->numFaces() " << this->numFaces()<< std::endl;
 
-  vtkIdType halfi = kdhalf_locator->FindClosestPoint(querypt);
-  vtkIdType fulli = this->pointLocator->FindClosestPoint(querypt);
-
-  double halfp[3];
-  halfmesh->GetPoint(halfi, halfp);
-
-  double fullp[3];
-  this->poly_data_->GetPoint(fulli, fullp);
-
-  if (halfp[0] != fullp[0] || halfp[1] != fullp[1] || halfp[2] != fullp[2]) {
-    halfmeshisin = false;  // If the closest point in halfmesh is not the closest point in fullmesh, then halfmesh is
-                           // not the in mesh.
+  for(size_t i = 0; i < this->numFaces(); i++){
+      filled.push_back(0);
   }
+
+  this->fill(cellId, V, F, allBoundaryVerts);
 
   vtkSmartPointer<vtkDoubleArray> inout = vtkSmartPointer<vtkDoubleArray>::New();
   inout->SetNumberOfComponents(1);
   inout->SetNumberOfTuples(this->poly_data_->GetNumberOfPoints());
   inout->SetName("inout");
 
-  for (vtkIdType i = 0; i < this->poly_data_->GetNumberOfPoints(); i++) {
-    this->poly_data_->GetPoint(i, fullp);
-
-    halfi = kdhalf_locator->FindClosestPoint(fullp);
-    halfmesh->GetPoint(halfi, halfp);
-    // std::cout << i <<  " (" << fullp[0] << " " << fullp[1] << " " << fullp[2] << ") " << halfi << " (" << halfp[0] <<
-    // " " << halfp[1] << " " << halfp[2] << " )" << std::endl;
-    bool ptinhalfmesh = false;
-    if (fullp[0] == halfp[0] && fullp[1] == halfp[1] && fullp[2] == halfp[2]) {
-      // If in halfmesh
-      ptinhalfmesh = true;
-    }
-    // The relationship becomes an xor operation between halfmeshisin and ptinhalfmesh to determine whether each point
-    // is in or out. Thus we set values for the scalar field.
-    if (!halfmeshisin ^ ptinhalfmesh) {
-      if (arr) {
-        inout->SetValue(i, std::min(1., arr->GetValue(i)));
-      } else {
-        inout->SetValue(i, 1.);
-      }
-    } else {
+  for(size_t i = 0; i < this->poly_data_->GetNumberOfPoints(); i++) {
       inout->SetValue(i, 0.);
-    }
   }
+
+  for(size_t i = 0; i < filled.size(); i++) {
+      if(filled[i]){
+          auto vertecesi = F.row(i);
+          inout->SetValue(vertecesi(0), 1.);
+          inout->SetValue(vertecesi(1), 1.);
+          inout->SetValue(vertecesi(2), 1.);
+      }
+  }
+
+//  for (vtkIdType i = 0; i < this->poly_data_->GetNumberOfPoints(); i++) {
+//    this->poly_data_->GetPoint(i, fullp);
+
+//    halfi = kdhalf_locator->FindClosestPoint(fullp);
+//    halfmesh->GetPoint(halfi, halfp);
+//    // std::cout << i <<  " (" << fullp[0] << " " << fullp[1] << " " << fullp[2] << ") " << halfi << " (" << halfp[0] <<
+//    // " " << halfp[1] << " " << halfp[2] << " )" << std::endl;
+//    bool ptinhalfmesh = false;
+//    if (fullp[0] == halfp[0] && fullp[1] == halfp[1] && fullp[2] == halfp[2]) {
+//      // If in halfmesh
+//      ptinhalfmesh = true;
+//    }
+//    // The relationship becomes an xor operation between halfmeshisin and ptinhalfmesh to determine whether each point
+//    // is in or out. Thus we set values for the scalar field.
+//    if (!halfmeshisin ^ ptinhalfmesh) {
+//      if (arr) {
+//        inout->SetValue(i, std::min(1., arr->GetValue(i)));
+//      } else {
+//        inout->SetValue(i, 1.);
+//      }
+//    } else {
+//      inout->SetValue(i, 0.);
+//    }
+//  }
 
   // Setting scalar field
   this->setField("inout", inout, Mesh::Point);
 
   return inout;
+}
+
+bool Mesh::fill(size_t i, Eigen::MatrixXd V, Eigen::MatrixXi F, std::vector<size_t> allBoundaryVerts){
+    // If already checked, return
+    if(filled[i]){return 0;}
+
+    // Else, set to checked and proceed
+    filled[i] = 1;
+
+    // Find cell neighbors which share edges
+    std::vector<size_t> neighbors;
+
+    for(size_t j = 0; j < this->numFaces(); j++){
+        size_t same_count = 0;
+
+        if(F(i,0) == F(j,0)) same_count++;
+        if(F(i,1) == F(j,0)) same_count++;
+        if(F(i,2) == F(j,0)) same_count++;
+        if(F(i,0) == F(j,1)) same_count++;
+        if(F(i,1) == F(j,1)) same_count++;
+        if(F(i,2) == F(j,1)) same_count++;
+        if(F(i,0) == F(j,2)) same_count++;
+        if(F(i,1) == F(j,2)) same_count++;
+        if(F(i,2) == F(j,2)) same_count++;
+
+        if(same_count == 2) neighbors.push_back(j);
+    }
+
+    if(neighbors.size() != 3)
+        std::cout << "Set " << neighbors.size() << std::endl;
+
+    for (size_t j = 0; j < neighbors.size(); j++){
+        auto vertexj = F.row(j);
+        size_t boundary_vertices_in_j = 0;
+        for (size_t bvert = 0; bvert < allBoundaryVerts.size(); bvert++){
+            if(vertexj(0) == allBoundaryVerts[bvert] || vertexj(1) == allBoundaryVerts[bvert] || vertexj(2) == allBoundaryVerts[bvert]){
+                boundary_vertices_in_j++;
+            }
+        }
+        if(boundary_vertices_in_j != 2){
+            fill(j, V, F, allBoundaryVerts);
+        }
+    }
 }
 
 vtkSmartPointer<vtkDoubleArray> Mesh::setDistanceToBoundaryValueFieldForFFCs(vtkSmartPointer<vtkDoubleArray> values,

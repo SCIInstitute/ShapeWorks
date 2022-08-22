@@ -292,12 +292,18 @@ class Mesh {
       Eigen::MatrixXi F);  // fixme: sets value, returns absvalues, not sure why
 
   /// Computes whether point is inside or outside the boundary
-  vtkSmartPointer<vtkDoubleArray> computeInOutForFFCs(Eigen::Vector3d query,
-                                                      MeshType halfmesh);  // similar issues to above
+  vtkSmartPointer<vtkDoubleArray> computeInOutForFFCs(std::vector<size_t> allBoundaryVerts, Eigen::Vector3d query,
+                                                      Eigen::MatrixXd V, Eigen::MatrixXi F);  // similar issues to above
 
   /// Computes baricentric coordinates given a query point and a face number
   Eigen::Vector3d computeBarycentricCoordinates(const Eigen::Vector3d& pt, int face)
       const;  // // WARNING: Copied directly from Meshwrapper. TODO: When refactoring, take this into account.
+
+  // Flood fill keeping track
+  std::vector<bool> filled;
+
+  // Recursive flood fill
+  bool fill(size_t i, Eigen::MatrixXd V, Eigen::MatrixXi F, std::vector<size_t> allBoundaryVerts);
 
 };
 
