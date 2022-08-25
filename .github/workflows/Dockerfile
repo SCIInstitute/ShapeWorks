@@ -26,9 +26,9 @@ RUN curl https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -
 
 RUN pip3 install --upgrade aqtinstall setuptools
 
-RUN apt-get install rsync freeglut3-dev -y
+RUN apt-get install rsync freeglut3-dev libegl1-mesa-dev -y
 
-ARG QT=5.9.9
+ARG QT=5.12.12
 ARG QT_HOST=linux
 ARG QT_TARGET=desktop
 RUN aqt install --outputdir /opt/qt ${QT} ${QT_HOST} ${QT_TARGET} -m all \

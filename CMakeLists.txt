@@ -15,10 +15,10 @@ if (NOT "${HASH}" STREQUAL "bb94438a695c749b264180019abbbb97")
   message( FATAL_ERROR "MD5 hash of '${CMAKE_CURRENT_SOURCE_DIR}/Testing/data/icp_baseline.nrrd' is incorrect.  This most likely means that git-lfs was not installed when ShapeWorks was cloned." )
 endif()
 
-set(CMAKE_CXX_STANDARD 14)             # available options are [98, 11, 14, 17. 20]
+set(CMAKE_CXX_STANDARD 17)             # available options are [98, 11, 14, 17. 20]
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/CMake")
-find_package(Python3 3.7 EXACT REQUIRED)
+find_package(Python3 3.9 EXACT REQUIRED COMPONENTS Interpreter Development)
 
 if (NOT APPLE)
   option(USE_OPENMP      "Build using OpenMP" ON)
@@ -88,11 +88,14 @@ if (SHAPEWORKS_GUI)
     
   find_package(Qt5 COMPONENTS Core Widgets OpenGL Gui Sql Xml Svg PrintSupport ${SHAPEWORKS_QT_REQUIRED})
   if (Qt5Core_FOUND AND Qt5Widgets_FOUND AND Qt5OpenGL_FOUND AND Qt5Gui_FOUND AND Qt5Sql_FOUND)
-  set(SHAPEWORKS_QT_FOUND 1)
+    set(SHAPEWORKS_QT_FOUND 1)
+    if (Qt5Widgets_VERSION VERSION_LESS 5.15.4)
+        message(FATAL_ERROR "Minimum supported Qt5 version is 5.15.4!  Add the shapeworks conda env's bin dir to the start of $PATH")
+    endif()
   else()
-  set(SHAPEWORKS_QT_FOUND 0)
+    set(SHAPEWORKS_QT_FOUND 0)
   endif()
-
+  
   find_package(JKQTCommonSharedLib REQUIRED)
   find_package(JKQTMathTextSharedLib REQUIRED)
   find_package(JKQTPlotterSharedLib REQUIRED)

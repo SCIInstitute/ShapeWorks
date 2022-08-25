@@ -41,6 +41,8 @@ compress_file() {
     if [[ "$PLATFORM" == "windows" ]]; then
 	7z -spf a "$1" "$2"
     else
+	df -h
+	which tar
 	tar --use-compress-program=pigz -cf "$1" "$2"
     fi
 }
@@ -51,6 +53,8 @@ decompress_file() {
 	    7z -spf x "$1"
 	fi
     else
+	df -h
+	which tar
 	if tar -tzf "$1" >/dev/null ; then
 	    tar --use-compress-program=pigz -xf "$1"
 	fi

@@ -145,7 +145,6 @@ theme:
 
 markdown_extensions:
    - attr_list
-   - fontawesome_markdown
    - pymdownx.tasklist
    - mdx_math
    - admonition

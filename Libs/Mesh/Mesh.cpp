@@ -174,6 +174,7 @@ Mesh& Mesh::write(const std::string& pathname, bool binaryFile) {
   try {
     if (StringUtils::hasSuffix(pathname, ".vtk")) {
       auto writer = vtkSmartPointer<vtkPolyDataWriter>::New();
+      writer->SetFileVersion(42);
       writer->SetFileName(pathname.c_str());
       writer->SetInputData(this->poly_data_);
       writer->WriteArrayMetaDataOff();  // needed for older readers to read these files
@@ -1397,7 +1398,7 @@ bool Mesh::prepareFFCFields(std::vector<std::vector<Eigen::Vector3d>> boundaries
   }  // Per boundary for loop end
 
   // Write mesh for debug purposes
-  //    std::string fnin = "dev/mesh_" + std::to_string(dom) + "_" + std::to_string(num) + "_in.vtk";
+  //    std::string fnin = "dev/mesh_" + std::to_string(query[0]) + "_" + std::to_string(query[2]) + "_in.vtk";
   //    this->write(fnin);
 
   this->invalidateLocators();

@@ -35,13 +35,13 @@ jobs:
         source ~/.zshrc
         brew install ccache pigz gnu-tar coreutils
 
-    - name: Acquire 10.13 SDK
+    - name: Acquire 10.15 SDK
       run: |
-        curl -L -o $HOME/MacOSX10.13.sdk.tar.xz https://github.com/phracker/MacOSX-SDKs/releases/download/11.3/MacOSX10.13.sdk.tar.xz
-        cd $HOME && tar -xJf MacOSX10.13.sdk.tar.xz
+        curl -L -o $HOME/MacOSX10.15.sdk.tar.xz https://github.com/phracker/MacOSX-SDKs/releases/download/11.3/MacOSX10.15.sdk.tar.xz
+        cd $HOME && tar -xJf MacOSX10.15.sdk.tar.xz
         
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         lfs: true
 
@@ -66,7 +66,7 @@ jobs:
     - name: Install Qt
       uses: jurplel/install-qt-action@v2.13.0
       with:
-        version: "5.9.9"
+        version: "5.12.12"
         cached: ${{ steps.cache-qt.outputs.cache-hit }}
 
     - name: Build Dependencies
@@ -75,7 +75,7 @@ jobs:
 
     - name: cmake
       shell: bash -l {0}
-      run: conda activate shapeworks && mkdir build && cd build && cmake -DCMAKE_CXX_FLAGS=-g -DCMAKE_PREFIX_PATH=$HOME/install -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DPython3_ROOT_DIR:FILEPATH=${CONDA_PREFIX} -DUSE_OPENMP=OFF -DBuild_PythonAPI=ON -DBuild_Studio=ON -DBuild_View2=ON -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/shapeworks-install -DCMAKE_OSX_SYSROOT="$HOME/MacOSX10.13.sdk" -DCMAKE_OSX_DEPLOYMENT_TARGET="10.13" -DBUILD_DOCUMENTATION=ON ..
+      run: conda activate shapeworks && mkdir build && cd build && cmake -DCMAKE_LIBTOOL=/usr/bin/libtool -DCMAKE_CXX_FLAGS=-g -DCMAKE_PREFIX_PATH=$HOME/install -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DPython3_ROOT_DIR:FILEPATH=${CONDA_PREFIX} -DUSE_OPENMP=OFF -DBuild_PythonAPI=ON -DBuild_Studio=ON -DBuild_View2=ON -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/shapeworks-install -DCMAKE_OSX_SYSROOT="$HOME/MacOSX10.15.sdk" -DCMAKE_OSX_DEPLOYMENT_TARGET="10.15" -DBUILD_DOCUMENTATION=ON ..
 
     - name: make
       shell: bash -l {0}
