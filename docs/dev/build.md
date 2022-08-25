@@ -71,6 +71,14 @@ Use `$ ./build_dependencies.sh --help` for more details on the available options
     
     Make sure you added Qt to your path as explained in the Qt5 installation step.  
 
+!!! note 
+    **OpenSUSE Users: If you get an error** that looks like this:  
+    ```
+    Could NOT find OpenGL (missing: OPENGL_opengl_LIBRARY OPENGL_glx_LIBRARY OPENGL_INCLUDE_DIR)
+    ```
+    
+    Make sure the following are installed: Mesa-devel, freeglut-devel, libX11-devel  
+
 !!! important
     If you decide to build ITK yourself and you would like to use the ShapeWorks GUI applications, __ITK must be built with VTK__.  
 
