@@ -59,9 +59,6 @@ int main(int argc, char** argv) {
   try {
     new_log();
     SW_LOG("ShapeWorks Studio " SHAPEWORKS_VERSION " initializing...");
-    // SW_DEBUG("debug");
-    // SW_WARN("warning");
-    // SW_ERROR("error");
 
     // needed to ensure appropriate OpenGL context is created for VTK rendering.
     QSurfaceFormat format = QVTKOpenGLNativeWidget::defaultFormat();
@@ -82,8 +79,7 @@ int main(int argc, char** argv) {
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
 
-    QSharedPointer<shapeworks::ShapeWorksStudioApp> studio_app =
-        QSharedPointer<shapeworks::ShapeWorksStudioApp>(new shapeworks::ShapeWorksStudioApp());
+    auto studio_app = QSharedPointer<ShapeWorksStudioApp>::create();
     QResource::registerResource(RSCS_FILE);
     studio_app->setWindowIcon(QIcon(ICON_FILE));
     studio_app->initialize_vtk();

@@ -60,6 +60,9 @@ void Logging::log_message(std::string message, const int line, const char *file)
   if (log_open_) {
     spd::get("file")->info(message);
   }
+  if (message_callback_) {
+    message_callback_(message);
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -104,6 +107,9 @@ void Logging::log_debug(std::string message, const int line, const char *file) {
   if (log_open_) {
     spd::get("file")->debug(str);
   }
+  if (debug_callback_) {
+    debug_callback_(message);
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -111,6 +117,9 @@ void Logging::log_warning(std::string message, const int line, const char *file)
   spd::warn(message);
   if (log_open_) {
     spd::get("file")->warn(message);
+  }
+  if (warning_callback_) {
+    warning_callback_(message);
   }
 }
 
@@ -129,5 +138,11 @@ void Logging::set_error_callback(std::function<void(std::string)> callback) { er
 
 //-----------------------------------------------------------------------------
 void Logging::set_message_callback(std::function<void(std::string)> callback) { message_callback_ = callback; }
+
+//-----------------------------------------------------------------------------
+void Logging::set_warning_callback(std::function<void(std::string)> callback) { warning_callback_ = callback; }
+
+//-----------------------------------------------------------------------------
+void Logging::set_debug_callback(std::function<void(std::string)> callback) { debug_callback_ = callback; }
 
 }  // namespace shapeworks

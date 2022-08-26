@@ -18,10 +18,10 @@
 
 // shapeworks
 #include <Applications/Configuration.h>
-#include <SurfaceReconstructor.h>
 #include <Libs/Mesh/Mesh.h>
 #include <Libs/Utils/StringUtils.h>
 #include <Logging.h>
+#include <SurfaceReconstructor.h>
 
 // studio
 #include <Analysis/AnalysisTool.h>
@@ -29,8 +29,6 @@
 #include <Data/ExportUtils.h>
 #include <Data/Preferences.h>
 #include <Data/Session.h>
-#include <Shape.h>
-#include <Logging.h>
 #include <DeepSSM/DeepSSMTool.h>
 #include <Groom/GroomTool.h>
 #include <Interface/CompareWidget.h>
@@ -40,8 +38,10 @@
 #include <Interface/SplashScreen.h>
 #include <Interface/StatusBarWidget.h>
 #include <Interface/WheelEventForwarder.h>
+#include <Logging.h>
 #include <Optimize/OptimizeTool.h>
 #include <Python/PythonWorker.h>
+#include <Shape.h>
 #include <Utils/StudioUtils.h>
 #include <Visualization/Lightbox.h>
 #include <Visualization/Visualizer.h>
@@ -69,14 +69,16 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
   studio_vtk_output_window_ = vtkSmartPointer<StudioVtkOutputWindow>::New();
   vtkOutputWindow::SetInstance(studio_vtk_output_window_);
 
-
-  ///connect(&(StudioLog::Instance()), &StudioLog::error_signal, this, &ShapeWorksStudioApp::handle_error);
-  ///connect(&(StudioLog::Instance()), &StudioLog::message_signal, this, &ShapeWorksStudioApp::handle_message);
+  /// connect(&(StudioLog::Instance()), &StudioLog::error_signal, this, &ShapeWorksStudioApp::handle_error);
+  /// connect(&(StudioLog::Instance()), &StudioLog::message_signal, this, &ShapeWorksStudioApp::handle_message);
   auto error_callback = std::bind(&ShapeWorksStudioApp::handle_error, this, std::placeholders::_1);
   Logging::Instance().set_error_callback(error_callback);
   auto message_callback = std::bind(&ShapeWorksStudioApp::handle_message, this, std::placeholders::_1);
   Logging::Instance().set_message_callback(message_callback);
-
+  auto warning_callback = std::bind(&ShapeWorksStudioApp::handle_warning, this, std::placeholders::_1);
+  Logging::Instance().set_warning_callback(warning_callback);
+  auto debug_callback = std::bind(&ShapeWorksStudioApp::handle_debug, this, std::placeholders::_1);
+  Logging::Instance().set_debug_callback(debug_callback);
 
   // default hide
   ui_->feature_widget->hide();
@@ -229,7 +231,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
           &ShapeWorksStudioApp::action_export_all_subjects_particle_scalars_triggered);
 
   update_feature_map_scale();
-  handle_message("ShapeWorks Studio Initialized");
+  SW_LOG("ShapeWorks Studio Initialized");
 }
 
 //---------------------------------------------------------------------------
@@ -318,7 +320,8 @@ bool ShapeWorksStudioApp::on_action_save_project_as_triggered() {
   auto type = tr("ShapeWorks Project (*.swproj);;XLSX files (*.xlsx)");
 
   QString filename = ExportUtils::get_save_filename(this, tr("Save Project As..."), type, ".swproj");
-  //QString filename = ExportUtils::get_save_filename(this, tr("Save Project As..."), tr("XLSX files (*.xlsx)"), ".xlsx");
+  // QString filename = ExportUtils::get_save_filename(this, tr("Save Project As..."), tr("XLSX files (*.xlsx)"),
+  // ".xlsx");
 
   if (filename.isEmpty()) {
     return false;
@@ -636,10 +639,18 @@ void ShapeWorksStudioApp::handle_error(std::string str) {
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::handle_warning(QString str) {
-  set_message(MessageType::warning, str);
-  current_message_ = str;
-  error_message_dialog_.showMessage("Warning:\n" + str, "warning");
+void ShapeWorksStudioApp::handle_warning(std::string str) {
+  auto qstr = QString::fromStdString(str);
+  set_message(MessageType::warning, qstr);
+  current_message_ = qstr;
+  error_message_dialog_.showMessage("Warning:\n" + qstr, "warning");
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::handle_debug(std::string str) {
+  auto qstr = QString::fromStdString(str);
+  set_message(MessageType::debug, qstr);
+  current_message_ = qstr;
 }
 
 //---------------------------------------------------------------------------

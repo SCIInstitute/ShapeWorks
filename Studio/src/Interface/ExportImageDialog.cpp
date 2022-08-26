@@ -94,7 +94,7 @@ void ExportImageDialog::export_clicked() {
     }
     prefs_.set_last_directory(QFileInfo(filename).absolutePath());
     if (pixmap_.save(filename)) {
-      SW_MESSAGE("Saved: " + filename.toStdString());
+      SW_LOG("Saved: " + filename.toStdString());
     } else {
       SW_ERROR("Error saving: " + filename.toStdString());
     }

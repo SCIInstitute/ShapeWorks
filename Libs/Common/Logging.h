@@ -100,8 +100,14 @@ class Logging {
   //! Set an error callback function to be called whenever an error is raised
   void set_error_callback(std::function<void(std::string)> callback);
 
-  //! Set an message callback function to be called whenever an message is posted
+  //! Set a message callback function to be called whenever an message is posted
   void set_message_callback(std::function<void(std::string)> callback);
+
+  //! Set a warning callback function to be called whenever a warning is posted
+  void set_warning_callback(std::function<void(std::string)> callback);
+
+  //! Set a debug messagecallback function to be called whenever a debug message is posted
+  void set_debug_callback(std::function<void(std::string)> callback);
 
  private:
   //! Constructor
@@ -113,6 +119,10 @@ class Logging {
   std::function<void(std::string)> error_callback_;
 
   std::function<void(std::string)> message_callback_;
+
+  std::function<void(std::string)> warning_callback_;
+
+  std::function<void(std::string)> debug_callback_;
 };
 
 //! Log stack macro
@@ -145,6 +155,4 @@ class Logging {
 //! Close session macro
 #define SW_CLOSE_LOG() shapeworks::Logging::Instance().close_log();
 
-//! Close session macro
-#define SW_FLUSH_LOG() shapeworks::Logging::Instance().flush_log();
 }  // namespace shapeworks
