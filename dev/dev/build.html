@@ -1763,6 +1763,20 @@
               
   
   
+  
+    <li class="md-nav__item">
+      <a href="onboarding.html" class="md-nav__link">
+        Onboarding
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
     
   
   
@@ -1863,13 +1877,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#qt5" class="md-nav__link">
-    Qt5
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#vxl-vtk-itk-eigen-and-openvdb" class="md-nav__link">
     VXL, VTK, ITK, Eigen and OpenVDB
   </a>
@@ -1904,15 +1911,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#qt5_1" class="md-nav__link">
-    Qt5
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#vxl-vtk-itk-eigen-and-openvdb_1" class="md-nav__link">
-    VXL, VTK, ITK, Eigen and OpenVDB
+  <a href="#vtk-itk-eigen-xlnt-jkqtplotter-libigl-geometry-central-acvd-and-openvdb" class="md-nav__link">
+    VTK, ITK, Eigen, XLNT, jkqtplotter, libIGL, geometry central, ACVD, and OpenVDB
   </a>
   
 </li>
@@ -2462,13 +2462,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#qt5" class="md-nav__link">
-    Qt5
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#vxl-vtk-itk-eigen-and-openvdb" class="md-nav__link">
     VXL, VTK, ITK, Eigen and OpenVDB
   </a>
@@ -2503,15 +2496,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#qt5_1" class="md-nav__link">
-    Qt5
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#vxl-vtk-itk-eigen-and-openvdb_1" class="md-nav__link">
-    VXL, VTK, ITK, Eigen and OpenVDB
+  <a href="#vtk-itk-eigen-xlnt-jkqtplotter-libigl-geometry-central-acvd-and-openvdb" class="md-nav__link">
+    VTK, ITK, Eigen, XLNT, jkqtplotter, libIGL, geometry central, ACVD, and OpenVDB
   </a>
   
 </li>
@@ -2635,14 +2621,12 @@
 <h3 id="linux">Linux</h3>
 <ul>
 <li>CMake 3.11 (provided by conda below if not already installed)</li>
-<li>GCC 7.5.0</li>
-<li>Qt 5.9.8 (optional for GUI components)</li>
+<li>GCC 9.0.0</li>
 </ul>
 <h3 id="mac">Mac</h3>
 <ul>
 <li>CMake 3.11 (provided by conda below if not already installed)</li>
 <li>Clang 10.0.0</li>
-<li>Qt 5.9.8 (optional for GUI components)</li>
 </ul>
 <h3 id="windows">Windows</h3>
 <!--See **[BUILD_Windows.md](BUILD_Windows.md)**-->
@@ -2650,7 +2634,6 @@
 <ul>
 <li>CMake 3.11 (provided by conda below if not already installed)</li>
 <li>MSVC 2019</li>
-<li>Qt 5.9.8 (optional for GUI components)</li>
 </ul>
 <h2 id="clone-source">Clone source</h2>
 <p>To clone the ShapeWorks source:<br />
@@ -2674,10 +2657,6 @@ $ git lfs checkout
 <p class="admonition-title">Activate shapeworks environment</p>
 <p>Each time you build or use <a href="../tools/ShapeWorksCommands.html">ShapeWorks from the command line</a>, you must first activate its environment using the <code>conda activate shapeworks</code> command on the terminal.</p>
 </div>
-<h4 id="qt5">Qt5</h4>
-<p>Download and install the latest version of <a href="https://download.qt.io/archive/qt/">Qt5</a>, selecting the LGPL (free) license (at least version 5.10 required).  </p>
-<p>After installing Qt5, add the directory containing <code>qmake.exe</code> to your PATH. See <a href="paths.html">Adding to PATH Environment Variable</a> for help with this.  </p>
-<p>Example qmake directory Linux: <code>/opt/Qt5.14.0/5.14.0/gcc_64/bin</code>  </p>
 <h4 id="vxl-vtk-itk-eigen-and-openvdb">VXL, VTK, ITK, Eigen and OpenVDB</h4>
 <p>These dependencies can be installed using the <code>build_dependencies.sh</code> script.  </p>
 <p>Use <code>$ ./build_dependencies.sh --help</code> for more details on the available options.  </p>
@@ -2689,6 +2668,13 @@ For GUI applications, please make sure at least version $QT_MIN_VER of Qt5 is in
 Download Qt5 from: https://download.qt.io/archive/qt/
 </code></pre></div></p>
 <p>Make sure you added Qt to your path as explained in the Qt5 installation step.  </p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>OpenSUSE Users: If you get an error</strong> that looks like this:<br />
+<div class="highlight"><pre><span></span><code>Could NOT find OpenGL (missing: OPENGL_opengl_LIBRARY OPENGL_glx_LIBRARY OPENGL_INCLUDE_DIR)
+</code></pre></div></p>
+<p>Make sure the following are installed: Mesa-devel, freeglut-devel, libX11-devel  </p>
 </div>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
@@ -2704,14 +2690,10 @@ Download and install <a href="https://visualstudio.microsoft.com/">[Visual Studi
 <p class="admonition-title">Important</p>
 <p>It is recommended <strong>not</strong> to add Anaconda to your PATH and <strong>not</strong> to register Anaconda as your default Python.  </p>
 </div>
-<p>Using the <em>Anaconda Prompt</em>, run <code>install_shapeworks.bat [environment name]</code><br />
+<p>Using an <em>MSYS2 Prompt</em> (e.g. git-bash), run <code>source install_shapeworks.sh [environment name]</code><br />
 <strong>Note:</strong> By default this creates an environment named <strong>shapeworks</strong>, but you can specify a different name and it's okay to have multiple environments.  </p>
-<h4 id="qt5_1">Qt5</h4>
-<p>Download and install the latest version of <a href="https://download.qt.io/archive/qt/">Qt5</a>, selecting the LGPL (free) license (at least version 5.10 required).   </p>
-<p>After installing Qt5, add the directory containing <code>qmake.exe</code> to your PATH. See <a href="paths.html">Adding to PATH Environment Variable</a> for help with this.  </p>
-<p>Example qmake directory: <code>D:\Qt\5.14.0\winrt_x64_msvc2017\bin</code>  </p>
-<h4 id="vxl-vtk-itk-eigen-and-openvdb_1">VXL, VTK, ITK, Eigen and OpenVDB</h4>
-<p>These dependencies can be installed using the <code>build_dependencies.sh</code> script. Use an msys shell (e.g., git bash) to do this on Windows.  </p>
+<h4 id="vtk-itk-eigen-xlnt-jkqtplotter-libigl-geometry-central-acvd-and-openvdb">VTK, ITK, Eigen, XLNT, jkqtplotter, libIGL, geometry central, ACVD, and OpenVDB</h4>
+<p>These dependencies can be installed using the <code>build_dependencies.sh</code> script. Use an msys2 shell (e.g., git bash) to do this on Windows.  </p>
 <p>Use <code>$ ./build_dependencies.sh --help</code> for more details on the available build_dependencies options.  </p>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
@@ -2733,22 +2715,20 @@ There is a CMake GUI to see and change any of the options:
 - On OSX/Linux, you can use the GUI by running <code>ccmake</code> instead of <code>cmake</code>.  </p>
 <h4 id="options">Options</h4>
 <p>If you used the <code>build_dependencies.sh</code> script above, the prefix for all dependencies is the same.
-Otherwise, the specific paths to VTK, VXL, ITK, and Eigen3 are all required.</p>
+Otherwise, the specific paths to all the dependencies are all required.</p>
 <p>Required (if you used build_dependencies.sh):<br />
 <div class="highlight"><pre><span></span><code>  -DCMAKE_PREFIX_PATH=&lt;dependencies install path&gt;
 </code></pre></div></p>
 <p>Required (otherwise):<br />
-<div class="highlight"><pre><span></span><code>  -DVXL_DIR=&lt;vxl cmake path&gt;           (contains VXLConfig.cmake)
-  -DVTK_DIR=&lt;vtk cmake path&gt;           (contains VTKConfig.cmake)
+<div class="highlight"><pre><span></span><code>  -DVTK_DIR=&lt;vtk cmake path&gt;           (contains VTKConfig.cmake)
   -DITK_DIR=&lt;itk cmake path&gt;           (contains ITKConfig.cmake)
   -DEigen3_DIR=&lt;eigen3 cmake path&gt;     (contains Eigen3Config.cmake)
   -DOpenVDB_DIR=&lt;openvdb cmake path&gt;   (contains FindOpenVDB.cmake)
+  ... and so on for each dependency ...
 </code></pre></div></p>
 <p>Optional:
 <div class="highlight"><pre><span></span><code>  -G&lt;generator&gt;                       default: Unix Makefiles (ex: -GXCode or -G&quot;Visual Studio 16 2019&quot; -Ax64)  
   -DBuild_Studio=[OFF|ON]             default: OFF
-  -DBuild_View2=[OFF|ON]              default: OFF
-  -DBuild_Post=[OFF|ON]               default: OFF
   -DCMAKE_INSTALL_PREFIX=&lt;path&gt;       default: ./install
   -DCMAKE_BUILD_TYPE=[Debug|Release]  default: Release (only required is default generator is used)
 </code></pre></div></p>
@@ -2771,7 +2751,7 @@ Otherwise, the specific paths to VTK, VXL, ITK, and Eigen3 are all required.</p>
 <div class="highlight"><pre><span></span><code>$ ./build_dependencies.sh
 mkdir build
 cd build
-cmake -DCMAKE_PREFIX_PATH=&quot;${PWD}/../dependencies/install&quot; -DBuild_Post:BOOL=ON -DBuild_View2:BOOL=ON -DBuild_Studio:BOOL=ON -DUSE_OPENMP=OFF -Wno-dev -Wno-deprecated -GXcode ..
+cmake -DCMAKE_PREFIX_PATH=&quot;${PWD}/../dependencies/install&quot; -DBuild_Studio:BOOL=ON -Wno-dev -Wno-deprecated -GXcode ..
 open ShapeWorks.xcodeproj
 </code></pre></div>
 <h3 id="windows_2">Windows</h3>
@@ -2782,21 +2762,20 @@ open ShapeWorks.xcodeproj
 &gt; ./build_dependencies.sh --build-dir=../dependencies --install-dir=../dependencies
 &gt; mkdir build
 &gt; cd build
-&gt; cmake -G&quot;Visual Studio 16 2019&quot; -Ax64 -DVXL_DIR=../dependencies/vxl/build -DCMAKE_PREFIX_PATH=../dependencies -DBuild_Post:BOOL=ON -DBuild_View2:BOOL=ON -DBuild_Studio:BOOL=ON ..
+&gt; cmake -G&quot;Visual Studio 16 2019&quot; -Ax64 -DVXL_DIR=../dependencies/vxl/build -DCMAKE_PREFIX_PATH=../dependencies -DBuild_Studio:BOOL=ON ..
 </code></pre></div></p>
 <h4 id="options_1">Options</h4>
 <p>Required:<br />
 <div class="highlight"><pre><span></span><code>  -DCMAKE_PREFIX_PATH=&lt;qt cmake path&gt;  (This is different from qmake path in the Install Qt5 step
-  -DVXL_DIR=&lt;vxl cmake path&gt;           (contains VXLConfig.cmake)
   -DVTK_DIR=&lt;vtk cmake path&gt;           (contains VTKConfig.cmake)
   -DITK_DIR=&lt;itk cmake path&gt;           (contains ITKConfig.cmake)
   -DEigen3_DIR=&lt;eigen cmake path&gt;      (contains Eigen3Config.cmake)
   -DOpenVDB_DIR=&lt;openvdb cmake path&gt;   (contains FindOpenVDB.cmake)
+  ... and so on for each dependency ...
 </code></pre></div>
 Optional:
-<div class="highlight"><pre><span></span><code>  -D Build_Studio=[OFF|ON]             default: OFF
-  -D Build_View2=[OFF|ON]              default: OFF
-  -D Build_Post=[OFF|ON]               default: ON
+<div class="highlight"><pre><span></span><code>  -D Build_Studio=[OFF|ON]             default: ON
+  -D BUILD_TESTS=[OFF|ON]              default: ON
   -D CMAKE_INSTALL_PREFIX=&lt;path&gt;       default: ./install
   -D CMAKE_BUILD_TYPE=[Debug|Release]  
 </code></pre></div></p>
@@ -2820,7 +2799,7 @@ Optional:
     <nav class="md-footer__inner md-grid" aria-label="Footer" >
       
         
-        <a href="../use-cases/right-ventricle.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: Right Ventricle: Highly Variable Shapes" rel="prev">
+        <a href="onboarding.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: Onboarding" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
           </div>
@@ -2829,7 +2808,7 @@ Optional:
               <span class="md-footer__direction">
                 Previous
               </span>
-              Right Ventricle: Highly Variable Shapes
+              Onboarding
             </div>
           </div>
         </a>
