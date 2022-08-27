@@ -94,6 +94,7 @@ nav:
    - 'Right Ventricle: Highly Variable Shapes':                      'use-cases/right-ventricle.md'
 
 - For Developers:
+   - 'Onboarding':                           'dev/onboarding.md'
    - 'How to Build ShapeWorks from Source?': 'dev/build.md'
    - 'How to Contribute to ShapeWorks?':     'dev/contribute.md'
    - 'How to Add ShapeWorks Commands?':      'dev/commands.md'
