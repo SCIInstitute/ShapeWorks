@@ -222,9 +222,7 @@ void Lightbox::setup_renderers() {
     viewers_[i]->get_renderer()->DrawOff();
   }
 
-  if (render_window_->IsDrawable()) {
-    render_window_->Render();
-  }
+  render_window_->Render();
 }
 
 //-----------------------------------------------------------------------------
