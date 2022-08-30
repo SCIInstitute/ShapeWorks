@@ -197,7 +197,7 @@ bool AnalyzeCommand::execute(const optparse::Values& options, SharedCommandData&
   }
 
   if (outputFile.empty()) {
-    std::cerr << "No output file specified, must pass `--outputname <filename>`\n";
+    std::cerr << "No output file specified, must pass `--output <filename>`\n";
     return false;
   }
 
