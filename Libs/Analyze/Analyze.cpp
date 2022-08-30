@@ -30,6 +30,12 @@ void Analyze::run_offline_analysis(std::string outfile) {
   int half_steps = (steps / 2.0);
   double increment = range / half_steps;
 
+  std::vector<double> vals;
+  for (int i = stats_.Eigenvalues().size() - 1; i > 0; i--) {
+    vals.push_back(stats_.Eigenvalues()[i]);
+  }
+  double sum = std::accumulate(vals.begin(), vals.end(), 0.0);
+
   int num_domains = project_->get_domain_names().size();
   int num_modes = get_num_modes();
   j["number_of_modes"] = num_modes;
@@ -51,12 +57,55 @@ void Analyze::run_offline_analysis(std::string outfile) {
   j["mean"] = jmean;
 
   // export modes
-  for (int mode = num_modes; mode > 0; mode--) {
+  for (int mode = num_modes-1; mode >= 0; mode--) {
     unsigned int m = stats_.Eigenvectors().cols() - (mode + 1);
     json jmode;
     double eigen_value = stats_.Eigenvalues()[mode];
     jmode["eigen_value"] = eigen_value;
     SW_LOG("eigen value [{}]: {}", mode, eigen_value);
+
+
+    double cumulation = 0;
+    for (size_t i = 0; i < mode; ++i) {
+      cumulation += vals[i];
+    }
+    jmode["explained_variance"] = vals[mode] / sum * 100;
+    jmode["cumulative_explained_variance"] = cumulation / sum * 100;
+
+    double lambda = sqrt(stats_.Eigenvalues()[m]);
+
+    std::vector<json> jmodes;
+    for (int i = 1; i <= half_steps; i++) {
+      double pca_value = increment * i;
+      std::string pca_string = QString::number(pca_value, 'g', 2).toStdString();
+
+      std::string minus_name = "pca_mode_" + std::to_string(mode) + "_minus_" + pca_string + ".vtk";
+
+      auto process_value = [&](double pca_value, std::string prefix) {
+        auto shape = get_mode_shape(mode, pca_value);
+        auto mode_meshes = shape->get_reconstructed_meshes(true);
+
+        json item;
+        item["pca_value"] = pca_value;
+        item["lambda"] = lambda * pca_value;
+
+        std::vector<std::string> items;
+        for (int d = 0; d < num_domains; d++) {
+          std::string domain_id = std::to_string(d);
+          auto mesh = mode_meshes.meshes()[d];
+          std::string name = "pca_mode_" + std::to_string(mode) + "_domain_" + std::to_string(d) + "_" + prefix + "_" +
+                             pca_string + ".vtk";
+          items.push_back(name);
+          Mesh(mesh->get_poly_data()).write(name);
+        }
+        item["meshes"] = items;
+        jmodes.push_back(item);
+      };
+
+      process_value(-pca_value, "minus");
+      process_value(pca_value, "plus");
+    }
+    jmode["pca_values"] = jmodes;
 
     j[std::to_string(m)] = jmode;
   }
@@ -92,10 +141,39 @@ ShapeHandle Analyze::get_mean_shape() {
 }
 
 //---------------------------------------------------------------------------
-Particles Analyze::get_shape_points(int mode, double value) {}
+Particles Analyze::get_shape_points(int mode, double value) {
+  if (!compute_stats() || stats_.Eigenvectors().size() <= 1) {
+    return Particles();
+  }
+  if (mode + 2 > stats_.Eigenvalues().size()) {
+    mode = stats_.Eigenvalues().size() - 2;
+  }
+
+  unsigned int m = stats_.Eigenvectors().cols() - (mode + 1);
+
+  Eigen::VectorXd e = stats_.Eigenvectors().col(m);
+
+  double lambda = sqrt(stats_.Eigenvalues()[m]);
+
+  std::vector<double> vals;
+  for (int i = stats_.Eigenvalues().size() - 1; i > 0; i--) {
+    vals.push_back(stats_.Eigenvalues()[i]);
+  }
+  double sum = std::accumulate(vals.begin(), vals.end(), 0.0);
+  double cumulation = 0;
+  for (size_t i = 0; i < mode + 1; ++i) {
+    cumulation += vals[i];
+  }
+
+  auto temp_shape = stats_.Mean() + (e * (value * lambda));
+
+  return convert_from_combined(temp_shape);
+}
 
 //---------------------------------------------------------------------------
-ShapeHandle Analyze::get_mode_shape(int mode, double value) {}
+ShapeHandle Analyze::get_mode_shape(int mode, double value) {
+  return create_shape_from_points(get_shape_points(mode, value));
+}
 
 //---------------------------------------------------------------------------
 ShapeHandle Analyze::create_shape_from_points(Particles points) {
