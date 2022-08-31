@@ -32,11 +32,11 @@ void Analyze::run_offline_analysis(std::string outfile) {
   int half_steps = (steps / 2.0);
   double increment = range / half_steps;
 
-  std::vector<double> vals;
+  std::vector<double> eigen_vals;
   for (int i = stats_.Eigenvalues().size() - 1; i > 0; i--) {
-    vals.push_back(stats_.Eigenvalues()[i]);
+    eigen_vals.push_back(stats_.Eigenvalues()[i]);
   }
-  double sum = std::accumulate(vals.begin(), vals.end(), 0.0);
+  double sum = std::accumulate(eigen_vals.begin(), eigen_vals.end(), 0.0);
 
   int num_domains = project_->get_domain_names().size();
   int num_modes = get_num_modes();
@@ -59,20 +59,24 @@ void Analyze::run_offline_analysis(std::string outfile) {
   j["mean"] = jmean;
 
   // export modes
-  for (int mode = num_modes-1; mode >= 0; mode--) {
+  for (int mode = 0; mode < num_modes; mode++) {
     unsigned int m = stats_.Eigenvectors().cols() - (mode + 1);
     json jmode;
-    double eigen_value = stats_.Eigenvalues()[mode];
+    double eigen_value = eigen_vals[mode];
     jmode["eigen_value"] = eigen_value;
     SW_LOG("eigen value [{}]: {}", mode, eigen_value);
 
-
     double cumulation = 0;
-    for (size_t i = 0; i < mode; ++i) {
-      cumulation += vals[i];
+    for (size_t i = 0; i <= mode; ++i) {
+      cumulation += eigen_vals[i];
     }
-    jmode["explained_variance"] = vals[mode] / sum * 100;
-    jmode["cumulative_explained_variance"] = cumulation / sum * 100;
+
+    double explained_variance = eigen_vals[mode] / sum * 100;
+    double cumulative_explained_variance = cumulation / sum * 100;
+    jmode["explained_variance"] = explained_variance;
+    jmode["cumulative_explained_variance"] = cumulative_explained_variance;
+    SW_LOG("explained_variance [{}]: {:.2f}", mode, explained_variance);
+    SW_LOG("cumulative_explained_variance [{}]: {:.2f}", mode, cumulative_explained_variance);
 
     double lambda = sqrt(stats_.Eigenvalues()[m]);
 
