@@ -8,7 +8,9 @@ using json = nlohmann::ordered_json;
 namespace shapeworks {
 
 //---------------------------------------------------------------------------
-Analyze::Analyze(ProjectHandle project) : project_(project), mesh_manager_(new MeshManager()) {}
+Analyze::Analyze(ProjectHandle project) : project_(project), mesh_manager_(new MeshManager()) {
+  mesh_manager_->set_cache_enabled(false);
+}
 
 //---------------------------------------------------------------------------
 void Analyze::run_offline_analysis(std::string outfile) {
