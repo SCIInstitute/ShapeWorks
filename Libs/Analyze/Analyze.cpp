@@ -38,15 +38,19 @@ void Analyze::run_offline_analysis(std::string outfile) {
   }
   double sum = std::accumulate(eigen_vals.begin(), eigen_vals.end(), 0.0);
 
-  int num_domains = project_->get_domain_names().size();
+  auto domain_names = project_->get_domain_names();
+  int num_domains = domain_names.size();
   int num_modes = get_num_modes();
   j["number_of_modes"] = num_modes;
   SW_LOG("number of modes: {}", num_modes);
+
+  j["domains"] = domain_names;
 
   // output mean shape
   auto mean_shape = get_mean_shape();
   auto meshes = mean_shape->get_reconstructed_meshes(true);
   json jmean;
+  std::vector<std::string> mean_meshes;
   for (int d = 0; d < num_domains; d++) {
     std::string domain_id = std::to_string(d);
     auto mesh = meshes.meshes()[d];
@@ -55,8 +59,12 @@ void Analyze::run_offline_analysis(std::string outfile) {
     item["mesh"] = filename;
     Mesh(mesh->get_poly_data()).write(filename);
     jmean[domain_id] = item;
+    mean_meshes.push_back(filename);
   }
-  j["mean"] = jmean;
+  json mean_meshes_item;
+  mean_meshes_item["meshes"] = mean_meshes;
+  j["mean"] = mean_meshes_item;
+  //j["mean_me"]
 
   // export modes
   for (int mode = 0; mode < num_modes; mode++) {

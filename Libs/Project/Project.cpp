@@ -44,6 +44,10 @@ bool Project::load(const std::string& filename) {
 //---------------------------------------------------------------------------
 bool Project::save(const std::string& filename) {
   filename_ = filename;
+
+  Parameters project_parameters = get_parameters(Parameters::PROJECT_PARAMS);
+  project_parameters.set("version", version_);
+  set_parameters(Parameters::PROJECT_PARAMS, project_parameters);
   update_subjects();
   if (StringUtils::hasSuffix(filename, "swproj")) {
     return JsonProjectWriter::write_project(*this, filename);
@@ -156,7 +160,7 @@ bool Project::get_landmarks_present() {
 
 //---------------------------------------------------------------------------
 void Project::set_landmarks(int domain_id, std::vector<LandmarkDefinition> landmarks) {
-  while (domain_id > landmark_definitions_.size()) {
+  while (domain_id >= landmark_definitions_.size()) {
     landmark_definitions_.push_back(std::vector<LandmarkDefinition>());
   }
   landmark_definitions_[domain_id] = landmarks;

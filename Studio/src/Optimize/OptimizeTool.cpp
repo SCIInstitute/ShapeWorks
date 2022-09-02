@@ -13,11 +13,11 @@
 // studio
 #include <Data/Preferences.h>
 #include <Data/Session.h>
-#include <Shape.h>
 #include <Data/ShapeWorksWorker.h>
 #include <Interface/Style.h>
 #include <Logging.h>
 #include <Optimize/OptimizeTool.h>
+#include <Shape.h>
 #include <ui_OptimizeTool.h>
 
 using namespace shapeworks;
@@ -26,6 +26,8 @@ using namespace shapeworks;
 OptimizeTool::OptimizeTool(Preferences& prefs) : preferences_(prefs) {
   ui_ = new Ui_OptimizeTool;
   ui_->setupUi(this);
+
+  qRegisterMetaType<QVector<int>>("QVector<int>");
 
   connect(ui_->optimize_open_button, &QPushButton::toggled, ui_->optimize_content, &QWidget::setVisible);
   connect(ui_->optimize_header, &QPushButton::clicked, ui_->optimize_open_button, &QPushButton::toggle);
