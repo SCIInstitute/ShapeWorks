@@ -194,10 +194,10 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
   update_display();
   update_view_combo();
 
-  connect(ui_->features, qOverload<const QString&>(&QComboBox::currentIndexChanged), this,
+  connect(ui_->features, qOverload<int>(&QComboBox::currentIndexChanged), this,
           &ShapeWorksStudioApp::update_feature_map_selection);
 
-  connect(ui_->image_combo_, qOverload<const QString&>(&QComboBox::currentIndexChanged), this,
+  connect(ui_->image_combo_, qOverload<int>(&QComboBox::currentIndexChanged), this,
           &ShapeWorksStudioApp::image_combo_changed);
 
   connect(ui_->feature_uniform_scale, &QCheckBox::toggled, this, &ShapeWorksStudioApp::set_feature_uniform_scale);
@@ -836,8 +836,8 @@ void ShapeWorksStudioApp::new_session() {
   connect(ui_->feature_max, qOverload<double>(&QDoubleSpinBox::valueChanged), session_.data(),
           &Session::set_feature_range_max);
 
-  connect(ui_->image_axis_, qOverload<const QString&>(&QComboBox::currentIndexChanged), session_.data(),
-          &Session::set_image_axis);
+  connect(ui_->image_axis_, qOverload<int>(&QComboBox::currentIndexChanged), session_.data(),
+          [&](int index) { session_->set_image_axis(ui_->image_axis_->itemText(index)); });
   connect(ui_->image_3d_mode_, &QCheckBox::clicked, session_.data(), &Session::set_image_3d_mode);
   connect(ui_->image_share_window_and_level_, &QCheckBox::clicked, session_.data(),
           &Session::set_image_share_window_and_level);
@@ -1901,7 +1901,8 @@ QString ShapeWorksStudioApp::get_mesh_file_filter() {
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::update_feature_map_selection(const QString& feature_map) {
+void ShapeWorksStudioApp::update_feature_map_selection(int index) {
+  QString feature_map = ui_->features->itemText(index);
   set_feature_map(feature_map.toStdString());
 }
 
@@ -1922,8 +1923,8 @@ void ShapeWorksStudioApp::update_feature_map_scale() {
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::image_combo_changed(const QString& image_name) {
-  session_->set_image_name(image_name.toStdString());
+void ShapeWorksStudioApp::image_combo_changed(int index) {
+  session_->set_image_name(ui_->image_combo_->itemText(index).toStdString());
 }
 
 //---------------------------------------------------------------------------
@@ -2144,6 +2145,7 @@ void ShapeWorksStudioApp::toggle_log_window() { log_window_.setVisible(!log_wind
 
 //---------------------------------------------------------------------------
 QSharedPointer<PythonWorker> ShapeWorksStudioApp::get_py_worker() { return py_worker_; }
+
 
 //---------------------------------------------------------------------------
 }  // namespace shapeworks

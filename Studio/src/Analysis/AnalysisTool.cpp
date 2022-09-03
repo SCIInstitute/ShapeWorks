@@ -70,15 +70,9 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
           &AnalysisTool::handle_group_animate_state_changed);
   connect(&group_animate_timer_, &QTimer::timeout, this, &AnalysisTool::handle_group_timer);
 
-  connect(ui_->group_box, qOverload<const QString&>(&QComboBox::currentIndexChanged), this,
-          &AnalysisTool::update_group_values);
-
-  connect(ui_->group_left, qOverload<const QString&>(&QComboBox::currentIndexChanged), this,
-          &AnalysisTool::group_changed);
-
-  connect(ui_->group_right, qOverload<const QString&>(&QComboBox::currentIndexChanged), this,
-          &AnalysisTool::group_changed);
-
+  connect(ui_->group_box, qOverload<int>(&QComboBox::currentIndexChanged), this, &AnalysisTool::update_group_values);
+  connect(ui_->group_left, qOverload<int>(&QComboBox::currentIndexChanged), this, &AnalysisTool::group_changed);
+  connect(ui_->group_right, qOverload<int>(&QComboBox::currentIndexChanged), this, &AnalysisTool::group_changed);
   connect(ui_->group_p_values_button, &QPushButton::clicked, this, &AnalysisTool::group_p_values_clicked);
 
   connect(ui_->reference_domain, qOverload<int>(&QComboBox::currentIndexChanged), this,
@@ -912,8 +906,7 @@ void AnalysisTool::update_group_boxes() {
 //---------------------------------------------------------------------------
 void AnalysisTool::update_group_values() {
   block_group_change_ = true;
-  auto values =
-      session_->get_project()->get_group_values(ui_->group_box->currentText().toStdString());
+  auto values = session_->get_project()->get_group_values(ui_->group_box->currentText().toStdString());
 
   if (values != current_group_values_) {
     // populate group values
