@@ -56,6 +56,9 @@ public:
   //! Computes PCA modes from the set of correspondence mode positions. Requires that ReadPointFiles be called first.
   int ComputeModes();
 
+  //! Return the number of modes
+  int get_num_modes();
+
   //! Computes the principal component loadings, or projections onto the
   //!  principal componenent axes for each of the samples.  ComputeModes must be called first.
   int PrincipalComponentProjections();
@@ -121,9 +124,9 @@ public:
                              const std::vector<double> &x,
                              double &a, double &b) const;
 
-  Eigen::VectorXd get_compactness(std::function<void(float)> progress_callback);
-  Eigen::VectorXd get_specificity(std::function<void (float)> progress_callback);
-  Eigen::VectorXd get_generalization(std::function<void (float)> progress_callback);
+  Eigen::VectorXd get_compactness(std::function<void(float)> progress_callback = nullptr);
+  Eigen::VectorXd get_specificity(std::function<void (float)> progress_callback = nullptr);
+  Eigen::VectorXd get_generalization(std::function<void (float)> progress_callback = nullptr);
 
   Eigen::MatrixXd get_group1_matrix();
   Eigen::MatrixXd get_group2_matrix();

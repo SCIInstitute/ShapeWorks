@@ -7,6 +7,39 @@ using json = nlohmann::ordered_json;
 
 namespace shapeworks {
 
+  //---------------------------------------------------------------------------
+static json create_charts(ParticleShapeStatistics* stats) {
+  std::vector<int> x(stats->get_num_modes());
+  for (int i = 0; i < x.size(); i++) {
+    x[i] = i + 1;
+  }
+
+  json compactness;
+  compactness["x"] = x;
+  compactness["y"] = stats->get_compactness();
+  compactness["title"] = "Compactness";
+  compactness["x_label"] = "Number of Modes";
+  compactness["y_label"] = "Explained Variance";
+
+  json generalization;
+  generalization["x"] = x;
+  generalization["y"] = stats->get_generalization();
+  generalization["title"] = "Generalization";
+  generalization["x_label"] = "Number of Modes";
+  generalization["y_label"] = "Generalization";
+
+  json specificity;
+  specificity["x"] = x;
+  specificity["y"] = stats->get_specificity();
+  specificity["title"] = "Specificity";
+  specificity["x_label"] = "Number of Modes";
+  specificity["y_label"] = "Specificity";
+
+  json charts = {compactness, generalization, specificity};
+
+  return charts;
+}
+
 //---------------------------------------------------------------------------
 Analyze::Analyze(ProjectHandle project) : project_(project), mesh_manager_(new MeshManager()) {
   mesh_manager_->set_cache_enabled(false);
@@ -43,28 +76,22 @@ void Analyze::run_offline_analysis(std::string outfile) {
   int num_modes = get_num_modes();
   j["number_of_modes"] = num_modes;
   SW_LOG("number of modes: {}", num_modes);
-
   j["domains"] = domain_names;
 
   // output mean shape
   auto mean_shape = get_mean_shape();
   auto meshes = mean_shape->get_reconstructed_meshes(true);
-  json jmean;
   std::vector<std::string> mean_meshes;
   for (int d = 0; d < num_domains; d++) {
     std::string domain_id = std::to_string(d);
     auto mesh = meshes.meshes()[d];
-    json item;
     std::string filename = "mean_shape_" + domain_id + ".vtk";
-    item["mesh"] = filename;
     Mesh(mesh->get_poly_data()).write(filename);
-    jmean[domain_id] = item;
     mean_meshes.push_back(filename);
   }
   json mean_meshes_item;
   mean_meshes_item["meshes"] = mean_meshes;
   j["mean"] = mean_meshes_item;
-  //j["mean_me"]
 
   // export modes
   for (int mode = 0; mode < num_modes; mode++) {
@@ -123,6 +150,8 @@ void Analyze::run_offline_analysis(std::string outfile) {
 
     j[std::to_string(m)] = jmode;
   }
+
+  j["charts"] = create_charts(&stats_);
 
   std::ofstream file(outfile);
   if (!file.good()) {
