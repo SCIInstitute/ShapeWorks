@@ -38,7 +38,6 @@
 #include <Interface/SplashScreen.h>
 #include <Interface/StatusBarWidget.h>
 #include <Interface/WheelEventForwarder.h>
-#include <Logging.h>
 #include <Optimize/OptimizeTool.h>
 #include <Python/PythonWorker.h>
 #include <Shape.h>
@@ -69,16 +68,11 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
   studio_vtk_output_window_ = vtkSmartPointer<StudioVtkOutputWindow>::New();
   vtkOutputWindow::SetInstance(studio_vtk_output_window_);
 
-  /// connect(&(StudioLog::Instance()), &StudioLog::error_signal, this, &ShapeWorksStudioApp::handle_error);
-  /// connect(&(StudioLog::Instance()), &StudioLog::message_signal, this, &ShapeWorksStudioApp::handle_message);
-  auto error_callback = std::bind(&ShapeWorksStudioApp::handle_error, this, std::placeholders::_1);
-  Logging::Instance().set_error_callback(error_callback);
-  auto message_callback = std::bind(&ShapeWorksStudioApp::handle_message, this, std::placeholders::_1);
-  Logging::Instance().set_message_callback(message_callback);
-  auto warning_callback = std::bind(&ShapeWorksStudioApp::handle_warning, this, std::placeholders::_1);
-  Logging::Instance().set_warning_callback(warning_callback);
-  auto debug_callback = std::bind(&ShapeWorksStudioApp::handle_debug, this, std::placeholders::_1);
-  Logging::Instance().set_debug_callback(debug_callback);
+  logger_.register_callbacks();
+  connect(&logger_, &StudioLogger::message, this, &ShapeWorksStudioApp::handle_message);
+  connect(&logger_, &StudioLogger::error, this, &ShapeWorksStudioApp::handle_error);
+  connect(&logger_, &StudioLogger::warning, this, &ShapeWorksStudioApp::handle_warning);
+  connect(&logger_, &StudioLogger::debug, this, &ShapeWorksStudioApp::handle_debug);
 
   // default hide
   ui_->feature_widget->hide();
@@ -615,6 +609,10 @@ void ShapeWorksStudioApp::clear_message() { current_message_ = ""; }
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_message(std::string str) {
+  assert(QThread::currentThread() == QCoreApplication::instance()->thread());
+
+  std::cerr << "must be correct\n";
+
   QString qstr = QString::fromStdString(str);
   if (qstr != current_message_) {
     set_message(MessageType::normal, qstr);
@@ -651,6 +649,13 @@ void ShapeWorksStudioApp::handle_debug(std::string str) {
   auto qstr = QString::fromStdString(str);
   set_message(MessageType::debug, qstr);
   current_message_ = qstr;
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::message_callback(std::string str) {
+  QMetaObject::invokeMethod(
+      this, [&]() { handle_message(str); }, Qt::QueuedConnection);
+  // QMetaObject::invokeMethod(this,)
 }
 
 //---------------------------------------------------------------------------

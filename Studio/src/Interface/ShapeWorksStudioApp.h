@@ -6,6 +6,8 @@
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
 
+#include <Interface/StudioLogger.h>
+
 #include <Eigen/Eigen>
 #include <QActionGroup>
 #include <QCheckBox>
@@ -119,6 +121,8 @@ class ShapeWorksStudioApp : public QMainWindow {
   void handle_error(std::string str);
   void handle_warning(std::string str);
   void handle_debug(std::string str);
+
+  void message_callback(std::string str);
 
   void handle_status(QString str);
   void handle_progress(int amt);
@@ -249,5 +253,7 @@ class ShapeWorksStudioApp : public QMainWindow {
   QStringList current_image_list_;
 
   QSharedPointer<PythonWorker> py_worker_;
+
+  StudioLogger logger_;
 };
 }  // namespace shapeworks

@@ -7,7 +7,7 @@ using json = nlohmann::ordered_json;
 
 namespace shapeworks {
 
-  //---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 static json create_charts(ParticleShapeStatistics* stats) {
   std::vector<int> x(stats->get_num_modes());
   for (int i = 0; i < x.size(); i++) {
@@ -36,7 +36,6 @@ static json create_charts(ParticleShapeStatistics* stats) {
   specificity["y_label"] = "Specificity";
 
   json charts = {compactness, generalization, specificity};
-
   return charts;
 }
 

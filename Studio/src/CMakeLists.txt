@@ -174,6 +174,7 @@ SET(STUDIO_INTERFACE_SRCS
   Interface/ShapeWorksStudioApp.cpp
   Interface/SplashScreen.cpp
   Interface/StatusBarWidget.cpp
+  Interface/StudioLogger.cpp
   Interface/Style.cpp
   Interface/WheelEventForwarder.cpp
   )
@@ -185,6 +186,7 @@ SET(STUDIO_INTERFACE_MOC_HDRS
   Interface/ShapeWorksStudioApp.h
   Interface/SplashScreen.h
   Interface/StatusBarWidget.h
+  Interface/StudioLogger.h
   Interface/WheelEventForwarder.h
   )
 
