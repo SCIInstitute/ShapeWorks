@@ -27,8 +27,6 @@ OptimizeTool::OptimizeTool(Preferences& prefs) : preferences_(prefs) {
   ui_ = new Ui_OptimizeTool;
   ui_->setupUi(this);
 
-  //qRegisterMetaType<QVector<int>>("QVector<int>");
-
   connect(ui_->optimize_open_button, &QPushButton::toggled, ui_->optimize_content, &QWidget::setVisible);
   connect(ui_->optimize_header, &QPushButton::clicked, ui_->optimize_open_button, &QPushButton::toggle);
 
