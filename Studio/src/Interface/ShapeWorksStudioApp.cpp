@@ -283,7 +283,7 @@ void ShapeWorksStudioApp::on_action_show_project_folder_triggered() {
   }
 
   QProcess process;
-  process.setReadChannelMode(QProcess::MergedChannels);
+  process.setProcessChannelMode(QProcess::MergedChannels);
 
 #ifdef _WIN32
   auto qstring_path = QFileInfo(filename).absoluteDir().absolutePath();
