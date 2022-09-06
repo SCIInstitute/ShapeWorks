@@ -1,17 +1,18 @@
+#include <tbb/tbb.h>
+
+#include <QApplication>
+#include <QResource>
+#include <QMessageBox>
+#include <QDir>
+
+#include <itkMacro.h>
+
+#include <Interface/ShapeWorksStudioApp.h>
 #include <Applications/Configuration.h>
 #include <Data/StudioLog.h>
 #include <Interface/ShapeWorksStudioApp.h>
 #include <QVTKOpenGLNativeWidget.h>
-#include <itkMacro.h>
-#include <tbb/tbb.h>
-#include <vtkObject.h>
 
-#include <QApplication>
-#include <QDir>
-#include <QMessageBox>
-#include <QResource>
-#include <QSurfaceFormat>
-#include <iostream>
 
 #ifdef _WIN32
 #include <Utils/WindowsCrashHandler.h>

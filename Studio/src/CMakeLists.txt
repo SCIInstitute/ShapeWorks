@@ -315,7 +315,7 @@ if(WIN32)
   add_custom_command(TARGET ShapeWorksStudio
     POST_BUILD
     # copy Qt libs
-    COMMAND ${WINDEPLOYQT} ARGS --verbose 5 -core -widgets -gui -sql -xml -printsupport
+    COMMAND ${WINDEPLOYQT} ARGS --verbose 5 -core -widgets -gui -sql -xml -printsupport --no-translations
                                 --libdir $<TARGET_FILE_DIR:ShapeWorksStudio>
                                 $<TARGET_FILE_DIR:ShapeWorksStudio>/ShapeWorksStudio.exe
   )

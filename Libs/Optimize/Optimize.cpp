@@ -72,7 +72,7 @@ Optimize::Optimize()
 bool Optimize::Run()
 {
   // control number of threads
-  int num_threads = tbb::task_scheduler_init::default_num_threads();
+  int num_threads = tbb::info::default_concurrency();
   const char* num_threads_env = getenv("TBB_NUM_THREADS");
   if (num_threads_env) {
      num_threads = std::max(1, atoi(num_threads_env));

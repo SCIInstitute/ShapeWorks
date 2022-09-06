@@ -924,7 +924,7 @@ void AnalysisTool::update_group_boxes() {
 void AnalysisTool::update_group_values() {
   block_group_change_ = true;
   auto values =
-      session_->get_project()->get_group_values(std::string("group_") + ui_->group_box->currentText().toStdString());
+      session_->get_project()->get_group_values(ui_->group_box->currentText().toStdString());
 
   if (values != current_group_values_) {
     // populate group values

@@ -1,6 +1,8 @@
 #include <sstream>
 #include <iostream>
 
+#include <Libs/Optimize/Optimize.h>
+
 #include <QProcess>
 #include <QMessageBox>
 
@@ -8,7 +10,6 @@
 #include <Data/Shape.h>
 #include <Data/ShapeWorksWorker.h>
 
-#include <Libs/Optimize/Optimize.h>
 #include <Libs/Optimize/OptimizeParameters.h>
 #include <Data/SurfaceReconstructor.h>
 

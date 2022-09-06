@@ -244,7 +244,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
 ShapeWorksStudioApp::~ShapeWorksStudioApp() {}
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::initialize_vtk() { lightbox_->set_render_window(ui_->qvtkWidget->GetRenderWindow()); }
+void ShapeWorksStudioApp::initialize_vtk() { lightbox_->set_render_window(ui_->qvtkWidget->renderWindow()); }
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_new_project_triggered() {
@@ -428,7 +428,7 @@ void ShapeWorksStudioApp::on_zoom_slider_valueChanged() {
 
   update_scrollbar();
 
-  ui_->qvtkWidget->GetRenderWindow()->Render();
+  ui_->qvtkWidget->renderWindow()->Render();
 }
 
 //---------------------------------------------------------------------------

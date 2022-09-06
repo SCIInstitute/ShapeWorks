@@ -79,7 +79,6 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     QT_LIB_LOCATION="@executable_path/ShapeWorksStudio.app/Contents/Frameworks"
     QT_LOADER_LIB_LOCATION="@loader_path/ShapeWorksStudio.app/Contents/Frameworks"
 
-
     # copy platform plugins for Studio
     cp -a ShapeWorksStudio.app/Contents/PlugIns .
 

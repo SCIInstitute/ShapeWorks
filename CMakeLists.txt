@@ -18,12 +18,12 @@ endif()
 set(CMAKE_CXX_STANDARD 17)             # available options are [98, 11, 14, 17. 20]
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/CMake")
-find_package(Python3 3.7 EXACT REQUIRED)
+find_package(Python3 3.9 EXACT REQUIRED COMPONENTS Interpreter Development)
 
 if (NOT APPLE)
   option(USE_OPENMP      "Build using OpenMP" ON)
 endif()
-option(Build_Studio    "Build studio"       OFF)
+option(Build_Studio    "Build studio"       ON)
 option(BUILD_TESTS     "Build tests"        ON)
 
 if ("${Build_Studio}")
@@ -88,11 +88,14 @@ if (SHAPEWORKS_GUI)
     
   find_package(Qt5 COMPONENTS Core Widgets OpenGL Gui Sql Xml Svg PrintSupport ${SHAPEWORKS_QT_REQUIRED})
   if (Qt5Core_FOUND AND Qt5Widgets_FOUND AND Qt5OpenGL_FOUND AND Qt5Gui_FOUND AND Qt5Sql_FOUND)
-  set(SHAPEWORKS_QT_FOUND 1)
+    set(SHAPEWORKS_QT_FOUND 1)
+    if (Qt5Widgets_VERSION VERSION_LESS 5.15.4)
+        message(FATAL_ERROR "Minimum supported Qt5 version is 5.15.4!  Add the shapeworks conda env's bin dir to the start of $PATH")
+    endif()
   else()
-  set(SHAPEWORKS_QT_FOUND 0)
+    set(SHAPEWORKS_QT_FOUND 0)
   endif()
-
+  
   find_package(JKQTCommonSharedLib REQUIRED)
   find_package(JKQTMathTextSharedLib REQUIRED)
   find_package(JKQTPlotterSharedLib REQUIRED)

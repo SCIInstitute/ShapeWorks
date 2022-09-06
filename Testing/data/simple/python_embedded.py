@@ -1,4 +1,7 @@
+print("line 1")
+print("line 2")
 import shapeworks
+print("line 3")
 
 opt = shapeworks.Optimize
 
