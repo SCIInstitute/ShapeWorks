@@ -611,8 +611,6 @@ void ShapeWorksStudioApp::clear_message() { current_message_ = ""; }
 void ShapeWorksStudioApp::handle_message(std::string str) {
   assert(QThread::currentThread() == QCoreApplication::instance()->thread());
 
-  std::cerr << "must be correct\n";
-
   QString qstr = QString::fromStdString(str);
   if (qstr != current_message_) {
     set_message(MessageType::normal, qstr);
