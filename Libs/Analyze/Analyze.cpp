@@ -1,6 +1,7 @@
 #include "Analyze.h"
 
 #include <Logging.h>
+#include <StringUtils.h>
 
 #include <nlohmann/json.hpp>
 using json = nlohmann::ordered_json;
@@ -53,6 +54,8 @@ void Analyze::run_offline_analysis(std::string outfile) {
   if (!project_->get_particles_present()) {
     throw std::runtime_error("Project has not been optimized, please run optimize first");
   }
+
+  auto base = StringUtils::getPath(outfile);
 
   // load data from the project
   update_shapes();
@@ -139,7 +142,7 @@ void Analyze::run_offline_analysis(std::string outfile) {
           std::string name = "pca_mode_" + std::to_string(mode + 1) + "_domain_" + std::to_string(d) + "_" + prefix +
                              "_" + pca_string + ".vtk";
           items.push_back(name);
-          Mesh(mesh->get_poly_data()).write(name);
+          Mesh(mesh->get_poly_data()).write(base + "/" + name);
         }
         item["meshes"] = items;
         jmodes.push_back(item);

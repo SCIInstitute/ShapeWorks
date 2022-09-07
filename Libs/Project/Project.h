@@ -36,10 +36,10 @@ class Project {
   Project();
   ~Project();
 
-  //! Load from XLSX file
+  //! Load from project file
   bool load(const std::string& filename);
 
-  //! Save to XLSX file
+  //! Save to project file
   bool save(const std::string& filename);
 
   //! Return the filename

@@ -1,15 +1,19 @@
-#include "Commands.h"
-
+// must be first
 #include <Libs/Optimize/Optimize.h>
+// must be first
+
 #include <Libs/Analyze/Analyze.h>
 #include <Libs/Groom/Groom.h>
 #include <Libs/Optimize/OptimizeParameterFile.h>
 #include <Libs/Optimize/OptimizeParameters.h>
 #include <Libs/Utils/StringUtils.h>
+#include <Logging.h>
 #include <ShapeworksUtils.h>
 
 #include <boost/filesystem.hpp>
 #include <limits>
+
+#include "Commands.h"
 
 namespace shapeworks {
 
@@ -203,10 +207,27 @@ bool AnalyzeCommand::execute(const optparse::Values& options, SharedCommandData&
 
   try {
     ProjectHandle project = std::make_shared<Project>();
-    project->load(projectFile);
+
+    const auto oldBasePath = boost::filesystem::current_path();
+    auto base = StringUtils::getPath(projectFile);
+    auto filename = StringUtils::getFilename(projectFile);
+    if (base != projectFile) {
+      SW_LOG("Setting path to {}", base);
+      boost::filesystem::current_path(base.c_str());
+      project->set_filename(filename);
+    }
+
+    SW_LOG("Loading project: {}", filename);
+    project->load(filename);
 
     Analyze analyze(project);
-    analyze.run_offline_analysis(outputFile);
+
+    boost::filesystem::path dir(oldBasePath);
+    boost::filesystem::path file(outputFile);
+    boost::filesystem::path full_output = dir / file;
+    analyze.run_offline_analysis(full_output.string());
+
+    boost::filesystem::current_path(oldBasePath);
 
     return true;
   } catch (std::exception& e) {
