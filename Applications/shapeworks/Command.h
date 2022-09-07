@@ -87,6 +87,14 @@ public:
 private:
 };
 
+class ProjectCommandGroup : public Command
+{
+public:
+  const std::string type() override { return "Project"; }
+
+private:
+};
+
 class ParticleSystemCommand : public Command
 {
 public:
