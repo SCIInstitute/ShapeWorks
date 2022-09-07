@@ -15,28 +15,28 @@ static json create_charts(ParticleShapeStatistics* stats) {
   }
 
   json compactness;
-  compactness["type"] = "line";
-  compactness["x"] = x;
-  compactness["y"] = stats->get_compactness();
   compactness["title"] = "Compactness";
+  compactness["type"] = "line";
   compactness["x_label"] = "Number of Modes";
   compactness["y_label"] = "Explained Variance";
+  compactness["x"] = x;
+  compactness["y"] = stats->get_compactness();
 
   json generalization;
-  generalization["type"] = "line";
-  generalization["x"] = x;
-  generalization["y"] = stats->get_generalization();
   generalization["title"] = "Generalization";
+  generalization["type"] = "line";
   generalization["x_label"] = "Number of Modes";
   generalization["y_label"] = "Generalization";
+  generalization["x"] = x;
+  generalization["y"] = stats->get_generalization();
 
   json specificity;
-  specificity["type"] = "line";
-  specificity["x"] = x;
-  specificity["y"] = stats->get_specificity();
   specificity["title"] = "Specificity";
+  specificity["type"] = "line";
   specificity["x_label"] = "Number of Modes";
   specificity["y_label"] = "Specificity";
+  specificity["x"] = x;
+  specificity["y"] = stats->get_specificity();
 
   json charts = {compactness, generalization, specificity};
   return charts;
@@ -100,7 +100,7 @@ void Analyze::run_offline_analysis(std::string outfile) {
   for (int mode = 0; mode < num_modes; mode++) {
     unsigned int m = stats_.Eigenvectors().cols() - (mode + 1);
     json jmode;
-    jmode["mode"] = m;
+    jmode["mode"] = mode + 1;
     double eigen_value = eigen_vals[mode];
     jmode["eigen_value"] = eigen_value;
     SW_LOG("eigen value [{}]: {}", mode, eigen_value);
@@ -124,8 +124,6 @@ void Analyze::run_offline_analysis(std::string outfile) {
       double pca_value = increment * i;
       std::string pca_string = QString::number(pca_value, 'g', 2).toStdString();
 
-      std::string minus_name = "pca_mode_" + std::to_string(mode) + "_minus_" + pca_string + ".vtk";
-
       auto process_value = [&](double pca_value, std::string prefix) {
         auto shape = get_mode_shape(mode, pca_value);
         auto mode_meshes = shape->get_reconstructed_meshes(true);
@@ -138,8 +136,8 @@ void Analyze::run_offline_analysis(std::string outfile) {
         for (int d = 0; d < num_domains; d++) {
           std::string domain_id = std::to_string(d);
           auto mesh = mode_meshes.meshes()[d];
-          std::string name = "pca_mode_" + std::to_string(mode) + "_domain_" + std::to_string(d) + "_" + prefix + "_" +
-                             pca_string + ".vtk";
+          std::string name = "pca_mode_" + std::to_string(mode + 1) + "_domain_" + std::to_string(d) + "_" + prefix +
+                             "_" + pca_string + ".vtk";
           items.push_back(name);
           Mesh(mesh->get_poly_data()).write(name);
         }
