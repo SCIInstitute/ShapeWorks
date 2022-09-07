@@ -8,239 +8,245 @@
             "mean_shape_0.vtk"
         ]
     },
-    "3": {
-        "eigen_value": 336.20140083577616,
-        "explained_variance": 95.85995547214975,
-        "cumulative_explained_variance": 95.85995547214975,
-        "pca_values": [
-            {
-                "pca_value": -0.4,
-                "lambda": -7.334318246007886,
-                "meshes": [
-                    "pca_mode_0_domain_0_minus_0.4.vtk"
-                ]
-            },
-            {
-                "pca_value": 0.4,
-                "lambda": 7.334318246007886,
-                "meshes": [
-                    "pca_mode_0_domain_0_plus_0.4.vtk"
-                ]
-            },
-            {
-                "pca_value": -0.8,
-                "lambda": -14.668636492015771,
-                "meshes": [
-                    "pca_mode_0_domain_0_minus_0.8.vtk"
-                ]
-            },
-            {
-                "pca_value": 0.8,
-                "lambda": 14.668636492015771,
-                "meshes": [
-                    "pca_mode_0_domain_0_plus_0.8.vtk"
-                ]
-            },
-            {
-                "pca_value": -1.2000000000000002,
-                "lambda": -22.002954738023657,
-                "meshes": [
-                    "pca_mode_0_domain_0_minus_1.2.vtk"
-                ]
-            },
-            {
-                "pca_value": 1.2000000000000002,
-                "lambda": 22.002954738023657,
-                "meshes": [
-                    "pca_mode_0_domain_0_plus_1.2.vtk"
-                ]
-            },
-            {
-                "pca_value": -1.6,
-                "lambda": -29.337272984031543,
-                "meshes": [
-                    "pca_mode_0_domain_0_minus_1.6.vtk"
-                ]
-            },
-            {
-                "pca_value": 1.6,
-                "lambda": 29.337272984031543,
-                "meshes": [
-                    "pca_mode_0_domain_0_plus_1.6.vtk"
-                ]
-            },
-            {
-                "pca_value": -2.0,
-                "lambda": -36.671591230039425,
-                "meshes": [
-                    "pca_mode_0_domain_0_minus_2.vtk"
-                ]
-            },
-            {
-                "pca_value": 2.0,
-                "lambda": 36.671591230039425,
-                "meshes": [
-                    "pca_mode_0_domain_0_plus_2.vtk"
-                ]
-            }
-        ]
-    },
-    "2": {
-        "eigen_value": 11.20983907018731,
-        "explained_variance": 3.1962230717861173,
-        "cumulative_explained_variance": 99.05617854393586,
-        "pca_values": [
-            {
-                "pca_value": -0.4,
-                "lambda": -1.3392439102829514,
-                "meshes": [
-                    "pca_mode_1_domain_0_minus_0.4.vtk"
-                ]
-            },
-            {
-                "pca_value": 0.4,
-                "lambda": 1.3392439102829514,
-                "meshes": [
-                    "pca_mode_1_domain_0_plus_0.4.vtk"
-                ]
-            },
-            {
-                "pca_value": -0.8,
-                "lambda": -2.678487820565903,
-                "meshes": [
-                    "pca_mode_1_domain_0_minus_0.8.vtk"
-                ]
-            },
-            {
-                "pca_value": 0.8,
-                "lambda": 2.678487820565903,
-                "meshes": [
-                    "pca_mode_1_domain_0_plus_0.8.vtk"
-                ]
-            },
-            {
-                "pca_value": -1.2000000000000002,
-                "lambda": -4.017731730848855,
-                "meshes": [
-                    "pca_mode_1_domain_0_minus_1.2.vtk"
-                ]
-            },
-            {
-                "pca_value": 1.2000000000000002,
-                "lambda": 4.017731730848855,
-                "meshes": [
-                    "pca_mode_1_domain_0_plus_1.2.vtk"
-                ]
-            },
-            {
-                "pca_value": -1.6,
-                "lambda": -5.356975641131806,
-                "meshes": [
-                    "pca_mode_1_domain_0_minus_1.6.vtk"
-                ]
-            },
-            {
-                "pca_value": 1.6,
-                "lambda": 5.356975641131806,
-                "meshes": [
-                    "pca_mode_1_domain_0_plus_1.6.vtk"
-                ]
-            },
-            {
-                "pca_value": -2.0,
-                "lambda": -6.696219551414757,
-                "meshes": [
-                    "pca_mode_1_domain_0_minus_2.vtk"
-                ]
-            },
-            {
-                "pca_value": 2.0,
-                "lambda": 6.696219551414757,
-                "meshes": [
-                    "pca_mode_1_domain_0_plus_2.vtk"
-                ]
-            }
-        ]
-    },
-    "1": {
-        "eigen_value": 3.310184050313001,
-        "explained_variance": 0.9438214560641364,
-        "cumulative_explained_variance": 100.0,
-        "pca_values": [
-            {
-                "pca_value": -0.4,
-                "lambda": -0.7277564483053931,
-                "meshes": [
-                    "pca_mode_2_domain_0_minus_0.4.vtk"
-                ]
-            },
-            {
-                "pca_value": 0.4,
-                "lambda": 0.7277564483053931,
-                "meshes": [
-                    "pca_mode_2_domain_0_plus_0.4.vtk"
-                ]
-            },
-            {
-                "pca_value": -0.8,
-                "lambda": -1.4555128966107862,
-                "meshes": [
-                    "pca_mode_2_domain_0_minus_0.8.vtk"
-                ]
-            },
-            {
-                "pca_value": 0.8,
-                "lambda": 1.4555128966107862,
-                "meshes": [
-                    "pca_mode_2_domain_0_plus_0.8.vtk"
-                ]
-            },
-            {
-                "pca_value": -1.2000000000000002,
-                "lambda": -2.1832693449161793,
-                "meshes": [
-                    "pca_mode_2_domain_0_minus_1.2.vtk"
-                ]
-            },
-            {
-                "pca_value": 1.2000000000000002,
-                "lambda": 2.1832693449161793,
-                "meshes": [
-                    "pca_mode_2_domain_0_plus_1.2.vtk"
-                ]
-            },
-            {
-                "pca_value": -1.6,
-                "lambda": -2.9110257932215724,
-                "meshes": [
-                    "pca_mode_2_domain_0_minus_1.6.vtk"
-                ]
-            },
-            {
-                "pca_value": 1.6,
-                "lambda": 2.9110257932215724,
-                "meshes": [
-                    "pca_mode_2_domain_0_plus_1.6.vtk"
-                ]
-            },
-            {
-                "pca_value": -2.0,
-                "lambda": -3.638782241526965,
-                "meshes": [
-                    "pca_mode_2_domain_0_minus_2.vtk"
-                ]
-            },
-            {
-                "pca_value": 2.0,
-                "lambda": 3.638782241526965,
-                "meshes": [
-                    "pca_mode_2_domain_0_plus_2.vtk"
-                ]
-            }
-        ]
-    },
+    "modes": [
+        {
+            "mode": 3,
+            "eigen_value": 336.20140083577616,
+            "explained_variance": 95.85995547214975,
+            "cumulative_explained_variance": 95.85995547214975,
+            "pca_values": [
+                {
+                    "pca_value": -0.4,
+                    "lambda": -7.334318246007886,
+                    "meshes": [
+                        "pca_mode_0_domain_0_minus_0.4.vtk"
+                    ]
+                },
+                {
+                    "pca_value": 0.4,
+                    "lambda": 7.334318246007886,
+                    "meshes": [
+                        "pca_mode_0_domain_0_plus_0.4.vtk"
+                    ]
+                },
+                {
+                    "pca_value": -0.8,
+                    "lambda": -14.668636492015771,
+                    "meshes": [
+                        "pca_mode_0_domain_0_minus_0.8.vtk"
+                    ]
+                },
+                {
+                    "pca_value": 0.8,
+                    "lambda": 14.668636492015771,
+                    "meshes": [
+                        "pca_mode_0_domain_0_plus_0.8.vtk"
+                    ]
+                },
+                {
+                    "pca_value": -1.2000000000000002,
+                    "lambda": -22.002954738023657,
+                    "meshes": [
+                        "pca_mode_0_domain_0_minus_1.2.vtk"
+                    ]
+                },
+                {
+                    "pca_value": 1.2000000000000002,
+                    "lambda": 22.002954738023657,
+                    "meshes": [
+                        "pca_mode_0_domain_0_plus_1.2.vtk"
+                    ]
+                },
+                {
+                    "pca_value": -1.6,
+                    "lambda": -29.337272984031543,
+                    "meshes": [
+                        "pca_mode_0_domain_0_minus_1.6.vtk"
+                    ]
+                },
+                {
+                    "pca_value": 1.6,
+                    "lambda": 29.337272984031543,
+                    "meshes": [
+                        "pca_mode_0_domain_0_plus_1.6.vtk"
+                    ]
+                },
+                {
+                    "pca_value": -2.0,
+                    "lambda": -36.671591230039425,
+                    "meshes": [
+                        "pca_mode_0_domain_0_minus_2.vtk"
+                    ]
+                },
+                {
+                    "pca_value": 2.0,
+                    "lambda": 36.671591230039425,
+                    "meshes": [
+                        "pca_mode_0_domain_0_plus_2.vtk"
+                    ]
+                }
+            ]
+        },
+        {
+            "mode": 2,
+            "eigen_value": 11.20983907018731,
+            "explained_variance": 3.1962230717861173,
+            "cumulative_explained_variance": 99.05617854393586,
+            "pca_values": [
+                {
+                    "pca_value": -0.4,
+                    "lambda": -1.3392439102829514,
+                    "meshes": [
+                        "pca_mode_1_domain_0_minus_0.4.vtk"
+                    ]
+                },
+                {
+                    "pca_value": 0.4,
+                    "lambda": 1.3392439102829514,
+                    "meshes": [
+                        "pca_mode_1_domain_0_plus_0.4.vtk"
+                    ]
+                },
+                {
+                    "pca_value": -0.8,
+                    "lambda": -2.678487820565903,
+                    "meshes": [
+                        "pca_mode_1_domain_0_minus_0.8.vtk"
+                    ]
+                },
+                {
+                    "pca_value": 0.8,
+                    "lambda": 2.678487820565903,
+                    "meshes": [
+                        "pca_mode_1_domain_0_plus_0.8.vtk"
+                    ]
+                },
+                {
+                    "pca_value": -1.2000000000000002,
+                    "lambda": -4.017731730848855,
+                    "meshes": [
+                        "pca_mode_1_domain_0_minus_1.2.vtk"
+                    ]
+                },
+                {
+                    "pca_value": 1.2000000000000002,
+                    "lambda": 4.017731730848855,
+                    "meshes": [
+                        "pca_mode_1_domain_0_plus_1.2.vtk"
+                    ]
+                },
+                {
+                    "pca_value": -1.6,
+                    "lambda": -5.356975641131806,
+                    "meshes": [
+                        "pca_mode_1_domain_0_minus_1.6.vtk"
+                    ]
+                },
+                {
+                    "pca_value": 1.6,
+                    "lambda": 5.356975641131806,
+                    "meshes": [
+                        "pca_mode_1_domain_0_plus_1.6.vtk"
+                    ]
+                },
+                {
+                    "pca_value": -2.0,
+                    "lambda": -6.696219551414757,
+                    "meshes": [
+                        "pca_mode_1_domain_0_minus_2.vtk"
+                    ]
+                },
+                {
+                    "pca_value": 2.0,
+                    "lambda": 6.696219551414757,
+                    "meshes": [
+                        "pca_mode_1_domain_0_plus_2.vtk"
+                    ]
+                }
+            ]
+        },
+        {
+            "mode": 1,
+            "eigen_value": 3.310184050313001,
+            "explained_variance": 0.9438214560641364,
+            "cumulative_explained_variance": 100.0,
+            "pca_values": [
+                {
+                    "pca_value": -0.4,
+                    "lambda": -0.7277564483053931,
+                    "meshes": [
+                        "pca_mode_2_domain_0_minus_0.4.vtk"
+                    ]
+                },
+                {
+                    "pca_value": 0.4,
+                    "lambda": 0.7277564483053931,
+                    "meshes": [
+                        "pca_mode_2_domain_0_plus_0.4.vtk"
+                    ]
+                },
+                {
+                    "pca_value": -0.8,
+                    "lambda": -1.4555128966107862,
+                    "meshes": [
+                        "pca_mode_2_domain_0_minus_0.8.vtk"
+                    ]
+                },
+                {
+                    "pca_value": 0.8,
+                    "lambda": 1.4555128966107862,
+                    "meshes": [
+                        "pca_mode_2_domain_0_plus_0.8.vtk"
+                    ]
+                },
+                {
+                    "pca_value": -1.2000000000000002,
+                    "lambda": -2.1832693449161793,
+                    "meshes": [
+                        "pca_mode_2_domain_0_minus_1.2.vtk"
+                    ]
+                },
+                {
+                    "pca_value": 1.2000000000000002,
+                    "lambda": 2.1832693449161793,
+                    "meshes": [
+                        "pca_mode_2_domain_0_plus_1.2.vtk"
+                    ]
+                },
+                {
+                    "pca_value": -1.6,
+                    "lambda": -2.9110257932215724,
+                    "meshes": [
+                        "pca_mode_2_domain_0_minus_1.6.vtk"
+                    ]
+                },
+                {
+                    "pca_value": 1.6,
+                    "lambda": 2.9110257932215724,
+                    "meshes": [
+                        "pca_mode_2_domain_0_plus_1.6.vtk"
+                    ]
+                },
+                {
+                    "pca_value": -2.0,
+                    "lambda": -3.638782241526965,
+                    "meshes": [
+                        "pca_mode_2_domain_0_minus_2.vtk"
+                    ]
+                },
+                {
+                    "pca_value": 2.0,
+                    "lambda": 3.638782241526965,
+                    "meshes": [
+                        "pca_mode_2_domain_0_plus_2.vtk"
+                    ]
+                }
+            ]
+        }
+    ],
     "charts": [
         {
+            "type": "line",
             "x": [
                 1,
                 2,
@@ -256,6 +262,7 @@
             "y_label": "Explained Variance"
         },
         {
+            "type": "line",
             "x": [
                 1,
                 2,
@@ -271,6 +278,7 @@
             "y_label": "Generalization"
         },
         {
+            "type": "line",
             "x": [
                 1,
                 2,

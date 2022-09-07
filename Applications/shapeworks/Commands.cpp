@@ -178,7 +178,7 @@ bool GroomCommand::execute(const optparse::Values& options, SharedCommandData& s
 ///////////////////////////////////////////////////////////////////////////////
 void AnalyzeCommand::buildParser() {
   const std::string prog = "analyze";
-  const std::string desc = "analyze a shapeworks project";
+  const std::string desc = "Offline analysis of a shapeworks project, output json and meshes";
   parser.prog(prog).description(desc);
 
   parser.add_option("--name").action("store").type("string").set_default("").help("Path to project file.");

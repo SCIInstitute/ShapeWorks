@@ -96,9 +96,11 @@ void Analyze::run_offline_analysis(std::string outfile) {
   j["mean"] = mean_meshes_item;
 
   // export modes
+  std::vector<json> modes;
   for (int mode = 0; mode < num_modes; mode++) {
     unsigned int m = stats_.Eigenvectors().cols() - (mode + 1);
     json jmode;
+    jmode["mode"] = m;
     double eigen_value = eigen_vals[mode];
     jmode["eigen_value"] = eigen_value;
     SW_LOG("eigen value [{}]: {}", mode, eigen_value);
@@ -149,10 +151,10 @@ void Analyze::run_offline_analysis(std::string outfile) {
       process_value(pca_value, "plus");
     }
     jmode["pca_values"] = jmodes;
-
-    j[std::to_string(m)] = jmode;
+    modes.push_back(jmode);
   }
 
+  j["modes"] = modes;
   j["charts"] = create_charts(&stats_);
 
   std::ofstream file(outfile);
