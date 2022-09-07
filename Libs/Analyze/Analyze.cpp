@@ -15,6 +15,7 @@ static json create_charts(ParticleShapeStatistics* stats) {
   }
 
   json compactness;
+  compactness["type"] = "line";
   compactness["x"] = x;
   compactness["y"] = stats->get_compactness();
   compactness["title"] = "Compactness";
@@ -22,6 +23,7 @@ static json create_charts(ParticleShapeStatistics* stats) {
   compactness["y_label"] = "Explained Variance";
 
   json generalization;
+  generalization["type"] = "line";
   generalization["x"] = x;
   generalization["y"] = stats->get_generalization();
   generalization["title"] = "Generalization";
@@ -29,6 +31,7 @@ static json create_charts(ParticleShapeStatistics* stats) {
   generalization["y_label"] = "Generalization";
 
   json specificity;
+  specificity["type"] = "line";
   specificity["x"] = x;
   specificity["y"] = stats->get_specificity();
   specificity["title"] = "Specificity";
