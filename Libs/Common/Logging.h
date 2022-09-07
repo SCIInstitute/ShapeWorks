@@ -1,5 +1,7 @@
 #pragma once
 
+#include <functional>
+
 #include <spdlog/fmt/fmt.h>
 
 namespace shapeworks {
