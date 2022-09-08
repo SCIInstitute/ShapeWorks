@@ -1,10 +1,11 @@
 // Includes for platform specific functions
 #ifdef _WIN32
 #include <LMCons.h>
-#include <psapi.h>
 #include <shlobj.h>
 #include <tlhelp32.h>
 #include <windows.h>
+// psapi.h must come after windows.h
+#include <psapi.h>
 #else
 #include <stdlib.h>
 #include <sys/types.h>
@@ -20,8 +21,8 @@
 #endif  // ifndef __APPLE__
 #endif  // ifdef _WIN32
 
-#include <MeshCache.h>
 #include <Logging.h>
+#include <MeshCache.h>
 #include <vtkPolyData.h>
 
 namespace shapeworks {
