@@ -2240,9 +2240,11 @@
 <h2 id="source-code">Source code</h2>
 <div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;random&gt;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Eigen/Core&gt;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Eigen/Dense&gt;</span><span class="cp"></span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;boost/random/mersenne_twister.hpp&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;boost/random/normal_distribution.hpp&gt;</span><span class="cp"></span>
 
 <span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="k">struct</span><span class="w"> </span><span class="nc">MultiVariateNormalRandom</span><span class="w"></span>
@@ -2251,8 +2253,8 @@
 <span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="n">transform</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">  </span><span class="c1">// seed set as constant 42 for test repeatability</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">mt19937</span><span class="w"> </span><span class="n">gen</span><span class="p">{</span><span class="mi">42</span><span class="p">};</span><span class="w"></span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">normal_distribution</span><span class="o">&lt;&gt;</span><span class="w"> </span><span class="n">dist</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">boost</span><span class="o">::</span><span class="n">mt19937</span><span class="w"> </span><span class="n">gen</span><span class="p">{</span><span class="mi">42</span><span class="p">};</span><span class="w"></span>
+<span class="w">  </span><span class="n">boost</span><span class="o">::</span><span class="n">normal_distribution</span><span class="o">&lt;&gt;</span><span class="w"> </span><span class="n">dist</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">  </span><span class="n">MultiVariateNormalRandom</span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">&amp;</span><span class="n">covar</span><span class="p">)</span><span class="w"></span>
 <span class="w">          </span><span class="o">:</span><span class="w"> </span><span class="n">MultiVariateNormalRandom</span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">::</span><span class="n">Zero</span><span class="p">(</span><span class="n">covar</span><span class="p">.</span><span class="n">rows</span><span class="p">()),</span><span class="w"> </span><span class="n">covar</span><span class="p">)</span><span class="w"></span>
@@ -2315,7 +2317,7 @@
 <span class="p">}</span><span class="w"></span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-08-27 at 07:44:08 +0000</p>
+<p>Updated on 2022-09-08 at 20:38:24 +0000</p>
 
               
             </article>

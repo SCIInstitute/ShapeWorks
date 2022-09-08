@@ -28,9 +28,11 @@ title: Libs/Particles/EvaluationUtil.h
 ```cpp
 #pragma once
 
-#include <random>
 #include <Eigen/Core>
 #include <Eigen/Dense>
+
+#include <boost/random/mersenne_twister.hpp>
+#include <boost/random/normal_distribution.hpp>
 
 namespace shapeworks {
 struct MultiVariateNormalRandom
@@ -39,8 +41,8 @@ struct MultiVariateNormalRandom
   Eigen::MatrixXd transform;
 
   // seed set as constant 42 for test repeatability
-  std::mt19937 gen{42};
-  std::normal_distribution<> dist;
+  boost::mt19937 gen{42};
+  boost::normal_distribution<> dist;
 
   MultiVariateNormalRandom(Eigen::MatrixXd const &covar)
           : MultiVariateNormalRandom(Eigen::VectorXd::Zero(covar.rows()), covar)
@@ -106,4 +108,4 @@ void SaveReconstructions(std::vector<Reconstruction> &reconstructions, const std
 
 -------------------------------
 
-Updated on 2022-08-27 at 07:44:08 +0000
+Updated on 2022-09-08 at 20:38:24 +0000
