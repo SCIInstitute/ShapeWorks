@@ -3,8 +3,8 @@
 #include <Logging.h>
 #include <StringUtils.h>
 
-#include <nlohmann/json.hpp>
 #include <boost/filesystem.hpp>
+#include <nlohmann/json.hpp>
 
 using json = nlohmann::ordered_json;
 
@@ -57,7 +57,7 @@ void Analyze::run_offline_analysis(std::string outfile) {
     throw std::runtime_error("Project has not been optimized, please run optimize first");
   }
 
-  auto base = StringUtils::getPath(outfile);
+  auto base = boost::filesystem::path(outfile).parent_path();
 
   // load data from the project
   update_shapes();
@@ -145,9 +145,8 @@ void Analyze::run_offline_analysis(std::string outfile) {
                              "_" + pca_string + ".vtk";
           items.push_back(name);
 
-          boost::filesystem::path dir(base);
           boost::filesystem::path file(name);
-          boost::filesystem::path filename = dir / file;
+          boost::filesystem::path filename = base / file;
           Mesh(mesh->get_poly_data()).write(filename.string());
         }
         item["meshes"] = items;
