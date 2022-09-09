@@ -4,6 +4,8 @@
 #include <StringUtils.h>
 
 #include <nlohmann/json.hpp>
+#include <boost/filesystem.hpp>
+
 using json = nlohmann::ordered_json;
 
 namespace shapeworks {
@@ -142,7 +144,11 @@ void Analyze::run_offline_analysis(std::string outfile) {
           std::string name = "pca_mode_" + std::to_string(mode + 1) + "_domain_" + std::to_string(d) + "_" + prefix +
                              "_" + pca_string + ".vtk";
           items.push_back(name);
-          Mesh(mesh->get_poly_data()).write(base + "/" + name);
+
+          boost::filesystem::path dir(base);
+          boost::filesystem::path file(name);
+          boost::filesystem::path filename = dir / file;
+          Mesh(mesh->get_poly_data()).write(filename.string());
         }
         item["meshes"] = items;
         jmodes.push_back(item);
