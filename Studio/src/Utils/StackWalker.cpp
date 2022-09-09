@@ -1354,6 +1354,6 @@ void StackWalker::OnSymInit(LPCSTR szSearchPath, DWORD symOptions, LPCSTR szUser
 void StackWalker::OnOutput(LPCSTR buffer)
 {
   //OutputDebugStringA(buffer);
-  SW_LOG(QString::fromStdString(std::string(buffer)));
+  SW_LOG_STACK(std::string(buffer));
 }
 #endif

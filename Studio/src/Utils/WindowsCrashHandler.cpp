@@ -151,10 +151,10 @@ static LONG __stdcall CrashHandlerExceptionFilter(EXCEPTION_POINTERS* pExPtrs)
      pExPtrs->ExceptionRecord->ExceptionAddress);
 
   SW_ERROR("Program crashed, end of stacktrace");
-  STUDIO_CLOSE_LOG();
+  SW_CLOSE_LOG();
 
   // attempt to open the log file with notepad
-  std::string file = shapeworks::StudioLog::Instance().get_log_filename().toStdString();
+  std::string file = shapeworks::Logging::Instance().get_log_filename();
   ShellExecute(0, 0, file.c_str(), 0, 0 , SW_SHOW );
 
   FatalAppExit(-1, lString);
