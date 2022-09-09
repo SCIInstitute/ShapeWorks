@@ -180,7 +180,7 @@ bool PythonWorker::init() {
     }
 
     qputenv("PATH", path.toUtf8());
-    SW_LOG("Setting PATH for Python to: " + path.toUtf8());
+    SW_LOG("Setting PATH for Python to: " + path.toStdString());
   }
 #endif  // ifdef _WIN32
 
