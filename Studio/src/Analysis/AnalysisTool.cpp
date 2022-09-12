@@ -1002,7 +1002,7 @@ void AnalysisTool::update_difference_particles() {
   }
 
   // start with a copy from the first shape so that the sizes of domains are already filled out
-  StudioParticles target = session_->get_shapes()[1]->get_particles();
+  StudioParticles target = session_->get_shapes()[0]->get_particles();
   auto all_particles = target.get_combined_global_particles();
 
   Eigen::VectorXd mean = stats_.Mean();
