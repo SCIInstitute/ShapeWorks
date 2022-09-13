@@ -231,7 +231,7 @@ class Mesh {
 
   // public static functions //
 
-  /// getSupportedTypes
+  //! Return supported file types
   static std::vector<std::string> getSupportedTypes() { return {"vtk", "vtp", "ply", "stl", "obj"}; }
 
   /// Prepares the mesh for FFCs by setting scalar and vector fields

@@ -557,6 +557,11 @@ int ParticleShapeStatistics::ComputeModes()
   return 0;
 }
 
+int ParticleShapeStatistics::get_num_modes()
+{
+  return m_numSamples-1;
+}
+
 int ParticleShapeStatistics::PrincipalComponentProjections()
 {
   // Now print the projection of each shape

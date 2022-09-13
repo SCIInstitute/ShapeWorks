@@ -278,6 +278,9 @@ class Image {
   //! Evaluates the image at a given position
   Image::PixelType evaluate(Point p);
 
+  //! Return supported file types
+  static std::vector<std::string> getSupportedTypes() { return {"nrrd", "nii", "nii.gz", "mhd", "tiff", "jpeg", "jpg", "png", "dcm", "ima"}; }
+
  private:
   friend struct SharedCommandData;
   Image()

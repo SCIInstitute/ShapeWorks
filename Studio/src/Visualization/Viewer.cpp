@@ -32,8 +32,8 @@
 #include <vtkUnsignedLongArray.h>
 
 // shapeworks
-#include <Data/Shape.h>
-#include <Data/StudioLog.h>
+#include <Shape.h>
+#include <Logging.h>
 #include <Utils/StudioUtils.h>
 #include <Visualization/LandmarkWidget.h>
 #include <Visualization/Lightbox.h>
@@ -604,7 +604,7 @@ std::vector<vtkSmartPointer<vtkActor>> Viewer::get_unclipped_surface_actors() { 
 MeshGroup Viewer::get_meshes() { return meshes_; }
 
 //-----------------------------------------------------------------------------
-void Viewer::display_shape(QSharedPointer<Shape> shape) {
+void Viewer::display_shape(std::shared_ptr<Shape> shape) {
   visible_ = true;
 
   shape_ = shape;
@@ -626,11 +626,11 @@ void Viewer::display_shape(QSharedPointer<Shape> shape) {
   }
   mesh_ready_ = true;
 
-  QStringList annotations = shape->get_annotations();
-  corner_annotation_->SetText(0, (annotations[0]).toStdString().c_str());
-  corner_annotation_->SetText(1, (annotations[1]).toStdString().c_str());
-  corner_annotation_->SetText(2, (annotations[2]).toStdString().c_str());
-  corner_annotation_->SetText(3, (annotations[3]).toStdString().c_str());
+  auto annotations = shape->get_annotations();
+  corner_annotation_->SetText(0, (annotations[0]).c_str());
+  corner_annotation_->SetText(1, (annotations[1]).c_str());
+  corner_annotation_->SetText(2, (annotations[2]).c_str());
+  corner_annotation_->SetText(3, (annotations[3]).c_str());
   corner_annotation_->GetTextProperty()->SetColor(0.50, 0.5, 0.5);
 
   renderer_->RemoveAllViewProps();
@@ -710,7 +710,7 @@ void Viewer::display_shape(QSharedPointer<Shape> shape) {
               ffc.applyToPolyData(poly_data);
             }
           } catch (std::exception& e) {
-            STUDIO_SHOW_ERROR(QString("Unable to apply free form constraints: ") + e.what());
+            SW_ERROR(std::string("Unable to apply free form constraints: ") + e.what());
           }
         }
 
@@ -1123,7 +1123,7 @@ int Viewer::handle_pick(int* click_pos) {
       vtkIdType glyph_id = input_ids->GetTuple1(input_id);
 
       if (glyph_id >= 0) {
-        STUDIO_LOG_MESSAGE("picked correspondence point :" + QString::number(glyph_id));
+        SW_LOG("picked correspondence point :" + std::to_string(glyph_id));
         return glyph_id;
       }
     }
@@ -1219,7 +1219,7 @@ void Viewer::update_opacities() {
 }
 
 //-----------------------------------------------------------------------------
-QSharedPointer<Shape> Viewer::get_shape() { return shape_; }
+std::shared_ptr<Shape> Viewer::get_shape() { return shape_; }
 
 //-----------------------------------------------------------------------------
 void Viewer::initialize_surfaces() {

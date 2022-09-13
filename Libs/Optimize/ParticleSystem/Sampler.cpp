@@ -102,7 +102,7 @@ void Sampler::AllocateDomainsAndNeighborhoods() {
         // Adding cutting planes to constraint object
         if (m_CuttingPlanes.size() > i) {
           for (unsigned int j = 0; j < m_CuttingPlanes[i].size(); j++) {
-            domain->GetConstraints()->addPlane(m_CuttingPlanes[i][j].a, m_CuttingPlanes[i][j].b, m_CuttingPlanes[i][j].c);
+            domain->GetConstraints()->addPlane(m_CuttingPlanes[i][j].a.as_ref(), m_CuttingPlanes[i][j].b.as_ref(), m_CuttingPlanes[i][j].c.as_ref());
             if (m_verbosity >= 1)
               std::cout << "Adding cutting plane constraint to domain " << i << " shape " << j << " with normal "
                         << domain->GetConstraints()->getPlaneConstraints()[j].getPlaneNormal().transpose() << " and point "
@@ -171,7 +171,7 @@ void Sampler::AllocateDomainsAndNeighborhoods() {
             // Adding cutting planes to constraint object
             if (m_CuttingPlanes.size() > i) {
               for (unsigned int j = 0; j < m_CuttingPlanes[i].size(); j++) {
-                domain->GetConstraints()->addPlane(m_CuttingPlanes[i][j].a, m_CuttingPlanes[i][j].b, m_CuttingPlanes[i][j].c);
+                domain->GetConstraints()->addPlane(m_CuttingPlanes[i][j].a.as_ref(), m_CuttingPlanes[i][j].b.as_ref(), m_CuttingPlanes[i][j].c.as_ref());
                 if (m_verbosity >= 1)
                   std::cout << "Adding cutting plane constraint to domain " << i << " shape " << j << " with normal "
                             << domain->GetConstraints()->getPlaneConstraints()[j].getPlaneNormal().transpose() << " and point "
@@ -364,7 +364,7 @@ void Sampler::SetCuttingPlane(unsigned int i, const vnl_vector_fixed<double, Dim
 
   if (m_Initialized == true) {
     std::cout << "Initialized plane" << std::endl;
-    m_ParticleSystem->GetDomain(i)->GetConstraints()->addPlane(va, vb, vc);
+    m_ParticleSystem->GetDomain(i)->GetConstraints()->addPlane(va.as_ref(), vb.as_ref(), vc.as_ref());
   }
 }
 

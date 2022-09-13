@@ -12,7 +12,7 @@
  *
  **********************************************************************/
 
-#include <Data/StudioLog.h>
+#include <Logging.h>
 #include "StackWalker.h"
 #include <tchar.h>
 #include <stdio.h>
@@ -36,7 +36,7 @@ class StackWalkerToConsole : public StackWalker
 protected:
   virtual void OnOutput(LPCSTR szText)
   {
-	  STUDIO_LOG_STACK(std::string(szText));
+	  SW_LOG_STACK(std::string(szText));
 //	  printf("%s", szText);
   }
 };
@@ -135,7 +135,7 @@ static LONG __stdcall CrashHandlerExceptionFilter(EXCEPTION_POINTERS* pExPtrs)
   }
 #endif
 
-  STUDIO_LOG_ERROR("Program crashed, stacktrace:");
+  SW_ERROR("Program crashed, stacktrace:");
 
   StackWalkerToConsole sw;  // output to console
   sw.ShowCallstack(GetCurrentThread(), pExPtrs->ContextRecord);
@@ -150,11 +150,11 @@ static LONG __stdcall CrashHandlerExceptionFilter(EXCEPTION_POINTERS* pExPtrs)
      pExPtrs->ExceptionRecord->ExceptionFlags,
      pExPtrs->ExceptionRecord->ExceptionAddress);
 
-  STUDIO_LOG_ERROR("Program crashed, end of stacktrace");
-  STUDIO_CLOSE_LOG();
+  SW_ERROR("Program crashed, end of stacktrace");
+  SW_CLOSE_LOG();
 
   // attempt to open the log file with notepad
-  std::string file = shapeworks::StudioLog::Instance().get_log_filename().toStdString();
+  std::string file = shapeworks::Logging::Instance().get_log_filename();
   ShellExecute(0, 0, file.c_str(), 0, 0 , SW_SHOW );
 
   FatalAppExit(-1, lString);
@@ -216,9 +216,9 @@ int f(int i)
 
 int init_crash_handler()
 {
-  //STUDIO_LOG_MESSAGE("Showing a simple callstack of the current thread:\n\n\n");
+  //SW_LOG("Showing a simple callstack of the current thread:\n\n\n");
   //StackWalkTest();
-  STUDIO_LOG_MESSAGE("Windows Crash Handler Initialized");
+  SW_LOG("Windows Crash Handler Initialized");
 
 #ifdef EXCEPTION_FILTER_TEST
   //printf("\n\n\nShow a the callstack from inside an execption-handler:\n\n\n");
