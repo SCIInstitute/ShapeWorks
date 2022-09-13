@@ -3,11 +3,14 @@
 #include <vtkSmartPointer.h>
 #include <vtkTransform.h>
 
+#include <map>
 #include <vector>
 
-#include "Project.h"
+#include <DomainType.h>
 
 namespace shapeworks {
+
+class Project;
 
 namespace project::prefixes {
 static constexpr const char* SEGMENTATION_PREFIX = "segmentation_";
@@ -37,15 +40,14 @@ static constexpr const char* WORLD_PARTICLES_PREFIX = "world_particles_";
 }  // namespace project::prefixes
 
 namespace project::types {
-  using StringMap = std::map<std::string, std::string>;
-  using StringList = std::vector<std::string>;
-  using StringMapList = std::vector<StringMap>;
-  using StringMultiMap = std::map<std::string, StringMap>;
-}
+using StringMap = std::map<std::string, std::string>;
+using StringList = std::vector<std::string>;
+using StringMapList = std::vector<StringMap>;
+using StringMultiMap = std::map<std::string, StringMap>;
+}  // namespace project::types
 
 class ProjectUtils {
  public:
-
   using StringList = project::types::StringList;
   using StringMap = project::types::StringMap;
 
@@ -59,7 +61,7 @@ class ProjectUtils {
   static StringList determine_domain_names(StringList keys);
 
   //! determine and set domain types
-  static void determine_domain_types(Project& project, StringMap key_map);
+  static void determine_domain_types(Project* project, StringMap key_map);
 
   //! return a list of the input prefixes
   static StringList get_input_prefixes();
@@ -92,6 +94,5 @@ class ProjectUtils {
 
   static std::vector<std::string> convert_domain_types(std::vector<DomainType> domain_types);
   static std::vector<std::string> convert_groomed_domain_types(std::vector<DomainType> domain_types);
-
 };
 }  // namespace shapeworks

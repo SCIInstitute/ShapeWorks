@@ -1,5 +1,6 @@
 #include "ProjectUtils.h"
 
+#include <Project.h>
 #include <Libs/Mesh/MeshUtils.h>
 #include <StringUtils.h>
 
@@ -74,8 +75,8 @@ StringList ProjectUtils::determine_domain_names(StringList keys) {
 }
 
 //---------------------------------------------------------------------------
-void ProjectUtils::determine_domain_types(Project& project, StringMap key_map) {
-  auto domain_names = project.get_domain_names();
+void ProjectUtils::determine_domain_types(Project *project, StringMap key_map) {
+  auto domain_names = project->get_domain_names();
 
   std::vector<DomainType> original_domain_types;
   for (const auto& domain : domain_names) {
@@ -91,7 +92,7 @@ void ProjectUtils::determine_domain_types(Project& project, StringMap key_map) {
       }
     }
   }
-  project.set_original_domain_types(original_domain_types);
+  project->set_original_domain_types(original_domain_types);
 
   // groomed types
   std::vector<DomainType> groomed_domain_types;
@@ -104,7 +105,7 @@ void ProjectUtils::determine_domain_types(Project& project, StringMap key_map) {
       }
     }
   }
-  project.set_groomed_domain_types(groomed_domain_types);
+  project->set_groomed_domain_types(groomed_domain_types);
 }
 
 //---------------------------------------------------------------------------
