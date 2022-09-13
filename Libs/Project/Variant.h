@@ -50,7 +50,7 @@ class Variant {
   operator std::vector<bool>();
 
  private:
-  const std::string str_;
+  std::string str_;
   bool valid_;
 };
 }  // namespace shapeworks

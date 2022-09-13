@@ -1,11 +1,16 @@
 #pragma once
 
+#include <map>
+#include <nlohmann/json.hpp>
+#include "ordered_map.h"
+#include <string>
+#include <vector>
+
+// vtk
 #include <vtkSmartPointer.h>
 #include <vtkTransform.h>
 
-#include <map>
-#include <vector>
-
+// shapeworks
 #include <DomainType.h>
 
 namespace shapeworks {
@@ -41,7 +46,10 @@ static constexpr const char* WORLD_PARTICLES_PREFIX = "world_particles_";
 }  // namespace project::prefixes
 
 namespace project::types {
-using StringMap = std::map<std::string, std::string>;
+// using StringMap = nlohmann::ordered_map<std::string, std::string>;
+// using StringMap = nlohmann::ordered_json;
+  using StringMap = tsl::ordered_map<std::string, std::string>;
+//  using StringMap = std::map<std::string, std::string>;
 using StringList = std::vector<std::string>;
 using StringMapList = std::vector<StringMap>;
 using StringMultiMap = std::map<std::string, StringMap>;
@@ -97,6 +105,5 @@ class ProjectUtils {
   static std::vector<std::string> convert_groomed_domain_types(std::vector<DomainType> domain_types);
 
   static StringMap convert_subject_to_map(Project* project, Subject* subject);
-
 };
 }  // namespace shapeworks

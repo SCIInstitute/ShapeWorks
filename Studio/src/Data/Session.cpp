@@ -493,7 +493,7 @@ void Session::set_project_path(QString relative_path) {
 
     // features
     auto features = subject->get_feature_filenames();
-    std::map<std::string, std::string> new_features;
+    project::types::StringMap new_features;
     for (auto const& x : features) {
       auto full_path = old_path.absoluteFilePath(QString::fromStdString(x.second));
       new_features[x.first] = new_path.relativeFilePath(full_path).toStdString();
