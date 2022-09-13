@@ -437,7 +437,7 @@ void Shape::generate_meshes(std::vector<std::string> filenames, MeshGroup& mesh_
       mesh_group.set_mesh(i, new_mesh);
 
       if (new_mesh->get_poly_data()->GetNumberOfPoints() < 1) {
-        SW_ERROR("Error: Mesh contained no points: " + filenames[i]);
+        SW_ERROR("Generated mesh is empty, file: " + filenames[i]);
       } else {
         // generate a basic centering transform
         auto com = vtkSmartPointer<vtkCenterOfMass>::New();

@@ -180,6 +180,11 @@ MeshHandle MeshGenerator::build_mesh_from_file(std::string filename, float iso_v
       image = orienter->GetOutput();
 
       mesh = this->build_mesh_from_image(image, iso_value);
+
+      if (mesh->get_poly_data()->GetNumberOfPoints() == 0) {
+        SW_ERROR("Mesh generated for {} with iso-level {} is empty",filename, iso_value);
+      }
+
     } catch (itk::ExceptionObject& excep) {
       SW_ERROR(excep.what());
       mesh->set_error_message(std::string("Exception: ") + excep.what());
