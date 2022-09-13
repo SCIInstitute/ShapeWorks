@@ -17,7 +17,7 @@ class Groom {
   Groom(ProjectHandle project);
 
   //! Run the grooming
-  virtual bool run();
+  bool run();
 
   //! Set if grooming steps should be skipped
   void set_skip_grooming(bool skip);

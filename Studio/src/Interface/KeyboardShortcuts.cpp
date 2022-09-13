@@ -1,22 +1,18 @@
 #include <iostream>
 
 // Qt includes
+#include <Applications/Configuration.h>
+
 #include <QFileDialog>
 #include <QMessageBox>
 
 #include "KeyboardShortcuts.h"
-
-#include <Applications/Configuration.h>
-#include <Data/StudioLog.h>
-
 #include "ui_KeyboardShortcuts.h"
 
 namespace shapeworks {
 
 //---------------------------------------------------------------------------
-KeyboardShortcuts::KeyboardShortcuts(QWidget* parent) :
-  QDialog(parent)
-{
+KeyboardShortcuts::KeyboardShortcuts(QWidget* parent) : QDialog(parent) {
   this->ui_ = new Ui_KeyboardShortcuts;
   this->ui_->setupUi(this);
 
@@ -30,9 +26,6 @@ KeyboardShortcuts::KeyboardShortcuts(QWidget* parent) :
 }
 
 //---------------------------------------------------------------------------
-KeyboardShortcuts::~KeyboardShortcuts()
-{
-}
+KeyboardShortcuts::~KeyboardShortcuts() {}
 
-}
-
+}  // namespace shapeworks

@@ -1,10 +1,12 @@
 #include "ExportUtils.h"
 
 #include <Data/Session.h>
-#include <Data/Shape.h>
+#include <Shape.h>
 #include <Interface/ShapeWorksStudioApp.h>
 #include <StringUtils.h>
 #include <Utils/StudioUtils.h>
+#include <Logging.h>
+
 #include <vtkPointData.h>
 #include <vtkPolyData.h>
 
@@ -19,7 +21,8 @@ namespace shapeworks {
 QString ExportUtils::get_save_filename(ShapeWorksStudioApp* parent, QString title, QString filetypes,
                                        QString default_ext) {
   QString last_directory = parent->prefs().get_last_directory();
-  QString filename = QFileDialog::getSaveFileName(parent, title, last_directory, filetypes);
+  //QString filename = QFileDialog::getSaveFileName(parent, title, last_directory, filetypes);
+  QString filename = QFileDialog::getSaveFileName(parent, title, last_directory, "*.*");
   if (filename.isEmpty()) {
     return "";
   }
@@ -46,7 +49,7 @@ void ExportUtils::export_all_subjects_particle_scalars(ShapeWorksStudioApp* pare
   QFileInfo fi(filename);
   QString base = fi.path() + QDir::separator() + fi.completeBaseName();
   for (const auto& shape : session->get_shapes()) {
-    QString shape_filename = base + "_" + shape->get_display_name() + "." + fi.completeSuffix();
+    QString shape_filename = base + "_" + QString::fromStdString(shape->get_display_name()) + "." + fi.completeSuffix();
 
     auto display_mode = session->get_display_mode();
     auto mesh_group = shape->get_meshes(display_mode, true);
@@ -57,7 +60,7 @@ void ExportUtils::export_all_subjects_particle_scalars(ShapeWorksStudioApp* pare
     }
 
     ExportUtils::write_particle_scalars(parent, shape, shape_filename);
-    parent->handle_message("Wrote: " + shape_filename);
+    SW_LOG("Wrote: " + shape_filename.toStdString());
 
     if (progress.wasCanceled()) {
       break;
@@ -69,14 +72,14 @@ void ExportUtils::export_all_subjects_particle_scalars(ShapeWorksStudioApp* pare
 //---------------------------------------------------------------------------
 bool ExportUtils::write_scalars(ShapeWorksStudioApp* app, vtkSmartPointer<vtkPolyData> poly_data, QString filename) {
   if (!poly_data || !poly_data->GetPointData()->GetScalars()) {
-    app->handle_error("Error, no scalars to export");
+    SW_ERROR("Error, no scalars to export");
     return false;
   }
 
   std::ofstream output;
   output.open(filename.toStdString().c_str());
   if (output.bad()) {
-    app->handle_error("Error writing to file: " + filename);
+    SW_ERROR("Error writing to file: " + filename.toStdString());
     return false;
   }
   output << "point,x,y,z";
@@ -126,7 +129,7 @@ bool ExportUtils::write_scalars(ShapeWorksStudioApp* app, vtkSmartPointer<vtkPol
 }
 
 //---------------------------------------------------------------------------
-bool ExportUtils::write_particle_scalars(ShapeWorksStudioApp* app, QSharedPointer<Shape> shape, QString filename) {
+bool ExportUtils::write_particle_scalars(ShapeWorksStudioApp* app, std::shared_ptr<Shape> shape, QString filename) {
   if (!shape) {
     app->handle_error("No shape to export");
     return false;
@@ -135,7 +138,7 @@ bool ExportUtils::write_particle_scalars(ShapeWorksStudioApp* app, QSharedPointe
   std::ofstream output;
   output.open(filename.toStdString().c_str());
   if (output.bad()) {
-    app->handle_error("Error writing to file: " + filename);
+    SW_ERROR("Error writing to file: " + filename.toStdString());
     return false;
   }
   output << "point,x,y,z";

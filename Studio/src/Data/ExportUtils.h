@@ -19,7 +19,7 @@ class ExportUtils {
 
   static bool write_scalars(ShapeWorksStudioApp* app, vtkSmartPointer<vtkPolyData> poly_data, QString filename);
 
-  static bool write_particle_scalars(ShapeWorksStudioApp* app, QSharedPointer<Shape> shape, QString filename);
+  static bool write_particle_scalars(ShapeWorksStudioApp* app, std::shared_ptr<Shape> shape, QString filename);
 };
 
 }  // namespace shapeworks

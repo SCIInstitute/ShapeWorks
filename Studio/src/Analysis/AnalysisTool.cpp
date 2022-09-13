@@ -9,17 +9,17 @@
 
 // shapeworks
 #include <Analysis/AnalysisTool.h>
-#include <Data/QMeshWarper.h>
 #include <Data/Session.h>
-#include <Data/Shape.h>
 #include <Data/ShapeWorksWorker.h>
-#include <Data/StudioLog.h>
-#include <Data/StudioMesh.h>
 #include <Interface/ShapeWorksStudioApp.h>
 #include <Job/GroupPvalueJob.h>
 #include <Job/ParticleNormalEvaluationJob.h>
 #include <Job/StatsGroupLDAJob.h>
+#include <Logging.h>
 #include <Python/PythonWorker.h>
+#include <QMeshWarper.h>
+#include <Shape.h>
+#include <StudioMesh.h>
 #include <Visualization/Lightbox.h>
 #include <jkqtplotter/graphs/jkqtpscatter.h>
 #include <jkqtplotter/jkqtplotter.h>
@@ -70,15 +70,9 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
           &AnalysisTool::handle_group_animate_state_changed);
   connect(&group_animate_timer_, &QTimer::timeout, this, &AnalysisTool::handle_group_timer);
 
-  connect(ui_->group_box, qOverload<const QString&>(&QComboBox::currentIndexChanged), this,
-          &AnalysisTool::update_group_values);
-
-  connect(ui_->group_left, qOverload<const QString&>(&QComboBox::currentIndexChanged), this,
-          &AnalysisTool::group_changed);
-
-  connect(ui_->group_right, qOverload<const QString&>(&QComboBox::currentIndexChanged), this,
-          &AnalysisTool::group_changed);
-
+  connect(ui_->group_box, qOverload<int>(&QComboBox::currentIndexChanged), this, &AnalysisTool::update_group_values);
+  connect(ui_->group_left, qOverload<int>(&QComboBox::currentIndexChanged), this, &AnalysisTool::group_changed);
+  connect(ui_->group_right, qOverload<int>(&QComboBox::currentIndexChanged), this, &AnalysisTool::group_changed);
   connect(ui_->group_p_values_button, &QPushButton::clicked, this, &AnalysisTool::group_p_values_clicked);
 
   connect(ui_->reference_domain, qOverload<int>(&QComboBox::currentIndexChanged), this,
@@ -106,7 +100,6 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
   group_lda_job_ = QSharedPointer<StatsGroupLDAJob>::create();
   connect(group_lda_job_.data(), &StatsGroupLDAJob::progress, this, &AnalysisTool::handle_lda_progress);
   connect(group_lda_job_.data(), &StatsGroupLDAJob::finished, this, &AnalysisTool::handle_lda_complete);
-  connect(group_lda_job_.data(), &StatsGroupLDAJob::message, this, &AnalysisTool::message);
 
   connect(ui_->show_difference_to_mean, &QPushButton::clicked, this, &AnalysisTool::show_difference_to_mean_clicked);
 }
@@ -158,7 +151,7 @@ void AnalysisTool::handle_reconstruction_complete() {
 
   session_->calculate_reconstructed_samples();
   emit progress(100);
-  emit message("Reconstruction Complete");
+  SW_LOG("Reconstruction Complete");
   emit reconstruction_complete();
   /// TODO: Studio
   /// ui_->run_optimize_button->setEnabled(true);
@@ -169,22 +162,16 @@ void AnalysisTool::handle_reconstruction_complete() {
 //---------------------------------------------------------------------------
 void AnalysisTool::on_reconstructionButton_clicked() {
   store_settings();
-  emit message("Please wait: running reconstruction step...");
+  SW_LOG("Please wait: running reconstruction step...");
   emit progress(5);
   QThread* thread = new QThread;
-  std::vector<std::vector<itk::Point<double>>> local, global;
-  std::vector<std::string> images;
 
   ShapeworksWorker* worker =
-      new ShapeworksWorker(ShapeworksWorker::ReconstructType, nullptr, nullptr, nullptr, session_, local, global,
-                           images, ui_->maxAngle->value(), ui_->meshDecimation->value(), ui_->numClusters->value());
+      new ShapeworksWorker(ShapeworksWorker::ReconstructType, nullptr, nullptr, nullptr, session_,
+                           ui_->maxAngle->value(), ui_->meshDecimation->value(), ui_->numClusters->value());
   worker->moveToThread(thread);
   connect(thread, SIGNAL(started()), worker, SLOT(process()));
   connect(worker, SIGNAL(result_ready()), this, SLOT(handle_reconstruction_complete()));
-
-  connect(worker, &ShapeworksWorker::error_message, this, &AnalysisTool::error);
-  connect(worker, &ShapeworksWorker::warning_message, this, &AnalysisTool::warning);
-  connect(worker, &ShapeworksWorker::message, this, &AnalysisTool::message);
 
   connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
   thread->start();
@@ -236,10 +223,7 @@ void AnalysisTool::set_session(QSharedPointer<Session> session) {
 }
 
 //---------------------------------------------------------------------------
-QSharedPointer<Session> AnalysisTool::get_session()
-{
-  return session_;
-}
+QSharedPointer<Session> AnalysisTool::get_session() { return session_; }
 
 //---------------------------------------------------------------------------
 void AnalysisTool::set_app(ShapeWorksStudioApp* app) { app_ = app; }
@@ -381,11 +365,10 @@ void AnalysisTool::group_p_values_clicked() {
     handle_group_pvalues_complete();
   } else {
     if (group1_list_.size() < 3 || group2_list_.size() < 3) {
-      emit error("Unable to compute p-values with less than 3 shapes per group");
+      SW_ERROR("Unable to compute p-values with less than 3 shapes per group");
       return;
     }
     group_pvalue_job_ = QSharedPointer<GroupPvalueJob>::create(stats_);
-    connect(group_pvalue_job_.data(), &GroupPvalueJob::message, this, &AnalysisTool::message);
     connect(group_pvalue_job_.data(), &GroupPvalueJob::progress, this, &AnalysisTool::progress);
     connect(group_pvalue_job_.data(), &GroupPvalueJob::finished, this, &AnalysisTool::handle_group_pvalues_complete);
     app_->get_py_worker()->run_job(group_pvalue_job_);
@@ -418,7 +401,7 @@ bool AnalysisTool::compute_stats() {
   group1_list_.clear();
   group2_list_.clear();
 
-  Q_FOREACH (ShapeHandle shape, session_->get_shapes()) {
+  for (auto& shape : session_->get_shapes()) {
     if (groups_enabled) {
       auto value = shape->get_subject()->get_group_value(group_set);
       if (value == left_group) {
@@ -434,7 +417,7 @@ bool AnalysisTool::compute_stats() {
       }
     } else {
       points.push_back(shape->get_global_correspondence_points());
-      group_ids.push_back(shape->get_group_id());
+      group_ids.push_back(1);
     }
   }
 
@@ -446,7 +429,7 @@ bool AnalysisTool::compute_stats() {
   size_t point_size = points[0].size();
   for (auto&& p : points) {
     if (p.size() != point_size) {
-      emit error("Inconsistency in data, particle files must contain the same number of points");
+      SW_ERROR("Inconsistency in data, particle files must contain the same number of points");
       return false;
     }
   }
@@ -501,9 +484,9 @@ bool AnalysisTool::compute_stats() {
 }
 
 //-----------------------------------------------------------------------------
-StudioParticles AnalysisTool::get_mean_shape_points() {
+Particles AnalysisTool::get_mean_shape_points() {
   if (!compute_stats()) {
-    return StudioParticles();
+    return Particles();
   }
 
   if (ui_->group1_button->isChecked() || ui_->difference_button->isChecked()) {
@@ -524,9 +507,9 @@ StudioParticles AnalysisTool::get_mean_shape_points() {
 }
 
 //-----------------------------------------------------------------------------
-StudioParticles AnalysisTool::get_shape_points(int mode, double value) {
+Particles AnalysisTool::get_shape_points(int mode, double value) {
   if (!compute_stats() || stats_.Eigenvectors().size() <= 1) {
-    return StudioParticles();
+    return Particles();
   }
   if (mode + 2 > stats_.Eigenvalues().size()) {
     mode = stats_.Eigenvalues().size() - 2;
@@ -878,7 +861,7 @@ ShapeHandle AnalysisTool::get_mean_shape() {
 }
 
 //---------------------------------------------------------------------------
-ShapeHandle AnalysisTool::create_shape_from_points(StudioParticles points) {
+ShapeHandle AnalysisTool::create_shape_from_points(Particles points) {
   ShapeHandle shape = ShapeHandle(new Shape());
   shape->set_mesh_manager(session_->get_mesh_manager());
   shape->set_particles(points);
@@ -923,8 +906,7 @@ void AnalysisTool::update_group_boxes() {
 //---------------------------------------------------------------------------
 void AnalysisTool::update_group_values() {
   block_group_change_ = true;
-  auto values =
-      session_->get_project()->get_group_values(ui_->group_box->currentText().toStdString());
+  auto values = session_->get_project()->get_group_values(ui_->group_box->currentText().toStdString());
 
   if (values != current_group_values_) {
     // populate group values
@@ -1002,7 +984,7 @@ void AnalysisTool::update_difference_particles() {
   }
 
   // start with a copy from the first shape so that the sizes of domains are already filled out
-  StudioParticles target = session_->get_shapes()[1]->get_particles();
+  Particles target = session_->get_shapes()[1]->get_particles();
   auto all_particles = target.get_combined_global_particles();
 
   Eigen::VectorXd mean = stats_.Mean();
@@ -1107,15 +1089,15 @@ void AnalysisTool::initialize_mesh_warper() {
     int median = stats_.ComputeMedianShape(-32);  //-32 = both groups
 
     if (median < 0 || median >= session_->get_num_shapes()) {
-      STUDIO_LOG_ERROR("Unable to set reference mesh, stats returned invalid median index");
+      SW_ERROR("Unable to set reference mesh, stats returned invalid median index");
       return;
     }
-    QSharedPointer<Shape> median_shape = session_->get_shapes()[median];
+    std::shared_ptr<Shape> median_shape = session_->get_shapes()[median];
 
     auto mesh_group = median_shape->get_groomed_meshes(true);
 
     if (!mesh_group.valid()) {
-      STUDIO_LOG_ERROR("Unable to set reference mesh, groomed mesh is unavailable");
+      SW_ERROR("Unable to set reference mesh, groomed mesh is unavailable");
       return;
     }
     auto meshes = mesh_group.meshes();
@@ -1298,8 +1280,8 @@ void AnalysisTool::set_active(bool active) {
 bool AnalysisTool::get_active() { return active_; }
 
 //---------------------------------------------------------------------------
-StudioParticles AnalysisTool::convert_from_combined(const Eigen::VectorXd& points) {
-  StudioParticles particles;
+Particles AnalysisTool::convert_from_combined(const Eigen::VectorXd& points) {
+  Particles particles;
   if (session_->get_shapes().empty()) {
     return particles;
   }

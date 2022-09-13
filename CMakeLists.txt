@@ -156,11 +156,15 @@ find_package(Boost REQUIRED COMPONENTS
 
 ### Json library
 find_package(nlohmann_json 3.10.5 REQUIRED)
-	   
+
+### spdlog library
+find_package(spdlog 1.10.0 REQUIRED)
+
 ### Geometry central include
 if (NOT DEFINED GEOMETRY_CENTRAL_DIR)
   set(GEOMETRY_CENTRAL_DIR ${CMAKE_PREFIX_PATH}/geometry-central/)
 endif()
+MESSAGE(status "GEOMETRY_CENTRAL_DIR: ${GEOMETRY_CENTRAL_DIR}")
 # we need to explicitly specify the output folder if adding a subdirectory outside the current working dir.
 add_subdirectory(${GEOMETRY_CENTRAL_DIR} ./geometry-central-build/)
 

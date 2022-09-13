@@ -1,22 +1,19 @@
 #include <iostream>
 
 // Qt includes
+#include <Applications/Configuration.h>
+#include <Logging.h>
+
 #include <QFileDialog>
 #include <QMessageBox>
 
 #include "SplashScreen.h"
-
-#include <Applications/Configuration.h>
-#include <Data/StudioLog.h>
-
 #include "ui_SplashScreen.h"
 
 namespace shapeworks {
 
 //---------------------------------------------------------------------------
-SplashScreen::SplashScreen(QWidget* parent, Preferences& preferences) :
-  QDialog(parent), preferences_(preferences)
-{
+SplashScreen::SplashScreen(QWidget* parent, Preferences& preferences) : QDialog(parent), preferences_(preferences) {
   this->ui_ = new Ui_SplashScreen;
   this->ui_->setupUi(this);
 
@@ -33,51 +30,34 @@ SplashScreen::SplashScreen(QWidget* parent, Preferences& preferences) :
 
   this->populate_recent_projects();
 
-  connect(this->ui_->quit_button_, &QPushButton::clicked,
-          this, &SplashScreen::quit);
+  connect(this->ui_->quit_button_, &QPushButton::clicked, this, &SplashScreen::quit);
 
-  connect(this->ui_->recent_project_listwidget_, &QListWidget::itemPressed,
-          this, &SplashScreen::enable_load_recent_button);
+  connect(this->ui_->recent_project_listwidget_, &QListWidget::itemPressed, this,
+          &SplashScreen::enable_load_recent_button);
 
-  connect(this->ui_->recent_project_listwidget_, &QListWidget::itemDoubleClicked,
-          this, &SplashScreen::open_recent);
+  connect(this->ui_->recent_project_listwidget_, &QListWidget::itemDoubleClicked, this, &SplashScreen::open_recent);
 
-  connect(this->ui_->new_project_button_, &QPushButton::clicked,
-          this, &SplashScreen::new_project);
+  connect(this->ui_->new_project_button_, &QPushButton::clicked, this, &SplashScreen::new_project);
 
-  connect(this->ui_->load_recent_button_, &QPushButton::clicked,
-          this, &SplashScreen::open_recent);
+  connect(this->ui_->load_recent_button_, &QPushButton::clicked, this, &SplashScreen::open_recent);
 
-  connect(this->ui_->existing_project_button_, &QPushButton::clicked,
-          this, &SplashScreen::open_existing);
+  connect(this->ui_->existing_project_button_, &QPushButton::clicked, this, &SplashScreen::open_existing);
 
   this->ui_->new_project_button_->setFocus();
-
 }
 
 //---------------------------------------------------------------------------
-SplashScreen::~SplashScreen()
-{
-}
+SplashScreen::~SplashScreen() {}
 
 //---------------------------------------------------------------------------
-void SplashScreen::new_project()
-{
-  this->close();
-}
+void SplashScreen::new_project() { this->close(); }
 
 //---------------------------------------------------------------------------
-void SplashScreen::quit()
-{
-  reinterpret_cast<QWidget*>( this->parent())->close();
-}
+void SplashScreen::quit() { reinterpret_cast<QWidget*>(this->parent())->close(); }
 
 //---------------------------------------------------------------------------
-void SplashScreen::open_existing()
-{
-
-  QString filename = QFileDialog::getOpenFileName(this, tr("Open Project..."),
-                                                  this->preferences_.get_last_directory(),
+void SplashScreen::open_existing() {
+  QString filename = QFileDialog::getOpenFileName(this, tr("Open Project..."), this->preferences_.get_last_directory(),
                                                   tr("XLSX files (*.xlsx)"));
   if (filename.isEmpty()) {
     return;
@@ -91,9 +71,7 @@ void SplashScreen::open_existing()
 }
 
 //---------------------------------------------------------------------------
-void SplashScreen::open_recent()
-{
-
+void SplashScreen::open_recent() {
   QListWidgetItem* current_item = this->ui_->recent_project_listwidget_->currentItem();
   if (current_item == nullptr) {
     return;
@@ -120,13 +98,11 @@ void SplashScreen::open_recent()
 }
 
 //---------------------------------------------------------------------------
-void SplashScreen::populate_recent_projects()
-{
-
+void SplashScreen::populate_recent_projects() {
   QStringList recent_files = this->preferences_.get_recent_files();
   QStringList recent_paths = this->preferences_.get_recent_paths();
 
-  int num_recent_files = qMin(recent_files.size(), (int) Preferences::MAX_RECENT_FILES);
+  int num_recent_files = qMin(recent_files.size(), (int)Preferences::MAX_RECENT_FILES);
 
   for (int i = 0; i < num_recent_files; i++) {
     QString text = QFileInfo(recent_files[i]).fileName();
@@ -137,18 +113,15 @@ void SplashScreen::populate_recent_projects()
     new_item->setToolTip(recent_files[i]);
     this->ui_->recent_project_listwidget_->addItem(new_item);
   }
-
 }
 
 //---------------------------------------------------------------------------
-void SplashScreen::enable_load_recent_button(QListWidgetItem* not_used)
-{
+void SplashScreen::enable_load_recent_button(QListWidgetItem* not_used) {
   this->ui_->load_recent_button_->setEnabled(true);
 }
 
 //---------------------------------------------------------------------------
-void SplashScreen::resizeEvent(QResizeEvent* event)
-{
+void SplashScreen::resizeEvent(QResizeEvent* event) {
   QDialog::resizeEvent(event);
 
   QFontMetrics fm(this->ui_->title_->font());
@@ -157,5 +130,4 @@ void SplashScreen::resizeEvent(QResizeEvent* event)
   this->resize(width * 2, width * 1.2);
 }
 
-}
-
+}  // namespace shapeworks

@@ -66,10 +66,7 @@ signals:
   void optimize_start();
   void optimize_complete();
 
-  void error_message(QString);
-  void warning_message(QString);
   void progress(int);
-  void message(QString);
   void status(QString);
 
 private:
