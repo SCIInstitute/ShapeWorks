@@ -63,7 +63,7 @@ const double iso_spacing = 0.0;
 const std::vector<double> spacing{0, 0, 0};
 const bool convert_mesh = false;
 const bool fill_holes = true;
-const bool fill_holes_mesh = true;
+const bool fill_holes_mesh = false;
 const bool isolate = true;
 const bool pad = true;
 const int pad_value = 10;
