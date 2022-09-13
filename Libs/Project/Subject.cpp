@@ -6,6 +6,7 @@
 
 using namespace shapeworks;
 using StringMap = project::types::StringMap;
+using StringList = project::types::StringList;
 
 //---------------------------------------------------------------------------
 Subject::Subject() {}
@@ -14,16 +15,16 @@ Subject::Subject() {}
 Subject::~Subject() {}
 
 //---------------------------------------------------------------------------
-void Subject::set_original_filenames(std::vector<std::string> filenames) { original_filenames_ = filenames; }
+void Subject::set_original_filenames(StringList filenames) { original_filenames_ = filenames; }
 
 //---------------------------------------------------------------------------
-void Subject::set_groomed_filenames(std::vector<std::string> filenames) { groomed_filenames_ = filenames; }
+void Subject::set_groomed_filenames(StringList filenames) { groomed_filenames_ = filenames; }
 
 //---------------------------------------------------------------------------
-std::vector<std::string> Subject::get_groomed_filenames() { return groomed_filenames_; }
+StringList Subject::get_groomed_filenames() { return groomed_filenames_; }
 
 //---------------------------------------------------------------------------
-std::vector<std::string> Subject::get_original_filenames() { return original_filenames_; }
+StringList Subject::get_original_filenames() { return original_filenames_; }
 
 //---------------------------------------------------------------------------
 void Subject::set_number_of_domains(int number_of_domains) { number_of_domains_ = number_of_domains; }
@@ -87,30 +88,26 @@ std::string Subject::get_display_name() { return display_name_; }
 void Subject::set_display_name(std::string display_name) { display_name_ = display_name; }
 
 //---------------------------------------------------------------------------
-void Subject::set_local_particle_filenames(std::vector<std::string> filenames) {
-  local_particle_filenames_ = filenames;
-}
+void Subject::set_local_particle_filenames(StringList filenames) { local_particle_filenames_ = filenames; }
 
 //---------------------------------------------------------------------------
-std::vector<std::string> Subject::get_local_particle_filenames() { return local_particle_filenames_; }
+StringList Subject::get_local_particle_filenames() { return local_particle_filenames_; }
 
 //---------------------------------------------------------------------------
-void Subject::set_world_particle_filenames(std::vector<std::string> filenames) {
-  world_particle_filenames_ = filenames;
-}
+void Subject::set_world_particle_filenames(StringList filenames) { world_particle_filenames_ = filenames; }
 
 //---------------------------------------------------------------------------
-std::vector<std::string> Subject::get_world_particle_filenames() { return world_particle_filenames_; }
+StringList Subject::get_world_particle_filenames() { return world_particle_filenames_; }
 
 //---------------------------------------------------------------------------
-void Subject::set_landmarks_filenames(std::vector<std::string> filenames) { landmarks_filenames_ = filenames; }
+void Subject::set_landmarks_filenames(StringList filenames) { landmarks_filenames_ = filenames; }
 
 //---------------------------------------------------------------------------
-std::vector<std::string> Subject::get_landmarks_filenames() { return landmarks_filenames_; }
+StringList Subject::get_landmarks_filenames() { return landmarks_filenames_; }
 
 //---------------------------------------------------------------------------
-void Subject::set_constraints_filenames(std::vector<std::string> filenames) { constraints_filenames_ = filenames; }
+void Subject::set_constraints_filenames(StringList filenames) { constraints_filenames_ = filenames; }
 
 //---------------------------------------------------------------------------
-std::vector<std::string> Subject::get_constraints_filenames() { return constraints_filenames_; }
+StringList Subject::get_constraints_filenames() { return constraints_filenames_; }
 //---------------------------------------------------------------------------

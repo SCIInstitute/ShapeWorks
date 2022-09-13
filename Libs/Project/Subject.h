@@ -18,39 +18,40 @@ namespace shapeworks {
 class Subject {
  public:
   using StringMap = project::types::StringMap;
+  using StringList = project::types::StringList;
 
   Subject();
   ~Subject();
 
   //! Set original filenames (one per domain)
-  void set_original_filenames(std::vector<std::string> filenames);
+  void set_original_filenames(StringList filenames);
   //! Get original filenames
-  std::vector<std::string> get_original_filenames();
+  StringList get_original_filenames();
 
   //! Set groomed filenames
-  void set_groomed_filenames(std::vector<std::string> filenames);
+  void set_groomed_filenames(StringList filenames);
   //! Get groomed filenames
-  std::vector<std::string> get_groomed_filenames();
+  StringList get_groomed_filenames();
 
   //! Set local particle filenames (one per domain)
-  void set_local_particle_filenames(std::vector<std::string> filenames);
+  void set_local_particle_filenames(StringList filenames);
   //! Get local particle filenames
-  std::vector<std::string> get_local_particle_filenames();
+  StringList get_local_particle_filenames();
 
   //! Set the world particle filenames
-  void set_world_particle_filenames(std::vector<std::string> filenames);
+  void set_world_particle_filenames(StringList filenames);
   //! Get the world particle filenames
-  std::vector<std::string> get_world_particle_filenames();
+  StringList get_world_particle_filenames();
 
   //! Get the landmarks filenames (one per domain)
-  void set_landmarks_filenames(std::vector<std::string> filenames);
+  void set_landmarks_filenames(StringList filenames);
   //! Set the landmarks filenames
-  std::vector<std::string> get_landmarks_filenames();
+  StringList get_landmarks_filenames();
 
   //! Get the constraints filenames (one per domain)
-  void set_constraints_filenames(std::vector<std::string> filenames);
+  void set_constraints_filenames(StringList filenames);
   //! Set the constratins filenames
-  std::vector<std::string> get_constraints_filenames();
+  StringList get_constraints_filenames();
 
   //! Set the number of domains
   void set_number_of_domains(int number_of_domains);
@@ -99,12 +100,12 @@ class Subject {
   int number_of_domains_ = 0;
 
   std::string display_name_;
-  std::vector<std::string> original_filenames_;
-  std::vector<std::string> groomed_filenames_;
-  std::vector<std::string> local_particle_filenames_;
-  std::vector<std::string> world_particle_filenames_;
-  std::vector<std::string> landmarks_filenames_;
-  std::vector<std::string> constraints_filenames_;
+  StringList original_filenames_;
+  StringList groomed_filenames_;
+  StringList local_particle_filenames_;
+  StringList world_particle_filenames_;
+  StringList landmarks_filenames_;
+  StringList constraints_filenames_;
   std::vector<std::vector<double>> groomed_transforms_;
   std::vector<std::vector<double>> procrustes_transforms_;
 

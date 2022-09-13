@@ -11,6 +11,7 @@
 namespace shapeworks {
 
 class Project;
+class Subject;
 
 namespace project::prefixes {
 static constexpr const char* SEGMENTATION_PREFIX = "segmentation_";
@@ -94,5 +95,8 @@ class ProjectUtils {
 
   static std::vector<std::string> convert_domain_types(std::vector<DomainType> domain_types);
   static std::vector<std::string> convert_groomed_domain_types(std::vector<DomainType> domain_types);
+
+  static StringMap convert_subject_to_map(Project* project, Subject* subject);
+
 };
 }  // namespace shapeworks
