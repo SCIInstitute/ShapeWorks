@@ -1,10 +1,12 @@
 #pragma once
 
+// std
 #include <map>
-#include <nlohmann/json.hpp>
-#include "ordered_map.h"
 #include <string>
 #include <vector>
+
+// tsl
+#include "ordered_map.h"
 
 // vtk
 #include <vtkSmartPointer.h>
@@ -46,10 +48,7 @@ static constexpr const char* WORLD_PARTICLES_PREFIX = "world_particles_";
 }  // namespace project::prefixes
 
 namespace project::types {
-// using StringMap = nlohmann::ordered_map<std::string, std::string>;
-// using StringMap = nlohmann::ordered_json;
-  using StringMap = tsl::ordered_map<std::string, std::string>;
-//  using StringMap = std::map<std::string, std::string>;
+using StringMap = tsl::ordered_map<std::string, std::string>;
 using StringList = std::vector<std::string>;
 using StringMapList = std::vector<StringMap>;
 using StringMultiMap = std::map<std::string, StringMap>;
