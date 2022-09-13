@@ -2269,8 +2269,8 @@
 <span class="w">  </span><span class="n">Lightbox</span><span class="p">();</span><span class="w"></span>
 <span class="w">  </span><span class="o">~</span><span class="n">Lightbox</span><span class="p">();</span><span class="w"></span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_shapes</span><span class="p">(</span><span class="n">QVector</span><span class="o">&lt;</span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Shape</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">shapes</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="n">QVector</span><span class="o">&lt;</span><span class="n">ShapeHandle</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_shapes</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_shapes</span><span class="p">(</span><span class="n">ShapeList</span><span class="w"> </span><span class="n">shapes</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="n">ShapeList</span><span class="w"> </span><span class="nf">get_shapes</span><span class="p">();</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_interactor</span><span class="p">(</span><span class="n">vtkRenderWindowInteractor</span><span class="o">*</span><span class="w"> </span><span class="n">interactor</span><span class="p">);</span><span class="w"></span>
 
@@ -2334,13 +2334,13 @@
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">display_shapes</span><span class="p">();</span><span class="w"></span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">insert_shape_into_viewer</span><span class="p">(</span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Shape</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shape</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">position</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">insert_shape_into_viewer</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Shape</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shape</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">position</span><span class="p">);</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_start_shape</span><span class="p">();</span><span class="w"></span>
 
 <span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkRenderer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">renderer_</span><span class="p">;</span><span class="w"></span>
 
-<span class="w">  </span><span class="n">QVector</span><span class="o">&lt;</span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Shape</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">shapes_</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">ShapeList</span><span class="w"> </span><span class="n">shapes_</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">  </span><span class="c1">// there is one viewer for every tile in the lightbox display</span>
 <span class="w">  </span><span class="n">ViewerList</span><span class="w"> </span><span class="n">viewers_</span><span class="p">;</span><span class="w"></span>
@@ -2382,7 +2382,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-09-12 at 20:07:14 +0000</p>
+<p>Updated on 2022-09-13 at 16:52:37 +0000</p>
 
               
             </article>

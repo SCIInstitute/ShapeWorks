@@ -1,5 +1,6 @@
 ---
 title: shapeworks::MeshWorkItem
+summary: Provides concurrent access to a list of shapes to work needing reconstruction. 
 
 ---
 
@@ -7,7 +8,10 @@ title: shapeworks::MeshWorkItem
 
 
 
+Provides concurrent access to a list of shapes to work needing reconstruction. 
 
+
+`#include <MeshWorkQueue.h>`
 
 ## Public Attributes
 
@@ -81,4 +85,4 @@ friend bool operator==(
 
 -------------------------------
 
-Updated on 2022-09-12 at 20:07:11 +0000
+Updated on 2022-09-13 at 16:52:34 +0000

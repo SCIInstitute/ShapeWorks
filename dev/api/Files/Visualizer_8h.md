@@ -74,7 +74,7 @@ class Visualizer : public QObject {
   void display_sample(int i);
 
   void display_shape(ShapeHandle shape);
-  void display_shapes(QVector<QSharedPointer<Shape>> shapes);
+  void display_shapes(ShapeList shapes);
 
   void set_selected_point_one(int id);
   void set_selected_point_two(int id);
@@ -86,7 +86,7 @@ class Visualizer : public QObject {
 
   void update_lut();
 
-  StudioParticles get_current_shape();
+  Particles get_current_shape();
 
   vtkFloatArray* get_current_particle_scalars();
   vtkSmartPointer<vtkPolyData> get_current_particle_poly_data();
@@ -117,9 +117,9 @@ class Visualizer : public QObject {
 
   void update_feature_range(double min, double max);
 
-  vtkSmartPointer<vtkTransform> get_transform(QSharedPointer<Shape> shape, int alignment_domain, int domain);
+  vtkSmartPointer<vtkTransform> get_transform(std::shared_ptr<Shape> shape, int alignment_domain, int domain);
 
-  vtkSmartPointer<vtkTransform> get_transform(QSharedPointer<Shape> shape, DisplayMode display_mode, int alignment_domain, int domain);
+  vtkSmartPointer<vtkTransform> get_transform(std::shared_ptr<Shape> shape, DisplayMode display_mode, int alignment_domain, int domain);
 
   void set_opacities(std::vector<float> opacities);
 
@@ -168,7 +168,7 @@ class Visualizer : public QObject {
   int selected_point_two_;
 
   Eigen::VectorXd cached_mean_;
-  StudioParticles current_shape_;
+  Particles current_shape_;
 
   double feature_range_[2] = {0, 0};
   double feature_manual_range_[2] = {0, 0};
@@ -186,4 +186,4 @@ class Visualizer : public QObject {
 
 -------------------------------
 
-Updated on 2022-09-12 at 20:07:14 +0000
+Updated on 2022-09-13 at 16:52:37 +0000

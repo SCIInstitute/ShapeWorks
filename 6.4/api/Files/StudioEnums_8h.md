@@ -1,9 +1,9 @@
 ---
-title: Studio/src/Data/StudioEnums.h
+title: Libs/Analyze/StudioEnums.h
 
 ---
 
-# Studio/src/Data/StudioEnums.h
+# Libs/Analyze/StudioEnums.h
 
 
 
@@ -40,4 +40,4 @@ DisplayMode string_to_display_mode(std::string str);
 
 -------------------------------
 
-Updated on 2022-09-12 at 20:07:13 +0000
+Updated on 2022-09-13 at 16:52:36 +0000

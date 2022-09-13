@@ -33,6 +33,8 @@ title: Studio/src/Interface/ShapeWorksStudioApp.h
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
 
+#include <Interface/StudioLogger.h>
+
 #include <Eigen/Eigen>
 #include <QActionGroup>
 #include <QCheckBox>
@@ -137,19 +139,25 @@ class ShapeWorksStudioApp : public QMainWindow {
   void handle_color_scheme();
   void handle_pca_update();
   void clear_message();
-  void handle_message(QString str);
+
+  // callbacks from logger
+  void handle_message(std::string str);
+  void handle_error(std::string str);
+  void handle_warning(std::string str);
+  void handle_debug(std::string str);
+
+  void message_callback(std::string str);
+
   void handle_status(QString str);
-  void handle_error(QString str);
-  void handle_warning(QString str);
   void handle_progress(int amt);
   void handle_new_mesh();
   void handle_clear_cache();
   void handle_compare_settings_changed();
 
-  void update_feature_map_selection(const QString& feature_map);
+  void update_feature_map_selection(int index);
   void update_feature_map_scale();
 
-  void image_combo_changed(const QString& image_name);
+  void image_combo_changed(int index);
 
   void show_splash_screen();
   void about();
@@ -268,6 +276,8 @@ class ShapeWorksStudioApp : public QMainWindow {
   QStringList current_image_list_;
 
   QSharedPointer<PythonWorker> py_worker_;
+
+  StudioLogger logger_;
 };
 }  // namespace shapeworks
 ```
@@ -275,4 +285,4 @@ class ShapeWorksStudioApp : public QMainWindow {
 
 -------------------------------
 
-Updated on 2022-09-12 at 20:07:13 +0000
+Updated on 2022-09-13 at 16:52:36 +0000

@@ -81,9 +81,9 @@ public:
   using OptimizerType = itk::ParticleGradientDescentPositionOptimizer<PixelType, Dimension>;
 
   struct CuttingPlaneType {
-    vnl_vector_fixed<double, Dimension> a;
-    vnl_vector_fixed<double, Dimension> b;
-    vnl_vector_fixed<double, Dimension> c;
+    vnl_vector_fixed<double, 3> a;
+    vnl_vector_fixed<double, 3> b;
+    vnl_vector_fixed<double, 3> c;
   };
 
   struct SphereType {
@@ -428,7 +428,7 @@ public:
       std::vector<std::pair<Eigen::Vector3d, Eigen::Vector3d> > domain_i_cps;
       for(size_t j = 0; j < m_CuttingPlanes[i].size(); j++){
         std::pair<Eigen::Vector3d, Eigen::Vector3d> cut_plane;
-        cut_plane.first = ComputePlaneNormal(m_CuttingPlanes[i][j].a, m_CuttingPlanes[i][j].b, m_CuttingPlanes[i][j].c);
+        cut_plane.first = ComputePlaneNormal(m_CuttingPlanes[i][j].a.as_ref(), m_CuttingPlanes[i][j].b.as_ref(), m_CuttingPlanes[i][j].c.as_ref());
         cut_plane.second = Eigen::Vector3d(m_CuttingPlanes[i][j].a[0], m_CuttingPlanes[i][j].a[1],m_CuttingPlanes[i][j].a[2]);
         domain_i_cps.push_back(cut_plane);
       }
@@ -566,4 +566,4 @@ private:
 
 -------------------------------
 
-Updated on 2022-09-12 at 20:07:13 +0000
+Updated on 2022-09-13 at 16:52:36 +0000

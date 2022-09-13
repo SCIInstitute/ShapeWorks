@@ -27,35 +27,32 @@ title: Studio/src/Visualization/StudioVtkOutputWindow.h
 ```cpp
 #pragma once
 
-#include <QObject>
 #include <vtkOutputWindow.h>
+
+#include <QObject>
 
 namespace shapeworks {
 
 class StudioVtkOutputWindow : public QObject, public vtkOutputWindow {
-Q_OBJECT;
+  Q_OBJECT;
 
-public:
+ public:
   static StudioVtkOutputWindow* New();
 
-vtkTypeMacro(StudioVtkOutputWindow, vtkOutputWindow);
+  vtkTypeMacro(StudioVtkOutputWindow, vtkOutputWindow);
 
   StudioVtkOutputWindow();
 
   void DisplayErrorText(const char* text) override;
   void DisplayWarningText(const char* text) override;
-
-Q_SIGNALS:
-  void warning(QString message);
-  void error(QString message);
-
-private:
-
+  void DisplayGenericWarningText(const char* text) override;
+  void DisplayDebugText(const char* text) override;
+ private:
 };
-}
+}  // namespace shapeworks
 ```
 
 
 -------------------------------
 
-Updated on 2022-09-12 at 20:07:14 +0000
+Updated on 2022-09-13 at 16:52:37 +0000

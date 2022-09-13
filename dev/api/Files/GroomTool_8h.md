@@ -27,17 +27,16 @@ title: Studio/src/Groom/GroomTool.h
 ```cpp
 #pragma once
 
-#include <string>
-
-#include <QWidget>
-#include <QSharedPointer>
-#include <QProgressDialog>
-#include <QElapsedTimer>
-#include <QObject>
-
 #include <Data/Preferences.h>
 #include <Groom/QGroom.h>
 #include <Libs/Groom/GroomParameters.h>
+
+#include <QElapsedTimer>
+#include <QObject>
+#include <QProgressDialog>
+#include <QSharedPointer>
+#include <QWidget>
+#include <string>
 
 class Ui_GroomTool;
 
@@ -49,9 +48,9 @@ class Session;
 class ShapeWorksStudioApp;
 
 class GroomTool : public QWidget {
-Q_OBJECT;
-public:
+  Q_OBJECT;
 
+ public:
   GroomTool(Preferences& prefs);
   ~GroomTool();
 
@@ -67,14 +66,12 @@ public:
 
   void shutdown_threads();
 
-Q_SIGNALS:
+ Q_SIGNALS:
   void groom_start();
   void groom_complete();
-  void error_message(QString);
-  void message(QString);
   void progress(int);
 
-public Q_SLOTS:
+ public Q_SLOTS:
 
   void on_antialias_checkbox_stateChanged(int state);
   void on_blur_checkbox_stateChanged(int state);
@@ -100,8 +97,7 @@ public Q_SLOTS:
   void handle_progress(int val);
   void handle_error(QString msg);
 
-private:
-
+ private:
   void set_ui_from_params(GroomParameters params);
 
   void update_page();
@@ -128,10 +124,10 @@ private:
 
   QStringList reflect_columns_;
 };
-}
+}  // namespace shapeworks
 ```
 
 
 -------------------------------
 
-Updated on 2022-09-12 at 20:07:13 +0000
+Updated on 2022-09-13 at 16:52:36 +0000

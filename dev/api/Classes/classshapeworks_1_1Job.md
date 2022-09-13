@@ -17,10 +17,7 @@ Inherited by [shapeworks::DeepSSMJob](../Classes/classshapeworks_1_1DeepSSMJob.m
 
 |                | Name           |
 | -------------- | -------------- |
-| void | **[error_message](../Classes/classshapeworks_1_1Job.md#signal-error-message)**(QString ) |
-| void | **[warning_message](../Classes/classshapeworks_1_1Job.md#signal-warning-message)**(QString ) |
 | void | **[progress](../Classes/classshapeworks_1_1Job.md#signal-progress)**(double ) |
-| void | **[message](../Classes/classshapeworks_1_1Job.md#signal-message)**(QString ) |
 | void | **[finished](../Classes/classshapeworks_1_1Job.md#signal-finished)**() |
 
 ## Public Functions
@@ -37,38 +34,11 @@ Inherited by [shapeworks::DeepSSMJob](../Classes/classshapeworks_1_1DeepSSMJob.m
 
 ## Public Signals Documentation
 
-### signal error_message
-
-```cpp
-void error_message(
-    QString 
-)
-```
-
-
-### signal warning_message
-
-```cpp
-void warning_message(
-    QString 
-)
-```
-
-
 ### signal progress
 
 ```cpp
 void progress(
     double 
-)
-```
-
-
-### signal message
-
-```cpp
-void message(
-    QString 
 )
 ```
 
@@ -139,4 +109,4 @@ qint64 timer_elapsed()
 
 -------------------------------
 
-Updated on 2022-09-12 at 20:07:11 +0000
+Updated on 2022-09-13 at 16:52:34 +0000

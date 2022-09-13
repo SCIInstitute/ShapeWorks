@@ -21,7 +21,7 @@ summary: 3D Viewer
 | | **[~Viewer](../Classes/classshapeworks_1_1Viewer.md#function-~viewer)**() =default |
 | void | **[set_renderer](../Classes/classshapeworks_1_1Viewer.md#function-set-renderer)**(vtkSmartPointer< vtkRenderer > renderer) |
 | vtkSmartPointer< vtkRenderer > | **[get_renderer](../Classes/classshapeworks_1_1Viewer.md#function-get-renderer)**() |
-| void | **[display_shape](../Classes/classshapeworks_1_1Viewer.md#function-display-shape)**(QSharedPointer< [Shape](../Classes/classshapeworks_1_1Shape.md) > shape) |
+| void | **[display_shape](../Classes/classshapeworks_1_1Viewer.md#function-display-shape)**(std::shared_ptr< [Shape](../Classes/classshapeworks_1_1Shape.md) > shape) |
 | void | **[clear_viewer](../Classes/classshapeworks_1_1Viewer.md#function-clear-viewer)**() |
 | void | **[reset_camera](../Classes/classshapeworks_1_1Viewer.md#function-reset-camera)**(std::array< double, 3 > c) |
 | void | **[reset_camera](../Classes/classshapeworks_1_1Viewer.md#function-reset-camera)**() |
@@ -46,7 +46,7 @@ summary: 3D Viewer
 | void | **[set_visualizer](../Classes/classshapeworks_1_1Viewer.md#function-set-visualizer)**([Visualizer](../Classes/classshapeworks_1_1Visualizer.md) * visualizer) |
 | void | **[update_feature_range](../Classes/classshapeworks_1_1Viewer.md#function-update-feature-range)**(double * range) |
 | void | **[update_opacities](../Classes/classshapeworks_1_1Viewer.md#function-update-opacities)**() |
-| QSharedPointer< [Shape](../Classes/classshapeworks_1_1Shape.md) > | **[get_shape](../Classes/classshapeworks_1_1Viewer.md#function-get-shape)**() |
+| std::shared_ptr< [Shape](../Classes/classshapeworks_1_1Shape.md) > | **[get_shape](../Classes/classshapeworks_1_1Viewer.md#function-get-shape)**() |
 | void | **[update_landmarks](../Classes/classshapeworks_1_1Viewer.md#function-update-landmarks)**() |
 | void | **[update_planes](../Classes/classshapeworks_1_1Viewer.md#function-update-planes)**() |
 | void | **[update_ffc_mode](../Classes/classshapeworks_1_1Viewer.md#function-update-ffc-mode)**() |
@@ -119,7 +119,7 @@ vtkSmartPointer< vtkRenderer > get_renderer()
 
 ```cpp
 void display_shape(
-    QSharedPointer< Shape > shape
+    std::shared_ptr< Shape > shape
 )
 ```
 
@@ -324,7 +324,7 @@ void update_opacities()
 ### function get_shape
 
 ```cpp
-QSharedPointer< Shape > get_shape()
+std::shared_ptr< Shape > get_shape()
 ```
 
 
@@ -521,4 +521,4 @@ static bool is_reverse(
 
 -------------------------------
 
-Updated on 2022-09-12 at 20:07:12 +0000
+Updated on 2022-09-13 at 16:52:35 +0000

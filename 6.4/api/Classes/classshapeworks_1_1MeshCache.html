@@ -2173,8 +2173,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#public-attributes" class="md-nav__link">
-    Public Attributes
+  <a href="#detailed-description" class="md-nav__link">
+    Detailed Description
   </a>
   
 </li>
@@ -2190,6 +2190,20 @@
           <li class="md-nav__item">
   <a href="#function-meshcache" class="md-nav__link">
     function MeshCache
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-set_cache_enabled" class="md-nav__link">
+    function set_cache_enabled
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-set_memory_percent" class="md-nav__link">
+    function set_memory_percent
   </a>
   
 </li>
@@ -2220,26 +2234,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#public-attributes-documentation" class="md-nav__link">
-    Public Attributes Documentation
-  </a>
-  
-    <nav class="md-nav" aria-label="Public Attributes Documentation">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#variable-pref_ref_" class="md-nav__link">
-    variable pref_ref_
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -2259,6 +2253,8 @@
 
 
 <h1 id="shapeworksmeshcache">shapeworks::MeshCache</h1>
+<p>Thread safe cache for meshes index by shape.  <a href="#detailed-description">More...</a></p>
+<p><code>#include &lt;MeshCache.h&gt;</code></p>
 <h2 id="public-functions">Public Functions</h2>
 <table>
 <thead>
@@ -2270,7 +2266,15 @@
 <tbody>
 <tr>
 <td></td>
-<td><strong><a href="classshapeworks_1_1MeshCache.html#function-meshcache">MeshCache</a></strong>(<a href="classPreferences.html">Preferences</a> &amp; prefs)</td>
+<td><strong><a href="classshapeworks_1_1MeshCache.html#function-meshcache">MeshCache</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1MeshCache.html#function-set-cache-enabled">set_cache_enabled</a></strong>(bool enabled)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1MeshCache.html#function-set-memory-percent">set_memory_percent</a></strong>(int percent)</td>
 </tr>
 <tr>
 <td>MeshHandle</td>
@@ -2286,25 +2290,23 @@
 </tr>
 </tbody>
 </table>
-<h2 id="public-attributes">Public Attributes</h2>
-<table>
-<thead>
-<tr>
-<th></th>
-<th>Name</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><a href="classPreferences.html">Preferences</a> *</td>
-<td><strong><a href="classshapeworks_1_1MeshCache.html#variable-pref-ref-">pref_ref_</a></strong></td>
-</tr>
-</tbody>
-</table>
+<h2 id="detailed-description">Detailed Description</h2>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">shapeworks</span><span class="o">::</span><span class="n">MeshCache</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<p>Thread safe cache for meshes index by shape. </p>
+<p>The <a href="classshapeworks_1_1MeshCache.html">MeshCache</a> implements a std::map keyed by shape (list of points) with MeshHandle values. It is thread-safe and can be used from any thread. </p>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-meshcache">function MeshCache</h3>
-<div class="highlight"><pre><span></span><code><span class="n">MeshCache</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">Preferences</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">prefs</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">MeshCache</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-set_cache_enabled">function set_cache_enabled</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_cache_enabled</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-set_memory_percent">function set_memory_percent</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_memory_percent</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">percent</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-get_mesh">function get_mesh</h3>
@@ -2321,12 +2323,8 @@
 <h3 id="function-clear">function clear</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">clear</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
-<h2 id="public-attributes-documentation">Public Attributes Documentation</h2>
-<h3 id="variable-pref_ref_">variable pref_ref_</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">Preferences</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">pref_ref_</span><span class="p">;</span><span class="w"></span>
-</code></pre></div>
 <hr />
-<p>Updated on 2022-09-12 at 20:07:11 +0000</p>
+<p>Updated on 2022-09-13 at 16:52:34 +0000</p>
 
               
             </article>

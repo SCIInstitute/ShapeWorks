@@ -34,7 +34,7 @@ title: Studio/src/DeepSSM/DeepSSMTool.h
 
 // studio
 #include <Data/Preferences.h>
-#include <Data/Shape.h>
+#include <Shape.h>
 
 class Ui_DeepSSMTool;
 class QLabel;
@@ -68,7 +68,7 @@ class DeepSSMTool : public QWidget {
 
   void shutdown();
 
-  QVector<QSharedPointer<Shape>> get_shapes();
+  ShapeList get_shapes();
 
   void resizeEvent(QResizeEvent* event) override;
 
@@ -97,9 +97,6 @@ class DeepSSMTool : public QWidget {
 
   void update_view();
   void progress(int);
-  void message(QString);
-  void error(QString);
-  void warning(QString);
 
  private:
   void update_meshes();
@@ -127,7 +124,7 @@ class DeepSSMTool : public QWidget {
   QSharedPointer<DeepSSMJob> deep_ssm_;
   QElapsedTimer timer_;
 
-  QVector<QSharedPointer<Shape>> shapes_;
+  ShapeList shapes_;
   QPixmap violin_plot_;
   QPixmap training_plot_;
 };
@@ -138,4 +135,4 @@ class DeepSSMTool : public QWidget {
 
 -------------------------------
 
-Updated on 2022-09-12 at 20:07:13 +0000
+Updated on 2022-09-13 at 16:52:36 +0000

@@ -2243,7 +2243,7 @@
 
 <span class="c1">// studio</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/Preferences.h&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/Shape.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Shape.h&gt;</span><span class="cp"></span>
 
 <span class="k">class</span><span class="w"> </span><span class="nc">Ui_DeepSSMTool</span><span class="p">;</span><span class="w"></span>
 <span class="k">class</span><span class="w"> </span><span class="nc">QLabel</span><span class="p">;</span><span class="w"></span>
@@ -2277,7 +2277,7 @@
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">shutdown</span><span class="p">();</span><span class="w"></span>
 
-<span class="w">  </span><span class="n">QVector</span><span class="o">&lt;</span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Shape</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">get_shapes</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="n">ShapeList</span><span class="w"> </span><span class="nf">get_shapes</span><span class="p">();</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">resizeEvent</span><span class="p">(</span><span class="n">QResizeEvent</span><span class="o">*</span><span class="w"> </span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="p">;</span><span class="w"></span>
 
@@ -2306,9 +2306,6 @@
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_view</span><span class="p">();</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">progress</span><span class="p">(</span><span class="kt">int</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">message</span><span class="p">(</span><span class="n">QString</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">error</span><span class="p">(</span><span class="n">QString</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">warning</span><span class="p">(</span><span class="n">QString</span><span class="p">);</span><span class="w"></span>
 
 <span class="w"> </span><span class="k">private</span><span class="o">:</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">update_meshes</span><span class="p">();</span><span class="w"></span>
@@ -2336,7 +2333,7 @@
 <span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">DeepSSMJob</span><span class="o">&gt;</span><span class="w"> </span><span class="n">deep_ssm_</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="n">QElapsedTimer</span><span class="w"> </span><span class="n">timer_</span><span class="p">;</span><span class="w"></span>
 
-<span class="w">  </span><span class="n">QVector</span><span class="o">&lt;</span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Shape</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">shapes_</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">ShapeList</span><span class="w"> </span><span class="n">shapes_</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="n">QPixmap</span><span class="w"> </span><span class="n">violin_plot_</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="n">QPixmap</span><span class="w"> </span><span class="n">training_plot_</span><span class="p">;</span><span class="w"></span>
 <span class="p">};</span><span class="w"></span>
@@ -2344,7 +2341,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-09-12 at 20:07:13 +0000</p>
+<p>Updated on 2022-09-13 at 16:52:36 +0000</p>
 
               
             </article>

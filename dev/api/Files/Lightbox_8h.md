@@ -60,8 +60,8 @@ class Lightbox : public QObject {
   Lightbox();
   ~Lightbox();
 
-  void set_shapes(QVector<QSharedPointer<Shape>> shapes);
-  QVector<ShapeHandle> get_shapes();
+  void set_shapes(ShapeList shapes);
+  ShapeList get_shapes();
 
   void set_interactor(vtkRenderWindowInteractor* interactor);
 
@@ -125,13 +125,13 @@ class Lightbox : public QObject {
 
   void display_shapes();
 
-  void insert_shape_into_viewer(QSharedPointer<Shape> shape, int position);
+  void insert_shape_into_viewer(std::shared_ptr<Shape> shape, int position);
 
   int get_start_shape();
 
   vtkSmartPointer<vtkRenderer> renderer_;
 
-  QVector<QSharedPointer<Shape>> shapes_;
+  ShapeList shapes_;
 
   // there is one viewer for every tile in the lightbox display
   ViewerList viewers_;
@@ -176,4 +176,4 @@ class Lightbox : public QObject {
 
 -------------------------------
 
-Updated on 2022-09-12 at 20:07:14 +0000
+Updated on 2022-09-13 at 16:52:37 +0000

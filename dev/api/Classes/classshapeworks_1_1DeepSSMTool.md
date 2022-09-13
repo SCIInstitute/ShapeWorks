@@ -38,9 +38,6 @@ Inherits from QWidget
 | -------------- | -------------- |
 | void | **[update_view](../Classes/classshapeworks_1_1DeepSSMTool.md#signal-update-view)**() |
 | void | **[progress](../Classes/classshapeworks_1_1DeepSSMTool.md#signal-progress)**(int ) |
-| void | **[message](../Classes/classshapeworks_1_1DeepSSMTool.md#signal-message)**(QString ) |
-| void | **[error](../Classes/classshapeworks_1_1DeepSSMTool.md#signal-error)**(QString ) |
-| void | **[warning](../Classes/classshapeworks_1_1DeepSSMTool.md#signal-warning)**(QString ) |
 
 ## Public Functions
 
@@ -54,7 +51,7 @@ Inherits from QWidget
 | void | **[load_params](../Classes/classshapeworks_1_1DeepSSMTool.md#function-load-params)**() |
 | void | **[store_params](../Classes/classshapeworks_1_1DeepSSMTool.md#function-store-params)**() |
 | void | **[shutdown](../Classes/classshapeworks_1_1DeepSSMTool.md#function-shutdown)**() |
-| QVector< QSharedPointer< [Shape](../Classes/classshapeworks_1_1Shape.md) > > | **[get_shapes](../Classes/classshapeworks_1_1DeepSSMTool.md#function-get-shapes)**() |
+| ShapeList | **[get_shapes](../Classes/classshapeworks_1_1DeepSSMTool.md#function-get-shapes)**() |
 | void | **[resizeEvent](../Classes/classshapeworks_1_1DeepSSMTool.md#function-resizeevent)**(QResizeEvent * event) override |
 | std::string | **[get_display_feature](../Classes/classshapeworks_1_1DeepSSMTool.md#function-get-display-feature)**() |
 
@@ -170,33 +167,6 @@ void progress(
 ```
 
 
-### signal message
-
-```cpp
-void message(
-    QString 
-)
-```
-
-
-### signal error
-
-```cpp
-void error(
-    QString 
-)
-```
-
-
-### signal warning
-
-```cpp
-void warning(
-    QString 
-)
-```
-
-
 ## Public Functions Documentation
 
 ### function DeepSSMTool
@@ -267,7 +237,7 @@ void shutdown()
 ### function get_shapes
 
 ```cpp
-QVector< QSharedPointer< Shape > > get_shapes()
+ShapeList get_shapes()
 ```
 
 
@@ -289,4 +259,4 @@ std::string get_display_feature()
 
 -------------------------------
 
-Updated on 2022-09-12 at 20:07:11 +0000
+Updated on 2022-09-13 at 16:52:34 +0000

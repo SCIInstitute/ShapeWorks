@@ -1,10 +1,10 @@
 ---
-title: Studio/src/Data/MeshGenerator.h
+title: Libs/Analyze/MeshGenerator.h
 summary: Mesh generation. 
 
 ---
 
-# Studio/src/Data/MeshGenerator.h
+# Libs/Analyze/MeshGenerator.h
 
 Mesh generation.  [More...](#detailed-description)
 
@@ -38,9 +38,8 @@ The MeshGenerator performs the actual work of reconstructing a mesh from a shape
 
 #include "vnl/vnl_vector.h"
 
-#include <Data/StudioMesh.h>
-#include <Data/Preferences.h>
-#include <Data/MeshWorkQueue.h>
+#include <StudioMesh.h>
+#include <MeshWorkQueue.h>
 
 class SurfaceReconstructor;
 
@@ -91,4 +90,4 @@ private:
 
 -------------------------------
 
-Updated on 2022-09-12 at 20:07:13 +0000
+Updated on 2022-09-13 at 16:52:36 +0000

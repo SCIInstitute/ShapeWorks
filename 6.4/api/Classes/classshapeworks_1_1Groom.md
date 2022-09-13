@@ -20,7 +20,7 @@ Inherited by [shapeworks::QGroom](../Classes/classshapeworks_1_1QGroom.md)
 |                | Name           |
 | -------------- | -------------- |
 | | **[Groom](../Classes/classshapeworks_1_1Groom.md#function-groom)**(ProjectHandle project) |
-| virtual bool | **[run](../Classes/classshapeworks_1_1Groom.md#function-run)**()<br>Run the grooming.  |
+| bool | **[run](../Classes/classshapeworks_1_1Groom.md#function-run)**()<br>Run the grooming.  |
 | void | **[set_skip_grooming](../Classes/classshapeworks_1_1Groom.md#function-set-skip-grooming)**(bool skip)<br>Set if grooming steps should be skipped.  |
 | void | **[abort](../Classes/classshapeworks_1_1Groom.md#function-abort)**()<br>Set abort as soon as possible.  |
 | bool | **[get_aborted](../Classes/classshapeworks_1_1Groom.md#function-get-aborted)**()<br>Return if grooming was aborted.  |
@@ -65,7 +65,7 @@ Groom(
 ### function run
 
 ```cpp
-virtual bool run()
+bool run()
 ```
 
 Run the grooming. 
@@ -156,4 +156,4 @@ std::atomic< int > progress_counter_ = 0;
 
 -------------------------------
 
-Updated on 2022-09-12 at 20:07:11 +0000
+Updated on 2022-09-13 at 16:52:34 +0000

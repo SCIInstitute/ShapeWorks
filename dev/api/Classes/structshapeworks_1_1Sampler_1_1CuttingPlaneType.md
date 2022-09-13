@@ -16,9 +16,9 @@ title: shapeworks::Sampler::CuttingPlaneType
 
 |                | Name           |
 | -------------- | -------------- |
-| vnl_vector_fixed< double, Dimension > | **[a](../Classes/structshapeworks_1_1Sampler_1_1CuttingPlaneType.md#variable-a)**  |
-| vnl_vector_fixed< double, Dimension > | **[b](../Classes/structshapeworks_1_1Sampler_1_1CuttingPlaneType.md#variable-b)**  |
-| vnl_vector_fixed< double, Dimension > | **[c](../Classes/structshapeworks_1_1Sampler_1_1CuttingPlaneType.md#variable-c)**  |
+| vnl_vector_fixed< double, 3 > | **[a](../Classes/structshapeworks_1_1Sampler_1_1CuttingPlaneType.md#variable-a)**  |
+| vnl_vector_fixed< double, 3 > | **[b](../Classes/structshapeworks_1_1Sampler_1_1CuttingPlaneType.md#variable-b)**  |
+| vnl_vector_fixed< double, 3 > | **[c](../Classes/structshapeworks_1_1Sampler_1_1CuttingPlaneType.md#variable-c)**  |
 
 ## Detailed Description
 
@@ -34,24 +34,24 @@ Convenient typedef for storing cutting plane information
 ### variable a
 
 ```cpp
-vnl_vector_fixed< double, Dimension > a;
+vnl_vector_fixed< double, 3 > a;
 ```
 
 
 ### variable b
 
 ```cpp
-vnl_vector_fixed< double, Dimension > b;
+vnl_vector_fixed< double, 3 > b;
 ```
 
 
 ### variable c
 
 ```cpp
-vnl_vector_fixed< double, Dimension > c;
+vnl_vector_fixed< double, 3 > c;
 ```
 
 
 -------------------------------
 
-Updated on 2022-09-12 at 20:07:12 +0000
+Updated on 2022-09-13 at 16:52:35 +0000

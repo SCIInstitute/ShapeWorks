@@ -85,10 +85,7 @@ signals:
   void optimize_start();
   void optimize_complete();
 
-  void error_message(QString);
-  void warning_message(QString);
   void progress(int);
-  void message(QString);
   void status(QString);
 
 private:
@@ -120,4 +117,4 @@ private:
 
 -------------------------------
 
-Updated on 2022-09-12 at 20:07:14 +0000
+Updated on 2022-09-13 at 16:52:37 +0000

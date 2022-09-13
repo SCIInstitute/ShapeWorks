@@ -12,14 +12,14 @@
         <meta name="author" content="Shireen Elhabian et al.">
       
       
-        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Classes/classshapeworks_1_1StudioParticles.html">
+        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Classes/classStudioLogger.html">
       
       <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.3.8">
     
     
       
-        <title>shapeworks::StudioParticles - ShapeWorks</title>
+        <title>StudioLogger - ShapeWorks</title>
       
     
     
@@ -82,7 +82,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#shapeworksstudioparticles" class="md-skip">
+        <a href="#studiologger" class="md-skip">
           Skip to content
         </a>
       
@@ -120,7 +120,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              shapeworks::StudioParticles
+              StudioLogger
             
           </span>
         </div>
@@ -2166,6 +2166,13 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#public-signals" class="md-nav__link">
+    Public Signals
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#public-functions" class="md-nav__link">
     Public Functions
   </a>
@@ -2173,9 +2180,43 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#detailed-description" class="md-nav__link">
-    Detailed Description
+  <a href="#public-signals-documentation" class="md-nav__link">
+    Public Signals Documentation
   </a>
+  
+    <nav class="md-nav" aria-label="Public Signals Documentation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signal-message" class="md-nav__link">
+    signal message
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#signal-error" class="md-nav__link">
+    signal error
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#signal-warning" class="md-nav__link">
+    signal warning
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#signal-debug" class="md-nav__link">
+    signal debug
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -2188,134 +2229,50 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#function-studioparticles" class="md-nav__link">
-    function StudioParticles
+  <a href="#function-studiologger" class="md-nav__link">
+    function StudioLogger
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-set_local_particles" class="md-nav__link">
-    function set_local_particles
+  <a href="#function-studiologger_1" class="md-nav__link">
+    function ~StudioLogger
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-set_world_particles" class="md-nav__link">
-    function set_world_particles
+  <a href="#function-register_callbacks" class="md-nav__link">
+    function register_callbacks
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-set_local_particles_1" class="md-nav__link">
-    function set_local_particles
+  <a href="#function-handle_message" class="md-nav__link">
+    function handle_message
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-set_world_particles_1" class="md-nav__link">
-    function set_world_particles
+  <a href="#function-handle_error" class="md-nav__link">
+    function handle_error
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-get_local_particles" class="md-nav__link">
-    function get_local_particles
+  <a href="#function-handle_warning" class="md-nav__link">
+    function handle_warning
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-get_world_particles" class="md-nav__link">
-    function get_world_particles
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-get_local_particles_1" class="md-nav__link">
-    function get_local_particles
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-get_world_particles_1" class="md-nav__link">
-    function get_world_particles
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-get_raw_world_particles" class="md-nav__link">
-    function get_raw_world_particles
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-get_combined_local_particles" class="md-nav__link">
-    function get_combined_local_particles
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-get_combined_global_particles" class="md-nav__link">
-    function get_combined_global_particles
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-set_combined_global_particles" class="md-nav__link">
-    function set_combined_global_particles
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-get_local_points" class="md-nav__link">
-    function get_local_points
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-get_world_points" class="md-nav__link">
-    function get_world_points
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-get_domain_for_combined_id" class="md-nav__link">
-    function get_domain_for_combined_id
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-set_transform" class="md-nav__link">
-    function set_transform
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-set_procrustes_transforms" class="md-nav__link">
-    function set_procrustes_transforms
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-get_difference_vectors" class="md-nav__link">
-    function get_difference_vectors
+  <a href="#function-handle_debug" class="md-nav__link">
+    function handle_debug
   </a>
   
 </li>
@@ -2337,15 +2294,43 @@
             <article class="md-content__inner md-typeset">
               
                 
-  <a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/api/Classes/classshapeworks_1_1StudioParticles.md" title="Edit this page" class="md-content__button md-icon">
+  <a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/api/Classes/classStudioLogger.md" title="Edit this page" class="md-content__button md-icon">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
   </a>
 
 
 
-<h1 id="shapeworksstudioparticles">shapeworks::StudioParticles</h1>
-<p>Representation of correspondence points for a shape including multiple domains.  <a href="#detailed-description">More...</a></p>
-<p><code>#include &lt;StudioParticles.h&gt;</code></p>
+<h1 id="studiologger">StudioLogger</h1>
+<p>Handle logger callbacks via Qt for thread correctness. </p>
+<p><code>#include &lt;StudioLogger.h&gt;</code></p>
+<p>Inherits from QObject</p>
+<h2 id="public-signals">Public Signals</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>void</td>
+<td><strong><a href="classStudioLogger.html#signal-message">message</a></strong>(std::string str)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classStudioLogger.html#signal-error">error</a></strong>(std::string str)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classStudioLogger.html#signal-warning">warning</a></strong>(std::string str)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classStudioLogger.html#signal-debug">debug</a></strong>(std::string str)</td>
+</tr>
+</tbody>
+</table>
 <h2 id="public-functions">Public Functions</h2>
 <table>
 <thead>
@@ -2357,181 +2342,87 @@
 <tbody>
 <tr>
 <td></td>
-<td><strong><a href="classshapeworks_1_1StudioParticles.html#function-studioparticles">StudioParticles</a></strong>()</td>
+<td><strong><a href="classStudioLogger.html#function-studiologger">StudioLogger</a></strong>()</td>
+</tr>
+<tr>
+<td>virtual</td>
+<td><strong><a href="classStudioLogger.html#function-~studiologger">~StudioLogger</a></strong>()</td>
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1StudioParticles.html#function-set-local-particles">set_local_particles</a></strong>(int domain, std::vector&lt; itk::Point&lt; double &gt; &gt; particles)</td>
+<td><strong><a href="classStudioLogger.html#function-register-callbacks">register_callbacks</a></strong>()</td>
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1StudioParticles.html#function-set-world-particles">set_world_particles</a></strong>(int domain, std::vector&lt; itk::Point&lt; double &gt; &gt; particles)</td>
+<td><strong><a href="classStudioLogger.html#function-handle-message">handle_message</a></strong>(std::string str)</td>
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1StudioParticles.html#function-set-local-particles">set_local_particles</a></strong>(int domain, Eigen::VectorXd particles)</td>
+<td><strong><a href="classStudioLogger.html#function-handle-error">handle_error</a></strong>(std::string str)</td>
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1StudioParticles.html#function-set-world-particles">set_world_particles</a></strong>(int domain, Eigen::VectorXd particles)</td>
-</tr>
-<tr>
-<td>std::vector&lt; Eigen::VectorXd &gt;</td>
-<td><strong><a href="classshapeworks_1_1StudioParticles.html#function-get-local-particles">get_local_particles</a></strong>()</td>
-</tr>
-<tr>
-<td>std::vector&lt; Eigen::VectorXd &gt;</td>
-<td><strong><a href="classshapeworks_1_1StudioParticles.html#function-get-world-particles">get_world_particles</a></strong>()</td>
-</tr>
-<tr>
-<td>Eigen::VectorXd</td>
-<td><strong><a href="classshapeworks_1_1StudioParticles.html#function-get-local-particles">get_local_particles</a></strong>(int domain)</td>
-</tr>
-<tr>
-<td>Eigen::VectorXd</td>
-<td><strong><a href="classshapeworks_1_1StudioParticles.html#function-get-world-particles">get_world_particles</a></strong>(int domain)</td>
-</tr>
-<tr>
-<td>Eigen::VectorXd</td>
-<td><strong><a href="classshapeworks_1_1StudioParticles.html#function-get-raw-world-particles">get_raw_world_particles</a></strong>(int domain)<br>Get untransformed original world particles from optimizer.</td>
-</tr>
-<tr>
-<td>Eigen::VectorXd</td>
-<td><strong><a href="classshapeworks_1_1StudioParticles.html#function-get-combined-local-particles">get_combined_local_particles</a></strong>() const</td>
-</tr>
-<tr>
-<td>Eigen::VectorXd</td>
-<td><strong><a href="classshapeworks_1_1StudioParticles.html#function-get-combined-global-particles">get_combined_global_particles</a></strong>() const</td>
+<td><strong><a href="classStudioLogger.html#function-handle-warning">handle_warning</a></strong>(std::string str)</td>
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1StudioParticles.html#function-set-combined-global-particles">set_combined_global_particles</a></strong>(const Eigen::VectorXd &amp; particles)</td>
-</tr>
-<tr>
-<td>std::vector&lt; itk::Point&lt; double &gt; &gt;</td>
-<td><strong><a href="classshapeworks_1_1StudioParticles.html#function-get-local-points">get_local_points</a></strong>(int domain)</td>
-</tr>
-<tr>
-<td>std::vector&lt; itk::Point&lt; double &gt; &gt;</td>
-<td><strong><a href="classshapeworks_1_1StudioParticles.html#function-get-world-points">get_world_points</a></strong>(int domain)</td>
-</tr>
-<tr>
-<td>int</td>
-<td><strong><a href="classshapeworks_1_1StudioParticles.html#function-get-domain-for-combined-id">get_domain_for_combined_id</a></strong>(int id)<br>Return which domain a particle belongs to when they are concatenated together.</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1StudioParticles.html#function-set-transform">set_transform</a></strong>(vtkSmartPointer&lt; vtkTransform &gt; transform)</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1StudioParticles.html#function-set-procrustes-transforms">set_procrustes_transforms</a></strong>(std::vector&lt; vtkSmartPointer&lt; vtkTransform &gt; &gt; transforms)</td>
-</tr>
-<tr>
-<td>Eigen::VectorXd</td>
-<td><strong><a href="classshapeworks_1_1StudioParticles.html#function-get-difference-vectors">get_difference_vectors</a></strong>(const <a href="classshapeworks_1_1StudioParticles.html">StudioParticles</a> &amp; other)</td>
+<td><strong><a href="classStudioLogger.html#function-handle-debug">handle_debug</a></strong>(std::string str)</td>
 </tr>
 </tbody>
 </table>
-<h2 id="detailed-description">Detailed Description</h2>
-<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">shapeworks</span><span class="o">::</span><span class="n">StudioParticles</span><span class="p">;</span><span class="w"></span>
+<h2 id="public-signals-documentation">Public Signals Documentation</h2>
+<h3 id="signal-message">signal message</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">message</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">str</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
 </code></pre></div>
-<p>Representation of correspondence points for a shape including multiple domains. </p>
-<p>The <a href="classshapeworks_1_1StudioParticles.html">StudioParticles</a> class encapsulates the correspondence points for a shape, including multiple domains, local and global points </p>
+<h3 id="signal-error">signal error</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">error</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">str</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="signal-warning">signal warning</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">warning</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">str</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="signal-debug">signal debug</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">debug</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">str</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
-<h3 id="function-studioparticles">function StudioParticles</h3>
-<div class="highlight"><pre><span></span><code><span class="n">StudioParticles</span><span class="p">()</span><span class="w"></span>
+<h3 id="function-studiologger">function StudioLogger</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">StudioLogger</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
-<h3 id="function-set_local_particles">function set_local_particles</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_local_particles</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">particles</span><span class="w"></span>
+<h3 id="function-studiologger_1">function ~StudioLogger</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">StudioLogger</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-register_callbacks">function register_callbacks</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">register_callbacks</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-handle_message">function handle_message</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_message</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">str</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
-<h3 id="function-set_world_particles">function set_world_particles</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_world_particles</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">particles</span><span class="w"></span>
+<h3 id="function-handle_error">function handle_error</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_error</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">str</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
-<h3 id="function-set_local_particles_1">function set_local_particles</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_local_particles</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">particles</span><span class="w"></span>
+<h3 id="function-handle_warning">function handle_warning</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_warning</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">str</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
-<h3 id="function-set_world_particles_1">function set_world_particles</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_world_particles</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">particles</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
-</code></pre></div>
-<h3 id="function-get_local_particles">function get_local_particles</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_local_particles</span><span class="p">()</span><span class="w"></span>
-</code></pre></div>
-<h3 id="function-get_world_particles">function get_world_particles</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_world_particles</span><span class="p">()</span><span class="w"></span>
-</code></pre></div>
-<h3 id="function-get_local_particles_1">function get_local_particles</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">get_local_particles</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
-</code></pre></div>
-<h3 id="function-get_world_particles_1">function get_world_particles</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">get_world_particles</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
-</code></pre></div>
-<h3 id="function-get_raw_world_particles">function get_raw_world_particles</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">get_raw_world_particles</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
-</code></pre></div>
-<p>Get untransformed original world particles from optimizer. </p>
-<h3 id="function-get_combined_local_particles">function get_combined_local_particles</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">get_combined_local_particles</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
-</code></pre></div>
-<h3 id="function-get_combined_global_particles">function get_combined_global_particles</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">get_combined_global_particles</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
-</code></pre></div>
-<h3 id="function-set_combined_global_particles">function set_combined_global_particles</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_combined_global_particles</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">particles</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
-</code></pre></div>
-<h3 id="function-get_local_points">function get_local_points</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_local_points</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
-</code></pre></div>
-<h3 id="function-get_world_points">function get_world_points</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_world_points</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
-</code></pre></div>
-<h3 id="function-get_domain_for_combined_id">function get_domain_for_combined_id</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_domain_for_combined_id</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
-</code></pre></div>
-<p>Return which domain a particle belongs to when they are concatenated together. </p>
-<h3 id="function-set_transform">function set_transform</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_transform</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkTransform</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">transform</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
-</code></pre></div>
-<h3 id="function-set_procrustes_transforms">function set_procrustes_transforms</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_procrustes_transforms</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkTransform</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">transforms</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
-</code></pre></div>
-<h3 id="function-get_difference_vectors">function get_difference_vectors</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">get_difference_vectors</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">StudioParticles</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span><span class="w"></span>
+<h3 id="function-handle_debug">function handle_debug</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_debug</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">str</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-09-12 at 20:07:12 +0000</p>
+<p>Updated on 2022-09-13 at 16:52:36 +0000</p>
 
               
             </article>

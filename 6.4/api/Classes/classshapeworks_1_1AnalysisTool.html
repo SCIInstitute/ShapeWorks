@@ -2529,27 +2529,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#signal-message" class="md-nav__link">
-    signal message
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#signal-error" class="md-nav__link">
-    signal error
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#signal-warning" class="md-nav__link">
-    signal warning
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#signal-reconstruction_complete" class="md-nav__link">
     signal reconstruction_complete
   </a>
@@ -3060,18 +3039,6 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1AnalysisTool.html#signal-message">message</a></strong>(QString )</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1AnalysisTool.html#signal-error">error</a></strong>(QString )</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1AnalysisTool.html#signal-warning">warning</a></strong>(QString )</td>
-</tr>
-<tr>
-<td>void</td>
 <td><strong><a href="classshapeworks_1_1AnalysisTool.html#signal-reconstruction-complete">reconstruction_complete</a></strong>()</td>
 </tr>
 </tbody>
@@ -3170,7 +3137,7 @@
 <td><strong><a href="classshapeworks_1_1AnalysisTool.html#function-enable-actions">enable_actions</a></strong>(bool newly_enabled =false)</td>
 </tr>
 <tr>
-<td><a href="classshapeworks_1_1StudioParticles.html">StudioParticles</a></td>
+<td><a href="classshapeworks_1_1Particles.html">Particles</a></td>
 <td><strong><a href="classshapeworks_1_1AnalysisTool.html#function-get-mean-shape-points">get_mean_shape_points</a></strong>()</td>
 </tr>
 <tr>
@@ -3178,7 +3145,7 @@
 <td><strong><a href="classshapeworks_1_1AnalysisTool.html#function-get-mean-shape">get_mean_shape</a></strong>()</td>
 </tr>
 <tr>
-<td><a href="classshapeworks_1_1StudioParticles.html">StudioParticles</a></td>
+<td><a href="classshapeworks_1_1Particles.html">Particles</a></td>
 <td><strong><a href="classshapeworks_1_1AnalysisTool.html#function-get-shape-points">get_shape_points</a></strong>(int mode, double value)</td>
 </tr>
 <tr>
@@ -3413,21 +3380,6 @@
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
-<h3 id="signal-message">signal message</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">message</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">QString</span><span class="w"> </span>
-<span class="p">)</span><span class="w"></span>
-</code></pre></div>
-<h3 id="signal-error">signal error</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">error</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">QString</span><span class="w"> </span>
-<span class="p">)</span><span class="w"></span>
-</code></pre></div>
-<h3 id="signal-warning">signal warning</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">warning</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">QString</span><span class="w"> </span>
-<span class="p">)</span><span class="w"></span>
-</code></pre></div>
 <h3 id="signal-reconstruction_complete">signal reconstruction_complete</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">reconstruction_complete</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
@@ -3516,13 +3468,13 @@
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-get_mean_shape_points">function get_mean_shape_points</h3>
-<div class="highlight"><pre><span></span><code><span class="n">StudioParticles</span><span class="w"> </span><span class="n">get_mean_shape_points</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">Particles</span><span class="w"> </span><span class="n">get_mean_shape_points</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-get_mean_shape">function get_mean_shape</h3>
 <div class="highlight"><pre><span></span><code><span class="n">ShapeHandle</span><span class="w"> </span><span class="n">get_mean_shape</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-get_shape_points">function get_shape_points</h3>
-<div class="highlight"><pre><span></span><code><span class="n">StudioParticles</span><span class="w"> </span><span class="n">get_shape_points</span><span class="p">(</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">Particles</span><span class="w"> </span><span class="n">get_shape_points</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">mode</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
@@ -3570,7 +3522,7 @@
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">MODE_REGRESSION_C</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-09-12 at 20:07:11 +0000</p>
+<p>Updated on 2022-09-13 at 16:52:34 +0000</p>
 
               
             </article>

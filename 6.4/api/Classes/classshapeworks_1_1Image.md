@@ -113,6 +113,7 @@ title: shapeworks::Image
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[write](../Classes/classshapeworks_1_1Image.md#function-write)**(const std::string & filename, bool compressed =true)<br>writes image, format specified by filename extension  |
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) | **[toMesh](../Classes/classshapeworks_1_1Image.md#function-tomesh)**(PixelType isovalue) const<br>converts image to mesh  |
 | Image::PixelType | **[evaluate](../Classes/classshapeworks_1_1Image.md#function-evaluate)**(Point p)<br>Evaluates the image at a given position.  |
+| std::vector< std::string > | **[getSupportedTypes](../Classes/classshapeworks_1_1Image.md#function-getsupportedtypes)**()<br>Return supported file types.  |
 
 ## Friends
 
@@ -1021,6 +1022,14 @@ Image::PixelType evaluate(
 
 Evaluates the image at a given position. 
 
+### function getSupportedTypes
+
+```cpp
+static inline std::vector< std::string > getSupportedTypes()
+```
+
+Return supported file types. 
+
 ## Friends
 
 ### friend SharedCommandData
@@ -1034,4 +1043,4 @@ friend struct SharedCommandData(
 
 -------------------------------
 
-Updated on 2022-09-12 at 20:07:13 +0000
+Updated on 2022-09-13 at 16:52:36 +0000

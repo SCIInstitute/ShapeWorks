@@ -52,6 +52,7 @@ title: Classes
 * **struct [Ray](../Classes/structRay.md)** 
 * **class [Reconstruction](../Classes/classReconstruction.md)** 
 * **struct [SimilarityTransform3D](../Classes/structSimilarityTransform3D.md)** 
+* **class [StudioLogger](../Classes/classStudioLogger.md)** <br>Handle logger callbacks via Qt for thread correctness. 
 * **class [SurfaceReconstructor](../Classes/classSurfaceReconstructor.md)** 
 * **struct [Triangle](../Classes/structTriangle.md)** 
 * **namespace [Ui](../Namespaces/namespaceUi.md)** 
@@ -116,6 +117,8 @@ title: Classes
 * **namespace [shapeworks](../Namespaces/namespaceshapeworks.md)** 
     * **class [AnalysisTool](../Classes/classshapeworks_1_1AnalysisTool.md)** 
     * **class [AnalysisUtils](../Classes/classshapeworks_1_1AnalysisUtils.md)** 
+    * **class [Analyze](../Classes/classshapeworks_1_1Analyze.md)** <br>High level analyze API. 
+    * **class [AnalyzeCommandGroup](../Classes/classshapeworks_1_1AnalyzeCommandGroup.md)** 
     * **class [ColorMap](../Classes/classshapeworks_1_1ColorMap.md)** 
     * **class [ColorMaps](../Classes/classshapeworks_1_1ColorMaps.md)** 
     * **class [Command](../Classes/classshapeworks_1_1Command.md)** 
@@ -154,21 +157,22 @@ title: Classes
     * **class [LandmarkWidget](../Classes/classshapeworks_1_1LandmarkWidget.md)** <br>[LandmarkWidget](). 
     * **class [Lightbox](../Classes/classshapeworks_1_1Lightbox.md)** <br>Display multiple Viewers in a tiled display. 
     * **class [LogWindow](../Classes/classshapeworks_1_1LogWindow.md)** <br>Log Window. 
+    * **class [Logging](../Classes/classshapeworks_1_1Logging.md)** <br>ShapeWorks [Logging]() Library. 
     * **class [MatrixContainer](../Classes/classshapeworks_1_1MatrixContainer.md)** 
     * **class [Mesh](../Classes/classshapeworks_1_1Mesh.md)** 
-    * **class [MeshCache](../Classes/classshapeworks_1_1MeshCache.md)** 
+    * **class [MeshCache](../Classes/classshapeworks_1_1MeshCache.md)** <br>Thread safe cache for meshes index by shape. 
     * **class [MeshCommand](../Classes/classshapeworks_1_1MeshCommand.md)** 
     * **class [MeshDomain](../Classes/classshapeworks_1_1MeshDomain.md)** 
     * **class [MeshGenerator](../Classes/classshapeworks_1_1MeshGenerator.md)** 
     * **struct [MeshGeoEntry](../Classes/structshapeworks_1_1MeshGeoEntry.md)** 
     * **class [MeshGroup](../Classes/classshapeworks_1_1MeshGroup.md)** <br>Representation of a group of meshes. 
-    * **class [MeshManager](../Classes/classshapeworks_1_1MeshManager.md)** 
+    * **class [MeshManager](../Classes/classshapeworks_1_1MeshManager.md)** <br>Class to manage meshes. 
     * **class [MeshReader](../Classes/classshapeworks_1_1MeshReader.md)** <br>reads mesh (used only by one of the [Mesh](../Classes/classshapeworks_1_1Mesh.md) constructors) 
     * **class [MeshReconstructors](../Classes/classshapeworks_1_1MeshReconstructors.md)** 
     * **class [MeshSlice](../Classes/classshapeworks_1_1MeshSlice.md)** <br>[MeshSlice](). 
     * **class [MeshUtils](../Classes/classshapeworks_1_1MeshUtils.md)** 
     * **class [MeshWarper](../Classes/classshapeworks_1_1MeshWarper.md)** 
-    * **class [MeshWorkItem](../Classes/classshapeworks_1_1MeshWorkItem.md)** 
+    * **class [MeshWorkItem](../Classes/classshapeworks_1_1MeshWorkItem.md)** <br>Provides concurrent access to a list of shapes to work needing reconstruction. 
     * **class [MeshWorkQueue](../Classes/classshapeworks_1_1MeshWorkQueue.md)** 
     * **class [MeshWorker](../Classes/classshapeworks_1_1MeshWorker.md)** 
     * **class [MeshWrapper](../Classes/classshapeworks_1_1MeshWrapper.md)** 
@@ -194,12 +198,14 @@ title: Classes
     * **class [ParticleShapeStatistics](../Classes/classshapeworks_1_1ParticleShapeStatistics.md)** 
     * **class [ParticleSystem](../Classes/classshapeworks_1_1ParticleSystem.md)** 
     * **class [ParticleSystemCommand](../Classes/classshapeworks_1_1ParticleSystemCommand.md)** 
+    * **class [Particles](../Classes/classshapeworks_1_1Particles.md)** <br>Representation of correspondence points for a shape including multiple domains. 
     * **class [PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md)** <br>physical bounds of a 3d region of space 
     * **class [PickResult](../Classes/classshapeworks_1_1PickResult.md)** 
     * **class [PlaneConstraint](../Classes/classshapeworks_1_1PlaneConstraint.md)** <br>[PlaneConstraint](). 
     * **class [PlaneWidget](../Classes/classshapeworks_1_1PlaneWidget.md)** <br>[PlaneWidget](). 
     * **class [PreferencesWindow](../Classes/classshapeworks_1_1PreferencesWindow.md)** <br>Qt UI dialog to control preferences. 
     * **class [Project](../Classes/classshapeworks_1_1Project.md)** <br>Representation of a project. 
+    * **class [ProjectCommandGroup](../Classes/classshapeworks_1_1ProjectCommandGroup.md)** 
     * **class [ProjectReader](../Classes/classshapeworks_1_1ProjectReader.md)** <br>Base class for [Project](../Classes/classshapeworks_1_1Project.md) readers. 
     * **class [ProjectUtils](../Classes/classshapeworks_1_1ProjectUtils.md)** 
     * **class [PythonWorker](../Classes/classshapeworks_1_1PythonWorker.md)** 
@@ -230,9 +236,7 @@ title: Classes
     * **class [StringUtils](../Classes/classshapeworks_1_1StringUtils.md)** <br>String utility functions. 
     * **class [StudioHandleWidget](../Classes/classshapeworks_1_1StudioHandleWidget.md)** 
     * **class [StudioInteractorStyle](../Classes/classshapeworks_1_1StudioInteractorStyle.md)** 
-    * **class [StudioLog](../Classes/classshapeworks_1_1StudioLog.md)** 
     * **class [StudioMesh](../Classes/classshapeworks_1_1StudioMesh.md)** <br>Representation of a single mesh. 
-    * **class [StudioParticles](../Classes/classshapeworks_1_1StudioParticles.md)** <br>Representation of correspondence points for a shape including multiple domains. 
     * **class [StudioSliceInteractorStyle](../Classes/classshapeworks_1_1StudioSliceInteractorStyle.md)** 
     * **class [StudioUtils](../Classes/classshapeworks_1_1StudioUtils.md)** <br>Utilities for Studio. 
     * **class [StudioVtkOutputWindow](../Classes/classshapeworks_1_1StudioVtkOutputWindow.md)** <br>Implementation of vtkOutputWindow to capture and display VTK error messages. 
@@ -261,4 +265,4 @@ title: Classes
 
 -------------------------------
 
-Updated on 2022-09-12 at 20:07:14 +0000
+Updated on 2022-09-13 at 16:52:37 +0000

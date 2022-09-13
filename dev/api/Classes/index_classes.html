@@ -2241,6 +2241,7 @@
 <li><strong>struct <a href="structRay.html">Ray</a></strong> </li>
 <li><strong>class <a href="classReconstruction.html">Reconstruction</a></strong> </li>
 <li><strong>struct <a href="structSimilarityTransform3D.html">SimilarityTransform3D</a></strong> </li>
+<li><strong>class <a href="classStudioLogger.html">StudioLogger</a></strong> <br>Handle logger callbacks via Qt for thread correctness. </li>
 <li><strong>class <a href="classSurfaceReconstructor.html">SurfaceReconstructor</a></strong> </li>
 <li><strong>struct <a href="structTriangle.html">Triangle</a></strong> </li>
 <li><strong>namespace <a href="../Namespaces/namespaceUi.html">Ui</a></strong> </li>
@@ -2317,6 +2318,8 @@
 <li><strong>namespace <a href="../Namespaces/namespaceshapeworks.html">shapeworks</a></strong> <ul>
 <li><strong>class <a href="classshapeworks_1_1AnalysisTool.html">AnalysisTool</a></strong> </li>
 <li><strong>class <a href="classshapeworks_1_1AnalysisUtils.html">AnalysisUtils</a></strong> </li>
+<li><strong>class <a href="classshapeworks_1_1Analyze.html">Analyze</a></strong> <br>High level analyze API. </li>
+<li><strong>class <a href="classshapeworks_1_1AnalyzeCommandGroup.html">AnalyzeCommandGroup</a></strong> </li>
 <li><strong>class <a href="classshapeworks_1_1ColorMap.html">ColorMap</a></strong> </li>
 <li><strong>class <a href="classshapeworks_1_1ColorMaps.html">ColorMaps</a></strong> </li>
 <li><strong>class <a href="classshapeworks_1_1Command.html">Command</a></strong> </li>
@@ -2355,21 +2358,22 @@
 <li><strong>class <a href="classshapeworks_1_1LandmarkWidget.html">LandmarkWidget</a></strong> <br><a href="">LandmarkWidget</a>. </li>
 <li><strong>class <a href="classshapeworks_1_1Lightbox.html">Lightbox</a></strong> <br>Display multiple Viewers in a tiled display. </li>
 <li><strong>class <a href="classshapeworks_1_1LogWindow.html">LogWindow</a></strong> <br>Log Window. </li>
+<li><strong>class <a href="classshapeworks_1_1Logging.html">Logging</a></strong> <br>ShapeWorks <a href="">Logging</a> Library. </li>
 <li><strong>class <a href="classshapeworks_1_1MatrixContainer.html">MatrixContainer</a></strong> </li>
 <li><strong>class <a href="classshapeworks_1_1Mesh.html">Mesh</a></strong> </li>
-<li><strong>class <a href="classshapeworks_1_1MeshCache.html">MeshCache</a></strong> </li>
+<li><strong>class <a href="classshapeworks_1_1MeshCache.html">MeshCache</a></strong> <br>Thread safe cache for meshes index by shape. </li>
 <li><strong>class <a href="classshapeworks_1_1MeshCommand.html">MeshCommand</a></strong> </li>
 <li><strong>class <a href="classshapeworks_1_1MeshDomain.html">MeshDomain</a></strong> </li>
 <li><strong>class <a href="classshapeworks_1_1MeshGenerator.html">MeshGenerator</a></strong> </li>
 <li><strong>struct <a href="structshapeworks_1_1MeshGeoEntry.html">MeshGeoEntry</a></strong> </li>
 <li><strong>class <a href="classshapeworks_1_1MeshGroup.html">MeshGroup</a></strong> <br>Representation of a group of meshes. </li>
-<li><strong>class <a href="classshapeworks_1_1MeshManager.html">MeshManager</a></strong> </li>
+<li><strong>class <a href="classshapeworks_1_1MeshManager.html">MeshManager</a></strong> <br>Class to manage meshes. </li>
 <li><strong>class <a href="classshapeworks_1_1MeshReader.html">MeshReader</a></strong> <br>reads mesh (used only by one of the <a href="classshapeworks_1_1Mesh.html">Mesh</a> constructors) </li>
 <li><strong>class <a href="classshapeworks_1_1MeshReconstructors.html">MeshReconstructors</a></strong> </li>
 <li><strong>class <a href="classshapeworks_1_1MeshSlice.html">MeshSlice</a></strong> <br><a href="">MeshSlice</a>. </li>
 <li><strong>class <a href="classshapeworks_1_1MeshUtils.html">MeshUtils</a></strong> </li>
 <li><strong>class <a href="classshapeworks_1_1MeshWarper.html">MeshWarper</a></strong> </li>
-<li><strong>class <a href="classshapeworks_1_1MeshWorkItem.html">MeshWorkItem</a></strong> </li>
+<li><strong>class <a href="classshapeworks_1_1MeshWorkItem.html">MeshWorkItem</a></strong> <br>Provides concurrent access to a list of shapes to work needing reconstruction. </li>
 <li><strong>class <a href="classshapeworks_1_1MeshWorkQueue.html">MeshWorkQueue</a></strong> </li>
 <li><strong>class <a href="classshapeworks_1_1MeshWorker.html">MeshWorker</a></strong> </li>
 <li><strong>class <a href="classshapeworks_1_1MeshWrapper.html">MeshWrapper</a></strong> </li>
@@ -2395,12 +2399,14 @@
 <li><strong>class <a href="classshapeworks_1_1ParticleShapeStatistics.html">ParticleShapeStatistics</a></strong> </li>
 <li><strong>class <a href="classshapeworks_1_1ParticleSystem.html">ParticleSystem</a></strong> </li>
 <li><strong>class <a href="classshapeworks_1_1ParticleSystemCommand.html">ParticleSystemCommand</a></strong> </li>
+<li><strong>class <a href="classshapeworks_1_1Particles.html">Particles</a></strong> <br>Representation of correspondence points for a shape including multiple domains. </li>
 <li><strong>class <a href="classshapeworks_1_1PhysicalRegion.html">PhysicalRegion</a></strong> <br>physical bounds of a 3d region of space </li>
 <li><strong>class <a href="classshapeworks_1_1PickResult.html">PickResult</a></strong> </li>
 <li><strong>class <a href="classshapeworks_1_1PlaneConstraint.html">PlaneConstraint</a></strong> <br><a href="">PlaneConstraint</a>. </li>
 <li><strong>class <a href="classshapeworks_1_1PlaneWidget.html">PlaneWidget</a></strong> <br><a href="">PlaneWidget</a>. </li>
 <li><strong>class <a href="classshapeworks_1_1PreferencesWindow.html">PreferencesWindow</a></strong> <br>Qt UI dialog to control preferences. </li>
 <li><strong>class <a href="classshapeworks_1_1Project.html">Project</a></strong> <br>Representation of a project. </li>
+<li><strong>class <a href="classshapeworks_1_1ProjectCommandGroup.html">ProjectCommandGroup</a></strong> </li>
 <li><strong>class <a href="classshapeworks_1_1ProjectReader.html">ProjectReader</a></strong> <br>Base class for <a href="classshapeworks_1_1Project.html">Project</a> readers. </li>
 <li><strong>class <a href="classshapeworks_1_1ProjectUtils.html">ProjectUtils</a></strong> </li>
 <li><strong>class <a href="classshapeworks_1_1PythonWorker.html">PythonWorker</a></strong> </li>
@@ -2435,9 +2441,7 @@
 <li><strong>class <a href="classshapeworks_1_1StringUtils.html">StringUtils</a></strong> <br>String utility functions. </li>
 <li><strong>class <a href="classshapeworks_1_1StudioHandleWidget.html">StudioHandleWidget</a></strong> </li>
 <li><strong>class <a href="classshapeworks_1_1StudioInteractorStyle.html">StudioInteractorStyle</a></strong> </li>
-<li><strong>class <a href="classshapeworks_1_1StudioLog.html">StudioLog</a></strong> </li>
 <li><strong>class <a href="classshapeworks_1_1StudioMesh.html">StudioMesh</a></strong> <br>Representation of a single mesh. </li>
-<li><strong>class <a href="classshapeworks_1_1StudioParticles.html">StudioParticles</a></strong> <br>Representation of correspondence points for a shape including multiple domains. </li>
 <li><strong>class <a href="classshapeworks_1_1StudioSliceInteractorStyle.html">StudioSliceInteractorStyle</a></strong> </li>
 <li><strong>class <a href="classshapeworks_1_1StudioUtils.html">StudioUtils</a></strong> <br>Utilities for Studio. </li>
 <li><strong>class <a href="classshapeworks_1_1StudioVtkOutputWindow.html">StudioVtkOutputWindow</a></strong> <br>Implementation of vtkOutputWindow to capture and display VTK error messages. </li>
@@ -2467,7 +2471,7 @@
 <li><strong>class <a href="classvtkPolyDataToImageData.html">vtkPolyDataToImageData</a></strong> </li>
 </ul>
 <hr />
-<p>Updated on 2022-09-12 at 20:07:14 +0000</p>
+<p>Updated on 2022-09-13 at 16:52:37 +0000</p>
 
               
             </article>

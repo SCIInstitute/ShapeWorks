@@ -72,6 +72,8 @@ public:
 
   int ComputeModes();
 
+  int get_num_modes();
+
   int PrincipalComponentProjections();
 
   int FisherLinearDiscriminant(unsigned int numModes);
@@ -113,9 +115,9 @@ public:
                              const std::vector<double> &x,
                              double &a, double &b) const;
 
-  Eigen::VectorXd get_compactness(std::function<void(float)> progress_callback);
-  Eigen::VectorXd get_specificity(std::function<void (float)> progress_callback);
-  Eigen::VectorXd get_generalization(std::function<void (float)> progress_callback);
+  Eigen::VectorXd get_compactness(std::function<void(float)> progress_callback = nullptr);
+  Eigen::VectorXd get_specificity(std::function<void (float)> progress_callback = nullptr);
+  Eigen::VectorXd get_generalization(std::function<void (float)> progress_callback = nullptr);
 
   Eigen::MatrixXd get_group1_matrix();
   Eigen::MatrixXd get_group2_matrix();
@@ -169,4 +171,4 @@ private:
 
 -------------------------------
 
-Updated on 2022-09-12 at 20:07:13 +0000
+Updated on 2022-09-13 at 16:52:36 +0000

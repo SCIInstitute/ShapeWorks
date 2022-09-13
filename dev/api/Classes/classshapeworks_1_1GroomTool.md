@@ -39,8 +39,6 @@ Inherits from QWidget
 | -------------- | -------------- |
 | void | **[groom_start](../Classes/classshapeworks_1_1GroomTool.md#signal-groom-start)**() |
 | void | **[groom_complete](../Classes/classshapeworks_1_1GroomTool.md#signal-groom-complete)**() |
-| void | **[error_message](../Classes/classshapeworks_1_1GroomTool.md#signal-error-message)**(QString ) |
-| void | **[message](../Classes/classshapeworks_1_1GroomTool.md#signal-message)**(QString ) |
 | void | **[progress](../Classes/classshapeworks_1_1GroomTool.md#signal-progress)**(int ) |
 
 ## Public Functions
@@ -217,24 +215,6 @@ void groom_complete()
 ```
 
 
-### signal error_message
-
-```cpp
-void error_message(
-    QString 
-)
-```
-
-
-### signal message
-
-```cpp
-void message(
-    QString 
-)
-```
-
-
 ### signal progress
 
 ```cpp
@@ -322,4 +302,4 @@ shut down any running threads
 
 -------------------------------
 
-Updated on 2022-09-12 at 20:07:11 +0000
+Updated on 2022-09-13 at 16:52:34 +0000

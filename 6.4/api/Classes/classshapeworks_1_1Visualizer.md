@@ -44,13 +44,13 @@ Inherits from QObject
 | void | **[update_ffc_mode](../Classes/classshapeworks_1_1Visualizer.md#function-update-ffc-mode)**() |
 | void | **[display_sample](../Classes/classshapeworks_1_1Visualizer.md#function-display-sample)**(int i) |
 | void | **[display_shape](../Classes/classshapeworks_1_1Visualizer.md#function-display-shape)**(ShapeHandle shape) |
-| void | **[display_shapes](../Classes/classshapeworks_1_1Visualizer.md#function-display-shapes)**(QVector< QSharedPointer< [Shape](../Classes/classshapeworks_1_1Shape.md) > > shapes) |
+| void | **[display_shapes](../Classes/classshapeworks_1_1Visualizer.md#function-display-shapes)**(ShapeList shapes) |
 | void | **[set_selected_point_one](../Classes/classshapeworks_1_1Visualizer.md#function-set-selected-point-one)**(int id) |
 | void | **[set_selected_point_two](../Classes/classshapeworks_1_1Visualizer.md#function-set-selected-point-two)**(int id) |
 | void | **[set_mean](../Classes/classshapeworks_1_1Visualizer.md#function-set-mean)**(const Eigen::VectorXd & mean) |
 | void | **[reset_camera](../Classes/classshapeworks_1_1Visualizer.md#function-reset-camera)**() |
 | void | **[update_lut](../Classes/classshapeworks_1_1Visualizer.md#function-update-lut)**() |
-| [StudioParticles](../Classes/classshapeworks_1_1StudioParticles.md) | **[get_current_shape](../Classes/classshapeworks_1_1Visualizer.md#function-get-current-shape)**() |
+| [Particles](../Classes/classshapeworks_1_1Particles.md) | **[get_current_shape](../Classes/classshapeworks_1_1Visualizer.md#function-get-current-shape)**() |
 | vtkFloatArray * | **[get_current_particle_scalars](../Classes/classshapeworks_1_1Visualizer.md#function-get-current-particle-scalars)**() |
 | vtkSmartPointer< vtkPolyData > | **[get_current_particle_poly_data](../Classes/classshapeworks_1_1Visualizer.md#function-get-current-particle-poly-data)**() |
 | void | **[handle_new_mesh](../Classes/classshapeworks_1_1Visualizer.md#function-handle-new-mesh)**() |
@@ -67,8 +67,8 @@ Inherits from QObject
 | bool | **[get_feature_range_valid](../Classes/classshapeworks_1_1Visualizer.md#function-get-feature-range-valid)**()<br>Return if the feature range is valid or not.  |
 | void | **[update_feature_range](../Classes/classshapeworks_1_1Visualizer.md#function-update-feature-range)**(double * range)<br>Update the feature range with a given range.  |
 | void | **[update_feature_range](../Classes/classshapeworks_1_1Visualizer.md#function-update-feature-range)**(double min, double max)<br>Update the feature range with a given range.  |
-| vtkSmartPointer< vtkTransform > | **[get_transform](../Classes/classshapeworks_1_1Visualizer.md#function-get-transform)**(QSharedPointer< [Shape](../Classes/classshapeworks_1_1Shape.md) > shape, int alignment_domain, int domain)<br>Request the transform for a given shape and domain.  |
-| vtkSmartPointer< vtkTransform > | **[get_transform](../Classes/classshapeworks_1_1Visualizer.md#function-get-transform)**(QSharedPointer< [Shape](../Classes/classshapeworks_1_1Shape.md) > shape, DisplayMode display_mode, int alignment_domain, int domain)<br>Request the transform for a given shape and domain and display mode.  |
+| vtkSmartPointer< vtkTransform > | **[get_transform](../Classes/classshapeworks_1_1Visualizer.md#function-get-transform)**(std::shared_ptr< [Shape](../Classes/classshapeworks_1_1Shape.md) > shape, int alignment_domain, int domain)<br>Request the transform for a given shape and domain.  |
+| vtkSmartPointer< vtkTransform > | **[get_transform](../Classes/classshapeworks_1_1Visualizer.md#function-get-transform)**(std::shared_ptr< [Shape](../Classes/classshapeworks_1_1Shape.md) > shape, DisplayMode display_mode, int alignment_domain, int domain)<br>Request the transform for a given shape and domain and display mode.  |
 | void | **[set_opacities](../Classes/classshapeworks_1_1Visualizer.md#function-set-opacities)**(std::vector< float > opacities)<br>Set domain opacities.  |
 | std::vector< float > | **[get_opacities](../Classes/classshapeworks_1_1Visualizer.md#function-get-opacities)**()<br>Get domain opacities.  |
 | double | **[get_current_glyph_size](../Classes/classshapeworks_1_1Visualizer.md#function-get-current-glyph-size)**()<br>Get the current glyph size.  |
@@ -263,7 +263,7 @@ void display_shape(
 
 ```cpp
 void display_shapes(
-    QVector< QSharedPointer< Shape > > shapes
+    ShapeList shapes
 )
 ```
 
@@ -312,7 +312,7 @@ void update_lut()
 ### function get_current_shape
 
 ```cpp
-StudioParticles get_current_shape()
+Particles get_current_shape()
 ```
 
 
@@ -454,7 +454,7 @@ Update the feature range with a given range.
 
 ```cpp
 vtkSmartPointer< vtkTransform > get_transform(
-    QSharedPointer< Shape > shape,
+    std::shared_ptr< Shape > shape,
     int alignment_domain,
     int domain
 )
@@ -466,7 +466,7 @@ Request the transform for a given shape and domain.
 
 ```cpp
 vtkSmartPointer< vtkTransform > get_transform(
-    QSharedPointer< Shape > shape,
+    std::shared_ptr< Shape > shape,
     DisplayMode display_mode,
     int alignment_domain,
     int domain
@@ -543,4 +543,4 @@ Return render window size.
 
 -------------------------------
 
-Updated on 2022-09-12 at 20:07:12 +0000
+Updated on 2022-09-13 at 16:52:35 +0000

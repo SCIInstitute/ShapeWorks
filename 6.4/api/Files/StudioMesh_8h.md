@@ -1,9 +1,9 @@
 ---
-title: Studio/src/Data/StudioMesh.h
+title: Libs/Analyze/StudioMesh.h
 
 ---
 
-# Studio/src/Data/StudioMesh.h
+# Libs/Analyze/StudioMesh.h
 
 
 
@@ -58,8 +58,6 @@ using ImageType =  itk::Image<PixelType, 3>;
 
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
-#include <QSharedPointer>
-#include <QString>
 
 using PixelType = float;
 using ImageType = itk::Image<PixelType, 3>;
@@ -79,11 +77,7 @@ class StudioMesh {
 
   ~StudioMesh();
 
-  QString get_dimension_string();
-
   vtkSmartPointer<vtkPolyData> get_poly_data();
-
-  vnl_vector<double> get_center_transform();
 
   void set_poly_data(vtkSmartPointer<vtkPolyData> poly_data);
 
@@ -108,11 +102,6 @@ class StudioMesh {
   static constexpr const char* const FFC_PAINT = "ffc_paint";
 
  private:
-  // metadata
-  int dimensions_[3];
-  vnl_vector<double> center_transform_;
-
-  // the polydata
   vtkSmartPointer<vtkPolyData> poly_data_;
 
   vtkSmartPointer<vtkStaticPointLocator> locator_;
@@ -126,4 +115,4 @@ class StudioMesh {
 
 -------------------------------
 
-Updated on 2022-09-12 at 20:07:13 +0000
+Updated on 2022-09-13 at 16:52:36 +0000

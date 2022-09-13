@@ -20,7 +20,7 @@ Export utilities for Studio.
 | QString | **[get_save_filename](../Classes/classshapeworks_1_1ExportUtils.md#function-get-save-filename)**([ShapeWorksStudioApp](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md) * parent, QString title, QString filetypes, QString default_ext) |
 | void | **[export_all_subjects_particle_scalars](../Classes/classshapeworks_1_1ExportUtils.md#function-export-all-subjects-particle-scalars)**([ShapeWorksStudioApp](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md) * parent, QSharedPointer< [Session](../Classes/classshapeworks_1_1Session.md) > session) |
 | bool | **[write_scalars](../Classes/classshapeworks_1_1ExportUtils.md#function-write-scalars)**([ShapeWorksStudioApp](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md) * app, vtkSmartPointer< vtkPolyData > poly_data, QString filename) |
-| bool | **[write_particle_scalars](../Classes/classshapeworks_1_1ExportUtils.md#function-write-particle-scalars)**([ShapeWorksStudioApp](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md) * app, QSharedPointer< [Shape](../Classes/classshapeworks_1_1Shape.md) > shape, QString filename) |
+| bool | **[write_particle_scalars](../Classes/classshapeworks_1_1ExportUtils.md#function-write-particle-scalars)**([ShapeWorksStudioApp](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md) * app, std::shared_ptr< [Shape](../Classes/classshapeworks_1_1Shape.md) > shape, QString filename) |
 
 ## Public Functions Documentation
 
@@ -62,7 +62,7 @@ static bool write_scalars(
 ```cpp
 static bool write_particle_scalars(
     ShapeWorksStudioApp * app,
-    QSharedPointer< Shape > shape,
+    std::shared_ptr< Shape > shape,
     QString filename
 )
 ```
@@ -70,4 +70,4 @@ static bool write_particle_scalars(
 
 -------------------------------
 
-Updated on 2022-09-12 at 20:07:11 +0000
+Updated on 2022-09-13 at 16:52:34 +0000

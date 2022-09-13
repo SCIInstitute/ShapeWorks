@@ -15,13 +15,6 @@ Implementation of vtkOutputWindow to capture and display VTK error messages.
 
 Inherits from QObject, vtkOutputWindow
 
-## Public Signals
-
-|                | Name           |
-| -------------- | -------------- |
-| void | **[warning](../Classes/classshapeworks_1_1StudioVtkOutputWindow.md#signal-warning)**(QString message) |
-| void | **[error](../Classes/classshapeworks_1_1StudioVtkOutputWindow.md#signal-error)**(QString message) |
-
 ## Public Functions
 
 |                | Name           |
@@ -31,26 +24,8 @@ Inherits from QObject, vtkOutputWindow
 | | **[StudioVtkOutputWindow](../Classes/classshapeworks_1_1StudioVtkOutputWindow.md#function-studiovtkoutputwindow)**() |
 | void | **[DisplayErrorText](../Classes/classshapeworks_1_1StudioVtkOutputWindow.md#function-displayerrortext)**(const char * text) override |
 | void | **[DisplayWarningText](../Classes/classshapeworks_1_1StudioVtkOutputWindow.md#function-displaywarningtext)**(const char * text) override |
-
-## Public Signals Documentation
-
-### signal warning
-
-```cpp
-void warning(
-    QString message
-)
-```
-
-
-### signal error
-
-```cpp
-void error(
-    QString message
-)
-```
-
+| void | **[DisplayGenericWarningText](../Classes/classshapeworks_1_1StudioVtkOutputWindow.md#function-displaygenericwarningtext)**(const char * text) override |
+| void | **[DisplayDebugText](../Classes/classshapeworks_1_1StudioVtkOutputWindow.md#function-displaydebugtext)**(const char * text) override |
 
 ## Public Functions Documentation
 
@@ -96,6 +71,24 @@ void DisplayWarningText(
 ```
 
 
+### function DisplayGenericWarningText
+
+```cpp
+void DisplayGenericWarningText(
+    const char * text
+) override
+```
+
+
+### function DisplayDebugText
+
+```cpp
+void DisplayDebugText(
+    const char * text
+) override
+```
+
+
 -------------------------------
 
-Updated on 2022-09-12 at 20:07:12 +0000
+Updated on 2022-09-13 at 16:52:35 +0000

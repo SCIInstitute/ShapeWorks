@@ -19,8 +19,8 @@ Representation of a project.  [More...](#detailed-description)
 | -------------- | -------------- |
 | | **[Project](../Classes/classshapeworks_1_1Project.md#function-project)**() |
 | | **[~Project](../Classes/classshapeworks_1_1Project.md#function-~project)**() |
-| bool | **[load](../Classes/classshapeworks_1_1Project.md#function-load)**(const std::string & filename)<br>Load from XLSX file.  |
-| bool | **[save](../Classes/classshapeworks_1_1Project.md#function-save)**(const std::string & filename)<br>Save to XLSX file.  |
+| bool | **[load](../Classes/classshapeworks_1_1Project.md#function-load)**(const std::string & filename)<br>Load from project file.  |
+| bool | **[save](../Classes/classshapeworks_1_1Project.md#function-save)**(const std::string & filename)<br>Save to project file.  |
 | std::string | **[get_filename](../Classes/classshapeworks_1_1Project.md#function-get-filename)**()<br>Return the filename.  |
 | void | **[set_filename](../Classes/classshapeworks_1_1Project.md#function-set-filename)**(std::string filename)<br>Set project filename.  |
 | std::vector< std::string > | **[get_headers](../Classes/classshapeworks_1_1Project.md#function-get-headers)**()<br>Return the headers of the subject sheet.  |
@@ -92,7 +92,7 @@ bool load(
 )
 ```
 
-Load from XLSX file. 
+Load from project file. 
 
 ### function save
 
@@ -102,7 +102,7 @@ bool save(
 )
 ```
 
-Save to XLSX file. 
+Save to project file. 
 
 ### function get_filename
 
@@ -430,4 +430,4 @@ Get the groomed domain types.
 
 -------------------------------
 
-Updated on 2022-09-12 at 20:07:12 +0000
+Updated on 2022-09-13 at 16:52:35 +0000

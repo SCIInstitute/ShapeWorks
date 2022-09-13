@@ -28,7 +28,7 @@ title: Studio/src/Visualization/Viewer.h
 ```cpp
 #pragma once
 
-#include <Data/Shape.h>
+#include <Shape.h>
 #include <Visualization/ColorMap.h>
 #include <Visualization/ColorSchemes.h>
 #include <Visualization/SliceView.h>
@@ -90,7 +90,7 @@ class Viewer {
   void set_renderer(vtkSmartPointer<vtkRenderer> renderer);
   vtkSmartPointer<vtkRenderer> get_renderer();
 
-  void display_shape(QSharedPointer<Shape> shape);
+  void display_shape(std::shared_ptr<Shape> shape);
 
   void clear_viewer();
   void reset_camera(std::array<double, 3> c);
@@ -131,7 +131,7 @@ class Viewer {
 
   void update_opacities();
 
-  QSharedPointer<Shape> get_shape();
+  std::shared_ptr<Shape> get_shape();
 
   void update_landmarks();
   void update_planes();
@@ -199,7 +199,7 @@ class Viewer {
 
   bool visible_ = false;
 
-  QSharedPointer<Shape> shape_;
+  std::shared_ptr<Shape> shape_;
 
   bool show_glyphs_ = true;
   bool show_surface_ = true;
@@ -279,4 +279,4 @@ class Viewer {
 
 -------------------------------
 
-Updated on 2022-09-12 at 20:07:14 +0000
+Updated on 2022-09-13 at 16:52:37 +0000

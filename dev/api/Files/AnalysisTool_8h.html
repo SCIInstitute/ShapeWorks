@@ -2249,7 +2249,7 @@
 <span class="c1">// Studio</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Analysis/ShapeEvaluationJob.h&gt;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/Preferences.h&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/Shape.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Shape.h&gt;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Visualization/Visualizer.h&gt;</span><span class="cp"></span>
 
 <span class="k">class</span><span class="w"> </span><span class="nc">Ui_AnalysisTool</span><span class="p">;</span><span class="w"></span>
@@ -2313,10 +2313,10 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">reset_stats</span><span class="p">();</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">enable_actions</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">newly_enabled</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span><span class="w"></span>
 
-<span class="w">  </span><span class="n">StudioParticles</span><span class="w"> </span><span class="nf">get_mean_shape_points</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="n">Particles</span><span class="w"> </span><span class="nf">get_mean_shape_points</span><span class="p">();</span><span class="w"></span>
 <span class="w">  </span><span class="n">ShapeHandle</span><span class="w"> </span><span class="nf">get_mean_shape</span><span class="p">();</span><span class="w"></span>
 
-<span class="w">  </span><span class="n">StudioParticles</span><span class="w"> </span><span class="nf">get_shape_points</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">mode</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="n">Particles</span><span class="w"> </span><span class="nf">get_shape_points</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">mode</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="p">);</span><span class="w"></span>
 <span class="w">  </span><span class="n">ShapeHandle</span><span class="w"> </span><span class="nf">get_mode_shape</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">mode</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="p">);</span><span class="w"></span>
 
 <span class="w">  </span><span class="n">ParticleShapeStatistics</span><span class="w"> </span><span class="nf">get_stats</span><span class="p">();</span><span class="w"></span>
@@ -2406,9 +2406,6 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_view</span><span class="p">();</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">pca_update</span><span class="p">();</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">progress</span><span class="p">(</span><span class="kt">int</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">message</span><span class="p">(</span><span class="n">QString</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">error</span><span class="p">(</span><span class="n">QString</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">warning</span><span class="p">(</span><span class="n">QString</span><span class="p">);</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">reconstruction_complete</span><span class="p">();</span><span class="w"></span>
 
 <span class="w"> </span><span class="k">private</span><span class="o">:</span><span class="w"></span>
@@ -2425,7 +2422,7 @@
 
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">group_pvalues_valid</span><span class="p">();</span><span class="w"></span>
 
-<span class="w">  </span><span class="n">StudioParticles</span><span class="w"> </span><span class="nf">convert_from_combined</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">points</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="n">Particles</span><span class="w"> </span><span class="nf">convert_from_combined</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">points</span><span class="p">);</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_group_boxes</span><span class="p">();</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_group_values</span><span class="p">();</span><span class="w"></span>
@@ -2435,7 +2432,7 @@
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_difference_particles</span><span class="p">();</span><span class="w"></span>
 
-<span class="w">  </span><span class="n">ShapeHandle</span><span class="w"> </span><span class="nf">create_shape_from_points</span><span class="p">(</span><span class="n">StudioParticles</span><span class="w"> </span><span class="n">points</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="n">ShapeHandle</span><span class="w"> </span><span class="nf">create_shape_from_points</span><span class="p">(</span><span class="n">Particles</span><span class="w"> </span><span class="n">points</span><span class="p">);</span><span class="w"></span>
 
 <span class="w">  </span><span class="n">Preferences</span><span class="o">&amp;</span><span class="w"> </span><span class="n">preferences_</span><span class="p">;</span><span class="w"></span>
 
@@ -2482,7 +2479,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-09-12 at 20:07:13 +0000</p>
+<p>Updated on 2022-09-13 at 16:52:36 +0000</p>
 
               
             </article>

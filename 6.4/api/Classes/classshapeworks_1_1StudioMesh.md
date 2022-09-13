@@ -19,9 +19,7 @@ Representation of a single mesh.  [More...](#detailed-description)
 | -------------- | -------------- |
 | | **[StudioMesh](../Classes/classshapeworks_1_1StudioMesh.md#function-studiomesh)**()<br>Constructor.  |
 | | **[~StudioMesh](../Classes/classshapeworks_1_1StudioMesh.md#function-~studiomesh)**()<br>Destructor.  |
-| QString | **[get_dimension_string](../Classes/classshapeworks_1_1StudioMesh.md#function-get-dimension-string)**()<br>Get the dimensions as a string for display (if loaded from an image)  |
 | vtkSmartPointer< vtkPolyData > | **[get_poly_data](../Classes/classshapeworks_1_1StudioMesh.md#function-get-poly-data)**()<br>Get the mesh polydata.  |
-| vnl_vector< double > | **[get_center_transform](../Classes/classshapeworks_1_1StudioMesh.md#function-get-center-transform)**()<br>Get the center transform.  |
 | void | **[set_poly_data](../Classes/classshapeworks_1_1StudioMesh.md#function-set-poly-data)**(vtkSmartPointer< vtkPolyData > poly_data)<br>Set the poly data directly.  |
 | void | **[set_error_message](../Classes/classshapeworks_1_1StudioMesh.md#function-set-error-message)**(std::string error_message)<br>Set the error message.  |
 | std::string | **[get_error_message](../Classes/classshapeworks_1_1StudioMesh.md#function-get-error-message)**()<br>Return the error message.  |
@@ -47,7 +45,9 @@ class shapeworks::StudioMesh;
 
 Representation of a single mesh. 
 
-The [Mesh](../Classes/classshapeworks_1_1Mesh.md) class represents a single mesh generated from an image file or set of particles. It is responsible for loading the image and generating a mesh from it. 
+The [Mesh](../Classes/classshapeworks_1_1Mesh.md) class represents a single mesh generated from an image file or set of particles. It is responsible for loading the image and generating a mesh from it.
+
+TODO: Merge this functionality with Libs/Mesh/Mesh class 
 
 ## Public Functions Documentation
 
@@ -67,14 +67,6 @@ Constructor.
 
 Destructor. 
 
-### function get_dimension_string
-
-```cpp
-QString get_dimension_string()
-```
-
-Get the dimensions as a string for display (if loaded from an image) 
-
 ### function get_poly_data
 
 ```cpp
@@ -82,14 +74,6 @@ vtkSmartPointer< vtkPolyData > get_poly_data()
 ```
 
 Get the mesh polydata. 
-
-### function get_center_transform
-
-```cpp
-vnl_vector< double > get_center_transform()
-```
-
-Get the center transform. 
 
 ### function set_poly_data
 
@@ -202,4 +186,4 @@ static constexpr const char *const FFC_PAINT = "ffc_paint";
 
 -------------------------------
 
-Updated on 2022-09-12 at 20:07:12 +0000
+Updated on 2022-09-13 at 16:52:35 +0000

@@ -28,6 +28,7 @@ title: shapeworks::ParticleShapeStatistics
 | int | **[WriteCSVFile](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-writecsvfile)**(const std::string & s)<br>Writes a text file in comma-separated format. Suitable for reading into excel or R or Matlab for analysis.  |
 | int | **[WriteCSVFile2](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-writecsvfile2)**(const std::string & s) |
 | int | **[ComputeModes](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-computemodes)**()<br>Computes PCA modes from the set of correspondence mode positions. Requires that ReadPointFiles be called first.  |
+| int | **[get_num_modes](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-get-num-modes)**()<br>Return the number of modes.  |
 | int | **[PrincipalComponentProjections](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-principalcomponentprojections)**() |
 | int | **[FisherLinearDiscriminant](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-fisherlineardiscriminant)**(unsigned int numModes)<br>Computes fishers linear discriminant line for best group separation.  |
 | int | **[SampleSize](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-samplesize)**() const<br>Returns the sample size.  |
@@ -51,9 +52,9 @@ title: shapeworks::ParticleShapeStatistics
 | const Eigen::MatrixXd & | **[RecenteredShape](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-recenteredshape)**() const<br>Returns the shape with the mean subtracted.  |
 | const std::vector< double > & | **[PercentVarByMode](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-percentvarbymode)**() const |
 | int | **[SimpleLinearRegression](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-simplelinearregression)**(const std::vector< double > & y, const std::vector< double > & x, double & a, double & b) const |
-| Eigen::VectorXd | **[get_compactness](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-get-compactness)**(std::function< void(float)> progress_callback) |
-| Eigen::VectorXd | **[get_specificity](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-get-specificity)**(std::function< void(float)> progress_callback) |
-| Eigen::VectorXd | **[get_generalization](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-get-generalization)**(std::function< void(float)> progress_callback) |
+| Eigen::VectorXd | **[get_compactness](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-get-compactness)**(std::function< void(float)> progress_callback =nullptr) |
+| Eigen::VectorXd | **[get_specificity](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-get-specificity)**(std::function< void(float)> progress_callback =nullptr) |
+| Eigen::VectorXd | **[get_generalization](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-get-generalization)**(std::function< void(float)> progress_callback =nullptr) |
 | Eigen::MatrixXd | **[get_group1_matrix](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-get-group1-matrix)**() |
 | Eigen::MatrixXd | **[get_group2_matrix](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-get-group2-matrix)**() |
 
@@ -184,6 +185,14 @@ int ComputeModes()
 ```
 
 Computes PCA modes from the set of correspondence mode positions. Requires that ReadPointFiles be called first. 
+
+### function get_num_modes
+
+```cpp
+int get_num_modes()
+```
+
+Return the number of modes. 
 
 ### function PrincipalComponentProjections
 
@@ -385,7 +394,7 @@ Computes a simple linear regression of the first list of values with respect to 
 
 ```cpp
 Eigen::VectorXd get_compactness(
-    std::function< void(float)> progress_callback
+    std::function< void(float)> progress_callback =nullptr
 )
 ```
 
@@ -394,7 +403,7 @@ Eigen::VectorXd get_compactness(
 
 ```cpp
 Eigen::VectorXd get_specificity(
-    std::function< void(float)> progress_callback
+    std::function< void(float)> progress_callback =nullptr
 )
 ```
 
@@ -403,7 +412,7 @@ Eigen::VectorXd get_specificity(
 
 ```cpp
 Eigen::VectorXd get_generalization(
-    std::function< void(float)> progress_callback
+    std::function< void(float)> progress_callback =nullptr
 )
 ```
 
@@ -433,4 +442,4 @@ static constexpr static int VDimension = 3;
 
 -------------------------------
 
-Updated on 2022-09-12 at 20:07:12 +0000
+Updated on 2022-09-13 at 16:52:35 +0000

@@ -72,9 +72,6 @@ class PythonWorker : public QObject {
  Q_SIGNALS:
 
   void result_ready();
-  void error_message(QString);
-  void warning_message(QString);
-  void message(QString);
   void finished();
 
  private:
@@ -95,4 +92,4 @@ class PythonWorker : public QObject {
 
 -------------------------------
 
-Updated on 2022-09-12 at 20:07:14 +0000
+Updated on 2022-09-13 at 16:52:37 +0000

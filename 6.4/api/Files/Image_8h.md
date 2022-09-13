@@ -220,6 +220,8 @@ class Image {
 
   Image::PixelType evaluate(Point p);
 
+  static std::vector<std::string> getSupportedTypes() { return {"nrrd", "nii", "nii.gz", "mhd", "tiff", "jpeg", "jpg", "png", "dcm", "ima"}; }
+
  private:
   friend struct SharedCommandData;
   Image()
@@ -259,4 +261,4 @@ Image& operator/=(Image& img, const double x);
 
 -------------------------------
 
-Updated on 2022-09-12 at 20:07:13 +0000
+Updated on 2022-09-13 at 16:52:36 +0000

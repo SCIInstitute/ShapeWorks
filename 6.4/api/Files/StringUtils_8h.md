@@ -42,6 +42,8 @@ class StringUtils {
   static bool hasSuffix(std::string const& filename, std::string const& suffix);
   static std::vector<std::string> getFileNamesFromPaths(const std::vector<std::string>& paths);
 
+  static std::string getLowerExtension(std::string const& filename);
+
   // safely convert a const char* to string, allowing for nullptr
   static std::string safeString(const char* s) { return s == nullptr ? std::string() : s; }
 
@@ -54,4 +56,4 @@ class StringUtils {
 
 -------------------------------
 
-Updated on 2022-09-12 at 20:07:13 +0000
+Updated on 2022-09-13 at 16:52:36 +0000

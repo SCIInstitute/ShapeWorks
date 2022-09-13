@@ -27,8 +27,8 @@ Inherits from QObject
 | -------------- | -------------- |
 | | **[Lightbox](../Classes/classshapeworks_1_1Lightbox.md#function-lightbox)**() |
 | | **[~Lightbox](../Classes/classshapeworks_1_1Lightbox.md#function-~lightbox)**() |
-| void | **[set_shapes](../Classes/classshapeworks_1_1Lightbox.md#function-set-shapes)**(QVector< QSharedPointer< [Shape](../Classes/classshapeworks_1_1Shape.md) > > shapes) |
-| QVector< ShapeHandle > | **[get_shapes](../Classes/classshapeworks_1_1Lightbox.md#function-get-shapes)**() |
+| void | **[set_shapes](../Classes/classshapeworks_1_1Lightbox.md#function-set-shapes)**(ShapeList shapes) |
+| ShapeList | **[get_shapes](../Classes/classshapeworks_1_1Lightbox.md#function-get-shapes)**() |
 | void | **[set_interactor](../Classes/classshapeworks_1_1Lightbox.md#function-set-interactor)**(vtkRenderWindowInteractor * interactor) |
 | void | **[set_render_window](../Classes/classshapeworks_1_1Lightbox.md#function-set-render-window)**(vtkRenderWindow * render_window) |
 | void | **[set_tile_layout](../Classes/classshapeworks_1_1Lightbox.md#function-set-tile-layout)**(int width, int height) |
@@ -96,7 +96,7 @@ Lightbox()
 
 ```cpp
 void set_shapes(
-    QVector< QSharedPointer< Shape > > shapes
+    ShapeList shapes
 )
 ```
 
@@ -104,7 +104,7 @@ void set_shapes(
 ### function get_shapes
 
 ```cpp
-QVector< ShapeHandle > get_shapes()
+ShapeList get_shapes()
 ```
 
 
@@ -329,4 +329,4 @@ vtkRenderWindow * get_render_window()
 
 -------------------------------
 
-Updated on 2022-09-12 at 20:07:11 +0000
+Updated on 2022-09-13 at 16:52:34 +0000

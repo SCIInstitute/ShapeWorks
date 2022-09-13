@@ -1,9 +1,9 @@
 ---
-title: Studio/src/Data/StudioParticles.h
+title: Libs/Analyze/Particles.h
 
 ---
 
-# Studio/src/Data/StudioParticles.h
+# Libs/Analyze/Particles.h
 
 
 
@@ -17,7 +17,7 @@ title: Studio/src/Data/StudioParticles.h
 
 |                | Name           |
 | -------------- | -------------- |
-| class | **[shapeworks::StudioParticles](../Classes/classshapeworks_1_1StudioParticles.md)** <br>Representation of correspondence points for a shape including multiple domains.  |
+| class | **[shapeworks::Particles](../Classes/classshapeworks_1_1Particles.md)** <br>Representation of correspondence points for a shape including multiple domains.  |
 
 
 
@@ -41,9 +41,9 @@ class vtkTransform;
 namespace shapeworks {
 
 
-class StudioParticles {
+class Particles {
  public:
-  StudioParticles();
+  Particles();
 
   void set_local_particles(int domain, std::vector<itk::Point<double>> particles);
   void set_world_particles(int domain, std::vector<itk::Point<double>> particles);
@@ -70,7 +70,7 @@ class StudioParticles {
   void set_transform(vtkSmartPointer<vtkTransform> transform);
   void set_procrustes_transforms(std::vector<vtkSmartPointer<vtkTransform>> transforms);
 
-  Eigen::VectorXd get_difference_vectors(const StudioParticles& other);
+  Eigen::VectorXd get_difference_vectors(const Particles& other);
 
  private:
   void transform_global_particles();
@@ -93,4 +93,4 @@ class StudioParticles {
 
 -------------------------------
 
-Updated on 2022-09-12 at 20:07:13 +0000
+Updated on 2022-09-13 at 16:52:36 +0000

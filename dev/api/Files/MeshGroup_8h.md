@@ -1,9 +1,9 @@
 ---
-title: Studio/src/Data/MeshGroup.h
+title: Libs/Analyze/MeshGroup.h
 
 ---
 
-# Studio/src/Data/MeshGroup.h
+# Libs/Analyze/MeshGroup.h
 
 
 
@@ -27,7 +27,7 @@ title: Studio/src/Data/MeshGroup.h
 ```cpp
 #pragma once
 
-#include <Data/StudioMesh.h>
+#include <StudioMesh.h>
 
 namespace shapeworks {
 
@@ -59,4 +59,4 @@ class MeshGroup {
 
 -------------------------------
 
-Updated on 2022-09-12 at 20:07:13 +0000
+Updated on 2022-09-13 at 16:52:36 +0000

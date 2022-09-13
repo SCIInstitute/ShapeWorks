@@ -26,10 +26,28 @@ title: Files
             * **file [Libs/Alignment/Transforms/itkThinPlateSplineKernelTransform2.h](../Files/itkThinPlateSplineKernelTransform2_8h.md#file-itkthinplatesplinekerneltransform2.h)** 
         * **file [Libs/Alignment/Procrustes3D.h](../Files/Procrustes3D_8h.md#file-procrustes3d.h)** 
     * **dir [Libs/Analyze](../Files/dir_d77cc112773b74d11448b7fad9142c8e.md#dir-libs/analyze)** 
+        * **file [Libs/Analyze/Analyze.h](../Files/Analyze_8h.md#file-analyze.h)** 
+        * **file [Libs/Analyze/CustomSurfaceReconstructionFilter.h](../Files/CustomSurfaceReconstructionFilter_8h.md#file-customsurfacereconstructionfilter.h)** 
+        * **file [Libs/Analyze/ItkToVtk.h](../Files/ItkToVtk_8h.md#file-itktovtk.h)** 
+        * **file [Libs/Analyze/LegacyMeshGenerator.h](../Files/LegacyMeshGenerator_8h.md#file-legacymeshgenerator.h)** <br>Mesh generation. 
+        * **file [Libs/Analyze/MeshCache.h](../Files/MeshCache_8h.md#file-meshcache.h)** 
+        * **file [Libs/Analyze/MeshGenerator.h](../Files/MeshGenerator_8h.md#file-meshgenerator.h)** <br>Mesh generation. 
+        * **file [Libs/Analyze/MeshGroup.h](../Files/MeshGroup_8h.md#file-meshgroup.h)** 
+        * **file [Libs/Analyze/MeshManager.h](../Files/MeshManager_8h.md#file-meshmanager.h)** 
+        * **file [Libs/Analyze/MeshWorkQueue.h](../Files/MeshWorkQueue_8h.md#file-meshworkqueue.h)** 
+        * **file [Libs/Analyze/MeshWorker.h](../Files/MeshWorker_8h.md#file-meshworker.h)** <br>Worker class for parallel mesh reconstruction. 
+        * **file [Libs/Analyze/Particles.h](../Files/Particles_8h.md#file-particles.h)** 
+        * **file [Libs/Analyze/QMeshWarper.h](../Files/QMeshWarper_8h.md#file-qmeshwarper.h)** 
         * **file [Libs/Analyze/Reconstruction.h](../Files/Reconstruction_8h.md#file-reconstruction.h)** 
+        * **file [Libs/Analyze/Shape.h](../Files/Shape_8h.md#file-shape.h)** 
+        * **file [Libs/Analyze/StudioEnums.h](../Files/StudioEnums_8h.md#file-studioenums.h)** 
+        * **file [Libs/Analyze/StudioMesh.h](../Files/StudioMesh_8h.md#file-studiomesh.h)** 
+        * **file [Libs/Analyze/SurfaceReconstructor.h](../Files/SurfaceReconstructor_8h.md#file-surfacereconstructor.h)** <br>Surface [Reconstruction](../Classes/classReconstruction.md) Layer. 
         * **file [Libs/Analyze/Vis.h](../Files/Vis_8h.md#file-vis.h)** 
+        * **file [Libs/Analyze/vtkPolyDataToImageData.h](../Files/vtkPolyDataToImageData_8h.md#file-vtkpolydatatoimagedata.h)** 
     * **dir [Libs/Common](../Files/dir_c13ed27a749775eeb2d59234813cae48.md#dir-libs/common)** 
         * **file [Libs/Common/Exception.h](../Files/Exception_8h.md#file-exception.h)** 
+        * **file [Libs/Common/Logging.h](../Files/Logging_8h.md#file-logging.h)** 
         * **file [Libs/Common/Region.h](../Files/Region_8h.md#file-region.h)** 
         * **file [Libs/Common/Shapeworks.h](../Files/Shapeworks_8h.md#file-shapeworks.h)** 
         * **file [Libs/Common/ShapeworksUtils.h](../Files/ShapeworksUtils_8h.md#file-shapeworksutils.h)** 
@@ -159,33 +177,16 @@ title: Files
             * **file [Studio/src/Analysis/AnalysisTool.h](../Files/AnalysisTool_8h.md#file-analysistool.h)** 
             * **file [Studio/src/Analysis/ShapeEvaluationJob.h](../Files/ShapeEvaluationJob_8h.md#file-shapeevaluationjob.h)** 
         * **dir [Studio/src/Data](../Files/dir_217db32785bc9a56b002739d3e5efbb6.md#dir-studio/src/data)** 
-            * **file [Studio/src/Data/CustomSurfaceReconstructionFilter.h](../Files/CustomSurfaceReconstructionFilter_8h.md#file-customsurfacereconstructionfilter.h)** 
             * **file [Studio/src/Data/DataTool.h](../Files/DataTool_8h.md#file-datatool.h)** 
             * **file [Studio/src/Data/ExportUtils.h](../Files/ExportUtils_8h.md#file-exportutils.h)** 
-            * **file [Studio/src/Data/ItkToVtk.h](../Files/ItkToVtk_8h.md#file-itktovtk.h)** 
             * **file [Studio/src/Data/LandmarkItemDelegate.h](../Files/LandmarkItemDelegate_8h.md#file-landmarkitemdelegate.h)** 
             * **file [Studio/src/Data/LandmarkTableModel.h](../Files/LandmarkTableModel_8h.md#file-landmarktablemodel.h)** 
-            * **file [Studio/src/Data/LegacyMeshGenerator.h](../Files/LegacyMeshGenerator_8h.md#file-legacymeshgenerator.h)** <br>Mesh generation. 
-            * **file [Studio/src/Data/MeshCache.h](../Files/MeshCache_8h.md#file-meshcache.h)** <br>Thread safe cache for meshes index by shape. 
-            * **file [Studio/src/Data/MeshGenerator.h](../Files/MeshGenerator_8h.md#file-meshgenerator.h)** <br>Mesh generation. 
-            * **file [Studio/src/Data/MeshGroup.h](../Files/MeshGroup_8h.md#file-meshgroup.h)** 
-            * **file [Studio/src/Data/MeshManager.h](../Files/MeshManager_8h.md#file-meshmanager.h)** <br>Class to manage meshes. 
             * **file [Studio/src/Data/MeshSettings.h](../Files/MeshSettings_8h.md#file-meshsettings.h)** 
-            * **file [Studio/src/Data/MeshWorkQueue.h](../Files/MeshWorkQueue_8h.md#file-meshworkqueue.h)** <br>Provides concurrent access to a list of shapes to work needing reconstruction. 
-            * **file [Studio/src/Data/MeshWorker.h](../Files/MeshWorker_8h.md#file-meshworker.h)** <br>Worker class for parallel mesh reconstruction. 
             * **file [Studio/src/Data/Preferences.h](../Files/Preferences_8h.md#file-preferences.h)** 
             * **file [Studio/src/Data/PreferencesWindow.h](../Files/PreferencesWindow_8h.md#file-preferenceswindow.h)** 
-            * **file [Studio/src/Data/QMeshWarper.h](../Files/QMeshWarper_8h.md#file-qmeshwarper.h)** 
             * **file [Studio/src/Data/Session.h](../Files/Session_8h.md#file-session.h)** 
-            * **file [Studio/src/Data/Shape.h](../Files/Shape_8h.md#file-shape.h)** 
             * **file [Studio/src/Data/ShapeWorksWorker.h](../Files/ShapeWorksWorker_8h.md#file-shapeworksworker.h)** 
-            * **file [Studio/src/Data/StudioEnums.h](../Files/StudioEnums_8h.md#file-studioenums.h)** 
-            * **file [Studio/src/Data/StudioLog.h](../Files/StudioLog_8h.md#file-studiolog.h)** 
-            * **file [Studio/src/Data/StudioMesh.h](../Files/StudioMesh_8h.md#file-studiomesh.h)** 
-            * **file [Studio/src/Data/StudioParticles.h](../Files/StudioParticles_8h.md#file-studioparticles.h)** 
-            * **file [Studio/src/Data/SurfaceReconstructor.h](../Files/SurfaceReconstructor_8h.md#file-surfacereconstructor.h)** <br>Surface [Reconstruction](../Classes/classReconstruction.md) Layer. 
             * **file [Studio/src/Data/Worker.h](../Files/Worker_8h.md#file-worker.h)** 
-            * **file [Studio/src/Data/vtkPolyDataToImageData.h](../Files/vtkPolyDataToImageData_8h.md#file-vtkpolydatatoimagedata.h)** 
         * **dir [Studio/src/DeepSSM](../Files/dir_dec1a63a19e4f4a11987b8b8502ff5c9.md#dir-studio/src/deepssm)** 
             * **file [Studio/src/DeepSSM/DeepSSMJob.h](../Files/DeepSSMJob_8h.md#file-deepssmjob.h)** 
             * **file [Studio/src/DeepSSM/DeepSSMParameters.h](../Files/DeepSSMParameters_8h.md#file-deepssmparameters.h)** 
@@ -201,6 +202,7 @@ title: Files
             * **file [Studio/src/Interface/ShapeWorksStudioApp.h](../Files/ShapeWorksStudioApp_8h.md#file-shapeworksstudioapp.h)** 
             * **file [Studio/src/Interface/SplashScreen.h](../Files/SplashScreen_8h.md#file-splashscreen.h)** 
             * **file [Studio/src/Interface/StatusBarWidget.h](../Files/StatusBarWidget_8h.md#file-statusbarwidget.h)** 
+            * **file [Studio/src/Interface/StudioLogger.h](../Files/StudioLogger_8h.md#file-studiologger.h)** 
             * **file [Studio/src/Interface/Style.h](../Files/Style_8h.md#file-style.h)** 
             * **file [Studio/src/Interface/WheelEventForwarder.h](../Files/WheelEventForwarder_8h.md#file-wheeleventforwarder.h)** 
         * **dir [Studio/src/Job](../Files/dir_3e441cbfff25a2e63cb70556b317072d.md#dir-studio/src/job)** 
@@ -241,4 +243,4 @@ title: Files
 
 -------------------------------
 
-Updated on 2022-09-12 at 20:07:14 +0000
+Updated on 2022-09-13 at 16:52:37 +0000

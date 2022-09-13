@@ -2209,6 +2209,13 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#enum-displaymode" class="md-nav__link">
+    enum DisplayMode
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#enum-axis" class="md-nav__link">
     enum Axis
   </a>
@@ -2258,15 +2265,50 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#enum-displaymode" class="md-nav__link">
-    enum DisplayMode
+  <a href="#enum-messagetype" class="md-nav__link">
+    enum MessageType
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#enum-messagetype" class="md-nav__link">
-    enum MessageType
+  <a href="#using-cachemap" class="md-nav__link">
+    using CacheMap
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-cachelist" class="md-nav__link">
+    using CacheList
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-shapehandle" class="md-nav__link">
+    using ShapeHandle
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-shapelist" class="md-nav__link">
+    using ShapeList
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-meshhandle" class="md-nav__link">
+    using MeshHandle
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-meshlist" class="md-nav__link">
+    using MeshList
   </a>
   
 </li>
@@ -2454,20 +2496,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#using-cachemap" class="md-nav__link">
-    using CacheMap
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#using-cachelist" class="md-nav__link">
-    using CacheList
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#typedef-sessionhandle" class="md-nav__link">
     typedef SessionHandle
   </a>
@@ -2477,34 +2505,6 @@
           <li class="md-nav__item">
   <a href="#using-transformtype" class="md-nav__link">
     using TransformType
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#using-shapehandle" class="md-nav__link">
-    using ShapeHandle
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#using-shapelist" class="md-nav__link">
-    using ShapeList
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#using-meshhandle" class="md-nav__link">
-    using MeshHandle
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#using-meshlist" class="md-nav__link">
-    using MeshList
   </a>
   
 </li>
@@ -3153,6 +3153,34 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-command_declare_86" class="md-nav__link">
+    function COMMAND_DECLARE
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-command_declare_87" class="md-nav__link">
+    function COMMAND_DECLARE
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-display_mode_to_string" class="md-nav__link">
+    function display_mode_to_string
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-string_to_display_mode" class="md-nav__link">
+    function string_to_display_mode
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-operator" class="md-nav__link">
     function operator&lt;&lt;
   </a>
@@ -3663,20 +3691,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#function-display_mode_to_string" class="md-nav__link">
-    function display_mode_to_string
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-string_to_display_mode" class="md-nav__link">
-    function string_to_display_mode
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -3750,6 +3764,14 @@
 <tr>
 <td>class</td>
 <td><strong><a href="../Classes/classshapeworks_1_1AnalysisUtils.html">shapeworks::AnalysisUtils</a></strong></td>
+</tr>
+<tr>
+<td>class</td>
+<td><strong><a href="../Classes/classshapeworks_1_1Analyze.html">shapeworks::Analyze</a></strong> <br>High level analyze API.</td>
+</tr>
+<tr>
+<td>class</td>
+<td><strong><a href="../Classes/classshapeworks_1_1AnalyzeCommandGroup.html">shapeworks::AnalyzeCommandGroup</a></strong></td>
 </tr>
 <tr>
 <td>class</td>
@@ -3901,6 +3923,10 @@
 </tr>
 <tr>
 <td>class</td>
+<td><strong><a href="../Classes/classshapeworks_1_1Logging.html">shapeworks::Logging</a></strong> <br>ShapeWorks <a href="">Logging</a> Library.</td>
+</tr>
+<tr>
+<td>class</td>
 <td><strong><a href="../Classes/classshapeworks_1_1LogWindow.html">shapeworks::LogWindow</a></strong> <br>Log Window.</td>
 </tr>
 <tr>
@@ -3913,7 +3939,7 @@
 </tr>
 <tr>
 <td>class</td>
-<td><strong><a href="../Classes/classshapeworks_1_1MeshCache.html">shapeworks::MeshCache</a></strong></td>
+<td><strong><a href="../Classes/classshapeworks_1_1MeshCache.html">shapeworks::MeshCache</a></strong> <br>Thread safe cache for meshes index by shape.</td>
 </tr>
 <tr>
 <td>class</td>
@@ -3937,7 +3963,7 @@
 </tr>
 <tr>
 <td>class</td>
-<td><strong><a href="../Classes/classshapeworks_1_1MeshManager.html">shapeworks::MeshManager</a></strong></td>
+<td><strong><a href="../Classes/classshapeworks_1_1MeshManager.html">shapeworks::MeshManager</a></strong> <br>Class to manage meshes.</td>
 </tr>
 <tr>
 <td>class</td>
@@ -3965,7 +3991,7 @@
 </tr>
 <tr>
 <td>class</td>
-<td><strong><a href="../Classes/classshapeworks_1_1MeshWorkItem.html">shapeworks::MeshWorkItem</a></strong></td>
+<td><strong><a href="../Classes/classshapeworks_1_1MeshWorkItem.html">shapeworks::MeshWorkItem</a></strong> <br>Provides concurrent access to a list of shapes to work needing reconstruction.</td>
 </tr>
 <tr>
 <td>class</td>
@@ -4053,6 +4079,10 @@
 </tr>
 <tr>
 <td>class</td>
+<td><strong><a href="../Classes/classshapeworks_1_1Particles.html">shapeworks::Particles</a></strong> <br>Representation of correspondence points for a shape including multiple domains.</td>
+</tr>
+<tr>
+<td>class</td>
 <td><strong><a href="../Classes/classshapeworks_1_1ParticleShapeStatistics.html">shapeworks::ParticleShapeStatistics</a></strong></td>
 </tr>
 <tr>
@@ -4086,6 +4116,10 @@
 <tr>
 <td>class</td>
 <td><strong><a href="../Classes/classshapeworks_1_1Project.html">shapeworks::Project</a></strong> <br>Representation of a project.</td>
+</tr>
+<tr>
+<td>class</td>
+<td><strong><a href="../Classes/classshapeworks_1_1ProjectCommandGroup.html">shapeworks::ProjectCommandGroup</a></strong></td>
 </tr>
 <tr>
 <td>class</td>
@@ -4197,15 +4231,7 @@
 </tr>
 <tr>
 <td>class</td>
-<td><strong><a href="../Classes/classshapeworks_1_1StudioLog.html">shapeworks::StudioLog</a></strong></td>
-</tr>
-<tr>
-<td>class</td>
 <td><strong><a href="../Classes/classshapeworks_1_1StudioMesh.html">shapeworks::StudioMesh</a></strong> <br>Representation of a single mesh.</td>
-</tr>
-<tr>
-<td>class</td>
-<td><strong><a href="../Classes/classshapeworks_1_1StudioParticles.html">shapeworks::StudioParticles</a></strong> <br>Representation of correspondence points for a shape including multiple domains.</td>
 </tr>
 <tr>
 <td>class</td>
@@ -4272,6 +4298,10 @@
 <tbody>
 <tr>
 <td>enum</td>
+<td Original="Original"><strong><a href="namespaceshapeworks.html#enum-displaymode">DisplayMode</a></strong></td>
+</tr>
+<tr>
+<td>enum</td>
 <td><strong><a href="namespaceshapeworks.html#enum-axis">Axis</a></strong> { invalid = -1, X, Y, Z}<br>handy way to specify an axis</td>
 </tr>
 <tr>
@@ -4299,12 +4329,32 @@
 <td ALL_VISIBLE_E_="ALL_VISIBLE_E," NONE_VISIBLE_E_="NONE_VISIBLE_E," SOME_VISIBLE_E="SOME_VISIBLE_E"><strong><a href="namespaceshapeworks.html#enum-landmarkvisibility">LandmarkVisibility</a></strong></td>
 </tr>
 <tr>
-<td>enum</td>
-<td Original="Original"><strong><a href="namespaceshapeworks.html#enum-displaymode">DisplayMode</a></strong></td>
-</tr>
-<tr>
 <td>enum class</td>
 <td debug="debug" error_="error," normal_="normal," warning_="warning,"><strong><a href="namespaceshapeworks.html#enum-messagetype">MessageType</a></strong></td>
+</tr>
+<tr>
+<td>using std::map&lt; <a href="../Classes/classshapeworks_1_1MeshWorkItem.html">MeshWorkItem</a>, MeshHandle &gt;</td>
+<td><strong><a href="namespaceshapeworks.html#using-cachemap">CacheMap</a></strong></td>
+</tr>
+<tr>
+<td>using std::list&lt; <a href="../Classes/classshapeworks_1_1MeshWorkItem.html">MeshWorkItem</a> &gt;</td>
+<td><strong><a href="namespaceshapeworks.html#using-cachelist">CacheList</a></strong></td>
+</tr>
+<tr>
+<td>using std::shared_ptr&lt; <a href="../Classes/classshapeworks_1_1Shape.html">Shape</a> &gt;</td>
+<td><strong><a href="namespaceshapeworks.html#using-shapehandle">ShapeHandle</a></strong></td>
+</tr>
+<tr>
+<td>using std::vector&lt; ShapeHandle &gt;</td>
+<td><strong><a href="namespaceshapeworks.html#using-shapelist">ShapeList</a></strong></td>
+</tr>
+<tr>
+<td>using std::shared_ptr&lt; <a href="../Classes/classshapeworks_1_1StudioMesh.html">StudioMesh</a> &gt;</td>
+<td><strong><a href="namespaceshapeworks.html#using-meshhandle">MeshHandle</a></strong></td>
+</tr>
+<tr>
+<td>using std::vector&lt; MeshHandle &gt;</td>
+<td><strong><a href="namespaceshapeworks.html#using-meshlist">MeshList</a></strong></td>
 </tr>
 <tr>
 <td>using itk::Index&lt; 3 &gt;</td>
@@ -4411,36 +4461,12 @@
 <td><strong><a href="namespaceshapeworks.html#using-vnlmatrix">VnlMatrix</a></strong></td>
 </tr>
 <tr>
-<td>using std::map&lt; <a href="../Classes/classshapeworks_1_1MeshWorkItem.html">MeshWorkItem</a>, MeshHandle &gt;</td>
-<td><strong><a href="namespaceshapeworks.html#using-cachemap">CacheMap</a></strong></td>
-</tr>
-<tr>
-<td>using std::list&lt; <a href="../Classes/classshapeworks_1_1MeshWorkItem.html">MeshWorkItem</a> &gt;</td>
-<td><strong><a href="namespaceshapeworks.html#using-cachelist">CacheList</a></strong></td>
-</tr>
-<tr>
 <td>typedef QSharedPointer&lt; <a href="../Classes/classshapeworks_1_1Session.html">Session</a> &gt;</td>
 <td><strong><a href="namespaceshapeworks.html#typedef-sessionhandle">SessionHandle</a></strong></td>
 </tr>
 <tr>
 <td>using vtkSmartPointer&lt; vtkTransform &gt;</td>
 <td><strong><a href="namespaceshapeworks.html#using-transformtype">TransformType</a></strong> <br>TODO: replace this.</td>
-</tr>
-<tr>
-<td>using QSharedPointer&lt; <a href="../Classes/classshapeworks_1_1Shape.html">Shape</a> &gt;</td>
-<td><strong><a href="namespaceshapeworks.html#using-shapehandle">ShapeHandle</a></strong></td>
-</tr>
-<tr>
-<td>using QVector&lt; ShapeHandle &gt;</td>
-<td><strong><a href="namespaceshapeworks.html#using-shapelist">ShapeList</a></strong></td>
-</tr>
-<tr>
-<td>using std::shared_ptr&lt; <a href="../Classes/classshapeworks_1_1StudioMesh.html">StudioMesh</a> &gt;</td>
-<td><strong><a href="namespaceshapeworks.html#using-meshhandle">MeshHandle</a></strong></td>
-</tr>
-<tr>
-<td>using std::vector&lt; MeshHandle &gt;</td>
-<td><strong><a href="namespaceshapeworks.html#using-meshlist">MeshList</a></strong></td>
 </tr>
 <tr>
 <td>typedef QSharedPointer&lt; <a href="../Classes/classshapeworks_1_1Lightbox.html">Lightbox</a> &gt;</td>
@@ -4814,6 +4840,22 @@
 <td><strong><a href="namespaceshapeworks.html#function-command-declare">COMMAND_DECLARE</a></strong>(GroomCommand , <a href="../Classes/classshapeworks_1_1GroomCommandGroup.html">GroomCommandGroup</a> )</td>
 </tr>
 <tr>
+<td></td>
+<td><strong><a href="namespaceshapeworks.html#function-command-declare">COMMAND_DECLARE</a></strong>(AnalyzeCommand , <a href="../Classes/classshapeworks_1_1AnalyzeCommandGroup.html">AnalyzeCommandGroup</a> )</td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="namespaceshapeworks.html#function-command-declare">COMMAND_DECLARE</a></strong>(ConvertProjectCommand , <a href="../Classes/classshapeworks_1_1ProjectCommandGroup.html">ProjectCommandGroup</a> )</td>
+</tr>
+<tr>
+<td>std::string</td>
+<td><strong><a href="namespaceshapeworks.html#function-display-mode-to-string">display_mode_to_string</a></strong>(DisplayMode display_mode)</td>
+</tr>
+<tr>
+<td>DisplayMode</td>
+<td><strong><a href="namespaceshapeworks.html#function-string-to-display-mode">string_to_display_mode</a></strong>(std::string str)</td>
+</tr>
+<tr>
 <td>std::ostream &amp;</td>
 <td><strong><a href="namespaceshapeworks.html#function-operator&lt;&lt;">operator&lt;&lt;</a></strong>(std::ostream &amp; os, const <a href="../Classes/classshapeworks_1_1IndexRegion.html">IndexRegion</a> &amp; region)</td>
 </tr>
@@ -5105,14 +5147,6 @@
 <td>template &lt;unsigned NRows,unsigned NCols,typename T &gt; <br>itk::Matrix&lt; T, NRows, NCols &gt;</td>
 <td><strong><a href="namespaceshapeworks.html#function-wrapdatawithitk">wrapDataWithItk</a></strong>(T * data)</td>
 </tr>
-<tr>
-<td>std::string</td>
-<td><strong><a href="namespaceshapeworks.html#function-display-mode-to-string">display_mode_to_string</a></strong>(DisplayMode display_mode)</td>
-</tr>
-<tr>
-<td>DisplayMode</td>
-<td><strong><a href="namespaceshapeworks.html#function-string-to-display-mode">string_to_display_mode</a></strong>(std::string str)</td>
-</tr>
 </tbody>
 </table>
 <h2 id="attributes">Attributes</h2>
@@ -5131,6 +5165,33 @@
 </tbody>
 </table>
 <h2 id="types-documentation">Types Documentation</h2>
+<h3 id="enum-displaymode">enum DisplayMode</h3>
+<table>
+<thead>
+<tr>
+<th>Enumerator</th>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Original</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td>Groomed</td>
+<td>1</td>
+<td></td>
+</tr>
+<tr>
+<td>Reconstructed</td>
+<td>2</td>
+<td></td>
+</tr>
+</tbody>
+</table>
 <h3 id="enum-axis">enum Axis</h3>
 <table>
 <thead>
@@ -5362,33 +5423,6 @@
 </tr>
 </tbody>
 </table>
-<h3 id="enum-displaymode">enum DisplayMode</h3>
-<table>
-<thead>
-<tr>
-<th>Enumerator</th>
-<th>Value</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Original</td>
-<td>0</td>
-<td></td>
-</tr>
-<tr>
-<td>Groomed</td>
-<td>1</td>
-<td></td>
-</tr>
-<tr>
-<td>Reconstructed</td>
-<td>2</td>
-<td></td>
-</tr>
-</tbody>
-</table>
 <h3 id="enum-messagetype">enum MessageType</h3>
 <table>
 <thead>
@@ -5421,6 +5455,24 @@
 </tr>
 </tbody>
 </table>
+<h3 id="using-cachemap">using CacheMap</h3>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">CacheMap</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">typedef</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="n">MeshWorkItem</span><span class="p">,</span><span class="w"> </span><span class="n">MeshHandle</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="using-cachelist">using CacheList</h3>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">CacheList</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">typedef</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">list</span><span class="o">&lt;</span><span class="n">MeshWorkItem</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="using-shapehandle">using ShapeHandle</h3>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ShapeHandle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">typedef</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Shape</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="using-shapelist">using ShapeList</h3>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ShapeList</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">typedef</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">ShapeHandle</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="using-meshhandle">using MeshHandle</h3>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">MeshHandle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">typedef</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">StudioMesh</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="using-meshlist">using MeshList</h3>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">MeshList</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">typedef</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">MeshHandle</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
 <h3 id="using-coord">using Coord</h3>
 <div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Coord</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Index</span><span class="o">&lt;</span><span class="mi">3</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
@@ -5505,12 +5557,6 @@
 <div class="highlight"><pre><span></span><code><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">T</span><span class="w"> </span><span class="o">&gt;</span><span class="w"></span>
 <span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">VnlMatrix</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">typedef</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Matrix</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Dynamic</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Dynamic</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">RowMajor</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
-<h3 id="using-cachemap">using CacheMap</h3>
-<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">CacheMap</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">typedef</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="n">MeshWorkItem</span><span class="p">,</span><span class="w"> </span><span class="n">MeshHandle</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
-</code></pre></div>
-<h3 id="using-cachelist">using CacheList</h3>
-<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">CacheList</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">typedef</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">list</span><span class="o">&lt;</span><span class="n">MeshWorkItem</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
-</code></pre></div>
 <h3 id="typedef-sessionhandle">typedef SessionHandle</h3>
 <div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Session</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">SessionHandle</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
@@ -5518,18 +5564,6 @@
 <div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">TransformType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">typedef</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkTransform</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
 <p>TODO: replace this. </p>
-<h3 id="using-shapehandle">using ShapeHandle</h3>
-<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ShapeHandle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">typedef</span><span class="w"> </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Shape</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
-</code></pre></div>
-<h3 id="using-shapelist">using ShapeList</h3>
-<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ShapeList</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">typedef</span><span class="w"> </span><span class="n">QVector</span><span class="o">&lt;</span><span class="n">ShapeHandle</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
-</code></pre></div>
-<h3 id="using-meshhandle">using MeshHandle</h3>
-<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">MeshHandle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">typedef</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">StudioMesh</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
-</code></pre></div>
-<h3 id="using-meshlist">using MeshList</h3>
-<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">MeshList</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">typedef</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">MeshHandle</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
-</code></pre></div>
 <h3 id="typedef-lightboxhandle">typedef LightboxHandle</h3>
 <div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Lightbox</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">LightboxHandle</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
@@ -6059,6 +6093,28 @@
 <span class="w">    </span><span class="n">GroomCommandGroup</span><span class="w"> </span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
+<h3 id="function-command_declare_86">function COMMAND_DECLARE</h3>
+<div class="highlight"><pre><span></span><code><span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">AnalyzeCommand</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">AnalyzeCommandGroup</span><span class="w"> </span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-command_declare_87">function COMMAND_DECLARE</h3>
+<div class="highlight"><pre><span></span><code><span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">ConvertProjectCommand</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">ProjectCommandGroup</span><span class="w"> </span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-display_mode_to_string">function display_mode_to_string</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">display_mode_to_string</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">DisplayMode</span><span class="w"> </span><span class="n">display_mode</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-string_to_display_mode">function string_to_display_mode</h3>
+<div class="highlight"><pre><span></span><code><span class="n">DisplayMode</span><span class="w"> </span><span class="n">string_to_display_mode</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">str</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
 <h3 id="function-operator">function operator&lt;&lt;</h3>
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">&lt;&lt;</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">os</span><span class="p">,</span><span class="w"></span>
@@ -6536,23 +6592,13 @@
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <p>Wrap data pointer with itk::Matrix. Handy for efficiently going back and forth between Python numpy arrays. WARNING: This function actually just copies data. </p>
-<h3 id="function-display_mode_to_string">function display_mode_to_string</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">display_mode_to_string</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">DisplayMode</span><span class="w"> </span><span class="n">display_mode</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
-</code></pre></div>
-<h3 id="function-string_to_display_mode">function string_to_display_mode</h3>
-<div class="highlight"><pre><span></span><code><span class="n">DisplayMode</span><span class="w"> </span><span class="n">string_to_display_mode</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">str</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
-</code></pre></div>
 <h2 id="attributes-documentation">Attributes Documentation</h2>
 <h3 id="variable-pi">variable Pi</h3>
 <div class="highlight"><pre><span></span><code><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">Pi</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">atan</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mf">4.0</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
 <p>pi that doesn't depend on deprecated or non-std lib defines </p>
 <hr />
-<p>Updated on 2022-09-12 at 20:07:11 +0000</p>
+<p>Updated on 2022-09-13 at 16:52:34 +0000</p>
 
               
             </article>

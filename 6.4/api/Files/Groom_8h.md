@@ -38,7 +38,7 @@ class Groom {
  public:
   Groom(ProjectHandle project);
 
-  virtual bool run();
+  bool run();
 
   void set_skip_grooming(bool skip);
 
@@ -115,4 +115,4 @@ class Groom {
 
 -------------------------------
 
-Updated on 2022-09-12 at 20:07:13 +0000
+Updated on 2022-09-13 at 16:52:36 +0000

@@ -42,10 +42,7 @@ Inherits from [shapeworks::Job](../Classes/classshapeworks_1_1Job.md), QObject
 
 |                | Name           |
 | -------------- | -------------- |
-| void | **[error_message](../Classes/classshapeworks_1_1Job.md#signal-error-message)**(QString ) |
-| void | **[warning_message](../Classes/classshapeworks_1_1Job.md#signal-warning-message)**(QString ) |
 | void | **[progress](../Classes/classshapeworks_1_1Job.md#signal-progress)**(double ) |
-| void | **[message](../Classes/classshapeworks_1_1Job.md#signal-message)**(QString ) |
 | void | **[finished](../Classes/classshapeworks_1_1Job.md#signal-finished)**() |
 
 **Public Functions inherited from [shapeworks::Job](../Classes/classshapeworks_1_1Job.md)**
@@ -173,4 +170,4 @@ std::vector< std::string > get_list(
 
 -------------------------------
 
-Updated on 2022-09-12 at 20:07:11 +0000
+Updated on 2022-09-13 at 16:52:34 +0000

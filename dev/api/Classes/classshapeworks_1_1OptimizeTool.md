@@ -32,10 +32,7 @@ Inherits from QWidget
 | -------------- | -------------- |
 | void | **[optimize_start](../Classes/classshapeworks_1_1OptimizeTool.md#signal-optimize-start)**() |
 | void | **[optimize_complete](../Classes/classshapeworks_1_1OptimizeTool.md#signal-optimize-complete)**() |
-| void | **[error_message](../Classes/classshapeworks_1_1OptimizeTool.md#signal-error-message)**(QString ) |
-| void | **[warning_message](../Classes/classshapeworks_1_1OptimizeTool.md#signal-warning-message)**(QString ) |
 | void | **[progress](../Classes/classshapeworks_1_1OptimizeTool.md#signal-progress)**(int ) |
-| void | **[message](../Classes/classshapeworks_1_1OptimizeTool.md#signal-message)**(QString ) |
 | void | **[status](../Classes/classshapeworks_1_1OptimizeTool.md#signal-status)**(QString ) |
 
 ## Public Functions
@@ -150,38 +147,11 @@ void optimize_complete()
 ```
 
 
-### signal error_message
-
-```cpp
-void error_message(
-    QString 
-)
-```
-
-
-### signal warning_message
-
-```cpp
-void warning_message(
-    QString 
-)
-```
-
-
 ### signal progress
 
 ```cpp
 void progress(
     int 
-)
-```
-
-
-### signal message
-
-```cpp
-void message(
-    QString 
 )
 ```
 
@@ -273,4 +243,4 @@ shut down any running threads
 
 -------------------------------
 
-Updated on 2022-09-12 at 20:07:11 +0000
+Updated on 2022-09-13 at 16:52:34 +0000

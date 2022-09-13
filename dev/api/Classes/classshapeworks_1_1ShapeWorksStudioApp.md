@@ -68,17 +68,19 @@ Inherits from QMainWindow
 | void | **[handle_color_scheme](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-color-scheme)**() |
 | void | **[handle_pca_update](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-pca-update)**() |
 | void | **[clear_message](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-clear-message)**() |
-| void | **[handle_message](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-message)**(QString str) |
+| void | **[handle_message](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-message)**(std::string str) |
+| void | **[handle_error](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-error)**(std::string str) |
+| void | **[handle_warning](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-warning)**(std::string str) |
+| void | **[handle_debug](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-debug)**(std::string str) |
+| void | **[message_callback](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-message-callback)**(std::string str) |
 | void | **[handle_status](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-status)**(QString str) |
-| void | **[handle_error](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-error)**(QString str) |
-| void | **[handle_warning](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-warning)**(QString str) |
 | void | **[handle_progress](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-progress)**(int amt) |
 | void | **[handle_new_mesh](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-new-mesh)**() |
 | void | **[handle_clear_cache](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-clear-cache)**() |
 | void | **[handle_compare_settings_changed](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-compare-settings-changed)**() |
-| void | **[update_feature_map_selection](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-update-feature-map-selection)**(const QString & feature_map) |
+| void | **[update_feature_map_selection](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-update-feature-map-selection)**(int index) |
 | void | **[update_feature_map_scale](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-update-feature-map-scale)**() |
-| void | **[image_combo_changed](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-image-combo-changed)**(const QString & image_name) |
+| void | **[image_combo_changed](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-image-combo-changed)**(int index) |
 | void | **[show_splash_screen](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-show-splash-screen)**() |
 | void | **[about](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-about)**() |
 | void | **[keyboard_shortcuts](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-keyboard-shortcuts)**() |
@@ -468,16 +470,7 @@ void clear_message()
 
 ```cpp
 void handle_message(
-    QString str
-)
-```
-
-
-### slot handle_status
-
-```cpp
-void handle_status(
-    QString str
+    std::string str
 )
 ```
 
@@ -486,7 +479,7 @@ void handle_status(
 
 ```cpp
 void handle_error(
-    QString str
+    std::string str
 )
 ```
 
@@ -495,6 +488,33 @@ void handle_error(
 
 ```cpp
 void handle_warning(
+    std::string str
+)
+```
+
+
+### slot handle_debug
+
+```cpp
+void handle_debug(
+    std::string str
+)
+```
+
+
+### slot message_callback
+
+```cpp
+void message_callback(
+    std::string str
+)
+```
+
+
+### slot handle_status
+
+```cpp
+void handle_status(
     QString str
 )
 ```
@@ -534,7 +554,7 @@ void handle_compare_settings_changed()
 
 ```cpp
 void update_feature_map_selection(
-    const QString & feature_map
+    int index
 )
 ```
 
@@ -550,7 +570,7 @@ void update_feature_map_scale()
 
 ```cpp
 void image_combo_changed(
-    const QString & image_name
+    int index
 )
 ```
 
@@ -676,4 +696,4 @@ void dropEvent(
 
 -------------------------------
 
-Updated on 2022-09-12 at 20:07:12 +0000
+Updated on 2022-09-13 at 16:52:35 +0000

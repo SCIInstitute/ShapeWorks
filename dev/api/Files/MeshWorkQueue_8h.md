@@ -1,12 +1,11 @@
 ---
-title: Studio/src/Data/MeshWorkQueue.h
-summary: Provides concurrent access to a list of shapes to work needing reconstruction. 
+title: Libs/Analyze/MeshWorkQueue.h
 
 ---
 
-# Studio/src/Data/MeshWorkQueue.h
+# Libs/Analyze/MeshWorkQueue.h
 
-Provides concurrent access to a list of shapes to work needing reconstruction. 
+
 
 ## Namespaces
 
@@ -18,7 +17,7 @@ Provides concurrent access to a list of shapes to work needing reconstruction.
 
 |                | Name           |
 | -------------- | -------------- |
-| class | **[shapeworks::MeshWorkItem](../Classes/classshapeworks_1_1MeshWorkItem.md)**  |
+| class | **[shapeworks::MeshWorkItem](../Classes/classshapeworks_1_1MeshWorkItem.md)** <br>Provides concurrent access to a list of shapes to work needing reconstruction.  |
 | class | **[shapeworks::MeshWorkQueue](../Classes/classshapeworks_1_1MeshWorkQueue.md)**  |
 
 ## Functions
@@ -50,20 +49,16 @@ Q_DECLARE_METATYPE(
 #include <list>
 
 // qt
-#include <QMutex>
 #include <QMetaType>
+#include <QMutex>
 
-// vnl
-#include "vnl/vnl_vector.h"
-
+// eigen
 #include <Eigen/Eigen>
-
 
 namespace shapeworks {
 
-class MeshWorkItem
-{
-public:
+class MeshWorkItem {
+ public:
   std::string filename;
   Eigen::VectorXd points;
   int domain{0};
@@ -75,12 +70,8 @@ public:
   friend bool operator==(const MeshWorkItem &a, const MeshWorkItem &b);
 };
 
-
-class MeshWorkQueue
-{
-
-public:
-
+class MeshWorkQueue {
+ public:
   using WorkList = std::list<MeshWorkItem>;
 
   MeshWorkQueue();
@@ -88,7 +79,7 @@ public:
 
   void push(const MeshWorkItem &item);
 
-  MeshWorkItem* get_next_work_item();
+  MeshWorkItem *get_next_work_item();
 
   bool is_inside(const MeshWorkItem &item);
 
@@ -98,9 +89,8 @@ public:
 
   int size();
 
-private:
-
-  bool in_inside_list(const MeshWorkItem &item, const WorkList& list);
+ private:
+  bool in_inside_list(const MeshWorkItem &item, const WorkList &list);
 
   // for concurrent access
   QMutex mutex_;
@@ -109,7 +99,7 @@ private:
 
   WorkList processing_list_;
 };
-}
+}  // namespace shapeworks
 
 Q_DECLARE_METATYPE(shapeworks::MeshWorkItem);
 ```
@@ -117,4 +107,4 @@ Q_DECLARE_METATYPE(shapeworks::MeshWorkItem);
 
 -------------------------------
 
-Updated on 2022-09-12 at 20:07:13 +0000
+Updated on 2022-09-13 at 16:52:36 +0000

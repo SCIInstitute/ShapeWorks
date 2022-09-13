@@ -67,9 +67,6 @@ Inherits from QWidget
 | void | **[update_view](../Classes/classshapeworks_1_1AnalysisTool.md#signal-update-view)**() |
 | void | **[pca_update](../Classes/classshapeworks_1_1AnalysisTool.md#signal-pca-update)**() |
 | void | **[progress](../Classes/classshapeworks_1_1AnalysisTool.md#signal-progress)**(int ) |
-| void | **[message](../Classes/classshapeworks_1_1AnalysisTool.md#signal-message)**(QString ) |
-| void | **[error](../Classes/classshapeworks_1_1AnalysisTool.md#signal-error)**(QString ) |
-| void | **[warning](../Classes/classshapeworks_1_1AnalysisTool.md#signal-warning)**(QString ) |
 | void | **[reconstruction_complete](../Classes/classshapeworks_1_1AnalysisTool.md#signal-reconstruction-complete)**() |
 
 ## Public Functions
@@ -97,9 +94,9 @@ Inherits from QWidget
 | void | **[update_slider](../Classes/classshapeworks_1_1AnalysisTool.md#function-update-slider)**() |
 | void | **[reset_stats](../Classes/classshapeworks_1_1AnalysisTool.md#function-reset-stats)**() |
 | void | **[enable_actions](../Classes/classshapeworks_1_1AnalysisTool.md#function-enable-actions)**(bool newly_enabled =false) |
-| [StudioParticles](../Classes/classshapeworks_1_1StudioParticles.md) | **[get_mean_shape_points](../Classes/classshapeworks_1_1AnalysisTool.md#function-get-mean-shape-points)**() |
+| [Particles](../Classes/classshapeworks_1_1Particles.md) | **[get_mean_shape_points](../Classes/classshapeworks_1_1AnalysisTool.md#function-get-mean-shape-points)**() |
 | ShapeHandle | **[get_mean_shape](../Classes/classshapeworks_1_1AnalysisTool.md#function-get-mean-shape)**() |
-| [StudioParticles](../Classes/classshapeworks_1_1StudioParticles.md) | **[get_shape_points](../Classes/classshapeworks_1_1AnalysisTool.md#function-get-shape-points)**(int mode, double value) |
+| [Particles](../Classes/classshapeworks_1_1Particles.md) | **[get_shape_points](../Classes/classshapeworks_1_1AnalysisTool.md#function-get-shape-points)**(int mode, double value) |
 | ShapeHandle | **[get_mode_shape](../Classes/classshapeworks_1_1AnalysisTool.md#function-get-mode-shape)**(int mode, double value) |
 | [ParticleShapeStatistics](../Classes/classshapeworks_1_1ParticleShapeStatistics.md) | **[get_stats](../Classes/classshapeworks_1_1AnalysisTool.md#function-get-stats)**() |
 | void | **[load_settings](../Classes/classshapeworks_1_1AnalysisTool.md#function-load-settings)**() |
@@ -444,33 +441,6 @@ void progress(
 ```
 
 
-### signal message
-
-```cpp
-void message(
-    QString 
-)
-```
-
-
-### signal error
-
-```cpp
-void error(
-    QString 
-)
-```
-
-
-### signal warning
-
-```cpp
-void warning(
-    QString 
-)
-```
-
-
 ### signal reconstruction_complete
 
 ```cpp
@@ -650,7 +620,7 @@ void enable_actions(
 ### function get_mean_shape_points
 
 ```cpp
-StudioParticles get_mean_shape_points()
+Particles get_mean_shape_points()
 ```
 
 
@@ -664,7 +634,7 @@ ShapeHandle get_mean_shape()
 ### function get_shape_points
 
 ```cpp
-StudioParticles get_shape_points(
+Particles get_shape_points(
     int mode,
     double value
 )
@@ -764,4 +734,4 @@ static const std::string MODE_REGRESSION_C;
 
 -------------------------------
 
-Updated on 2022-09-12 at 20:07:11 +0000
+Updated on 2022-09-13 at 16:52:34 +0000

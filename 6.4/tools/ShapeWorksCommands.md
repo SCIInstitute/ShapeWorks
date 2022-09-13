@@ -34,6 +34,32 @@
   
 <a href="#top">Back to Top</a>
 
+## Analyze Commands
+
+### analyze
+
+
+**Usage:**
+
+```
+shapeworks  analyze [args]...
+```  
+
+
+**Description:** Offline analysis of a shapeworks project, output json and meshes  
+
+
+**Options:**
+
+**-h, --help:** show this help message and exit
+
+**--name=STRING:** Path to project file.
+
+**--output=STRING:** Path to output file.  
+  
+<a href="#top">Back to Top</a>
+  
+[Back to Analyze Commands](#analyze-commands)
 ## Groom Commands
 
 ### groom
@@ -53,7 +79,7 @@ shapeworks  groom [args]...
 
 **-h, --help:** show this help message and exit
 
-**--name=STRING:** Path to parameter file.  
+**--name=STRING:** Path to project file.  
   
 <a href="#top">Back to Top</a>
   
@@ -2057,7 +2083,7 @@ shapeworks  optimize [args]...
 
 **-h, --help:** show this help message and exit
 
-**--name=STRING:** Path to parameter file.  
+**--name=STRING:** Path to project file.  
   
 <a href="#top">Back to Top</a>
   
@@ -2158,6 +2184,32 @@ shapeworks  specificity [args]...
 <a href="#top">Back to Top</a>
   
 [Back to ParticleSystem Commands](#particlesystem-commands)
+## Project Commands
+
+### convert-project
+
+
+**Usage:**
+
+```
+shapeworks  convert-project [args]...
+```  
+
+
+**Description:** convert a shapeworks project (xlsx or swproj)  
+
+
+**Options:**
+
+**-h, --help:** show this help message and exit
+
+**--name=STRING:** Path to input project file (xlsx or swproj).
+
+**--output=STRING:** Path to output project file (xlsx or swproj).  
+  
+<a href="#top">Back to Top</a>
+  
+[Back to Project Commands](#project-commands)
 ## Shapeworks Commands
 
 ### seed

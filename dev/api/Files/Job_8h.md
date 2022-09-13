@@ -51,10 +51,7 @@ public:
 public Q_SLOTS:
 
 Q_SIGNALS:
-  void error_message(QString);
-  void warning_message(QString);
   void progress(double);
-  void message(QString);
   void finished();
 
 private:
@@ -66,4 +63,4 @@ private:
 
 -------------------------------
 
-Updated on 2022-09-12 at 20:07:13 +0000
+Updated on 2022-09-13 at 16:52:37 +0000

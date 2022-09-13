@@ -29,7 +29,7 @@ Inherits from QObject, [shapeworks::Optimize](../Classes/classshapeworks_1_1Opti
 | virtual | **[~QOptimize](../Classes/classshapeworks_1_1QOptimize.md#function-~qoptimize)**() |
 | virtual std::vector< std::vector< itk::Point< double > > > | **[GetLocalPoints](../Classes/classshapeworks_1_1QOptimize.md#function-getlocalpoints)**() override<br>Return the local points.  |
 | virtual std::vector< std::vector< itk::Point< double > > > | **[GetGlobalPoints](../Classes/classshapeworks_1_1QOptimize.md#function-getglobalpoints)**() override<br>Return the global points.  |
-| std::vector< [StudioParticles](../Classes/classshapeworks_1_1StudioParticles.md) > | **[GetParticles](../Classes/classshapeworks_1_1QOptimize.md#function-getparticles)**() |
+| std::vector< [Particles](../Classes/classshapeworks_1_1Particles.md) > | **[GetParticles](../Classes/classshapeworks_1_1QOptimize.md#function-getparticles)**() |
 | virtual std::vector< std::vector< std::vector< double > > > | **[GetProcrustesTransforms](../Classes/classshapeworks_1_1QOptimize.md#function-getprocrustestransforms)**() override |
 | virtual void | **[UpdateExportablePoints](../Classes/classshapeworks_1_1QOptimize.md#function-updateexportablepoints)**() override |
 
@@ -338,7 +338,7 @@ Return the global points.
 ### function GetParticles
 
 ```cpp
-std::vector< StudioParticles > GetParticles()
+std::vector< Particles > GetParticles()
 ```
 
 
@@ -390,4 +390,4 @@ virtual void IterateCallback(
 
 -------------------------------
 
-Updated on 2022-09-12 at 20:07:12 +0000
+Updated on 2022-09-13 at 16:52:35 +0000

@@ -1,9 +1,9 @@
 ---
-title: Studio/src/Data/Shape.h
+title: Libs/Analyze/Shape.h
 
 ---
 
-# Studio/src/Data/Shape.h
+# Libs/Analyze/Shape.h
 
 
 
@@ -28,25 +28,24 @@ title: Studio/src/Data/Shape.h
 ```cpp
 #pragma once
 
-#include <Data/MeshGroup.h>
-#include <Data/MeshManager.h>
-#include <Data/StudioEnums.h>
-#include <Data/StudioMesh.h>
-#include <Data/StudioParticles.h>
+#include <MeshGroup.h>
+#include <MeshManager.h>
+#include <StudioEnums.h>
+#include <StudioMesh.h>
+#include <Libs/Analyze/Particles.h>
 #include <Libs/Optimize/ParticleSystem/Constraints.h>
 #include <Libs/Project/Subject.h>
 #include <itkMatrixOffsetTransformBase.h>
 
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
-#include <QSharedPointer>
-#include <QString>
+#include <string>
 
 namespace shapeworks {
 
 class Shape;
-using ShapeHandle = QSharedPointer<Shape>;
-using ShapeList = QVector<ShapeHandle>;
+using ShapeHandle = std::shared_ptr<Shape>;
+using ShapeList = std::vector<ShapeHandle>;
 class VtkMeshWrapper;
 
 class Shape {
@@ -62,14 +61,14 @@ class Shape {
 
   ~Shape();
 
-  QString get_display_name();
+  std::string get_display_name();
 
   MeshGroup get_meshes(DisplayMode display_mode, bool wait = false);
 
-  void set_annotations(QStringList annotations, bool only_overwrite_blank = true);
-  QStringList get_annotations();
+  void set_annotations(std::vector<std::string> annotations, bool only_overwrite_blank = true);
+  std::vector<std::string> get_annotations();
 
-  void set_mesh_manager(QSharedPointer<MeshManager> mesh_manager);
+  void set_mesh_manager(std::shared_ptr<MeshManager> mesh_manager);
 
   void set_subject(std::shared_ptr<shapeworks::Subject> subject);
 
@@ -77,7 +76,7 @@ class Shape {
 
   std::shared_ptr<shapeworks::Subject> get_subject();
 
-  void import_original_image(const std::string& filename);
+  void import_original_file(const std::string& filename);
 
   MeshGroup get_original_meshes(bool wait = false);
 
@@ -87,20 +86,20 @@ class Shape {
 
   void reset_groomed_mesh();
 
-  bool import_global_point_files(QStringList filenames);
+  bool import_global_point_files(std::vector<std::string> filenames);
 
-  bool import_local_point_files(QStringList filenames);
+  bool import_local_point_files(std::vector<std::string> filenames);
 
-  bool import_landmarks_files(QStringList filenames);
+  bool import_landmarks_files(std::vector<std::string> filenames);
 
   bool store_landmarks();
 
-  bool import_constraints(QStringList filenames);
+  bool import_constraints(std::vector<std::string> filenames);
 
   bool store_constraints();
 
-  void set_particles(StudioParticles particles);
-  StudioParticles get_particles();
+  void set_particles(Particles particles);
+  Particles get_particles();
 
   void set_particle_transform(vtkSmartPointer<vtkTransform> transform);
 
@@ -116,29 +115,20 @@ class Shape {
 
   void set_id(int id);
 
-  std::vector<QString> get_original_filenames();
-  std::vector<QString> get_original_filenames_with_path();
+  std::vector<std::string> get_original_filenames();
+  std::vector<std::string> get_original_filenames_with_path();
 
-  QString get_original_filename();
-  QString get_original_filename_with_path();
+  std::string get_original_filename();
+  std::string get_original_filename_with_path();
 
-  QString get_groomed_filename();
-  QString get_groomed_filename_with_path(int domain);
+  std::string get_groomed_filename();
+  std::string get_groomed_filename_with_path(int domain);
 
-  QString get_global_point_filename();
-  QString get_global_point_filename_with_path();
+  std::string get_global_point_filename();
+  std::string get_global_point_filename_with_path();
 
-  QString get_local_point_filename();
-  QString get_local_point_filename_with_path();
-
-  QList<Point> get_exclusion_sphere_centers();
-  void set_exclusion_sphere_centers(QList<Point> centers);
-
-  QList<double> get_exclusion_sphere_radii();
-  void set_exclusion_sphere_radii(QList<double> radii);
-
-  int get_group_id();
-  void set_group_id(int id);
+  std::string get_local_point_filename();
+  std::string get_local_point_filename_with_path();
 
   void set_transform(vtkSmartPointer<vtkTransform> transform);
   vtkSmartPointer<vtkTransform> get_transform(int domain = 0);
@@ -185,7 +175,7 @@ class Shape {
   void generate_meshes(std::vector<std::string> filenames, MeshGroup& mesh_list, bool save_transform,
                        bool wait = false);
 
-  static bool import_point_file(QString filename, Eigen::VectorXd& points);
+  static bool import_point_file(std::string filename, Eigen::VectorXd& points);
 
   void apply_feature_to_points(std::string feature, ImageType::Pointer image);
   void load_feature_from_mesh(std::string feature, MeshHandle mesh);
@@ -197,33 +187,26 @@ class Shape {
   MeshGroup reconstructed_meshes_;
   std::vector<std::shared_ptr<VtkMeshWrapper>> groomed_mesh_wrappers_;
 
-  int group_id_ = 1;
-
   std::string override_feature_;
 
   std::vector<std::string> global_point_filenames_;
   std::vector<std::string> local_point_filenames_;
 
   std::map<std::string, Eigen::VectorXf> point_features_;
-  StudioParticles particles_;
-
-  QList<Point> exclusion_sphere_centers_;
-  QList<double> exclusion_sphere_radii_;
+  Particles particles_;
 
   std::shared_ptr<shapeworks::Subject> subject_;
 
-  std::vector<Point> vectors_;
   vtkSmartPointer<vtkTransform> transform_ = vtkSmartPointer<vtkTransform>::New();
 
   std::vector<vtkSmartPointer<vtkTransform>> reconstruction_transforms_;
 
-  QStringList corner_annotations_;
+  std::vector<std::string> corner_annotations_;
 
-  QSharedPointer<MeshManager> mesh_manager_;
+  std::shared_ptr<MeshManager> mesh_manager_;
 
   Eigen::MatrixXd landmarks_;
 
-  // vtkSmartPointer<vtkImageData> image_volume_;
   std::shared_ptr<Image> image_volume_;
   std::string image_volume_filename_;
 
@@ -235,4 +218,4 @@ class Shape {
 
 -------------------------------
 
-Updated on 2022-09-12 at 20:07:13 +0000
+Updated on 2022-09-13 at 16:52:36 +0000

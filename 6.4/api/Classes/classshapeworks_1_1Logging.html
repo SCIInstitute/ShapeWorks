@@ -12,14 +12,14 @@
         <meta name="author" content="Shireen Elhabian et al.">
       
       
-        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/StudioLog_8h.html">
+        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Classes/classshapeworks_1_1Logging.html">
       
       <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.3.8">
     
     
       
-        <title>Studio/src/Data/StudioLog.h - ShapeWorks</title>
+        <title>shapeworks::Logging - ShapeWorks</title>
       
     
     
@@ -82,7 +82,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#studiosrcdatastudiologh" class="md-skip">
+        <a href="#shapeworkslogging" class="md-skip">
           Skip to content
         </a>
       
@@ -120,7 +120,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Studio/src/Data/StudioLog.h
+              shapeworks::Logging
             
           </span>
         </div>
@@ -2021,7 +2021,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../Classes/index_classes.html" class="md-nav__link">
+      <a href="index_classes.html" class="md-nav__link">
         Classes
       </a>
     </li>
@@ -2035,7 +2035,7 @@
   
   
     <li class="md-nav__item">
-      <a href="index_files.html" class="md-nav__link">
+      <a href="../Files/index_files.html" class="md-nav__link">
         Files
       </a>
     </li>
@@ -2166,92 +2166,141 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#namespaces" class="md-nav__link">
-    Namespaces
+  <a href="#public-functions" class="md-nav__link">
+    Public Functions
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#classes" class="md-nav__link">
-    Classes
+  <a href="#detailed-description" class="md-nav__link">
+    Detailed Description
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#defines" class="md-nav__link">
-    Defines
+  <a href="#public-functions-documentation" class="md-nav__link">
+    Public Functions Documentation
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#macros-documentation" class="md-nav__link">
-    Macros Documentation
-  </a>
-  
-    <nav class="md-nav" aria-label="Macros Documentation">
+    <nav class="md-nav" aria-label="Public Functions Documentation">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#define-studio_log_stack" class="md-nav__link">
-    define STUDIO_LOG_STACK
+  <a href="#function-instance" class="md-nav__link">
+    function Instance
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#define-studio_log_message" class="md-nav__link">
-    define STUDIO_LOG_MESSAGE
+  <a href="#function-open_file_log" class="md-nav__link">
+    function open_file_log
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#define-studio_log_error" class="md-nav__link">
-    define STUDIO_LOG_ERROR
+  <a href="#function-check_log_open" class="md-nav__link">
+    function check_log_open
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#define-studio_show_error" class="md-nav__link">
-    define STUDIO_SHOW_ERROR
+  <a href="#function-get_log_filename" class="md-nav__link">
+    function get_log_filename
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#define-studio_show_message" class="md-nav__link">
-    define STUDIO_SHOW_MESSAGE
+  <a href="#function-log_message" class="md-nav__link">
+    function log_message
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#define-studio_close_log" class="md-nav__link">
-    define STUDIO_CLOSE_LOG
+  <a href="#function-log_stack" class="md-nav__link">
+    function log_stack
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#define-studio_flush_log" class="md-nav__link">
-    define STUDIO_FLUSH_LOG
+  <a href="#function-log_error" class="md-nav__link">
+    function log_error
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-show_message" class="md-nav__link">
+    function show_message
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-show_status" class="md-nav__link">
+    function show_status
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-log_debug" class="md-nav__link">
+    function log_debug
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-log_warning" class="md-nav__link">
+    function log_warning
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-close_log" class="md-nav__link">
+    function close_log
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-set_error_callback" class="md-nav__link">
+    function set_error_callback
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-set_message_callback" class="md-nav__link">
+    function set_message_callback
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-set_warning_callback" class="md-nav__link">
+    function set_warning_callback
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-set_debug_callback" class="md-nav__link">
+    function set_debug_callback
   </a>
   
 </li>
         
       </ul>
     </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#source-code" class="md-nav__link">
-    Source code
-  </a>
   
 </li>
       
@@ -2267,27 +2316,17 @@
             <article class="md-content__inner md-typeset">
               
                 
-  <a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/api/Files/StudioLog_8h.md" title="Edit this page" class="md-content__button md-icon">
+  <a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/api/Classes/classshapeworks_1_1Logging.md" title="Edit this page" class="md-content__button md-icon">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
   </a>
 
 
 
-<h1 id="studiosrcdatastudiologh">Studio/src/Data/StudioLog.h</h1>
-<h2 id="namespaces">Namespaces</h2>
-<table>
-<thead>
-<tr>
-<th>Name</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong><a href="../Namespaces/namespaceshapeworks.html">shapeworks</a></strong></td>
-</tr>
-</tbody>
-</table>
-<h2 id="classes">Classes</h2>
+<h1 id="shapeworkslogging">shapeworks::Logging</h1>
+<p><strong>Module:</strong> <strong><a href="../Modules/group__Group-Common.html">Common Classes</a></strong></p>
+<p>ShapeWorks <a href="">Logging</a> Library.  <a href="#detailed-description">More...</a></p>
+<p><code>#include &lt;Logging.h&gt;</code></p>
+<h2 id="public-functions">Public Functions</h2>
 <table>
 <thead>
 <tr>
@@ -2297,175 +2336,205 @@
 </thead>
 <tbody>
 <tr>
-<td>class</td>
-<td><strong><a href="../Classes/classshapeworks_1_1StudioLog.html">shapeworks::StudioLog</a></strong></td>
+<td><a href="classshapeworks_1_1Logging.html">Logging</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Logging.html#function-instance">Instance</a></strong>()<br>Return the singleton instance.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Logging.html#function-open-file-log">open_file_log</a></strong>(std::string filename)<br>Create a file log.</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Logging.html#function-check-log-open">check_log_open</a></strong>()<br>Return if the log is open.</td>
+</tr>
+<tr>
+<td>std::string</td>
+<td><strong><a href="classshapeworks_1_1Logging.html#function-get-log-filename">get_log_filename</a></strong>()<br>Return the log filename.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Logging.html#function-log-message">log_message</a></strong>(std::string message, const int line, const char * file)<br>Log a message, use SW_LOG macro.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Logging.html#function-log-stack">log_stack</a></strong>(std::string message)<br>Log a stack trace message, use SW_LOG_STACK macro.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Logging.html#function-log-error">log_error</a></strong>(std::string message, const int line, const char * file)<br>Log an error, use SW_ERROR macro.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Logging.html#function-show-message">show_message</a></strong>(std::string message, const int line, const char * file)<br>Log a message, use SW_MESSAGE macro.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Logging.html#function-show-status">show_status</a></strong>(std::string message, const int line, const char * file)<br>Log a message, use SW_STATUS macro.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Logging.html#function-log-debug">log_debug</a></strong>(std::string message, const int line, const char * file)<br>Log a debug message, use SW_DEBUG macro.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Logging.html#function-log-warning">log_warning</a></strong>(std::string message, const int line, const char * file)<br>Log a warning message, use SW_WARN macro.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Logging.html#function-close-log">close_log</a></strong>()<br>Close the log, use SW_CLOSE_LOG macro.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Logging.html#function-set-error-callback">set_error_callback</a></strong>(std::function&lt; void(std::string)&gt; callback)<br>Set an error callback function to be called whenever an error is raised.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Logging.html#function-set-message-callback">set_message_callback</a></strong>(std::function&lt; void(std::string)&gt; callback)<br>Set a message callback function to be called whenever an message is posted.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Logging.html#function-set-warning-callback">set_warning_callback</a></strong>(std::function&lt; void(std::string)&gt; callback)<br>Set a warning callback function to be called whenever a warning is posted.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Logging.html#function-set-debug-callback">set_debug_callback</a></strong>(std::function&lt; void(std::string)&gt; callback)<br>Set a debug messagecallback function to be called whenever a debug message is posted.</td>
 </tr>
 </tbody>
 </table>
-<h2 id="defines">Defines</h2>
-<table>
-<thead>
-<tr>
-<th></th>
-<th>Name</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td></td>
-<td><strong><a href="StudioLog_8h.html#define-studio-log-stack">STUDIO_LOG_STACK</a></strong>(message) <br>Log stack macro.</td>
-</tr>
-<tr>
-<td></td>
-<td><strong><a href="StudioLog_8h.html#define-studio-log-message">STUDIO_LOG_MESSAGE</a></strong>(message) <br>Log message macro.</td>
-</tr>
-<tr>
-<td></td>
-<td><strong><a href="StudioLog_8h.html#define-studio-log-error">STUDIO_LOG_ERROR</a></strong>(message) <br>Log error macro.</td>
-</tr>
-<tr>
-<td></td>
-<td><strong><a href="StudioLog_8h.html#define-studio-show-error">STUDIO_SHOW_ERROR</a></strong>(message) <br>Log show error macro.</td>
-</tr>
-<tr>
-<td></td>
-<td><strong><a href="StudioLog_8h.html#define-studio-show-message">STUDIO_SHOW_MESSAGE</a></strong>(message) <br>Log show message macro.</td>
-</tr>
-<tr>
-<td></td>
-<td><strong><a href="StudioLog_8h.html#define-studio-close-log">STUDIO_CLOSE_LOG</a></strong>() <br>Close session macro.</td>
-</tr>
-<tr>
-<td></td>
-<td><strong><a href="StudioLog_8h.html#define-studio-flush-log">STUDIO_FLUSH_LOG</a></strong>() <br>Close session macro.</td>
-</tr>
-</tbody>
-</table>
-<h2 id="macros-documentation">Macros Documentation</h2>
-<h3 id="define-studio_log_stack">define STUDIO_LOG_STACK</h3>
-<div class="highlight"><pre><span></span><code><span class="cp">#define STUDIO_LOG_STACK(</span>
-<span class="w">    </span><span class="n">message</span><span class="w"></span>
+<h2 id="detailed-description">Detailed Description</h2>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">shapeworks</span><span class="o">::</span><span class="n">Logging</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<p>ShapeWorks <a href="">Logging</a> Library. </p>
+<p>The <a href="classshapeworks_1_1Logging.html">Logging</a> class supports univeral console and file logging.</p>
+<p>To use the ShapeWorks logging library, use the pre-defined macros:</p>
+<p>Normal log message: </p>
+<div class="highlight"><pre><span></span><code><span class="n">SW_LOG</span><span class="p">(</span><span class="s">&quot;message&quot;</span><span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>Warning: </p>
+<div class="highlight"><pre><span></span><code><span class="n">SW_WARN</span><span class="p">(</span><span class="s">&quot;warning&quot;</span><span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>Error: </p>
+<div class="highlight"><pre><span></span><code><span class="n">SW_ERROR</span><span class="p">(</span><span class="s">&quot;error&quot;</span><span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>Debug: </p>
+<div class="highlight"><pre><span></span><code><span class="n">SW_DEBUG</span><span class="p">(</span><span class="s">&quot;debug&quot;</span><span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>Output (assuming it was line 25 of Analyze.cpp and SW_LOG_LEVEL=debug): </p>
+<div class="highlight"><pre><span></span><code><span class="p">[</span><span class="mi">2022-08-18</span><span class="w"> </span><span class="mi">11</span><span class="o">:</span><span class="mi">40</span><span class="o">:</span><span class="mf">01.021</span><span class="p">]</span><span class="w"> </span><span class="p">[</span><span class="n">debug</span><span class="p">]</span><span class="w"> </span><span class="p">[</span><span class="n">Analyze</span><span class="p">.</span><span class="n">cpp</span><span class="o">|</span><span class="mi">25</span><span class="p">]</span><span class="w"> </span><span class="n">debug</span><span class="w"></span>
+</code></pre></div>
+<p>The logging macros using the fmt library. Read more here:</p>
+<p><a href="https://github.com/fmtlib/fmt">https://github.com/fmtlib/fmt</a></p>
+<p>Example: </p>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">mode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">10</span><span class="p">;</span><span class="w"></span>
+<span class="kt">double</span><span class="w"> </span><span class="n">eigen_value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">42.3</span><span class="p">;</span><span class="w"></span>
+<span class="n">SW_LOG</span><span class="p">(</span><span class="s">&quot;eigen value [{}]: {}&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">mode</span><span class="p">,</span><span class="w"> </span><span class="n">eigen_value</span><span class="p">);</span><span class="w"></span>
+</code></pre></div>
+<p>Output: </p>
+<div class="highlight"><pre><span></span><code><span class="p">[</span><span class="mi">2022-08-18</span><span class="w"> </span><span class="mi">11</span><span class="o">:</span><span class="mi">37</span><span class="o">:</span><span class="mf">42.613</span><span class="p">]</span><span class="w"> </span><span class="p">[</span><span class="n">info</span><span class="p">]</span><span class="w"> </span><span class="n">eigen</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="p">[</span><span class="mi">10</span><span class="p">]</span><span class="o">:</span><span class="w"> </span><span class="mf">42.32</span><span class="w"></span>
+</code></pre></div>
+<h2 id="public-functions-documentation">Public Functions Documentation</h2>
+<h3 id="function-instance">function Instance</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">Logging</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">Instance</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<p>Return the singleton instance. </p>
+<h3 id="function-open_file_log">function open_file_log</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">open_file_log</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">filename</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
-<span class="n">shapeworks</span><span class="o">::</span><span class="n">StudioLog</span><span class="o">::</span><span class="n">Instance</span><span class="p">().</span><span class="n">log_stack</span><span class="p">(</span><span class="n">message</span><span class="p">)</span><span class="w"></span>
 </code></pre></div>
-<p>Log stack macro. </p>
-<h3 id="define-studio_log_message">define STUDIO_LOG_MESSAGE</h3>
-<div class="highlight"><pre><span></span><code><span class="cp">#define STUDIO_LOG_MESSAGE(</span>
-<span class="w">    </span><span class="n">message</span><span class="w"></span>
+<p>Create a file log. </p>
+<h3 id="function-check_log_open">function check_log_open</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">check_log_open</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<p>Return if the log is open. </p>
+<h3 id="function-get_log_filename">function get_log_filename</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">get_log_filename</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<p>Return the log filename. </p>
+<h3 id="function-log_message">function log_message</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">log_message</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">line</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">file</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
-<span class="n">shapeworks</span><span class="o">::</span><span class="n">StudioLog</span><span class="o">::</span><span class="n">Instance</span><span class="p">().</span><span class="n">log_message</span><span class="p">(</span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="n">__LINE__</span><span class="p">,</span><span class="w"> </span><span class="n">__FILE__</span><span class="p">)</span><span class="w"></span>
 </code></pre></div>
-<p>Log message macro. </p>
-<h3 id="define-studio_log_error">define STUDIO_LOG_ERROR</h3>
-<div class="highlight"><pre><span></span><code><span class="cp">#define STUDIO_LOG_ERROR(</span>
-<span class="w">    </span><span class="n">message</span><span class="w"></span>
+<p>Log a message, use SW_LOG macro. </p>
+<h3 id="function-log_stack">function log_stack</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">log_stack</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">message</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
-<span class="n">shapeworks</span><span class="o">::</span><span class="n">StudioLog</span><span class="o">::</span><span class="n">Instance</span><span class="p">().</span><span class="n">log_error</span><span class="p">(</span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="n">__LINE__</span><span class="p">,</span><span class="w"> </span><span class="n">__FILE__</span><span class="p">)</span><span class="w"></span>
 </code></pre></div>
-<p>Log error macro. </p>
-<h3 id="define-studio_show_error">define STUDIO_SHOW_ERROR</h3>
-<div class="highlight"><pre><span></span><code><span class="cp">#define STUDIO_SHOW_ERROR(</span>
-<span class="w">    </span><span class="n">message</span><span class="w"></span>
+<p>Log a stack trace message, use SW_LOG_STACK macro. </p>
+<h3 id="function-log_error">function log_error</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">log_error</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">line</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">file</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
-<span class="n">shapeworks</span><span class="o">::</span><span class="n">StudioLog</span><span class="o">::</span><span class="n">Instance</span><span class="p">().</span><span class="n">show_error</span><span class="p">(</span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="n">__LINE__</span><span class="p">,</span><span class="w"> </span><span class="n">__FILE__</span><span class="p">)</span><span class="w"></span>
 </code></pre></div>
-<p>Log show error macro. </p>
-<h3 id="define-studio_show_message">define STUDIO_SHOW_MESSAGE</h3>
-<div class="highlight"><pre><span></span><code><span class="cp">#define STUDIO_SHOW_MESSAGE(</span>
-<span class="w">    </span><span class="n">message</span><span class="w"></span>
+<p>Log an error, use SW_ERROR macro. </p>
+<h3 id="function-show_message">function show_message</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">show_message</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">line</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">file</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
-<span class="n">shapeworks</span><span class="o">::</span><span class="n">StudioLog</span><span class="o">::</span><span class="n">Instance</span><span class="p">().</span><span class="n">show_message</span><span class="p">(</span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="n">__LINE__</span><span class="p">,</span><span class="w"> </span><span class="n">__FILE__</span><span class="p">)</span><span class="w"></span>
 </code></pre></div>
-<p>Log show message macro. </p>
-<h3 id="define-studio_close_log">define STUDIO_CLOSE_LOG</h3>
-<div class="highlight"><pre><span></span><code><span class="cp">#define STUDIO_CLOSE_LOG(</span>
-
+<p>Log a message, use SW_MESSAGE macro. </p>
+<h3 id="function-show_status">function show_status</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">show_status</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">line</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">file</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
-<span class="n">shapeworks</span><span class="o">::</span><span class="n">StudioLog</span><span class="o">::</span><span class="n">Instance</span><span class="p">().</span><span class="n">close_log</span><span class="p">();</span><span class="w"></span>
 </code></pre></div>
-<p>Close session macro. </p>
-<h3 id="define-studio_flush_log">define STUDIO_FLUSH_LOG</h3>
-<div class="highlight"><pre><span></span><code><span class="cp">#define STUDIO_FLUSH_LOG(</span>
-
+<p>Log a message, use SW_STATUS macro. </p>
+<h3 id="function-log_debug">function log_debug</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">log_debug</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">line</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">file</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
-<span class="n">shapeworks</span><span class="o">::</span><span class="n">StudioLog</span><span class="o">::</span><span class="n">Instance</span><span class="p">().</span><span class="n">flush_log</span><span class="p">();</span><span class="w"></span>
 </code></pre></div>
-<p>Close session macro. </p>
-<h2 id="source-code">Source code</h2>
-<div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
-
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QObject&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QString&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;fstream&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;string&gt;</span><span class="cp"></span>
-
-<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-
-<span class="k">class</span><span class="w"> </span><span class="nc">StudioLog</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">QObject</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">  </span><span class="n">Q_OBJECT</span><span class="p">;</span><span class="w"></span>
-
-<span class="w"> </span><span class="k">public</span><span class="o">:</span><span class="w"></span>
-<span class="w">  </span><span class="n">StudioLog</span><span class="p">();</span><span class="w"></span>
-
-<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">StudioLog</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">Instance</span><span class="p">();</span><span class="w"></span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">new_log</span><span class="p">();</span><span class="w"></span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">log_message</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">line</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">file</span><span class="p">);</span><span class="w"></span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">log_stack</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">message</span><span class="p">);</span><span class="w"></span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">log_error</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">line</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">file</span><span class="p">);</span><span class="w"></span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">show_error</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">line</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">file</span><span class="p">);</span><span class="w"></span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">show_message</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">line</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">file</span><span class="p">);</span><span class="w"></span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">log_debug</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">line</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">file</span><span class="p">);</span><span class="w"></span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">close_log</span><span class="p">();</span><span class="w"></span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">flush_log</span><span class="p">();</span><span class="w"></span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">check_log_open</span><span class="p">();</span><span class="w"></span>
-
-<span class="w">  </span><span class="n">QString</span><span class="w"> </span><span class="nf">get_log_filename</span><span class="p">();</span><span class="w"></span>
-
-<span class="w"> </span><span class="nl">Q_SIGNALS</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">error_signal</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">message</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">message_signal</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">message</span><span class="p">);</span><span class="w"></span>
-
-<span class="w"> </span><span class="k">private</span><span class="o">:</span><span class="w"></span>
-<span class="w">  </span><span class="n">QString</span><span class="w"> </span><span class="n">create_header</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">line</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">filename</span><span class="p">);</span><span class="w"></span>
-
-<span class="w">  </span><span class="n">QString</span><span class="w"> </span><span class="nf">get_current_datetime</span><span class="p">();</span><span class="w"></span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">ofstream</span><span class="w"> </span><span class="n">log_</span><span class="p">;</span><span class="w">  </span>
-
-<span class="w">  </span><span class="n">QString</span><span class="w"> </span><span class="n">log_filename_</span><span class="p">;</span><span class="w"></span>
-
-<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="n">datetime_format_</span><span class="p">;</span><span class="w"></span>
-
-<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="n">log_datetime_format_</span><span class="p">;</span><span class="w"></span>
-<span class="p">};</span><span class="w"></span>
-
-<span class="cp">#define STUDIO_LOG_STACK(message) shapeworks::StudioLog::Instance().log_stack(message)</span>
-
-<span class="cp">#define STUDIO_LOG_MESSAGE(message) shapeworks::StudioLog::Instance().log_message(message, __LINE__, __FILE__)</span>
-
-<span class="cp">#define STUDIO_LOG_ERROR(message) shapeworks::StudioLog::Instance().log_error(message, __LINE__, __FILE__)</span>
-
-<span class="cp">#define STUDIO_SHOW_ERROR(message) shapeworks::StudioLog::Instance().show_error(message, __LINE__, __FILE__)</span>
-
-<span class="cp">#define STUDIO_SHOW_MESSAGE(message) shapeworks::StudioLog::Instance().show_message(message, __LINE__, __FILE__)</span>
-
-<span class="cp">#define STUDIO_CLOSE_LOG() shapeworks::StudioLog::Instance().close_log();</span>
-
-<span class="cp">#define STUDIO_FLUSH_LOG() shapeworks::StudioLog::Instance().flush_log();</span>
-<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
+<p>Log a debug message, use SW_DEBUG macro. </p>
+<h3 id="function-log_warning">function log_warning</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">log_warning</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">line</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">file</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
 </code></pre></div>
+<p>Log a warning message, use SW_WARN macro. </p>
+<h3 id="function-close_log">function close_log</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">close_log</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<p>Close the log, use SW_CLOSE_LOG macro. </p>
+<h3 id="function-set_error_callback">function set_error_callback</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_error_callback</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">void</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="n">callback</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>Set an error callback function to be called whenever an error is raised. </p>
+<h3 id="function-set_message_callback">function set_message_callback</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_message_callback</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">void</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="n">callback</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>Set a message callback function to be called whenever an message is posted. </p>
+<h3 id="function-set_warning_callback">function set_warning_callback</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_warning_callback</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">void</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="n">callback</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>Set a warning callback function to be called whenever a warning is posted. </p>
+<h3 id="function-set_debug_callback">function set_debug_callback</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_debug_callback</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">void</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="n">callback</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>Set a debug messagecallback function to be called whenever a debug message is posted. </p>
 <hr />
-<p>Updated on 2022-09-12 at 20:07:13 +0000</p>
+<p>Updated on 2022-09-13 at 16:52:36 +0000</p>
 
               
             </article>

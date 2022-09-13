@@ -19,6 +19,8 @@ title: shapeworks
 | -------------- | -------------- |
 | class | **[shapeworks::AnalysisTool](../Classes/classshapeworks_1_1AnalysisTool.md)**  |
 | class | **[shapeworks::AnalysisUtils](../Classes/classshapeworks_1_1AnalysisUtils.md)**  |
+| class | **[shapeworks::Analyze](../Classes/classshapeworks_1_1Analyze.md)** <br>High level analyze API.  |
+| class | **[shapeworks::AnalyzeCommandGroup](../Classes/classshapeworks_1_1AnalyzeCommandGroup.md)**  |
 | class | **[shapeworks::ColorMap](../Classes/classshapeworks_1_1ColorMap.md)**  |
 | class | **[shapeworks::ColorMaps](../Classes/classshapeworks_1_1ColorMaps.md)**  |
 | class | **[shapeworks::Command](../Classes/classshapeworks_1_1Command.md)**  |
@@ -56,23 +58,24 @@ title: shapeworks
 | class | **[shapeworks::LandmarkTableModel](../Classes/classshapeworks_1_1LandmarkTableModel.md)**  |
 | class | **[shapeworks::LandmarkWidget](../Classes/classshapeworks_1_1LandmarkWidget.md)** <br>[LandmarkWidget]().  |
 | class | **[shapeworks::Lightbox](../Classes/classshapeworks_1_1Lightbox.md)** <br>Display multiple Viewers in a tiled display.  |
+| class | **[shapeworks::Logging](../Classes/classshapeworks_1_1Logging.md)** <br>ShapeWorks [Logging]() Library.  |
 | class | **[shapeworks::LogWindow](../Classes/classshapeworks_1_1LogWindow.md)** <br>Log Window.  |
 | class | **[shapeworks::MatrixContainer](../Classes/classshapeworks_1_1MatrixContainer.md)**  |
 | class | **[shapeworks::Mesh](../Classes/classshapeworks_1_1Mesh.md)**  |
-| class | **[shapeworks::MeshCache](../Classes/classshapeworks_1_1MeshCache.md)**  |
+| class | **[shapeworks::MeshCache](../Classes/classshapeworks_1_1MeshCache.md)** <br>Thread safe cache for meshes index by shape.  |
 | class | **[shapeworks::MeshCommand](../Classes/classshapeworks_1_1MeshCommand.md)**  |
 | class | **[shapeworks::MeshDomain](../Classes/classshapeworks_1_1MeshDomain.md)**  |
 | class | **[shapeworks::MeshGenerator](../Classes/classshapeworks_1_1MeshGenerator.md)**  |
 | struct | **[shapeworks::MeshGeoEntry](../Classes/structshapeworks_1_1MeshGeoEntry.md)**  |
 | class | **[shapeworks::MeshGroup](../Classes/classshapeworks_1_1MeshGroup.md)** <br>Representation of a group of meshes.  |
-| class | **[shapeworks::MeshManager](../Classes/classshapeworks_1_1MeshManager.md)**  |
+| class | **[shapeworks::MeshManager](../Classes/classshapeworks_1_1MeshManager.md)** <br>Class to manage meshes.  |
 | class | **[shapeworks::MeshReader](../Classes/classshapeworks_1_1MeshReader.md)** <br>reads mesh (used only by one of the [Mesh](../Classes/classshapeworks_1_1Mesh.md) constructors)  |
 | class | **[shapeworks::MeshReconstructors](../Classes/classshapeworks_1_1MeshReconstructors.md)**  |
 | class | **[shapeworks::MeshSlice](../Classes/classshapeworks_1_1MeshSlice.md)** <br>[MeshSlice]().  |
 | class | **[shapeworks::MeshUtils](../Classes/classshapeworks_1_1MeshUtils.md)**  |
 | class | **[shapeworks::MeshWarper](../Classes/classshapeworks_1_1MeshWarper.md)**  |
 | class | **[shapeworks::MeshWorker](../Classes/classshapeworks_1_1MeshWorker.md)**  |
-| class | **[shapeworks::MeshWorkItem](../Classes/classshapeworks_1_1MeshWorkItem.md)**  |
+| class | **[shapeworks::MeshWorkItem](../Classes/classshapeworks_1_1MeshWorkItem.md)** <br>Provides concurrent access to a list of shapes to work needing reconstruction.  |
 | class | **[shapeworks::MeshWorkQueue](../Classes/classshapeworks_1_1MeshWorkQueue.md)**  |
 | class | **[shapeworks::MeshWrapper](../Classes/classshapeworks_1_1MeshWrapper.md)**  |
 | struct | **[shapeworks::MultiVariateNormalRandom](../Classes/structshapeworks_1_1MultiVariateNormalRandom.md)**  |
@@ -94,6 +97,7 @@ title: shapeworks
 | class | **[shapeworks::ParticleNormalEvaluationJob](../Classes/classshapeworks_1_1ParticleNormalEvaluationJob.md)**  |
 | class | **[shapeworks::ParticleProcrustesRegistration](../Classes/classshapeworks_1_1ParticleProcrustesRegistration.md)**  |
 | class | **[shapeworks::ParticleRegionDomain](../Classes/classshapeworks_1_1ParticleRegionDomain.md)**  |
+| class | **[shapeworks::Particles](../Classes/classshapeworks_1_1Particles.md)** <br>Representation of correspondence points for a shape including multiple domains.  |
 | class | **[shapeworks::ParticleShapeStatistics](../Classes/classshapeworks_1_1ParticleShapeStatistics.md)**  |
 | class | **[shapeworks::ParticleSystem](../Classes/classshapeworks_1_1ParticleSystem.md)**  |
 | class | **[shapeworks::ParticleSystemCommand](../Classes/classshapeworks_1_1ParticleSystemCommand.md)**  |
@@ -103,6 +107,7 @@ title: shapeworks
 | class | **[shapeworks::PlaneWidget](../Classes/classshapeworks_1_1PlaneWidget.md)** <br>[PlaneWidget]().  |
 | class | **[shapeworks::PreferencesWindow](../Classes/classshapeworks_1_1PreferencesWindow.md)** <br>Qt UI dialog to control preferences.  |
 | class | **[shapeworks::Project](../Classes/classshapeworks_1_1Project.md)** <br>Representation of a project.  |
+| class | **[shapeworks::ProjectCommandGroup](../Classes/classshapeworks_1_1ProjectCommandGroup.md)**  |
 | class | **[shapeworks::ProjectReader](../Classes/classshapeworks_1_1ProjectReader.md)** <br>Base class for [Project](../Classes/classshapeworks_1_1Project.md) readers.  |
 | class | **[shapeworks::ProjectUtils](../Classes/classshapeworks_1_1ProjectUtils.md)**  |
 | class | **[shapeworks::PythonWorker](../Classes/classshapeworks_1_1PythonWorker.md)**  |
@@ -130,9 +135,7 @@ title: shapeworks
 | class | **[shapeworks::StringUtils](../Classes/classshapeworks_1_1StringUtils.md)** <br>String utility functions.  |
 | class | **[shapeworks::StudioHandleWidget](../Classes/classshapeworks_1_1StudioHandleWidget.md)**  |
 | class | **[shapeworks::StudioInteractorStyle](../Classes/classshapeworks_1_1StudioInteractorStyle.md)**  |
-| class | **[shapeworks::StudioLog](../Classes/classshapeworks_1_1StudioLog.md)**  |
 | class | **[shapeworks::StudioMesh](../Classes/classshapeworks_1_1StudioMesh.md)** <br>Representation of a single mesh.  |
-| class | **[shapeworks::StudioParticles](../Classes/classshapeworks_1_1StudioParticles.md)** <br>Representation of correspondence points for a shape including multiple domains.  |
 | class | **[shapeworks::StudioSliceInteractorStyle](../Classes/classshapeworks_1_1StudioSliceInteractorStyle.md)**  |
 | class | **[shapeworks::StudioUtils](../Classes/classshapeworks_1_1StudioUtils.md)** <br>Utilities for Studio.  |
 | class | **[shapeworks::StudioVtkOutputWindow](../Classes/classshapeworks_1_1StudioVtkOutputWindow.md)** <br>Implementation of vtkOutputWindow to capture and display VTK error messages.  |
@@ -151,6 +154,7 @@ title: shapeworks
 
 |                | Name           |
 | -------------- | -------------- |
+| enum| **[DisplayMode](../Namespaces/namespaceshapeworks.md#enum-displaymode)** { Original = 0, Groomed = 1, Reconstructed = 2} |
 | enum| **[Axis](../Namespaces/namespaceshapeworks.md#enum-axis)** { invalid = -1, X, Y, Z}<br>handy way to specify an axis  |
 | enum class char | **[ConstraintType](../Namespaces/namespaceshapeworks.md#enum-constrainttype)** { Sphere = 'S', CuttingPlane = 'C', FreeForm = 'F'} |
 | enum class int | **[CorrespondenceMode](../Namespaces/namespaceshapeworks.md#enum-correspondencemode)** { MeanEnergy = 0, EnsembleEntropy = 1, EnsembleRegressionEntropy = 3, EnsembleMixedEffectsEntropy = 4, MeshBasedGeneralEntropy = 5, MeshBasedGeneralMeanEnergy = 6} |
@@ -158,8 +162,13 @@ title: shapeworks
 | enum| **[ArrayTransferOptions](../Namespaces/namespaceshapeworks.md#enum-arraytransferoptions)** { COPY_ARRAY, SHARE_ARRAY, MOVE_ARRAY}<br>ways of tranferring Arrays to Python, copy being the least efficient but most conservative  |
 | enum| **[LandmarkColumns](../Namespaces/namespaceshapeworks.md#enum-landmarkcolumns)** { VISIBLE_E, COLOR_E, NAME_E, POSITION_E, SET_BUTTON_E, COMMENT_E, END_E} |
 | enum| **[LandmarkVisibility](../Namespaces/namespaceshapeworks.md#enum-landmarkvisibility)** { ALL_VISIBLE_E, NONE_VISIBLE_E, SOME_VISIBLE_E} |
-| enum| **[DisplayMode](../Namespaces/namespaceshapeworks.md#enum-displaymode)** { Original = 0, Groomed = 1, Reconstructed = 2} |
 | enum class| **[MessageType](../Namespaces/namespaceshapeworks.md#enum-messagetype)** { normal, warning, error, debug} |
+| using std::map< [MeshWorkItem](../Classes/classshapeworks_1_1MeshWorkItem.md), MeshHandle > | **[CacheMap](../Namespaces/namespaceshapeworks.md#using-cachemap)**  |
+| using std::list< [MeshWorkItem](../Classes/classshapeworks_1_1MeshWorkItem.md) > | **[CacheList](../Namespaces/namespaceshapeworks.md#using-cachelist)**  |
+| using std::shared_ptr< [Shape](../Classes/classshapeworks_1_1Shape.md) > | **[ShapeHandle](../Namespaces/namespaceshapeworks.md#using-shapehandle)**  |
+| using std::vector< ShapeHandle > | **[ShapeList](../Namespaces/namespaceshapeworks.md#using-shapelist)**  |
+| using std::shared_ptr< [StudioMesh](../Classes/classshapeworks_1_1StudioMesh.md) > | **[MeshHandle](../Namespaces/namespaceshapeworks.md#using-meshhandle)**  |
+| using std::vector< MeshHandle > | **[MeshList](../Namespaces/namespaceshapeworks.md#using-meshlist)**  |
 | using itk::Index< 3 > | **[Coord](../Namespaces/namespaceshapeworks.md#using-coord)** <br>Simple names for common types used in the framework.  |
 | using itk::Size< 3 > | **[Dims](../Namespaces/namespaceshapeworks.md#using-dims)**  |
 | using itk::Point< double, 3 > | **[Point3](../Namespaces/namespaceshapeworks.md#using-point3)**  |
@@ -186,14 +195,8 @@ title: shapeworks
 | using [itk::CompactlySupportedRBFSparseKernelTransform](../Classes/classitk_1_1CompactlySupportedRBFSparseKernelTransform.md)< double, 3 > | **[RBFSSparseTransform](../Namespaces/namespaceshapeworks.md#using-rbfssparsetransform)**  |
 | using std::shared_ptr< [Project](../Classes/classshapeworks_1_1Project.md) > | **[ProjectHandle](../Namespaces/namespaceshapeworks.md#using-projecthandle)**  |
 | template <typename T \> <br>using Eigen::Matrix< T, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor > | **[VnlMatrix](../Namespaces/namespaceshapeworks.md#using-vnlmatrix)**  |
-| using std::map< [MeshWorkItem](../Classes/classshapeworks_1_1MeshWorkItem.md), MeshHandle > | **[CacheMap](../Namespaces/namespaceshapeworks.md#using-cachemap)**  |
-| using std::list< [MeshWorkItem](../Classes/classshapeworks_1_1MeshWorkItem.md) > | **[CacheList](../Namespaces/namespaceshapeworks.md#using-cachelist)**  |
 | typedef QSharedPointer< [Session](../Classes/classshapeworks_1_1Session.md) > | **[SessionHandle](../Namespaces/namespaceshapeworks.md#typedef-sessionhandle)**  |
 | using vtkSmartPointer< vtkTransform > | **[TransformType](../Namespaces/namespaceshapeworks.md#using-transformtype)** <br>TODO: replace this.  |
-| using QSharedPointer< [Shape](../Classes/classshapeworks_1_1Shape.md) > | **[ShapeHandle](../Namespaces/namespaceshapeworks.md#using-shapehandle)**  |
-| using QVector< ShapeHandle > | **[ShapeList](../Namespaces/namespaceshapeworks.md#using-shapelist)**  |
-| using std::shared_ptr< [StudioMesh](../Classes/classshapeworks_1_1StudioMesh.md) > | **[MeshHandle](../Namespaces/namespaceshapeworks.md#using-meshhandle)**  |
-| using std::vector< MeshHandle > | **[MeshList](../Namespaces/namespaceshapeworks.md#using-meshlist)**  |
 | typedef QSharedPointer< [Lightbox](../Classes/classshapeworks_1_1Lightbox.md) > | **[LightboxHandle](../Namespaces/namespaceshapeworks.md#typedef-lightboxhandle)**  |
 | typedef QSharedPointer< [Viewer](../Classes/classshapeworks_1_1Viewer.md) > | **[ViewerHandle](../Namespaces/namespaceshapeworks.md#typedef-viewerhandle)**  |
 | typedef QVector< ViewerHandle > | **[ViewerList](../Namespaces/namespaceshapeworks.md#typedef-viewerlist)**  |
@@ -289,6 +292,10 @@ title: shapeworks
 | | **[COMMAND_DECLARE](../Namespaces/namespaceshapeworks.md#function-command-declare)**(Seed , [ShapeworksCommand](../Classes/classshapeworks_1_1ShapeworksCommand.md) ) |
 | | **[COMMAND_DECLARE](../Namespaces/namespaceshapeworks.md#function-command-declare)**(OptimizeCommand , [OptimizeCommandGroup](../Classes/classshapeworks_1_1OptimizeCommandGroup.md) ) |
 | | **[COMMAND_DECLARE](../Namespaces/namespaceshapeworks.md#function-command-declare)**(GroomCommand , [GroomCommandGroup](../Classes/classshapeworks_1_1GroomCommandGroup.md) ) |
+| | **[COMMAND_DECLARE](../Namespaces/namespaceshapeworks.md#function-command-declare)**(AnalyzeCommand , [AnalyzeCommandGroup](../Classes/classshapeworks_1_1AnalyzeCommandGroup.md) ) |
+| | **[COMMAND_DECLARE](../Namespaces/namespaceshapeworks.md#function-command-declare)**(ConvertProjectCommand , [ProjectCommandGroup](../Classes/classshapeworks_1_1ProjectCommandGroup.md) ) |
+| std::string | **[display_mode_to_string](../Namespaces/namespaceshapeworks.md#function-display-mode-to-string)**(DisplayMode display_mode) |
+| DisplayMode | **[string_to_display_mode](../Namespaces/namespaceshapeworks.md#function-string-to-display-mode)**(std::string str) |
 | std::ostream & | **[operator<<](../Namespaces/namespaceshapeworks.md#function-operator<<)**(std::ostream & os, const [IndexRegion](../Classes/classshapeworks_1_1IndexRegion.md) & region) |
 | std::ostream & | **[operator<<](../Namespaces/namespaceshapeworks.md#function-operator<<)**(std::ostream & os, const [PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md) & region) |
 | Vector3 | **[makeVector](../Namespaces/namespaceshapeworks.md#function-makevector)**(std::array< double, 3 > && arr)<br>Enables `makeVector({1,2,3});`, construction using an initializer list (likely an accidental omission in current ITK version)  |
@@ -362,8 +369,6 @@ title: shapeworks
 | template <int NRows,int NCols,typename T \> <br>Eigen::Map< Eigen::Matrix< T, NRows, NCols, Eigen::RowMajor > > | **[wrapDataWithEigen](../Namespaces/namespaceshapeworks.md#function-wrapdatawitheigen)**(T * data) |
 | template <typename T \> <br>Eigen::Map< Eigen::Matrix< T, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor > > | **[wrapDataWithEigen](../Namespaces/namespaceshapeworks.md#function-wrapdatawitheigen)**(T * data, size_t nrows, size_t ncols)<br>Wrap a data pointer of the specified size with Eigen::Matrix.  |
 | template <unsigned NRows,unsigned NCols,typename T \> <br>itk::Matrix< T, NRows, NCols > | **[wrapDataWithItk](../Namespaces/namespaceshapeworks.md#function-wrapdatawithitk)**(T * data) |
-| std::string | **[display_mode_to_string](../Namespaces/namespaceshapeworks.md#function-display-mode-to-string)**(DisplayMode display_mode) |
-| DisplayMode | **[string_to_display_mode](../Namespaces/namespaceshapeworks.md#function-string-to-display-mode)**(std::string str) |
 
 ## Attributes
 
@@ -372,6 +377,17 @@ title: shapeworks
 | const auto | **[Pi](../Namespaces/namespaceshapeworks.md#variable-pi)** <br>pi that doesn't depend on deprecated or non-std lib defines  |
 
 ## Types Documentation
+
+### enum DisplayMode
+
+| Enumerator | Value | Description |
+| ---------- | ----- | ----------- |
+| Original | 0|   |
+| Groomed | 1|   |
+| Reconstructed | 2|   |
+
+
+
 
 ### enum Axis
 
@@ -460,17 +476,6 @@ ways of tranferring Arrays to Python, copy being the least efficient but most co
 
 
 
-### enum DisplayMode
-
-| Enumerator | Value | Description |
-| ---------- | ----- | ----------- |
-| Original | 0|   |
-| Groomed | 1|   |
-| Reconstructed | 2|   |
-
-
-
-
 ### enum MessageType
 
 | Enumerator | Value | Description |
@@ -481,6 +486,48 @@ ways of tranferring Arrays to Python, copy being the least efficient but most co
 | debug | |   |
 
 
+
+
+### using CacheMap
+
+```cpp
+using shapeworks::CacheMap = typedef std::map<MeshWorkItem, MeshHandle>;
+```
+
+
+### using CacheList
+
+```cpp
+using shapeworks::CacheList = typedef std::list<MeshWorkItem>;
+```
+
+
+### using ShapeHandle
+
+```cpp
+using shapeworks::ShapeHandle = typedef std::shared_ptr<Shape>;
+```
+
+
+### using ShapeList
+
+```cpp
+using shapeworks::ShapeList = typedef std::vector<ShapeHandle>;
+```
+
+
+### using MeshHandle
+
+```cpp
+using shapeworks::MeshHandle = typedef std::shared_ptr<StudioMesh>;
+```
+
+
+### using MeshList
+
+```cpp
+using shapeworks::MeshList = typedef std::vector<MeshHandle>;
+```
 
 
 ### using Coord
@@ -671,20 +718,6 @@ using shapeworks::VnlMatrix = typedef Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dy
 ```
 
 
-### using CacheMap
-
-```cpp
-using shapeworks::CacheMap = typedef std::map<MeshWorkItem, MeshHandle>;
-```
-
-
-### using CacheList
-
-```cpp
-using shapeworks::CacheList = typedef std::list<MeshWorkItem>;
-```
-
-
 ### typedef SessionHandle
 
 ```cpp
@@ -699,34 +732,6 @@ using shapeworks::TransformType = typedef vtkSmartPointer<vtkTransform>;
 ```
 
 TODO: replace this. 
-
-### using ShapeHandle
-
-```cpp
-using shapeworks::ShapeHandle = typedef QSharedPointer<Shape>;
-```
-
-
-### using ShapeList
-
-```cpp
-using shapeworks::ShapeList = typedef QVector<ShapeHandle>;
-```
-
-
-### using MeshHandle
-
-```cpp
-using shapeworks::MeshHandle = typedef std::shared_ptr<StudioMesh>;
-```
-
-
-### using MeshList
-
-```cpp
-using shapeworks::MeshList = typedef std::vector<MeshHandle>;
-```
-
 
 ### typedef LightboxHandle
 
@@ -1619,6 +1624,44 @@ COMMAND_DECLARE(
 ```
 
 
+### function COMMAND_DECLARE
+
+```cpp
+COMMAND_DECLARE(
+    AnalyzeCommand ,
+    AnalyzeCommandGroup 
+)
+```
+
+
+### function COMMAND_DECLARE
+
+```cpp
+COMMAND_DECLARE(
+    ConvertProjectCommand ,
+    ProjectCommandGroup 
+)
+```
+
+
+### function display_mode_to_string
+
+```cpp
+std::string display_mode_to_string(
+    DisplayMode display_mode
+)
+```
+
+
+### function string_to_display_mode
+
+```cpp
+DisplayMode string_to_display_mode(
+    std::string str
+)
+```
+
+
 ### function operator<<
 
 ```cpp
@@ -2392,24 +2435,6 @@ itk::Matrix< T, NRows, NCols > wrapDataWithItk(
 Wrap data pointer with itk::Matrix. Handy for efficiently going back and forth between Python numpy arrays. WARNING: This function actually just copies data. 
 
 
-### function display_mode_to_string
-
-```cpp
-std::string display_mode_to_string(
-    DisplayMode display_mode
-)
-```
-
-
-### function string_to_display_mode
-
-```cpp
-DisplayMode string_to_display_mode(
-    std::string str
-)
-```
-
-
 
 ## Attributes Documentation
 
@@ -2426,4 +2451,4 @@ pi that doesn't depend on deprecated or non-std lib defines
 
 -------------------------------
 
-Updated on 2022-09-12 at 20:07:11 +0000
+Updated on 2022-09-13 at 16:52:34 +0000

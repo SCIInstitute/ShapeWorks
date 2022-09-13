@@ -40,7 +40,7 @@ title: Studio/src/Analysis/AnalysisTool.h
 // Studio
 #include <Analysis/ShapeEvaluationJob.h>
 #include <Data/Preferences.h>
-#include <Data/Shape.h>
+#include <Shape.h>
 #include <Visualization/Visualizer.h>
 
 class Ui_AnalysisTool;
@@ -104,10 +104,10 @@ class AnalysisTool : public QWidget {
   void reset_stats();
   void enable_actions(bool newly_enabled = false);
 
-  StudioParticles get_mean_shape_points();
+  Particles get_mean_shape_points();
   ShapeHandle get_mean_shape();
 
-  StudioParticles get_shape_points(int mode, double value);
+  Particles get_shape_points(int mode, double value);
   ShapeHandle get_mode_shape(int mode, double value);
 
   ParticleShapeStatistics get_stats();
@@ -197,9 +197,6 @@ class AnalysisTool : public QWidget {
   void update_view();
   void pca_update();
   void progress(int);
-  void message(QString);
-  void error(QString);
-  void warning(QString);
   void reconstruction_complete();
 
  private:
@@ -216,7 +213,7 @@ class AnalysisTool : public QWidget {
 
   bool group_pvalues_valid();
 
-  StudioParticles convert_from_combined(const Eigen::VectorXd& points);
+  Particles convert_from_combined(const Eigen::VectorXd& points);
 
   void update_group_boxes();
   void update_group_values();
@@ -226,7 +223,7 @@ class AnalysisTool : public QWidget {
 
   void update_difference_particles();
 
-  ShapeHandle create_shape_from_points(StudioParticles points);
+  ShapeHandle create_shape_from_points(Particles points);
 
   Preferences& preferences_;
 
@@ -276,4 +273,4 @@ class AnalysisTool : public QWidget {
 
 -------------------------------
 
-Updated on 2022-09-12 at 20:07:13 +0000
+Updated on 2022-09-13 at 16:52:36 +0000
