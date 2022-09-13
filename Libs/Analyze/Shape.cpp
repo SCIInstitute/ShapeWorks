@@ -90,7 +90,7 @@ bool Shape::is_subject() { return subject_ != nullptr; }
 std::shared_ptr<Subject> Shape::get_subject() { return subject_; }
 
 //---------------------------------------------------------------------------
-void Shape::import_original_image(const std::string& filename) {
+void Shape::import_original_file(const std::string& filename) {
   subject_->set_original_filenames({filename});
   corner_annotations_[0] = StringUtils::getFilename(filename);
 }

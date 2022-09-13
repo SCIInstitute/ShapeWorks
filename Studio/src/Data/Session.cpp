@@ -522,7 +522,7 @@ void Session::load_original_files(std::vector<std::string> filenames) {
   for (int i = 0; i < filenames.size(); i++) {
     QString filename = QString::fromStdString(filenames[i]);
     if (!QFile::exists(filename)) {
-      SW_LOG("File does not exist: " + filename.toStdString());
+      SW_ERROR("File does not exist: " + filename.toStdString());
       return;
     }
 
@@ -533,7 +533,7 @@ void Session::load_original_files(std::vector<std::string> filenames) {
     shape->set_mesh_manager(this->mesh_manager_);
     shape->set_subject(subject);
     this->project_->get_subjects().push_back(subject);
-    shape->import_original_image(filenames[i]);
+    shape->import_original_file(filenames[i]);
 
     this->shapes_.push_back(shape);
   }
@@ -909,10 +909,12 @@ bool Session::is_supported_file_format(std::string filename) {
     }
   }
 
-  if (StringUtils::hasSuffix(filename, ".nrrd") || StringUtils::hasSuffix(filename, ".mha") ||
-      StringUtils::hasSuffix(filename, ".nii") || StringUtils::hasSuffix(filename, ".nii.gz")) {
-    return true;
+  for (const auto& type : Image::getSupportedTypes()) {
+    if (StringUtils::hasSuffix(filename, type)) {
+      return true;
+    }
   }
+
   return false;
 }
 

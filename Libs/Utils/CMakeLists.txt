@@ -25,6 +25,7 @@ target_link_libraries(Utils PUBLIC
   Eigen3::Eigen 
   ${VTK_LIBRARIES}
   ${ITK_LIBRARIES}
+  Boost::filesystem
   )
 
 # Install

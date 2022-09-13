@@ -28,9 +28,11 @@ bool Project::load(const std::string& filename) {
   if (StringUtils::hasSuffix(filename, "swproj")) {
     JsonProjectReader reader(*this);
     return reader.read_project(filename);
-  } else {
+  } else if (StringUtils::hasSuffix(filename, "xlsx")) {
     ExcelProjectReader reader(*this);
     return reader.read_project(filename);
+  } else {
+    throw std::runtime_error("Unsupported project file type: " + filename + ", supported filetypes are xlsx and swproj");
   }
 
   Parameters project_parameters = get_parameters(Parameters::PROJECT_PARAMS);

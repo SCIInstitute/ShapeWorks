@@ -5,6 +5,9 @@
 #include <cstdlib>
 #include <cstring>
 
+#include <boost/filesystem.hpp>
+#include <boost/algorithm/string/case_conv.hpp>
+
 namespace {
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
 struct MatchPathSeparator {
@@ -63,6 +66,11 @@ std::vector<std::string> StringUtils::getFileNamesFromPaths(const std::vector<st
     filenames.push_back(std::string(fname));
   }
   return filenames;
+}
+
+//---------------------------------------------------------------------------
+std::string StringUtils::getLowerExtension(const std::string &filename) {
+  return boost::algorithm::to_lower_copy(boost::filesystem::extension(filename));
 }
 
 //---------------------------------------------------------------------------

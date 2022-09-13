@@ -87,7 +87,7 @@ bool OptimizeCommand::execute(const optparse::Values& options, SharedCommandData
   const std::string& projectFile(static_cast<std::string>(options.get("name")));
 
   if (projectFile.length() == 0) {
-    std::cerr << "Must specify project name\n";
+    std::cerr << "Must specify project name with --name <project.xlsx|.swproj>\n";
     return false;
   }
 
@@ -148,7 +148,7 @@ bool GroomCommand::execute(const optparse::Values& options, SharedCommandData& s
   const std::string& projectFile(static_cast<std::string>(options.get("name")));
 
   if (projectFile.length() == 0) {
-    std::cerr << "Must specify project name\n";
+    std::cerr << "Must specify project name with --name <project.xlsx|.swproj>\n";
     return false;
   }
 
@@ -196,7 +196,7 @@ bool AnalyzeCommand::execute(const optparse::Values& options, SharedCommandData&
   const std::string& outputFile(static_cast<std::string>(options.get("output")));
 
   if (projectFile.length() == 0) {
-    std::cerr << "Must specify project name\n";
+    std::cerr << "Must specify project name with --name <project.xlsx|.swproj>\n";
     return false;
   }
 
@@ -241,11 +241,11 @@ bool AnalyzeCommand::execute(const optparse::Values& options, SharedCommandData&
 ///////////////////////////////////////////////////////////////////////////////
 void ConvertProjectCommand::buildParser() {
   const std::string prog = "convert-project";
-  const std::string desc = "convert a shapeworks project";
+  const std::string desc = "convert a shapeworks project (xlsx or swproj)";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--name").action("store").type("string").set_default("").help("Path to input project file.");
-  parser.add_option("--output").action("store").type("string").set_default("").help("Path to output project file.");
+  parser.add_option("--name").action("store").type("string").set_default("").help("Path to input project file (xlsx or swproj).");
+  parser.add_option("--output").action("store").type("string").set_default("").help("Path to output project file (xlsx or swproj).");
 
   Command::buildParser();
 }
@@ -255,12 +255,24 @@ bool ConvertProjectCommand::execute(const optparse::Values& options, SharedComma
   const std::string& outputFile(static_cast<std::string>(options.get("output")));
 
   if (projectFile.length() == 0) {
-    std::cerr << "Must specify project name\n";
+    std::cerr << "No input file specified, must pass `--name <filename>`\n";
+    return false;
+  }
+
+  auto extension = StringUtils::getLowerExtension(projectFile);
+  if (extension != ".xlsx" && extension != ".swproj") {
+    std::cerr << "Input project file must be either .xlsx or .swproj\n";
     return false;
   }
 
   if (outputFile.empty()) {
     std::cerr << "No output file specified, must pass `--output <filename>`\n";
+    return false;
+  }
+
+  extension = StringUtils::getLowerExtension(outputFile);
+  if (extension != ".xlsx" && extension != ".swproj") {
+    std::cerr << "Output project file must be either .xlsx or .swproj\n";
     return false;
   }
 

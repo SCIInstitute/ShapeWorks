@@ -133,7 +133,9 @@ MeshHandle MeshGenerator::build_mesh_from_file(std::string filename, float iso_v
   MeshHandle mesh(new StudioMesh);
 
   if (!QFileInfo(QString::fromStdString(filename)).exists()) {
-    mesh->set_error_message("File does not exist: " + filename);
+    auto message = "File does not exist: " + filename;
+    SW_ERROR(message);
+    mesh->set_error_message(message);
     return mesh;
   }
 
@@ -141,6 +143,13 @@ MeshHandle MeshGenerator::build_mesh_from_file(std::string filename, float iso_v
   for (auto type : shapeworks::Mesh::getSupportedTypes()) {
     if (StringUtils::hasSuffix(filename, type)) {
       is_mesh = true;
+    }
+  }
+
+  bool is_image = false;
+  for (auto type : shapeworks::Image::getSupportedTypes()) {
+    if (StringUtils::hasSuffix(filename, type)) {
+      is_image = true;
     }
   }
 
@@ -152,7 +161,7 @@ MeshHandle MeshGenerator::build_mesh_from_file(std::string filename, float iso_v
       SW_ERROR(message);
       mesh->set_error_message(message);
     }
-  } else {
+  } else if (is_image) {
     try {
       // read file using ITK
       using ReaderType = itk::ImageFileReader<ImageType>;
@@ -175,6 +184,10 @@ MeshHandle MeshGenerator::build_mesh_from_file(std::string filename, float iso_v
       SW_ERROR(excep.what());
       mesh->set_error_message(std::string("Exception: ") + excep.what());
     }
+  } else {
+    auto message = "Unsupported file type: " + filename;
+    SW_ERROR(message);
+    mesh->set_error_message(message);
   }
   return mesh;
 }

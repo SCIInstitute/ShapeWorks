@@ -50,8 +50,8 @@ class Shape {
 
   std::shared_ptr<shapeworks::Subject> get_subject();
 
-  /// Import the original raw image file
-  void import_original_image(const std::string& filename);
+  /// Import the original raw mesh or image file
+  void import_original_file(const std::string& filename);
 
   /// Retrieve the original meshes
   MeshGroup get_original_meshes(bool wait = false);
