@@ -1891,7 +1891,14 @@ PYBIND11_MODULE(shapeworks_py, m)
       "Get extra values (extra columns we don't interpret)")
 
   .def("set_extra_values",
-      &Subject::set_extra_values,
+       [](Subject& subject, std::map<std::string,std::string> map) -> decltype(auto) {
+         project::types::StringMap m;
+
+         for (auto& [k, v] : map) {
+           m[k] = v;
+         }
+         subject.set_extra_values(m);
+       },
       "Set extra values",
       "extra_values"_a)
 
