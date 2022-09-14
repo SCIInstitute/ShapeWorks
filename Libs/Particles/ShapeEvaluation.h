@@ -19,22 +19,22 @@ public:
 
   static Eigen::VectorXd ComputeFullCompactness(const ParticleSystem &particleSystem, std::function<void(float)> progress_callback = nullptr);
 
-  static Eigen::MatrixXd ComputeFullCompactnessWithinSubspace(const ParticleSystem &particleSystem, const std::vector<int> &num_particles_ar, std::function<void(float)> progress_callback = nullptr);
-  static Eigen::VectorXd ComputeFullCompactnessBetweenSubspace(const ParticleSystem &particleSystem, const std::vector<int> &num_particles_ar, std::function<void(float)> progress_callback = nullptr);
+  static Eigen::MatrixXd ComputeFullCompactnessWithinSubspace(const Eigen::MatrixXd &particleSystem, const std::vector<int> &num_particles_ar, std::function<void(float)> progress_callback = nullptr);
+  static Eigen::VectorXd ComputeFullCompactnessBetweenSubspace(const Eigen::MatrixXd &particleSystem, const std::vector<int> &num_particles_ar, std::function<void(float)> progress_callback = nullptr);
 
   static double ComputeGeneralization(const ParticleSystem &particleSystem, const int nModes, const std::string &saveTo = "");
 
   static Eigen::VectorXd ComputeFullGeneralization(const ParticleSystem &particleSystem, std::function<void(float)> progress_callback = nullptr);
 
-  static Eigen::MatrixXd ComputeFullGeneralizationWithinSubspace(const ParticleSystem &particleSystem, const std::vector<int> &num_particles_ar, std::function<void(float)> progress_callback = nullptr);
-  static Eigen::VectorXd ComputeFullGeneralizationBetweenSubspace(const ParticleSystem &particleSystem, const std::vector<int> &num_particles_ar, std::function<void(float)> progress_callback = nullptr);
+  static Eigen::MatrixXd ComputeFullGeneralizationWithinSubspace(const Eigen::MatrixXd &particleSystem, const std::vector<int> &num_particles_ar, std::function<void(float)> progress_callback = nullptr);
+  static Eigen::VectorXd ComputeFullGeneralizationBetweenSubspace(const Eigen::MatrixXd &particleSystem, const std::vector<int> &num_particles_ar, std::function<void(float)> progress_callback = nullptr);
 
   static double ComputeSpecificity(const ParticleSystem &particleSystem, const int nModes, const std::string &saveTo = "");
 
   static Eigen::VectorXd ComputeFullSpecificity(const ParticleSystem &particleSystem, std::function<void(float)> progress_callback = nullptr);
 
-  static Eigen::MatrixXd ComputeFullSpecificityWithinSubspace(const ParticleSystem &particleSystem, const std::vector<int> &num_particles_ar, std::function<void(float)> progress_callback = nullptr);
-  static Eigen::VectorXd ComputeFullSpecificityBetweenSubspace(const ParticleSystem &particleSystem, const std::vector<int> &num_particles_ar, std::function<void(float)> progress_callback = nullptr);
+  static Eigen::MatrixXd ComputeFullSpecificityWithinSubspace(const Eigen::MatrixXd &particleSystem, const std::vector<int> &num_particles_ar, std::function<void(float)> progress_callback = nullptr);
+  static Eigen::VectorXd ComputeFullSpecificityBetweenSubspace(const Eigen::MatrixXd &particleSystem, const std::vector<int> &num_particles_ar, std::function<void(float)> progress_callback = nullptr);
 
   static void DoMultiLevelModeling(const Eigen::MatrixXd &shape_matrix, const std::vector<int>& num_particles, std::vector<Eigen::MatrixXd>& within_objectives, Eigen::MatrixXd& between_objectives);
   static void ComputeWithinTerms(Eigen::MatrixXd &super_matrix,const std::vector<int>& num_particles, std::vector<Eigen::MatrixXd>& within_objectives);

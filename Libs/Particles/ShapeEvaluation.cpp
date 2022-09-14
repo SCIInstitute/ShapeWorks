@@ -59,9 +59,9 @@ Eigen::VectorXd ShapeEvaluation::ComputeFullCompactness(const ParticleSystem &pa
 }
 
 //---------------------------------------------------------------------------
-Eigen::MatrixXd ShapeEvaluation::ComputeFullCompactnessWithinSubspace(const ParticleSystem &particleSystem, const std::vector<int> &num_particles_ar, std::function<void(float)> progress_callback)
+Eigen::MatrixXd ShapeEvaluation::ComputeFullCompactnessWithinSubspace(const Eigen::MatrixXd &particleSystem, const std::vector<int> &num_particles_ar, std::function<void(float)> progress_callback)
 {
-  const int N = particleSystem.N();
+  const int N = particleSystem.cols();
   const int num_modes = N-1; // the number of modes is one less than the number of samples
   if (num_modes < 1) {
     return Eigen::MatrixXd();
@@ -72,7 +72,7 @@ Eigen::MatrixXd ShapeEvaluation::ComputeFullCompactnessWithinSubspace(const Part
   std::vector<Eigen::MatrixXd> within_objectives;
   Eigen::MatrixXd between_objective_all;
   std::cout << "Before  - DoMultiLevelModeling in CompactnessWithin" << std::endl;
-  ShapeEvaluation::DoMultiLevelModeling(particleSystem.Particles(), num_particles_ar, within_objectives, between_objective_all);
+  ShapeEvaluation::DoMultiLevelModeling(particleSystem, num_particles_ar, within_objectives, between_objective_all);
 
   Eigen::MatrixXd within_compactness_all;
   within_compactness_all.resize(num_modes, dps);
@@ -104,9 +104,9 @@ Eigen::MatrixXd ShapeEvaluation::ComputeFullCompactnessWithinSubspace(const Part
 
 
 //---------------------------------------------------------------------------
-Eigen::VectorXd ShapeEvaluation::ComputeFullCompactnessBetweenSubspace(const ParticleSystem &particleSystem, const std::vector<int> &num_particles_ar, std::function<void(float)> progress_callback)
+Eigen::VectorXd ShapeEvaluation::ComputeFullCompactnessBetweenSubspace(const Eigen::MatrixXd &particleSystem, const std::vector<int> &num_particles_ar, std::function<void(float)> progress_callback)
 {
-  const int N = particleSystem.N();
+  const int N = particleSystem.cols();
   const int num_modes = N-1; // the number of modes is one less than the number of samples
   if (num_modes < 1) {
     return Eigen::VectorXd();
@@ -115,7 +115,7 @@ Eigen::VectorXd ShapeEvaluation::ComputeFullCompactnessBetweenSubspace(const Par
   std::vector<Eigen::MatrixXd> within_objectives;
   Eigen::MatrixXd between_objective_all;
   std::cout << "Before  - DoMultiLevelModeling in CompactnessBetween" << std::endl;
-  ShapeEvaluation::DoMultiLevelModeling(particleSystem.Particles(), num_particles_ar, within_objectives, between_objective_all);
+  ShapeEvaluation::DoMultiLevelModeling(particleSystem, num_particles_ar, within_objectives, between_objective_all);
  
 
   const int D = between_objective_all.rows();
@@ -237,9 +237,9 @@ Eigen::VectorXd ShapeEvaluation::ComputeFullGeneralization(const ParticleSystem 
 }
 
 //---------------------------------------------------------------------------
-Eigen::MatrixXd ShapeEvaluation::ComputeFullGeneralizationWithinSubspace(const ParticleSystem &particleSystem, const std::vector<int> &num_particles_ar, std::function<void(float)> progress_callback)
+Eigen::MatrixXd ShapeEvaluation::ComputeFullGeneralizationWithinSubspace(const Eigen::MatrixXd &particleSystem, const std::vector<int> &num_particles_ar, std::function<void(float)> progress_callback)
 {
-  const int N = particleSystem.N();
+  const int N = particleSystem.cols();
 
   if (N <= 1) {
     return Eigen::VectorXd();
@@ -251,7 +251,7 @@ Eigen::MatrixXd ShapeEvaluation::ComputeFullGeneralizationWithinSubspace(const P
   std::vector<Eigen::MatrixXd> within_objectives;
   Eigen::MatrixXd between_objective_all;
   std::cout << "Before  - DoMultiLevelModeling in Generalization Between" << std::endl;
-  ShapeEvaluation::DoMultiLevelModeling(particleSystem.Particles(), num_particles_ar, within_objectives, between_objective_all);
+  ShapeEvaluation::DoMultiLevelModeling(particleSystem, num_particles_ar, within_objectives, between_objective_all);
   
   
   Eigen::MatrixXd within_gen_all;
@@ -299,9 +299,9 @@ Eigen::MatrixXd ShapeEvaluation::ComputeFullGeneralizationWithinSubspace(const P
 }
 
 //---------------------------------------------------------------------------
-Eigen::VectorXd ShapeEvaluation::ComputeFullGeneralizationBetweenSubspace(const ParticleSystem &particleSystem, const std::vector<int> &num_particles_ar, std::function<void(float)> progress_callback)
+Eigen::VectorXd ShapeEvaluation::ComputeFullGeneralizationBetweenSubspace(const Eigen::MatrixXd &particleSystem, const std::vector<int> &num_particles_ar, std::function<void(float)> progress_callback)
 {
-  const int N = particleSystem.N();
+  const int N = particleSystem.cols();
 
   if (N <= 1) {
     return Eigen::VectorXd();
@@ -313,7 +313,7 @@ Eigen::VectorXd ShapeEvaluation::ComputeFullGeneralizationBetweenSubspace(const 
   std::vector<Eigen::MatrixXd> within_objectives;
   Eigen::MatrixXd between_objective_all;
   std::cout << "Before  - DoMultiLevelModeling in Generalization Between" << std::endl;
-  ShapeEvaluation::DoMultiLevelModeling(particleSystem.Particles(), num_particles_ar, within_objectives, between_objective_all);
+  ShapeEvaluation::DoMultiLevelModeling(particleSystem, num_particles_ar, within_objectives, between_objective_all);
 
   unsigned int D = between_objective_all.rows();
   Eigen::MatrixXd P = between_objective_all;
@@ -503,9 +503,9 @@ Eigen::VectorXd ShapeEvaluation::ComputeFullSpecificity(const ParticleSystem &pa
 }
 
 //---------------------------------------------------------------------------
-Eigen::MatrixXd ShapeEvaluation::ComputeFullSpecificityWithinSubspace(const ParticleSystem &particleSystem, const std::vector<int> &num_particles_ar, std::function<void(float)> progress_callback)
+Eigen::MatrixXd ShapeEvaluation::ComputeFullSpecificityWithinSubspace(const Eigen::MatrixXd &particleSystem, const std::vector<int> &num_particles_ar, std::function<void(float)> progress_callback)
 {
-  const int N = particleSystem.N();
+  const int N = particleSystem.cols();
 
   if (N <= 1) {
     return Eigen::VectorXd();
@@ -517,7 +517,7 @@ Eigen::MatrixXd ShapeEvaluation::ComputeFullSpecificityWithinSubspace(const Part
   std::vector<Eigen::MatrixXd> within_objectives;
   Eigen::MatrixXd between_objective_all;
   std::cout << "Before  - DoMultiLevelModeling in Generalization Between" << std::endl;
-  ShapeEvaluation::DoMultiLevelModeling(particleSystem.Particles(), num_particles_ar, within_objectives, between_objective_all);
+  ShapeEvaluation::DoMultiLevelModeling(particleSystem, num_particles_ar, within_objectives, between_objective_all);
   
   
   Eigen::MatrixXd within_spec_all;
@@ -588,9 +588,9 @@ Eigen::MatrixXd ShapeEvaluation::ComputeFullSpecificityWithinSubspace(const Part
 
 
 //---------------------------------------------------------------------------
-Eigen::VectorXd ShapeEvaluation::ComputeFullSpecificityBetweenSubspace(const ParticleSystem &particleSystem, const std::vector<int> &num_particles_ar, std::function<void(float)> progress_callback)
+Eigen::VectorXd ShapeEvaluation::ComputeFullSpecificityBetweenSubspace(const Eigen::MatrixXd &particleSystem, const std::vector<int> &num_particles_ar, std::function<void(float)> progress_callback)
 {
-  const int N = particleSystem.N();
+  const int N = particleSystem.cols();
 
   if (N <= 1) {
     return Eigen::VectorXd();
@@ -601,7 +601,7 @@ Eigen::VectorXd ShapeEvaluation::ComputeFullSpecificityBetweenSubspace(const Par
   std::vector<Eigen::MatrixXd> within_objectives;
   Eigen::MatrixXd between_objective_all;
   std::cout << "Before  - DoMultiLevelModeling in Generalization Between" << std::endl;
-  ShapeEvaluation::DoMultiLevelModeling(particleSystem.Particles(), num_particles_ar, within_objectives, between_objective_all);
+  ShapeEvaluation::DoMultiLevelModeling(particleSystem, num_particles_ar, within_objectives, between_objective_all);
 
   unsigned int D = between_objective_all.rows();
   Eigen::MatrixXd ptsModels = between_objective_all;

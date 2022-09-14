@@ -1416,14 +1416,41 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def_static("ComputeFullCompactness",
               &ShapeEvaluation::ComputeFullCompactness,
               "particleSystem"_a,"progress_callback"_a=nullptr)
+  
+  .def_static("ComputeFullCompactnessWithinSubspace",
+              &ShapeEvaluation::ComputeFullCompactnessWithinSubspace,
+              "particleSystem"_a,"num_particles_ar"_a,"progress_callback"_a=nullptr)
+
+  .def_static("ComputeFullCompactnessBetweenSubspace",
+              &ShapeEvaluation::ComputeFullCompactnessBetweenSubspace,
+              "particleSystem"_a,"num_particles_ar"_a,"progress_callback"_a=nullptr)
 
   .def_static("ComputeFullGeneralization",
               &ShapeEvaluation::ComputeFullGeneralization,
               "particleSystem"_a,"progress_callback"_a=nullptr)
 
+  
+  .def_static("ComputeFullGeneralizationWithinSubspace",
+              &ShapeEvaluation::ComputeFullGeneralizationWithinSubspace,
+              "particleSystem"_a,"num_particles_ar"_a,"progress_callback"_a=nullptr)
+
+  .def_static("ComputeFullGeneralizationBetweenSubspace",
+              &ShapeEvaluation::ComputeFullGeneralizationBetweenSubspace,
+              "particleSystem"_a,"num_particles_ar"_a,"progress_callback"_a=nullptr)
+
+
   .def_static("ComputeFullSpecificity",
               &ShapeEvaluation::ComputeFullSpecificity,
               "particleSystem"_a,"progress_callback"_a=nullptr)
+
+  .def_static("ComputeFullSpecificityWithinSubspace",
+              &ShapeEvaluation::ComputeFullSpecificityWithinSubspace,
+              "particleSystem"_a,"num_particles_ar"_a,"progress_callback"_a=nullptr)
+
+  .def_static("ComputeFullSpecificityBetweenSubspace",
+              &ShapeEvaluation::ComputeFullSpecificityBetweenSubspace,
+              "particleSystem"_a,"num_particles_ar"_a,"progress_callback"_a=nullptr)
+
   ;
 
   py::class_<ParticleShapeStatistics>(m, "ParticleShapeStatistics")
