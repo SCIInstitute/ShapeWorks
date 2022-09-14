@@ -302,8 +302,11 @@ class Mesh {
   // Flood fill keeping track
   std::vector<bool> filled;
 
+  //debug
+  std::vector<double> dval;
+
   // Recursive flood fill
-  bool fill(size_t i, Eigen::MatrixXd V, Eigen::MatrixXi F, std::vector<size_t> allBoundaryVerts);
+  bool fill(size_t i, Eigen::MatrixXd& V, Eigen::MatrixXi& F, std::vector<size_t>& allBoundaryVerts, double step);
 
 };
 

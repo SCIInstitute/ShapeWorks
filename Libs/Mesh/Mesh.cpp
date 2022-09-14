@@ -1341,6 +1341,7 @@ bool Mesh::prepareFFCFields(std::vector<std::vector<Eigen::Vector3d>> boundaries
     dijkstra->SetInputData(this->poly_data_);
 
     vtkIdType lastId = 0;
+    bool dense = true;
     for (size_t i = 0; i < boundaries[bound].size(); i++) {
       Eigen::Vector3d pt = boundaries[bound][i];
       double ptdob[3] = {pt[0], pt[1], pt[2]};
@@ -1364,6 +1365,15 @@ bool Mesh::prepareFFCFields(std::vector<std::vector<Eigen::Vector3d>> boundaries
         selectionPoints->InsertNextPoint(pathpt[0], pathpt[1], pathpt[2]);
         boundaryVerts.push_back(ptid);
         allBoundaryVerts.push_back(ptid);
+        // Check adjacency to guarantee dense edges
+        bool match = false;
+        for(size_t f = 0; f < this->numFaces(); f++){
+            if((F(f,0) == ptid || F(f,1) == ptid || F(f,2) == ptid) && (F(f,0) == lastId || F(f,1) == lastId || F(f,2) == lastId)) match = true;
+        }
+        if(!match) {
+            dense = false;
+            std::cout << "Density violation in boundary " << bound << ". Found gap between points " << ptid << " and " << lastId << std::endl;
+        }
       }
 
       lastId = ptid;
@@ -1486,9 +1496,10 @@ vtkSmartPointer<vtkDoubleArray> Mesh::computeInOutForFFCs(std::vector<size_t> al
 
   for(size_t i = 0; i < this->numFaces(); i++){
       filled.push_back(0);
+      dval.push_back(0.);
   }
 
-  this->fill(cellId, V, F, allBoundaryVerts);
+  this->fill(cellId, V, F, allBoundaryVerts, 0.);
 
   vtkSmartPointer<vtkDoubleArray> inout = vtkSmartPointer<vtkDoubleArray>::New();
   inout->SetNumberOfComponents(1);
@@ -1500,8 +1511,9 @@ vtkSmartPointer<vtkDoubleArray> Mesh::computeInOutForFFCs(std::vector<size_t> al
   }
 
   for(size_t i = 0; i < filled.size(); i++) {
-      if(filled[i]){
-          auto vertecesi = F.row(i);
+      auto vertecesi = F.row(i);
+      std::cout << filled[i] << " ";
+      if(filled[i] == 1){
           inout->SetValue(vertecesi(0), 1.);
           inout->SetValue(vertecesi(1), 1.);
           inout->SetValue(vertecesi(2), 1.);
@@ -1539,12 +1551,13 @@ vtkSmartPointer<vtkDoubleArray> Mesh::computeInOutForFFCs(std::vector<size_t> al
   return inout;
 }
 
-bool Mesh::fill(size_t i, Eigen::MatrixXd V, Eigen::MatrixXi F, std::vector<size_t> allBoundaryVerts){
+bool Mesh::fill(size_t i, Eigen::MatrixXd& V, Eigen::MatrixXi& F, std::vector<size_t>& allBoundaryVerts, double step){
     // If already checked, return
     if(filled[i]){return 0;}
 
     // Else, set to checked and proceed
     filled[i] = 1;
+    dval[i] = step;
 
     // Find cell neighbors which share edges
     std::vector<size_t> neighbors;
@@ -1568,17 +1581,19 @@ bool Mesh::fill(size_t i, Eigen::MatrixXd V, Eigen::MatrixXi F, std::vector<size
     if(neighbors.size() != 3)
         std::cout << "Set " << neighbors.size() << std::endl;
 
+    // If we haven't hit the boundary recursively fill the rest of the triangles
     for (size_t j = 0; j < neighbors.size(); j++){
-        auto vertexj = F.row(j);
+        auto vertexj = F.row(neighbors[j]);
         size_t boundary_vertices_in_j = 0;
         for (size_t bvert = 0; bvert < allBoundaryVerts.size(); bvert++){
             if(vertexj(0) == allBoundaryVerts[bvert] || vertexj(1) == allBoundaryVerts[bvert] || vertexj(2) == allBoundaryVerts[bvert]){
                 boundary_vertices_in_j++;
             }
         }
-        if(boundary_vertices_in_j != 2){
-            fill(j, V, F, allBoundaryVerts);
+        if(boundary_vertices_in_j < 2){
+            fill(neighbors[j], V, F, allBoundaryVerts, step+1.);
         }
+        //std::cout << "(" << i << " " << boundary_vertices_in_j << " " << neighbors[j] << ") ";
     }
 }
 
