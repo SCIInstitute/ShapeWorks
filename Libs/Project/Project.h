@@ -162,8 +162,6 @@ class Project {
   std::string get_next_landmark_name(int domain_id);
   std::string get_next_landmark_color(int domain_id);
 
-  int num_domains_per_subject_ = 1;
-
   std::vector<std::shared_ptr<Subject>> subjects_;
 
   bool loaded_{false};

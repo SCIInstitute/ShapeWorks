@@ -149,12 +149,6 @@ void Project::update_subjects() {
     return;
   }
 
-  // update the table values as they may have changed
-  for (auto& subject : subjects_) {
-    auto map = ProjectUtils::convert_subject_to_map(this, subject.get());
-    subject->set_table_values(map);
-  }
-
   auto subject = subjects_[0];
   originals_present_ = !subject->get_original_filenames().empty();
   groomed_present_ = !subject->get_groomed_filenames().empty();
@@ -173,6 +167,12 @@ void Project::update_subjects() {
     domain_names_.push_back(std::to_string(domain_names_.size() + 1));
   }
   determine_feature_names();
+
+  // update the table values as they may have changed
+  for (auto& subject : subjects_) {
+    auto map = ProjectUtils::convert_subject_to_map(this, subject.get());
+    subject->set_table_values(map);
+  }
 }
 
 //---------------------------------------------------------------------------

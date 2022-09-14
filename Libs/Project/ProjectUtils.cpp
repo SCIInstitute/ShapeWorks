@@ -279,7 +279,8 @@ static void assign_keys(StringMap& j, std::vector<std::string> prefixes, std::ve
   }
   auto prefix = prefixes[0];
   if (filenames.size() != domains.size()) {
-    throw std::runtime_error(prefix + " filenames and number of domains mismatch");
+    throw std::runtime_error(prefix + " filenames and number of domains mismatch (" +
+                             std::to_string(filenames.size()) + " vs " + std::to_string(domains.size()) + ")");
   }
   for (int i = 0; i < domains.size(); i++) {
     if (prefixes.size() == domains.size()) {
@@ -298,7 +299,8 @@ static void assign_transforms(StringMap& j, std::string prefix, std::vector<std:
     return;
   }
   if (transforms.size() != domains.size() && transforms.size() != domains.size() + 1) {
-    throw std::runtime_error(prefix + " filenames and number of domains mismatch");
+    throw std::runtime_error(prefix + " filenames and number of domains mismatch (" +
+                             std::to_string(transforms.size()) + " vs " + std::to_string(domains.size()) + ")");
   }
   for (int i = 0; i < transforms.size(); i++) {
     std::string key = prefix + "_";

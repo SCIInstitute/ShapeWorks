@@ -286,8 +286,6 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   /// project filename
   QString filename_;
 
-  QString project_path_;
-
   /// collection of shapes
   ShapeList shapes_;
 

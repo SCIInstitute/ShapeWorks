@@ -449,69 +449,6 @@ bool Session::load_xl_project(QString filename) {
 //---------------------------------------------------------------------------
 void Session::set_project_path(QString relative_path) {
   project_->set_project_path(relative_path.toStdString());
-  return;
-
-  SW_LOG("OLD Setting project path to " + relative_path.toStdString());
-
-  QDir old_path = QDir(project_path_);
-  QDir new_path = QDir(relative_path);
-
-  auto subjects = project_->get_subjects();
-  for (auto subject : subjects) {
-    // original
-    auto paths = subject->get_original_filenames();
-    std::vector<std::string> new_paths;
-    for (const auto& path : paths) {
-      auto full_path = old_path.absoluteFilePath(QString::fromStdString(path));
-      new_paths.push_back(new_path.relativeFilePath(full_path).toStdString());
-    }
-    subject->set_original_filenames(new_paths);
-
-    // groomed
-    paths = subject->get_groomed_filenames();
-    new_paths.clear();
-    for (const auto& path : paths) {
-      auto full_path = old_path.absoluteFilePath(QString::fromStdString(path));
-      new_paths.push_back(new_path.relativeFilePath(full_path).toStdString());
-    }
-    subject->set_groomed_filenames(new_paths);
-
-    // local particles
-    paths = subject->get_local_particle_filenames();
-    new_paths.clear();
-    for (const auto& path : paths) {
-      auto full_path = old_path.absoluteFilePath(QString::fromStdString(path));
-      new_paths.push_back(new_path.relativeFilePath(full_path).toStdString());
-    }
-    subject->set_local_particle_filenames(new_paths);
-
-    // world particles
-    paths = subject->get_world_particle_filenames();
-    new_paths.clear();
-    for (const auto& path : paths) {
-      auto full_path = old_path.absoluteFilePath(QString::fromStdString(path));
-      new_paths.push_back(new_path.relativeFilePath(full_path).toStdString());
-    }
-    subject->set_world_particle_filenames(new_paths);
-
-    // features
-    auto features = subject->get_feature_filenames();
-    project::types::StringMap new_features;
-    for (auto const& x : features) {
-      auto full_path = old_path.absoluteFilePath(QString::fromStdString(x.second));
-      new_features[x.first] = new_path.relativeFilePath(full_path).toStdString();
-    }
-    subject->set_feature_filenames(new_features);
-
-    // images?
-
-    // constraints?
-
-    // landmarks?
-  }
-
-  project_path_ = relative_path;
-  chdir(project_path_.toStdString().c_str());
 }
 
 //---------------------------------------------------------------------------
