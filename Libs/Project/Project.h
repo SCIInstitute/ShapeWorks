@@ -44,6 +44,9 @@ class Project {
   //! Save to project file
   bool save(const std::string& filename);
 
+  //! Set the project path
+  void set_project_path(const std::string& path);
+
   //! Return the filename
   std::string get_filename();
 
@@ -166,6 +169,7 @@ class Project {
   bool loaded_{false};
 
   std::string filename_;
+  std::string project_path_;
 
   std::vector<std::string> default_landmark_colors_;
 

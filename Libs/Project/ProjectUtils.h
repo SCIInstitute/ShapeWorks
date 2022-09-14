@@ -59,10 +59,10 @@ class ProjectUtils {
   using StringList = project::types::StringList;
   using StringMap = project::types::StringMap;
 
-  // convert a list of doubles from a spreadsheet to a vtkTransform
+  //! convert a list of doubles from a spreadsheet to a vtkTransform
   static vtkSmartPointer<vtkTransform> convert_transform(std::vector<double> list);
 
-  // convert a vtkTransform to a list of doubles (e.g. for project spreadsheet)
+  //! convert a vtkTransform to a list of doubles (e.g. for project spreadsheet)
   static std::vector<double> convert_transform(vtkSmartPointer<vtkTransform> transform);
 
   //! determine domain names from a subject's keys
