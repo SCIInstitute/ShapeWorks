@@ -20,6 +20,7 @@
 #include <igl/invert_diag.h>
 #include <igl/massmatrix.h>
 #include <igl/principal_curvature.h>
+#include <igl/adjacency_list.h>
 
 // vtk
 #include <vtkAppendPolyData.h>
@@ -1499,7 +1500,9 @@ vtkSmartPointer<vtkDoubleArray> Mesh::computeInOutForFFCs(std::vector<size_t> al
       dval.push_back(0.);
   }
 
-  this->fill(cellId, V, F, allBoundaryVerts, 0.);
+  std::cout << "Filling" << std::endl;
+  this->fill(cellId, F, allBoundaryVerts, 0.);
+  std::cout << "Filling done" << std::endl;
 
   vtkSmartPointer<vtkDoubleArray> inout = vtkSmartPointer<vtkDoubleArray>::New();
   inout->SetNumberOfComponents(1);
@@ -1510,15 +1513,24 @@ vtkSmartPointer<vtkDoubleArray> Mesh::computeInOutForFFCs(std::vector<size_t> al
       inout->SetValue(i, 0.);
   }
 
+  size_t ins = 0;
+  size_t outs = 0;
+
   for(size_t i = 0; i < filled.size(); i++) {
       auto vertecesi = F.row(i);
-      std::cout << filled[i] << " ";
+      //std::cout << filled[i] << " ";
       if(filled[i] == 1){
+          ins++;
           inout->SetValue(vertecesi(0), 1.);
           inout->SetValue(vertecesi(1), 1.);
           inout->SetValue(vertecesi(2), 1.);
       }
+      else{
+          outs++;
+      }
   }
+
+  std::cout << "ins/outs " << ins << " " << outs << std::endl;
 
 //  for (vtkIdType i = 0; i < this->poly_data_->GetNumberOfPoints(); i++) {
 //    this->poly_data_->GetPoint(i, fullp);
@@ -1551,7 +1563,8 @@ vtkSmartPointer<vtkDoubleArray> Mesh::computeInOutForFFCs(std::vector<size_t> al
   return inout;
 }
 
-bool Mesh::fill(size_t i, Eigen::MatrixXd& V, Eigen::MatrixXi& F, std::vector<size_t>& allBoundaryVerts, double step){
+// Flood fills mesh so that it stops at boundary constraints. Auxiliary recursive function for FFC implementation
+bool Mesh::fill(size_t i, const Eigen::MatrixXi& F, const std::vector<size_t>& allBoundaryVerts, double step){
     // If already checked, return
     if(filled[i]){return 0;}
 
@@ -1560,26 +1573,37 @@ bool Mesh::fill(size_t i, Eigen::MatrixXd& V, Eigen::MatrixXi& F, std::vector<si
     dval[i] = step;
 
     // Find cell neighbors which share edges
-    std::vector<size_t> neighbors;
+    std::set<vtkIdType> neighborsSet;
 
-    for(size_t j = 0; j < this->numFaces(); j++){
-        size_t same_count = 0;
+    vtkNew<vtkTriangleFilter> triangleFilter;
+    triangleFilter->SetInputData(poly_data_);
+    triangleFilter->Update();
 
-        if(F(i,0) == F(j,0)) same_count++;
-        if(F(i,1) == F(j,0)) same_count++;
-        if(F(i,2) == F(j,0)) same_count++;
-        if(F(i,0) == F(j,1)) same_count++;
-        if(F(i,1) == F(j,1)) same_count++;
-        if(F(i,2) == F(j,1)) same_count++;
-        if(F(i,0) == F(j,2)) same_count++;
-        if(F(i,1) == F(j,2)) same_count++;
-        if(F(i,2) == F(j,2)) same_count++;
+    // Find all cells connected to point 0
+    vtkIdType cellId = 0;
 
-        if(same_count == 2) neighbors.push_back(j);
-    }
+    vtkNew<vtkIdList> cellPointIds;
+    triangleFilter->GetOutput()->GetCellPoints(i, cellPointIds);
+    for (vtkIdType i = 0; i < cellPointIds->GetNumberOfIds(); i++)
+     {
+       vtkNew<vtkIdList> idList;
+       idList->InsertNextId(cellPointIds->GetId(i));
+       idList->InsertNextId(cellPointIds->GetId((i+1)%cellPointIds->GetNumberOfIds()));
 
-    if(neighbors.size() != 3)
-        std::cout << "Set " << neighbors.size() << std::endl;
+       // get the neighbors of the cell
+       vtkNew<vtkIdList> neighborCellIds;
+
+       triangleFilter->GetOutput()->GetCellNeighbors(cellId, idList,
+                                                     neighborCellIds);
+
+       for (vtkIdType j = 0; j < neighborCellIds->GetNumberOfIds(); j++)
+       {
+         neighborsSet.insert(neighborCellIds->GetId(j));
+       }
+     }
+    std::vector<size_t> neighbors(neighborsSet.begin(), neighborsSet.end());
+
+    //std::cout << neighbors.size() << " ";
 
     // If we haven't hit the boundary recursively fill the rest of the triangles
     for (size_t j = 0; j < neighbors.size(); j++){
@@ -1591,7 +1615,7 @@ bool Mesh::fill(size_t i, Eigen::MatrixXd& V, Eigen::MatrixXi& F, std::vector<si
             }
         }
         if(boundary_vertices_in_j < 2){
-            fill(neighbors[j], V, F, allBoundaryVerts, step+1.);
+            fill(neighbors[j], F, allBoundaryVerts, step+1.);
         }
         //std::cout << "(" << i << " " << boundary_vertices_in_j << " " << neighbors[j] << ") ";
     }

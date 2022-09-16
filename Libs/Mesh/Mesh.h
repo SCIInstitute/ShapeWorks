@@ -306,7 +306,7 @@ class Mesh {
   std::vector<double> dval;
 
   // Recursive flood fill
-  bool fill(size_t i, Eigen::MatrixXd& V, Eigen::MatrixXi& F, std::vector<size_t>& allBoundaryVerts, double step);
+  bool fill(size_t i, const Eigen::MatrixXi& F, const std::vector<size_t>& allBoundaryVerts, double step);
 
 };
 
