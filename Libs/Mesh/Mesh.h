@@ -3,6 +3,8 @@
 #include "ImageUtils.h"
 #include "Shapeworks.h"
 
+#include <vtkTriangleFilter.h>
+
 class vtkCellLocator;
 class vtkKdTreePointLocator;
 
@@ -306,7 +308,7 @@ class Mesh {
   std::vector<double> dval;
 
   // Recursive flood fill
-  bool fill(size_t i, const Eigen::MatrixXi& F, const std::vector<size_t>& allBoundaryVerts, double step);
+  bool fill(size_t i, const Eigen::MatrixXi& F, const std::vector<size_t>& allBoundaryVerts,  const vtkNew<vtkTriangleFilter>& triangleFilter, double step);
 
 };
 

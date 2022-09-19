@@ -1321,6 +1321,8 @@ bool Mesh::prepareFFCFields(std::vector<std::vector<Eigen::Vector3d>> boundaries
     points = getIGLMesh(V, F);
   }
 
+  std::cout << "Vertices dim " << V.rows() << " " << V.cols() << " faces dim " << F.rows() << " " << F.cols() << std::endl;
+
   std::vector<size_t> allBoundaryVerts;
   std::vector< std::vector<size_t> > perVertBoundaryVerts;
 
@@ -1500,8 +1502,12 @@ vtkSmartPointer<vtkDoubleArray> Mesh::computeInOutForFFCs(std::vector<size_t> al
       dval.push_back(0.);
   }
 
+  vtkNew<vtkTriangleFilter> triangleFilter;
+  triangleFilter->SetInputData(poly_data_);
+  triangleFilter->Update();
+
   std::cout << "Filling" << std::endl;
-  this->fill(cellId, F, allBoundaryVerts, 0.);
+  this->fill(cellId, F, allBoundaryVerts, triangleFilter, 0.);
   std::cout << "Filling done" << std::endl;
 
   vtkSmartPointer<vtkDoubleArray> inout = vtkSmartPointer<vtkDoubleArray>::New();
@@ -1564,7 +1570,7 @@ vtkSmartPointer<vtkDoubleArray> Mesh::computeInOutForFFCs(std::vector<size_t> al
 }
 
 // Flood fills mesh so that it stops at boundary constraints. Auxiliary recursive function for FFC implementation
-bool Mesh::fill(size_t i, const Eigen::MatrixXi& F, const std::vector<size_t>& allBoundaryVerts, double step){
+bool Mesh::fill(size_t i, const Eigen::MatrixXi& F, const std::vector<size_t>& allBoundaryVerts, const vtkNew<vtkTriangleFilter>& triangleFilter, double step){
     // If already checked, return
     if(filled[i]){return 0;}
 
@@ -1574,10 +1580,6 @@ bool Mesh::fill(size_t i, const Eigen::MatrixXi& F, const std::vector<size_t>& a
 
     // Find cell neighbors which share edges
     std::set<vtkIdType> neighborsSet;
-
-    vtkNew<vtkTriangleFilter> triangleFilter;
-    triangleFilter->SetInputData(poly_data_);
-    triangleFilter->Update();
 
     // Find all cells connected to point 0
     vtkIdType cellId = 0;
@@ -1615,7 +1617,7 @@ bool Mesh::fill(size_t i, const Eigen::MatrixXi& F, const std::vector<size_t>& a
             }
         }
         if(boundary_vertices_in_j < 2){
-            fill(neighbors[j], F, allBoundaryVerts, step+1.);
+            fill(neighbors[j], F, allBoundaryVerts, triangleFilter,step+1.);
         }
         //std::cout << "(" << i << " " << boundary_vertices_in_j << " " << neighbors[j] << ") ";
     }
