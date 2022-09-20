@@ -1502,7 +1502,7 @@ vtkSmartPointer<vtkDoubleArray> Mesh::computeInOutForFFCs(std::vector<size_t> al
       dval.push_back(0.);
   }
 
-  vtkNew<vtkTriangleFilter> triangleFilter;
+  vtkSmartPointer<vtkTriangleFilter> triangleFilter = vtkSmartPointer<vtkTriangleFilter>::New();
   triangleFilter->SetInputData(poly_data_);
   triangleFilter->Update();
 
@@ -1570,7 +1570,7 @@ vtkSmartPointer<vtkDoubleArray> Mesh::computeInOutForFFCs(std::vector<size_t> al
 }
 
 // Flood fills mesh so that it stops at boundary constraints. Auxiliary recursive function for FFC implementation
-bool Mesh::fill(size_t i, const Eigen::MatrixXi& F, const std::vector<size_t>& allBoundaryVerts, const vtkNew<vtkTriangleFilter>& triangleFilter, double step){
+bool Mesh::fill(size_t i, const Eigen::MatrixXi& F, const std::vector<size_t>& allBoundaryVerts, vtkSmartPointer<vtkTriangleFilter> triangleFilter, double step){
     // If already checked, return
     if(filled[i]){return 0;}
 
