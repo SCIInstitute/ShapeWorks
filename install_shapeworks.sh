@@ -112,6 +112,12 @@ function install_conda() {
     then return 1; fi
   fi
 
+  if [ -d ".git" ]; then  # don't invoke if not in a git clone directory
+    if ! pip install mkdocs-jupyter==0.21.0;              then return 1; fi # for adding notebooks to our documentation (supports toc and executation before deployment)
+    if ! pip install pyyaml==6.0;                         then return 1; fi # for mkdocs
+    if ! pip install markdown-it-py==2.1.0;               then return 1; fi # for mkdocs
+  fi
+
   if ! pip install notebook==6.1.5;                     then return 1; fi
   if ! pip install trimesh==3.12.6;                     then return 1; fi
   if ! pip install termcolor==1.1.0;                    then return 1; fi
@@ -177,10 +183,6 @@ function install_conda() {
   jupyter nbextension enable toc2/main
 
   if [ -d ".git" ]; then  # don't invoke if not in a git clone directory
-    if ! pip install mkdocs-jupyter==0.21.0;              then return 1; fi # for adding notebooks to our documentation (supports toc and executation before deployment)
-    if ! pip install pyyaml==6.0;                         then return 1; fi # for mkdocs
-    if ! pip install markdown-it-py==2.1.0;               then return 1; fi # for mkdocs
-
     # installing nbstripout to strip out notebooks cell outputs before committing 
     nbstripout --install
     nbstripout --install --attributes .gitattributes
