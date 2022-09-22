@@ -91,7 +91,7 @@ bool OptimizeCommand::execute(const optparse::Values& options, SharedCommandData
     return false;
   }
 
-  bool isProject = StringUtils::hasSuffix(projectFile, "xlsx");
+  bool isProject = StringUtils::hasSuffix(projectFile, "xlsx") || StringUtils::hasSuffix(projectFile, "swproj");
 
   Optimize app;
   if (isProject) {
