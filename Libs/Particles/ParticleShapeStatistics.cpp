@@ -1050,6 +1050,7 @@ Eigen::VectorXd ParticleShapeStatistics::get_compactness(std::function<void(floa
 Eigen::VectorXd ParticleShapeStatistics::get_specificity(std::function<void(float)> progress_callback)
 {
   auto ps = shapeworks::ParticleSystem(this->m_Matrix);
+  std::cout << "PS" << std::endl;
   return shapeworks::ShapeEvaluation::ComputeFullSpecificity(ps, progress_callback);
 }
 
