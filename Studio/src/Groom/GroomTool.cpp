@@ -1,16 +1,14 @@
 #include <Data/Session.h>
-#include <Data/Shape.h>
+#include <Shape.h>
 #include <Data/ShapeWorksWorker.h>
-#include <Data/StudioLog.h>
-#include <Data/StudioMesh.h>
 #include <Groom/GroomTool.h>
 #include <Libs/Groom/GroomParameters.h>
+#include <Logging.h>
 #include <ui_GroomTool.h>
 
 #include <QDebug>
 #include <QMessageBox>
 #include <QThread>
-#include <iostream>
 
 namespace shapeworks {
 
@@ -143,7 +141,7 @@ void GroomTool::on_autopad_checkbox_stateChanged(int state) {
 //---------------------------------------------------------------------------
 void GroomTool::handle_error(QString msg) {
   groom_is_running_ = false;
-  emit error_message(msg);
+  SW_ERROR(msg.toStdString());
   emit progress(100);
   enable_actions();
 }
@@ -166,7 +164,11 @@ void GroomTool::update_page() {
   int domain_id = ui_->domain_box->currentIndex();
 
   auto subjects = session_->get_project()->get_subjects();
-  if (session_->get_project()->get_original_domain_types().size() > domain_id) {
+  int num_domains = session_->get_project()->get_original_domain_types().size();
+  if (domain_id < 0) {
+    domain_id = 0;
+  }
+  if (domain_id < num_domains) {
     bool is_image = session_->get_project()->get_original_domain_types()[domain_id] == DomainType::Image;
     bool is_mesh = session_->get_project()->get_original_domain_types()[domain_id] == DomainType::Mesh;
 
@@ -245,15 +247,23 @@ void GroomTool::update_reflect_columns() {
 void GroomTool::update_reflect_choices() {
   auto project = session_->get_project();
   auto column = ui_->reflect_column->currentText();
-  auto subjects = session_->get_project()->get_subjects();
 
-  auto rows = project->get_string_column(column.toStdString());
+  auto& subjects = project->get_subjects();
+
+  auto contains = [](std::map<std::string, std::string> map, std::string key) -> bool {
+    return map.find(key) != map.end();
+  };
+
+  QStringList list;
+  for (int row = 0; row < subjects.size(); row++) {
+    auto values = subjects[row]->get_table_values();
+    std::string value;
+    if (contains(values, column.toStdString())) {
+      list << QString::fromStdString(values[column.toStdString()]);
+    }
+  }
 
   ui_->reflect_choice->clear();
-  QStringList list;
-  for (int row = 0; row < rows.size(); row++) {
-    list << QString::fromStdString(rows[row]);
-  }
   list.removeDuplicates();
   Q_FOREACH (auto item, list) { ui_->reflect_choice->addItem(item); }
 }
@@ -354,7 +364,7 @@ void GroomTool::set_ui_from_params(GroomParameters params) {
               params.set_spacing({spacing[0], spacing[1], spacing[2]});
             }
           } catch (std::exception& e) {
-            emit error_message(e.what());
+            SW_ERROR(e.what());
           }
         }
       }
@@ -476,7 +486,7 @@ void GroomTool::on_run_groom_button_clicked() {
 
   timer_.start();
 
-  emit message("Please wait: running groom step...");
+  SW_LOG("Please wait: running groom step...");
   emit progress(0);
 
   groom_ = QSharedPointer<QGroom>(new QGroom(session_->get_project()));
@@ -490,8 +500,6 @@ void GroomTool::on_run_groom_button_clicked() {
   connect(thread, SIGNAL(started()), worker, SLOT(process()));
   connect(worker, &ShapeworksWorker::finished, this, &GroomTool::handle_thread_complete);
   connect(groom_.data(), &QGroom::progress, this, &GroomTool::handle_progress);
-  connect(worker, &ShapeworksWorker::error_message, this, &GroomTool::handle_error);
-  connect(worker, &ShapeworksWorker::message, this, &GroomTool::message);
   connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
   thread->start();
 
@@ -503,8 +511,8 @@ void GroomTool::on_run_groom_button_clicked() {
 void GroomTool::handle_thread_complete() {
   emit progress(95);
 
-  QString duration = QString::number(timer_.elapsed() / 1000.0, 'f', 1);
-  emit message("Groom Complete.  Duration: " + duration + " seconds");
+  std::string duration = QString::number(timer_.elapsed() / 1000.0, 'f', 1).toStdString();
+  SW_LOG("Groom Complete.  Duration: " + duration + " seconds");
 
   // trigger reload of meshes
   Q_FOREACH (auto shape, session_->get_shapes()) { shape->reset_groomed_mesh(); }
@@ -546,7 +554,7 @@ void GroomTool::on_skip_button_clicked() {
   groom_->set_skip_grooming(true);
   groom_->run();
 
-  emit message("Skipped Grooming");
+  SW_LOG("Skipped Grooming");
   emit groom_complete();
 }
 

@@ -31,6 +31,11 @@ StatusBarWidget::StatusBarWidget(QMainWindow* parent) : QWidget(parent) {
 //---------------------------------------------------------------------------
 void StatusBarWidget::set_message(MessageType message_type, QString message) {
   message.replace('\n', ' ');
+  // truncate long messages
+  if (message.length() > 100) {
+    message.truncate(100);
+    message = message + "...";
+  }
   if (message_type == MessageType::normal) {
     ui_->log_button->setIcon(normal_message_icon_);
   } else if (message_type == MessageType::warning) {

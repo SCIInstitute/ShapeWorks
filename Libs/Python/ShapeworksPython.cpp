@@ -1292,6 +1292,12 @@ PYBIND11_MODULE(shapeworks_py, m)
       },
       "Return the map of landmarks to vertices.")
 
+  .def("getGoodParticlesIndices",
+      [](MeshWarper &w) -> decltype(auto) {
+        return w.get_good_particle_indices();
+      },
+      "Return the indexes of good particles.")
+
   .def("buildMesh",
       [](MeshWarper &w, const Eigen::MatrixXd &particles) -> decltype(auto) {
           return Mesh(w.build_mesh(particles));
@@ -1778,7 +1784,7 @@ PYBIND11_MODULE(shapeworks_py, m)
       "name"_a)
 
   .def("store_subjects",
-      &Project::store_subjects)
+      &Project::update_subjects)
 
   .def("get_supported_version",
       &Project::get_supported_version)
@@ -1865,15 +1871,6 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def("get_number_of_domains",
       &Subject::get_number_of_domains,
       "Get the number of domains")
-
-  .def("set_image_filenames",
-      &Subject::set_image_filenames,
-      "Set image filenames",
-      "filenames"_a)
-
-  .def("get_image_filenames",
-      &Subject::get_image_filenames,
-      "Get image filenames")
 
   .def("get_feature_filenames",
       &Subject::get_feature_filenames,

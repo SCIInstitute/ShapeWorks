@@ -40,13 +40,12 @@
 
 
 // tbb
-#include <tbb/mutex.h>
 #include <tbb/parallel_for.h>
 
 namespace shapeworks {
 
 // locking to handle non-thread-safe code
-static tbb::mutex mesh_mutex;
+static std::mutex mesh_mutex;
 
 const vtkSmartPointer<vtkMatrix4x4> MeshUtils::createICPTransform(const Mesh source,
                                                                   const Mesh target,
@@ -92,14 +91,14 @@ const vtkSmartPointer<vtkMatrix4x4> MeshUtils::createICPTransform(const Mesh sou
 
 Mesh MeshUtils::threadSafeReadMesh(std::string filename)
 {
-  tbb::mutex::scoped_lock lock(mesh_mutex);
+  std::scoped_lock lock(mesh_mutex);
   Mesh mesh(filename);
   return mesh;
 }
 
 void MeshUtils::threadSafeWriteMesh(std::string filename, Mesh mesh)
 {
-  tbb::mutex::scoped_lock lock(mesh_mutex);
+  std::scoped_lock lock(mesh_mutex);
   mesh.write(filename);
 }
 
@@ -146,7 +145,7 @@ size_t MeshUtils::findReferenceMesh(std::vector<Mesh>& meshes)
   // map of pair to distance value
   std::map<size_t, double> results;
   // mutex for access to results
-  tbb::mutex mutex;
+  std::mutex mutex;
 
   tbb::parallel_for(
     tbb::blocked_range<size_t>{0, pairs.size()},
@@ -174,7 +173,7 @@ size_t MeshUtils::findReferenceMesh(std::vector<Mesh>& meshes)
         double distance = mean(distances);
         {
           // lock and store results
-          tbb::mutex::scoped_lock lock(mutex);
+          std::scoped_lock lock(mutex);
           results[i] = distance;
         }
       }

@@ -13,15 +13,19 @@ namespace shapeworks {
  * Used to store parameters for various tools
  */
 class Parameters {
-
-public:
-
+ public:
   static constexpr const char* ANALYSIS_PARAMS = "analysis";
   static constexpr const char* GROOM_PARAMS = "groom";
   static constexpr const char* OPTIMIZE_PARAMS = "optimize";
   static constexpr const char* STUDIO_PARAMS = "studio";
   static constexpr const char* PROJECT_PARAMS = "project";
   static constexpr const char* DEEPSSM_PARAMS = "deepssm";
+
+  //! default constructor
+  Parameters();
+
+  //! construct from map
+  explicit Parameters(std::map<std::string, std::string> map);
 
   //! get a parameter based on a key, return default if it doesn't exist
   Variant get(std::string key, Variant default_value);
@@ -44,8 +48,7 @@ public:
   //! reset parameters to blank
   void reset_parameters();
 
-private:
-
+ private:
   std::map<std::string, std::string> map_;
 };
-}
+}  // namespace shapeworks

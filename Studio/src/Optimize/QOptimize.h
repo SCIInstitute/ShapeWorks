@@ -1,7 +1,7 @@
 #pragma once
 
 #ifndef Q_MOC_RUN
-#include <Data/StudioParticles.h>
+#include <Libs/Analyze/Particles.h>
 #include <Libs/Optimize/Optimize.h>
 #endif
 #include <QObject>
@@ -21,7 +21,7 @@ public:
   std::vector<std::vector<itk::Point<double>>> GetLocalPoints() override;
   std::vector<std::vector<itk::Point<double>>> GetGlobalPoints() override;
 
-  std::vector<StudioParticles> GetParticles();
+  std::vector<Particles> GetParticles();
 
   std::vector<std::vector<std::vector<double>>> GetProcrustesTransforms() override;
 

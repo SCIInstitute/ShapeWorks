@@ -73,30 +73,14 @@ QT5_ADD_RESOURCES(STUDIO_RSCS ${UI_RESOURCES_RCC})
 
 
 SET(STUDIO_DATA_SRCS
-  Data/CustomSurfaceReconstructionFilter.cpp
   Data/LandmarkItemDelegate.cpp
   Data/LandmarkTableModel.cpp
   Data/DataTool.cpp
   Data/ExportUtils.cpp
-  Data/LegacyMeshGenerator.cpp
-  Data/MeshCache.cpp
-  Data/MeshGenerator.cpp
-  Data/MeshGroup.cpp
-  Data/MeshManager.cpp
   Data/MeshSettings.cpp
-  Data/MeshWorkQueue.cpp
-  Data/MeshWorker.cpp
-  Data/QMeshWarper.cpp
   Data/Preferences.cpp
   Data/PreferencesWindow.cpp
   Data/Session.cpp
-  Data/Shape.cpp
-  Data/StudioEnums.cpp
-  Data/StudioLog.cpp
-  Data/StudioMesh.cpp
-  Data/StudioParticles.cpp
-  Data/SurfaceReconstructor.cpp
-  Data/vtkPolyDataToImageData.cpp
   Data/ShapeWorksWorker.cpp
   Data/Worker.cpp
   )
@@ -105,15 +89,11 @@ SET(STUDIO_DATA_MOC_HDRS
   Data/LandmarkItemDelegate.h
   Data/LandmarkTableModel.h
   Data/DataTool.h
-  Data/MeshManager.h
-  Data/QMeshWarper.h
-  Data/MeshWorker.h
   Data/Preferences.h
   Data/PreferencesWindow.h
   Data/Session.h
   Data/ShapeWorksWorker.h
   Data/Worker.h
-  Data/StudioLog.h
   )
 
 SET(STUDIO_JOB_SRCS
@@ -194,6 +174,7 @@ SET(STUDIO_INTERFACE_SRCS
   Interface/ShapeWorksStudioApp.cpp
   Interface/SplashScreen.cpp
   Interface/StatusBarWidget.cpp
+  Interface/StudioLogger.cpp
   Interface/Style.cpp
   Interface/WheelEventForwarder.cpp
   )
@@ -205,6 +186,7 @@ SET(STUDIO_INTERFACE_MOC_HDRS
   Interface/ShapeWorksStudioApp.h
   Interface/SplashScreen.h
   Interface/StatusBarWidget.h
+  Interface/StudioLogger.h
   Interface/WheelEventForwarder.h
   )
 
@@ -315,7 +297,7 @@ if(WIN32)
   add_custom_command(TARGET ShapeWorksStudio
     POST_BUILD
     # copy Qt libs
-    COMMAND ${WINDEPLOYQT} ARGS --verbose 5 -core -widgets -gui -sql -xml -printsupport
+    COMMAND ${WINDEPLOYQT} ARGS --verbose 5 -core -widgets -gui -sql -xml -printsupport --no-translations
                                 --libdir $<TARGET_FILE_DIR:ShapeWorksStudio>
                                 $<TARGET_FILE_DIR:ShapeWorksStudio>/ShapeWorksStudio.exe
   )

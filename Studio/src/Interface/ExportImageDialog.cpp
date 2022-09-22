@@ -11,7 +11,7 @@
 // studio
 #include <Analysis/AnalysisTool.h>
 #include <Applications/Configuration.h>
-#include <Data/StudioLog.h>
+#include <Logging.h>
 #include <Visualization/ColorSchemes.h>
 #include <Visualization/Visualizer.h>
 
@@ -94,12 +94,12 @@ void ExportImageDialog::export_clicked() {
     }
     prefs_.set_last_directory(QFileInfo(filename).absolutePath());
     if (pixmap_.save(filename)) {
-      STUDIO_SHOW_MESSAGE("Saved: " + filename);
+      SW_LOG("Saved: " + filename.toStdString());
     } else {
-      STUDIO_SHOW_ERROR("Error saving: " + filename);
+      SW_ERROR("Error saving: " + filename.toStdString());
     }
   } catch (std::exception& e) {
-    STUDIO_LOG_ERROR("Error saving: " + filename + " : " + e.what());
+    SW_ERROR("Error saving: " + filename.toStdString() + " : " + e.what());
   }
 
   accept();

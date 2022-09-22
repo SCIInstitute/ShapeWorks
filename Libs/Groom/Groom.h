@@ -3,8 +3,6 @@
 #include <GroomParameters.h>
 #include <Libs/Image/Image.h>
 #include <Libs/Project/Project.h>
-#include <tbb/atomic.h>
-#include <tbb/mutex.h>
 
 namespace shapeworks {
 
@@ -19,7 +17,7 @@ class Groom {
   Groom(ProjectHandle project);
 
   //! Run the grooming
-  virtual bool run();
+  bool run();
 
   //! Set if grooming steps should be skipped
   void set_skip_grooming(bool skip);
@@ -41,9 +39,9 @@ class Groom {
   //! call to be overridden by subclasses
   virtual void update_progress(){};
 
-  tbb::atomic<float> progress_ = 0;
-  tbb::atomic<int> total_ops_ = 0;
-  tbb::atomic<int> progress_counter_ = 0;
+  std::atomic<float> progress_ = 0;
+  std::atomic<int> total_ops_ = 0;
+  std::atomic<int> progress_counter_ = 0;
 
  private:
   //! Return the number of operations that will be performed
@@ -100,6 +98,6 @@ class Groom {
 
   bool abort_ = false;
 
-  tbb::mutex mutex_;
+  std::mutex mutex_;
 };
 }  // namespace shapeworks

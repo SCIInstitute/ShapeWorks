@@ -1,5 +1,7 @@
 #include "Testing.h"
 
+using namespace shapeworks;
+
 //---------------------------------------------------------------------------
 void run_test(const std::string& name) {
   setupenv(std::string(TEST_DATA_DIR) + "/../shapeworksTests");
@@ -7,6 +9,15 @@ void run_test(const std::string& name) {
   std::string command = "bash " + name;
   ASSERT_FALSE(system(command.c_str()));
 }
+//---------------------------------------------------------------------------
+
+void run_sandboxed_test(const std::string& name) {
+  TestUtils::Instance().prep_temp(std::string(TEST_DATA_DIR) + "/shapeworksTests/" + name, name);
+  std::string command = "bash " + name + ".sh";
+  ASSERT_FALSE(system(command.c_str()));
+}
+
+//---------------------------------------------------------------------------
 
 TEST(shapeworksTests, meshwriteTest) { run_test("meshwrite.sh"); }
 
@@ -139,3 +150,5 @@ TEST(shapeworksTests, computenormalsTest) { run_test("computenormals.sh"); }
 TEST(shapeworksTests, shapeevaluationTest) { run_test("shapeevaluation.sh"); }
 
 TEST(shapeworksTests, isolateTest) { run_test("isolate.sh"); }
+
+TEST(shapeworksTests, analyzeTest) { run_sandboxed_test("analyze"); }

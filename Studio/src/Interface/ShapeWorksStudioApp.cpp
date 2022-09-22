@@ -18,9 +18,10 @@
 
 // shapeworks
 #include <Applications/Configuration.h>
-#include <Data/SurfaceReconstructor.h>
 #include <Libs/Mesh/Mesh.h>
 #include <Libs/Utils/StringUtils.h>
+#include <Logging.h>
+#include <SurfaceReconstructor.h>
 
 // studio
 #include <Analysis/AnalysisTool.h>
@@ -28,8 +29,6 @@
 #include <Data/ExportUtils.h>
 #include <Data/Preferences.h>
 #include <Data/Session.h>
-#include <Data/Shape.h>
-#include <Data/StudioLog.h>
 #include <DeepSSM/DeepSSMTool.h>
 #include <Groom/GroomTool.h>
 #include <Interface/CompareWidget.h>
@@ -41,6 +40,7 @@
 #include <Interface/WheelEventForwarder.h>
 #include <Optimize/OptimizeTool.h>
 #include <Python/PythonWorker.h>
+#include <Shape.h>
 #include <Utils/StudioUtils.h>
 #include <Visualization/Lightbox.h>
 #include <Visualization/Visualizer.h>
@@ -68,10 +68,11 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
   studio_vtk_output_window_ = vtkSmartPointer<StudioVtkOutputWindow>::New();
   vtkOutputWindow::SetInstance(studio_vtk_output_window_);
 
-  connect(studio_vtk_output_window_.Get(), &StudioVtkOutputWindow::warning, this, &ShapeWorksStudioApp::handle_message);
-  connect(studio_vtk_output_window_.Get(), &StudioVtkOutputWindow::error, this, &ShapeWorksStudioApp::handle_error);
-  connect(&(StudioLog::Instance()), &StudioLog::error_signal, this, &ShapeWorksStudioApp::handle_error);
-  connect(&(StudioLog::Instance()), &StudioLog::message_signal, this, &ShapeWorksStudioApp::handle_message);
+  logger_.register_callbacks();
+  connect(&logger_, &StudioLogger::message, this, &ShapeWorksStudioApp::handle_message);
+  connect(&logger_, &StudioLogger::error, this, &ShapeWorksStudioApp::handle_error);
+  connect(&logger_, &StudioLogger::warning, this, &ShapeWorksStudioApp::handle_warning);
+  connect(&logger_, &StudioLogger::debug, this, &ShapeWorksStudioApp::handle_debug);
 
   // default hide
   ui_->feature_widget->hide();
@@ -92,7 +93,6 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
 
   py_worker_ = QSharedPointer<PythonWorker>::create();
   py_worker_->set_vtk_output_window(studio_vtk_output_window_);
-  connect(py_worker_.data(), &PythonWorker::error_message, this, &ShapeWorksStudioApp::handle_error);
 
 #if defined(Q_OS_LINUX)
   ui_->action_show_project_folder->setVisible(false);
@@ -116,17 +116,10 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
   connect(analysis_tool_.data(), &AnalysisTool::progress, this, &ShapeWorksStudioApp::handle_progress);
   connect(analysis_tool_.data(), SIGNAL(reconstruction_complete()), this, SLOT(handle_reconstruction_complete()));
 
-  connect(analysis_tool_.data(), &AnalysisTool::message, this, &ShapeWorksStudioApp::handle_message);
-  connect(analysis_tool_.data(), &AnalysisTool::warning, this, &ShapeWorksStudioApp::handle_warning);
-  connect(analysis_tool_.data(), &AnalysisTool::error, this, &ShapeWorksStudioApp::handle_error);
-
   // DeepSSM tool init
   deepssm_tool_ = QSharedPointer<DeepSSMTool>::create(preferences_);
   deepssm_tool_->set_app(this);
   ui_->stacked_widget->addWidget(deepssm_tool_.data());
-  connect(deepssm_tool_.data(), &DeepSSMTool::message, this, &ShapeWorksStudioApp::handle_message);
-  connect(deepssm_tool_.data(), &DeepSSMTool::warning, this, &ShapeWorksStudioApp::handle_warning);
-  connect(deepssm_tool_.data(), &DeepSSMTool::error, this, &ShapeWorksStudioApp::handle_error);
   connect(deepssm_tool_.data(), &DeepSSMTool::progress, this, &ShapeWorksStudioApp::handle_progress);
   connect(deepssm_tool_.data(), &DeepSSMTool::update_view, this, &ShapeWorksStudioApp::handle_display_setting_changed);
 
@@ -165,8 +158,6 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
   ui_->stacked_widget->addWidget(groom_tool_.data());
   connect(groom_tool_.data(), &GroomTool::groom_start, this, &ShapeWorksStudioApp::handle_groom_start);
   connect(groom_tool_.data(), &GroomTool::groom_complete, this, &ShapeWorksStudioApp::handle_groom_complete);
-  connect(groom_tool_.data(), &GroomTool::error_message, this, &ShapeWorksStudioApp::handle_error);
-  connect(groom_tool_.data(), &GroomTool::message, this, &ShapeWorksStudioApp::handle_message);
   connect(groom_tool_.data(), &GroomTool::progress, this, &ShapeWorksStudioApp::handle_progress);
 
   // optimize tool initialization
@@ -177,9 +168,6 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
 
   connect(optimize_tool_.data(), &OptimizeTool::optimize_start, this, &ShapeWorksStudioApp::handle_optimize_start);
 
-  connect(optimize_tool_.data(), &OptimizeTool::error_message, this, &ShapeWorksStudioApp::handle_error);
-  connect(optimize_tool_.data(), &OptimizeTool::warning_message, this, &ShapeWorksStudioApp::handle_warning);
-  connect(optimize_tool_.data(), &OptimizeTool::message, this, &ShapeWorksStudioApp::handle_message);
   connect(optimize_tool_.data(), &OptimizeTool::status, this, &ShapeWorksStudioApp::handle_status);
   connect(optimize_tool_.data(), &OptimizeTool::progress, this, &ShapeWorksStudioApp::handle_progress);
 
@@ -207,10 +195,10 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
   update_display();
   update_view_combo();
 
-  connect(ui_->features, qOverload<const QString&>(&QComboBox::currentIndexChanged), this,
+  connect(ui_->features, qOverload<int>(&QComboBox::currentIndexChanged), this,
           &ShapeWorksStudioApp::update_feature_map_selection);
 
-  connect(ui_->image_combo_, qOverload<const QString&>(&QComboBox::currentIndexChanged), this,
+  connect(ui_->image_combo_, qOverload<int>(&QComboBox::currentIndexChanged), this,
           &ShapeWorksStudioApp::image_combo_changed);
 
   connect(ui_->feature_uniform_scale, &QCheckBox::toggled, this, &ShapeWorksStudioApp::set_feature_uniform_scale);
@@ -238,14 +226,14 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
           &ShapeWorksStudioApp::action_export_all_subjects_particle_scalars_triggered);
 
   update_feature_map_scale();
-  handle_message("ShapeWorks Studio Initialized");
+  SW_LOG("ShapeWorks Studio Initialized");
 }
 
 //---------------------------------------------------------------------------
 ShapeWorksStudioApp::~ShapeWorksStudioApp() {}
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::initialize_vtk() { lightbox_->set_render_window(ui_->qvtkWidget->GetRenderWindow()); }
+void ShapeWorksStudioApp::initialize_vtk() { lightbox_->set_render_window(ui_->qvtkWidget->renderWindow()); }
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_new_project_triggered() {
@@ -277,8 +265,9 @@ void ShapeWorksStudioApp::on_actionShow_Tool_Window_triggered() {
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_open_project_triggered() {
-  QString filename = QFileDialog::getOpenFileName(this, tr("Open Project..."), preferences_.get_last_directory(),
-                                                  tr("XLSX files (*.xlsx)"));
+  auto type = tr("ShapeWorks Project (*.swproj);;XLSX files (*.xlsx)");
+
+  QString filename = QFileDialog::getOpenFileName(this, tr("Open Project..."), preferences_.get_last_directory(), type);
   if (filename.isEmpty()) {
     return;
   }
@@ -295,7 +284,7 @@ void ShapeWorksStudioApp::on_action_show_project_folder_triggered() {
   }
 
   QProcess process;
-  process.setReadChannelMode(QProcess::MergedChannels);
+  process.setProcessChannelMode(QProcess::MergedChannels);
 
 #ifdef _WIN32
   auto qstring_path = QFileInfo(filename).absoluteDir().absolutePath();
@@ -307,7 +296,7 @@ void ShapeWorksStudioApp::on_action_show_project_folder_triggered() {
 
   if (!process.waitForFinished()) {
     QString error = QString("Could not open project: ") + process.errorString() + ".";
-    STUDIO_LOG_ERROR(error);
+    SW_ERROR(error.toStdString());
   }
 }
 
@@ -323,7 +312,12 @@ bool ShapeWorksStudioApp::on_action_save_project_triggered() {
 
 //---------------------------------------------------------------------------
 bool ShapeWorksStudioApp::on_action_save_project_as_triggered() {
-  QString filename = ExportUtils::get_save_filename(this, tr("Save Project As..."), tr("XLSX files (*.xlsx)"), ".xlsx");
+  auto type = tr("ShapeWorks Project (*.swproj);;XLSX files (*.xlsx)");
+
+  QString filename = ExportUtils::get_save_filename(this, tr("Save Project As..."), type, ".swproj");
+  // QString filename = ExportUtils::get_save_filename(this, tr("Save Project As..."), tr("XLSX files (*.xlsx)"),
+  // ".xlsx");
+
   if (filename.isEmpty()) {
     return false;
   }
@@ -383,7 +377,7 @@ void ShapeWorksStudioApp::import_files(QStringList file_names) {
 
     session_->load_original_files(list);
 
-    session_->get_project()->store_subjects();
+    session_->get_project()->update_subjects();
 
     update_table();
     enable_possible_actions();
@@ -424,7 +418,7 @@ void ShapeWorksStudioApp::on_zoom_slider_valueChanged() {
 
   update_scrollbar();
 
-  ui_->qvtkWidget->GetRenderWindow()->Render();
+  ui_->qvtkWidget->renderWindow()->Render();
 }
 
 //---------------------------------------------------------------------------
@@ -465,7 +459,8 @@ void ShapeWorksStudioApp::enable_possible_actions() {
   bool original_present = session_->get_project()->get_originals_present();
 
   auto filename = session_->get_filename();
-  bool save_enabled = filename == "" || filename.endsWith(".xlsx");
+  bool save_enabled = filename == "" || filename.endsWith(".xlsx", Qt::CaseInsensitive) ||
+                      filename.endsWith(".swproj", Qt::CaseInsensitive);
   ui_->action_save_project->setEnabled(save_enabled);
   // ui_->action_save_project_as->setEnabled(original_present);
   ui_->action_save_project_as->setEnabled(true);
@@ -626,28 +621,26 @@ void ShapeWorksStudioApp::handle_pca_update() {
 }
 
 //---------------------------------------------------------------------------
+
 void ShapeWorksStudioApp::handle_mca_update()
 {
   if (analysis_tool_->get_active() && analysis_tool_->get_analysis_mode() == AnalysisTool::MODE_MCA_C) {
     compute_mca_mode_shape();
   }
 }
+void ShapeWorksStudioApp::clear_message() { current_message_ = ""; }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::clear_message()
-{
-  current_message_ = "";
-}
+void ShapeWorksStudioApp::handle_message(std::string str) {
+  assert(QThread::currentThread() == QCoreApplication::instance()->thread());
 
-//---------------------------------------------------------------------------
-void ShapeWorksStudioApp::handle_message(QString str) {
-  if (str != current_message_) {
-    STUDIO_LOG_MESSAGE(str);
-    set_message(MessageType::normal, str);
+  QString qstr = QString::fromStdString(str);
+  if (qstr != current_message_) {
+    set_message(MessageType::normal, qstr);
   } else {
-    status_bar_->set_message(MessageType::normal, str);
+    status_bar_->set_message(MessageType::normal, qstr);
   }
-  current_message_ = str;
+  current_message_ = qstr;
 }
 
 //---------------------------------------------------------------------------
@@ -657,25 +650,39 @@ void ShapeWorksStudioApp::handle_status(QString str) {
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::handle_error(QString str) {
-  STUDIO_LOG_ERROR(str);
-  set_message(MessageType::error, str);
-  current_message_ = str;
-  error_message_dialog_.showMessage("Error:\n" + str, "error");
+void ShapeWorksStudioApp::handle_error(std::string str) {
+  auto qstr = QString::fromStdString(str);
+  set_message(MessageType::error, qstr);
+  current_message_ = qstr;
+  error_message_dialog_.showMessage("Error:\n" + qstr, "error");
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::handle_warning(QString str) {
-  STUDIO_LOG_MESSAGE(str);
-  set_message(MessageType::warning, str);
-  current_message_ = str;
-  error_message_dialog_.showMessage("Warning:\n" + str, "warning");
+void ShapeWorksStudioApp::handle_warning(std::string str) {
+  auto qstr = QString::fromStdString(str);
+  set_message(MessageType::warning, qstr);
+  current_message_ = qstr;
+  error_message_dialog_.showMessage("Warning:\n" + qstr, "warning");
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::handle_debug(std::string str) {
+  auto qstr = QString::fromStdString(str);
+  set_message(MessageType::debug, qstr);
+  current_message_ = qstr;
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::message_callback(std::string str) {
+  QMetaObject::invokeMethod(
+      this, [&]() { handle_message(str); }, Qt::QueuedConnection);
+  // QMetaObject::invokeMethod(this,)
 }
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_progress(int value) {
   status_bar_->set_progress(value);
-  handle_message(current_message_);
+  handle_message(current_message_.toStdString());
 }
 
 //---------------------------------------------------------------------------
@@ -834,18 +841,14 @@ void ShapeWorksStudioApp::new_session() {
   session_->set_parent(this);
   setWindowTitle(session_->get_display_name());
 
-  connect(session_->get_mesh_manager().data(), &MeshManager::error_encountered, this,
-          &ShapeWorksStudioApp::handle_error);
-  connect(session_->get_mesh_manager().data(), &MeshManager::progress, this, &ShapeWorksStudioApp::handle_progress);
-  connect(session_->get_mesh_manager().data(), &MeshManager::status, this, &ShapeWorksStudioApp::handle_status);
+  connect(session_->get_mesh_manager().get(), &MeshManager::progress, this, &ShapeWorksStudioApp::handle_progress);
+  connect(session_->get_mesh_manager().get(), &MeshManager::status, this, &ShapeWorksStudioApp::handle_status);
 
   connect(session_.data(), &Session::data_changed, this, &ShapeWorksStudioApp::handle_project_changed);
   connect(session_.data(), &Session::points_changed, this, &ShapeWorksStudioApp::handle_points_changed);
   connect(session_.data(), &Session::update_display, this, &ShapeWorksStudioApp::handle_display_setting_changed);
   connect(session_.data(), &Session::update_view_mode, this, &ShapeWorksStudioApp::update_view_mode);
-  connect(session_.data(), &Session::message, this, &ShapeWorksStudioApp::handle_message);
   connect(session_.data(), &Session::new_mesh, this, &ShapeWorksStudioApp::handle_new_mesh);
-  connect(session_.data(), &Session::error, this, &ShapeWorksStudioApp::handle_error);
 
   connect(ui_->feature_auto_scale, &QCheckBox::toggled, this, &ShapeWorksStudioApp::update_feature_map_scale);
   connect(ui_->feature_auto_scale, &QCheckBox::toggled, session_.data(), &Session::set_feature_auto_scale);
@@ -854,8 +857,8 @@ void ShapeWorksStudioApp::new_session() {
   connect(ui_->feature_max, qOverload<double>(&QDoubleSpinBox::valueChanged), session_.data(),
           &Session::set_feature_range_max);
 
-  connect(ui_->image_axis_, qOverload<const QString&>(&QComboBox::currentIndexChanged), session_.data(),
-          &Session::set_image_axis);
+  connect(ui_->image_axis_, qOverload<int>(&QComboBox::currentIndexChanged), session_.data(),
+          [&](int index) { session_->set_image_axis(ui_->image_axis_->itemText(index)); });
   connect(ui_->image_3d_mode_, &QCheckBox::clicked, session_.data(), &Session::set_image_3d_mode);
   connect(ui_->image_share_window_and_level_, &QCheckBox::clicked, session_.data(),
           &Session::set_image_share_window_and_level);
@@ -1247,7 +1250,6 @@ void ShapeWorksStudioApp::update_display(bool force) {
 
   std::string mode = AnalysisTool::MODE_ALL_SAMPLES_C;
 
-
   int num_domains = session_->get_domains_per_shape();
   ui_->alignment_combo->setVisible(!session_->is_analysis_mode() && num_domains > 1);
 
@@ -1264,7 +1266,6 @@ void ShapeWorksStudioApp::update_display(bool force) {
     block_update_ = false;
     return;
   }
-
 
   update_view_mode();
   update_view_combo();
@@ -1318,8 +1319,9 @@ void ShapeWorksStudioApp::on_view_mode_combobox_currentIndexChanged(QString disp
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::open_project(QString filename) {
+  preferences_.set_last_directory(QFileInfo(filename).absolutePath());
   new_session();
-  handle_message("Loading Project: " + filename);
+  SW_LOG("Loading Project: " + filename.toStdString());
   handle_progress(-1);  // busy
   QApplication::processEvents();
 
@@ -1336,7 +1338,7 @@ void ShapeWorksStudioApp::open_project(QString filename) {
       return;
     }
   } catch (std::exception& e) {
-    handle_error(QString("Project failed to load: ") + e.what());
+    handle_error(std::string("Project failed to load: ") + e.what());
     handle_progress(100);
     return;
   }
@@ -1419,7 +1421,7 @@ void ShapeWorksStudioApp::open_project(QString filename) {
 
   create_iso_submenu();
   handle_progress(100);
-  handle_message("Project loaded: " + filename);
+  SW_LOG("Project loaded: " + filename.toStdString());
 }
 
 //---------------------------------------------------------------------------
@@ -1436,7 +1438,7 @@ void ShapeWorksStudioApp::on_action_export_current_mesh_triggered() {
 
   if (single) {
     write_mesh(visualizer_->get_current_mesh(), filename);
-    handle_message("Wrote: " + filename);
+    handle_message("Wrote: " + filename.toStdString());
   } else {
     auto meshes = visualizer_->get_current_meshes_transformed();
     auto domain_names = session_->get_project()->get_domain_names();
@@ -1454,7 +1456,7 @@ void ShapeWorksStudioApp::on_action_export_current_mesh_triggered() {
       if (!write_mesh(meshes[domain], name)) {
         return;
       }
-      handle_message("Wrote: " + name);
+      handle_message("Wrote: " + name.toStdString());
     }
   }
 }
@@ -1484,7 +1486,7 @@ bool ShapeWorksStudioApp::write_scalars(vtkSmartPointer<vtkPolyData> poly_data, 
   std::ofstream output;
   output.open(filename.toStdString().c_str());
   if (output.bad()) {
-    handle_error("Error writing to file: " + filename);
+    handle_error("Error writing to file: " + filename.toStdString());
     return false;
   }
   output << "point,x,y,z";
@@ -1548,9 +1550,9 @@ void ShapeWorksStudioApp::on_action_export_current_particles_triggered() {
     auto particles = visualizer_->get_current_shape().get_combined_global_particles();
 
     if (!ShapeWorksStudioApp::write_particle_file(filename.toStdString(), particles)) {
-      handle_error("Error writing particle file: " + filename);
+      handle_error("Error writing particle file: " + filename.toStdString());
     }
-    handle_message("Wrote: " + filename);
+    handle_message("Wrote: " + filename.toStdString());
   } else {
     auto domain_names = session_->get_project()->get_domain_names();
 
@@ -1562,10 +1564,10 @@ void ShapeWorksStudioApp::on_action_export_current_particles_triggered() {
       auto shape = visualizer_->get_current_shape();
       auto particles = visualizer_->get_current_shape().get_world_particles(domain);
       if (!ShapeWorksStudioApp::write_particle_file(name.toStdString(), particles)) {
-        handle_error("Error writing particle file: " + name);
+        handle_error("Error writing particle file: " + name.toStdString());
       }
 
-      handle_message("Wrote: " + name);
+      handle_message("Wrote: " + name.toStdString());
     }
   }
 }
@@ -1585,7 +1587,7 @@ void ShapeWorksStudioApp::on_action_export_mesh_scalars_triggered() {
   } else {
     auto meshes = visualizer_->get_current_meshes_transformed();
     if (meshes.empty()) {
-      handle_error("Error exporting mesh: not ready yet");
+      SW_ERROR("Error exporting mesh: not ready yet");
       return;
     }
 
@@ -1601,7 +1603,7 @@ void ShapeWorksStudioApp::on_action_export_mesh_scalars_triggered() {
         return;
       }
 
-      handle_message("Wrote: " + name);
+      handle_message("Wrote: " + name.toStdString());
     }
   }
 }
@@ -1620,7 +1622,7 @@ void ShapeWorksStudioApp::action_export_particle_scalars_triggered() {
     return;
   }
   write_scalars(poly_data, filename);
-  handle_message("Wrote: " + filename);
+  handle_message("Wrote: " + filename.toStdString());
 }
 
 //---------------------------------------------------------------------------
@@ -1643,7 +1645,7 @@ void ShapeWorksStudioApp::on_action_export_pca_scores_triggered() {
   } catch (std::exception& e) {
     handle_error(e.what());
   }
-  handle_message("Saved: " + filename);
+  handle_message("Saved: " + filename.toStdString());
 }
 
 //---------------------------------------------------------------------------
@@ -1660,6 +1662,8 @@ void ShapeWorksStudioApp::action_export_screenshot_triggered() {
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::closeEvent(QCloseEvent* event) {
+  // close error dialog in case it is open
+  error_message_dialog_.close();
   // close the preferences window in case it is open
   preferences_window_->close();
   if (preferences_.not_saved() && ui_->action_save_project->isEnabled()) {
@@ -1686,7 +1690,7 @@ void ShapeWorksStudioApp::closeEvent(QCloseEvent* event) {
 
   optimize_tool_->shutdown_threads();
   deepssm_tool_->shutdown();
-  STUDIO_CLOSE_LOG();
+  SW_CLOSE_LOG();
 }
 
 //---------------------------------------------------------------------------
@@ -1805,7 +1809,7 @@ void ShapeWorksStudioApp::on_actionExport_PCA_Mesh_triggered() {
       writer->WriteArrayMetaDataOff();
       writer->Write();
     }
-    handle_message("Successfully exported PCA Mesh files: " + filename);
+    handle_message("Successfully exported PCA Mesh files: " + filename.toStdString());
     return;
   }
   auto shape = visualizer_->get_current_shape();
@@ -1818,7 +1822,7 @@ void ShapeWorksStudioApp::on_actionExport_PCA_Mesh_triggered() {
   // writer->SetInputData(msh);
   writer->WriteArrayMetaDataOff();
   writer->Write();
-  handle_message("Successfully exported PCA Mesh file: " + filename);
+  handle_message("Successfully exported PCA Mesh file: " + filename.toStdString());
 }
 
 //---------------------------------------------------------------------------
@@ -1836,7 +1840,7 @@ void ShapeWorksStudioApp::on_actionExport_Eigenvalues_triggered() {
     out << values[i] << std::endl;
   }
   out.close();
-  handle_message("Successfully exported eigenvalue EVAL file: " + filename);
+  handle_message("Successfully exported eigenvalue EVAL file: " + filename.toStdString());
 }
 
 //---------------------------------------------------------------------------
@@ -1860,7 +1864,7 @@ void ShapeWorksStudioApp::on_actionExport_Eigenvectors_triggered() {
     }
     out.close();
   }
-  handle_message("Successfully exported eigenvalue EVAL file: " + filename);
+  handle_message("Successfully exported eigenvalue EVAL file: " + filename.toStdString());
 }
 
 //---------------------------------------------------------------------------
@@ -1881,7 +1885,7 @@ void ShapeWorksStudioApp::on_actionExport_PCA_Mode_Points_triggered() {
   auto mean_pts = analysis_tool_->get_shape_points(mode, 0).get_combined_global_particles();
   QString mean_name = QString::fromStdString(basename) + "_mean.particles";
   if (!ShapeWorksStudioApp::write_particle_file(mean_name.toStdString(), mean_pts)) {
-    handle_error("Error writing particle file: " + mean_name);
+    handle_error("Error writing particle file: " + mean_name.toStdString());
     return;
   }
 
@@ -1892,14 +1896,14 @@ void ShapeWorksStudioApp::on_actionExport_PCA_Mode_Points_triggered() {
     std::string minus_name = basename + "_mode_" + std::to_string(mode) + "_minus_" + pca_string + ".pts";
     auto pts = analysis_tool_->get_shape_points(mode, -pca_value).get_combined_global_particles();
     if (!ShapeWorksStudioApp::write_particle_file(minus_name, pts)) {
-      handle_error("Error writing particle file: " + QString::fromStdString(minus_name));
+      handle_error("Error writing particle file: " + minus_name);
       return;
     }
 
     std::string plus_name = basename + "_mode_" + std::to_string(mode) + "_plus_" + pca_string + ".pts";
     pts = analysis_tool_->get_shape_points(mode, pca_value).get_combined_global_particles();
     if (!ShapeWorksStudioApp::write_particle_file(plus_name, pts)) {
-      handle_error("Error writing particle file: " + QString::fromStdString(plus_name));
+      handle_error("Error writing particle file: " + plus_name);
       return;
     }
   }
@@ -1932,7 +1936,8 @@ QString ShapeWorksStudioApp::get_mesh_file_filter() {
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::update_feature_map_selection(const QString& feature_map) {
+void ShapeWorksStudioApp::update_feature_map_selection(int index) {
+  QString feature_map = ui_->features->itemText(index);
   set_feature_map(feature_map.toStdString());
 }
 
@@ -1953,8 +1958,8 @@ void ShapeWorksStudioApp::update_feature_map_scale() {
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::image_combo_changed(const QString& image_name) {
-  session_->set_image_name(image_name.toStdString());
+void ShapeWorksStudioApp::image_combo_changed(int index) {
+  session_->set_image_name(ui_->image_combo_->itemText(index).toStdString());
 }
 
 //---------------------------------------------------------------------------
@@ -2175,6 +2180,7 @@ void ShapeWorksStudioApp::toggle_log_window() { log_window_.setVisible(!log_wind
 
 //---------------------------------------------------------------------------
 QSharedPointer<PythonWorker> ShapeWorksStudioApp::get_py_worker() { return py_worker_; }
+
 
 //---------------------------------------------------------------------------
 }  // namespace shapeworks

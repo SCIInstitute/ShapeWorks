@@ -1,10 +1,10 @@
 #pragma once
 
+#include <Libs/Optimize/ParticleSystem/DomainType.h>
+
+#include <map>
 #include <string>
 #include <vector>
-#include <map>
-
-#include <Libs/Optimize/ParticleSystem/DomainType.h>
 
 namespace shapeworks {
 
@@ -15,9 +15,7 @@ namespace shapeworks {
  *
  */
 class Subject {
-
-public:
-
+ public:
   Subject();
   ~Subject();
 
@@ -55,11 +53,6 @@ public:
   void set_number_of_domains(int number_of_domains);
   //! Get the number of domains
   int get_number_of_domains();
-
-  //! Set image filenames
-  void set_image_filenames(std::vector<std::string> filenames);
-  //! Get image filenames
-  std::vector<std::string> get_image_filenames();
 
   //! Get the feature map filenames
   std::map<std::string, std::string> get_feature_filenames() const;
@@ -99,12 +92,10 @@ public:
   //! Set the display name
   void set_display_name(std::string display_name);
 
-private:
-
+ private:
   int number_of_domains_ = 0;
 
   std::string display_name_;
-  std::vector<std::string> image_filenames_;
   std::vector<std::string> original_filenames_;
   std::vector<std::string> groomed_filenames_;
   std::vector<std::string> local_particle_filenames_;
@@ -122,4 +113,4 @@ private:
   std::vector<DomainType> original_domain_types_;
   std::vector<DomainType> groomed_domain_types_;
 };
-}
+}  // namespace shapeworks

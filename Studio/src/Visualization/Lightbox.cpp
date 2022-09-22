@@ -1,5 +1,5 @@
-#include <Data/Shape.h>
-#include <Data/StudioMesh.h>
+#include <Shape.h>
+#include <StudioMesh.h>
 #include <Visualization/Lightbox.h>
 #include <Visualization/SliceView.h>
 #include <Visualization/StudioInteractorStyle.h>
@@ -60,7 +60,7 @@ Lightbox::~Lightbox() {}
 void Lightbox::set_interactor(vtkRenderWindowInteractor* interactor) { interactor_ = interactor; }
 
 //-----------------------------------------------------------------------------
-void Lightbox::insert_shape_into_viewer(QSharedPointer<Shape> shape, int position) {
+void Lightbox::insert_shape_into_viewer(std::shared_ptr<Shape> shape, int position) {
   if (position >= viewers_.size()) {
     return;
   }
@@ -222,9 +222,7 @@ void Lightbox::setup_renderers() {
     viewers_[i]->get_renderer()->DrawOff();
   }
 
-  if (render_window_->IsDrawable()) {
-    render_window_->Render();
-  }
+  render_window_->Render();
 }
 
 //-----------------------------------------------------------------------------
@@ -253,13 +251,13 @@ void Lightbox::set_start_row(int row) {
 }
 
 //-----------------------------------------------------------------------------
-void Lightbox::set_shapes(QVector<QSharedPointer<Shape>> shapes) {
+void Lightbox::set_shapes(ShapeList shapes) {
   shapes_ = shapes;
   display_shapes();
 }
 
 //-----------------------------------------------------------------------------
-QVector<ShapeHandle> Lightbox::get_shapes() { return shapes_; }
+ShapeList Lightbox::get_shapes() { return shapes_; }
 
 //-----------------------------------------------------------------------------
 void Lightbox::redraw() {
