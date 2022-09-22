@@ -179,10 +179,8 @@ function install_conda() {
   jupyter nbextension enable toc2/main
 
   if [ -d ".git" ]; then  # don't invoke if not in a git clone directory
-    conda uninstall nbconvert
-    if ! pip install nbconvert==6.5.3;                    then return 1; fi
     if ! pip install mkdocs-jupyter==0.21.0;              then return 1; fi # for adding notebooks to our documentation (supports toc and executation before deployment)
-    if ! pip install pyyaml==6.0;                       then return 1; fi # for mkdocs
+    if ! pip install pyyaml==6.0;                         then return 1; fi # for mkdocs
     if ! pip install markdown-it-py==2.1.0;               then return 1; fi # for mkdocs
 
     # installing nbstripout to strip out notebooks cell outputs before committing 
