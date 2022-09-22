@@ -45,7 +45,14 @@ rm -rf Post
 
 # Run auto-documentation
 cd $ROOT
-PATH=$BUILD/bin/Release:bin:$PATH
+PATH=$BUILD/bin/Release/bin:$PATH
+
+# add $PATH to $PYTHONPATH
+PYTHONPATH=$PYTHONPATH:$PATH
+
+# on windows, the PYTHONPATH should use semicolons
+PYTHONPATH=${PYTHONPATH//:/;}
+
 # check that 'shapeworks -h' is working
 shapeworks -h
 if [ $? -eq 0 ]; then
@@ -58,7 +65,9 @@ python Python/RunShapeWorksAutoDoc.py --md_filename docs/tools/ShapeWorksCommand
 pip list
 echo "PATH = $PATH"
 echo "PYTHONPATH = $PYTHONPATH"
-echo "import shapeworks" | python
+echo "See if we can import shapeworks..."
+echo "import shapeworks ; print(dir(shapeworks))" | python
+
 echo "running mkdocs build"
 mkdocs build
 mv site Documentation
