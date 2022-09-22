@@ -315,7 +315,9 @@ void Sampler::ReInitialize() {
 void Sampler::AddMesh(std::shared_ptr<shapeworks::MeshWrapper> mesh) {
   auto domain = std::make_shared<MeshDomain>();
   m_NeighborhoodList.push_back(itk::ParticleSurfaceNeighborhood<ImageType>::New());
+  std::cout << "AddMesh" << std::endl;
   if (mesh) {
+      std::cout << "Adding mesh" << std::endl;
     this->m_Spacing = 1;
     domain->SetMesh(mesh);
     this->m_meshes.push_back(mesh->GetPolydata());

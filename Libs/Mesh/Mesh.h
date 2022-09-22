@@ -308,7 +308,7 @@ class Mesh {
   std::vector<double> dval;
 
   // Recursive flood fill
-  bool fill(size_t i, const Eigen::MatrixXi& F, const std::vector<size_t>& allBoundaryVerts, vtkSmartPointer<vtkTriangleFilter> triangleFilter, double step);
+  bool fill(size_t cellInd, const Eigen::MatrixXi& F, const std::vector<size_t>& allBoundaryVerts, double step);
 
 };
 

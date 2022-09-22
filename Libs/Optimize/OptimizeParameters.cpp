@@ -424,6 +424,7 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
         Mesh mesh = MeshUtils::threadSafeReadMesh(filename.c_str());
         if (domain_count < constraints.size()) {
           Constraints constraint = constraints[domain_count];
+          std::cout << "SetUpOptimize" << std::endl;
           constraint.clipMesh(mesh);
         }
 

@@ -1497,17 +1497,16 @@ vtkSmartPointer<vtkDoubleArray> Mesh::computeInOutForFFCs(std::vector<size_t> al
 
   std::cout << "cellId " << cellId << " this->numFaces() " << this->numFaces()<< std::endl;
 
-  for(size_t i = 0; i < this->numFaces(); i++){
-      filled.push_back(0);
-      dval.push_back(0.);
-  }
+  filled = vector<bool>(this->numFaces(), 0);
+  dval = vector<double>(this->numFaces(), 0.);
 
   vtkSmartPointer<vtkTriangleFilter> triangleFilter = vtkSmartPointer<vtkTriangleFilter>::New();
   triangleFilter->SetInputData(poly_data_);
   triangleFilter->Update();
+  poly_data_ = triangleFilter->GetOutput();
 
   std::cout << "Filling" << std::endl;
-  this->fill(cellId, F, allBoundaryVerts, triangleFilter, 0.);
+  this->fill(cellId, F, allBoundaryVerts, 0.);
   std::cout << "Filling done" << std::endl;
 
   vtkSmartPointer<vtkDoubleArray> inout = vtkSmartPointer<vtkDoubleArray>::New();
@@ -1570,13 +1569,13 @@ vtkSmartPointer<vtkDoubleArray> Mesh::computeInOutForFFCs(std::vector<size_t> al
 }
 
 // Flood fills mesh so that it stops at boundary constraints. Auxiliary recursive function for FFC implementation
-bool Mesh::fill(size_t i, const Eigen::MatrixXi& F, const std::vector<size_t>& allBoundaryVerts, vtkSmartPointer<vtkTriangleFilter> triangleFilter, double step){
+bool Mesh::fill(size_t cellInd, const Eigen::MatrixXi& F, const std::vector<size_t>& allBoundaryVerts, double step){
     // If already checked, return
-    if(filled[i]){return 0;}
+    if(filled[cellInd]){return 0;}
 
     // Else, set to checked and proceed
-    filled[i] = 1;
-    dval[i] = step;
+    filled[cellInd] = 1;
+    dval[cellInd] = step;
 
     // Find cell neighbors which share edges
     std::set<vtkIdType> neighborsSet;
@@ -1585,7 +1584,7 @@ bool Mesh::fill(size_t i, const Eigen::MatrixXi& F, const std::vector<size_t>& a
     vtkIdType cellId = 0;
 
     vtkNew<vtkIdList> cellPointIds;
-    triangleFilter->GetOutput()->GetCellPoints(i, cellPointIds);
+    poly_data_->GetCellPoints(cellInd, cellPointIds);
     for (vtkIdType i = 0; i < cellPointIds->GetNumberOfIds(); i++)
      {
        vtkNew<vtkIdList> idList;
@@ -1595,7 +1594,7 @@ bool Mesh::fill(size_t i, const Eigen::MatrixXi& F, const std::vector<size_t>& a
        // get the neighbors of the cell
        vtkNew<vtkIdList> neighborCellIds;
 
-       triangleFilter->GetOutput()->GetCellNeighbors(cellId, idList,
+       poly_data_->GetCellNeighbors(cellId, idList,
                                                      neighborCellIds);
 
        for (vtkIdType j = 0; j < neighborCellIds->GetNumberOfIds(); j++)
@@ -1617,7 +1616,7 @@ bool Mesh::fill(size_t i, const Eigen::MatrixXi& F, const std::vector<size_t>& a
             }
         }
         if(boundary_vertices_in_j < 2){
-            fill(neighbors[j], F, allBoundaryVerts, triangleFilter,step+1.);
+            fill(neighbors[j], F, allBoundaryVerts, step+1.);
         }
         //std::cout << "(" << i << " " << boundary_vertices_in_j << " " << neighbors[j] << ") ";
     }
