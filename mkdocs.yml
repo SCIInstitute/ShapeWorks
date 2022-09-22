@@ -172,6 +172,9 @@ plugins:
             docstring_style: google
             docstring_options:
               ignore_init_summary: yes
+          setup_commands:
+            - "import sys"
+            - "print(sys.path)"
           rendering:
             merge_init_into_class: yes
   - mkdocs-jupyter:

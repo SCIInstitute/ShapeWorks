@@ -63,10 +63,12 @@ else
 fi
 python Python/RunShapeWorksAutoDoc.py --md_filename docs/tools/ShapeWorksCommands.md
 pip list
+export PYTHONPATH
+
 echo "PATH = $PATH"
 echo "PYTHONPATH = $PYTHONPATH"
-echo "See if we can import shapeworks..."
-echo "import shapeworks ; print(dir(shapeworks))" | python
+echo "See if we can import shapeworks_py..."
+echo "import shapeworks_py ; print(dir(shapeworks_py))" | python
 
 echo "running mkdocs build"
 mkdocs build
