@@ -36,6 +36,11 @@ for M in ${SOURCE}/Python/*/; do
     export PYTHONPATH=${M}:$PYTHONPATH
 done
 
+# on windows, the PYTHONPATH should use semicolons
+if [[ $OSTYPE == "msys" ]]; then
+    PYTHONPATH=${PYTHONPATH//:/;}
+fi
+
 # Set the python path for studio
 mkdir -p $HOME/.shapeworks ; python -c "import sys; print('\n'.join(sys.path))" > $HOME/.shapeworks/python_path.txt
 
