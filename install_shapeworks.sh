@@ -100,7 +100,8 @@ function install_conda() {
     pybind11=2.9.2 \
     nlohmann_json=3.10.5 \
     spdlog=1.10.0 \
-    pkg-config=0.29.2
+    pkg-config=0.29.2 \
+    pip=22.1.2
   then return 1; fi
 
   # linux (only) deps
@@ -111,9 +112,6 @@ function install_conda() {
     then return 1; fi
   fi
 
-
-  # pip is needed in sub-environments or the base env's pip will silently install to base
-  if ! conda install --yes pip=22.1.2; then return 1; fi
   if ! pip install notebook==6.1.5;                     then return 1; fi
   if ! pip install trimesh==3.12.6;                     then return 1; fi
   if ! pip install termcolor==1.1.0;                    then return 1; fi
