@@ -41,6 +41,8 @@ if [[ $OSTYPE == "msys" ]]; then
     PYTHONPATH=${PYTHONPATH//:/;}
 fi
 
+echo "set PYTHONPATH to $PYTHONPATH"
+
 # Set the python path for studio
 mkdir -p $HOME/.shapeworks ; python -c "import sys; print('\n'.join(sys.path))" > $HOME/.shapeworks/python_path.txt
 

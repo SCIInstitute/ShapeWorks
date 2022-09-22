@@ -56,6 +56,9 @@ else
 fi
 python Python/RunShapeWorksAutoDoc.py --md_filename docs/tools/ShapeWorksCommands.md
 pip list
+echo "PATH = $PATH"
+echo "PYTHONPATH = $PYTHONPATH"
+echo "import shapeworks" | python
 echo "running mkdocs build"
 mkdocs build
 mv site Documentation
