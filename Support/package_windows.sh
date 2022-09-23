@@ -50,9 +50,6 @@ PATH=$BUILD/bin/Release/bin:$PATH
 # add $PATH to $PYTHONPATH
 PYTHONPATH=$PYTHONPATH:$PATH
 
-# on windows, the PYTHONPATH should use semicolons
-PYTHONPATH=${PYTHONPATH//:/;}
-
 # check that 'shapeworks -h' is working
 shapeworks -h
 if [ $? -eq 0 ]; then
