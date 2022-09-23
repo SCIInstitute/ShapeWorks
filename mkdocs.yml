@@ -175,6 +175,7 @@ plugins:
           setup_commands:
             - "import sys"
             - "print(sys.path)"
+            - "import shapeworks"
           rendering:
             merge_init_into_class: yes
   - mkdocs-jupyter:

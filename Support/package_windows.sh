@@ -68,7 +68,10 @@ export PYTHONPATH
 echo "PATH = $PATH"
 echo "PYTHONPATH = $PYTHONPATH"
 echo "See if we can import shapeworks_py..."
-echo "import shapeworks_py ; print(dir(shapeworks_py))" | python
+
+echo "import os; print(os.environ)" | python
+
+echo "import shapeworks; import shapeworks_py ; print(dir(shapeworks_py))" | python
 
 echo "running mkdocs build"
 mkdocs build
