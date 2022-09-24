@@ -67,8 +67,9 @@ echo "PYTHONPATH before = $PYTHONPATH"
 # on windows, the PYTHONPATH should use semicolons
 if [[ $OSTYPE == "msys" ]]; then
     PYTHONPATH=${PYTHONPATH//:/;}
-    PYTHONPATH=${PYTHONPATH//\/d\//D:/}
-    PYTHONPATH=${PYTHONPATH//\/c\//C:/}
+    PYTHONPATH=${PYTHONPATH//;\/d\//;D:/}
+    PYTHONPATH=${PYTHONPATH//;\/c\//;C:/}
+    PYTHONPATH=${PYTHONPATH//\/d\/a/D:/a}
 fi
 
 
