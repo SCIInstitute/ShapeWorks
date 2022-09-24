@@ -89,10 +89,8 @@ StringMap JsonProjectReader::get_parameters(std::string name) {
     return container_->object_to_map(name);
   }
   catch (json::exception& e) {
-    //SW_ERROR("Error parsing parameters for {}: {}", name, e.what());
     throw std::runtime_error(fmt::format("Unable to parse parameters for {}: {}", name, e.what()));
   }
-  return {};
 }
 
 //---------------------------------------------------------------------------
