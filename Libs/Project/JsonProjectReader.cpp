@@ -3,6 +3,7 @@
 #include <fstream>
 #include <iostream>
 #include <nlohmann/json.hpp>
+#include <Logging.h>
 
 using json = nlohmann::ordered_json;
 
@@ -14,8 +15,8 @@ using namespace project::types;
 //---------------------------------------------------------------------------
 class JsonProjectReader::Container {
  public:
-  Container(){};
-  ~Container(){};
+  Container() {};
+  ~Container() {};
   json j;
 
   //---------------------------------------------------------------------------
@@ -64,7 +65,8 @@ class JsonProjectReader::Container {
 };
 
 //---------------------------------------------------------------------------
-JsonProjectReader::JsonProjectReader(Project& project) : ProjectReader(project), container_(new Container) {}
+JsonProjectReader::JsonProjectReader(Project& project)
+    : ProjectReader(project), container_(new Container) {}
 
 //---------------------------------------------------------------------------
 JsonProjectReader::~JsonProjectReader() {}
@@ -82,7 +84,16 @@ bool JsonProjectReader::read_project(std::string filename) {
 }
 
 //---------------------------------------------------------------------------
-StringMap JsonProjectReader::get_parameters(std::string name) { return container_->object_to_map(name); }
+StringMap JsonProjectReader::get_parameters(std::string name) {
+  try {
+    return container_->object_to_map(name);
+  }
+  catch (json::exception& e) {
+    //SW_ERROR("Error parsing parameters for {}: {}", name, e.what());
+    throw std::runtime_error(fmt::format("Unable to parse parameters for {}: {}", name, e.what()));
+  }
+  return {};
+}
 
 //---------------------------------------------------------------------------
 StringMultiMap JsonProjectReader::get_multi_parameters(std::string name) {

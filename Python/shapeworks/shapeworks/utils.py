@@ -286,7 +286,7 @@ def verify(args, world_point_files):
 
 def check_results(args, project_spreadsheet):
     # If tiny test or verify, check results and exit
-    particle_dir = project_spreadsheet.replace(".xlsx", "_particles/")
+    particle_dir = project_spreadsheet.replace(".xlsx", "_particles/").replace(".swproj", "_particles/")
     world_point_files = []
     for file in sorted(os.listdir(particle_dir)):
         if "world" in file:

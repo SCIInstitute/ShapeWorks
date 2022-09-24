@@ -9,7 +9,9 @@ using json = nlohmann::ordered_json;
 namespace shapeworks {
 
 //---------------------------------------------------------------------------
-static void assign_keys(json& j, std::vector<std::string> prefixes, std::vector<std::string> filenames,
+static void assign_keys(json& j,
+                        std::vector<std::string> prefixes,
+                        std::vector<std::string> filenames,
                         std::vector<std::string> domains) {
   if (filenames.empty() || prefixes.empty()) {
     return;
@@ -33,7 +35,9 @@ static void assign_keys(json& j, std::vector<std::string> prefixes, std::vector<
 }
 
 //---------------------------------------------------------------------------
-static void assign_transforms(json& j, std::string prefix, std::vector<std::vector<double>> transforms,
+static void assign_transforms(json& j,
+                              std::string prefix,
+                              std::vector<std::vector<double>> transforms,
                               std::vector<std::string> domains) {
   if (transforms.empty()) {
     return;
@@ -64,8 +68,10 @@ static json create_data_object(Project& project) {
     json j;
     j["name"] = subject->get_display_name();
 
-    auto original_prefixes = ProjectUtils::convert_domain_types(project.get_original_domain_types());
-    auto groomed_prefixes = ProjectUtils::convert_groomed_domain_types(project.get_groomed_domain_types());
+    auto
+        original_prefixes = ProjectUtils::convert_domain_types(project.get_original_domain_types());
+    auto groomed_prefixes =
+        ProjectUtils::convert_groomed_domain_types(project.get_groomed_domain_types());
 
     assign_keys(j, original_prefixes, subject->get_original_filenames(), domains);
     for (auto& [key, value] : subject->get_feature_filenames()) {
@@ -105,7 +111,10 @@ static json create_parameter_object(Parameters params) {
 static json create_parameter_map_object(std::map<std::string, Parameters> parameter_map) {
   json j;
   for (auto& [key, params] : parameter_map) {
-    j[key] = create_parameter_object(params);
+    auto item = create_parameter_object(params);
+    if (!item.is_null()) {
+      j[key] = item;
+    }
   }
   return j;
 }
@@ -142,13 +151,22 @@ bool JsonProjectWriter::write_project(Project& project, std::string filename) {
   json landmarks_sheet;
 
   j["data"] = create_data_object(project);
-  j["groom"] = create_parameter_map_object(project.get_parameter_map("groom"));
-  j["optimize"] = create_parameter_object(project.get_parameters("optimize"));
-  j["studio"] = create_parameter_object(project.get_parameters("studio"));
-  j["project"] = create_parameter_object(project.get_parameters("project"));
-  j["analysis"] = create_parameter_object(project.get_parameters("analysis"));
-  j["deepssm"] = create_parameter_object(project.get_parameters("deepssm"));
-  j["landmarks"] = create_landmark_definition_object(project);
+  auto groom_item = create_parameter_map_object(project.get_parameter_map("groom"));
+  if (!groom_item.is_null()) {
+    j["groom"] = groom_item;
+  }
+  auto landmarks_list = create_landmark_definition_object(project);
+
+  if (!landmarks_list.empty()) {
+    j["landmarks"] = landmarks_list;
+  }
+
+  for (auto name : {"optimize", "studio", "project", "analysis", "deepssm"}) {
+    auto item = create_parameter_object(project.get_parameters(name));
+    if (!item.is_null()) {
+      j[name] = item;
+    }
+  }
 
   std::ofstream file(filename);
   if (!file.good()) {
