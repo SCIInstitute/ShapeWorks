@@ -36,11 +36,6 @@ for M in ${SOURCE}/Python/*/; do
     export PYTHONPATH=${M}:$PYTHONPATH
 done
 
-# on windows, the PYTHONPATH should use semicolons
-if [[ $OSTYPE == "msys" ]]; then
-    PYTHONPATH=${PYTHONPATH//:/;}
-fi
-
 echo "set PYTHONPATH to $PYTHONPATH"
 
 # Set the python path for studio

@@ -62,8 +62,16 @@ python Python/RunShapeWorksAutoDoc.py --md_filename docs/tools/ShapeWorksCommand
 pip list
 export PYTHONPATH
 
+echo "PYTHONPATH before = $PYTHONPATH"
+
+# on windows, the PYTHONPATH should use semicolons
+if [[ $OSTYPE == "msys" ]]; then
+    PYTHONPATH=${PYTHONPATH//;/:}
+fi
+
+
 echo "PATH = $PATH"
-echo "PYTHONPATH = $PYTHONPATH"
+echo "PYTHONPATH after = $PYTHONPATH"
 echo "See if we can import shapeworks_py..."
 
 echo "import os; print(os.environ)" | python
