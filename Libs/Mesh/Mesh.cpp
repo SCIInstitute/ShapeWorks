@@ -1317,9 +1317,9 @@ bool Mesh::prepareFFCFields(std::vector<std::vector<Eigen::Vector3d>> boundaries
   Eigen::MatrixXi F;
 
   vtkSmartPointer<vtkPoints> points;
-  if (!onlyGenerateInOut) {
+  //if (!onlyGenerateInOut) {
     points = getIGLMesh(V, F);
-  }
+  //}
 
   std::cout << "Vertices dim " << V.rows() << " " << V.cols() << " faces dim " << F.rows() << " " << F.cols() << std::endl;
 
