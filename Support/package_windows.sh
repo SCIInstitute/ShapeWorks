@@ -88,6 +88,7 @@ cp -a Documentation bin/
 
 # Remove tests, they won't work for users anyway
 rm bin/*Tests.exe
+rm -rf docs
 
 windeployqt "bin/ShapeWorksStudio.exe"
 ../NSISPortable/App/NSIS/makensis.exe -V4 shapeworks.nsi 
