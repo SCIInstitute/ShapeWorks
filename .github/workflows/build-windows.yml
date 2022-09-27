@@ -23,7 +23,7 @@ jobs:
     steps:
 
     - name: Setup Conda
-      uses: conda-incubator/setup-miniconda@v2.0.0
+      uses: conda-incubator/setup-miniconda@v2.1.1
       with:
           miniconda-version: 'latest'
 
@@ -98,7 +98,7 @@ jobs:
       shell: bash -l {0}
       env:
         PR_NUMBER: ${{ github.event.number }}
-      run: conda activate shapeworks && pwd ; ls ; cp docs/users/Windows_README.txt . ; cp Support/shapeworks.nsi . ; conda activate shapeworks && ./Support/package_windows.sh tag
+      run: conda activate shapeworks && source ${GITHUB_WORKSPACE}/devenv.sh ./bin/Release && pwd ; ls ; cp docs/users/Windows_README.txt . ; cp Support/shapeworks.nsi . ; conda activate shapeworks && source ${GITHUB_WORKSPACE}/devenv.sh ./bin/Release && ./Support/package_windows.sh tag
 
     - name: Check Disk Space3
       working-directory: ${{runner.workspace}}
