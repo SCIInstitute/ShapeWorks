@@ -146,15 +146,11 @@ void DataTool::update_table() {
   ui_->table->setHorizontalHeaderLabels(table_headers);
   ui_->table->verticalHeader()->setVisible(true);
 
-  auto contains = [](std::map<std::string, std::string> map, std::string key) -> bool {
-    return map.find(key) != map.end();
-  };
-
   for (int row = 0; row < subjects.size(); row++) {
     auto values = subjects[row]->get_table_values();
     for (int h = 0; h < table_headers.size(); h++) {
       std::string value;
-      if (contains(values, headers[h])) {
+      if (values.contains(headers[h])) {
         value = values[headers[h]];
       }
       QTableWidgetItem* new_item = new QTableWidgetItem(QString::fromStdString(value));

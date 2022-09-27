@@ -1,7 +1,6 @@
 #pragma once
 
-#include <map>
-#include <string>
+#include <ProjectUtils.h>
 
 #include "Variant.h"
 
@@ -13,6 +12,8 @@ namespace shapeworks {
  * Used to store parameters for various tools
  */
 class Parameters {
+  using StringMap = project::types::StringMap;
+
  public:
   static constexpr const char* ANALYSIS_PARAMS = "analysis";
   static constexpr const char* GROOM_PARAMS = "groom";
@@ -25,7 +26,7 @@ class Parameters {
   Parameters();
 
   //! construct from map
-  explicit Parameters(std::map<std::string, std::string> map);
+  explicit Parameters(StringMap map);
 
   //! get a parameter based on a key, return default if it doesn't exist
   Variant get(std::string key, Variant default_value);
@@ -40,15 +41,20 @@ class Parameters {
   void remove_entry(std::string key);
 
   //! set underlying map
-  void set_map(std::map<std::string, std::string> map);
+  void set_map(StringMap map);
 
   //! get underlying map
-  std::map<std::string, std::string> get_map();
+  StringMap get_map();
 
   //! reset parameters to blank
   void reset_parameters();
 
  private:
-  std::map<std::string, std::string> map_;
+  StringMap map_;
+
+  //  std::vector< std::pair<const std::string, std::string> >  container_;
+  // std::pair<const std::string, std::string>  container_;
+  //const std::string joke_;
+  tsl::ordered_map<std::string,std::string> mappy_;
 };
 }  // namespace shapeworks
