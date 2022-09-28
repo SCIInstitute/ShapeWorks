@@ -142,14 +142,14 @@ void GroomTool::on_autopad_checkbox_stateChanged(int state) {
 void GroomTool::handle_error(QString msg) {
   groom_is_running_ = false;
   SW_ERROR(msg.toStdString());
-  emit progress(100);
+  Q_EMIT progress(100);
   enable_actions();
 }
 
 //---------------------------------------------------------------------------
 void GroomTool::handle_progress(int val) {
   if (groom_is_running_) {
-    emit progress(val);
+    Q_EMIT progress(val);
   }
 }
 
@@ -446,7 +446,7 @@ void GroomTool::on_run_groom_button_clicked() {
     shutdown_threads();
     groom_is_running_ = false;
     enable_actions();
-    emit progress(100);
+    Q_EMIT progress(100);
     return;
   }
 
@@ -483,7 +483,7 @@ void GroomTool::on_run_groom_button_clicked() {
   timer_.start();
 
   SW_LOG("Please wait: running groom step...");
-  emit progress(0);
+  Q_EMIT progress(0);
 
   groom_ = QSharedPointer<QGroom>(new QGroom(session_->get_project()));
 
@@ -499,13 +499,13 @@ void GroomTool::on_run_groom_button_clicked() {
   connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
   thread->start();
 
-  emit groom_start();
+  Q_EMIT groom_start();
   threads_ << thread;
 }
 
 //---------------------------------------------------------------------------
 void GroomTool::handle_thread_complete() {
-  emit progress(95);
+  Q_EMIT progress(95);
 
   std::string duration = QString::number(timer_.elapsed() / 1000.0, 'f', 1).toStdString();
   SW_LOG("Groom Complete.  Duration: " + duration + " seconds");
@@ -513,8 +513,8 @@ void GroomTool::handle_thread_complete() {
   // trigger reload of meshes
   Q_FOREACH (auto shape, session_->get_shapes()) { shape->reset_groomed_mesh(); }
 
-  emit progress(100);
-  emit groom_complete();
+  Q_EMIT progress(100);
+  Q_EMIT groom_complete();
 
   groom_is_running_ = false;
   enable_actions();
@@ -551,7 +551,7 @@ void GroomTool::on_skip_button_clicked() {
   groom_->run();
 
   SW_LOG("Skipped Grooming");
-  emit groom_complete();
+  Q_EMIT groom_complete();
 }
 
 //---------------------------------------------------------------------------

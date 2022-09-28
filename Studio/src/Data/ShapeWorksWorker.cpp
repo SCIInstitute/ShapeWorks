@@ -1,4 +1,4 @@
-// must come first due to Q_EMIT vs emit
+// must come first due to Q_Q_EMIT vs Q_EMIT
 #include <Libs/Optimize/Optimize.h>
 // must come first
 
@@ -58,29 +58,29 @@ void ShapeworksWorker::process() {
       } catch (std::runtime_error e) {
         std::cerr << "Exception: " << e.what() << "\n";
         SW_ERROR(std::string("Error: ") + e.what());
-        emit failure();
-        emit finished();
+        Q_EMIT failure();
+        Q_EMIT finished();
         return;
       } catch (itk::ExceptionObject& ex) {
         std::cerr << "ITK Exception: " << ex << std::endl;
         SW_ERROR(std::string("ITK Exception: ") + ex.GetDescription());
-        emit failure();
-        emit finished();
+        Q_EMIT failure();
+        Q_EMIT finished();
         return;
       } catch (std::exception& e) {
         SW_ERROR(e.what());
-        emit failure();
-        emit finished();
+        Q_EMIT failure();
+        Q_EMIT finished();
         return;
       } catch (...) {
         SW_ERROR("Error during optimization!");
-        emit failure();
-        emit finished();
+        Q_EMIT failure();
+        Q_EMIT finished();
         return;
       }
       if (this->optimize_->GetAborted()) {
         SW_LOG("Optimization Aborted!");
-        emit failure();
+        Q_EMIT failure();
         return;
       }
 
@@ -106,7 +106,7 @@ void ShapeworksWorker::process() {
           SW_WARN(e.what());
         } else {
           SW_ERROR(e.what());
-          emit finished();
+          Q_EMIT finished();
           return;
         }
       } catch (std::exception& e) {
@@ -114,19 +114,19 @@ void ShapeworksWorker::process() {
           SW_WARN(e.what());
         } else {
           SW_ERROR(e.what());
-          emit finished();
+          Q_EMIT finished();
           return;
         }
       } catch (...) {
         SW_ERROR("Error during optimization!");
-        emit finished();
+        Q_EMIT finished();
         return;
       }
       break;
   }
 
-  emit result_ready();
-  emit finished();
+  Q_EMIT result_ready();
+  Q_EMIT finished();
 }
 
 }  // namespace shapeworks

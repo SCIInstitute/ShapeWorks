@@ -26,6 +26,8 @@ endif()
 option(Build_Studio    "Build studio"       ON)
 option(BUILD_TESTS     "Build tests"        ON)
 
+option(USE_PCH "Use pre-compiled headers" OFF)
+
 if ("${Build_Studio}")
   set(SHAPEWORKS_GUI ON)
   set(SHAPEWORKS_QT_REQUIRED REQUIRED)
@@ -113,6 +115,8 @@ if (SHAPEWORKS_GUI)
   add_definitions(${Qt5Core_DEFINITIONS})
   add_definitions(${Qt5Gui_DEFINITIONS})
   add_definitions(${Qt5Sql_DEFINITIONS})
+
+  add_definitions(-DQT_NO_KEYWORDS)
   
   if (WIN32)
     cmake_policy(SET CMP0020 NEW)   # link to qtmain.lib on Windows

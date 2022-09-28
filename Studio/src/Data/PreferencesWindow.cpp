@@ -52,7 +52,7 @@ void PreferencesWindow::on_mesh_cache_enabled_stateChanged(int state) {
   ui_->mesh_cache_memory->setEnabled(b);
   ui_->parallel_enabled->setEnabled(b);
   ui_->num_threads->setEnabled(b);
-  emit clear_cache();
+  Q_EMIT clear_cache();
 }
 
 //-----------------------------------------------------------------------------
@@ -64,19 +64,19 @@ void PreferencesWindow::on_mesh_cache_memory_valueChanged(int value) {
 //-----------------------------------------------------------------------------
 void PreferencesWindow::on_color_scheme_currentIndexChanged(int index) {
   preferences_.set_color_scheme(index);
-  emit update_view();
+  Q_EMIT update_view();
 }
 
 //-----------------------------------------------------------------------------
 void PreferencesWindow::on_pca_range_valueChanged(double value) {
   preferences_.set_pca_range(value);
-  emit slider_update();
+  Q_EMIT slider_update();
 }
 
 //-----------------------------------------------------------------------------
 void PreferencesWindow::on_pca_steps_valueChanged(int value) {
   preferences_.set_pca_steps(value);
-  emit slider_update();
+  Q_EMIT slider_update();
 }
 
 //-----------------------------------------------------------------------------
@@ -132,7 +132,7 @@ void PreferencesWindow::save_to_preferences() {
   preferences_.set_discrete_color_mode(ui_->discrete_color_mode->isChecked());
   preferences_.set_reverse_color_map(ui_->reverse_color_map->isChecked());
   update_labels();
-  emit update_view();
+  Q_EMIT update_view();
 }
 
 //-----------------------------------------------------------------------------

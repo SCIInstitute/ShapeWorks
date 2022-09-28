@@ -349,6 +349,17 @@ TARGET_LINK_LIBRARIES(ShapeWorksStudio
   JKQTPlotterSharedLib
   )
 
+IF(USE_PCH)
+  target_precompile_headers(ShapeWorksStudio PRIVATE
+    "<vtkPolyData.h>"
+    "<itkImage.h>"
+    "<itkAffineTransform.h>"
+    "<Eigen/Dense>"
+    "<Eigen/Sparse>"
+    "<Eigen/Core>"
+    )
+ENDIF(USE_PCH)
+
 INSTALL(TARGETS ShapeWorksStudio
   BUNDLE  DESTINATION bin
   RUNTIME DESTINATION bin COMPONENT Runtime
