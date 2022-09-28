@@ -354,10 +354,12 @@ IF(USE_PCH)
     "<vtkPolyData.h>"
     "<itkImage.h>"
     "<itkAffineTransform.h>"
+    "<itkStatisticsImageFilter.h>"
     "<Eigen/Dense>"
     "<Eigen/Sparse>"
     "<Eigen/Core>"
     "<QCloseEvent>"
+    "<QFileDialog>"
     )
 ENDIF(USE_PCH)
 

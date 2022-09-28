@@ -3,6 +3,8 @@
 #include <ItkToVtk.h>
 #include <LegacyMeshGenerator.h>
 #include <MeshGenerator.h>
+#include <vtkImageImport.h>
+#include <itkImageFileReader.h>
 
 #include <QMeshWarper.h>
 

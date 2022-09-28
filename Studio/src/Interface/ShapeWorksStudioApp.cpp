@@ -4,7 +4,7 @@
 
 
 
-
+#include <QWidget>
 
 // qt
 #include <QCloseEvent>
@@ -136,6 +136,10 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
   if (!preferences_.get_window_state().isEmpty()) {
     restoreState(preferences_.get_window_state());
   }
+
+
+
+
 
   // set to import
   ui_->action_import_mode->setChecked(true);
@@ -2136,6 +2140,7 @@ void ShapeWorksStudioApp::dropEvent(QDropEvent* event) {
       }
     }
   }
+
 
   if (accept) {
     import_files(files_to_load);
