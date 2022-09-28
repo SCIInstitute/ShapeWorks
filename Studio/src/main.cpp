@@ -68,16 +68,16 @@ int main(int argc, char** argv) {
     format.setSamples(0);
     QSurfaceFormat::setDefaultFormat(format);
 
+    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+
 #ifdef _WIN32
-    QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     SW_LOG("ShapeWorks Studio win32 initializing...");
     init_crash_handler();
     ::SetErrorMode(0);
 #endif
 
     QApplication app(argc, argv);
-    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-    QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
 
     auto studio_app = QSharedPointer<ShapeWorksStudioApp>::create();
     QResource::registerResource(RSCS_FILE);

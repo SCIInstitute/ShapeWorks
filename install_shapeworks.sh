@@ -100,7 +100,10 @@ function install_conda() {
     pybind11=2.9.2 \
     nlohmann_json=3.10.5 \
     spdlog=1.10.0 \
-    pkg-config=0.29.2
+    pkg-config=0.29.2 \
+    openh264==2.3.0 \
+    libhwloc=2.8.0 \
+    pip=22.1.2
   then return 1; fi
 
   # linux (only) deps
@@ -111,9 +114,11 @@ function install_conda() {
     then return 1; fi
   fi
 
-
-  # pip is needed in sub-environments or the base env's pip will silently install to base
-  if ! conda install --yes pip=22.1.2; then return 1; fi
+  if [ -d ".git" ]; then  # don't invoke if not in a git clone directory
+    if ! pip install mkdocs-jupyter==0.21.0;              then return 1; fi # for adding notebooks to our documentation (supports toc and executation before deployment)
+    if ! pip install pyyaml==6.0;                         then return 1; fi # for mkdocs
+    if ! pip install markdown-it-py==2.1.0;               then return 1; fi # for mkdocs
+  fi
 
   if ! pip install notebook==6.1.5;                     then return 1; fi
   if ! pip install trimesh==3.12.6;                     then return 1; fi
@@ -132,6 +137,8 @@ function install_conda() {
   if ! pip install mdutils==1.4.0;                      then return 1; fi # lib for writing markdown files (auto-documentation)
   if ! pip install mkdocs==1.3.0;                       then return 1; fi # lib for generating documentation from markdown
   if ! pip install mkdocs-material==8.3.8;              then return 1; fi # theme for mkdocs
+  if ! pip install mkdocstrings==0.19.0;                then return 1; fi # needed for python api docs
+  if ! pip install mkdocstrings-python==0.7.1;          then return 1; fi # needed for python api docs
   if ! pip install mike==1.1.2;                         then return 1; fi # deploys versioned documentation to gh-pages
   if ! pip install jinja2==3.1.2;                       then return 1; fi # only version of jinja that works (needed by mkdocs)
   if ! pip install Pygments==2.12.0;                    then return 1; fi # Needed by mkdocs
@@ -178,10 +185,6 @@ function install_conda() {
   jupyter nbextension enable toc2/main
 
   if [ -d ".git" ]; then  # don't invoke if not in a git clone directory
-    if ! pip install mkdocs-jupyter==0.21.0;              then return 1; fi # for adding notebooks to our documentation (supports toc and executation before deployment)
-    if ! pip install pyyaml==6.0;                       then return 1; fi # for mkdocs
-    if ! pip install markdown-it-py==2.1.0;               then return 1; fi # for mkdocs
-
     # installing nbstripout to strip out notebooks cell outputs before committing 
     nbstripout --install
     nbstripout --install --attributes .gitattributes

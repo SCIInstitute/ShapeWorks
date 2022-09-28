@@ -27,7 +27,7 @@ void ProjectReader::load_subjects(StringMapList list) {
       auto keys = get_keys(item);
       auto domain_names = ProjectUtils::determine_domain_names(keys);
       project_.set_domain_names(domain_names);
-      ProjectUtils::determine_domain_types(project_, key_map);
+      ProjectUtils::determine_domain_types(&project_, key_map);
       original_keys = ProjectUtils::get_original_keys(domain_names, key_map);
     }
 

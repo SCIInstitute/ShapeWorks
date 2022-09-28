@@ -1,6 +1,7 @@
 #include "ProjectUtils.h"
 
 #include <Libs/Mesh/MeshUtils.h>
+#include <Project.h>
 #include <StringUtils.h>
 
 namespace shapeworks {
@@ -74,8 +75,8 @@ StringList ProjectUtils::determine_domain_names(StringList keys) {
 }
 
 //---------------------------------------------------------------------------
-void ProjectUtils::determine_domain_types(Project& project, StringMap key_map) {
-  auto domain_names = project.get_domain_names();
+void ProjectUtils::determine_domain_types(Project* project, StringMap key_map) {
+  auto domain_names = project->get_domain_names();
 
   std::vector<DomainType> original_domain_types;
   for (const auto& domain : domain_names) {
@@ -91,7 +92,7 @@ void ProjectUtils::determine_domain_types(Project& project, StringMap key_map) {
       }
     }
   }
-  project.set_original_domain_types(original_domain_types);
+  project->set_original_domain_types(original_domain_types);
 
   // groomed types
   std::vector<DomainType> groomed_domain_types;
@@ -104,7 +105,7 @@ void ProjectUtils::determine_domain_types(Project& project, StringMap key_map) {
       }
     }
   }
-  project.set_groomed_domain_types(groomed_domain_types);
+  project->set_groomed_domain_types(groomed_domain_types);
 }
 
 //---------------------------------------------------------------------------
@@ -264,6 +265,84 @@ std::vector<std::string> ProjectUtils::convert_groomed_domain_types(std::vector<
     }
   }
   return list;
+}
+
+//---------------------------------------------------------------------------
+static void assign_keys(StringMap& j, std::vector<std::string> prefixes, std::vector<std::string> filenames,
+                        std::vector<std::string> domains) {
+  if (filenames.empty() || prefixes.empty()) {
+    return;
+  }
+  assert(!domains.empty());
+  if (domains.empty()) {
+    throw std::runtime_error("Empty domains");
+  }
+  auto prefix = prefixes[0];
+  if (filenames.size() != domains.size()) {
+    throw std::runtime_error(prefix + " filenames and number of domains mismatch (" +
+                             std::to_string(filenames.size()) + " vs " + std::to_string(domains.size()) + ")");
+  }
+  for (int i = 0; i < domains.size(); i++) {
+    if (prefixes.size() == domains.size()) {
+      prefix = prefixes[i];
+    }
+    std::string key = prefix + "_" + domains[i];
+    std::string value = filenames[i];
+    j[key] = value;
+  }
+}
+
+//---------------------------------------------------------------------------
+static void assign_transforms(StringMap& j, std::string prefix, std::vector<std::vector<double>> transforms,
+                              std::vector<std::string> domains) {
+  if (transforms.empty()) {
+    return;
+  }
+  if (transforms.size() != domains.size() && transforms.size() != domains.size() + 1) {
+    throw std::runtime_error(prefix + " filenames and number of domains mismatch (" +
+                             std::to_string(transforms.size()) + " vs " + std::to_string(domains.size()) + ")");
+  }
+  for (int i = 0; i < transforms.size(); i++) {
+    std::string key = prefix + "_";
+    if (i < domains.size()) {
+      key = key + domains[i];
+    } else {
+      key = key + "global";
+    }
+    std::string value = ProjectUtils::transform_to_string(transforms[i]);
+    j[key] = value;
+  }
+}
+//---------------------------------------------------------------------------
+ProjectUtils::StringMap ProjectUtils::convert_subject_to_map(Project* project, Subject* subject) {
+  auto domains = project->get_domain_names();
+
+  StringMap j;
+  j["name"] = subject->get_display_name();
+
+  auto original_prefixes = ProjectUtils::convert_domain_types(project->get_original_domain_types());
+  auto groomed_prefixes = ProjectUtils::convert_groomed_domain_types(project->get_groomed_domain_types());
+
+  assign_keys(j, original_prefixes, subject->get_original_filenames(), domains);
+  for (auto& [key, value] : subject->get_feature_filenames()) {
+    j["image_" + key] = value;
+  }
+  for (auto& [key, value] : subject->get_group_values()) {
+    j["group_" + key] = value;
+  }
+  assign_keys(j, {"landmarks_file"}, subject->get_landmarks_filenames(), domains);
+  assign_keys(j, {"constraints"}, subject->get_constraints_filenames(), domains);
+  assign_keys(j, groomed_prefixes, subject->get_groomed_filenames(), domains);
+  assign_keys(j, {"local_particles"}, subject->get_local_particle_filenames(), domains);
+  assign_keys(j, {"world_particles"}, subject->get_world_particle_filenames(), domains);
+  assign_transforms(j, {"alignment"}, subject->get_groomed_transforms(), domains);
+  assign_transforms(j, {"procrustes"}, subject->get_procrustes_transforms(), domains);
+
+  // write out extra values
+  for (auto& [key, value] : subject->get_extra_values()) {
+    j[key] = value;
+  }
+  return j;
 }
 
 //---------------------------------------------------------------------------

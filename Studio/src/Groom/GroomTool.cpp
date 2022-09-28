@@ -250,15 +250,11 @@ void GroomTool::update_reflect_choices() {
 
   auto& subjects = project->get_subjects();
 
-  auto contains = [](std::map<std::string, std::string> map, std::string key) -> bool {
-    return map.find(key) != map.end();
-  };
-
   QStringList list;
   for (int row = 0; row < subjects.size(); row++) {
     auto values = subjects[row]->get_table_values();
     std::string value;
-    if (contains(values, column.toStdString())) {
+    if (values.contains(column.toStdString())) {
       list << QString::fromStdString(values[column.toStdString()]);
     }
   }
