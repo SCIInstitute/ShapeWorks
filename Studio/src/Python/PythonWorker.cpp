@@ -85,12 +85,12 @@ void PythonWorker::start_job(QSharedPointer<Job> job) {
   }
 
   this->python_logger_->clear_abort();
-  emit this->current_job_->finished();
+  Q_EMIT this->current_job_->finished();
 }
 
 //---------------------------------------------------------------------------
 void PythonWorker::run_job(QSharedPointer<Job> job) {
-  emit job->progress(0);
+  Q_EMIT job->progress(0);
   SW_LOG("Running Task: " + job->name().toStdString());
 
   job->start_timer();
@@ -259,7 +259,7 @@ void PythonWorker::finalize_python() {
 }
 
 //---------------------------------------------------------------------------
-void PythonWorker::incoming_python_progress(double value) { emit this->current_job_->progress(value); }
+void PythonWorker::incoming_python_progress(double value) { Q_EMIT this->current_job_->progress(value); }
 
 //---------------------------------------------------------------------------
 void PythonWorker::abort_job() { this->python_logger_->set_abort(); }

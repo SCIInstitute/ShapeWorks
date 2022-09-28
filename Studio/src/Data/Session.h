@@ -247,7 +247,7 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   void handle_new_mesh();
   void handle_thread_complete();
 
- signals:
+  Q_SIGNALS:
   /// signal that the data has changed
   void data_changed();
   void points_changed();

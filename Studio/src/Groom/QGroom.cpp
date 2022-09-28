@@ -5,7 +5,7 @@ namespace shapeworks {
 //---------------------------------------------------------------------------
 void QGroom::update_progress()
 {
-  emit progress(static_cast<int>(this->progress_));
+  Q_EMIT progress(static_cast<int>(this->progress_));
 }
 
 //---------------------------------------------------------------------------

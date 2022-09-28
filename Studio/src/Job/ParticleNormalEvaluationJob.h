@@ -16,7 +16,7 @@ class ParticleNormalEvaluationJob : public Job {
 
   std::vector<bool> get_good_bad();
 
-signals:
+Q_SIGNALS:
 
   void result_ready(std::vector<bool> good_bad);
 

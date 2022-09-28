@@ -357,6 +357,7 @@ IF(USE_PCH)
     "<Eigen/Dense>"
     "<Eigen/Sparse>"
     "<Eigen/Core>"
+    "<QCloseEvent>"
     )
 ENDIF(USE_PCH)
 

@@ -36,6 +36,7 @@
 #include <Visualization/Visualizer.h>
 #include <tinyxml.h>
 
+
 namespace shapeworks {
 
 const std::string Session::DATA_C("data");
@@ -57,13 +58,13 @@ Session::Session(QWidget* parent, Preferences& prefs)
 Session::~Session() = default;
 
 //---------------------------------------------------------------------------
-void Session::handle_new_mesh() { emit new_mesh(); }
+void Session::handle_new_mesh() { Q_EMIT new_mesh(); }
 
 //---------------------------------------------------------------------------
 void Session::handle_thread_complete() {
   SW_LOG("Reconstruction initialization complete.");
   calculate_reconstructed_samples();
-  emit update_display();
+  Q_EMIT update_display();
 }
 
 //---------------------------------------------------------------------------
@@ -487,7 +488,7 @@ void Session::load_original_files(std::vector<std::string> filenames) {
   renumber_shapes();
   project_->update_subjects();
   if (filenames.size() > 0) {
-    emit data_changed();
+    Q_EMIT data_changed();
   }
 }
 
@@ -524,7 +525,7 @@ void Session::load_groomed_files(std::vector<std::string> file_names, double iso
 
   project_->update_subjects();
   if (file_names.size() > 0) {
-    emit data_changed();
+    Q_EMIT data_changed();
   }
 }
 
@@ -571,7 +572,7 @@ bool Session::load_point_files(std::vector<std::string> local, std::vector<std::
 
   project_->update_subjects();
   if (local.size() > 0) {
-    emit data_changed();
+    Q_EMIT data_changed();
   }
 
   return true;
@@ -595,7 +596,7 @@ bool Session::update_particles(std::vector<Particles> particles) {
   }
 
   unsaved_particle_files_ = true;
-  emit points_changed();
+  Q_EMIT points_changed();
   return true;
 }
 
@@ -685,7 +686,7 @@ ShapeList Session::get_shapes() { return shapes_; }
 //---------------------------------------------------------------------------
 void Session::remove_shapes(QList<int> list) {
   std::sort(list.begin(), list.end(), std::greater<>());
-  foreach (int i, list) {
+  Q_FOREACH (int i, list) {
     std::vector<std::shared_ptr<Subject>>& subjects = project_->get_subjects();
     subjects.erase(subjects.begin() + i);
     shapes_.erase(shapes_.begin() + i);
@@ -694,7 +695,7 @@ void Session::remove_shapes(QList<int> list) {
   project_->get_subjects();
   renumber_shapes();
   project_->update_subjects();
-  emit data_changed();
+  Q_EMIT data_changed();
 }
 
 //---------------------------------------------------------------------------
@@ -766,7 +767,7 @@ void Session::new_landmark(PickResult result) {
     project_->new_landmark(result.domain_);
   }
   update_auto_glyph_size();
-  emit landmarks_changed();
+  Q_EMIT landmarks_changed();
 }
 
 //---------------------------------------------------------------------------
@@ -797,7 +798,7 @@ void Session::new_plane_point(PickResult result) {
     plane.points().push_back(pos);
     planes.push_back(plane);
   }
-  emit planes_changed();
+  Q_EMIT planes_changed();
 }
 
 //---------------------------------------------------------------------------
@@ -895,7 +896,7 @@ bool Session::get_feature_auto_scale() { return params_.get("feature_auto_scale"
 //---------------------------------------------------------------------------
 void Session::set_feature_auto_scale(bool value) {
   params_.set("feature_auto_scale", value);
-  emit feature_range_changed();
+  Q_EMIT feature_range_changed();
 }
 
 //---------------------------------------------------------------------------
@@ -913,13 +914,13 @@ void Session::set_feature_range(double min, double max) {
 //---------------------------------------------------------------------------
 void Session::set_feature_range_min(double value) {
   params_.set("feature_range_min", value);
-  emit feature_range_changed();
+  Q_EMIT feature_range_changed();
 }
 
 //---------------------------------------------------------------------------
 void Session::set_feature_range_max(double value) {
   params_.set("feature_range_max", value);
-  emit feature_range_changed();
+  Q_EMIT feature_range_changed();
 }
 
 //---------------------------------------------------------------------------
@@ -936,13 +937,13 @@ void Session::handle_ctrl_click(PickResult result) {
 }
 
 //---------------------------------------------------------------------------
-void Session::trigger_landmarks_changed() { emit landmarks_changed(); }
+void Session::trigger_landmarks_changed() { Q_EMIT landmarks_changed(); }
 
 //---------------------------------------------------------------------------
-void Session::trigger_planes_changed() { emit planes_changed(); }
+void Session::trigger_planes_changed() { Q_EMIT planes_changed(); }
 
 //---------------------------------------------------------------------------
-void Session::trigger_ffc_changed() { emit ffc_changed(); }
+void Session::trigger_ffc_changed() { Q_EMIT ffc_changed(); }
 
 //---------------------------------------------------------------------------
 void Session::set_active_landmark_domain(int id) { active_landmark_domain_ = id; }
@@ -974,7 +975,7 @@ bool Session::get_planes_active() { return planes_active_ && get_tool_state() ==
 //---------------------------------------------------------------------------
 void Session::set_show_landmark_labels(bool show) {
   show_landmark_labels_ = show;
-  emit landmarks_changed();
+  Q_EMIT landmarks_changed();
 }
 
 //---------------------------------------------------------------------------
@@ -985,7 +986,7 @@ void Session::set_show_planes(bool show) {
   bool old_value = get_show_planes();
   params_.set("show_planes", show);
   if (show != old_value) {
-    emit planes_changed();
+    Q_EMIT planes_changed();
   }
 }
 
@@ -1000,7 +1001,7 @@ void Session::set_show_landmarks(bool show) {
   bool old_value = get_show_landmarks();
   if (show != old_value) {
     params_.set("show_landmarks", show);
-    emit landmarks_changed();
+    Q_EMIT landmarks_changed();
   }
 }
 
@@ -1129,7 +1130,7 @@ bool Session::get_show_good_bad_particles() { return params_.get("show_good_bad_
 void Session::set_show_good_bad_particles(bool enabled) {
   if (enabled != get_show_good_bad_particles()) {
     params_.set("show_good_bad_particles", enabled);
-    emit update_display();
+    Q_EMIT update_display();
   }
 }
 
@@ -1153,7 +1154,7 @@ void Session::set_good_bad_particles(const std::vector<bool>& good_bad) { params
 //---------------------------------------------------------------------------
 void Session::set_compare_settings(CompareSettings settings) {
   compare_settings_ = settings;
-  emit update_display();
+  Q_EMIT update_display();
 }
 
 //---------------------------------------------------------------------------
@@ -1166,7 +1167,7 @@ void Session::trigger_repaint() { Q_EMIT repaint(); }
 void Session::set_display_mode(DisplayMode mode) {
   if (!is_loading()) {
     params_.set("view_state", display_mode_to_string(mode));
-    emit update_view_mode();
+    Q_EMIT update_view_mode();
   }
 }
 

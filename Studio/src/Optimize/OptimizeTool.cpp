@@ -113,8 +113,8 @@ void OptimizeTool::handle_progress(int val, QString progress_message) {
     return;
   }
 
-  emit progress(val);
-  emit status(progress_message);
+  Q_EMIT progress(val);
+  Q_EMIT status(progress_message);
 
   auto particles = optimize_->GetParticles();
   session_->update_particles(particles);
@@ -132,22 +132,22 @@ void OptimizeTool::handle_optimize_complete() {
 
   session_->calculate_reconstructed_samples();
   session_->get_project()->update_subjects();
-  emit progress(100);
+  Q_EMIT progress(100);
 
   QString duration = QString::number(elapsed_timer_.elapsed() / 1000.0, 'f', 1);
   SW_LOG("Optimize Complete.  Duration: " + duration.toStdString() + " seconds");
-  emit optimize_complete();
+  Q_EMIT optimize_complete();
   update_run_button();
 }
 
 //---------------------------------------------------------------------------
 void OptimizeTool::handle_optimize_failed() {
   optimization_is_running_ = false;
-  emit progress(100);
+  Q_EMIT progress(100);
 
   std::string duration = QString::number(elapsed_timer_.elapsed() / 1000.0, 'f', 1).toStdString();
   SW_LOG("Optimize Failed.  Duration: " + duration + " seconds");
-  emit optimize_complete();
+  Q_EMIT optimize_complete();
   update_run_button();
 }
 
@@ -173,7 +173,7 @@ void OptimizeTool::on_run_optimize_button_clicked() {
   }
 
   optimization_is_running_ = true;
-  emit optimize_start();
+  Q_EMIT optimize_start();
 
   store_params();
   SW_LOG("Please wait: running optimize step...");
@@ -349,8 +349,8 @@ void OptimizeTool::handle_load_progress(int count) {
   }
 
   double value = static_cast<double>(count) / session_->get_shapes().size() * 100.0f;
-  if (value < 100) {  // cannot emit 100 or the main interface will think the job is done
-    emit progress(static_cast<int>(value));
+  if (value < 100) {  // cannot Q_EMIT 100 or the main interface will think the job is done
+    Q_EMIT progress(static_cast<int>(value));
   }
 }
 
