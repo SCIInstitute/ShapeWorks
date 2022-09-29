@@ -66,14 +66,18 @@ def generate_segmentations(meshList, out_dir, randomize_size=True, spacing=[1.0,
     segDir = out_dir + "segmentations/"
     make_dir(segDir)
 
-    # get region that includes all of these meshes
+    # get region that includes all of these meshes with padding
     bball = sw.MeshUtils.boundingBox(meshList)
+    pad = np.array([5,5,5])
+    bball.min -= pad
+    bball.max += pad
 
     # randomly select 20% meshes for boundary touching samples
-    numMeshes = len(meshList)
-    meshIndexArray = np.array(list(range(numMeshes)))
-    subSampleSize = int(0.2*numMeshes)
-    randomBoundarySamples = np.random.choice(meshIndexArray,subSampleSize,replace=False)
+    if allow_on_boundary:
+        numMeshes = len(meshList)
+        meshIndexArray = np.array(list(range(numMeshes)))
+        subSampleSize = int(0.2*numMeshes)
+        randomBoundarySamples = np.random.choice(meshIndexArray,subSampleSize,replace=False)
 
     # loop through meshes and turn to images
     segList = []
@@ -85,19 +89,17 @@ def generate_segmentations(meshList, out_dir, randomize_size=True, spacing=[1.0,
 
         # load .ply mesh and get its bounding box
         mesh = sw.Mesh(mesh_)
-        bb = mesh.boundingBox()
 
-        # if mesh isn't in the set for allow_on_boundary, add [random] padding
-        if not (allow_on_boundary and (meshIndex in randomBoundarySamples)):
+        # set bounding box based on parameters
+        if allow_on_boundary:
+            if meshIndex in randomBoundarySamples:
+                bb = mesh.boundingBox()
+        else:
             bb = bball
-
-            pad = 5
-            if randomize_size:            
+            if randomize_size:    
                 pad = np.random.randint(5, high=15, size=3)
-            else:
-                pad = np.array([5,5,5])
-            bb.min -= pad
-            bb.max += pad
+                bb.min -= pad
+                bb.max += pad
 
         # sample the given region of Mesh to an image
         image = mesh.toImage(region=bb, spacing=spacing)
