@@ -2,17 +2,19 @@
 
 using namespace shapeworks;
 
+using StringMap = project::types::StringMap;
+
 //---------------------------------------------------------------------------
 Parameters::Parameters() {}
 
 //---------------------------------------------------------------------------
-Parameters::Parameters(std::map<std::string, std::string> map) { set_map(map); }
+Parameters::Parameters(StringMap map) { set_map(map); }
 
 //---------------------------------------------------------------------------
-void Parameters::set_map(std::map<std::string, std::string> map) { map_ = map; }
+void Parameters::set_map(StringMap map) { map_ = map; }
 
 //---------------------------------------------------------------------------
-std::map<std::string, std::string> Parameters::get_map() { return map_; }
+StringMap Parameters::get_map() { return map_; }
 
 //---------------------------------------------------------------------------
 Variant Parameters::get(std::string key, Variant default_value) {

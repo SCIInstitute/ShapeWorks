@@ -2,10 +2,10 @@
 #include <Data/LandmarkItemDelegate.h>
 #include <Data/LandmarkTableModel.h>
 #include <Data/Session.h>
-#include <Data/Shape.h>
+#include <Shape.h>
 #include <Data/ShapeWorksWorker.h>
-#include <Data/StudioLog.h>
-#include <Data/StudioMesh.h>
+#include <Logging.h>
+#include <StudioMesh.h>
 #include <ui_DataTool.h>
 
 #include <QDebug>
@@ -128,7 +128,7 @@ void DataTool::update_table() {
     return;
   }
 
-  QVector<QSharedPointer<Shape>> shapes = session_->get_shapes();
+  auto shapes = session_->get_shapes();
 
   auto project = session_->get_project();
   auto headers = project->get_headers();
@@ -146,15 +146,11 @@ void DataTool::update_table() {
   ui_->table->setHorizontalHeaderLabels(table_headers);
   ui_->table->verticalHeader()->setVisible(true);
 
-  auto contains = [](std::map<std::string, std::string> map, std::string key) -> bool {
-    return map.find(key) != map.end();
-  };
-
   for (int row = 0; row < subjects.size(); row++) {
     auto values = subjects[row]->get_table_values();
     for (int h = 0; h < table_headers.size(); h++) {
       std::string value;
-      if (contains(values, headers[h])) {
+      if (values.contains(headers[h])) {
         value = values[headers[h]];
       }
       QTableWidgetItem* new_item = new QTableWidgetItem(QString::fromStdString(value));
@@ -291,7 +287,7 @@ void DataTool::update_plane_table() {
         for (auto& plane : planes) {
           plane.updatePlaneFromPoints();
           // shape
-          auto* new_item = new QTableWidgetItem(shape->get_display_name());
+          auto* new_item = new QTableWidgetItem(QString::fromStdString(shape->get_display_name()));
           new_item->setData(Qt::UserRole, i);  // shape id
           table->setItem(row, 0, new_item);
           // domain
@@ -366,7 +362,7 @@ void DataTool::update_ffc_table() {
     for (int domain_id = 0; domain_id < domain_names.size(); domain_id++) {
       if (shape->get_constraints(domain_id).getFreeformConstraint().isSet()) {
         // shape
-        auto* new_item = new QTableWidgetItem(shape->get_display_name());
+        auto* new_item = new QTableWidgetItem(QString::fromStdString(shape->get_display_name()));
         new_item->setData(Qt::UserRole, i);  // shape id
         table->setItem(row, 0, new_item);
         // domain

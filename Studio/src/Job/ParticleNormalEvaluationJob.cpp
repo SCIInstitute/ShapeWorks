@@ -2,7 +2,7 @@
 #include "ParticleNormalEvaluationJob.h"
 
 #include <Data/Session.h>
-#include <Data/StudioLog.h>
+#include <Logging.h>
 
 #include "ParticleNormalEvaluation.h"
 
@@ -43,8 +43,8 @@ void ParticleNormalEvaluationJob::run() {
 
   int good_count = std::count(good_bad.begin(), good_bad.end(), true);
 
-  STUDIO_LOG_MESSAGE("ParticleNormalEvaluationJob: found " + QString::number(good_count) + "/" +
-                     QString::number(good_bad.size()) + " good particles");
+  SW_LOG("ParticleNormalEvaluationJob: found " + std::to_string(good_count) + "/" +
+                     std::to_string(good_bad.size()) + " good particles");
 
   emit progress(1.0);
 

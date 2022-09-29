@@ -6,8 +6,7 @@
 namespace shapeworks {
 
 //---------------------------------------------------------------------------
-LogWindow::LogWindow(QWidget* parent) : QDialog(parent)
-{
+LogWindow::LogWindow(QWidget* parent) : QDialog(parent) {
   ui_ = new Ui_LogWindow;
   ui_->setupUi(this);
   ui_->history_list_->setWordWrap(true);
@@ -18,15 +17,12 @@ LogWindow::LogWindow(QWidget* parent) : QDialog(parent)
   flags = flags & (~helpFlag);
   this->setWindowFlags(flags);
   this->setWindowIcon(icon);
-
 }
 
 //---------------------------------------------------------------------------
-void LogWindow::add_message(MessageType message_type, QString message)
-{
+void LogWindow::add_message(MessageType message_type, QString message) {
   message = message.trimmed();
   QColor color = QColor(255, 255, 255);
-
   switch (message_type) {
     case MessageType::error:
       color = QColor(200, 0, 0);
@@ -44,12 +40,10 @@ void LogWindow::add_message(MessageType message_type, QString message)
       break;
   }
 
-  QListWidgetItem* item = new QListWidgetItem(message,
-                                              this->ui_->history_list_);
+  QListWidgetItem* item = new QListWidgetItem(message, this->ui_->history_list_);
   item->setTextColor(color);
   this->ui_->history_list_->addItem(item);
   this->ui_->history_list_->setCurrentItem(item);
 }
 
-}
-
+}  // namespace shapeworks

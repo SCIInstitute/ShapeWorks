@@ -489,7 +489,7 @@ vnl_vector_fixed<double, 3> Constraints::constraintsLagrangianGradient(const Poi
   prept(1) = prepos[1];
   prept(2) = prepos[2];
   Eigen::Vector3d grad = Eigen::Vector3d(0, 0, 0);
-  std::stringstream stream;
+  //std::stringstream stream;
   for (size_t i = 0; i < planeConstraints_.size(); i++) {
     // if(planeConsts[i].ConstraintEval(pt)>0) stream << "CuttingPlane " << i << "/" << planeConsts.size() << ": "
     // << planeConsts[i].LagragianGradient(pt, C).transpose() << " ::: " << planeConsts[i].ConstraintEval(pt) <<
@@ -506,7 +506,7 @@ vnl_vector_fixed<double, 3> Constraints::constraintsLagrangianGradient(const Poi
   for (size_t i = 0; i < 3; i++) {
     gradE[i] = grad(i);
   }
-  stream << "gradE " << gradE << std::endl;
+  //stream << "gradE " << gradE << std::endl;
   // std::cout << stream.str();
   return gradE;
 }

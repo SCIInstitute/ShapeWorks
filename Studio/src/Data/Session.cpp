@@ -14,6 +14,7 @@
 #include <QMessageBox>
 #include <QProgressDialog>
 #include <QXmlStreamWriter>
+#include <boost/algorithm/string/join.hpp>
 
 #ifdef _WIN32
 #include <direct.h>
@@ -22,14 +23,14 @@
 #include <unistd.h>
 #endif
 
-#include <Data/MeshManager.h>
 #include <Data/Session.h>
-#include <Data/Shape.h>
-#include <Data/StudioLog.h>
 #include <ExcelProjectWriter.h>
-#include <JsonProjectWriter.h>
 #include <JsonProjectReader.h>
+#include <JsonProjectWriter.h>
 #include <Libs/Project/Project.h>
+#include <Logging.h>
+#include <MeshManager.h>
+#include <Shape.h>
 #include <Utils/AnalysisUtils.h>
 #include <Utils/StudioUtils.h>
 #include <Visualization/Visualizer.h>
@@ -45,9 +46,11 @@ const std::string Session::DEEPSSM_C("deepssm");
 
 //---------------------------------------------------------------------------
 Session::Session(QWidget* parent, Preferences& prefs)
-    : parent_(parent), preferences_(prefs), mesh_manager_(QSharedPointer<MeshManager>(new MeshManager(preferences_))) {
-  this->parent_ = nullptr;
-  connect(this->mesh_manager_.data(), &MeshManager::new_mesh, this, &Session::handle_new_mesh);
+    : parent_(parent), preferences_(prefs), mesh_manager_(new MeshManager()) {
+  parent_ = nullptr;
+  connect(mesh_manager_.get(), &MeshManager::new_mesh, this, &Session::handle_new_mesh);
+  // clear cache sets the mesh manager cache seettings
+  handle_clear_cache();
 }
 
 //---------------------------------------------------------------------------
@@ -57,56 +60,58 @@ Session::~Session() = default;
 void Session::handle_new_mesh() { emit new_mesh(); }
 
 //---------------------------------------------------------------------------
-void Session::handle_message(QString s) { emit message(s); }
-
-//---------------------------------------------------------------------------
 void Session::handle_thread_complete() {
-  emit message("Reconstruction initialization complete.");
-  this->calculate_reconstructed_samples();
+  SW_LOG("Reconstruction initialization complete.");
+  calculate_reconstructed_samples();
   emit update_display();
 }
 
 //---------------------------------------------------------------------------
 void Session::handle_clear_cache() {
-  this->mesh_manager_->clear_cache();
+  mesh_manager_->set_cache_enabled(preferences_.get_cache_enabled());
+  mesh_manager_->set_cache_memory_percent(preferences_.get_memory_cache_percent());
+  mesh_manager_->set_parallel_enabled(preferences_.get_parallel_enabled());
+  mesh_manager_->set_num_threads(preferences_.get_num_threads());
 
-  for (auto& s : this->shapes_) {
+  mesh_manager_->clear_cache();
+
+  for (auto& s : shapes_) {
     s->clear_reconstructed_mesh();
   }
 
-  this->calculate_reconstructed_samples();
+  calculate_reconstructed_samples();
 }
 
 //---------------------------------------------------------------------------
 void Session::calculate_reconstructed_samples() {
-  if (!this->project_->get_particles_present()) {
+  if (!project_->get_particles_present()) {
     return;
   }
-  // this->preferences_.set_preference("Studio/cache_enabled", false);
-  for (auto shape : qAsConst(this->shapes_)) {
+  // preferences_.set_preference("Studio/cache_enabled", false);
+  for (auto shape : qAsConst(shapes_)) {
     auto pts = shape->get_local_correspondence_points();
     if (!(pts.size() == 0)) {
       /// TODO: fix
-      // shape->set_reconstructed_mesh(this->mesh_manager_->get_mesh(pts));
+      // shape->set_reconstructed_mesh(mesh_manager_->get_mesh(pts));
     }
   }
-  // this->preferences_.set_preference("Studio/cache_enabled", true);
+  // preferences_.set_preference("Studio/cache_enabled", true);
 }
 
 //---------------------------------------------------------------------------
-void Session::set_parent(QWidget* parent) { this->parent_ = parent; }
+void Session::set_parent(QWidget* parent) { parent_ = parent; }
 
 //---------------------------------------------------------------------------
 bool Session::save_project(QString filename) {
-  QProgressDialog progress("Saving Project...", "Abort", 0, 100, this->parent_);
+  QProgressDialog progress("Saving Project...", "Abort", 0, 100, parent_);
   progress.setWindowModality(Qt::WindowModal);
   progress.setMinimumDuration(2000);
 
   try {
     if (filename == "") {
-      filename = this->filename_;
+      filename = filename_;
     }
-    this->filename_ = QFileInfo(filename).absoluteFilePath();
+    filename_ = QFileInfo(filename).absoluteFilePath();
 
     QFileInfo fi(filename);
     if (fi.exists()) {
@@ -123,20 +128,20 @@ bool Session::save_project(QString filename) {
       }
     }
 
-    this->set_project_path(QFileInfo(filename).absolutePath());
+    set_project_path(QFileInfo(filename).absolutePath());
 
-    this->preferences_.set_saved();
+    preferences_.set_saved();
 
     progress.setValue(5);
     QApplication::processEvents();
 
     // original files
-    if (this->original_present()) {
+    if (original_present()) {
       std::vector<std::string> original_list;
-      for (int i = 0; i < this->shapes_.size(); i++) {
-        original_list.push_back(this->shapes_[i]->get_original_filename_with_path().toStdString());
+      for (int i = 0; i < shapes_.size(); i++) {
+        original_list.push_back(shapes_[i]->get_original_filename_with_path());
       }
-      // this->session_->set_original_files(original_list);
+      // session_->set_original_files(original_list);
     }
 
     // landmarks
@@ -150,27 +155,27 @@ bool Session::save_project(QString filename) {
     }
 
     // correspondence points
-    if (this->unsaved_particle_files_ && this->particles_present()) {
-      for (int i = 0; i < this->shapes_.size(); i++) {
-        auto local_files = this->shapes_[i]->get_subject()->get_local_particle_filenames();
-        auto world_files = this->shapes_[i]->get_subject()->get_world_particle_filenames();
-        auto particles = this->shapes_[i]->get_particles();
+    if (unsaved_particle_files_ && particles_present()) {
+      for (int i = 0; i < shapes_.size(); i++) {
+        auto local_files = shapes_[i]->get_subject()->get_local_particle_filenames();
+        auto world_files = shapes_[i]->get_subject()->get_world_particle_filenames();
+        auto particles = shapes_[i]->get_particles();
         for (int i = 0; i < local_files.size(); i++) {
-          this->save_particles_file(local_files[i], particles.get_local_particles(i));
-          this->save_particles_file(world_files[i], particles.get_raw_world_particles(i));
+          save_particles_file(local_files[i], particles.get_local_particles(i));
+          save_particles_file(world_files[i], particles.get_raw_world_particles(i));
         }
       }
-      this->unsaved_particle_files_ = false;
+      unsaved_particle_files_ = false;
     }
 
-    this->project_->set_parameters(Parameters::STUDIO_PARAMS, this->params_);
+    project_->set_parameters(Parameters::STUDIO_PARAMS, params_);
 
-    this->project_->save(filename.toStdString());
+    project_->save(filename.toStdString());
 
-    //ExcelProjectWriter::write_project(project_, "/tmp/project.xlsx");
-    //JsonProjectWriter::write_project(project_, "/tmp/project.json");
-    //auto proj = std::make_shared<Project>();
-    //JsonProjectReader::read_project(proj, "/tmp/project.json");
+    // ExcelProjectWriter::write_project(project_, "/tmp/project.xlsx");
+    // JsonProjectWriter::write_project(project_, "/tmp/project.json");
+    // auto proj = std::make_shared<Project>();
+    // JsonProjectReader::read_project(proj, "/tmp/project.json");
 
   } catch (std::exception& e) {
     QMessageBox::warning(0, "Error saving project", QString("Error saving project: ") + e.what());
@@ -200,10 +205,10 @@ bool Session::load_project(QString filename) {
   }
 
   // clear the project out first
-  this->filename_ = QFileInfo(filename).absoluteFilePath();
+  filename_ = QFileInfo(filename).absoluteFilePath();
 
   if (filename.endsWith(".xlsx", Qt::CaseInsensitive) || filename.endsWith(".swproj", Qt::CaseInsensitive)) {
-    return this->load_xl_project(filename);
+    return load_xl_project(filename);
   }
 
   // open and parse XML
@@ -222,7 +227,7 @@ bool Session::load_project(QString filename) {
   bool is_project = project_element != nullptr;
 
   if (!is_project) {
-    return this->load_light_project(filename);
+    return load_light_project(filename);
   }
 
   QString message = "Error: This version of ShapeWorksStudio only reads XLSX and legacy XML files: " + filename;
@@ -233,7 +238,7 @@ bool Session::load_project(QString filename) {
 //---------------------------------------------------------------------------
 bool Session::load_light_project(QString filename) {
   std::cerr << "Loading old XML parameter file...\n";
-  this->is_light_project_ = true;
+  is_light_project_ = true;
 
   // open and parse XML
   TiXmlDocument doc(filename.toStdString().c_str());
@@ -248,7 +253,7 @@ bool Session::load_light_project(QString filename) {
   std::istringstream inputsBuffer;
 
   // determine if groups are available
-  this->groups_available_ = (docHandle.FirstChild("group_ids").Element() != nullptr);
+  groups_available_ = (docHandle.FirstChild("group_ids").Element() != nullptr);
 
   int domains_per_shape = 1;
   TiXmlElement* elem = docHandle.FirstChild("domains_per_shape").Element();
@@ -256,7 +261,7 @@ bool Session::load_light_project(QString filename) {
     domains_per_shape = atoi(elem->GetText());
   }
   std::vector<std::string> domain_names;
-  for (int i=0;i<domains_per_shape;i++) {
+  for (int i = 0; i < domains_per_shape; i++) {
     domain_names.push_back(std::to_string(i));
   }
   project_->set_domain_names(domain_names);
@@ -306,9 +311,7 @@ bool Session::load_light_project(QString filename) {
   elem = docHandle.FirstChild("distance_transform_files").Element();
   if (elem && elem->GetText()) {
     if (!local_particles_found) {
-      QString message = "Error, distance_transform_files specified, but not local_particle_files";
-      STUDIO_LOG_ERROR(message);
-      QMessageBox::critical(nullptr, "ShapeWorksStudio", message, QMessageBox::Ok);
+      SW_ERROR("Error, distance_transform_files specified, but not local_particle_files");
       return false;
     }
     groom_files.clear();  // if someone specifies both, prefer the distance transforms
@@ -316,9 +319,7 @@ bool Session::load_light_project(QString filename) {
     inputsBuffer.str(elem->GetText());
     while (inputsBuffer >> distance_transform_filename) {
       if (!QFile::exists(QString::fromStdString(distance_transform_filename))) {
-        QString message = "File does not exist: " + QString::fromStdString(distance_transform_filename);
-        STUDIO_LOG_ERROR(message);
-        QMessageBox::critical(nullptr, "ShapeWorksStudio", message, QMessageBox::Ok);
+        SW_ERROR("File does not exist: " + distance_transform_filename);
         return false;
       }
 
@@ -331,18 +332,15 @@ bool Session::load_light_project(QString filename) {
   elem = docHandle.FirstChild("mesh_files").Element();
   if (elem && elem->GetText()) {
     if (!local_particles_found) {
-      QString message = "Error, mesh_files specified, but not local_particle_files";
-      STUDIO_LOG_ERROR(message);
-      QMessageBox::critical(nullptr, "ShapeWorksStudio", message, QMessageBox::Ok);
+      SW_ERROR("Error, mesh_files specified, but not local_particle_files");
       return false;
     }
     std::string mesh_filename;
     inputsBuffer.str(elem->GetText());
     while (inputsBuffer >> mesh_filename) {
       if (!QFile::exists(QString::fromStdString(mesh_filename))) {
-        QString message = "File does not exist: " + QString::fromStdString(mesh_filename);
-        STUDIO_LOG_ERROR(message);
-        QMessageBox::critical(nullptr, "ShapeWorksStudio", message, QMessageBox::Ok);
+        std::string message = "File does not exist: " + mesh_filename;
+        SW_ERROR(message);
         return false;
       }
       groom_files.push_back(mesh_filename);
@@ -353,25 +351,21 @@ bool Session::load_light_project(QString filename) {
 
   if (!groom_files.empty()) {
     if (groom_files.size() != local_point_files.size()) {
-      QString message = "Error, mismatch in number of distance_transforms and particle files";
-      STUDIO_LOG_ERROR(message);
-      QMessageBox::critical(nullptr, "ShapeWorksStudio", message, QMessageBox::Ok);
+      SW_ERROR("Error, mismatch in number of distance_transforms and particle files");
       return false;
     }
   }
 
   if (local_point_files.size() != global_point_files.size()) {
-    QString message = "Error, mismatch in number of local and world particle files";
-    STUDIO_LOG_ERROR(message);
-    QMessageBox::critical(nullptr, "ShapeWorksStudio", message, QMessageBox::Ok);
+    SW_ERROR("Error, mismatch in number of local and world particle files");
     return false;
   }
 
-  if (!this->load_point_files(local_point_files, global_point_files, domains_per_shape)) {
+  if (!load_point_files(local_point_files, global_point_files, domains_per_shape)) {
     return false;
   }
 
-  this->load_groomed_files(groom_files, 0.5, domains_per_shape);
+  load_groomed_files(groom_files, 0.5, domains_per_shape);
 
   // read group ids
   std::vector<int> group_ids;
@@ -383,16 +377,14 @@ bool Session::load_light_project(QString filename) {
       group_ids.push_back(group_id);
     }
 
-    for (int i = 0; i < this->shapes_.size(); i++) {
-      this->shapes_[i]->set_group_id(group_ids[i]);
-    }
+    /// TODO: set groups from XML
   }
 
   set_display_mode(DisplayMode::Reconstructed);
 
   set_tool_state(Session::ANALYSIS_C);
 
-  this->renumber_shapes();
+  renumber_shapes();
 
   std::cerr << "Old XML parameter file loaded\n";
   return true;
@@ -412,14 +404,8 @@ bool Session::load_xl_project(QString filename) {
 
   auto subjects = project_->get_subjects();
 
-  std::vector<std::string> local_point_files;
-  std::vector<std::string> global_point_files;
-
-  auto domain_names = project_->get_domain_names();
-
-  // auto landmark_definitions = project_->get_all_landmark_definitions();
   for (int i = 0; i < num_subjects; i++) {
-    QSharedPointer<Shape> shape = QSharedPointer<Shape>(new Shape());
+    auto shape = std::make_shared<Shape>();
     shape->set_mesh_manager(mesh_manager_);
     shape->set_subject(subjects[i]);
 
@@ -428,16 +414,16 @@ bool Session::load_xl_project(QString filename) {
     auto landmark_files = subjects[i]->get_landmarks_filenames();
     auto constraints_files = subjects[i]->get_constraints_filenames();
 
-    if (!shape->import_local_point_files(StudioUtils::to_string_list(locals))) {
+    if (!shape->import_local_point_files(locals)) {
       return false;
     }
-    if (!shape->import_global_point_files(StudioUtils::to_string_list(worlds))) {
+    if (!shape->import_global_point_files(worlds)) {
       return false;
     }
-    if (!shape->import_landmarks_files(StudioUtils::to_string_list(landmark_files))) {
+    if (!shape->import_landmarks_files(landmark_files)) {
       return false;
     }
-    if (!shape->import_constraints(StudioUtils::to_string_list(constraints_files))) {
+    if (!shape->import_constraints(constraints_files)) {
       return false;
     }
 
@@ -452,9 +438,7 @@ bool Session::load_xl_project(QString filename) {
         landmark_definitions = project_->get_landmarks(domain_id);
       }
     }
-    for (int domain_id = 0; domain_id < domain_names.size(); domain_id++) {
-    }
-    shapes_ << shape;
+    shapes_.push_back(shape);
   }
 
   groups_available_ = project_->get_group_names().size() > 0;
@@ -464,65 +448,11 @@ bool Session::load_xl_project(QString filename) {
 
 //---------------------------------------------------------------------------
 void Session::set_project_path(QString relative_path) {
-  std::cerr << "Setting project path to " << relative_path.toStdString() << "\n";
-
-  QDir old_path = QDir(this->project_path_);
-  QDir new_path = QDir(relative_path);
-
-  auto subjects = this->project_->get_subjects();
-  for (auto subject : subjects) {
-    // segmentations
-    auto paths = subject->get_original_filenames();
-    std::vector<std::string> new_paths;
-    for (const auto& path : paths) {
-      auto full_path = old_path.absoluteFilePath(QString::fromStdString(path));
-      new_paths.push_back(new_path.relativeFilePath(full_path).toStdString());
-    }
-    subject->set_original_filenames(new_paths);
-
-    // groomed
-    paths = subject->get_groomed_filenames();
-    new_paths.clear();
-    for (const auto& path : paths) {
-      auto full_path = old_path.absoluteFilePath(QString::fromStdString(path));
-      new_paths.push_back(new_path.relativeFilePath(full_path).toStdString());
-    }
-    subject->set_groomed_filenames(new_paths);
-
-    // local particles
-    paths = subject->get_local_particle_filenames();
-    new_paths.clear();
-    for (const auto& path : paths) {
-      auto full_path = old_path.absoluteFilePath(QString::fromStdString(path));
-      new_paths.push_back(new_path.relativeFilePath(full_path).toStdString());
-    }
-    subject->set_local_particle_filenames(new_paths);
-
-    // world particles
-    paths = subject->get_world_particle_filenames();
-    new_paths.clear();
-    for (const auto& path : paths) {
-      auto full_path = old_path.absoluteFilePath(QString::fromStdString(path));
-      new_paths.push_back(new_path.relativeFilePath(full_path).toStdString());
-    }
-    subject->set_world_particle_filenames(new_paths);
-
-    // features
-    auto features = subject->get_feature_filenames();
-    std::map<std::string, std::string> new_features;
-    for (auto const& x : features) {
-      auto full_path = old_path.absoluteFilePath(QString::fromStdString(x.second));
-      new_features[x.first] = new_path.relativeFilePath(full_path).toStdString();
-    }
-    subject->set_feature_filenames(new_features);
-  }
-
-  this->project_path_ = relative_path;
-  chdir(this->project_path_.toStdString().c_str());
+  project_->set_project_path(relative_path.toStdString());
 }
 
 //---------------------------------------------------------------------------
-std::shared_ptr<Project> Session::get_project() { return this->project_; }
+std::shared_ptr<Project> Session::get_project() { return project_; }
 
 //---------------------------------------------------------------------------
 void Session::load_original_files(std::vector<std::string> filenames) {
@@ -538,26 +468,24 @@ void Session::load_original_files(std::vector<std::string> filenames) {
   for (int i = 0; i < filenames.size(); i++) {
     QString filename = QString::fromStdString(filenames[i]);
     if (!QFile::exists(filename)) {
-      QString message = "File does not exist: " + filename;
-      STUDIO_LOG_MESSAGE(message);
-      QMessageBox::critical(NULL, "ShapeWorksStudio", message, QMessageBox::Ok);
+      SW_ERROR("File does not exist: " + filename.toStdString());
       return;
     }
 
-    QSharedPointer<Shape> shape = QSharedPointer<Shape>(new Shape());
+    std::shared_ptr<Shape> shape = std::shared_ptr<Shape>(new Shape());
 
     std::shared_ptr<Subject> subject = std::make_shared<Subject>();
     subject->set_number_of_domains(1);
-    shape->set_mesh_manager(this->mesh_manager_);
+    shape->set_mesh_manager(mesh_manager_);
     shape->set_subject(subject);
-    this->project_->get_subjects().push_back(subject);
-    shape->import_original_image(filenames[i]);
+    project_->get_subjects().push_back(subject);
+    shape->import_original_file(filenames[i]);
 
-    this->shapes_.push_back(shape);
+    shapes_.push_back(shape);
   }
 
-  this->renumber_shapes();
-  this->project_->update_subjects();
+  renumber_shapes();
+  project_->update_subjects();
   if (filenames.size() > 0) {
     emit data_changed();
   }
@@ -569,21 +497,21 @@ void Session::load_groomed_files(std::vector<std::string> file_names, double iso
   int num_subjects = file_names.size() / domains_per_shape;
   int counter = 0;
   for (int i = 0; i < num_subjects; i++) {
-    if (this->shapes_.size() <= i) {
-      auto shape = QSharedPointer<Shape>(new Shape);
+    if (shapes_.size() <= i) {
+      auto shape = std::shared_ptr<Shape>(new Shape);
       std::shared_ptr<Subject> subject = std::make_shared<Subject>();
-      shape->set_mesh_manager(this->mesh_manager_);
+      shape->set_mesh_manager(mesh_manager_);
       shape->set_subject(subject);
-      this->project_->get_subjects().push_back(subject);
-      this->shapes_.push_back(shape);
+      project_->get_subjects().push_back(subject);
+      shapes_.push_back(shape);
     }
 
-    QStringList list;
-    list << QFileInfo(QString::fromStdString(file_names[counter])).fileName();
-    list << "";
-    list << "";
-    list << "";
-    this->shapes_[i]->set_annotations(list);
+    std::vector<std::string> list;
+    list.push_back(StringUtils::getFilename(file_names[counter]));
+    list.push_back("");
+    list.push_back("");
+    list.push_back("");
+    shapes_[i]->set_annotations(list);
 
     std::vector<std::string> groomed_filenames;
     for (int j = 0; j < domains_per_shape; j++) {
@@ -591,10 +519,10 @@ void Session::load_groomed_files(std::vector<std::string> file_names, double iso
     }
     counter += domains_per_shape;
 
-    this->shapes_[i]->get_subject()->set_groomed_filenames(groomed_filenames);
+    shapes_[i]->get_subject()->set_groomed_filenames(groomed_filenames);
   }
 
-  this->project_->update_subjects();
+  project_->update_subjects();
   if (file_names.size() > 0) {
     emit data_changed();
   }
@@ -606,41 +534,42 @@ bool Session::load_point_files(std::vector<std::string> local, std::vector<std::
   int num_subjects = local.size() / domains_per_shape;
   int counter = 0;
   for (int i = 0; i < num_subjects; i++) {
-    if (this->shapes_.size() <= i) {
-      auto shape = QSharedPointer<Shape>(new Shape);
+    if (shapes_.size() <= i) {
+      auto shape = std::shared_ptr<Shape>(new Shape);
       std::shared_ptr<Subject> subject = std::make_shared<Subject>();
       subject->set_number_of_domains(domains_per_shape);
-      shape->set_mesh_manager(this->mesh_manager_);
+      shape->set_mesh_manager(mesh_manager_);
       shape->set_subject(subject);
-      this->project_->get_subjects().push_back(subject);
-      this->shapes_.push_back(shape);
+      project_->get_subjects().push_back(subject);
+      shapes_.push_back(shape);
     }
 
     auto base = QString::fromStdString(world[counter]).remove("_world.particles").toStdString();
-    QStringList list;
-    list << QString::fromStdString(StringUtils::getFilename(base));
-    list << "";
-    list << "";
-    list << "";
+    std::vector<std::string> list;
+    list.push_back(StringUtils::getFilename(base));
+    list.push_back("");
+    list.push_back("");
+    list.push_back("");
 
-    QStringList local_filenames;
-    QStringList world_filenames;
+    std::vector<std::string> local_filenames;
+    std::vector<std::string> world_filenames;
     // only single domain supported so far
     for (int j = 0; j < domains_per_shape; j++) {
-      local_filenames << QString::fromStdString(local[counter + j]);
-      world_filenames << QString::fromStdString(world[counter + j]);
+      local_filenames.push_back(local[counter + j]);
+      world_filenames.push_back(world[counter + j]);
     }
     counter += domains_per_shape;
-    if (!this->shapes_[i]->import_local_point_files(local_filenames)) {
-      emit error("Unable to load point files: " + local_filenames.join(", "));
+    if (!shapes_[i]->import_local_point_files(local_filenames)) {
+      std::string message = "Unable to load point files: " + boost::algorithm::join(local_filenames, ", ");
+      SW_ERROR(message);
     }
-    if (!this->shapes_[i]->import_global_point_files(world_filenames)) {
-      emit error("Unable to load point files: " + local_filenames.join(", "));
+    if (!shapes_[i]->import_global_point_files(world_filenames)) {
+      SW_ERROR("Unable to load point files: " + boost::algorithm::join(local_filenames, ", "));
     }
-    this->shapes_[i]->set_annotations(list);
+    shapes_[i]->set_annotations(list);
   }
 
-  this->project_->update_subjects();
+  project_->update_subjects();
   if (local.size() > 0) {
     emit data_changed();
   }
@@ -649,23 +578,23 @@ bool Session::load_point_files(std::vector<std::string> local, std::vector<std::
 }
 
 //---------------------------------------------------------------------------
-bool Session::update_particles(std::vector<StudioParticles> particles) {
+bool Session::update_particles(std::vector<Particles> particles) {
   for (int i = 0; i < particles.size(); i++) {
-    QSharedPointer<Shape> shape;
-    if (this->shapes_.size() > i) {
-      shape = this->shapes_[i];
+    std::shared_ptr<Shape> shape;
+    if (shapes_.size() > i) {
+      shape = shapes_[i];
     } else {
-      shape = QSharedPointer<Shape>(new Shape);
+      shape = std::shared_ptr<Shape>(new Shape);
       std::shared_ptr<Subject> subject = std::make_shared<Subject>();
-      shape->set_mesh_manager(this->mesh_manager_);
+      shape->set_mesh_manager(mesh_manager_);
       shape->set_subject(subject);
-      this->project_->get_subjects().push_back(subject);
-      this->shapes_.push_back(shape);
+      project_->get_subjects().push_back(subject);
+      shapes_.push_back(shape);
     }
     shape->set_particles(particles[i]);
   }
 
-  this->unsaved_particle_files_ = true;
+  unsaved_particle_files_ = true;
   emit points_changed();
   return true;
 }
@@ -687,8 +616,8 @@ ParticleSystem Session::get_local_particle_system(int domain) {
 //---------------------------------------------------------------------------
 void Session::update_procrustes_transforms(std::vector<std::vector<std::vector<double>>> transforms) {
   for (size_t i = 0; i < transforms.size(); i++) {
-    if (this->shapes_.size() > i) {
-      QSharedPointer<Shape> shape = this->shapes_[i];
+    if (shapes_.size() > i) {
+      std::shared_ptr<Shape> shape = shapes_[i];
       if (shape->get_subject()) {
         shape->get_subject()->set_procrustes_transforms(transforms[i]);
       }
@@ -741,47 +670,47 @@ double Session::update_auto_glyph_size() {
   auto_glyph_size_ = std::max<double>(0.1, auto_glyph_size_);
   auto_glyph_size_ = std::min<double>(10.0, auto_glyph_size_);
 
-  return this->auto_glyph_size_;
+  return auto_glyph_size_;
 }
 
 //---------------------------------------------------------------------------
-bool Session::is_light_project() { return this->is_light_project_; }
+bool Session::is_light_project() { return is_light_project_; }
 
 //---------------------------------------------------------------------------
-bool Session::get_groomed_present() { return this->project_->get_groomed_present(); }
+bool Session::get_groomed_present() { return project_->get_groomed_present(); }
 
 //---------------------------------------------------------------------------
-QVector<QSharedPointer<Shape>> Session::get_shapes() { return this->shapes_; }
+ShapeList Session::get_shapes() { return shapes_; }
 
 //---------------------------------------------------------------------------
 void Session::remove_shapes(QList<int> list) {
   std::sort(list.begin(), list.end(), std::greater<>());
   foreach (int i, list) {
-    std::vector<std::shared_ptr<Subject>>& subjects = this->project_->get_subjects();
+    std::vector<std::shared_ptr<Subject>>& subjects = project_->get_subjects();
     subjects.erase(subjects.begin() + i);
-    this->shapes_.erase(this->shapes_.begin() + i);
+    shapes_.erase(shapes_.begin() + i);
   }
 
-  this->project_->get_subjects();
-  this->renumber_shapes();
-  this->project_->update_subjects();
+  project_->get_subjects();
+  renumber_shapes();
+  project_->update_subjects();
   emit data_changed();
 }
 
 //---------------------------------------------------------------------------
-bool Session::original_present() { return this->project_->get_originals_present(); }
+bool Session::original_present() { return project_->get_originals_present(); }
 
 //---------------------------------------------------------------------------
-bool Session::groomed_present() { return this->project_->get_groomed_present(); }
+bool Session::groomed_present() { return project_->get_groomed_present(); }
 
 //---------------------------------------------------------------------------
 bool Session::particles_present() {
-  if (!this->project_->get_particles_present()) {
+  if (!project_->get_particles_present()) {
     return false;
   }
 
-  if (this->shapes_.size() > 0) {
-    auto shape = this->shapes_[0];
+  if (shapes_.size() > 0) {
+    auto shape = shapes_[0];
     return shape->get_global_correspondence_points().size() > 0;
   }
 
@@ -789,12 +718,12 @@ bool Session::particles_present() {
 }
 
 //---------------------------------------------------------------------------
-bool Session::groups_available() { return this->groups_available_; }
+bool Session::groups_available() { return groups_available_; }
 
 //---------------------------------------------------------------------------
 void Session::renumber_shapes() {
-  for (int i = 0; i < this->shapes_.size(); i++) {
-    this->shapes_[i]->set_id(i + 1);
+  for (int i = 0; i < shapes_.size(); i++) {
+    shapes_[i]->set_id(i + 1);
   }
 }
 
@@ -872,24 +801,24 @@ void Session::new_plane_point(PickResult result) {
 }
 
 //---------------------------------------------------------------------------
-QString Session::get_filename() { return this->filename_; }
+QString Session::get_filename() { return filename_; }
 
 //---------------------------------------------------------------------------
-int Session::get_num_shapes() { return this->shapes_.size(); }
+int Session::get_num_shapes() { return shapes_.size(); }
 
 //---------------------------------------------------------------------------
-int Session::get_domains_per_shape() { return this->get_project()->get_number_of_domains_per_subject(); }
+int Session::get_domains_per_shape() { return get_project()->get_number_of_domains_per_subject(); }
 
 //---------------------------------------------------------------------------
 Parameters& Session::parameters() { return params_; }
 
 //---------------------------------------------------------------------------
 QString Session::get_display_name() {
-  if (this->filename_ == "") {
+  if (filename_ == "") {
     return "New Project";
   }
 
-  QFileInfo fi(this->filename_);
+  QFileInfo fi(filename_);
   QString name = fi.baseName();
   if (!fi.isWritable()) {
     name = name + " (read-only)";
@@ -900,8 +829,8 @@ QString Session::get_display_name() {
 
 //---------------------------------------------------------------------------
 std::string Session::get_default_feature_map() {
-  if (!this->get_project()->get_subjects().empty()) {
-    auto subject = this->get_project()->get_subjects()[0];
+  if (!get_project()->get_subjects().empty()) {
+    auto subject = get_project()->get_subjects()[0];
     if (!subject->get_original_filenames().empty()) {
       if (project_->get_original_domain_types()[0] == DomainType::Mesh) {
         Mesh m = MeshUtils::threadSafeReadMesh(subject->get_original_filenames()[0]);
@@ -926,10 +855,12 @@ bool Session::is_supported_file_format(std::string filename) {
     }
   }
 
-  if (StringUtils::hasSuffix(filename, ".nrrd") || StringUtils::hasSuffix(filename, ".mha") ||
-      StringUtils::hasSuffix(filename, ".nii") || StringUtils::hasSuffix(filename, ".nii.gz")) {
-    return true;
+  for (const auto& type : Image::getSupportedTypes()) {
+    if (StringUtils::hasSuffix(filename, type)) {
+      return true;
+    }
   }
+
   return false;
 }
 
@@ -950,44 +881,44 @@ Point3 Session::get_point(const Eigen::VectorXd& points, int i) {
 }
 
 //---------------------------------------------------------------------------
-double Session::get_auto_glyph_size() { return this->auto_glyph_size_; }
+double Session::get_auto_glyph_size() { return auto_glyph_size_; }
 
 //---------------------------------------------------------------------------
 void Session::clear_particles() {
-  std::vector<StudioParticles> particles(this->get_num_shapes());
-  this->update_particles(particles);
+  std::vector<Particles> particles(get_num_shapes());
+  update_particles(particles);
 }
 
 //---------------------------------------------------------------------------
-bool Session::get_feature_auto_scale() { return this->params_.get("feature_auto_scale", true); }
+bool Session::get_feature_auto_scale() { return params_.get("feature_auto_scale", true); }
 
 //---------------------------------------------------------------------------
 void Session::set_feature_auto_scale(bool value) {
-  this->params_.set("feature_auto_scale", value);
+  params_.set("feature_auto_scale", value);
   emit feature_range_changed();
 }
 
 //---------------------------------------------------------------------------
-double Session::get_feature_range_max() { return this->params_.get("feature_range_max", 0); }
+double Session::get_feature_range_max() { return params_.get("feature_range_max", 0); }
 
 //---------------------------------------------------------------------------
-double Session::get_feature_range_min() { return this->params_.get("feature_range_min", 0); }
+double Session::get_feature_range_min() { return params_.get("feature_range_min", 0); }
 
 //---------------------------------------------------------------------------
 void Session::set_feature_range(double min, double max) {
-  this->set_feature_range_min(min);
-  this->set_feature_range_max(max);
+  set_feature_range_min(min);
+  set_feature_range_max(max);
 }
 
 //---------------------------------------------------------------------------
 void Session::set_feature_range_min(double value) {
-  this->params_.set("feature_range_min", value);
+  params_.set("feature_range_min", value);
   emit feature_range_changed();
 }
 
 //---------------------------------------------------------------------------
 void Session::set_feature_range_max(double value) {
-  this->params_.set("feature_range_max", value);
+  params_.set("feature_range_max", value);
   emit feature_range_changed();
 }
 
@@ -1105,7 +1036,7 @@ Axis Session::get_image_axis() {
   if (axis == Axis::invalid) {
     axis = Axis::Z;
   }
-  return toAxis(axis_string);
+  return axis;
 }
 
 //---------------------------------------------------------------------------

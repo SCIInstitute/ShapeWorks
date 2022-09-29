@@ -49,6 +49,9 @@ static void set_value(xlnt::worksheet& ws, const std::string& column_name, int s
 //---------------------------------------------------------------------------
 static void assign_keys(xlnt::worksheet& ws, int subject_id, std::vector<std::string> prefixes,
                         std::vector<std::string> filenames, std::vector<std::string> domains) {
+  if (filenames.empty()) {
+    return;
+  }
   assert(!prefixes.empty());
   assert(!domains.empty());
   if (prefixes.empty()) {
@@ -56,9 +59,6 @@ static void assign_keys(xlnt::worksheet& ws, int subject_id, std::vector<std::st
   }
   if (domains.empty()) {
     throw std::runtime_error("Empty domains");
-  }
-  if (filenames.empty()) {
-    return;
   }
   auto prefix = prefixes[0];
   if (filenames.size() != domains.size()) {

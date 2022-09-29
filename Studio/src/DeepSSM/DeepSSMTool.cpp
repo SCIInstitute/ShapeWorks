@@ -9,12 +9,13 @@
 // shapeworks
 #include <Libs/Mesh/Mesh.h>
 #include <Python/PythonWorker.h>
+#include <Logging.h>
 
 // studio
 #include <Data/Session.h>
-#include <Data/Shape.h>
+#include <Shape.h>
 #include <Data/ShapeWorksWorker.h>
-#include <Data/StudioLog.h>
+#include <Logging.h>
 #include <DeepSSM/DeepSSMJob.h>
 #include <DeepSSM/DeepSSMParameters.h>
 #include <DeepSSM/DeepSSMTool.h>
@@ -257,7 +258,7 @@ void DeepSSMTool::populate_table_from_csv(QTableWidget* table, QString filename,
   }
   QFile file(filename);
   if (!file.open(QIODevice::ReadOnly)) {
-    emit error("Unable to open file: " + filename);
+    SW_ERROR("Unable to open file: " + filename.toStdString());
     return;
   }
 
@@ -328,15 +329,15 @@ void DeepSSMTool::show_training_meshes() {
       auto subject = std::make_shared<Subject>();
       shape->set_subject(subject);
       shape->set_mesh_manager(this->session_->get_mesh_manager());
-      shape->import_local_point_files({filenames[i]});
-      shape->import_global_point_files({filenames[i]});
+      shape->import_local_point_files({filenames[i].toStdString()});
+      shape->import_global_point_files({filenames[i].toStdString()});
       shape->load_feature_from_scalar_file(scalar_filenames[i].toStdString(), "deepssm_error");
       shape->get_reconstructed_meshes();
-      QStringList list;
-      list << names[i];
-      list << "";
-      list << "";
-      list << "";
+      std::vector<std::string> list;
+      list.push_back(names[i].toStdString());
+      list.push_back("");
+      list.push_back("");
+      list.push_back("");
       shape->set_annotations(list);
 
       this->shapes_.push_back(shape);
@@ -366,14 +367,14 @@ void DeepSSMTool::show_testing_meshes() {
       subject->set_display_name(id);
       shape->set_subject(subject);
       shape->set_mesh_manager(this->session_->get_mesh_manager());
-      shape->import_local_point_files(QStringList(filename));
-      shape->import_global_point_files(QStringList(filename));
+      shape->import_local_point_files({filename.toStdString()});
+      shape->import_global_point_files({filename.toStdString()});
       shape->get_reconstructed_meshes();
-      QStringList list;
-      list << shapes[i]->get_annotations()[0];
-      list << "";
-      list << "";
-      list << "";
+      std::vector<std::string> list;
+      list.push_back(shapes[i]->get_annotations()[0]);
+      list.push_back("");
+      list.push_back("");
+      list.push_back("");
       shape->set_annotations(list);
 
       this->shapes_.push_back(shape);
@@ -417,7 +418,7 @@ void DeepSSMTool::update_testing_meshes() {
 
       auto mesh_group = shapes[i]->get_groomed_meshes(true);
       if (!mesh_group.valid()) {
-        emit warning("Warning: Couldn't load groomed mesh for " + name);
+        SW_WARN("Warning: Couldn't load groomed mesh for " + name.toStdString());
         continue;
       }
       Mesh base(mesh_group.meshes()[0]->get_poly_data());
@@ -445,7 +446,7 @@ void DeepSSMTool::update_testing_meshes() {
       }
     }
   } catch (std::exception& e) {
-    emit error(e.what());
+    SW_ERROR(e.what());
   }
 
   emit update_view();
@@ -483,7 +484,7 @@ void DeepSSMTool::show_augmentation_meshes() {
     QFile file(filename);
 
     if (!file.open(QIODevice::ReadOnly)) {
-      emit error("Unable to open file: " + filename);
+      SW_ERROR("Unable to open file: " + filename.toStdString());
       return;
     }
 
@@ -496,22 +497,22 @@ void DeepSSMTool::show_augmentation_meshes() {
       bool is_generated = line.contains("Generated");
       if ((is_generated && show_generated) || (!is_generated && show_original)) {
         auto image_file = line.split(',')[0].toStdString();
-        QString particle_file = line.split(',')[1];
+        std::string particle_file = (line.split(',')[1]).toStdString();
 
         auto subject = std::make_shared<Subject>();
         ShapeHandle shape = ShapeHandle(new Shape());
         shape->set_subject(subject);
         shape->set_mesh_manager(this->session_->get_mesh_manager());
-        shape->import_local_point_files(QStringList(particle_file));
-        shape->import_global_point_files(QStringList(particle_file));
+        shape->import_local_point_files({particle_file});
+        shape->import_global_point_files({particle_file});
 
         shape->get_reconstructed_meshes();
 
-        QStringList list;
-        list << QFileInfo(particle_file).baseName();
-        list << "";
-        list << "";
-        list << "";
+        std::vector<std::string> list;
+        list.push_back((QFileInfo(QString::fromStdString(particle_file)).baseName()).toStdString());
+        list.push_back("");
+        list.push_back("");
+        list.push_back("");
         shape->set_annotations(list);
 
         this->shapes_.push_back(shape);
@@ -524,7 +525,7 @@ void DeepSSMTool::show_augmentation_meshes() {
 }
 
 //---------------------------------------------------------------------------
-QVector<QSharedPointer<Shape>> DeepSSMTool::get_shapes() { return this->shapes_; }
+ShapeList DeepSSMTool::get_shapes() { return this->shapes_; }
 
 //---------------------------------------------------------------------------
 void DeepSSMTool::load_plots() {
@@ -604,18 +605,18 @@ void DeepSSMTool::run_tool(DeepSSMTool::ToolMode type) {
   this->current_tool_ = type;
   emit progress(-1);
   if (type == DeepSSMTool::ToolMode::DeepSSM_AugmentationType) {
-    emit message("Please Wait: Running Data Augmentation...");
+    SW_LOG("Please Wait: Running Data Augmentation...");
     // clean
     QFile("deepssm/Augmentation/TotalData.csv").remove();
   } else if (type == DeepSSMTool::ToolMode::DeepSSM_TrainingType) {
-    emit message("Please Wait: Running Training...");
+    SW_LOG("Please Wait: Running Training...");
     // clean
     QDir dir("deepssm/model");
     dir.removeRecursively();
 
     this->show_training_meshes();
   } else {
-    emit message("Please Wait: Running Testing...");
+    SW_LOG("Please Wait: Running Testing...");
   }
 
   this->load_plots();
@@ -629,8 +630,6 @@ void DeepSSMTool::run_tool(DeepSSMTool::ToolMode type) {
   this->store_params();
   this->deep_ssm_ = QSharedPointer<DeepSSMJob>::create(session_->get_project(), type);
 
-  connect(this->deep_ssm_.data(), &DeepSSMJob::message, this, &DeepSSMTool::message);
-  // connect(this->deep_ssm_.data(), &DeepSSMJob::error_message, this, &DeepSSMTool::error);
   connect(this->deep_ssm_.data(), &DeepSSMJob::progress, this, &DeepSSMTool::handle_progress);
   connect(this->deep_ssm_.data(), &DeepSSMJob::finished, this, &DeepSSMTool::handle_thread_complete);
 

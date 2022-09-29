@@ -10,7 +10,7 @@
 #include <iostream>
 
 // The interface from the designer
-#include "StudioLog.h"
+#include <Logging.h>
 #include "ui_PreferencesWindow.h"
 
 namespace shapeworks {
@@ -26,7 +26,7 @@ PreferencesWindow::PreferencesWindow(QWidget* parent, Preferences& prefs) : pref
   QPushButton* reset_button = ui_->button_box->button(QDialogButtonBox::RestoreDefaults);
   QObject::connect(reinterpret_cast<QObject*>(reset_button), SIGNAL(clicked()), this, SLOT(restore_defaults()));
 
-  ui_->log_location->setText(shapeworks::StudioLog::Instance().get_log_filename());
+  ui_->log_location->setText(QString::fromStdString(shapeworks::Logging::Instance().get_log_filename()));
 
   ui_->color_map->clear();
   ColorMaps maps;

@@ -1,9 +1,9 @@
 #pragma once
 
-#include <Data/StudioEnums.h>
-#include <Data/MeshManager.h>
+#include <StudioEnums.h>
+#include <MeshManager.h>
 #include <Data/Preferences.h>
-#include <Data/StudioParticles.h>
+#include <Libs/Analyze/Particles.h>
 #include <Libs/Particles/ParticleSystem.h>
 #include <Libs/Project/Project.h>
 #include <Shapeworks.h>
@@ -12,7 +12,7 @@
 
 #include <QSharedPointer>
 #include <QVector>
-#include <cstdlib>
+//#include <cstdlib>
 #include <map>
 #include <string>
 #include <vector>
@@ -88,7 +88,7 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
 
   bool load_point_files(std::vector<std::string> local, std::vector<std::string> world, int domains_per_shape);
 
-  bool update_particles(std::vector<StudioParticles> particles);
+  bool update_particles(std::vector<Particles> particles);
 
   //! Return the total number of particles for all domains, combined
   int get_num_particles();
@@ -105,7 +105,7 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   void remove_shapes(QList<int> list);
 
   /// return all shapes
-  QVector<QSharedPointer<Shape>> get_shapes();
+  ShapeList get_shapes();
 
   void calculate_reconstructed_samples();
 
@@ -127,7 +127,7 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
 
   static bool is_supported_file_format(std::string filename);
 
-  QSharedPointer<MeshManager> get_mesh_manager() { return this->mesh_manager_; }
+  std::shared_ptr<MeshManager> get_mesh_manager() { return this->mesh_manager_; }
 
   shapeworks::Parameters& parameters();
 
@@ -223,8 +223,8 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   void set_good_bad_particles(const std::vector<bool>& good_bad);
 
   // for setting difference to mean, etc
-  void set_difference_particles(StudioParticles particles) { difference_particles_ = particles; }
-  StudioParticles get_difference_particles() { return difference_particles_; }
+  void set_difference_particles(Particles particles) { difference_particles_ = particles; }
+  Particles get_difference_particles() { return difference_particles_; }
 
   void set_compare_settings(CompareSettings settings);
   CompareSettings get_compare_settings();
@@ -245,7 +245,6 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
 
   void handle_clear_cache();
   void handle_new_mesh();
-  void handle_message(QString s);
   void handle_thread_complete();
 
  signals:
@@ -257,8 +256,6 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   void ffc_changed();
   void update_display();
   void new_mesh();
-  void message(QString);
-  void error(QString);
   void feature_range_changed();
   void update_view_mode();
   void image_slice_settings_changed();
@@ -289,14 +286,12 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   /// project filename
   QString filename_;
 
-  QString project_path_;
-
   /// collection of shapes
-  QVector<QSharedPointer<Shape>> shapes_;
+  ShapeList shapes_;
 
-  StudioParticles difference_particles_;
+  Particles difference_particles_;
 
-  QSharedPointer<MeshManager> mesh_manager_;
+  std::shared_ptr<MeshManager> mesh_manager_;
 
   bool groups_available_{false};
   bool is_light_project_{false};

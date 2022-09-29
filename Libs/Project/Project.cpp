@@ -1,8 +1,10 @@
 #include <Libs/Mesh/MeshUtils.h>
+#include <Logging.h>
 #include <Project.h>
 #include <StringUtils.h>
 #include <vtkPointData.h>
 
+#include <boost/filesystem.hpp>
 #include <cstring>
 #include <memory>
 
@@ -11,7 +13,9 @@
 #include "JsonProjectReader.h"
 #include "JsonProjectWriter.h"
 
+namespace fs = boost::filesystem;
 using namespace shapeworks;
+using StringList = project::types::StringList;
 
 //---------------------------------------------------------------------------
 Project::Project() {
@@ -28,9 +32,12 @@ bool Project::load(const std::string& filename) {
   if (StringUtils::hasSuffix(filename, "swproj")) {
     JsonProjectReader reader(*this);
     return reader.read_project(filename);
-  } else {
+  } else if (StringUtils::hasSuffix(filename, "xlsx")) {
     ExcelProjectReader reader(*this);
     return reader.read_project(filename);
+  } else {
+    throw std::runtime_error("Unsupported project file type: " + filename +
+                             ", supported filetypes are xlsx and swproj");
   }
 
   Parameters project_parameters = get_parameters(Parameters::PROJECT_PARAMS);
@@ -44,12 +51,52 @@ bool Project::load(const std::string& filename) {
 //---------------------------------------------------------------------------
 bool Project::save(const std::string& filename) {
   filename_ = filename;
+
+  Parameters project_parameters = get_parameters(Parameters::PROJECT_PARAMS);
+  project_parameters.set("version", version_);
+  set_parameters(Parameters::PROJECT_PARAMS, project_parameters);
   update_subjects();
   if (StringUtils::hasSuffix(filename, "swproj")) {
     return JsonProjectWriter::write_project(*this, filename);
   } else {
     return ExcelProjectWriter::write_project(*this, filename);
   }
+}
+
+//---------------------------------------------------------------------------
+void Project::set_project_path(const std::string& new_pathname) {
+  SW_LOG("Setting project path to " + new_pathname);
+
+  auto old_path = fs::path(project_path_);
+  auto new_path = fs::path(new_pathname);
+
+  auto fixup = [&](StringList paths) {
+    StringList new_paths;
+    for (const auto& path : paths) {
+      auto canonical = fs::canonical(path, old_path);
+      new_paths.push_back(fs::relative(canonical, new_path).string());
+    }
+    return new_paths;
+  };
+
+  for (auto& subject : subjects_) {
+    subject->set_original_filenames(fixup(subject->get_original_filenames()));
+    subject->set_groomed_filenames(fixup(subject->get_groomed_filenames()));
+    subject->set_local_particle_filenames(fixup(subject->get_local_particle_filenames()));
+    subject->set_world_particle_filenames(fixup(subject->get_world_particle_filenames()));
+    subject->set_landmarks_filenames(fixup(subject->get_landmarks_filenames()));
+    subject->set_constraints_filenames(fixup(subject->get_constraints_filenames()));
+
+    auto features = subject->get_feature_filenames();
+    StringMap new_features;
+    for (auto const& x : features) {
+      auto canonical = fs::canonical(x.second, old_path);
+      new_features[x.first] = fs::relative(canonical, new_path).string();
+    }
+  }
+
+  project_path_ = new_pathname;
+  fs::current_path(project_path_);  // chdir
 }
 
 //---------------------------------------------------------------------------
@@ -120,6 +167,12 @@ void Project::update_subjects() {
     domain_names_.push_back(std::to_string(domain_names_.size() + 1));
   }
   determine_feature_names();
+
+  // update the table values as they may have changed
+  for (auto& subject : subjects_) {
+    auto map = ProjectUtils::convert_subject_to_map(this, subject.get());
+    subject->set_table_values(map);
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -156,7 +209,7 @@ bool Project::get_landmarks_present() {
 
 //---------------------------------------------------------------------------
 void Project::set_landmarks(int domain_id, std::vector<LandmarkDefinition> landmarks) {
-  while (domain_id > landmark_definitions_.size()) {
+  while (domain_id >= landmark_definitions_.size()) {
     landmark_definitions_.push_back(std::vector<LandmarkDefinition>());
   }
   landmark_definitions_[domain_id] = landmarks;

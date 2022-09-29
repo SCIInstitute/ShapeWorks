@@ -1409,26 +1409,32 @@ PYBIND11_MODULE(shapeworks_py, m)
 
   .def_static("ComputeCompactness",
               &ShapeEvaluation::ComputeCompactness,
+              "Computes the compactness measure for a particle system",
               "particleSystem"_a, "nModes"_a, "saveTo"_a="")
 
   .def_static("ComputeGeneralization",
               &ShapeEvaluation::ComputeGeneralization,
+              "Computes the generalization measure for a particle system",
               "particleSystem"_a, "nModes"_a, "saveTo"_a="")
 
   .def_static("ComputeSpecificity",
               &ShapeEvaluation::ComputeSpecificity,
+              "Computes the specificity measure for a particle system",
               "particleSystem"_a, "nModes"_a, "saveTo"_a="")
 
   .def_static("ComputeFullCompactness",
               &ShapeEvaluation::ComputeFullCompactness,
+              "Computes the compactness measure for a particle system, all modes",
               "particleSystem"_a,"progress_callback"_a=nullptr)
 
   .def_static("ComputeFullGeneralization",
               &ShapeEvaluation::ComputeFullGeneralization,
+              "Computes the generalization measure for a particle system, all modes",
               "particleSystem"_a,"progress_callback"_a=nullptr)
 
   .def_static("ComputeFullSpecificity",
               &ShapeEvaluation::ComputeFullSpecificity,
+              "Computes the specificity measure for a particle system, all modes",
               "particleSystem"_a,"progress_callback"_a=nullptr)
   ;
 
@@ -1891,7 +1897,14 @@ PYBIND11_MODULE(shapeworks_py, m)
       "Get extra values (extra columns we don't interpret)")
 
   .def("set_extra_values",
-      &Subject::set_extra_values,
+       [](Subject& subject, std::map<std::string,std::string> map) -> decltype(auto) {
+         project::types::StringMap m;
+
+         for (auto& [k, v] : map) {
+           m[k] = v;
+         }
+         subject.set_extra_values(m);
+       },
       "Set extra values",
       "extra_values"_a)
 

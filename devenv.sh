@@ -14,12 +14,12 @@
 (return 0 2>/dev/null) && sourced=1 || sourced=0
 
 if [[ "$sourced" == "0" ]]; then
-    echo "ERROR: must call this script using \"source ./devenv.sh BUILD_BIN\""
+    echo "ERROR: must call this script using \"source ./devenv.sh <BUILD/BIN_DIR>\""
     exit 1
 fi
 
 if [[ "$#" -ne 1 ]]; then
-    echo "ERROR: must call this script using \"source ./devenv.sh BUILD_BIN\""
+    echo "ERROR: must call this script using \"source ./devenv.sh <BUILD/BIN_DIR>\""
     return 1
 fi    
 
@@ -36,5 +36,14 @@ for M in ${SOURCE}/Python/*/; do
     export PYTHONPATH=${M}:$PYTHONPATH
 done
 
+echo "set PYTHONPATH to $PYTHONPATH"
+
 # Set the python path for studio
 mkdir -p $HOME/.shapeworks ; python -c "import sys; print('\n'.join(sys.path))" > $HOME/.shapeworks/python_path.txt
+
+if [ -f ${BUILD}/shapeworks ] ; then
+    echo "shapeworks executable found ${BUILD}"
+else
+    echo "\nWarning: shapeworks executable not present in ${BUILD}"
+    echo "\n\tDid you specify the correct build/bin dir?"
+fi

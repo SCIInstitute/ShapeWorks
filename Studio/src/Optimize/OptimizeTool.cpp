@@ -13,10 +13,11 @@
 // studio
 #include <Data/Preferences.h>
 #include <Data/Session.h>
-#include <Data/Shape.h>
 #include <Data/ShapeWorksWorker.h>
 #include <Interface/Style.h>
+#include <Logging.h>
 #include <Optimize/OptimizeTool.h>
+#include <Shape.h>
 #include <ui_OptimizeTool.h>
 
 using namespace shapeworks;
@@ -99,12 +100,12 @@ OptimizeTool::~OptimizeTool() {}
 
 //---------------------------------------------------------------------------
 void OptimizeTool::handle_error(QString msg) {
-  emit error_message(msg);
+  SW_LOG(msg.toStdString());
   update_run_button();
 }
 
 //---------------------------------------------------------------------------
-void OptimizeTool::handle_warning(QString msg) { emit warning_message(msg); }
+void OptimizeTool::handle_warning(QString msg) { SW_WARN(msg.toStdString()); }
 
 //---------------------------------------------------------------------------
 void OptimizeTool::handle_progress(int val, QString progress_message) {
@@ -134,7 +135,7 @@ void OptimizeTool::handle_optimize_complete() {
   emit progress(100);
 
   QString duration = QString::number(elapsed_timer_.elapsed() / 1000.0, 'f', 1);
-  emit message("Optimize Complete.  Duration: " + duration + " seconds");
+  SW_LOG("Optimize Complete.  Duration: " + duration.toStdString() + " seconds");
   emit optimize_complete();
   update_run_button();
 }
@@ -144,8 +145,8 @@ void OptimizeTool::handle_optimize_failed() {
   optimization_is_running_ = false;
   emit progress(100);
 
-  QString duration = QString::number(elapsed_timer_.elapsed() / 1000.0, 'f', 1);
-  emit message("Optimize Failed.  Duration: " + duration + " seconds");
+  std::string duration = QString::number(elapsed_timer_.elapsed() / 1000.0, 'f', 1).toStdString();
+  SW_LOG("Optimize Failed.  Duration: " + duration + " seconds");
   emit optimize_complete();
   update_run_button();
 }
@@ -159,12 +160,12 @@ void OptimizeTool::on_run_optimize_button_clicked() {
     ui_->run_optimize_button->setText("Aborting...");
     optimization_is_running_ = false;
     shutdown_threads();
-    emit message("Aborted Optimize");
+    SW_LOG("Aborted Optimize");
     return;
   }
 
   if (session_->get_filename() == "") {
-    emit error_message("Project must be saved before running Optimize");
+    SW_ERROR("Project must be saved before running Optimize");
     ui_->run_optimize_button->setEnabled(true);
     return;
   } else {
@@ -175,7 +176,7 @@ void OptimizeTool::on_run_optimize_button_clicked() {
   emit optimize_start();
 
   store_params();
-  emit message("Please wait: running optimize step...");
+  SW_LOG("Please wait: running optimize step...");
 
   elapsed_timer_.start();
   optimize_ = QSharedPointer<QOptimize>::create();
@@ -189,18 +190,13 @@ void OptimizeTool::on_run_optimize_button_clicked() {
   optimize_->SetFileOutputEnabled(false);
 
   ShapeworksWorker* worker =
-      new ShapeworksWorker(ShapeworksWorker::OptimizeType, NULL, optimize_, optimize_parameters_, session_,
-                           std::vector<std::vector<itk::Point<double>>>(),
-                           std::vector<std::vector<itk::Point<double>>>(), std::vector<std::string>());
-
+      new ShapeworksWorker(ShapeworksWorker::OptimizeType, NULL, optimize_, optimize_parameters_, session_);
   QThread* thread = new QThread;
   worker->moveToThread(thread);
   connect(thread, SIGNAL(started()), worker, SLOT(process()));
   connect(worker, SIGNAL(result_ready()), this, SLOT(handle_optimize_complete()));
   connect(worker, &ShapeworksWorker::failure, this, &OptimizeTool::handle_optimize_failed);
   connect(optimize_.data(), &QOptimize::progress, this, &OptimizeTool::handle_progress);
-  connect(worker, &ShapeworksWorker::error_message, this, &OptimizeTool::handle_error);
-  connect(worker, &ShapeworksWorker::message, this, &OptimizeTool::handle_message);
   connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
   connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
   connect(worker, SIGNAL(finished()), thread, SLOT(quit()));
@@ -213,7 +209,7 @@ void OptimizeTool::on_run_optimize_button_clicked() {
 }
 
 //---------------------------------------------------------------------------
-void OptimizeTool::handle_message(QString s) { emit message(s); }
+void OptimizeTool::handle_message(QString s) { SW_LOG(s.toStdString()); }
 
 //---------------------------------------------------------------------------
 void OptimizeTool::on_restoreDefaults_clicked() {
