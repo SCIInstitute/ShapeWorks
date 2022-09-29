@@ -1,4 +1,4 @@
-#include <Libs/Analyze/Particles.h>
+#include <Analyze/Particles.h>
 #include <vtkTransform.h>
 
 #include <cassert>

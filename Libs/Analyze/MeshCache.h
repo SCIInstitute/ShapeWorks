@@ -1,7 +1,7 @@
 #pragma once
 
-#include <MeshWorkQueue.h>
-#include <StudioMesh.h>
+#include "MeshWorkQueue.h"
+#include "StudioMesh.h"
 
 // qt
 #include <QMutex>

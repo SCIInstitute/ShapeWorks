@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Libs/Project/Project.h>
+#include <Project/Project.h>
 class QWidget;
 
 #include <vtkPolyData.h>

@@ -2,7 +2,7 @@
 
 #include <Data/Preferences.h>
 #include <Groom/QGroom.h>
-#include <Libs/Groom/GroomParameters.h>
+#include <Groom/GroomParameters.h>
 
 #include <QElapsedTimer>
 #include <QObject>

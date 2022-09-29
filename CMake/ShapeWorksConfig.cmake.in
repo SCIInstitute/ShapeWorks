@@ -1,0 +1,53 @@
+#set(SHAPEWORKS_VERSION "@shapeworks_VERSION@")
+
+@PACKAGE_INIT@
+
+get_filename_component(SHAPEWORKS_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+
+set_and_check(SHAPEWORKS_INCLUDE_DIR "@SHAPEWORKS_INCLUDE_DIR@")
+
+#set_and_check(SHAPEWORKS_LIBS "@SHAPEWORKS_LIBS@")
+
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}")
+
+include(CMakeFindDependencyMacro)
+
+### XLNT
+find_dependency (XLNT REQUIRED)
+add_definitions(-DXLNT_STATIC=1)
+
+### ACVD
+find_dependency (ACVD REQUIRED)
+
+### Libigl set include path
+find_dependency(LIBIGL REQUIRED QUIET)
+
+### Boost
+find_dependency(Boost REQUIRED COMPONENTS
+             filesystem)
+
+### Json library
+find_dependency(nlohmann_json 3.10.5 REQUIRED)
+
+### spdlog library
+find_dependency(spdlog 1.10.0 REQUIRED)
+
+# OpenVDB only provides a module file (FindOpenVDB.cmake), so we use OpenVDB_DIR to find it
+if (NOT DEFINED OpenVDB_DIR OR "${OpenVDB_DIR}" STREQUAL "OpenVDB_DIR-NOTFOUND")
+  set(OpenVDB_DIR ${CMAKE_PREFIX_PATH}/lib/cmake/OpenVDB)
+endif()
+message(STATUS "OpenVDB_DIR set to ${OpenVDB_DIR} (must contain FindOpenVDB.cmake)")
+file(TO_CMAKE_PATH ${OpenVDB_DIR} OpenVDB_DIR) # fixes path to use forward slashes on Windows
+list(APPEND CMAKE_MODULE_PATH ${OpenVDB_DIR})
+find_dependency (OpenVDB MODULE REQUIRED)
+
+SET(PYBIND11_PYTHON_VERSION 3.9)
+find_dependency(pybind11 2.5.0 REQUIRED)
+
+check_required_components(shapeworks)
+
+#include_directories(${SHAPEWORKS_INCLUDE_DIR})
+
+if(NOT TARGET shapeworks::shapeworks)
+  include("${SHAPEWORKS_CMAKE_DIR}/ShapeworksTargets.cmake")
+endif()

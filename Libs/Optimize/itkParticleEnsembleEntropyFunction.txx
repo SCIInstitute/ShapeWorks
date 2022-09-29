@@ -3,7 +3,7 @@
 #include "ParticleImageDomainWithGradients.h"
 #include "vnl/algo/vnl_symmetric_eigensystem.h"
 #include "itkParticleGaussianModeWriter.h"
-#include "Libs/Utils/Utils.h"
+#include <Utils/Utils.h>
 #include <string>
 
 namespace itk

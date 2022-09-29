@@ -34,8 +34,7 @@ target_include_directories(Mesh PUBLIC
  $<INSTALL_INTERFACE:include>
  )
 
-target_link_libraries(
-  Mesh
+target_link_libraries(Mesh PUBLIC
   Image
   Common
   Optimize
@@ -56,11 +55,11 @@ set_target_properties(Mesh PROPERTIES PUBLIC_HEADER
  "${Mesh_headers};${PreviewMeshQC_headers}"
  )
 
-install(TARGETS Mesh
+install(TARGETS Mesh EXPORT ShapeWorksTargets
  ARCHIVE DESTINATION lib
  RUNTIME DESTINATION lib
  LIBRARY DESTINATION lib
- PUBLIC_HEADER DESTINATION include
+ PUBLIC_HEADER DESTINATION include/Mesh
  )
 
 

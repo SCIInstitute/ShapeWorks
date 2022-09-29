@@ -29,7 +29,7 @@ target_link_libraries(Common
 # Install
 set_target_properties(Common PROPERTIES PUBLIC_HEADER
   "${Common_headers}")
-install(TARGETS Common
+install(TARGETS Common EXPORT ShapeWorksTargets
   ARCHIVE DESTINATION lib
   RUNTIME DESTINATION lib
   LIBRARY DESTINATION lib

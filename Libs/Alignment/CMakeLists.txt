@@ -25,3 +25,10 @@ target_link_libraries(Alignment PUBLIC
   tinyxml
   Eigen3::Eigen
   )
+
+install(TARGETS Alignment EXPORT ShapeWorksTargets
+  ARCHIVE DESTINATION lib
+  RUNTIME DESTINATION lib
+  LIBRARY DESTINATION lib
+  PUBLIC_HEADER DESTINATION include
+  )

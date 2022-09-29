@@ -41,7 +41,7 @@ set_target_properties(Particles PROPERTIES PUBLIC_HEADER
   "${Particles_headers}"
   )
 
-install(TARGETS Particles
+install(TARGETS Particles EXPORT ShapeWorksTargets
   ARCHIVE DESTINATION lib
   RUNTIME DESTINATION lib
   LIBRARY DESTINATION lib

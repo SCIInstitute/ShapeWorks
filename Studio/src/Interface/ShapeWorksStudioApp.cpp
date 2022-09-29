@@ -18,8 +18,8 @@
 
 // shapeworks
 #include <Applications/Configuration.h>
-#include <Libs/Mesh/Mesh.h>
-#include <Libs/Utils/StringUtils.h>
+#include <Mesh/Mesh.h>
+#include <Utils/StringUtils.h>
 #include <Logging.h>
 #include <SurfaceReconstructor.h>
 

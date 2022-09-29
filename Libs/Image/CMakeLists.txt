@@ -27,9 +27,9 @@ target_link_libraries(Image
 set_target_properties(Image PROPERTIES PUBLIC_HEADER
   "${Image_headers}"
   )
-install(TARGETS Image
+install(TARGETS Image EXPORT ShapeWorksTargets
   ARCHIVE DESTINATION lib
   RUNTIME DESTINATION lib
   LIBRARY DESTINATION lib
-  PUBLIC_HEADER DESTINATION include
+  PUBLIC_HEADER DESTINATION include/Image
   )

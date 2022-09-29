@@ -1,6 +1,6 @@
 #include <Eigen/Eigen>
 
-#include <Libs/Optimize/Optimize.h>
+#include <Optimize/Optimize.h>
 
 Eigen::MatrixXd optimize_get_particle_system(shapeworks::Optimize *opt)
 {

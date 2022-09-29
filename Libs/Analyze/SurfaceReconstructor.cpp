@@ -4,7 +4,7 @@
 #include <itkNrrdImageIOFactory.h>
 #include <itkMetaImageIOFactory.h>
 
-#include <Libs/Utils/Utils.h>
+#include <Utils/Utils.h>
 
 //---------------------------------------------------------------------------
 SurfaceReconstructor::SurfaceReconstructor()

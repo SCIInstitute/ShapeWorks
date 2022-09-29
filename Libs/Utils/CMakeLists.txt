@@ -33,9 +33,9 @@ set_target_properties(Utils PROPERTIES PUBLIC_HEADER
   "${Utils_headers}"
   )
 
-install(TARGETS Utils
+install(TARGETS Utils EXPORT ShapeWorksTargets
   ARCHIVE DESTINATION lib
   RUNTIME DESTINATION lib
   LIBRARY DESTINATION lib
-  PUBLIC_HEADER DESTINATION include
+  PUBLIC_HEADER DESTINATION include/Utils
   )

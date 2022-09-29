@@ -66,7 +66,7 @@
 
 #include "FEFixMesh.h"
 #include "Image.h"
-#include "Libs/Optimize/ParticleSystem/VtkMeshWrapper.h"
+#include <Optimize/VtkMeshWrapper.h>
 #include "MeshUtils.h"
 #include "PreviewMeshQC/FEAreaCoverage.h"
 #include "PreviewMeshQC/FEVTKExport.h"

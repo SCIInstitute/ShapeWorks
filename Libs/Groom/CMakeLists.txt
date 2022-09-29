@@ -3,6 +3,10 @@ add_library(Groom STATIC
   GroomParameters.cpp
   )
 
+set(HEADERS
+  Groom.h
+  GroomParameters.h)
+
 target_link_libraries(Groom
   Image
   Mesh
@@ -11,7 +15,17 @@ target_link_libraries(Groom
   Boost::filesystem
   )
 
+set_target_properties(Groom PROPERTIES PUBLIC_HEADER
+        "${HEADERS}")
+
 target_include_directories(Groom PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
   $<INSTALL_INTERFACE:include>
   )
+
+install(TARGETS Groom EXPORT ShapeWorksTargets
+        ARCHIVE DESTINATION lib
+        RUNTIME DESTINATION lib
+        LIBRARY DESTINATION lib
+        PUBLIC_HEADER DESTINATION include/Groom
+        )

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ImageUtils.h"
+#include <Image/ImageUtils.h>
 #include "Shapeworks.h"
 
 class vtkCellLocator;

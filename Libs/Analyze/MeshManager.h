@@ -1,14 +1,15 @@
 #pragma once
 
-#include <MeshCache.h>
-#include <MeshGenerator.h>
-#include <MeshWorkQueue.h>
-#include <MeshWorker.h>
+#include "MeshCache.h"
+#include "MeshGenerator.h"
+#include "MeshWorkQueue.h"
+#include "MeshWorker.h"
 
 #include <vtkSmartPointer.h>
 
 #include <QThreadPool>
 #include <QWaitCondition>
+
 class SurfaceReconstructor;
 
 namespace shapeworks {

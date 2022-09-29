@@ -23,17 +23,17 @@
 
 // shapeworks
 #include "TriMesh.h"
-#include "ParticleSystem/ParticleImageDomain.h"
-#include "ParticleSystem/ParticleImplicitSurfaceDomain.h"
-#include "ParticleSystem/object_reader.h"
-#include "ParticleSystem/object_writer.h"
+#include "ParticleImageDomain.h"
+#include "ParticleImplicitSurfaceDomain.h"
+#include "object_reader.h"
+#include "object_writer.h"
 #include "OptimizeParameterFile.h"
 #include "OptimizeParameters.h"
-#include <Libs/Project/Project.h>
+#include <Project/Project.h>
 #include "VtkMeshWrapper.h"
 
 #include "Optimize.h"
-#include <Libs/Project/Project.h>
+#include <Project/Project.h>
 
 // pybind
 #include <pybind11/embed.h>

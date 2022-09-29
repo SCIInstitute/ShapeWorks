@@ -8,7 +8,7 @@
 #include <QTimer>
 
 // shapeworks
-#include <Libs/Optimize/OptimizeParameters.h>
+#include <Optimize/OptimizeParameters.h>
 
 // studio
 #include <Data/Preferences.h>
