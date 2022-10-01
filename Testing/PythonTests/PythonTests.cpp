@@ -1,13 +1,32 @@
 #include "Testing.h"
 #include <boost/filesystem/operations.hpp>
 
+using namespace shapeworks;
+
+//---------------------------------------------------------------------------
+void run_isolated_test(const std::string& name)
+{
+  // store the initial path
+  auto initial_path = boost::filesystem::current_path();
+
+  TestUtils::Instance().prep_temp(std::string(TEST_DATA_DIR) + "/python/" + name, "python_"+name);
+
+  // -u generates unbuffered output, shown even if crashes
+  std::string command = "python -u " + name + ".py";
+  ASSERT_FALSE(system(command.c_str()));
+
+  // change dir back to initial path
+  boost::filesystem::current_path(initial_path);
+}
+
+
 //---------------------------------------------------------------------------
 void run_test(const std::string& name)
 {
   std::string python_test_dir = std::string(TEST_DATA_DIR) + "/../PythonTests";
   setupenv(python_test_dir);
 
-    // store the initial path
+  // store the initial path
   auto initial_path = boost::filesystem::current_path();
 
   // change to temp dir
@@ -397,3 +416,7 @@ TEST(pythonTests, isolateTest)
   run_test("isolate.py");
 }
 
+TEST(pythonTests, projectTest)
+{
+  run_isolated_test("project");
+}
