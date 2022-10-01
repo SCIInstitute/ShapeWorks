@@ -71,15 +71,7 @@ function install_conda() {
   conda config --add channels conda-forge
   
   # create and activate shapeworks env
-  if ! conda create --yes --name $CONDAENV python=3.7.8; then return 1; fi
-  eval "$(conda shell.bash hook)"
-  if ! conda activate $CONDAENV; then return 1; fi
-  
-  # install conda into the shell
-  conda init
-
-  # install shapeworks deps
-  if ! conda install --yes \
+  if ! conda create --yes --name $CONDAENV python=3.7.8 \
     cmake=3.18.2 \
     gtest=1.10.0 \
     colorama=0.4.3 \
@@ -98,8 +90,16 @@ function install_conda() {
     openexr=2.5.3 \
     pybind11=2.5.0 \
     nlohmann_json=3.10.5 \
-    pkg-config=0.29.2
-  then return 1; fi
+    pkg-config=0.29.2 \
+     ; then return 1;
+  fi
+
+
+  eval "$(conda shell.bash hook)"
+  if ! conda activate $CONDAENV; then return 1; fi
+  
+  # install conda into the shell
+  conda init
 
   # linux (only) deps
   if [[ "$(uname)" == "Linux" ]]; then
