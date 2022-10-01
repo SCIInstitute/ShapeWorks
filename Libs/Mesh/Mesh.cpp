@@ -1577,22 +1577,27 @@ bool Mesh::fill(size_t cellInd, const Eigen::MatrixXi& F, const std::vector<size
     filled[cellInd] = 1;
     dval[cellInd] = step;
 
+    //std::cout << cellInd << " " << std::endl;
+
     // Find cell neighbors which share edges
     std::set<vtkIdType> neighborsSet;
 
     // Find all cells connected to point 0
     vtkIdType cellId = 0;
 
-    vtkNew<vtkIdList> cellPointIds;
+    //vtkNew<vtkIdList> cellPointIds;
+    vtkSmartPointer<vtkIdList> cellPointIds = vtkSmartPointer<vtkIdList>::New();
     poly_data_->GetCellPoints(cellInd, cellPointIds);
     for (vtkIdType i = 0; i < cellPointIds->GetNumberOfIds(); i++)
      {
-       vtkNew<vtkIdList> idList;
+       //vtkNew<vtkIdList> idList;
+       vtkSmartPointer<vtkIdList> idList = vtkSmartPointer<vtkIdList>::New();
        idList->InsertNextId(cellPointIds->GetId(i));
        idList->InsertNextId(cellPointIds->GetId((i+1)%cellPointIds->GetNumberOfIds()));
 
        // get the neighbors of the cell
-       vtkNew<vtkIdList> neighborCellIds;
+       //vtkNew<vtkIdList> neighborCellIds;
+       vtkSmartPointer<vtkIdList> neighborCellIds = vtkSmartPointer<vtkIdList>::New();
 
        poly_data_->GetCellNeighbors(cellId, idList,
                                                      neighborCellIds);
@@ -1602,24 +1607,29 @@ bool Mesh::fill(size_t cellInd, const Eigen::MatrixXi& F, const std::vector<size
          neighborsSet.insert(neighborCellIds->GetId(j));
        }
      }
-    std::vector<size_t> neighbors(neighborsSet.begin(), neighborsSet.end());
+    //std::cout << "neighborsSet.size() " << neighborsSet.size() << std::endl;
+
+    //std::vector<size_t> neighbors(neighborsSet.begin(), neighborsSet.end());
 
     //std::cout << neighbors.size() << " ";
 
     // If we haven't hit the boundary recursively fill the rest of the triangles
-    for (size_t j = 0; j < neighbors.size(); j++){
-        auto vertexj = F.row(neighbors[j]);
-        size_t boundary_vertices_in_j = 0;
-        for (size_t bvert = 0; bvert < allBoundaryVerts.size(); bvert++){
-            if(vertexj(0) == allBoundaryVerts[bvert] || vertexj(1) == allBoundaryVerts[bvert] || vertexj(2) == allBoundaryVerts[bvert]){
-                boundary_vertices_in_j++;
+    for (auto itr : neighborsSet){
+        if(size_t(itr) != cellInd){
+            auto vertexj = F.row(size_t(itr));
+            size_t boundary_vertices_in_j = 0;
+            for (size_t bvert = 0; bvert < allBoundaryVerts.size(); bvert++){
+                if(size_t(vertexj(0)) == allBoundaryVerts[bvert] || size_t(vertexj(1)) == allBoundaryVerts[bvert] || size_t(vertexj(2)) == allBoundaryVerts[bvert]){
+                    boundary_vertices_in_j++;
+                }
             }
+            if(boundary_vertices_in_j < 2){
+                fill(size_t(itr), F, allBoundaryVerts, step+1.);
+            }
+            //std::cout << "(" << i << " " << boundary_vertices_in_j << " " << neighbors[j] << ") ";
         }
-        if(boundary_vertices_in_j < 2){
-            fill(neighbors[j], F, allBoundaryVerts, step+1.);
-        }
-        //std::cout << "(" << i << " " << boundary_vertices_in_j << " " << neighbors[j] << ") ";
     }
+    return 0;
 }
 
 vtkSmartPointer<vtkDoubleArray> Mesh::setDistanceToBoundaryValueFieldForFFCs(vtkSmartPointer<vtkDoubleArray> values,
