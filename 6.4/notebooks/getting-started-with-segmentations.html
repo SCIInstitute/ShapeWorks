@@ -42,6 +42,8 @@
       
     
     
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
       <link rel="stylesheet" href="../css/custom.css">
     
     <script>__md_scope=new URL("..",location),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
@@ -2098,24 +2100,39 @@
   
   
   
+    <li class="md-nav__item">
+      <a href="../python/python-api.html" class="md-nav__link">
+        Python API Reference
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
     
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_12" type="checkbox" id="__nav_12" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_13" type="checkbox" id="__nav_13" >
       
       
       
       
-        <label class="md-nav__link" for="__nav_12">
-          API Reference
+        <label class="md-nav__link" for="__nav_13">
+          C++ API Reference
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" aria-label="API Reference" data-md-level="1">
-        <label class="md-nav__title" for="__nav_12">
+      <nav class="md-nav" aria-label="C++ API Reference" data-md-level="1">
+        <label class="md-nav__title" for="__nav_13">
           <span class="md-nav__icon md-icon"></span>
-          API Reference
+          C++ API Reference
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -2192,18 +2209,18 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_13" type="checkbox" id="__nav_13" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_14" type="checkbox" id="__nav_14" >
       
       
       
       
-        <label class="md-nav__link" for="__nav_13">
+        <label class="md-nav__link" for="__nav_14">
           About
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="About" data-md-level="1">
-        <label class="md-nav__title" for="__nav_13">
+        <label class="md-nav__title" for="__nav_14">
           <span class="md-nav__icon md-icon"></span>
           About
         </label>
@@ -2605,6 +2622,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 .highlight-ipynb .m { color: var(--jp-mirror-editor-number-color) } /* Literal.Number */
 .highlight-ipynb .s { color: var(--jp-mirror-editor-string-color) } /* Literal.String */
 .highlight-ipynb .ow { color: var(--jp-mirror-editor-operator-color); font-weight: bold } /* Operator.Word */
+.highlight-ipynb .pm { color: var(--jp-mirror-editor-punctuation-color) } /* Punctuation.Marker */
 .highlight-ipynb .w { color: var(--jp-mirror-editor-variable-color) } /* Text.Whitespace */
 .highlight-ipynb .mb { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Bin */
 .highlight-ipynb .mf { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Float */
@@ -3447,7 +3465,7 @@ Licensed under the Apache License, Version 2.0.
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h1 id="getting-started-with-segmentations">Getting Started with Segmentations<a class="anchor-link" href="#getting-started-with-segmentations">&#182;</a></h1>
+<h1 id="Getting-Started-with-Segmentations">Getting Started with Segmentations<a class="anchor-link" href="#Getting-Started-with-Segmentations">&#182;</a></h1>
 </div>
 </div>
 </div>
@@ -3458,14 +3476,14 @@ Licensed under the Apache License, Version 2.0.
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="before-you-start">Before you start!<a class="anchor-link" href="#before-you-start">&#182;</a></h2><ul>
+<h2 id="Before-you-start!">Before you start!<a class="anchor-link" href="#Before-you-start!">&#182;</a></h2><ul>
 <li>This notebook assumes that shapeworks conda environment has been activated using <code>conda activate shapeworks</code> on the terminal.</li>
-<li>See <a href="getting-started-with-notebooks.ipynb">Getting Started with Notebooks</a> for information on setting up your environment and notebook shortcuts. </li>
+<li>See <a href="getting-started-with-notebooks.ipynb">Getting Started with Notebooks</a> for information on setting up your environment and notebook shortcuts.</li>
 <li>Note example output was generated on Linux/Mac environment and may look different on Windows.</li>
 </ul>
-<h2 id="in-this-notebook-you-will-learn">In this notebook, you will learn:<a class="anchor-link" href="#in-this-notebook-you-will-learn">&#182;</a></h2><ol>
+<h2 id="In-this-notebook,-you-will-learn:">In this notebook, you will learn:<a class="anchor-link" href="#In-this-notebook,-you-will-learn:">&#182;</a></h2><ol>
 <li>How to define your dataset location and explore what is available in it</li>
-<li>How to load a single segmentation </li>
+<li>How to load a single segmentation</li>
 <li>How to convert <code>shapeworks</code> image to <code>vtk</code> image for visualization</li>
 <li>How to visualize a single segmentation and multiple segmentations using <code>pyvista</code></li>
 </ol>
@@ -3512,11 +3530,12 @@ Licensed under the Apache License, Version 2.0.
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="1-defining-and-exploring-your-dataset">1. Defining and exploring your dataset<a class="anchor-link" href="#1-defining-and-exploring-your-dataset">&#182;</a></h2><h3 id="defining-dataset-location">Defining dataset location<a class="anchor-link" href="#defining-dataset-location">&#182;</a></h3><p>You can download exemplar datasets from <a href="https://girder.shapeworks-cloud.org">ShapeWorks data portal</a> after you login. For new users, you can <a href="https://girder.shapeworks-cloud.org#?dialog=register">register</a> an account for free. Please do not use an important password.</p>
+<h2 id="1.-Defining-and-exploring-your-dataset">1. Defining and exploring your dataset<a class="anchor-link" href="#1.-Defining-and-exploring-your-dataset">&#182;</a></h2><h3 id="Defining-dataset-location">Defining dataset location<a class="anchor-link" href="#Defining-dataset-location">&#182;</a></h3><p>You can download exemplar datasets from <a href="https://girder.shapeworks-cloud.org">ShapeWorks data portal</a> after you login. For new users, you can <a href="https://girder.shapeworks-cloud.org#?dialog=register">register</a> an account for free. Please do not use an important password.</p>
 <p>After you login, click <code>Collections</code> on the left panel and then <code>use-case-data-v2</code>. Select the dataset you would like to download by clicking on the checkbox on the left of the dataset name. See the video below.
 After you download the dataset zip file, make sure you unzip/extract the contents in the appropriate location.</p>
 <p><strong>This notebook assumes that you have downloaded <code>ellipsoid_1mode</code> and you have placed the unzipped folder <code>ellipsoid_1mode</code> in <code>Examples/Python/Data</code>.</strong> Feel free to use your own dataset.</p>
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/portal_data_download.mp4" autoplay muted loop controls style="width:100%"></p>
+
 </div>
 </div>
 </div>
@@ -3579,7 +3598,7 @@ print('Shape Directory:  ' + shapeDir)</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="what-is-available-in-the-dataset">What is available in the dataset?<a class="anchor-link" href="#what-is-available-in-the-dataset">&#182;</a></h3><p>First let's see how many shapes we have in the dataset.</p>
+<h3 id="What-is-available-in-the-dataset?">What is available in the dataset?<a class="anchor-link" href="#What-is-available-in-the-dataset?">&#182;</a></h3><p>First let's see how many shapes we have in the dataset.</p>
 <p><strong>File formats:</strong> For binary segmentations, all <a href="https://insightsoftwareconsortium.github.io/itk-js/docs/image_formats.html">itk-supported image formats</a> can be used.</p>
 
 </div>
@@ -3656,7 +3675,7 @@ for shapeFilename in shapeFilenames:
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="2-loading-a-single-segmentation">2. Loading a single segmentation<a class="anchor-link" href="#2-loading-a-single-segmentation">&#182;</a></h2><p>We will select one segmentation to explore for now. We will then use shapeworks Image class to load this segmentation and print out its header information that includes image dimensions (rows, columns and slices), physical origin, physical size, and voxel spacing (in physical units).</p>
+<h2 id="2.-Loading-a-single-segmentation">2. Loading a single segmentation<a class="anchor-link" href="#2.-Loading-a-single-segmentation">&#182;</a></h2><p>We will select one segmentation to explore for now. We will then use shapeworks Image class to load this segmentation and print out its header information that includes image dimensions (rows, columns and slices), physical origin, physical size, and voxel spacing (in physical units).</p>
 
 </div>
 </div>
@@ -3724,7 +3743,7 @@ print(shapeSeg)</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="3-converting-shapeworks-image-to-vtk-image-for-visualization">3. Converting <code>shapeworks</code> image to <code>vtk</code> image for visualization<a class="anchor-link" href="#3-converting-shapeworks-image-to-vtk-image-for-visualization">&#182;</a></h2><p>We use python library <a href="https://docs.pyvista.org/index.html"><code>pyvista</code></a> for interactive 3D visualization. This library support, among others, <code>vtk</code> data structures for images and meshes. Hence, to visualize our <code>shapeworks</code> image, we need first to convert it to a <code>vtk</code> data structure.</p>
+<h2 id="3.-Converting-shapeworks-image-to-vtk-image-for-visualization">3. Converting <code>shapeworks</code> image to <code>vtk</code> image for visualization<a class="anchor-link" href="#3.-Converting-shapeworks-image-to-vtk-image-for-visualization">&#182;</a></h2><p>We use python library <a href="https://docs.pyvista.org/index.html"><code>pyvista</code></a> for interactive 3D visualization. This library support, among others, <code>vtk</code> data structures for images and meshes. Hence, to visualize our <code>shapeworks</code> image, we need first to convert it to a <code>vtk</code> data structure.</p>
 <p>This conversion can be performed by first extracting a numpy array from the <code>shapeworks</code> image, then constructing a <code>vtk</code> image from this array. <code>pyvista</code>'s <code>wrap</code> function makes this easy.</p>
 <p>In the ShapeWorks python module, we have the <code>sw2vtkImage</code> function for this conversion to <code>vtk</code> image.</p>
 
@@ -3788,7 +3807,7 @@ print(shapeSeg_vtk)</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="4-visualizing-segmentation-using-pyvista">4. Visualizing segmentation using <code>pyvista</code><a class="anchor-link" href="#4-visualizing-segmentation-using-pyvista">&#182;</a></h2><p><a href="https://docs.pyvista.org/index.html"><code>pyvista</code></a> python library is built on top of <code>vtk</code> and brings a paraview-like visualizations to notebooks. It also supports multiple rendering windows that can be linked. This feature is very useful when visualizing multiple samples from your dataset side-by-side and making them share the same camera view.</p>
+<h2 id="4.-Visualizing-segmentation-using-pyvista">4. Visualizing segmentation using <code>pyvista</code><a class="anchor-link" href="#4.-Visualizing-segmentation-using-pyvista">&#182;</a></h2><p><a href="https://docs.pyvista.org/index.html"><code>pyvista</code></a> python library is built on top of <code>vtk</code> and brings a paraview-like visualizations to notebooks. It also supports multiple rendering windows that can be linked. This feature is very useful when visualizing multiple samples from your dataset side-by-side and making them share the same camera view.</p>
 
 </div>
 </div>
@@ -3845,17 +3864,6 @@ shapeSeg_vtk.plot(volume     = True,     # volume render
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/nb-seg-pv-vol.mp4" autoplay muted loop controls style="width:100%"></p>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="5-visualizing-two-segmentations-side-by-side-using-pyvista">5. Visualizing two segmentations side-by-side using <code>pyvista</code><a class="anchor-link" href="#5-visualizing-two-segmentations-side-by-side-using-pyvista">&#182;</a></h2><p>When exploring datasets and results of different grooming (data preprocessing) steps, it is important to simultaneously visualize multiple shape samples. Here, we will learn how to visualize two segmentations side-by-side and link their views using <code>pyvista</code>. This linking is useful to make all rendering windows share the same camera view.</p>
 
 </div>
 </div>
@@ -3867,7 +3875,19 @@ shapeSeg_vtk.plot(volume     = True,     # volume render
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="loading-the-second-segmentation-and-convert-it-to-vtk-image">Loading the second segmentation and convert it to <code>vtk</code> image<a class="anchor-link" href="#loading-the-second-segmentation-and-convert-it-to-vtk-image">&#182;</a></h3><p>First, let's select another segmentation and load it.</p>
+<h2 id="5.-Visualizing-two-segmentations-side-by-side-using-pyvista">5. Visualizing two segmentations side-by-side using <code>pyvista</code><a class="anchor-link" href="#5.-Visualizing-two-segmentations-side-by-side-using-pyvista">&#182;</a></h2><p>When exploring datasets and results of different grooming (data preprocessing) steps, it is important to simultaneously visualize multiple shape samples. Here, we will learn how to visualize two segmentations side-by-side and link their views using <code>pyvista</code>. This linking is useful to make all rendering windows share the same camera view.</p>
+
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h3 id="Loading-the-second-segmentation-and-convert-it-to-vtk-image">Loading the second segmentation and convert it to <code>vtk</code> image<a class="anchor-link" href="#Loading-the-second-segmentation-and-convert-it-to-vtk-image">&#182;</a></h3><p>First, let's select another segmentation and load it.</p>
 
 </div>
 </div>
@@ -3981,7 +4001,7 @@ shapeSeg2_vtk = sw.sw2vtkImage(shapeSeg2)</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="defining-pyvista-plotter">Defining <code>pyvista</code> plotter<a class="anchor-link" href="#defining-pyvista-plotter">&#182;</a></h3><p>Next, we will define a <code>pyvista</code> plotter to render multiple windows, each with a single segmentation. The multiple rendering windows will be visualized as a grid of plots. Since, we have only two segmentations, the grid size will be one row and two columns.</p>
+<h3 id="Defining-pyvista-plotter">Defining <code>pyvista</code> plotter<a class="anchor-link" href="#Defining-pyvista-plotter">&#182;</a></h3><p>Next, we will define a <code>pyvista</code> plotter to render multiple windows, each with a single segmentation. The multiple rendering windows will be visualized as a grid of plots. Since, we have only two segmentations, the grid size will be one row and two columns.</p>
 <p>The plotter also enable use to specify a color map.</p>
 
 </div>
@@ -4129,6 +4149,7 @@ sw.plot_volumes(shapeSegList,
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p><img src="https://sci.utah.edu/~shapeworks/doc-resources/pngs/segs_two_windows.png"></p>
+
 </div>
 </div>
 </div>
@@ -4139,7 +4160,7 @@ sw.plot_volumes(shapeSegList,
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="6-visualizing-two-segmentations-in-the-same-rendering-window">6. Visualizing two segmentations in the same rendering window<a class="anchor-link" href="#6-visualizing-two-segmentations-in-the-same-rendering-window">&#182;</a></h2><p>This type of visualization is useful when exploring differences between more than one segmentations, e.g., when inspecting the impact of a grooming/preprocessing step or the spatial relation of multiple samples. This is also useful if your shape data contains multiple domains (or compartments) such as anatomical joints.</p>
+<h2 id="6.-Visualizing-two-segmentations-in-the-same-rendering-window">6. Visualizing two segmentations in the same rendering window<a class="anchor-link" href="#6.-Visualizing-two-segmentations-in-the-same-rendering-window">&#182;</a></h2><p>This type of visualization is useful when exploring differences between more than one segmentations, e.g., when inspecting the impact of a grooming/preprocessing step or the spatial relation of multiple samples. This is also useful if your shape data contains multiple domains (or compartments) such as anatomical joints.</p>
 <p>Note that, since we have a single rendering window (view), linking views is not necessary. But, if this multi-surface visualization is used in conjuction with multiple rendering windows, linking views should be considered.</p>
 
 </div>
@@ -4244,6 +4265,7 @@ sw.plot_volumes(shapeSegList,
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p><img src="https://sci.utah.edu/~shapeworks/doc-resources/pngs/segs_one_window.png"></p>
+
 </div>
 </div>
 </div>

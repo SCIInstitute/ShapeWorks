@@ -73,7 +73,7 @@ class Variant {
   operator std::vector<bool>();
 
  private:
-  const std::string str_;
+  std::string str_;
   bool valid_;
 };
 }  // namespace shapeworks
@@ -82,4 +82,4 @@ class Variant {
 
 -------------------------------
 
-Updated on 2022-09-13 at 16:52:36 +0000
+Updated on 2022-10-01 at 18:47:24 +0000

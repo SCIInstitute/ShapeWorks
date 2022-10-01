@@ -290,8 +290,6 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
 
   QString filename_;
 
-  QString project_path_;
-
   ShapeList shapes_;
 
   Particles difference_particles_;
@@ -331,4 +329,4 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
 
 -------------------------------
 
-Updated on 2022-09-13 at 16:52:36 +0000
+Updated on 2022-10-01 at 18:47:24 +0000

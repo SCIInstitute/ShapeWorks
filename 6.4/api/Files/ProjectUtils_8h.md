@@ -30,14 +30,25 @@ title: Libs/Project/ProjectUtils.h
 ```cpp
 #pragma once
 
+// std
+#include <map>
+#include <string>
+#include <vector>
+
+// tsl
+#include "ordered_map.h"
+
+// vtk
 #include <vtkSmartPointer.h>
 #include <vtkTransform.h>
 
-#include <vector>
-
-#include "Project.h"
+// shapeworks
+#include <DomainType.h>
 
 namespace shapeworks {
+
+class Project;
+class Subject;
 
 namespace project::prefixes {
 static constexpr const char* SEGMENTATION_PREFIX = "segmentation_";
@@ -67,27 +78,24 @@ static constexpr const char* WORLD_PARTICLES_PREFIX = "world_particles_";
 }  // namespace project::prefixes
 
 namespace project::types {
-  using StringMap = std::map<std::string, std::string>;
-  using StringList = std::vector<std::string>;
-  using StringMapList = std::vector<StringMap>;
-  using StringMultiMap = std::map<std::string, StringMap>;
-}
+using StringMap = tsl::ordered_map<std::string, std::string>;
+using StringList = std::vector<std::string>;
+using StringMapList = std::vector<StringMap>;
+using StringMultiMap = std::map<std::string, StringMap>;
+}  // namespace project::types
 
 class ProjectUtils {
  public:
-
   using StringList = project::types::StringList;
   using StringMap = project::types::StringMap;
 
-  // convert a list of doubles from a spreadsheet to a vtkTransform
   static vtkSmartPointer<vtkTransform> convert_transform(std::vector<double> list);
 
-  // convert a vtkTransform to a list of doubles (e.g. for project spreadsheet)
   static std::vector<double> convert_transform(vtkSmartPointer<vtkTransform> transform);
 
   static StringList determine_domain_names(StringList keys);
 
-  static void determine_domain_types(Project& project, StringMap key_map);
+  static void determine_domain_types(Project* project, StringMap key_map);
 
   static StringList get_input_prefixes();
 
@@ -113,6 +121,7 @@ class ProjectUtils {
   static std::vector<std::string> convert_domain_types(std::vector<DomainType> domain_types);
   static std::vector<std::string> convert_groomed_domain_types(std::vector<DomainType> domain_types);
 
+  static StringMap convert_subject_to_map(Project* project, Subject* subject);
 };
 }  // namespace shapeworks
 ```
@@ -120,4 +129,4 @@ class ProjectUtils {
 
 -------------------------------
 
-Updated on 2022-09-13 at 16:52:36 +0000
+Updated on 2022-10-01 at 18:47:24 +0000

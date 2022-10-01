@@ -42,6 +42,8 @@
       
     
     
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
       <link rel="stylesheet" href="../../css/custom.css">
     
     <script>__md_scope=new URL("../..",location),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
@@ -1966,24 +1968,39 @@
   
   
   
+    <li class="md-nav__item">
+      <a href="../../python/python-api.html" class="md-nav__link">
+        Python API Reference
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
     
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_12" type="checkbox" id="__nav_12" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_13" type="checkbox" id="__nav_13" >
       
       
       
       
-        <label class="md-nav__link" for="__nav_12">
-          API Reference
+        <label class="md-nav__link" for="__nav_13">
+          C++ API Reference
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" aria-label="API Reference" data-md-level="1">
-        <label class="md-nav__title" for="__nav_12">
+      <nav class="md-nav" aria-label="C++ API Reference" data-md-level="1">
+        <label class="md-nav__title" for="__nav_13">
           <span class="md-nav__icon md-icon"></span>
-          API Reference
+          C++ API Reference
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -2060,18 +2077,18 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_13" type="checkbox" id="__nav_13" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_14" type="checkbox" id="__nav_14" >
       
       
       
       
-        <label class="md-nav__link" for="__nav_13">
+        <label class="md-nav__link" for="__nav_14">
           About
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="About" data-md-level="1">
-        <label class="md-nav__title" for="__nav_13">
+        <label class="md-nav__title" for="__nav_14">
           <span class="md-nav__icon md-icon"></span>
           About
         </label>
@@ -2326,6 +2343,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#function-convert_subject_to_map" class="md-nav__link">
+    function convert_subject_to_map
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2380,11 +2404,11 @@
 <tbody>
 <tr>
 <td>vtkSmartPointer&lt; vtkTransform &gt;</td>
-<td><strong><a href="classshapeworks_1_1ProjectUtils.html#function-convert-transform">convert_transform</a></strong>(std::vector&lt; double &gt; list)</td>
+<td><strong><a href="classshapeworks_1_1ProjectUtils.html#function-convert-transform">convert_transform</a></strong>(std::vector&lt; double &gt; list)<br>convert a list of doubles from a spreadsheet to a vtkTransform</td>
 </tr>
 <tr>
 <td>std::vector&lt; double &gt;</td>
-<td><strong><a href="classshapeworks_1_1ProjectUtils.html#function-convert-transform">convert_transform</a></strong>(vtkSmartPointer&lt; vtkTransform &gt; transform)</td>
+<td><strong><a href="classshapeworks_1_1ProjectUtils.html#function-convert-transform">convert_transform</a></strong>(vtkSmartPointer&lt; vtkTransform &gt; transform)<br>convert a vtkTransform to a list of doubles (e.g. for project spreadsheet)</td>
 </tr>
 <tr>
 <td>StringList</td>
@@ -2392,7 +2416,7 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1ProjectUtils.html#function-determine-domain-types">determine_domain_types</a></strong>(<a href="classshapeworks_1_1Project.html">Project</a> &amp; project, StringMap key_map)<br>determine and set domain types</td>
+<td><strong><a href="classshapeworks_1_1ProjectUtils.html#function-determine-domain-types">determine_domain_types</a></strong>(<a href="classshapeworks_1_1Project.html">Project</a> * project, StringMap key_map)<br>determine and set domain types</td>
 </tr>
 <tr>
 <td>StringList</td>
@@ -2442,6 +2466,10 @@
 <td>std::vector&lt; std::string &gt;</td>
 <td><strong><a href="classshapeworks_1_1ProjectUtils.html#function-convert-groomed-domain-types">convert_groomed_domain_types</a></strong>(std::vector&lt; DomainType &gt; domain_types)</td>
 </tr>
+<tr>
+<td>StringMap</td>
+<td><strong><a href="classshapeworks_1_1ProjectUtils.html#function-convert-subject-to-map">convert_subject_to_map</a></strong>(<a href="classshapeworks_1_1Project.html">Project</a> * project, <a href="classshapeworks_1_1Subject.html">Subject</a> * subject)</td>
+</tr>
 </tbody>
 </table>
 <h2 id="public-types-documentation">Public Types Documentation</h2>
@@ -2457,11 +2485,13 @@
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">list</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
+<p>convert a list of doubles from a spreadsheet to a vtkTransform </p>
 <h3 id="function-convert_transform_1">function convert_transform</h3>
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">convert_transform</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkTransform</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">transform</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
+<p>convert a vtkTransform to a list of doubles (e.g. for project spreadsheet) </p>
 <h3 id="function-determine_domain_names">function determine_domain_names</h3>
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">StringList</span><span class="w"> </span><span class="n">determine_domain_names</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="n">StringList</span><span class="w"> </span><span class="n">keys</span><span class="w"></span>
@@ -2470,7 +2500,7 @@
 <p>determine domain names from a subject's keys </p>
 <h3 id="function-determine_domain_types">function determine_domain_types</h3>
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">determine_domain_types</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">Project</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">project</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">Project</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">project</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="n">StringMap</span><span class="w"> </span><span class="n">key_map</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
@@ -2546,8 +2576,14 @@
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">DomainType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">domain_types</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
+<h3 id="function-convert_subject_to_map">function convert_subject_to_map</h3>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">StringMap</span><span class="w"> </span><span class="n">convert_subject_to_map</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">Project</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">project</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">Subject</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">subject</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
 <hr />
-<p>Updated on 2022-09-13 at 16:52:35 +0000</p>
+<p>Updated on 2022-10-01 at 18:47:23 +0000</p>
 
               
             </article>

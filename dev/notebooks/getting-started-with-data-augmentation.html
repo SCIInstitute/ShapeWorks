@@ -42,6 +42,8 @@
       
     
     
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
       <link rel="stylesheet" href="../css/custom.css">
     
     <script>__md_scope=new URL("..",location),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
@@ -2130,24 +2132,39 @@
   
   
   
+    <li class="md-nav__item">
+      <a href="../python/python-api.html" class="md-nav__link">
+        Python API Reference
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
     
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_12" type="checkbox" id="__nav_12" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_13" type="checkbox" id="__nav_13" >
       
       
       
       
-        <label class="md-nav__link" for="__nav_12">
-          API Reference
+        <label class="md-nav__link" for="__nav_13">
+          C++ API Reference
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" aria-label="API Reference" data-md-level="1">
-        <label class="md-nav__title" for="__nav_12">
+      <nav class="md-nav" aria-label="C++ API Reference" data-md-level="1">
+        <label class="md-nav__title" for="__nav_13">
           <span class="md-nav__icon md-icon"></span>
-          API Reference
+          C++ API Reference
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -2224,18 +2241,18 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_13" type="checkbox" id="__nav_13" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_14" type="checkbox" id="__nav_14" >
       
       
       
       
-        <label class="md-nav__link" for="__nav_13">
+        <label class="md-nav__link" for="__nav_14">
           About
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="About" data-md-level="1">
-        <label class="md-nav__title" for="__nav_13">
+        <label class="md-nav__title" for="__nav_14">
           <span class="md-nav__icon md-icon"></span>
           About
         </label>
@@ -2669,6 +2686,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 .highlight-ipynb .m { color: var(--jp-mirror-editor-number-color) } /* Literal.Number */
 .highlight-ipynb .s { color: var(--jp-mirror-editor-string-color) } /* Literal.String */
 .highlight-ipynb .ow { color: var(--jp-mirror-editor-operator-color); font-weight: bold } /* Operator.Word */
+.highlight-ipynb .pm { color: var(--jp-mirror-editor-punctuation-color) } /* Punctuation.Marker */
 .highlight-ipynb .w { color: var(--jp-mirror-editor-variable-color) } /* Text.Whitespace */
 .highlight-ipynb .mb { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Bin */
 .highlight-ipynb .mf { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Float */
@@ -3511,7 +3529,7 @@ Licensed under the Apache License, Version 2.0.
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h1 id="getting-started-with-data-augmentation">Getting Started with Data Augmentation<a class="anchor-link" href="#getting-started-with-data-augmentation">&#182;</a></h1>
+<h1 id="Getting-Started-with-Data-Augmentation">Getting Started with Data Augmentation<a class="anchor-link" href="#Getting-Started-with-Data-Augmentation">&#182;</a></h1>
 </div>
 </div>
 </div>
@@ -3522,23 +3540,23 @@ Licensed under the Apache License, Version 2.0.
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="before-you-start">Before you start!<a class="anchor-link" href="#before-you-start">&#182;</a></h2><ul>
+<h2 id="Before-you-start!">Before you start!<a class="anchor-link" href="#Before-you-start!">&#182;</a></h2><ul>
 <li>This notebook assumes that shapeworks conda environment has been activated using <code>conda activate shapeworks</code> on the terminal.</li>
-<li>See <a href="getting-started-with-notebooks.ipynb">Getting Started with Notebooks</a> for information on setting up your environment and notebook shortcuts. </li>
+<li>See <a href="getting-started-with-notebooks.ipynb">Getting Started with Notebooks</a> for information on setting up your environment and notebook shortcuts.</li>
 <li>Note example output was generated on Linux/Mac environment and may look different on Windows.</li>
 </ul>
-<h2 id="in-this-notebook-you-will-learn">In this notebook, you will learn:<a class="anchor-link" href="#in-this-notebook-you-will-learn">&#182;</a></h2><ol>
+<h2 id="In-this-notebook,-you-will-learn:">In this notebook, you will learn:<a class="anchor-link" href="#In-this-notebook,-you-will-learn:">&#182;</a></h2><ol>
 <li>How to generate realistic synthetic data from an existing dataset using different parametric distributions.</li>
 <li>How to visualize the statistical distribution of the generated data compared to the original data.</li>
 </ol>
-<h3 id="data-augmentation-overview">Data Augmentation Overview<a class="anchor-link" href="#data-augmentation-overview">&#182;</a></h3><p>ShapeWorks includes a Python package, DataAugmentationUtils, that supports model-based data augmentation. This package is useful to increase the training sample size to train deep networks such as DeepSSM (see <a href="http://sciinstitute.github.io/ShapeWorks/deep-learning/deep-ssm.html">SSMs Directly from Images</a>).</p>
+<h3 id="Data-Augmentation-Overview">Data Augmentation Overview<a class="anchor-link" href="#Data-Augmentation-Overview">&#182;</a></h3><p>ShapeWorks includes a Python package, DataAugmentationUtils, that supports model-based data augmentation. This package is useful to increase the training sample size to train deep networks such as DeepSSM (see <a href="http://sciinstitute.github.io/ShapeWorks/deep-learning/deep-ssm.html">SSMs Directly from Images</a>).</p>
 <p>A preliminary requirement for data augmentation is a set of images and shape models from real data on which to base augmentation. Once that is acquired, the process includes:</p>
 <ol>
 <li>Embedding the real data into a low-dimensional space using principle component analysis (PCA).</li>
 <li>Fitting a parametric distribution to the subspace for sampling.</li>
 <li>Sampling from the distribution to create new instances.</li>
-<li>Projecting the samples back into the high-dimensional space of the original data </li>
-<li>Completing the sample generation by creating a corresponding synthetic image. </li>
+<li>Projecting the samples back into the high-dimensional space of the original data</li>
+<li>Completing the sample generation by creating a corresponding synthetic image.</li>
 </ol>
 <p>This notebook shows how the distribution of the original data can be visually compared to the distribution of the synthetic data to motivate the choice of parametric distribution in step 2.</p>
 <p>For a full explanation of the data augmentation process and package please see: <a href="http://sciinstitute.github.io/ShapeWorks/deep-learning/data-augmentation.html">Data Augmentation for Deep Learning</a>.</p>
@@ -3553,7 +3571,7 @@ Licensed under the Apache License, Version 2.0.
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="import-shapeworks-and-relevant-libraries">Import shapeworks and relevant libraries<a class="anchor-link" href="#import-shapeworks-and-relevant-libraries">&#182;</a></h3>
+<h3 id="Import-shapeworks-and-relevant-libraries">Import shapeworks and relevant libraries<a class="anchor-link" href="#Import-shapeworks-and-relevant-libraries">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -3600,7 +3618,7 @@ import shapeworks</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="import-data-augmentation-package">Import Data Augmentation Package<a class="anchor-link" href="#import-data-augmentation-package">&#182;</a></h3>
+<h3 id="Import-Data-Augmentation-Package">Import Data Augmentation Package<a class="anchor-link" href="#Import-Data-Augmentation-Package">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -3643,11 +3661,12 @@ import shapeworks</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="1-defining-the-original-dataset">1. Defining the original dataset<a class="anchor-link" href="#1-defining-the-original-dataset">&#182;</a></h2><h3 id="defining-dataset-location">Defining dataset location<a class="anchor-link" href="#defining-dataset-location">&#182;</a></h3><p>You can download exemplar datasets from <a href="https://girder.shapeworks-cloud.org">ShapeWorks data portal</a> after you login. For new users, you can <a href="https://girder.shapeworks-cloud.org#?dialog=register">register</a> an account for free. Please do not use an important password.</p>
+<h2 id="1.-Defining-the-original-dataset">1. Defining the original dataset<a class="anchor-link" href="#1.-Defining-the-original-dataset">&#182;</a></h2><h3 id="Defining-dataset-location">Defining dataset location<a class="anchor-link" href="#Defining-dataset-location">&#182;</a></h3><p>You can download exemplar datasets from <a href="https://girder.shapeworks-cloud.org">ShapeWorks data portal</a> after you login. For new users, you can <a href="https://girder.shapeworks-cloud.org#?dialog=register">register</a> an account for free. Please do not use an important password.</p>
 <p>After you login, click <code>Collections</code> on the left panel and then <code>use-case-data-v2</code>. Select the dataset you would like to download by clicking on the checkbox on the left of the dataset name. See the video below.
 After you download the dataset zip file, make sure you unzip/extract the contents in the appropriate location.</p>
 <p><strong>This notebook assumes that you have downloaded <code>femur-v0</code> and you have placed the unzipped folder <code>femur-v0</code> in <code>Examples/Python/Data</code>.</strong> Feel free to use your own dataset.</p>
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/portal_data_download.mp4" autoplay muted loop controls style="width:100%"></p>
+
 </div>
 </div>
 </div>
@@ -3706,7 +3725,7 @@ print('Directory:  ' + data_dir)</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="get-file-lists">Get file lists<a class="anchor-link" href="#get-file-lists">&#182;</a></h3><p>Now we need the .particle files and corresponding raw images for the original dataset.</p>
+<h3 id="Get-file-lists">Get file lists<a class="anchor-link" href="#Get-file-lists">&#182;</a></h3><p>Now we need the .particle files and corresponding raw images for the original dataset.</p>
 
 </div>
 </div>
@@ -3780,7 +3799,7 @@ print("Total shapes in original dataset: "+ str(len(img_list)))</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="run-data-augmentation-using-a-gaussian-distribution">Run data augmentation using a Gaussian Distribution<a class="anchor-link" href="#run-data-augmentation-using-a-gaussian-distribution">&#182;</a></h2><p>Below is the command for running the complete data augmentation process:</p>
+<h2 id="Run-data-augmentation-using-a-Gaussian-Distribution">Run data augmentation using a Gaussian Distribution<a class="anchor-link" href="#Run-data-augmentation-using-a-Gaussian-Distribution">&#182;</a></h2><p>Below is the command for running the complete data augmentation process:</p>
 <div class="highlight"><pre><span></span><span class="n">DataAugmentationUtils</span><span class="o">.</span><span class="n">runDataAugmentation</span><span class="p">(</span><span class="n">out_dir</span><span class="p">,</span> <span class="n">img_list</span><span class="p">,</span> 
                                           <span class="n">local_point_list</span><span class="p">,</span> <span class="n">num_samples</span><span class="p">,</span> 
                                           <span class="n">num_dim</span><span class="p">,</span> <span class="n">percent_variability</span><span class="p">,</span> 
@@ -3795,7 +3814,7 @@ print("Total shapes in original dataset: "+ str(len(img_list)))</div>
 <li><code>num_dim</code>: The number of dimensions to reduce to in PCA embedding. If zero or not specified, the percent_variability option is used to select the numnber of dimensions.</li>
 <li><code>percent_variability</code>: The proportion of variability in the data to be preserved in embedding. Used if <code>num_dim</code> is zero or not specified. Default value is 0.95 which preserves 95% of the varibaility in the data.</li>
 <li><code>sampler_type</code>: The type of parametric distribution to fit and sample from. Options: <code>gaussian</code>, <code>mixture</code>, or <code>kde</code>. Default: <code>kde</code>.</li>
-<li><code>mixture_num</code>: Only necessary if <code>sampler_type</code> is <code>mixture</code>. The number of clusters (i.e., mixture components) to be used in fitting a mixture model. If zero or not specified, the optimal number of clusters will be automatically determined using the <a href="https://en.wikipedia.org/wiki/Elbow_method_(clustering">elbow method</a>).</li>
+<li><code>mixture_num</code>: Only necessary if <code>sampler_type</code> is <code>mixture</code>. The number of clusters (i.e., mixture components) to be used in fitting a mixture model. If zero or not specified, the optimal number of clusters will be automatically determined using the <a href="https://en.wikipedia.org/wiki/Elbow_method_(clustering)">elbow method</a>.</li>
 <li><code>world_point_list</code>: List of paths to world <code>.particles</code> files of the original dataset. This is optional and should be provided in cases where procrustes was used for the original optimization, resulting in a difference between world and local particle files. Note, this list should be ordered in correspondence with the <code>img_list</code> and <code>local_point_list</code>.</li>
 </ul>
 <p>In this notebook we will keep most arguments the same and explore the effect of changing the <code>sampler_type</code>.
@@ -3887,13 +3906,13 @@ aug_data_csv = output_directory + "/TotalData.csv"</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="visualize-distribution-of-real-and-augmented-data">Visualize distribution of real and augmented data<a class="anchor-link" href="#visualize-distribution-of-real-and-augmented-data">&#182;</a></h3><p>Below is the command for visualizing the original and augmented data:</p>
-
-<pre><code>DataAugmentationUtils.visualizeAugmentation(data_csv, viz_type)</code></pre>
+<h3 id="Visualize-distribution-of-real-and-augmented-data">Visualize distribution of real and augmented data<a class="anchor-link" href="#Visualize-distribution-of-real-and-augmented-data">&#182;</a></h3><p>Below is the command for visualizing the original and augmented data:</p>
+<pre><code>DataAugmentationUtils.visualizeAugmentation(data_csv, viz_type)
+</code></pre>
 <p><strong>Input arguments:</strong></p>
 <ul>
 <li><code>data_csv</code>: The path to the CSV file created by running the data augmentation process.</li>
-<li><code>viz_type</code>: The type of visulazation to display. Options <code>splom</code> or <code>violin</code> (default: <code>splom</code>). If set to <code>splom</code>, a scatterplot matrix of pairwise PCA comparisions will open in the default browser. If set to <code>violin</code> a violin plot or rotated kernel density plot will be displayed. </li>
+<li><code>viz_type</code>: The type of visulazation to display. Options <code>splom</code> or <code>violin</code> (default: <code>splom</code>). If set to <code>splom</code>, a scatterplot matrix of pairwise PCA comparisions will open in the default browser. If set to <code>violin</code> a violin plot or rotated kernel density plot will be displayed.</li>
 </ul>
 <p>We will use a violin plot to visualize the difference in the real and augmented distributions.</p>
 
@@ -3941,6 +3960,7 @@ aug_data_csv = output_directory + "/TotalData.csv"</div>
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>Example output:</p>
 <p><img src="https://sci.utah.edu/~shapeworks/doc-resources/pngs/data_aug_gaussian.png"></p>
+
 </div>
 </div>
 </div>
@@ -3951,7 +3971,7 @@ aug_data_csv = output_directory + "/TotalData.csv"</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="run-data-augmentation-using-a-mixture-of-gaussian-distribution">Run data augmentation using a Mixture of Gaussian Distribution<a class="anchor-link" href="#run-data-augmentation-using-a-mixture-of-gaussian-distribution">&#182;</a></h2>
+<h2 id="Run-data-augmentation-using-a-Mixture-of-Gaussian-Distribution">Run data augmentation using a Mixture of Gaussian Distribution<a class="anchor-link" href="#Run-data-augmentation-using-a-Mixture-of-Gaussian-Distribution">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -4000,7 +4020,7 @@ aug_data_csv = output_directory + "/TotalData.csv"</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="visualize-distribution-of-real-and-augmented-data">Visualize distribution of real and augmented data<a class="anchor-link" href="#visualize-distribution-of-real-and-augmented-data">&#182;</a></h3>
+<h3 id="Visualize-distribution-of-real-and-augmented-data">Visualize distribution of real and augmented data<a class="anchor-link" href="#Visualize-distribution-of-real-and-augmented-data">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -4045,6 +4065,7 @@ aug_data_csv = output_directory + "/TotalData.csv"</div>
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>Example output:</p>
 <p><img src="https://sci.utah.edu/~shapeworks/doc-resources/pngs/data_aug_mixture.png"></p>
+
 </div>
 </div>
 </div>
@@ -4055,7 +4076,7 @@ aug_data_csv = output_directory + "/TotalData.csv"</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="run-data-augmentation-using-kernel-density-estimation">Run data augmentation using Kernel Density Estimation<a class="anchor-link" href="#run-data-augmentation-using-kernel-density-estimation">&#182;</a></h2>
+<h2 id="Run-data-augmentation-using-Kernel-Density-Estimation">Run data augmentation using Kernel Density Estimation<a class="anchor-link" href="#Run-data-augmentation-using-Kernel-Density-Estimation">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -4104,7 +4125,7 @@ aug_data_csv = output_directory + "/TotalData.csv"</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="visualize-distribution-of-real-and-augmented-data">Visualize distribution of real and augmented data<a class="anchor-link" href="#visualize-distribution-of-real-and-augmented-data">&#182;</a></h3>
+<h3 id="Visualize-distribution-of-real-and-augmented-data">Visualize distribution of real and augmented data<a class="anchor-link" href="#Visualize-distribution-of-real-and-augmented-data">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -4149,6 +4170,7 @@ aug_data_csv = output_directory + "/TotalData.csv"</div>
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p>Example output:</p>
 <p><img src="https://sci.utah.edu/~shapeworks/doc-resources/pngs/data_aug_kde.png"></p>
+
 </div>
 </div>
 </div>

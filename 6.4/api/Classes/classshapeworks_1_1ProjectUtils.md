@@ -20,10 +20,10 @@ title: shapeworks::ProjectUtils
 
 |                | Name           |
 | -------------- | -------------- |
-| vtkSmartPointer< vtkTransform > | **[convert_transform](../Classes/classshapeworks_1_1ProjectUtils.md#function-convert-transform)**(std::vector< double > list) |
-| std::vector< double > | **[convert_transform](../Classes/classshapeworks_1_1ProjectUtils.md#function-convert-transform)**(vtkSmartPointer< vtkTransform > transform) |
+| vtkSmartPointer< vtkTransform > | **[convert_transform](../Classes/classshapeworks_1_1ProjectUtils.md#function-convert-transform)**(std::vector< double > list)<br>convert a list of doubles from a spreadsheet to a vtkTransform  |
+| std::vector< double > | **[convert_transform](../Classes/classshapeworks_1_1ProjectUtils.md#function-convert-transform)**(vtkSmartPointer< vtkTransform > transform)<br>convert a vtkTransform to a list of doubles (e.g. for project spreadsheet)  |
 | StringList | **[determine_domain_names](../Classes/classshapeworks_1_1ProjectUtils.md#function-determine-domain-names)**(StringList keys)<br>determine domain names from a subject's keys  |
-| void | **[determine_domain_types](../Classes/classshapeworks_1_1ProjectUtils.md#function-determine-domain-types)**([Project](../Classes/classshapeworks_1_1Project.md) & project, StringMap key_map)<br>determine and set domain types  |
+| void | **[determine_domain_types](../Classes/classshapeworks_1_1ProjectUtils.md#function-determine-domain-types)**([Project](../Classes/classshapeworks_1_1Project.md) * project, StringMap key_map)<br>determine and set domain types  |
 | StringList | **[get_input_prefixes](../Classes/classshapeworks_1_1ProjectUtils.md#function-get-input-prefixes)**()<br>return a list of the input prefixes  |
 | StringList | **[get_groomed_prefixes](../Classes/classshapeworks_1_1ProjectUtils.md#function-get-groomed-prefixes)**()<br>return a list of the groomed prefixes  |
 | StringList | **[get_original_keys](../Classes/classshapeworks_1_1ProjectUtils.md#function-get-original-keys)**(StringList domain_names, StringMap key_map)<br>extract original keys from key_map given an ordered list of domain names  |
@@ -36,6 +36,7 @@ title: shapeworks::ProjectUtils
 | std::string | **[transform_to_string](../Classes/classshapeworks_1_1ProjectUtils.md#function-transform-to-string)**(std::vector< double > transform) |
 | std::vector< std::string > | **[convert_domain_types](../Classes/classshapeworks_1_1ProjectUtils.md#function-convert-domain-types)**(std::vector< DomainType > domain_types) |
 | std::vector< std::string > | **[convert_groomed_domain_types](../Classes/classshapeworks_1_1ProjectUtils.md#function-convert-groomed-domain-types)**(std::vector< DomainType > domain_types) |
+| StringMap | **[convert_subject_to_map](../Classes/classshapeworks_1_1ProjectUtils.md#function-convert-subject-to-map)**([Project](../Classes/classshapeworks_1_1Project.md) * project, [Subject](../Classes/classshapeworks_1_1Subject.md) * subject) |
 
 ## Public Types Documentation
 
@@ -63,6 +64,7 @@ static vtkSmartPointer< vtkTransform > convert_transform(
 )
 ```
 
+convert a list of doubles from a spreadsheet to a vtkTransform 
 
 ### function convert_transform
 
@@ -72,6 +74,7 @@ static std::vector< double > convert_transform(
 )
 ```
 
+convert a vtkTransform to a list of doubles (e.g. for project spreadsheet) 
 
 ### function determine_domain_names
 
@@ -87,7 +90,7 @@ determine domain names from a subject's keys
 
 ```cpp
 static void determine_domain_types(
-    Project & project,
+    Project * project,
     StringMap key_map
 )
 ```
@@ -213,6 +216,16 @@ static std::vector< std::string > convert_groomed_domain_types(
 ```
 
 
+### function convert_subject_to_map
+
+```cpp
+static StringMap convert_subject_to_map(
+    Project * project,
+    Subject * subject
+)
+```
+
+
 -------------------------------
 
-Updated on 2022-09-13 at 16:52:35 +0000
+Updated on 2022-10-01 at 18:47:23 +0000

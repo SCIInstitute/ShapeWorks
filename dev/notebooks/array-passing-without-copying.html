@@ -42,6 +42,8 @@
       
     
     
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
       <link rel="stylesheet" href="../css/custom.css">
     
     <script>__md_scope=new URL("..",location),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
@@ -2188,24 +2190,39 @@
   
   
   
+    <li class="md-nav__item">
+      <a href="../python/python-api.html" class="md-nav__link">
+        Python API Reference
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
     
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_12" type="checkbox" id="__nav_12" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_13" type="checkbox" id="__nav_13" >
       
       
       
       
-        <label class="md-nav__link" for="__nav_12">
-          API Reference
+        <label class="md-nav__link" for="__nav_13">
+          C++ API Reference
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" aria-label="API Reference" data-md-level="1">
-        <label class="md-nav__title" for="__nav_12">
+      <nav class="md-nav" aria-label="C++ API Reference" data-md-level="1">
+        <label class="md-nav__title" for="__nav_13">
           <span class="md-nav__icon md-icon"></span>
-          API Reference
+          C++ API Reference
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -2282,18 +2299,18 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_13" type="checkbox" id="__nav_13" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_14" type="checkbox" id="__nav_14" >
       
       
       
       
-        <label class="md-nav__link" for="__nav_13">
+        <label class="md-nav__link" for="__nav_14">
           About
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="About" data-md-level="1">
-        <label class="md-nav__title" for="__nav_13">
+        <label class="md-nav__title" for="__nav_14">
           <span class="md-nav__icon md-icon"></span>
           About
         </label>
@@ -2789,6 +2806,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 .highlight-ipynb .m { color: var(--jp-mirror-editor-number-color) } /* Literal.Number */
 .highlight-ipynb .s { color: var(--jp-mirror-editor-string-color) } /* Literal.String */
 .highlight-ipynb .ow { color: var(--jp-mirror-editor-operator-color); font-weight: bold } /* Operator.Word */
+.highlight-ipynb .pm { color: var(--jp-mirror-editor-punctuation-color) } /* Punctuation.Marker */
 .highlight-ipynb .w { color: var(--jp-mirror-editor-variable-color) } /* Text.Whitespace */
 .highlight-ipynb .mb { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Bin */
 .highlight-ipynb .mf { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Float */
@@ -3695,7 +3713,7 @@ Licensed under the Apache License, Version 2.0.
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="shapeworks-image-from-numpy-array">shapeworks Image from numpy array<a class="anchor-link" href="#shapeworks-image-from-numpy-array">&#182;</a></h2>
+<h2 id="shapeworks-Image-from-numpy-array">shapeworks Image from numpy array<a class="anchor-link" href="#shapeworks-Image-from-numpy-array">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -3914,7 +3932,7 @@ farrimg  # NOTE: sw.Image dims are specified in x, y, z order</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="while-the-numpy-can-still-look-at-the-memory-it-no-longer-has-ownership">While the numpy can still look at the memory, it no longer has ownership:<a class="anchor-link" href="#while-the-numpy-can-still-look-at-the-memory-it-no-longer-has-ownership">&#182;</a></h3>
+<h3 id="While-the-numpy-can-still-look-at-the-memory,-it-no-longer-has-ownership:">While the numpy can still look at the memory, it no longer has ownership:<a class="anchor-link" href="#While-the-numpy-can-still-look-at-the-memory,-it-no-longer-has-ownership:">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -4053,7 +4071,7 @@ farrimg  # NOTE: sw.Image dims are specified in x, y, z order</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="so-the-safest-thing-to-do-now-is-let-the-array-go-out-of-scope">...so the safest thing to do now is let the array go out of scope:<a class="anchor-link" href="#so-the-safest-thing-to-do-now-is-let-the-array-go-out-of-scope">&#182;</a></h3><ul>
+<h3 id="...so-the-safest-thing-to-do-now-is-let-the-array-go-out-of-scope:">...so the safest thing to do now is let the array go out of scope:<a class="anchor-link" href="#...so-the-safest-thing-to-do-now-is-let-the-array-go-out-of-scope:">&#182;</a></h3><ul>
 <li>having used a temporary during Image construction: <code>img = sw.Image(np.array(arr))</code></li>
 <li>variable replacement after Image construction: <code>arr = np.zeros(1)</code></li>
 <li>explicit deletion after Image construction: <code>del arr</code></li>
@@ -4101,7 +4119,7 @@ farrimg  # NOTE: sw.Image dims are specified in x, y, z order</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="only-dtypefloat32-arrays-can-be-used-to-initialize-an-image">Only dtype.float32 arrays can be used to initialize an image:<a class="anchor-link" href="#only-dtypefloat32-arrays-can-be-used-to-initialize-an-image">&#182;</a></h2>
+<h2 id="Only-dtype.float32-arrays-can-be-used-to-initialize-an-image:">Only dtype.float32 arrays can be used to initialize an image:<a class="anchor-link" href="#Only-dtype.float32-arrays-can-be-used-to-initialize-an-image:">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -4296,7 +4314,7 @@ darrimg</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="no-unnecessary-copies-and-no-memory-leaks"><em>No unnecessary copies and no memory leaks!</em><a class="anchor-link" href="#no-unnecessary-copies-and-no-memory-leaks">&#182;</a></h2>
+<h2 id="No-unnecessary-copies-and-no-memory-leaks!"><em>No unnecessary copies and no memory leaks!</em><a class="anchor-link" href="#No-unnecessary-copies-and-no-memory-leaks!">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -4307,7 +4325,7 @@ darrimg</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="the-numpy-array-still-owns-its-data-since-a-copy-was-passed-to-create-the-image">The numpy array still owns its data since a copy was passed to create the Image.<a class="anchor-link" href="#the-numpy-array-still-owns-its-data-since-a-copy-was-passed-to-create-the-image">&#182;</a></h3><h3 id="ownership-of-the-copys-memory-was-taken-by-the-image-before-it-went-out-of-scope">Ownership of the copy's memory was taken by the image before it went out of scope.<a class="anchor-link" href="#ownership-of-the-copys-memory-was-taken-by-the-image-before-it-went-out-of-scope">&#182;</a></h3>
+<h3 id="The-numpy-array-still-owns-its-data-since-a-copy-was-passed-to-create-the-Image.">The numpy array still owns its data since a copy was passed to create the Image.<a class="anchor-link" href="#The-numpy-array-still-owns-its-data-since-a-copy-was-passed-to-create-the-Image.">&#182;</a></h3><h3 id="Ownership-of-the-copy's-memory-was-taken-by-the-image-before-it-went-out-of-scope.">Ownership of the copy's memory was taken by the image before it went out of scope.<a class="anchor-link" href="#Ownership-of-the-copy's-memory-was-taken-by-the-image-before-it-went-out-of-scope.">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -4606,7 +4624,7 @@ darrimg</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="now-for-the-other-way-around">Now for the other way around.<a class="anchor-link" href="#now-for-the-other-way-around">&#182;</a></h3><h2 id="numpy-array-from-shapeworks-image">numpy array from shapeworks Image<a class="anchor-link" href="#numpy-array-from-shapeworks-image">&#182;</a></h2>
+<h3 id="Now-for-the-other-way-around.">Now for the other way around.<a class="anchor-link" href="#Now-for-the-other-way-around.">&#182;</a></h3><h2 id="numpy-array-from-shapeworks-Image">numpy array from shapeworks Image<a class="anchor-link" href="#numpy-array-from-shapeworks-Image">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -4847,7 +4865,7 @@ arr.dtype</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="the-numpy-array-references-the-memory-of-the-current-image-and-can-change-it">The numpy array references the memory of the current Image and can change it:<a class="anchor-link" href="#the-numpy-array-references-the-memory-of-the-current-image-and-can-change-it">&#182;</a></h3>
+<h3 id="The-numpy-array-references-the-memory-of-the-current-Image-and-can-change-it:">The numpy array references the memory of the current Image and can change it:<a class="anchor-link" href="#The-numpy-array-references-the-memory-of-the-current-Image-and-can-change-it:">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -4954,7 +4972,7 @@ arr.dtype</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="but-it-still-doesnt-have-ownership">...but it still doesn't have ownership.<a class="anchor-link" href="#but-it-still-doesnt-have-ownership">&#182;</a></h3><h3 id="since-many-image-operations-reallocate-internally-its-still-safest-to-let-it-go-out-of-scope-as-shown-above">Since many Image operations reallocate internally, it's still safest to let it go out of scope as shown above.<a class="anchor-link" href="#since-many-image-operations-reallocate-internally-its-still-safest-to-let-it-go-out-of-scope-as-shown-above">&#182;</a></h3>
+<h3 id="...but-it-still-doesn't-have-ownership.">...but it still doesn't have ownership.<a class="anchor-link" href="#...but-it-still-doesn't-have-ownership.">&#182;</a></h3><h3 id="Since-many-Image-operations-reallocate-internally,-it's-still-safest-to-let-it-go-out-of-scope-as-shown-above.">Since many Image operations reallocate internally, it's still safest to let it go out of scope as shown above.<a class="anchor-link" href="#Since-many-Image-operations-reallocate-internally,-it's-still-safest-to-let-it-go-out-of-scope-as-shown-above.">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -5029,7 +5047,7 @@ arr.dtype</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="if-a-copy-is-needed-pass-copytrue-to-toarray">If a copy is needed, pass <code>copy=True</code> to <code>toArray()</code><a class="anchor-link" href="#if-a-copy-is-needed-pass-copytrue-to-toarray">&#182;</a></h2>
+<h2 id="If-a-copy-is-needed,-pass-copy=True-to-toArray()">If a copy is needed, pass <code>copy=True</code> to <code>toArray()</code><a class="anchor-link" href="#If-a-copy-is-needed,-pass-copy=True-to-toArray()">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -5074,7 +5092,7 @@ arr.flags['OWNDATA']</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="this-can-be-useful-when-the-array-is-created-from-a-temporary-image">This can be useful when the array is created from a temporary Image:<a class="anchor-link" href="#this-can-be-useful-when-the-array-is-created-from-a-temporary-image">&#182;</a></h3>
+<h3 id="This-can-be-useful-when-the-array-is-created-from-a-temporary-Image:">This can be useful when the array is created from a temporary Image:<a class="anchor-link" href="#This-can-be-useful-when-the-array-is-created-from-a-temporary-Image:">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -5185,7 +5203,7 @@ arr.mean()</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="viewing-the-image-using-pyvista">viewing the image using pyvista<a class="anchor-link" href="#viewing-the-image-using-pyvista">&#182;</a></h2><h3 id="one-common-reason-to-get-the-images-array-is-for-viewing-using-pyvista-using-the-for_viewing-argument">One common reason to get the Image's array is for viewing using pyvista using the <code>for_viewing</code> argument:<a class="anchor-link" href="#one-common-reason-to-get-the-images-array-is-for-viewing-using-pyvista-using-the-for_viewing-argument">&#182;</a></h3>
+<h2 id="viewing-the-image-using-pyvista">viewing the image using pyvista<a class="anchor-link" href="#viewing-the-image-using-pyvista">&#182;</a></h2><h3 id="One-common-reason-to-get-the-Image's-array-is-for-viewing-using-pyvista-using-the-for_viewing-argument:">One common reason to get the Image's array is for viewing using pyvista using the <code>for_viewing</code> argument:<a class="anchor-link" href="#One-common-reason-to-get-the-Image's-array-is-for-viewing-using-pyvista-using-the-for_viewing-argument:">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -5502,7 +5520,7 @@ vtkimg = sw.sw2vtkImage(img, verbose=True)</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="finally-we-can-assign-a-numpy-array-to-an-existing-image">Finally, we can <code>assign</code> a numpy array to an existing Image<a class="anchor-link" href="#finally-we-can-assign-a-numpy-array-to-an-existing-image">&#182;</a></h2><h3 id="this-retains-the-images-origin-scale-and-coordsys">This retains the Image's origin, scale, and coordsys.<a class="anchor-link" href="#this-retains-the-images-origin-scale-and-coordsys">&#182;</a></h3>
+<h2 id="Finally,-we-can-assign-a-numpy-array-to-an-existing-Image">Finally, we can <code>assign</code> a numpy array to an existing Image<a class="anchor-link" href="#Finally,-we-can-assign-a-numpy-array-to-an-existing-Image">&#182;</a></h2><h3 id="This-retains-the-Image's-origin,-scale,-and-coordsys.">This retains the Image's origin, scale, and coordsys.<a class="anchor-link" href="#This-retains-the-Image's-origin,-scale,-and-coordsys.">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -5647,7 +5665,7 @@ plotter.add_axes()</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="lets-use-a-scipy-operation-on-the-image">Let's use a scipy operation on the image:<a class="anchor-link" href="#lets-use-a-scipy-operation-on-the-image">&#182;</a></h3>
+<h3 id="Let's-use-a-scipy-operation-on-the-image:">Let's use a scipy operation on the image:<a class="anchor-link" href="#Let's-use-a-scipy-operation-on-the-image:">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -5722,7 +5740,7 @@ plotter.add_axes()</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="the-return-from-this-filter-is-the-right-size-and-type-but-its-a-copy">The return from this filter is the right size and type, but it's a copy:<a class="anchor-link" href="#the-return-from-this-filter-is-the-right-size-and-type-but-its-a-copy">&#182;</a></h3>
+<h3 id="The-return-from-this-filter-is-the-right-size-and-type,-but-it's-a-copy:">The return from this filter is the right size and type, but it's a copy:<a class="anchor-link" href="#The-return-from-this-filter-is-the-right-size-and-type,-but-it's-a-copy:">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -5829,7 +5847,7 @@ plotter.add_axes()</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="lets-assign-it-back-to-image-so-we-can-retain-images-origin-scale-and-coordsys">Let's assign it back to Image so we can retain Image's origin, scale, and coordsys:<a class="anchor-link" href="#lets-assign-it-back-to-image-so-we-can-retain-images-origin-scale-and-coordsys">&#182;</a></h3>
+<h3 id="Let's-assign-it-back-to-Image-so-we-can-retain-Image's-origin,-scale,-and-coordsys:">Let's assign it back to Image so we can retain Image's origin, scale, and coordsys:<a class="anchor-link" href="#Let's-assign-it-back-to-Image-so-we-can-retain-Image's-origin,-scale,-and-coordsys:">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -5906,7 +5924,7 @@ ck.flags['OWNDATA']</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="now-we-can-look-at-it-again-in-the-plotter">Now we can look at it again in the plotter:<a class="anchor-link" href="#now-we-can-look-at-it-again-in-the-plotter">&#182;</a></h3>
+<h3 id="Now-we-can-look-at-it-again-in-the-plotter:">Now we can look at it again in the plotter:<a class="anchor-link" href="#Now-we-can-look-at-it-again-in-the-plotter:">&#182;</a></h3>
 </div>
 </div>
 </div>

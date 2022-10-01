@@ -27,8 +27,7 @@ title: Libs/Project/Parameters.h
 ```cpp
 #pragma once
 
-#include <map>
-#include <string>
+#include <ProjectUtils.h>
 
 #include "Variant.h"
 
@@ -36,6 +35,8 @@ namespace shapeworks {
 
 
 class Parameters {
+  using StringMap = project::types::StringMap;
+
  public:
   static constexpr const char* ANALYSIS_PARAMS = "analysis";
   static constexpr const char* GROOM_PARAMS = "groom";
@@ -46,7 +47,7 @@ class Parameters {
 
   Parameters();
 
-  explicit Parameters(std::map<std::string, std::string> map);
+  explicit Parameters(StringMap map);
 
   Variant get(std::string key, Variant default_value);
 
@@ -56,14 +57,19 @@ class Parameters {
 
   void remove_entry(std::string key);
 
-  void set_map(std::map<std::string, std::string> map);
+  void set_map(StringMap map);
 
-  std::map<std::string, std::string> get_map();
+  StringMap get_map();
 
   void reset_parameters();
 
  private:
-  std::map<std::string, std::string> map_;
+  StringMap map_;
+
+  //  std::vector< std::pair<const std::string, std::string> >  container_;
+  // std::pair<const std::string, std::string>  container_;
+  //const std::string joke_;
+  tsl::ordered_map<std::string,std::string> mappy_;
 };
 }  // namespace shapeworks
 ```
@@ -71,4 +77,4 @@ class Parameters {
 
 -------------------------------
 
-Updated on 2022-09-13 at 16:52:36 +0000
+Updated on 2022-10-01 at 18:47:24 +0000

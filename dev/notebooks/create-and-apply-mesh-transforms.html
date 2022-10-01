@@ -42,6 +42,8 @@
       
     
     
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
       <link rel="stylesheet" href="../css/custom.css">
     
     <script>__md_scope=new URL("..",location),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
@@ -2187,24 +2189,39 @@
   
   
   
+    <li class="md-nav__item">
+      <a href="../python/python-api.html" class="md-nav__link">
+        Python API Reference
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
     
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_12" type="checkbox" id="__nav_12" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_13" type="checkbox" id="__nav_13" >
       
       
       
       
-        <label class="md-nav__link" for="__nav_12">
-          API Reference
+        <label class="md-nav__link" for="__nav_13">
+          C++ API Reference
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" aria-label="API Reference" data-md-level="1">
-        <label class="md-nav__title" for="__nav_12">
+      <nav class="md-nav" aria-label="C++ API Reference" data-md-level="1">
+        <label class="md-nav__title" for="__nav_13">
           <span class="md-nav__icon md-icon"></span>
-          API Reference
+          C++ API Reference
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -2281,18 +2298,18 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_13" type="checkbox" id="__nav_13" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_14" type="checkbox" id="__nav_14" >
       
       
       
       
-        <label class="md-nav__link" for="__nav_13">
+        <label class="md-nav__link" for="__nav_14">
           About
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="About" data-md-level="1">
-        <label class="md-nav__title" for="__nav_13">
+        <label class="md-nav__title" for="__nav_14">
           <span class="md-nav__icon md-icon"></span>
           About
         </label>
@@ -2783,6 +2800,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 .highlight-ipynb .m { color: var(--jp-mirror-editor-number-color) } /* Literal.Number */
 .highlight-ipynb .s { color: var(--jp-mirror-editor-string-color) } /* Literal.String */
 .highlight-ipynb .ow { color: var(--jp-mirror-editor-operator-color); font-weight: bold } /* Operator.Word */
+.highlight-ipynb .pm { color: var(--jp-mirror-editor-punctuation-color) } /* Punctuation.Marker */
 .highlight-ipynb .w { color: var(--jp-mirror-editor-variable-color) } /* Text.Whitespace */
 .highlight-ipynb .mb { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Bin */
 .highlight-ipynb .mf { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Float */
@@ -3625,7 +3643,7 @@ Licensed under the Apache License, Version 2.0.
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h1 id="transforms-can-also-be-used-to-align-two-meshes">Transforms can also be used to align two meshes<a class="anchor-link" href="#transforms-can-also-be-used-to-align-two-meshes">&#182;</a></h1>
+<h1 id="Transforms-can-also-be-used-to-align-two-meshes">Transforms can also be used to align two meshes<a class="anchor-link" href="#Transforms-can-also-be-used-to-align-two-meshes">&#182;</a></h1>
 </div>
 </div>
 </div>
@@ -3738,7 +3756,7 @@ import matplotlib</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="mesh-alignment">Mesh alignment<a class="anchor-link" href="#mesh-alignment">&#182;</a></h2><p>A mesh transformation can be computed rigidly, using similarity, or as an affine matrix. The alignment is computed using the iterative closest point (ICP) method for the specified number of iterations (default: a similarity transform with 10 iterations).</p>
+<h2 id="Mesh-alignment">Mesh alignment<a class="anchor-link" href="#Mesh-alignment">&#182;</a></h2><p>A mesh transformation can be computed rigidly, using similarity, or as an affine matrix. The alignment is computed using the iterative closest point (ICP) method for the specified number of iterations (default: a similarity transform with 10 iterations).</p>
 
 </div>
 </div>
@@ -3784,7 +3802,7 @@ filename2 = DATA + "/ellipsoid_1mode/meshes/ellipsoid_07.vtk"</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h4 id="load-meshes">Load meshes<a class="anchor-link" href="#load-meshes">&#182;</a></h4>
+<h4 id="Load-meshes">Load meshes<a class="anchor-link" href="#Load-meshes">&#182;</a></h4>
 </div>
 </div>
 </div>
@@ -3829,7 +3847,7 @@ mesh2 = sw.Mesh(filename2)</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h4 id="visualize-original-meshes">Visualize original meshes<a class="anchor-link" href="#visualize-original-meshes">&#182;</a></h4>
+<h4 id="Visualize-original-meshes">Visualize original meshes<a class="anchor-link" href="#Visualize-original-meshes">&#182;</a></h4>
 </div>
 </div>
 </div>
@@ -3988,7 +4006,7 @@ p.show()</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="rigid-transformation">Rigid transformation<a class="anchor-link" href="#rigid-transformation">&#182;</a></h3>
+<h3 id="Rigid-transformation">Rigid transformation<a class="anchor-link" href="#Rigid-transformation">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -4135,7 +4153,7 @@ pv_mesh2 = sw.sw2vtkMesh(mesh2)</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h4 id="mesh-1-mesh-2">Mesh 1 -&gt; Mesh 2<a class="anchor-link" href="#mesh-1-mesh-2">&#182;</a></h4>
+<h4 id="Mesh-1--%3E-Mesh-2">Mesh 1 -&gt; Mesh 2<a class="anchor-link" href="#Mesh-1--%3E-Mesh-2">&#182;</a></h4>
 </div>
 </div>
 </div>
@@ -4260,7 +4278,7 @@ p.show()</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h4 id="mesh-2-mesh-1">Mesh 2 -&gt; Mesh 1<a class="anchor-link" href="#mesh-2-mesh-1">&#182;</a></h4>
+<h4 id="Mesh-2--%3E-Mesh-1">Mesh 2 -&gt; Mesh 1<a class="anchor-link" href="#Mesh-2--%3E-Mesh-1">&#182;</a></h4>
 </div>
 </div>
 </div>
@@ -4417,7 +4435,7 @@ p.show()</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="similarity-transformation">Similarity transformation<a class="anchor-link" href="#similarity-transformation">&#182;</a></h3><p>This type of transformation is very similar to rigid transformations above.</p>
+<h3 id="Similarity-transformation">Similarity transformation<a class="anchor-link" href="#Similarity-transformation">&#182;</a></h3><p>This type of transformation is very similar to rigid transformations above.</p>
 
 </div>
 </div>
@@ -4429,7 +4447,7 @@ p.show()</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h4 id="reload-meshes">Reload meshes<a class="anchor-link" href="#reload-meshes">&#182;</a></h4>
+<h4 id="Reload-meshes">Reload meshes<a class="anchor-link" href="#Reload-meshes">&#182;</a></h4>
 </div>
 </div>
 </div>
@@ -4610,7 +4628,7 @@ pv_mesh2 = sw.sw2vtkMesh(mesh2)</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h4 id="mesh-1-mesh-2">Mesh 1 -&gt; Mesh 2<a class="anchor-link" href="#mesh-1-mesh-2">&#182;</a></h4>
+<h4 id="Mesh-1--%3E-Mesh-2">Mesh 1 -&gt; Mesh 2<a class="anchor-link" href="#Mesh-1--%3E-Mesh-2">&#182;</a></h4>
 </div>
 </div>
 </div>
@@ -4735,7 +4753,7 @@ p.show()</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h4 id="mesh-2-mesh-1">Mesh 2 -&gt; Mesh 1<a class="anchor-link" href="#mesh-2-mesh-1">&#182;</a></h4>
+<h4 id="Mesh-2--%3E-Mesh-1">Mesh 2 -&gt; Mesh 1<a class="anchor-link" href="#Mesh-2--%3E-Mesh-1">&#182;</a></h4>
 </div>
 </div>
 </div>
@@ -4892,7 +4910,7 @@ p.show()</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="affine-transformation">Affine transformation<a class="anchor-link" href="#affine-transformation">&#182;</a></h3><p>This type of transformation warps the points of one mesh into the other as well as translating its position.</p>
+<h3 id="Affine-transformation">Affine transformation<a class="anchor-link" href="#Affine-transformation">&#182;</a></h3><p>This type of transformation warps the points of one mesh into the other as well as translating its position.</p>
 
 </div>
 </div>
@@ -4904,7 +4922,7 @@ p.show()</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h4 id="reload-meshes">Reload meshes<a class="anchor-link" href="#reload-meshes">&#182;</a></h4>
+<h4 id="Reload-meshes">Reload meshes<a class="anchor-link" href="#Reload-meshes">&#182;</a></h4>
 </div>
 </div>
 </div>
@@ -5085,7 +5103,7 @@ pv_mesh2 = sw.sw2vtkMesh(mesh2)</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h4 id="mesh-1-mesh-2">Mesh 1 -&gt; Mesh 2<a class="anchor-link" href="#mesh-1-mesh-2">&#182;</a></h4>
+<h4 id="Mesh-1--%3E-Mesh-2">Mesh 1 -&gt; Mesh 2<a class="anchor-link" href="#Mesh-1--%3E-Mesh-2">&#182;</a></h4>
 </div>
 </div>
 </div>
@@ -5210,7 +5228,7 @@ p.show()</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h4 id="mesh-2-mesh-1">Mesh 2 -&gt; Mesh 1<a class="anchor-link" href="#mesh-2-mesh-1">&#182;</a></h4>
+<h4 id="Mesh-2--%3E-Mesh-1">Mesh 2 -&gt; Mesh 1<a class="anchor-link" href="#Mesh-2--%3E-Mesh-1">&#182;</a></h4>
 </div>
 </div>
 </div>

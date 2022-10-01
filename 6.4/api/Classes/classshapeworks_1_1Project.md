@@ -13,6 +13,12 @@ Representation of a project.  [More...](#detailed-description)
 
 `#include <Project.h>`
 
+## Public Types
+
+|                | Name           |
+| -------------- | -------------- |
+| using std::map< std::string, std::string > | **[StringMap](../Classes/classshapeworks_1_1Project.md#using-stringmap)**  |
+
 ## Public Functions
 
 |                | Name           |
@@ -21,6 +27,7 @@ Representation of a project.  [More...](#detailed-description)
 | | **[~Project](../Classes/classshapeworks_1_1Project.md#function-~project)**() |
 | bool | **[load](../Classes/classshapeworks_1_1Project.md#function-load)**(const std::string & filename)<br>Load from project file.  |
 | bool | **[save](../Classes/classshapeworks_1_1Project.md#function-save)**(const std::string & filename)<br>Save to project file.  |
+| void | **[set_project_path](../Classes/classshapeworks_1_1Project.md#function-set-project-path)**(const std::string & path)<br>Set the project path.  |
 | std::string | **[get_filename](../Classes/classshapeworks_1_1Project.md#function-get-filename)**()<br>Return the filename.  |
 | void | **[set_filename](../Classes/classshapeworks_1_1Project.md#function-set-filename)**(std::string filename)<br>Set project filename.  |
 | std::vector< std::string > | **[get_headers](../Classes/classshapeworks_1_1Project.md#function-get-headers)**()<br>Return the headers of the subject sheet.  |
@@ -68,6 +75,15 @@ Representation of a project.
 
 The [Project](../Classes/classshapeworks_1_1Project.md) class encapsulates the spreadsheet based file format for storing project data. 
 
+## Public Types Documentation
+
+### using StringMap
+
+```cpp
+using shapeworks::Project::StringMap =  std::map<std::string, std::string>;
+```
+
+
 ## Public Functions Documentation
 
 ### function Project
@@ -103,6 +119,16 @@ bool save(
 ```
 
 Save to project file. 
+
+### function set_project_path
+
+```cpp
+void set_project_path(
+    const std::string & path
+)
+```
+
+Set the project path. 
 
 ### function get_filename
 
@@ -430,4 +456,4 @@ Get the groomed domain types.
 
 -------------------------------
 
-Updated on 2022-09-13 at 16:52:35 +0000
+Updated on 2022-10-01 at 18:47:23 +0000

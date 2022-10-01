@@ -42,6 +42,8 @@
       
     
     
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
       <link rel="stylesheet" href="../css/custom.css">
     
     <script>__md_scope=new URL("..",location),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
@@ -1966,24 +1968,39 @@
   
   
   
+    <li class="md-nav__item">
+      <a href="../python/python-api.html" class="md-nav__link">
+        Python API Reference
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
     
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_12" type="checkbox" id="__nav_12" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_13" type="checkbox" id="__nav_13" >
       
       
       
       
-        <label class="md-nav__link" for="__nav_12">
-          API Reference
+        <label class="md-nav__link" for="__nav_13">
+          C++ API Reference
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" aria-label="API Reference" data-md-level="1">
-        <label class="md-nav__title" for="__nav_12">
+      <nav class="md-nav" aria-label="C++ API Reference" data-md-level="1">
+        <label class="md-nav__title" for="__nav_13">
           <span class="md-nav__icon md-icon"></span>
-          API Reference
+          C++ API Reference
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -2060,18 +2077,18 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_13" type="checkbox" id="__nav_13" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_14" type="checkbox" id="__nav_14" >
       
       
       
       
-        <label class="md-nav__link" for="__nav_13">
+        <label class="md-nav__link" for="__nav_14">
           About
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="About" data-md-level="1">
-        <label class="md-nav__title" for="__nav_13">
+        <label class="md-nav__title" for="__nav_14">
           <span class="md-nav__icon md-icon"></span>
           About
         </label>
@@ -2182,25 +2199,18 @@
 <h1 id="_3"></h1>
 <p>[Image Tools]
 [Mesh Tools]
-[Alignment]
-[Analysis]
+[Alignment][Analysis]
 [Optimization]
 [File Utilities]</p>
 <h1 id="image-tools">Image Tools</h1>
 <p>Image manipulation is used to blah blah blah...</p>
 <p>[AntiAliasing] (#anti-aliasing)
-[ClipVolume]
-[CloseHoles]
-[Cropping Images]
-[ExtractGivenLabelImage]
-[FastMarching]
-[FindLargestBoundingBox]
-[PadVolumeWithConstant]
-[ReflectVolumes]
-[ResampleVolumesToBeIsotropic]
-[ThresholdImages]
-[TopologyPreservingSmoothing]
-[WriteImageInfoToText]</p>
+[ClipVolume][CloseHoles]
+[Cropping Images][ExtractGivenLabelImage]
+[FastMarching][FindLargestBoundingBox]
+[PadVolumeWithConstant][ReflectVolumes]
+[ResampleVolumesToBeIsotropic][ThresholdImages]
+[TopologyPreservingSmoothing][WriteImageInfoToText]</p>
 <h2 id="read">Read</h2>
 <p>This tool reads an image.</p>
 <p>Command Line Name: read-image</p>
@@ -2534,10 +2544,8 @@ output vtk meshes with scalar field defined based on such probing process (repor
   - relaxation_factor: amount of vertex displacement in each iteration</p>
 <h3 id="alignment">Alignment</h3>
 <p>Alignment tools are used to blah blah blah...</p>
-<p>[ICPRigid3DImageRegistration]
-[ICPRigid3DMeshRegistration]
-[ReflectMeshes]
-[TranslateShapeToImageOrigin]
+<p>[ICPRigid3DImageRegistration][ICPRigid3DMeshRegistration]
+[ReflectMeshes][TranslateShapeToImageOrigin]
 [Resize_origin_resampleShape]</p>
 <h2 id="icprigid3dimageregistration">ICPRigid3DImageRegistration</h2>
 <p>A command line tool that performs iterative closed point (ICP) 3D rigid registration on a pair of images.</p>
@@ -2593,12 +2601,9 @@ in the source mesh domain to be mapped to the target domain</p>
 <p>Optimization is used to blah blah blah...</p>
 <h3 id="file-utilities">File Utilities</h3>
 <p>The File Utilities are used to read and convert data stored in a variety of different formats.</p>
-<p>[GENERIC MESH FORMAT CONVERSION]
-[fea2vtk]
-[stl2ply]
-[stl2vtk]
-[vtk2ply]
-[VTKUnstructuredGridToPolyData]
+<p>[GENERIC MESH FORMAT CONVERSION][fea2vtk]
+[stl2ply][stl2vtk]
+[vtk2ply][VTKUnstructuredGridToPolyData]
 [MeshFromDT]</p>
 <h2 id="generic-mesh-format-conversion">GENERIC MESH FORMAT CONVERSION</h2>
 <p>Converts different mesh formats (vtk, ply, stl, obj) to other formats</p>

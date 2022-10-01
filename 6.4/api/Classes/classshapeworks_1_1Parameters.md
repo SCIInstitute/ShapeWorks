@@ -18,13 +18,13 @@ Parameter settings.  [More...](#detailed-description)
 |                | Name           |
 | -------------- | -------------- |
 | | **[Parameters](../Classes/classshapeworks_1_1Parameters.md#function-parameters)**()<br>default constructor  |
-| | **[Parameters](../Classes/classshapeworks_1_1Parameters.md#function-parameters)**(std::map< std::string, std::string > map)<br>construct from map  |
+| | **[Parameters](../Classes/classshapeworks_1_1Parameters.md#function-parameters)**(StringMap map)<br>construct from map  |
 | [Variant](../Classes/classshapeworks_1_1Variant.md) | **[get](../Classes/classshapeworks_1_1Parameters.md#function-get)**(std::string key, [Variant](../Classes/classshapeworks_1_1Variant.md) default_value)<br>get a parameter based on a key, return default if it doesn't exist  |
 | bool | **[key_exists](../Classes/classshapeworks_1_1Parameters.md#function-key-exists)**(std::string key)<br>return if a key exists or not  |
 | void | **[set](../Classes/classshapeworks_1_1Parameters.md#function-set)**(std::string key, [Variant](../Classes/classshapeworks_1_1Variant.md) value)<br>set a parameter based on a key  |
 | void | **[remove_entry](../Classes/classshapeworks_1_1Parameters.md#function-remove-entry)**(std::string key)<br>remove an entry  |
-| void | **[set_map](../Classes/classshapeworks_1_1Parameters.md#function-set-map)**(std::map< std::string, std::string > map)<br>set underlying map  |
-| std::map< std::string, std::string > | **[get_map](../Classes/classshapeworks_1_1Parameters.md#function-get-map)**()<br>get underlying map  |
+| void | **[set_map](../Classes/classshapeworks_1_1Parameters.md#function-set-map)**(StringMap map)<br>set underlying map  |
+| StringMap | **[get_map](../Classes/classshapeworks_1_1Parameters.md#function-get-map)**()<br>get underlying map  |
 | void | **[reset_parameters](../Classes/classshapeworks_1_1Parameters.md#function-reset-parameters)**()<br>reset parameters to blank  |
 
 ## Public Attributes
@@ -62,7 +62,7 @@ default constructor
 
 ```cpp
 explicit Parameters(
-    std::map< std::string, std::string > map
+    StringMap map
 )
 ```
 
@@ -114,7 +114,7 @@ remove an entry
 
 ```cpp
 void set_map(
-    std::map< std::string, std::string > map
+    StringMap map
 )
 ```
 
@@ -123,7 +123,7 @@ set underlying map
 ### function get_map
 
 ```cpp
-std::map< std::string, std::string > get_map()
+StringMap get_map()
 ```
 
 get underlying map 
@@ -182,4 +182,4 @@ static constexpr const char * DEEPSSM_PARAMS = "deepssm";
 
 -------------------------------
 
-Updated on 2022-09-13 at 16:52:34 +0000
+Updated on 2022-10-01 at 18:47:23 +0000

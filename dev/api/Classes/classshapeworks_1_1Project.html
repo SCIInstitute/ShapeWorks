@@ -42,6 +42,8 @@
       
     
     
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
       <link rel="stylesheet" href="../../css/custom.css">
     
     <script>__md_scope=new URL("../..",location),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
@@ -1966,24 +1968,39 @@
   
   
   
+    <li class="md-nav__item">
+      <a href="../../python/python-api.html" class="md-nav__link">
+        Python API Reference
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
     
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_12" type="checkbox" id="__nav_12" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_13" type="checkbox" id="__nav_13" >
       
       
       
       
-        <label class="md-nav__link" for="__nav_12">
-          API Reference
+        <label class="md-nav__link" for="__nav_13">
+          C++ API Reference
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" aria-label="API Reference" data-md-level="1">
-        <label class="md-nav__title" for="__nav_12">
+      <nav class="md-nav" aria-label="C++ API Reference" data-md-level="1">
+        <label class="md-nav__title" for="__nav_13">
           <span class="md-nav__icon md-icon"></span>
-          API Reference
+          C++ API Reference
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -2060,18 +2077,18 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_13" type="checkbox" id="__nav_13" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_14" type="checkbox" id="__nav_14" >
       
       
       
       
-        <label class="md-nav__link" for="__nav_13">
+        <label class="md-nav__link" for="__nav_14">
           About
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="About" data-md-level="1">
-        <label class="md-nav__title" for="__nav_13">
+        <label class="md-nav__title" for="__nav_14">
           <span class="md-nav__icon md-icon"></span>
           About
         </label>
@@ -2166,6 +2183,13 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#public-types" class="md-nav__link">
+    Public Types
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#public-functions" class="md-nav__link">
     Public Functions
   </a>
@@ -2176,6 +2200,26 @@
   <a href="#detailed-description" class="md-nav__link">
     Detailed Description
   </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#public-types-documentation" class="md-nav__link">
+    Public Types Documentation
+  </a>
+  
+    <nav class="md-nav" aria-label="Public Types Documentation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#using-stringmap" class="md-nav__link">
+    using StringMap
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -2211,6 +2255,13 @@
           <li class="md-nav__item">
   <a href="#function-save" class="md-nav__link">
     function save
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-set_project_path" class="md-nav__link">
+    function set_project_path
   </a>
   
 </li>
@@ -2493,6 +2544,21 @@
 <h1 id="shapeworksproject">shapeworks::Project</h1>
 <p>Representation of a project.  <a href="#detailed-description">More...</a></p>
 <p><code>#include &lt;Project.h&gt;</code></p>
+<h2 id="public-types">Public Types</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>using std::map&lt; std::string, std::string &gt;</td>
+<td><strong><a href="classshapeworks_1_1Project.html#using-stringmap">StringMap</a></strong></td>
+</tr>
+</tbody>
+</table>
 <h2 id="public-functions">Public Functions</h2>
 <table>
 <thead>
@@ -2517,6 +2583,10 @@
 <tr>
 <td>bool</td>
 <td><strong><a href="classshapeworks_1_1Project.html#function-save">save</a></strong>(const std::string &amp; filename)<br>Save to project file.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Project.html#function-set-project-path">set_project_path</a></strong>(const std::string &amp; path)<br>Set the project path.</td>
 </tr>
 <tr>
 <td>std::string</td>
@@ -2669,6 +2739,10 @@
 </code></pre></div>
 <p>Representation of a project. </p>
 <p>The <a href="classshapeworks_1_1Project.html">Project</a> class encapsulates the spreadsheet based file format for storing project data. </p>
+<h2 id="public-types-documentation">Public Types Documentation</h2>
+<h3 id="using-stringmap">using StringMap</h3>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Project</span><span class="o">::</span><span class="n">StringMap</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-project">function Project</h3>
 <div class="highlight"><pre><span></span><code><span class="n">Project</span><span class="p">()</span><span class="w"></span>
@@ -2688,6 +2762,12 @@
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <p>Save to project file. </p>
+<h3 id="function-set_project_path">function set_project_path</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_project_path</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">path</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>Set the project path. </p>
 <h3 id="function-get_filename">function get_filename</h3>
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">get_filename</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
@@ -2869,7 +2949,7 @@
 </code></pre></div>
 <p>Get the groomed domain types. </p>
 <hr />
-<p>Updated on 2022-09-13 at 16:52:35 +0000</p>
+<p>Updated on 2022-10-01 at 18:47:23 +0000</p>
 
               
             </article>

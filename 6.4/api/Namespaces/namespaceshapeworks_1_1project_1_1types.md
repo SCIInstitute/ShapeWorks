@@ -11,7 +11,7 @@ title: shapeworks::project::types
 
 |                | Name           |
 | -------------- | -------------- |
-| using std::map< std::string, std::string > | **[StringMap](../Namespaces/namespaceshapeworks_1_1project_1_1types.md#using-stringmap)**  |
+| using tsl::ordered_map< std::string, std::string > | **[StringMap](../Namespaces/namespaceshapeworks_1_1project_1_1types.md#using-stringmap)**  |
 | using std::vector< std::string > | **[StringList](../Namespaces/namespaceshapeworks_1_1project_1_1types.md#using-stringlist)**  |
 | using std::vector< StringMap > | **[StringMapList](../Namespaces/namespaceshapeworks_1_1project_1_1types.md#using-stringmaplist)**  |
 | using std::map< std::string, StringMap > | **[StringMultiMap](../Namespaces/namespaceshapeworks_1_1project_1_1types.md#using-stringmultimap)**  |
@@ -21,7 +21,7 @@ title: shapeworks::project::types
 ### using StringMap
 
 ```cpp
-using shapeworks::project::types::StringMap = typedef std::map<std::string, std::string>;
+using shapeworks::project::types::StringMap = typedef tsl::ordered_map<std::string, std::string>;
 ```
 
 
@@ -53,4 +53,4 @@ using shapeworks::project::types::StringMultiMap = typedef std::map<std::string,
 
 -------------------------------
 
-Updated on 2022-09-13 at 16:52:35 +0000
+Updated on 2022-10-01 at 18:47:24 +0000
