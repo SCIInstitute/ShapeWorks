@@ -76,7 +76,7 @@ jobs:
       shell: bash -l {0}
       env:
         PR_NUMBER: ${{ github.event.number }}
-      run: conda activate shapeworks && ./Support/package.sh tag ${GITHUB_WORKSPACE}/shapeworks-install $HOME/install
+      run: conda activate shapeworks && source ./devenv.sh ./build/bin && ./Support/package.sh tag ${GITHUB_WORKSPACE}/shapeworks-install $HOME/install
 
     - name: make test
       shell: bash -l {0}
