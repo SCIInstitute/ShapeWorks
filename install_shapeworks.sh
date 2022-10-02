@@ -3,7 +3,7 @@
 #
 echo ""
 echo "Note: this script only supports bash and zsh shells "
-echo "      It must be called using \"source ./install_shapeworks.sh [--developer] [optional_env_name]\""
+echo "      It must be called using \"source ./install_shapeworks.sh [--developer] [--user] [optional_env_name]\""
 echo ""
 
 (return 0 2>/dev/null) && sourced=1 || sourced=0
@@ -14,12 +14,20 @@ if [[ "$sourced" == "0" ]]; then
 fi
 
 
-POSITIONAL_ARGS=()
 DEVELOPER=NO
+if [ -d ".git" ]; then # default to developer if in a git repo
+    DEVELOPER=YES
+fi
+    
+POSITIONAL_ARGS=()
 while [[ $# -gt 0 ]]; do
   case $1 in
     --developer)
       DEVELOPER=YES
+      shift # past argument
+      ;;
+    --user)
+      DEVELOPER=NO
       shift # past argument
       ;;
     -*|--*)
