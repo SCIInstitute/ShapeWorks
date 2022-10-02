@@ -274,6 +274,8 @@ def generate_images(generated_directories, blur_factor, foreground_mean, foregro
     if type(generated_directories) != list:
         generated_directories = [generated_directories]
 
+    all_ims = []
+
     # Get all images from all directories
     for i in range(len(generated_directories)):
         segs = get_files_only(generated_directories[i]+"/segmentations/")
@@ -292,7 +294,9 @@ def generate_images(generated_directories, blur_factor, foreground_mean, foregro
             img = sw.Image(np.float32(img_array)).setOrigin(origin)
             img.write(name,compressed=True)
             index += 1
-        return get_files(imgDir)
+        all_ims.extend(get_files_only(imgDir))
+
+    return all_ims
 
 '''
 Generates image by blurring and adding noise to segmentation
