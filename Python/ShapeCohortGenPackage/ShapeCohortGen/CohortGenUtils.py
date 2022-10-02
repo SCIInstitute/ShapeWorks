@@ -66,6 +66,34 @@ def rename(inname, outDir, extension_addition, extension_change=''):
     return outname
 
 '''
+Get mesh bounding box dimensions:
+ - Given a number of project folders, it will compile all meshes of all "project_folder/mesh" directories
+ - and will return the min, max, and size of the bounding boxes. This is for the user to check bounding box sizes
+'''
+def bb_dimensions(generated_directories):
+    if type(generated_directories) != list:
+        generated_directories = [generated_directories]
+
+    # Get all meshes from all directories
+    allMeshes = []
+    allGenerated = []
+    for i in range(len(generated_directories)):
+        meshFileNames = get_files_only(generated_directories[i]+"/meshes/")
+        for j in range(len(meshFileNames)):
+            allMeshes.append(meshFileNames[i])
+        allGenerated.append(meshFileNames)
+
+
+    # get region that includes all of these meshes with padding
+    bball = sw.MeshUtils.boundingBox(allMeshes)
+    bb = {}
+    bb['min'] = bball.min
+    bb['max'] = bball.max
+    bb['size'] = bball.max-bball.min
+
+    return bb
+
+'''
 Generate segmentations from mesh list:
  - by default these will be the size of the region containing ALL meshes (with some padding)
  - if allow_on_boundary, a random subset of these will be exactly the size of the mesh
@@ -74,22 +102,21 @@ Generate segmentations from mesh list:
 '''
 def generate_segmentations(generated_directories, randomize_size=False, spacing=[1.0,1.0,1.0], allow_on_boundary=False, padding=[5,5,5]):
 
+    if type(generated_directories) != list:
+        generated_directories = [generated_directories]
+
     # Get all meshes from all directories
     allMeshes = []
     allGenerated = []
     for i in range(len(generated_directories)):
-        print(generated_directories[i]+"/meshes/")
         meshFileNames = get_files_only(generated_directories[i]+"/meshes/")
-        print(meshFileNames)
         for j in range(len(meshFileNames)):
             allMeshes.append(meshFileNames[i])
         allGenerated.append(meshFileNames)
 
-    print(allMeshes)
 
     # get region that includes all of these meshes with padding
     bball = sw.MeshUtils.boundingBox(allMeshes)
-    print(bball)
     pad = np.array(padding)
     bball.min -= pad
     bball.max += pad
@@ -242,22 +269,30 @@ def get_contours_bounding_box(contour_list, pad=5):
 '''
 Generates image by blurring and adding noise to segmentation
 '''
-def generate_images(segs, outDir, blur_factor, foreground_mean, foreground_var, background_mean, background_var):
-    imgDir = outDir + 'images/'
-    make_dir(imgDir)
-    index = 1
-    for seg in segs:
-        print("Generating image " + str(index) + " out of " + str(len(segs)))
-        name = seg.replace('segmentations/','images/').replace('_seg.nrrd', '_blur' + str(blur_factor) + '.nrrd')
-        img = sw.Image(seg)
-        origin = img.origin()
-        img_array = blur(img.toArray(), blur_factor)
-        img_array = apply_noise(img_array, foreground_mean, foreground_var, background_mean, background_var)
-        img_array = np.float32(img_array)
-        img = sw.Image(np.float32(img_array)).setOrigin(origin)
-        img.write(name,compressed=True)
-        index += 1
-    return get_files(imgDir)
+def generate_images(generated_directories, blur_factor, foreground_mean, foreground_var, background_mean, background_var):
+
+    if type(generated_directories) != list:
+        generated_directories = [generated_directories]
+
+    # Get all images from all directories
+    for i in range(len(generated_directories)):
+        segs = get_files_only(generated_directories[i]+"/segmentations/")
+
+        imgDir = generated_directories[i] + 'images/'
+        make_dir(imgDir)
+        index = 1
+        for seg in segs:
+            print("Generating image " + str(index) + " out of " + str(len(segs)))
+            name = seg.replace('segmentations/','images/').replace('_seg.nrrd', '_blur' + str(blur_factor) + '.nrrd')
+            img = sw.Image(seg)
+            origin = img.origin()
+            img_array = blur(img.toArray(), blur_factor)
+            img_array = apply_noise(img_array, foreground_mean, foreground_var, background_mean, background_var)
+            img_array = np.float32(img_array)
+            img = sw.Image(np.float32(img_array)).setOrigin(origin)
+            img.write(name,compressed=True)
+            index += 1
+        return get_files(imgDir)
 
 '''
 Generates image by blurring and adding noise to segmentation

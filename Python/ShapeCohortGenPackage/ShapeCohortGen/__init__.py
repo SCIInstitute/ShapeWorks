@@ -23,3 +23,9 @@ def Supershapes2DCohortGenerator(out_dir=os.getcwd()+'/generated_supershapes_2D_
 
 def GenerateSegmentations(generated_directories, randomize_size=False, spacing=[1.0,1.0,1.0], allow_on_boundary=False, padding=[5,5,5]):
 	return CohortGenUtils.generate_segmentations(generated_directories, randomize_size, spacing, allow_on_boundary, padding)
+
+def GenerateImages(generated_directories, blur_factor=1, foreground_mean=180, foreground_var=30, background_mean=80, background_var=30):
+	return CohortGenUtils.generate_images(generated_directories, blur_factor, foreground_mean, foreground_var, background_mean, background_var)
+
+def BBDimensions(generated_directories):
+	return CohortGenUtils.bb_dimensions(generated_directories)
