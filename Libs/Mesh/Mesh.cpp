@@ -1397,8 +1397,8 @@ bool Mesh::prepareFFCFields(std::vector<std::vector<Eigen::Vector3d>> boundaries
     }
 
   // Write mesh for debug purposes
-      std::string fnin = "dev/mesh_" + std::to_string(query[0]) + "_" + std::to_string(query[2]) + "_in.vtk";
-      this->write(fnin);
+//      std::string fnin = "dev/mesh_" + std::to_string(query[0]) + "_" + std::to_string(query[2]) + "_in.vtk";
+//      this->write(fnin);
 
   this->invalidateLocators();
   return true;
