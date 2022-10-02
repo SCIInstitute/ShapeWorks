@@ -70,21 +70,7 @@ function install_conda() {
   conda config --add channels anaconda
   conda config --add channels conda-forge
 
-  EXTRA_PACKAGES=""
-  
-  # linux (only) deps
-  if [[ "$(uname)" == "Linux" ]]; then
-      # required by install_python_module.sh
-      EXTRA_PACKAGES="zlib=1.2.11 patchelf=0.13"
-  fi
-
-    # linux and mac (only) deps
-  if [[ "$(uname)" == "Linux" || "$(uname)" == "Darwin" ]]; then
-      EXTRA_PACKAGES="$EXTRA_PACKAGES openmp=8.0.1 ncurses=6.2 libuuid=2.32.1"
-  fi
-
-  # create and activate shapeworks env
-  if ! conda create --yes --name $CONDAENV python=3.7.8 \
+  CONDA_PACKAGES=(python=3.7.8 \
     cmake=3.18.2 \
     gtest=1.10.0 \
     colorama=0.4.3 \
@@ -104,19 +90,32 @@ function install_conda() {
     pybind11=2.5.0 \
     nlohmann_json=3.10.5 \
     pkg-config=0.29.2 \
-    pip=21.2.4 \
-    $EXTRA_PACKAGES
-     ; then return 1;
+    pip=21.2.4
+    )
+  
+  # linux (only) deps
+  if [[ "$(uname)" == "Linux" ]]; then
+      # required by install_python_module.sh
+      CONDA_PACKAGES+=(zlib=1.2.11 patchelf=0.13)
   fi
 
+    # linux and mac (only) deps
+  if [[ "$(uname)" == "Linux" || "$(uname)" == "Darwin" ]]; then
+      CONDA_PACKAGES+=(openmp=8.0.1 ncurses=6.2 libuuid=2.32.1)
+  fi
+
+  echo "Installing CONDA_PACKAGES = ${CONDA_PACKAGES[@]}"
+
+  # create and activate shapeworks env
+  if ! conda create --yes --name $CONDAENV ${CONDA_PACKAGES[@]} ; then
+      return 1;
+  fi
 
   eval "$(conda shell.bash hook)"
   if ! conda activate $CONDAENV; then return 1; fi
   
   # install conda into the shell
   conda init
-
-
 
   which pip
   if ! pip install notebook==6.1.5;                     then return 1; fi
