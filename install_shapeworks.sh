@@ -69,17 +69,8 @@ function install_conda() {
   # add default channels
   conda config --add channels anaconda
   conda config --add channels conda-forge
-  
-  # create and activate shapeworks env
-  if ! conda create --yes --name $CONDAENV python=3.9.13; then return 1; fi
-  eval "$(conda shell.bash hook)"
-  if ! conda activate $CONDAENV; then return 1; fi
-  
-  # install conda into the shell
-  conda init
 
-  # install shapeworks deps
-  if ! conda install --yes \
+  CONDA_PACKAGES=(python=3.9.13 \
     cmake=3.23.2 \
     gtest=1.11.0 \
     gmock=1.11.0 \
@@ -104,15 +95,27 @@ function install_conda() {
     openh264==2.3.0 \
     libhwloc=2.8.0 \
     pip=22.1.2
-  then return 1; fi
+   )		      
 
   # linux (only) deps
   if [[ "$(uname)" == "Linux" ]]; then
-    if ! conda install --yes \
-      zlib=1.2.12 \
-      patchelf=0.14.5                          # required by install_python_module.sh
-    then return 1; fi
+      # required by install_python_module.sh
+      CONDA_PACKAGES+=(zlib=1.2.12 patchelf=0.14.5)
   fi
+
+
+  echo "Installing CONDA_PACKAGES = ${CONDA_PACKAGES[@]}"
+
+  # create and activate shapeworks env
+  if ! conda create --yes --name $CONDAENV ${CONDA_PACKAGES[@]} ; then
+      return 1;
+  fi
+
+  eval "$(conda shell.bash hook)"
+  if ! conda activate $CONDAENV; then return 1; fi
+  
+  # install conda into the shell
+  conda init
 
   if [ -d ".git" ]; then  # don't invoke if not in a git clone directory
     if ! pip install mkdocs-jupyter==0.21.0;              then return 1; fi # for adding notebooks to our documentation (supports toc and executation before deployment)
