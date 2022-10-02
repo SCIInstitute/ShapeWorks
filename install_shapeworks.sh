@@ -69,7 +69,20 @@ function install_conda() {
   # add default channels
   conda config --add channels anaconda
   conda config --add channels conda-forge
+
+  EXTRA_PACKAGES=""
   
+  # linux (only) deps
+  if [[ "$(uname)" == "Linux" ]]; then
+      # required by install_python_module.sh
+      EXTRA_PACKAGES="zlib=1.2.11 patchelf=0.13"
+  fi
+
+    # linux and mac (only) deps
+  if [[ "$(uname)" == "Linux" || "$(uname)" == "Darwin" ]]; then
+      EXTRA_PACKAGES="$EXTRA_PACKAGES openmp=8.0.1 ncurses=6.2 libuuid=2.32.1"
+  fi
+
   # create and activate shapeworks env
   if ! conda create --yes --name $CONDAENV python=3.7.8 \
     cmake=3.18.2 \
@@ -91,6 +104,8 @@ function install_conda() {
     pybind11=2.5.0 \
     nlohmann_json=3.10.5 \
     pkg-config=0.29.2 \
+    pip=21.2.4 \
+    $EXTRA_PACKAGES
      ; then return 1;
   fi
 
@@ -101,25 +116,7 @@ function install_conda() {
   # install conda into the shell
   conda init
 
-  # linux (only) deps
-  if [[ "$(uname)" == "Linux" ]]; then
-    if ! conda install --yes \
-      zlib=1.2.11 \
-      patchelf=0.13                          # required by install_python_module.sh
-    then return 1; fi
-  fi
 
-  # linux and mac (only) deps
-  if [[ "$(uname)" == "Linux" || "$(uname)" == "Darwin" ]]; then
-    if ! conda install --yes \
-      openmp=8.0.1 \
-      ncurses=6.2 \
-      libuuid=2.32.1
-    then return 1; fi
-  fi
-
-  # pip is needed in sub-environments or the base env's pip will silently install to base
-  if ! conda install --yes pip=21.2.4; then return 1; fi
 
   which pip
   if ! pip install notebook==6.1.5;                     then return 1; fi
