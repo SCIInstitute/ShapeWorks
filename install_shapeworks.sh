@@ -121,6 +121,7 @@ function install_conda() {
 		     pkg-config=0.29.2 \
 		     openh264==2.3.0 \
 		     libhwloc=2.8.0 \
+		     jupyter_contrib_nbextensions=0.5.1 \
 		    )
     
     # linux (only) deps
@@ -210,12 +211,11 @@ function install_conda() {
 
 
   # for spell check markdown cells in jupyter notebooks and table of contents (toc2)
-  conda install --yes jupyter_contrib_nbextensions=0.5.1
   jupyter contrib nbextension install --user
   jupyter nbextension enable spellchecker/main
   jupyter nbextension enable toc2/main
 
-  if [ -d ".git" ]; then  # don't invoke if not in a git clone directory
+  if [[ "$DEVELOPER" == "YES" ]] ; then
     # installing nbstripout to strip out notebooks cell outputs before committing 
     nbstripout --install
     nbstripout --install --attributes .gitattributes
