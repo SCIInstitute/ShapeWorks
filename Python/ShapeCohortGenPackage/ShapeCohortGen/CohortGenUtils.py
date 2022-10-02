@@ -29,6 +29,12 @@ def get_files(folder):
     return file_list
 
 '''
+Get list of full paths for ONLY files in folder, no subdirectories
+'''
+def get_files_only(folder):
+    return [(folder + f).replace(" ","") for f in os.listdir(folder) if os.path.isfile(os.path.join(folder, f))]
+
+'''
 Get files with specific extensions
 '''
 def get_file_with_ext(file_list,extension):
@@ -39,6 +45,12 @@ def get_file_with_ext(file_list,extension):
             extList.append(file)
     extList = sorted(extList)
     return extList
+
+'''
+Get files with specific extensions, ONLY files in folder, no subdirectories
+'''
+def get_files_only_with_ext(folder, extension):
+    return [(folder + f).replace(" ","") for f in os.listdir(folder) if os.path.isfile(os.path.join(folder, f)) and f.split(".")[-1] == extension]
 
 '''
 Takes inname path and replaces dir with outdir and adds extension before file type
@@ -60,56 +72,76 @@ Generate segmentations from mesh list:
  - if randomize_size, meshes not in allow_on_boundary subset will be ALL mesh region with different padding
  - this is an example of using Mesh.toImage, not a useful tool
 '''
-def generate_segmentations(meshList, out_dir, randomize_size=True, spacing=[1.0,1.0,1.0], allow_on_boundary=True):
+def generate_segmentations(generated_directories, randomize_size=False, spacing=[1.0,1.0,1.0], allow_on_boundary=False, padding=[5,5,5]):
 
-    # get list of meshs to be converted
-    segDir = out_dir + "segmentations/"
-    make_dir(segDir)
+    # Get all meshes from all directories
+    allMeshes = []
+    allGenerated = []
+    for i in range(len(generated_directories)):
+        print(generated_directories[i]+"/meshes/")
+        meshFileNames = get_files_only(generated_directories[i]+"/meshes/")
+        print(meshFileNames)
+        for j in range(len(meshFileNames)):
+            allMeshes.append(meshFileNames[i])
+        allGenerated.append(meshFileNames)
+
+    print(allMeshes)
 
     # get region that includes all of these meshes with padding
-    bball = sw.MeshUtils.boundingBox(meshList)
+    bball = sw.MeshUtils.boundingBox(allMeshes)
     print(bball)
-    pad = np.array([5,5,5])
+    pad = np.array(padding)
     bball.min -= pad
     bball.max += pad
 
-    # randomly select 20% meshes for boundary touching samples
-    if allow_on_boundary:
-        numMeshes = len(meshList)
-        meshIndexArray = np.array(list(range(numMeshes)))
-        subSampleSize = int(0.2*numMeshes)
-        randomBoundarySamples = np.random.choice(meshIndexArray,subSampleSize,replace=False)
+    # Returns all segmentation files created
+    segF = []
 
-    # loop through meshes and turn to images
-    segList = []
-    meshIndex = 0
-    for mesh_ in meshList:
-        print("Generating seg " + str(meshIndex + 1) + " out of " + str(len(meshList)))
-        segFile = rename(mesh_, segDir, "", ".nrrd")
-        segList.append(segFile)
+    for i in range(len(generated_directories)):
+        # Generate output directory for segs
+        segDir = generated_directories[i] + "/segmentations/"
+        make_dir(segDir)
 
-        # load .ply mesh and get its bounding box
-        mesh = sw.Mesh(mesh_)
+        meshList = allGenerated[i]
 
-        # set bounding box based on parameters
-        if allow_on_boundary and meshIndex in randomBoundarySamples:
-            bb = mesh.boundingBox()
-        else:
-            bb = bball
-            if randomize_size:
-                pad = np.random.randint(5, high=15, size=3)
-                bb.min -= pad
-                bb.max += pad
+        # randomly select 20% meshes for boundary touching samples
+        if allow_on_boundary:
+            numMeshes = len(meshList)
+            meshIndexArray = np.array(list(range(numMeshes)))
+            subSampleSize = int(0.2*numMeshes)
+            randomBoundarySamples = np.random.choice(meshIndexArray,subSampleSize,replace=False)
 
-        # sample the given region of Mesh to an image
-        image = mesh.toImage(region=bb, spacing=spacing)
+        # loop through meshes and turn to images
+        segList = []
+        meshIndex = 0
+        for mesh_ in meshList:
+            print("Generating seg " + str(meshIndex + 1) + " out of " + str(len(meshList)))
+            segFile = rename(mesh_, segDir, "", ".nrrd")
+            segList.append(segFile)
 
-        # write the result to disk and move to the next mesh
-        image.write(segFile, compressed=True)
-        meshIndex += 1
+            # load .ply mesh and get its bounding box
+            mesh = sw.Mesh(mesh_)
 
-    # return list of new image filenames
-    return segList
+            # set bounding box based on parameters
+            if allow_on_boundary and meshIndex in randomBoundarySamples:
+                bb = mesh.boundingBox()
+            else:
+                bb = bball
+                if randomize_size:
+                    pad = np.random.randint(5, high=15, size=3)
+                    bb.min -= pad
+                    bb.max += pad
+
+            # sample the given region of Mesh to an image
+            image = mesh.toImage(region=bb, spacing=spacing)
+
+            # write the result to disk and move to the next mesh
+            image.write(segFile, compressed=True)
+            meshIndex += 1
+            segF.append(segFile)
+
+    # Returns all segmentation files created
+    return segF
 
 '''
 Generate 2D segmentations from contour list:

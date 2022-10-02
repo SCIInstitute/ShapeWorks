@@ -20,3 +20,6 @@ def ToriCohortGenerator(out_dir=os.getcwd()+'/generated_tori_cohort/'):
 
 def Supershapes2DCohortGenerator(out_dir=os.getcwd()+'/generated_supershapes_2D_cohort/'):
 	return CohortGenerator.Supershapes2DCohortGenerator(out_dir)
+
+def GenerateSegmentations(generated_directories, randomize_size=False, spacing=[1.0,1.0,1.0], allow_on_boundary=False, padding=[5,5,5]):
+	return CohortGenUtils.generate_segmentations(generated_directories, randomize_size, spacing, allow_on_boundary, padding)
