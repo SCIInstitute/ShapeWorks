@@ -133,8 +133,6 @@ function install_conda() {
 
   echo "Installing CONDA_PACKAGES = ${CONDA_PACKAGES[@]}"
 
-  return
-  
   # create and activate shapeworks env
   if ! conda create --yes --name $CONDAENV ${CONDA_PACKAGES[@]} ; then
       return 1;
