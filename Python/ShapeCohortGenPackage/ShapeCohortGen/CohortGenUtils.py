@@ -68,6 +68,7 @@ def generate_segmentations(meshList, out_dir, randomize_size=True, spacing=[1.0,
 
     # get region that includes all of these meshes with padding
     bball = sw.MeshUtils.boundingBox(meshList)
+    print(bball)
     pad = np.array([5,5,5])
     bball.min -= pad
     bball.max += pad
@@ -91,12 +92,11 @@ def generate_segmentations(meshList, out_dir, randomize_size=True, spacing=[1.0,
         mesh = sw.Mesh(mesh_)
 
         # set bounding box based on parameters
-        if allow_on_boundary:
-            if meshIndex in randomBoundarySamples:
-                bb = mesh.boundingBox()
+        if allow_on_boundary and meshIndex in randomBoundarySamples:
+            bb = mesh.boundingBox()
         else:
             bb = bball
-            if randomize_size:    
+            if randomize_size:
                 pad = np.random.randint(5, high=15, size=3)
                 bb.min -= pad
                 bb.max += pad
@@ -153,7 +153,7 @@ def generate_2Dsegmentations(contour_list, out_dir, randomize_size=True, spacing
             bb = bball
             padx = 5
             pady = 5
-            if randomize_size:            
+            if randomize_size:
                 padx = np.random.randint(5, high=15)
                 pady = np.random.randint(5, high=15)
             bb[0] += padx
@@ -187,7 +187,7 @@ Returns smallest bounding box that contains all contours
 def get_contours_bounding_box(contour_list, pad=5):
     max_x = 0
     max_y = 0
-    min_x = np.inf 
+    min_x = np.inf
     min_y = np.inf
     for contour in contour_list:
         reader = vtk.vtkXMLPolyDataReader()
