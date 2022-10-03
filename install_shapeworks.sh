@@ -155,7 +155,6 @@ function install_conda() {
   fi
 
   if ! pip install numpy==1.22.4;                       then return 1; fi
-  if ! pip install geotiff==1.7.1;                      then return 1; fi
   if ! pip install requests==2.27.1;                    then return 1; fi
   if ! pip install colorama==0.4.5;                     then return 1; fi
 
