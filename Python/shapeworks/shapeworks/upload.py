@@ -4,6 +4,7 @@ from pathlib import Path
 import glob 
 from swcc.api import swcc_session
 from swcc.models import Dataset
+from portal import login
 from swcc.models import (Dataset, GroomedSegmentation, OptimizedParticles,OptimizedShapeModel, Project, Segmentation, Subject)
 def get_license(filename):
     license = Path(filename).read_text()
@@ -32,8 +33,8 @@ def create_data_file(filename,shape_files,image_files=None):
 
 
 # # For development, it is possible to generate a session outside of a context manager.
-ctx = swcc_session(token=token)
-session = ctx.__enter__()
+# ctx = swcc_session(token=token)
+# session = ctx.__enter__()
 
 
 # print("Printing the datasets")
@@ -53,33 +54,37 @@ session = ctx.__enter__()
 # print(get_license("left_atrium-v0/License.txt"))
 def upload_dataset(dataset_name,license_filename,description,data_file,project_file):
     # print("in upload dataset")
-    license  = get_license(license_filename)
+    username,password = login()
+    with swcc_session()  as session:
+        token = session.login(username, password)
+        session = swcc_session(token=token).__enter__()
+        license  = get_license(license_filename)
 
-    
-    # shape_dir = dataset_dir + shape_dir
-    # shape_file_list = get_file_column(shape_dir,shape_ext)
-    # if image_dir is not None:
-    #     image_dir = dataset_dir + image_dir
-    #     image_file_list = get_file_column(image_dir, ".nrrd")
-    # else:
-    #     image_file_list = None
+        
+        # shape_dir = dataset_dir + shape_dir
+        # shape_file_list = get_file_column(shape_dir,shape_ext)
+        # if image_dir is not None:
+        #     image_dir = dataset_dir + image_dir
+        #     image_file_list = get_file_column(image_dir, ".nrrd")
+        # else:
+        #     image_file_list = None
 
-    # create_data_file(dataset_name+".xlsx",shape_file_list,image_file_list)
+        # create_data_file(dataset_name+".xlsx",shape_file_list,image_file_list)
 
 
-    old = Dataset.from_name(dataset_name)
-    # Either get rid of an existing dataset with the same name, or create a new name for testing
+        old = Dataset.from_name(dataset_name)
+        # Either get rid of an existing dataset with the same name, or create a new name for testing
 
-    if old:
-        print('Deleting previous version of %s' % dataset_name)
-        old.delete()
+        if old:
+            print('Deleting previous version of %s' % dataset_name)
+            old.delete()
 
-    dataset = Dataset(
-            name=dataset_name,
-            file=Path(data_file),
-            license=license,
-            description=description,
-            acknowledgement='NIH')
-    dataset.add_project(Path(project_file))
-    # dataset.create()
+        dataset = Dataset(
+                name=dataset_name,
+                file=Path(data_file),
+                license=license,
+                description=description,
+                acknowledgement='NIH')
+        dataset.add_project(Path(project_file))
+        # dataset.create()
     
