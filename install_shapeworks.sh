@@ -124,7 +124,8 @@ function install_conda() {
 		     spdlog=1.10.0 \
 		     pkg-config=0.29.2 \
 		     openh264==2.3.0 \
-		     libhwloc=2.8.0
+		     libhwloc=2.8.0 \
+		     qt-main=5.15.4 \
 		    )
     
     # linux (only) deps
