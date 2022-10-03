@@ -176,69 +176,88 @@ Generate 2D segmentations from contour list:
  - if allow_on_boundary, a random subset of these will be exactly the size of the contour
  - if randomize_size, contours not in allow_on_boundary subset will be ALL contour region with different padding
 '''
-def generate_2Dsegmentations(contour_list, out_dir, randomize_size=True, spacing=[1.0,1.0,1.0], allow_on_boundary=True):
+def generate_2Dsegmentations(generated_directories, out_dir, randomize_size=False, spacing=[1.0,1.0], allow_on_boundary=False, padding=[5,5]):
 
-    # get list of meshs to be converted
-    segDir = out_dir + "segmentations/"
-    make_dir(segDir)
+    if type(generated_directories) != list:
+        generated_directories = [generated_directories]
+
+    # Get all contours from all directories
+    allContours = []
+    allGenerated = []
+    for i in range(len(generated_directories)):
+        contourFileNames = get_files_only(generated_directories[i]+"/contours/")
+        for j in range(len(contourFileNames)):
+            allContours.append(contourFileNames[i])
+        allGenerated.append(contourFileNames)
 
     # get region that includes all of these contours
-    bball = get_contours_bounding_box(contour_list)
+    bball = get_contours_bounding_box(allContours)
 
-    # randomly select 20% contours for boundary touching samples
-    num_contours = len(contour_list)
-    contourIndexArray = np.array(list(range(num_contours)))
-    subSampleSize = int(0.2*num_contours)
-    randomBoundarySamples = np.random.choice(contourIndexArray,subSampleSize,replace=False)
+    # Returns all segmentation files created
+    segF = []
 
-    # loop through meshes and turn to images
-    segList = []
-    contourIndex = 0
-    for contour in contour_list:
-        print("Generating seg " + str(contourIndex + 1) + " out of " + str(len(contour_list)))
-        segFile = rename(contour, segDir, "", ".png")
-        segList.append(segFile)
+    for i in range(len(generated_directories)):
+        # Generate output directory for segs
+        segDir = generated_directories[i] + "/segmentations/"
+        make_dir(segDir)
 
-        reader = vtk.vtkXMLPolyDataReader()
-        reader.SetFileName(contour)
-        reader.Update()
-        polydata = reader.GetOutput()
-        points = polydata.GetPoints()
-        array = points.GetData()
-        point_coordinates = vtk_to_numpy(array)
+        contour_list = allGenerated[i]
 
-        bb = [np.max(point_coordinates[:,0]), np.min(point_coordinates[:,0]), np.max(point_coordinates[:,1]), np.min(point_coordinates[:,1])]
-        if not (allow_on_boundary and (contourIndex in randomBoundarySamples)):
-            bb = bball
-            padx = 5
-            pady = 5
-            if randomize_size:
-                padx = np.random.randint(5, high=15)
-                pady = np.random.randint(5, high=15)
-            bb[0] += padx
-            bb[1] -= padx
-            bb[2] += pady
-            bb[3] -= pady
+        # randomly select 20% contours for boundary touching samples
+        num_contours = len(contour_list)
+        contourIndexArray = np.array(list(range(num_contours)))
+        subSampleSize = int(0.2*num_contours)
+        randomBoundarySamples = np.random.choice(contourIndexArray,subSampleSize,replace=False)
 
-        poly = list()
-        for ii in range(point_coordinates.shape[0]):
-            poly.append((point_coordinates[ii,0], point_coordinates[ii,1]))
-        polygon = shapely.geometry.Polygon(poly)
+        # loop through meshes and turn to images
+        segList = []
+        contourIndex = 0
+        for contour in contour_list:
+            print("Generating seg " + str(contourIndex + 1) + " out of " + str(len(contour_list)))
+            segFile = rename(contour, segDir, "", ".png")
+            segList.append(segFile)
 
-        X = np.arange(bb[1], bb[0])
-        Y = np.arange(bb[3], bb[2])
-        mask = np.zeros((Y.shape[0],X.shape[0]))
-        for ii in range(X.shape[0]):
-            for jj in range(Y.shape[0]):
-                point = shapely.geometry.Point(X[ii], Y[jj])
-                if polygon.contains(point):
-                    mask[jj,ii] = 1
+            reader = vtk.vtkXMLPolyDataReader()
+            reader.SetFileName(contour)
+            reader.Update()
+            polydata = reader.GetOutput()
+            points = polydata.GetPoints()
+            array = points.GetData()
+            point_coordinates = vtk_to_numpy(array)
 
-        plt.imsave(segFile, mask, cmap="gray")
-        contourIndex += 1
+            bb = [np.max(point_coordinates[:,0]), np.min(point_coordinates[:,0]), np.max(point_coordinates[:,1]), np.min(point_coordinates[:,1])]
+            if not (allow_on_boundary and (contourIndex in randomBoundarySamples)):
+                bb = bball
+                padx = padding[0]
+                pady = padding[1]
+                if randomize_size:
+                    padx = np.random.randint(5, high=15)
+                    pady = np.random.randint(5, high=15)
+                bb[0] += padx
+                bb[1] -= padx
+                bb[2] += pady
+                bb[3] -= pady
 
-    # return list of new image filenames
-    return segList
+            poly = list()
+            for ii in range(point_coordinates.shape[0]):
+                poly.append((point_coordinates[ii,0], point_coordinates[ii,1]))
+            polygon = shapely.geometry.Polygon(poly)
+
+            X = np.arange(bb[1], bb[0])
+            Y = np.arange(bb[3], bb[2])
+            mask = np.zeros((Y.shape[0],X.shape[0]))
+            for ii in range(X.shape[0]):
+                for jj in range(Y.shape[0]):
+                    point = shapely.geometry.Point(X[ii], Y[jj])
+                    if polygon.contains(point):
+                        mask[jj,ii] = 1
+
+            plt.imsave(segFile, mask, cmap="gray")
+            contourIndex+=1
+            segF.append(segFile)
+
+    # Returns all segmentation files created
+    return segF
 
 '''
 Returns smallest bounding box that contains all contours
@@ -301,21 +320,32 @@ def generate_images(generated_directories, blur_factor, foreground_mean, foregro
 '''
 Generates image by blurring and adding noise to segmentation
 '''
-def generate_2Dimages(segs, outDir, blur_factor, foreground_mean, foreground_var, background_mean, background_var):
-    imgDir = outDir + 'images/'
-    make_dir(imgDir)
-    index = 1
-    for seg in segs:
-        print("Generating image " + str(index) + " out of " + str(len(segs)))
-        name = seg.replace('segmentations/','images/').replace('_seg.png', '_blur' + str(blur_factor) + '.png')
-        img_array = plt.imread(seg, format="png")
-        img_array = img_array/np.max(img_array)
-        img_array = blur(img_array, blur_factor)
-        img_array = apply_noise(img_array, foreground_mean, foreground_var, background_mean, background_var)
-        img_array = img_array.astype(np.uint8)
-        plt.imsave(name, img_array, cmap="gray")
-        index += 1
-    return get_files(imgDir)
+def generate_2Dimages(generated_directories, blur_factor, foreground_mean, foreground_var, background_mean, background_var):
+    if type(generated_directories) != list:
+        generated_directories = [generated_directories]
+
+    all_ims = []
+
+    # Get all images from all directories
+    for i in range(len(generated_directories)):
+        segs = get_files_only(generated_directories[i]+"/segmentations/")
+
+        imgDir = generated_directories[i] + 'images/'
+        make_dir(imgDir)
+        index = 1
+        for seg in segs:
+            print("Generating image " + str(index) + " out of " + str(len(segs)))
+            name = seg.replace('segmentations/','images/').replace('_seg.png', '_blur' + str(blur_factor) + '.png')
+            img_array = plt.imread(seg, format="png")
+            img_array = img_array/np.max(img_array)
+            img_array = blur(img_array, blur_factor)
+            img_array = apply_noise(img_array, foreground_mean, foreground_var, background_mean, background_var)
+            img_array = img_array.astype(np.uint8)
+            plt.imsave(name, img_array, cmap="gray")
+            index += 1
+        all_ims.extend(get_files_only(imgDir))
+
+    return all_ims
 
 '''
 get_image helper
