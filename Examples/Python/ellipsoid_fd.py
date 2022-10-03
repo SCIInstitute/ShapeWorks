@@ -180,7 +180,7 @@ def Run_Pipeline(args):
     for key in studio_dictionary:
         studio_parameters.set(key, sw.Variant(studio_dictionary[key]))
     project.set_parameters("studio", studio_parameters)
-    spreadsheet_file = output_directory + "shape_models/ellipsoid_fd_" + args.option_set + ".xlsx"
+    spreadsheet_file = output_directory + "shape_models/ellipsoid_fd_" + args.option_set + ".swproj"
     project.save(spreadsheet_file)
 
     # Run optimization

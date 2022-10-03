@@ -203,7 +203,7 @@ def Run_Pipeline(args):
     parameters.set("number_of_particles" ,sw.Variant(num_particles))
     project.set_parameters("optimize", parameters)
     
-    spreadsheet_file = output_directory + "shape_models/ellipsoid_multiple_domain_mesh_" + args.option_set + ".xlsx"
+    spreadsheet_file = output_directory + "shape_models/ellipsoid_multiple_domain_mesh_" + args.option_set + ".swproj"
     project.save(spreadsheet_file)
 
     # Run optimization

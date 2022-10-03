@@ -216,7 +216,7 @@ def Run_Pipeline(args):
         parameters.set(key, sw.Variant([parameter_dictionary[key]]))
     parameters.set("domain_type", sw.Variant(domain_type[0]))
     project.set_parameters("optimize", parameters)
-    spreadsheet_file = output_directory + "shape_models/left_atrium_" + args.option_set + ".xlsx"
+    spreadsheet_file = output_directory + "shape_models/left_atrium_" + args.option_set + ".swproj"
     project.save(spreadsheet_file)
 
     # Run optimization
