@@ -100,10 +100,6 @@ function install_conda() {
   conda config --add channels conda-forge
 
   CONDA_PACKAGES=(python=3.9.13 \
-    colorama=0.4.4 \
-    requests=2.27.1 \
-    geotiff=1.7.1 \
-    numpy=1.22.4 \
     openblas=0.3.20 \
     'vtk=9.1.0=qt*' \
     scikit-learn=1.1.1 \
@@ -128,8 +124,7 @@ function install_conda() {
 		     spdlog=1.10.0 \
 		     pkg-config=0.29.2 \
 		     openh264==2.3.0 \
-		     libhwloc=2.8.0 \
-		     jupyter_contrib_nbextensions=0.5.1 \
+		     libhwloc=2.8.0
 		    )
     
     # linux (only) deps
@@ -156,7 +151,13 @@ function install_conda() {
     if ! pip install mkdocs-jupyter==0.21.0;              then return 1; fi # for adding notebooks to our documentation (supports toc and executation before deployment)
     if ! pip install pyyaml==6.0;                         then return 1; fi # for mkdocs
     if ! pip install markdown-it-py==2.1.0;               then return 1; fi # for mkdocs
+    if ! pip install jupyter_contrib_nbextensions=0.5.1;  then return 1; fi
   fi
+
+  if ! pip install numpy==1.22.4;                       then return 1; fi
+  if ! pip install geotiff==1.7.1;                      then return 1; fi
+  if ! pip install requests==2.27.1;                    then return 1; fi
+  if ! pip install colorama==0.4.5;                     then return 1; fi
 
   if ! pip install notebook==6.1.5;                     then return 1; fi
   if ! pip install trimesh==3.12.6;                     then return 1; fi
@@ -188,6 +189,8 @@ function install_conda() {
   if ! pip install Python/DeepSSMUtilsPackage;          then return 1; fi # install DeepSSM code as a package
   if ! pip install Python/ShapeCohortGenPackage;        then return 1; fi # install shape cohort generation code as a package
 
+
+  
   ./Installation/install_python_module.sh   # install python module
   ./Installation/conda_env_setup.sh         # install conda [de]activate scripts
 
