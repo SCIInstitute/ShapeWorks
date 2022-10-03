@@ -322,6 +322,12 @@ build_acvd()
   cd acvd
   git checkout -f ${ACVD_VER}
 
+  # silence a bunch of output
+  sed -i'.original' -e 's/cout/if(0)cout/' Common/vtkCurvatureMeasure.cxx
+  sed -i'.original' -e 's/cout/if(0)cout/' DiscreteRemeshing/vtkDiscreteRemeshing.h
+  sed -i'.original' -e 's/cout/if(0)cout/' DiscreteRemeshing/vtkQEMetricForClustering.h
+  sed -i'.original' -e 's/cout/if(0)cout/' Common/vtkUniformClustering.h
+
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
   mkdir -p build && cd build
 

@@ -315,13 +315,13 @@ Mesh& Mesh::smoothSinc(int iterations, double passband) {
 Mesh& Mesh::remesh(int numVertices, double adaptivity) {
   // ACVD is very noisy to std::cout, even with console output set to zero
   // setting the failbit on std::cout will silence this until it's cleared below
-  std::cout.setstate(std::ios_base::failbit);
+//  std::cout.setstate(std::ios_base::failbit);
   auto surf = vtkSmartPointer<vtkSurface>::New();
   auto remesh = vtkSmartPointer<vtkQIsotropicDiscreteRemeshing>::New();
   surf->CreateFromPolyData(this->poly_data_);
   surf->GetCellData()->Initialize();
   surf->GetPointData()->Initialize();
-  surf->DisplayMeshProperties();
+  //surf->DisplayMeshProperties();
   int subsamplingThreshold = 10;  // subsampling threshold
 
   numVertices = std::max<int>(numVertices, 1);
@@ -337,7 +337,7 @@ Mesh& Mesh::remesh(int numVertices, double adaptivity) {
   remesh->SetNumberOfClusters(numVertices);
   remesh->Remesh();
   // Restore std::cout
-  std::cout.clear();
+//  std::cout.clear();
 
   this->poly_data_ = remesh->GetOutput();
 
