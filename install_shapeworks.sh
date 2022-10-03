@@ -151,7 +151,7 @@ function install_conda() {
     if ! pip install mkdocs-jupyter==0.21.0;              then return 1; fi # for adding notebooks to our documentation (supports toc and executation before deployment)
     if ! pip install pyyaml==6.0;                         then return 1; fi # for mkdocs
     if ! pip install markdown-it-py==2.1.0;               then return 1; fi # for mkdocs
-    if ! pip install jupyter_contrib_nbextensions=0.5.1;  then return 1; fi
+    if ! pip install jupyter_contrib_nbextensions==0.5.1; then return 1; fi
   fi
 
   if ! pip install numpy==1.22.4;                       then return 1; fi
