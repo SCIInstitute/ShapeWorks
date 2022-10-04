@@ -153,12 +153,21 @@ function install_conda() {
     if ! pip install pyyaml==6.0;                         then return 1; fi # for mkdocs
     if ! pip install markdown-it-py==2.1.0;               then return 1; fi # for mkdocs
     if ! pip install jupyter_contrib_nbextensions==0.5.1; then return 1; fi
+    if ! pip install mdutils==1.4.0;                      then return 1; fi # lib for writing markdown files (auto-documentation)
+    if ! pip install mkdocs==1.3.0;                       then return 1; fi # lib for generating documentation from markdown
+    if ! pip install mkdocs-material==8.3.8;              then return 1; fi # theme for mkdocs
+    if ! pip install mkdocstrings==0.19.0;                then return 1; fi # needed for python api docs
+    if ! pip install mkdocstrings-python==0.7.1;          then return 1; fi # needed for python api docs
+    if ! pip install mike==1.1.2;                         then return 1; fi # deploys versioned documentation to gh-pages
+    if ! pip install jinja2==3.1.2;                       then return 1; fi # only version of jinja that works (needed by mkdocs)
+    if ! pip install Pygments==2.12.0;                    then return 1; fi # Needed by mkdocs
+    if ! pip install python-markdown-math==0.8;           then return 1; fi # lib for rendering equations in docs
+    if ! pip install pymdown-extensions==9.5;             then return 1; fi # lib to support checkbox lists in documentation
   fi
 
   if ! pip install numpy==1.22.4;                       then return 1; fi
   if ! pip install requests==2.27.1;                    then return 1; fi
   if ! pip install colorama==0.4.5;                     then return 1; fi
-
   if ! pip install notebook==6.1.5;                     then return 1; fi
   if ! pip install trimesh==3.12.6;                     then return 1; fi
   if ! pip install termcolor==1.1.0;                    then return 1; fi
@@ -173,16 +182,6 @@ function install_conda() {
   if ! pip install SimpleITK==2.1.1.2;                  then return 1; fi
   if ! pip install bokeh==2.4.3;                        then return 1; fi
   if ! pip install seaborn==0.11.2;                     then return 1; fi
-  if ! pip install mdutils==1.4.0;                      then return 1; fi # lib for writing markdown files (auto-documentation)
-  if ! pip install mkdocs==1.3.0;                       then return 1; fi # lib for generating documentation from markdown
-  if ! pip install mkdocs-material==8.3.8;              then return 1; fi # theme for mkdocs
-  if ! pip install mkdocstrings==0.19.0;                then return 1; fi # needed for python api docs
-  if ! pip install mkdocstrings-python==0.7.1;          then return 1; fi # needed for python api docs
-  if ! pip install mike==1.1.2;                         then return 1; fi # deploys versioned documentation to gh-pages
-  if ! pip install jinja2==3.1.2;                       then return 1; fi # only version of jinja that works (needed by mkdocs)
-  if ! pip install Pygments==2.12.0;                    then return 1; fi # Needed by mkdocs
-  if ! pip install python-markdown-math==0.8;           then return 1; fi # lib for rendering equations in docs
-  if ! pip install pymdown-extensions==9.5;             then return 1; fi # lib to support checkbox lists in documentation
   if ! pip install Python/DatasetUtilsPackage;          then return 1; fi # install the local GirderConnector code as a package
   if ! pip install Python/DocumentationUtilsPackage;    then return 1; fi # install shapeworks auto-documentation as a package
   if ! pip install Python/DataAugmentationUtilsPackage; then return 1; fi # install data augmentation code as a package
