@@ -1344,7 +1344,7 @@ bool Mesh::prepareFFCFields(std::vector<std::vector<Eigen::Vector3d>> boundaries
     dijkstra->SetInputData(this->poly_data_);
 
     vtkIdType lastId = 0;
-    bool dense = true;
+    size_t dense = 0;
     for (size_t i = 0; i < boundaries[bound].size(); i++) {
       Eigen::Vector3d pt = boundaries[bound][i];
       double ptdob[3] = {pt[0], pt[1], pt[2]};
@@ -1363,25 +1363,43 @@ bool Mesh::prepareFFCFields(std::vector<std::vector<Eigen::Vector3d>> boundaries
 
       // If the current and last vertices are different, then add all vertices in the path to the boundaryVerts list
       if (lastId != ptid) {
-        Point3 pathpt;
-        pathpt = getPoint(ptid);
-        selectionPoints->InsertNextPoint(pathpt[0], pathpt[1], pathpt[2]);
-        boundaryVerts.push_back(ptid);
-        allBoundaryVerts.push_back(ptid);
         // Check adjacency to guarantee dense edges
         bool match = false;
         for(size_t f = 0; f < this->numFaces(); f++){
             if((F(f,0) == ptid || F(f,1) == ptid || F(f,2) == ptid) && (F(f,0) == lastId || F(f,1) == lastId || F(f,2) == lastId)) match = true;
         }
+        // If the two vertices aren't adjacent, run dijkstra's and add points in shortest path, else just add the point
         if(!match) {
-            dense = false;
-            std::cout << "Density violation in boundary " << bound << ". Found gap between points " << ptid << " and " << lastId << std::endl;
+            dense++;
+            dijkstra->SetStartVertex(lastId);
+            dijkstra->SetEndVertex(ptid);
+            dijkstra->Update();
+            vtkSmartPointer<vtkIdList> idL = dijkstra->GetIdList();
+            for (size_t j = idL->GetNumberOfIds()-2; j > 0; j--) {
+               std::cout << j << std::endl;
+               vtkIdType id = idL->GetId(j);
+               Point3 pathpt;
+               pathpt = getPoint(id);
+               selectionPoints->InsertNextPoint(pathpt[0], pathpt[1], pathpt[2]);
+               boundaryVerts.push_back(id);
+            }
+            //std::cout << "Density violation in boundary " << bound << ". Found gap between points " << ptid << " and " << lastId << std::endl;
+        }
+        else{
+            Point3 pathpt;
+            pathpt = getPoint(ptid);
+            selectionPoints->InsertNextPoint(pathpt[0], pathpt[1], pathpt[2]);
+            boundaryVerts.push_back(ptid);
+            allBoundaryVerts.push_back(ptid);
         }
       }
+
+      //for(size_t j = 0; j < boundaryVerts.size(); j++){std::cout << boundaryVerts[j] << " ";}
 
       lastId = ptid;
     }
     perVertBoundaryVerts.push_back(boundaryVerts);
+    if(dense > 0) std::cout << "Boundary not dense, had to run dijkstra's " << dense << " times" << std::endl;
   }  // Per boundary for loop end
 
     std::cout << "Computing inout"  << std::endl;
