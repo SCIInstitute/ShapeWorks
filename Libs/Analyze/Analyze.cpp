@@ -145,33 +145,26 @@ void Analyze::run_offline_analysis(std::string outfile) {
         item["lambda"] = lambda * pca_value;
 
         std::vector<std::string> items;
-        std::vector<std::string> locals;
         std::vector<std::string> worlds;
         for (int d = 0; d < num_domains; d++) {
           std::string domain_id = std::to_string(d);
           auto mesh = mode_meshes.meshes()[d];
           std::string name = "pca_mode_" + std::to_string(mode + 1) + "_domain_" + std::to_string(d) + "_" + prefix +
               "_" + pca_string;
-          std::string vtk_filename = prefix + ".vtk";
+          std::string vtk_filename = name + ".vtk";
           items.push_back(vtk_filename);
 
           auto filename = base / boost::filesystem::path(vtk_filename);
           Mesh(mesh->get_poly_data()).write(filename.string());
 
-          auto particle_filename = prefix + ".local.pts";
-          locals.push_back(particle_filename);
-          filename = base / boost::filesystem::path(particle_filename);
-          Particles::save_particles_file(filename.string(), shape->get_particles().get_local_particles(d));
-
-          particle_filename = prefix + ".world.pts";
+          auto particle_filename = name + ".pts";
           worlds.push_back(particle_filename);
           filename = base / boost::filesystem::path(particle_filename);
           Particles::save_particles_file(filename.string(), shape->get_particles().get_world_particles(d));
 
         }
         item["meshes"] = items;
-        item["local_particles"] = locals;
-        item["world_particles"] = worlds;
+        item["particles"] = worlds;
         jmodes.push_back(item);
       };
 
