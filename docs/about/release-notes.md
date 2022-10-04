@@ -1,5 +1,10 @@
 # Release Notes
 
+## ShapeWorks 6.3.2 - 2022-10-04
+
+### Fixes
+  * Fix install_shapeworks.sh script on Linux.  
+
 
 ## ShapeWorks 6.3.1 - 2022-07-22
 
