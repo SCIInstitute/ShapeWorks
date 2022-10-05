@@ -10,6 +10,22 @@ using json = nlohmann::ordered_json;
 
 namespace shapeworks {
 
+
+//---------------------------------------------------------------------------
+static json get_eigen_vectors(ParticleShapeStatistics *stats) {
+  auto values = stats->Eigenvectors();
+
+  std::vector<double> vals;
+  for (size_t i = values.cols() - 1, ii = 0; i > 0; i--, ii++) {
+    auto col = values.col(i);
+    for (int j = 0; j < col.size(); j++) {
+      vals.push_back(col[j]);
+    }
+  }
+
+  return vals;
+}
+
 //---------------------------------------------------------------------------
 static json create_charts(ParticleShapeStatistics *stats) {
   std::vector<int> x(stats->get_num_modes());
@@ -67,8 +83,8 @@ void Analyze::run_offline_analysis(std::string outfile) {
 
   json j;
 
-  double range = 2.0;
-  double steps = 11;
+  double range = 2.0; // TODO: make this configurable
+  double steps = 11; // TODO: make this configurable
   int half_steps = (steps / 2.0);
   double increment = range / half_steps;
 
@@ -175,8 +191,26 @@ void Analyze::run_offline_analysis(std::string outfile) {
     modes.push_back(jmode);
   }
 
+  j["eigen_vectors"] = get_eigen_vectors(&stats_);
+  j["eigen_values"] = stats_.Eigenvalues();
   j["modes"] = modes;
   j["charts"] = create_charts(&stats_);
+
+  std::vector<json> shapes;
+  for (int i=0;i<shapes_.size();i++) {
+    auto &s = shapes_[i];
+    auto meshes = s->get_reconstructed_meshes(true);
+    std::vector<std::string> filenames;
+    for (int d = 0; d < num_domains; d++) {
+      auto mesh = meshes.meshes()[d];
+      std::string vtk_filename = "sample_"+std::to_string(i)+"_"+std::to_string(d)+".vtk";
+      auto filename = base / boost::filesystem::path(vtk_filename);
+      Mesh(mesh->get_poly_data()).write(filename.string());
+      filenames.push_back(vtk_filename);
+    }
+    shapes.push_back(filenames);
+  }
+  j["reconstructed_samples"] = shapes;
 
   std::ofstream file(outfile);
   if (!file.good()) {
