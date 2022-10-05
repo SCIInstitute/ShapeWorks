@@ -1345,7 +1345,8 @@ bool Mesh::prepareFFCFields(std::vector<std::vector<Eigen::Vector3d>> boundaries
 
     vtkIdType lastId = 0;
     size_t dense = 0;
-    for (size_t i = 0; i < boundaries[bound].size(); i++) {
+    for (size_t it = 0; it < boundaries[bound].size()+1; it++) {
+      size_t i = it % boundaries[bound].size();
       Eigen::Vector3d pt = boundaries[bound][i];
       double ptdob[3] = {pt[0], pt[1], pt[2]};
       vtkIdType ptid = tmp_locator->FindClosestPoint(ptdob);
@@ -1375,13 +1376,13 @@ bool Mesh::prepareFFCFields(std::vector<std::vector<Eigen::Vector3d>> boundaries
             dijkstra->SetEndVertex(ptid);
             dijkstra->Update();
             vtkSmartPointer<vtkIdList> idL = dijkstra->GetIdList();
-            for (size_t j = idL->GetNumberOfIds()-2; j > 0; j--) {
-               std::cout << j << std::endl;
+            for (int j = idL->GetNumberOfIds()-1; j >= 0; j--) {
                vtkIdType id = idL->GetId(j);
                Point3 pathpt;
                pathpt = getPoint(id);
                selectionPoints->InsertNextPoint(pathpt[0], pathpt[1], pathpt[2]);
                boundaryVerts.push_back(id);
+               allBoundaryVerts.push_back(id);
             }
             //std::cout << "Density violation in boundary " << bound << ". Found gap between points " << ptid << " and " << lastId << std::endl;
         }
