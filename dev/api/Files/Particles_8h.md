@@ -72,6 +72,9 @@ class Particles {
 
   Eigen::VectorXd get_difference_vectors(const Particles& other);
 
+  static void save_particles_file(std::string filename, const Eigen::VectorXd& points);
+
+
  private:
   void transform_global_particles();
 
@@ -93,4 +96,4 @@ class Particles {
 
 -------------------------------
 
-Updated on 2022-10-06 at 05:00:19 +0000
+Updated on 2022-10-06 at 05:15:15 +0000
