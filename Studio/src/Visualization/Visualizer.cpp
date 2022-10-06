@@ -221,6 +221,7 @@ void Visualizer::update_viewer_properties() {
       viewer->set_color_series(color_map);
       viewer->set_show_glyphs(show_glyphs_);
       viewer->set_show_surface(show_surface_);
+      viewer->set_scale_arrows(preferences_.get_glyph_scale_arrows());
       viewer->set_color_scheme(preferences_.get_color_scheme());
     }
 
