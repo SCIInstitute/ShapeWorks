@@ -161,7 +161,7 @@ find_package(nlohmann_json 3.10.5 REQUIRED)
 find_package(spdlog 1.10.0 REQUIRED)
 
 ### Geometry Central
-find_package (geometrycentral REQUIRED)
+find_package (GEOMETRYCENTRAL REQUIRED)
 
 if(USE_OPENMP)
   find_package(OpenMP REQUIRED)
