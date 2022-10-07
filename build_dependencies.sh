@@ -16,7 +16,6 @@ VTK_VER="v9.1.0"
 VTK_VER_STR="9.1"
 ITK_VER="v5.2.1"
 ITK_VER_STR="5.2"
-EIGEN_VER="3.4.0"
 QT_MIN_VER="5.15.4"
 XLNT_VER="538f80794c7d736afc0a452d21313606cc5538fc"
 JKQTPLOTTER_VER="v2019.11.3-high_dpi-rpath"
@@ -172,30 +171,6 @@ build_itk()
   if [[ $CLEAN_AFTER = 1 ]]; then make clean; fi
 }
 
-build_eigen()
-{
-  echo ""
-  echo "## Building Eigen..."
-  cd ${BUILD_DIR}
-  git clone https://gitlab.com/libeigen/eigen.git
-  cd eigen
-  git checkout -f tags/${EIGEN_VER}
-
-  if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
-  mkdir -p build && cd build
-
-  if [[ $OSTYPE == "msys" ]]; then
-      cmake -DCMAKE_CXX_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_C_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_SHARED_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_EXE_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_SHARED_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" ..
-      cmake --build . --config ${BUILD_TYPE} --parallel || exit 1
-      cmake --build . --config ${BUILD_TYPE} --target install
-      EIGEN_DIR=$(echo ${INSTALL_DIR}\\share\\eigen3\\cmake | sed -e 's/\\/\\\\/g')
-  else
-      cmake -DCMAKE_CXX_FLAGS="$FLAGS" -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DCMAKE_BUILD_TYPE=${BUILD_TYPE} ..
-      make -j${NUM_PROCS} install || exit 1
-      EIGEN_DIR=${INSTALL_DIR}/share/eigen3/cmake
-  fi
-}
-
 build_xlnt()
 {
   echo ""
@@ -305,11 +280,28 @@ build_geometry_central()
 {
   echo " "
   echo "## Building Geometry central..."
-  cd ${INSTALL_DIR}
+  cd ${BUILD_DIR}
   git clone --recursive https://github.com/nmwsharp/geometry-central.git
   cd geometry-central
   git checkout -f ${geometry_central_VER}
+  mkdir build
+  
+  if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
+  mkdir -p build && cd build
 
+  if [[ $OSTYPE == "msys" ]]; then
+      cmake -DCMAKE_CXX_FLAGS="-FS" -DCMAKE_C_FLAGS="-FS" -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" ..
+      cmake --build . --config ${BUILD_TYPE} --parallel || exit 1
+  else
+      cmake -DCMAKE_CXX_FLAGS="$FLAGS" -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DJKQtPlotter_BUILD_EXAMPLES=OFF -DCMAKE_BUILD_TYPE=${BUILD_TYPE} ..
+      make -j${NUM_PROCS} install
+  fi
+
+  # no make install, so we do this manually
+  cd ..
+  cp -a include/geometrycentral ${INSTALL_DIR}/include
+  cp build/src/*geom* ${INSTALL_DIR}/lib
+  
   GEOMETRY_CENTRAL_DIR=${INSTALL_DIR}/geometry-central
 }
 
@@ -406,10 +398,6 @@ build_all()
 
   if [[ -z $VTK_DIR ]]; then
     build_vtk
-  fi
-
-  if [[ -z $EIGEN_DIR ]]; then
-    build_eigen
   fi
 
   if [[ -z $ITK_DIR ]]; then

@@ -20,7 +20,7 @@ add_definitions(-DXLNT_STATIC=1)
 find_dependency (ACVD REQUIRED)
 
 ### Libigl set include path
-find_dependency(LIBIGL REQUIRED QUIET)
+#find_dependency(LIBIGL REQUIRED QUIET)
 
 ### Boost
 find_dependency(Boost REQUIRED COMPONENTS

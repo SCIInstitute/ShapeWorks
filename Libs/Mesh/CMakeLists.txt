@@ -45,7 +45,7 @@ target_link_libraries(Mesh PUBLIC
   igl::core
   Particles
   TBB::tbb
-  geometry-central
+  ${GEOMETRYCENTRAL_LIBRARY}
   Boost::filesystem
   acvd::acvd
   )

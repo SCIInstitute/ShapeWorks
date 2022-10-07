@@ -24,7 +24,7 @@ target_link_libraries(Optimize PUBLIC
   ${VTK_LIBRARIES}
   igl::core
   ${Boost_LIBRARIES}
-  geometry-central
+  ${GEOMETRYCENTRAL_LIBRARY}
   nlohmann_json::nlohmann_json
   ${SW_PYTHON_LIBS}
   )

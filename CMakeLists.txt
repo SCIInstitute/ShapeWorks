@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.11)
+cmake_minimum_required(VERSION 3.20)
 
 ##########################################
 # SHAPEWORKS VERSION
@@ -160,13 +160,8 @@ find_package(nlohmann_json 3.10.5 REQUIRED)
 ### spdlog library
 find_package(spdlog 1.10.0 REQUIRED)
 
-### Geometry central include
-if (NOT DEFINED GEOMETRY_CENTRAL_DIR)
-  set(GEOMETRY_CENTRAL_DIR ${CMAKE_PREFIX_PATH}/geometry-central/)
-endif()
-MESSAGE(status "GEOMETRY_CENTRAL_DIR: ${GEOMETRY_CENTRAL_DIR}")
-# we need to explicitly specify the output folder if adding a subdirectory outside the current working dir.
-add_subdirectory(${GEOMETRY_CENTRAL_DIR} ./geometry-central-build/)
+### Geometry Central
+find_package (geometrycentral REQUIRED)
 
 if(USE_OPENMP)
   find_package(OpenMP REQUIRED)
@@ -261,13 +256,6 @@ set(SHAPEWORKS_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 set(SHAPEWORKS_LIBS Project)
 set(SHAPEWORKS_CMAKE_CFG_DEST_DIR ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
   CACHE PATH "Default location to install CMake config files")
-
-install(TARGETS geometry-central nanort nanoflann happly EXPORT ShapeWorksTargets
-  ARCHIVE DESTINATION lib
-  RUNTIME DESTINATION lib
-  LIBRARY DESTINATION lib
-  PUBLIC_HEADER DESTINATION include
-  )
 
 install(TARGETS igl igl_common EXPORT ShapeWorksTargets
   ARCHIVE DESTINATION lib
