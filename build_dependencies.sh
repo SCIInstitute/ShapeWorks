@@ -178,7 +178,7 @@ build_xlnt()
   cd ${BUILD_DIR}
   git clone https://github.com/tfussell/xlnt.git
   cd xlnt
-  git checkout -f tags/${XLNT_VER}
+  git checkout -f ${XLNT_VER}
   git submodule init
   git submodule update
 
