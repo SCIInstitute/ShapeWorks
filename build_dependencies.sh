@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #set -v   #verbose execution for debugging
-set -x   #tracing execution for debugging (echos all commands from script)
+#set -x   #tracing execution for debugging (echos all commands from script)
 
 # defaults
 BUILD_CLEAN=0
@@ -292,15 +292,19 @@ build_geometry_central()
   if [[ $OSTYPE == "msys" ]]; then
       cmake -DCMAKE_CXX_FLAGS="-FS" -DCMAKE_C_FLAGS="-FS" -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" ..
       cmake --build . --config ${BUILD_TYPE} --parallel || exit 1
+      # no make install, so we do this manually
+      cd ..
+      cp -a include/geometrycentral ${INSTALL_DIR}/include
+      cp build/src/Release/geometry-central.lib ${INSTALL_DIR}/lib
   else
-      cmake -DCMAKE_CXX_FLAGS="$FLAGS" -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DCMAKE_BUILD_TYPE=${BUILD_TYPE} ..
+      cmake -DCMAKE_CXX_FLAGS="-fPIC $FLAGS" -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DCMAKE_BUILD_TYPE=${BUILD_TYPE} ..
       make -j${NUM_PROCS}
+      # no make install, so we do this manually
+      cd ..
+      cp -a include/geometrycentral ${INSTALL_DIR}/include
+      cp build/src/*geom* ${INSTALL_DIR}/lib
   fi
 
-  # no make install, so we do this manually
-  cd ..
-  cp -a include/geometrycentral ${INSTALL_DIR}/include
-  cp build/src/*geom* ${INSTALL_DIR}/lib
   
   GEOMETRY_CENTRAL_DIR=${INSTALL_DIR}/geometry-central
 }
