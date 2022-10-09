@@ -19,6 +19,14 @@ add_definitions(-DXLNT_STATIC=1)
 ### ACVD
 find_dependency (ACVD REQUIRED)
 
+### Json library
+find_dependency(nlohmann_json 3.10.5 REQUIRED)
+
+find_dependency (ITK)
+
+#find_dependency (Eigen 3.3 REQUIRED NO_MODULE)
+
+find_dependency (VTK)
 ### Libigl set include path
 #find_dependency(LIBIGL REQUIRED QUIET)
 
@@ -26,8 +34,6 @@ find_dependency (ACVD REQUIRED)
 find_dependency(Boost REQUIRED COMPONENTS
              filesystem)
 
-### Json library
-find_dependency(nlohmann_json 3.10.5 REQUIRED)
 
 ### spdlog library
 find_dependency(spdlog 1.10.0 REQUIRED)
@@ -46,8 +52,13 @@ find_dependency(pybind11 2.5.0 REQUIRED)
 
 check_required_components(shapeworks)
 
-#include_directories(${SHAPEWORKS_INCLUDE_DIR})
+if(@USE_OPENMP@)
+  find_dependency(OpenMP)
+  add_definitions(-DSW_USE_OPENMP)
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS} -fPIC")
+endif()
 
 if(NOT TARGET shapeworks::shapeworks)
-  include("${SHAPEWORKS_CMAKE_DIR}/ShapeworksTargets.cmake")
+  include("${SHAPEWORKS_CMAKE_DIR}/ShapeWorksTargets.cmake")
 endif()
