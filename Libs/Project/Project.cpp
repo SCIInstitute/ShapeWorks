@@ -73,8 +73,12 @@ void Project::set_project_path(const std::string& new_pathname) {
   auto fixup = [&](StringList paths) {
     StringList new_paths;
     for (const auto& path : paths) {
-      auto canonical = fs::canonical(path, old_path);
-      new_paths.push_back(fs::relative(canonical, new_path).string());
+      if (fs::exists(path)) {
+        auto canonical = fs::canonical(path, old_path);
+        new_paths.push_back(fs::relative(canonical, new_path).string());
+      } else {
+        new_paths.push_back(path);
+      }
     }
     return new_paths;
   };

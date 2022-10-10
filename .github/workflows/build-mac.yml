@@ -76,7 +76,7 @@ jobs:
       shell: bash -l {0}
       env:
         PR_NUMBER: ${{ github.event.number }}
-      run: conda activate shapeworks && ./Support/package.sh tag ${GITHUB_WORKSPACE}/shapeworks-install $HOME/install
+      run: conda activate shapeworks && source ./devenv.sh ./build/bin && ./Support/package.sh tag ${GITHUB_WORKSPACE}/shapeworks-install $HOME/install
 
     - name: make test
       shell: bash -l {0}
@@ -103,7 +103,7 @@ jobs:
     - name: Deploy Docs
       if: github.ref == 'refs/heads/master'
       shell: bash -l {0}
-      run: conda activate shapeworks && pwd && ls && ./Support/deploy_docs.sh ${GITHUB_WORKSPACE}/build
+      run: conda activate shapeworks && source ./devenv.sh ./build/bin && ./Support/deploy_docs.sh ${GITHUB_WORKSPACE}/build
       env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

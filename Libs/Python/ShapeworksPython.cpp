@@ -1722,7 +1722,13 @@ PYBIND11_MODULE(shapeworks_py, m)
       "Return the domain names (e.g. femur, pelvis, etc)")
 
   .def("get_subjects",
-      &Project::get_subjects,
+      [](Project &project) -> decltype(auto) {
+        std::vector<Subject> py_subjects;
+        for (auto s :project.get_subjects()) {
+          py_subjects.push_back(*s);
+        }
+        return py_subjects;
+      },
       "Return the list of Subjects")
 
   .def("get_originals_present",
