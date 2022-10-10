@@ -7,9 +7,11 @@ set(CMAKE_CXX_STANDARD 17)
 # Find ShapeWorks
 find_package(ShapeWorks REQUIRED)
 
+SET(CMAKE_EXE_LINKER_FLAGS "-Wl,--disable-new-dtags")
+
 # Find ITK
-find_package(ITK REQUIRED)
-include(${ITK_USE_FILE})
+#find_package(ITK REQUIRED)
+#include(${ITK_USE_FILE})
 
 add_executable(HelloShapeWorksItk HelloShapeWorksItk.cpp)
 

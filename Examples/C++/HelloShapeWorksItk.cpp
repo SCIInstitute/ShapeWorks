@@ -5,6 +5,8 @@
 #include "itkMesh.h"
 #include "itkRegularSphereMeshSource.h"
 #include "itkMeshFileWriter.h"
+#include "itkMeshIOFactory.h"
+#include "itkVTKPolyDataMeshIOFactory.h"
 
 // shapeworks includes
 #include <Project/Project.h>
@@ -44,6 +46,10 @@ void create_sphere(double radius, std::string name) {
 }
 
 int main() {
+
+  itk::VTKPolyDataMeshIOFactory::RegisterOneFactory();
+  // auto registeredIOs = itk::ObjectFactoryBase::CreateAllInstance( "itkMeshIOBase" );
+  
   typedef itk::Image< unsigned short, 3 > ImageType;
   ImageType::Pointer image = ImageType::New();
 
@@ -54,7 +60,7 @@ int main() {
 
   std::cout << "Step 1: Use ITK to generate input data\n";
   for (int i=5;i<9;i++) {
-    auto filename = "mesh" + std::to_string(5) + ".vtk";
+    auto filename = "mesh" + std::to_string(i) + ".vtk";
     std::cout << "Creating input file: " << filename << "\n";
     create_sphere(i, filename);
     auto subject = std::make_shared<shapeworks::Subject>();

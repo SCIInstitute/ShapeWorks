@@ -17,7 +17,7 @@ endif()
 
 set(CMAKE_CXX_STANDARD 17)             # available options are [98, 11, 14, 17. 20]
 
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/CMake")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 find_package(Python3 3.9 EXACT REQUIRED COMPONENTS Interpreter Development)
 
 if (NOT APPLE)
@@ -123,11 +123,11 @@ if (SHAPEWORKS_GUI)
 endif()
 
 ### vtk
-find_package(VTK 8.2.0)
+find_package(VTK 9.1.0)
 if (NOT VTK_FOUND)
   message(FATAL_ERROR "VTK is required, but could not be found! Make sure path to VTKConfig.cmake is included in CMAKE_PREFIX_PATH")
 endif()
-include(${VTK_USE_FILE})
+#include(${VTK_USE_FILE})
 
 ### Eigen
 find_package (Eigen3 3.3 REQUIRED NO_MODULE)
@@ -170,10 +170,16 @@ if(USE_OPENMP)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS} -fPIC")
 endif(USE_OPENMP)
 
+SET(CMAKE_INSTALL_LIBDIR lib)
+
 if(APPLE)
   set(CMAKE_INSTALL_RPATH "@executable_path/../lib")
 else()
-  set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib")
+  #  set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib")
+  set(CMAKE_SKIP_BUILD_RPATH FALSE)
+  set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
+  set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+  set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
 endif()
 
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
@@ -254,13 +260,12 @@ message(STATUS "CMAKE_SHARED_LINKER_FLAGS: ${CMAKE_SHARED_LINKER_FLAGS}")
 
 set(SHAPEWORKS_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 set(SHAPEWORKS_LIBS Project)
-set(SHAPEWORKS_CMAKE_CFG_DEST_DIR ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
-  CACHE PATH "Default location to install CMake config files")
+set(SHAPEWORKS_CMAKE_CFG_DEST_DIR ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
 
 install(TARGETS igl igl_common EXPORT ShapeWorksTargets
-  ARCHIVE DESTINATION lib
-  RUNTIME DESTINATION lib
-  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  RUNTIME DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
   PUBLIC_HEADER DESTINATION include
   )
 
@@ -271,7 +276,7 @@ install(EXPORT ShapeWorksTargets
 
 include(CMakePackageConfigHelpers)
 
-configure_package_config_file(CMake/ShapeWorksConfig.cmake.in
+configure_package_config_file(cmake/ShapeWorksConfig.cmake.in
   ${CMAKE_CURRENT_BINARY_DIR}/ShapeWorksConfig.cmake
   INSTALL_DESTINATION ${SHAPEWORKS_CMAKE_CFG_DEST_DIR}
   PATH_VARS SHAPEWORKS_INCLUDE_DIR)
@@ -283,9 +288,7 @@ write_basic_package_version_file(ShapeWorksConfigVersion.cmake
 install(FILES
   ${CMAKE_CURRENT_BINARY_DIR}/ShapeWorksConfig.cmake
   ${CMAKE_CURRENT_BINARY_DIR}/ShapeWorksConfigVersion.cmake
-  ${CMAKE_CURRENT_SOURCE_DIR}/CMake/FindXLNT.cmake
-  ${CMAKE_CURRENT_SOURCE_DIR}/CMake/FindLIBIGL.cmake
-  ${CMAKE_CURRENT_SOURCE_DIR}/CMake/FindACVD.cmake
+  ${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindXLNT.cmake
+  ${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindLIBIGL.cmake
+  ${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindACVD.cmake
   DESTINATION ${SHAPEWORKS_CMAKE_CFG_DEST_DIR})
-
-
