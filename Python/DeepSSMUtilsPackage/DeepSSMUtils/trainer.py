@@ -43,6 +43,19 @@ def log_print(logger, values):
 	log_string = ','.join(string_values)
 	logger.write(log_string + '\n')
 
+def set_scheduler(opt, sched_params):
+	if sched_params["type"] == "Step":
+		step_size = sched_params['parameters']['step_size']
+		gamma = sched_params['parameters']['gamma']
+		scheduler = torch.optim.lr_scheduler.StepLR(opt, step_size=1, gamma=0.99)
+	elif sched_params["type"] == "CosineAnnealing":
+		T_max = sched_params["parameters"]["T_max"]
+		eta_min = sched_params["parameters"]["eta_min"]
+		scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(opt, T_max=T_max, eta_min=eta_min)
+	else:
+		print("Error: Learning rate scheduler not recognized or implemented.")
+	return scheduler
+
 
 def train(config_file):
 	with open(config_file) as json_file: 
@@ -110,7 +123,8 @@ def supervised_train(config_file):
 	train_params = net.parameters()
 	opt = torch.optim.Adam(train_params, learning_rate)
 	opt.zero_grad()
-	scheduler = StepLR(opt, step_size=1, gamma=0.99)
+	if decay_lr:
+		scheduler = set_scheduler(opt, parameters['trainer']['decay_lr'])
 	print("Done.")
 	# train
 	print("Beginning training on device = " + device + '\n')
