@@ -12,6 +12,7 @@ from torch.optim.lr_scheduler import StepLR
 from DeepSSMUtils import model
 from DeepSSMUtils import losses
 from DeepSSMUtils import train_viz
+from DeepSSMUtils import loaders
 from shapeworks.utils import sw_message
 from shapeworks.utils import sw_progress
 from shapeworks.utils import sw_check_abort
@@ -60,8 +61,11 @@ def set_scheduler(opt, sched_params):
 def train(config_file):
 	with open(config_file) as json_file: 
 		parameters = json.load(json_file)
-	if parameters["loss"]["supervised_latent"]:
-		supervised_train(config_file)
+	if parameters["tl_net"]["enabled"]:
+		supervised_train_tl(config_file)
+	else:
+		if parameters["loss"]["supervised_latent"]:
+			supervised_train(config_file)
 
 '''
 Network training method
@@ -313,3 +317,236 @@ def supervised_train(config_file):
 		with open(config_file, "w") as json_file:
 			json.dump(parameters, json_file, indent=2) 
 		print("Fine tuning complete, model saved. Best model after epoch " + str(best_ft_epoch))
+
+def supervised_train_tl(conflict_file):
+	with open(conflict_file) as json_file: 
+		parameters = json.load(json_file)
+	model_dir = parameters['paths']['out_dir'] + parameters['model_name'] + '/'
+	loaders.make_dir(model_dir)
+	loader_dir = parameters['paths']['loader_dir']
+	learning_rate = parameters['trainer']['learning_rate']
+	eval_freq = parameters['trainer']['val_freq']
+	decay_lr = parameters['trainer']['decay_lr']
+	a_ae = parameters["tl_net"]["a_ae"]
+	c_ae = parameters["tl_net"]["c_ae"]
+	a_lat = parameters["tl_net"]["a_lat"]
+	c_lat = parameters["tl_net"]["c_lat"]
+	# load the loaders
+	train_loader_path = loader_dir + "train"
+	validation_loader_path = loader_dir + "validation"
+	print("Loading data loaders...")
+	train_loader = torch.load(train_loader_path)
+	val_loader = torch.load(validation_loader_path)
+	print("Done.")
+	print("Defining model...")
+	net = model.DeepSSMNet_TLNet(conflict_file)
+	device = net.device
+	net.to(device)
+	# intialize model weights
+	net.apply(weight_init(module=nn.Conv2d, initf=nn.init.xavier_normal_))	
+	net.apply(weight_init(module=nn.Linear, initf=nn.init.xavier_normal_))
+
+	train_params = net.parameters()
+	opt = torch.optim.Adam(train_params, learning_rate)
+	opt.zero_grad()
+	scheduler = StepLR(opt, step_size=1, gamma=0.99)
+	print("Done.")
+	# train
+	print("Beginning training on device = " + device + '\n')
+	logger = open(model_dir + "train_log.csv", "w+")
+	
+	t0 = time.time()
+	best_val_rel_error = np.Inf
+	
+	# train the AE first
+	log_print(logger,['##################################'])
+	log_print(logger,['Training the Autoencoder...'])
+	log_print(logger,['##################################'])
+	ae_epochs = parameters['tl_net']['ae_epochs']
+
+	log_print(logger, ["Epoch", "LR", "Train_Err_AE", "Train_Rel_Err_AE", "Val_Err_AE", "Val_Rel_Err_AE", "Sec"])
+
+	mean_mdl = torch.mean(train_loader.dataset.mdl_target, 0).to(device)
+
+	for e in range(1, ae_epochs + 1):
+		torch.cuda.empty_cache()
+		# train
+		net.train()
+		ae_train_losses = []
+		ae_train_rel_losses = []
+
+		for img, pca, mdl in train_loader:
+			opt.zero_grad()
+			img = img.to(device)
+			pca = pca.to(device)
+			mdl = mdl.to(device)
+			[pred_pt, lat, lat_img] = net(mdl, img)
+			loss = losses.deepssm.focal_loss(pred_pt, mdl, a_ae, c_ae)
+			train_rel_loss = losses.deepssm.focal_rel_loss(pred_pt, mdl, mean_mdl)
+			loss.backward()
+			opt.step()
+			ae_train_losses.append(loss.item())
+			ae_train_rel_losses.append(train_rel_loss.item())
+		
+		if ((e % eval_freq) == 0 or e == 1):
+			net.eval()
+			ae_val_losses = []
+			ae_val_rel_losses = []
+			for img, pca, mdl in val_loader:
+				opt.zero_grad()
+				img = img.to(device)
+				pca = pca.to(device)
+				mdl = mdl.to(device)
+				[pred_pt, lat, lat_img] = net(mdl, img)
+				# again in validation we simply compute standard l2 loss
+				loss_ae = losses.deepssm.focal_loss(pred_pt, mdl)
+				ae_val_rel_loss = losses.deepssm.focal_rel_loss(pred_pt, mdl, mean_mdl)
+				ae_val_losses.append(loss_ae.item())
+				ae_val_rel_losses.append(ae_val_rel_loss.item())
+			
+			# log
+			train_ae_err = np.mean(ae_train_losses)
+			train_rel_ae_err = np.mean(ae_train_rel_losses)
+			val_ae_err = np.mean(ae_val_losses)
+			val_rel_ae_err = np.mean(ae_val_rel_losses)
+			
+			log_print(logger, [e, scheduler.get_lr()[0], train_ae_err, train_rel_ae_err, val_ae_err, val_rel_ae_err, time.time()-t0])
+			t0 = time.time()
+	torch.save(net.state_dict(), os.path.join(model_dir, 'final_model_ae.torch'))
+	# fix the autoencoder and train the TL-net
+	for param in net.CorrespondenceDecoder.parameters():
+		param.requires_grad = False
+	for param in net.CorrespondenceEncoder.parameters():
+		param.requires_grad = False
+
+	# train the t-flank
+	tf_epochs = parameters['tl_net']['tf_epochs']
+	log_print(logger,['##################################'])
+	log_print(logger,['Training the T-Flank...'])
+	log_print(logger,['##################################'])
+	log_print(logger, ["Epoch", "LR", "Train_Err_TF", "Train_Rel_Err_TF", "Val_Err_TF", "Val_Rel_Err_TF", "Sec"])
+
+	for e in range(1, tf_epochs + 1):
+		torch.cuda.empty_cache()
+		# train
+		net.train()
+		tf_train_losses = []
+		tf_train_rel_losses = []
+
+		for img, pca, mdl in train_loader:
+			opt.zero_grad()
+			img = img.to(device)
+			pca = pca.to(device)
+			mdl = mdl.to(device)
+			[pred_pt, lat, lat_img] = net(mdl, img)
+			loss = losses.deepssm.focal_loss(lat_img, lat, a_lat, c_lat)
+			train_rel_loss = losses.deepssm.focal_rel_loss(lat_img, lat, lat*0)
+			loss.backward()
+			opt.step()
+			tf_train_losses.append(loss.item())
+			tf_train_rel_losses.append(train_rel_loss.item())
+
+		if ((e % eval_freq) == 0 or e == 1):
+			net.eval()
+			
+			tf_val_losses = []
+			tf_val_rel_losses = []
+			for img, pca, mdl in val_loader:
+				opt.zero_grad()
+				img = img.to(device)
+				pca = pca.to(device)
+				mdl = mdl.to(device)
+				[pred_pt, lat, lat_img] = net(mdl, img)
+				loss_tf = losses.deepssm.focal_loss(lat_img, lat)
+				tf_val_rel_loss = losses.deepssm.focal_rel_loss(lat_img, lat, lat*0)
+				tf_val_losses.append(loss_tf.item())
+				tf_val_rel_losses.append(tf_val_rel_loss.item())
+			
+			# log
+			train_tf_err = np.mean(tf_train_losses)
+			train_rel_tf_err = np.mean(tf_train_rel_losses)
+			val_tf_err = np.mean(tf_val_losses)
+			val_rel_tf_err = np.mean(tf_val_rel_losses)
+			
+			log_print(logger, [e, scheduler.get_lr()[0], train_tf_err, train_rel_tf_err, val_tf_err, val_rel_tf_err, time.time()-t0])
+			t0 = time.time()
+	torch.save(net.state_dict(), os.path.join(model_dir, 'final_model_tf.torch'))
+	# jointly train the model
+	joint_epochs = parameters['tl_net']['joint_epochs']
+	alpha = parameters['tl_net']['alpha']
+	
+	for param in net.CorrespondenceDecoder.parameters():
+		param.requires_grad = True
+	for param in net.CorrespondenceEncoder.parameters():
+		param.requires_grad = True
+
+	log_print(logger,['##################################'])
+	log_print(logger,['Joint training of the full network...'])
+	log_print(logger,['##################################'])
+
+	log_print(logger, ["Epoch", "LR", "Train_Rel_Err_AE", "Val_Rel_Err_AE", "Train_Rel_Err_TF", "Val_Rel_Err_TF", "Sec"])
+	for e in range(1, joint_epochs + 1):
+		# train
+		net.train()
+		ae_train_rel_losses = []
+		tf_train_rel_losses = []
+		
+		for img, pca, mdl in train_loader:
+			opt.zero_grad()
+			img = img.to(device)
+			pca = pca.to(device)
+			mdl = mdl.to(device)
+			[pred_pt, lat, lat_img] = net(mdl, img)
+			loss_ae = losses.deepssm.focal_loss(pred_pt, mdl, a_ae, c_ae)
+			ae_train_rel_loss = losses.deepssm.focal_loss(pred_pt, mdl, mean_mdl)
+			loss_tf = losses.deepssm.focal_loss(lat_img, lat, a_lat, c_lat)
+			tf_train_rel_loss = losses.deepssm.focal_rel_loss(lat_img, lat, lat*0)
+			loss = loss_ae  + alpha*loss_tf
+			loss.backward()
+			opt.step()
+			
+			ae_train_rel_losses.append(ae_train_rel_loss.item())
+			tf_train_rel_losses.append(tf_train_rel_loss.item())
+
+		# test validation
+		if ((e % eval_freq) == 0 or e == 1):
+			net.eval()
+			ae_val_rel_losses = []
+			tf_val_rel_losses = []
+			for img, pca, mdl in val_loader:
+				opt.zero_grad()
+				img = img.to(device)
+				pca = pca.to(device)
+				mdl = mdl.to(device)
+				[pred_pt, lat, lat_img] = net(mdl,img)
+				loss_ae = losses.deepssm.focal_loss(pred_pt, mdl)
+				ae_val_rel_loss = losses.deepssm.focal_rel_loss(pred_pt, mdl, mean_mdl)
+				loss_tf = losses.deepssm.focal_loss(lat_img, lat)
+				tf_val_rel_loss = losses.deepssm.focal_rel_loss(lat_img, lat, lat*0)
+				
+				ae_val_rel_losses.append(ae_val_rel_loss.item())
+				tf_val_rel_losses.append(tf_val_rel_loss.item())
+			
+			# log
+			train_rel_ae_err = np.mean(ae_train_rel_losses)
+			train_rel_tf_err = np.mean(tf_train_rel_losses)
+			val_rel_ae_err = np.mean(ae_val_rel_losses)
+			val_rel_tf_err = np.mean(tf_val_rel_losses)
+			
+			log_print(logger, [e, scheduler.get_lr()[0], train_rel_ae_err, val_rel_ae_err, train_rel_tf_err, val_rel_tf_err, time.time()-t0])
+			# save
+			val_rel_err = val_rel_ae_err + alpha*val_rel_tf_err
+			if val_rel_err < best_val_rel_error:
+				best_val_rel_error = val_rel_err
+				best_epoch = e
+				torch.save(net.state_dict(), os.path.join(model_dir, 'best_model.torch'))
+			t0 = time.time()
+		if decay_lr:
+			scheduler.step()
+	
+	logger.close()
+	torch.save(net.state_dict(), os.path.join(model_dir, 'final_model.torch'))
+	parameters['best_model_epochs'] = best_epoch
+	with open(conflict_file, "w") as json_file:
+		json.dump(parameters, json_file, indent=2) 
+	print("Training complete, model saved. Best model after epoch " + str(best_epoch))
