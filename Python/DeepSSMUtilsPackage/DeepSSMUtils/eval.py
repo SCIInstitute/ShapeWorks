@@ -38,15 +38,22 @@ def test(config_file, loader="test"):
 	print("Done.\n")
 	# initalizations
 	sw_message("Loading trained model...")
-	model_pca = model.DeepSSMNet(config_file)
-	model_pca.load_state_dict(torch.load(model_path))
-	device = model_pca.device
-	model_pca.to(device)
-	model_pca.eval()
-	model_ft = model.DeepSSMNet(config_file)
-	model_ft.load_state_dict(torch.load(model_path_ft))
-	model_ft.to(device)
-	model_ft.eval()
+	if parameters['tl_net']['enabled']:
+		model_tl = model.DeepSSMNet_TLNet(config_file)
+		model_tl.load_state_dict(torch.load(model_path))
+		device = model_tl.device
+		model_tl.to(device)
+		model_tl.eval()
+	else:
+		model_pca = model.DeepSSMNet(config_file)
+		model_pca.load_state_dict(torch.load(model_path))
+		device = model_pca.device
+		model_pca.to(device)
+		model_pca.eval()
+		model_ft = model.DeepSSMNet(config_file)
+		model_ft.load_state_dict(torch.load(model_path_ft))
+		model_ft.to(device)
+		model_ft.eval()
 
 	# Get test names 
 	test_names_file = loader_dir + loader + '_names.txt'
@@ -58,28 +65,43 @@ def test(config_file, loader="test"):
 	sw_message("Predicting for test images...")
 	index = 0
 	pred_scores = []
-	predPath_ft = pred_dir + 'FT_Predictions/'
-	if not os.path.exists(predPath_ft):
-		os.makedirs(predPath_ft)
-	predPath_pca = pred_dir + 'PCA_Predictions/'
-	if not os.path.exists(predPath_pca):
-		os.makedirs(predPath_pca)
-	predicted_particle_files = []
+
+	if parameters['tl_net']['enabled']:
+		predPath_tl = pred_dir + '/TL_Predictions'
+		if not os.path.exists(predPath_tl):
+			os.makedirs(predPath_tl)
+	else:
+		predPath_ft = pred_dir + 'FT_Predictions/'
+		if not os.path.exists(predPath_ft):
+			os.makedirs(predPath_ft)
+		predPath_pca = pred_dir + 'PCA_Predictions/'
+		if not os.path.exists(predPath_pca):
+			os.makedirs(predPath_pca)
+		predicted_particle_files = []
 	for img, pca, mdl in test_loader:
 		if sw_check_abort():
 			sw_message("Aborted")
 			return
 		sw_message(f"Predicting {index+1}/{len(test_loader)}")
 		sw_progress((index+1) / len(test_loader))
-
 		img = img.to(device)
-		[pred, pred_mdl_pca] = model_pca(img)
-		[pred, pred_mdl_ft] = model_ft(img)
-		pred_scores.append(pred.cpu().data.numpy()[0])
-		nmpred = predPath_pca + '/predicted_pca_' + test_names[index] + '.particles'
-		np.savetxt(nmpred, pred_mdl_pca.squeeze().detach().cpu().numpy())
-		nmpred = predPath_ft + '/predicted_ft_' + test_names[index] + '.particles'
-		np.savetxt(nmpred, pred_mdl_ft.squeeze().detach().cpu().numpy())
+		if parameters['tl_net']['enabled']:
+			[pred_tf, pred_mdl_tl] = model_tl(mdl, img)
+			pred_scores.append(pred_tf.cpu().data.numpy())
+			nmpred = predPath_tl + '/' + test_names[index] + '.particles'
+			np.savetxt(nmpred, pred_mdl_tl.squeeze().detach().cpu().numpy())
+			# save the AE latent space as shape descriptors
+			nmpred = predPath_tl + '/' + test_names[index] + '.npy'
+			np.save(nmpred, pred_tf.squeeze().detach().cpu().numpy())
+		else:
+			[pred, pred_mdl_pca] = model_pca(img)
+			[pred, pred_mdl_ft] = model_ft(img)
+			pred_scores.append(pred.cpu().data.numpy()[0])
+			nmpred = predPath_pca + '/predicted_pca_' + test_names[index] + '.particles'
+			np.savetxt(nmpred, pred_mdl_pca.squeeze().detach().cpu().numpy())
+			nmpred = predPath_ft + '/predicted_ft_' + test_names[index] + '.particles'
+			np.savetxt(nmpred, pred_mdl_ft.squeeze().detach().cpu().numpy())
 		predicted_particle_files.append(nmpred)
 		index += 1
+	sw_message("Test completed.")
 	return predicted_particle_files
