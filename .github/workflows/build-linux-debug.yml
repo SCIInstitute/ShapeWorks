@@ -20,7 +20,7 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    container: akenmorris/ubuntu-build-box-qt512
+    container: akenmorris/ubuntu-build-box-sw64
     
     steps:
 
