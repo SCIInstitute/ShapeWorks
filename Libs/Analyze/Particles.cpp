@@ -213,4 +213,15 @@ void Particles::transform_global_particles() {
     }
   }
 }
+
+void Particles::save_particles_file(std::string filename, const Eigen::VectorXd& points) {
+  std::ofstream out(filename);
+  size_t newline = 1;
+  for (int i = 0; i < points.size(); i++) {
+    out << points[i] << (newline % 3 == 0 ? "\n" : "    ");
+    newline++;
+  }
+  out.close();
+}
+
 }  // namespace shapeworks

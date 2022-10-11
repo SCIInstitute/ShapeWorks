@@ -162,8 +162,8 @@ bool Session::save_project(QString filename) {
         auto world_files = shapes_[i]->get_subject()->get_world_particle_filenames();
         auto particles = shapes_[i]->get_particles();
         for (int i = 0; i < local_files.size(); i++) {
-          save_particles_file(local_files[i], particles.get_local_particles(i));
-          save_particles_file(world_files[i], particles.get_raw_world_particles(i));
+          Particles::save_particles_file(local_files[i], particles.get_local_particles(i));
+          Particles::save_particles_file(world_files[i], particles.get_raw_world_particles(i));
         }
       }
       unsaved_particle_files_ = false;
@@ -185,17 +185,6 @@ bool Session::save_project(QString filename) {
 
   progress.setValue(100);
   return true;
-}
-
-//---------------------------------------------------------------------------
-void Session::save_particles_file(std::string filename, const Eigen::VectorXd& points) {
-  std::ofstream out(filename);
-  size_t newline = 1;
-  for (int i = 0; i < points.size(); i++) {
-    out << points[i] << (newline % 3 == 0 ? "\n" : "    ");
-    newline++;
-  }
-  out.close();
 }
 
 //---------------------------------------------------------------------------

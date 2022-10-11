@@ -271,7 +271,6 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   const static std::string DEEPSSM_C;
 
  private:
-  void save_particles_file(std::string filename, const Eigen::VectorXd& points);
 
   void renumber_shapes();
 

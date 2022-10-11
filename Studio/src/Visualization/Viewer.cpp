@@ -209,7 +209,7 @@ void Viewer::handle_new_mesh() {
 bool Viewer::is_viewer_ready() { return viewer_ready_; }
 
 //-----------------------------------------------------------------------------
-void Viewer::set_visualizer(Visualizer* visualizer) { visualizer_ = visualizer; }
+void Viewer::set_visualizer(Visualizer *visualizer) { visualizer_ = visualizer; }
 
 //-----------------------------------------------------------------------------
 void Viewer::display_vector_field() {
@@ -346,7 +346,7 @@ void Viewer::compute_point_differences(const Eigen::VectorXd& vecs, vtkSmartPoin
     }
 
     auto id = locators[domain]->FindClosestPoint(point_set->GetPoint(i));
-    double* normal = polys[domain]->GetPointData()->GetNormals()->GetTuple(id);
+    double *normal = polys[domain]->GetPointData()->GetNormals()->GetTuple(id);
 
     float xd = vecs(i * 3 + 0);
     float yd = vecs(i * 3 + 1);
@@ -809,7 +809,7 @@ void Viewer::update_glyph_properties() {
     glyph_size_ = std::min<double>(glyph_size_, average_range * 0.25);
   }
 
-  if (session_ && session_->should_difference_vectors_show()) {
+  if (session_ && session_->should_difference_vectors_show() && !scale_arrows_) {
     glyphs_->SetScaleFactor(1.0);
     arrow_glyphs_->SetScaleFactor(1.0);
   } else {
@@ -856,7 +856,7 @@ void Viewer::update_points() {
 
   int num_points = correspondence_points.size() / 3;
 
-  vtkFloatArray* scalars = (vtkFloatArray*)(glyph_point_set_->GetPointData()->GetScalars());
+  vtkFloatArray *scalars = (vtkFloatArray *) (glyph_point_set_->GetPointData()->GetScalars());
 
   Eigen::VectorXf scalar_values;
   if (showing_feature_map() && !session_->should_difference_vectors_show()) {
@@ -867,8 +867,8 @@ void Viewer::update_points() {
 
   if (num_points > 0) {
     viewer_ready_ = true;
-    glyphs_->SetRange(0.0, (double)num_points + 1);
-    glyph_mapper_->SetScalarRange(0.0, (double)num_points + 1.0);
+    glyphs_->SetRange(0.0, (double) num_points + 1);
+    glyph_mapper_->SetScalarRange(0.0, (double) num_points + 1.0);
 
     glyph_points_->Reset();
     scalars->Reset();
@@ -993,8 +993,8 @@ void Viewer::update_actors() {
 void Viewer::remove_scalar_bar() { renderer_->RemoveActor(scalar_bar_actor_); }
 
 //-----------------------------------------------------------------------------
-vtkFloatArray* Viewer::get_particle_scalars() {
-  vtkFloatArray* scalars = (vtkFloatArray*)(glyph_point_set_->GetPointData()->GetScalars());
+vtkFloatArray *Viewer::get_particle_scalars() {
+  vtkFloatArray *scalars = (vtkFloatArray *) (glyph_point_set_->GetPointData()->GetScalars());
   return scalars;
 }
 
@@ -1095,7 +1095,7 @@ void Viewer::update_image_volume() {
 }
 
 //-----------------------------------------------------------------------------
-int Viewer::handle_pick(int* click_pos) {
+int Viewer::handle_pick(int *click_pos) {
   // First determine what was picked
   // we use a new prop picker here since the member one only uses the surface actors
   auto prop_picker = vtkSmartPointer<vtkPropPicker>::New();
@@ -1110,10 +1110,10 @@ int Viewer::handle_pick(int* click_pos) {
   // we use a new cell picker here since the member only only uses the surface actors
   auto cell_picker = vtkSmartPointer<vtkCellPicker>::New();
   cell_picker->Pick(click_pos[0], click_pos[1], 0, renderer_);
-  vtkDataArray* input_ids = glyphs_->GetOutput()->GetPointData()->GetArray("InputPointIds");
+  vtkDataArray *input_ids = glyphs_->GetOutput()->GetPointData()->GetArray("InputPointIds");
 
   if (input_ids) {
-    vtkCell* cell = glyphs_->GetOutput()->GetCell(cell_picker->GetCellId());
+    vtkCell *cell = glyphs_->GetOutput()->GetCell(cell_picker->GetCellId());
 
     if (cell && cell->GetNumberOfPoints() > 0) {
       // get first PointId from picked cell
@@ -1133,14 +1133,14 @@ int Viewer::handle_pick(int* click_pos) {
 }
 
 //-----------------------------------------------------------------------------
-PickResult Viewer::handle_ctrl_click(int* click_pos) {
+PickResult Viewer::handle_ctrl_click(int *click_pos) {
   // First determine what was picked
   cell_picker_->Pick(click_pos[0], click_pos[1], 0, renderer_);
   PickResult result;
 
   for (int i = 0; i < unclipped_surface_actors_.size(); i++) {
     if (cell_picker_->GetActor() == unclipped_surface_actors_[i]) {
-      double* pos = cell_picker_->GetPickPosition();
+      double *pos = cell_picker_->GetPickPosition();
 
       auto transform = vtkSmartPointer<vtkTransform>::New();
       transform->DeepCopy(get_landmark_transform(i));
@@ -1205,7 +1205,7 @@ bool Viewer::showing_feature_map() {
 }
 
 //-----------------------------------------------------------------------------
-void Viewer::update_feature_range(double* range) { update_difference_lut(range[0], range[1]); }
+void Viewer::update_feature_range(double *range) { update_difference_lut(range[0], range[1]); }
 
 //-----------------------------------------------------------------------------
 void Viewer::update_opacities() {
@@ -1295,4 +1295,10 @@ bool Viewer::is_reverse(vtkSmartPointer<vtkTransform> transform) {
   }
   return reverse;
 }
+//-----------------------------------------------------------------------------
+void Viewer::set_scale_arrows(bool scale) {
+  scale_arrows_ = scale;
+  update_glyph_properties();
+}
+
 }  // namespace shapeworks

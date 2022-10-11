@@ -219,6 +219,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
   connect(glyph_size_slider_, SIGNAL(valueChanged(int)), this, SLOT(handle_glyph_changed()));
   connect(glyph_quality_slider_, SIGNAL(valueChanged(int)), this, SLOT(handle_glyph_changed()));
   connect(glyph_auto_size_, &QCheckBox::clicked, this, &ShapeWorksStudioApp::handle_glyph_changed);
+  connect(glyph_arrow_scale_, &QCheckBox::clicked, this, &ShapeWorksStudioApp::handle_glyph_changed);
   preferences_.set_saved();
   enable_possible_actions();
 
@@ -511,6 +512,7 @@ void ShapeWorksStudioApp::update_from_preferences() {
   glyph_quality_slider_->setValue(preferences_.get_glyph_quality());
   glyph_size_slider_->setValue(preferences_.get_glyph_size() * 10.0);
   glyph_auto_size_->setChecked(preferences_.get_glyph_auto_size());
+  glyph_arrow_scale_->setChecked(preferences_.get_glyph_scale_arrows());
   glyph_size_slider_->setEnabled(!glyph_auto_size_->isChecked());
 
   glyph_quality_label_->setText(QString::number(preferences_.get_glyph_quality()));
@@ -709,6 +711,8 @@ void ShapeWorksStudioApp::create_glyph_submenu() {
 
   glyph_auto_size_ = new QCheckBox("Auto");
 
+  glyph_arrow_scale_ = new QCheckBox("Scale arrows");
+
   glyph_quality_slider_ = new QSlider(widget);
   glyph_quality_slider_->setMinimum(1);
   glyph_quality_slider_->setMaximum(20);
@@ -718,9 +722,10 @@ void ShapeWorksStudioApp::create_glyph_submenu() {
   glyph_quality_slider_->setTickInterval(1);
   glyph_quality_slider_->setMinimumWidth(200);
 
-  layout->addWidget(glyph_size_slider_, 0, 2, 1, 1);
-  layout->addWidget(glyph_auto_size_, 0, 3, 1, 1);
+  layout->addWidget(glyph_size_slider_,    0, 2, 1, 1);
+  layout->addWidget(glyph_auto_size_,      0, 3, 1, 1);
   layout->addWidget(glyph_quality_slider_, 1, 2, 1, 1);
+  layout->addWidget(glyph_arrow_scale_,    2, 0, 1, 1);
   widget->setLayout(layout);
 
   QWidgetAction* widget_action = new QWidgetAction(widget);
@@ -1163,6 +1168,7 @@ void ShapeWorksStudioApp::handle_glyph_changed() {
   preferences_.set_glyph_size(glyph_size_slider_->value() / 10.0);
   preferences_.set_glyph_quality(glyph_quality_slider_->value());
   preferences_.set_glyph_auto_size(glyph_auto_size_->isChecked());
+  preferences_.set_glyph_scale_arrows(glyph_arrow_scale_->isChecked());
   glyph_size_slider_->setEnabled(!glyph_auto_size_->isChecked());
   if (glyph_auto_size_->isChecked()) {
     auto glyph_size = session_->get_auto_glyph_size();
