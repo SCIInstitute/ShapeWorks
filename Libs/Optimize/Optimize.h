@@ -342,6 +342,7 @@ protected:
   void WritePointFilesWithFeatures(int iter = -1);
   void WritePointFilesWithFeatures(std::string iter_prefix);
   void WriteEnergyFiles();
+  void WriteSplitFiles(std::string name);
   void WriteCuttingPlanePoints(int iter = -1);
   void WriteParameters(std::string output_dir = "");
   void ReportBadParticles();
