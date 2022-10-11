@@ -33,6 +33,7 @@ summary: 3D Viewer
 | QSharedPointer< [Session](../Classes/classshapeworks_1_1Session.md) > | **[get_session](../Classes/classshapeworks_1_1Viewer.md#function-get-session)**() |
 | void | **[set_show_glyphs](../Classes/classshapeworks_1_1Viewer.md#function-set-show-glyphs)**(bool show) |
 | void | **[set_show_surface](../Classes/classshapeworks_1_1Viewer.md#function-set-show-surface)**(bool show) |
+| void | **[set_scale_arrows](../Classes/classshapeworks_1_1Viewer.md#function-set-scale-arrows)**(bool scale) |
 | void | **[update_points](../Classes/classshapeworks_1_1Viewer.md#function-update-points)**() |
 | void | **[update_glyph_properties](../Classes/classshapeworks_1_1Viewer.md#function-update-glyph-properties)**() |
 | int | **[handle_pick](../Classes/classshapeworks_1_1Viewer.md#function-handle-pick)**(int * click_pos) |
@@ -210,6 +211,15 @@ void set_show_glyphs(
 ```cpp
 void set_show_surface(
     bool show
+)
+```
+
+
+### function set_scale_arrows
+
+```cpp
+void set_scale_arrows(
+    bool scale
 )
 ```
 
@@ -521,4 +531,4 @@ static bool is_reverse(
 
 -------------------------------
 
-Updated on 2022-10-07 at 04:24:31 +0000
+Updated on 2022-10-11 at 01:33:49 +0000

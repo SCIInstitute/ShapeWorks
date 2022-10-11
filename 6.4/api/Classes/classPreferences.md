@@ -63,6 +63,8 @@ Inherits from QObject
 | void | **[set_glyph_quality](../Classes/classPreferences.md#function-set-glyph-quality)**(float value) |
 | bool | **[get_glyph_auto_size](../Classes/classPreferences.md#function-get-glyph-auto-size)**() |
 | void | **[set_glyph_auto_size](../Classes/classPreferences.md#function-set-glyph-auto-size)**(bool value) |
+| bool | **[get_glyph_scale_arrows](../Classes/classPreferences.md#function-get-glyph-scale-arrows)**() |
+| void | **[set_glyph_scale_arrows](../Classes/classPreferences.md#function-set-glyph-scale-arrows)**(bool value) |
 | float | **[get_pca_range](../Classes/classPreferences.md#function-get-pca-range)**() |
 | void | **[set_pca_range](../Classes/classPreferences.md#function-set-pca-range)**(float value) |
 | int | **[get_pca_steps](../Classes/classPreferences.md#function-get-pca-steps)**() |
@@ -394,6 +396,22 @@ void set_glyph_auto_size(
 ```
 
 
+### function get_glyph_scale_arrows
+
+```cpp
+bool get_glyph_scale_arrows()
+```
+
+
+### function set_glyph_scale_arrows
+
+```cpp
+void set_glyph_scale_arrows(
+    bool value
+)
+```
+
+
 ### function get_pca_range
 
 ```cpp
@@ -700,4 +718,4 @@ QString get_export_pca_modes()
 
 -------------------------------
 
-Updated on 2022-10-07 at 04:24:32 +0000
+Updated on 2022-10-11 at 01:33:50 +0000

@@ -76,6 +76,9 @@ class Preferences : public QObject {
   bool get_glyph_auto_size();
   void set_glyph_auto_size(bool value);
 
+  bool get_glyph_scale_arrows();
+  void set_glyph_scale_arrows(bool value);
+
   float get_pca_range();
   void set_pca_range(float value);
 
@@ -147,4 +150,4 @@ class Preferences : public QObject {
 
 -------------------------------
 
-Updated on 2022-10-07 at 04:24:32 +0000
+Updated on 2022-10-11 at 01:33:50 +0000
