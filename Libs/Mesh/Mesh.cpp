@@ -1505,6 +1505,12 @@ vtkSmartPointer<vtkPoints> Mesh::getIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi&
 vtkSmartPointer<vtkDoubleArray> Mesh::computeInOutForFFCs(std::vector<size_t> allBoundaryVerts, Eigen::Vector3d query,
                                                           Eigen::MatrixXd V, Eigen::MatrixXi F) {
 
+  // Apply triangle filter to allow face adjacency queries
+  vtkSmartPointer<vtkTriangleFilter> triangleFilter = vtkSmartPointer<vtkTriangleFilter>::New();
+  triangleFilter->SetInputData(poly_data_);
+  triangleFilter->Update();
+  poly_data_ = triangleFilter->GetOutput();
+
   // Find a face that is inside by checking around the qury point
   this->updateCellLocator();
 
@@ -1519,13 +1525,8 @@ vtkSmartPointer<vtkDoubleArray> Mesh::computeInOutForFFCs(std::vector<size_t> al
   filled = vector<bool>(this->numFaces(), 0);
   dval = vector<double>(this->numFaces(), 0.);
 
-  vtkSmartPointer<vtkTriangleFilter> triangleFilter = vtkSmartPointer<vtkTriangleFilter>::New();
-  triangleFilter->SetInputData(poly_data_);
-  triangleFilter->Update();
-  poly_data_ = triangleFilter->GetOutput();
-
   std::cout << "Filling" << std::endl;
-  this->fill(cellId, F, allBoundaryVerts, 0.);
+  this->fill(size_t(cellId), F, allBoundaryVerts, 0.);
   std::cout << "Filling done" << std::endl;
 
   vtkSmartPointer<vtkDoubleArray> inout = vtkSmartPointer<vtkDoubleArray>::New();
