@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1206</width>
+    <width>1232</width>
     <height>705</height>
    </rect>
   </property>
@@ -673,8 +673,8 @@ QToolButton#compare::checked {
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1206</width>
-     <height>21</height>
+     <width>1232</width>
+     <height>24</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -697,11 +697,18 @@ QToolButton#compare::checked {
      <addaction name="action_export_pca_montage"/>
      <addaction name="action_export_screenshot"/>
     </widget>
+    <widget class="QMenu" name="menu_save_project_as">
+     <property name="title">
+      <string>Save Project As...</string>
+     </property>
+     <addaction name="save_as_swproj"/>
+     <addaction name="save_as_xlsx"/>
+    </widget>
     <addaction name="action_new_project"/>
     <addaction name="action_open_project"/>
     <addaction name="action_show_project_folder"/>
     <addaction name="action_save_project"/>
-    <addaction name="action_save_project_as"/>
+    <addaction name="menu_save_project_as"/>
     <addaction name="separator"/>
     <addaction name="action_import"/>
     <addaction name="menuExport"/>
@@ -745,9 +752,6 @@ QToolButton#compare::checked {
    </property>
    <property name="floating">
     <bool>false</bool>
-   </property>
-   <property name="features">
-    <set>QDockWidget::AllDockWidgetFeatures</set>
    </property>
    <property name="allowedAreas">
     <set>Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>
@@ -801,7 +805,7 @@ QToolButton#compare::checked {
           <x>0</x>
           <y>0</y>
           <width>398</width>
-          <height>641</height>
+          <height>630</height>
          </rect>
         </property>
         <property name="minimumSize">
@@ -841,7 +845,6 @@ QToolButton#compare::checked {
    <property name="font">
     <font>
      <pointsize>8</pointsize>
-     <weight>50</weight>
      <bold>false</bold>
     </font>
    </property>
@@ -969,14 +972,6 @@ QToolButton#compare::checked {
    </property>
    <property name="shortcut">
     <string>Ctrl+N</string>
-   </property>
-  </action>
-  <action name="action_save_project_as">
-   <property name="text">
-    <string>Save Project As...</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Shift+S</string>
    </property>
   </action>
   <action name="action_preferences">
@@ -1150,6 +1145,16 @@ QToolButton#compare::checked {
   <action name="action_export_all_subjects_particle_scalars">
    <property name="text">
     <string>Export All Subjects Particle Scalars...</string>
+   </property>
+  </action>
+  <action name="save_as_swproj">
+   <property name="text">
+    <string>Project JSON (swproj)</string>
+   </property>
+  </action>
+  <action name="save_as_xlsx">
+   <property name="text">
+    <string>Project Spreadsheet (xlsx)</string>
    </property>
   </action>
  </widget>
