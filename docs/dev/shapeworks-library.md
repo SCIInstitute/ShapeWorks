@@ -3,7 +3,7 @@
 ShapeWorks can be used as a library, for example as part of an ITK based application.  To do so, when building ShapeWorks, specify CMAKE_INSTALL_PREFIX and use `make install`:
 
 ```
-$ ccmake -DCMAKE_INSTALL_PREFIX=/path/to/sw/install
+$ ccmake -DCMAKE_INSTALL_PREFIX=</path/to/sw/install>
 $ make install
 ```
 
@@ -141,7 +141,7 @@ Configure using `-DShapeWorks_DIR` and the prefix module path used for building 
 cd /path/to/shapeworks/Examples/C++
 mkdir build
 cd build
-cmake .. -DShapeWorks_DIR=/path/to/sw/install/lib/cmake/ShapeWorks -DCMAKE_PREFIX_PATH=/path/to/shapeworks/dependencies/install
+cmake .. -DShapeWorks_DIR=</path/to/sw/install>/lib/cmake/ShapeWorks -DCMAKE_PREFIX_PATH=</path/to/shapeworks/dependencies/install>
 ```
 
 Build:
