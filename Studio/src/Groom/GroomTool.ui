@@ -836,7 +836,6 @@ QWidget#domain_panel {
                 <widget class="QGroupBox" name="resample_box">
                  <property name="font">
                   <font>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -1384,7 +1383,6 @@ QWidget#domain_panel {
                 <widget class="QGroupBox" name="mesh_smooth_box">
                  <property name="font">
                   <font>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -1544,7 +1542,6 @@ QWidget#domain_panel {
                 <widget class="QGroupBox" name="remesh_box">
                  <property name="font">
                   <font>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -1968,24 +1965,33 @@ QWidget#domain_panel {
    <item>
     <widget class="QWidget" name="button_box" native="true">
      <layout class="QGridLayout" name="gridLayout">
-      <item row="0" column="0">
-       <widget class="QPushButton" name="skip_button">
-        <property name="text">
-         <string>Skip</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QPushButton" name="run_groom_button">
-        <property name="text">
-         <string>Run Groom</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0" colspan="2">
+      <item row="3" column="0" colspan="2">
        <widget class="QPushButton" name="restore_defaults">
         <property name="text">
          <string>Restore Defaults</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QCheckBox" name="skip_grooming">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Skip Grooming</string>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0" colspan="2">
+       <widget class="QPushButton" name="run_groom_button">
+        <property name="text">
+         <string>Run Groom</string>
         </property>
        </widget>
       </item>
