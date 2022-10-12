@@ -26,7 +26,7 @@
 
 #include "TriMesh.h"
 
-#include "Mesh.h"
+#include <Mesh/Mesh.h>
 
 // Uncomment to visualize FFCs with scalar and vector fields
 //#define VIZFFC

@@ -1,8 +1,8 @@
 #pragma once
 
-#include <GroomParameters.h>
-#include <Libs/Image/Image.h>
-#include <Libs/Project/Project.h>
+#include "GroomParameters.h"
+#include <Image/Image.h>
+#include <Project/Project.h>
 
 namespace shapeworks {
 
@@ -19,8 +19,6 @@ class Groom {
   //! Run the grooming
   bool run();
 
-  //! Set if grooming steps should be skipped
-  void set_skip_grooming(bool skip);
 
   //! Set abort as soon as possible
   void abort();
@@ -93,8 +91,6 @@ class Groom {
   bool verbose_ = false;
 
   ProjectHandle project_;
-
-  bool skip_grooming_ = false;
 
   bool abort_ = false;
 

@@ -1,6 +1,6 @@
-#include <Libs/Mesh/MeshUtils.h>
-#include <Libs/Optimize/OptimizeParameters.h>
-#include <Libs/Project/Project.h>
+#include <Mesh/MeshUtils.h>
+#include <Optimize/OptimizeParameters.h>
+#include <Project/Project.h>
 #include <itkApproximateSignedDistanceMapImageFilter.h>
 #include <itkImageFileReader.h>
 #include <itkImageFileWriter.h>

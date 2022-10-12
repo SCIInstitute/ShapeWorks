@@ -1,7 +1,7 @@
 #pragma once
 
-#include <Libs/Optimize/ParticleSystem/DomainType.h>
-#include <ProjectUtils.h>
+#include <Optimize/DomainType.h>
+#include "ProjectUtils.h"
 
 #include <map>
 #include <string>

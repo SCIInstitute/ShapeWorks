@@ -282,7 +282,7 @@ void Lightbox::handle_pick(int* click_pos, bool one, bool ctrl) {
     }
   } else {
     int id = -1;
-    foreach (ViewerHandle viewer, viewers_) {
+    Q_FOREACH (ViewerHandle viewer, viewers_) {
       int vid = viewer->handle_pick(click_pos);
       if (vid != -1) {
         id = vid;
@@ -337,13 +337,13 @@ void Lightbox::handle_key(int* click_pos, std::string key) {
 
 //-----------------------------------------------------------------------------
 void Lightbox::set_glyph_lut(vtkSmartPointer<vtkLookupTable> lut) {
-  foreach (ViewerHandle viewer, viewers_) { viewer->set_lut(lut); }
+  Q_FOREACH (ViewerHandle viewer, viewers_) { viewer->set_lut(lut); }
 }
 
 //-----------------------------------------------------------------------------
 void Lightbox::set_session(QSharedPointer<Session> session) {
   session_ = session;
-  foreach (ViewerHandle viewer, viewers_) { viewer->set_session(session); }
+  Q_FOREACH (ViewerHandle viewer, viewers_) { viewer->set_session(session); }
 }
 
 //-----------------------------------------------------------------------------
@@ -352,7 +352,7 @@ void Lightbox::set_visualizer(Visualizer* visualizer) { visualizer_ = visualizer
 //-----------------------------------------------------------------------------
 void Lightbox::handle_timer_callback() {
   timer_callback_count_ = (timer_callback_count_ + 1) % 19;
-  foreach (ViewerHandle viewer, get_viewers()) { viewer->set_loading_screen(spinner_images_[timer_callback_count_]); }
+  Q_FOREACH (ViewerHandle viewer, get_viewers()) { viewer->set_loading_screen(spinner_images_[timer_callback_count_]); }
   renderer_->GetRenderWindow()->Render();
 }
 

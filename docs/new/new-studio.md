@@ -96,7 +96,7 @@ See [Multiple Domains](../studio/multiple-domains.md) for more information.
 
 As of ShapeWorks 6.1, we added support in ShapeWorks Studio for mesh grooming, including smoothing, hole filling, and iterative closest point pre-alignment.
 
-![ShapeWorks Studio Groom Module for Meshes](../img/studio/studio_groom_mesh.png){: width="300" }
+![ShapeWorks Studio Groom Module for Meshes](../img/studio/studio_groom.png){: width="300" }
 
 See [Groom Module](../studio/getting-started-with-studio.md#groom-module) for more information.
 

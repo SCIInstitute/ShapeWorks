@@ -1,6 +1,6 @@
-#include <Libs/Mesh/Mesh.h>
-#include <Libs/Project/Subject.h>
-#include <Libs/Utils/StringUtils.h>
+#include <Mesh/Mesh.h>
+#include <Project/Subject.h>
+#include <Utils/StringUtils.h>
 
 #include <map>
 

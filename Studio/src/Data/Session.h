@@ -3,9 +3,9 @@
 #include <StudioEnums.h>
 #include <MeshManager.h>
 #include <Data/Preferences.h>
-#include <Libs/Analyze/Particles.h>
-#include <Libs/Particles/ParticleSystem.h>
-#include <Libs/Project/Project.h>
+#include <Analyze/Particles.h>
+#include <Particles/ParticleSystem.h>
+#include <Project/Project.h>
 #include <Shapeworks.h>
 #include <Visualization/Viewer.h>
 #include <itkMatrixOffsetTransformBase.h>
@@ -247,7 +247,7 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   void handle_new_mesh();
   void handle_thread_complete();
 
- signals:
+  Q_SIGNALS:
   /// signal that the data has changed
   void data_changed();
   void points_changed();

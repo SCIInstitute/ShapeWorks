@@ -150,9 +150,9 @@ void AnalysisTool::handle_reconstruction_complete() {
   session_->handle_clear_cache();
 
   session_->calculate_reconstructed_samples();
-  emit progress(100);
+  Q_EMIT progress(100);
   SW_LOG("Reconstruction Complete");
-  emit reconstruction_complete();
+  Q_EMIT reconstruction_complete();
   /// TODO: Studio
   /// ui_->run_optimize_button->setEnabled(true);
 
@@ -163,7 +163,7 @@ void AnalysisTool::handle_reconstruction_complete() {
 void AnalysisTool::on_reconstructionButton_clicked() {
   store_settings();
   SW_LOG("Please wait: running reconstruction step...");
-  emit progress(5);
+  Q_EMIT progress(5);
   QThread* thread = new QThread;
 
   ShapeworksWorker* worker =
@@ -175,7 +175,7 @@ void AnalysisTool::on_reconstructionButton_clicked() {
 
   connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
   thread->start();
-  emit progress(15);
+  Q_EMIT progress(15);
 }
 
 //---------------------------------------------------------------------------
@@ -288,7 +288,7 @@ void AnalysisTool::handle_analysis_options() {
     pca_animate_timer_.stop();
   }
 
-  emit update_view();
+  Q_EMIT update_view();
 }
 
 //---------------------------------------------------------------------------
@@ -297,7 +297,7 @@ void AnalysisTool::handle_median() {
     return;
   }
   ui_->sampleSpinBox->setValue(stats_.ComputeMedianShape(-32));  //-32 = both groups
-  emit update_view();
+  Q_EMIT update_view();
 }
 
 //-----------------------------------------------------------------------------
@@ -308,7 +308,7 @@ void AnalysisTool::on_mean_button_clicked() {
   ui_->group_animate_checkbox->setChecked(false);
   ui_->mean_button->setChecked(true);
   update_difference_particles();
-  emit update_view();
+  Q_EMIT update_view();
 }
 
 //-----------------------------------------------------------------------------
@@ -321,7 +321,7 @@ void AnalysisTool::on_group1_button_clicked() {
   ui_->group1_button->setChecked(true);
   ui_->group_p_values_button->setChecked(false);
   update_difference_particles();
-  emit update_view();
+  Q_EMIT update_view();
 }
 
 //-----------------------------------------------------------------------------
@@ -334,7 +334,7 @@ void AnalysisTool::on_group2_button_clicked() {
   ui_->group2_button->setChecked(true);
   ui_->group_p_values_button->setChecked(false);
   update_difference_particles();
-  emit update_view();
+  Q_EMIT update_view();
 }
 
 //-----------------------------------------------------------------------------
@@ -347,7 +347,7 @@ void AnalysisTool::on_difference_button_clicked() {
   ui_->group_animate_checkbox->setChecked(false);
   ui_->difference_button->setChecked(true);
   update_difference_particles();
-  emit update_view();
+  Q_EMIT update_view();
 }
 
 //---------------------------------------------------------------------------
@@ -627,7 +627,7 @@ void AnalysisTool::on_pcaSlider_valueChanged() {
   // this will make the slider handle redraw making the UI appear more responsive
   QCoreApplication::processEvents();
 
-  emit pca_update();
+  Q_EMIT pca_update();
 }
 
 //---------------------------------------------------------------------------
@@ -640,11 +640,11 @@ void AnalysisTool::on_group_slider_valueChanged() {
   ui_->difference_button->setChecked(false);
   ui_->mean_button->setChecked(false);
 
-  emit update_view();
+  Q_EMIT update_view();
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::on_pcaModeSpinBox_valueChanged(int i) { emit pca_update(); }
+void AnalysisTool::on_pcaModeSpinBox_valueChanged(int i) { Q_EMIT pca_update(); }
 
 //---------------------------------------------------------------------------
 void AnalysisTool::handle_pca_animate_state_changed() {
@@ -1167,13 +1167,13 @@ void AnalysisTool::handle_eval_particle_normals_complete(std::vector<bool> good_
   session_->set_good_bad_particles(good_bad);
   session_->set_show_good_bad_particles(true);
   update_interface();
-  emit update_view();
+  Q_EMIT update_view();
 }
 
 //---------------------------------------------------------------------------
 void AnalysisTool::handle_group_pvalues_complete() {
-  emit progress(100);
-  emit update_view();
+  Q_EMIT progress(100);
+  Q_EMIT update_view();
 }
 
 //---------------------------------------------------------------------------
@@ -1200,7 +1200,7 @@ void AnalysisTool::handle_alignment_changed(int new_alignment) {
 
   evals_ready_ = false;
   group_changed();
-  emit update_view();
+  Q_EMIT update_view();
 }
 
 //---------------------------------------------------------------------------
@@ -1245,7 +1245,7 @@ void AnalysisTool::handle_lda_complete() {
 //---------------------------------------------------------------------------
 void AnalysisTool::show_difference_to_mean_clicked() {
   update_difference_particles();
-  emit update_view();
+  Q_EMIT update_view();
 }
 
 //---------------------------------------------------------------------------
@@ -1262,7 +1262,7 @@ void AnalysisTool::reconstruction_method_changed() {
   if (previous_method != method) {
     session_->get_mesh_manager()->get_mesh_generator()->set_reconstruction_method(method);
     session_->handle_clear_cache();
-    emit reconstruction_complete();
+    Q_EMIT reconstruction_complete();
   }
 }
 

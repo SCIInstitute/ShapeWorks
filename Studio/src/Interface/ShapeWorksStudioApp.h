@@ -63,7 +63,9 @@ class ShapeWorksStudioApp : public QMainWindow {
   void on_action_open_project_triggered();
   void on_action_show_project_folder_triggered();
   bool on_action_save_project_triggered();
-  bool on_action_save_project_as_triggered();
+  bool save_project_as(QString type);
+  void save_as_swproj_clicked();
+  void save_as_xlsx_clicked();
   void on_action_quit_triggered();
   void on_action_import_triggered();
 

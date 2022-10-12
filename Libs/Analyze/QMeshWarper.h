@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Libs/Mesh/MeshWarper.h>
+#include <Mesh/MeshWarper.h>
 #include <QObject>
 #include <QMutex>
 #include <QElapsedTimer>

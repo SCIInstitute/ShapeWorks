@@ -1,10 +1,10 @@
 #include <Groom.h>
 #include <GroomParameters.h>
-#include <Libs/Image/Image.h>
-#include <Libs/Mesh/Mesh.h>
-#include <Libs/Mesh/MeshUtils.h>
-#include <Libs/Project/ProjectUtils.h>
-#include <Libs/Utils/StringUtils.h>
+#include <Image/Image.h>
+#include <Mesh/Mesh.h>
+#include <Mesh/MeshUtils.h>
+#include <Project/ProjectUtils.h>
+#include <Utils/StringUtils.h>
 #include <itkRegionOfInterestImageFilter.h>
 #include <tbb/parallel_for.h>
 #include <vtkCenterOfMass.h>
@@ -85,16 +85,16 @@ bool Groom::image_pipeline(std::shared_ptr<Subject> subject, size_t domain) {
   // grab parameters
   auto params = GroomParameters(this->project_, this->project_->get_domain_names()[domain]);
 
-  auto path = subject->get_original_filenames()[domain];
+  auto original = subject->get_original_filenames()[domain];
 
   // load the image
-  Image image(path);
+  Image image(original);
 
   // define a groom transform
   vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
   transform->Identity();
 
-  if (this->skip_grooming_) {
+  if (params.get_skip_grooming()) {
     std::vector<std::vector<double>> groomed_transforms;
     groomed_transforms.push_back(ProjectUtils::convert_transform(transform));
     subject->set_groomed_transforms(groomed_transforms);
@@ -108,7 +108,7 @@ bool Groom::image_pipeline(std::shared_ptr<Subject> subject, size_t domain) {
       if (domain >= groomed_filenames.size()) {
         groomed_filenames.resize(domain + 1);
       }
-      groomed_filenames[domain] = path;
+      groomed_filenames[domain] = original;
 
       // store filenames back to subject
       subject->set_groomed_filenames(groomed_filenames);
@@ -139,12 +139,12 @@ bool Groom::image_pipeline(std::shared_ptr<Subject> subject, size_t domain) {
   }
 
   // groomed filename
-  std::string groomed_name = this->get_output_filename(path, DomainType::Image);
+  std::string groomed_name = this->get_output_filename(original, DomainType::Image);
 
   if (params.get_convert_to_mesh()) {
     Mesh mesh = image.toMesh(0.0);
     this->run_mesh_pipeline(mesh, params);
-    groomed_name = this->get_output_filename(path, DomainType::Mesh);
+    groomed_name = this->get_output_filename(original, DomainType::Mesh);
     // save the groomed mesh
     MeshUtils::threadSafeWriteMesh(groomed_name, mesh);
   } else {
@@ -267,17 +267,17 @@ bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject, size_t domain) {
   // grab parameters
   auto params = GroomParameters(this->project_, this->project_->get_domain_names()[domain]);
 
-  auto path = subject->get_original_filenames()[domain];
+  auto original = subject->get_original_filenames()[domain];
 
   // groomed mesh name
-  std::string groom_name = this->get_output_filename(path, DomainType::Mesh);
+  std::string groom_name = this->get_output_filename(original, DomainType::Mesh);
 
-  Mesh mesh = MeshUtils::threadSafeReadMesh(path);
+  Mesh mesh = MeshUtils::threadSafeReadMesh(original);
 
   // define a groom transform
   auto transform = vtkSmartPointer<vtkTransform>::New();
 
-  if (!this->skip_grooming_) {
+  if (!params.get_skip_grooming()) {
     this->run_mesh_pipeline(mesh, params);
 
     // reflection
@@ -294,10 +294,12 @@ bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject, size_t domain) {
     if (params.get_use_center()) {
       this->add_center_transform(transform, mesh);
     }
+    // save the groomed mesh
+    MeshUtils::threadSafeWriteMesh(groom_name, mesh);
+  } else {
+    groom_name = original;
   }
 
-  // save the groomed mesh
-  MeshUtils::threadSafeWriteMesh(groom_name, mesh);
 
   {
     // lock for project data structure
@@ -359,17 +361,17 @@ bool Groom::contour_pipeline(std::shared_ptr<Subject> subject, size_t domain) {
   // grab parameters
   auto params = GroomParameters(this->project_, this->project_->get_domain_names()[domain]);
 
-  auto path = subject->get_original_filenames()[domain];
+  auto original = subject->get_original_filenames()[domain];
 
   // groomed mesh name
-  std::string groom_name = this->get_output_filename(path, DomainType::Mesh);
+  std::string groom_name = this->get_output_filename(original, DomainType::Mesh);
 
-  Mesh mesh = MeshUtils::threadSafeReadMesh(path);
+  Mesh mesh = MeshUtils::threadSafeReadMesh(original);
 
   // define a groom transform
   auto transform = vtkSmartPointer<vtkTransform>::New();
 
-  if (!this->skip_grooming_) {
+  if (!params.get_skip_grooming()) {
     // reflection
     if (params.get_reflect()) {
       auto table = subject->get_table_values();
@@ -384,10 +386,13 @@ bool Groom::contour_pipeline(std::shared_ptr<Subject> subject, size_t domain) {
     if (params.get_use_center()) {
       this->add_center_transform(transform, mesh);
     }
-  }
 
-  // save the groomed contour
-  MeshUtils::threadSafeWriteMesh(groom_name, mesh);
+    // save the groomed contour
+    MeshUtils::threadSafeWriteMesh(groom_name, mesh);
+
+  } else {
+    groom_name = original;
+  }
 
   {
     // lock for project data structure
@@ -427,6 +432,7 @@ int Groom::get_total_ops() {
 
   int num_tools = 0;
 
+  project_->update_subjects();
   auto domains = this->project_->get_domain_names();
   auto subjects = this->project_->get_subjects();
 
@@ -445,7 +451,7 @@ int Groom::get_total_ops() {
     }
 
     bool run_mesh = project_->get_original_domain_types()[i] == DomainType::Mesh ||
-                    (project_->get_original_domain_types()[i] == DomainType::Image && params.get_convert_to_mesh());
+        (project_->get_original_domain_types()[i] == DomainType::Image && params.get_convert_to_mesh());
 
     if (run_mesh) {
       num_tools += params.get_fill_holes_tool() ? 1 : 0;
@@ -465,9 +471,6 @@ void Groom::increment_progress(int amount) {
   this->progress_ = static_cast<float>(this->progress_counter_) / static_cast<float>(this->total_ops_) * 100.0;
   this->update_progress();
 }
-
-//---------------------------------------------------------------------------
-void Groom::set_skip_grooming(bool skip) { this->skip_grooming_ = skip; }
 
 //---------------------------------------------------------------------------
 void Groom::abort() { this->abort_ = true; }

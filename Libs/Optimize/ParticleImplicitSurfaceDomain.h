@@ -3,7 +3,7 @@
 #include "ParticleImageDomainWithCurvature.h"
 #include "TriMesh.h"
 #include "TriMesh_algo.h"
-#include "meshFIM.h"
+#include <Mesh/meshFIM.h>
 #include "vnl/vnl_cross.h"
 #include "vnl/vnl_inverse.h"
 #include "vnl/vnl_math.h"

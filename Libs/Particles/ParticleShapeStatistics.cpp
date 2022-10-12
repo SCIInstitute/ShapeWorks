@@ -1,11 +1,11 @@
 
 #include "ParticleShapeStatistics.h"
 #include "ShapeEvaluation.h"
-#include <Libs/Project/Project.h>
+#include <Project/Project.h>
 
 
 #include <vnl/algo/vnl_symmetric_eigensystem.h>
-#include <tinyxml.h>
+#include "ExternalLibs/tinyxml/tinyxml.h"
 
 namespace shapeworks{
 

@@ -87,7 +87,7 @@ void MeshManager::handle_thread_complete(const MeshWorkItem& item, MeshHandle me
 
   check_error_status(mesh);
 
-  emit new_mesh();
+  Q_EMIT new_mesh();
 }
 
 //---------------------------------------------------------------------------
@@ -128,10 +128,10 @@ void MeshManager::handle_warper_progress() {
   float p = sum / num_domains * 100.0;
 
   if (p < 100.0) {
-    emit status("Generating Mesh Warp");
+    Q_EMIT status("Generating Mesh Warp");
   } else {
-    emit status("");
+    Q_EMIT status("");
   }
-  emit progress(p);
+  Q_EMIT progress(p);
 }
 }  // namespace shapeworks

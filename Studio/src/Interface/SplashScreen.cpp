@@ -66,7 +66,7 @@ void SplashScreen::open_existing() {
 
   this->hide();
   QApplication::processEvents();
-  emit open_project(filename);
+  Q_EMIT open_project(filename);
   this->close();
 }
 
@@ -93,7 +93,7 @@ void SplashScreen::open_recent() {
   QDir::setCurrent(relative_path);
   this->hide();
   QApplication::processEvents();
-  emit open_project(full_file_path);
+  Q_EMIT open_project(full_file_path);
   this->close();
 }
 

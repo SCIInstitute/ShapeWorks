@@ -2,8 +2,8 @@
 
 #include "Testing.h"
 
-#include <Libs/Groom/Groom.h>
-#include <Libs/Project/Project.h>
+#include <Groom/Groom.h>
+#include <Project/Project.h>
 
 using namespace shapeworks;
 

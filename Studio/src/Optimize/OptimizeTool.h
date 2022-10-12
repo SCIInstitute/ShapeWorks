@@ -62,7 +62,7 @@ public Q_SLOTS:
 
   bool validate_inputs();
 
-signals:
+Q_SIGNALS:
   void optimize_start();
   void optimize_complete();
 
