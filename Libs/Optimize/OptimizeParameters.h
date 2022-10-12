@@ -94,6 +94,12 @@ class OptimizeParameters {
 
   bool is_subject_fixed(std::shared_ptr<Subject> subject);
 
+  int get_checkpoint_interval();
+  void set_checkpoint_interval(int iterations);
+
+  bool get_save_init_splits();
+  void set_save_init_splits(bool enabled);
+
  private:
   std::string get_output_prefix();
 
