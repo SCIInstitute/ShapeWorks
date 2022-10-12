@@ -307,6 +307,11 @@ class Mesh {
   //debug
   std::vector<double> dval;
 
+  // Current processing vector
+  std::vector<size_t> currentFloodFill;
+  // Next processing vector
+  std::vector<size_t> nextFloodFill;
+
   // Recursive flood fill
   bool fill(size_t cellInd, const Eigen::MatrixXi& F, const std::vector<size_t>& allBoundaryVerts, double step);
 

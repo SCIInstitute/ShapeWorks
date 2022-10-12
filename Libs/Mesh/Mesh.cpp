@@ -1525,8 +1525,19 @@ vtkSmartPointer<vtkDoubleArray> Mesh::computeInOutForFFCs(std::vector<size_t> al
   filled = vector<bool>(this->numFaces(), 0);
   dval = vector<double>(this->numFaces(), 0.);
 
+  // Flood filling
   std::cout << "Filling" << std::endl;
-  this->fill(size_t(cellId), F, allBoundaryVerts, 0.);
+  currentFloodFill.push_back(cellId);
+
+  size_t it = 0;
+  while(this->currentFloodFill.size() > 0){
+    for(size_t ind = 0; ind < currentFloodFill.size(); ind++){
+        this->fill(size_t(currentFloodFill[ind]), F, allBoundaryVerts, it);
+    }
+    currentFloodFill = nextFloodFill;
+    nextFloodFill.clear();
+    it++;
+  }
   std::cout << "Filling done" << std::endl;
 
   vtkSmartPointer<vtkDoubleArray> inout = vtkSmartPointer<vtkDoubleArray>::New();
@@ -1644,7 +1655,7 @@ bool Mesh::fill(size_t cellInd, const Eigen::MatrixXi& F, const std::vector<size
                 }
             }
             if(boundary_vertices_in_j < 2){
-                fill(size_t(itr), F, allBoundaryVerts, step+1.);
+                this->nextFloodFill.push_back(size_t(itr));
             }
             //std::cout << "(" << i << " " << boundary_vertices_in_j << " " << neighbors[j] << ") ";
         }
