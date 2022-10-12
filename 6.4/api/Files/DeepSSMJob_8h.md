@@ -28,7 +28,7 @@ title: Studio/src/DeepSSM/DeepSSMJob.h
 #pragma once
 
 #include <QObject>
-#include <Libs/Project/Project.h>
+#include <Project/Project.h>
 #include <Job/Job.h>
 #include <DeepSSM/DeepSSMTool.h>
 
@@ -78,4 +78,4 @@ private:
 
 -------------------------------
 
-Updated on 2022-10-11 at 01:33:50 +0000
+Updated on 2022-10-12 at 23:44:43 +0000

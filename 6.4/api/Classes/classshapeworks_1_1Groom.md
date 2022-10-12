@@ -21,7 +21,6 @@ Inherited by [shapeworks::QGroom](../Classes/classshapeworks_1_1QGroom.md)
 | -------------- | -------------- |
 | | **[Groom](../Classes/classshapeworks_1_1Groom.md#function-groom)**(ProjectHandle project) |
 | bool | **[run](../Classes/classshapeworks_1_1Groom.md#function-run)**()<br>Run the grooming.  |
-| void | **[set_skip_grooming](../Classes/classshapeworks_1_1Groom.md#function-set-skip-grooming)**(bool skip)<br>Set if grooming steps should be skipped.  |
 | void | **[abort](../Classes/classshapeworks_1_1Groom.md#function-abort)**()<br>Set abort as soon as possible.  |
 | bool | **[get_aborted](../Classes/classshapeworks_1_1Groom.md#function-get-aborted)**()<br>Return if grooming was aborted.  |
 | double | **[compute_landmark_distance](../Classes/classshapeworks_1_1Groom.md#function-compute-landmark-distance)**(vtkSmartPointer< vtkPoints > one, vtkSmartPointer< vtkPoints > two)<br>Util to compute square distance between paired landmarks.  |
@@ -69,16 +68,6 @@ bool run()
 ```
 
 Run the grooming. 
-
-### function set_skip_grooming
-
-```cpp
-void set_skip_grooming(
-    bool skip
-)
-```
-
-Set if grooming steps should be skipped. 
 
 ### function abort
 
@@ -156,4 +145,4 @@ std::atomic< int > progress_counter_ = 0;
 
 -------------------------------
 
-Updated on 2022-10-11 at 01:33:48 +0000
+Updated on 2022-10-12 at 23:44:41 +0000

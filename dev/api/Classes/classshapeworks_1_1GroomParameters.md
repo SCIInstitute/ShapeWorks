@@ -89,6 +89,8 @@ title: shapeworks::GroomParameters
 | void | **[set_remesh_num_vertices](../Classes/classshapeworks_1_1GroomParameters.md#function-set-remesh-num-vertices)**(int num_vertices) |
 | double | **[get_remesh_gradation](../Classes/classshapeworks_1_1GroomParameters.md#function-get-remesh-gradation)**() |
 | void | **[set_remesh_gradation](../Classes/classshapeworks_1_1GroomParameters.md#function-set-remesh-gradation)**(double gradation) |
+| bool | **[get_skip_grooming](../Classes/classshapeworks_1_1GroomParameters.md#function-get-skip-grooming)**() |
+| void | **[set_skip_grooming](../Classes/classshapeworks_1_1GroomParameters.md#function-set-skip-grooming)**(bool skip) |
 | void | **[restore_defaults](../Classes/classshapeworks_1_1GroomParameters.md#function-restore-defaults)**() |
 
 ## Public Attributes
@@ -710,6 +712,22 @@ void set_remesh_gradation(
 ```
 
 
+### function get_skip_grooming
+
+```cpp
+bool get_skip_grooming()
+```
+
+
+### function set_skip_grooming
+
+```cpp
+void set_skip_grooming(
+    bool skip
+)
+```
+
+
 ### function restore_defaults
 
 ```cpp
@@ -756,4 +774,4 @@ static const std::string GROOM_ALIGNMENT_LANDMARK_C;
 
 -------------------------------
 
-Updated on 2022-10-11 at 01:33:48 +0000
+Updated on 2022-10-12 at 23:44:41 +0000

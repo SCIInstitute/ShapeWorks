@@ -1,9 +1,9 @@
 ---
-title: Libs/Optimize/ParticleSystem/ParticleImplicitSurfaceDomain.h
+title: Libs/Optimize/ParticleImplicitSurfaceDomain.h
 
 ---
 
-# Libs/Optimize/ParticleSystem/ParticleImplicitSurfaceDomain.h
+# Libs/Optimize/ParticleImplicitSurfaceDomain.h
 
 
 
@@ -30,7 +30,7 @@ title: Libs/Optimize/ParticleSystem/ParticleImplicitSurfaceDomain.h
 #include "ParticleImageDomainWithCurvature.h"
 #include "TriMesh.h"
 #include "TriMesh_algo.h"
-#include "meshFIM.h"
+#include <Mesh/meshFIM.h>
 #include "vnl/vnl_cross.h"
 #include "vnl/vnl_inverse.h"
 #include "vnl/vnl_math.h"
@@ -189,4 +189,4 @@ class ParticleImplicitSurfaceDomain : public ParticleImageDomainWithCurvature<T>
 
 -------------------------------
 
-Updated on 2022-10-11 at 01:33:50 +0000
+Updated on 2022-10-12 at 23:44:43 +0000

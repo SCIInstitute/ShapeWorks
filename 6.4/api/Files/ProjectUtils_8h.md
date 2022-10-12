@@ -36,14 +36,14 @@ title: Libs/Project/ProjectUtils.h
 #include <vector>
 
 // tsl
-#include "ordered_map.h"
+#include <ordered_map.h>
 
 // vtk
 #include <vtkSmartPointer.h>
 #include <vtkTransform.h>
 
 // shapeworks
-#include <DomainType.h>
+#include <Optimize/DomainType.h>
 
 namespace shapeworks {
 
@@ -129,4 +129,4 @@ class ProjectUtils {
 
 -------------------------------
 
-Updated on 2022-10-11 at 01:33:50 +0000
+Updated on 2022-10-12 at 23:44:43 +0000

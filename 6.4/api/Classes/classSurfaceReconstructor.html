@@ -2010,6 +2010,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../../dev/shapeworks-library.html" class="md-nav__link">
+        ShapeWorks as a Library
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../Modules/index_groups.html" class="md-nav__link">
         Groups
       </a>
@@ -2183,99 +2197,9 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#public-types" class="md-nav__link">
-    Public Types
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#public-functions" class="md-nav__link">
     Public Functions
   </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#public-types-documentation" class="md-nav__link">
-    Public Types Documentation
-  </a>
-  
-    <nav class="md-nav" aria-label="Public Types Documentation">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#typedef-pixeltype" class="md-nav__link">
-    typedef PixelType
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#typedef-imagetype" class="md-nav__link">
-    typedef ImageType
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#typedef-readertype" class="md-nav__link">
-    typedef ReaderType
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#typedef-coordinatereptype" class="md-nav__link">
-    typedef CoordinateRepType
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#typedef-rbftransformtype" class="md-nav__link">
-    typedef RBFTransformType
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#typedef-thinplatesplinetype" class="md-nav__link">
-    typedef ThinPlateSplineType
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#typedef-interpolatortype" class="md-nav__link">
-    typedef InterpolatorType
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#typedef-reconstructiontype" class="md-nav__link">
-    typedef ReconstructionType
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#typedef-pointtype" class="md-nav__link">
-    typedef PointType
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#typedef-pointarraytype" class="md-nav__link">
-    typedef PointArrayType
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -2290,6 +2214,13 @@
           <li class="md-nav__item">
   <a href="#function-surfacereconstructor" class="md-nav__link">
     function SurfaceReconstructor
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-surfacereconstructor_1" class="md-nav__link">
+    function ~SurfaceReconstructor
   </a>
   
 </li>
@@ -2395,57 +2326,6 @@
 
 
 <h1 id="surfacereconstructor">SurfaceReconstructor</h1>
-<h2 id="public-types">Public Types</h2>
-<table>
-<thead>
-<tr>
-<th></th>
-<th>Name</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>typedef float</td>
-<td><strong><a href="classSurfaceReconstructor.html#typedef-pixeltype">PixelType</a></strong></td>
-</tr>
-<tr>
-<td>typedef itk::Image&lt; PixelType, 3 &gt;</td>
-<td><strong><a href="classSurfaceReconstructor.html#typedef-imagetype">ImageType</a></strong></td>
-</tr>
-<tr>
-<td>typedef itk::ImageFileReader&lt; ImageType &gt;</td>
-<td><strong><a href="classSurfaceReconstructor.html#typedef-readertype">ReaderType</a></strong></td>
-</tr>
-<tr>
-<td>typedef double</td>
-<td><strong><a href="classSurfaceReconstructor.html#typedef-coordinatereptype">CoordinateRepType</a></strong></td>
-</tr>
-<tr>
-<td>typedef <a href="classitk_1_1CompactlySupportedRBFSparseKernelTransform.html">itk::CompactlySupportedRBFSparseKernelTransform</a>&lt; CoordinateRepType, 3 &gt;</td>
-<td><strong><a href="classSurfaceReconstructor.html#typedef-rbftransformtype">RBFTransformType</a></strong></td>
-</tr>
-<tr>
-<td>typedef <a href="classitk_1_1ThinPlateSplineKernelTransform2.html">itk::ThinPlateSplineKernelTransform2</a>&lt; CoordinateRepType, 3 &gt;</td>
-<td><strong><a href="classSurfaceReconstructor.html#typedef-thinplatesplinetype">ThinPlateSplineType</a></strong></td>
-</tr>
-<tr>
-<td>typedef itk::LinearInterpolateImageFunction&lt; ImageType, double &gt;</td>
-<td><strong><a href="classSurfaceReconstructor.html#typedef-interpolatortype">InterpolatorType</a></strong></td>
-</tr>
-<tr>
-<td>typedef <a href="classReconstruction.html">Reconstruction</a>&lt; <a href="classitk_1_1CompactlySupportedRBFSparseKernelTransform.html">itk::CompactlySupportedRBFSparseKernelTransform</a>, itk::LinearInterpolateImageFunction, CoordinateRepType, PixelType, ImageType &gt;</td>
-<td><strong><a href="classSurfaceReconstructor.html#typedef-reconstructiontype">ReconstructionType</a></strong></td>
-</tr>
-<tr>
-<td>typedef ReconstructionType::PointType</td>
-<td><strong><a href="classSurfaceReconstructor.html#typedef-pointtype">PointType</a></strong></td>
-</tr>
-<tr>
-<td>typedef ReconstructionType::PointArrayType</td>
-<td><strong><a href="classSurfaceReconstructor.html#typedef-pointarraytype">PointArrayType</a></strong></td>
-</tr>
-</tbody>
-</table>
 <h2 id="public-functions">Public Functions</h2>
 <table>
 <thead>
@@ -2458,6 +2338,10 @@
 <tr>
 <td></td>
 <td><strong><a href="classSurfaceReconstructor.html#function-surfacereconstructor">SurfaceReconstructor</a></strong>()</td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="classSurfaceReconstructor.html#function-~surfacereconstructor">~SurfaceReconstructor</a></strong>()</td>
 </tr>
 <tr>
 <td>void</td>
@@ -2505,40 +2389,12 @@
 </tr>
 </tbody>
 </table>
-<h2 id="public-types-documentation">Public Types Documentation</h2>
-<h3 id="typedef-pixeltype">typedef PixelType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">SurfaceReconstructor</span><span class="o">::</span><span class="n">PixelType</span><span class="p">;</span><span class="w"></span>
-</code></pre></div>
-<h3 id="typedef-imagetype">typedef ImageType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Image</span><span class="o">&lt;</span><span class="w"> </span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">SurfaceReconstructor</span><span class="o">::</span><span class="n">ImageType</span><span class="p">;</span><span class="w"></span>
-</code></pre></div>
-<h3 id="typedef-readertype">typedef ReaderType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ImageFileReader</span><span class="o">&lt;</span><span class="w"> </span><span class="n">ImageType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">SurfaceReconstructor</span><span class="o">::</span><span class="n">ReaderType</span><span class="p">;</span><span class="w"></span>
-</code></pre></div>
-<h3 id="typedef-coordinatereptype">typedef CoordinateRepType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">SurfaceReconstructor</span><span class="o">::</span><span class="n">CoordinateRepType</span><span class="p">;</span><span class="w"></span>
-</code></pre></div>
-<h3 id="typedef-rbftransformtype">typedef RBFTransformType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">CompactlySupportedRBFSparseKernelTransform</span><span class="o">&lt;</span><span class="w"> </span><span class="n">CoordinateRepType</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="w"> </span><span class="n">SurfaceReconstructor</span><span class="o">::</span><span class="n">RBFTransformType</span><span class="p">;</span><span class="w"></span>
-</code></pre></div>
-<h3 id="typedef-thinplatesplinetype">typedef ThinPlateSplineType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ThinPlateSplineKernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">CoordinateRepType</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="w"> </span><span class="n">SurfaceReconstructor</span><span class="o">::</span><span class="n">ThinPlateSplineType</span><span class="p">;</span><span class="w"></span>
-</code></pre></div>
-<h3 id="typedef-interpolatortype">typedef InterpolatorType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">LinearInterpolateImageFunction</span><span class="o">&lt;</span><span class="n">ImageType</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">SurfaceReconstructor</span><span class="o">::</span><span class="n">InterpolatorType</span><span class="p">;</span><span class="w"></span>
-</code></pre></div>
-<h3 id="typedef-reconstructiontype">typedef ReconstructionType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Reconstruction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">CompactlySupportedRBFSparseKernelTransform</span><span class="p">,</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">LinearInterpolateImageFunction</span><span class="p">,</span><span class="w"> </span><span class="n">CoordinateRepType</span><span class="p">,</span><span class="w"> </span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="n">ImageType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">SurfaceReconstructor</span><span class="o">::</span><span class="n">ReconstructionType</span><span class="p">;</span><span class="w"></span>
-</code></pre></div>
-<h3 id="typedef-pointtype">typedef PointType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">ReconstructionType</span><span class="o">::</span><span class="n">PointType</span><span class="w"> </span><span class="n">SurfaceReconstructor</span><span class="o">::</span><span class="n">PointType</span><span class="p">;</span><span class="w"></span>
-</code></pre></div>
-<h3 id="typedef-pointarraytype">typedef PointArrayType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">ReconstructionType</span><span class="o">::</span><span class="n">PointArrayType</span><span class="w"> </span><span class="n">SurfaceReconstructor</span><span class="o">::</span><span class="n">PointArrayType</span><span class="p">;</span><span class="w"></span>
-</code></pre></div>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-surfacereconstructor">function SurfaceReconstructor</h3>
 <div class="highlight"><pre><span></span><code><span class="n">SurfaceReconstructor</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-surfacereconstructor_1">function ~SurfaceReconstructor</h3>
+<div class="highlight"><pre><span></span><code><span class="o">~</span><span class="n">SurfaceReconstructor</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-initializereconstruction">function initializeReconstruction</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">initializeReconstruction</span><span class="p">(</span><span class="w"></span>
@@ -2599,7 +2455,7 @@
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-10-11 at 01:33:50 +0000</p>
+<p>Updated on 2022-10-12 at 23:44:42 +0000</p>
 
               
             </article>

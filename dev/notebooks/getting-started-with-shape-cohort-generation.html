@@ -2245,6 +2245,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../dev/shapeworks-library.html" class="md-nav__link">
+        ShapeWorks as a Library
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../api/Modules/index_groups.html" class="md-nav__link">
         Groups
       </a>
@@ -2828,7 +2842,6 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 .highlight-ipynb .m { color: var(--jp-mirror-editor-number-color) } /* Literal.Number */
 .highlight-ipynb .s { color: var(--jp-mirror-editor-string-color) } /* Literal.String */
 .highlight-ipynb .ow { color: var(--jp-mirror-editor-operator-color); font-weight: bold } /* Operator.Word */
-.highlight-ipynb .pm { color: var(--jp-mirror-editor-punctuation-color) } /* Punctuation.Marker */
 .highlight-ipynb .w { color: var(--jp-mirror-editor-variable-color) } /* Text.Whitespace */
 .highlight-ipynb .mb { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Bin */
 .highlight-ipynb .mf { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Float */
@@ -3671,7 +3684,7 @@ Licensed under the Apache License, Version 2.0.
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h1 id="Getting-Started-with-Shape-Cohort-Generator">Getting Started with Shape Cohort Generator<a class="anchor-link" href="#Getting-Started-with-Shape-Cohort-Generator">&#182;</a></h1>
+<h1 id="getting-started-with-shape-cohort-generator">Getting Started with Shape Cohort Generator<a class="anchor-link" href="#getting-started-with-shape-cohort-generator">&#182;</a></h1>
 </div>
 </div>
 </div>
@@ -3682,29 +3695,27 @@ Licensed under the Apache License, Version 2.0.
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="Before-you-start!">Before you start!<a class="anchor-link" href="#Before-you-start!">&#182;</a></h2><ul>
+<h2 id="before-you-start">Before you start!<a class="anchor-link" href="#before-you-start">&#182;</a></h2><ul>
 <li>This notebook assumes that shapeworks conda environment has been activated using <code>conda activate shapeworks</code> on the terminal.</li>
-<li>See <a href="getting-started-with-notebooks.ipynb">Getting Started with Notebooks</a> for information on setting up your environment and notebook shortcuts.</li>
+<li>See <a href="getting-started-with-notebooks.ipynb">Getting Started with Notebooks</a> for information on setting up your environment and notebook shortcuts. </li>
 <li>See <a href="getting-started-with-meshes.ipynb">Getting Started with Meshes</a> to learn how to load and visualize meshes.</li>
 <li>See <a href="getting-started-with-segmentations.ipynb">Getting Started with Segmentations</a> to learn how to load and visualize binary segmentations.</li>
 <li>Note example output was generated on Linux/Mac environment and may look different on Windows.</li>
 </ul>
-<h2 id="In-this-notebook,-you-will-learn:">In this notebook, you will learn:<a class="anchor-link" href="#In-this-notebook,-you-will-learn:">&#182;</a></h2><p>How to use the <code>ShapeCohortGenerator</code> package to generate meshes and segmentations (binary images) for synthetic shape cohorts, i.e., parameterized families of shapes.</p>
-<h2 id="About-ShapeCohortGenerator">About <code>ShapeCohortGenerator</code><a class="anchor-link" href="#About-ShapeCohortGenerator">&#182;</a></h2><p><code>ShapeCohortGenerator</code> is a python package that generates synthetic shape cohorts with groundtruth surface correspondences by varying different parameters describing such shape families.</p>
-<h3 id="What-is-a-shape-cohort-?">What is a shape cohort ?<a class="anchor-link" href="#What-is-a-shape-cohort-?">&#182;</a></h3><p>A shape cohort is a collection of geometric shapes that attain clear differences in shape; however, they share common characteristics that stem from the underlying mechanisms involved in their formation. For real-world shapes, e.g., anatomical structures, such common characteristics (or factor of variations) are not known in advance, hence ShapeWorks discovers such factors of variations directly from surface meshes or binary segmentations of such shapes. <code>ShapeCohortGenerator</code> uses the true factors of variations known for synthetic shapes that are analytically parameterized.</p>
-<h3 id="Why-ShapeCohortGenerator?">Why <code>ShapeCohortGenerator</code>?<a class="anchor-link" href="#Why-ShapeCohortGenerator?">&#182;</a></h3><p>We require a shape population dataset to run the shape modeling workflow. Each population dataset requires unique grooming steps. Developing and testing complicated grooming pipelines for large-scale datasets can consume a lot of computational resources and time. Hence, having a few toy datasets, which are lightweight and robust in variability can make this development and debugging process easier and simpler.These cohorts can also be used to test the optimization workflow.</p>
-<h3 id="What-families-of-shape-can-be-generated-by-ShapeCohortGenerator?">What families of shape can be generated by <code>ShapeCohortGenerator</code>?<a class="anchor-link" href="#What-families-of-shape-can-be-generated-by-ShapeCohortGenerator?">&#182;</a></h3><p><code>ShapeCohortGenerator</code> currently supports two families of synthetic shapes, namely <a href="https://en.wikipedia.org/wiki/Ellipsoid">ellipsoids</a> and  <a href="https://link.springer.com/article/10.1007/s00158-018-2034-z?shared-article-renderer">supershapes</a>.</p>
-<h4 id="Ellipsoids">Ellipsoids<a class="anchor-link" href="#Ellipsoids">&#182;</a></h4><p>An <a href="https://en.wikipedia.org/wiki/Ellipsoid">ellipsoid</a>is symmetrical about three mutually perpendicular axes that intersect at the center. If a, b, and c are the principal semiaxes, the general equation of such an ellipsoid is 
+<h2 id="in-this-notebook-you-will-learn">In this notebook, you will learn:<a class="anchor-link" href="#in-this-notebook-you-will-learn">&#182;</a></h2><p>How to use the <code>ShapeCohortGenerator</code> package to generate meshes and segmentations (binary images) for synthetic shape cohorts, i.e., parameterized families of shapes.</p>
+<h2 id="about-shapecohortgenerator">About <code>ShapeCohortGenerator</code><a class="anchor-link" href="#about-shapecohortgenerator">&#182;</a></h2><p><code>ShapeCohortGenerator</code> is a python package that generates synthetic shape cohorts with groundtruth surface correspondences by varying different parameters describing such shape families.</p>
+<h3 id="what-is-a-shape-cohort">What is a shape cohort ?<a class="anchor-link" href="#what-is-a-shape-cohort">&#182;</a></h3><p>A shape cohort is a collection of geometric shapes that attain clear differences in shape; however, they share common characteristics that stem from the underlying mechanisms involved in their formation. For real-world shapes, e.g., anatomical structures, such common characteristics (or factor of variations) are not known in advance, hence ShapeWorks discovers such factors of variations directly from surface meshes or binary segmentations of such shapes. <code>ShapeCohortGenerator</code> uses the true factors of variations known for synthetic shapes that are analytically parameterized.</p>
+<h3 id="why-shapecohortgenerator">Why <code>ShapeCohortGenerator</code>?<a class="anchor-link" href="#why-shapecohortgenerator">&#182;</a></h3><p>We require a shape population dataset to run the shape modeling workflow. Each population dataset requires unique grooming steps. Developing and testing complicated grooming pipelines for large-scale datasets can consume a lot of computational resources and time. Hence, having a few toy datasets, which are lightweight and robust in variability can make this development and debugging process easier and simpler.These cohorts can also be used to test the optimization workflow.</p>
+<h3 id="what-families-of-shape-can-be-generated-by-shapecohortgenerator">What families of shape can be generated by <code>ShapeCohortGenerator</code>?<a class="anchor-link" href="#what-families-of-shape-can-be-generated-by-shapecohortgenerator">&#182;</a></h3><p><code>ShapeCohortGenerator</code> currently supports two families of synthetic shapes, namely <a href="https://en.wikipedia.org/wiki/Ellipsoid">ellipsoids</a> and  <a href="https://link.springer.com/article/10.1007/s00158-018-2034-z?shared-article-renderer">supershapes</a>.</p>
+<h4 id="ellipsoids">Ellipsoids<a class="anchor-link" href="#ellipsoids">&#182;</a></h4><p>An <a href="https://en.wikipedia.org/wiki/Ellipsoid">ellipsoid</a>is symmetrical about three mutually perpendicular axes that intersect at the center. If a, b, and c are the principal semiaxes, the general equation of such an ellipsoid is 
    $$\frac{x^2}{a^2} + \frac{y^2}{b^2} + \frac{z^2}{c^2} = 1$$</p>
-<h4 id="Supershapes">Supershapes<a class="anchor-link" href="#Supershapes">&#182;</a></h4><p><a href="https://link.springer.com/article/10.1007/s00158-018-2034-z?shared-article-renderer">Supershapes</a> are an extension of <a href="https://pubmed.ncbi.nlm.nih.gov/21659124/">superellipses</a> that can exhibit variable symmetry as well as asymmetry. Supershapes can be described through a single equation, the so-called superformula, that parametrizes a wide variety of shapes, including geometric primitives. The superformula is given by :</p>
+<h4 id="supershapes">Supershapes<a class="anchor-link" href="#supershapes">&#182;</a></h4><p><a href="https://link.springer.com/article/10.1007/s00158-018-2034-z?shared-article-renderer">Supershapes</a> are an extension of <a href="https://pubmed.ncbi.nlm.nih.gov/21659124/">superellipses</a> that can exhibit variable symmetry as well as asymmetry. Supershapes can be described through a single equation, the so-called superformula, that parametrizes a wide variety of shapes, including geometric primitives. The superformula is given by :</p>
 $$ r(\theta) = \left[ \left| \frac{1}{a} \cos \left( \frac{m\theta}{4} \right) \right|^{n_2} +  \left|  \frac{1}{b} \sin \left(\frac{m\theta}{4} \right) \right|^{n_3}  \right]^{-\frac{1}{n_1}} $$<p>Unlike superellipses, supershapes need not to be symmetric; the parameter $m$ controls the rotational symmetry. The values of  $a$ and $b$ control the size, and the exponents $n_1,n_2$ and $n_3$ control the curvature of the sides. The superformula can produce a wide range of shapes,including many shapes found in nature.</p>
 <p>The <code>ShapeCohortGenerator</code> package allows the user to specify the rotational symmetry $m$ and the size. The values of $n_1,n_2$ and $n_3$ are randomly selected to creates shapes with different curvatures. Examples of these supershapes with different $m$ values can be seen below.</p>
-<p><img src="https://sci.utah.edu/~shapeworks/doc-resources/gifs/supershapes_examples.png"></p>
-<h4 id="2D-Supershapes">2D Supershapes<a class="anchor-link" href="#2D-Supershapes">&#182;</a></h4><p>2D supershapes are the same as Supershapes but two-dimensional instead of three. When generation is called, contours are created rather than meshes When generate_segmentations and generate_images are called, 2D .png images are created rather than 3D .nrrd images.</p>
-<h4 id="Joint-Ellipsoids">Joint Ellipsoids<a class="anchor-link" href="#Joint-Ellipsoids">&#182;</a></h4><p>Joint ellipsoids are two ellipsoids positioned in a parameterized way in relation to each other. This cohort allows for exploring modes of variation such as relative rotation.</p>
-<h4 id="Torus">Torus<a class="anchor-link" href="#Torus">&#182;</a></h4><p>Tori are donut-shaped surfaces generated by a circle rotated about an axis in its plane that does not intersect the circle. For the tori mesh generation, the arguments are the same as for ellipsoids, except instead of <code>randomize_x_radius</code> and <code>randomize_y_radius</code> we have <code>randomize_ring_radius</code> (outside) and <code>randomize_cross_section_radius</code>(inside).</p>
-<p><img src="https://sci.utah.edu/~shapeworks/doc-resources/pngs/tori.png"></p>
-<h3 id="What-you-can-do-with-ShapeCohortGenerator?">What you can do with <code>ShapeCohortGenerator</code>?<a class="anchor-link" href="#What-you-can-do-with-ShapeCohortGenerator?">&#182;</a></h3><p>The <code>ShapeCohortGenerator</code> package can be used to generate collections of ellipsoids or supershapes, where the user can control the number of shapes in the cohort and the variability of the members of the cohort.</p>
+<p><img src="https://sci.utah.edu/~shapeworks/doc-resources/gifs/supershapes_examples.png"></p><h4 id="2d-supershapes">2D Supershapes<a class="anchor-link" href="#2d-supershapes">&#182;</a></h4><p>2D supershapes are the same as Supershapes but two-dimensional instead of three. When generation is called, contours are created rather than meshes When generate_segmentations and generate_images are called, 2D .png images are created rather than 3D .nrrd images.</p>
+<h4 id="joint-ellipsoids">Joint Ellipsoids<a class="anchor-link" href="#joint-ellipsoids">&#182;</a></h4><p>Joint ellipsoids are two ellipsoids positioned in a parameterized way in relation to each other. This cohort allows for exploring modes of variation such as relative rotation.</p>
+<h4 id="torus">Torus<a class="anchor-link" href="#torus">&#182;</a></h4><p>Tori are donut-shaped surfaces generated by a circle rotated about an axis in its plane that does not intersect the circle. For the tori mesh generation, the arguments are the same as for ellipsoids, except instead of <code>randomize_x_radius</code> and <code>randomize_y_radius</code> we have <code>randomize_ring_radius</code> (outside) and <code>randomize_cross_section_radius</code>(inside).</p>
+<p><img src="https://sci.utah.edu/~shapeworks/doc-resources/pngs/tori.png"></p><h3 id="what-you-can-do-with-shapecohortgenerator">What you can do with <code>ShapeCohortGenerator</code>?<a class="anchor-link" href="#what-you-can-do-with-shapecohortgenerator">&#182;</a></h3><p>The <code>ShapeCohortGenerator</code> package can be used to generate collections of ellipsoids or supershapes, where the user can control the number of shapes in the cohort and the variability of the members of the cohort.</p>
 <p>Each cohort will have mesh data (vtk format, supershapes will be saved in stl format) and segmentation image data (nrrd format). These cohorts generated by the package can be directly run with <code>ShapeWorks</code>. Generating these cohorts in the <code>Output</code> folder would be a good way to start.</p>
 <p>We will also define modular/generic helper functions as we walk through these items to reuse functionalities without duplicating code.</p>
 
@@ -3718,7 +3729,7 @@ $$ r(\theta) = \left[ \left| \frac{1}{a} \cos \left( \frac{m\theta}{4} \right) \
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="Importing-shapeworks-library">Importing <code>shapeworks</code> library<a class="anchor-link" href="#Importing-shapeworks-library">&#182;</a></h3>
+<h3 id="importing-shapeworks-library">Importing <code>shapeworks</code> library<a class="anchor-link" href="#importing-shapeworks-library">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -3761,7 +3772,7 @@ $$ r(\theta) = \left[ \left| \frac{1}{a} \cos \left( \frac{m\theta}{4} \right) \
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="Importing-ShapeCohortGen-library">Importing <code>ShapeCohortGen</code> library<a class="anchor-link" href="#Importing-ShapeCohortGen-library">&#182;</a></h3><p>To use this package, first a <code>generator</code> is defined, then <code>generate()</code> is called that generates shapes in vtk mesh format. Then segmentations (binary image) and images (synthetic intensities that mimic imaging data for real shapes) can be created from those meshes.</p>
+<h3 id="importing-shapecohortgen-library">Importing <code>ShapeCohortGen</code> library<a class="anchor-link" href="#importing-shapecohortgen-library">&#182;</a></h3><p>To use this package, first a <code>generator</code> is defined, then <code>generate()</code> is called that generates shapes in vtk mesh format. Then segmentations (binary image) and images (synthetic intensities that mimic imaging data for real shapes) can be created from those meshes.</p>
 <p>Each generator has three functions:</p>
 <ul>
 <li><code>generate()</code> for mesh generation (function specific to generator type)</li>
@@ -3811,7 +3822,7 @@ $$ r(\theta) = \left[ \left| \frac{1}{a} \cos \left( \frac{m\theta}{4} \right) \
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="Defining-parameters-for-pyvista-plotter">Defining parameters for <code>pyvista</code> plotter<a class="anchor-link" href="#Defining-parameters-for-pyvista-plotter">&#182;</a></h3>
+<h3 id="defining-parameters-for-pyvista-plotter">Defining parameters for <code>pyvista</code> plotter<a class="anchor-link" href="#defining-parameters-for-pyvista-plotter">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -3890,7 +3901,7 @@ show_mesh_edges = False  # show mesh edges </div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="Generating-an-Ellipsoid-Cohort">Generating an Ellipsoid Cohort<a class="anchor-link" href="#Generating-an-Ellipsoid-Cohort">&#182;</a></h2><h3 id="Step-1:-Initalize-Ellipsoid-Generator">Step 1: Initalize Ellipsoid Generator<a class="anchor-link" href="#Step-1:-Initalize-Ellipsoid-Generator">&#182;</a></h3><p>Here, we will initialize an ellipsoid cohort generator. The output directory needs to be specified, otherwise an output directory will automatically generated.</p>
+<h2 id="generating-an-ellipsoid-cohort">Generating an Ellipsoid Cohort<a class="anchor-link" href="#generating-an-ellipsoid-cohort">&#182;</a></h2><h3 id="step-1-initalize-ellipsoid-generator">Step 1: Initalize Ellipsoid Generator<a class="anchor-link" href="#step-1-initalize-ellipsoid-generator">&#182;</a></h3><p>Here, we will initialize an ellipsoid cohort generator. The output directory needs to be specified, otherwise an output directory will automatically generated.</p>
 <p>Arguments:</p>
 <ul>
 <li><code>out_dir</code>: path where the dataset should be saved<br>
@@ -3942,38 +3953,34 @@ ellipsoid_generator = ShapeCohortGen.EllipsoidCohortGenerator(out_dir)</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="Step-2:-Generate-Meshes">Step 2: Generate Meshes<a class="anchor-link" href="#Step-2:-Generate-Meshes">&#182;</a></h3><p>For the ellipsoid mesh generation, you can specify the following arguments:</p>
+<h3 id="step-2-generate-meshes">Step 2: Generate Meshes<a class="anchor-link" href="#step-2-generate-meshes">&#182;</a></h3><p>For the ellipsoid mesh generation, you can specify the following arguments:</p>
 <ul>
-<li><p><code>num_samples</code>: number of samples in the cohort(dataset)<br>
+<li><code>num_samples</code>: number of samples in the cohort(dataset)<br>
   Datatype : <code>int</code> <br>
-  Default value : 3 <br></p>
-  <br>
-</li>
-<li><p><code>randomize_center</code>: randomizes the centers for ellipsoid mesh generation if set to <code>True</code><br>
+  Default value : 3 <br>
+  <br></li>
+<li><code>randomize_center</code>: randomizes the centers for ellipsoid mesh generation if set to <code>True</code><br>
   Datatype : <code>bool</code> <br> 
-  Defaut value : <code>True</code> <br></p>
-  <br>
-</li>
+  Defaut value : <code>True</code> <br>
+  <br>   </li>
 <li><p><code>randomize_rotation</code>: randomizes the orientation of the ellipsoid if set to <code>True</code> <br>
   Datatype : <code>bool</code> <br> 
-  Defaut value : <code>True</code></p>
-  <br>
+  Defaut value : <code>True</code>
+  <br></p>
 </li>
 <li><p><code>randomize_x_radius</code>: randomizes the radius of the ellipsoid along x-axis if set to <code>True</code> or else the value is fixed as 20 for all ellipsoids<br>
   Datatype : <code>bool</code> <br> 
-  Defaut value : <code>True</code></p>
-  <br>
+  Defaut value : <code>True</code>
+  <br></p>
 </li>
-<li><p><code>randomize_y_radius</code>: randomizes the radius of the ellipsoid along y-axis if set to <code>True</code> or else the value is fixed as 10 for all ellipsoids<br>
+<li><code>randomize_y_radius</code>: randomizes the radius of the ellipsoid along y-axis if set to <code>True</code> or else the value is fixed as 10 for all ellipsoids<br>
   Datatype : <code>bool</code> <br> 
-  Defaut value : <code>True</code></p>
-  <br>
-</li>
-<li><p><code>randomize_z_radius</code>: randomizes the radius of the ellipsoid along z-axis if set to <code>True</code> or else the value is fixed as 10 for all ellipsoids<br>
+  Defaut value : <code>True</code>
+  <br></li>
+<li><code>randomize_z_radius</code>: randomizes the radius of the ellipsoid along z-axis if set to <code>True</code> or else the value is fixed as 10 for all ellipsoids<br>
   Datatype : <code>bool</code> <br> 
-  Defaut value : <code>True</code></p>
-  <br>
-</li>
+  Defaut value : <code>True</code>
+  <br></li>
 </ul>
 
 </div>
@@ -4065,7 +4072,6 @@ sw.plot_meshes(meshList, use_same_window=True, notebook=notebook)</div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p><img src="https://sci.utah.edu/~shapeworks/doc-resources/pngs/generated_ellipsoids.png"></p>
-
 </div>
 </div>
 </div>
@@ -4076,23 +4082,22 @@ sw.plot_meshes(meshList, use_same_window=True, notebook=notebook)</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="Step-3:-Generate-Segmentations">Step 3: Generate Segmentations<a class="anchor-link" href="#Step-3:-Generate-Segmentations">&#182;</a></h3><p>For segmentation generation, you can specify the following arguments:</p>
+<h3 id="step-3-generate-segmentations">Step 3: Generate Segmentations<a class="anchor-link" href="#step-3-generate-segmentations">&#182;</a></h3><p>For segmentation generation, you can specify the following arguments:</p>
 <ul>
 <li><p><code>randomize_size</code>: randomize the size of the images to include more background if set to <code>True</code><br>
   Datatype : <code>bool</code> <br> 
-  Defaut value : <code>True</code></p>
-  <br>
+  Defaut value : <code>True</code>
+  <br></p>
 </li>
 <li><p><code>spacing</code>: set the spacing of the segmentation image <br>
   Datatype: <code>list</code> <br>
-  Default value: <code>[1,1,1]</code> <br></p>
-  <br>
+  Default value: <code>[1,1,1]</code> <br>
+  <br></p>
 </li>
-<li><p><code>allow_on_boundary</code>: If set to <code>True</code>,randomly selects 20% samples and ensure that the shapes are touching two random selected axes out of <code>[x,y,z]</code><br>
+<li><code>allow_on_boundary</code>: If set to <code>True</code>,randomly selects 20% samples and ensure that the shapes are touching two random selected axes out of <code>[x,y,z]</code><br>
   Datatype : <code>bool</code> <br> 
-  Defaut value : <code>True</code></p>
-  <br>
-</li>
+  Defaut value : <code>True</code>
+  <br></li>
 </ul>
 
 </div>
@@ -4216,7 +4221,6 @@ sw.plot_volumes(shapeSegList,
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p><img src="https://sci.utah.edu/~shapeworks/doc-resources/pngs/generated_ellipsoids_segs.png"></p>
-
 </div>
 </div>
 </div>
@@ -4227,28 +4231,28 @@ sw.plot_volumes(shapeSegList,
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="Step-4:-Generate-Images---Turning-segmentations-into-non-binary-images">Step 4: Generate Images - Turning segmentations into non-binary images<a class="anchor-link" href="#Step-4:-Generate-Images---Turning-segmentations-into-non-binary-images">&#182;</a></h3><p>For the image generation, a Gaussian distribution is used to define foreground and background pixels values and a blur factor is used to blur the boundary with a Gaussian filter. You can specify the following arguments:</p>
+<h3 id="step-4-generate-images-turning-segmentations-into-non-binary-images">Step 4: Generate Images - Turning segmentations into non-binary images<a class="anchor-link" href="#step-4-generate-images-turning-segmentations-into-non-binary-images">&#182;</a></h3><p>For the image generation, a Gaussian distribution is used to define foreground and background pixels values and a blur factor is used to blur the boundary with a Gaussian filter. You can specify the following arguments:</p>
 <ul>
 <li><code>blur_factor</code>: size of Gaussian filter to use for boundary blurring <br>
   Datatype : <code>int</code> <br> 
-  Defaut value : <code>1</code>  <br>
-</li>
+  Defaut value : <code>1</code>
+  <br></li>
 <li><code>foreground_mean</code>: mean of the foreground pixel value distribution <br>
   Datatype: <code>int</code> <br>
-  Default value: <code>180</code> <br>  <br>
-</li>
+  Default value: <code>180</code> <br>
+  <br></li>
 <li><code>foreground_var</code>: variance of the foreground pixel value distribution <br>
   Datatype : <code>int</code> <br> 
-  Defaut value : <code>30</code>  <br>
-</li>
+  Defaut value : <code>30</code>
+  <br></li>
 <li><code>background_mean</code>: mean of the background pixel value distribution <br>
   Datatype: <code>int</code> <br>
-  Default value: <code>80</code> <br>  <br>
-</li>
+  Default value: <code>80</code> <br>
+  <br></li>
 <li><code>background_var</code>: variance of the foreground pixel value distribution <br>
   Datatype : <code>int</code> <br> 
-  Defaut value : <code>30</code>  <br>
-</li>
+  Defaut value : <code>30</code>
+  <br></li>
 </ul>
 
 </div>
@@ -4342,7 +4346,6 @@ sw.plot_volumes(seg0)</div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p><img src="https://sci.utah.edu/~shapeworks/doc-resources/pngs/generated_ellipsoid_seg.png"></p>
-
 </div>
 </div>
 </div>
@@ -4390,6 +4393,17 @@ sw.plot_volumes(img0)</div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p><img src="https://sci.utah.edu/~shapeworks/doc-resources/pngs/generated_ellipsoid_image.png"></p>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h2 id="generating-supershapes-cohort">Generating Supershapes Cohort<a class="anchor-link" href="#generating-supershapes-cohort">&#182;</a></h2><p>SuperShapes are parameterized shapes that have geometry based on a given number of lobes, $m$.</p>
 
 </div>
 </div>
@@ -4401,19 +4415,7 @@ sw.plot_volumes(img0)</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="Generating-Supershapes-Cohort">Generating Supershapes Cohort<a class="anchor-link" href="#Generating-Supershapes-Cohort">&#182;</a></h2><p>SuperShapes are parameterized shapes that have geometry based on a given number of lobes, $m$.</p>
-
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="Step-1:-Initialize-SuperShapes-Generator">Step 1: Initialize SuperShapes Generator<a class="anchor-link" href="#Step-1:-Initialize-SuperShapes-Generator">&#182;</a></h3><p>Here, we will initialize  SuperShapes cohort generator. The output directory needs to be specified otherwise an output directory will automatically be generated.</p>
+<h3 id="step-1-initialize-supershapes-generator">Step 1: Initialize SuperShapes Generator<a class="anchor-link" href="#step-1-initialize-supershapes-generator">&#182;</a></h3><p>Here, we will initialize  SuperShapes cohort generator. The output directory needs to be specified otherwise an output directory will automatically be generated.</p>
 <p>Argument:</p>
 <ul>
 <li><code>out_dir</code>: path where the dataset should be saved<br>
@@ -4465,28 +4467,28 @@ ss_generator = ShapeCohortGen.SupershapesCohortGenerator(out_dir)</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="Step-2:-Generate-Meshes">Step 2: Generate Meshes<a class="anchor-link" href="#Step-2:-Generate-Meshes">&#182;</a></h3><p>For the supershapes mesh generation, you can specify the following arguments:</p>
+<h3 id="step-2-generate-meshes">Step 2: Generate Meshes<a class="anchor-link" href="#step-2-generate-meshes">&#182;</a></h3><p>For the supershapes mesh generation, you can specify the following arguments:</p>
 <ul>
 <li><code>num_samples</code> - number of samples in the cohort(dataset)<br>
   Datatype : <code>int</code> <br>
-  Default value : 3 <br>  <br>
-</li>
+  Default value : 3 <br>
+  <br></li>
 <li><code>randomize_center</code>: randomizes the centers for ellipsoid mesh generation if set to <code>True</code><br>
   Datatype : <code>bool</code> <br> 
-  Defaut value : <code>True</code> <br>  <br>
-</li>
+  Defaut value : <code>True</code> <br>
+  <br>   </li>
 <li><code>randomize_rotation</code>: randomizes the orientation of the ellispoids if set to <code>True</code> <br>
   Datatype : <code>bool</code> <br> 
-  Defaut value : <code>True</code>  <br>
-</li>
+  Defaut value : <code>True</code>
+  <br></li>
 <li><code>m</code>: number of lobes supershapes should have <br>
   Datatype : <code>int</code> <br>
-  Default value: <code>3</code> <br>  <br>
-</li>
+  Default value: <code>3</code> <br>
+  <br></li>
 <li><code>size</code>: size of meshes (won't be more than 'size' away from center in any direction) <br>
   Datatype: <code>int</code> <br>
-  Default value: <code>20</code> <br>  <br>
-</li>
+  Default value: <code>20</code> <br>
+  <br></li>
 </ul>
 
 </div>
@@ -4578,7 +4580,6 @@ sw.plot_meshes(meshList, use_same_window=True, notebook=notebook)</div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p><img src="https://sci.utah.edu/~shapeworks/doc-resources/pngs/generated_supershapes.png"></p>
-
 </div>
 </div>
 </div>
@@ -4589,7 +4590,7 @@ sw.plot_meshes(meshList, use_same_window=True, notebook=notebook)</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="Step-3:-Generate-Segmentations">Step 3: Generate Segmentations<a class="anchor-link" href="#Step-3:-Generate-Segmentations">&#182;</a></h3><p>This is data type independent, the options are the same as they were for the ellipsoid.</p>
+<h3 id="step-3-generate-segmentations">Step 3: Generate Segmentations<a class="anchor-link" href="#step-3-generate-segmentations">&#182;</a></h3><p>This is data type independent, the options are the same as they were for the ellipsoid.</p>
 
 </div>
 </div>
@@ -4712,7 +4713,6 @@ sw.plot_volumes(shapeSegList,
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p><img src="https://sci.utah.edu/~shapeworks/doc-resources/pngs/generated_supershapes_segs.png"></p>
-
 </div>
 </div>
 </div>
@@ -4723,7 +4723,7 @@ sw.plot_volumes(shapeSegList,
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="Step-4:-Generate-Images">Step 4: Generate Images<a class="anchor-link" href="#Step-4:-Generate-Images">&#182;</a></h3><p>This is also a standard function and has all the same options as listed before.</p>
+<h3 id="step-4-generate-images">Step 4: Generate Images<a class="anchor-link" href="#step-4-generate-images">&#182;</a></h3><p>This is also a standard function and has all the same options as listed before.</p>
 
 </div>
 </div>
@@ -4816,7 +4816,6 @@ sw.plot_volumes(seg0, notebook=notebook)</div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p><img src="https://sci.utah.edu/~shapeworks/doc-resources/pngs/generated_supershapes_seg.png"></p>
-
 </div>
 </div>
 </div>
@@ -4864,7 +4863,6 @@ sw.plot_volumes(img0, notebook=notebook)</div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p><img src="https://sci.utah.edu/~shapeworks/doc-resources/pngs/generated_supershapes_image.png"></p>
-
 </div>
 </div>
 </div>

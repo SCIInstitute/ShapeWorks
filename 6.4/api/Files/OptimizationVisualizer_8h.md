@@ -1,9 +1,9 @@
 ---
-title: Libs/Optimize/ParticleSystem/OptimizationVisualizer.h
+title: Libs/Optimize/OptimizationVisualizer.h
 
 ---
 
-# Libs/Optimize/ParticleSystem/OptimizationVisualizer.h
+# Libs/Optimize/OptimizationVisualizer.h
 
 
 
@@ -41,7 +41,7 @@ title: Libs/Optimize/ParticleSystem/OptimizationVisualizer.h
 #include <vtkSphereSource.h>
 #include <vtkCellArray.h>
 
-#include "ParticleSystem/itkParticleSystem.h"
+#include "itkParticleSystem.h"
 
 namespace shapeworks
 {
@@ -100,4 +100,4 @@ namespace shapeworks
 
 -------------------------------
 
-Updated on 2022-10-11 at 01:33:50 +0000
+Updated on 2022-10-12 at 23:44:43 +0000

@@ -2010,6 +2010,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../../dev/shapeworks-library.html" class="md-nav__link">
+        ShapeWorks as a Library
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../Modules/index_groups.html" class="md-nav__link">
         Groups
       </a>
@@ -2254,8 +2268,8 @@
 <div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
 
 <span class="cp">#ifndef Q_MOC_RUN</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Libs/Analyze/Particles.h&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Libs/Optimize/Optimize.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Analyze/Particles.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Optimize/Optimize.h&gt;</span><span class="cp"></span>
 <span class="cp">#endif</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QObject&gt;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QMutex&gt;</span><span class="cp"></span>
@@ -2283,7 +2297,7 @@
 <span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetIterationCallback</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">IterateCallback</span><span class="p">(</span><span class="n">itk</span><span class="o">::</span><span class="n">Object</span><span class="o">*</span><span class="w"> </span><span class="n">caller</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">EventObject</span><span class="o">&amp;</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="p">;</span><span class="w"></span>
 
-<span class="nl">signals</span><span class="p">:</span><span class="w"></span>
+<span class="nl">Q_SIGNALS</span><span class="p">:</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">progress</span><span class="p">(</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">QString</span><span class="p">);</span><span class="w"></span>
 
 <span class="k">private</span><span class="o">:</span><span class="w"></span>
@@ -2300,7 +2314,7 @@
 <span class="p">}</span><span class="w"></span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-10-11 at 01:33:50 +0000</p>
+<p>Updated on 2022-10-12 at 23:44:43 +0000</p>
 
               
             </article>

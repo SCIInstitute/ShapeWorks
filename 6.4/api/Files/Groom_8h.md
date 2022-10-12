@@ -27,9 +27,9 @@ title: Libs/Groom/Groom.h
 ```cpp
 #pragma once
 
-#include <GroomParameters.h>
-#include <Libs/Image/Image.h>
-#include <Libs/Project/Project.h>
+#include "GroomParameters.h"
+#include <Image/Image.h>
+#include <Project/Project.h>
 
 namespace shapeworks {
 
@@ -40,7 +40,6 @@ class Groom {
 
   bool run();
 
-  void set_skip_grooming(bool skip);
 
   void abort();
 
@@ -103,8 +102,6 @@ class Groom {
 
   ProjectHandle project_;
 
-  bool skip_grooming_ = false;
-
   bool abort_ = false;
 
   std::mutex mutex_;
@@ -115,4 +112,4 @@ class Groom {
 
 -------------------------------
 
-Updated on 2022-10-11 at 01:33:50 +0000
+Updated on 2022-10-12 at 23:44:43 +0000

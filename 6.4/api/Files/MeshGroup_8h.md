@@ -27,7 +27,7 @@ title: Libs/Analyze/MeshGroup.h
 ```cpp
 #pragma once
 
-#include <StudioMesh.h>
+#include "StudioMesh.h"
 
 namespace shapeworks {
 
@@ -59,4 +59,4 @@ class MeshGroup {
 
 -------------------------------
 
-Updated on 2022-10-11 at 01:33:50 +0000
+Updated on 2022-10-12 at 23:44:43 +0000

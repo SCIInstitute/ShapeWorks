@@ -31,41 +31,19 @@ The [SurfaceReconstructor](../Classes/classSurfaceReconstructor.md) wraps the su
 #include <vector>
 #include <string>
 
-#include <itkImageFileReader.h>
+#include <itkPoint.h>
+#include <vtkPoints.h>
+#include <vtkPolyData.h>
+#include <Eigen/Core>
 
-#include <Reconstruction.h>
+class SurfaceReconstructorPrivate;
 
-class SurfaceReconstructor
-{
+class SurfaceReconstructor {
 
-public:
-
-  typedef float PixelType;
-  typedef itk::Image< PixelType, 3 > ImageType;
-
-  typedef itk::ImageFileReader< ImageType > ReaderType;
-
-  typedef double CoordinateRepType;
-  typedef itk::CompactlySupportedRBFSparseKernelTransform < CoordinateRepType,
-                                                            3> RBFTransformType;
-  typedef itk::ThinPlateSplineKernelTransform2< CoordinateRepType, 3> ThinPlateSplineType;
-
-  typedef itk::LinearInterpolateImageFunction<ImageType, double > InterpolatorType;
-
-  typedef Reconstruction < itk::CompactlySupportedRBFSparseKernelTransform,
-                           itk::LinearInterpolateImageFunction,
-                           CoordinateRepType, PixelType, ImageType> ReconstructionType;
-
-/*
-   typedef Reconstruction < itk::ThinPlateSplineKernelTransform2,
-                           itk::LinearInterpolateImageFunction,
-                           CoordinateRepType, PixelType, ImageType> ReconstructionType;
- */
-
-  typedef typename ReconstructionType::PointType PointType;
-  typedef typename ReconstructionType::PointArrayType PointArrayType;
+ public:
 
   SurfaceReconstructor();
+  ~SurfaceReconstructor();
 
   //**********************************************//
   //************Imported From Studio *************//
@@ -95,8 +73,9 @@ public:
 
   vtkSmartPointer<vtkPolyData> build_mesh(const Eigen::VectorXd& shape);
 
-private:
-  ReconstructionType reconstructor_;
+ private:
+
+  std::unique_ptr<SurfaceReconstructorPrivate> private_;
 
   bool surface_reconstruction_available_ = false;
 
@@ -109,4 +88,4 @@ private:
 
 -------------------------------
 
-Updated on 2022-10-11 at 01:33:50 +0000
+Updated on 2022-10-12 at 23:44:43 +0000

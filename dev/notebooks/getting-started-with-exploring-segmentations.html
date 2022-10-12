@@ -2169,6 +2169,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../dev/shapeworks-library.html" class="md-nav__link">
+        ShapeWorks as a Library
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../api/Modules/index_groups.html" class="md-nav__link">
         Groups
       </a>
@@ -2676,7 +2690,6 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 .highlight-ipynb .m { color: var(--jp-mirror-editor-number-color) } /* Literal.Number */
 .highlight-ipynb .s { color: var(--jp-mirror-editor-string-color) } /* Literal.String */
 .highlight-ipynb .ow { color: var(--jp-mirror-editor-operator-color); font-weight: bold } /* Operator.Word */
-.highlight-ipynb .pm { color: var(--jp-mirror-editor-punctuation-color) } /* Punctuation.Marker */
 .highlight-ipynb .w { color: var(--jp-mirror-editor-variable-color) } /* Text.Whitespace */
 .highlight-ipynb .mb { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Bin */
 .highlight-ipynb .mf { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Float */
@@ -3519,7 +3532,7 @@ Licensed under the Apache License, Version 2.0.
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h1 id="Getting-Started-with-Exploring-Segmentations">Getting Started with Exploring Segmentations<a class="anchor-link" href="#Getting-Started-with-Exploring-Segmentations">&#182;</a></h1>
+<h1 id="getting-started-with-exploring-segmentations">Getting Started with Exploring Segmentations<a class="anchor-link" href="#getting-started-with-exploring-segmentations">&#182;</a></h1>
 </div>
 </div>
 </div>
@@ -3530,13 +3543,13 @@ Licensed under the Apache License, Version 2.0.
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="Before-you-start!">Before you start!<a class="anchor-link" href="#Before-you-start!">&#182;</a></h2><ul>
+<h2 id="before-you-start">Before you start!<a class="anchor-link" href="#before-you-start">&#182;</a></h2><ul>
 <li>This notebook assumes that shapeworks conda environment has been activated using <code>conda activate shapeworks</code> on the terminal.</li>
-<li>See <a href="getting-started-with-notebooks.ipynb">Getting Started with Notebooks</a> for information on setting up your environment and notebook shortcuts.</li>
+<li>See <a href="getting-started-with-notebooks.ipynb">Getting Started with Notebooks</a> for information on setting up your environment and notebook shortcuts. </li>
 <li>See <a href="getting-started-with-segmentations.ipynb">Getting Started with Segmentations</a> to learn how to load and visualize binary segmentations.</li>
 <li>Note example output was generated on Linux/Mac environment and may look different on Windows.</li>
 </ul>
-<h2 id="In-this-notebook,-you-will-learn:">In this notebook, you will learn:<a class="anchor-link" href="#In-this-notebook,-you-will-learn:">&#182;</a></h2><ol>
+<h2 id="in-this-notebook-you-will-learn">In this notebook, you will learn:<a class="anchor-link" href="#in-this-notebook-you-will-learn">&#182;</a></h2><ol>
 <li>How to define your dataset location and explore what is available in it</li>
 <li>How to explore your dataset</li>
 <li>How to decide the grooming pipeline needed for your dataset</li>
@@ -3584,12 +3597,11 @@ Licensed under the Apache License, Version 2.0.
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="1.-Defining-and-exploring-your-dataset">1. Defining and exploring your dataset<a class="anchor-link" href="#1.-Defining-and-exploring-your-dataset">&#182;</a></h2><h3 id="Defining-dataset-location">Defining dataset location<a class="anchor-link" href="#Defining-dataset-location">&#182;</a></h3><p>You can download exemplar datasets from <a href="https://girder.shapeworks-cloud.org">ShapeWorks data portal</a> after you login. For new users, you can <a href="https://girder.shapeworks-cloud.org#?dialog=register">register</a> an account for free. Please do not use an important password.</p>
+<h2 id="1-defining-and-exploring-your-dataset">1. Defining and exploring your dataset<a class="anchor-link" href="#1-defining-and-exploring-your-dataset">&#182;</a></h2><h3 id="defining-dataset-location">Defining dataset location<a class="anchor-link" href="#defining-dataset-location">&#182;</a></h3><p>You can download exemplar datasets from <a href="https://girder.shapeworks-cloud.org">ShapeWorks data portal</a> after you login. For new users, you can <a href="https://girder.shapeworks-cloud.org#?dialog=register">register</a> an account for free. Please do not use an important password.</p>
 <p>After you login, click <code>Collections</code> on the left panel and then <code>use-case-data-v2</code>. Select the dataset you would like to download by clicking on the checkbox on the left of the dataset name. See the video below.
 After you download the dataset zip file, make sure you unzip/extract the contents in the appropriate location.</p>
 <p><strong>This notebook assumes that you have downloaded <code>ellipsoid_1mode</code> and you have placed the unzipped folder <code>ellipsoid_1mode</code> in <code>Examples/Python/Data</code>.</strong> Feel free to use your own dataset.</p>
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/portal_data_download.mp4" autoplay muted loop controls style="width:100%"></p>
-
 </div>
 </div>
 </div>
@@ -3658,7 +3670,7 @@ print('Shape Directory:  ' + shapeDir)</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="What-is-available-in-the-dataset?">What is available in the dataset?<a class="anchor-link" href="#What-is-available-in-the-dataset?">&#182;</a></h3><p>First let's see how many shapes we have in the dataset.</p>
+<h3 id="what-is-available-in-the-dataset">What is available in the dataset?<a class="anchor-link" href="#what-is-available-in-the-dataset">&#182;</a></h3><p>First let's see how many shapes we have in the dataset.</p>
 <p><strong>File formats:</strong> For binary segmentations, all <a href="https://insightsoftwareconsortium.github.io/itk-js/docs/image_formats.html">itk-supported image formats</a> can be used.</p>
 
 </div>
@@ -3733,7 +3745,7 @@ for shapeFilename in shapeFilenames:
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="2.-Exploring-your-dataset">2. Exploring your dataset<a class="anchor-link" href="#2.-Exploring-your-dataset">&#182;</a></h2><p>We would like to better understand the given dataset to decide the appropriate grooming (preprocessing) pipeline/step to prepare it for shape modeling.</p>
+<h2 id="2-exploring-your-dataset">2. Exploring your dataset<a class="anchor-link" href="#2-exploring-your-dataset">&#182;</a></h2><p>We would like to better understand the given dataset to decide the appropriate grooming (preprocessing) pipeline/step to prepare it for shape modeling.</p>
 
 </div>
 </div>
@@ -3745,7 +3757,7 @@ for shapeFilename in shapeFilenames:
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="Loading-your-dataset">Loading your dataset<a class="anchor-link" href="#Loading-your-dataset">&#182;</a></h3><p>First step is to load the dataset.</p>
+<h3 id="loading-your-dataset">Loading your dataset<a class="anchor-link" href="#loading-your-dataset">&#182;</a></h3><p>First step is to load the dataset.</p>
 <p><strong>Note:</strong> If your dataset is large (large volumes and/or large number of segmentations), you could select a subset for this exploration step.</p>
 
 </div>
@@ -3838,7 +3850,7 @@ print('\n' + str(num_samples) +
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="Visualizing-your-dataset">Visualizing your dataset<a class="anchor-link" href="#Visualizing-your-dataset">&#182;</a></h3><p>Now let's visualize all samples in a grid using <code>pyvista</code>. You may need to call <code>pv.close_all()</code> every once in a while to clean up the unclosed plotters.
+<h3 id="visualizing-your-dataset">Visualizing your dataset<a class="anchor-link" href="#visualizing-your-dataset">&#182;</a></h3><p>Now let's visualize all samples in a grid using <code>pyvista</code>. You may need to call <code>pv.close_all()</code> every once in a while to clean up the unclosed plotters.
 We will use <code>sw.plot_volumes</code> function from the Shapeworks python module. This function will take in a list of shapeworks images as input and initiate a pyvista plotter to render multiple windows, each with a single segmentation, add segmentations to the plotter, and start rendering.</p>
 
 </div>
@@ -3934,7 +3946,6 @@ sw.plot_volumes(shapeSegList,
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/nb-explore-vols.mp4" autoplay muted loop controls style="width:100%"></p>
-
 </div>
 </div>
 </div>
@@ -3945,7 +3956,7 @@ sw.plot_volumes(shapeSegList,
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="3.-Deciding-the-grooming-pipeline-needed-for-your-dataset">3. Deciding the grooming pipeline needed for your dataset<a class="anchor-link" href="#3.-Deciding-the-grooming-pipeline-needed-for-your-dataset">&#182;</a></h2>
+<h2 id="3-deciding-the-grooming-pipeline-needed-for-your-dataset">3. Deciding the grooming pipeline needed for your dataset<a class="anchor-link" href="#3-deciding-the-grooming-pipeline-needed-for-your-dataset">&#182;</a></h2>
 </div>
 </div>
 </div>
@@ -3968,7 +3979,7 @@ sw.plot_volumes(shapeSegList,
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="Voxel-spacing">Voxel spacing<a class="anchor-link" href="#Voxel-spacing">&#182;</a></h3><p>Voxel spacing are not isotropic, i.e., voxel size in each of the three dimensions are not equal.This can be identified if you zoom-in in the visualization below and observe the step size in the x,y,z direction. Anisotropic spacing could adversely impact particles optimization since shapeworks assumes equal voxel spacing. Some datasets might also have different voxel spacings for each segmentation.</p>
+<h3 id="voxel-spacing">Voxel spacing<a class="anchor-link" href="#voxel-spacing">&#182;</a></h3><p>Voxel spacing are not isotropic, i.e., voxel size in each of the three dimensions are not equal.This can be identified if you zoom-in in the visualization below and observe the step size in the x,y,z direction. Anisotropic spacing could adversely impact particles optimization since shapeworks assumes equal voxel spacing. Some datasets might also have different voxel spacings for each segmentation.</p>
 <p><em>Hence, it is necessary to bring all segmentations to the same voxel spacing that is equal in all dimensions.</em></p>
 <p>Another observation is voxel spacing is relatively large. This can be observed by the pixelated volume rendering and the jagged isosurface.</p>
 <p><em>We can improve the segmentation resolution by decreasing voxel spacing.</em></p>
@@ -4035,7 +4046,7 @@ sw.plot_volumes(shapeSeg_vtk)</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="Segmentations-and-image-boundaries">Segmentations and image boundaries<a class="anchor-link" href="#Segmentations-and-image-boundaries">&#182;</a></h3><p>Some segmentations are very close to the image boundary, not leaving enough room for particles (correspondences) to move and spread over these surface regions. In particular, particles could overshoot outside the image boundary during optimization.</p>
+<h3 id="segmentations-and-image-boundaries">Segmentations and image boundaries<a class="anchor-link" href="#segmentations-and-image-boundaries">&#182;</a></h3><p>Some segmentations are very close to the image boundary, not leaving enough room for particles (correspondences) to move and spread over these surface regions. In particular, particles could overshoot outside the image boundary during optimization.</p>
 <p>Furthermore, if a segmentation touches the image boundary, this will result in an artificially (i.e., not real) open surface.</p>
 <p><em>Hence, these segmentations needs to be padded with background voxels (zero-valued) to create more room along each dimension.</em></p>
 
@@ -4094,7 +4105,6 @@ sw.plot_volumes(shapeSeg_vtk)</div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p><img src="https://sci.utah.edu/~shapeworks/doc-resources/pngs/shape_boundary.png"></p>
-
 </div>
 </div>
 </div>
@@ -4334,7 +4344,6 @@ sw.plot_meshes([shapeMesh_vtk])</div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p><img src="https://sci.utah.edu/~shapeworks/doc-resources/pngs/explore_seg.png"></p>
-
 </div>
 </div>
 </div>
@@ -4357,7 +4366,7 @@ sw.plot_meshes([shapeMesh_vtk])</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="Shape-alignment">Shape alignment<a class="anchor-link" href="#Shape-alignment">&#182;</a></h3><p>One can observe from the segmentation visualization that they are not roughly aligned, i.e., they do not share the same coordinate frame where each individual shape is located differently compared to other shapes.</p>
+<h3 id="shape-alignment">Shape alignment<a class="anchor-link" href="#shape-alignment">&#182;</a></h3><p>One can observe from the segmentation visualization that they are not roughly aligned, i.e., they do not share the same coordinate frame where each individual shape is located differently compared to other shapes.</p>
 <p><em>Aligning shapes is a critical preprocessing step to avoid the shape model to encode variabilities pertaining to global transformations such as rotation and translation.</em></p>
 
 </div>
@@ -4534,7 +4543,6 @@ for shapeSeg in shapeSegSubset:
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/nb-explore-iso-align-pv.mp4" autoplay muted loop controls style="width:100%"></p>
-
 </div>
 </div>
 </div>
@@ -4545,7 +4553,7 @@ for shapeSeg in shapeSegSubset:
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="Too-much-background">Too much background<a class="anchor-link" href="#Too-much-background">&#182;</a></h3><p>Image boundaries are not tight around shapes, leaving irrelevant background voxels that might increase the memory footprint when optimizing the shape model.</p>
+<h3 id="too-much-background">Too much background<a class="anchor-link" href="#too-much-background">&#182;</a></h3><p>Image boundaries are not tight around shapes, leaving irrelevant background voxels that might increase the memory footprint when optimizing the shape model.</p>
 <p><em>We can crop segmentations to remove unnecessary background.</em></p>
 
 </div>
@@ -4601,7 +4609,6 @@ sw.plot_volumes(shapeSeg_vtk)</div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p><img src="https://sci.utah.edu/~shapeworks/doc-resources/pngs/explore_background.png"></p>
-
 </div>
 </div>
 </div>
@@ -4612,7 +4619,7 @@ sw.plot_volumes(shapeSeg_vtk)</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="Binary-segmentations">Binary segmentations<a class="anchor-link" href="#Binary-segmentations">&#182;</a></h3><p>In general, this binary representation is not useful for finite numerical calculation of surface geometry and features that are required in shape modeling, which assumes the image is a sampling of a smooth function.</p>
+<h3 id="binary-segmentations">Binary segmentations<a class="anchor-link" href="#binary-segmentations">&#182;</a></h3><p>In general, this binary representation is not useful for finite numerical calculation of surface geometry and features that are required in shape modeling, which assumes the image is a sampling of a smooth function.</p>
 <p>Hence, ShapeWorks makes use of the signed distance transform of the binary segmentation that does satisfy this criterion.</p>
 <p><em>For the correspondence optimization step, shapes can be represented as the zero level set of a smooth signed distance transform.</em></p>
 
@@ -4626,12 +4633,12 @@ sw.plot_volumes(shapeSeg_vtk)</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="Tentative-grooming">Tentative grooming<a class="anchor-link" href="#Tentative-grooming">&#182;</a></h3><p>Hence, a tentative grooming pipeline entails the following steps:</p>
+<h3 id="tentative-grooming">Tentative grooming<a class="anchor-link" href="#tentative-grooming">&#182;</a></h3><p>Hence, a tentative grooming pipeline entails the following steps:</p>
 <ol>
-<li>Resampling segmentations to have smaller and isotropic voxel spacing</li>
-<li>Rigidly aligning shapes</li>
-<li>Cropping and padding segmentations</li>
-<li>Converting segmentations to smooth signed distance transforms</li>
+<li>Resampling segmentations to have smaller and isotropic voxel spacing   </li>
+<li>Rigidly aligning shapes   </li>
+<li>Cropping and padding segmentations   </li>
+<li>Converting segmentations to smooth signed distance transforms   </li>
 </ol>
 <p>Let the fun begins!!! Please visit <a href="getting-started-with-grooming-segmentations.ipynb">Getting Started with Grooming Segmentations</a> to learn how to groom your dataset.</p>
 

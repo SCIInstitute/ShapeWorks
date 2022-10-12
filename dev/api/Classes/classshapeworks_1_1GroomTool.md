@@ -18,7 +18,7 @@ Inherits from QWidget
 | void | **[on_antialias_checkbox_stateChanged](../Classes/classshapeworks_1_1GroomTool.md#slot-on-antialias-checkbox-statechanged)**(int state) |
 | void | **[on_blur_checkbox_stateChanged](../Classes/classshapeworks_1_1GroomTool.md#slot-on-blur-checkbox-statechanged)**(int state) |
 | void | **[on_autopad_checkbox_stateChanged](../Classes/classshapeworks_1_1GroomTool.md#slot-on-autopad-checkbox-statechanged)**(int state) |
-| void | **[on_skip_button_clicked](../Classes/classshapeworks_1_1GroomTool.md#slot-on-skip-button-clicked)**() |
+| void | **[skip_grooming_toggled](../Classes/classshapeworks_1_1GroomTool.md#slot-skip-grooming-toggled)**() |
 | void | **[on_restore_defaults_clicked](../Classes/classshapeworks_1_1GroomTool.md#slot-on-restore-defaults-clicked)**() |
 | void | **[update_ui](../Classes/classshapeworks_1_1GroomTool.md#slot-update-ui)**() |
 | void | **[domain_changed](../Classes/classshapeworks_1_1GroomTool.md#slot-domain-changed)**() |
@@ -84,10 +84,10 @@ void on_autopad_checkbox_stateChanged(
 ```
 
 
-### slot on_skip_button_clicked
+### slot skip_grooming_toggled
 
 ```cpp
-void on_skip_button_clicked()
+void skip_grooming_toggled()
 ```
 
 
@@ -302,4 +302,4 @@ shut down any running threads
 
 -------------------------------
 
-Updated on 2022-10-11 at 01:33:49 +0000
+Updated on 2022-10-12 at 23:44:41 +0000

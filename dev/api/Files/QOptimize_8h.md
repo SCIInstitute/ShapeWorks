@@ -28,8 +28,8 @@ title: Studio/src/Optimize/QOptimize.h
 #pragma once
 
 #ifndef Q_MOC_RUN
-#include <Libs/Analyze/Particles.h>
-#include <Libs/Optimize/Optimize.h>
+#include <Analyze/Particles.h>
+#include <Optimize/Optimize.h>
 #endif
 #include <QObject>
 #include <QMutex>
@@ -57,7 +57,7 @@ protected:
   virtual void SetIterationCallback() override;
   virtual void IterateCallback(itk::Object* caller, const itk::EventObject&) override;
 
-signals:
+Q_SIGNALS:
   void progress(int, QString);
 
 private:
@@ -77,4 +77,4 @@ private:
 
 -------------------------------
 
-Updated on 2022-10-11 at 01:33:50 +0000
+Updated on 2022-10-12 at 23:44:43 +0000

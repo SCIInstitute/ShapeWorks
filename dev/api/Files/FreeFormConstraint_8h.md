@@ -1,9 +1,9 @@
 ---
-title: Libs/Optimize/ParticleSystem/FreeFormConstraint.h
+title: Libs/Optimize/FreeFormConstraint.h
 
 ---
 
-# Libs/Optimize/ParticleSystem/FreeFormConstraint.h
+# Libs/Optimize/FreeFormConstraint.h
 
 
 
@@ -27,7 +27,7 @@ title: Libs/Optimize/ParticleSystem/FreeFormConstraint.h
 ```cpp
 #pragma once
 
-#include <Libs/Mesh/Mesh.h>
+#include <Mesh/Mesh.h>
 
 #include "Constraint.h"
 
@@ -93,4 +93,4 @@ class FreeFormConstraint : public Constraint {
 
 -------------------------------
 
-Updated on 2022-10-11 at 01:33:50 +0000
+Updated on 2022-10-12 at 23:44:43 +0000

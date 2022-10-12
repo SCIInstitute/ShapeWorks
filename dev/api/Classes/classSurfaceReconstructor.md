@@ -9,26 +9,12 @@ title: SurfaceReconstructor
 
 
 
-## Public Types
-
-|                | Name           |
-| -------------- | -------------- |
-| typedef float | **[PixelType](../Classes/classSurfaceReconstructor.md#typedef-pixeltype)**  |
-| typedef itk::Image< PixelType, 3 > | **[ImageType](../Classes/classSurfaceReconstructor.md#typedef-imagetype)**  |
-| typedef itk::ImageFileReader< ImageType > | **[ReaderType](../Classes/classSurfaceReconstructor.md#typedef-readertype)**  |
-| typedef double | **[CoordinateRepType](../Classes/classSurfaceReconstructor.md#typedef-coordinatereptype)**  |
-| typedef [itk::CompactlySupportedRBFSparseKernelTransform](../Classes/classitk_1_1CompactlySupportedRBFSparseKernelTransform.md)< CoordinateRepType, 3 > | **[RBFTransformType](../Classes/classSurfaceReconstructor.md#typedef-rbftransformtype)**  |
-| typedef [itk::ThinPlateSplineKernelTransform2](../Classes/classitk_1_1ThinPlateSplineKernelTransform2.md)< CoordinateRepType, 3 > | **[ThinPlateSplineType](../Classes/classSurfaceReconstructor.md#typedef-thinplatesplinetype)**  |
-| typedef itk::LinearInterpolateImageFunction< ImageType, double > | **[InterpolatorType](../Classes/classSurfaceReconstructor.md#typedef-interpolatortype)**  |
-| typedef [Reconstruction](../Classes/classReconstruction.md)< [itk::CompactlySupportedRBFSparseKernelTransform](../Classes/classitk_1_1CompactlySupportedRBFSparseKernelTransform.md), itk::LinearInterpolateImageFunction, CoordinateRepType, PixelType, ImageType > | **[ReconstructionType](../Classes/classSurfaceReconstructor.md#typedef-reconstructiontype)**  |
-| typedef ReconstructionType::PointType | **[PointType](../Classes/classSurfaceReconstructor.md#typedef-pointtype)**  |
-| typedef ReconstructionType::PointArrayType | **[PointArrayType](../Classes/classSurfaceReconstructor.md#typedef-pointarraytype)**  |
-
 ## Public Functions
 
 |                | Name           |
 | -------------- | -------------- |
 | | **[SurfaceReconstructor](../Classes/classSurfaceReconstructor.md#function-surfacereconstructor)**() |
+| | **[~SurfaceReconstructor](../Classes/classSurfaceReconstructor.md#function-~surfacereconstructor)**() |
 | void | **[initializeReconstruction](../Classes/classSurfaceReconstructor.md#function-initializereconstruction)**(std::vector< std::vector< itk::Point< double > > > local_pts, std::vector< std::vector< itk::Point< double > > > global_pts, std::vector< std::string > distance_transforms, double maxAngle, float decimationPercent, int numClusters) |
 | bool | **[hasDenseMean](../Classes/classSurfaceReconstructor.md#function-hasdensemean)**() |
 | void | **[setMean](../Classes/classSurfaceReconstructor.md#function-setmean)**(vtkSmartPointer< vtkPoints > sparseMean, vtkSmartPointer< vtkPolyData > denseMean, std::vector< bool > goodPoints) |
@@ -41,84 +27,19 @@ title: SurfaceReconstructor
 | bool | **[get_surface_reconstruction_available](../Classes/classSurfaceReconstructor.md#function-get-surface-reconstruction-available)**() |
 | vtkSmartPointer< vtkPolyData > | **[build_mesh](../Classes/classSurfaceReconstructor.md#function-build-mesh)**(const Eigen::VectorXd & shape) |
 
-## Public Types Documentation
-
-### typedef PixelType
-
-```cpp
-typedef float SurfaceReconstructor::PixelType;
-```
-
-
-### typedef ImageType
-
-```cpp
-typedef itk::Image< PixelType, 3 > SurfaceReconstructor::ImageType;
-```
-
-
-### typedef ReaderType
-
-```cpp
-typedef itk::ImageFileReader< ImageType > SurfaceReconstructor::ReaderType;
-```
-
-
-### typedef CoordinateRepType
-
-```cpp
-typedef double SurfaceReconstructor::CoordinateRepType;
-```
-
-
-### typedef RBFTransformType
-
-```cpp
-typedef itk::CompactlySupportedRBFSparseKernelTransform< CoordinateRepType, 3> SurfaceReconstructor::RBFTransformType;
-```
-
-
-### typedef ThinPlateSplineType
-
-```cpp
-typedef itk::ThinPlateSplineKernelTransform2< CoordinateRepType, 3> SurfaceReconstructor::ThinPlateSplineType;
-```
-
-
-### typedef InterpolatorType
-
-```cpp
-typedef itk::LinearInterpolateImageFunction<ImageType, double > SurfaceReconstructor::InterpolatorType;
-```
-
-
-### typedef ReconstructionType
-
-```cpp
-typedef Reconstruction< itk::CompactlySupportedRBFSparseKernelTransform, itk::LinearInterpolateImageFunction, CoordinateRepType, PixelType, ImageType> SurfaceReconstructor::ReconstructionType;
-```
-
-
-### typedef PointType
-
-```cpp
-typedef ReconstructionType::PointType SurfaceReconstructor::PointType;
-```
-
-
-### typedef PointArrayType
-
-```cpp
-typedef ReconstructionType::PointArrayType SurfaceReconstructor::PointArrayType;
-```
-
-
 ## Public Functions Documentation
 
 ### function SurfaceReconstructor
 
 ```cpp
 SurfaceReconstructor()
+```
+
+
+### function ~SurfaceReconstructor
+
+```cpp
+~SurfaceReconstructor()
 ```
 
 
@@ -226,4 +147,4 @@ vtkSmartPointer< vtkPolyData > build_mesh(
 
 -------------------------------
 
-Updated on 2022-10-11 at 01:33:50 +0000
+Updated on 2022-10-12 at 23:44:42 +0000

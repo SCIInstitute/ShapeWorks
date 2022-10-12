@@ -1,9 +1,9 @@
 ---
-title: Libs/Optimize/ParticleSystem/Sampler.h
+title: Libs/Optimize/Sampler.h
 
 ---
 
-# Libs/Optimize/ParticleSystem/Sampler.h
+# Libs/Optimize/Sampler.h
 
 
 
@@ -56,7 +56,7 @@ title: Libs/Optimize/ParticleSystem/Sampler.h
 
 #include "TriMesh.h"
 
-#include "Mesh.h"
+#include <Mesh/Mesh.h>
 
 // Uncomment to visualize FFCs with scalar and vector fields
 //#define VIZFFC
@@ -566,4 +566,4 @@ private:
 
 -------------------------------
 
-Updated on 2022-10-11 at 01:33:50 +0000
+Updated on 2022-10-12 at 23:44:43 +0000

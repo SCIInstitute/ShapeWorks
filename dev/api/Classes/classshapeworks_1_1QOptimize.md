@@ -181,6 +181,7 @@ Inherits from QObject, [shapeworks::Optimize](../Classes/classshapeworks_1_1Opti
 | void | **[WritePointFilesWithFeatures](../Classes/classshapeworks_1_1Optimize.md#function-writepointfileswithfeatures)**(int iter =-1) |
 | void | **[WritePointFilesWithFeatures](../Classes/classshapeworks_1_1Optimize.md#function-writepointfileswithfeatures)**(std::string iter_prefix) |
 | void | **[WriteEnergyFiles](../Classes/classshapeworks_1_1Optimize.md#function-writeenergyfiles)**() |
+| void | **[WriteSplitFiles](../Classes/classshapeworks_1_1Optimize.md#function-writesplitfiles)**(std::string name) |
 | void | **[WriteCuttingPlanePoints](../Classes/classshapeworks_1_1Optimize.md#function-writecuttingplanepoints)**(int iter =-1) |
 | void | **[WriteParameters](../Classes/classshapeworks_1_1Optimize.md#function-writeparameters)**(std::string output_dir ="") |
 | void | **[ReportBadParticles](../Classes/classshapeworks_1_1Optimize.md#function-reportbadparticles)**() |
@@ -390,4 +391,4 @@ virtual void IterateCallback(
 
 -------------------------------
 
-Updated on 2022-10-11 at 01:33:49 +0000
+Updated on 2022-10-12 at 23:44:42 +0000

@@ -27,7 +27,7 @@ title: Studio/src/DeepSSM/DeepSSMParameters.h
 ```cpp
 #pragma once
 
-#include <Libs/Project/Project.h>
+#include <Project/Project.h>
 
 namespace shapeworks {
 
@@ -113,4 +113,4 @@ private:
 
 -------------------------------
 
-Updated on 2022-10-11 at 01:33:50 +0000
+Updated on 2022-10-12 at 23:44:43 +0000

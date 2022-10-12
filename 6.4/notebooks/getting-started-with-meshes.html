@@ -2141,6 +2141,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../dev/shapeworks-library.html" class="md-nav__link">
+        ShapeWorks as a Library
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../api/Modules/index_groups.html" class="md-nav__link">
         Groups
       </a>
@@ -2620,7 +2634,6 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 .highlight-ipynb .m { color: var(--jp-mirror-editor-number-color) } /* Literal.Number */
 .highlight-ipynb .s { color: var(--jp-mirror-editor-string-color) } /* Literal.String */
 .highlight-ipynb .ow { color: var(--jp-mirror-editor-operator-color); font-weight: bold } /* Operator.Word */
-.highlight-ipynb .pm { color: var(--jp-mirror-editor-punctuation-color) } /* Punctuation.Marker */
 .highlight-ipynb .w { color: var(--jp-mirror-editor-variable-color) } /* Text.Whitespace */
 .highlight-ipynb .mb { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Bin */
 .highlight-ipynb .mf { color: var(--jp-mirror-editor-number-color) } /* Literal.Number.Float */
@@ -3463,7 +3476,7 @@ Licensed under the Apache License, Version 2.0.
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h1 id="Getting-Started-with-Meshes">Getting Started with Meshes<a class="anchor-link" href="#Getting-Started-with-Meshes">&#182;</a></h1>
+<h1 id="getting-started-with-meshes">Getting Started with Meshes<a class="anchor-link" href="#getting-started-with-meshes">&#182;</a></h1>
 </div>
 </div>
 </div>
@@ -3474,14 +3487,14 @@ Licensed under the Apache License, Version 2.0.
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="Before-you-start!">Before you start!<a class="anchor-link" href="#Before-you-start!">&#182;</a></h2><ul>
+<h2 id="before-you-start">Before you start!<a class="anchor-link" href="#before-you-start">&#182;</a></h2><ul>
 <li>This <a href="getting-started-with-meshes.ipynb">notebook</a> assumes that shapeworks conda environment has been activated using <code>conda activate shapeworks</code> on the terminal.</li>
 <li>See <a href="setting-up-shapeworks-environment.ipynb">Setting Up ShapeWorks Environment</a> to learn how to set up your environment to start using shapeworks library. Please note, the prerequisite steps will use the same code to setup the environment for this notebook and import <code>shapeworks</code> library.</li>
 <li>Note example output was generated on Linux/Mac environment and may look different on Windows.</li>
 </ul>
-<h2 id="In-this-notebook,-you-will-learn:">In this notebook, you will learn:<a class="anchor-link" href="#In-this-notebook,-you-will-learn:">&#182;</a></h2><ol>
+<h2 id="in-this-notebook-you-will-learn">In this notebook, you will learn:<a class="anchor-link" href="#in-this-notebook-you-will-learn">&#182;</a></h2><ol>
 <li>How to define your dataset location and explore what is available in it</li>
-<li>How to load a single mesh</li>
+<li>How to load a single mesh </li>
 <li>How to convert <code>shapeworks</code> mesh to <code>vtk</code> mesh for visualization</li>
 <li>How to visualize a surface mesh using <code>pyvista</code></li>
 </ol>
@@ -3496,7 +3509,7 @@ Licensed under the Apache License, Version 2.0.
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="Importing-shapeworks-library">Importing <code>shapeworks</code> library<a class="anchor-link" href="#Importing-shapeworks-library">&#182;</a></h3>
+<h3 id="importing-shapeworks-library">Importing <code>shapeworks</code> library<a class="anchor-link" href="#importing-shapeworks-library">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -3539,11 +3552,10 @@ Licensed under the Apache License, Version 2.0.
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="1.-Defining-and-exploring-your-dataset">1. Defining and exploring your dataset<a class="anchor-link" href="#1.-Defining-and-exploring-your-dataset">&#182;</a></h2><h3 id="Defining-dataset-location">Defining dataset location<a class="anchor-link" href="#Defining-dataset-location">&#182;</a></h3><p>You can download exemplar datasets from <a href="https://girder.shapeworks-cloud.org">ShapeWorks data portal</a> after you login. For new users, you can <a href="https://girder.shapeworks-cloud.org#?dialog=register">register</a> an account for free. Please do not use an important password.</p>
+<h2 id="1-defining-and-exploring-your-dataset">1. Defining and exploring your dataset<a class="anchor-link" href="#1-defining-and-exploring-your-dataset">&#182;</a></h2><h3 id="defining-dataset-location">Defining dataset location<a class="anchor-link" href="#defining-dataset-location">&#182;</a></h3><p>You can download exemplar datasets from <a href="https://girder.shapeworks-cloud.org">ShapeWorks data portal</a> after you login. For new users, you can <a href="https://girder.shapeworks-cloud.org#?dialog=register">register</a> an account for free. Please do not use an important password.</p>
 <p>After you login, click <code>Collections</code> on the left panel and then <code>use-case-data-v2</code>. Select the dataset you would like to download by clicking on the checkbox on the left of the dataset name. See the video below.</p>
 <p><strong>This notebook assumes that you have downloaded <code>ellipsoid_1mode</code> and you have placed the unzipped folder<code>ellipsoid_1mode</code>in <code>Examples/Python/Data</code>.</strong> Feel free to use your own dataset.</p>
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/portal_data_download.mp4" autoplay muted loop controls style="width:100%"></p>
-
 </div>
 </div>
 </div>
@@ -3606,7 +3618,7 @@ print('Shape Directory:  ' + shapeDir)</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="What-is-available-in-the-dataset?">What is available in the dataset?<a class="anchor-link" href="#What-is-available-in-the-dataset?">&#182;</a></h3><p>First let's see how many shapes we have in the dataset.</p>
+<h3 id="what-is-available-in-the-dataset">What is available in the dataset?<a class="anchor-link" href="#what-is-available-in-the-dataset">&#182;</a></h3><p>First let's see how many shapes we have in the dataset.</p>
 <p><strong>File formats:</strong> For surface meshes, all vtk-supported mesh formats can be used (e.g., vtk, ply, and stl).</p>
 
 </div>
@@ -3679,7 +3691,7 @@ for shapeFilename in shapeFilenames:
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="2.-Loading-a-single-mesh">2. Loading a single mesh<a class="anchor-link" href="#2.-Loading-a-single-mesh">&#182;</a></h2><p>We will select one mesh to explore for now. We will then use <code>shapeworks</code> Mesh class to load this surface mesh and print out its header information that includes .</p>
+<h2 id="2-loading-a-single-mesh">2. Loading a single mesh<a class="anchor-link" href="#2-loading-a-single-mesh">&#182;</a></h2><p>We will select one mesh to explore for now. We will then use <code>shapeworks</code> Mesh class to load this surface mesh and print out its header information that includes .</p>
 
 </div>
 </div>
@@ -3747,7 +3759,7 @@ print(shapeMesh)</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="3.-Convert-to-a-VTK-mesh">3. Convert to a VTK mesh<a class="anchor-link" href="#3.-Convert-to-a-VTK-mesh">&#182;</a></h2><p>To visualize a <code>shapeworks</code> mesh with <code>pyvista</code>, we need first to convert it to a <code>vtk</code> mesh.</p>
+<h2 id="3-convert-to-a-vtk-mesh">3. Convert to a VTK mesh<a class="anchor-link" href="#3-convert-to-a-vtk-mesh">&#182;</a></h2><p>To visualize a <code>shapeworks</code> mesh with <code>pyvista</code>, we need first to convert it to a <code>vtk</code> mesh.</p>
 
 </div>
 </div>
@@ -3793,7 +3805,7 @@ shapeMesh_vtk = sw.sw2vtkMesh(shapeMesh)</div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="4.-Visualizing-surface-mesh-using-pyvista">4. Visualizing surface mesh using <code>pyvista</code><a class="anchor-link" href="#4.-Visualizing-surface-mesh-using-pyvista">&#182;</a></h2><p><a href="https://docs.pyvista.org/index.html"><code>pyvista</code></a> is a python library for 3D visualization and analysis. It is built on top of <code>vtk</code> and brings a paraview-like visualizations to notebooks. It also supports multiple rendering windows that can be linked. This feature is very useful when visualizing multiple samples from your dataset side-by-side and making them share the same camera view.</p>
+<h2 id="4-visualizing-surface-mesh-using-pyvista">4. Visualizing surface mesh using <code>pyvista</code><a class="anchor-link" href="#4-visualizing-surface-mesh-using-pyvista">&#182;</a></h2><p><a href="https://docs.pyvista.org/index.html"><code>pyvista</code></a> is a python library for 3D visualization and analysis. It is built on top of <code>vtk</code> and brings a paraview-like visualizations to notebooks. It also supports multiple rendering windows that can be linked. This feature is very useful when visualizing multiple samples from your dataset side-by-side and making them share the same camera view.</p>
 
 </div>
 </div>
@@ -3846,6 +3858,17 @@ shapeMesh_vtk.plot(notebook = notebook) </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p><img src="https://sci.utah.edu/~shapeworks/doc-resources/pngs/mesh.png"></p>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h2 id="5-visualizing-multiple-meshes">5. Visualizing multiple meshes<a class="anchor-link" href="#5-visualizing-multiple-meshes">&#182;</a></h2><p>When exploring datasets and results of different grooming (data preprocessing) steps, it is important to simultaneously visualize multiple shape samples. Here, we visualize two meshes side-by-side and link their views using <code>pyvista</code>. This linking is useful to make all rendering windows share the same camera view.</p>
 
 </div>
 </div>
@@ -3857,19 +3880,7 @@ shapeMesh_vtk.plot(notebook = notebook) </div>
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="5.-Visualizing-multiple-meshes">5. Visualizing multiple meshes<a class="anchor-link" href="#5.-Visualizing-multiple-meshes">&#182;</a></h2><p>When exploring datasets and results of different grooming (data preprocessing) steps, it is important to simultaneously visualize multiple shape samples. Here, we visualize two meshes side-by-side and link their views using <code>pyvista</code>. This linking is useful to make all rendering windows share the same camera view.</p>
-
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="Loading-the-second-mesh-and-convert-it-to-vtk-mesh">Loading the second mesh and convert it to <code>vtk</code> mesh<a class="anchor-link" href="#Loading-the-second-mesh-and-convert-it-to-vtk-mesh">&#182;</a></h3><p>First, let's select another mesh and load it.</p>
+<h3 id="loading-the-second-mesh-and-convert-it-to-vtk-mesh">Loading the second mesh and convert it to <code>vtk</code> mesh<a class="anchor-link" href="#loading-the-second-mesh-and-convert-it-to-vtk-mesh">&#182;</a></h3><p>First, let's select another mesh and load it.</p>
 
 </div>
 </div>
@@ -3988,7 +3999,6 @@ sw.plot_meshes(meshList, use_same_window=False, notebook=notebook)</div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p><img src="https://sci.utah.edu/~shapeworks/doc-resources/pngs/two_window_meshes.png"></p>
-
 </div>
 </div>
 </div>
@@ -4034,7 +4044,6 @@ sw.plot_meshes(meshList, use_same_window=True, notebook=notebook)</div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <p><img src="https://sci.utah.edu/~shapeworks/doc-resources/pngs/one_window_meshes.png"></p>
-
 </div>
 </div>
 </div>

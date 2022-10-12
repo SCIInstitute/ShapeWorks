@@ -29,7 +29,7 @@ title: Studio/src/Groom/GroomTool.h
 
 #include <Data/Preferences.h>
 #include <Groom/QGroom.h>
-#include <Libs/Groom/GroomParameters.h>
+#include <Groom/GroomParameters.h>
 
 #include <QElapsedTimer>
 #include <QObject>
@@ -76,7 +76,7 @@ class GroomTool : public QWidget {
   void on_antialias_checkbox_stateChanged(int state);
   void on_blur_checkbox_stateChanged(int state);
   void on_autopad_checkbox_stateChanged(int state);
-  void on_skip_button_clicked();
+  void skip_grooming_toggled();
   void on_restore_defaults_clicked();
 
   void update_ui();
@@ -130,4 +130,4 @@ class GroomTool : public QWidget {
 
 -------------------------------
 
-Updated on 2022-10-11 at 01:33:50 +0000
+Updated on 2022-10-12 at 23:44:43 +0000

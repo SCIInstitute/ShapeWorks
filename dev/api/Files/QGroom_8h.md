@@ -30,7 +30,7 @@ title: Studio/src/Groom/QGroom.h
 #include <QObject>
 
 #ifndef Q_MOC_RUN
-#include <Libs/Groom/Groom.h>
+#include <Groom/Groom.h>
 #endif
 
 namespace shapeworks {
@@ -58,4 +58,4 @@ Q_SIGNALS:
 
 -------------------------------
 
-Updated on 2022-10-11 at 01:33:50 +0000
+Updated on 2022-10-12 at 23:44:43 +0000

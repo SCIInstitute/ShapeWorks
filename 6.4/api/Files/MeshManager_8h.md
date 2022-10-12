@@ -27,15 +27,16 @@ title: Libs/Analyze/MeshManager.h
 ```cpp
 #pragma once
 
-#include <MeshCache.h>
-#include <MeshGenerator.h>
-#include <MeshWorkQueue.h>
-#include <MeshWorker.h>
+#include "MeshCache.h"
+#include "MeshGenerator.h"
+#include "MeshWorkQueue.h"
+#include "MeshWorker.h"
 
 #include <vtkSmartPointer.h>
 
 #include <QThreadPool>
 #include <QWaitCondition>
+
 class SurfaceReconstructor;
 
 namespace shapeworks {
@@ -115,4 +116,4 @@ class MeshManager : public QObject {
 
 -------------------------------
 
-Updated on 2022-10-11 at 01:33:50 +0000
+Updated on 2022-10-12 at 23:44:43 +0000

@@ -27,8 +27,8 @@ title: Libs/Project/Subject.h
 ```cpp
 #pragma once
 
-#include <Libs/Optimize/ParticleSystem/DomainType.h>
-#include <ProjectUtils.h>
+#include <Optimize/DomainType.h>
+#include "ProjectUtils.h"
 
 #include <map>
 #include <string>
@@ -114,4 +114,4 @@ class Subject {
 
 -------------------------------
 
-Updated on 2022-10-11 at 01:33:50 +0000
+Updated on 2022-10-12 at 23:44:43 +0000

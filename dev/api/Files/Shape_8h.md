@@ -28,18 +28,22 @@ title: Libs/Analyze/Shape.h
 ```cpp
 #pragma once
 
-#include <MeshGroup.h>
-#include <MeshManager.h>
-#include <StudioEnums.h>
-#include <StudioMesh.h>
-#include <Libs/Analyze/Particles.h>
-#include <Libs/Optimize/ParticleSystem/Constraints.h>
-#include <Libs/Project/Subject.h>
 #include <itkMatrixOffsetTransformBase.h>
 
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
 #include <string>
+
+// studio
+#include "MeshGroup.h"
+#include "MeshManager.h"
+#include "StudioEnums.h"
+#include "StudioMesh.h"
+
+// shapeworks
+#include <Analyze/Particles.h>
+#include <Optimize/Constraints.h>
+#include <Project/Subject.h>
 
 namespace shapeworks {
 
@@ -218,4 +222,4 @@ class Shape {
 
 -------------------------------
 
-Updated on 2022-10-11 at 01:33:50 +0000
+Updated on 2022-10-12 at 23:44:43 +0000

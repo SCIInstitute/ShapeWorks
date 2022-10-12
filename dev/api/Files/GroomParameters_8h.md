@@ -27,7 +27,7 @@ title: Libs/Groom/GroomParameters.h
 ```cpp
 #pragma once
 
-#include <Libs/Project/Project.h>
+#include <Project/Project.h>
 
 namespace shapeworks {
 
@@ -44,7 +44,7 @@ class GroomParameters {
     icp
   };
 
-public:
+ public:
 
   explicit GroomParameters(ProjectHandle project, std::string domain_name = "");
   void set_domain_name(std::string domain_name);
@@ -120,7 +120,6 @@ public:
   bool get_convert_to_mesh();
   void set_convert_to_mesh(bool value);
 
-
   // reflection
   bool get_reflect();
   void set_reflect(bool reflect);
@@ -156,6 +155,8 @@ public:
   double get_remesh_gradation();
   void set_remesh_gradation(double gradation);
 
+  bool get_skip_grooming();
+  void set_skip_grooming(bool skip);
 
   void restore_defaults();
 
@@ -167,7 +168,7 @@ public:
   const static std::string GROOM_ALIGNMENT_ICP_C;
   const static std::string GROOM_ALIGNMENT_LANDMARK_C;
 
-private:
+ private:
 
   Parameters params_;
   ProjectHandle project_;
@@ -179,4 +180,4 @@ private:
 
 -------------------------------
 
-Updated on 2022-10-11 at 01:33:50 +0000
+Updated on 2022-10-12 at 23:44:43 +0000

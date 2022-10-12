@@ -44,15 +44,15 @@ title: Libs/Optimize/Optimize.h
 #include <Eigen/Eigen>
 
 // shapeworks particle system
-#include "ParticleSystem/itkParticleSystem.h"
-#include "ParticleSystem/Sampler.h"
-#include "ParticleSystem/ParticleProcrustesRegistration.h"
-#include "ParticleSystem/itkParticleGoodBadAssessment.h"
-#include "ParticleSystem/itkParticleVectorFunction.h"
-#include "ParticleSystem/DomainType.h"
-#include "ParticleSystem/MeshWrapper.h"
-#include "ParticleSystem/OptimizationVisualizer.h"
-#include <Libs/Project/Project.h>
+#include "itkParticleSystem.h"
+#include "Sampler.h"
+#include "ParticleProcrustesRegistration.h"
+#include "itkParticleGoodBadAssessment.h"
+#include "itkParticleVectorFunction.h"
+#include "DomainType.h"
+#include "MeshWrapper.h"
+#include "OptimizationVisualizer.h"
+#include <Project/Project.h>
 
 
 namespace shapeworks {
@@ -266,6 +266,7 @@ protected:
   void WritePointFilesWithFeatures(int iter = -1);
   void WritePointFilesWithFeatures(std::string iter_prefix);
   void WriteEnergyFiles();
+  void WriteSplitFiles(std::string name);
   void WriteCuttingPlanePoints(int iter = -1);
   void WriteParameters(std::string output_dir = "");
   void ReportBadParticles();
@@ -403,4 +404,4 @@ protected:
 
 -------------------------------
 
-Updated on 2022-10-11 at 01:33:50 +0000
+Updated on 2022-10-12 at 23:44:43 +0000

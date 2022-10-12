@@ -78,3 +78,6 @@ To remove a constraint:
 ![Delete 1](../img/studio/delete1.png){: width="300" }
 3. To delete, select the one to delete and click delete.  
 ![Delete 2](../img/studio/delete2.png){: width="300" }
+
+*Below is a demonstration of the free form constraints functionality.*
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_ffc.mp4" autoplay muted loop controls style="width:100%"></p>

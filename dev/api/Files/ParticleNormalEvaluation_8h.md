@@ -27,7 +27,7 @@ title: Libs/Particles/ParticleNormalEvaluation.h
 ```cpp
 #pragma once
 
-#include <Libs/Particles/ParticleSystem.h>
+#include <Particles/ParticleSystem.h>
 
 #include <memory>
 
@@ -52,4 +52,4 @@ class ParticleNormalEvaluation {
 
 -------------------------------
 
-Updated on 2022-10-11 at 01:33:50 +0000
+Updated on 2022-10-12 at 23:44:43 +0000

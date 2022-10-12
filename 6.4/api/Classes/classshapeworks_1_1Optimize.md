@@ -157,6 +157,7 @@ Inherited by [shapeworks::QOptimize](../Classes/classshapeworks_1_1QOptimize.md)
 | void | **[WritePointFilesWithFeatures](../Classes/classshapeworks_1_1Optimize.md#function-writepointfileswithfeatures)**(int iter =-1) |
 | void | **[WritePointFilesWithFeatures](../Classes/classshapeworks_1_1Optimize.md#function-writepointfileswithfeatures)**(std::string iter_prefix) |
 | void | **[WriteEnergyFiles](../Classes/classshapeworks_1_1Optimize.md#function-writeenergyfiles)**() |
+| void | **[WriteSplitFiles](../Classes/classshapeworks_1_1Optimize.md#function-writesplitfiles)**(std::string name) |
 | void | **[WriteCuttingPlanePoints](../Classes/classshapeworks_1_1Optimize.md#function-writecuttingplanepoints)**(int iter =-1) |
 | void | **[WriteParameters](../Classes/classshapeworks_1_1Optimize.md#function-writeparameters)**(std::string output_dir ="") |
 | void | **[ReportBadParticles](../Classes/classshapeworks_1_1Optimize.md#function-reportbadparticles)**() |
@@ -1460,6 +1461,15 @@ void WriteEnergyFiles()
 ```
 
 
+### function WriteSplitFiles
+
+```cpp
+void WriteSplitFiles(
+    std::string name
+)
+```
+
+
 ### function WriteCuttingPlanePoints
 
 ```cpp
@@ -2158,4 +2168,4 @@ std::shared_ptr< Project > project_;
 
 -------------------------------
 
-Updated on 2022-10-11 at 01:33:49 +0000
+Updated on 2022-10-12 at 23:44:42 +0000

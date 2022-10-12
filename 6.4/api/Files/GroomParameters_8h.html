@@ -2010,6 +2010,20 @@
   
   
     <li class="md-nav__item">
+      <a href="../../dev/shapeworks-library.html" class="md-nav__link">
+        ShapeWorks as a Library
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../Modules/index_groups.html" class="md-nav__link">
         Groups
       </a>
@@ -2253,7 +2267,7 @@
 <h2 id="source-code">Source code</h2>
 <div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Libs/Project/Project.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Project/Project.h&gt;</span><span class="cp"></span>
 
 <span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 
@@ -2270,7 +2284,7 @@
 <span class="w">    </span><span class="n">icp</span><span class="w"></span>
 <span class="w">  </span><span class="p">};</span><span class="w"></span>
 
-<span class="k">public</span><span class="o">:</span><span class="w"></span>
+<span class="w"> </span><span class="k">public</span><span class="o">:</span><span class="w"></span>
 
 <span class="w">  </span><span class="k">explicit</span><span class="w"> </span><span class="n">GroomParameters</span><span class="p">(</span><span class="n">ProjectHandle</span><span class="w"> </span><span class="n">project</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">domain_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">);</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_domain_name</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">domain_name</span><span class="p">);</span><span class="w"></span>
@@ -2346,7 +2360,6 @@
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_convert_to_mesh</span><span class="p">();</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_convert_to_mesh</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="p">);</span><span class="w"></span>
 
-
 <span class="w">  </span><span class="c1">// reflection</span>
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_reflect</span><span class="p">();</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_reflect</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">reflect</span><span class="p">);</span><span class="w"></span>
@@ -2382,6 +2395,8 @@
 <span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_remesh_gradation</span><span class="p">();</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_remesh_gradation</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">gradation</span><span class="p">);</span><span class="w"></span>
 
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_skip_grooming</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_skip_grooming</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">skip</span><span class="p">);</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">restore_defaults</span><span class="p">();</span><span class="w"></span>
 
@@ -2393,7 +2408,7 @@
 <span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">GROOM_ALIGNMENT_ICP_C</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">GROOM_ALIGNMENT_LANDMARK_C</span><span class="p">;</span><span class="w"></span>
 
-<span class="k">private</span><span class="o">:</span><span class="w"></span>
+<span class="w"> </span><span class="k">private</span><span class="o">:</span><span class="w"></span>
 
 <span class="w">  </span><span class="n">Parameters</span><span class="w"> </span><span class="n">params_</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="n">ProjectHandle</span><span class="w"> </span><span class="n">project_</span><span class="p">;</span><span class="w"></span>
@@ -2402,7 +2417,7 @@
 <span class="p">}</span><span class="w"></span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-10-11 at 01:33:50 +0000</p>
+<p>Updated on 2022-10-12 at 23:44:43 +0000</p>
 
               
             </article>

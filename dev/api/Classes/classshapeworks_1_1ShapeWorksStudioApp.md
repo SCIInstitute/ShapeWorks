@@ -24,7 +24,9 @@ Inherits from QMainWindow
 | void | **[on_action_open_project_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-action-open-project-triggered)**() |
 | void | **[on_action_show_project_folder_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-action-show-project-folder-triggered)**() |
 | bool | **[on_action_save_project_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-action-save-project-triggered)**() |
-| bool | **[on_action_save_project_as_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-action-save-project-as-triggered)**() |
+| bool | **[save_project_as](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-save-project-as)**(QString type) |
+| void | **[save_as_swproj_clicked](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-save-as-swproj-clicked)**() |
+| void | **[save_as_xlsx_clicked](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-save-as-xlsx-clicked)**() |
 | void | **[on_action_quit_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-action-quit-triggered)**() |
 | void | **[on_action_import_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-action-import-triggered)**() |
 | void | **[on_vertical_scroll_bar_valueChanged](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-vertical-scroll-bar-valuechanged)**() |
@@ -156,10 +158,26 @@ bool on_action_save_project_triggered()
 ```
 
 
-### slot on_action_save_project_as_triggered
+### slot save_project_as
 
 ```cpp
-bool on_action_save_project_as_triggered()
+bool save_project_as(
+    QString type
+)
+```
+
+
+### slot save_as_swproj_clicked
+
+```cpp
+void save_as_swproj_clicked()
+```
+
+
+### slot save_as_xlsx_clicked
+
+```cpp
+void save_as_xlsx_clicked()
 ```
 
 
@@ -696,4 +714,4 @@ void dropEvent(
 
 -------------------------------
 
-Updated on 2022-10-11 at 01:33:49 +0000
+Updated on 2022-10-12 at 23:44:42 +0000

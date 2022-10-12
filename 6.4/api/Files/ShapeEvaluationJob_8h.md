@@ -76,7 +76,7 @@ public:
 
   QString name() override;
 
-signals:
+Q_SIGNALS:
 
   void report_progress(shapeworks::ShapeEvaluationJob::JobType job_type, float progress);
   void result_ready(shapeworks::ShapeEvaluationJob::JobType job_type, Eigen::VectorXd data);
@@ -97,4 +97,4 @@ Q_DECLARE_METATYPE(shapeworks::ShapeEvaluationJob::JobType);
 
 -------------------------------
 
-Updated on 2022-10-11 at 01:33:50 +0000
+Updated on 2022-10-12 at 23:44:43 +0000

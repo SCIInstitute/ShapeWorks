@@ -27,7 +27,7 @@ title: Libs/Optimize/OptimizeParameters.h
 ```cpp
 #pragma once
 
-#include <Libs/Project/Project.h>
+#include <Project/Project.h>
 
 #include <functional>
 
@@ -121,6 +121,12 @@ class OptimizeParameters {
 
   bool is_subject_fixed(std::shared_ptr<Subject> subject);
 
+  int get_checkpoint_interval();
+  void set_checkpoint_interval(int iterations);
+
+  bool get_save_init_splits();
+  void set_save_init_splits(bool enabled);
+
  private:
   std::string get_output_prefix();
 
@@ -138,4 +144,4 @@ class OptimizeParameters {
 
 -------------------------------
 
-Updated on 2022-10-11 at 01:33:50 +0000
+Updated on 2022-10-12 at 23:44:43 +0000
