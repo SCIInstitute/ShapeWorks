@@ -1,8 +1,8 @@
 #pragma once
 
-#include <GroomParameters.h>
-#include <Libs/Image/Image.h>
-#include <Libs/Project/Project.h>
+#include "GroomParameters.h"
+#include <Image/Image.h>
+#include <Project/Project.h>
 
 namespace shapeworks {
 

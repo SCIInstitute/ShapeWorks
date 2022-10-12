@@ -2,7 +2,7 @@
 
 #include <itkImage.h>
 
-#include <Libs/Utils/Utils.h>
+#include <Utils/Utils.h>
 
 #include <Reconstruction.h>
 

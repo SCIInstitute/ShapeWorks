@@ -1,15 +1,14 @@
-#include "OptimizeParameters.h"
-
-#include <Libs/Image/Image.h>
-#include <Libs/Mesh/MeshUtils.h>
-#include <Libs/Utils/StringUtils.h>
-#include <ParticleSystem/VtkMeshWrapper.h>
-
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 #include <functional>
 
+#include <Image/Image.h>
+#include <Mesh/MeshUtils.h>
+#include <Utils/StringUtils.h>
+
+#include "OptimizeParameters.h"
 #include "Optimize.h"
+#include "VtkMeshWrapper.h"
 
 using namespace shapeworks;
 

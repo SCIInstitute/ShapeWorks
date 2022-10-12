@@ -2,10 +2,10 @@
 #include <MeshGroup.h>
 
 #include <Shape.h>
-#include <Libs/Image/Image.h>
-#include <Libs/Project/ProjectUtils.h>
-#include <Libs/Utils/StringUtils.h>
-#include <Libs/Particles/ParticleSystem.h>
+#include <Image/Image.h>
+#include <Project/ProjectUtils.h>
+#include <Utils/StringUtils.h>
+#include <Particles/ParticleSystem.h>
 #include <Logging.h>
 
 #include <itkImageFileReader.h>
@@ -15,7 +15,7 @@
 #include <boost/filesystem.hpp>
 
 // vtk
-#include <Libs/Optimize/ParticleSystem/VtkMeshWrapper.h>
+#include <Optimize/VtkMeshWrapper.h>
 #include <vtkKdTreePointLocator.h>
 #include <vtkPointData.h>
 

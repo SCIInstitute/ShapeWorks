@@ -1,17 +1,17 @@
 #include "OptimizeParameterFile.h"
 #include "Optimize.h"
-#include "ParticleSystem/DomainType.h"
+#include "DomainType.h"
 
 #include <itkImageFileReader.h>
 #include <vtkPLYReader.h>
 
-#include <tinyxml.h>
+#include "ExternalLibs/tinyxml/tinyxml.h"
 
-#include "ParticleSystem/MeshWrapper.h"
-#include "ParticleSystem/TriMeshWrapper.h"
-#include "ParticleSystem/VtkMeshWrapper.h"
-#include <Libs/Utils/StringUtils.h>
-#include <Libs/Mesh/MeshUtils.h>
+#include "MeshWrapper.h"
+#include "TriMeshWrapper.h"
+#include "VtkMeshWrapper.h"
+#include <Utils/StringUtils.h>
+#include <Mesh/MeshUtils.h>
 
 namespace shapeworks {
 

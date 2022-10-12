@@ -10,7 +10,7 @@
 #include <time.h>
 #include "ParticleImageDomainWithGradients.h"
 #include "ParticleImageDomainWithGradN.h"
-#include "Libs/Utils/Utils.h"
+#include <Utils/Utils.h>
 
 namespace itk
 {

@@ -4,8 +4,8 @@
 #include <vtkPointData.h>
 
 // qt
-#include <Libs/Mesh/MeshUtils.h>
-#include <Libs/Utils/StringUtils.h>
+#include <Mesh/MeshUtils.h>
+#include <Utils/StringUtils.h>
 
 #include <QApplication>
 #include <QDir>
@@ -27,14 +27,14 @@
 #include <ExcelProjectWriter.h>
 #include <JsonProjectReader.h>
 #include <JsonProjectWriter.h>
-#include <Libs/Project/Project.h>
+#include <Project/Project.h>
 #include <Logging.h>
 #include <MeshManager.h>
 #include <Shape.h>
 #include <Utils/AnalysisUtils.h>
 #include <Utils/StudioUtils.h>
 #include <Visualization/Visualizer.h>
-#include <tinyxml.h>
+#include "ExternalLibs/tinyxml/tinyxml.h"
 
 
 namespace shapeworks {

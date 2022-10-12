@@ -3,9 +3,9 @@
 #include <StudioEnums.h>
 #include <MeshManager.h>
 #include <Data/Preferences.h>
-#include <Libs/Analyze/Particles.h>
-#include <Libs/Particles/ParticleSystem.h>
-#include <Libs/Project/Project.h>
+#include <Analyze/Particles.h>
+#include <Particles/ParticleSystem.h>
+#include <Project/Project.h>
 #include <Shapeworks.h>
 #include <Visualization/Viewer.h>
 #include <itkMatrixOffsetTransformBase.h>

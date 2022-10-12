@@ -2,7 +2,7 @@
 
 // QT Includes
 #include <Data/Session.h>
-#include <Libs/Project/Project.h>
+#include <Project/Project.h>
 
 #include <QAbstractTableModel>
 #include <QIcon>

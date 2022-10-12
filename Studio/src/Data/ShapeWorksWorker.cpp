@@ -1,12 +1,10 @@
-// must come first due to Q_Q_EMIT vs Q_EMIT
-#include <Libs/Optimize/Optimize.h>
-// must come first
 
 #include <Shape.h>
 #include <Data/ShapeWorksWorker.h>
 #include <SurfaceReconstructor.h>
 #include <Groom/QGroom.h>
-#include <Libs/Optimize/OptimizeParameters.h>
+#include <Optimize/OptimizeParameters.h>
+#include <Optimize/Optimize.h>
 #include <Logging.h>
 
 namespace shapeworks {

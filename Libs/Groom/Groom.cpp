@@ -1,10 +1,10 @@
 #include <Groom.h>
 #include <GroomParameters.h>
-#include <Libs/Image/Image.h>
-#include <Libs/Mesh/Mesh.h>
-#include <Libs/Mesh/MeshUtils.h>
-#include <Libs/Project/ProjectUtils.h>
-#include <Libs/Utils/StringUtils.h>
+#include <Image/Image.h>
+#include <Mesh/Mesh.h>
+#include <Mesh/MeshUtils.h>
+#include <Project/ProjectUtils.h>
+#include <Utils/StringUtils.h>
 #include <itkRegionOfInterestImageFilter.h>
 #include <tbb/parallel_for.h>
 #include <vtkCenterOfMass.h>
@@ -432,6 +432,7 @@ int Groom::get_total_ops() {
 
   int num_tools = 0;
 
+  project_->update_subjects();
   auto domains = this->project_->get_domain_names();
   auto subjects = this->project_->get_subjects();
 

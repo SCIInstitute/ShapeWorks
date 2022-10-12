@@ -2,7 +2,7 @@
 #include <Shape.h>
 #include <Data/ShapeWorksWorker.h>
 #include <Groom/GroomTool.h>
-#include <Libs/Groom/GroomParameters.h>
+#include <Groom/GroomParameters.h>
 #include <Logging.h>
 #include <ui_GroomTool.h>
 
