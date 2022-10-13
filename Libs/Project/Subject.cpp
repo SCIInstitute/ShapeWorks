@@ -186,6 +186,18 @@ std::vector<std::string> Subject::get_landmarks_filenames()
 }
 
 //---------------------------------------------------------------------------
+void Subject::set_time_point_for_subject(std::vector<std::string> filenames)
+{
+  this->regression_time_point_ = filenames;
+}
+
+//---------------------------------------------------------------------------
+std::vector<double> Subject::get_time_point_for_subject()
+{
+  return this->regression_time_point_;
+}
+
+//---------------------------------------------------------------------------
 void Subject::set_constraints_filenames(std::vector<std::string> filenames)
 {
   constraints_filenames_ = filenames;

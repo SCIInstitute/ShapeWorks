@@ -193,6 +193,7 @@ void Project::load_subjects() {
   auto image_columns = this->get_matching_columns(IMAGE_PREFIX);
   auto name_column = this->get_index_for_column(NAME);
   auto landmarks_columns = this->get_matching_columns(LANDMARKS_FILE_PREFIX);
+  auto regression_time_indices_columns = this->get_matching_columns(REGRESSION_TIME_INDEX_PREFIX;
   auto constraints_columns = get_matching_columns(CONSTRAINTS_PREFIX);
 
   auto extra_columns = this->get_extra_columns();
@@ -205,6 +206,7 @@ void Project::load_subjects() {
     subject->set_original_filenames(this->get_file_list(original_columns, i));
     subject->set_groomed_filenames(this->get_file_list(groomed_columns, i));
     subject->set_landmarks_filenames(this->get_list(landmarks_columns, i));
+    subject->set_time_point_for_subject(this->get_list(regression_time_indices_columns, i));
     subject->set_constraints_filenames(this->get_file_list(constraints_columns, i));
     subject->set_groomed_transforms(this->get_transform_list(groomed_transform_columns, i));
     subject->set_procrustes_transforms(this->get_transform_list(procrustes_transform_columns, i));

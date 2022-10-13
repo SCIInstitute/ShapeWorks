@@ -3,22 +3,27 @@
 #include "itkParticleShapeMatrixAttribute.h"
 #include "vnl/vnl_vector.h"
 #include "itkParticleSystem.h"
+#include <pybind11/embed.h>
+#include <pybind11/stl.h>
+#include <pybind11/eigen.h>
+namespace py = pybind11;
+using namespace pybind11::literals; // to bring in the `_a` literal
 
 namespace itk
 {
-/** \class ParticleShapeLinearRegressionMatrixAttribute
+/** \class itkParticleShapeSpatiotemporalPolynomialRegressionMatrixAttribute
  *
  *
  *
  */
 template <class T, unsigned int VDimension>
-class ITK_EXPORT ParticleShapeLinearRegressionMatrixAttribute
+class ITK_EXPORT itkParticleShapeSpatiotemporalPolynomialRegressionMatrixAttribute
   : public ParticleShapeMatrixAttribute<T,VDimension>
 {
 public:
   /** Standard class typedefs */
   typedef T DataType;
-  typedef ParticleShapeLinearRegressionMatrixAttribute Self;
+  typedef itkParticleShapeSpatiotemporalPolynomialRegressionMatrixAttribute Self;
   typedef ParticleShapeMatrixAttribute<T,VDimension> Superclass;
   typedef SmartPointer<Self>  Pointer;
   typedef SmartPointer<const Self>  ConstPointer;
@@ -28,7 +33,7 @@ public:
   itkNewMacro(Self);
   
   /** Run-time type information (and related methods). */
-  itkTypeMacro(ParticleShapeLinearRegressionMatrixAttribute, ParticleShapeMatrixAttribute);
+  itkTypeMacro(itkParticleShapeSpatiotemporalPolynomialRegressionMatrixAttribute, ParticleShapeMatrixAttribute);
   
   
   void UpdateMeanMatrix()
@@ -259,39 +264,13 @@ public:
   void EstimateParameters()
   {
 
-    // make calls to python job here
 
-    //    std::cout << "Estimating params" << std::endl;
-    //    std::cout << "Explanatory: " << m_Expl << std::endl;
-
+    py::module sw = py::module::import("shapeworks");
+    py::object compute = sw.attr("polynomial_regression").attr("estimate_parameters");
     vnl_matrix<double> X = *this + m_MeanMatrix;
-
-    // Number of samples
-    double n = static_cast<double>(X.cols());
-    
-    vnl_vector<double> sumtx = m_Expl[0] * X.get_column(0);
-    vnl_vector<double> sumx = X.get_column(0);
-    double sumt = m_Expl[0];
-    double sumt2 = m_Expl[0] * m_Expl[0];    
-    for (unsigned int k = 1; k < X.cols(); k++)      // k is the sample number
-      {
-      sumtx += m_Expl[k] * X.get_column(k);
-      sumx  += X.get_column(k);
-      sumt  += m_Expl[k];
-      sumt2 += m_Expl[k] * m_Expl[k];      
-      }
-
-    m_Slope = (n * sumtx - (sumx * sumt)) / (n * sumt2 - (sumt*sumt));
-
-
-    vnl_vector<double> sumbt = m_Slope * m_Expl[0];
-    for (unsigned int k = 1; k < X.cols(); k++)
-      {
-      sumbt += m_Slope * m_Expl[k];
-      }
-    
-    
-    m_Intercept = (sumx - sumbt) / n;
+    // x to eigen 
+    // m_exp tp eig vec
+    Eigen::MatrixXd betas_eigen = compute(X, X).cast<Eigen::MatrixXd>();
     
   }
   
@@ -301,6 +280,7 @@ public:
     m_Intercept.fill(0.0);
     m_Slope.fill(0.0);
     m_MeanMatrix.fill(0.0);
+    m_Betas.fill(0.0);
   }
   
   virtual void BeforeIteration()

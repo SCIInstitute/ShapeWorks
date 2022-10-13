@@ -40,6 +40,13 @@ bool OptimizeParameters::get_use_ssm_4d() { return this->params_.get("ssm_4d", f
 //---------------------------------------------------------------------------
 void OptimizeParameters::set_use_ssm_4d(bool value) { this->params_.set("ssm_4d", value);}
 
+
+//---------------------------------------------------------------------------
+bool OptimizeParameters::get_use_spatiotemporal_regression() { return this->params_.get("spatiotemporal_regression", false); }
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_use_spatiotemporal_regression(bool value) { this->params_.set("spatiotemporal_regression", value);}
+
 //---------------------------------------------------------------------------
 double OptimizeParameters::get_initial_relative_weighting() {
   return this->params_.get("initial_relative_weighting", 0.05);
@@ -259,6 +266,8 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
   optimize->SetDomainsPerShape(domains_per_shape);
   optimize->SetNumberOfParticles(this->get_number_of_particles());
   optimize->SetSsm4d(this->get_use_ssm_4d());
+  optimize->SetSpatiotemporalRegression(this->get_use_spatiotemporal_regression());
+
   // debug 
   std::cout << "-----SSM 4D Flag set as " << this->get_use_ssm_4d() << std::endl;
   optimize->SetInitialRelativeWeighting(this->get_initial_relative_weighting());
@@ -340,6 +349,20 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
     }
     if (point_files.size() > 0) {
       optimize->SetPointFiles(point_files);
+    }
+  }
+
+  if(get_use_spatiotemporal_regression()) {
+    // time points for each subject
+    std::vector<double> time_points_for_spatiotemporal;
+    for(auto& s : subjects){
+      auto time_point = s->get_time_point_for_subject();
+      time_points_for_spatiotemporal.insert(std::end(time_points_for_spatiotemporal), std::begin(time_point), std::end(time_point));
+    }
+    if (time_points_for_spatiotemporal.size()>0){
+        dynamic_cast < itk::ParticleShapeLinearRegressionMatrixAttribute<double, 3>* >
+  (optimize->GetSampler()->GetEnsembleRegressionEntropyFunction()->GetShapeMatrix())->SetExplanatory(
+    evars);
     }
   }
 

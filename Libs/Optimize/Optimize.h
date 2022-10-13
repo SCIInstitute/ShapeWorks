@@ -101,6 +101,9 @@ public:
   //! Set flag for 4D SSM Optimization with time points
   void SetSsm4d(bool value);
 
+  //! Set flag for 4D SSM Optimization with time points
+  void SetSpatiotemporalRegression(bool value);
+
   void SetDomainType(shapeworks::DomainType type);
   shapeworks::DomainType GetDomainType();
 
