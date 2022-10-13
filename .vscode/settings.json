@@ -1,3 +1,6 @@
 {
-    "python.pythonPath": "/home/sci/nawazish.khan/miniconda3/envs/assignment/bin/python"
+    "python.pythonPath": "/home/sci/nawazish.khan/miniconda3/envs/shapeworks_new/bin/python",
+    "files.associations": {
+        "cmath": "cpp"
+    }
 }
