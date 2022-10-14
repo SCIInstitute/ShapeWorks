@@ -17,13 +17,13 @@ namespace itk
  *
  */
 template <class T, unsigned int VDimension>
-class ITK_EXPORT itkParticleShapeSpatiotemporalPolynomialRegressionMatrixAttribute
+class ITK_EXPORT ParticleShapeSpatiotemporalPolynomialRegressionMatrixAttribute
   : public ParticleShapeMatrixAttribute<T,VDimension>
 {
 public:
   /** Standard class typedefs */
   typedef T DataType;
-  typedef itkParticleShapeSpatiotemporalPolynomialRegressionMatrixAttribute Self;
+  typedef ParticleShapeSpatiotemporalPolynomialRegressionMatrixAttribute Self;
   typedef ParticleShapeMatrixAttribute<T,VDimension> Superclass;
   typedef SmartPointer<Self>  Pointer;
   typedef SmartPointer<const Self>  ConstPointer;
@@ -38,57 +38,41 @@ public:
   
   void UpdateMeanMatrix()
   {
-    // for each sample
-    for (unsigned int i = 0; i < m_MeanMatrix.cols(); i++)
-      {
-      // compute the mean
-      m_MeanMatrix.set_column(i, m_Intercept + m_Slope * m_Expl(i));
-      }
-  }
-
-    
-  void UpdateMeanMatrix()
-  {
     // New g(r)
     // for each sample
+    //TODO: Sanity Check
     for (unsigned int i = 0; i < m_MeanMatrix.cols(); i++)
       {
       // compute the mean
       vnl_vector<double> vec;
       for (t = 0 ; t < T; t++){
-        val += pow(m_Expl(i), t) * m_betas.col(i)
+        vec += pow(m_Expl(i), t) * m_betas.col(i)
       }
-      m_MeanMatrix.set_column(i, val);
-
-      // m_MeanMatrix.set_column(i, m_Intercept + m_Slope * m_Expl(i));
+      m_MeanMatrix.set_column(i, vec);
       }
   }
   
-  
-  inline vnl_vector<double> ComputeMean(double k) const
-  {
-    return m_Intercept + m_Slope * k;    
-  }
   
   void ResizeParameters(unsigned int n)
   {
-    vnl_vector<double> tmpA = m_Intercept; // copy existing  matrix
-    vnl_vector<double> tmpB = m_Slope; // copy existing  matrix
-    
+    // Resize after change in particle size
+    vnl_matrix<double> tmp = m_Betas; // copy existing  matrix
+    unsigned int T = m_Betas.cols();
     // Create new 
-    m_Intercept.set_size(n);
-    m_Slope.set_size(n);
-    
-    // Copy old data into new vector.
-    for (unsigned int r = 0; r < tmpA.size(); r++)
+    m_Betas.set_size(n, T);
+    // Copy old data
+    for (unsigned int r = 0; r < tmp.rows(); r++)
+    {
+      for (unsigned int c = 0; c < tmp.cols(); c++)
       {
-      m_Intercept(r) = tmpA(r);
-      m_Slope(r) = tmpB(r);
+          m_Betas(r, c) = tmp(r, c);
       }
+    }
   }
   
   virtual void ResizeMeanMatrix(int rs, int cs)
   {
+    // TODO: sanity check
     vnl_matrix<T> tmp = m_MeanMatrix; // copy existing  matrix
     
     // Create new column (shape)
@@ -106,11 +90,6 @@ public:
       } 
   }
 
-  virtual void ResizeBetas(int rs, int cs){
-    //TODO: Add stuff here
-
-  }
-  
   void ResizeExplanatory(unsigned int n)
   {
     if (n > m_Expl.size())
@@ -141,7 +120,7 @@ public:
     
     if ( d % this->m_DomainsPerShape  == 0 )
       {
-      this->ResizeMatrix(this->rows(), this->cols()+1);
+      this->ResizeMatrix(this->rows(), this->cols()+1); // for shapeMatrixAttribute
       this->ResizeMeanMatrix(this->rows(), this->cols()+1);
       this->ResizeExplanatory(this->cols());
       }    
@@ -237,48 +216,46 @@ public:
   double &GetExplanatory(unsigned int i)
   { return m_Expl[i]; }
 
-  const vnl_vector<double> &GetSlope() const
-  { return m_Slope; }
-  const vnl_vector<double> &GetIntercept() const
-  { return m_Intercept; }
-  
-  void SetSlope(const std::vector<double> &v)
-  {
-    ResizeParameters(v.size());
-    for (unsigned int i = 0; i < v.size(); i++)
-      {
-      m_Slope[i] = v[i];
-      }    
-  }
+  const vnl_matrix<double> &GetBetas() const
+  { return m_Betas; }
 
-  void SetIntercept(const std::vector<double> &v)
+  void SetBetas(const vnl_matrix<double> &m)
   {
-    ResizeParameters(v.size());
-    for (unsigned int i = 0; i < v.size(); i++)
+    ResizeParameters(m.rows());
+    for (unsigned int r = 0; r < m.rows(); ++r)
+    {
+      for (unsigned int c = 0; c < m.cols(); ++c)
       {
-      m_Intercept[i] = v[i];
+        m_Betas(r, c) = m(r, c);
       }
-    
+    }
   }
 
-  void EstimateParameters()
+  void GetOptimumAlphaValue()
   {
+    py::module sw = py::module::import("shapeworks");
+    py::object compute = sw.attr("polynomial_regression").attr("get_optimum_alpha");
+    vnl_matrix<double> X = *this + m_MeanMatrix;
+    // x to eigen 
+    // m_exp tp eig vec
+    double val = compute(X, X).cast<Eigen::MatrixXd>();
+    m_alpha_value = val;
+    m_alpha_estimated = true;
+  }
 
-
+    void EstimateParameters()
+  {
     py::module sw = py::module::import("shapeworks");
     py::object compute = sw.attr("polynomial_regression").attr("estimate_parameters");
     vnl_matrix<double> X = *this + m_MeanMatrix;
     // x to eigen 
     // m_exp tp eig vec
-    Eigen::MatrixXd betas_eigen = compute(X, X).cast<Eigen::MatrixXd>();
-    
+    Eigen::MatrixXd betas_eigen = compute(X, X, alpha_value).cast<Eigen::MatrixXd>();
   }
   
   // 
   void Initialize()
   {
-    m_Intercept.fill(0.0);
-    m_Slope.fill(0.0);
     m_MeanMatrix.fill(0.0);
     m_Betas.fill(0.0);
   }
@@ -289,6 +266,9 @@ public:
     if (m_UpdateCounter >= m_RegressionInterval)
       {
       m_UpdateCounter = 0;
+      if (!m_alpha_estimated){
+        this->GetOptimumAlphaValue();
+      }
       this->EstimateParameters();
       this->UpdateMeanMatrix();
       }
@@ -300,7 +280,7 @@ public:
   { return m_RegressionInterval; }
   
 protected:
-  ParticleShapeLinearRegressionMatrixAttribute() 
+  ParticleShapeSpatiotemporalPolynomialRegressionMatrixAttribute() 
   {
     this->m_DefinedCallbacks.DomainAddEvent = true;
     this->m_DefinedCallbacks.PositionAddEvent = true;
@@ -308,27 +288,25 @@ protected:
     this->m_DefinedCallbacks.PositionRemoveEvent = true;
     m_UpdateCounter = 0;
     m_RegressionInterval = 1;
+    m_alpha_value = 0.000005;
+    m_alpha_estimated = false;
   }
-  virtual ~ParticleShapeLinearRegressionMatrixAttribute() {};
+  virtual ~ParticleShapeSpatiotemporalPolynomialRegressionMatrixAttribute() {};
 
   void PrintSelf(std::ostream& os, Indent indent) const
   { Superclass::PrintSelf(os,indent);  }
 
 private:
-  ParticleShapeLinearRegressionMatrixAttribute(const Self&); //purposely not implemented
+  ParticleShapeSpatiotemporalPolynomialRegressionMatrixAttribute(const Self&); //purposely not implemented
   void operator=(const Self&); //purposely not implemented
 
   int m_UpdateCounter;
   int m_RegressionInterval;
 
-  double m_alpha_value;
-
-  // Parameters for the linear model
-  vnl_vector<double> m_Intercept;
-  vnl_vector<double> m_Slope;
-
+  // Parameters for the polynomial regression model using LASSO
   vnl_matrix<double> m_betas;
-
+  double m_alpha_value;
+  bool m_alpha_estimated;
 
   // The explanatory variable value for each sample (matrix column)
   vnl_vector<double> m_Expl;
