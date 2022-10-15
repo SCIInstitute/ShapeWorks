@@ -3,6 +3,13 @@
 #set -v   #verbose execution for debugging
 #set -x   #tracing execution for debugging (echos all commands from script)
 
+# check to make sure `source` was not used
+(return 0 2>/dev/null) && sourced=1 || sourced=0
+if [[ "$sourced" == "1" ]]; then
+  echo "ERROR: do not use \"source\" when executing this script"
+  return
+fi
+
 # defaults
 BUILD_CLEAN=0
 CLEAN_AFTER=0
