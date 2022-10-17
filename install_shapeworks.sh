@@ -1,6 +1,9 @@
 #
 # Installs conda environment for building ShapeWorks
 #
+
+SW_MAJOR_VERSION=6.4
+
 echo ""
 echo "Note: this script only supports bash and zsh shells "
 echo "      It must be called using \"source ./install_shapeworks.sh [--developer] [--user] [optional_env_name]\""
@@ -231,8 +234,9 @@ function install_conda() {
 
   # Set the python path for studio
   conda activate $CONDAENV
-  mkdir -p $HOME/.shapeworks ; python -c "import sys; print('\n'.join(sys.path))" > $HOME/.shapeworks/python_path.txt
-  python -c "import sys; print(sys.prefix)" > $HOME/.shapeworks/python_home.txt
+  mkdir -p $HOME/.shapeworks
+  python -c "import sys; print('\n'.join(sys.path))" > $HOME/.shapeworks/python_path_${SW_MAJOR_VERSION}.txt
+  python -c "import sys; print(sys.prefix)" > $HOME/.shapeworks/python_home_${SW_MAJOR_VERSION}.txt
 
   return 0
 }
