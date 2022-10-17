@@ -101,6 +101,14 @@ namespace itk
 
       const auto accTimerBegin = std::chrono::steady_clock::now();
       m_GradientFunction->SetParticleSystem(m_ParticleSystem);
+
+      //TODO: Sanity Check
+      if (this->m_BeforeEvaluateCallback) {
+        std::cout << " ------- Making Python Callback from ParticleGradientDescentPositionOptimizer 0 ------" << std::endl;
+        this->m_BeforeEvaluateCallback();
+        std::cout << " ------- Making Python Callback from ParticleGradientDescentPositionOptimizer 1 ------" << std::endl;
+
+      }
         if (counter % global_iteration == 0)
             m_GradientFunction->BeforeIteration();
         counter++;

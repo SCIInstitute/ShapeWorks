@@ -46,10 +46,10 @@ public:
   //! Set the landmarks filenames
   std::vector<std::string> get_landmarks_filenames();
 
-  //! Get the landmarks filenames (one per domain)
-  void set_time_point_for_subject(std::vector<double> timpepoints);
-  //! Set the landmarks filenames
-  std::vector<double> get_time_point_for_subject();
+  //! Get the time point for regression
+  void set_time_point_for_subject(std::vector<std::string> filenames);
+  //! Set the time fpoint for regression
+  std::vector<std::string> get_time_point_for_subject();
 
   //! Get the constraints filenames (one per domain)
   void set_constraints_filenames(std::vector<std::string> filenames);
@@ -115,7 +115,7 @@ private:
   std::vector<std::string> local_particle_filenames_;
   std::vector<std::string> world_particle_filenames_;
   std::vector<std::string> landmarks_filenames_;
-  std::vector<double> regression_time_point_;
+  std::vector<std::string> regression_time_point_;
   std::vector<std::string> constraints_filenames_;
   std::vector<std::vector<double>> groomed_transforms_;
   std::vector<std::vector<double>> procrustes_transforms_;

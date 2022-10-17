@@ -193,7 +193,7 @@ void Project::load_subjects() {
   auto image_columns = this->get_matching_columns(IMAGE_PREFIX);
   auto name_column = this->get_index_for_column(NAME);
   auto landmarks_columns = this->get_matching_columns(LANDMARKS_FILE_PREFIX);
-  auto regression_time_indices_columns = this->get_matching_columns(REGRESSION_TIME_INDEX_PREFIX;
+  auto regression_time_indices_columns = this->get_matching_columns(REGRESSION_TIME_INDEX_PREFIX);
   auto constraints_columns = get_matching_columns(CONSTRAINTS_PREFIX);
 
   auto extra_columns = this->get_extra_columns();
@@ -281,7 +281,9 @@ void Project::store_subjects() {
   auto original_columns = this->get_matching_columns(this->input_prefixes_);
   auto image_columns = this->get_matching_columns(IMAGE_PREFIX);
   auto landmarks_columns = this->get_matching_columns(LANDMARKS_FILE_PREFIX);
+  auto regression_time_indices_columns = this->get_matching_columns(REGRESSION_TIME_INDEX_PREFIX);
   landmarks_columns.clear();
+  regression_time_indices_columns.clear();
   auto constraints_columns = get_matching_columns(CONSTRAINTS_PREFIX);
   constraints_columns.clear();
 
@@ -324,6 +326,8 @@ void Project::store_subjects() {
     world_columns.push_back(column_name);
     column_name = std::string(LANDMARKS_FILE_PREFIX) + this->get_column_identifier(original_columns[i]);
     landmarks_columns.push_back(column_name);
+    column_name = std::string(REGRESSION_TIME_INDEX_PREFIX  ) + this->get_column_identifier(original_columns[i]);
+    regression_time_indices_columns.push_back(column_name);
     column_name = std::string(CONSTRAINTS_PREFIX) + this->get_column_identifier(original_columns[i]);
     constraints_columns.push_back(column_name);
   }
@@ -392,6 +396,17 @@ void Project::store_subjects() {
     }
     if (landmark_files.size() > 0) {
       set_list(landmarks_columns, i, landmark_files);
+    }
+
+    // timepoints
+    auto time_points_ar = subject->get_time_point_for_subject();
+    int time_point_count = 0;
+    while (time_points_ar.size() > regression_time_indices_columns.size()) {
+      regression_time_indices_columns.push_back(get_new_file_column(REGRESSION_TIME_INDEX_PREFIX, time_point_count));
+      time_point_count++;
+    }
+    if (time_points_ar.size() > 0) {
+      set_list(regression_time_indices_columns, i, time_points_ar);
     }
 
     // constraints

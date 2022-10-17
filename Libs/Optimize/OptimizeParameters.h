@@ -20,7 +20,10 @@ class OptimizeParameters {
   void set_use_ssm_4d(bool value);
 
   bool get_use_spatiotemporal_regression();
-  bool set_use_spatiotemporal_regression(bool value);
+  void set_use_spatiotemporal_regression(bool value);
+
+  int get_spatiotemporal_polynomial_degree();
+  void set_spatiotemporal_polynomial_degree(int value);
 
   std::vector<int> get_number_of_particles();
   void set_number_of_particles(std::vector<int> number_of_particles);

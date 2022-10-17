@@ -3,11 +3,7 @@
 #include "itkParticleShapeMatrixAttribute.h"
 #include "vnl/vnl_vector.h"
 #include "itkParticleSystem.h"
-#include <pybind11/embed.h>
-#include <pybind11/stl.h>
-#include <pybind11/eigen.h>
-namespace py = pybind11;
-using namespace pybind11::literals; // to bring in the `_a` literal
+
 
 namespace itk
 {
@@ -39,59 +35,83 @@ public:
   void UpdateMeanMatrix()
   {
     // New g(r)
-    // for each sample
     //TODO: Sanity Check
-    for (unsigned int i = 0; i < m_MeanMatrix.cols(); i++)
+    int beta_cols_size = m_polynomial_degree + 1;
+    std::cout << "Updating mean matrix m_polynomial_degree = " << m_polynomial_degree << std::endl;
+    // b_0, b_1, b_2 ... each vec of size dM
+    unsigned int N = m_MeanMatrix->cols();
+    for (unsigned int i = 0; i < N; ++i)
       {
       // compute the mean
-      vnl_vector<double> vec;
-      for (t = 0 ; t < T; t++){
-        vec += pow(m_Expl(i), t) * m_betas.col(i)
+      vnl_vector<double> vec; // dM
+      for (unsigned int p = 0 ; p < beta_cols_size; ++p){
+        vec += (std::pow(m_Expl(i), p) * m_Betas->get_column(p));
       }
-      m_MeanMatrix.set_column(i, vec);
+      m_MeanMatrix->set_column(i, vec);
       }
+      std::cout << "-----Mean Matrix Updated in ShapeMatrixAttribute ----- " << std::endl;
+  }
+
+  std::shared_ptr<vnl_matrix<double>> GetMeanMatrix(){
+    return this->m_MeanMatrix;
+  }
+
+  std::shared_ptr<vnl_matrix<double>> GetRegressionParametersMatrix(){
+    return this->m_Betas;
   }
   
-  
-  void ResizeParameters(unsigned int n)
+  void ResizeParameters(unsigned int n, int degree)
   {
     // Resize after change in particle size
-    vnl_matrix<double> tmp = m_Betas; // copy existing  matrix
-    unsigned int T = m_Betas.cols();
+    // std::cout << "Inside ResizeParameters 0 n = " << n << std::endl;
+    
+    vnl_matrix<double> tmp(*m_Betas); // copy existing  matrix
+    // std::cout << "Inside ResizeParameters 0.1 " << std::endl;
+    
+    int beta_cols = m_Betas->cols(); // P + 1
+    if (beta_cols != (m_polynomial_degree + 1)){
+      std::cerr << "Polynomial Degree doesn't match with Beta Matrix Colsize" << std::endl;
+    }
     // Create new 
-    m_Betas.set_size(n, T);
+    m_Betas->set_size(n, beta_cols);
     // Copy old data
     for (unsigned int r = 0; r < tmp.rows(); r++)
     {
       for (unsigned int c = 0; c < tmp.cols(); c++)
       {
-          m_Betas(r, c) = tmp(r, c);
+          m_Betas->put(r, c, tmp(r, c));
       }
     }
+    // std::cout << "Inside ResizeParameters 1 " << std::endl;
+    
   }
   
   virtual void ResizeMeanMatrix(int rs, int cs)
   {
-    // TODO: sanity check
-    vnl_matrix<T> tmp = m_MeanMatrix; // copy existing  matrix
+    // std::cout << "Inside Resize Mean Matrix 0 rs, cs = " << rs << " " << cs <<  std::endl;
+    vnl_matrix<T> tmp(*m_MeanMatrix); // copy existing  matrix
+    // std::cout << "Inside Resize Mean Matrix 0.1" << std::endl;
     
     // Create new column (shape)
-    m_MeanMatrix.set_size(rs, cs);
+    m_MeanMatrix->set_size(rs, cs);
     
-    m_MeanMatrix.fill(0.0);
+    m_MeanMatrix->fill(0.0);
     
     // Copy old data into new matrix.
     for (unsigned int c = 0; c < tmp.cols(); c++)
       {
       for (unsigned int r = 0; r < tmp.rows(); r++)
         {
-        m_MeanMatrix(r,c) = tmp(r,c);
+        m_MeanMatrix->put(r,c, tmp(r,c)); 
         }
-      } 
+      }
+    // std::cout << "Inside Resize Mean Matrix 1" << std::endl;
+    
   }
 
   void ResizeExplanatory(unsigned int n)
   {
+    // std::cout << "Inside ResizeExplanatory 0 n = " << n << std::endl;
     if (n > m_Expl.size())
       {
       vnl_vector<double> tmp = m_Expl; // copy existing  matrix
@@ -106,6 +126,8 @@ public:
         m_Expl(r) = tmp(r);
         }
       }
+    // std::cout << "Inside ResizeExplanatory 1" << std::endl;
+
   }  
   
   /** Callbacks that may be defined by a subclass.  If a subclass defines one
@@ -114,6 +136,7 @@ public:
       the appropriate event with this method. */
   virtual void DomainAddEventCallback(Object *, const EventObject &e)
   {
+    // std::cout << "inside Domain add in ShapeMatrixAttribute 0 " << std::endl;
     const itk::ParticleDomainAddEvent &event
       = dynamic_cast<const itk::ParticleDomainAddEvent &>(e);
     unsigned int d = event.GetDomainIndex();
@@ -121,13 +144,18 @@ public:
     if ( d % this->m_DomainsPerShape  == 0 )
       {
       this->ResizeMatrix(this->rows(), this->cols()+1); // for shapeMatrixAttribute
+      // std::cout << "ShapeMatrix Resized " << std::endl;
+
       this->ResizeMeanMatrix(this->rows(), this->cols()+1);
       this->ResizeExplanatory(this->cols());
-      }    
+      }
+    // std::cout << "inside Domain add in ShapeMatrixAttribute 1" << std::endl;
+
   }
   
   virtual void PositionAddEventCallback(Object *o, const EventObject &e) 
   {
+    // std::cout << "inside position add in ShapeMatrixAttribute 0" << std::endl;
     const itk::ParticlePositionAddEvent &event
       = dynamic_cast<const itk::ParticlePositionAddEvent &>(e);
     const itk::ParticleSystem *ps
@@ -143,7 +171,7 @@ public:
     if ((ps->GetNumberOfParticles(d) * VDimension * this->m_DomainsPerShape)
         > this->rows())
       {
-      this->ResizeParameters(PointsPerDomain * VDimension * this->m_DomainsPerShape);
+      this->ResizeParameters(PointsPerDomain * VDimension * this->m_DomainsPerShape, this->m_polynomial_degree);
       this->ResizeMatrix(PointsPerDomain * VDimension * this->m_DomainsPerShape,
                          this->cols());
       this->ResizeMeanMatrix(PointsPerDomain * VDimension * this->m_DomainsPerShape,
@@ -158,12 +186,14 @@ public:
       {
       this->operator()(i+k, d / this->m_DomainsPerShape) = pos[i];
       }
+    // std::cout << "inside position add in ShapeMatrixAttribute 1 " << std::endl;
     
     //   std::cout << "Row " << k << " Col " << d / this->m_DomainsPerShape << " = " << pos << std::endl;
   }
   
   virtual void PositionSetEventCallback(Object *o, const EventObject &e) 
   {
+    // std::cout << "inside position set in ShapeMatrixAttribute 0" << std::endl;
     const itk::ParticlePositionSetEvent &event
       = dynamic_cast <const itk::ParticlePositionSetEvent &>(e);
   
@@ -182,8 +212,10 @@ public:
     for (unsigned int i = 0; i < VDimension; i++)
       {
       this->operator()(i+k, d / this->m_DomainsPerShape) =
-        pos[i] - m_MeanMatrix(i+k, d/ this->m_DomainsPerShape);
+        pos[i] - m_MeanMatrix->get(i+k, d/ this->m_DomainsPerShape);
       }
+    // std::cout << "inside position set in ShapeMatrixAttribute 1" << std::endl;
+
   }
   
   virtual void PositionRemoveEventCallback(Object *, const EventObject &) 
@@ -208,6 +240,11 @@ public:
       //      std::cout << v[i] << std::endl;
       m_Expl[i] = v[i];
       }
+    m_N = v.size();
+  }
+
+  void SetPolynomialDegree(int degree){
+    this->m_polynomial_degree = degree;
   }
   void SetExplanatory(unsigned int i, double q)
   { m_Expl[i] = q; }
@@ -215,62 +252,27 @@ public:
   { return m_Expl[i]; }
   double &GetExplanatory(unsigned int i)
   { return m_Expl[i]; }
-
-  const vnl_matrix<double> &GetBetas() const
-  { return m_Betas; }
-
-  void SetBetas(const vnl_matrix<double> &m)
-  {
-    ResizeParameters(m.rows());
-    for (unsigned int r = 0; r < m.rows(); ++r)
-    {
-      for (unsigned int c = 0; c < m.cols(); ++c)
-      {
-        m_Betas(r, c) = m(r, c);
-      }
-    }
-  }
-
-  void GetOptimumAlphaValue()
-  {
-    py::module sw = py::module::import("shapeworks");
-    py::object compute = sw.attr("polynomial_regression").attr("get_optimum_alpha");
-    vnl_matrix<double> X = *this + m_MeanMatrix;
-    // x to eigen 
-    // m_exp tp eig vec
-    double val = compute(X, X).cast<Eigen::MatrixXd>();
-    m_alpha_value = val;
-    m_alpha_estimated = true;
-  }
-
-    void EstimateParameters()
-  {
-    py::module sw = py::module::import("shapeworks");
-    py::object compute = sw.attr("polynomial_regression").attr("estimate_parameters");
-    vnl_matrix<double> X = *this + m_MeanMatrix;
-    // x to eigen 
-    // m_exp tp eig vec
-    Eigen::MatrixXd betas_eigen = compute(X, X, alpha_value).cast<Eigen::MatrixXd>();
-  }
-  
+ 
   // 
   void Initialize()
   {
-    m_MeanMatrix.fill(0.0);
-    m_Betas.fill(0.0);
+    //TODO: make shared ?
+    std::cout << "Initializing shape matrix poly regression" << std::endl;
+    m_MeanMatrix->fill(0.0);
+    m_Betas->fill(0.0);
   }
   
   virtual void BeforeIteration()
   {
+    // std::cout << "-----Before Iteration in ShapeMatrixAttribute 0 ------" << std::endl;
     m_UpdateCounter ++;
     if (m_UpdateCounter >= m_RegressionInterval)
       {
       m_UpdateCounter = 0;
-      if (!m_alpha_estimated){
-        this->GetOptimumAlphaValue();
-      }
-      this->EstimateParameters();
+      // this->EstimateParameters();
+      //Get Parameters from python
       this->UpdateMeanMatrix();
+      std::cout << "-----Before Iteration in ShapeMatrixAttribute 1 (MEAN UDPATED)------" << std::endl;
       }
   }
 
@@ -288,8 +290,10 @@ protected:
     this->m_DefinedCallbacks.PositionRemoveEvent = true;
     m_UpdateCounter = 0;
     m_RegressionInterval = 1;
-    m_alpha_value = 0.000005;
-    m_alpha_estimated = false;
+    m_polynomial_degree = 10;
+    m_Betas = std::make_shared<vnl_matrix<double>>(); // dM X (P+1)
+    m_MeanMatrix = std::make_shared<vnl_matrix<double>>(); // dM X N
+    m_N = 1;
   }
   virtual ~ParticleShapeSpatiotemporalPolynomialRegressionMatrixAttribute() {};
 
@@ -302,17 +306,18 @@ private:
 
   int m_UpdateCounter;
   int m_RegressionInterval;
+  int m_polynomial_degree;
+  unsigned int m_N;
 
   // Parameters for the polynomial regression model using LASSO
-  vnl_matrix<double> m_betas;
-  double m_alpha_value;
-  bool m_alpha_estimated;
+  std::shared_ptr<vnl_matrix<double>> m_Betas; // dM X (P+1)
 
   // The explanatory variable value for each sample (matrix column)
-  vnl_vector<double> m_Expl;
+  vnl_vector<double> m_Expl; // N
 
   // A matrix to store the mean estimated for each explanatory variable (each sample)
-  vnl_matrix<double> m_MeanMatrix; // g(r)
+  std::shared_ptr<vnl_matrix<double>> m_MeanMatrix; // dM X N
+
 };
 
 } // end namespace

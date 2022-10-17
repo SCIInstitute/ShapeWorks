@@ -1624,6 +1624,9 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def("LoadParameterFile",
        &Optimize::LoadParameterFile)
 
+  .def("LoadXlsxProjectFile",
+       &Optimize::LoadXlsxProjectFile)
+
   .def("SetUpOptimize",
        &Optimize::SetUpOptimize,
        "projectFile"_a )
@@ -1633,6 +1636,33 @@ PYBIND11_MODULE(shapeworks_py, m)
 
   .def("SetIterationCallbackFunction",
        &Optimize::SetIterationCallbackFunction)
+
+  .def("GetSpatiotemporalResiduals",
+       [](Optimize *opt){
+          shapeworks::MatrixContainer container = opt->GetSpatiotemporalResiduals();
+          return container.matrix_;
+     }
+     )
+
+  .def("GetSpatiotemporalMeanMatrix",
+       [](Optimize *opt){
+          shapeworks::MatrixContainer container = opt->GetSpatiotemporalMeanMatrix();
+          return container.matrix_;
+     }
+     )
+
+  .def("SetBeforeEvaluateCallbackFunction",
+      &Optimize::SetBeforeEvaluateCallbackFunction)
+     
+  .def("SetSpatiotemporalRegressionParameters",
+     [](Optimize *opt,Eigen::MatrixXd updates){
+          shapeworks::MatrixContainer container;
+          container.matrix_ = updates;
+          opt->SetSpatiotemporalRegressionParameters(container);
+          }
+     )
+
+
 
   .def("GetParticleSystem",
        &optimize_get_particle_system)
@@ -1788,6 +1818,10 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def("set_groomed_filenames",
       &Subject::set_groomed_filenames,
       "Set groomed filenames",
+      "filenames"_a)
+  .def("set_time_point_for_subject",
+      &Subject::set_time_point_for_subject,
+      "Set time point for subject",
       "filenames"_a)
 
   .def("get_groomed_filenames",

@@ -113,6 +113,9 @@ public:
   itkGetObjectMacro(GradientFunction, GradientFunctionType);
   itkSetObjectMacro(GradientFunction, GradientFunctionType);
 
+  void SetBeforeEvaluateCallbackFunction(const std::function<void(void)> &f)
+  { this->m_BeforeEvaluateCallback = f; }
+
 protected:
   ParticleGradientDescentPositionOptimizer();
   ParticleGradientDescentPositionOptimizer(const ParticleGradientDescentPositionOptimizer &);
@@ -136,6 +139,7 @@ private:
   unsigned int m_verbosity;
 
   void ResetTimeStepVectors();
+  std::function<void(void)> m_BeforeEvaluateCallback;
 };
 
 

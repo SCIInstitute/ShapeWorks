@@ -66,6 +66,8 @@ public:
   //! Load a parameter file
   bool LoadParameterFile(std::string filename);
 
+  bool LoadXlsxProjectFile(std::string filename);
+
   bool SetUpOptimize(ProjectHandle projectFile);
 
   //! Set the Projects
@@ -74,6 +76,8 @@ public:
 
   void SetIterationCallbackFunction(const std::function<void(void)> &f)
   { this->m_iter_callback = f; }
+
+  void SetBeforeEvaluateCallbackFunction(const std::function<void(void)> &f);
 
   //! Abort optimization
   void AbortOptimization();
@@ -101,8 +105,11 @@ public:
   //! Set flag for 4D SSM Optimization with time points
   void SetSsm4d(bool value);
 
-  //! Set flag for 4D SSM Optimization with time points
-  void SetSpatiotemporalRegression(bool value);
+  //! Set flag for Spatiotemporal Regression Optimization with time points
+  void SetSpatiotemporalPolynomialRegression(bool value);
+
+  //! Set flag for Spatiotemporal Regression Optimization with time points
+  void SetSpatiotemporalPolynomialDegree(int value);
 
   void SetDomainType(shapeworks::DomainType type);
   shapeworks::DomainType GetDomainType();
@@ -290,6 +297,9 @@ public:
 
   //! Return the particle system as a matrix
   MatrixContainer GetParticleSystem();
+  MatrixContainer GetSpatiotemporalResiduals();
+  MatrixContainer GetSpatiotemporalMeanMatrix();
+  void SetSpatiotemporalRegressionParameters(MatrixContainer matrix);
 
   //! Set the python file to run at startup
   void SetPythonFile(std::string filename);
@@ -384,6 +394,9 @@ protected:
   bool m_optimizing = false;
   bool m_use_regression = false;
   bool m_use_ssm_4d = false;
+  bool m_use_spatiotemporal_poly_regression = false;
+  int m_spatiotemporal_polynomial_degree = 10;
+
   bool m_use_mixed_effects = false;
 
   // IO Parameters

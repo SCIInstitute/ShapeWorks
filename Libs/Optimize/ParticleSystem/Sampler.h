@@ -17,6 +17,7 @@
 #include "itkParticleDualVectorFunction.h"
 #include "itkParticleEnsembleEntropyFunction.h"
 #include "itkParticleShapeLinearRegressionMatrixAttribute.h"
+#include "itkParticleShapeSpatiotemporalPolynomialRegressionMatrixAttribute.h"
 #include "itkParticleShapeMixedEffectsMatrixAttribute.h"
 #include "itkParticleMeshBasedGeneralEntropyGradientFunction.h"
 #include "itkParticleSsm4dEnsembleEntropyFunction.h"
@@ -245,6 +246,9 @@ public:
       m_LinkingFunction->SetFunctionB(m_EnsembleEntropyFunction);
       m_EnsembleEntropyFunction->UseEntropy();
     }
+    else if (mode == shapeworks::CorrespondenceMode::EnsemblePolynomialRegressionEntropy) {
+      m_LinkingFunction->SetFunctionB(m_EnsemblePolynomialRegressionEntropyFunction);
+    }
     else if (mode == shapeworks::CorrespondenceMode::EnsembleRegressionEntropy) {
       m_LinkingFunction->SetFunctionB(m_EnsembleRegressionEntropyFunction);
     }
@@ -325,6 +329,12 @@ public:
     return m_GeneralShapeMatrix.GetPointer();
   }
 
+
+  itk::ParticleShapeSpatiotemporalPolynomialRegressionMatrixAttribute<double, Dimension>* GetSpatiotemporalRegressionShapeMatrix()
+  {
+    return m_SpatiotemporalRegressionShapeMatrix.GetPointer();
+  }
+
   itk::ParticleGeneralShapeGradientMatrix<double, Dimension>* GetGeneralShapeGradientMatrix()
   {
     return m_GeneralShapeGradMatrix.GetPointer();
@@ -341,6 +351,9 @@ public:
 
   itk::ParticleEnsembleEntropyFunction<Dimension>* GetEnsembleRegressionEntropyFunction()
   { return m_EnsembleRegressionEntropyFunction.GetPointer(); }
+
+  itk::ParticleEnsembleEntropyFunction<Dimension>* GetEnsemblePolynomialRegressionEntropyFunction()
+  { return m_EnsemblePolynomialRegressionEntropyFunction.GetPointer(); }
 
   itk::ParticleEnsembleEntropyFunction<Dimension>* GetEnsembleMixedEffectsEntropyFunction()
   { return m_EnsembleMixedEffectsEntropyFunction.GetPointer(); }
@@ -361,6 +374,10 @@ public:
   const itk::ParticleEnsembleEntropyFunction<Dimension>*
   GetEnsembleRegressionEntropyFunction() const
   { return m_EnsembleRegressionEntropyFunction.GetPointer(); }
+
+  const itk::ParticleEnsembleEntropyFunction<Dimension>*
+  GetEnsemblePolynomialRegressionEntropyFunction() const
+  { return m_EnsemblePolynomialRegressionEntropyFunction.GetPointer(); }
 
   const itk::ParticleEnsembleEntropyFunction<Dimension>*
   GetEnsembleMixedEffectsEntropyFunction() const
@@ -422,9 +439,11 @@ public:
 /** */
   virtual void Initialize()
   {
+    std::cout <<"Inside sampler initialize " << std::endl;
     this->m_Initializing = true;
     this->Execute();
     this->m_Initializing = false;
+    std::cout <<"Inside sampler initialize after execute" << std::endl;
   }
 
   virtual void ReInitialize();
@@ -530,12 +549,15 @@ protected:
 
   itk::ParticleEnsembleEntropyFunction<Dimension>::Pointer m_EnsembleEntropyFunction;
   itk::ParticleEnsembleEntropyFunction<Dimension>::Pointer m_EnsembleRegressionEntropyFunction;
+  itk::ParticleEnsembleEntropyFunction<Dimension>::Pointer m_EnsemblePolynomialRegressionEntropyFunction;
   itk::ParticleEnsembleEntropyFunction<Dimension>::Pointer m_EnsembleMixedEffectsEntropyFunction;
   itk::ParticleSsm4dEnsembleEntropyFunction<Dimension>::Pointer m_Ssm4dEnsembleEntropyFunction;
 
   itk::ParticleShapeMatrixAttribute<double, Dimension>::Pointer m_ShapeMatrix;
 
   itk::ParticleShapeLinearRegressionMatrixAttribute<double, Dimension>::Pointer m_LinearRegressionShapeMatrix;
+  itk::ParticleShapeSpatiotemporalPolynomialRegressionMatrixAttribute<double, Dimension>::Pointer m_SpatiotemporalRegressionShapeMatrix;
+
   itk::ParticleShapeMixedEffectsMatrixAttribute<double, Dimension>::Pointer m_MixedEffectsShapeMatrix;
 
   itk::ParticleGeneralShapeMatrix<double, Dimension>::Pointer m_GeneralShapeMatrix;

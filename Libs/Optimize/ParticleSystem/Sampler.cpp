@@ -32,6 +32,7 @@ Sampler::Sampler() {
   m_LinkingFunction = itk::ParticleDualVectorFunction<Dimension>::New();
   m_EnsembleEntropyFunction = itk::ParticleEnsembleEntropyFunction<Dimension>::New();
   m_EnsembleRegressionEntropyFunction = itk::ParticleEnsembleEntropyFunction<Dimension>::New();
+  m_EnsemblePolynomialRegressionEntropyFunction = itk::ParticleEnsembleEntropyFunction<Dimension>::New();
   m_EnsembleMixedEffectsEntropyFunction = itk::ParticleEnsembleEntropyFunction<Dimension>::New();
   
   m_Ssm4dEnsembleEntropyFunction = itk::ParticleSsm4dEnsembleEntropyFunction<Dimension>::New();
@@ -42,11 +43,13 @@ Sampler::Sampler() {
   m_GeneralShapeGradMatrix = itk::ParticleGeneralShapeGradientMatrix<double, Dimension>::New();
 
   m_LinearRegressionShapeMatrix = itk::ParticleShapeLinearRegressionMatrixAttribute<double, Dimension>::New();
+  m_SpatiotemporalRegressionShapeMatrix = itk::ParticleShapeSpatiotemporalPolynomialRegressionMatrixAttribute<double, Dimension>::New();
   m_MixedEffectsShapeMatrix = itk::ParticleShapeMixedEffectsMatrixAttribute<double, Dimension>::New();
   m_Ssm4dEnsembleEntropyFunction->SetShapeMatrix(m_ShapeMatrix);
   m_EnsembleEntropyFunction->SetShapeMatrix(m_ShapeMatrix);
 
   m_EnsembleRegressionEntropyFunction->SetShapeMatrix(m_LinearRegressionShapeMatrix);
+  m_EnsemblePolynomialRegressionEntropyFunction->SetShapeMatrix(m_SpatiotemporalRegressionShapeMatrix);
   m_EnsembleMixedEffectsEntropyFunction->SetShapeMatrix(m_MixedEffectsShapeMatrix);
 
   m_MeshBasedGeneralEntropyGradientFunction->SetShapeData(m_GeneralShapeMatrix);
@@ -55,6 +58,8 @@ Sampler::Sampler() {
   m_ParticleSystem->RegisterAttribute(m_ShapeMatrix);
   m_ParticleSystem->RegisterAttribute(m_LinearRegressionShapeMatrix);
   m_ParticleSystem->RegisterAttribute(m_MixedEffectsShapeMatrix);
+  m_ParticleSystem->RegisterAttribute(m_SpatiotemporalRegressionShapeMatrix);
+
 
   m_CorrespondenceMode = shapeworks::CorrespondenceMode::EnsembleEntropy;
 }
@@ -86,9 +91,11 @@ void Sampler::AllocateDomainsAndNeighborhoods() {
   // *after* registering the attributes to the particle system since some of
   // them respond to AddDomain.
   // Here, the Constraints actually get added to the constraints class
+  // std::cout << "Inside AllocateDomainsAndNeighborhoods A " << std::endl; 
   int ctr = 0;
   for (unsigned int i = 0; i < this->m_DomainList.size(); i++) {
     auto domain = m_DomainList[i];
+  // std::cout << "Inside AllocateDomainsAndNeighborhoods B " << std::endl; 
 
     // Adding spheres to constraint object
     if (m_Spheres.size() > i) {
@@ -122,6 +129,8 @@ void Sampler::AllocateDomainsAndNeighborhoods() {
       }
 
       if (m_AttributesPerDomain.size() > 0 && m_AttributesPerDomain[i % m_DomainsPerShape] > 0) {
+      // std::cout << "Inside AllocateDomainsAndNeighborhoods C " << std::endl; 
+
         TriMesh* themesh = TriMesh::read(m_MeshFiles[i].c_str());
         if (themesh != NULL) {
           themesh->need_faces();
@@ -162,6 +171,7 @@ void Sampler::AllocateDomainsAndNeighborhoods() {
       }
     }
     else if(domain->GetDomainType() == shapeworks::DomainType::Mesh){
+      // std::cout << "Inside AllocateDomainsAndNeighborhoods D " << std::endl; 
 
         if(m_meshFFCMode == 1){
             // Adding free-form constraints to constraint object
@@ -181,11 +191,16 @@ void Sampler::AllocateDomainsAndNeighborhoods() {
               }
             }
         }
+    // std::cout << "Inside AllocateDomainsAndNeighborhoods E " << std::endl; 
+
     }
 
     // END TEST CUTTING PLANE
+    // std::cout << "Inside AllocateDomainsAndNeighborhoods F " << std::endl; 
     m_ParticleSystem->AddDomain(domain);
+    // std::cout << "Inside AllocateDomainsAndNeighborhoods G " << std::endl; 
     m_ParticleSystem->SetNeighborhood(i, m_NeighborhoodList[i]);
+    // std::cout << "Inside AllocateDomainsAndNeighborhoods H  " << std::endl; 
   }
 }
 
@@ -206,6 +221,7 @@ void Sampler::ReadPointsFiles() {
 }
 
 void Sampler::InitializeOptimizationFunctions() {
+  std::cout << "Inside initialize optimization functions" << std::endl;
   // Set the minimum neighborhood radius and maximum sigma based on the
   // domain of the 1st input image.
   unsigned int maxdim = 0;
@@ -247,6 +263,8 @@ void Sampler::InitializeOptimizationFunctions() {
   m_OmegaGradientFunction->SetDomainNumber(0);
 
   m_LinearRegressionShapeMatrix->Initialize();
+  std::cout << "Before spatiotemporal initialize" << std::endl;
+  m_SpatiotemporalRegressionShapeMatrix->Initialize();
   m_MixedEffectsShapeMatrix->Initialize();
   m_ShapeMatrix->Initialize();
 
@@ -257,24 +275,37 @@ void Sampler::InitializeOptimizationFunctions() {
 void Sampler::GenerateData() {}
 
 void Sampler::Execute() {
+  // std::cout << " Inside Sampler Execute " << std::endl;
   if (this->GetInitialized() == false) {
+    // std::cout << " Get Initialized  0 " << std::endl;
     this->AllocateDataCaches();
+    // std::cout << " Inside Sampler Execute A" << std::endl;
     this->SetAdaptivityMode(m_AdaptivityMode);
+    // std::cout << " Inside Sampler Execute B" << std::endl;
     this->SetCorrespondenceMode(m_CorrespondenceMode);
+    // std::cout << " Inside Sampler Execute C" << std::endl;
     this->GetOptimizer()->SetGradientFunction(m_LinkingFunction);
+    // std::cout << " Inside Sampler Execute D" << std::endl;
     m_LinkingFunction->SetAOn();
+    // std::cout << " Inside Sampler Execute E" << std::endl;
     m_LinkingFunction->SetBOn();
-
+    // std::cout << " Inside Sampler Execute F" << std::endl;
     this->AllocateDomainsAndNeighborhoods();
+    // std::cout << " Inside Sampler Execute G" << std::endl;
 
     // Point the optimizer to the particle system.
     this->GetOptimizer()->SetParticleSystem(this->GetParticleSystem());
+    // std::cout << " Inside Sampler Execute H" << std::endl;
     this->ReadTransforms();
+    // std::cout << " Inside Sampler Execute I" << std::endl;
     this->ReadPointsFiles();
+    // std::cout << " Inside Sampler Execute J" << std::endl;
     this->InitializeOptimizationFunctions();
+    // std::cout << " Inside Sampler Execute K" << std::endl;
 
     this->SetInitialized(true);
   }
+  // std::cout << " Inside Sampler Execute Initialized Already " << std::endl;
 
   if (this->GetInitializing() == true) return;
 
@@ -417,6 +448,15 @@ void Sampler::AddImage(ImageType::Pointer image, double narrow_band, std::string
   domain->SetDomainName(name);
   m_DomainList.push_back(domain);
 }
+
+// std::shared_ptr<vnl_matrix<double>> Sampler::GetSpatiotemporalRegressionMeanMatrix()
+// {
+//   return this->m_SpatiotemporalRegressionMeanMatrix;
+// }
+// std::shared_ptr<vnl_matrix<double>> Sampler::GetSpatiotemporalRegressionParametersMatrix()
+// {
+//   return this->m_SpatiotemporalRegressionParametersMatrix;
+// }
 
 bool Sampler::initialize_ffcs(size_t dom) {
   auto mesh = std::make_shared<Mesh>(m_meshes[dom]);

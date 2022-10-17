@@ -386,6 +386,19 @@ void Optimize::SetSsm4d(bool value)
 }
 
 //---------------------------------------------------------------------------
+void Optimize::SetSpatiotemporalPolynomialRegression(bool value)
+{
+  this->m_use_spatiotemporal_poly_regression  = value;
+}
+
+//---------------------------------------------------------------------------
+void Optimize::SetSpatiotemporalPolynomialDegree(int value)
+{
+  this->m_spatiotemporal_polynomial_degree  = value;
+}
+
+
+//---------------------------------------------------------------------------
 void Optimize::SetNumberOfParticles(std::vector<int> number_of_particles)
 {
   this->m_number_of_particles = number_of_particles;
@@ -591,6 +604,11 @@ void Optimize::InitializeSampler()
   m_sampler->GetEnsembleRegressionEntropyFunction()->SetRecomputeCovarianceInterval(1);
   m_sampler->GetEnsembleRegressionEntropyFunction()->SetHoldMinimumVariance(false);
 
+  std::cout << "----Init sampler 0" << std::endl ;
+  m_sampler->GetEnsemblePolynomialRegressionEntropyFunction()->SetMinimumVariance(m_starting_regularization);
+  m_sampler->GetEnsemblePolynomialRegressionEntropyFunction()->SetRecomputeCovarianceInterval(1);
+  m_sampler->GetEnsemblePolynomialRegressionEntropyFunction()->SetHoldMinimumVariance(false);
+  std::cout << "----Init sampler 1" << std::endl ;
   m_sampler->GetEnsembleMixedEffectsEntropyFunction()->SetMinimumVariance(m_starting_regularization);
   m_sampler->GetEnsembleMixedEffectsEntropyFunction()->SetRecomputeCovarianceInterval(1);
   m_sampler->GetEnsembleMixedEffectsEntropyFunction()->SetHoldMinimumVariance(false);
@@ -608,6 +626,8 @@ void Optimize::InitializeSampler()
   m_sampler->GetMeshBasedGeneralEntropyGradientFunction()
     ->SetRecomputeCovarianceInterval(m_recompute_regularization_interval);
   m_sampler->GetEnsembleRegressionEntropyFunction()
+    ->SetRecomputeCovarianceInterval(m_recompute_regularization_interval);
+  m_sampler->GetEnsemblePolynomialRegressionEntropyFunction()
     ->SetRecomputeCovarianceInterval(m_recompute_regularization_interval);
   m_sampler->GetEnsembleMixedEffectsEntropyFunction()
     ->SetRecomputeCovarianceInterval(m_recompute_regularization_interval);
@@ -628,6 +648,8 @@ void Optimize::InitializeSampler()
   }
 
   m_sampler->ApplyConstraintsToZeroCrossing();
+  std::cout << "----Init sampler last" << std::endl ;
+
 }
 
 //---------------------------------------------------------------------------
@@ -1024,6 +1046,11 @@ void Optimize::RunOptimize()
     m_ending_regularization,
     m_optimization_iterations -
     m_optimization_iterations_completed);
+  m_sampler->GetEnsemblePolynomialRegressionEntropyFunction()->SetMinimumVarianceDecay(
+    m_starting_regularization,
+    m_ending_regularization,
+    m_optimization_iterations -
+    m_optimization_iterations_completed);
 
   m_sampler->GetEnsembleMixedEffectsEntropyFunction()->SetMinimumVarianceDecay(
     m_starting_regularization,
@@ -1043,6 +1070,9 @@ void Optimize::RunOptimize()
        *std::max_element(m_attributes_per_domain.begin(),
                          m_attributes_per_domain.end()) > 0) || m_mesh_based_attributes) {
     m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::MeshBasedGeneralEntropy);
+  }
+  else if (m_use_spatiotemporal_poly_regression) {
+    m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::EnsemblePolynomialRegressionEntropy);
   }
   else if (m_use_regression == true) {
     if (m_use_mixed_effects == true) {
@@ -2410,7 +2440,20 @@ bool Optimize::LoadParameterFile(std::string filename)
   }
   return true;
 }
+//---------------------------------------------------------------------------
+bool Optimize::LoadXlsxProjectFile(std::string filename)
+{
+  ProjectHandle project = std::make_shared<Project>();
+  project->load(filename);
 
+  OptimizeParameters params(project);
+  if(!params.set_up_optimize(this)){
+    std::cerr << "Error in loading xlsx sheet" << std::endl;
+    return false;
+  }
+  this->SetProject(project);
+  return true;
+}
 bool Optimize::SetUpOptimize(ProjectHandle projectFile)
 {
 
@@ -2444,6 +2487,70 @@ MatrixContainer Optimize::GetParticleSystem()
   return container;
 }
 
+//---------------------------------------------------------------------------
+MatrixContainer Optimize::GetSpatiotemporalResiduals()
+{
+  // std::cout << "---Getting  Regression Residuals From Optimize 0 --- " << std::endl;
+
+  auto shape_matrix = m_sampler->GetSpatiotemporalRegressionShapeMatrix();
+
+  std::cout << "---Getting  Regression Residuals From Optimize 1 --- " << std::endl;
+
+
+  MatrixType matrix;
+  matrix.resize(shape_matrix->rows(), shape_matrix->cols());
+
+  for (int i = 0; i < shape_matrix->rows(); i++) {
+    for (int j = 0; j < shape_matrix->cols(); j++) {
+      matrix(i, j) = shape_matrix->get(i, j);
+    }
+  }
+
+  MatrixContainer container;
+  container.matrix_ = matrix;
+  return container;
+}
+
+//---------------------------------------------------------------------------
+MatrixContainer Optimize::GetSpatiotemporalMeanMatrix()
+{
+
+  // dynamic_cast < itk::ParticleShapeLinearRegressionMatrixAttribute<double, 3>* >
+  // (m_sampler->GetEnsembleRegressionEntropyFunction()->GetShapeMatrix())->SetExplanatory(
+  //   evars);
+  // std::cout << "---Getting  Regression Mean From Optimize 0 --- " << std::endl;
+  auto mean_matrix = m_sampler->GetSpatiotemporalRegressionShapeMatrix()->GetMeanMatrix();
+  // std::cout << "---Getting  Regression Mean From Optimize 1 --- " << std::endl;
+
+  MatrixType matrix;
+  matrix.resize(mean_matrix->rows(), mean_matrix->cols());
+
+  for (int i = 0; i < mean_matrix->rows(); i++) {
+    for (int j = 0; j < mean_matrix->cols(); j++) {
+      matrix(i, j) = mean_matrix->get(i, j);
+    }
+  }
+
+  MatrixContainer container;
+  container.matrix_ = matrix;
+  return container;
+}
+//---------------------------------------------------------------------------
+void Optimize::SetSpatiotemporalRegressionParameters(MatrixContainer matrix)
+{
+  std::cout << "---Setting up Regression Params in Optimize  0--- " << std::endl;
+  auto vnl = this->m_sampler->GetSpatiotemporalRegressionShapeMatrix()->GetRegressionParametersMatrix();
+ // shared ptr vnl matrix
+  auto eigen = matrix.matrix_;
+  vnl->set_size(eigen.rows(), eigen.cols());
+  for (int r = 0; r < eigen.rows(); r++) {
+    for (int c = 0; c < eigen.cols(); c++) {
+      vnl->put(r, c, eigen(r, c));
+    }
+  }
+  std::cout << "---Setting up Regression Params in Optimize  1--- " << std::endl;
+
+}
 //---------------------------------------------------------------------------
 std::string Optimize::GetCheckpointDir()
 {
@@ -2492,6 +2599,12 @@ void Optimize::SetGeodesicsEnabled(bool is_enabled)
 void Optimize::SetGeodesicsCacheSizeMultiplier(size_t n)
 {
   this->m_geodesic_cache_size_multiplier = n;
+}
+
+
+void Optimize::SetBeforeEvaluateCallbackFunction(const std::function<void(void)>& f)
+{
+  this->m_sampler->GetOptimizer()->SetBeforeEvaluateCallbackFunction(f);
 }
 
 //---------------------------------------------------------------------------

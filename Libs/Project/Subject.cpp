@@ -188,12 +188,14 @@ std::vector<std::string> Subject::get_landmarks_filenames()
 //---------------------------------------------------------------------------
 void Subject::set_time_point_for_subject(std::vector<std::string> filenames)
 {
+  // std::cout << "Inside set_time_pt for sub size" << filenames.size() << std::endl; 
   this->regression_time_point_ = filenames;
 }
 
 //---------------------------------------------------------------------------
-std::vector<double> Subject::get_time_point_for_subject()
+std::vector<std::string> Subject::get_time_point_for_subject()
 {
+  // std::cout << "Inside get_time_pt for sub size" << this->regression_time_point_.size() << std::endl; 
   return this->regression_time_point_;
 }
 

@@ -48,6 +48,12 @@ bool OptimizeParameters::get_use_spatiotemporal_regression() { return this->para
 void OptimizeParameters::set_use_spatiotemporal_regression(bool value) { this->params_.set("spatiotemporal_regression", value);}
 
 //---------------------------------------------------------------------------
+int OptimizeParameters::get_spatiotemporal_polynomial_degree() { return this->params_.get("spatiotemporal_polynomial_degree", false); }
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_spatiotemporal_polynomial_degree(int value) { this->params_.set("spatiotemporal_polynomial_degree", value);}
+
+//---------------------------------------------------------------------------
 double OptimizeParameters::get_initial_relative_weighting() {
   return this->params_.get("initial_relative_weighting", 0.05);
 }
@@ -266,10 +272,14 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
   optimize->SetDomainsPerShape(domains_per_shape);
   optimize->SetNumberOfParticles(this->get_number_of_particles());
   optimize->SetSsm4d(this->get_use_ssm_4d());
-  optimize->SetSpatiotemporalRegression(this->get_use_spatiotemporal_regression());
+  optimize->SetSpatiotemporalPolynomialRegression(this->get_use_spatiotemporal_regression());
+  optimize->SetSpatiotemporalPolynomialDegree(this->get_spatiotemporal_polynomial_degree());
 
   // debug 
   std::cout << "-----SSM 4D Flag set as " << this->get_use_ssm_4d() << std::endl;
+  std::cout << "-----Spatiotemporal Regression Optimization set as " << this->get_use_spatiotemporal_regression() << std::endl;
+  std::cout << "-----Spatiotemporal Polynomial Degree set as " << this->get_spatiotemporal_polynomial_degree() << std::endl;
+
   optimize->SetInitialRelativeWeighting(this->get_initial_relative_weighting());
   optimize->SetRelativeWeighting(this->get_relative_weighting());
   optimize->SetStartingRegularization(this->get_starting_regularization());
@@ -354,15 +364,23 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
 
   if(get_use_spatiotemporal_regression()) {
     // time points for each subject
-    std::vector<double> time_points_for_spatiotemporal;
+    std::vector<std::string> time_points_for_spatiotemporal;
+    std::vector<double> time_points;
     for(auto& s : subjects){
       auto time_point = s->get_time_point_for_subject();
       time_points_for_spatiotemporal.insert(std::end(time_points_for_spatiotemporal), std::begin(time_point), std::end(time_point));
     }
+    for (unsigned int x = 0; x < time_points_for_spatiotemporal.size(); ++x){
+      time_points.push_back(std::stod(time_points_for_spatiotemporal[x]));
+    }
+    std::cout << " Explainatory Variables set for Spatiotemporal Regression 1" << std::endl;
+
     if (time_points_for_spatiotemporal.size()>0){
-        dynamic_cast < itk::ParticleShapeLinearRegressionMatrixAttribute<double, 3>* >
-  (optimize->GetSampler()->GetEnsembleRegressionEntropyFunction()->GetShapeMatrix())->SetExplanatory(
-    evars);
+      dynamic_cast < itk::ParticleShapeSpatiotemporalPolynomialRegressionMatrixAttribute<double, 3>* >
+        (optimize->GetSampler()->GetEnsemblePolynomialRegressionEntropyFunction()->GetShapeMatrix())->SetExplanatory(time_points);
+        std::cout << " Explainatory Variables set for Spatiotemporal Regression 2" << std::endl;
+      dynamic_cast < itk::ParticleShapeSpatiotemporalPolynomialRegressionMatrixAttribute<double, 3>* >
+        (optimize->GetSampler()->GetEnsemblePolynomialRegressionEntropyFunction()->GetShapeMatrix())->SetPolynomialDegree(this->get_spatiotemporal_polynomial_degree());
     }
   }
 

@@ -10,7 +10,7 @@ namespace shapeworks {
     MeshBasedGeneralEntropy = 5,
     MeshBasedGeneralMeanEnergy = 6,
     Ssm4dEnsembleEntropy = 7,
-    Ssm4dEnsembleEntropyMean = 8
-
+    Ssm4dEnsembleEntropyMean = 8,
+    EnsemblePolynomialRegressionEntropy = 9
   };
 }
