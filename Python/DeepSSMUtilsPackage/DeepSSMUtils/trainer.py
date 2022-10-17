@@ -102,7 +102,7 @@ def supervised_train(config_file):
 	device = net.device
 	net.to(device)
 	# initialize model weights
-	net.apply(weight_init(module=nn.Conv2d, initf=nn.init.xavier_normal_))	
+	net.apply(weight_init(module=nn.Conv3d, initf=nn.init.xavier_normal_))	
 	net.apply(weight_init(module=nn.Linear, initf=nn.init.xavier_normal_))
 
 	# these lines are for the fine tuning layer initialization
@@ -343,7 +343,7 @@ def supervised_train_tl(conflict_file):
 	device = net.device
 	net.to(device)
 	# intialize model weights
-	net.apply(weight_init(module=nn.Conv2d, initf=nn.init.xavier_normal_))	
+	net.apply(weight_init(module=nn.Conv3d, initf=nn.init.xavier_normal_))	
 	net.apply(weight_init(module=nn.Linear, initf=nn.init.xavier_normal_))
 
 	train_params = net.parameters()
