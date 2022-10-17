@@ -18,6 +18,7 @@ public:
   static double ComputeCompactness(const ParticleSystem &particleSystem, const int nModes, const std::string &saveTo = "");
 
   static Eigen::VectorXd ComputeFullCompactness(const ParticleSystem &particleSystem, std::function<void(float)> progress_callback = nullptr);
+  static Eigen::VectorXd ComputeFullCompactnessNew(const Eigen::MatrixXd &particleSystem, std::function<void(float)> progress_callback = nullptr);
 
   static Eigen::MatrixXd ComputeFullCompactnessWithinSubspace(const Eigen::MatrixXd &particleSystem, const std::vector<int> &num_particles_ar, std::function<void(float)> progress_callback = nullptr);
   static Eigen::VectorXd ComputeFullCompactnessBetweenSubspace(const Eigen::MatrixXd &particleSystem, const std::vector<int> &num_particles_ar, std::function<void(float)> progress_callback = nullptr);
@@ -25,6 +26,7 @@ public:
   static double ComputeGeneralization(const ParticleSystem &particleSystem, const int nModes, const std::string &saveTo = "");
 
   static Eigen::VectorXd ComputeFullGeneralization(const ParticleSystem &particleSystem, std::function<void(float)> progress_callback = nullptr);
+  static Eigen::VectorXd ComputeFullGeneralizationNew(const Eigen::MatrixXd &particleSystem, std::function<void(float)> progress_callback = nullptr);
 
   static Eigen::MatrixXd ComputeFullGeneralizationWithinSubspace(const Eigen::MatrixXd &particleSystem, const std::vector<int> &num_particles_ar, std::function<void(float)> progress_callback = nullptr);
   static Eigen::VectorXd ComputeFullGeneralizationBetweenSubspace(const Eigen::MatrixXd &particleSystem, const std::vector<int> &num_particles_ar, std::function<void(float)> progress_callback = nullptr);
@@ -32,6 +34,7 @@ public:
   static double ComputeSpecificity(const ParticleSystem &particleSystem, const int nModes, const std::string &saveTo = "");
 
   static Eigen::VectorXd ComputeFullSpecificity(const ParticleSystem &particleSystem, std::function<void(float)> progress_callback = nullptr);
+  static Eigen::VectorXd ComputeFullSpecificityNew(const Eigen::MatrixXd &particleSystem, std::function<void(float)> progress_callback = nullptr);
 
   static Eigen::MatrixXd ComputeFullSpecificityWithinSubspace(const Eigen::MatrixXd &particleSystem, const std::vector<int> &num_particles_ar, std::function<void(float)> progress_callback = nullptr);
   static Eigen::VectorXd ComputeFullSpecificityBetweenSubspace(const Eigen::MatrixXd &particleSystem, const std::vector<int> &num_particles_ar, std::function<void(float)> progress_callback = nullptr);
