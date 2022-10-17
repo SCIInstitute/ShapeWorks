@@ -28,6 +28,8 @@ option(BUILD_TESTS     "Build tests"        ON)
 
 option(USE_PCH "Use pre-compiled headers" OFF)
 
+option(USE_ORIGIN_RPATH "Use $ORIGIN in rpath, for deployment" OFF)
+
 if ("${Build_Studio}")
   set(SHAPEWORKS_GUI ON)
   set(SHAPEWORKS_QT_REQUIRED REQUIRED)
@@ -179,11 +181,15 @@ SET(CMAKE_INSTALL_LIBDIR lib)
 if(APPLE)
   set(CMAKE_INSTALL_RPATH "@executable_path/../lib")
 else()
-  #  set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib")
+  if(USE_ORIGIN_RPATH)
+    set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib")
+  else()
+    set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
+  endif()
+    
   set(CMAKE_SKIP_BUILD_RPATH FALSE)
   set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
   set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-  set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
 endif()
 
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
