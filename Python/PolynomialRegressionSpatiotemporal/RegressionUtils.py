@@ -13,7 +13,6 @@ OPT_PARAMS = {}
 with open('optimization_params.json', 'r') as f:
     OPT_PARAMS = json.load(f)
 
-
 def load_regression_inputs_from_particles(particles_dir):
     particles_list_temp, file_names = sort_files_from_dir(files_dir=particles_dir,ext='_world.particles')
     N = len(particles_list_temp)
@@ -25,8 +24,7 @@ def load_regression_inputs_from_particles(particles_dir):
         shape_matrix[:, idx] = ar
     return shape_matrix
 
-
-def estimate_parameters(shape_matrix, t, alpha_value):
+def estimate_parameters(shape_matrix, t, alpha_value, fn_mse='temp_mse.txt', fn_r2 = 'temp_r2.txt'):
     print(f'----------ESTIMATING BETAS----------')
     N = t.shape[0]
     assert N == shape_matrix.shape[1]
@@ -41,7 +39,7 @@ def estimate_parameters(shape_matrix, t, alpha_value):
     
     shape_matrix = np.transpose(shape_matrix)
     mean_shape = np.tile(np.mean(shape_matrix, axis=0), (N,1))
-    print(f'New shape _matrix shape {shape_matrix.shape} and X shape = {X.shape}')
+    # print(f'New shape _matrix shape {shape_matrix.shape} and X shape = {X.shape}')
 
     # lassoreg = Lasso(alpha=alpha_value, normalize=True, max_iter=100000)
     lassoreg = Lasso(alpha=alpha_value)
@@ -49,9 +47,16 @@ def estimate_parameters(shape_matrix, t, alpha_value):
     lassoreg.fit(X, shape_matrix)
     # print(f'-----Lasso Fit done alpha chosen {lassoreg.alpha_}')
     z_hat = lassoreg.predict(X)
-    print(f'z_hat shape {z_hat.shape}')
+    # print(f'z_hat shape {z_hat.shape}')
     mse = np.mean((z_hat - shape_matrix)**2)
-    print(f'rel mse = {mse/np.mean((mean_shape - shape_matrix)**2)}')
+    rel_mse = mse/np.mean((mean_shape - shape_matrix)**2)
+    print(f'################ Relative MSE = {rel_mse} #################')
+    with open(fn_mse, 'a') as f:
+        f.write(str(rel_mse))
+    score_r2 = lassoreg.score(X, shape_matrix)
+    with open(fn_r2, 'a') as f:
+        f.write(str(score_r2))
+    print(f'################ R2 Score = {score_r2} #################')
     betas = np.zeros((dM, degree+1))
     betas[:,0]= lassoreg.intercept_
     betas[:,1:] = lassoreg.coef_
@@ -71,8 +76,7 @@ def sort_files_from_dir(files_dir, file_prefix='', mid_sub_string='', file_postf
                 sorted_files_name.remove(fn)
     return sorted_files_path, sorted_files_name
 
-
-def get_time_index(file_name, dataset_name = 'Synthetic-Dataset'):
+def get_time_index(file_name, dataset_name = ''):
     if dataset_name == 'Synthetic-Dataset':
         split_str = '_TIME'
         time_idx = file_name.split(split_str)[1]
@@ -82,7 +86,6 @@ def get_time_index(file_name, dataset_name = 'Synthetic-Dataset'):
         time_idx = file_name.split(split_str)[1].split('_')[0]
         return str(int(time_idx)+1)
     
-
 class ShapeWorksProjectFile:
     def __init__(self, dataset_name) -> None:
         self.dataset_name = dataset_name
@@ -182,7 +185,6 @@ class ShapeWorksProjectFile:
     def estimate_initial_alpha_value(self):
         pass
 
-
 def create_project_files(dataset, use_relative_paths=True, expt_name=''):
     ob = ShapeWorksProjectFile(dataset)
     # ob.create_cross_sectional_project_file(use_relative_paths, expt_name='')
@@ -191,6 +193,3 @@ def create_project_files(dataset, use_relative_paths=True, expt_name=''):
 def estimate_alpha_values(dataset=''):
     ob = ShapeWorksProjectFile(dataset)
     ob.estimate_initial_alpha_value()
-
-# create_project_files('Left-Atrium-Dataset', use_relative_paths=False, expt_name='1')
-create_project_files('Synthetic-Dataset', use_relative_paths=False, expt_name='')
