@@ -73,6 +73,7 @@ public:
   //! Set the Projects
   void SetProject(std::shared_ptr<Project> project);
 
+  void SaveProjectFileAfterOptimize(const std::string& filename);
 
   void SetIterationCallbackFunction(const std::function<void(void)> &f)
   { this->m_iter_callback = f; }

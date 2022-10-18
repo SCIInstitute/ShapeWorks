@@ -5,7 +5,6 @@ from sklearn.linear_model import Lasso, LassoCV, MultiTaskLassoCV
 from RegressionUtils import *
 
 MODELS_WORKING_DIR = '/home/sci/nawazish.khan/Public/Spatiotemporal-Polynomial-Regression-Experiments/'
-# DATASET_NAME = 'Synthetic-Dataset'
 DATASET_NAME = 'Left-Atrium-Dataset'
 PROJECT_DIR = f'{MODELS_WORKING_DIR}/{DATASET_NAME}/'
 PROJECT_FILE_NAME = f'{PROJECT_DIR}/spatiotemporal_regression_model.xlsx'
@@ -33,5 +32,6 @@ opt.SetBeforeEvaluateCallbackFunction(before_evaluate)
 print('-----SetBeforeEvaluateCallbackFunction set from Python----')
 print('-----Running Opt from Python----')
 opt.Run()
+opt.SaveProjectFileAfterOptimize(PROJECT_FILE_NAME)
 
 

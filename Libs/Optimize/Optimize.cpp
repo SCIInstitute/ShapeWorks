@@ -2467,6 +2467,12 @@ void Optimize::SetProject(std::shared_ptr<Project> project)
   project_ = project;
 }
 
+void Optimize::SaveProjectFileAfterOptimize(const std::string& filename)
+{
+  project_->save(filename);
+  std::cout << "Project File saved after Optimization " << std::endl;
+}
+
 //---------------------------------------------------------------------------
 MatrixContainer Optimize::GetParticleSystem()
 {
@@ -2494,7 +2500,7 @@ MatrixContainer Optimize::GetSpatiotemporalResiduals()
 
   auto shape_matrix = m_sampler->GetSpatiotemporalRegressionShapeMatrix();
 
-  std::cout << "---Getting  Regression Residuals From Optimize 1 --- " << std::endl;
+  // std::cout << "---Getting  Regression Residuals From Optimize 1 --- " << std::endl;
 
 
   MatrixType matrix;
@@ -2538,7 +2544,7 @@ MatrixContainer Optimize::GetSpatiotemporalMeanMatrix()
 //---------------------------------------------------------------------------
 void Optimize::SetSpatiotemporalRegressionParameters(MatrixContainer matrix)
 {
-  std::cout << "---Setting up Regression Params in Optimize  0--- " << std::endl;
+  // std::cout << "---Setting up Regression Params in Optimize  0--- " << std::endl;
   auto vnl = this->m_sampler->GetSpatiotemporalRegressionShapeMatrix()->GetRegressionParametersMatrix();
  // shared ptr vnl matrix
   auto eigen = matrix.matrix_;
@@ -2548,7 +2554,7 @@ void Optimize::SetSpatiotemporalRegressionParameters(MatrixContainer matrix)
       vnl->put(r, c, eigen(r, c));
     }
   }
-  std::cout << "---Setting up Regression Params in Optimize  1--- " << std::endl;
+  // std::cout << "---Setting up Regression Params in Optimize  1--- " << std::endl;
 
 }
 //---------------------------------------------------------------------------

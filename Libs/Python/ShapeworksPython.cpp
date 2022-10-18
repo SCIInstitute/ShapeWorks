@@ -1634,6 +1634,10 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def("Run",
        &Optimize::Run)
 
+     
+  .def("SaveProjectFileAfterOptimize",
+       &Optimize::SaveProjectFileAfterOptimize)
+
   .def("SetIterationCallbackFunction",
        &Optimize::SetIterationCallbackFunction)
 

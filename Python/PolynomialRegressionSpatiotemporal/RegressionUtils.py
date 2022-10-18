@@ -8,7 +8,7 @@ import shapeworks as sw
 import json
 
 MODELS_WORKING_DIR = '/home/sci/nawazish.khan/Public/Spatiotemporal-Polynomial-Regression-Experiments/'
-ALPHA_VALUES = [0, 1e-10, 1e-5, 1e-4, 1e-3,1e-2,1e-1, 1, 10]
+ALPHA_VALUES = [1e-5, 1e-4, 1e-3,1e-2,1e-1, 1, 10]
 OPT_PARAMS = {}
 with open('optimization_params.json', 'r') as f:
     OPT_PARAMS = json.load(f)
@@ -23,28 +23,16 @@ def load_regression_inputs_from_particles(particles_dir):
     for idx, particle_file in enumerate(particles_list_temp):
         ar = np.loadtxt(particle_file).flatten()
         shape_matrix[:, idx] = ar
-    t = []
-    for file_name in file_names:
-        t.append(get_time_index(file_name=file_name))
-    return shape_matrix, t
-
-
-
-def get_optimum_alpha(shape_matrix, t):
-    print(f'----------FINDING OPTIMUM ALPHA VALUE----------')
-    # run k-fold estimate of parameters and return optimum alpha_value
-    for alpha_val in ALPHA_VALUES:
-        pass
-
-    print(f'----------OPTIMUM ALPHA VALUE = {0}----------')
-    return 0
+    return shape_matrix
 
 
 def estimate_parameters(shape_matrix, t, alpha_value):
     print(f'----------ESTIMATING BETAS----------')
     N = t.shape[0]
     assert N == shape_matrix.shape[1]
-    degree = int(np.max(t) - 1)
+    TOTAL_TIME_PTS = int(np.max(t))
+    degree = TOTAL_TIME_PTS - 1
+    # degree = 1
     dM = shape_matrix.shape[0]
     X = np.zeros((N, degree))
 
@@ -52,16 +40,18 @@ def estimate_parameters(shape_matrix, t, alpha_value):
         X[:, deg] = np.power(t, deg+1)
     
     shape_matrix = np.transpose(shape_matrix)
+    mean_shape = np.tile(np.mean(shape_matrix, axis=0), (N,1))
     print(f'New shape _matrix shape {shape_matrix.shape} and X shape = {X.shape}')
 
     # lassoreg = Lasso(alpha=alpha_value, normalize=True, max_iter=100000)
-    lassoreg = MultiTaskLassoCV(alphas=ALPHA_VALUES, normalize=True, max_iter=100000)
+    lassoreg = Lasso(alpha=alpha_value)
+    # lassoreg = MultiTaskLassoCV(alphas=ALPHA_VALUES)
     lassoreg.fit(X, shape_matrix)
-    print(f'-----Lasso Fit done alpha chosen {lassoreg.alpha_}')
+    # print(f'-----Lasso Fit done alpha chosen {lassoreg.alpha_}')
     z_hat = lassoreg.predict(X)
     print(f'z_hat shape {z_hat.shape}')
     mse = np.mean((z_hat - shape_matrix)**2)
-    print(mse)
+    print(f'rel mse = {mse/np.mean((mean_shape - shape_matrix)**2)}')
     betas = np.zeros((dM, degree+1))
     betas[:,0]= lassoreg.intercept_
     betas[:,1:] = lassoreg.coef_
@@ -99,7 +89,7 @@ class ShapeWorksProjectFile:
         self.meshes_dir = f'{MODELS_WORKING_DIR}/{dataset_name}/meshes/'
         self.project_out_dir = f'{MODELS_WORKING_DIR}/{dataset_name}/'
         self.opt_params = OPT_PARAMS[dataset_name]
-    def create_cross_sectional_project_file(self, use_relative_paths=True):
+    def create_cross_sectional_project_file(self, use_relative_paths=True, expt_name=''):
         optimization_params = self.opt_params['cross_sectional']
         file_paths, _ = sort_files_from_dir(files_dir=self.meshes_dir, ext='.vtk')
         file_names = []
@@ -132,11 +122,11 @@ class ShapeWorksProjectFile:
         parameters.set("domain_type", sw.Variant('mesh'))
         shapeworks_project.set_subjects(project_subjects)
         shapeworks_project.set_parameters("optimize", parameters)
-        project_name = f'{self.project_out_dir}/cross_sectional_model.xlsx'
+        project_name = f'{self.project_out_dir}/cross_sectional_model{expt_name}.xlsx'
         shapeworks_project.save(project_name)
         # print(f' Project Created at {project_name}')
     
-    def create_spatiotemporal_regression_project_file(self, use_relative_paths=True):
+    def create_spatiotemporal_regression_project_file(self, use_relative_paths=True, expt_name='', use_corresponding_csm=False):
 
         optimization_params = self.opt_params['spatiotemporal_regression']
         file_paths, _ = sort_files_from_dir(files_dir=self.meshes_dir, ext='.vtk')
@@ -157,7 +147,8 @@ class ShapeWorksProjectFile:
         for idx in range(len(file_paths)):
             subject = sw.Subject()
             subject.set_number_of_domains(1)
-            landmark_file = glob.glob(f'{self.project_out_dir}/cross_sectional_model_particles/*{file_names[idx]}_local.particles')
+            particles_dir_csm = 'cross_sectional_model_particles{expt_name}' if use_corresponding_csm else 'cross_sectional_model_particles'
+            landmark_file = glob.glob(f'{self.project_out_dir}/{particles_dir_csm}/*{file_names[idx]}_local.particles')
             # print(landmark_file)
             # print(len(landmark_file))
             assert len(landmark_file) == 1
@@ -182,7 +173,7 @@ class ShapeWorksProjectFile:
         parameters.set("domain_type", sw.Variant('mesh'))
         shapeworks_project.set_subjects(project_subjects)
         shapeworks_project.set_parameters("optimize", parameters)
-        project_name = f'{self.project_out_dir}/spatiotemporal_regression_model.xlsx'
+        project_name = f'{self.project_out_dir}/spatiotemporal_regression_model{expt_name}.xlsx'
         shapeworks_project.save(project_name)
         t_file  = f'{self.project_out_dir}/t_array.txt'
         time_indices_ar_int = [int(x) for x in time_indices_ar]
@@ -192,14 +183,14 @@ class ShapeWorksProjectFile:
         pass
 
 
-def create_project_files(dataset, use_relative_paths=True):
+def create_project_files(dataset, use_relative_paths=True, expt_name=''):
     ob = ShapeWorksProjectFile(dataset)
-    ob.create_cross_sectional_project_file(use_relative_paths)
-    ob.create_spatiotemporal_regression_project_file(use_relative_paths)
+    # ob.create_cross_sectional_project_file(use_relative_paths, expt_name='')
+    ob.create_spatiotemporal_regression_project_file(use_relative_paths, expt_name, False)
 
 def estimate_alpha_values(dataset=''):
     ob = ShapeWorksProjectFile(dataset)
     ob.estimate_initial_alpha_value()
 
-create_project_files('Left-Atrium-Dataset', use_relative_paths=False)
-create_project_files('Synthetic-Dataset', use_relative_paths=False)
+# create_project_files('Left-Atrium-Dataset', use_relative_paths=False, expt_name='1')
+create_project_files('Synthetic-Dataset', use_relative_paths=False, expt_name='')
