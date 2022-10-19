@@ -439,7 +439,9 @@ bool AnalysisTool::compute_stats() {
 
   update_difference_particles();
 
-  compute_shape_evaluations();
+  if (ui_->metrics_open_button->isChecked()) {
+    compute_shape_evaluations();
+  }
 
   stats_ready_ = true;
   std::vector<double> vals;
@@ -607,7 +609,7 @@ void AnalysisTool::compute_shape_evaluations() {
   ui_->specificity_progress->setValue(0);
 
   auto job_types = {ShapeEvaluationJob::JobType::CompactnessType, ShapeEvaluationJob::JobType::GeneralizationType,
-                    ShapeEvaluationJob::JobType::SpecificityType};
+                      ShapeEvaluationJob::JobType::SpecificityType};
   for (auto job_type : job_types) {
     auto worker = Worker::create_worker();
     auto job = QSharedPointer<ShapeEvaluationJob>::create(job_type, stats_);
@@ -1040,7 +1042,7 @@ void AnalysisTool::on_metrics_open_button_toggled() {
   ui_->metrics_content->setVisible(show);
 
   if (show) {
-    compute_stats();
+    compute_shape_evaluations();
   }
 }
 
