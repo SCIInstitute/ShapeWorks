@@ -270,9 +270,11 @@ Eigen::VectorXd ShapeEvaluation::ComputeFullGeneralization(const ParticleSystem 
 
 Eigen::VectorXd ShapeEvaluation::ComputeFullGeneralizationNew(const Eigen::MatrixXd &particleSystem, std::function<void(float)> progress_callback)
 {
-  const int N = particleSystem.rows();
-  const int D = particleSystem.cols();
+  const int N = particleSystem.cols();
+  const int D = particleSystem.rows();
+  std::cout << "N = " << N << " D = " << D  << std::endl; 
   auto P = particleSystem;
+  std::cout << "particle sys loaded " << std::endl;
 
   if (N <= 1) {
     return Eigen::VectorXd();
@@ -585,8 +587,8 @@ Eigen::VectorXd ShapeEvaluation::ComputeFullSpecificity(const ParticleSystem &pa
 //---------------------------------------------------------------------------
 Eigen::VectorXd ShapeEvaluation::ComputeFullSpecificityNew(const Eigen::MatrixXd &particleSystem, std::function<void(float)> progress_callback)
 {
-  const int N = particleSystem.rows();
-  const int D = particleSystem.cols();
+  const int N = particleSystem.cols();
+  const int D = particleSystem.rows();
   const int numParticles = D / VDimension;
 
   Eigen::VectorXd specificities(N-1);
