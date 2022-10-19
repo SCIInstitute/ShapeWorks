@@ -52,10 +52,10 @@ def estimate_parameters(shape_matrix, t, alpha_value, fn_mse='temp_mse.txt', fn_
     rel_mse = mse/np.mean((mean_shape - shape_matrix)**2)
     print(f'################ Relative MSE = {rel_mse} #################')
     with open(fn_mse, 'a') as f:
-        f.write(str(rel_mse))
+        f.write(f'str({rel_mse})\n')
     score_r2 = lassoreg.score(X, shape_matrix)
     with open(fn_r2, 'a') as f:
-        f.write(str(score_r2))
+        f.write(f'str({score_r2})\n')
     print(f'################ R2 Score = {score_r2} #################')
     betas = np.zeros((dM, degree+1))
     betas[:,0]= lassoreg.intercept_
