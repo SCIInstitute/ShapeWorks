@@ -2558,6 +2558,22 @@ void Optimize::SetSpatiotemporalRegressionParameters(MatrixContainer matrix)
 
 }
 //---------------------------------------------------------------------------
+void Optimize::SetSpatiotemporalRegressionMeanMatrix(MatrixContainer matrix)
+{
+  std::cout << "---Setting up Mean Matrix in Optimize  0--- " << std::endl;
+  auto vnl = this->m_sampler->GetSpatiotemporalRegressionShapeMatrix()->GetMeanMatrix();
+ // shared ptr vnl matrix
+  auto eigen = matrix.matrix_;
+  vnl->set_size(eigen.rows(), eigen.cols());
+  for (int r = 0; r < eigen.rows(); r++) {
+    for (int c = 0; c < eigen.cols(); c++) {
+      vnl->put(r, c, eigen(r, c));
+    }
+  }
+  std::cout << "---Setting up Mean Matrix in Optimize  1--- " << std::endl;
+}
+
+//---------------------------------------------------------------------------
 std::string Optimize::GetCheckpointDir()
 {
   int num_digits = std::to_string(abs(m_total_iterations)).length();

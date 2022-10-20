@@ -1665,7 +1665,13 @@ PYBIND11_MODULE(shapeworks_py, m)
           opt->SetSpatiotemporalRegressionParameters(container);
           }
      )
-
+  .def("SetSpatiotemporalRegressionMeanMatrix",
+     [](Optimize *opt,Eigen::MatrixXd updates){
+          shapeworks::MatrixContainer container;
+          container.matrix_ = updates;
+          opt->SetSpatiotemporalRegressionMeanMatrix(container);
+          }
+     )
 
 
   .def("GetParticleSystem",

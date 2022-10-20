@@ -2,7 +2,7 @@ import shapeworks as sw
 import numpy as np
 from sklearn.model_selection import KFold
 from sklearn.linear_model import Lasso, LassoCV, MultiTaskLassoCV
-from RegressionUtils import *
+from Estimate import *
 import matplotlib.pyplot as plt
 plt.rcParams["figure.figsize"] = (20, 15)
 
@@ -31,8 +31,8 @@ def before_evaluate():
     print(f'------Got Mean in python shape = {current_mean.shape}-----')
     t_array = TIME_ARRAY
     X = residuals + current_mean
-    betas = estimate_parameters(X, t_array, FIXED_ALPHA_VAL, fn_mse=f'{RELATIVE_ERROR_LOG_FILES}.txt', fn_r2=f'{SCORE_R2_LOG_FILES}.txt')
-    opt.SetSpatiotemporalRegressionParameters(betas)
+    new_mean = estimate_mean_only_lasso(X, t_array, fn_mse=f'{RELATIVE_ERROR_LOG_FILES}.txt', fn_r2=f'{SCORE_R2_LOG_FILES}.txt')
+    opt.SetSpatiotemporalRegressionMeanMatrix(new_mean)
 
 opt.SetBeforeEvaluateCallbackFunction(before_evaluate)
 print('-----SetBeforeEvaluateCallbackFunction set from Python----')

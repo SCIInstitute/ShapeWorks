@@ -32,31 +32,31 @@ public:
   itkTypeMacro(itkParticleShapeSpatiotemporalPolynomialRegressionMatrixAttribute, ParticleShapeMatrixAttribute);
   
   
-  void UpdateMeanMatrix()
-  {
-    // New g(r)
-    //TODO: Sanity Check
-    int beta_cols_size = m_polynomial_degree + 1;
-    if(beta_cols_size != m_Betas->cols()){
-      std::cerr << "Mismatch in col size for regression params" << std::endl;
-    }
-    // std::cout << "Updating mean matrix m_polynomial_degree = " << m_polynomial_degree << std::endl;
-    // b_0, b_1, b_2 ... each vec of size dM
-    unsigned int N = m_MeanMatrix->cols();
-    for (unsigned int i = 0; i < N; ++i)
-      {
-      // compute the mean
-      // std::cout << " i = " << i << std::endl;
-      vnl_vector<double> vec; // dM
-      vec.set_size(m_Betas->rows());
-      vec.fill(0.0);
-      for (unsigned int p = 0 ; p < beta_cols_size; ++p){
-        vec += (pow(m_Expl(i), p) * m_Betas->get_column(p));
-      }
-      m_MeanMatrix->set_column(i, vec);
-      }
-      // std::cout << "-----Mean Matrix Updated in ShapeMatrixAttribute ----- " << std::endl;
-  }
+  // void UpdateMeanMatrix()
+  // {
+  //   // New g(r)
+  //   //TODO: Sanity Check
+  //   int beta_cols_size = m_polynomial_degree + 1;
+  //   if(beta_cols_size != m_Betas->cols()){
+  //     std::cerr << "Mismatch in col size for regression params" << std::endl;
+  //   }
+  //   // std::cout << "Updating mean matrix m_polynomial_degree = " << m_polynomial_degree << std::endl;
+  //   // b_0, b_1, b_2 ... each vec of size dM
+  //   unsigned int N = m_MeanMatrix->cols();
+  //   for (unsigned int i = 0; i < N; ++i)
+  //     {
+  //     // compute the mean
+  //     // std::cout << " i = " << i << std::endl;
+  //     vnl_vector<double> vec; // dM
+  //     vec.set_size(m_Betas->rows());
+  //     vec.fill(0.0);
+  //     for (unsigned int p = 0 ; p < beta_cols_size; ++p){
+  //       vec += (pow(m_Expl(i), p) * m_Betas->get_column(p));
+  //     }
+  //     m_MeanMatrix->set_column(i, vec);
+  //     }
+  //     // std::cout << "-----Mean Matrix Updated in ShapeMatrixAttribute ----- " << std::endl;
+  // }
 
   std::shared_ptr<vnl_matrix<double>> GetMeanMatrix(){
     return this->m_MeanMatrix;
@@ -277,7 +277,8 @@ public:
       m_UpdateCounter = 0;
       // this->EstimateParameters();
       //Get Parameters from python
-      this->UpdateMeanMatrix();
+      // New Get transformed mean from Python
+      // this->UpdateMeanMatrix();
       // std::cout << "-----Before Iteration in ShapeMatrixAttribute 1 (MEAN UDPATED)------" << std::endl;
       }
   }

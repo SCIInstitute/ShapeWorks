@@ -41,14 +41,14 @@ opt.Run()
 opt.SaveProjectFileAfterOptimize(PROJECT_FILE_NAME)
 
 # Plot Rel MSE Errors and R2
-rel_errors = np.loadtxt(f'{RELATIVE_ERROR_LOG_FILES}.txt')
+rel_errors = np.loadtxt(f'{RELATIVE_ERROR_LOG_FILES}.txt', dtype=float)
 print(rel_errors.shape)
 plt.plot(rel_errors)
 plt.ylabel('Relative Mean Squared Error')
 plt.xlabel('Optimization Iterations')
 plt.savefig(f'{RELATIVE_ERROR_LOG_FILES}.png', dpi=700)
 
-scores_r2 = np.loadtxt(f'{SCORE_R2_LOG_FILES}.txt')
+scores_r2 = np.loadtxt(f'{SCORE_R2_LOG_FILES}.txt', dtype=float)
 print(scores_r2.shape)
 plt.plot(scores_r2)
 plt.ylabel('Coefficient of Determination')

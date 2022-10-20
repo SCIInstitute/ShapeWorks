@@ -301,6 +301,8 @@ public:
   MatrixContainer GetSpatiotemporalResiduals();
   MatrixContainer GetSpatiotemporalMeanMatrix();
   void SetSpatiotemporalRegressionParameters(MatrixContainer matrix);
+  void SetSpatiotemporalRegressionMeanMatrix(MatrixContainer matrix);
+
 
   //! Set the python file to run at startup
   void SetPythonFile(std::string filename);

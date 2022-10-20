@@ -52,10 +52,10 @@ def estimate_parameters(shape_matrix, t, alpha_value, fn_mse='temp_mse.txt', fn_
     rel_mse = mse/np.mean((mean_shape - shape_matrix)**2)
     print(f'################ Relative MSE = {rel_mse} #################')
     with open(fn_mse, 'a') as f:
-        f.write(f'str({rel_mse})\n')
+        f.write(f'{str(rel_mse)}\n')
     score_r2 = lassoreg.score(X, shape_matrix)
     with open(fn_r2, 'a') as f:
-        f.write(f'str({score_r2})\n')
+        f.write(f'{str(score_r2)}\n')
     print(f'################ R2 Score = {score_r2} #################')
     betas = np.zeros((dM, degree+1))
     betas[:,0]= lassoreg.intercept_
@@ -147,7 +147,17 @@ class ShapeWorksProjectFile:
 
         project_subjects = []
         project_location = self.project_out_dir
+
+        # # remove this
+        # indices_to_drop = []
+        #------
         for idx in range(len(file_paths)):
+            time_pt = time_indices_ar[idx]
+            # Remove this
+            # if time_pt not in ['1', '2', '3', '4', '5', '6']:
+            #     indices_to_drop.append(idx)
+            #     continue
+            # # ------
             subject = sw.Subject()
             subject.set_number_of_domains(1)
             particles_dir_csm = 'cross_sectional_model_particles{expt_name}' if use_corresponding_csm else 'cross_sectional_model_particles'
@@ -165,7 +175,7 @@ class ShapeWorksProjectFile:
             subject.set_groomed_filenames(rel_mesh_files)
             subject.set_landmarks_filenames(rel_landmark_files)
             # print(f'time index = {[time_indices_ar[idx]]}')
-            subject.set_time_point_for_subject([time_indices_ar[idx]])
+            subject.set_time_point_for_subject([time_pt])
             project_subjects.append(subject)
         
 
@@ -179,6 +189,11 @@ class ShapeWorksProjectFile:
         project_name = f'{self.project_out_dir}/spatiotemporal_regression_model{expt_name}.xlsx'
         shapeworks_project.save(project_name)
         t_file  = f'{self.project_out_dir}/t_array.txt'
+
+        # # remove this
+        # for index in sorted(indices_to_drop, reverse=True):
+        #     del time_indices_ar[index]
+        # # ------
         time_indices_ar_int = [int(x) for x in time_indices_ar]
         np.savetxt(t_file, np.asarray(time_indices_ar_int).astype(int), fmt='%i')
         # print(f' Project Created at {project_name}')
