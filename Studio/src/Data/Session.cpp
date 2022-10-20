@@ -124,7 +124,7 @@ bool Session::save_project(QString filename) {
       // open file
       QFile file(filename);
       if (!file.open(QIODevice::WriteOnly)) {
-        QMessageBox::warning(0, "Read only", "The file is in read only mode");
+        QMessageBox::warning(nullptr, "Read only", "The file is in read only mode");
         return false;
       }
     }
@@ -179,7 +179,7 @@ bool Session::save_project(QString filename) {
     // JsonProjectReader::read_project(proj, "/tmp/project.json");
 
   } catch (std::exception& e) {
-    QMessageBox::warning(0, "Error saving project", QString("Error saving project: ") + e.what());
+    QMessageBox::warning(nullptr, "Error saving project", QString("Error saving project: ") + e.what());
     return false;
   }
 
@@ -394,6 +394,10 @@ bool Session::load_xl_project(QString filename) {
 
   auto subjects = project_->get_subjects();
 
+  QProgressDialog progress("Loading Project...", "Abort", 0, num_subjects, parent_);
+  progress.setWindowModality(Qt::WindowModal);
+  progress.setMinimumDuration(2000);
+
   for (int i = 0; i < num_subjects; i++) {
     auto shape = std::make_shared<Shape>();
     shape->set_mesh_manager(mesh_manager_);
@@ -429,6 +433,11 @@ bool Session::load_xl_project(QString filename) {
       }
     }
     shapes_.push_back(shape);
+    if (progress.wasCanceled()) {
+      break;
+    }
+    progress.setValue(progress.value() + 1);
+
   }
 
   groups_available_ = project_->get_group_names().size() > 0;
