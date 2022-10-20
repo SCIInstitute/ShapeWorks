@@ -1,5 +1,6 @@
-#include <iostream>
 
+
+#include <Logging.h>
 #include "ShapeEvaluationJob.h"
 namespace shapeworks {
 

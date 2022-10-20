@@ -2,6 +2,7 @@
 #include "ParticleShapeStatistics.h"
 #include "ShapeEvaluation.h"
 #include <Project/Project.h>
+#include <Logging.h>
 
 
 #include <vnl/algo/vnl_symmetric_eigensystem.h>
