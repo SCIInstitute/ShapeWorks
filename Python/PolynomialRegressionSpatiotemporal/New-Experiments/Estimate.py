@@ -11,7 +11,7 @@ def run_pca(shape_matrix):
     print(f"--------Number of modes covering 97% varaince - {minDims} -------")
     return shape_matrix_transformed, minDims, eigvecs, pca_ob
 
-def estimate_mean(shape_matrix, t, fn_mse='temp_mse.txt', fn_r2 = 'temp_r2.txt'):
+def estimate_mean(shape_matrix, t, fn_mse, fn_r2):
     TOTAL_TIME_PTS = int(np.max(t))
     degree = TOTAL_TIME_PTS - 1
     # 1. Project onto PCA subspace
@@ -46,9 +46,11 @@ def estimate_mean(shape_matrix, t, fn_mse='temp_mse.txt', fn_r2 = 'temp_r2.txt')
     assert transformed_mean.shape[0] == dM and transformed_mean.shape[1] == N
     return transformed_mean
     
-def estimate_parameters_from_pca_embeddings(shape_matrix, t, alpha_value=1e-5, fn_mse='temp_mse.txt', fn_r2 = 'temp_r2.txt'):
+def estimate_parameters_from_pca_embeddings(shape_matrix, t, fn_mse, fn_r2):
     print(f'----------ESTIMATING BETAS----------')
     N = t.shape[0]
+    alpha_value = 1e-5
+    
     assert N == shape_matrix.shape[1]
     TOTAL_TIME_PTS = int(np.max(t))
     degree = TOTAL_TIME_PTS - 1
@@ -82,7 +84,7 @@ def estimate_parameters_from_pca_embeddings(shape_matrix, t, alpha_value=1e-5, f
     return betas
 
 
-def estimate_mean_only_lasso(shape_matrix, t, fn_mse='temp_mse.txt', fn_r2 = 'temp_r2.txt'):
+def estimate_mean_only_lasso(shape_matrix, t, fn_mse, fn_r2):
     TOTAL_TIME_PTS = int(np.max(t))
     degree = TOTAL_TIME_PTS - 1
     # 1. Project onto PCA subspace
@@ -96,7 +98,7 @@ def estimate_mean_only_lasso(shape_matrix, t, fn_mse='temp_mse.txt', fn_r2 = 'te
     print(f'r = {r} , N = {shape_matrix_transformed.shape[0]}, dM = {dM}')
     shape_matrix_transformed = shape_matrix_transformed.T # r X N
     
-    betas_for_low_dim = estimate_parameters_from_pca_embeddings_only_lasso(shape_matrix_transformed, t)
+    betas_for_low_dim = estimate_parameters_from_pca_embeddings_only_lasso(shape_matrix_transformed, t, fn_mse, fn_r2)
     # --> r X (degree+1)
     assert betas_for_low_dim.shape[1] == (degree+1)
 
@@ -118,9 +120,10 @@ def estimate_mean_only_lasso(shape_matrix, t, fn_mse='temp_mse.txt', fn_r2 = 'te
     return transformed_mean
 
 
-def estimate_parameters_from_pca_embeddings_only_lasso(shape_matrix, t, alpha_value=1e-5, fn_mse='temp_mse.txt', fn_r2 = 'temp_r2.txt'):
+def estimate_parameters_from_pca_embeddings_only_lasso(shape_matrix, t, fn_mse, fn_r2):
     print(f'----------ESTIMATING BETAS----------')
     N = t.shape[0]
+    alpha_value = 1e-5
     assert N == shape_matrix.shape[1]
     TOTAL_TIME_PTS = int(np.max(t))
     degree = TOTAL_TIME_PTS - 1
