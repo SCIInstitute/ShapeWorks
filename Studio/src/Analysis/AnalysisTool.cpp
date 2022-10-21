@@ -439,7 +439,9 @@ bool AnalysisTool::compute_stats() {
 
   update_difference_particles();
 
-  compute_shape_evaluations();
+  if (ui_->metrics_open_button->isChecked()) {
+    compute_shape_evaluations();
+  }
 
   stats_ready_ = true;
   std::vector<double> vals;
@@ -606,9 +608,45 @@ void AnalysisTool::compute_shape_evaluations() {
   ui_->generalization_progress->setValue(0);
   ui_->specificity_progress->setValue(0);
 
-  auto job_types = {ShapeEvaluationJob::JobType::CompactnessType, ShapeEvaluationJob::JobType::GeneralizationType,
+
+  if ((stats_.matrix().rows() > 10000 || stats_.matrix().cols() > 10000) && !large_particle_disclaimer_waived_) {
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(this, "Are you sure?",
+                                  "Shape evaluation on large numbers of particles or samples may exhaust "
+                                  "system memory and cause ShapeWorksStudio to become unresponsive, "
+                                  "are you sure you want to continue?",
+                                  QMessageBox::Yes | QMessageBox::No);
+    if (reply == QMessageBox::No) {
+      skip_evals_ = true;
+    }
+    large_particle_disclaimer_waived_ = true;
+  }
+
+  std::vector<ShapeEvaluationJob::JobType> job_types = {ShapeEvaluationJob::JobType::CompactnessType, ShapeEvaluationJob::JobType::GeneralizationType,
                     ShapeEvaluationJob::JobType::SpecificityType};
+
+  if (skip_evals_) {
+    // compactness isn't ever a problem.
+    job_types = {ShapeEvaluationJob::JobType::CompactnessType};
+  }
+
   for (auto job_type : job_types) {
+
+    switch (job_type) {
+      case ShapeEvaluationJob::JobType::CompactnessType:
+        SW_DEBUG("job type: compactness");
+        break;
+      case ShapeEvaluationJob::JobType::GeneralizationType:
+        SW_DEBUG("job type: gen job");
+        break;
+      case ShapeEvaluationJob::JobType::SpecificityType:
+        SW_DEBUG("job type: spec job");
+        break;
+      default:
+        SW_DEBUG("job type: wtf");
+    }
+
+
     auto worker = Worker::create_worker();
     auto job = QSharedPointer<ShapeEvaluationJob>::create(job_type, stats_);
     connect(job.data(), &ShapeEvaluationJob::result_ready, this, &AnalysisTool::handle_eval_thread_complete);
@@ -1040,7 +1078,7 @@ void AnalysisTool::on_metrics_open_button_toggled() {
   ui_->metrics_content->setVisible(show);
 
   if (show) {
-    compute_stats();
+    compute_shape_evaluations();
   }
 }
 
@@ -1118,8 +1156,11 @@ void AnalysisTool::initialize_mesh_warper() {
 
 //---------------------------------------------------------------------------
 void AnalysisTool::handle_eval_thread_complete(ShapeEvaluationJob::JobType job_type, Eigen::VectorXd data) {
+  SW_DEBUG("eval thread is complete");
+
   switch (job_type) {
     case ShapeEvaluationJob::JobType::CompactnessType:
+      SW_DEBUG("compactness go");
       eval_compactness_ = data;
       create_plot(ui_->compactness_graph, data, "Compactness", "Number of Modes", "Explained Variance");
       ui_->compactness_graph->show();

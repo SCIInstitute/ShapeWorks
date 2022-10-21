@@ -67,49 +67,49 @@ class Logging {
   static Logging& Instance();
 
   //! Create a file log
-  void open_file_log(std::string filename);
+  void open_file_log(const std::string& filename);
 
   //! Return if the log is open
-  bool check_log_open();
+  bool check_log_open() const;
 
   //! Return the log filename
-  std::string get_log_filename();
+  std::string get_log_filename() const;
 
   //! Log a message, use SW_LOG macro
-  void log_message(std::string message, const int line, const char* file);
+  void log_message(const std::string& message, const int line, const char *file) const;
 
   //! Log a stack trace message, use SW_LOG_STACK macro
-  void log_stack(std::string message);
+  void log_stack(const std::string& message) const;
 
   //! Log an error, use SW_ERROR macro
-  void log_error(std::string message, const int line, const char* file);
+  void log_error(const std::string& message, const int line, const char *file) const;
 
   //! Log a message, use SW_MESSAGE macro
-  void show_message(std::string message, const int line, const char* file);
+  void show_message(const std::string& message, const int line, const char *file) const;
 
   //! Log a message, use SW_STATUS macro
-  void show_status(std::string message, const int line, const char* file);
+  void show_status(const std::string& message, const int line, const char *file) const;
 
   //! Log a debug message, use SW_DEBUG macro
-  void log_debug(std::string message, const int line, const char* file);
+  void log_debug(const std::string& message, const int line, const char *file) const;
 
   //! Log a warning message, use SW_WARN macro
-  void log_warning(std::string message, const int line, const char* file);
+  void log_warning(const std::string& message, const int line, const char *file) const;
 
   //! Close the log, use SW_CLOSE_LOG macro
   void close_log();
 
   //! Set an error callback function to be called whenever an error is raised
-  void set_error_callback(std::function<void(std::string)> callback);
+  void set_error_callback(const std::function<void(std::string)>& callback);
 
   //! Set a message callback function to be called whenever an message is posted
-  void set_message_callback(std::function<void(std::string)> callback);
+  void set_message_callback(const std::function<void(std::string)>& callback);
 
   //! Set a warning callback function to be called whenever a warning is posted
-  void set_warning_callback(std::function<void(std::string)> callback);
+  void set_warning_callback(const std::function<void(std::string)>& callback);
 
   //! Set a debug messagecallback function to be called whenever a debug message is posted
-  void set_debug_callback(std::function<void(std::string)> callback);
+  void set_debug_callback(const std::function<void(std::string)>& callback);
 
  private:
   //! Constructor

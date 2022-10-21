@@ -17,7 +17,6 @@ ProjectReader::ProjectReader(Project& project) : project_(project) {}
 void ProjectReader::load_subjects(StringMapList list) {
   std::vector<std::shared_ptr<Subject>> subjects;
   bool first = true;
-  std::vector<std::string> original_keys;
   for (auto& item : list) {
     auto subject = std::make_shared<Subject>();
 
@@ -28,7 +27,6 @@ void ProjectReader::load_subjects(StringMapList list) {
       auto domain_names = ProjectUtils::determine_domain_names(keys);
       project_.set_domain_names(domain_names);
       ProjectUtils::determine_domain_types(&project_, key_map);
-      original_keys = ProjectUtils::get_original_keys(domain_names, key_map);
     }
 
     auto domains = project_.get_domain_names();

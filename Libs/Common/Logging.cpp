@@ -29,19 +29,19 @@ Logging::Logging() {
 }
 
 //-----------------------------------------------------------------------------
-Logging &Logging::Instance() {
+Logging& Logging::Instance() {
   static Logging instance;
   return instance;
 }
 
 //-----------------------------------------------------------------------------
-void Logging::open_file_log(std::string filename) {
+void Logging::open_file_log(const std::string& filename) {
   try {
     auto logger = spd::basic_logger_mt("file", filename);
     logger->set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%l] %v");
     logger->set_level(spd::get_level());
     log_open_ = true;
-  } catch (const spd::spdlog_ex &ex) {
+  } catch (const spd::spdlog_ex& ex) {
     spd::error(std::string("Log file init failed: ") + ex.what());
   }
 
@@ -49,13 +49,13 @@ void Logging::open_file_log(std::string filename) {
 }
 
 //-----------------------------------------------------------------------------
-bool Logging::check_log_open() { return log_open_; }
+bool Logging::check_log_open() const { return log_open_; }
 
 //-----------------------------------------------------------------------------
-std::string Logging::get_log_filename() { return log_filename_; }
+std::string Logging::get_log_filename() const { return log_filename_; }
 
 //-----------------------------------------------------------------------------
-void Logging::log_message(std::string message, const int line, const char *file) {
+void Logging::log_message(const std::string& message, const int line, const char *file) const {
   spd::info(message);
   if (log_open_) {
     spd::get("file")->info(message);
@@ -66,7 +66,7 @@ void Logging::log_message(std::string message, const int line, const char *file)
 }
 
 //-----------------------------------------------------------------------------
-void Logging::log_stack(std::string message) {
+void Logging::log_stack(const std::string& message) const {
   spd::error(message);
   if (log_open_) {
     spd::get("file")->error(message);
@@ -74,7 +74,7 @@ void Logging::log_stack(std::string message) {
 }
 
 //-----------------------------------------------------------------------------
-void Logging::log_error(std::string message, const int line, const char *file) {
+void Logging::log_error(const std::string& message, const int line, const char *file) const {
   spd::error(message);
   if (log_open_) {
     spd::get("file")->error(message);
@@ -85,7 +85,7 @@ void Logging::log_error(std::string message, const int line, const char *file) {
 }
 
 //-----------------------------------------------------------------------------
-void Logging::show_message(std::string message, const int line, const char *file) {
+void Logging::show_message(const std::string& message, const int line, const char *file) const {
   log_message(message, line, file);
   if (message_callback_) {
     message_callback_(message);
@@ -93,7 +93,7 @@ void Logging::show_message(std::string message, const int line, const char *file
 }
 
 //-----------------------------------------------------------------------------
-void Logging::show_status(std::string message, const int line, const char *file) {
+void Logging::show_status(const std::string& message, const int line, const char *file) const {
   log_message(message, line, file);
   if (message_callback_) {
     message_callback_(message);
@@ -101,19 +101,19 @@ void Logging::show_status(std::string message, const int line, const char *file)
 }
 
 //-----------------------------------------------------------------------------
-void Logging::log_debug(std::string message, const int line, const char *file) {
+void Logging::log_debug(const std::string& message, const int line, const char *file) const {
   std::string str = create_header(line, file) + " " + message;
   spd::debug(str);
   if (log_open_) {
     spd::get("file")->debug(str);
   }
   if (debug_callback_) {
-    debug_callback_(message);
+    debug_callback_(str);
   }
 }
 
 //-----------------------------------------------------------------------------
-void Logging::log_warning(std::string message, const int line, const char *file) {
+void Logging::log_warning(const std::string& message, const int line, const char *file) const {
   spd::warn(message);
   if (log_open_) {
     spd::get("file")->warn(message);
@@ -134,15 +134,15 @@ void Logging::close_log() {
 }
 
 //-----------------------------------------------------------------------------
-void Logging::set_error_callback(std::function<void(std::string)> callback) { error_callback_ = callback; }
+void Logging::set_error_callback(const std::function<void(std::string)>& callback) { error_callback_ = callback; }
 
 //-----------------------------------------------------------------------------
-void Logging::set_message_callback(std::function<void(std::string)> callback) { message_callback_ = callback; }
+void Logging::set_message_callback(const std::function<void(std::string)>& callback) { message_callback_ = callback; }
 
 //-----------------------------------------------------------------------------
-void Logging::set_warning_callback(std::function<void(std::string)> callback) { warning_callback_ = callback; }
+void Logging::set_warning_callback(const std::function<void(std::string)>& callback) { warning_callback_ = callback; }
 
 //-----------------------------------------------------------------------------
-void Logging::set_debug_callback(std::function<void(std::string)> callback) { debug_callback_ = callback; }
+void Logging::set_debug_callback(const std::function<void(std::string)>& callback) { debug_callback_ = callback; }
 
 }  // namespace shapeworks

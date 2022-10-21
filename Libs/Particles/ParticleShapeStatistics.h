@@ -131,6 +131,8 @@ public:
   Eigen::MatrixXd get_group1_matrix();
   Eigen::MatrixXd get_group2_matrix();
 
+  Eigen::MatrixXd& matrix() { return m_Matrix; };
+
 private:
 
   void compute_good_bad_points();
