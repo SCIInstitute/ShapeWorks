@@ -45,7 +45,7 @@ class PythonWorker : public QObject {
   Q_OBJECT
 
  public:
-  constexpr static const char* python_api_version = "6.3";
+  constexpr static const char* python_api_version = "6.4";
 
   PythonWorker();
   ~PythonWorker();
@@ -92,4 +92,4 @@ class PythonWorker : public QObject {
 
 -------------------------------
 
-Updated on 2022-10-21 at 17:00:30 +0000
+Updated on 2022-10-21 at 17:19:43 +0000
