@@ -2372,43 +2372,43 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Logging.html#function-open-file-log">open_file_log</a></strong>(std::string filename)<br>Create a file log.</td>
+<td><strong><a href="classshapeworks_1_1Logging.html#function-open-file-log">open_file_log</a></strong>(const std::string &amp; filename)<br>Create a file log.</td>
 </tr>
 <tr>
 <td>bool</td>
-<td><strong><a href="classshapeworks_1_1Logging.html#function-check-log-open">check_log_open</a></strong>()<br>Return if the log is open.</td>
+<td><strong><a href="classshapeworks_1_1Logging.html#function-check-log-open">check_log_open</a></strong>() const<br>Return if the log is open.</td>
 </tr>
 <tr>
 <td>std::string</td>
-<td><strong><a href="classshapeworks_1_1Logging.html#function-get-log-filename">get_log_filename</a></strong>()<br>Return the log filename.</td>
+<td><strong><a href="classshapeworks_1_1Logging.html#function-get-log-filename">get_log_filename</a></strong>() const<br>Return the log filename.</td>
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Logging.html#function-log-message">log_message</a></strong>(std::string message, const int line, const char * file)<br>Log a message, use SW_LOG macro.</td>
+<td><strong><a href="classshapeworks_1_1Logging.html#function-log-message">log_message</a></strong>(const std::string &amp; message, const int line, const char * file) const<br>Log a message, use SW_LOG macro.</td>
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Logging.html#function-log-stack">log_stack</a></strong>(std::string message)<br>Log a stack trace message, use SW_LOG_STACK macro.</td>
+<td><strong><a href="classshapeworks_1_1Logging.html#function-log-stack">log_stack</a></strong>(const std::string &amp; message) const<br>Log a stack trace message, use SW_LOG_STACK macro.</td>
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Logging.html#function-log-error">log_error</a></strong>(std::string message, const int line, const char * file)<br>Log an error, use SW_ERROR macro.</td>
+<td><strong><a href="classshapeworks_1_1Logging.html#function-log-error">log_error</a></strong>(const std::string &amp; message, const int line, const char * file) const<br>Log an error, use SW_ERROR macro.</td>
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Logging.html#function-show-message">show_message</a></strong>(std::string message, const int line, const char * file)<br>Log a message, use SW_MESSAGE macro.</td>
+<td><strong><a href="classshapeworks_1_1Logging.html#function-show-message">show_message</a></strong>(const std::string &amp; message, const int line, const char * file) const<br>Log a message, use SW_MESSAGE macro.</td>
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Logging.html#function-show-status">show_status</a></strong>(std::string message, const int line, const char * file)<br>Log a message, use SW_STATUS macro.</td>
+<td><strong><a href="classshapeworks_1_1Logging.html#function-show-status">show_status</a></strong>(const std::string &amp; message, const int line, const char * file) const<br>Log a message, use SW_STATUS macro.</td>
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Logging.html#function-log-debug">log_debug</a></strong>(std::string message, const int line, const char * file)<br>Log a debug message, use SW_DEBUG macro.</td>
+<td><strong><a href="classshapeworks_1_1Logging.html#function-log-debug">log_debug</a></strong>(const std::string &amp; message, const int line, const char * file) const<br>Log a debug message, use SW_DEBUG macro.</td>
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Logging.html#function-log-warning">log_warning</a></strong>(std::string message, const int line, const char * file)<br>Log a warning message, use SW_WARN macro.</td>
+<td><strong><a href="classshapeworks_1_1Logging.html#function-log-warning">log_warning</a></strong>(const std::string &amp; message, const int line, const char * file) const<br>Log a warning message, use SW_WARN macro.</td>
 </tr>
 <tr>
 <td>void</td>
@@ -2416,19 +2416,19 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Logging.html#function-set-error-callback">set_error_callback</a></strong>(std::function&lt; void(std::string)&gt; callback)<br>Set an error callback function to be called whenever an error is raised.</td>
+<td><strong><a href="classshapeworks_1_1Logging.html#function-set-error-callback">set_error_callback</a></strong>(const std::function&lt; void(std::string)&gt; &amp; callback)<br>Set an error callback function to be called whenever an error is raised.</td>
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Logging.html#function-set-message-callback">set_message_callback</a></strong>(std::function&lt; void(std::string)&gt; callback)<br>Set a message callback function to be called whenever an message is posted.</td>
+<td><strong><a href="classshapeworks_1_1Logging.html#function-set-message-callback">set_message_callback</a></strong>(const std::function&lt; void(std::string)&gt; &amp; callback)<br>Set a message callback function to be called whenever an message is posted.</td>
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Logging.html#function-set-warning-callback">set_warning_callback</a></strong>(std::function&lt; void(std::string)&gt; callback)<br>Set a warning callback function to be called whenever a warning is posted.</td>
+<td><strong><a href="classshapeworks_1_1Logging.html#function-set-warning-callback">set_warning_callback</a></strong>(const std::function&lt; void(std::string)&gt; &amp; callback)<br>Set a warning callback function to be called whenever a warning is posted.</td>
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Logging.html#function-set-debug-callback">set_debug_callback</a></strong>(std::function&lt; void(std::string)&gt; callback)<br>Set a debug messagecallback function to be called whenever a debug message is posted.</td>
+<td><strong><a href="classshapeworks_1_1Logging.html#function-set-debug-callback">set_debug_callback</a></strong>(const std::function&lt; void(std::string)&gt; &amp; callback)<br>Set a debug messagecallback function to be called whenever a debug message is posted.</td>
 </tr>
 </tbody>
 </table>
@@ -2470,70 +2470,70 @@
 <p>Return the singleton instance. </p>
 <h3 id="function-open_file_log">function open_file_log</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">open_file_log</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">filename</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">filename</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <p>Create a file log. </p>
 <h3 id="function-check_log_open">function check_log_open</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">check_log_open</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">check_log_open</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
 </code></pre></div>
 <p>Return if the log is open. </p>
 <h3 id="function-get_log_filename">function get_log_filename</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">get_log_filename</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">get_log_filename</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
 </code></pre></div>
 <p>Return the log filename. </p>
 <h3 id="function-log_message">function log_message</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">log_message</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">line</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">file</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
 </code></pre></div>
 <p>Log a message, use SW_LOG macro. </p>
 <h3 id="function-log_stack">function log_stack</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">log_stack</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">message</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">message</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
 </code></pre></div>
 <p>Log a stack trace message, use SW_LOG_STACK macro. </p>
 <h3 id="function-log_error">function log_error</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">log_error</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">line</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">file</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
 </code></pre></div>
 <p>Log an error, use SW_ERROR macro. </p>
 <h3 id="function-show_message">function show_message</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">show_message</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">line</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">file</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
 </code></pre></div>
 <p>Log a message, use SW_MESSAGE macro. </p>
 <h3 id="function-show_status">function show_status</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">show_status</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">line</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">file</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
 </code></pre></div>
 <p>Log a message, use SW_STATUS macro. </p>
 <h3 id="function-log_debug">function log_debug</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">log_debug</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">line</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">file</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
 </code></pre></div>
 <p>Log a debug message, use SW_DEBUG macro. </p>
 <h3 id="function-log_warning">function log_warning</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">log_warning</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">line</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">file</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
 </code></pre></div>
 <p>Log a warning message, use SW_WARN macro. </p>
 <h3 id="function-close_log">function close_log</h3>
@@ -2542,30 +2542,30 @@
 <p>Close the log, use SW_CLOSE_LOG macro. </p>
 <h3 id="function-set_error_callback">function set_error_callback</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_error_callback</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">void</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="n">callback</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">void</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">callback</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <p>Set an error callback function to be called whenever an error is raised. </p>
 <h3 id="function-set_message_callback">function set_message_callback</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_message_callback</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">void</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="n">callback</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">void</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">callback</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <p>Set a message callback function to be called whenever an message is posted. </p>
 <h3 id="function-set_warning_callback">function set_warning_callback</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_warning_callback</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">void</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="n">callback</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">void</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">callback</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <p>Set a warning callback function to be called whenever a warning is posted. </p>
 <h3 id="function-set_debug_callback">function set_debug_callback</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_debug_callback</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">void</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="n">callback</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">void</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">callback</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <p>Set a debug messagecallback function to be called whenever a debug message is posted. </p>
 <hr />
-<p>Updated on 2022-10-17 at 08:46:38 +0000</p>
+<p>Updated on 2022-10-21 at 17:00:29 +0000</p>
 
               
             </article>

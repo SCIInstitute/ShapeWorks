@@ -146,35 +146,35 @@ class Logging {
  public:
   static Logging& Instance();
 
-  void open_file_log(std::string filename);
+  void open_file_log(const std::string& filename);
 
-  bool check_log_open();
+  bool check_log_open() const;
 
-  std::string get_log_filename();
+  std::string get_log_filename() const;
 
-  void log_message(std::string message, const int line, const char* file);
+  void log_message(const std::string& message, const int line, const char *file) const;
 
-  void log_stack(std::string message);
+  void log_stack(const std::string& message) const;
 
-  void log_error(std::string message, const int line, const char* file);
+  void log_error(const std::string& message, const int line, const char *file) const;
 
-  void show_message(std::string message, const int line, const char* file);
+  void show_message(const std::string& message, const int line, const char *file) const;
 
-  void show_status(std::string message, const int line, const char* file);
+  void show_status(const std::string& message, const int line, const char *file) const;
 
-  void log_debug(std::string message, const int line, const char* file);
+  void log_debug(const std::string& message, const int line, const char *file) const;
 
-  void log_warning(std::string message, const int line, const char* file);
+  void log_warning(const std::string& message, const int line, const char *file) const;
 
   void close_log();
 
-  void set_error_callback(std::function<void(std::string)> callback);
+  void set_error_callback(const std::function<void(std::string)>& callback);
 
-  void set_message_callback(std::function<void(std::string)> callback);
+  void set_message_callback(const std::function<void(std::string)>& callback);
 
-  void set_warning_callback(std::function<void(std::string)> callback);
+  void set_warning_callback(const std::function<void(std::string)>& callback);
 
-  void set_debug_callback(std::function<void(std::string)> callback);
+  void set_debug_callback(const std::function<void(std::string)>& callback);
 
  private:
   Logging();
@@ -219,4 +219,4 @@ class Logging {
 
 -------------------------------
 
-Updated on 2022-10-17 at 08:46:38 +0000
+Updated on 2022-10-21 at 17:00:29 +0000

@@ -20,21 +20,21 @@ ShapeWorks [Logging]() Library.  [More...](#detailed-description)
 |                | Name           |
 | -------------- | -------------- |
 | [Logging](../Classes/classshapeworks_1_1Logging.md) & | **[Instance](../Classes/classshapeworks_1_1Logging.md#function-instance)**()<br>Return the singleton instance.  |
-| void | **[open_file_log](../Classes/classshapeworks_1_1Logging.md#function-open-file-log)**(std::string filename)<br>Create a file log.  |
-| bool | **[check_log_open](../Classes/classshapeworks_1_1Logging.md#function-check-log-open)**()<br>Return if the log is open.  |
-| std::string | **[get_log_filename](../Classes/classshapeworks_1_1Logging.md#function-get-log-filename)**()<br>Return the log filename.  |
-| void | **[log_message](../Classes/classshapeworks_1_1Logging.md#function-log-message)**(std::string message, const int line, const char * file)<br>Log a message, use SW_LOG macro.  |
-| void | **[log_stack](../Classes/classshapeworks_1_1Logging.md#function-log-stack)**(std::string message)<br>Log a stack trace message, use SW_LOG_STACK macro.  |
-| void | **[log_error](../Classes/classshapeworks_1_1Logging.md#function-log-error)**(std::string message, const int line, const char * file)<br>Log an error, use SW_ERROR macro.  |
-| void | **[show_message](../Classes/classshapeworks_1_1Logging.md#function-show-message)**(std::string message, const int line, const char * file)<br>Log a message, use SW_MESSAGE macro.  |
-| void | **[show_status](../Classes/classshapeworks_1_1Logging.md#function-show-status)**(std::string message, const int line, const char * file)<br>Log a message, use SW_STATUS macro.  |
-| void | **[log_debug](../Classes/classshapeworks_1_1Logging.md#function-log-debug)**(std::string message, const int line, const char * file)<br>Log a debug message, use SW_DEBUG macro.  |
-| void | **[log_warning](../Classes/classshapeworks_1_1Logging.md#function-log-warning)**(std::string message, const int line, const char * file)<br>Log a warning message, use SW_WARN macro.  |
+| void | **[open_file_log](../Classes/classshapeworks_1_1Logging.md#function-open-file-log)**(const std::string & filename)<br>Create a file log.  |
+| bool | **[check_log_open](../Classes/classshapeworks_1_1Logging.md#function-check-log-open)**() const<br>Return if the log is open.  |
+| std::string | **[get_log_filename](../Classes/classshapeworks_1_1Logging.md#function-get-log-filename)**() const<br>Return the log filename.  |
+| void | **[log_message](../Classes/classshapeworks_1_1Logging.md#function-log-message)**(const std::string & message, const int line, const char * file) const<br>Log a message, use SW_LOG macro.  |
+| void | **[log_stack](../Classes/classshapeworks_1_1Logging.md#function-log-stack)**(const std::string & message) const<br>Log a stack trace message, use SW_LOG_STACK macro.  |
+| void | **[log_error](../Classes/classshapeworks_1_1Logging.md#function-log-error)**(const std::string & message, const int line, const char * file) const<br>Log an error, use SW_ERROR macro.  |
+| void | **[show_message](../Classes/classshapeworks_1_1Logging.md#function-show-message)**(const std::string & message, const int line, const char * file) const<br>Log a message, use SW_MESSAGE macro.  |
+| void | **[show_status](../Classes/classshapeworks_1_1Logging.md#function-show-status)**(const std::string & message, const int line, const char * file) const<br>Log a message, use SW_STATUS macro.  |
+| void | **[log_debug](../Classes/classshapeworks_1_1Logging.md#function-log-debug)**(const std::string & message, const int line, const char * file) const<br>Log a debug message, use SW_DEBUG macro.  |
+| void | **[log_warning](../Classes/classshapeworks_1_1Logging.md#function-log-warning)**(const std::string & message, const int line, const char * file) const<br>Log a warning message, use SW_WARN macro.  |
 | void | **[close_log](../Classes/classshapeworks_1_1Logging.md#function-close-log)**()<br>Close the log, use SW_CLOSE_LOG macro.  |
-| void | **[set_error_callback](../Classes/classshapeworks_1_1Logging.md#function-set-error-callback)**(std::function< void(std::string)> callback)<br>Set an error callback function to be called whenever an error is raised.  |
-| void | **[set_message_callback](../Classes/classshapeworks_1_1Logging.md#function-set-message-callback)**(std::function< void(std::string)> callback)<br>Set a message callback function to be called whenever an message is posted.  |
-| void | **[set_warning_callback](../Classes/classshapeworks_1_1Logging.md#function-set-warning-callback)**(std::function< void(std::string)> callback)<br>Set a warning callback function to be called whenever a warning is posted.  |
-| void | **[set_debug_callback](../Classes/classshapeworks_1_1Logging.md#function-set-debug-callback)**(std::function< void(std::string)> callback)<br>Set a debug messagecallback function to be called whenever a debug message is posted.  |
+| void | **[set_error_callback](../Classes/classshapeworks_1_1Logging.md#function-set-error-callback)**(const std::function< void(std::string)> & callback)<br>Set an error callback function to be called whenever an error is raised.  |
+| void | **[set_message_callback](../Classes/classshapeworks_1_1Logging.md#function-set-message-callback)**(const std::function< void(std::string)> & callback)<br>Set a message callback function to be called whenever an message is posted.  |
+| void | **[set_warning_callback](../Classes/classshapeworks_1_1Logging.md#function-set-warning-callback)**(const std::function< void(std::string)> & callback)<br>Set a warning callback function to be called whenever a warning is posted.  |
+| void | **[set_debug_callback](../Classes/classshapeworks_1_1Logging.md#function-set-debug-callback)**(const std::function< void(std::string)> & callback)<br>Set a debug messagecallback function to be called whenever a debug message is posted.  |
 
 ## Detailed Description
 
@@ -110,7 +110,7 @@ Return the singleton instance.
 
 ```cpp
 void open_file_log(
-    std::string filename
+    const std::string & filename
 )
 ```
 
@@ -119,7 +119,7 @@ Create a file log.
 ### function check_log_open
 
 ```cpp
-bool check_log_open()
+bool check_log_open() const
 ```
 
 Return if the log is open. 
@@ -127,7 +127,7 @@ Return if the log is open.
 ### function get_log_filename
 
 ```cpp
-std::string get_log_filename()
+std::string get_log_filename() const
 ```
 
 Return the log filename. 
@@ -136,10 +136,10 @@ Return the log filename.
 
 ```cpp
 void log_message(
-    std::string message,
+    const std::string & message,
     const int line,
     const char * file
-)
+) const
 ```
 
 Log a message, use SW_LOG macro. 
@@ -148,8 +148,8 @@ Log a message, use SW_LOG macro.
 
 ```cpp
 void log_stack(
-    std::string message
-)
+    const std::string & message
+) const
 ```
 
 Log a stack trace message, use SW_LOG_STACK macro. 
@@ -158,10 +158,10 @@ Log a stack trace message, use SW_LOG_STACK macro.
 
 ```cpp
 void log_error(
-    std::string message,
+    const std::string & message,
     const int line,
     const char * file
-)
+) const
 ```
 
 Log an error, use SW_ERROR macro. 
@@ -170,10 +170,10 @@ Log an error, use SW_ERROR macro.
 
 ```cpp
 void show_message(
-    std::string message,
+    const std::string & message,
     const int line,
     const char * file
-)
+) const
 ```
 
 Log a message, use SW_MESSAGE macro. 
@@ -182,10 +182,10 @@ Log a message, use SW_MESSAGE macro.
 
 ```cpp
 void show_status(
-    std::string message,
+    const std::string & message,
     const int line,
     const char * file
-)
+) const
 ```
 
 Log a message, use SW_STATUS macro. 
@@ -194,10 +194,10 @@ Log a message, use SW_STATUS macro.
 
 ```cpp
 void log_debug(
-    std::string message,
+    const std::string & message,
     const int line,
     const char * file
-)
+) const
 ```
 
 Log a debug message, use SW_DEBUG macro. 
@@ -206,10 +206,10 @@ Log a debug message, use SW_DEBUG macro.
 
 ```cpp
 void log_warning(
-    std::string message,
+    const std::string & message,
     const int line,
     const char * file
-)
+) const
 ```
 
 Log a warning message, use SW_WARN macro. 
@@ -226,7 +226,7 @@ Close the log, use SW_CLOSE_LOG macro.
 
 ```cpp
 void set_error_callback(
-    std::function< void(std::string)> callback
+    const std::function< void(std::string)> & callback
 )
 ```
 
@@ -236,7 +236,7 @@ Set an error callback function to be called whenever an error is raised.
 
 ```cpp
 void set_message_callback(
-    std::function< void(std::string)> callback
+    const std::function< void(std::string)> & callback
 )
 ```
 
@@ -246,7 +246,7 @@ Set a message callback function to be called whenever an message is posted.
 
 ```cpp
 void set_warning_callback(
-    std::function< void(std::string)> callback
+    const std::function< void(std::string)> & callback
 )
 ```
 
@@ -256,7 +256,7 @@ Set a warning callback function to be called whenever a warning is posted.
 
 ```cpp
 void set_debug_callback(
-    std::function< void(std::string)> callback
+    const std::function< void(std::string)> & callback
 )
 ```
 
@@ -264,4 +264,4 @@ Set a debug messagecallback function to be called whenever a debug message is po
 
 -------------------------------
 
-Updated on 2022-10-17 at 08:46:38 +0000
+Updated on 2022-10-21 at 17:00:29 +0000

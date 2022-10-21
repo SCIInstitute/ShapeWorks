@@ -57,6 +57,7 @@ title: shapeworks::ParticleShapeStatistics
 | Eigen::VectorXd | **[get_generalization](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-get-generalization)**(std::function< void(float)> progress_callback =nullptr) |
 | Eigen::MatrixXd | **[get_group1_matrix](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-get-group1-matrix)**() |
 | Eigen::MatrixXd | **[get_group2_matrix](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-get-group2-matrix)**() |
+| Eigen::MatrixXd & | **[matrix](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-matrix)**() |
 
 ## Public Attributes
 
@@ -431,6 +432,13 @@ Eigen::MatrixXd get_group2_matrix()
 ```
 
 
+### function matrix
+
+```cpp
+inline Eigen::MatrixXd & matrix()
+```
+
+
 ## Public Attributes Documentation
 
 ### variable VDimension
@@ -442,4 +450,4 @@ static constexpr static int VDimension = 3;
 
 -------------------------------
 
-Updated on 2022-10-17 at 08:46:37 +0000
+Updated on 2022-10-21 at 17:00:29 +0000
