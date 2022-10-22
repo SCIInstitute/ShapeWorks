@@ -2,14 +2,15 @@ import shapeworks as sw
 import numpy as np
 from sklearn.model_selection import KFold
 from sklearn.linear_model import Lasso, LassoCV, MultiTaskLassoCV
-from Estimate import *
+from Estimate_1 import *
 import matplotlib.pyplot as plt
 plt.rcParams["figure.figsize"] = (20, 15)
 
 MODELS_WORKING_DIR = '/home/sci/nawazish.khan/Public/Spatiotemporal-Polynomial-Regression-Experiments/'
 DATASET_NAME = 'Synthetic-Dataset'
 PROJECT_DIR = f'{MODELS_WORKING_DIR}/{DATASET_NAME}/'
-MODEL_NAME = 'spatiotemporal_regression_model'
+ex = '-new_1'
+MODEL_NAME = f'spatiotemporal_regression_model{ex}'
 PROJECT_FILE_NAME = f'{PROJECT_DIR}/{MODEL_NAME}.xlsx'
 RELATIVE_ERROR_LOG_FILES = f'{PROJECT_DIR}/{MODEL_NAME}_REL_MSE_log'
 SCORE_R2_LOG_FILES = f'{PROJECT_DIR}/{MODEL_NAME}_R2_SCORE_log'
@@ -31,7 +32,7 @@ def before_evaluate():
     print(f'------Got Mean in python shape = {current_mean.shape}-----')
     t_array = TIME_ARRAY
     X = residuals + current_mean
-    new_mean = estimate_mean_only_lasso(X, t_array, fn_mse=f'{RELATIVE_ERROR_LOG_FILES}.txt', fn_r2=f'{SCORE_R2_LOG_FILES}.txt')
+    new_mean = estimate_mean(X, t_array, fn_mse=f'{RELATIVE_ERROR_LOG_FILES}.txt', fn_r2=f'{SCORE_R2_LOG_FILES}.txt')
     opt.SetSpatiotemporalRegressionMeanMatrix(new_mean)
 
 opt.SetBeforeEvaluateCallbackFunction(before_evaluate)

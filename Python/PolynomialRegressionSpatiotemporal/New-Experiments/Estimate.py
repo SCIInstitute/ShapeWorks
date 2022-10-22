@@ -1,14 +1,15 @@
 import sklearn.decomposition
-from sklearn.linear_model import MultiTaskLassoCV, Lasso
+from sklearn.linear_model import MultiTaskLassoCV, Lasso, MultiTaskElasticNetCV, LinearRegression, MultiTaskElasticNet
 import numpy as np
 
 def run_pca(shape_matrix):
-    pca_ob = sklearn.decomposition.PCA(svd_solver='auto', n_components=2)
+    pca_ob = sklearn.decomposition.PCA(svd_solver='full',)
     shape_matrix_transformed = pca_ob.fit_transform(shape_matrix)
     scree = pca_ob.explained_variance_ratio_.cumsum()
     minDims = np.where(scree < 0.9999999)[0][-1]
     eigvecs = pca_ob.components_
     print(f"--------Number of modes covering 97% varaince - {minDims} -------")
+
     return shape_matrix_transformed, minDims, eigvecs, pca_ob
 
 def estimate_mean(shape_matrix, t, fn_mse, fn_r2):
@@ -25,7 +26,7 @@ def estimate_mean(shape_matrix, t, fn_mse, fn_r2):
     print(f'r = {r} , N = {shape_matrix_transformed.shape[0]}, dM = {dM}')
     shape_matrix_transformed = shape_matrix_transformed.T # r X N
     
-    betas_for_low_dim = estimate_parameters_from_pca_embeddings(shape_matrix_transformed, t)
+    betas_for_low_dim = estimate_parameters_from_pca_embeddings(shape_matrix_transformed, t, fn_mse, fn_r2)
     # --> r X (degree+1)
     assert betas_for_low_dim.shape[1] == (degree+1)
 
@@ -55,7 +56,7 @@ def estimate_parameters_from_pca_embeddings(shape_matrix, t, fn_mse, fn_r2):
     TOTAL_TIME_PTS = int(np.max(t))
     degree = TOTAL_TIME_PTS - 1
     # degree = 1
-    dM = shape_matrix.shape[0]
+    dM = shape_matrix.shape[0] 
     X = np.zeros((N, degree))
 
     for deg in range(0, degree):
@@ -64,9 +65,9 @@ def estimate_parameters_from_pca_embeddings(shape_matrix, t, fn_mse, fn_r2):
     shape_matrix = np.transpose(shape_matrix)
     mean_shape = np.tile(np.mean(shape_matrix, axis=0), (N,1))
 
-    lassoreg = MultiTaskLassoCV()
+    lassoreg = MultiTaskElasticNet()
     lassoreg.fit(X, shape_matrix)
-    print(f'-----Lasso Fit done alpha chosen {lassoreg.alpha_}')
+    # print(f'-----Lasso Fit done alpha chosen {lassoreg.alpha_}')
     z_hat = lassoreg.predict(X)
     mse = np.mean((z_hat - shape_matrix)**2)
     rel_mse = mse/np.mean((mean_shape - shape_matrix)**2)
@@ -137,7 +138,8 @@ def estimate_parameters_from_pca_embeddings_only_lasso(shape_matrix, t, fn_mse, 
     shape_matrix = np.transpose(shape_matrix)
     mean_shape = np.tile(np.mean(shape_matrix, axis=0), (N,1))
 
-    lassoreg = Lasso(alpha=alpha_value)
+    # lassoreg = LinearRegression(alpha=alpha_value)
+    lassoreg = LinearRegression()
     lassoreg.fit(X, shape_matrix)
     # print(f'-----Lasso Fit done alpha chosen {lassoreg.alpha_}')
     z_hat = lassoreg.predict(X)

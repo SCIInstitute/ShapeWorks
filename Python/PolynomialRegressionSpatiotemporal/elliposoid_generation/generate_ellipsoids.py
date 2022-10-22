@@ -75,9 +75,10 @@ def generate_sequential_ellipsoid_meshes(num_samples, sequence_length, period, o
 	return(get_files(mesh_dir))
 
 out_dir = PROJECT_DIR
-num_samples = 50
+num_samples = 30
 sequence_length = 8
 period = 8
 mesh_files = generate_sequential_ellipsoid_meshes(num_samples, sequence_length, period, out_dir)
+print('done')
 # seg_files = generate_segmentations(mesh_files, out_dir, randomize_size=False, spacing=[1,1,1], allow_on_boundary=False)
 # img_files = generate_images(seg_files, out_dir, blur_factor=1, foreground_mean=180, foreground_var=30, background_mean=80, background_var=30)
