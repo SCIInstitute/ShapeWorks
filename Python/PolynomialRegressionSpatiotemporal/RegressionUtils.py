@@ -149,14 +149,14 @@ class ShapeWorksProjectFile:
         project_location = self.project_out_dir
 
         # # remove this
-        indices_to_drop = []
+        # indices_to_drop = []
         #------
         for idx in range(len(file_paths)):
             time_pt = time_indices_ar[idx]
             # Remove this
-            if time_pt not in ['2', '6']:
-                indices_to_drop.append(idx)
-                continue
+            # if time_pt not in ['2', '6']:
+            #     indices_to_drop.append(idx)
+            #     continue
             # # ------
             subject = sw.Subject()
             subject.set_number_of_domains(1)
@@ -191,8 +191,8 @@ class ShapeWorksProjectFile:
         t_file  = f'{self.project_out_dir}/t_array.txt'
 
         # # remove this
-        for index in sorted(indices_to_drop, reverse=True):
-            del time_indices_ar[index]
+        # for index in sorted(indices_to_drop, reverse=True):
+        #     del time_indices_ar[index]
         # ------
         time_indices_ar_int = [int(x) for x in time_indices_ar]
         np.savetxt(t_file, np.asarray(time_indices_ar_int).astype(int), fmt='%i')

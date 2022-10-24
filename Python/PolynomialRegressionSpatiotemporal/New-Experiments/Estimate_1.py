@@ -1,5 +1,5 @@
 import sklearn.decomposition
-from sklearn.linear_model import MultiTaskLassoCV, Lasso, MultiTaskElasticNetCV, LinearRegression, MultiTaskElasticNet, ElasticNet
+from sklearn.linear_model import MultiTaskLassoCV, Lasso, MultiTaskElasticNetCV, LinearRegression, MultiTaskElasticNet, ElasticNet, ElasticNetCV
 import numpy as np
 
 def run_pca(shape_matrix):
@@ -66,7 +66,7 @@ def estimate_parameters_from_pca_embeddings(shape_matrix, t, fn_mse, fn_r2):
     betas = np.zeros((dM, degree+1))
     # compute polynomial for each mode
     for r in range(shape_matrix.shape[1]):
-        lassoreg = ElasticNet()
+        lassoreg = ElasticNetCV()
         lassoreg.fit(X, shape_matrix[:, r])
         score_r2 = lassoreg.score(X, shape_matrix[:, r])
         with open(fn_r2, 'a') as f:
