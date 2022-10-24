@@ -2,9 +2,7 @@
 
 #include <spdlog/cfg/helpers.h>
 #include <spdlog/details/os.h>
-#include <spdlog/fmt/bundled/chrono.h>
 #include <spdlog/sinks/basic_file_sink.h>
-#include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/spdlog.h>
 
 namespace spd = spdlog;

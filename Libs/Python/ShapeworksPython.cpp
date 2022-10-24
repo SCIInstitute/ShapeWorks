@@ -1886,7 +1886,7 @@ PYBIND11_MODULE(shapeworks_py, m)
 
   .def("get_group_values",
       &Subject::get_group_values,
-      "Get the group values")
+      "Get the group values map")
 
   .def("get_group_value",
       &Subject::get_group_value,
@@ -1894,8 +1894,15 @@ PYBIND11_MODULE(shapeworks_py, m)
       "group_name"_a)
 
   .def("set_group_values",
-      &Subject::set_group_values,
-      "Set a specific group value"
+       [](Subject& subject, std::map<std::string,std::string> map) -> decltype(auto) {
+         project::types::StringMap m;
+
+         for (auto& [k, v] : map) {
+           m[k] = v;
+         }
+         subject.set_group_values(m);
+       },
+      "Set group values map"
       "group_values"_a)
 
   .def("get_extra_values",
