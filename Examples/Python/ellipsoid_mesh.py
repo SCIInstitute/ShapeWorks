@@ -52,7 +52,7 @@ def Run_Pipeline(args):
     """
 
     # Create a directory for groomed output
-    groom_dir = output_directory + 'groomed/'
+    groom_dir = output_directory + 'groomed_tinytest/'
     if not os.path.exists(groom_dir):
         os.makedirs(groom_dir)
 

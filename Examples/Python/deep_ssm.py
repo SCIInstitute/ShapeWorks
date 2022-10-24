@@ -248,7 +248,7 @@ def Run_Pipeline(args):
         parameters.set(key,sw.Variant([parameter_dictionary[key]]))
     parameters.set("domain_type",sw.Variant('mesh'))
     project.set_parameters("optimize",parameters)
-    spreadsheet_file = data_dir + "train.xlsx"
+    spreadsheet_file = data_dir + "train.swproj"
     project.save(spreadsheet_file)
 
     # Run optimization
@@ -532,7 +532,7 @@ def Run_Pipeline(args):
     for key in studio_dictionary:
         studio_parameters.set(key, sw.Variant(studio_dictionary[key]))
     project.set_parameters("studio", studio_parameters)
-    spreadsheet_file = data_dir + "validation.xlsx"
+    spreadsheet_file = data_dir + "validation.swproj"
     project.save(spreadsheet_file)
 
     # Run optimization
