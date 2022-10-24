@@ -197,6 +197,85 @@ class ShapeWorksProjectFile:
         time_indices_ar_int = [int(x) for x in time_indices_ar]
         np.savetxt(t_file, np.asarray(time_indices_ar_int).astype(int), fmt='%i')
         # print(f' Project Created at {project_name}')
+
+    def create_disentangled_project_file(self, use_relative_paths=True, expt_name='', use_corresponding_csm=False):
+
+        optimization_params = self.opt_params['spatiotemporal_regression']
+        file_paths, fnames = sort_files_from_dir(files_dir=self.meshes_dir, ext='.vtk')
+        file_names = []
+        for fp in file_paths:
+            fn = fp.split('/')[-1].split('.vtk')[0]
+            file_names.append(fn)
+
+        time_indices_ar = []
+        for file_name in file_names:
+            time_indices_ar.append(get_time_index(file_name, self.dataset_name))
+        assert len(time_indices_ar) == len(file_paths)
+
+        sub_set = set()
+        for fn in fnames:
+            sub = fn.split('_')[0]
+            sub_set.add(sub)
+        sub_set = list(sub_set)
+        print(f'{len(sub_set)} Subjects loaded')
+        
+        
+
+        # print(len(file_paths))
+
+
+        project_subjects = []
+        project_location = self.project_out_dir
+
+        # # remove this
+        # indices_to_drop = []
+        #------
+        for idx in range(len(sub_set)):
+            sub_name = sub_set[idx]
+            subject = sw.Subject()
+            subject.set_number_of_domains(25)
+            particles_dir_csm = 'cross_sectional_model_particles{expt_name}' if use_corresponding_csm else 'cross_sectional_model_particles'
+
+            mesh_files = []
+            landmark_files = []
+            for time in range(0, 25):
+                temp1 = glob.glob(f'{self.project_out_dir}/{particles_dir_csm}/{sub_name}*.{time}_local.particles')
+                temp2 = glob.glob(f'{self.meshes_dir}/{sub_name}*.{time}.vtk')
+                print(len(temp1), len(temp2))
+                assert len(temp1) == 1 and len(temp2) == 1
+                mesh_files.append(temp2[0])
+                landmark_files.append(temp1[0])
+
+            print(len(landmark_files), len(mesh_files))
+            print(mesh_files)
+            assert len(landmark_files) == 25 and len(mesh_files) == 25
+
+            if use_relative_paths:
+                rel_mesh_files = []
+                rel_landmark_files = []
+                for i in range(len(mesh_files)):
+
+                    rel_mesh_files += sw.utils.get_relative_paths([mesh_files[i]], project_location)
+                    rel_landmark_files += sw.utils.get_relative_paths([landmark_files[i]], project_location)
+
+            subject.set_original_filenames(mesh_files)
+            subject.set_groomed_filenames(mesh_files)
+            subject.set_landmarks_filenames(landmark_files)
+            # print(f'time index = {[time_indices_ar[idx]]}')
+            project_subjects.append(subject)
+        
+
+        shapeworks_project = sw.Project()
+        parameters = sw.Parameters()
+        for key in optimization_params:
+            parameters.set(key, sw.Variant([optimization_params[key]]))
+        parameters.set("domain_type", sw.Variant('mesh'))
+        shapeworks_project.set_subjects(project_subjects)
+        shapeworks_project.set_parameters("optimize", parameters)
+        project_name = f'{self.project_out_dir}/disentangled_model_new{expt_name}.xlsx'
+        shapeworks_project.save(project_name)
+
+        print(f' Project Created at {project_name}')
     def estimate_initial_alpha_value(self):
         pass
 
@@ -204,6 +283,7 @@ def create_project_files(dataset, use_relative_paths=True, expt_name=''):
     ob = ShapeWorksProjectFile(dataset)
     # ob.create_cross_sectional_project_file(use_relative_paths, expt_name='')
     ob.create_spatiotemporal_regression_project_file(use_relative_paths, expt_name, False)
+    ob.create_disentangled_project_file(use_relative_paths, expt_name, False)
 
 def estimate_alpha_values(dataset=''):
     ob = ShapeWorksProjectFile(dataset)
