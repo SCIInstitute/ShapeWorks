@@ -66,7 +66,8 @@ def estimate_parameters_from_pca_embeddings(shape_matrix, t, fn_mse, fn_r2):
     betas = np.zeros((dM, degree+1))
     # compute polynomial for each mode
     for r in range(shape_matrix.shape[1]):
-        lassoreg = ElasticNetCV()
+        # lassoreg = ElasticNetCV()
+        lassoreg = ElasticNet()
         lassoreg.fit(X, shape_matrix[:, r])
         score_r2 = lassoreg.score(X, shape_matrix[:, r])
         with open(fn_r2, 'a') as f:
