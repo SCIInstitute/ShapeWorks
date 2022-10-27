@@ -9,15 +9,10 @@
 
 #include <Interface/ShapeWorksStudioApp.h>
 #include <Applications/Configuration.h>
-#include <Interface/ShapeWorksStudioApp.h>
 #include <Logging.h>
 #include <QVTKOpenGLNativeWidget.h>
 
-#include <QApplication>
 #include <QDateTime>
-#include <QDir>
-#include <QMessageBox>
-#include <QResource>
 #include <QStandardPaths>
 #include <QSurfaceFormat>
 #include <iostream>
@@ -28,6 +23,32 @@
 #endif
 
 using namespace shapeworks;
+
+class OverrideQApplication : public QApplication {
+ public:
+  OverrideQApplication(int& argc, char **argv)
+      : QApplication(argc, argv) {
+  }
+
+  bool event(QEvent *event) override {
+    if (event->type() == QEvent::FileOpen) {
+      QFileOpenEvent *openEvent = static_cast<QFileOpenEvent *>(event);
+      SW_LOG("Open file {}", openEvent->file().toStdString());
+      std::cerr << "Open file event: " << openEvent->file().toStdString() << "\n";
+
+      stored_filename_ = openEvent->file();
+      if (file_open_callback_) {
+        file_open_callback_(openEvent->file());
+      }
+
+    }
+
+    return QApplication::event(event);
+  }
+
+  std::function<void(QString)> file_open_callback_;
+  QString stored_filename_;
+};
 
 static void new_log() {
   QDateTime date_time = QDateTime::currentDateTime();
@@ -53,12 +74,10 @@ static void new_log() {
   Logging::Instance().open_file_log(logfile.toStdString());
 }
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv) {
   // tbb::task_scheduler_init init(1);
 
   try {
-    new_log();
-    SW_LOG("ShapeWorks Studio " SHAPEWORKS_VERSION " initializing...");
 
     // needed to ensure appropriate OpenGL context is created for VTK rendering.
     QSurfaceFormat format = QVTKOpenGLNativeWidget::defaultFormat();
@@ -77,13 +96,31 @@ int main(int argc, char** argv) {
     ::SetErrorMode(0);
 #endif
 
-    QApplication app(argc, argv);
+    new_log();
+    SW_LOG("ShapeWorks Studio " SHAPEWORKS_VERSION " initializing...");
+
+    OverrideQApplication app(argc, argv);
 
     auto studio_app = QSharedPointer<ShapeWorksStudioApp>::create();
     QResource::registerResource(RSCS_FILE);
     studio_app->setWindowIcon(QIcon(ICON_FILE));
     studio_app->initialize_vtk();
     studio_app->show();
+
+
+    bool project_loaded = false;
+    app.file_open_callback_ = [&](QString filename) {
+      //QTimer::singleShot(0, [=]() {
+      studio_app->hide_splash_screen();
+      studio_app->open_project(filename);
+      project_loaded = true;
+      //});
+    };
+
+
+    // Try to process a QEvent::FileOpen event before showing the splash screen
+    QApplication::processEvents();
+    QApplication::processEvents();
 
     if (argc > 1) {
       QString filename = QString(argv[1]);
@@ -100,8 +137,16 @@ int main(int argc, char** argv) {
         QTimer::singleShot(0, [=]() { studio_app->import_files(files); });
       }
     } else {
-      studio_app->show_splash_screen();
+      if (!project_loaded) {
+        studio_app->show_splash_screen();
+      }
+
     }
+
+    if (!project_loaded && !app.stored_filename_.isEmpty()) {
+      app.file_open_callback_(app.stored_filename_);
+    }
+
     return app.exec();
   } catch (itk::ExceptionObject& excep) {
     std::cerr << excep << std::endl;

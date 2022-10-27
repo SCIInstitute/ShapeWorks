@@ -1980,6 +1980,9 @@ void ShapeWorksStudioApp::set_feature_uniform_scale(bool value) {
 void ShapeWorksStudioApp::show_splash_screen() { splash_screen_->show(); }
 
 //---------------------------------------------------------------------------
+void ShapeWorksStudioApp::hide_splash_screen() { splash_screen_->hide(); }
+
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::about() {
   std::string about = std::string("About ShapeWorksStudio");
   QMessageBox::about(this, QString::fromStdString(about),
