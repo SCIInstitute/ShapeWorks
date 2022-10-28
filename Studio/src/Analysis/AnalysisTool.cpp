@@ -632,7 +632,7 @@ Particles AnalysisTool::get_shape_points(int mode, double value) {
 }
 
 //---------------------------------------------------------------------------
-StudioParticles AnalysisTool::get_multi_level_shape_points(int mode, double value, int level)
+Particles AnalysisTool::get_multi_level_shape_points(int mode, double value, int level)
 {
  Eigen::MatrixXd eigenvectors;
  std::vector<double> eigenvalues;
@@ -649,7 +649,7 @@ StudioParticles AnalysisTool::get_multi_level_shape_points(int mode, double valu
  }
 
  if (!compute_stats() || eigenvectors.size() <= 1) {
-    return StudioParticles();
+    return Particles();
   }
   if (mode + 2 > eigenvalues.size()) {
     mode = eigenvalues.size() - 2;
@@ -1096,6 +1096,7 @@ void AnalysisTool::set_analysis_mode(std::string mode) {
     ui_->tabWidget->setCurrentWidget(ui_->mca_tab);
     ui_->mcaLevelWithinButton->setChecked(true);
     ui_->mcaLevelBetweenButton->setChecked(false);
+  } 
 }
 
 //---------------------------------------------------------------------------
