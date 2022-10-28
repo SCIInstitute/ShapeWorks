@@ -4,6 +4,7 @@
 #include <vnl/vnl_vector.h>
 
 #include <Eigen/Core>
+#include <iostream>
 
 #include "ConstraintType.h"
 

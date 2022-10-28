@@ -11,7 +11,7 @@ namespace shapeworks {
 bool FreeFormConstraint::readyForOptimize() const { return mesh_ != nullptr; }
 
 bool FreeFormConstraint::isViolated(const Eigen::Vector3d &pt) const {
-  if (constraintEval(pt) >= 0) {
+  if (constraintEval(pt) < 0) {
     return false;
   } else {
     return true;
