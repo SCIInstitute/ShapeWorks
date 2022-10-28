@@ -116,6 +116,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
   ui_->stacked_widget->addWidget(analysis_tool_.data());
   connect(analysis_tool_.data(), SIGNAL(update_view()), this, SLOT(handle_display_setting_changed()));
   connect(analysis_tool_.data(), SIGNAL(pca_update()), this, SLOT(handle_pca_update()));
+  connect(analysis_tool_.data(), SIGNAL(mca_update()), this, SLOT(handle_mca_update()));
   connect(analysis_tool_.data(), &AnalysisTool::progress, this, &ShapeWorksStudioApp::handle_progress);
   connect(analysis_tool_.data(), SIGNAL(reconstruction_complete()), this, SLOT(handle_reconstruction_complete()));
 
@@ -617,9 +618,32 @@ void ShapeWorksStudioApp::handle_pca_changed() {
 void ShapeWorksStudioApp::handle_slider_update() { analysis_tool_->update_slider(); }
 
 //---------------------------------------------------------------------------
+void ShapeWorksStudioApp::handle_mca_changed()
+{
+  if (!session_->particles_present()) { return; }
+  session_->handle_clear_cache();
+  visualizer_->update_lut();
+  compute_mca_mode_shape();
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::handle_mca_slider_update()
+{
+  analysis_tool_->updateMcaSlider();
+}
+
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_pca_update() {
   if (analysis_tool_->get_active() && analysis_tool_->get_analysis_mode() == AnalysisTool::MODE_PCA_C) {
     compute_mode_shape();
+  }
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::handle_mca_update()
+{
+  if (analysis_tool_->get_active() && analysis_tool_->get_analysis_mode() == AnalysisTool::MODE_MCA_C) {
+    compute_mca_mode_shape();
   }
 }
 
@@ -1164,6 +1188,7 @@ void ShapeWorksStudioApp::handle_display_setting_changed() {
   if (analysis_tool_->pca_animate()) {
     return;
   }
+  if (analysis_tool_->mcaAnimate()) { return; }
   update_display(true);
 }
 
@@ -1286,6 +1311,10 @@ void ShapeWorksStudioApp::update_display(bool force) {
       } else if (mode == AnalysisTool::MODE_PCA_C) {
         session_->set_display_mode(DisplayMode::Reconstructed);
         compute_mode_shape();
+        visualizer_->reset_camera();
+      } else if (mode == AnalysisTool::MODE_MCA_C) {
+        session_->set_display_mode(DisplayMode::Reconstructed);
+        compute_mca_mode_shape();
         visualizer_->reset_camera();
       } else if (mode == AnalysisTool::MODE_SINGLE_SAMPLE_C) {
         visualizer_->display_sample(analysis_tool_->get_sample_number());
@@ -1694,6 +1723,15 @@ void ShapeWorksStudioApp::compute_mode_shape() {
   double pca_value = analysis_tool_->get_pca_value();
 
   visualizer_->display_shape(analysis_tool_->get_mode_shape(pca_mode, pca_value));
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::compute_mca_mode_shape()
+{
+  int mca_mode = analysis_tool_->getMCAMode();
+  double mca_value = analysis_tool_->get_mca_value();
+  int mca_level = analysis_tool_->get_mca_level();
+  visualizer_->display_shape(analysis_tool_->get_mca_mode_shape(mca_mode, mca_value, mca_level));
 }
 
 //---------------------------------------------------------------------------

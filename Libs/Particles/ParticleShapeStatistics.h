@@ -43,6 +43,13 @@ public:
   //! Loads a set of point files and pre-computes some statistics.
   int ImportPoints(std::vector<Eigen::VectorXd> points, std::vector<int> group_ids);
 
+  //! Compute Shape Variations for MLCA
+  int ComputeShapeDevModesForMca();
+  //! Compute Pose Variations for MLCA
+  int ComputeRelPoseModesForMca();
+  int MultiLevelPrincipalComponentProjections();
+  int ImportPointsAndComputeMultiLevelPCA(std::vector<Eigen::VectorXd> points, unsigned int dps);
+  void SetNumberOfParticlesAr(std::vector<int> num_particles_ar); 
   //! Loads a set of point files and pre-computes some statistics.
   int ReadPointFiles(const std::string &s);
 
@@ -73,6 +80,12 @@ public:
 
   //! Returns the number of dimensions (this is number of points times Dimension)
   int NumberOfDimensions() const { return m_numDimensions; }
+  //! Return Number of objects for MLCA Analysis
+  int DomainsNumber() { return m_dps; }
+  //! Return Number of Points
+  int NumberOfPoints() { return m_numPoints; }
+  // !Returns Number of Particles Array
+  std::vector<int> NumberOfPointsArray() { return m_num_particles_ar; }
 
   //! Returns the group ids
   int GroupID(unsigned int i) const { return m_groupIDs[i]; }
@@ -81,6 +94,14 @@ public:
   //! Returns the eigenvectors/values.
   const Eigen::MatrixXd &Eigenvectors() const { return m_eigenvectors; }
   const std::vector<double> &Eigenvalues() const { return m_eigenvalues; }
+
+  //! Returns the eigenvectors/eigenvalues for Shape and Pose Variations of MLCA
+  const Eigen::MatrixXd &EigenvectorsRelPose() { return m_Eigenvectors_rel_pose; }
+  const std::vector<double> &EigenvaluesShapeDev() { return m_Eigenvalues_shape_dev; }
+  const Eigen::MatrixXd &EigenvectorsShapeDev() { return m_Eigenvectors_shape_dev; }
+  const std::vector<double> &EigenvaluesRelPose() { return m_Eigenvalues_rel_pose; }
+  const Eigen::VectorXd &MeanShapeDev() { return m_mean_shape_dev; }
+  const Eigen::VectorXd &MeanRelPose() { return m_mean_rel_pose; }
 
   //! Returns the mean shape.
   const Eigen::VectorXd &Mean() const { return m_mean; }
@@ -162,6 +183,21 @@ private:
 
   Eigen::VectorXd m_groupdiff;
   Eigen::VectorXd m_groupdiffnorm;
+
+  // MLCA vars
+  unsigned int m_dps;
+  unsigned int m_N;
+  unsigned int m_numPoints;
+  std::vector<int> m_num_particles_ar; 
+  Eigen::MatrixXd m_Eigenvectors_rel_pose;
+  Eigen::MatrixXd m_Eigenvectors_shape_dev;
+  std::vector<double> m_Eigenvalues_rel_pose;
+  std::vector<double> m_Eigenvalues_shape_dev;
+  Eigen::MatrixXd m_pointsMinusMean_for_rel_pose;
+  Eigen::MatrixXd m_pointsMinusMean_for_shape_dev;
+  Eigen::VectorXd m_mean_shape_dev;
+  Eigen::VectorXd m_mean_rel_pose;
+  Eigen::MatrixXd m_super_matrix;
 
   // used to keep the points' files that needs to be reloaded when new updates come in.
   std::vector<std::string> m_pointsfiles;
