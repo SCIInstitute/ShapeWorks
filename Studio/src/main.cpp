@@ -1,21 +1,25 @@
 #include <tbb/tbb.h>
 
+#include <iostream>
+
 #include <QApplication>
 #include <QResource>
 #include <QMessageBox>
 #include <QDir>
+#include <QFileOpenEvent>
+#include <QDateTime>
+#include <QStandardPaths>
+#include <QSurfaceFormat>
 
+// itk
 #include <itkMacro.h>
+
+// vtk
+#include <QVTKOpenGLNativeWidget.h>
 
 #include <Interface/ShapeWorksStudioApp.h>
 #include <Applications/Configuration.h>
 #include <Logging.h>
-#include <QVTKOpenGLNativeWidget.h>
-
-#include <QDateTime>
-#include <QStandardPaths>
-#include <QSurfaceFormat>
-#include <iostream>
 
 #ifdef _WIN32
 #include <Utils/WindowsCrashHandler.h>
@@ -34,8 +38,6 @@ class OverrideQApplication : public QApplication {
     if (event->type() == QEvent::FileOpen) {
       QFileOpenEvent *openEvent = static_cast<QFileOpenEvent *>(event);
       SW_LOG("Open file {}", openEvent->file().toStdString());
-      std::cerr << "Open file event: " << openEvent->file().toStdString() << "\n";
-
       stored_filename_ = openEvent->file();
       if (file_open_callback_) {
         file_open_callback_(openEvent->file());
@@ -107,14 +109,11 @@ int main(int argc, char **argv) {
     studio_app->initialize_vtk();
     studio_app->show();
 
-
     bool project_loaded = false;
     app.file_open_callback_ = [&](QString filename) {
-      //QTimer::singleShot(0, [=]() {
       studio_app->hide_splash_screen();
       studio_app->open_project(filename);
       project_loaded = true;
-      //});
     };
 
 
