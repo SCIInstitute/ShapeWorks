@@ -78,7 +78,7 @@ Section "ShapeWorks (required)"
   File /r "Documentation"
   File /r "Installation"
 
-  ${registerExtension} "$INSTDIR\ShapeWorksStudio.exe" ".swproj" "ShapeWorks Project"
+  ${registerExtension} "$INSTDIR\bin\ShapeWorksStudio.exe" ".swproj" "ShapeWorks Project"
   
   ; Write the installation path into the registry
   WriteRegStr HKLM SOFTWARE\ShapeWorks "Install_Dir" "$INSTDIR"
