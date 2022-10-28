@@ -13,13 +13,13 @@ using namespace project::types;
 //---------------------------------------------------------------------------
 class ExcelProjectReader::Container {
  public:
-  Container(){};
-  ~Container(){};
+  Container() {};
+  ~Container() {};
 
   xlnt::workbook wb;
 
   //---------------------------------------------------------------------------
-  // read an excel sheel into a list of string maps with headers as keys
+  // read an excel sheet into a list of string maps with headers as keys
   //---------------------------------------------------------------------------
   StringMapList sheet_to_map_list(std::string name) {
     StringMapList list;
@@ -115,10 +115,17 @@ class ExcelProjectReader::Container {
   }
 
   //---------------------------------------------------------------------------
+  std::string get_data_sheet() {
+    if (wb.contains("data")) {
+      return "data";
+    } else {
+      return wb.sheet_by_id(1).title();
+    }
+  }
 };
 
 //---------------------------------------------------------------------------
-ExcelProjectReader::ExcelProjectReader(Project &project) : ProjectReader(project), container_(new Container) {}
+ExcelProjectReader::ExcelProjectReader(Project& project) : ProjectReader(project), container_(new Container) {}
 
 //---------------------------------------------------------------------------
 ExcelProjectReader::~ExcelProjectReader() {}
@@ -127,7 +134,7 @@ ExcelProjectReader::~ExcelProjectReader() {}
 bool ExcelProjectReader::read_project(std::string filename) {
   container_->wb.load(filename);
 
-  load_subjects(container_->sheet_to_map_list("data"));
+  load_subjects(container_->sheet_to_map_list(container_->get_data_sheet()));
   load_landmark_definitions(container_->sheet_to_map_list("landmarks"));
   load_parameters();
 
@@ -141,6 +148,8 @@ StringMap ExcelProjectReader::get_parameters(std::string name) { return containe
 StringMultiMap ExcelProjectReader::get_multi_parameters(std::string name) {
   return container_->sheet_to_multi_map(name);
 }
+
+
 
 //---------------------------------------------------------------------------
 
