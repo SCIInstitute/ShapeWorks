@@ -204,6 +204,7 @@ class AnalysisTool : public QWidget {
 
   void pca_labels_changed(QString value, QString eigen, QString lambda);
   void mca_labels_changed(QString value, QString eigen, QString lambda);
+  void compute_mca_mode_shape();
   void compute_mode_shape();
   void update_analysis_mode();
   void update_interface();
