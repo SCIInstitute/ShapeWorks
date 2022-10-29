@@ -29,7 +29,7 @@ void PlaneConstraint::setOffset(double offset) { offset_ = offset; }
 
 //-----------------------------------------------------------------------------
 double PlaneConstraint::constraintEval(const Eigen::Vector3d &pt) const {
-  double val = -planeNormal_.dot(pt - planePoint_);
+  double val = planeNormal_.dot(pt - planePoint_);
   return val;
 }
 

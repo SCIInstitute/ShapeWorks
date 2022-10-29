@@ -1472,7 +1472,7 @@ Eigen::Vector3d Mesh::getFFCGradient(Eigen::Vector3d query) const {
   double* gradAr = poly_data_->GetCellData()->GetArray("vff")->GetTuple3(cellId);
   Eigen::Vector3d grad(gradAr[0], gradAr[1], gradAr[2]);
 
-  return grad;
+  return -grad;
 }
 
 // WARNING: Copied directly from Meshwrapper. TODO: When refactoring, take this into account.
@@ -1557,11 +1557,14 @@ vtkSmartPointer<vtkDoubleArray> Mesh::computeInOutForFFCs(std::vector<size_t> al
       //std::cout << filled[i] << " ";
       if(filled[i] == 1){
           ins++;
+          inout->SetValue(vertecesi(0), 0.);
+          inout->SetValue(vertecesi(1), 0.);
+          inout->SetValue(vertecesi(2), 0.);
+      }
+      else{
           inout->SetValue(vertecesi(0), 1.);
           inout->SetValue(vertecesi(1), 1.);
           inout->SetValue(vertecesi(2), 1.);
-      }
-      else{
           outs++;
       }
   }

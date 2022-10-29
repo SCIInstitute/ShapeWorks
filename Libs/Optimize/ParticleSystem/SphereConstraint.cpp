@@ -50,12 +50,12 @@ Eigen::Vector3d SphereConstraint::constraintGradientSphere(const Eigen::Vector3d
       // Center-repel method
       // return -(intersection1 - center)/(intersection1 - center).norm();
       // Projection-repel method
-      return -(intersection1 - updpt) / (intersection1 - updpt).norm();
+      return (intersection1 - updpt) / (intersection1 - updpt).norm();
     }
   }
 
   // If intersections don't exist, then just return regular gradient.
-  return constraintGradient(updpt);
+  return -constraintGradient(updpt);
 }
 
 double SphereConstraint::constraintEvalSphere(const Eigen::Vector3d &pt, const Eigen::Vector3d &updpt) const {

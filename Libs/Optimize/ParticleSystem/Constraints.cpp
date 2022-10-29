@@ -494,13 +494,13 @@ vnl_vector_fixed<double, 3> Constraints::constraintsLagrangianGradient(const Poi
     // if(planeConsts[i].ConstraintEval(pt)>0) stream << "CuttingPlane " << i << "/" << planeConsts.size() << ": "
     // << planeConsts[i].LagragianGradient(pt, C).transpose() << " ::: " << planeConsts[i].ConstraintEval(pt) <<
     // std::endl;
-    grad += planeConstraints_[i].lagragianGradient(pt, C);
+    grad -= planeConstraints_[i].lagragianGradient(pt, C);
   }
   for (size_t i = 0; i < sphereConstraints_.size(); i++) {
-    grad += sphereConstraints_[i].lagragianGradient(prept, pt, C);
+    grad -= sphereConstraints_[i].lagragianGradient(prept, pt, C);
   }
   if (freeFormConstraint_.readyForOptimize()) {
-    grad += freeFormConstraint_.lagragianGradient(pt, C);
+    grad -= freeFormConstraint_.lagragianGradient(pt, C);
   }
   vnl_vector_fixed<double, 3> gradE;
   for (size_t i = 0; i < 3; i++) {
