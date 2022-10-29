@@ -312,18 +312,18 @@ void ShapeWorksStudioApp::on_action_show_project_folder_triggered() {
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::save_as_swproj_clicked() {
-  save_project_as(".swproj");
+  save_project_as("swproj");
 }
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::save_as_xlsx_clicked() {
-  save_project_as(".xlsx");
+  save_project_as("xlsx");
 }
 
 //---------------------------------------------------------------------------
 bool ShapeWorksStudioApp::on_action_save_project_triggered() {
   if (session_->get_filename() == "") {
-    return save_project_as(".xlsx");
+    return save_project_as("swproj");
   } else {
     save_project(session_->get_filename());
   }
@@ -332,9 +332,15 @@ bool ShapeWorksStudioApp::on_action_save_project_triggered() {
 
 //---------------------------------------------------------------------------
 bool ShapeWorksStudioApp::save_project_as(QString ext) {
-  auto filetype = tr("ShapeWorks Project (*.swproj);;XLSX files (*.xlsx)");
+  QString filetype = tr("ShapeWorks Project (*.swproj);;XLSX files (*.xlsx)");
+  QString default_filter = "ShapeWorks Project (*.swproj)";
 
-  QString filename = ExportUtils::get_save_filename(this, tr("Save Project As..."), filetype, ext);
+  if (ext == "xlsx") {
+    filetype = tr("XLSX files (*.xlsx);;ShapeWorks Project (*.swproj)");
+    default_filter = "XLSX files (*.xlsx)";
+  }
+
+  QString filename = ExportUtils::get_save_filename(this, tr("Save Project As..."), filetype, default_filter);
 
   if (filename.isEmpty()) {
     return false;
@@ -1978,6 +1984,9 @@ void ShapeWorksStudioApp::set_feature_uniform_scale(bool value) {
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::show_splash_screen() { splash_screen_->show(); }
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::hide_splash_screen() { splash_screen_->hide(); }
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::about() {
