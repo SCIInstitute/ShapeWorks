@@ -84,6 +84,7 @@ Inherits from QMainWindow
 | void | **[update_feature_map_scale](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-update-feature-map-scale)**() |
 | void | **[image_combo_changed](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-image-combo-changed)**(int index) |
 | void | **[show_splash_screen](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-show-splash-screen)**() |
+| void | **[hide_splash_screen](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-hide-splash-screen)**() |
 | void | **[about](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-about)**() |
 | void | **[keyboard_shortcuts](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-keyboard-shortcuts)**() |
 | void | **[toggle_log_window](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-toggle-log-window)**() |
@@ -600,6 +601,13 @@ void show_splash_screen()
 ```
 
 
+### slot hide_splash_screen
+
+```cpp
+void hide_splash_screen()
+```
+
+
 ### slot about
 
 ```cpp
@@ -714,4 +722,4 @@ void dropEvent(
 
 -------------------------------
 
-Updated on 2022-10-28 at 01:47:39 +0000
+Updated on 2022-10-29 at 22:38:49 +0000

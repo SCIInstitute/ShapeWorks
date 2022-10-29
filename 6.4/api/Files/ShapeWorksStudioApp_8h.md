@@ -162,6 +162,7 @@ class ShapeWorksStudioApp : public QMainWindow {
   void image_combo_changed(int index);
 
   void show_splash_screen();
+  void hide_splash_screen();
   void about();
   void keyboard_shortcuts();
 
@@ -288,4 +289,4 @@ class ShapeWorksStudioApp : public QMainWindow {
 
 -------------------------------
 
-Updated on 2022-10-28 at 01:47:40 +0000
+Updated on 2022-10-29 at 22:38:49 +0000
