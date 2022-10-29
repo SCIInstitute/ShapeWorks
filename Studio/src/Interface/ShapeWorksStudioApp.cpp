@@ -312,12 +312,12 @@ void ShapeWorksStudioApp::on_action_show_project_folder_triggered() {
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::save_as_swproj_clicked() {
-  save_project_as(".swproj");
+  save_project_as("ShapeWorks Project (*.swproj)");
 }
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::save_as_xlsx_clicked() {
-  save_project_as(".xlsx");
+  save_project_as("XLSX files (*.xlsx)");
 }
 
 //---------------------------------------------------------------------------
