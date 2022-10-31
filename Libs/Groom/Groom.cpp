@@ -27,6 +27,7 @@ Groom::Groom(ProjectHandle project) { this->project_ = project; }
 
 //---------------------------------------------------------------------------
 bool Groom::run() {
+  used_names_.clear();
   this->progress_ = 0;
   this->progress_counter_ = 0;
   this->total_ops_ = this->get_total_ops();
@@ -641,7 +642,17 @@ std::string Groom::get_output_filename(std::string input, DomainType domain_type
     }
   }
 
-  auto output = path + "/" + StringUtils::getBaseFilenameWithoutExtension(input) + suffix;
+  auto name = path + "/" + StringUtils::getBaseFilenameWithoutExtension(input);
+
+  // check for and handle name clashes, e.g. a/foo.vtk, b/foo.vtk (see #1387)
+  auto base_name = name;
+  int count = 2;
+  while (used_names_.find(name) != used_names_.end()) {
+    name = base_name + std::to_string(count++);
+  }
+  used_names_.insert(name);
+
+  auto output = name + suffix;
 
   return output;
 }

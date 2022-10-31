@@ -19,7 +19,6 @@ class Groom {
   //! Run the grooming
   bool run();
 
-
   //! Set abort as soon as possible
   void abort();
 
@@ -61,7 +60,7 @@ class Groom {
   //! Run the contour based pipeline on a single subject
   bool contour_pipeline(std::shared_ptr<Subject> subject, size_t domain);
 
-  //! Return the output filename for a given intpu tfile
+  //! Return the output filename for a given input file
   std::string get_output_filename(std::string input, DomainType domain_type);
 
   bool run_alignment();
@@ -95,5 +94,7 @@ class Groom {
   bool abort_ = false;
 
   std::mutex mutex_;
+
+  std::set<std::string> used_names_;
 };
 }  // namespace shapeworks
