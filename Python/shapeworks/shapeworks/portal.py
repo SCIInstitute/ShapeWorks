@@ -13,7 +13,7 @@ import getpass
 import json
 import os
 from swcc.api import swcc_session
-from swcc.models import (Dataset, GroomedSegmentation, OptimizedParticles,OptimizedShapeModel, Project, Segmentation, Subject)
+from swcc.models import (Dataset, GroomedSegmentation, OptimizedParticles, Project, Segmentation, Subject)
 from itertools import islice
 _LOGIN_FILE_NAME = 'shapeworksPortalLogin_new.txt'
 
@@ -41,7 +41,7 @@ def getLoginDetails():
     username = input("Username: ")
     password = getpass.getpass("Password: ")
     try:
-        with swcc_session()  as session:
+        with swcc_session(base_url="http://localhost:8000/api/v1")  as session:
             token = session.login(username, password)
         combined = username + ':' + password
         PasswordHash = base64.b64encode(password.encode()).decode("ascii")
@@ -99,7 +99,7 @@ def download_subset(use_case,datasetName,outputDirectory):
     outputDirectory = outputDirectory #+ datasetName+"/"
     print('Downloading subset')
     print(outputDirectory)
-    with swcc_session()  as session:
+    with swcc_session(base_url="http://localhost:8000/api/v1")  as session:
         token = session.login(username, password)
         session = swcc_session(token=token).__enter__()
         dataset = Dataset.from_name(datasetName)
@@ -117,7 +117,7 @@ def download_subset(use_case,datasetName,outputDirectory):
         elif(use_case in ["ellipsoid_mesh","femur_cut","lumps","thin_cavity_bean"]):
             print(outputDirectory_1 +"/meshes/")
             if(generate_download_flag(outputDirectory_1+"/","meshes")):
-                for mesh in islice(dataset.meshes, 3):
+                for mesh in islice(dataset.images, 3):
                     print(mesh)
                     mesh_dir = outputDirectory_1+ "/meshes"
                     print(mesh_dir)
@@ -174,7 +174,7 @@ def download_and_unzip_dataset(datasetName, outputDirectory):
     username,password = login()
 
     #api as a context manager
-    with swcc_session()  as session:
+    with swcc_session(base_url="http://localhost:8000/api/v1")  as session:
         
         token = session.login(username, password)
         session = swcc_session(token=token).__enter__()
@@ -189,14 +189,4 @@ def download_and_unzip_dataset(datasetName, outputDirectory):
                 rmtree(str(download_path))
                 
             dataset.download(download_path)
-
-
-
-   
-
-
-
-
-
-
-
+download_and_unzip_dataset("ellipsoid_mesh","/home/sci/mkaranam/Desktop/ShapeWorks/Examples/Python/Output/test_download/")
