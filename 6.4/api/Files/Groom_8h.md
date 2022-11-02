@@ -40,7 +40,6 @@ class Groom {
 
   bool run();
 
-
   void abort();
 
   bool get_aborted();
@@ -105,6 +104,8 @@ class Groom {
   bool abort_ = false;
 
   std::mutex mutex_;
+
+  std::set<std::string> used_names_;
 };
 }  // namespace shapeworks
 ```
@@ -112,4 +113,4 @@ class Groom {
 
 -------------------------------
 
-Updated on 2022-10-29 at 22:38:49 +0000
+Updated on 2022-11-02 at 19:38:08 +0000

@@ -2280,7 +2280,6 @@
 
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">run</span><span class="p">();</span><span class="w"></span>
 
-
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">abort</span><span class="p">();</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_aborted</span><span class="p">();</span><span class="w"></span>
@@ -2345,11 +2344,13 @@
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">abort_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">mutex</span><span class="w"> </span><span class="n">mutex_</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">set</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">used_names_</span><span class="p">;</span><span class="w"></span>
 <span class="p">};</span><span class="w"></span>
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-10-29 at 22:38:49 +0000</p>
+<p>Updated on 2022-11-02 at 19:38:08 +0000</p>
 
               
             </article>
