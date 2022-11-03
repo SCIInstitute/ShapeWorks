@@ -14,7 +14,7 @@ env:
   BUILD_TYPE: Release
   SW_PORTAL_LOGIN: ${{ secrets.PORTAL_LOGIN }}
   CACHE_HOST: ${{ secrets.SSH_HOST }}
-#  LD_LIBRARY_PATH: /opt/conda/envs/shapeworks/lib
+  LD_LIBRARY_PATH: /opt/conda/envs/shapeworks/lib
     
 jobs:
   build:
@@ -87,9 +87,6 @@ jobs:
       shell: bash -l {0}
       run: conda activate shapeworks && cd build && make install
       
-#    - name: Remove Qt SQL Stuff
-#      run: mv /usr/local/plugins/sqldrivers/libqsqlmysql.so /usr/local/plugins/sqldrivers/libqsqlpsql.so /tmp
-
     - name: Build Binary Package
       shell: bash -l {0}
       env:
@@ -100,9 +97,6 @@ jobs:
       shell: bash -l {0}
       run: conda activate shapeworks && source ./devenv.sh ./build/bin && cd build && ctest -VV
   
-#    - name: Replace Qt SQL Stuff
-#      run: mv /tmp/lib*.so /usr/local/plugins/sqldrivers
-
     - name: Copy artifact
       shell: bash -l {0}
       run: cd  /__w/ShapeWorks/ShapeWorks/artifacts && ${GITHUB_WORKSPACE}/.github/workflows/copy_artifact.sh artifact-${{github.sha}}-linux *
