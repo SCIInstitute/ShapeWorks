@@ -10,6 +10,8 @@ if [[ "$sourced" == "1" ]]; then
   return
 fi
 
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+
 # defaults
 BUILD_CLEAN=0
 CLEAN_AFTER=0
@@ -136,6 +138,8 @@ build_vtk()
   cd vtk
   git checkout -f tags/${VTK_VER}
 
+  patch -p1 < ${SCRIPT_DIR}/Support/vtk-9.1.patch
+  
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
   mkdir -p build && cd build
   if [[ $OSTYPE == "msys" ]]; then
