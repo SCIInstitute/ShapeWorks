@@ -1236,7 +1236,7 @@ QWidget#particles_panel {
               
                 <widget class="QWidget" name="mca_tab">
                     <attribute name="title">
-                        <string>Multi-Level PCA</string>
+                        <string>Multi-Level Analysis</string>
                     </attribute>
                     <layout class="QGridLayout" name="gridLayout_20">
                         <property name="leftMargin">
