@@ -5,6 +5,7 @@ import vtk
 import glob
 import shutil
 import shapeworks as sw
+import subprocess
 
 # Global shapeworks logger object (e.g. attached to Studio)
 sw_logger = None
@@ -312,7 +313,7 @@ def check_results_pattern(args, project_spreadsheet, pattern):
         print("Done with test, verification succeeded.")
         exit()
         
-def findMeanShape(shapeModelDir):
+def findMeanShape(shapeModelDir, out_mean_file_name=None):
     fileList = sorted(glob.glob(shapeModelDir + '/*local.particles'))
     for i in range(len(fileList)):
         if i == 0:
@@ -320,7 +321,10 @@ def findMeanShape(shapeModelDir):
         else:
             meanShape += np.loadtxt(fileList[i])
     meanShape = meanShape / len(fileList)
-    nmMS = shapeModelDir + '/meanshape_local.particles'
+    if out_mean_file_name is None:
+        nmMS = shapeModelDir + '/meanshape_local.particles'
+    else:
+        nmMS = f'{shapeModelDir}/{out_mean_file_name}'
     np.savetxt(nmMS, meanShape)
 
 def transformParticles(particles, transform, inverse=False):
@@ -331,3 +335,47 @@ def transformParticles(particles, transform, inverse=False):
         transformed_particles.append(np.matmul(transform, np.append(particle, 1))[:3])
     transformed_particles = np.array(transformed_particles)
     return transformed_particles
+def find_norm(shape_matrix, a, b):
+    """
+        Utility function to compute norm between two shape vectors 'a' and 'b'
+    """
+    norm = 0.0
+    for i in range(0, shape_matrix.shape[0]):
+        norm += (np.fabs(shape_matrix[i, a] - shape_matrix[i, b]))
+    return norm
+
+def compute_median_shape(world_point_files):
+    """
+        Utility function to find the median shape of the cohort, the one with Minimum L1 Norm
+    """
+    median_shape_idx = -1
+    min_sum = 1e10
+    particle_sys = sw.ParticleSystem(world_point_files)
+    shape_matrix = particle_sys.Particles()
+    num_shapes = shape_matrix.shape[1]
+    for i in range(0, num_shapes):
+        cur_sum = 0.0
+        for j in range(0, num_shapes):
+            if i != j:
+                cur_sum += find_norm(shape_matrix, i, j)
+        if cur_sum < min_sum:
+            min_sum = cur_sum
+            median_shape_idx = i
+    if median_shape_idx == -1:
+        raise ValueError('Median shape not found for Reconstruction, Cannot proceed further with Mesh Warping')
+    return median_shape_idx
+
+def reconstruct_meshes(input_mesh_files, local_point_files, world_point_files, out_dir):
+    median_shape_idx = compute_median_shape(world_point_files)
+    execCommand = ["shapeworks", "warp-mesh", "--reference_mesh", input_mesh_files[median_shape_idx], 
+                    "--reference_points", local_point_files[median_shape_idx], "--save_dir", out_dir, "--target_points" ]
+    for fl in local_point_files:
+        execCommand.append(fl)
+    execCommand.append('--')
+    subprocess.check_call(execCommand)
+    # print(f'Mesh reconstruction from point files done')
+    reconstructed_mesh_files = sorted(glob.glob(f'{out_dir}/*.vtk'))
+    if len(reconstructed_mesh_files) == 0:
+        raise ValueError('Meshes not reconstructed!')
+    return reconstructed_mesh_files
+
