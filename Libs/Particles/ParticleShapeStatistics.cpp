@@ -212,17 +212,11 @@ int ParticleShapeStatistics::ImportPoints(std::vector<Eigen::VectorXd> points, s
 void ParticleShapeStatistics::SetNumberOfParticlesAr(std::vector<int> num_particles_ar)
 {
   this->m_num_particles_ar = num_particles_ar;
-  for(int i = 0; i < num_particles_ar.size(); i++){
-    std::cout << num_particles_ar[i] << " ";
-  }
-  std::cout << std::endl <<  "Number of Particles Array Set for Multi-level Analysis" << std::endl;
 }
 
 //---------------------------------------------------------------------------
-int ParticleShapeStatistics::ImportPointsAndComputeMultiLevelPCA(std::vector<Eigen::VectorXd> points, unsigned int dps)
+int ParticleShapeStatistics::ComputeMultiLevelAnalysisStatistics(std::vector<Eigen::VectorXd> points, unsigned int dps)
 {
-  // debug
-  bool debug = false;
   unsigned int num_points = (int)(points[0].size() / (3 * dps)); // M_total
   m_dps = dps;
   m_numPoints = num_points;
@@ -244,15 +238,14 @@ int ParticleShapeStatistics::ImportPointsAndComputeMultiLevelPCA(std::vector<Eig
   grand_mean.resize(n);
   grand_mean.fill(0.0);
   grand_mean = m_super_matrix.colwise().mean();
-  Eigen::MatrixXd z_rel_pose_matrix;
-  z_rel_pose_matrix.resize(m_super_matrix.rows(), m_super_matrix.cols());
-  z_rel_pose_matrix.fill(0.0);
-  for(unsigned int r=0; r < m_super_matrix.rows(); r++){
-    for (unsigned int c=0; c < m_N; c++){
-      z_rel_pose_matrix(r, c) = m_super_matrix(r, c) - grand_mean(c);
-    }
-  }
-
+  // Eigen::MatrixXd z_rel_pose_matrix;
+  // z_rel_pose_matrix.resize(m_super_matrix.rows(), m_super_matrix.cols());
+  // z_rel_pose_matrix.fill(0.0);
+  // for(unsigned int r=0; r < m_super_matrix.rows(); r++){
+  //   for (unsigned int c=0; c < m_N; c++){
+  //     z_rel_pose_matrix(r, c) = m_super_matrix(r, c) - grand_mean(c);
+  //   }
+  // }
 
   Eigen::MatrixXd z_shape_dev_centred;
   Eigen::MatrixXd z_rel_pose_centred;
@@ -264,25 +257,21 @@ int ParticleShapeStatistics::ImportPointsAndComputeMultiLevelPCA(std::vector<Eig
     unsigned int row = 0;
     for(unsigned int idx = 0; idx < k; idx++){ row += this->m_num_particles_ar[idx]; }
     Eigen::MatrixXd z_k = m_super_matrix.block(row, 0, this->m_num_particles_ar[k], n);
-    Eigen::MatrixXd z_k_rel_pose = z_rel_pose_matrix.block(row, 0, this->m_num_particles_ar[k], n);
+    // Eigen::MatrixXd z_k_rel_pose = z_rel_pose_matrix.block(row, 0, this->m_num_particles_ar[k], n);
 
     // COM for each sub
     Eigen::RowVectorXd mean_k;
     mean_k.resize(n);
     mean_k.fill(0.0);
     mean_k = z_k.colwise().mean();
-    // Eigen::RowVectorXd mean_z_k;
-    // mean_z_k.resize(n);
-    // mean_z_k = z_k_rel_pose.colwise().mean();
     for(unsigned int x = 0; x < n; x++){
-      z_rel_pose_centred(k, x) = mean_k(x);
+      z_rel_pose_centred(k, x) = mean_k(x) - grand_mean(x);
     }
 
     Eigen::MatrixXd z_shape_dev_centred_k;
     z_shape_dev_centred_k.resize(this->m_num_particles_ar[k], n);
     z_shape_dev_centred_k.fill(0.0);
     Eigen::RowVectorXd diff_vec;
-    // diff_vec = (mean_k - grand_mean);
     diff_vec = (mean_k);
     z_shape_dev_centred_k = z_k.rowwise() - diff_vec;
     z_shape_dev_centred.block(row, 0, z_shape_dev_centred_k.rows(), z_shape_dev_centred_k.cols()) = z_shape_dev_centred_k;

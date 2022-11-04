@@ -43,12 +43,14 @@ public:
   //! Loads a set of point files and pre-computes some statistics.
   int ImportPoints(std::vector<Eigen::VectorXd> points, std::vector<int> group_ids);
 
-  //! Compute Shape Variations for MLCA
+  //! Loads a set of point files and pre-computes statistics for multi-level analysis 
+  int ComputeMultiLevelAnalysisStatistics(std::vector<Eigen::VectorXd> points, unsigned int dps);
+
+  //! Compute shape variations for MLCA
   int ComputeShapeDevModesForMca();
-  //! Compute Pose Variations for MLCA
+  //! Compute pose variations for MLCA
   int ComputeRelPoseModesForMca();
-  int MultiLevelPrincipalComponentProjections();
-  int ImportPointsAndComputeMultiLevelPCA(std::vector<Eigen::VectorXd> points, unsigned int dps);
+  //! Set number of particles per domain/object (required for multi-level analysis) 
   void SetNumberOfParticlesAr(std::vector<int> num_particles_ar); 
   //! Loads a set of point files and pre-computes some statistics.
   int ReadPointFiles(const std::string &s);

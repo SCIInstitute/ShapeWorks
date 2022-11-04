@@ -111,6 +111,7 @@ class AnalysisTool : public QWidget {
   static const std::string MODE_MCA_C;
   static const std::string MODE_SINGLE_SAMPLE_C;
   static const std::string MODE_REGRESSION_C;
+  static const unsigned int MCA_TAB_INDEX;
 
  public Q_SLOTS:
 
@@ -147,7 +148,8 @@ class AnalysisTool : public QWidget {
   void on_mcaModeSpinBox_valueChanged(int i);
   void handle_mca_animate_state_changed();
   void handle_mca_timer();
-  void on_mca_between_radio_toggled();
+  void mca_between_radio_toggled();
+  void mca_within_radio_toggled();
 
   //! Set the currently selected feature map
   void set_feature_map(const std::string& feature_map);
