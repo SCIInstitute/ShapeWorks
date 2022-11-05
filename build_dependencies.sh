@@ -1,7 +1,7 @@
 #!/bin/bash
 
-#set -v   #verbose execution for debugging
-#set -x   #tracing execution for debugging (echos all commands from script)
+set -v   #verbose execution for debugging
+set -x   #tracing execution for debugging (echos all commands from script)
 
 # check to make sure `source` was not used
 (return 0 2>/dev/null) && sourced=1 || sourced=0
@@ -139,6 +139,7 @@ build_vtk()
   git checkout -f tags/${VTK_VER}
 
   patch -p1 < ${SCRIPT_DIR}/Support/vtk-9.1.patch
+  cat Rendering/OpenGL2/vtkCocoaRenderWindow.mm
   
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
   mkdir -p build && cd build
@@ -487,4 +488,3 @@ echo "BUILD_TYPE: ${BUILD_TYPE}"
 (time build_all 2>&1) 2>&1 | tee ${BUILD_LOG}
 RC=( "${PIPESTATUS[@]}" )
 exit ${RC[0]}
-

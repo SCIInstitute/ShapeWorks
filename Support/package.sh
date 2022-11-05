@@ -73,7 +73,7 @@ rm -rf include share v3p plugins libigl
 if [[ "$OSTYPE" == "darwin"* ]]; then
     # Mac OSX
     cd bin
-    macdeployqt ShapeWorksStudio.app -no-strip
+    macdeployqt ShapeWorksStudio.app -no-strip -verbose=3
     install_name_tool -add_rpath @executable_path/../Frameworks ShapeWorksStudio.app/Contents/MacOS/ShapeWorksStudio
     install_name_tool -add_rpath @executable_path/../../../../lib ShapeWorksStudio.app/Contents/MacOS/ShapeWorksStudio
     QT_LIB_LOCATION="@executable_path/ShapeWorksStudio.app/Contents/Frameworks"
