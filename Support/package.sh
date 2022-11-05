@@ -5,6 +5,8 @@ if [ "$#" -ne 3 ]; then
     exit 1
 fi
 
+echo "Debug package.sh"
+
 VERSION=$1
 INSTALL_DIR=$2
 INSTALL_DEP_DIR=$3

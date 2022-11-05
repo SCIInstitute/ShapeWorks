@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "Build Dependencies Debug"
+
 set -v   #verbose execution for debugging
 set -x   #tracing execution for debugging (echos all commands from script)
 
