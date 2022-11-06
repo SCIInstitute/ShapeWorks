@@ -179,7 +179,7 @@ endif(USE_OPENMP)
 SET(CMAKE_INSTALL_LIBDIR lib)
 
 if(APPLE)
-  set(CMAKE_INSTALL_RPATH "@executable_path/../lib")
+  set(CMAKE_INSTALL_RPATH "@executable_path/ShapeWorksStudio.app/Contents/Frameworks")
 else()
   if(USE_ORIGIN_RPATH)
     set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib")

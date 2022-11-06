@@ -46,7 +46,6 @@ rm -rf "package/$VERSION"
 mkdir -p "package/$VERSION"
 
 BASE_LIB=${INSTALL_DEP_DIR}/lib
-cp -a $INSTALL_DEP_DIR/lib "package/${VERSION}"
 cp -a $INSTALL_DIR/* "package/${VERSION}"
 cp -a Examples "package/${VERSION}"
 cp -a Python "package/${VERSION}"
@@ -55,12 +54,14 @@ cp install_shapeworks.sh package/${VERSION}
 cp docs/about/release-notes.md package/${VERSION}
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
+    cp -a $INSTALL_DEP_DIR/lib/* "package/${VERSION}/bin/ShapeWorksStudio.app/Contents/Frameworks"
     cp docs/users/Mac_README.txt package/${VERSION}/README.txt
     if [ $? -ne 0 ]; then
 	echo "Failed to copy Mac package README"
 	exit 1
     fi
 else
+    cp -a $INSTALL_DEP_DIR/lib "package/${VERSION}"
     cp docs/users/Linux_README.txt package/${VERSION}/README.txt
     if [ $? -ne 0 ]; then
 	echo "Failed to copy Linux package README"

@@ -384,6 +384,6 @@ if (APPLE)
   # See https://doc.qt.io/qt-5/osx-deployment.html#macdeploy
   install(CODE "set(deployqt \"${deployqt}\")" COMPONENT Runtime)
   install(CODE [===[
-    execute_process(COMMAND "${deployqt}" "${CMAKE_INSTALL_PREFIX}/bin/ShapeWorksStudio.app")
+    execute_process(COMMAND "${deployqt}" "${CMAKE_INSTALL_PREFIX}/bin/ShapeWorksStudio.app" "-verbose=2")
     ]===] COMPONENT Runtime)
 endif()
