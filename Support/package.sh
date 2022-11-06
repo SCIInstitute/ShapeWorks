@@ -77,10 +77,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     # Mac OSX
     cd bin
 
-    # make install is already running macdeployqt
-    #macdeployqt ShapeWorksStudio.app -no-strip -verbose=3
     install_name_tool -add_rpath @executable_path/../Frameworks ShapeWorksStudio.app/Contents/MacOS/ShapeWorksStudio
-    install_name_tool -add_rpath @executable_path/../../../../lib ShapeWorksStudio.app/Contents/MacOS/ShapeWorksStudio
     QT_LIB_LOCATION="@executable_path/ShapeWorksStudio.app/Contents/Frameworks"
     QT_LOADER_LIB_LOCATION="@loader_path/ShapeWorksStudio.app/Contents/Frameworks"
 
@@ -96,18 +93,16 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 	install_name_tool -add_rpath $QT_LIB_LOCATION $i
     done
 
-    cd ../lib
     # Copy libraries from anaconda
     conda_libs="libpython libboost_filesystem"
     for clib in $conda_libs; do
-        cp ${CONDA_PREFIX}/lib/${clib}* .
-        cp ${CONDA_PREFIX}/lib/${clib}* ../bin/ShapeWorksStudio.app/Contents/Frameworks
+        cp ${CONDA_PREFIX}/lib/${clib}* ShapeWorksStudio.app/Contents/Frameworks
     done
     # remove static libs
-    rm *.a ../bin/ShapeWorksStudio.app/Contents/Frameworks/*.a
+    rm ShapeWorksStudio.app/Contents/Frameworks/*.a
     
     # Fix transitive loaded libs
-    for i in *.dylib ; do
+    for i in ShapeWorksStudio.app/Contents/Frameworks/*.dylib ; do
 	install_name_tool -change ${BASE_LIB}/libitkgdcmopenjp2-5.2.1.dylib @rpath/libitkgdcmopenjp2-5.2.1.dylib $i
     done
     install_name_tool -id @rpath/libitkgdcmopenjp2-5.2.1.dylib libitkgdcmopenjp2-5.2.1.dylib
