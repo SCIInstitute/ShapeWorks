@@ -337,7 +337,7 @@ void Lightbox::handle_key(int* click_pos, std::string key) {
 
 //-----------------------------------------------------------------------------
 void Lightbox::set_glyph_lut(vtkSmartPointer<vtkLookupTable> lut) {
-  Q_FOREACH (ViewerHandle viewer, viewers_) { viewer->set_lut(lut); }
+  Q_FOREACH (ViewerHandle viewer, viewers_) { viewer->set_glyph_lut(lut); }
 }
 
 //-----------------------------------------------------------------------------

@@ -514,14 +514,6 @@ void ShapeWorksStudioApp::enable_possible_actions() {
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::update_from_preferences() {
-  glyph_quality_slider_->setValue(preferences_.get_glyph_quality());
-  glyph_size_slider_->setValue(preferences_.get_glyph_size() * 10.0);
-  glyph_auto_size_->setChecked(preferences_.get_glyph_auto_size());
-  glyph_arrow_scale_->setChecked(preferences_.get_glyph_scale_arrows());
-  glyph_size_slider_->setEnabled(!glyph_auto_size_->isChecked());
-
-  glyph_quality_label_->setText(QString::number(preferences_.get_glyph_quality()));
-  glyph_size_label_->setText(QString::number(preferences_.get_glyph_size()));
 
   ui_->center_checkbox->setChecked(preferences_.get_center_checked());
 
@@ -734,10 +726,23 @@ void ShapeWorksStudioApp::create_glyph_submenu() {
   widget->setLayout(layout);
 
 
+  glyph_quality_slider_->setValue(preferences_.get_glyph_quality());
+  glyph_size_slider_->setValue(preferences_.get_glyph_size() * 10.0);
+  glyph_auto_size_->setChecked(preferences_.get_glyph_auto_size());
+  glyph_arrow_scale_->setChecked(preferences_.get_glyph_scale_arrows());
+  glyph_size_slider_->setEnabled(!glyph_auto_size_->isChecked());
+
+  glyph_quality_label_->setText(QString::number(preferences_.get_glyph_quality()));
+  glyph_size_label_->setText(QString::number(preferences_.get_glyph_size()));
+
+
+
   connect(glyph_size_slider_, &QSlider::valueChanged, this, &ShapeWorksStudioApp::handle_glyph_changed);
   connect(glyph_quality_slider_, &QSlider::valueChanged, this, &ShapeWorksStudioApp::handle_glyph_changed );
   connect(glyph_auto_size_, &QCheckBox::clicked, this, &ShapeWorksStudioApp::handle_glyph_changed);
   connect(glyph_arrow_scale_, &QCheckBox::clicked, this, &ShapeWorksStudioApp::handle_glyph_changed);
+
+
 
 
   if (!session_) {
@@ -1446,7 +1451,6 @@ void ShapeWorksStudioApp::open_project(QString filename) {
   }
 
   session_->update_auto_glyph_size();
-  handle_glyph_changed();
 
   setWindowTitle(session_->get_display_name());
 
@@ -1457,8 +1461,11 @@ void ShapeWorksStudioApp::open_project(QString filename) {
 
   update_display(true);
 
+
+
   create_glyph_submenu();
   create_iso_submenu();
+  handle_glyph_changed();
   handle_progress(100);
   SW_LOG("Project loaded: " + filename.toStdString());
 }

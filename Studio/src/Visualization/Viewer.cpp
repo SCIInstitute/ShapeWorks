@@ -223,7 +223,7 @@ void Viewer::display_vector_field() {
     glyphs_->ScalingOn();
     glyphs_->ClampingOff();
     glyphs_->SetScaleModeToDataScalingOff();
-    glyph_mapper_->SetLookupTable(lut_);
+    glyph_mapper_->SetLookupTable(glyph_lut_);
 
     glyph_points_->SetDataTypeToDouble();
     glyph_point_set_->SetPoints(glyph_points_);
@@ -1156,10 +1156,10 @@ PickResult Viewer::handle_ctrl_click(int *click_pos) {
 }
 
 //-----------------------------------------------------------------------------
-void Viewer::set_lut(vtkSmartPointer<vtkLookupTable> lut) {
-  lut_ = lut;
+void Viewer::set_glyph_lut(vtkSmartPointer<vtkLookupTable> lut) {
+  glyph_lut_ = lut;
   if (!arrows_visible_ && !showing_feature_map()) {
-    glyph_mapper_->SetLookupTable(lut_);
+    glyph_mapper_->SetLookupTable(glyph_lut_);
   }
 }
 
