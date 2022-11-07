@@ -489,8 +489,22 @@ void Visualizer::set_opacities(std::vector<float> opacities) {
   opacities_ = opacities;
   if (lightbox_) {
     Q_FOREACH (ViewerHandle viewer, lightbox_->get_viewers()) { viewer->update_opacities(); }
-    lightbox_->redraw();
   }
+  lightbox_->redraw();
+}
+
+//-----------------------------------------------------------------------------
+void Visualizer::set_domain_particle_visibilities(std::vector<bool> visibilities) {
+  domain_particle_visibilities_ = visibilities;
+  if (lightbox_) {
+    Q_FOREACH (ViewerHandle viewer, lightbox_->get_viewers()) { viewer->update_points(); }
+  }
+  lightbox_->redraw();
+}
+
+//-----------------------------------------------------------------------------
+std::vector<bool> Visualizer::get_domain_particle_visibilities() {
+  return domain_particle_visibilities_;
 }
 
 //-----------------------------------------------------------------------------
@@ -586,6 +600,8 @@ QSize Visualizer::get_render_size() {
   int* size = render_window->GetSize();
   return QSize(size[0], size[1]);
 }
+
+
 //-----------------------------------------------------------------------------
 
 }  // namespace shapeworks

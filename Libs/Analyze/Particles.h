@@ -28,16 +28,16 @@ class Particles {
   void set_local_particles(int domain, Eigen::VectorXd particles);
   void set_world_particles(int domain, Eigen::VectorXd particles);
 
-  std::vector<Eigen::VectorXd> get_local_particles();
-  std::vector<Eigen::VectorXd> get_world_particles();
+  std::vector<Eigen::VectorXd> get_local_particles(); // one Eigen::VectorXd per domain
+  std::vector<Eigen::VectorXd> get_world_particles(); // one Eigen::VectorXd per domain
 
   Eigen::VectorXd get_local_particles(int domain);
   Eigen::VectorXd get_world_particles(int domain);
   //! Get untransformed original world particles from optimizer
   Eigen::VectorXd get_raw_world_particles(int domain);
 
-  Eigen::VectorXd get_combined_local_particles() const;
-  Eigen::VectorXd get_combined_global_particles() const;
+  Eigen::VectorXd get_combined_local_particles(std::vector<bool> domains = {}) const;
+  Eigen::VectorXd get_combined_global_particles(std::vector<bool> domains = {}) const;
   void set_combined_global_particles(const Eigen::VectorXd &particles);
 
   std::vector<itk::Point<double>> get_local_points(int domain);
@@ -59,7 +59,7 @@ class Particles {
 
   std::vector<itk::Point<double>> eigen_to_point_vector(const Eigen::VectorXd& particles);
 
-  Eigen::VectorXd combine(const std::vector<Eigen::VectorXd>& particles) const;
+  Eigen::VectorXd combine(const std::vector<Eigen::VectorXd>& particles, std::vector<bool> domains = {}) const;
 
   void set_particles(int domain, std::vector<itk::Point<double>> particles, bool local);
   std::vector<Eigen::VectorXd> local_particles_;               // one for each domain

@@ -102,11 +102,13 @@ void Particles::set_world_particles(int domain, Eigen::VectorXd particles) {
 }
 
 //---------------------------------------------------------------------------
-Eigen::VectorXd Particles::get_combined_local_particles() const { return combine(local_particles_); }
+Eigen::VectorXd Particles::get_combined_local_particles(std::vector<bool> domains) const {
+  return combine(local_particles_, domains);
+}
 
 //---------------------------------------------------------------------------
-Eigen::VectorXd Particles::get_combined_global_particles() const {
-  return combine(transformed_global_particles_);
+Eigen::VectorXd Particles::get_combined_global_particles(std::vector<bool> domains) const {
+  return combine(transformed_global_particles_, domains);
 }
 
 //---------------------------------------------------------------------------
@@ -128,17 +130,25 @@ void Particles::set_combined_global_particles(const Eigen::VectorXd& particles) 
 }
 
 //---------------------------------------------------------------------------
-Eigen::VectorXd Particles::combine(const std::vector<Eigen::VectorXd>& particles) const {
+Eigen::VectorXd Particles::combine(const std::vector<Eigen::VectorXd>& particles, std::vector<bool> domains) const {
+  if (domains.size() != particles.size()) {
+    domains.resize(particles.size(), true);
+  }
+
   Eigen::VectorXd points;
   int size = 0;
   for (int i = 0; i < particles.size(); i++) {
-    size += particles[i].size();
+    if (domains[i]) {
+      size += particles[i].size();
+    }
   }
   points.resize(size);
   int idx = 0;
   for (int i = 0; i < particles.size(); i++) {
-    for (int j = 0; j < particles[i].size(); j++) {
-      points[idx++] = particles[i][j];
+    if (domains[i]) {
+      for (int j = 0; j < particles[i].size(); j++) {
+        points[idx++] = particles[i][j];
+      }
     }
   }
 
@@ -193,7 +203,7 @@ void Particles::transform_global_particles() {
         pt[1] = eigen[i + 1];
         pt[2] = eigen[i + 2];
 
-        double* new_point = transform_->TransformPoint(pt);
+        double *new_point = transform_->TransformPoint(pt);
         eigen[i] = new_point[0];
         eigen[i + 1] = new_point[1];
         eigen[i + 2] = new_point[2];
@@ -202,7 +212,7 @@ void Particles::transform_global_particles() {
           pt[0] = eigen[i];
           pt[1] = eigen[i + 1];
           pt[2] = eigen[i + 2];
-          double* new_point = procrustes_transforms_[d]->TransformPoint(pt);
+          double *new_point = procrustes_transforms_[d]->TransformPoint(pt);
           eigen[i] = new_point[0];
           eigen[i + 1] = new_point[1];
           eigen[i + 2] = new_point[2];

@@ -849,9 +849,9 @@ void Viewer::update_points() {
 
   Eigen::VectorXd correspondence_points;
   if (session_->get_display_mode() == DisplayMode::Reconstructed) {
-    correspondence_points = shape_->get_correspondence_points_for_display();
+    correspondence_points = shape_->get_correspondence_points_for_display(visualizer_->get_domain_particle_visibilities());
   } else {
-    correspondence_points = shape_->get_local_correspondence_points();
+    correspondence_points = shape_->get_local_correspondence_points(visualizer_->get_domain_particle_visibilities());
   }
 
   int num_points = correspondence_points.size() / 3;

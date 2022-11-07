@@ -96,10 +96,10 @@ class Shape {
   Eigen::VectorXd get_global_correspondence_points();
 
   /// Get the global correspondence points for display
-  Eigen::VectorXd get_correspondence_points_for_display();
+  Eigen::VectorXd get_correspondence_points_for_display(std::vector<bool> domains = {});
 
   /// Get the local correspondence points
-  Eigen::VectorXd get_local_correspondence_points();
+  Eigen::VectorXd get_local_correspondence_points(std::vector<bool> domains = {});
 
   void clear_reconstructed_mesh();
 

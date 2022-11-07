@@ -209,10 +209,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
   // glyph options signals/slots
   connect(ui_->glyphs_visible_button, SIGNAL(clicked()), this, SLOT(handle_glyph_changed()));
   connect(ui_->surface_visible_button, SIGNAL(clicked()), this, SLOT(handle_glyph_changed()));
-  connect(glyph_size_slider_, SIGNAL(valueChanged(int)), this, SLOT(handle_glyph_changed()));
-  connect(glyph_quality_slider_, SIGNAL(valueChanged(int)), this, SLOT(handle_glyph_changed()));
-  connect(glyph_auto_size_, &QCheckBox::clicked, this, &ShapeWorksStudioApp::handle_glyph_changed);
-  connect(glyph_arrow_scale_, &QCheckBox::clicked, this, &ShapeWorksStudioApp::handle_glyph_changed);
+
   preferences_.set_saved();
   enable_possible_actions();
 
@@ -736,6 +733,13 @@ void ShapeWorksStudioApp::create_glyph_submenu() {
   layout->addWidget(glyph_arrow_scale_, 2, 0, 1, 1);
   widget->setLayout(layout);
 
+
+  connect(glyph_size_slider_, &QSlider::valueChanged, this, &ShapeWorksStudioApp::handle_glyph_changed);
+  connect(glyph_quality_slider_, &QSlider::valueChanged, this, &ShapeWorksStudioApp::handle_glyph_changed );
+  connect(glyph_auto_size_, &QCheckBox::clicked, this, &ShapeWorksStudioApp::handle_glyph_changed);
+  connect(glyph_arrow_scale_, &QCheckBox::clicked, this, &ShapeWorksStudioApp::handle_glyph_changed);
+
+
   if (!session_) {
     return;
   }
@@ -754,6 +758,9 @@ void ShapeWorksStudioApp::create_glyph_submenu() {
     int row = 4;
     for (const auto& name : domain_names) {
       auto checkbox = new QCheckBox("Show " + QString::fromStdString(name), widget);
+      checkbox->setChecked(true);
+      connect(checkbox, &QCheckBox::clicked, this, &ShapeWorksStudioApp::handle_glyph_changed);
+      domain_particle_checkboxes_.push_back(checkbox);
       layout->addWidget(checkbox, row, 0);
       row++;
     }
@@ -1215,6 +1222,13 @@ void ShapeWorksStudioApp::handle_glyph_changed() {
   glyph_quality_label_->setText(QString::number(preferences_.get_glyph_quality()));
   glyph_size_label_->setText(QString::number(preferences_.get_glyph_size()));
   // update_display(true);
+
+  std::vector<bool> domains_to_display;
+  for (auto& checkbox : domain_particle_checkboxes_) {
+    domains_to_display.push_back(checkbox->isChecked());
+  }
+  visualizer_->set_domain_particle_visibilities(domains_to_display);
+
   visualizer_->update_viewer_properties();
 }
 
