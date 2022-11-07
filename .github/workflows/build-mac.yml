@@ -66,11 +66,11 @@ jobs:
 
     - name: make
       shell: bash -l {0}
-      run: conda activate shapeworks && cd build && make VERBOSE=1 -j4
+      run: conda activate shapeworks && cd build && make -j4
       
     - name: make install
       shell: bash -l {0}
-      run: conda activate shapeworks && cd build && make VERBOSE=1 install
+      run: conda activate shapeworks && cd build && make install
 
     - name: Build Binary Package
       shell: bash -l {0}

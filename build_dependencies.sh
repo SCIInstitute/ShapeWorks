@@ -1,9 +1,7 @@
 #!/bin/bash
 
-echo "Build Dependencies Debug"
-
-set -v   #verbose execution for debugging
-set -x   #tracing execution for debugging (echos all commands from script)
+#set -v   #verbose execution for debugging
+#set -x   #tracing execution for debugging (echos all commands from script)
 
 # check to make sure `source` was not used
 (return 0 2>/dev/null) && sourced=1 || sourced=0
