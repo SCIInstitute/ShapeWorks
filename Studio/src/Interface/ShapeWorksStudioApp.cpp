@@ -109,7 +109,6 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
   ui_->qvtkWidget->installEventFilter(wheel_event_forwarder_.data());
   ui_->qvtkWidget->setContextMenuPolicy(Qt::CustomContextMenu);
 
-  create_glyph_submenu();
   // analysis tool initializations
   analysis_tool_ = QSharedPointer<AnalysisTool>::create(preferences_);
   analysis_tool_->set_app(this);
@@ -133,9 +132,6 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
   if (!preferences_.get_window_state().isEmpty()) {
     restoreState(preferences_.get_window_state());
   }
-
-
-
 
 
   // set to import
@@ -740,10 +736,36 @@ void ShapeWorksStudioApp::create_glyph_submenu() {
   layout->addWidget(glyph_arrow_scale_, 2, 0, 1, 1);
   widget->setLayout(layout);
 
+  if (!session_) {
+    return;
+  }
+
+  auto project = session_->get_project();
+  auto domain_names = project->get_domain_names();
+  domain_particle_checkboxes_.clear();
+  if (domain_names.size() > 1) {
+    auto line = new QFrame(widget);
+    line->setObjectName(QString::fromUtf8("line"));
+    line->setGeometry(QRect(320, 150, 118, 3));
+    line->setFrameShape(QFrame::HLine);
+    line->setFrameShadow(QFrame::Sunken);
+    layout->addWidget(line, 3, 0, 1, 4);
+
+    int row = 4;
+    for (const auto& name : domain_names) {
+      auto checkbox = new QCheckBox("Show " + QString::fromStdString(name), widget);
+      layout->addWidget(checkbox, row, 0);
+      row++;
+    }
+  }
+
   QWidgetAction *widget_action = new QWidgetAction(widget);
   widget_action->setDefaultWidget(widget);
   menu->addAction(widget_action);
   ui_->glyphs_visible_button->setMenu(menu);
+
+  glyph_quality_label_->setText(QString::number(preferences_.get_glyph_quality()));
+  glyph_size_label_->setText(QString::number(preferences_.get_glyph_size()));
 }
 
 //---------------------------------------------------------------------------
@@ -882,6 +904,7 @@ void ShapeWorksStudioApp::new_session() {
   groom_tool_->set_session(session_);
   optimize_tool_->set_session(session_);
   deepssm_tool_->set_session(session_);
+  create_glyph_submenu();
   create_iso_submenu();
 
   update_table();
@@ -1420,6 +1443,7 @@ void ShapeWorksStudioApp::open_project(QString filename) {
 
   update_display(true);
 
+  create_glyph_submenu();
   create_iso_submenu();
   handle_progress(100);
   SW_LOG("Project loaded: " + filename.toStdString());
