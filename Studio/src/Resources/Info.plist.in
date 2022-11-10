@@ -42,5 +42,27 @@
         <string>true</string>
 	<key>com.apple.security.cs.disable-library-validation</key>
 	<true/>
+
+	<key>CFBundleDocumentTypes</key>
+<array>
+<dict>
+    <key>CFBundleTypeRole</key>
+        <string>Viewer</string>
+    <key>CFBundleTypeExtensions</key>
+    <array>
+        <string>swproj</string>
+    </array>
+    <key>CFBundleTypeIconFile</key>
+        <string>ShapeWorksStudio.icns</string>
+    <key>CFBundleTypeMIMETypes</key>
+        <string>application/octet-stream</string>
+    <key>CFBundleTypeName</key>
+        <string>ShapeWorks Project File</string>
+    <key>CFBundleTypeOSTypes</key>
+    <array>
+        <string>swproj</string>
+    </array>
+</dict>
+</array>
 </dict>
 </plist>

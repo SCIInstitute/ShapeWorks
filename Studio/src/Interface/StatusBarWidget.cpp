@@ -40,6 +40,9 @@ void StatusBarWidget::set_message(MessageType message_type, QString message) {
     ui_->log_button->setIcon(normal_message_icon_);
   } else if (message_type == MessageType::warning) {
     ui_->log_button->setIcon(warning_message_icon_);
+  } else if (message_type == MessageType::debug) {
+    ui_->log_button->setIcon(normal_message_icon_);
+    message = "<font color=#800080>" + message + "</font>";
   } else {
     ui_->log_button->setIcon(error_message_icon_);
     message = "<font color=#CC0000>" + message + "</font>";

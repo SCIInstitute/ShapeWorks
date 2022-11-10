@@ -18,10 +18,10 @@ void StatsGroupLDAJob::set_stats(ParticleShapeStatistics stats) { stats_ = stats
 
 //---------------------------------------------------------------------------
 void StatsGroupLDAJob::run() {
-  emit progress(0.1);
+  Q_EMIT progress(0.1);
   stats_.PrincipalComponentProjections();
   auto pca_loadings = stats_.PCALoadings();
-  emit progress(0.2);
+  Q_EMIT progress(0.2);
 
   auto& group_ids = stats_.GroupID();
 
@@ -51,7 +51,7 @@ void StatsGroupLDAJob::run() {
 
   py::module sw = py::module::import("shapeworks");
   py::object lda_loadings = sw.attr("stats").attr("lda_loadings");
-  emit progress(0.5);
+  Q_EMIT progress(0.5);
 
   using ResultType =
       std::tuple<Eigen::MatrixXd, Eigen::MatrixXd, Eigen::MatrixXd, Eigen::MatrixXd, Eigen::MatrixXd, Eigen::MatrixXd>;
@@ -64,7 +64,7 @@ void StatsGroupLDAJob::run() {
   group1_map_ = std::get<4>(result);
   group2_map_ = std::get<5>(result);
 
-  emit progress(1.0);
+  Q_EMIT progress(1.0);
 }
 
 //---------------------------------------------------------------------------

@@ -31,7 +31,7 @@ void ParticleNormalEvaluationJob::run() {
     for (auto& shape : session_->get_shapes()) {
       meshes.push_back(shape->get_groomed_mesh_wrappers()[domain]);
       count++;
-      emit progress(count / total);
+      Q_EMIT progress(count / total);
     }
 
     auto normals = ParticleNormalEvaluation::compute_particle_normals(particles.Particles(), meshes);
@@ -46,9 +46,9 @@ void ParticleNormalEvaluationJob::run() {
   SW_LOG("ParticleNormalEvaluationJob: found " + std::to_string(good_count) + "/" +
                      std::to_string(good_bad.size()) + " good particles");
 
-  emit progress(1.0);
+  Q_EMIT progress(1.0);
 
-  emit result_ready(good_bad);
+  Q_EMIT result_ready(good_bad);
   good_bad_ = good_bad;
 }
 

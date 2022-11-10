@@ -44,6 +44,6 @@ void Worker::process()
   } catch (std::exception& e) {
     SW_ERROR(e.what());
   }
-  emit this->job_->finished();
+  Q_EMIT this->job_->finished();
 }
 } // shapeworks

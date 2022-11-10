@@ -4,7 +4,7 @@
 #include <vtkContourFilter.h>
 #include <vtkMassProperties.h>
 #include <itkImage.h>
-#include <ParticleRegionDomain.h>
+#include "ParticleRegionDomain.h"
 #include <itkImageToVTKImageFilter.h>
 #include <itkZeroCrossingImageFilter.h>
 #include <itkImageRegionConstIteratorWithIndex.h>

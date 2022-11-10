@@ -64,25 +64,25 @@ void Visualizer::display_samples() {
 
 //-----------------------------------------------------------------------------
 void Visualizer::update_samples() {
-  foreach (ViewerHandle viewer, lightbox_->get_viewers()) { viewer->update_points(); }
+  Q_FOREACH (ViewerHandle viewer, lightbox_->get_viewers()) { viewer->update_points(); }
   lightbox_->redraw();
 }
 
 //-----------------------------------------------------------------------------
 void Visualizer::update_landmarks() {
-  foreach (ViewerHandle viewer, lightbox_->get_viewers()) { viewer->update_landmarks(); }
+  Q_FOREACH (ViewerHandle viewer, lightbox_->get_viewers()) { viewer->update_landmarks(); }
   lightbox_->redraw();
 }
 
 //-----------------------------------------------------------------------------
 void Visualizer::update_planes() {
-  foreach (ViewerHandle viewer, lightbox_->get_viewers()) { viewer->update_planes(); }
+  Q_FOREACH (ViewerHandle viewer, lightbox_->get_viewers()) { viewer->update_planes(); }
   lightbox_->redraw();
 }
 
 //-----------------------------------------------------------------------------
 void Visualizer::update_ffc_mode() {
-  foreach (ViewerHandle viewer, lightbox_->get_viewers()) { viewer->update_ffc_mode(); }
+  Q_FOREACH (ViewerHandle viewer, lightbox_->get_viewers()) { viewer->update_ffc_mode(); }
   lightbox_->redraw();
 }
 
@@ -216,11 +216,12 @@ void Visualizer::update_viewer_properties() {
   color_map.set_reverse_mode(preferences_.get_reverse_color_map());
 
   if (lightbox_) {
-    foreach (ViewerHandle viewer, lightbox_->get_viewers()) {
+    Q_FOREACH (ViewerHandle viewer, lightbox_->get_viewers()) {
       viewer->set_glyph_size_and_quality(size, quality);
       viewer->set_color_series(color_map);
       viewer->set_show_glyphs(show_glyphs_);
       viewer->set_show_surface(show_surface_);
+      viewer->set_scale_arrows(preferences_.get_glyph_scale_arrows());
       viewer->set_color_scheme(preferences_.get_color_scheme());
     }
 
@@ -487,7 +488,7 @@ vtkSmartPointer<vtkTransform> Visualizer::get_transform(std::shared_ptr<Shape> s
 void Visualizer::set_opacities(std::vector<float> opacities) {
   opacities_ = opacities;
   if (lightbox_) {
-    foreach (ViewerHandle viewer, lightbox_->get_viewers()) { viewer->update_opacities(); }
+    Q_FOREACH (ViewerHandle viewer, lightbox_->get_viewers()) { viewer->update_opacities(); }
     lightbox_->redraw();
   }
 }

@@ -22,7 +22,7 @@ public:
 
   QString name() override;
 
-signals:
+Q_SIGNALS:
 
   void report_progress(shapeworks::ShapeEvaluationJob::JobType job_type, float progress);
   void result_ready(shapeworks::ShapeEvaluationJob::JobType job_type, Eigen::VectorXd data);

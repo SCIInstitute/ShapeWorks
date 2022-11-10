@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QObject>
-#include <Libs/Project/Project.h>
+#include <Project/Project.h>
 #include <Job/Job.h>
 #include <DeepSSM/DeepSSMTool.h>
 

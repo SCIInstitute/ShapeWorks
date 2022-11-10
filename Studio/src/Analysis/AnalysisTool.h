@@ -171,7 +171,7 @@ class AnalysisTool : public QWidget {
 
   void show_difference_to_mean_clicked();
 
- signals:
+ Q_SIGNALS:
 
   void update_view();
   void pca_update();
@@ -215,6 +215,8 @@ class AnalysisTool : public QWidget {
   ParticleShapeStatistics stats_;
   bool stats_ready_ = false;
   bool evals_ready_ = false;
+  bool large_particle_disclaimer_waived_ = false;
+  bool skip_evals_ = false;
 
   Eigen::VectorXd eval_specificity_;
   Eigen::VectorXd eval_compactness_;

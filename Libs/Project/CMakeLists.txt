@@ -15,6 +15,7 @@ set(HEADERS
   Project.h
   Subject.h
   Parameters.h
+  ProjectUtils.h
   Variant.h
   )
 
@@ -34,9 +35,10 @@ target_include_directories(Project PUBLIC
 
 set_target_properties(Project PROPERTIES PUBLIC_HEADER
   "${HEADERS}")
-install(TARGETS Project
-  ARCHIVE DESTINATION lib
-  RUNTIME DESTINATION lib
-  LIBRARY DESTINATION lib
-  PUBLIC_HEADER DESTINATION include
+
+install(TARGETS Project EXPORT ShapeWorksTargets
+  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  RUNTIME DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  PUBLIC_HEADER DESTINATION include/Project
   )

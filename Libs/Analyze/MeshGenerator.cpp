@@ -3,13 +3,15 @@
 #include <ItkToVtk.h>
 #include <LegacyMeshGenerator.h>
 #include <MeshGenerator.h>
+#include <vtkImageImport.h>
+#include <itkImageFileReader.h>
 
 #include <QMeshWarper.h>
 
 #include <Logging.h>
-#include <Libs/Mesh/Mesh.h>
-#include <Libs/Mesh/MeshUtils.h>
-#include <Libs/Utils/StringUtils.h>
+#include <Mesh/Mesh.h>
+#include <Mesh/MeshUtils.h>
+#include <Utils/StringUtils.h>
 #include <itkOrientImageFilter.h>
 #include <itkPoint.h>
 #include <itkVTKImageExport.h>

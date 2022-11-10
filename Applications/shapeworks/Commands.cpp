@@ -1,12 +1,12 @@
 // must be first
-#include <Libs/Optimize/Optimize.h>
+#include <Optimize/Optimize.h>
 // must be first
 
-#include <Libs/Analyze/Analyze.h>
-#include <Libs/Groom/Groom.h>
-#include <Libs/Optimize/OptimizeParameterFile.h>
-#include <Libs/Optimize/OptimizeParameters.h>
-#include <Libs/Utils/StringUtils.h>
+#include <Analyze/Analyze.h>
+#include <Groom/Groom.h>
+#include <Optimize/OptimizeParameterFile.h>
+#include <Optimize/OptimizeParameters.h>
+#include <Utils/StringUtils.h>
 #include <Logging.h>
 #include <ShapeworksUtils.h>
 

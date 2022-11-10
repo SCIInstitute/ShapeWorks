@@ -69,7 +69,7 @@ class DeepSSMTool : public QWidget {
 
   void training_fine_tuning_changed();
 
- signals:
+ Q_SIGNALS:
 
   void update_view();
   void progress(int);

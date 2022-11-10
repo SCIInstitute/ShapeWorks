@@ -1,15 +1,14 @@
-#include "OptimizeParameters.h"
-
-#include <Libs/Image/Image.h>
-#include <Libs/Mesh/MeshUtils.h>
-#include <Libs/Utils/StringUtils.h>
-#include <ParticleSystem/VtkMeshWrapper.h>
-
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 #include <functional>
 
+#include <Image/Image.h>
+#include <Mesh/MeshUtils.h>
+#include <Utils/StringUtils.h>
+
+#include "OptimizeParameters.h"
 #include "Optimize.h"
+#include "VtkMeshWrapper.h"
 
 using namespace shapeworks;
 
@@ -246,7 +245,7 @@ std::string OptimizeParameters::get_fixed_subjects_choice() { return params_.get
 void OptimizeParameters::set_fixed_subjects_choice(std::string choice) { params_.set("fixed_subjects_choice", choice); }
 
 //---------------------------------------------------------------------------
-bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
+bool OptimizeParameters::set_up_optimize(Optimize *optimize) {
   optimize->SetVerbosity(this->get_verbosity());
   int domains_per_shape = this->project_->get_number_of_domains_per_subject();
   bool normals_enabled = this->get_use_normals()[0];
@@ -432,13 +431,12 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
 
         if (poly_data) {
           // TODO This is a HACK for detecting contours
-          if(poly_data->GetCell(0)->GetNumberOfPoints() == 2) {
+          if (poly_data->GetCell(0)->GetNumberOfPoints() == 2) {
             optimize->AddContour(poly_data);
           } else {
             optimize->AddMesh(poly_data);
           }
-        }
-        else {
+        } else {
           throw std::invalid_argument("Error loading mesh: " + filename);
         }
       } else if (domain_type == DomainType::Contour) {
@@ -494,6 +492,10 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
     }
   }
 
+
+  optimize->SetCheckpointingInterval(get_checkpoint_interval());
+  optimize->SetSaveInitSplits(get_save_init_splits());
+
   optimize->SetFilenames(StringUtils::getFileNamesFromPaths(filenames));
   optimize->SetOutputTransformFile("transform");
 
@@ -510,4 +512,24 @@ bool OptimizeParameters::is_subject_fixed(std::shared_ptr<Subject> subject) {
     }
   }
   return false;
+}
+
+//---------------------------------------------------------------------------
+int OptimizeParameters::get_checkpoint_interval() {
+  return params_.get("checkpointing_interval", 0);
+}
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_checkpoint_interval(int iterations) {
+  params_.set("checkpointing_interval", iterations);
+}
+
+//---------------------------------------------------------------------------
+bool OptimizeParameters::get_save_init_splits() {
+  return params_.get("save_init_splits", false);
+}
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_save_init_splits(bool enabled) {
+  params_.set("save_init_splits", enabled);
 }

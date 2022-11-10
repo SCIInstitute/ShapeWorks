@@ -20,6 +20,7 @@ class ExcelProjectReader : public ProjectReader {
   StringMultiMap get_multi_parameters(std::string name) override;
 
  private:
+
   // pimpl container
   class Container;
   std::unique_ptr<Container> container_;

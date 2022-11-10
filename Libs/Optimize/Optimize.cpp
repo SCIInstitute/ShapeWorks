@@ -23,17 +23,17 @@
 
 // shapeworks
 #include "TriMesh.h"
-#include "ParticleSystem/ParticleImageDomain.h"
-#include "ParticleSystem/ParticleImplicitSurfaceDomain.h"
-#include "ParticleSystem/object_reader.h"
-#include "ParticleSystem/object_writer.h"
+#include "ParticleImageDomain.h"
+#include "ParticleImplicitSurfaceDomain.h"
+#include "object_reader.h"
+#include "object_writer.h"
 #include "OptimizeParameterFile.h"
 #include "OptimizeParameters.h"
-#include <Libs/Project/Project.h>
+#include <Project/Project.h>
 #include "VtkMeshWrapper.h"
 
 #include "Optimize.h"
-#include <Libs/Project/Project.h>
+#include <Project/Project.h>
 
 // pybind
 #include <pybind11/embed.h>
@@ -129,6 +129,8 @@ bool Optimize::Run()
     std::log2(static_cast<double>(this->m_number_of_particles[0])));
   this->m_iteration_count = 0;
 
+  m_split_number = 0;
+
   if (this->m_use_shape_statistics_after <= 0) {
     this->m_total_iterations = (number_of_splits * this->m_iterations_per_split) +
                                this->m_optimization_iterations;
@@ -176,24 +178,7 @@ bool Optimize::Run()
 
     // save the particles for this split if requested
     if (m_save_init_splits == true) {
-      std::stringstream ss;
-      ss << this->m_split_number;
-      std::stringstream ssp;
-      std::string dir_name = "split" + ss.str();
-      for (int i = 0; i < m_domains_per_shape; i++) {
-        ssp << m_sampler->GetParticleSystem()->GetNumberOfParticles(i);
-        dir_name += "_" + ssp.str();
-        ssp.str("");
-      }
-      dir_name += "pts_w_opt";
-      std::string out_path = m_output_dir;
-      std::string tmp_dir_name = out_path + "/" + dir_name;
-
-      this->WritePointFiles(tmp_dir_name + "/");
-      this->WritePointFilesWithFeatures(tmp_dir_name + "/");
-      this->WriteTransformFile(tmp_dir_name + "/" + m_output_transform_file);
-      this->WriteTransformFiles(tmp_dir_name + "/");
-      this->WriteParameters(dir_name);
+      WriteSplitFiles("pts_w_opt");
     }
 
     // set to use shape statistics now for the Initialize mode
@@ -722,8 +707,6 @@ void Optimize::Initialize()
 
   m_sampler->GetParticleSystem()->SynchronizePositions();
 
-  this->m_split_number = 0;
-
   int n = m_sampler->GetParticleSystem()->GetNumberOfDomains();
 
   // Adaptive Initialization params
@@ -801,26 +784,7 @@ void Optimize::Initialize()
     }
 
     if (m_save_init_splits == true) {
-      std::stringstream ss;
-      ss << this->m_split_number;
-
-      std::stringstream ssp;
-      std::string dir_name = "split" + ss.str();
-      for (int i = 0; i < m_domains_per_shape; i++) {
-        ssp << m_sampler->GetParticleSystem()->GetNumberOfParticles(i);
-        dir_name += "_" + ssp.str();
-        ssp.str("");
-      }
-      dir_name += "pts_wo_init";
-      std::string out_path = m_output_dir;
-
-      std::string tmp_dir_name = out_path + "/" + dir_name;
-
-      this->WritePointFiles(tmp_dir_name);
-      this->WritePointFilesWithFeatures(tmp_dir_name + "/");
-      this->WriteTransformFile(tmp_dir_name + "/" + m_output_transform_file);
-      this->WriteTransformFiles(tmp_dir_name + "/");
-      this->WriteParameters(tmp_dir_name);
+      WriteSplitFiles("pts_wo_init");
     }
 
     m_energy_a.clear();
@@ -858,24 +822,7 @@ void Optimize::Initialize()
     m_sampler->GetOptimizer()->SetInitializationMode(false);
 
     if (m_save_init_splits == true) {
-      std::stringstream ss;
-      ss << this->m_split_number;
-      std::stringstream ssp;
-      std::string dir_name = "split" + ss.str();
-      for (int i = 0; i < m_domains_per_shape; i++) {
-        ssp << m_sampler->GetParticleSystem()->GetNumberOfParticles(i);
-        dir_name += "_" + ssp.str();
-        ssp.str("");
-      }
-      dir_name += "pts_w_init";
-      std::string out_path = m_output_dir;
-      std::string tmp_dir_name = out_path + "/" + dir_name;
-
-      this->WritePointFiles(tmp_dir_name + "/");
-      this->WritePointFilesWithFeatures(tmp_dir_name + "/");
-      this->WriteTransformFile(tmp_dir_name + "/" + m_output_transform_file);
-      this->WriteTransformFiles(tmp_dir_name + "/");
-      this->WriteParameters(tmp_dir_name);
+      WriteSplitFiles("pts_w_init");
     }
     this->WritePointFiles();
     this->WritePointFilesWithFeatures();
@@ -1744,6 +1691,28 @@ void Optimize::WriteEnergyFiles()
   this->PrintDoneMessage(1);
 
   this->PrintDoneMessage();
+}
+
+//---------------------------------------------------------------------------
+void Optimize::WriteSplitFiles(std::string name) {
+  std::stringstream ss;
+  ss << this->m_split_number;
+  std::stringstream ssp;
+  std::string dir_name = "split" + ss.str();
+  for (int i = 0; i < m_domains_per_shape; i++) {
+    ssp << m_sampler->GetParticleSystem()->GetNumberOfParticles(i);
+    dir_name += "_" + ssp.str();
+    ssp.str("");
+  }
+  dir_name += name;
+  std::string out_path = m_output_dir;
+  std::string tmp_dir_name = out_path + "/" + dir_name;
+
+  WritePointFiles(tmp_dir_name);
+  WritePointFilesWithFeatures(tmp_dir_name + "/");
+  WriteTransformFile(tmp_dir_name + "/" + m_output_transform_file);
+  WriteTransformFiles(tmp_dir_name + "/");
+  WriteParameters(tmp_dir_name);
 }
 
 //---------------------------------------------------------------------------

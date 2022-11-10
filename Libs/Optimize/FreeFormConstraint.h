@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Libs/Mesh/Mesh.h>
+#include <Mesh/Mesh.h>
 
 #include "Constraint.h"
 
