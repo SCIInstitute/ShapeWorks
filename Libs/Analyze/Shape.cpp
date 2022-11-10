@@ -306,8 +306,8 @@ bool Shape::store_constraints() {
 Eigen::VectorXd Shape::get_global_correspondence_points() { return particles_.get_combined_global_particles(); }
 
 //---------------------------------------------------------------------------
-Eigen::VectorXd Shape::get_local_correspondence_points(std::vector<bool> domains) {
-  return particles_.get_combined_local_particles(domains);
+Eigen::VectorXd Shape::get_local_correspondence_points() {
+  return particles_.get_combined_local_particles();
 }
 
 //---------------------------------------------------------------------------
@@ -707,48 +707,6 @@ vtkSmartPointer<vtkTransform> Shape::get_reconstruction_transform(int domain) {
   vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
   transform->Identity();
   return transform;
-}
-
-//---------------------------------------------------------------------------
-Eigen::VectorXd Shape::get_correspondence_points_for_display(std::vector<bool> domains) {
-  auto locals = particles_.get_local_particles();
-
-  if (domains.size() != locals.size()) {  // if an array of bools was not provided, return all
-    domains.resize(locals.size(), true);
-  }
-
-  int size = 0;
-  for (int i = 0; i < locals.size(); i++) {
-    if (domains[i]) {
-      size += locals[i].size();
-    }
-  }
-  Eigen::VectorXd points;
-  points.resize(size);
-
-  int idx = 0;
-  for (int i = 0; i < locals.size(); i++) {
-    if (domains[i]) {
-      for (int j = 0; j < locals[i].size(); j += 3) {
-        double p[3];
-        p[0] = locals[i][j + 0];
-        p[1] = locals[i][j + 1];
-        p[2] = locals[i][j + 2];
-        if (reconstruction_transforms_.size() > i && !subject_) {  // only computed shapes
-          double* pt = reconstruction_transforms_[i]->TransformPoint(p);
-          points[idx++] = pt[0];
-          points[idx++] = pt[1];
-          points[idx++] = pt[2];
-        } else {
-          points[idx++] = p[0];
-          points[idx++] = p[1];
-          points[idx++] = p[2];
-        }
-      }
-    }
-  }
-
-  return points;
 }
 
 //---------------------------------------------------------------------------
