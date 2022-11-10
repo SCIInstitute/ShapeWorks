@@ -321,10 +321,8 @@ void Visualizer::update_lut() {
 
     // normal particle coloring mode
     glyph_lut_->ForceBuild();
-    SW_TRACE(num_points);
     for (int i = 0; i < num_points; i++) {
       glyph_lut_->SetTableValue(i, lut->GetTableValue(i % lut->GetNumberOfTableValues()));
-      // glyph_lut_->SetTableValue(i, i % 2 == 0 ? 1.0 : 0, 1.0, 0);
     }
   }
 

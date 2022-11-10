@@ -98,6 +98,9 @@ class Shape {
   /// Get the global correspondence points for display
   Eigen::VectorXd get_correspondence_points_for_display(std::vector<bool> domains = {});
 
+  /// Get the global correspondence points for display
+  std::vector<Eigen::VectorXd> get_particles_for_display();
+
   /// Get the local correspondence points
   Eigen::VectorXd get_local_correspondence_points(std::vector<bool> domains = {});
 

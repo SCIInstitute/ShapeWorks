@@ -1,13 +1,11 @@
+#include <Image/Image.h>
+#include <Logging.h>
 #include <MeshGenerator.h>
 #include <MeshGroup.h>
-
-#include <Shape.h>
-#include <Image/Image.h>
-#include <Project/ProjectUtils.h>
-#include <Utils/StringUtils.h>
 #include <Particles/ParticleSystem.h>
-#include <Logging.h>
-
+#include <Project/ProjectUtils.h>
+#include <Shape.h>
+#include <Utils/StringUtils.h>
 #include <itkImageFileReader.h>
 #include <itkOrientImageFilter.h>
 #include <vtkCenterOfMass.h>
@@ -308,7 +306,9 @@ bool Shape::store_constraints() {
 Eigen::VectorXd Shape::get_global_correspondence_points() { return particles_.get_combined_global_particles(); }
 
 //---------------------------------------------------------------------------
-Eigen::VectorXd Shape::get_local_correspondence_points(std::vector<bool> domains) { return particles_.get_combined_local_particles(domains); }
+Eigen::VectorXd Shape::get_local_correspondence_points(std::vector<bool> domains) {
+  return particles_.get_combined_local_particles(domains);
+}
 
 //---------------------------------------------------------------------------
 int Shape::get_id() { return id_; }
@@ -571,7 +571,7 @@ void Shape::apply_feature_to_points(std::string feature, ImageType::Pointer imag
     p[1] = all_locals[idx++];
     p[2] = all_locals[idx++];
 
-    double *pt = p;
+    double* pt = p;
 
     ImageType::PointType pitk;
     pitk[0] = pt[0];
@@ -607,7 +607,7 @@ void Shape::load_feature_from_mesh(std::string feature, MeshHandle mesh) {
 
   Eigen::VectorXf values(num_points);
 
-  vtkDataArray *from_array = from_mesh->GetPointData()->GetArray(feature.c_str());
+  vtkDataArray* from_array = from_mesh->GetPointData()->GetArray(feature.c_str());
   if (!from_array) {
     return;
   }
@@ -713,7 +713,7 @@ vtkSmartPointer<vtkTransform> Shape::get_reconstruction_transform(int domain) {
 Eigen::VectorXd Shape::get_correspondence_points_for_display(std::vector<bool> domains) {
   auto locals = particles_.get_local_particles();
 
-  if (domains.size() != locals.size()) { // if an array of bools was not provided, return all
+  if (domains.size() != locals.size()) {  // if an array of bools was not provided, return all
     domains.resize(locals.size(), true);
   }
 
@@ -735,7 +735,7 @@ Eigen::VectorXd Shape::get_correspondence_points_for_display(std::vector<bool> d
         p[1] = locals[i][j + 1];
         p[2] = locals[i][j + 2];
         if (reconstruction_transforms_.size() > i && !subject_) {  // only computed shapes
-          double *pt = reconstruction_transforms_[i]->TransformPoint(p);
+          double* pt = reconstruction_transforms_[i]->TransformPoint(p);
           points[idx++] = pt[0];
           points[idx++] = pt[1];
           points[idx++] = pt[2];
@@ -749,6 +749,38 @@ Eigen::VectorXd Shape::get_correspondence_points_for_display(std::vector<bool> d
   }
 
   return points;
+}
+
+//---------------------------------------------------------------------------
+std::vector<Eigen::VectorXd> Shape::get_particles_for_display() {
+  std::vector<Eigen::VectorXd> particles;
+
+  auto locals = particles_.get_local_particles();
+
+  // int idx = 0;
+  for (int i = 0; i < locals.size(); i++) {
+    Eigen::VectorXd points = locals[i];
+    for (int j = 0; j < locals[i].size(); j += 3) {
+      int idx = j;
+      double p[3];
+      p[0] = locals[i][j + 0];
+      p[1] = locals[i][j + 1];
+      p[2] = locals[i][j + 2];
+      if (reconstruction_transforms_.size() > i && !subject_) {  // only computed shapes
+        double* pt = reconstruction_transforms_[i]->TransformPoint(p);
+        points[idx++] = pt[0];
+        points[idx++] = pt[1];
+        points[idx++] = pt[2];
+      } else {
+        points[idx++] = p[0];
+        points[idx++] = p[1];
+        points[idx++] = p[2];
+      }
+    }
+    particles.push_back(points);
+  }
+
+  return particles;
 }
 
 //---------------------------------------------------------------------------
