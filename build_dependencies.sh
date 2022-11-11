@@ -10,6 +10,8 @@ if [[ "$sourced" == "1" ]]; then
   return
 fi
 
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+
 # defaults
 BUILD_CLEAN=0
 CLEAN_AFTER=0
@@ -136,6 +138,9 @@ build_vtk()
   cd vtk
   git checkout -f tags/${VTK_VER}
 
+  patch -p1 < ${SCRIPT_DIR}/Support/vtk-9.1.patch
+  cat Rendering/OpenGL2/vtkCocoaRenderWindow.mm
+  
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
   mkdir -p build && cd build
   if [[ $OSTYPE == "msys" ]]; then
@@ -145,7 +150,7 @@ build_vtk()
       VTK_DIR="${INSTALL_DIR}/lib/cmake/vtk-${VTK_VER_STR}"
       VTK_DIR=$(echo $VTK_DIR | sed s/\\\\/\\//g)
   else
-      cmake -DCMAKE_CXX_FLAGS="$FLAGS" -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DVTK_Group_Qt:BOOL=${BUILD_GUI} -DVTK_QT_VERSION=5 -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DVTK_PYTHON_VERSION=3 -DVTK_GROUP_ENABLE_Qt=YES -DVTK_MODULE_ENABLE_VTK_GUISupportQtQuick:STRING=DONT_WANT -DBUILD_EXAMPLES:BOOL=OFF ${VTK_EXTRA_OPTIONS} -DVTK_MODULE_USE_EXTERNAL_VTK_pugixml=ON -Wno-dev ..
+      cmake -DCMAKE_CXX_FLAGS="$FLAGS" -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=OFF -DBUILD_TESTING:BOOL=OFF -DVTK_Group_Qt:BOOL=${BUILD_GUI} -DVTK_QT_VERSION=5 -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DVTK_PYTHON_VERSION=3 -DVTK_GROUP_ENABLE_Qt=YES -DVTK_MODULE_ENABLE_VTK_GUISupportQtQuick:STRING=DONT_WANT -DBUILD_EXAMPLES:BOOL=OFF ${VTK_EXTRA_OPTIONS} -DVTK_MODULE_USE_EXTERNAL_VTK_pugixml=ON -Wno-dev ..
       make -j${NUM_PROCS} install || exit 1
       VTK_DIR=${INSTALL_DIR}/lib/cmake/vtk-${VTK_VER_STR}
   fi
@@ -483,4 +488,3 @@ echo "BUILD_TYPE: ${BUILD_TYPE}"
 (time build_all 2>&1) 2>&1 | tee ${BUILD_LOG}
 RC=( "${PIPESTATUS[@]}" )
 exit ${RC[0]}
-
