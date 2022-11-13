@@ -1,6 +1,9 @@
 # Prerequisites
 *.d
 
+# Python eggs
+*.egg-info
+
 # Compiled Object files
 *.slo
 *.lo

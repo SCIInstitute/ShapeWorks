@@ -1635,6 +1635,9 @@ PYBIND11_MODULE(shapeworks_py, m)
 
   .def("LoadParameterFile",
        &Optimize::LoadParameterFile)
+     
+  .def("LoadXlsxProjectFile",
+       &Optimize::LoadXlsxProjectFile)
 
   .def("SetUpOptimize",
        &Optimize::SetUpOptimize,
