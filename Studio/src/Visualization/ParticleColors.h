@@ -1,6 +1,6 @@
 #pragma once
 
-#include <qobjectdefs.h>
+#include <QObject>
 #include <vtkLookupTable.h>
 
 namespace shapeworks {
