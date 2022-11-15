@@ -9,6 +9,34 @@ import shapeworks as sw
 import ShapeCohortGen
 
 def Run_Pipeline(args):
+
+    # Select sorting type
+    sorting_type = input("\nPlease enter method of sorting to use. Options:{random, median, distribution} Default: median \nSorting type: ")
+    if sorting_type not in ['random','median','distribution']:
+        sorting_type = 'median'
+    print("Using", sorting_type, "sorting.")
+
+    # Set initial model size
+    initial_model_size_input = input("\nPlease enter the number of shapes to use in the initial model. Options:{2, 3, ..., 50} Default: 10 \nInitial shapes: ")
+    try:
+        initial_model_size = int(initial_model_size_input)
+        if initial_model_size < 2 or initial_model_size > 50:
+            initial_model_size=10
+    except:
+        initial_model_size=10
+    print("Using", initial_model_size, "initial shapes.")
+
+    # Set batch size
+    incremental_batch_size_input = input("\nPlease enter the number of shapes in a batch to incrementally add. Options:{1, 2, ...} Default: 5 \nIncremental batch size: ")
+    try:
+        incremental_batch_size = int(incremental_batch_size_input)
+        if incremental_batch_size < 1 or incremental_batch_size > (50-initial_model_size):
+            incremental_batch_size = 5  
+    except:
+        incremental_batch_size=10
+    print("Using an incremental batch size of", incremental_batch_size, ".")
+
+
     print("\nStep 1. Extract Data")
     """
     Step 1: EXTRACT DATA
@@ -40,37 +68,54 @@ def Run_Pipeline(args):
 
     """
     Step 2: Sort meshes into batches
-
-    We sort meshes using surface-to-surface distance so that they are ordered from 
-    least unque to most unique, then create batches.
+    We sort meshes using the specified sorting method.
     """
     print("\nStep 2: Sort meshes into batches")
-    # Load meshes
-    meshes = []
-    for mesh_file in mesh_files:
-        meshes.append(sw.Mesh(mesh_file))
-    # Get distances
-    print("Sorting based on surface-to-surface distance...")
-    distances = np.zeros(len(meshes))
-    ref_index = sw.find_reference_mesh_index(meshes)
-    ref_mesh = meshes[ref_index]
-    for i in range(len(meshes)):
-        distances[i] = np.mean(meshes[i].distance(ref_mesh)[0])
-    # Sort
-    sorted_indices = np.argsort(distances)
+    if sorting_type == "random":
+        print("Randomly sorting.")
+        sorted_indices = np.arange(len(mesh_files))
+        np.random.shuffle(sorted_indices)
+    else:
+        # Load meshes
+        meshes = []
+        for mesh_file in mesh_files:
+            meshes.append(sw.Mesh(mesh_file))
+        # Get distance matrix
+        print("Finding surface-to-surface distances for sorting...")
+        distances = np.zeros((len(meshes),len(meshes)))
+        for i in range(len(meshes)):
+            for j in range(len(meshes)):
+                if i != j:
+                    distances[i][j] = np.mean(meshes[i].distance(meshes[j])[0])
+        median_index = np.argmin(np.sum(distances,axis=0) + np.sum(distances,axis=1))
+        # Sort
+        if sorting_type=="median":
+            print("Sorting using median.")
+            sorted_indices = np.argsort(distances[median_index] + distances[:,median_index])
+        elif sorting_type=="distribution":
+            print("Sorting using distribution.")
+            sorted_indices = [median_index]
+            while len(sorted_indices) < len(mesh_files):
+                dists = np.sum(distances[sorted_indices],axis=0) + np.sum(distances[:,sorted_indices],axis=1)
+                next_ind = [i for i in np.argsort(dists) if i not in sorted_indices][0]
+                sorted_indices.append(next_ind)
+        else:
+            print("Error: Sorting type unrecognized.")
     sorted_mesh_files = np.array(mesh_files)[sorted_indices]
-    # Make 5 batches
-    batch_size = math.ceil(len(mesh_files)/5)
-    batches = [sorted_mesh_files[i:i + batch_size] for i in range(0, len(sorted_mesh_files), batch_size)]
-    print("Created " + str(len(batches))+ " batches of size " + str(len(batches[0])))
     
+    # Make batches
+    initial_shapes = sorted_mesh_files[:initial_model_size]
+    remaining = range(initial_model_size, len(mesh_files))
+    incremental_batches = [sorted_mesh_files[i:i + incremental_batch_size] for i in range(initial_model_size, len(sorted_mesh_files), incremental_batch_size)]
+    batches = [initial_shapes]+incremental_batches
+
     """
     Step 3: Base optimization
     Next we create a base shape model by optimizing on the first batch
     For more details on the plethora of parameters for shapeworks please refer 
     to: http://sciinstitute.github.io/ShapeWorks/workflow/optimize.html
     """
-    print("\nStep 3: Optimize initial particles on first batch")
+    print("\nStep 3: Optimize particles on initial shapes.")
     # Create project spreadsheet
     project_location = output_directory + "shape_models/"
     if not os.path.exists(project_location):
@@ -137,6 +182,11 @@ def Run_Pipeline(args):
     optimize_cmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
     print(optimize_cmd)
     subprocess.check_call(optimize_cmd)
+
+    # Analyze initial model
+    print("\nOpening studio to display initial model. \nClose studio to continue running the use case.\n")
+    analyze_cmd = ('ShapeWorksStudio ' + spreadsheet_file).split()
+    subprocess.check_call(analyze_cmd)
 
     """
     Step 4: Incrementally optimize 
