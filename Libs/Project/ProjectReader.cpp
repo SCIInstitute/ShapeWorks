@@ -60,7 +60,7 @@ void ProjectReader::load_subjects(StringMapList list) {
 
     std::string name;
     if (contains(item, "name")) {
-      name = item["item"];
+      name = item["name"];
     }
     if (name == "") {
       if (subject->get_original_filenames().size() != 0) {
