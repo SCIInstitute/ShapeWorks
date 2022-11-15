@@ -94,7 +94,7 @@ static void assign_transforms(xlnt::worksheet& ws, int subject_id, std::string p
   if (transforms.empty()) {
     return;
   }
-  if (transforms.size() != domains.size() && transforms.size() != domains.size() + 1) {
+  if (transforms.size() != domains.size()) {
     throw std::runtime_error(prefix + " filenames and number of domains mismatch");
   }
   for (int i = 0; i < domains.size(); i++) {
@@ -108,6 +108,10 @@ static void assign_transforms(xlnt::worksheet& ws, int subject_id, std::string p
 static void store_subjects(Project& project, xlnt::workbook& wb) {
   auto subjects = project.get_subjects();
   auto domains = project.get_domain_names();
+  auto domains_plus_global = project.get_domain_names();
+  if (domains.size() > 1) {
+    domains_plus_global.push_back("global");
+  }
 
   xlnt::worksheet ws = wb.sheet_by_index(0);
   ws.title("data");
@@ -129,7 +133,7 @@ static void store_subjects(Project& project, xlnt::workbook& wb) {
     assign_keys(ws, i, groomed_prefixes, subject->get_groomed_filenames(), domains);
     assign_keys(ws, i, {"local_particles"}, subject->get_local_particle_filenames(), domains);
     assign_keys(ws, i, {"world_particles"}, subject->get_world_particle_filenames(), domains);
-    assign_transforms(ws, i, {"alignment"}, subject->get_groomed_transforms(), domains);
+    assign_transforms(ws, i, {"alignment"}, subject->get_groomed_transforms(), domains_plus_global);
     assign_transforms(ws, i, {"procrustes"}, subject->get_procrustes_transforms(), domains);
 
     // write out extra values
