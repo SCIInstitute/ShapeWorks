@@ -33,7 +33,7 @@ def Run_Pipeline(args):
         if incremental_batch_size < 1 or incremental_batch_size > (50-initial_model_size):
             incremental_batch_size = 5  
     except:
-        incremental_batch_size=10
+        incremental_batch_size=5
     print("Using an incremental batch size of", incremental_batch_size, ".")
 
 
