@@ -2261,6 +2261,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#define-sw_trace" class="md-nav__link">
+    define SW_TRACE
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#define-sw_message" class="md-nav__link">
     define SW_MESSAGE
   </a>
@@ -2371,6 +2378,10 @@
 </tr>
 <tr>
 <td></td>
+<td><strong><a href="Logging_8h.html#define-sw-trace">SW_TRACE</a></strong>(x) <br>Variable trace macro (e.g. output variable name = <variable value>)</td>
+</tr>
+<tr>
+<td></td>
 <td><strong><a href="Logging_8h.html#define-sw-message">SW_MESSAGE</a></strong>(message, ...) <br>Log show message macro.</td>
 </tr>
 <tr>
@@ -2423,6 +2434,13 @@
 <span class="n">shapeworks</span><span class="o">::</span><span class="n">Logging</span><span class="o">::</span><span class="n">Instance</span><span class="p">().</span><span class="n">log_debug</span><span class="p">(</span><span class="n">fmt</span><span class="o">::</span><span class="n">format</span><span class="p">(</span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="err">##</span><span class="n">__VA_ARGS__</span><span class="p">),</span><span class="w"> </span><span class="n">__LINE__</span><span class="p">,</span><span class="w"> </span><span class="n">__FILE__</span><span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <p>Log debug macro. </p>
+<h3 id="define-sw_trace">define SW_TRACE</h3>
+<div class="highlight"><pre><span></span><code><span class="cp">#define SW_TRACE(</span>
+<span class="w">    </span><span class="n">x</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+<span class="n">SW_DEBUG</span><span class="p">(</span><span class="err">#</span><span class="n">x</span><span class="s">&quot; = {}&quot;</span><span class="p">,</span><span class="n">x</span><span class="p">);</span><span class="w"></span>
+</code></pre></div>
+<p>Variable trace macro (e.g. output variable name = <variable value>) </p>
 <h3 id="define-sw_message">define SW_MESSAGE</h3>
 <div class="highlight"><pre><span></span><code><span class="cp">#define SW_MESSAGE(</span>
 <span class="w">    </span><span class="n">message</span><span class="p">,</span><span class="w"></span>
@@ -2518,6 +2536,8 @@
 <span class="cp">#define SW_DEBUG(message, ...) \</span>
 <span class="cp">  shapeworks::Logging::Instance().log_debug(fmt::format(message, ##__VA_ARGS__), __LINE__, __FILE__)</span>
 
+<span class="cp">#define SW_TRACE(x) SW_DEBUG(#x&quot; = {}&quot;,x);</span>
+
 <span class="cp">#define SW_MESSAGE(message, ...) \</span>
 <span class="cp">  shapeworks::Logging::Instance().show_message(fmt::format(message, ##__VA_ARGS__), __LINE__, __FILE__)</span>
 
@@ -2529,7 +2549,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-11-16 at 05:48:48 +0000</p>
+<p>Updated on 2022-11-16 at 06:00:36 +0000</p>
 
               
             </article>

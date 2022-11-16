@@ -2395,15 +2395,15 @@
 <tbody>
 <tr>
 <td></td>
-<td><strong><a href="classshapeworks_1_1Particles.html#function-particles">Particles</a></strong>()</td>
+<td><strong><a href="classshapeworks_1_1Particles.html#function-particles">Particles</a></strong>() =default</td>
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Particles.html#function-set-local-particles">set_local_particles</a></strong>(int domain, std::vector&lt; itk::Point&lt; double &gt; &gt; particles)</td>
+<td><strong><a href="classshapeworks_1_1Particles.html#function-set-local-particles">set_local_particles</a></strong>(int domain, const std::vector&lt; itk::Point&lt; double &gt; &gt; &amp; particles)</td>
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Particles.html#function-set-world-particles">set_world_particles</a></strong>(int domain, std::vector&lt; itk::Point&lt; double &gt; &gt; particles)</td>
+<td><strong><a href="classshapeworks_1_1Particles.html#function-set-world-particles">set_world_particles</a></strong>(int domain, const std::vector&lt; itk::Point&lt; double &gt; &gt; &amp; particles)</td>
 </tr>
 <tr>
 <td>void</td>
@@ -2415,11 +2415,11 @@
 </tr>
 <tr>
 <td>std::vector&lt; Eigen::VectorXd &gt;</td>
-<td><strong><a href="classshapeworks_1_1Particles.html#function-get-local-particles">get_local_particles</a></strong>()</td>
+<td><strong><a href="classshapeworks_1_1Particles.html#function-get-local-particles">get_local_particles</a></strong>() const</td>
 </tr>
 <tr>
 <td>std::vector&lt; Eigen::VectorXd &gt;</td>
-<td><strong><a href="classshapeworks_1_1Particles.html#function-get-world-particles">get_world_particles</a></strong>()</td>
+<td><strong><a href="classshapeworks_1_1Particles.html#function-get-world-particles">get_world_particles</a></strong>() const</td>
 </tr>
 <tr>
 <td>Eigen::VectorXd</td>
@@ -2463,11 +2463,11 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Particles.html#function-set-procrustes-transforms">set_procrustes_transforms</a></strong>(std::vector&lt; vtkSmartPointer&lt; vtkTransform &gt; &gt; transforms)</td>
+<td><strong><a href="classshapeworks_1_1Particles.html#function-set-procrustes-transforms">set_procrustes_transforms</a></strong>(const std::vector&lt; vtkSmartPointer&lt; vtkTransform &gt; &gt; &amp; transforms)</td>
 </tr>
 <tr>
 <td>Eigen::VectorXd</td>
-<td><strong><a href="classshapeworks_1_1Particles.html#function-get-difference-vectors">get_difference_vectors</a></strong>(const <a href="classshapeworks_1_1Particles.html">Particles</a> &amp; other)</td>
+<td><strong><a href="classshapeworks_1_1Particles.html#function-get-difference-vectors">get_difference_vectors</a></strong>(const <a href="classshapeworks_1_1Particles.html">Particles</a> &amp; other) const</td>
 </tr>
 <tr>
 <td>void</td>
@@ -2482,18 +2482,18 @@
 <p>The StudioParticles class encapsulates the correspondence points for a shape, including multiple domains, local and global points </p>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-particles">function Particles</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Particles</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">Particles</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="k">default</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-set_local_particles">function set_local_particles</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_local_particles</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">particles</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">particles</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-set_world_particles">function set_world_particles</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_world_particles</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">particles</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">particles</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-set_local_particles_1">function set_local_particles</h3>
@@ -2509,10 +2509,10 @@
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-get_local_particles">function get_local_particles</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_local_particles</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_local_particles</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-get_world_particles">function get_world_particles</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_world_particles</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_world_particles</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-get_local_particles_1">function get_local_particles</h3>
 <div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">get_local_particles</span><span class="p">(</span><span class="w"></span>
@@ -2564,13 +2564,13 @@
 </code></pre></div>
 <h3 id="function-set_procrustes_transforms">function set_procrustes_transforms</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_procrustes_transforms</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkTransform</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">transforms</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkTransform</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">transforms</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-get_difference_vectors">function get_difference_vectors</h3>
 <div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">get_difference_vectors</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Particles</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-save_particles_file">function save_particles_file</h3>
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">save_particles_file</span><span class="p">(</span><span class="w"></span>
@@ -2579,7 +2579,7 @@
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-11-16 at 05:48:48 +0000</p>
+<p>Updated on 2022-11-16 at 06:00:35 +0000</p>
 
               
             </article>

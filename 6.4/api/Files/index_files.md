@@ -229,6 +229,7 @@ title: Files
             * **file [Studio/src/Visualization/Lightbox.h](../Files/Lightbox_8h.md#file-lightbox.h)** 
             * **file [Studio/src/Visualization/MeshSlice.h](../Files/MeshSlice_8h.md#file-meshslice.h)** 
             * **file [Studio/src/Visualization/PaintWidget.h](../Files/PaintWidget_8h.md#file-paintwidget.h)** 
+            * **file [Studio/src/Visualization/ParticleColors.h](../Files/ParticleColors_8h.md#file-particlecolors.h)** 
             * **file [Studio/src/Visualization/PlaneWidget.h](../Files/PlaneWidget_8h.md#file-planewidget.h)** 
             * **file [Studio/src/Visualization/SliceView.h](../Files/SliceView_8h.md#file-sliceview.h)** 
             * **file [Studio/src/Visualization/StudioHandleWidget.h](../Files/StudioHandleWidget_8h.md#file-studiohandlewidget.h)** 
@@ -242,4 +243,4 @@ title: Files
 
 -------------------------------
 
-Updated on 2022-11-16 at 05:48:49 +0000
+Updated on 2022-11-16 at 06:00:37 +0000

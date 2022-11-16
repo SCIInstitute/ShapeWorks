@@ -39,7 +39,7 @@ summary: 3D Viewer
 | int | **[handle_pick](../Classes/classshapeworks_1_1Viewer.md#function-handle-pick)**(int * click_pos) |
 | [PickResult](../Classes/classshapeworks_1_1PickResult.md) | **[handle_ctrl_click](../Classes/classshapeworks_1_1Viewer.md#function-handle-ctrl-click)**(int * click_pos) |
 | void | **[set_selected_point](../Classes/classshapeworks_1_1Viewer.md#function-set-selected-point)**(int id) |
-| void | **[set_lut](../Classes/classshapeworks_1_1Viewer.md#function-set-lut)**(vtkSmartPointer< vtkLookupTable > lut) |
+| void | **[set_glyph_lut](../Classes/classshapeworks_1_1Viewer.md#function-set-glyph-lut)**(vtkSmartPointer< vtkLookupTable > lut) |
 | void | **[set_loading_screen](../Classes/classshapeworks_1_1Viewer.md#function-set-loading-screen)**(vtkSmartPointer< vtkImageData > loading_screen) |
 | void | **[set_color_scheme](../Classes/classshapeworks_1_1Viewer.md#function-set-color-scheme)**(int i) |
 | void | **[handle_new_mesh](../Classes/classshapeworks_1_1Viewer.md#function-handle-new-mesh)**() |
@@ -265,10 +265,10 @@ void set_selected_point(
 ```
 
 
-### function set_lut
+### function set_glyph_lut
 
 ```cpp
-void set_lut(
+void set_glyph_lut(
     vtkSmartPointer< vtkLookupTable > lut
 )
 ```
@@ -531,4 +531,4 @@ static bool is_reverse(
 
 -------------------------------
 
-Updated on 2022-11-16 at 05:48:48 +0000
+Updated on 2022-11-16 at 06:00:35 +0000

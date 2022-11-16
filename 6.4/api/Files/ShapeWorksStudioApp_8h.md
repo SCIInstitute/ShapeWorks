@@ -266,6 +266,7 @@ class ShapeWorksStudioApp : public QMainWindow {
   QSharedPointer<shapeworks::SplashScreen> splash_screen_;
   QErrorMessage error_message_dialog_;
   std::vector<QSlider*> iso_opacity_sliders_;
+  std::vector<QCheckBox*> domain_particle_checkboxes_;
 
   QString current_message_;
 
@@ -289,4 +290,4 @@ class ShapeWorksStudioApp : public QMainWindow {
 
 -------------------------------
 
-Updated on 2022-11-16 at 05:48:48 +0000
+Updated on 2022-11-16 at 06:00:37 +0000

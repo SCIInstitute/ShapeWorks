@@ -116,7 +116,7 @@ class Viewer {
 
   void set_selected_point(int id);
 
-  void set_lut(vtkSmartPointer<vtkLookupTable> lut);
+  void set_glyph_lut(vtkSmartPointer<vtkLookupTable> lut);
 
   void set_loading_screen(vtkSmartPointer<vtkImageData> loading_screen);
 
@@ -231,7 +231,7 @@ class Viewer {
   std::vector<vtkSmartPointer<vtkPolyDataMapper>> compare_mappers_;
   std::vector<vtkSmartPointer<vtkActor>> compare_actors_;
 
-  vtkSmartPointer<vtkLookupTable> lut_;
+  vtkSmartPointer<vtkLookupTable> glyph_lut_;
   vtkSmartPointer<vtkLookupTable> surface_lut_;
 
   vtkSmartPointer<vtkArrowSource> arrow_source_;
@@ -281,4 +281,4 @@ class Viewer {
 
 -------------------------------
 
-Updated on 2022-11-16 at 05:48:49 +0000
+Updated on 2022-11-16 at 06:00:37 +0000

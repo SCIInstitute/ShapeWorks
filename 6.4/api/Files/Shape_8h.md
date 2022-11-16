@@ -109,7 +109,7 @@ class Shape {
 
   Eigen::VectorXd get_global_correspondence_points();
 
-  Eigen::VectorXd get_correspondence_points_for_display();
+  std::vector<Eigen::VectorXd> get_particles_for_display();
 
   Eigen::VectorXd get_local_correspondence_points();
 
@@ -222,4 +222,4 @@ class Shape {
 
 -------------------------------
 
-Updated on 2022-11-16 at 05:48:48 +0000
+Updated on 2022-11-16 at 06:00:36 +0000

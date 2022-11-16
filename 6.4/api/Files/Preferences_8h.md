@@ -88,6 +88,9 @@ class Preferences : public QObject {
   void set_color_scheme(int value);
   int get_color_scheme();
 
+  void set_particle_colors(int value);
+  int get_particle_colors();
+
   void set_color_map(int value);
   int get_color_map();
 
@@ -150,4 +153,4 @@ class Preferences : public QObject {
 
 -------------------------------
 
-Updated on 2022-11-16 at 05:48:48 +0000
+Updated on 2022-11-16 at 06:00:37 +0000

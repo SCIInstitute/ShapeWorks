@@ -185,6 +185,7 @@ title: Classes
     * **class [OptimizeTool](../Classes/classshapeworks_1_1OptimizeTool.md)** 
     * **class [PaintWidget](../Classes/classshapeworks_1_1PaintWidget.md)** 
     * **class [Parameters](../Classes/classshapeworks_1_1Parameters.md)** <br>Parameter settings. 
+    * **class [ParticleColors](../Classes/classshapeworks_1_1ParticleColors.md)** 
     * **class [ParticleDomain](../Classes/classshapeworks_1_1ParticleDomain.md)** 
     * **class [ParticleImageDomain](../Classes/classshapeworks_1_1ParticleImageDomain.md)** 
     * **class [ParticleImageDomainWithCurvature](../Classes/classshapeworks_1_1ParticleImageDomainWithCurvature.md)** 
@@ -265,4 +266,4 @@ title: Classes
 
 -------------------------------
 
-Updated on 2022-11-16 at 05:48:49 +0000
+Updated on 2022-11-16 at 06:00:37 +0000

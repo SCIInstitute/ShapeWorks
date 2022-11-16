@@ -71,6 +71,8 @@ Inherits from QObject
 | vtkSmartPointer< vtkTransform > | **[get_transform](../Classes/classshapeworks_1_1Visualizer.md#function-get-transform)**(std::shared_ptr< [Shape](../Classes/classshapeworks_1_1Shape.md) > shape, DisplayMode display_mode, int alignment_domain, int domain)<br>Request the transform for a given shape and domain and display mode.  |
 | void | **[set_opacities](../Classes/classshapeworks_1_1Visualizer.md#function-set-opacities)**(std::vector< float > opacities)<br>Set domain opacities.  |
 | std::vector< float > | **[get_opacities](../Classes/classshapeworks_1_1Visualizer.md#function-get-opacities)**()<br>Get domain opacities.  |
+| void | **[set_domain_particle_visibilities](../Classes/classshapeworks_1_1Visualizer.md#function-set-domain-particle-visibilities)**(std::vector< bool > visibilities)<br>Set the per-domain particle visibilities.  |
+| std::vector< bool > | **[get_domain_particle_visibilities](../Classes/classshapeworks_1_1Visualizer.md#function-get-domain-particle-visibilities)**()<br>Get the per-domain particle visibilities.  |
 | double | **[get_current_glyph_size](../Classes/classshapeworks_1_1Visualizer.md#function-get-current-glyph-size)**()<br>Get the current glyph size.  |
 | void | **[handle_ctrl_click](../Classes/classshapeworks_1_1Visualizer.md#function-handle-ctrl-click)**([PickResult](../Classes/classshapeworks_1_1PickResult.md) result)<br>Handle ctrl click.  |
 | void | **[redraw](../Classes/classshapeworks_1_1Visualizer.md#function-redraw)**()<br>Redraw renderers.  |
@@ -493,6 +495,24 @@ std::vector< float > get_opacities()
 
 Get domain opacities. 
 
+### function set_domain_particle_visibilities
+
+```cpp
+void set_domain_particle_visibilities(
+    std::vector< bool > visibilities
+)
+```
+
+Set the per-domain particle visibilities. 
+
+### function get_domain_particle_visibilities
+
+```cpp
+std::vector< bool > get_domain_particle_visibilities()
+```
+
+Get the per-domain particle visibilities. 
+
 ### function get_current_glyph_size
 
 ```cpp
@@ -543,4 +563,4 @@ Return render window size.
 
 -------------------------------
 
-Updated on 2022-11-16 at 05:48:48 +0000
+Updated on 2022-11-16 at 06:00:35 +0000

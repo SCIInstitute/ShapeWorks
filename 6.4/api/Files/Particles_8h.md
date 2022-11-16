@@ -43,16 +43,16 @@ namespace shapeworks {
 
 class Particles {
  public:
-  Particles();
+  Particles() = default;
 
-  void set_local_particles(int domain, std::vector<itk::Point<double>> particles);
-  void set_world_particles(int domain, std::vector<itk::Point<double>> particles);
+  void set_local_particles(int domain, const std::vector<itk::Point<double>>& particles);
+  void set_world_particles(int domain, const std::vector<itk::Point<double>>& particles);
 
   void set_local_particles(int domain, Eigen::VectorXd particles);
   void set_world_particles(int domain, Eigen::VectorXd particles);
 
-  std::vector<Eigen::VectorXd> get_local_particles();
-  std::vector<Eigen::VectorXd> get_world_particles();
+  std::vector<Eigen::VectorXd> get_local_particles() const; // one Eigen::VectorXd per domain
+  std::vector<Eigen::VectorXd> get_world_particles() const; // one Eigen::VectorXd per domain
 
   Eigen::VectorXd get_local_particles(int domain);
   Eigen::VectorXd get_world_particles(int domain);
@@ -68,9 +68,9 @@ class Particles {
   int get_domain_for_combined_id(int id);
 
   void set_transform(vtkSmartPointer<vtkTransform> transform);
-  void set_procrustes_transforms(std::vector<vtkSmartPointer<vtkTransform>> transforms);
+  void set_procrustes_transforms(const std::vector<vtkSmartPointer<vtkTransform>>& transforms);
 
-  Eigen::VectorXd get_difference_vectors(const Particles& other);
+  Eigen::VectorXd get_difference_vectors(const Particles& other) const;
 
   static void save_particles_file(std::string filename, const Eigen::VectorXd& points);
 
@@ -78,7 +78,7 @@ class Particles {
  private:
   void transform_global_particles();
 
-  std::vector<itk::Point<double>> eigen_to_point_vector(const Eigen::VectorXd& particles);
+  std::vector<itk::Point<double>> eigen_to_point_vector(const Eigen::VectorXd& particles) const;
 
   Eigen::VectorXd combine(const std::vector<Eigen::VectorXd>& particles) const;
 
@@ -96,4 +96,4 @@ class Particles {
 
 -------------------------------
 
-Updated on 2022-11-16 at 05:48:48 +0000
+Updated on 2022-11-16 at 06:00:36 +0000

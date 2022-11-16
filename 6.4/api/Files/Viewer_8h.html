@@ -2359,7 +2359,7 @@
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_selected_point</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="p">);</span><span class="w"></span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_lut</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkLookupTable</span><span class="o">&gt;</span><span class="w"> </span><span class="n">lut</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_glyph_lut</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkLookupTable</span><span class="o">&gt;</span><span class="w"> </span><span class="n">lut</span><span class="p">);</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_loading_screen</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkImageData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">loading_screen</span><span class="p">);</span><span class="w"></span>
 
@@ -2474,7 +2474,7 @@
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyDataMapper</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">compare_mappers_</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkActor</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">compare_actors_</span><span class="p">;</span><span class="w"></span>
 
-<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkLookupTable</span><span class="o">&gt;</span><span class="w"> </span><span class="n">lut_</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkLookupTable</span><span class="o">&gt;</span><span class="w"> </span><span class="n">glyph_lut_</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkLookupTable</span><span class="o">&gt;</span><span class="w"> </span><span class="n">surface_lut_</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkArrowSource</span><span class="o">&gt;</span><span class="w"> </span><span class="n">arrow_source_</span><span class="p">;</span><span class="w"></span>
@@ -2521,7 +2521,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-11-16 at 05:48:49 +0000</p>
+<p>Updated on 2022-11-16 at 06:00:37 +0000</p>
 
               
             </article>

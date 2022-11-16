@@ -71,6 +71,8 @@ Inherits from QObject
 | void | **[set_pca_steps](../Classes/classPreferences.md#function-set-pca-steps)**(int value) |
 | void | **[set_color_scheme](../Classes/classPreferences.md#function-set-color-scheme)**(int value) |
 | int | **[get_color_scheme](../Classes/classPreferences.md#function-get-color-scheme)**() |
+| void | **[set_particle_colors](../Classes/classPreferences.md#function-set-particle-colors)**(int value) |
+| int | **[get_particle_colors](../Classes/classPreferences.md#function-get-particle-colors)**() |
 | void | **[set_color_map](../Classes/classPreferences.md#function-set-color-map)**(int value) |
 | int | **[get_color_map](../Classes/classPreferences.md#function-get-color-map)**() |
 | void | **[set_discrete_color_mode](../Classes/classPreferences.md#function-set-discrete-color-mode)**(bool value) |
@@ -460,6 +462,22 @@ int get_color_scheme()
 ```
 
 
+### function set_particle_colors
+
+```cpp
+void set_particle_colors(
+    int value
+)
+```
+
+
+### function get_particle_colors
+
+```cpp
+int get_particle_colors()
+```
+
+
 ### function set_color_map
 
 ```cpp
@@ -718,4 +736,4 @@ QString get_export_pca_modes()
 
 -------------------------------
 
-Updated on 2022-11-16 at 05:48:48 +0000
+Updated on 2022-11-16 at 06:00:35 +0000

@@ -125,6 +125,10 @@ class Visualizer : public QObject {
 
   std::vector<float> get_opacities();
 
+  void set_domain_particle_visibilities(std::vector<bool> visibilities);
+
+  std::vector<bool> get_domain_particle_visibilities();
+
   double get_current_glyph_size();
 
   void handle_ctrl_click(PickResult result);
@@ -175,6 +179,7 @@ class Visualizer : public QObject {
   bool feature_range_valid_ = false;
   bool feature_range_uniform_ = true;
 
+  std::vector<bool> domain_particle_visibilities_;
   std::vector<float> opacities_;
 
   double current_glyph_size_{0};
@@ -186,4 +191,4 @@ class Visualizer : public QObject {
 
 -------------------------------
 
-Updated on 2022-11-16 at 05:48:49 +0000
+Updated on 2022-11-16 at 06:00:37 +0000

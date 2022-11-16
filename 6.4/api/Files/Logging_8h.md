@@ -28,6 +28,7 @@ title: Libs/Common/Logging.h
 |  | **[SW_WARN](../Files/Logging_8h.md#define-sw-warn)**(message, ...) <br>Log warning macro.  |
 |  | **[SW_ERROR](../Files/Logging_8h.md#define-sw-error)**(message, ...) <br>Log error macro.  |
 |  | **[SW_DEBUG](../Files/Logging_8h.md#define-sw-debug)**(message, ...) <br>Log debug macro.  |
+|  | **[SW_TRACE](../Files/Logging_8h.md#define-sw-trace)**(x) <br>Variable trace macro (e.g. output variable name = <variable value>)  |
 |  | **[SW_MESSAGE](../Files/Logging_8h.md#define-sw-message)**(message, ...) <br>Log show message macro.  |
 |  | **[SW_STATUS](../Files/Logging_8h.md#define-sw-status)**(message, ...) <br>Don't write to log, but set status (e.g. in the Studio statusbar)  |
 |  | **[SW_CLOSE_LOG](../Files/Logging_8h.md#define-sw-close-log)**() <br>Close session macro.  |
@@ -95,6 +96,17 @@ shapeworks::Logging::Instance().log_debug(fmt::format(message, ##__VA_ARGS__), _
 ```
 
 Log debug macro. 
+
+### define SW_TRACE
+
+```cpp
+#define SW_TRACE(
+    x
+)
+SW_DEBUG(#x" = {}",x);
+```
+
+Variable trace macro (e.g. output variable name = <variable value>) 
 
 ### define SW_MESSAGE
 
@@ -205,6 +217,8 @@ class Logging {
 #define SW_DEBUG(message, ...) \
   shapeworks::Logging::Instance().log_debug(fmt::format(message, ##__VA_ARGS__), __LINE__, __FILE__)
 
+#define SW_TRACE(x) SW_DEBUG(#x" = {}",x);
+
 #define SW_MESSAGE(message, ...) \
   shapeworks::Logging::Instance().show_message(fmt::format(message, ##__VA_ARGS__), __LINE__, __FILE__)
 
@@ -219,4 +233,4 @@ class Logging {
 
 -------------------------------
 
-Updated on 2022-11-16 at 05:48:48 +0000
+Updated on 2022-11-16 at 06:00:36 +0000
