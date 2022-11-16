@@ -146,6 +146,9 @@ class Logging {
 #define SW_DEBUG(message, ...) \
   shapeworks::Logging::Instance().log_debug(fmt::format(message, ##__VA_ARGS__), __LINE__, __FILE__)
 
+//! Variable trace macro (e.g. output variable name = <variable value>)
+#define SW_TRACE(x) SW_DEBUG(#x" = {}",x);
+
 //! Log show message macro
 #define SW_MESSAGE(message, ...) \
   shapeworks::Logging::Instance().show_message(fmt::format(message, ##__VA_ARGS__), __LINE__, __FILE__)

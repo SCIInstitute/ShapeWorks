@@ -1,7 +1,9 @@
 // qt
 #include <Data/Preferences.h>
 #include <Data/PreferencesWindow.h>
+#include <Logging.h>
 #include <Visualization/ColorMap.h>
+#include <Visualization/ParticleColors.h>
 #include <vtkColorSeries.h>
 #include <vtkNew.h>
 
@@ -9,8 +11,6 @@
 #include <cmath>
 #include <iostream>
 
-// The interface from the designer
-#include <Logging.h>
 #include "ui_PreferencesWindow.h"
 
 namespace shapeworks {
@@ -30,7 +30,15 @@ PreferencesWindow::PreferencesWindow(QWidget* parent, Preferences& prefs) : pref
 
   ui_->color_map->clear();
   ColorMaps maps;
-  Q_FOREACH (auto color_map, maps) { ui_->color_map->addItem(color_map.name_); }
+  Q_FOREACH (auto color_map, maps) {
+    ui_->color_map->addItem(color_map.name_);
+  }
+
+  ui_->particle_colors->clear();
+  QMetaEnum e = QMetaEnum::fromType<shapeworks::ParticleColors::ParticleColorsType>();
+  for (int i = 0; i < e.keyCount(); i++) {
+    ui_->particle_colors->addItem(e.key(i));
+  }
 
   set_values_from_preferences();
 
@@ -40,6 +48,8 @@ PreferencesWindow::PreferencesWindow(QWidget* parent, Preferences& prefs) : pref
           &PreferencesWindow::save_to_preferences);
   connect(ui_->geodesic_cache_multiplier, &QSlider::valueChanged, this, &PreferencesWindow::save_to_preferences);
   connect(ui_->color_map, qOverload<int>(&QComboBox::currentIndexChanged), this,
+          &PreferencesWindow::save_to_preferences);
+  connect(ui_->particle_colors, qOverload<int>(&QComboBox::currentIndexChanged), this,
           &PreferencesWindow::save_to_preferences);
   connect(ui_->discrete_color_mode, &QCheckBox::toggled, this, &PreferencesWindow::save_to_preferences);
   connect(ui_->reverse_color_map, &QCheckBox::toggled, this, &PreferencesWindow::save_to_preferences);
@@ -91,6 +101,7 @@ void PreferencesWindow::set_values_from_preferences() {
   ui_->mesh_cache_memory->setValue(preferences_.get_memory_cache_percent());
   ui_->color_scheme->setCurrentIndex(preferences_.get_color_scheme());
   ui_->color_map->setCurrentIndex(preferences_.get_color_map());
+  ui_->particle_colors->setCurrentIndex(preferences_.get_particle_colors());
   ui_->reverse_color_map->setChecked(preferences_.get_reverse_color_map());
   ui_->discrete_color_mode->setChecked(preferences_.get_discrete_color_mode());
   ui_->num_threads->setValue(preferences_.get_num_threads());
@@ -129,6 +140,7 @@ void PreferencesWindow::save_to_preferences() {
   preferences_.set_optimize_file_template(ui_->optimize_file_template->text());
   preferences_.set_geodesic_cache_multiplier(ui_->geodesic_cache_multiplier->value());
   preferences_.set_color_map(ui_->color_map->currentIndex());
+  preferences_.set_particle_colors(ui_->particle_colors->currentIndex());
   preferences_.set_discrete_color_mode(ui_->discrete_color_mode->isChecked());
   preferences_.set_reverse_color_map(ui_->reverse_color_map->isChecked());
   update_labels();

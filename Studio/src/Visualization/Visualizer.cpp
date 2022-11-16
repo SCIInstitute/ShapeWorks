@@ -1,6 +1,9 @@
+#include <Logging.h>
 #include <MeshManager.h>
 #include <Shape.h>
 #include <Utils/StudioUtils.h>
+#include <Visualization/ColorMap.h>
+#include <Visualization/ParticleColors.h>
 #include <Visualization/Visualizer.h>
 #include <vtkAppendPolyData.h>
 #include <vtkLookupTable.h>
@@ -10,7 +13,6 @@
 #include <vtkRendererCollection.h>
 #include <vtkTransformPolyDataFilter.h>
 #include <vtkWindowToImageFilter.h>
-#include <Visualization/ColorMap.h>
 
 #include <QColor>
 #include <QPixmap>
@@ -64,25 +66,33 @@ void Visualizer::display_samples() {
 
 //-----------------------------------------------------------------------------
 void Visualizer::update_samples() {
-  Q_FOREACH (ViewerHandle viewer, lightbox_->get_viewers()) { viewer->update_points(); }
+  Q_FOREACH (ViewerHandle viewer, lightbox_->get_viewers()) {
+    viewer->update_points();
+  }
   lightbox_->redraw();
 }
 
 //-----------------------------------------------------------------------------
 void Visualizer::update_landmarks() {
-  Q_FOREACH (ViewerHandle viewer, lightbox_->get_viewers()) { viewer->update_landmarks(); }
+  Q_FOREACH (ViewerHandle viewer, lightbox_->get_viewers()) {
+    viewer->update_landmarks();
+  }
   lightbox_->redraw();
 }
 
 //-----------------------------------------------------------------------------
 void Visualizer::update_planes() {
-  Q_FOREACH (ViewerHandle viewer, lightbox_->get_viewers()) { viewer->update_planes(); }
+  Q_FOREACH (ViewerHandle viewer, lightbox_->get_viewers()) {
+    viewer->update_planes();
+  }
   lightbox_->redraw();
 }
 
 //-----------------------------------------------------------------------------
 void Visualizer::update_ffc_mode() {
-  Q_FOREACH (ViewerHandle viewer, lightbox_->get_viewers()) { viewer->update_ffc_mode(); }
+  Q_FOREACH (ViewerHandle viewer, lightbox_->get_viewers()) {
+    viewer->update_ffc_mode();
+  }
   lightbox_->redraw();
 }
 
@@ -124,14 +134,12 @@ vtkFloatArray* Visualizer::get_current_particle_scalars() {
 }
 
 //-----------------------------------------------------------------------------
-vtkSmartPointer<vtkPolyData> Visualizer::get_current_particle_poly_data()
-{
+vtkSmartPointer<vtkPolyData> Visualizer::get_current_particle_poly_data() {
   auto viewers = lightbox_->get_viewers();
   if (viewers.size() > 0) {
     return viewers[0]->get_particle_poly_data();
   }
   return nullptr;
-
 }
 
 //-----------------------------------------------------------------------------
@@ -247,7 +255,9 @@ void Visualizer::handle_image_slice_settings_changed() {
   lightbox_->update_interactor_style();
 
   if (lightbox_) {
-    Q_FOREACH (ViewerHandle v, lightbox_->get_viewers()) { v->update_image_volume(); }
+    Q_FOREACH (ViewerHandle v, lightbox_->get_viewers()) {
+      v->update_image_volume();
+    }
   }
   lightbox_->redraw();
 }
@@ -291,8 +301,42 @@ void Visualizer::update_lut() {
       }
     }
   } else {
-    // normal particle coloring mode
-    glyph_lut_->ForceBuild();
+    if (preferences_.get_particle_colors() == ParticleColors::ParticleColorsType::Distinct) {
+      auto lut = vtkSmartPointer<vtkLookupTable>::New();
+      lut->SetNumberOfTableValues(21);
+
+      int v = 0;
+      auto add_color = [&](int r, int g, int b) { lut->SetTableValue(v++, r / 255.0, g / 255.0, b / 255.0); };
+
+      add_color(230, 25, 75);
+      add_color(60, 180, 75);
+      add_color(255, 225, 25);
+      add_color(0, 130, 200);
+      add_color(245, 130, 48);
+      add_color(145, 30, 180);
+      add_color(70, 240, 240);
+      add_color(240, 50, 230);
+      add_color(210, 245, 60);
+      add_color(250, 190, 212);
+      add_color(0, 128, 128);
+      add_color(220, 190, 255);
+      add_color(170, 110, 40);
+      add_color(255, 250, 200);
+      add_color(128, 0, 0);
+      add_color(170, 255, 195);
+      add_color(128, 128, 0);
+      add_color(255, 215, 180);
+      add_color(0, 0, 128);
+      add_color(128, 128, 128);
+      add_color(255, 255, 255);
+
+      // normal particle coloring mode
+      for (int i = 0; i < num_points; i++) {
+        glyph_lut_->SetTableValue(i, lut->GetTableValue(i % lut->GetNumberOfTableValues()));
+      }
+    } else {
+      glyph_lut_->ForceBuild();
+    }
   }
 
   glyph_lut_->Modified();
@@ -453,13 +497,14 @@ void Visualizer::set_uniform_feature_range(bool value) { feature_range_uniform_ 
 bool Visualizer::get_uniform_feature_range(void) { return feature_range_uniform_; }
 
 //-----------------------------------------------------------------------------
-vtkSmartPointer<vtkTransform> Visualizer::get_transform(std::shared_ptr<Shape> shape, int alignment_domain, int domain) {
+vtkSmartPointer<vtkTransform> Visualizer::get_transform(std::shared_ptr<Shape> shape, int alignment_domain,
+                                                        int domain) {
   return get_transform(shape, session_->get_display_mode(), alignment_domain, domain);
 }
 
 //-----------------------------------------------------------------------------
-vtkSmartPointer<vtkTransform> Visualizer::get_transform(std::shared_ptr<Shape> shape, DisplayMode display_mode, int alignment_domain, int domain)
-{
+vtkSmartPointer<vtkTransform> Visualizer::get_transform(std::shared_ptr<Shape> shape, DisplayMode display_mode,
+                                                        int alignment_domain, int domain) {
   auto transform = vtkSmartPointer<vtkTransform>::New();
 
   if (display_mode == DisplayMode::Original) {
@@ -481,17 +526,32 @@ vtkSmartPointer<vtkTransform> Visualizer::get_transform(std::shared_ptr<Shape> s
   }
 
   return transform;
-
 }
 
 //-----------------------------------------------------------------------------
 void Visualizer::set_opacities(std::vector<float> opacities) {
   opacities_ = opacities;
   if (lightbox_) {
-    Q_FOREACH (ViewerHandle viewer, lightbox_->get_viewers()) { viewer->update_opacities(); }
-    lightbox_->redraw();
+    Q_FOREACH (ViewerHandle viewer, lightbox_->get_viewers()) {
+      viewer->update_opacities();
+    }
   }
+  lightbox_->redraw();
 }
+
+//-----------------------------------------------------------------------------
+void Visualizer::set_domain_particle_visibilities(std::vector<bool> visibilities) {
+  domain_particle_visibilities_ = visibilities;
+  if (lightbox_) {
+    Q_FOREACH (ViewerHandle viewer, lightbox_->get_viewers()) {
+      viewer->update_points();
+    }
+  }
+  lightbox_->redraw();
+}
+
+//-----------------------------------------------------------------------------
+std::vector<bool> Visualizer::get_domain_particle_visibilities() { return domain_particle_visibilities_; }
 
 //-----------------------------------------------------------------------------
 std::vector<float> Visualizer::get_opacities() { return opacities_; }
@@ -542,7 +602,9 @@ QPixmap Visualizer::export_to_pixmap(QSize size, bool transparent_background, bo
   }
 
   if (!show_color_scale) {
-    Q_FOREACH (ViewerHandle viewer, lightbox_->get_viewers()) { viewer->remove_scalar_bar(); }
+    Q_FOREACH (ViewerHandle viewer, lightbox_->get_viewers()) {
+      viewer->remove_scalar_bar();
+    }
   }
 
   vtkRendererCollection* collection = render_window->GetRenderers();
@@ -575,7 +637,9 @@ QPixmap Visualizer::export_to_pixmap(QSize size, bool transparent_background, bo
 
   // restore changes
   update_viewer_properties();
-  Q_FOREACH (ViewerHandle viewer, lightbox_->get_viewers()) { viewer->update_actors(); }
+  Q_FOREACH (ViewerHandle viewer, lightbox_->get_viewers()) {
+    viewer->update_actors();
+  }
 
   return QPixmap::fromImage(qimage);
 }
@@ -586,6 +650,7 @@ QSize Visualizer::get_render_size() {
   int* size = render_window->GetSize();
   return QSize(size[0], size[1]);
 }
+
 //-----------------------------------------------------------------------------
 
 }  // namespace shapeworks
