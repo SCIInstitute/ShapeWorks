@@ -49,7 +49,7 @@ namespace shapeworks {
  * \code
  * int mode = 10;
  * double eigen_value = 42.3;
- * SW_LOG("eigen value [{}]: {}", mode, eigen_value);
+ * SW_LOG("eigen value [{}]: {:.2f}", mode, eigen_value);
  * \endcode
  *
  * Output:

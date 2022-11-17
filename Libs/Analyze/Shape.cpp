@@ -698,6 +698,11 @@ void Shape::set_particle_transform(vtkSmartPointer<vtkTransform> transform) {
 }
 
 //---------------------------------------------------------------------------
+void Shape::set_alignment_type(int alignment) {
+  particles_.set_alignment_type(alignment);
+}
+
+//---------------------------------------------------------------------------
 vtkSmartPointer<vtkTransform> Shape::get_reconstruction_transform(int domain) {
   if (domain < reconstruction_transforms_.size()) {
     return reconstruction_transforms_[domain];

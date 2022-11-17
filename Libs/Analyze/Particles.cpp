@@ -1,4 +1,5 @@
 #include <Analyze/Particles.h>
+#include <Logging.h>
 #include <vtkTransform.h>
 
 #include <cassert>
@@ -105,9 +106,7 @@ void Particles::set_world_particles(int domain, Eigen::VectorXd particles) {
 Eigen::VectorXd Particles::get_combined_local_particles() const { return combine(local_particles_); }
 
 //---------------------------------------------------------------------------
-Eigen::VectorXd Particles::get_combined_global_particles() const {
-  return combine(transformed_global_particles_);
-}
+Eigen::VectorXd Particles::get_combined_global_particles() const { return combine(transformed_global_particles_); }
 
 //---------------------------------------------------------------------------
 void Particles::set_combined_global_particles(const Eigen::VectorXd& particles) {
@@ -198,14 +197,14 @@ void Particles::transform_global_particles() {
         eigen[i + 1] = new_point[1];
         eigen[i + 2] = new_point[2];
 
-        if (d < procrustes_transforms_.size() && procrustes_transforms_[d]) {
+        if (alignment_type_ < procrustes_transforms_.size() && procrustes_transforms_[alignment_type_]) {
           pt[0] = eigen[i];
           pt[1] = eigen[i + 1];
           pt[2] = eigen[i + 2];
-          double* new_point = procrustes_transforms_[d]->TransformPoint(pt);
-          eigen[i] = new_point[0];
-          eigen[i + 1] = new_point[1];
-          eigen[i + 2] = new_point[2];
+          double* new_point2 = procrustes_transforms_[alignment_type_]->TransformPoint(pt);
+          eigen[i] = new_point2[0];
+          eigen[i + 1] = new_point2[1];
+          eigen[i + 2] = new_point2[2];
         }
       }
 
@@ -223,5 +222,7 @@ void Particles::save_particles_file(std::string filename, const Eigen::VectorXd&
   }
   out.close();
 }
+
+void Particles::set_alignment_type(int alignment) { alignment_type_ = alignment; }
 
 }  // namespace shapeworks
