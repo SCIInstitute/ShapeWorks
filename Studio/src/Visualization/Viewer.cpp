@@ -223,7 +223,7 @@ void Viewer::display_vector_field() {
     glyphs_->ScalingOn();
     glyphs_->ClampingOff();
     glyphs_->SetScaleModeToDataScalingOff();
-    glyph_mapper_->SetLookupTable(lut_);
+    glyph_mapper_->SetLookupTable(glyph_lut_);
 
     glyph_points_->SetDataTypeToDouble();
     glyph_point_set_->SetPoints(glyph_points_);
@@ -847,14 +847,17 @@ void Viewer::update_points() {
     return;
   }
 
-  Eigen::VectorXd correspondence_points;
+  std::vector<Eigen::VectorXd> correspondence_points; // one set per domain
   if (session_->get_display_mode() == DisplayMode::Reconstructed) {
-    correspondence_points = shape_->get_correspondence_points_for_display();
+    correspondence_points = shape_->get_particles_for_display();
   } else {
-    correspondence_points = shape_->get_local_correspondence_points();
+    correspondence_points = shape_->get_particles().get_local_particles();
   }
 
-  int num_points = correspondence_points.size() / 3;
+  int num_points = 0;
+  for (int i = 0; i < correspondence_points.size(); i++) {
+    num_points += correspondence_points[i].size() / 3;
+  }
 
   vtkFloatArray *scalars = (vtkFloatArray *) (glyph_point_set_->GetPointData()->GetScalars());
 
@@ -865,6 +868,12 @@ void Viewer::update_points() {
     scalar_values = shape_->get_point_features(feature_map);
   }
 
+
+  auto domain_visibility = visualizer_->get_domain_particle_visibilities();
+  if (domain_visibility.size() != correspondence_points.size()) {
+    domain_visibility.resize(correspondence_points.size(), true);
+  }
+
   if (num_points > 0) {
     viewer_ready_ = true;
     glyphs_->SetRange(0.0, (double) num_points + 1);
@@ -873,19 +882,26 @@ void Viewer::update_points() {
     glyph_points_->Reset();
     scalars->Reset();
 
+    int point_index = 0;
     unsigned int idx = 0;
-    for (int i = 0; i < num_points; i++) {
-      double x = correspondence_points[idx++];
-      double y = correspondence_points[idx++];
-      double z = correspondence_points[idx++];
+    for (int d = 0; d < correspondence_points.size(); d++) {
+      int num_points_this_domain = correspondence_points[d].size() / 3;
 
-      if (slice_view_.should_point_show(x, y, z)) {
-        if (scalar_values.size() > i) {
-          scalars->InsertNextValue(scalar_values[i]);
-        } else {
-          scalars->InsertNextValue(i);
+      int d_index = 0;
+      for (int j = 0; j < num_points_this_domain; j++) {
+        double x = correspondence_points[d][d_index++];
+        double y = correspondence_points[d][d_index++];
+        double z = correspondence_points[d][d_index++];
+
+        if (slice_view_.should_point_show(x, y, z) && domain_visibility[d]) {
+          if (scalar_values.size() > point_index) {
+            scalars->InsertNextValue(scalar_values[point_index]);
+          } else {
+            scalars->InsertNextValue(point_index);
+          }
+          glyph_points_->InsertNextPoint(x, y, z);
         }
-        glyph_points_->InsertNextPoint(x, y, z);
+        point_index++;
       }
     }
   } else {
@@ -1156,10 +1172,10 @@ PickResult Viewer::handle_ctrl_click(int *click_pos) {
 }
 
 //-----------------------------------------------------------------------------
-void Viewer::set_lut(vtkSmartPointer<vtkLookupTable> lut) {
-  lut_ = lut;
+void Viewer::set_glyph_lut(vtkSmartPointer<vtkLookupTable> lut) {
+  glyph_lut_ = lut;
   if (!arrows_visible_ && !showing_feature_map()) {
-    glyph_mapper_->SetLookupTable(lut_);
+    glyph_mapper_->SetLookupTable(glyph_lut_);
   }
 }
 

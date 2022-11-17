@@ -109,7 +109,6 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
   ui_->qvtkWidget->installEventFilter(wheel_event_forwarder_.data());
   ui_->qvtkWidget->setContextMenuPolicy(Qt::CustomContextMenu);
 
-  create_glyph_submenu();
   // analysis tool initializations
   analysis_tool_ = QSharedPointer<AnalysisTool>::create(preferences_);
   analysis_tool_->set_app(this);
@@ -133,9 +132,6 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
   if (!preferences_.get_window_state().isEmpty()) {
     restoreState(preferences_.get_window_state());
   }
-
-
-
 
 
   // set to import
@@ -213,10 +209,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
   // glyph options signals/slots
   connect(ui_->glyphs_visible_button, SIGNAL(clicked()), this, SLOT(handle_glyph_changed()));
   connect(ui_->surface_visible_button, SIGNAL(clicked()), this, SLOT(handle_glyph_changed()));
-  connect(glyph_size_slider_, SIGNAL(valueChanged(int)), this, SLOT(handle_glyph_changed()));
-  connect(glyph_quality_slider_, SIGNAL(valueChanged(int)), this, SLOT(handle_glyph_changed()));
-  connect(glyph_auto_size_, &QCheckBox::clicked, this, &ShapeWorksStudioApp::handle_glyph_changed);
-  connect(glyph_arrow_scale_, &QCheckBox::clicked, this, &ShapeWorksStudioApp::handle_glyph_changed);
+
   preferences_.set_saved();
   enable_possible_actions();
 
@@ -521,14 +514,6 @@ void ShapeWorksStudioApp::enable_possible_actions() {
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::update_from_preferences() {
-  glyph_quality_slider_->setValue(preferences_.get_glyph_quality());
-  glyph_size_slider_->setValue(preferences_.get_glyph_size() * 10.0);
-  glyph_auto_size_->setChecked(preferences_.get_glyph_auto_size());
-  glyph_arrow_scale_->setChecked(preferences_.get_glyph_scale_arrows());
-  glyph_size_slider_->setEnabled(!glyph_auto_size_->isChecked());
-
-  glyph_quality_label_->setText(QString::number(preferences_.get_glyph_quality()));
-  glyph_size_label_->setText(QString::number(preferences_.get_glyph_size()));
 
   ui_->center_checkbox->setChecked(preferences_.get_center_checked());
 
@@ -740,10 +725,59 @@ void ShapeWorksStudioApp::create_glyph_submenu() {
   layout->addWidget(glyph_arrow_scale_, 2, 0, 1, 1);
   widget->setLayout(layout);
 
+
+  glyph_quality_slider_->setValue(preferences_.get_glyph_quality());
+  glyph_size_slider_->setValue(preferences_.get_glyph_size() * 10.0);
+  glyph_auto_size_->setChecked(preferences_.get_glyph_auto_size());
+  glyph_arrow_scale_->setChecked(preferences_.get_glyph_scale_arrows());
+  glyph_size_slider_->setEnabled(!glyph_auto_size_->isChecked());
+
+  glyph_quality_label_->setText(QString::number(preferences_.get_glyph_quality()));
+  glyph_size_label_->setText(QString::number(preferences_.get_glyph_size()));
+
+
+
+  connect(glyph_size_slider_, &QSlider::valueChanged, this, &ShapeWorksStudioApp::handle_glyph_changed);
+  connect(glyph_quality_slider_, &QSlider::valueChanged, this, &ShapeWorksStudioApp::handle_glyph_changed );
+  connect(glyph_auto_size_, &QCheckBox::clicked, this, &ShapeWorksStudioApp::handle_glyph_changed);
+  connect(glyph_arrow_scale_, &QCheckBox::clicked, this, &ShapeWorksStudioApp::handle_glyph_changed);
+
+
+
+
+  if (!session_) {
+    return;
+  }
+
+  auto project = session_->get_project();
+  auto domain_names = project->get_domain_names();
+  domain_particle_checkboxes_.clear();
+  if (domain_names.size() > 1) {
+    auto line = new QFrame(widget);
+    line->setObjectName(QString::fromUtf8("line"));
+    line->setGeometry(QRect(320, 150, 118, 3));
+    line->setFrameShape(QFrame::HLine);
+    line->setFrameShadow(QFrame::Sunken);
+    layout->addWidget(line, 3, 0, 1, 4);
+
+    int row = 4;
+    for (const auto& name : domain_names) {
+      auto checkbox = new QCheckBox("Show " + QString::fromStdString(name), widget);
+      checkbox->setChecked(true);
+      connect(checkbox, &QCheckBox::clicked, this, &ShapeWorksStudioApp::handle_glyph_changed);
+      domain_particle_checkboxes_.push_back(checkbox);
+      layout->addWidget(checkbox, row, 0);
+      row++;
+    }
+  }
+
   QWidgetAction *widget_action = new QWidgetAction(widget);
   widget_action->setDefaultWidget(widget);
   menu->addAction(widget_action);
   ui_->glyphs_visible_button->setMenu(menu);
+
+  glyph_quality_label_->setText(QString::number(preferences_.get_glyph_quality()));
+  glyph_size_label_->setText(QString::number(preferences_.get_glyph_size()));
 }
 
 //---------------------------------------------------------------------------
@@ -882,6 +916,7 @@ void ShapeWorksStudioApp::new_session() {
   groom_tool_->set_session(session_);
   optimize_tool_->set_session(session_);
   deepssm_tool_->set_session(session_);
+  create_glyph_submenu();
   create_iso_submenu();
 
   update_table();
@@ -1192,6 +1227,13 @@ void ShapeWorksStudioApp::handle_glyph_changed() {
   glyph_quality_label_->setText(QString::number(preferences_.get_glyph_quality()));
   glyph_size_label_->setText(QString::number(preferences_.get_glyph_size()));
   // update_display(true);
+
+  std::vector<bool> domains_to_display;
+  for (auto& checkbox : domain_particle_checkboxes_) {
+    domains_to_display.push_back(checkbox->isChecked());
+  }
+  visualizer_->set_domain_particle_visibilities(domains_to_display);
+
   visualizer_->update_viewer_properties();
 }
 
@@ -1409,7 +1451,6 @@ void ShapeWorksStudioApp::open_project(QString filename) {
   }
 
   session_->update_auto_glyph_size();
-  handle_glyph_changed();
 
   setWindowTitle(session_->get_display_name());
 
@@ -1420,7 +1461,11 @@ void ShapeWorksStudioApp::open_project(QString filename) {
 
   update_display(true);
 
+
+
+  create_glyph_submenu();
   create_iso_submenu();
+  handle_glyph_changed();
   handle_progress(100);
   SW_LOG("Project loaded: " + filename.toStdString());
 }
