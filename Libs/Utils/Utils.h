@@ -37,6 +37,7 @@
 #include <itkImage.h>
 #include <itkPoint.h>
 #include <vnl/vnl_matrix.h>
+#include <Eigen/Eigen>
 
 namespace utils //TODO: -> namespace shapeworks (need to change everywhere it's used
 {
@@ -228,6 +229,8 @@ public:
 
     // the exact method
     static double averageThetaArc(std::vector<double> thetas);
+    
+    static Eigen::MatrixXd vnlToEigen(const vnl_matrix<double> &vnl);
 
 private:
     // only good for positive numbers.

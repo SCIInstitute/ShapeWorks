@@ -77,6 +77,10 @@ public:
   void SetIterationCallbackFunction(const std::function<void(void)> &f)
   { this->m_iter_callback = f; }
 
+  void SetBeforeEvaluateCallbackFunction(const std::function<void(void)> &f);
+
+  void SetFactor(const double f);
+
   //! Abort optimization
   void AbortOptimization();
 
@@ -287,6 +291,21 @@ public:
   //! Return the particle system as a matrix
   MatrixContainer GetParticleSystem();
 
+  //! Return the shape gradient matrix
+  MatrixContainer GetShapeGradientMatrix();
+
+  //! Return the shape gradient matrix given a particle system
+  MatrixContainer GetShapeGradientMatrix(MatrixContainer positions);
+
+  //! Return the correspondence update matrix
+  MatrixContainer GetCorrespondenceUpdateMatrix();
+
+  //! Set the correspondence update matrix
+  void SetCorrespondenceUpdateMatrix(MatrixContainer matrix);
+
+  //! Set Covariance Matrix
+  void SetInputCovarianceMatrix(MatrixContainer matrix);
+
   //! Set the python file to run at startup
   void SetPythonFile(std::string filename);
 
@@ -300,6 +319,13 @@ public:
   shapeworks::OptimizationVisualizer &GetVisualizer();
   void SetShowVisualizer(bool show);
   bool GetShowVisualizer();
+
+
+  bool GetOptimizing() {
+    return this->m_optimizing;
+  }
+
+  double Get_MinimumVariance();
 
   bool GetMeshFFCMode(){return m_mesh_ffc_mode;}
 

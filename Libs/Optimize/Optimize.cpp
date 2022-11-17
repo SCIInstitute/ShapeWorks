@@ -337,6 +337,7 @@ Optimize::~Optimize()
 void Optimize::SetVerbosity(int verbosity_level)
 {
   this->m_verbosity_level = verbosity_level;
+  this->m_sampler->SetVerbosity(this->m_verbosity_level);
 }
 
 //---------------------------------------------------------------------------
@@ -2393,6 +2394,69 @@ MatrixContainer Optimize::GetParticleSystem()
 }
 
 //---------------------------------------------------------------------------
+MatrixContainer Optimize::GetShapeGradientMatrix()
+{
+  MatrixContainer container;
+  container.matrix_ = Utils::vnlToEigen(*(m_sampler->GetGeneralShapeGradientMatrix()));
+  return container;
+}
+
+//---------------------------------------------------------------------------
+MatrixContainer Optimize::GetShapeGradientMatrix(MatrixContainer positions)
+{
+  /*
+  
+  ShapeWorks/Libs/Optimize/Optimize.cpp:2416:37: error: ‘itk::ParticleSystem’ is not a template
+   itk::ParticleSystem::Pointer ps = itk::ParticleSystem<3>::New();
+   Need to fix this
+  */
+  // itk::ParticleSystem::Pointer ps = itk::ParticleSystem<3>::New();
+  // need to add domains, set positions, etc
+
+  MatrixContainer container;
+  container.matrix_ = Utils::vnlToEigen(*(m_sampler->GetGeneralShapeGradientMatrix()));
+  return container;
+}
+
+//---------------------------------------------------------------------------
+MatrixContainer Optimize::GetCorrespondenceUpdateMatrix()
+{
+  auto matrix = this->m_sampler->GetCorrespondencePointsUpdate();
+
+  MatrixContainer container;
+  container.matrix_ = Utils::vnlToEigen(*matrix);
+  return container;
+}
+
+//---------------------------------------------------------------------------
+void Optimize::SetCorrespondenceUpdateMatrix(MatrixContainer matrix)
+{
+  auto vnl = this->m_sampler->GetCorrespondencePointsUpdate();
+
+  auto eigen = matrix.matrix_;
+  vnl->set_size(eigen.rows(), eigen.cols());
+  for (int r = 0; r < eigen.rows(); r++) {
+    for (int c = 0; c < eigen.cols(); c++) {
+      vnl->put(r, c, eigen(r, c));
+    }
+  }
+}
+
+void Optimize::SetInputCovarianceMatrix(MatrixContainer matrix)
+{ 
+
+  auto eigen = matrix.matrix_;
+  auto vnl = this->m_sampler->GetInputCovarianceMatrix();
+
+  vnl->set_size(eigen.rows(), eigen.cols());
+  for (int r = 0; r < eigen.rows(); r++) {
+    for (int c = 0; c < eigen.cols(); c++) {
+      vnl->put(r, c, eigen(r, c));
+    }
+  }
+}
+
+//---------------------------------------------------------------------------
 std::string Optimize::GetCheckpointDir()
 {
   int num_digits = std::to_string(abs(m_total_iterations)).length();
@@ -2440,6 +2504,21 @@ void Optimize::SetGeodesicsEnabled(bool is_enabled)
 void Optimize::SetGeodesicsCacheSizeMultiplier(size_t n)
 {
   this->m_geodesic_cache_size_multiplier = n;
+}
+
+
+void Optimize::SetBeforeEvaluateCallbackFunction(const std::function<void(void)>& f)
+{
+  this->m_sampler->GetOptimizer()->SetBeforeEvaluateCallbackFunction(f);
+}
+
+double Optimize::Get_MinimumVariance()
+{
+  return this->m_sampler->Get_MinimumVariance();
+}
+void Optimize::SetFactor(const double f)
+{
+  this->m_sampler->GetOptimizer()->SetFactor(f);
 }
 
 //---------------------------------------------------------------------------

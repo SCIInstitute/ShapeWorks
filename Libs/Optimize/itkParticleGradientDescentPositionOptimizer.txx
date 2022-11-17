@@ -63,7 +63,14 @@ namespace itk
     if (this->m_AbortProcessing) {
       return;
     }
-    const double factor = 1.1;
+    double factor = 1.1;
+
+    if(m_factor!=0)
+    {
+    factor = m_factor;
+    }
+
+
 
     // NOTE: THIS METHOD WILL NOT WORK AS WRITTEN IF PARTICLES ARE
     // ADDED TO THE SYSTEM DURING OPTIMIZATION.
@@ -102,6 +109,12 @@ namespace itk
         if (counter % global_iteration == 0)
             m_GradientFunction->BeforeIteration();
         counter++;
+
+
+      if (this->m_BeforeEvaluateCallback) {
+        this->m_BeforeEvaluateCallback();
+      }
+
 
         // Iterate over each domain
       const auto domains_per_shape = m_ParticleSystem->GetDomainsPerShape();

@@ -77,8 +77,19 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
 //        pinvMat = (V * invLambda) * V.transpose();
 //        m_InverseCovMatrix = (U * invLambda) * U.transpose();
 
+
+        if (!m_InputCovariance->is_zero())
+        {
+
+        gramMat = *m_InputCovariance;
+
+        }  
+        else
+        {
+
         gramMat = points_minus_mean.transpose()* points_minus_mean;
 
+        }
         vnl_svd <double> svd(gramMat);
 
         vnl_matrix_type UG = svd.U();

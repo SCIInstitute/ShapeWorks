@@ -43,12 +43,18 @@ Sampler::Sampler() {
   m_MixedEffectsShapeMatrix = itk::ParticleShapeMixedEffectsMatrixAttribute<double, Dimension>::New();
 
   m_EnsembleEntropyFunction->SetShapeMatrix(m_ShapeMatrix);
+  m_EnsembleEntropyFunction->SetPointsUpdate(m_PointsUpdate);
 
   m_EnsembleRegressionEntropyFunction->SetShapeMatrix(m_LinearRegressionShapeMatrix);
+  m_EnsembleRegressionEntropyFunction->SetPointsUpdate(m_PointsUpdate);
+
   m_EnsembleMixedEffectsEntropyFunction->SetShapeMatrix(m_MixedEffectsShapeMatrix);
+  m_EnsembleRegressionEntropyFunction->SetPointsUpdate(m_PointsUpdate);
 
   m_MeshBasedGeneralEntropyGradientFunction->SetShapeData(m_GeneralShapeMatrix);
   m_MeshBasedGeneralEntropyGradientFunction->SetShapeGradient(m_GeneralShapeGradMatrix);
+  m_MeshBasedGeneralEntropyGradientFunction->SetPointsUpdate(m_PointsUpdate);
+  m_MeshBasedGeneralEntropyGradientFunction->SetInputCovarianceMatrix(m_InputCovariance);
 
   m_ParticleSystem->RegisterAttribute(m_ShapeMatrix);
   m_ParticleSystem->RegisterAttribute(m_LinearRegressionShapeMatrix);
@@ -414,6 +420,25 @@ void Sampler::AddImage(ImageType::Pointer image, double narrow_band, std::string
   domain->SetDomainName(name);
   m_DomainList.push_back(domain);
 }
+
+
+
+std::shared_ptr<vnl_matrix<double>> Sampler::GetCorrespondencePointsUpdate()
+{
+  return this->m_PointsUpdate;
+}
+
+std::shared_ptr<vnl_matrix<double>> Sampler::GetInputCovarianceMatrix()
+{
+  return this->m_InputCovariance;
+}
+
+double Sampler::Get_MinimumVariance()
+{
+ return this->m_MeshBasedGeneralEntropyGradientFunction->GetMinimumVariance();
+}
+
+
 
 bool Sampler::initialize_ffcs(size_t dom) {
   auto mesh = std::make_shared<Mesh>(m_meshes[dom]);

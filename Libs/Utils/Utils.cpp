@@ -493,6 +493,20 @@ double Utils::averageThetaBruteForce(std::vector<double> thetas, double dtheta)
     return mod2pi(besttheta);
 }
 
+Eigen::MatrixXd Utils::vnlToEigen(const vnl_matrix<double>& vnl)
+{
+  Eigen::MatrixXd matrix;
+  matrix.resize(vnl.rows(), vnl.cols());
+
+  for (int i = 0; i < vnl.rows(); i++) {
+    for (int j = 0; j < vnl.cols(); j++) {
+      matrix(i, j) = vnl.get(i, j);
+    }
+  }
+
+  return matrix;
+}
+
 // the chord method
 double Utils::averageThetaChord(std::vector<double> thetas)
 {
