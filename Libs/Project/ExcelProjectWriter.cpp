@@ -10,29 +10,20 @@ namespace shapeworks {
 //---------------------------------------------------------------------------
 static int get_index_for_column(xlnt::worksheet& ws, const std::string& name) {
   auto headers = ws.rows(false)[0];
-  // std::cerr << "Get index for column: " << name << "\n";
-  // std::cerr << "number of headers = " << headers.length() << "\n";
   for (int i = 0; i < headers.length(); i++) {
-    // std::cerr << "header: " << headers[i].to_string() << "\n";
     if (headers[i].to_string() == name) {
       return i + 1;
     }
   }
 
-  // std::cerr << "couldn't find: " << name << "\n";
   auto column = ws.highest_column();
-  // std::cerr << "highest column is " << column.index << "\n";
   if (ws.cell(xlnt::cell_reference(column.index, 1)).value<std::string>().empty()) {
     ws.cell(xlnt::cell_reference(column.index, 1)).value(name);
-    // std::cerr << "returning " << column.index << "\n";
     return column.index;
   } else {
     ws.cell(xlnt::cell_reference(column.index + 1, 1)).value(name);
-    // std::cerr << "returning " << column.index + 1 << "\n";
     return column.index + 1;
   }
-
-  return -1;
 }
 
 //---------------------------------------------------------------------------
@@ -44,35 +35,6 @@ static void set_value(xlnt::worksheet& ws, int column, int subject_id, const std
 static void set_value(xlnt::worksheet& ws, const std::string& column_name, int subject_id, const std::string& value) {
   int column_index = get_index_for_column(ws, column_name);
   set_value(ws, column_index, subject_id + 2, value);  // +1 for header, +1 for 1-indexed
-}
-
-//---------------------------------------------------------------------------
-static void assign_keys(xlnt::worksheet& ws, int subject_id, std::vector<std::string> prefixes,
-                        std::vector<std::string> filenames, std::vector<std::string> domains) {
-  if (filenames.empty()) {
-    return;
-  }
-  assert(!prefixes.empty());
-  assert(!domains.empty());
-  if (prefixes.empty()) {
-    throw std::runtime_error("Empty prefixes");
-  }
-  if (domains.empty()) {
-    throw std::runtime_error("Empty domains");
-  }
-  auto prefix = prefixes[0];
-  if (filenames.size() != domains.size()) {
-    throw std::runtime_error(prefix + " filenames (" + std::to_string(filenames.size()) + ") and number of domains (" +
-                             std::to_string(domains.size()) + ") mismatch");
-  }
-  for (int i = 0; i < domains.size(); i++) {
-    if (prefixes.size() == domains.size()) {
-      prefix = prefixes[i];
-    }
-    std::string key = prefix + "_" + domains[i];
-    std::string value = filenames[i];
-    set_value(ws, key, subject_id, value);
-  }
 }
 
 //---------------------------------------------------------------------------
@@ -92,7 +54,7 @@ static void store_subjects(Project& project, xlnt::workbook& wb) {
 }
 
 //---------------------------------------------------------------------------
-static int get_or_create_worksheet(xlnt::workbook& wb, std::string name) {
+static size_t get_or_create_worksheet(xlnt::workbook& wb, const std::string& name) {
   if (wb.contains(name)) {
     auto ws = wb.sheet_by_title(name);
     return wb.index(ws);
@@ -104,9 +66,9 @@ static int get_or_create_worksheet(xlnt::workbook& wb, std::string name) {
 }
 
 //---------------------------------------------------------------------------
-static void create_parameter_sheet(xlnt::workbook& wb, std::string name, Parameters params,
-                                   std::string domain_name = "") {
-  int id = get_or_create_worksheet(wb, name);
+static void create_parameter_sheet(xlnt::workbook& wb, const std::string& name, Parameters params,
+                                   const std::string& domain_name = "") {
+  auto id = get_or_create_worksheet(wb, name);
   auto ws = wb.sheet_by_index(id);
   ws.cell(xlnt::cell_reference(1, 1)).value("key");
   ws.cell(xlnt::cell_reference(2, 1)).value("value");
@@ -123,17 +85,17 @@ static void create_parameter_sheet(xlnt::workbook& wb, std::string name, Paramet
   }
 
   int row = 2;
-  for (const auto& kv : params.get_map()) {
-    ws.cell(xlnt::cell_reference(key_column, row)).value(kv.first);
-    ws.cell(xlnt::cell_reference(value_column, row)).value(kv.second);
+  for (auto& [key, value] : params.get_map()) {
+    ws.cell(xlnt::cell_reference(key_column, row)).value(key);
+    ws.cell(xlnt::cell_reference(value_column, row)).value(value);
     row++;
   }
 }
 
 //---------------------------------------------------------------------------
-static void create_parameter_map_sheet(xlnt::workbook& wb, std::string name,
-                                       std::map<std::string, Parameters> parameter_map) {
-  for (auto& [key, params] : parameter_map) {
+static void create_parameter_map_sheet(xlnt::workbook& wb, const std::string& name,
+                                       const std::map<std::string, Parameters>& parameter_map) {
+  for (const auto& [key, params] : parameter_map) {
     create_parameter_sheet(wb, name, params, key);
   }
 }
@@ -145,7 +107,7 @@ static void store_landmark_definitions(Project& project, xlnt::workbook& wb) {
     wb.remove_sheet(wb.sheet_by_title(name));
   }
 
-  int id = get_or_create_worksheet(wb, name);
+  auto id = get_or_create_worksheet(wb, name);
   auto ws = wb.sheet_by_index(id);
 
   auto domain_names = project.get_domain_names();
@@ -173,7 +135,7 @@ static void store_landmark_definitions(Project& project, xlnt::workbook& wb) {
 }
 
 //---------------------------------------------------------------------------
-bool ExcelProjectWriter::write_project(Project& project, std::string filename) {
+bool ExcelProjectWriter::write_project(Project& project, const std::string& filename) {
   auto wb = xlnt::workbook{};
 
   store_subjects(project, wb);
