@@ -10,31 +10,37 @@ import ShapeCohortGen
 
 def Run_Pipeline(args):
 
-    # Select sorting type
-    sorting_type = input("\nPlease enter method of sorting to use. Options:{random, median, distribution} Default: median \nSorting type: ")
-    if sorting_type not in ['random','median','distribution']:
-        sorting_type = 'median'
-    print("Using", sorting_type, "sorting.")
+    # Set options
+    if args.interactive:
+        # Select sorting type
+        sorting_type = input("\nPlease enter method of sorting to use. Options:{random, median, distribution} Default: median \nSorting type: ")
+        if sorting_type not in ['random','median','distribution']:
+            sorting_type = 'median'
+        print("Using", sorting_type, "sorting.")
 
-    # Set initial model size
-    initial_model_size_input = input("\nPlease enter the number of shapes to use in the initial model. Options:{2, 3, ..., 50} Default: 10 \nInitial shapes: ")
-    try:
-        initial_model_size = int(initial_model_size_input)
-        if initial_model_size < 2 or initial_model_size > 50:
+        # Set initial model size
+        initial_model_size_input = input("\nPlease enter the number of shapes to use in the initial model. Options:{2, 3, ..., 50} Default: 10 \nInitial shapes: ")
+        try:
+            initial_model_size = int(initial_model_size_input)
+            if initial_model_size < 2 or initial_model_size > 50:
+                initial_model_size=10
+        except:
             initial_model_size=10
-    except:
-        initial_model_size=10
-    print("Using", initial_model_size, "initial shapes.")
+        print("Using", initial_model_size, "initial shapes.")
 
-    # Set batch size
-    incremental_batch_size_input = input("\nPlease enter the number of shapes in a batch to incrementally add. Options:{1, 2, ...} Default: 5 \nIncremental batch size: ")
-    try:
-        incremental_batch_size = int(incremental_batch_size_input)
-        if incremental_batch_size < 1 or incremental_batch_size > (50-initial_model_size):
-            incremental_batch_size = 5  
-    except:
+        # Set batch size
+        incremental_batch_size_input = input("\nPlease enter the number of shapes in a batch to incrementally add. Options:{1, 2, ...} Default: 5 \nIncremental batch size: ")
+        try:
+            incremental_batch_size = int(incremental_batch_size_input)
+            if incremental_batch_size < 1 or incremental_batch_size > (50-initial_model_size):
+                incremental_batch_size = 5  
+        except:
+            incremental_batch_size=5
+        print("Using an incremental batch size of", incremental_batch_size, ".")
+    else:
+        sorting_type = 'median'
+        initial_model_size=10
         incremental_batch_size=5
-    print("Using an incremental batch size of", incremental_batch_size, ".")
 
 
     print("\nStep 1. Extract Data")
@@ -184,9 +190,10 @@ def Run_Pipeline(args):
     subprocess.check_call(optimize_cmd)
 
     # Analyze initial model
-    print("\nOpening studio to display initial model. \nClose studio to continue running the use case.\n")
-    analyze_cmd = ('ShapeWorksStudio ' + spreadsheet_file).split()
-    subprocess.check_call(analyze_cmd)
+    if args.interactive:
+        print("\nOpening studio to display initial model. \nClose studio to continue running the use case.\n")
+        analyze_cmd = ('ShapeWorksStudio ' + spreadsheet_file).split()
+        subprocess.check_call(analyze_cmd)
 
     """
     Step 4: Incrementally optimize 

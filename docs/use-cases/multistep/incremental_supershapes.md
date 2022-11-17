@@ -7,7 +7,7 @@ The use case dataset is comprised of parameterized meshes called Supershapes gen
 There are 50 meshes that vary greatly in shape. They have 2 to 7 lobes, and the parameters are sampled from a chi-squared distribution. The function used to generate the data is included in the Python script.
 
 ## Use Case Options
-When this use case is run, the user is prompted to set the following options: sorting method, initial model size, and incremental batch size.
+When this use case is run with the `--interactive` tag, the user is prompted to set the following options: sorting method, initial model size, and incremental batch size.
 
 ### Sorting Method
 The sorting method determines how the shapes are sorted to be added incrementally. There are three options:
@@ -32,6 +32,7 @@ Here are some examples of the meshes:
 [--use_subsample](../use-cases.md#-use_subsample)
 [--num_subsample](../use-cases.md#-use_subsample)
 [--tiny_test](../use-cases.md#-tiny_test)
+[--interactive](../use-cases.md#-interactive)
 
 ## Incremental Optimization
 In incremental optimization, an initial shape model is fit by running optimization as usual. Additional shapes are then added, and the shape model is incrementally updated by initializing particles using the previous shape model and running optimization again. The mean particles from the existing shape model are used to initialize particles on new shapes.
