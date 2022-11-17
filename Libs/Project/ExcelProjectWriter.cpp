@@ -76,68 +76,16 @@ static void assign_keys(xlnt::worksheet& ws, int subject_id, std::vector<std::st
 }
 
 //---------------------------------------------------------------------------
-static std::string transform_to_string(std::vector<double> transform) {
-  std::string str;
-  for (int j = 0; j < transform.size(); j++) {
-    if (j == 0) {
-      str = std::to_string(transform[j]);
-    } else {
-      str = str + " " + std::to_string(transform[j]);
-    }
-  }
-  return str;
-}
-
-//---------------------------------------------------------------------------
-static void assign_transforms(xlnt::worksheet& ws, int subject_id, std::string prefix,
-                              std::vector<std::vector<double>> transforms, std::vector<std::string> domains) {
-  if (transforms.empty()) {
-    return;
-  }
-  if (transforms.size() != domains.size()) {
-    throw std::runtime_error(prefix + " filenames and number of domains mismatch");
-  }
-  for (int i = 0; i < domains.size(); i++) {
-    std::string key = prefix + "_" + domains[i];
-    std::string value = transform_to_string(transforms[i]);
-    set_value(ws, key, subject_id, value);
-  }
-}
-
-//---------------------------------------------------------------------------
 static void store_subjects(Project& project, xlnt::workbook& wb) {
-  auto subjects = project.get_subjects();
-  auto domains = project.get_domain_names();
-  auto domains_plus_global = project.get_domain_names();
-  if (domains.size() > 1) {
-    domains_plus_global.push_back("global");
-  }
-
   xlnt::worksheet ws = wb.sheet_by_index(0);
   ws.title("data");
 
+  auto subjects = project.get_subjects();
   for (int i = 0; i < subjects.size(); i++) {
     auto subject = subjects[i];
-    set_value(ws, "name", i, subject->get_display_name());
-    auto original_prefixes = ProjectUtils::convert_domain_types(project.get_original_domain_types());
-    auto groomed_prefixes = ProjectUtils::convert_groomed_domain_types(project.get_groomed_domain_types());
-    assign_keys(ws, i, original_prefixes, subject->get_original_filenames(), domains);
-    for (auto& [key, value] : subject->get_feature_filenames()) {
-      set_value(ws, "image_" + key, i, value);
-    }
-    for (auto& [key, value] : subject->get_group_values()) {
-      set_value(ws, "group_" + key, i, value);
-    }
-    assign_keys(ws, i, {"landmarks_file"}, subject->get_landmarks_filenames(), domains);
-    assign_keys(ws, i, {"constraints"}, subject->get_constraints_filenames(), domains);
-    assign_keys(ws, i, groomed_prefixes, subject->get_groomed_filenames(), domains);
-    assign_keys(ws, i, {"local_particles"}, subject->get_local_particle_filenames(), domains);
-    assign_keys(ws, i, {"world_particles"}, subject->get_world_particle_filenames(), domains);
-    assign_transforms(ws, i, {"alignment"}, subject->get_groomed_transforms(), domains_plus_global);
-    assign_transforms(ws, i, {"procrustes"}, subject->get_procrustes_transforms(), domains);
+    auto map = ProjectUtils::convert_subject_to_map(&project, subject.get());
 
-    // write out extra values
-    for (auto& [key, value] : subject->get_extra_values()) {
+    for (auto& [key, value] : map) {
       set_value(ws, key, i, value);
     }
   }
