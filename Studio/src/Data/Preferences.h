@@ -71,6 +71,9 @@ class Preferences : public QObject {
   void set_color_scheme(int value);
   int get_color_scheme();
 
+  void set_particle_colors(int value);
+  int get_particle_colors();
+
   void set_color_map(int value);
   int get_color_map();
 

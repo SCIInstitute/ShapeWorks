@@ -336,6 +336,7 @@ Parameters Project::get_parameters(const std::string& name, std::string domain_n
 std::map<std::string, Parameters> Project::get_parameter_map(const std::string& name) {
   std::map<std::string, Parameters> map;
   auto domains = get_domain_names();
+  domains.insert(domains.begin(), 1, ""); // add global parameters
   for (int i = 0; i < domains.size(); i++) {
     map[domains[i]] = get_parameters(name, domains[i]);
   }

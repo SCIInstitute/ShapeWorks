@@ -126,6 +126,12 @@ class Visualizer : public QObject {
   //! Get domain opacities
   std::vector<float> get_opacities();
 
+  //! Set the per-domain particle visibilities
+  void set_domain_particle_visibilities(std::vector<bool> visibilities);
+
+  //! Get the per-domain particle visibilities
+  std::vector<bool> get_domain_particle_visibilities();
+
   //! Get the current glyph size
   double get_current_glyph_size();
 
@@ -182,6 +188,7 @@ class Visualizer : public QObject {
   bool feature_range_valid_ = false;
   bool feature_range_uniform_ = true;
 
+  std::vector<bool> domain_particle_visibilities_;
   std::vector<float> opacities_;
 
   double current_glyph_size_{0};

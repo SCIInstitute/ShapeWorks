@@ -49,7 +49,7 @@ namespace shapeworks {
  * \code
  * int mode = 10;
  * double eigen_value = 42.3;
- * SW_LOG("eigen value [{}]: {}", mode, eigen_value);
+ * SW_LOG("eigen value [{}]: {:.2f}", mode, eigen_value);
  * \endcode
  *
  * Output:
@@ -145,6 +145,9 @@ class Logging {
 //! Log debug macro
 #define SW_DEBUG(message, ...) \
   shapeworks::Logging::Instance().log_debug(fmt::format(message, ##__VA_ARGS__), __LINE__, __FILE__)
+
+//! Variable trace macro (e.g. output variable name = <variable value>)
+#define SW_TRACE(x) SW_DEBUG(#x" = {}",x);
 
 //! Log show message macro
 #define SW_MESSAGE(message, ...) \

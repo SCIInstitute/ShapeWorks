@@ -196,6 +196,7 @@ SET(STUDIO_VISUALIZATION_SRCS
   Visualization/LandmarkWidget.cpp
   Visualization/PlaneWidget.cpp
   Visualization/PaintWidget.cpp
+  Visualization/ParticleColors.cpp
   Visualization/StudioInteractorStyle.cpp
   Visualization/StudioSliceInteractorStyle.cpp
   Visualization/SliceView.cpp
@@ -208,8 +209,9 @@ SET(STUDIO_VISUALIZATION_SRCS
 
 SET(STUDIO_VISUALIZATION_MOC_HDRS
   Visualization/Lightbox.h
-  Visualization/Visualizer.h
+  Visualization/ParticleColors.h
   Visualization/StudioVtkOutputWindow.h
+  Visualization/Visualizer.h
 )
 
 SET(STUDIO_SRCS
