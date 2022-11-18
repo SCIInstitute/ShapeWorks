@@ -60,6 +60,8 @@ def Run_Pipeline(args):
         sw.data.download_subset(args.use_case, dataset_name, output_directory)
         mesh_files = sorted(glob.glob(output_directory +
                             dataset_name + "/meshes/*.ply"))[:3]
+        initial_model_size = 1
+        incremental_batch_size =1
     # else download the entire dataset
     else:
         sw.data.download_and_unzip_dataset(dataset_name, output_directory)
