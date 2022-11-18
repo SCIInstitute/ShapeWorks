@@ -11,7 +11,6 @@ namespace shapeworks {
 //---------------------------------------------------------------------------
 static json create_data_object(Project& project) {
   auto subjects = project.get_subjects();
-  auto domains = project.get_domain_names();
 
   std::vector<json> list;
   for (int i = 0; i < subjects.size(); i++) {
