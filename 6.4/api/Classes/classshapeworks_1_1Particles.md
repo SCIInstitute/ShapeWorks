@@ -35,6 +35,7 @@ Representation of correspondence points for a shape including multiple domains. 
 | int | **[get_domain_for_combined_id](../Classes/classshapeworks_1_1Particles.md#function-get-domain-for-combined-id)**(int id)<br>Return which domain a particle belongs to when they are concatenated together.  |
 | void | **[set_transform](../Classes/classshapeworks_1_1Particles.md#function-set-transform)**(vtkSmartPointer< vtkTransform > transform) |
 | void | **[set_procrustes_transforms](../Classes/classshapeworks_1_1Particles.md#function-set-procrustes-transforms)**(const std::vector< vtkSmartPointer< vtkTransform > > & transforms) |
+| void | **[set_alignment_type](../Classes/classshapeworks_1_1Particles.md#function-set-alignment-type)**(int alignment) |
 | Eigen::VectorXd | **[get_difference_vectors](../Classes/classshapeworks_1_1Particles.md#function-get-difference-vectors)**(const [Particles](../Classes/classshapeworks_1_1Particles.md) & other) const |
 | void | **[save_particles_file](../Classes/classshapeworks_1_1Particles.md#function-save-particles-file)**(std::string filename, const Eigen::VectorXd & points) |
 
@@ -208,6 +209,15 @@ void set_procrustes_transforms(
 ```
 
 
+### function set_alignment_type
+
+```cpp
+void set_alignment_type(
+    int alignment
+)
+```
+
+
 ### function get_difference_vectors
 
 ```cpp
@@ -229,4 +239,4 @@ static void save_particles_file(
 
 -------------------------------
 
-Updated on 2022-11-16 at 06:00:35 +0000
+Updated on 2022-11-18 at 17:37:27 +0000

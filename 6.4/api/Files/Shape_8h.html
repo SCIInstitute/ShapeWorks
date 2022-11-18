@@ -2350,6 +2350,8 @@
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_particle_transform</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkTransform</span><span class="o">&gt;</span><span class="w"> </span><span class="n">transform</span><span class="p">);</span><span class="w"></span>
 
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_alignment_type</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">alignment</span><span class="p">);</span><span class="w"></span>
+
 <span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="nf">get_global_correspondence_points</span><span class="p">();</span><span class="w"></span>
 
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_particles_for_display</span><span class="p">();</span><span class="w"></span>
@@ -2458,11 +2460,12 @@
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">image_volume_filename_</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Constraints</span><span class="o">&gt;</span><span class="w"> </span><span class="n">constraints_</span><span class="p">;</span><span class="w">  </span><span class="c1">// one set for each domain</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">alignment_type_</span><span class="p">;</span><span class="w"></span>
 <span class="p">};</span><span class="w"></span>
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-11-16 at 06:00:36 +0000</p>
+<p>Updated on 2022-11-18 at 17:37:28 +0000</p>
 
               
             </article>

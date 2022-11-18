@@ -46,7 +46,8 @@ Representation of a single shape/patient/subject.
 | bool | **[store_constraints](../Classes/classshapeworks_1_1Shape.md#function-store-constraints)**()<br>Store constraints.  |
 | void | **[set_particles](../Classes/classshapeworks_1_1Shape.md#function-set-particles)**([Particles](../Classes/classshapeworks_1_1Particles.md) particles) |
 | [Particles](../Classes/classshapeworks_1_1Particles.md) | **[get_particles](../Classes/classshapeworks_1_1Shape.md#function-get-particles)**() |
-| void | **[set_particle_transform](../Classes/classshapeworks_1_1Shape.md#function-set-particle-transform)**(vtkSmartPointer< vtkTransform > transform) |
+| void | **[set_particle_transform](../Classes/classshapeworks_1_1Shape.md#function-set-particle-transform)**(vtkSmartPointer< vtkTransform > transform)<br>Set the particle transform (alignment)  |
+| void | **[set_alignment_type](../Classes/classshapeworks_1_1Shape.md#function-set-alignment-type)**(int alignment)<br>Set the alignment type.  |
 | Eigen::VectorXd | **[get_global_correspondence_points](../Classes/classshapeworks_1_1Shape.md#function-get-global-correspondence-points)**()<br>Get the global correspondence points.  |
 | std::vector< Eigen::VectorXd > | **[get_particles_for_display](../Classes/classshapeworks_1_1Shape.md#function-get-particles-for-display)**()<br>Get the global correspondence points for display.  |
 | Eigen::VectorXd | **[get_local_correspondence_points](../Classes/classshapeworks_1_1Shape.md#function-get-local-correspondence-points)**()<br>Get the local correspondence points.  |
@@ -297,6 +298,17 @@ void set_particle_transform(
 )
 ```
 
+Set the particle transform (alignment) 
+
+### function set_alignment_type
+
+```cpp
+void set_alignment_type(
+    int alignment
+)
+```
+
+Set the alignment type. 
 
 ### function get_global_correspondence_points
 
@@ -617,4 +629,4 @@ std::vector< std::shared_ptr< VtkMeshWrapper > > get_groomed_mesh_wrappers()
 
 -------------------------------
 
-Updated on 2022-11-16 at 06:00:35 +0000
+Updated on 2022-11-18 at 17:37:27 +0000

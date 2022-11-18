@@ -107,6 +107,8 @@ class Shape {
 
   void set_particle_transform(vtkSmartPointer<vtkTransform> transform);
 
+  void set_alignment_type(int alignment);
+
   Eigen::VectorXd get_global_correspondence_points();
 
   std::vector<Eigen::VectorXd> get_particles_for_display();
@@ -215,6 +217,7 @@ class Shape {
   std::string image_volume_filename_;
 
   std::vector<Constraints> constraints_;  // one set for each domain
+  int alignment_type_;
 };
 }  // namespace shapeworks
 ```
@@ -222,4 +225,4 @@ class Shape {
 
 -------------------------------
 
-Updated on 2022-11-16 at 06:00:36 +0000
+Updated on 2022-11-18 at 17:37:28 +0000

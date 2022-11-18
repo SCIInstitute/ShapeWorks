@@ -69,6 +69,7 @@ class Particles {
 
   void set_transform(vtkSmartPointer<vtkTransform> transform);
   void set_procrustes_transforms(const std::vector<vtkSmartPointer<vtkTransform>>& transforms);
+  void set_alignment_type(int alignment);
 
   Eigen::VectorXd get_difference_vectors(const Particles& other) const;
 
@@ -89,6 +90,8 @@ class Particles {
 
   vtkSmartPointer<vtkTransform> transform_;
   std::vector<vtkSmartPointer<vtkTransform>> procrustes_transforms_;
+  int alignment_type_;
+
 };
 }  // namespace shapeworks
 ```
@@ -96,4 +99,4 @@ class Particles {
 
 -------------------------------
 
-Updated on 2022-11-16 at 06:00:36 +0000
+Updated on 2022-11-18 at 17:37:28 +0000

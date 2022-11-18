@@ -87,7 +87,7 @@ Example:
 ```cpp
 int mode = 10;
 double eigen_value = 42.3;
-SW_LOG("eigen value [{}]: {}", mode, eigen_value);
+SW_LOG("eigen value [{}]: {:.2f}", mode, eigen_value);
 ```
 
 Output: 
@@ -264,4 +264,4 @@ Set a debug messagecallback function to be called whenever a debug message is po
 
 -------------------------------
 
-Updated on 2022-11-16 at 06:00:36 +0000
+Updated on 2022-11-18 at 17:37:28 +0000

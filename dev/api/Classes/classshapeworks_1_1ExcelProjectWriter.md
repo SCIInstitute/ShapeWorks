@@ -17,7 +17,7 @@ Excel file format writer for [Project]().  [More...](#detailed-description)
 
 |                | Name           |
 | -------------- | -------------- |
-| bool | **[write_project](../Classes/classshapeworks_1_1ExcelProjectWriter.md#function-write-project)**([Project](../Classes/classshapeworks_1_1Project.md) & project, std::string filename) |
+| bool | **[write_project](../Classes/classshapeworks_1_1ExcelProjectWriter.md#function-write-project)**([Project](../Classes/classshapeworks_1_1Project.md) & project, const std::string & filename) |
 
 ## Detailed Description
 
@@ -36,11 +36,11 @@ This class enables writing of [Project](../Classes/classshapeworks_1_1Project.md
 ```cpp
 static bool write_project(
     Project & project,
-    std::string filename
+    const std::string & filename
 )
 ```
 
 
 -------------------------------
 
-Updated on 2022-11-16 at 06:00:34 +0000
+Updated on 2022-11-18 at 17:37:27 +0000

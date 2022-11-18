@@ -2387,6 +2387,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-set_alignment_type" class="md-nav__link">
+    function set_alignment_type
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-get_global_correspondence_points" class="md-nav__link">
     function get_global_correspondence_points
   </a>
@@ -2803,7 +2810,11 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Shape.html#function-set-particle-transform">set_particle_transform</a></strong>(vtkSmartPointer&lt; vtkTransform &gt; transform)</td>
+<td><strong><a href="classshapeworks_1_1Shape.html#function-set-particle-transform">set_particle_transform</a></strong>(vtkSmartPointer&lt; vtkTransform &gt; transform)<br>Set the particle transform (alignment)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Shape.html#function-set-alignment-type">set_alignment_type</a></strong>(int alignment)<br>Set the alignment type.</td>
 </tr>
 <tr>
 <td>Eigen::VectorXd</td>
@@ -3077,6 +3088,13 @@
 <span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkTransform</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">transform</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
+<p>Set the particle transform (alignment) </p>
+<h3 id="function-set_alignment_type">function set_alignment_type</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_alignment_type</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">alignment</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>Set the alignment type. </p>
 <h3 id="function-get_global_correspondence_points">function get_global_correspondence_points</h3>
 <div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">get_global_correspondence_points</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
@@ -3239,7 +3257,7 @@
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VtkMeshWrapper</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_groomed_mesh_wrappers</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-11-16 at 06:00:35 +0000</p>
+<p>Updated on 2022-11-18 at 17:37:27 +0000</p>
 
               
             </article>

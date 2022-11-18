@@ -34,10 +34,9 @@ namespace shapeworks {
 
 class ExcelProjectWriter {
  public:
-  static bool write_project(Project& project, std::string filename);
+  static bool write_project(Project& project, const std::string& filename);
 
-private:
-
+ private:
 };
 }  // namespace shapeworks
 ```
@@ -45,4 +44,4 @@ private:
 
 -------------------------------
 
-Updated on 2022-11-16 at 06:00:36 +0000
+Updated on 2022-11-18 at 17:37:28 +0000
