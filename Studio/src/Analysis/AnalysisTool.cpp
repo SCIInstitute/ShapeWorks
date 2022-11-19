@@ -33,7 +33,6 @@ const std::string AnalysisTool::MODE_PCA_C("pca");
 const std::string AnalysisTool::MODE_MCA_C("mca");
 const std::string AnalysisTool::MODE_SINGLE_SAMPLE_C("single sample");
 const std::string AnalysisTool::MODE_REGRESSION_C("regression");
-const unsigned int AnalysisTool::MCA_TAB_INDEX(3);
 
 //---------------------------------------------------------------------------
 AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
@@ -67,11 +66,10 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
   connect(ui_->pcaAnimateCheckBox, SIGNAL(stateChanged(int)), this, SLOT(handle_pca_animate_state_changed()));
   connect(&pca_animate_timer_, SIGNAL(timeout()), this, SLOT(handle_pca_timer()));
 
-  //MLCA animation  
-  connect(ui_->mcaAnimateCheckBox, SIGNAL(stateChanged(int)), this, SLOT(handle_mca_animate_state_changed()));
+  //MCA animation  
   connect(ui_->mcaLevelBetweenButton, SIGNAL(clicked()), this, SLOT(mca_between_radio_toggled()));
   connect(ui_->mcaLevelWithinButton, SIGNAL(clicked()), this, SLOT(mca_within_radio_toggled()));
-  connect(&mca_animate_timer_, SIGNAL(timeout()), this, SLOT(handle_mca_timer()));
+  connect(ui_->vanillaPCAButton, SIGNAL(clicked()), this, SLOT(mca_vanilla_pca_radio_toggled()));
 
   // group animation
   connect(ui_->group_animate_checkbox, &QCheckBox::stateChanged, this,
@@ -90,8 +88,7 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
   ui_->metrics_open_button->setChecked(false);
 
   /// TODO nothing there yet (regression tab)
-  // Tab 3 - now for MLCA 
-  ui_->tabWidget->removeTab(MCA_TAB_INDEX+1);
+  ui_->tabWidget->removeTab(3);
 
   for (auto button : {ui_->distance_transfom_radio_button, ui_->mesh_warping_radio_button, ui_->legacy_radio_button}) {
     connect(button, &QRadioButton::clicked, this, &AnalysisTool::reconstruction_method_changed);
@@ -123,14 +120,15 @@ std::string AnalysisTool::get_analysis_mode() {
       return AnalysisTool::MODE_SINGLE_SAMPLE_C;
     }
   }
-
   if (ui_->tabWidget->currentWidget() == ui_->mean_tab) {
     return AnalysisTool::MODE_MEAN_C;
   }
-  if (ui_->tabWidget->currentWidget() == ui_->pca_tab) {
+  auto domain_names = session_->get_project()->get_domain_names();
+  bool multiple_domains = domain_names.size() > 1;
+  if (ui_->tabWidget->currentWidget() == ui_->pca_tab && !multiple_domains) {
     return AnalysisTool::MODE_PCA_C;
   }
-  if (ui_->tabWidget->currentWidget() == ui_->mca_tab) {
+  if (ui_->tabWidget->currentWidget() == ui_->pca_tab && multiple_domains) {
     return AnalysisTool::MODE_MCA_C;
   }
   if (ui_->tabWidget->currentWidget() == ui_->regression_tab) {
@@ -155,6 +153,11 @@ std::vector<Shape::Point> AnalysisTool::get_group_difference_vectors() {
     vecs.push_back(tmp);
   }
   return vecs;
+}
+//---------------------------------------------------------------------------
+void AnalysisTool::mca_vanilla_pca_radio_toggled()
+{ 
+  Q_EMIT mca_update();
 }
 
 //---------------------------------------------------------------------------
@@ -207,12 +210,6 @@ void AnalysisTool::on_reconstructionButton_clicked() {
 int AnalysisTool::get_pca_mode() { return ui_->pcaModeSpinBox->value() - 1; }
 
 //---------------------------------------------------------------------------
-int AnalysisTool::getMCAMode()
-{
-  return ui_->mcaModeSpinBox->value() - 1;
-}
-
-//---------------------------------------------------------------------------
 double AnalysisTool::get_group_ratio() {
   double group_slider_value = ui_->group_slider->value();
   double group_ratio = group_slider_value / static_cast<double>(ui_->group_slider->maximum());
@@ -223,12 +220,6 @@ double AnalysisTool::get_group_ratio() {
 bool AnalysisTool::pca_animate() { return ui_->pcaAnimateCheckBox->isChecked(); }
 
 //---------------------------------------------------------------------------
-bool AnalysisTool::mcaAnimate()
-{
-  return ui_->mcaAnimateCheckBox->isChecked();
-}
-
-//---------------------------------------------------------------------------
 void AnalysisTool::set_labels(QString which, QString value) {
   if (which == QString("pca")) {
     ui_->pcaValueLabel->setText(value);
@@ -236,14 +227,6 @@ void AnalysisTool::set_labels(QString which, QString value) {
     ui_->pcaEigenValueLabel->setText(value);
   } else if (which == QString("lambda")) {
     ui_->pcaLambdaLabel->setText(value);
-  } else if (which == QString("mca")) {
-    ui_->mcaValueLabel->setText(value);
-  }
-  else if (which == QString("mcaeigen")) {
-    ui_->mcaEigenValueLabel->setText(value);
-  }
-  else if (which == QString("mcalambda")) {
-    ui_->mcaLambdaLabel->setText(value);
   }
 }
 
@@ -326,16 +309,14 @@ void AnalysisTool::handle_analysis_options() {
     ui_->pcaSlider->setEnabled(true);
     ui_->pcaAnimateCheckBox->setEnabled(true);
     ui_->pcaModeSpinBox->setEnabled(true);
-  } else if (ui_->tabWidget->currentWidget() == ui_->mca_tab){
-    // mca mode
-    ui_->sampleSpinBox->setEnabled(false);
-    ui_->medianButton->setEnabled(false);
-    ui_->mcaSlider->setEnabled(true);
-    ui_->mcaAnimateCheckBox->setEnabled(true);
-    ui_->mcaModeSpinBox->setEnabled(true);
-    ui_->mcaLevelWithinButton->setEnabled(true);
-    ui_->mcaLevelBetweenButton->setEnabled(true);
-    ui_->mcaLevelWithinButton->setChecked(true);
+    auto domain_names = session_->get_project()->get_domain_names();
+    bool multiple_domains = domain_names.size() > 1;
+    if (multiple_domains) {
+      ui_->vanillaPCAButton->setEnabled(true);
+      ui_->mcaLevelWithinButton->setEnabled(true);
+      ui_->mcaLevelBetweenButton->setEnabled(true);
+      ui_->vanillaPCAButton->setChecked(true);
+    }
   } else {
     // regression mode
     ui_->sampleSpinBox->setEnabled(false);
@@ -446,7 +427,6 @@ bool AnalysisTool::compute_stats() {
   compute_reconstructed_domain_transforms();
 
   ui_->pcaModeSpinBox->setMaximum(std::max<double>(1, session_->get_shapes().size() - 1));
-  ui_->mcaModeSpinBox->setMaximum(std::max<double>(1, session_->get_shapes().size() - 1));
 
   std::vector<Eigen::VectorXd> points;
   std::vector<int> group_ids;
@@ -462,9 +442,6 @@ bool AnalysisTool::compute_stats() {
 
   auto domain_names = session_->get_project()->get_domain_names();
   unsigned int dps = domain_names.size();
-  if (dps == 1){
-    ui_->tabWidget->setTabEnabled(MCA_TAB_INDEX, false); // disable multi level analysis tab if only one domain/object is present
-  }
   number_of_particles_ar.resize(dps);
   bool flag_get_num_part = false;
   for (auto& shape : session_->get_shapes()) {
@@ -511,7 +488,7 @@ bool AnalysisTool::compute_stats() {
   }
 
   stats_.ImportPoints(points, group_ids);
-  // MLCA needs to know number of particles per domain/object
+  // MCA needs to know number of particles per domain/object
   stats_.SetNumberOfParticlesAr(number_of_particles_ar);
   if(dps > 1){ stats_.ComputeMultiLevelAnalysisStatistics(points, dps); }
   stats_.ComputeModes();
@@ -634,12 +611,12 @@ Particles AnalysisTool::get_multi_level_shape_points(int mode, double value, int
 {
  Eigen::MatrixXd eigenvectors;
  std::vector<double> eigenvalues;
- if(level == 1)
+ if(level == 2)
  {
    eigenvectors = stats_.EigenvectorsShapeDev();
    eigenvalues = stats_.EigenvaluesShapeDev();
  }
- else if (level == 2)
+ else if (level == 3)
  {
    eigenvectors = stats_.EigenvectorsRelPose();
    eigenvalues = stats_.EigenvaluesRelPose();
@@ -653,7 +630,7 @@ Particles AnalysisTool::get_multi_level_shape_points(int mode, double value, int
   unsigned int m = eigenvectors.cols() - (mode + 1);
   Eigen::VectorXd e = eigenvectors.col(m);
   double lambda = sqrt(eigenvalues[m]);
-  mca_labels_changed(QString::number(value, 'g', 2), QString::number(eigenvalues[m]), QString::number(value * lambda));
+  pca_labels_changed(QString::number(value, 'g', 2), QString::number(eigenvalues[m]), QString::number(value * lambda));
   std::vector<double> vals;
   for (int i = eigenvalues.size() - 1; i > 0; i--) {
     vals.push_back(eigenvalues[i]);
@@ -664,12 +641,12 @@ Particles AnalysisTool::get_multi_level_shape_points(int mode, double value, int
     cumulation += vals[i];
   }
   if (sum > 0) {
-    ui_->mca_explained_variance->setText(QString::number(vals[mode] / sum * 100, 'f', 1) + "%");
-    ui_->mca_cumulative_explained_variance->setText(QString::number(cumulation / sum * 100, 'f', 1) + "%");
+    ui_->explained_variance->setText(QString::number(vals[mode] / sum * 100, 'f', 1) + "%");
+    ui_->cumulative_explained_variance->setText(QString::number(cumulation / sum * 100, 'f', 1) + "%");
   }
   else {
-    ui_->mca_explained_variance->setText("");
-    ui_->mca_cumulative_explained_variance->setText("");
+    ui_->explained_variance->setText("");
+    ui_->cumulative_explained_variance->setText("");
   }
   Eigen::VectorXd shape_dev_mean = stats_.MeanShapeDev(); // 3M
   Eigen::VectorXd rel_pose_mean_ = stats_.MeanRelPose(); // 3K 
@@ -690,12 +667,12 @@ Particles AnalysisTool::get_multi_level_shape_points(int mode, double value, int
   }
   Eigen::VectorXd new_mean = shape_dev_mean + e_rel_pose_mean_reshaped;
 
-  if(level == 1){
+  if(level == 2){
     // temp_shape_mca = stats_.Mean() + (e * (value * lambda));
     temp_shape_mca = new_mean + (e * (value * lambda));
 
   }
-  else if(level == 2){
+  else if(level == 3){
     Eigen::VectorXd e_between;
     e_between.resize(sz);
     for(unsigned int i = 0; i < D; i++){
@@ -752,7 +729,6 @@ void AnalysisTool::store_settings() {
 //---------------------------------------------------------------------------
 void AnalysisTool::shutdown() { 
   pca_animate_timer_.stop();
-  mca_animate_timer_.stop();
 }
 
 //---------------------------------------------------------------------------
@@ -836,17 +812,16 @@ void AnalysisTool::on_tabWidget_currentChanged() { update_analysis_mode(); }
 void AnalysisTool::on_pcaSlider_valueChanged() {
   // this will make the slider handle redraw making the UI appear more responsive
   QCoreApplication::processEvents();
-
-  Q_EMIT pca_update();
+  auto domain_names = session_->get_project()->get_domain_names();
+  bool multiple_domains = domain_names.size() > 1;
+  if (multiple_domains){
+    Q_EMIT mca_update();
+  }
+  else {
+    Q_EMIT pca_update();
+  }
 }
 
-//---------------------------------------------------------------------------
-void AnalysisTool::on_mcaSlider_valueChanged()
-{
-  QCoreApplication::processEvents();
-
-  Q_EMIT mca_update();
-}
 
 //---------------------------------------------------------------------------
 void AnalysisTool::on_group_slider_valueChanged() {
@@ -862,10 +837,17 @@ void AnalysisTool::on_group_slider_valueChanged() {
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::on_pcaModeSpinBox_valueChanged(int i) { Q_EMIT pca_update(); }
+void AnalysisTool::on_pcaModeSpinBox_valueChanged(int i) {
+  auto domain_names = session_->get_project()->get_domain_names();
+  bool multiple_domains = domain_names.size() > 1;
+  if (multiple_domains){
+    Q_EMIT mca_update();
+  }
+  else {
+    Q_EMIT pca_update();
+  }
 
-//---------------------------------------------------------------------------
-void AnalysisTool::on_mcaModeSpinBox_valueChanged(int i) { Q_EMIT mca_update(); }
+}
 
 //---------------------------------------------------------------------------
 void AnalysisTool::handle_pca_animate_state_changed() {
@@ -874,18 +856,6 @@ void AnalysisTool::handle_pca_animate_state_changed() {
     pca_animate_timer_.start();
   } else {
     pca_animate_timer_.stop();
-  }
-}
-
-//---------------------------------------------------------------------------
-void AnalysisTool::handle_mca_animate_state_changed() {
-  if(mcaAnimate())
-  {
-    mca_animate_timer_.setInterval(10);
-    mca_animate_timer_.start();
-  }
-  else{
-    mca_animate_timer_.stop();
   }
 }
 
@@ -909,30 +879,6 @@ void AnalysisTool::handle_pca_timer() {
   ui_->pcaSlider->setValue(value);
 }
 
-//---------------------------------------------------------------------------
-void AnalysisTool::handle_mca_timer() {
-  if(!mcaAnimate())
-  {
-    return;
-  }
-
-  int value = ui_->mcaSlider->value();
-  if(mca_animate_direction_) 
-  {
-    value += ui_->mcaSlider->singleStep();
-  }
-  else{
-    value -= ui_->mcaSlider->singleStep();
-  }
-
-  if(value >= ui_->mcaSlider->maximum() || value <= ui_->mcaSlider->minimum())
-  {
-    mca_animate_direction_ = !mca_animate_direction_;
-  }
-
-  ui_->mcaSlider->setValue(value);
-
-}
 
 //---------------------------------------------------------------------------
 void AnalysisTool::handle_group_animate_state_changed() {
@@ -945,24 +891,18 @@ void AnalysisTool::handle_group_animate_state_changed() {
 }
 
 //---------------------------------------------------------------------------
-double AnalysisTool::get_mca_value() {
-  int slider_value = ui_->mcaSlider->value();
-  float range = preferences_.get_pca_range();
-  int halfRange = ui_->mcaSlider->maximum();
-
-  double value = (double) slider_value / (double) halfRange * range;
-  return value;
-}
-
-//---------------------------------------------------------------------------
 int AnalysisTool::get_mca_level() {
+  bool vanilla_pca = ui_->vanillaPCAButton->isChecked();
   bool between = ui_->mcaLevelBetweenButton->isChecked();
   bool within = ui_->mcaLevelWithinButton->isChecked();
-  if(within){
+  if (vanilla_pca){
     return 1;
   }
-  if(between){
+  else if(within){
     return 2;
+  }
+  else if(between){
+    return 3;
   }
 }
 
@@ -1001,27 +941,10 @@ void AnalysisTool::pca_labels_changed(QString value, QString eigen, QString lamb
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::mca_labels_changed(QString value, QString eigen, QString lambda)
-{
-  set_labels(QString("mca"), value);
-  set_labels(QString("mcaeigen"), eigen);
-  set_labels(QString("mcalambda"), lambda);
-}
-
-//---------------------------------------------------------------------------
 void AnalysisTool::update_slider() {
   auto steps = preferences_.get_pca_steps();
   auto sliderRange = ui_->pcaSlider->maximum() - ui_->pcaSlider->minimum();
   ui_->pcaSlider->setSingleStep(sliderRange / steps);
-}
-
-//---------------------------------------------------------------------------
-void AnalysisTool::updateMcaSlider()
-{
-  auto steps = preferences_.get_pca_steps();
-  auto sliderRange = ui_->mcaSlider->maximum() - ui_->mcaSlider->minimum();
-  ui_->mcaSlider->setSingleStep(sliderRange / steps);
-
 }
 
 //---------------------------------------------------------------------------
@@ -1036,13 +959,15 @@ void AnalysisTool::reset_stats() {
   ui_->pcaModeSpinBox->setEnabled(false);
   ui_->pcaAnimateCheckBox->setChecked(false);
   // MLCA
-  ui_->mcaSlider->setEnabled(false);
-  ui_->mcaAnimateCheckBox->setEnabled(false);
-  ui_->mcaModeSpinBox->setEnabled(false);
-  ui_->mcaAnimateCheckBox->setChecked(false);
-  ui_->mcaLevelWithinButton->setChecked(true);
-  ui_->mcaLevelWithinButton->setEnabled(false);
-  ui_->mcaLevelBetweenButton->setEnabled(false);
+  auto domain_names = session_->get_project()->get_domain_names();
+  bool multiple_domains = domain_names.size() > 1;
+  if (multiple_domains) {
+    ui_->vanillaPCAButton->setChecked(true);
+    ui_->mcaLevelWithinButton->setEnabled(false);
+    ui_->mcaLevelWithinButton->setEnabled(false);
+    ui_->mcaLevelBetweenButton->setEnabled(false);
+  }
+
   stats_ready_ = false;
   evals_ready_ = false;
   stats_ = ParticleShapeStatistics();
@@ -1087,9 +1012,11 @@ void AnalysisTool::set_analysis_mode(std::string mode) {
     ui_->tabWidget->setCurrentWidget(ui_->pca_tab);
   } else if (mode == "regression") {
     ui_->tabWidget->setCurrentWidget(ui_->regression_tab);
-  } else if (mode == "mca"){
-    ui_->tabWidget->setCurrentWidget(ui_->mca_tab);
-    ui_->mcaLevelWithinButton->setChecked(true);
+  } 
+  else if (mode == "mca"){
+    ui_->tabWidget->setCurrentWidget(ui_->pca_tab);
+    ui_->vanillaPCAButton->setChecked(true);
+    ui_->mcaLevelWithinButton->setChecked(false);
     ui_->mcaLevelBetweenButton->setChecked(false);
   } 
 }
@@ -1256,6 +1183,7 @@ void AnalysisTool::update_domain_alignment_box() {
 
   bool multiple_domains = domain_names.size() > 1;
   ui_->reference_domain_widget->setVisible(multiple_domains);
+  ui_->mca_groupBox->setVisible(multiple_domains);
   ui_->reference_domain->clear();
   if (multiple_domains) {
     ui_->reference_domain->addItem("Global Alignment");
@@ -1583,8 +1511,6 @@ void AnalysisTool::set_active(bool active) {
   if (!active) {
     ui_->pcaAnimateCheckBox->setChecked(false);
     pca_animate_timer_.stop();
-    ui_->mcaAnimateCheckBox->setChecked(false);
-    mca_animate_timer_.stop();
   }
   active_ = active;
   update_interface();

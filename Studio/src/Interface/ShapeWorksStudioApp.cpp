@@ -633,12 +633,6 @@ void ShapeWorksStudioApp::handle_mca_changed()
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::handle_mca_slider_update()
-{
-  analysis_tool_->updateMcaSlider();
-}
-
-//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_pca_update() {
   if (analysis_tool_->get_active() && analysis_tool_->get_analysis_mode() == AnalysisTool::MODE_PCA_C) {
     compute_mode_shape();
@@ -850,6 +844,7 @@ void ShapeWorksStudioApp::handle_new_mesh() {
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_clear_cache() {
   handle_pca_changed();
+  handle_mca_changed();
   if (session_) {
     session_->handle_clear_cache();
   }
@@ -1194,7 +1189,6 @@ void ShapeWorksStudioApp::handle_display_setting_changed() {
   if (analysis_tool_->pca_animate()) {
     return;
   }
-  if (analysis_tool_->mcaAnimate()) { return; }
   update_display(true);
 }
 
@@ -1734,10 +1728,16 @@ void ShapeWorksStudioApp::compute_mode_shape() {
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::compute_mca_mode_shape()
 {
-  int mca_mode = analysis_tool_->getMCAMode();
-  double mca_value = analysis_tool_->get_mca_value();
+  int pca_mode = analysis_tool_->get_pca_mode();
+  double pca_value = analysis_tool_->get_pca_value();
   int mca_level = analysis_tool_->get_mca_level();
-  visualizer_->display_shape(analysis_tool_->get_mca_mode_shape(mca_mode, mca_value, mca_level));
+  if (mca_level == 1) {
+     visualizer_->display_shape(analysis_tool_->get_mode_shape(pca_mode, pca_value));
+  }
+  else {
+    visualizer_->display_shape(analysis_tool_->get_mca_mode_shape(pca_mode, pca_value, mca_level));
+  }
+
 }
 
 //---------------------------------------------------------------------------
@@ -2100,7 +2100,7 @@ void ShapeWorksStudioApp::update_view_combo() {
   if (analysis_mode) {
     mode = analysis_tool_->get_analysis_mode();
   }
-  if (mode == AnalysisTool::MODE_MEAN_C || mode == AnalysisTool::MODE_PCA_C) {
+  if (mode == AnalysisTool::MODE_MEAN_C || mode == AnalysisTool::MODE_PCA_C || mode == AnalysisTool::MODE_MCA_C) {
     set_view_combo_item_enabled(DisplayMode::Original, false);
     set_view_combo_item_enabled(DisplayMode::Groomed, false);
   }

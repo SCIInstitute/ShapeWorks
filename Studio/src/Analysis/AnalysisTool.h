@@ -66,23 +66,19 @@ class AnalysisTool : public QWidget {
   void set_labels(QString which, QString value);
 
   int get_pca_mode();
-  int getMCAMode();
 
   double get_group_ratio();
 
   double get_pca_value();
-  double get_mca_value();
 
   bool pca_animate();
   int get_mca_level();
-  bool mcaAnimate();
 
   int get_sample_number();
 
   bool compute_stats();
 
   void update_slider();
-  void updateMcaSlider();
 
   void reset_stats();
   void enable_actions(bool newly_enabled = false);
@@ -111,7 +107,6 @@ class AnalysisTool : public QWidget {
   static const std::string MODE_MCA_C;
   static const std::string MODE_SINGLE_SAMPLE_C;
   static const std::string MODE_REGRESSION_C;
-  static const unsigned int MCA_TAB_INDEX;
 
  public Q_SLOTS:
 
@@ -143,11 +138,8 @@ class AnalysisTool : public QWidget {
   void on_reconstructionButton_clicked();
 
 
-  //MLCA
-  void on_mcaSlider_valueChanged();
-  void on_mcaModeSpinBox_valueChanged(int i);
-  void handle_mca_animate_state_changed();
-  void handle_mca_timer();
+  //MCA
+  void mca_vanilla_pca_radio_toggled();
   void mca_between_radio_toggled();
   void mca_within_radio_toggled();
 
@@ -205,7 +197,6 @@ class AnalysisTool : public QWidget {
   bool active_ = false;
 
   void pca_labels_changed(QString value, QString eigen, QString lambda);
-  void mca_labels_changed(QString value, QString eigen, QString lambda);
   void compute_mca_mode_shape();
   void compute_mode_shape();
   void update_analysis_mode();
@@ -250,9 +241,6 @@ class AnalysisTool : public QWidget {
 
   bool pca_animate_direction_ = true;
   QTimer pca_animate_timer_;
-
-  bool mca_animate_direction_ = true;
-  QTimer mca_animate_timer_;
 
   bool group_animate_direction_ = true;
   QTimer group_animate_timer_;
