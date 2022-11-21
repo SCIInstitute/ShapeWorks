@@ -615,7 +615,12 @@ void Viewer::display_shape(std::shared_ptr<Shape> shape) {
 
   bool compare_ready = true;
   if (compare_settings.compare_enabled_) {
-    compare_meshes_ = shape->get_meshes(compare_settings.get_display_mode());
+    if (compare_settings.get_mean_shape_checked()) {
+      compare_meshes_ = visualizer_->get_mean_shape()->get_meshes(DisplayMode::Reconstructed);
+    } else {
+      compare_meshes_ = shape->get_meshes(compare_settings.get_display_mode());
+    }
+
     compare_ready = compare_meshes_.valid();
   }
 
@@ -653,7 +658,7 @@ void Viewer::display_shape(std::shared_ptr<Shape> shape) {
     for (size_t i = 0; i < meshes_.meshes().size(); i++) {
       MeshHandle mesh = meshes_.meshes()[i];
 
-      vtkSmartPointer<vtkPolyData> poly_data = mesh->get_poly_data();
+      auto poly_data = mesh->get_poly_data();
 
       auto feature_map = get_displayed_feature_map();
 
@@ -694,6 +699,20 @@ void Viewer::display_shape(std::shared_ptr<Shape> shape) {
         // compute surface to surface distance
         Mesh m(poly_data);
         auto compare_poly_data = compare_meshes_.meshes()[i]->get_poly_data();
+
+        if (compare_settings.get_mean_shape_checked()) {
+          auto transform =
+              visualizer_->get_transform(shape_, compare_settings.get_display_mode(), visualizer_->get_alignment_domain(), i);
+
+          transform->Inverse();
+          auto transform_filter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+          transform_filter->SetInputData(compare_poly_data);
+          transform_filter->SetTransform(transform);
+          transform_filter->Update();
+
+          compare_poly_data = transform_filter->GetOutput();
+        }
+
         Mesh m2(compare_poly_data);
         auto field = m.distance(m2)[0];
         m.setField("distance", field, Mesh::Point);
@@ -1026,7 +1045,7 @@ void Viewer::insert_compare_meshes() {
 
   for (size_t i = 0; i < compare_meshes_.meshes().size(); i++) {
     MeshHandle mesh = compare_meshes_.meshes()[i];
-    vtkSmartPointer<vtkPolyData> poly_data = mesh->get_poly_data();
+    auto poly_data = mesh->get_poly_data();
     auto mapper = compare_mappers_[i];
     auto actor = compare_actors_[i];
 
@@ -1050,7 +1069,15 @@ void Viewer::insert_compare_meshes() {
         }
         */
 
-    actor->SetUserTransform(transform);
+    if (settings.get_mean_shape_checked()) {
+      // mean shape will already be in place and doesn't need the local to global transform
+      auto identity = vtkSmartPointer<vtkTransform>::New();
+      identity->Identity();
+      actor->SetUserTransform(identity);
+    } else {
+      actor->SetUserTransform(transform);
+
+    }
     mapper->SetInputData(poly_data);
 
     int domain_scheme = (scheme_ + i + 1) % color_schemes_.size();
