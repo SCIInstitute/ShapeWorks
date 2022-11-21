@@ -68,7 +68,16 @@ QToolButton::menu-arrow {
 
 QToolButton::menu-arrow:open {
     top: 1px; left: 1px; /* shift it a bit */
-}</string>
+}
+
+QToolBar QToolButton {
+    border: none
+}
+
+QToolBar QToolButton::checked {
+	background-color: rgb(185, 185, 185);
+}
+</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
