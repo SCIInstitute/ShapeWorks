@@ -1572,6 +1572,40 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#use-case-options" class="md-nav__link">
+    Use Case Options
+  </a>
+  
+    <nav class="md-nav" aria-label="Use Case Options">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sorting-method" class="md-nav__link">
+    Sorting Method
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#initial-model-size" class="md-nav__link">
+    Initial Model Size
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#incremental-batch-size" class="md-nav__link">
+    Incremental Batch Size
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#grooming-steps" class="md-nav__link">
     Grooming Steps
   </a>
@@ -1607,19 +1641,12 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#comparison-to-single-optimization" class="md-nav__link">
-    Comparison to Single Optimization
+  <a href="#evaluation-of-the-benefits-of-incremental-optimization" class="md-nav__link">
+    Evaluation of the Benefits of Incremental Optimization
   </a>
   
-    <nav class="md-nav" aria-label="Comparison to Single Optimization">
+    <nav class="md-nav" aria-label="Evaluation of the Benefits of Incremental Optimization">
       <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#full-dataset" class="md-nav__link">
-    Full Dataset
-  </a>
-  
-</li>
         
           <li class="md-nav__item">
   <a href="#subsample-of-dataset" class="md-nav__link">
@@ -2311,6 +2338,40 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#use-case-options" class="md-nav__link">
+    Use Case Options
+  </a>
+  
+    <nav class="md-nav" aria-label="Use Case Options">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sorting-method" class="md-nav__link">
+    Sorting Method
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#initial-model-size" class="md-nav__link">
+    Initial Model Size
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#incremental-batch-size" class="md-nav__link">
+    Incremental Batch Size
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#grooming-steps" class="md-nav__link">
     Grooming Steps
   </a>
@@ -2346,19 +2407,12 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#comparison-to-single-optimization" class="md-nav__link">
-    Comparison to Single Optimization
+  <a href="#evaluation-of-the-benefits-of-incremental-optimization" class="md-nav__link">
+    Evaluation of the Benefits of Incremental Optimization
   </a>
   
-    <nav class="md-nav" aria-label="Comparison to Single Optimization">
+    <nav class="md-nav" aria-label="Evaluation of the Benefits of Incremental Optimization">
       <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#full-dataset" class="md-nav__link">
-    Full Dataset
-  </a>
-  
-</li>
         
           <li class="md-nav__item">
   <a href="#subsample-of-dataset" class="md-nav__link">
@@ -2392,9 +2446,21 @@
 
 <h1 id="incremental-supershapes-building-a-shape-model-incrementally">Incremental Supershapes: Building a Shape Model Incrementally</h1>
 <h2 id="what-is-the-use-case">What is the Use Case?</h2>
-<p>The <code>incremental_supershapes</code> use case demonstrates how a shape model can be built incrementally. This approach is beneficial in two scenarios. The first is when the cohort of shapes is very large, where optimizing particle position across all shapes at once would take a very long time. In this case, by fitting a shape model on a subset of the data, then incrementally updating the shape model using the previous model as initialization, the total time for optimization can be greatly reduced. The second scenario is when the dataset is small but contains a large amount of shape variation. In this case, by initally fitting a model on the most similar shapes, then incrementally adding outlier shapes, we can achieve a more compact shape model with better correspondence then if we were to optimize on the whole dataset at once.</p>
+<p>The <code>incremental_supershapes</code> use case demonstrates how a shape model can be built incrementally. This approach is beneficial in two scenarios. The first is when the cohort of shapes is very large, where optimizing particle position across all shapes at once would take a very long time. In this case, by fitting a shape model on a subset of the data, then incrementally updating the shape model using the previous model as initialization, the total time for optimization can be greatly reduced. The second scenario is when the dataset is small but contains a large amount of shape variation. In this case, by initially fitting a model on the most similar shapes, then incrementally adding outlier shapes, we can achieve a more compact shape model with better correspondence than if we were to optimize the whole dataset at once.</p>
 <p>The use case dataset is comprised of parameterized meshes called Supershapes generated using the ShapeWorks <a href="../../notebooks/getting-started-with-shape-cohort-generation.html">Shape Cohort Generation</a> package.
-There are 50 meshes that vary greatly in shape. They have 2 to 7 lobes and the parameters are sampled from a chi-squared distribution. The function used to generate the data is included in the Python script.</p>
+There are 50 meshes that vary greatly in shape. They have 2 to 7 lobes, and the parameters are sampled from a chi-squared distribution. The function used to generate the data is included in the Python script.</p>
+<h2 id="use-case-options">Use Case Options</h2>
+<p>When this use case is run with the <code>--interactive</code> tag, the user is prompted to set the following options: sorting method, initial model size, and incremental batch size.</p>
+<h3 id="sorting-method">Sorting Method</h3>
+<p>The sorting method determines how the shapes are sorted to be added incrementally. There are three options:
+        - random : This option results in sorting the shapes randomly. It may be appropriate to use when the cohort of shapes is very large and the effect of outliers is likely small.
+        - median : When this option is used, the pairwise surface-to-surface distance between all of the meshes is first computed. Then the median shape (the shape with minimum distance to all other shapes) is found. The meshes are then sorted from closest to the median to furthest. The shapes furthest from the median typically represent outliers.
+        - distribution : Similar to median, when this option is used, the pairwise surface-to-surface distances are computed and the median mesh is selected. We then incrementally add one mesh at a time to the distribution (starting with the median), selecting the mesh with minimum distance to all others in the distribution. This results in meshes sorted from most inlying to most outlying. 
+The default option is median.</p>
+<h3 id="initial-model-size">Initial Model Size</h3>
+<p>The initial model size specifies how many shapes to use in the initial optimization. This can range between 2 and 50 and the default value is 10. Note when 50 is used, all of the shapes are used in the initial model; thus the use case is not incremental. The initial shapes are the first of the sorted shapes. After the initial shape model is optimized, Studio opens to allow for visualization. Incremental optimization pursues after Studio is closed.</p>
+<h3 id="incremental-batch-size">Incremental Batch Size</h3>
+<p>The incremental batch size specifies how many shapes to add in each incremental optimization. This can range from 1 to (50 - initial model size) and the default is 5. After all batches have been incrementally optimized, Studio opens to allow for visualization.</p>
 <h2 id="grooming-steps">Grooming Steps</h2>
 <p>In this use case, the Superhapes are generated so that they are already aligned/groomed.
 Here are some examples of the meshes:
@@ -2402,14 +2468,14 @@ Here are some examples of the meshes:
 <h2 id="relevant-arguments">Relevant Arguments</h2>
 <p><a href="../use-cases.html#-use_subsample">--use_subsample</a>
 <a href="../use-cases.html#-use_subsample">--num_subsample</a>
-<a href="../use-cases.html#-tiny_test">--tiny_test</a></p>
+<a href="../use-cases.html#-tiny_test">--tiny_test</a>
+<a href="../use-cases.html#-interactive">--interactive</a></p>
 <h2 id="incremental-optimization">Incremental Optimization</h2>
-<p>In incremental optimization an intial shape model is fit by running optimization as usual. Additional shapes are then added and the shape model is incrementally updated by initalizing particles using the previous shape model and running optimization again. The mean particles from the existing shape model are used to initalize particles on new shapes.</p>
-<p>We define the order in which shapes are added so that particles are fit to inlier shapes first, then outliers. This results in quicker optimization and a better shape model. To determine this order we sort the meshes using surface-to-surface distance to a reference mesh so that they are ordered from least unque to most unique, then create batches.</p>
-<p>The first batch is used to create an initial shape model and the remaining batches are incrementally added and optimized on.</p>
+<p>In incremental optimization, an initial shape model is fit by running optimization as usual. Additional shapes are then added, and the shape model is incrementally updated by initializing particles using the previous shape model and running optimization again. The mean particles from the existing shape model are used to initialize particles on new shapes.</p>
+<p>The order in which shapes are added depends on the specified sorting method. The first batch is used to create an initial shape model and the remaining batches are incrementally added and optimized.</p>
 <h2 id="optimization-parameters">Optimization Parameters</h2>
 <p>The python code for the use case calls the <code>optimize</code> command of ShapeWorks, which requires that the optimization parameters are specified in a python dictionary. Please refer to <a href="../../workflow/optimize.html#parameter-dictionary-in-python">Parameter Dictionary in Python</a> for more details. </p>
-<p>Here are the parameters used for optimizing the intial shape model:
+<p>Here are the parameters used for optimizing the initial shape model:
 <div class="highlight"><pre><span></span><code><span class="p">{</span>        
         <span class="s2">&quot;number_of_particles&quot;</span><span class="p">:</span> <span class="mi">128</span><span class="p">,</span>
         <span class="s2">&quot;use_normals&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
@@ -2432,7 +2498,7 @@ Here are some examples of the meshes:
         <span class="s2">&quot;multiscale_particles&quot;</span><span class="p">:</span> <span class="mi">32</span>
 <span class="p">}</span>
 </code></pre></div>
-After the initial optimization, the follwoing parameters are updated for each incremental optimization:
+After the initial optimization, the following parameters are updated for each incremental optimization:
 <div class="highlight"><pre><span></span><code><span class="p">{</span>        
         <span class="s2">&quot;use_landmarks&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
         <span class="s2">&quot;iterations_per_split&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
@@ -2440,21 +2506,21 @@ After the initial optimization, the follwoing parameters are updated for each in
         <span class="s2">&quot;multiscale&quot;</span><span class="p">:</span> <span class="mi">0</span>
 <span class="p">}</span>
 </code></pre></div>
-Here "use_landmarks" enables particle initalization. We use single scale optimization with no initialization iterations since the particles are already intialzed by the former shape model or mean particles. We can also reduce the optization iterations as we are not starting from scratch.</p>
+Here "use_landmarks" enables particle initialization. We use single scale optimization with no initialization iterations since the particles are already initialized by the former shape model or mean particles. We can also reduce the optimization iterations as we are not starting from scratch.</p>
 <h2 id="analyzing-shape-model">Analyzing Shape Model</h2>
-<p>Below is the intial shape model after optimizing on the first batch of 10 meshes. We can see all 10 are relatively similar. 
+<p>The following example output was generated using the default options: median sorting, initial model size of 10, and incremental batch size of 5.</p>
+<p>Below is the initial shape model after optimizing on the first batch of 10 meshes. We can see all 10 are relatively similar. 
 <img alt="Intial Incremental Optimization" src="../../img/use-cases/intial_supershapes_model.png" /></p>
 <p>Below is the final shape model after incrementally adding batches and running optimization. We can see the shape model accurately captures the original shapes as well as the more unique ones.
 <img alt="Final Incremental Optimization" src="../../img/use-cases/final_supershapes_model.png" /></p>
 <p>Here is the mean shape of the final shape model along the first PCA mode. Almost all of the variance is captured by the first four PCA modes.
 <img alt="Mean" src="https://sci.utah.edu/~shapeworks/doc-resources/gifs/mean_supershapes.gif" /></p>
-<h2 id="comparison-to-single-optimization">Comparison to Single Optimization</h2>
-<h3 id="full-dataset">Full Dataset</h3>
-<p>To see the benefit of incremental optimization, we can compare the results of this use case to the results we'd get from running a single optimization on all of the shapes at once. For a far comparison, the single optimization is done using the same parameters as the intial optimization in the incremental case, except the number of optimization iterations is increased to match the total number of optimization iterations performed across the entire incremental process.</p>
-<p>By comparing the vairance graphs below, we can see that the incremental optimization results in a mode compact shape model. In the shape model optimized incrementally the primary mode of variation exaplins 82.1% of the shape variation whereas in the shape model optimized all at once, the primary mode only captures 71.6% of the shape variation. If we double the amount of optimization iterations in the single optimization case, we get closer to the incremental model, with 75.3% of the variation captured by the first mode. But the model is still not as compact and takes much longer to run.</p>
+<h2 id="evaluation-of-the-benefits-of-incremental-optimization">Evaluation of the Benefits of Incremental Optimization</h2>
+<p>To see the benefit of incremental optimization, we can compare the results from running the use case with different options. 
+By comparing the variance graphs below, we can see that the incremental optimization results in a mode compact shape model. Sorting the shapes using either median or distribution so that optimization is done on inliers first and then outliers are incrementally added, results in a better model.</p>
 <p><img alt="Variance Graphs" src="../../img/use-cases/variance_graphs.png" /></p>
 <h3 id="subsample-of-dataset">Subsample of Dataset</h3>
-<p>The benefit of incremental optimization is even more apparent in the case where the datsaset is small and varies greatly. To see this we can run the use case with the <code>--use_subsample</code> tag. The subsample is automatically selected using clustering so that it is representative of the entire dataset, thus it is defined to have as much variation as possible. For example, when <code>--num_subsample</code> is set to 9, the selected meshes are shown below.</p>
+<p>The benefit of incremental optimization is even more apparent in the case where the dataset is small and varies greatly. To see this, we can run the use case with the <code>--use_subsample</code> tag. The subsample is automatically selected using clustering so that it is representative of the entire dataset, thus it is defined to have as much variation as possible. For example, when <code>--num_subsample</code> is set to 9, the selected meshes are shown below.</p>
 <p><img alt="Subset Meshes" src="../../img/use-cases/subsample_supershapes.png" /></p>
 <p>Below is the first mode of variation from the shape model optimized incrementally on the subset. 
 <img alt="Subset Incremental Model" src="https://sci.utah.edu/~shapeworks/doc-resources/gifs/incremental_supershapes_subset.gif" /></p>
