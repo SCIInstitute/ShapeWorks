@@ -67,6 +67,8 @@ class Visualizer : public QObject {
 
 
   void set_mean(const Eigen::VectorXd& mean);
+  void set_mean_shape(ShapeHandle mean_shape);
+  ShapeHandle get_mean_shape();
 
   void reset_camera();
 
@@ -181,6 +183,7 @@ class Visualizer : public QObject {
   int selected_point_two_;
 
   Eigen::VectorXd cached_mean_;
+  ShapeHandle mean_shape_;
   Particles current_shape_;
 
   double feature_range_[2] = {0, 0};

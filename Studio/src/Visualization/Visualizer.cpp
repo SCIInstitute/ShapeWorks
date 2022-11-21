@@ -652,5 +652,11 @@ QSize Visualizer::get_render_size() {
 }
 
 //-----------------------------------------------------------------------------
+void Visualizer::set_mean_shape(ShapeHandle mean_shape) { mean_shape_ = mean_shape; }
+
+//-----------------------------------------------------------------------------
+ShapeHandle Visualizer::get_mean_shape() { return mean_shape_; }
+
+//-----------------------------------------------------------------------------
 
 }  // namespace shapeworks

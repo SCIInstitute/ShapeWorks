@@ -1158,6 +1158,7 @@ void ShapeWorksStudioApp::handle_optimize_complete() {
   ui_->view_mode_combobox->setCurrentIndex(DisplayMode::Groomed);
   session_->set_display_mode(DisplayMode::Groomed);
   visualizer_->set_mean(analysis_tool_->get_mean_shape_points().get_combined_global_particles());
+  visualizer_->set_mean_shape(analysis_tool_->get_mean_shape());
   visualizer_->update_lut();
   update_display();
 
@@ -1171,6 +1172,7 @@ void ShapeWorksStudioApp::handle_reconstruction_complete() {
   session_->handle_clear_cache();
   update_view_combo();
   visualizer_->set_mean(analysis_tool_->get_mean_shape_points().get_combined_global_particles());
+  visualizer_->set_mean_shape(analysis_tool_->get_mean_shape());
   visualizer_->update_lut();
   update_display(true);
   enable_possible_actions();
@@ -1323,6 +1325,7 @@ void ShapeWorksStudioApp::update_display(bool force) {
     current_display_mode_ = mode;
 
     visualizer_->set_mean(analysis_tool_->get_mean_shape_points().get_combined_global_particles());
+    visualizer_->set_mean_shape(analysis_tool_->get_mean_shape());
 
     if (mode == AnalysisTool::MODE_ALL_SAMPLES_C) {
       session_->calculate_reconstructed_samples();
@@ -2126,7 +2129,7 @@ void ShapeWorksStudioApp::update_compare_menu() {
   compare_widget_->set_available(DisplayMode::Original, is_view_combo_item_enabled(DisplayMode::Original));
   compare_widget_->set_available(DisplayMode::Groomed, is_view_combo_item_enabled(DisplayMode::Groomed));
   compare_widget_->set_available(DisplayMode::Reconstructed, is_view_combo_item_enabled(DisplayMode::Reconstructed));
-
+  compare_widget_->set_mean_shape_available(is_view_combo_item_enabled(DisplayMode::Reconstructed));
   compare_widget_->set_available(static_cast<DisplayMode>(ui_->view_mode_combobox->currentIndex()), false);
 
   if (compare_widget_->check_any_available()) {

@@ -13,6 +13,7 @@ CompareWidget::CompareWidget(QWidget *parent) : QWidget(parent), ui_(new Ui::Com
   connect(ui_->groomed, &QCheckBox::toggled, this, &CompareWidget::settings_changed);
   connect(ui_->reconstructed, &QCheckBox::toggled, this, &CompareWidget::settings_changed);
   connect(ui_->opacity, &QSlider::valueChanged, this, &CompareWidget::settings_changed);
+  connect(ui_->mean_shape, &QCheckBox::toggled, this, &CompareWidget::settings_changed);
 }
 
 //---------------------------------------------------------------------------
@@ -25,6 +26,7 @@ CompareSettings CompareWidget::get_settings() {
   settings.original_checked_ = ui_->original->isChecked();
   settings.groomed_checked_ = ui_->groomed->isChecked();
   settings.reconstructed_checked_ = ui_->reconstructed->isChecked();
+  settings.mean_shape_checked_ = ui_->mean_shape->isChecked();
   settings.opacity_ = ui_->opacity->value() / 100.0;
   return settings;
 }
@@ -62,6 +64,11 @@ bool CompareWidget::check_any_available() {
   }
 
   return any_available;
+}
+
+//---------------------------------------------------------------------------
+void CompareWidget::set_mean_shape_available(bool available) {
+  ui_->mean_shape->setEnabled(available);
 }
 
 }  // namespace shapeworks
