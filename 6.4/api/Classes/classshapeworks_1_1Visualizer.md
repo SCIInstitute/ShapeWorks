@@ -48,6 +48,8 @@ Inherits from QObject
 | void | **[set_selected_point_one](../Classes/classshapeworks_1_1Visualizer.md#function-set-selected-point-one)**(int id) |
 | void | **[set_selected_point_two](../Classes/classshapeworks_1_1Visualizer.md#function-set-selected-point-two)**(int id) |
 | void | **[set_mean](../Classes/classshapeworks_1_1Visualizer.md#function-set-mean)**(const Eigen::VectorXd & mean) |
+| void | **[set_mean_shape](../Classes/classshapeworks_1_1Visualizer.md#function-set-mean-shape)**(ShapeHandle mean_shape) |
+| ShapeHandle | **[get_mean_shape](../Classes/classshapeworks_1_1Visualizer.md#function-get-mean-shape)**() |
 | void | **[reset_camera](../Classes/classshapeworks_1_1Visualizer.md#function-reset-camera)**() |
 | void | **[update_lut](../Classes/classshapeworks_1_1Visualizer.md#function-update-lut)**() |
 | [Particles](../Classes/classshapeworks_1_1Particles.md) | **[get_current_shape](../Classes/classshapeworks_1_1Visualizer.md#function-get-current-shape)**() |
@@ -294,6 +296,22 @@ void set_selected_point_two(
 void set_mean(
     const Eigen::VectorXd & mean
 )
+```
+
+
+### function set_mean_shape
+
+```cpp
+void set_mean_shape(
+    ShapeHandle mean_shape
+)
+```
+
+
+### function get_mean_shape
+
+```cpp
+ShapeHandle get_mean_shape()
 ```
 
 
@@ -563,4 +581,4 @@ Return render window size.
 
 -------------------------------
 
-Updated on 2022-11-21 at 04:51:57 +0000
+Updated on 2022-11-21 at 20:30:36 +0000

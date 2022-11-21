@@ -2321,6 +2321,8 @@
 
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_mean</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">mean</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_mean_shape</span><span class="p">(</span><span class="n">ShapeHandle</span><span class="w"> </span><span class="n">mean_shape</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="n">ShapeHandle</span><span class="w"> </span><span class="nf">get_mean_shape</span><span class="p">();</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">reset_camera</span><span class="p">();</span><span class="w"></span>
 
@@ -2412,6 +2414,7 @@
 <span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">selected_point_two_</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">cached_mean_</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">ShapeHandle</span><span class="w"> </span><span class="n">mean_shape_</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="n">Particles</span><span class="w"> </span><span class="n">current_shape_</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">feature_range_</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">};</span><span class="w"></span>
@@ -2428,7 +2431,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-11-21 at 04:51:58 +0000</p>
+<p>Updated on 2022-11-21 at 20:30:38 +0000</p>
 
               
             </article>

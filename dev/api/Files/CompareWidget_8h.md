@@ -47,6 +47,7 @@ class CompareWidget : public QWidget {
 
   CompareSettings get_settings();
   void set_available(DisplayMode mode, bool available);
+  void set_mean_shape_available(bool available);
 
   bool check_any_available();
 
@@ -64,4 +65,4 @@ class CompareWidget : public QWidget {
 
 -------------------------------
 
-Updated on 2022-11-21 at 04:51:58 +0000
+Updated on 2022-11-21 at 20:30:38 +0000
