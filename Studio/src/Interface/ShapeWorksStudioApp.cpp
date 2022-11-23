@@ -539,6 +539,7 @@ void ShapeWorksStudioApp::update_scrollbar() {
 void ShapeWorksStudioApp::on_vertical_scroll_bar_valueChanged() {
   int value = ui_->vertical_scroll_bar->value();
   lightbox_->set_start_row(value);
+  visualizer_->update_viewer_properties();
 }
 
 //---------------------------------------------------------------------------
