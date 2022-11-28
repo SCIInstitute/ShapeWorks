@@ -19,6 +19,7 @@ def calculate_transforms(shapes, reference_shape):
 		rigidTransform = shapes[i].createTransform(reference_shape,sw.Mesh.AlignmentType.Rigid,100)  
 		transforms.append(rigidTransform)
 	return transforms
+
 def Run_Pipeline(args):
 	print("\nStep 1. Extract Data\n")
 	"""
@@ -27,17 +28,7 @@ def Run_Pipeline(args):
 	We define dataset_name which determines which dataset to download from 
 	the portal and the directory to save output from the use case in. 
 	""" 
-	# output_data_dir = "Data/hip/"
-	# if not os.path.exists(output_data_dir):
-	#   os.makedirs(output_data_dir)
-
-
-	# pelvis_files = sorted(glob.glob(original_dir + "/*pelvis.vtk"))
-	# femur_files = sorted(glob.glob(original_dir + "/*femur.vtk"))
-
-	# [shutil.copy(p,output_data_dir) for p in pelvis_files ]
-	# [shutil.copy(f,output_data_dir) for f in femur_files ]
-
+	
 	dataset_name = "hip"
 	output_directory = "Output/hip/"
 	if not os.path.exists(output_directory):
@@ -54,9 +45,9 @@ def Run_Pipeline(args):
 	else:
 		sw.data.download_and_unzip_dataset(dataset_name, output_directory)
 		mesh_files = sorted(glob.glob(output_directory +
-									 dataset_name + "/meshes/*L*.vtk"))
+									 dataset_name + "/meshes/*.vtk"))
 		plane_files = sorted(glob.glob(output_directory +
-							dataset_name + "/constraints/*L*.json"))
+							dataset_name + "/constraints/*.json"))
 		if args.use_subsample:
 			inputMeshes =[sw.Mesh(filename) for filename in mesh_files]
 			sample_idx = sw.data.sample_meshes(inputMeshes, int(args.num_subsample),domains_per_shape=2)
@@ -68,11 +59,12 @@ def Run_Pipeline(args):
 	"""
 	Step 2: GROOMING 
 	The required grooming steps are: 
-	1. Remesh 
-	2. Reference selection
-	3. Rigid Alignment
+	1. Apply smoothing and remeshing and save groomed meshes
+    2. Apply clipping with planes for finding alignment transform
+    3. Find reflection tansfrom
+    4. Select reference mesh
+    5. Find rigid alignment transform
 	For more information on grooming see docs/workflow/groom.md
-	http://sciinstitute.github.io/ShapeWorks/workflow/groom.html
 	"""
 	# Create a directory for groomed output
 	groom_dir = output_directory + 'groomed/'
@@ -138,12 +130,13 @@ def Run_Pipeline(args):
 			print("Creating reflection transform for: " + name)
 			reflection[0][0] = -1 # Reflect across X
 			mesh.applyTransform(reflection)
-		reflections.append(reflection)
+		# reflection = np.eye(4) # Identity
+		# reflections.append(reflection)
 
 
 
 	"""
-	Grooming Step 2: Select a reference
+	Grooming Step 4: Select a reference
 	This step requires loading all of the meshes at once so the shape
 	closest to the mean can be found and selected as the reference. 
 	"""
@@ -161,9 +154,10 @@ def Run_Pipeline(args):
 		combined_mesh = mesh_list[i*domains_per_shape].copy()
 		combined_mesh += mesh_list[i*domains_per_shape+1]
 		combined_meshes.append(combined_mesh)
+		del combined_mesh 
 
-		domain1_reflections.append(reflections[i*domains_per_shape])
-		domain2_reflections.append(reflections[i*domains_per_shape + 1])
+		# domain1_reflections.append(reflections[i*domains_per_shape])
+		# domain2_reflections.append(reflections[i*domains_per_shape + 1])
 
 
 
@@ -179,7 +173,7 @@ def Run_Pipeline(args):
 
 
 	# """
-	# Grooming Step 3: Rigid alignment
+	# Grooming Step 5: Rigid alignment
 	# We calculate three kinds of alignments
 	# """
 
@@ -188,16 +182,16 @@ def Run_Pipeline(args):
 	# Alginment matrix for domain 2 shapes using domain 2 reference 
 	rigid_domain_2 = calculate_transforms(domain_2_meshes, domain2_reference)
 	# Alginment matrix for all shapes using the combined reference mesh denoting the global alignment option
-	global_transform = calculate_transforms(combined_meshes, combined_reference)
+	global_rigid_transform = calculate_transforms(combined_meshes, combined_reference)
 
 	# Combine transforms to pass to optimizer
-	transforms_domain_1 = []
-	transforms_domain_2 = []
-	global_transforms = []
-	for i in range(num_samples):
-		transforms_domain_1.append(np.matmul(domain1_reflections[i],rigid_domain_1[i]))
-		transforms_domain_2.append(np.matmul(domain2_reflections[i],rigid_domain_2[i]))
-		global_transforms.append(np.matmul(domain1_reflections[i],global_transform[i]))
+	transforms_domain_1 = rigid_domain_1
+	transforms_domain_2 = rigid_domain_2
+	global_transforms = global_rigid_transform
+	# for i in range(num_samples):
+	# 	transforms_domain_1.append(np.matmul(domain1_reflections[i],rigid_domain_1[i]))
+	# 	transforms_domain_2.append(np.matmul(domain2_reflections[i],rigid_domain_2[i]))
+	# 	global_transforms.append(np.matmul(domain1_reflections[i],global_rigid_transform[i]))
 
 	# Save groomed meshes
 	groomed_mesh_files = sw.utils.save_meshes(groom_dir + 'meshes/', mesh_list, mesh_names, extension='vtk')
@@ -226,7 +220,7 @@ def Run_Pipeline(args):
 		rel_plane_files=[]
 		transform = []
 		for d in range(domains_per_shape):
-			rel_mesh_files += sw.utils.get_relative_paths([os.getcwd() + '/' + mesh_files[i*domains_per_shape+d]], project_location)
+			rel_mesh_files += sw.utils.get_relative_paths([os.getcwd() + '/' + groomed_mesh_files[i*domains_per_shape+d]], project_location)
 			rel_groom_files += sw.utils.get_relative_paths([os.getcwd() + '/' + groomed_mesh_files[i*domains_per_shape+d]], project_location)
 			if(d==0):
 				transform.append(transforms_domain_1[i].flatten())
@@ -251,14 +245,14 @@ def Run_Pipeline(args):
 		"optimization_iterations" : 5000,
 		"starting_regularization" :1000,
 		"ending_regularization" : 10,
-		"recompute_regularization_interval" : 10,
+		"recompute_regularization_interval" : 1,
 		"domains_per_shape" : domains_per_shape,
 		"relative_weighting" : 10, 
 		"initial_relative_weighting" : 0.1,
 		"save_init_splits" : 0,
 		"verbosity" : 0,
 		"use_normals": 1,
-		"normal_weights": 5
+		"normal_weight": 5.0
 	  }
 	num_particles = [128,256]
 
