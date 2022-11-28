@@ -103,6 +103,12 @@ void Preferences::set_color_scheme(int value) { settings_.setValue("Studio/color
 int Preferences::get_color_scheme() { return settings_.value("Studio/color_scheme", 0).toInt(); }
 
 //-----------------------------------------------------------------------------
+void Preferences::set_particle_colors(int value) { settings_.setValue("Studio/particle_colors", value); }
+
+//-----------------------------------------------------------------------------
+int Preferences::get_particle_colors() { return settings_.value("Studio/particle_colors", 0).toInt(); }
+
+//-----------------------------------------------------------------------------
 void Preferences::set_color_map(int value) { settings_.setValue("Studio/color_map", value); }
 
 //-----------------------------------------------------------------------------

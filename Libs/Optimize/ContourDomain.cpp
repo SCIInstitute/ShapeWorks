@@ -236,6 +236,9 @@ void ContourDomain::ComputeGeodesics(vtkSmartPointer<vtkPolyData> poly_data) {
 
     auto out = vtkSmartPointer<vtkDoubleArray>::New();
     dijkstra->GetCumulativeWeights(out);
+    out->SetArrayFreeFunction([](void *ptr) {
+      delete[] reinterpret_cast<uint8_t *>(ptr);
+    });
 
     for (int j = 0; j < N; j++) {
       geodesics_(i, j) = out->GetValue(j);

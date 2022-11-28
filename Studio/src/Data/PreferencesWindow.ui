@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>756</width>
-    <height>570</height>
+    <height>616</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -398,23 +398,6 @@
       <string>Colors</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_7">
-      <item row="1" column="1">
-       <widget class="QComboBox" name="color_map"/>
-      </item>
-      <item row="0" column="0">
-       <widget class="QLabel" name="label_4">
-        <property name="text">
-         <string>Color Scheme</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1">
-       <widget class="QCheckBox" name="reverse_color_map">
-        <property name="text">
-         <string>Reverse Color Map</string>
-        </property>
-       </widget>
-      </item>
       <item row="0" column="1">
        <widget class="QComboBox" name="color_scheme">
         <item>
@@ -469,19 +452,46 @@
         </item>
        </widget>
       </item>
-      <item row="1" column="0">
+      <item row="2" column="0">
        <widget class="QLabel" name="label_14">
         <property name="text">
          <string>Color Map</string>
         </property>
        </widget>
       </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_4">
+        <property name="text">
+         <string>Color Scheme</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QComboBox" name="color_map"/>
+      </item>
       <item row="4" column="1">
+       <widget class="QCheckBox" name="reverse_color_map">
+        <property name="text">
+         <string>Reverse Color Map</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="1">
        <widget class="QCheckBox" name="discrete_color_mode">
         <property name="text">
          <string>Discrete Color Mode</string>
         </property>
        </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_particle_colors">
+        <property name="text">
+         <string>Particle Colors</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QComboBox" name="particle_colors"/>
       </item>
      </layout>
     </widget>

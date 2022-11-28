@@ -46,7 +46,7 @@ done
 
 CONDAENV=shapeworks
 if [[ "${#POSITIONAL_ARGS[@]}" -eq 1 ]]; then
-   CONDAENV=${POSITIONAL_ARGS[1]}
+   CONDAENV=${POSITIONAL_ARGS[0]}
 fi
 
 echo "Creating new conda environment for ShapeWorks called \"$CONDAENV\"..."

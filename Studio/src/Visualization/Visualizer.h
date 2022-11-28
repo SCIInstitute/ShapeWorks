@@ -67,6 +67,8 @@ class Visualizer : public QObject {
 
 
   void set_mean(const Eigen::VectorXd& mean);
+  void set_mean_shape(ShapeHandle mean_shape);
+  ShapeHandle get_mean_shape();
 
   void reset_camera();
 
@@ -126,6 +128,12 @@ class Visualizer : public QObject {
   //! Get domain opacities
   std::vector<float> get_opacities();
 
+  //! Set the per-domain particle visibilities
+  void set_domain_particle_visibilities(std::vector<bool> visibilities);
+
+  //! Get the per-domain particle visibilities
+  std::vector<bool> get_domain_particle_visibilities();
+
   //! Get the current glyph size
   double get_current_glyph_size();
 
@@ -175,6 +183,7 @@ class Visualizer : public QObject {
   int selected_point_two_;
 
   Eigen::VectorXd cached_mean_;
+  ShapeHandle mean_shape_;
   Particles current_shape_;
 
   double feature_range_[2] = {0, 0};
@@ -182,6 +191,7 @@ class Visualizer : public QObject {
   bool feature_range_valid_ = false;
   bool feature_range_uniform_ = true;
 
+  std::vector<bool> domain_particle_visibilities_;
   std::vector<float> opacities_;
 
   double current_glyph_size_{0};

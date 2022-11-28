@@ -26,6 +26,7 @@ class CompareSettings {
   bool original_checked_ = false;
   bool groomed_checked_ = false;
   bool reconstructed_checked_ = false;
+  bool mean_shape_checked_ = false;
   float opacity_ = 1.0;
   DisplayMode get_display_mode() {
     if (original_checked_) {
@@ -35,6 +36,9 @@ class CompareSettings {
     } else {
       return DisplayMode::Reconstructed;
     }
+  }
+  bool get_mean_shape_checked() {
+    return mean_shape_checked_;
   }
 };
 
