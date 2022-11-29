@@ -434,6 +434,7 @@ TEST(OptimizeTests, contour_domain_test) {
   // make sure we clean out at least one output file
   std::remove("optimize_particles/ss_0_groomed_world.particles");
 
+  std::cerr << "Run optimize\n";
   // run with parameter file
   Optimize app;
   ProjectHandle project = std::make_shared<Project>();
@@ -442,6 +443,8 @@ TEST(OptimizeTests, contour_domain_test) {
   ASSERT_TRUE(params.set_up_optimize(&app));
   app.Run();
 
+  std::cerr << "Run analysis\n";
+  
   // compute stats
   ParticleShapeStatistics stats;
   stats.ReadPointFiles("analyze.xml");

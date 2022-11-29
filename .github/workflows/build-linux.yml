@@ -5,6 +5,7 @@ on:
     branches:
       - master
       - release_v*
+      - 1947_test_crash
     tags:
     - '*'
   pull_request:
