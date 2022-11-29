@@ -82,7 +82,7 @@ class ShapeWorksStudioApp : public QMainWindow {
   void on_actionExport_Eigenvectors_triggered();
   void on_actionExport_PCA_Mode_Points_triggered();
   void on_action_preferences_triggered();
-  void on_action_export_current_mesh_triggered();
+  void action_export_current_mesh_triggered(int index = 0);
   void on_action_export_current_particles_triggered();
   void on_action_export_mesh_scalars_triggered();
   void on_action_export_pca_scores_triggered();
@@ -131,6 +131,8 @@ class ShapeWorksStudioApp : public QMainWindow {
   void handle_new_mesh();
   void handle_clear_cache();
   void handle_compare_settings_changed();
+
+  void handle_lightbox_right_click(int index);
 
   void update_feature_map_selection(int index);
   void update_feature_map_scale();

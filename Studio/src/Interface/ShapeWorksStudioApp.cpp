@@ -142,6 +142,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
   action_group_->addAction(ui_->action_deepssm_mode);
 
   lightbox_ = LightboxHandle(new Lightbox());
+  connect(lightbox_.get(), &Lightbox::right_click, this, &ShapeWorksStudioApp::handle_lightbox_right_click);
 
   // visualizer initializations
   visualizer_ = QSharedPointer<Visualizer>::create(preferences_);
@@ -221,6 +222,9 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
           &ShapeWorksStudioApp::action_export_particle_scalars_triggered);
   connect(ui_->action_export_all_subjects_particle_scalars, &QAction::triggered, this,
           &ShapeWorksStudioApp::action_export_all_subjects_particle_scalars_triggered);
+
+  connect(ui_->action_export_current_mesh, &QAction::triggered, this,
+          &ShapeWorksStudioApp::action_export_current_mesh_triggered);
 
   connect(ui_->save_as_swproj, &QAction::triggered, this, &ShapeWorksStudioApp::save_as_swproj_clicked);
   connect(ui_->save_as_xlsx, &QAction::triggered, this, &ShapeWorksStudioApp::save_as_xlsx_clicked);
@@ -861,6 +865,22 @@ void ShapeWorksStudioApp::handle_compare_settings_changed() {
 }
 
 //---------------------------------------------------------------------------
+void ShapeWorksStudioApp::handle_lightbox_right_click(int index) {
+
+  QMenu *menu = new QMenu(nullptr);
+  menu->setAttribute(Qt::WA_DeleteOnClose);
+  menu->addAction("Export Mesh");
+  menu->popup(QCursor::pos());
+
+
+  connect(menu, &QMenu::triggered, menu, [=](QAction *action) {
+    action_export_current_mesh_triggered(index);
+  });
+
+
+}
+
+//---------------------------------------------------------------------------
 void ShapeWorksStudioApp::new_session() {
   session_ = QSharedPointer<Session>::create(this, preferences_);
   session_->set_parent(this);
@@ -1461,19 +1481,19 @@ void ShapeWorksStudioApp::open_project(QString filename) {
 void ShapeWorksStudioApp::on_action_preferences_triggered() { preferences_window_->show(); }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::on_action_export_current_mesh_triggered() {
+void ShapeWorksStudioApp::action_export_current_mesh_triggered(int index) {
   bool single = StudioUtils::ask_multiple_domains_as_single(this, session_->get_project());
 
-  QString filename = ExportUtils::get_save_filename(this, tr("Export Current Mesh"), get_mesh_file_filter(), ".vtk");
+  QString filename = ExportUtils::get_save_filename(this, tr("Export Mesh"), get_mesh_file_filter(), ".vtk");
   if (filename.isEmpty()) {
     return;
   }
 
   if (single) {
-    write_mesh(visualizer_->get_current_mesh(), filename);
+    write_mesh(visualizer_->get_current_mesh(index), filename);
     handle_message("Wrote: " + filename.toStdString());
   } else {
-    auto meshes = visualizer_->get_current_meshes_transformed();
+    auto meshes = visualizer_->get_current_meshes_transformed(index);
     auto domain_names = session_->get_project()->get_domain_names();
 
     if (meshes.empty()) {
@@ -1615,10 +1635,10 @@ void ShapeWorksStudioApp::on_action_export_mesh_scalars_triggered() {
   }
 
   if (single) {
-    auto poly_data = visualizer_->get_current_mesh();
+    auto poly_data = visualizer_->get_current_mesh(0);
     write_scalars(poly_data, filename);
   } else {
-    auto meshes = visualizer_->get_current_meshes_transformed();
+    auto meshes = visualizer_->get_current_meshes_transformed(0);
     if (meshes.empty()) {
       SW_ERROR("Error exporting mesh: not ready yet");
       return;
