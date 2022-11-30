@@ -440,6 +440,7 @@ TEST(OptimizeTests, contour_domain_test) {
   ProjectHandle project = std::make_shared<Project>();
   std::cerr << "Load project\n";
   ASSERT_TRUE(project->load("optimize.xlsx"));
+  std::cerr << "Create params object\n";
   OptimizeParameters params(project);
   std::cerr << "Set up optimize\n";
   ASSERT_TRUE(params.set_up_optimize(&app));

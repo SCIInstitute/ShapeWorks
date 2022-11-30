@@ -279,6 +279,7 @@ void Project::determine_feature_names() {
     if (get_original_domain_types()[d] == DomainType::Mesh) {
       if (subject->get_original_filenames().size() > d) {
         auto filename = subject->get_original_filenames()[d];
+        SW_LOG("Attempting to read file: {}", filename);
         if (fs::exists(filename)) {
           try {
             auto poly_data = MeshUtils::threadSafeReadMesh(filename).getVTKMesh();

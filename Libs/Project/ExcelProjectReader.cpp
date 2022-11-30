@@ -3,6 +3,8 @@
 #include <xlnt/workbook/workbook_view.hpp>
 #include <xlnt/xlnt.hpp>
 
+#include <Logging.h>
+
 #include "ProjectUtils.h"
 
 namespace shapeworks {
@@ -132,12 +134,17 @@ ExcelProjectReader::~ExcelProjectReader() {}
 
 //---------------------------------------------------------------------------
 bool ExcelProjectReader::read_project(std::string filename) {
+  SW_LOG("Load XLSX file");
   container_->wb.load(filename);
 
+  SW_LOG("Load subjects");
   load_subjects(container_->sheet_to_map_list(container_->get_data_sheet()));
+  SW_LOG("Load landmark definitions");
   load_landmark_definitions(container_->sheet_to_map_list("landmarks"));
+  SW_LOG("Load parameters");
   load_parameters();
 
+  SW_LOG("Finished loading");
   return true;
 }
 
