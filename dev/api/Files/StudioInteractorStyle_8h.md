@@ -28,8 +28,8 @@ title: Studio/src/Visualization/StudioInteractorStyle.h
 #pragma once
 
 #include <vtkInteractorStyleTrackballCamera.h>
-#include <vtkRenderWindowInteractor.h>
 #include <vtkPropPicker.h>
+#include <vtkRenderWindowInteractor.h>
 
 namespace shapeworks {
 
@@ -37,9 +37,9 @@ class Lightbox;
 
 // Handle mouse events
 class StudioInteractorStyle : public vtkInteractorStyleTrackballCamera {
-public:
+ public:
   static StudioInteractorStyle* New();
-vtkTypeMacro(StudioInteractorStyle, vtkInteractorStyleTrackballCamera);
+  vtkTypeMacro(StudioInteractorStyle, vtkInteractorStyleTrackballCamera);
 
   void set_lightbox(Lightbox* lightbox);
 
@@ -49,6 +49,7 @@ vtkTypeMacro(StudioInteractorStyle, vtkInteractorStyleTrackballCamera);
 
   void OnLeftButtonDown() override;
   void OnRightButtonDown() override;
+  void OnRightButtonUp() override;
 
   void OnMouseWheelForward() override;
   void OnMouseWheelBackward() override;
@@ -60,18 +61,19 @@ vtkTypeMacro(StudioInteractorStyle, vtkInteractorStyleTrackballCamera);
 
   void OnMouseMove() override;
 
-protected:
-
+ protected:
   void Dolly(double factor) override;
-private:
 
+ private:
   Lightbox* lightbox_;
+  bool right_click_dragged_{false};
+  bool right_button_down_{false};
 };
 
-}
+}  // namespace shapeworks
 ```
 
 
 -------------------------------
 
-Updated on 2022-11-29 at 09:36:13 +0000
+Updated on 2022-11-30 at 22:18:22 +0000

@@ -86,6 +86,8 @@ class Lightbox : public QObject {
 
   void handle_key(int* click_pos, std::string key);
 
+  void handle_right_click(int* click_pos, vtkRenderer* renderer);
+
   void set_glyph_lut(vtkSmartPointer<vtkLookupTable> lut);
   void set_session(QSharedPointer<Session> session);
 
@@ -117,6 +119,9 @@ class Lightbox : public QObject {
 
  public Q_SLOTS:
   void handle_timer_callback();
+
+ Q_SIGNALS:
+  void right_click(int index);
 
  private:
   vtkSmartPointer<vtkOrientationMarkerWidget> create_orientation_marker();
@@ -176,4 +181,4 @@ class Lightbox : public QObject {
 
 -------------------------------
 
-Updated on 2022-11-29 at 09:36:13 +0000
+Updated on 2022-11-30 at 22:18:22 +0000

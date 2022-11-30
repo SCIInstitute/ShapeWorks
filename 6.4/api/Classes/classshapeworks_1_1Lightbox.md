@@ -21,6 +21,12 @@ Inherits from QObject
 | -------------- | -------------- |
 | void | **[handle_timer_callback](../Classes/classshapeworks_1_1Lightbox.md#slot-handle-timer-callback)**() |
 
+## Public Signals
+
+|                | Name           |
+| -------------- | -------------- |
+| void | **[right_click](../Classes/classshapeworks_1_1Lightbox.md#signal-right-click)**(int index) |
+
 ## Public Functions
 
 |                | Name           |
@@ -41,6 +47,7 @@ Inherits from QObject
 | void | **[handle_pick](../Classes/classshapeworks_1_1Lightbox.md#function-handle-pick)**(int * click_pos, bool one, bool ctrl) |
 | void | **[handle_hover](../Classes/classshapeworks_1_1Lightbox.md#function-handle-hover)**(int * click_pos) |
 | void | **[handle_key](../Classes/classshapeworks_1_1Lightbox.md#function-handle-key)**(int * click_pos, std::string key) |
+| void | **[handle_right_click](../Classes/classshapeworks_1_1Lightbox.md#function-handle-right-click)**(int * click_pos, vtkRenderer * renderer)<br>Handle a right click that did not involve any movement.  |
 | void | **[set_glyph_lut](../Classes/classshapeworks_1_1Lightbox.md#function-set-glyph-lut)**(vtkSmartPointer< vtkLookupTable > lut) |
 | void | **[set_session](../Classes/classshapeworks_1_1Lightbox.md#function-set-session)**(QSharedPointer< [Session](../Classes/classshapeworks_1_1Session.md) > session) |
 | void | **[set_visualizer](../Classes/classshapeworks_1_1Lightbox.md#function-set-visualizer)**([Visualizer](../Classes/classshapeworks_1_1Visualizer.md) * visualizer) |
@@ -73,6 +80,17 @@ The LightBox class displays multiple Viewers in a tiled display
 
 ```cpp
 void handle_timer_callback()
+```
+
+
+## Public Signals Documentation
+
+### signal right_click
+
+```cpp
+void right_click(
+    int index
+)
 ```
 
 
@@ -210,6 +228,17 @@ void handle_key(
 ```
 
 
+### function handle_right_click
+
+```cpp
+void handle_right_click(
+    int * click_pos,
+    vtkRenderer * renderer
+)
+```
+
+Handle a right click that did not involve any movement. 
+
 ### function set_glyph_lut
 
 ```cpp
@@ -329,4 +358,4 @@ vtkRenderWindow * get_render_window()
 
 -------------------------------
 
-Updated on 2022-11-29 at 09:36:11 +0000
+Updated on 2022-11-30 at 22:18:20 +0000

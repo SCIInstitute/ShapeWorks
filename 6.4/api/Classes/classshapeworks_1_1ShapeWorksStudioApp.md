@@ -41,7 +41,7 @@ Inherits from QMainWindow
 | void | **[on_actionExport_Eigenvectors_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-actionexport-eigenvectors-triggered)**() |
 | void | **[on_actionExport_PCA_Mode_Points_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-actionexport-pca-mode-points-triggered)**() |
 | void | **[on_action_preferences_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-action-preferences-triggered)**() |
-| void | **[on_action_export_current_mesh_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-action-export-current-mesh-triggered)**() |
+| void | **[action_export_current_mesh_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-action-export-current-mesh-triggered)**(int index =0) |
 | void | **[on_action_export_current_particles_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-action-export-current-particles-triggered)**() |
 | void | **[on_action_export_mesh_scalars_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-action-export-mesh-scalars-triggered)**() |
 | void | **[on_action_export_pca_scores_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-action-export-pca-scores-triggered)**() |
@@ -80,6 +80,7 @@ Inherits from QMainWindow
 | void | **[handle_new_mesh](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-new-mesh)**() |
 | void | **[handle_clear_cache](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-clear-cache)**() |
 | void | **[handle_compare_settings_changed](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-compare-settings-changed)**() |
+| void | **[handle_lightbox_right_click](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-lightbox-right-click)**(int index) |
 | void | **[update_feature_map_selection](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-update-feature-map-selection)**(int index) |
 | void | **[update_feature_map_scale](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-update-feature-map-scale)**() |
 | void | **[image_combo_changed](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-image-combo-changed)**(int index) |
@@ -280,10 +281,12 @@ void on_action_preferences_triggered()
 ```
 
 
-### slot on_action_export_current_mesh_triggered
+### slot action_export_current_mesh_triggered
 
 ```cpp
-void on_action_export_current_mesh_triggered()
+void action_export_current_mesh_triggered(
+    int index =0
+)
 ```
 
 
@@ -569,6 +572,15 @@ void handle_compare_settings_changed()
 ```
 
 
+### slot handle_lightbox_right_click
+
+```cpp
+void handle_lightbox_right_click(
+    int index
+)
+```
+
+
 ### slot update_feature_map_selection
 
 ```cpp
@@ -722,4 +734,4 @@ void dropEvent(
 
 -------------------------------
 
-Updated on 2022-11-29 at 09:36:12 +0000
+Updated on 2022-11-30 at 22:18:21 +0000

@@ -56,8 +56,8 @@ Inherits from QObject
 | vtkFloatArray * | **[get_current_particle_scalars](../Classes/classshapeworks_1_1Visualizer.md#function-get-current-particle-scalars)**() |
 | vtkSmartPointer< vtkPolyData > | **[get_current_particle_poly_data](../Classes/classshapeworks_1_1Visualizer.md#function-get-current-particle-poly-data)**() |
 | void | **[handle_new_mesh](../Classes/classshapeworks_1_1Visualizer.md#function-handle-new-mesh)**() |
-| vtkSmartPointer< vtkPolyData > | **[get_current_mesh](../Classes/classshapeworks_1_1Visualizer.md#function-get-current-mesh)**() |
-| std::vector< vtkSmartPointer< vtkPolyData > > | **[get_current_meshes_transformed](../Classes/classshapeworks_1_1Visualizer.md#function-get-current-meshes-transformed)**() |
+| vtkSmartPointer< vtkPolyData > | **[get_current_mesh](../Classes/classshapeworks_1_1Visualizer.md#function-get-current-mesh)**(int index) |
+| std::vector< vtkSmartPointer< vtkPolyData > > | **[get_current_meshes_transformed](../Classes/classshapeworks_1_1Visualizer.md#function-get-current-meshes-transformed)**(int index) |
 | const std::string & | **[get_feature_map](../Classes/classshapeworks_1_1Visualizer.md#function-get-feature-map)**() const<br>Get the currently selected feature map.  |
 | void | **[set_uniform_feature_range](../Classes/classshapeworks_1_1Visualizer.md#function-set-uniform-feature-range)**(bool value)<br>Set if we are using a uniform feature range.  |
 | bool | **[get_uniform_feature_range](../Classes/classshapeworks_1_1Visualizer.md#function-get-uniform-feature-range)**(void )<br>Return if we are using a uniform feature range.  |
@@ -360,14 +360,18 @@ void handle_new_mesh()
 ### function get_current_mesh
 
 ```cpp
-vtkSmartPointer< vtkPolyData > get_current_mesh()
+vtkSmartPointer< vtkPolyData > get_current_mesh(
+    int index
+)
 ```
 
 
 ### function get_current_meshes_transformed
 
 ```cpp
-std::vector< vtkSmartPointer< vtkPolyData > > get_current_meshes_transformed()
+std::vector< vtkSmartPointer< vtkPolyData > > get_current_meshes_transformed(
+    int index
+)
 ```
 
 
@@ -581,4 +585,4 @@ Return render window size.
 
 -------------------------------
 
-Updated on 2022-11-29 at 09:36:12 +0000
+Updated on 2022-11-30 at 22:18:21 +0000
