@@ -2,35 +2,36 @@
 
 using namespace shapeworks;
 
-//---------------------------------------------------------------------------
-void Parameters::set_map(std::map<std::string, std::string> map)
-{
-  this->map_ = map;
-}
+using StringMap = project::types::StringMap;
 
 //---------------------------------------------------------------------------
-std::map<std::string, std::string> Parameters::get_map()
-{
-  return this->map_;
-}
+Parameters::Parameters() {}
 
 //---------------------------------------------------------------------------
-Variant Parameters::get(std::string key, Variant default_value)
-{
-  if (this->map_.find(key) == this->map_.end()) {
+Parameters::Parameters(StringMap map) { set_map(map); }
+
+//---------------------------------------------------------------------------
+void Parameters::set_map(StringMap map) { map_ = map; }
+
+//---------------------------------------------------------------------------
+StringMap Parameters::get_map() { return map_; }
+
+//---------------------------------------------------------------------------
+Variant Parameters::get(std::string key, Variant default_value) {
+  if (!key_exists(key)) {
     return Variant(default_value);
   }
-  return Variant(this->map_[key]);
+  return Variant(map_[key]);
 }
 
 //---------------------------------------------------------------------------
-void Parameters::set(std::string key, Variant value)
-{
-  this->map_[key] = static_cast<std::string>(value);
-}
+void Parameters::set(std::string key, Variant value) { map_[key] = static_cast<std::string>(value); }
 
 //---------------------------------------------------------------------------
-void Parameters::remove_entry(std::string key)
-{
-  this->map_.erase(key);
-}
+void Parameters::remove_entry(std::string key) { map_.erase(key); }
+
+//---------------------------------------------------------------------------
+void Parameters::reset_parameters() { map_.clear(); }
+
+//---------------------------------------------------------------------------
+bool Parameters::key_exists(std::string key) { return map_.find(key) != map_.end(); }

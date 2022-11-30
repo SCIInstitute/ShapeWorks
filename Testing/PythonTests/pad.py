@@ -2,6 +2,8 @@ import os
 import sys
 from shapeworks import *
 
+success = True
+
 def padTest1():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
   img.pad(0, 0.0)
@@ -10,10 +12,7 @@ def padTest1():
 
   return img.compare(compareImg)
 
-val = padTest1()
-
-if val is False:
-  sys.exit(1)
+success &= utils.test(padTest1)
 
 def padTest2():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -23,10 +22,7 @@ def padTest2():
 
   return img.compare(compareImg)
 
-val = padTest2()
-
-if val is False:
-  sys.exit(1)
+success &= utils.test(padTest2)
 
 def padTest3():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -36,10 +32,7 @@ def padTest3():
 
   return img.compare(compareImg)
 
-val = padTest3()
-
-if val is False:
-  sys.exit(1)
+success &= utils.test(padTest3)
 
 def padTest4():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -49,7 +42,22 @@ def padTest4():
 
   return img.compare(compareImg)
 
-val = padTest4()
+success &= utils.test(padTest4)
 
-if val is False:
-  sys.exit(1)
+def padTest5():
+  img = Image(os.environ["DATA"] + "/femurImage.nrrd")
+  img.pad(img.logicalBoundingBox(), 10)
+
+  compareImg = Image(os.environ["DATA"] + "/femurImage.nrrd")
+
+  return img.compare(compareImg)
+
+success &= utils.test(padTest5)
+
+def padfailTest():
+  img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
+  img.pad()   # should fail because no version without parameters exists
+
+success &= utils.expectException(padfailTest, TypeError)
+
+sys.exit(not success)

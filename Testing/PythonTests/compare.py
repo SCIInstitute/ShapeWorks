@@ -2,16 +2,15 @@ import os
 import sys
 from shapeworks import *
 
+success = True
+
 def compareTest1():
   img = Image(os.environ["DATA"] + "/la-bin.nrrd")
   compareImg = Image(os.environ["DATA"] + "/la-bin.nrrd")
 
   return img.compare(compareImg)
 
-val = compareTest1()
-
-if val is False:
-  sys.exit(1)
+success &= utils.test(compareTest1)
 
 def compareTest2():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -19,7 +18,15 @@ def compareTest2():
 
   return img.compare(compareImg, tolerance=1.0)
 
-val = compareTest2()
+success &= utils.test(compareTest2)
 
-if val is False:
-  sys.exit(1)
+def comparefailTest():
+  img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
+
+  compareImg = Image(os.environ["DATA"] + "/la-bin.nrrd")
+
+  return img.compare(compareImg)
+
+success &= utils.test(comparefailTest, True)
+
+sys.exit(not success)

@@ -1,6 +1,9 @@
 import os
 import sys
+import numpy as np
 from shapeworks import *
+
+success = True
 
 def resampleTest1():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -10,10 +13,7 @@ def resampleTest1():
 
   return img.compare(compareImg)
 
-val = resampleTest1()
-
-if val is False:
-  sys.exit(1)
+success &= utils.test(resampleTest1)
 
 def resampleTest2():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -23,10 +23,7 @@ def resampleTest2():
 
   return img.compare(compareImg)
 
-val = resampleTest2()
-
-if val is False:
-  sys.exit(1)
+success &= utils.test(resampleTest2)
 
 def resampleTest3():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -36,10 +33,7 @@ def resampleTest3():
 
   return img.compare(compareImg)
 
-val = resampleTest3()
-
-if val is False:
-  sys.exit(1)
+success &= utils.test(resampleTest3)
 
 def resampleTest4():
   img = Image(os.environ["DATA"] + "/la1-small.nrrd")
@@ -49,21 +43,17 @@ def resampleTest4():
 
   return img.compare(compareImg)
 
-val = resampleTest4()
-
-if val is False:
-  sys.exit(1)
+success &= utils.test(resampleTest4)
 
 def resampleTest5():
   img = Image(os.environ["DATA"] + "/la1-small.nrrd")
-  transform = createTransform(Matrix())
+  transform = np.identity(4)
   img.resample(transform, [-100, -63.2, -42.9], [32, 32, 4], [6.25, 6.25, 13.75], img.coordsys())
 
   compareImg = Image(os.environ["DATA"] + "/resample5.nrrd")
 
   return img.compare(compareImg)
 
-val = resampleTest5()
+success &= utils.test(resampleTest5)
 
-if val is False:
-  sys.exit(1)
+sys.exit(not success)

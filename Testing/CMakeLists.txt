@@ -5,6 +5,9 @@ find_package(GTest REQUIRED)
 # Set the test data location
 set(TEST_DATA_DIR "${CMAKE_SOURCE_DIR}/Testing/data")
 
+# Set the Python modules location
+set(PYTHON_EXAMPLES_DIR "${CMAKE_SOURCE_DIR}/Examples/Python")
+
 # Configure the TestConfiguration.h file
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/TestConfiguration.h.in
   ${CMAKE_CURRENT_BINARY_DIR}/TestConfiguration.h
@@ -28,13 +31,14 @@ target_include_directories(Testing PUBLIC
   $<INSTALL_INTERFACE:include>)
 target_link_libraries(Testing
   GTest::Main
+  ${Boost_LIBRARIES}
   )
 set_target_properties(Testing PROPERTIES PUBLIC_HEADER
   "${Testing_headers}")
 install(TARGETS Testing
-  ARCHIVE DESTINATION lib
-  RUNTIME DESTINATION lib
-  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  RUNTIME DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
   PUBLIC_HEADER DESTINATION include
   )
 
@@ -45,4 +49,7 @@ add_subdirectory(GroomTests)
 add_subdirectory(OptimizeTests)
 add_subdirectory(PythonTests)
 add_subdirectory(ParticlesTests)
+add_subdirectory(ProjectTests)
+add_subdirectory(UseCaseTests)
 add_subdirectory(shapeworksTests)
+add_subdirectory(UtilsTests)

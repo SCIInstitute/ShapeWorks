@@ -1,6 +1,9 @@
 import os
 import sys
+from typing import Type
 from shapeworks import *
+
+success = True
 
 def scaleTest1():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -10,10 +13,7 @@ def scaleTest1():
 
   return img.compare(compareImg)
 
-val = scaleTest1()
-
-if val is False:
-  sys.exit(1)
+success &= utils.test(scaleTest1)
 
 def scaleTest2():
   img = Image(os.environ["DATA"] + "/la-bin-centered.nrrd")
@@ -23,10 +23,7 @@ def scaleTest2():
 
   return img.compare(compareImg)
 
-val = scaleTest2()
-
-if val is False:
-  sys.exit(1)
+success &= utils.test(scaleTest2)
 
 def scaleTest3():
   mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
@@ -36,10 +33,7 @@ def scaleTest3():
 
   return mesh == compareMesh
 
-val = scaleTest3()
-
-if val is False:
-  sys.exit(1)
+success &= utils.test(scaleTest3)
 
 def scaleTest4():
   mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
@@ -49,7 +43,16 @@ def scaleTest4():
 
   return mesh == compareMesh
 
-val = scaleTest4()
+success &= utils.test(scaleTest4)
 
-if val is False:
-  sys.exit(1)
+def scalefailTest():
+  img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
+  img.scale()
+
+  compareImg = Image(os.environ["DATA"] + "/scalefail.nrrd")
+
+  return img.compare(compareImg)
+
+success &= utils.expectException(scalefailTest, TypeError)
+
+sys.exit(not success)

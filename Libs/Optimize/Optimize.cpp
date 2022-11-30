@@ -5,6 +5,7 @@
 #include <vector>
 #include <numeric>
 #include <algorithm>
+#include <cstdlib>
 
 #ifdef _WIN32
 #include <direct.h>
@@ -22,21 +23,44 @@
 
 // shapeworks
 #include "TriMesh.h"
-#include "ParticleSystem/itkParticleImageDomain.h"
-#include "ParticleSystem/itkParticleImplicitSurfaceDomain.h"
-#include "ParticleSystem/object_reader.h"
-#include "ParticleSystem/object_writer.h"
+#include "ParticleImageDomain.h"
+#include "ParticleImplicitSurfaceDomain.h"
+#include "object_reader.h"
+#include "object_writer.h"
 #include "OptimizeParameterFile.h"
+#include "OptimizeParameters.h"
+#include <Project/Project.h>
 #include "VtkMeshWrapper.h"
 
 #include "Optimize.h"
+#include <Project/Project.h>
 
 // pybind
 #include <pybind11/embed.h>
 
+#include <tbb/global_control.h>
+
 namespace py = pybind11;
 
 namespace shapeworks {
+
+#ifdef _WIN32
+static std::string find_in_path(std::string file) {
+  std::stringstream path(getenv("PATH"));
+  while (! path.eof()) {
+    std::string test;
+    struct stat info;
+    getline(path, test, ';');
+    std::string base = test;
+    test.append("/");
+    test.append(file);
+    if (stat(test.c_str(), &info) == 0) {
+      return base;
+    }
+  }
+  return "";
+}
+#endif
 
 //---------------------------------------------------------------------------
 Optimize::Optimize()
@@ -47,7 +71,26 @@ Optimize::Optimize()
 //---------------------------------------------------------------------------
 bool Optimize::Run()
 {
+  // control number of threads
+  int num_threads = tbb::info::default_concurrency();
+  const char* num_threads_env = getenv("TBB_NUM_THREADS");
+  if (num_threads_env) {
+     num_threads = std::max(1, atoi(num_threads_env));
+  }
+  std::cerr << "ShapeWorks: TBB using " << num_threads << " threads\n";
+  tbb::global_control c(tbb::global_control::max_allowed_parallelism, num_threads);
+
   if (this->m_python_filename != "") {
+
+#ifdef _WIN32
+    // need to set PYTHONHOME to the same directory as python.exe on Windows
+    std::string found_path = find_in_path("python.exe");
+    if (found_path != "") {
+      std::cerr << "python.exe found in: " << found_path << "\n";
+      _putenv_s("PYTHONHOME", found_path.c_str());
+    }
+#endif
+
     py::initialize_interpreter();
 
     auto dir = this->m_python_filename;
@@ -67,8 +110,6 @@ bool Optimize::Run()
 
   }
 
-
-
   // sanity check
   if (this->m_domains_per_shape != this->m_number_of_particles.size()) {
     std::cerr <<
@@ -76,11 +117,19 @@ bool Optimize::Run()
     return false;
   }
 
+  // ensure use_shape_statistics_after doesn't increase the particle count over what was specified
+  for (int i = 0; i < this->m_number_of_particles.size(); i++) {
+    this->m_use_shape_statistics_after = std::min(this->m_use_shape_statistics_after,
+                                                  this->m_number_of_particles[i]);
+  }
+
   this->SetParameters();
 
   int number_of_splits = static_cast<int>(
     std::log2(static_cast<double>(this->m_number_of_particles[0])));
   this->m_iteration_count = 0;
+
+  m_split_number = 0;
 
   if (this->m_use_shape_statistics_after <= 0) {
     this->m_total_iterations = (number_of_splits * this->m_iterations_per_split) +
@@ -129,23 +178,7 @@ bool Optimize::Run()
 
     // save the particles for this split if requested
     if (m_save_init_splits == true) {
-      std::stringstream ss;
-      ss << this->m_split_number;
-      std::stringstream ssp;
-      std::string dir_name = "split" + ss.str();
-      for (int i = 0; i < m_domains_per_shape; i++) {
-        ssp << m_sampler->GetParticleSystem()->GetNumberOfParticles(i);
-        dir_name += "_" + ssp.str();
-        ssp.str("");
-      }
-      dir_name += "pts_w_opt";
-      std::string out_path = m_output_dir;
-      std::string tmp_dir_name = out_path + "/" + dir_name;
-
-      this->WritePointFiles(tmp_dir_name + "/");
-      this->WritePointFilesWithFeatures(tmp_dir_name + "/");
-      this->WriteTransformFile(tmp_dir_name + "/" + m_output_transform_file);
-      this->WriteParameters(dir_name);
+      WriteSplitFiles("pts_w_opt");
     }
 
     // set to use shape statistics now for the Initialize mode
@@ -182,6 +215,8 @@ bool Optimize::Run()
       this->m_iter_callback = nullptr;
       py::finalize_interpreter();
   }
+
+  UpdateProject();
 
   return true;
 }
@@ -231,16 +266,11 @@ void Optimize::SetParameters()
   }
 
   // Set up the procrustes registration object.
-  this->m_procrustes = itk::ParticleProcrustesRegistration<3>::New();
+  this->m_procrustes = std::make_shared<ParticleProcrustesRegistration>();
   this->m_procrustes->SetParticleSystem(this->m_sampler->GetParticleSystem());
   this->m_procrustes->SetDomainsPerShape(this->m_domains_per_shape);
-
-  if (this->m_procrustes_scaling == 0) {
-    this->m_procrustes->ScalingOff();
-  }
-  else {
-    this->m_procrustes->ScalingOn();
-  }
+  this->m_procrustes->SetScaling(this->m_procrustes_scaling);
+  this->m_procrustes->SetRotationTranslation(this->m_procrustes_rotation_translation);
 
   this->SetIterationCallback();
   this->PrintStartMessage("Initializing variables...");
@@ -383,6 +413,12 @@ void Optimize::SetOutputTransformFile(std::string output_transform_file)
 }
 
 //---------------------------------------------------------------------------
+void Optimize::SetOutputIndividualTransformFiles(bool value)
+{
+  this->m_output_transform_files = value;
+}
+
+//---------------------------------------------------------------------------
 void Optimize::SetUseMeshBasedAttributes(bool use_mesh_based_attributes)
 {
   this->m_mesh_based_attributes = use_mesh_based_attributes;
@@ -476,7 +512,7 @@ void Optimize::SetAdaptivityStrength(double adaptivity_strength)
 //---------------------------------------------------------------------------
 void Optimize::ReadTransformFile()
 {
-  object_reader<itk::ParticleSystem<3>::TransformType> reader;
+  object_reader<itk::ParticleSystem::TransformType> reader;
   reader.SetFileName(m_transform_file);
   reader.Update();
   for (unsigned int i = 0; i < m_sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
@@ -487,7 +523,7 @@ void Optimize::ReadTransformFile()
 //---------------------------------------------------------------------------
 void Optimize::ReadPrefixTransformFile(const std::string& fn)
 {
-  object_reader<itk::ParticleSystem<3>::TransformType> reader;
+  object_reader<itk::ParticleSystem::TransformType> reader;
   reader.SetFileName(fn.c_str());
   reader.Update();
   for (unsigned int i = 0; i < m_sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
@@ -586,7 +622,7 @@ double Optimize::GetMinNeighborhoodRadius()
 //---------------------------------------------------------------------------
 void Optimize::AddSinglePoint()
 {
-  typedef itk::ParticleSystem<3> ParticleSystemType;
+  typedef itk::ParticleSystem ParticleSystemType;
   typedef ParticleSystemType::PointType PointType;
 
   PointType firstPointPosition = m_sampler->GetParticleSystem()->GetDomain(0)->GetZeroCrossingPoint();
@@ -623,6 +659,7 @@ void Optimize::Initialize()
     }
     this->WritePointFiles();
     this->WriteTransformFile();
+    this->WriteTransformFiles();
   }
   m_disable_procrustes = true;
 
@@ -666,25 +703,19 @@ void Optimize::Initialize()
   m_sampler->GetLinkingFunction()->SetRelativeGradientScaling(m_initial_relative_weighting);
   m_sampler->GetLinkingFunction()->SetRelativeEnergyScaling(m_initial_relative_weighting);
 
-  // Debuggg
-  //std::cout << "Before adding single point" << std::endl;
-  //m_sampler->GetParticleSystem()->PrintParticleSystem();
-
   this->AddSinglePoint();
-
-  // Debuggg
-  //std::cout << "After adding single point" << std::endl;
-  //m_sampler->GetParticleSystem()->PrintParticleSystem();
 
   m_sampler->GetParticleSystem()->SynchronizePositions();
 
-  // Debuggg
-  //m_sampler->GetParticleSystem()->PrintParticleSystem();
-
-  this->m_split_number = 0;
-
   int n = m_sampler->GetParticleSystem()->GetNumberOfDomains();
 
+  // Adaptive Initialization params
+  bool adaptive_initialization = false;
+  size_t particles_before_adaptive_initialization = 8; // # of particles before adaptive initialization starts, starts at >= this_value
+  size_t check_iterations = 50; // The initialization optimization will check every check_iterations iterations for sampling quality
+  double initialization_start_scaling_factor = 3.;
+
+  m_sampler->GetOptimizer()->SetInitializationStartScalingFactor(initialization_start_scaling_factor);
 
   /*Old vector randomization
   vnl_vector_fixed<double, 3> random;
@@ -728,8 +759,16 @@ void Optimize::Initialize()
     }
     */
 
-    m_sampler->GetParticleSystem()->AdvancedAllParticleSplitting(epsilon);
-
+    // Splits particles
+    // Strategy: For each domain (for all samples), we make very corresponding particle
+    //      go in a random direction with magnitude epsilon/5. Then the shifted particles
+    //      in each domain are tested so that no particle will violate any inequality constraints
+    //      after its split.
+    for (int i = 0; i < m_domains_per_shape; i++) {
+      if (m_sampler->GetParticleSystem()->GetNumberOfParticles(i) < m_number_of_particles[i]) {
+        m_sampler->GetParticleSystem()->AdvancedAllParticleSplitting(epsilon, m_domains_per_shape, i);
+      }
+    }
     m_sampler->GetParticleSystem()->SynchronizePositions();
 
     this->m_split_number++;
@@ -745,25 +784,7 @@ void Optimize::Initialize()
     }
 
     if (m_save_init_splits == true) {
-      std::stringstream ss;
-      ss << this->m_split_number;
-
-      std::stringstream ssp;
-      std::string dir_name = "split" + ss.str();
-      for (int i = 0; i < m_domains_per_shape; i++) {
-        ssp << m_sampler->GetParticleSystem()->GetNumberOfParticles(i);
-        dir_name += "_" + ssp.str();
-        ssp.str("");
-      }
-      dir_name += "pts_wo_init";
-      std::string out_path = m_output_dir;
-
-      std::string tmp_dir_name = out_path + "/" + dir_name;
-
-      this->WritePointFiles(tmp_dir_name);
-      this->WritePointFilesWithFeatures(tmp_dir_name + "/");
-      this->WriteTransformFile(tmp_dir_name + "/" + m_output_transform_file);
-      this->WriteParameters(tmp_dir_name);
+      WriteSplitFiles("pts_wo_init");
     }
 
     m_energy_a.clear();
@@ -796,31 +817,18 @@ void Optimize::Initialize()
     m_saturation_counter = 0;
     m_sampler->GetOptimizer()->SetMaximumNumberOfIterations(m_iterations_per_split);
     m_sampler->GetOptimizer()->SetNumberOfIterations(0);
+    if(adaptive_initialization && m_sampler->GetParticleSystem()->GetNumberOfParticles(0) >= particles_before_adaptive_initialization) m_sampler->GetOptimizer()->SetInitializationMode(true);
     m_sampler->Execute();
+    m_sampler->GetOptimizer()->SetInitializationMode(false);
 
     if (m_save_init_splits == true) {
-      std::stringstream ss;
-      ss << this->m_split_number;
-      std::stringstream ssp;
-      std::string dir_name = "split" + ss.str();
-      for (int i = 0; i < m_domains_per_shape; i++) {
-        ssp << m_sampler->GetParticleSystem()->GetNumberOfParticles(i);
-        dir_name += "_" + ssp.str();
-        ssp.str("");
-      }
-      dir_name += "pts_w_init";
-      std::string out_path = m_output_dir;
-      std::string tmp_dir_name = out_path + "/" + dir_name;
-
-      this->WritePointFiles(tmp_dir_name + "/");
-      this->WritePointFilesWithFeatures(tmp_dir_name + "/");
-      this->WriteTransformFile(tmp_dir_name + "/" + m_output_transform_file);
-      this->WriteParameters(tmp_dir_name);
+      WriteSplitFiles("pts_w_init");
     }
     this->WritePointFiles();
     this->WritePointFilesWithFeatures();
     this->WriteEnergyFiles();
     this->WriteTransformFile();
+    this->WriteTransformFiles();
 
     flag_split = false;
     for (int i = 0; i < n; i++) {
@@ -834,6 +842,7 @@ void Optimize::Initialize()
   this->WritePointFiles();
   this->WritePointFilesWithFeatures();
   this->WriteTransformFile();
+  this->WriteTransformFiles();
   this->WriteCuttingPlanePoints();
   if (m_verbosity_level > 0) {
     std::cout << "Finished initialization!!!" << std::endl;
@@ -874,6 +883,7 @@ void Optimize::AddAdaptivity()
   this->WritePointFiles();
   this->WritePointFilesWithFeatures();
   this->WriteTransformFile();
+  this->WriteTransformFiles();
   this->WriteCuttingPlanePoints();
 
   if (m_verbosity_level > 0) {
@@ -912,6 +922,7 @@ void Optimize::RunOptimize()
     m_procrustes->RunRegistration();
     this->WritePointFiles();
     this->WriteTransformFile();
+    this->WriteTransformFiles();
 
     if (m_use_cutting_planes == true && m_distribution_domain_id > -1) {
       // transform cutting planes
@@ -996,6 +1007,7 @@ void Optimize::RunOptimize()
   this->WritePointFilesWithFeatures();
   this->WriteEnergyFiles();
   this->WriteTransformFile();
+  this->WriteTransformFiles();
   this->WriteModes();
   this->WriteCuttingPlanePoints();
   this->WriteParameters();
@@ -1088,6 +1100,7 @@ void Optimize::IterateCallback(itk::Object*, const itk::EventObject&)
 
       this->WritePointFiles();
       this->WriteTransformFile();
+      this->WriteTransformFiles();
       this->WritePointFilesWithFeatures();
       this->WriteModes();
       this->WriteParameters();
@@ -1097,6 +1110,7 @@ void Optimize::IterateCallback(itk::Object*, const itk::EventObject&)
         this->WritePointFiles(this->GetCheckpointDir());
         this->WritePointFilesWithFeatures(this->GetCheckpointDir());
         this->WriteTransformFile(this->GetCheckpointDir() + "/transform");
+        this->WriteTransformFiles(this->GetCheckpointDir());
         this->WriteParameters(this->GetCheckpointDir());
       }
     }
@@ -1341,7 +1355,7 @@ void Optimize::WriteTransformFile(std::string iter_prefix) const
 
   std::string output_file = iter_prefix;
 
-  std::vector<itk::ParticleSystem<3>::TransformType> tlist;
+  std::vector<itk::ParticleSystem::TransformType> tlist;
 
   for (unsigned int i = 0; i < m_sampler->GetParticleSystem()->GetNumberOfDomains();
        i++) {
@@ -1350,11 +1364,71 @@ void Optimize::WriteTransformFile(std::string iter_prefix) const
 
   std::string str = "writing " + output_file + " ...";
   PrintStartMessage(str);
-  object_writer<itk::ParticleSystem<3>::TransformType> writer;
+  object_writer<itk::ParticleSystem::TransformType> writer;
   writer.SetFileName(output_file);
   writer.SetInput(tlist);
   writer.Update();
   PrintDoneMessage();
+}
+
+//---------------------------------------------------------------------------
+void Optimize::WriteTransformFiles(int iter) const
+{
+  if (!this->m_file_output_enabled || !this->m_output_transform_files) {
+    return;
+  }
+  std::string output_file = m_output_dir + "/";
+
+  if (iter >= 0) {
+    std::stringstream ss;
+    ss << iter + m_optimization_iterations_completed;
+    std::stringstream ssp;
+    ssp << m_sampler->GetParticleSystem()->GetNumberOfParticles();     // size from domain 0
+    output_file = m_output_dir + "/iter" + ss.str() + "_p" + ssp.str() + "/";
+  }
+  this->WriteTransformFiles(output_file);
+}
+
+//---------------------------------------------------------------------------
+void Optimize::WriteTransformFiles(std::string iter_prefix) const
+{
+
+  if (!this->m_file_output_enabled || !this->m_output_transform_files) {
+    return;
+  }
+
+  this->PrintStartMessage("Writing transform files...\n");
+
+  const int n = m_sampler->GetParticleSystem()->GetNumberOfDomains();
+
+  int counter;
+  for (int i = 0; i < n; i++) {
+    counter = 0;
+
+    std::string transform_file = iter_prefix + "/" + m_filenames[i] + ".transform";
+
+    std::ofstream out(transform_file.c_str());
+
+    std::string str = "Writing " + transform_file + "...";
+    this->PrintStartMessage(str, 1);
+    if (!out) {
+      std::cerr << "Error opening output file: " << transform_file << std::endl;
+      throw 1;
+    }
+
+    auto transform = m_sampler->GetParticleSystem()->GetTransform(i);
+
+    for (int i=0;i<transform.cols();i++) {
+      for (int j=0;j<transform.rows();j++) {
+        out << transform(i,j) << " ";
+      }
+    }
+    out << std::endl;
+
+    out.close();
+
+  }
+  this->PrintDoneMessage();
 }
 
 //---------------------------------------------------------------------------
@@ -1533,8 +1607,8 @@ void Optimize::WritePointFilesWithFeatures(std::string iter_prefix)
       }
 
       // Only run the following code if we are dealing with ImplicitSurfaceDomains
-      const itk::ParticleImplicitSurfaceDomain<float>* domain
-              = dynamic_cast <const itk::ParticleImplicitSurfaceDomain<float>*> (m_sampler->GetParticleSystem()
+      const ParticleImplicitSurfaceDomain<float>* domain
+              = dynamic_cast <const ParticleImplicitSurfaceDomain<float>*> (m_sampler->GetParticleSystem()
                       ->GetDomain(i));
       if (domain && m_attributes_per_domain.size() > 0) {
         if (m_attributes_per_domain[i % m_domains_per_shape] > 0) {
@@ -1617,6 +1691,28 @@ void Optimize::WriteEnergyFiles()
   this->PrintDoneMessage(1);
 
   this->PrintDoneMessage();
+}
+
+//---------------------------------------------------------------------------
+void Optimize::WriteSplitFiles(std::string name) {
+  std::stringstream ss;
+  ss << this->m_split_number;
+  std::stringstream ssp;
+  std::string dir_name = "split" + ss.str();
+  for (int i = 0; i < m_domains_per_shape; i++) {
+    ssp << m_sampler->GetParticleSystem()->GetNumberOfParticles(i);
+    dir_name += "_" + ssp.str();
+    ssp.str("");
+  }
+  dir_name += name;
+  std::string out_path = m_output_dir;
+  std::string tmp_dir_name = out_path + "/" + dir_name;
+
+  WritePointFiles(tmp_dir_name);
+  WritePointFilesWithFeatures(tmp_dir_name + "/");
+  WriteTransformFile(tmp_dir_name + "/" + m_output_transform_file);
+  WriteTransformFiles(tmp_dir_name + "/");
+  WriteParameters(tmp_dir_name);
 }
 
 //---------------------------------------------------------------------------
@@ -1873,6 +1969,61 @@ void Optimize::UpdateExportablePoints()
   }
 }
 
+
+
+//---------------------------------------------------------------------------
+std::vector<std::vector<std::vector<double>>> Optimize::GetProcrustesTransforms()
+{
+  std::vector<std::vector<std::vector<double>>> transforms;
+
+  int num_domains_per_subject = this->GetDomainsPerShape();
+  int num_subjects = this->GetNumShapes() / num_domains_per_subject;
+  transforms.resize(num_subjects);
+
+  auto ps = this->GetSampler()->GetParticleSystem();
+
+  int subject = 0;
+  int domain = 0;
+  std::vector<std::vector<double>> subject_transform;
+  for (int i = 0; i < this->m_local_points.size(); i++) {  // iterate over all domains
+
+    auto procrustes = ps->GetTransform(i);
+    std::vector<double> transform;
+    for (int i = 0; i < procrustes.cols(); i++) {
+      for (int j = 0; j < procrustes.rows(); j++) {
+        transform.push_back(procrustes(i, j));
+      }
+    }
+    subject_transform.push_back(transform);
+
+    domain++;
+    if (domain == num_domains_per_subject) {
+      transforms[subject] = subject_transform;
+      subject++;
+      domain = 0;
+      subject_transform = std::vector<std::vector<double>>();
+    }
+  }
+
+  return transforms;
+}
+//---------------------------------------------------------------------------
+void Optimize::UpdateProject()
+{
+  if (!project_) {
+    return;
+  }
+
+  auto transforms = GetProcrustesTransforms();
+  auto& subjects = project_->get_subjects();
+
+  for (size_t i = 0; i < transforms.size(); i++) {
+    if (subjects.size() > i) {
+      subjects[i]->set_procrustes_transforms(transforms[i]);
+    }
+  }
+}
+
 //---------------------------------------------------------------------------
 void Optimize::SetPairwisePotentialType(int pairwise_potential_type)
 { this->m_pairwise_potential_type = pairwise_potential_type; }
@@ -1914,8 +2065,12 @@ void Optimize::SetProcrustesInterval(int procrustes_interval)
 { this->m_procrustes_interval = procrustes_interval; }
 
 //---------------------------------------------------------------------------
-void Optimize::SetProcrustesScaling(int procrustes_scaling)
+void Optimize::SetProcrustesScaling(bool procrustes_scaling)
 { this->m_procrustes_scaling = procrustes_scaling; }
+
+//---------------------------------------------------------------------------
+void Optimize::SetProcrustesRotationTranslation(bool procrustes_rotation_translation)
+{ this->m_procrustes_rotation_translation = procrustes_rotation_translation; }
 
 //---------------------------------------------------------------------------
 void Optimize::SetRelativeWeighting(double relative_weighting)
@@ -1974,9 +2129,9 @@ void Optimize::SetLogEnergy(bool log_energy)
 { this->m_log_energy = log_energy; }
 
 //---------------------------------------------------------------------------
-void Optimize::AddImage(ImageType::Pointer image)
+void Optimize::AddImage(ImageType::Pointer image, std::string name)
 {
-  this->m_sampler->AddImage(image, this->GetNarrowBand());
+  this->m_sampler->AddImage(image, this->GetNarrowBand(), name);
   this->m_num_shapes++;
   if (image) {
     this->m_spacing = image->GetSpacing()[0] * 5;
@@ -2188,6 +2343,19 @@ bool Optimize::LoadParameterFile(std::string filename)
   return true;
 }
 
+bool Optimize::SetUpOptimize(ProjectHandle projectFile)
+{
+
+  OptimizeParameters param(projectFile);
+  param.set_up_optimize(this);
+  return true;
+}
+//---------------------------------------------------------------------------
+void Optimize::SetProject(std::shared_ptr<Project> project)
+{
+  project_ = project;
+}
+
 //---------------------------------------------------------------------------
 MatrixContainer Optimize::GetParticleSystem()
 {
@@ -2207,7 +2375,7 @@ MatrixContainer Optimize::GetShapeGradientMatrix()
 //---------------------------------------------------------------------------
 MatrixContainer Optimize::GetShapeGradientMatrix(MatrixContainer positions)
 {
-  itk::ParticleSystem<3>::Pointer ps = itk::ParticleSystem<3>::New();
+  itk::ParticleSystem::Pointer ps = itk::ParticleSystem::New();
   // need to add domains, set positions, etc
 
   MatrixContainer container;
@@ -2288,6 +2456,46 @@ void Optimize::SetGeodesicsEnabled(bool is_enabled)
 void Optimize::SetGeodesicsCacheSizeMultiplier(size_t n)
 {
   this->m_geodesic_cache_size_multiplier = n;
+}
+
+//---------------------------------------------------------------------------
+vnl_vector_fixed<double, 3> Optimize::TransformPoint(int domain, vnl_vector_fixed<double, 3> input)
+{
+  // If initial transform provided, transform cutting plane points
+  if (GetPrefixTransformFile() == "" || GetTransformFile() == "") {
+    return input;
+  }
+
+  itk::ParticleSystem::PointType pa;
+
+  pa[0] = input[0];
+  pa[1] = input[1];
+  pa[2] = input[2];
+
+  itk::ParticleSystem::TransformType T =  GetSampler()->GetParticleSystem()->GetTransform(domain);
+  itk::ParticleSystem::TransformType prefT =
+      GetSampler()->GetParticleSystem()->GetPrefixTransform(domain);
+  pa = GetSampler()->GetParticleSystem()->TransformPoint(pa, T * prefT);
+
+  vnl_vector_fixed<double, 3> output;
+
+  output[0] = pa[0];
+  output[1] = pa[1];
+  output[2] = pa[2];
+  return output;
+}
+
+
+//---------------------------------------------------------------------------
+void Optimize::SetSharedBoundaryEnabled(bool enabled)
+{
+  m_sampler->SetSharedBoundaryEnabled(enabled);
+}
+
+//---------------------------------------------------------------------------
+void Optimize::SetSharedBoundaryWeight(double weight)
+{
+  m_sampler->SetSharedBoundaryWeight(weight);
 }
 
 //---------------------------------------------------------------------------

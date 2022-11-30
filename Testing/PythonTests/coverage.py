@@ -2,6 +2,8 @@ import os
 import sys
 from shapeworks import *
 
+success = True
+
 def coverageTest():
   femur = Mesh(os.environ["DATA"] + "/femur.vtk")
   pelvis = Mesh(os.environ["DATA"] + "/pelvis.vtk")
@@ -11,7 +13,6 @@ def coverageTest():
 
   return pelvis == compareMesh
 
-val = coverageTest()
+success &= utils.test(coverageTest)
 
-if val is False:
-  sys.exit(1)
+sys.exit(not success)

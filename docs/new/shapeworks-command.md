@@ -1,8 +1,8 @@
 # ShapeWorks Command
 
-ShapeWorks was a conglomeration of independent executables for grooming and optimization with a GUI (ShapeWorksStudio) for analysis and visualization. This design is highly inflexible, task specific, and poorly documented, and Studio duplicated a significant portion of their functionality.
+ShapeWorks was a conglomeration of independent executables for grooming and optimization with a GUI (ShapeWorks Studio) for analysis and visualization. This design is highly inflexible, task specific, and poorly documented, and Studio duplicated a significant portion of their functionality.
 
-We have made significant efforts in organizing the codebase based on functionalities, implementing them as libraries rather than executables to provide a common backbone to command-line and GUI-based tools, and syncing ShapeWorksStudio to use the same underlying libraries.
+We have made significant efforts in organizing the codebase based on functionalities, implementing them as libraries rather than executables to provide a common backbone to command-line and GUI-based tools, and syncing ShapeWorks Studio to use the same underlying libraries.
 
 
 To retain command line usage, we have created a single [`shapeworks`](../tools/ShapeWorksCommands.md) command with subcommands exposing this functionality along with greater flexibility and interactive `--help` for each subcommand. 

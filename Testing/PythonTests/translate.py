@@ -2,6 +2,8 @@ import os
 import sys
 from shapeworks import *
 
+success = True
+
 def translateTest1():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
   img.translate([10.0, 10.0, 10.0])
@@ -10,10 +12,7 @@ def translateTest1():
 
   return img.compare(compareImg)
 
-val = translateTest1()
-
-if val is False:
-  sys.exit(1)
+success &= utils.test(translateTest1)
 
 def translateTest2():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -23,10 +22,7 @@ def translateTest2():
 
   return img.compare(compareImg)
 
-val = translateTest2()
-
-if val is False:
-  sys.exit(1)
+success &= utils.test(translateTest2)
 
 def translateTest3():
   mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
@@ -36,10 +32,7 @@ def translateTest3():
 
   return mesh == compareMesh
 
-val = translateTest3()
-
-if val is False:
-  sys.exit(1)
+success &= utils.test(translateTest3)
 
 def translateTest4():
   mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
@@ -49,10 +42,7 @@ def translateTest4():
 
   return mesh == compareMesh
 
-val = translateTest4()
-
-if val is False:
-  sys.exit(1)
+success &= utils.test(translateTest4)
 
 def translateTest5():
   mesh = Mesh(os.environ["DATA"] + "/femur.vtk")
@@ -62,7 +52,16 @@ def translateTest5():
 
   return mesh == compareMesh
 
-val = translateTest5()
+success &= utils.test(translateTest5)
 
-if val is False:
-  sys.exit(1)
+def translatefailTest():
+  img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
+  img.translate()
+
+  compareImg = Image(os.environ["DATA"] + "/translatefail.nrrd")
+
+  return img.compare(compareImg)
+
+success &= utils.expectException(translatefailTest, TypeError)
+
+sys.exit(not success)

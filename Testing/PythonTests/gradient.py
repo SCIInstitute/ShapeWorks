@@ -2,7 +2,9 @@ import os
 import sys
 from shapeworks import *
 
-def gradientTest1():
+success = True
+
+def gradientTest():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
   img.applyGradientFilter()
 
@@ -10,7 +12,6 @@ def gradientTest1():
 
   return img.compare(compareImg)
 
-val = gradientTest1()
+success &= utils.test(gradientTest)
 
-if val is False:
-  sys.exit(1)
+sys.exit(not success)

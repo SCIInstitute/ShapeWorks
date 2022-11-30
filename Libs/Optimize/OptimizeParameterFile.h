@@ -2,6 +2,8 @@
 
 #include <string>
 #include <vector>
+#include <sstream>
+#include <exception>
 
 class TiXmlHandle;
 
@@ -56,6 +58,8 @@ private:
   bool read_cutting_planes(TiXmlHandle* doc_handle, Optimize* optimize);
 
   bool read_cutting_spheres(TiXmlHandle* doc_handle, Optimize* optimize);
+
+  bool read_cutting_ffcs(TiXmlHandle* docHandle, Optimize* optimize);
 
   bool read_explanatory_variables(TiXmlHandle* doc_handle, Optimize* optimize);
 

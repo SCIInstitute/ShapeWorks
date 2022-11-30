@@ -16,18 +16,20 @@
 #include <Eigen/Eigen>
 
 // shapeworks particle system
-#include "ParticleSystem/itkParticleSystem.h"
-#include "ParticleSystem/Sampler.h"
-#include "ParticleSystem/itkParticleProcrustesRegistration.h"
-#include "ParticleSystem/itkParticleGoodBadAssessment.h"
-#include "ParticleSystem/itkParticleVectorFunction.h"
-#include "ParticleSystem/DomainType.h"
-#include "ParticleSystem/MeshWrapper.h"
-#include "ParticleSystem/OptimizationVisualizer.h"
-
+#include "itkParticleSystem.h"
+#include "Sampler.h"
+#include "ParticleProcrustesRegistration.h"
+#include "itkParticleGoodBadAssessment.h"
+#include "itkParticleVectorFunction.h"
+#include "DomainType.h"
+#include "MeshWrapper.h"
+#include "OptimizationVisualizer.h"
+#include <Project/Project.h>
 
 
 namespace shapeworks {
+
+class Project;
 
 class MatrixContainer {
 public:
@@ -63,6 +65,12 @@ public:
 
   //! Load a parameter file
   bool LoadParameterFile(std::string filename);
+
+  bool SetUpOptimize(ProjectHandle projectFile);
+
+  //! Set the Projects
+  void SetProject(std::shared_ptr<Project> project);
+
 
   void SetIterationCallbackFunction(const std::function<void(void)> &f)
   { this->m_iter_callback = f; }
@@ -116,6 +124,9 @@ public:
   //! Set the output transform file
   void SetOutputTransformFile(std::string output_transform_file);
 
+  //! Set whether individual transforms should be written
+  void SetOutputIndividualTransformFiles(bool value);
+
   //! Set if mesh based attributes should be used
   void SetUseMeshBasedAttributes(bool use_mesh_based_attributes);
 
@@ -152,6 +163,8 @@ public:
   void SetProcessingMode(int mode);
   //! Set adaptivity mode (TODO: details)
   void SetAdaptivityMode(int adaptivity_mode);
+  //! Set Mesh FFC Mode false/0 = mesh clipping mode, true/1 = mesh augmented lagrangian mode
+  void SetMeshFFCMode(int mesh_ffc_mode){m_mesh_ffc_mode = mesh_ffc_mode; m_sampler->SetMeshFFCMode(mesh_ffc_mode);}
   //! Set adaptivity strength (TODO: details)
   void SetAdaptivityStrength(double adaptivity_strength);
   //! Set pairwise potential type (TODO: details)
@@ -174,8 +187,10 @@ public:
   void SetUseShapeStatisticsInInit(bool use_shape_statistics_in_init);
   //! Set the interval for running procrustes (0 to disable)
   void SetProcrustesInterval(int procrustes_interval);
-  //! Set if procrustes scaling should be used (0=disabled, 1=enabled)
-  void SetProcrustesScaling(int procrustes_scaling);
+  //! Set if procrustes scaling should be used
+  void SetProcrustesScaling(bool procrustes_scaling);
+  //! Set if procrustes rotation/translation should be used
+  void SetProcrustesRotationTranslation(bool procrustes_rotation_translation);
   //! Set the relative weighting (TODO: details)
   void SetRelativeWeighting(double relative_weighting);
   //! Set the initial relative weigting (TODO: details)
@@ -208,7 +223,7 @@ public:
   void SetLogEnergy(bool log_energy);
 
   //! Set the shape input images
-  void AddImage(ImageType::Pointer image);
+  void AddImage(ImageType::Pointer image, std::string name = "");
   void AddMesh(vtkSmartPointer<vtkPolyData> poly_data);
   void AddContour(vtkSmartPointer<vtkPolyData> poly_data);
 
@@ -234,6 +249,10 @@ public:
   void SetParticleFlags(std::vector<int> flags);
   //! Set Domain Flags (TODO: details)
   void SetDomainFlags(std::vector<int> flags);
+
+  //! Shared boundary settings
+  void SetSharedBoundaryEnabled(bool enabled);
+  void SetSharedBoundaryWeight(double weight);
 
   const std::vector<int>& GetDomainFlags();
 
@@ -294,6 +313,11 @@ public:
   void SetShowVisualizer(bool show);
   bool GetShowVisualizer();
 
+  bool GetMeshFFCMode(){return m_mesh_ffc_mode;}
+
+  //! transform a point if necessary
+  vnl_vector_fixed<double, 3> TransformPoint(int domain, vnl_vector_fixed<double, 3> input);
+
   bool GetOptimizing() {
     return this->m_optimizing;
   }
@@ -329,11 +353,14 @@ protected:
 
   void WriteTransformFile(int iter = -1) const;
   void WriteTransformFile(std::string iter_prefix) const;
+  void WriteTransformFiles(int iter = -1) const;
+  void WriteTransformFiles(std::string iter_prefix) const;
   void WritePointFiles(int iter = -1);
   void WritePointFiles(std::string iter_prefix);
   void WritePointFilesWithFeatures(int iter = -1);
   void WritePointFilesWithFeatures(std::string iter_prefix);
   void WriteEnergyFiles();
+  void WriteSplitFiles(std::string name);
   void WriteCuttingPlanePoints(int iter = -1);
   void WriteParameters(std::string output_dir = "");
   void ReportBadParticles();
@@ -347,11 +374,15 @@ protected:
 
   virtual void UpdateExportablePoints();
 
+  virtual std::vector<std::vector<std::vector<double>>> GetProcrustesTransforms();
+
+  void UpdateProject();
+
   // return a checkpoint dir for the current iteration
   std::string GetCheckpointDir();
 
   std::shared_ptr<Sampler> m_sampler;
-  itk::ParticleProcrustesRegistration<3>::Pointer m_procrustes;
+  ParticleProcrustesRegistration::Pointer m_procrustes;
   itk::ParticleGoodBadAssessment<float, 3>::Pointer m_good_bad;
 
   unsigned int m_verbosity_level = 0;
@@ -375,6 +406,7 @@ protected:
   std::string m_prefix_transform_file;
   std::string m_output_dir;
   std::string m_output_transform_file;
+  bool m_output_transform_files = false;
   bool m_mesh_based_attributes = false;
   std::vector<bool> m_use_xyz;
   std::vector<bool> m_use_normals;
@@ -388,6 +420,8 @@ protected:
   double m_adaptivity_strength = 0.0;
   int m_pairwise_potential_type = 0;   // 0 - gaussian (Cates work), 1 - modified cotangent (Meyer),
 
+  bool m_mesh_ffc_mode = 0;
+
   unsigned int m_timepts_per_subject = 1;
   int m_optimization_iterations = 2000;
   int m_optimization_iterations_completed = 0;
@@ -396,7 +430,8 @@ protected:
   double m_optimization_criterion = 1e-6;
   bool m_use_shape_statistics_in_init = false;
   unsigned int m_procrustes_interval = 3;
-  int m_procrustes_scaling = 1;
+  bool m_procrustes_scaling = true;
+  bool m_procrustes_rotation_translation = true;
   double m_relative_weighting = 1.0;
   double m_initial_relative_weighting = 0.05;
   double m_starting_regularization = 1000;
@@ -454,6 +489,8 @@ protected:
 
   bool show_visualizer = false;
   shapeworks::OptimizationVisualizer visualizer;
+
+  std::shared_ptr<Project> project_;
 };
 
 }

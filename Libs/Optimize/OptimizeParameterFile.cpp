@@ -1,17 +1,17 @@
 #include "OptimizeParameterFile.h"
 #include "Optimize.h"
-#include "ParticleSystem/DomainType.h"
+#include "DomainType.h"
 
 #include <itkImageFileReader.h>
 #include <vtkPLYReader.h>
 
-#include <tinyxml.h>
+#include "ExternalLibs/tinyxml/tinyxml.h"
 
-#include "ParticleSystem/MeshWrapper.h"
-#include "ParticleSystem/TriMeshWrapper.h"
-#include "ParticleSystem/VtkMeshWrapper.h"
-#include <Libs/Utils/StringUtils.h>
-#include <Libs/Mesh/MeshUtils.h>
+#include "MeshWrapper.h"
+#include "TriMeshWrapper.h"
+#include "VtkMeshWrapper.h"
+#include <Utils/StringUtils.h>
+#include <Mesh/MeshUtils.h>
 
 namespace shapeworks {
 
@@ -205,6 +205,12 @@ bool OptimizeParameterFile::set_io_parameters(TiXmlHandle* docHandle, Optimize* 
   if (elem) { output_transform_file = elem->GetText(); }
   optimize->SetOutputTransformFile(output_transform_file);
 
+  // write individual transform files
+  bool write_individual_output_transforms = false;
+  elem = docHandle->FirstChild("write_transform_files").Element();
+  if (elem) { write_individual_output_transforms = (bool) atoi(elem->GetText()); }
+  optimize->SetOutputIndividualTransformFiles(write_individual_output_transforms);
+
   // python filename
   std::string python_file = "";
   elem = docHandle->FirstChild("python_filename").Element();
@@ -337,6 +343,9 @@ bool OptimizeParameterFile::set_optimization_parameters(TiXmlHandle* docHandle, 
   elem = docHandle->FirstChild("procrustes_scaling").Element();
   if (elem) { optimize->SetProcrustesScaling(atoi(elem->GetText())); }
 
+  elem = docHandle->FirstChild("procrustes_rotation_translation").Element();
+  if (elem) { optimize->SetProcrustesRotationTranslation(atoi(elem->GetText())); }
+
   elem = docHandle->FirstChild("relative_weighting").Element();
   if (elem) { optimize->SetRelativeWeighting(atof(elem->GetText())); }
 
@@ -375,6 +384,15 @@ bool OptimizeParameterFile::set_optimization_parameters(TiXmlHandle* docHandle, 
 
   elem = docHandle->FirstChild("geodesics_cache_size_multiplier").Element();
   if (elem) { optimize->SetGeodesicsCacheSizeMultiplier((size_t) atol(elem->GetText())); }
+
+  elem = docHandle->FirstChild("mesh_ffc_mode").Element();
+  if (elem) { optimize->SetMeshFFCMode((bool) atoi(elem->GetText())); }
+
+  elem = docHandle->FirstChild("shared_boundary_enabled").Element();
+  if (elem) { optimize->SetSharedBoundaryEnabled((bool) atoi(elem->GetText())); }
+
+  elem = docHandle->FirstChild("shared_boundary_weight").Element();
+  if (elem) { optimize->SetSharedBoundaryWeight( atof(elem->GetText())); }
 
   return true;
 }
@@ -436,7 +454,7 @@ bool OptimizeParameterFile::read_image_inputs(TiXmlHandle* docHandle, Optimize* 
       reader->SetFileName(imageFiles[index]);
       reader->UpdateLargestPossibleRegion();
       const auto image = reader->GetOutput();
-      optimize->AddImage(image);
+      optimize->AddImage(image, imageFiles[index]);
     }
     else {
       optimize->AddImage(nullptr);
@@ -475,7 +493,8 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle* docHandle, Optimize* o
 
   // passing cutting plane constraints
   // planes dimensions [number_of_inputs, planes_per_input, normal/point]
-  std::vector<std::vector<std::pair<Eigen::Vector3d, Eigen::Vector3d> > > planes = optimize->GetSampler()->ComputeCuttingPlanes();
+  std::vector<std::vector<std::pair<Eigen::Vector3d, Eigen::Vector3d>>> planes = optimize->GetSampler()->ComputeCuttingPlanes();
+  auto ffcs = optimize->GetSampler()->GetFFCs();
 
   for (int index = 0; index < meshFiles.size(); index++) {
     bool fixed_domain = false;
@@ -515,6 +534,17 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle* docHandle, Optimize* o
           mesh.clip(plane);
         }
       }
+
+      if(optimize->GetMeshFFCMode() == 0){
+          if (this->verbosity_level_ > 1) {
+            std::cout << "ffcssize " << ffcs.size() << std::endl;
+          }
+            if (index < ffcs.size()) {
+              mesh.prepareFFCFields(ffcs[index].boundaries, ffcs[index].query);
+              mesh = Mesh(mesh.clipByField("inout", 0.0));
+            }
+        }
+
       auto poly_data = mesh.getVTKMesh();
 
       if (poly_data) {
@@ -788,7 +818,11 @@ bool OptimizeParameterFile::read_constraints(TiXmlHandle* doc_handle, Optimize* 
     }
   }
 
-  return this->read_cutting_spheres(doc_handle, optimize);
+  if (!this->read_cutting_spheres(doc_handle, optimize)) {
+    return false;
+  }
+
+  return this->read_cutting_ffcs(doc_handle, optimize);
 }
 
 //---------------------------------------------------------------------------
@@ -843,9 +877,9 @@ bool OptimizeParameterFile::read_distribution_cutting_plane(TiXmlHandle* doc_han
 
       // If initial transform provided, transform cutting plane points
       if (optimize->GetPrefixTransformFile() != "" && optimize->GetTransformFile() != "") {
-        itk::ParticleSystem<3>::PointType pa;
-        itk::ParticleSystem<3>::PointType pb;
-        itk::ParticleSystem<3>::PointType pc;
+        itk::ParticleSystem::PointType pa;
+        itk::ParticleSystem::PointType pb;
+        itk::ParticleSystem::PointType pc;
 
         pa[0] = a[0];
         pa[1] = a[1];
@@ -857,10 +891,10 @@ bool OptimizeParameterFile::read_distribution_cutting_plane(TiXmlHandle* doc_han
         pc[1] = c[1];
         pc[2] = c[2];
 
-        itk::ParticleSystem<3>::TransformType T =
+        itk::ParticleSystem::TransformType T =
           optimize->GetSampler()->GetParticleSystem()->GetTransform(
             shapeCount);
-        itk::ParticleSystem<3>::TransformType prefT =
+        itk::ParticleSystem::TransformType prefT =
           optimize->GetSampler()->GetParticleSystem()->GetPrefixTransform(shapeCount);
         pa = optimize->GetSampler()->GetParticleSystem()->TransformPoint(pa, T * prefT);
         pb = optimize->GetSampler()->GetParticleSystem()->TransformPoint(pb, T * prefT);
@@ -918,7 +952,7 @@ int OptimizeParameterFile::get_num_inputs(TiXmlHandle* docHandle)
     throw std::invalid_argument(message);
   }
 
-  return inputs.size() / domains_per_shape;
+  return inputs.size();
 }
 
 //---------------------------------------------------------------------------
@@ -996,9 +1030,9 @@ bool OptimizeParameterFile::read_cutting_planes(TiXmlHandle* docHandle, Optimize
 
         // If initial transform provided, transform cutting plane points
         if (optimize->GetPrefixTransformFile() != "" && optimize->GetTransformFile() != "") {
-          itk::ParticleSystem<3>::PointType pa;
-          itk::ParticleSystem<3>::PointType pb;
-          itk::ParticleSystem<3>::PointType pc;
+          itk::ParticleSystem::PointType pa;
+          itk::ParticleSystem::PointType pb;
+          itk::ParticleSystem::PointType pc;
 
           pa[0] = a[0];
           pa[1] = a[1];
@@ -1010,10 +1044,10 @@ bool OptimizeParameterFile::read_cutting_planes(TiXmlHandle* docHandle, Optimize
           pc[1] = c[1];
           pc[2] = c[2];
 
-          itk::ParticleSystem<3>::TransformType T =
+          itk::ParticleSystem::TransformType T =
             optimize->GetSampler()->GetParticleSystem()->GetTransform(
               shapeCount);
-          itk::ParticleSystem<3>::TransformType prefT =
+          itk::ParticleSystem::TransformType prefT =
             optimize->GetSampler()->GetParticleSystem()->GetPrefixTransform(shapeCount);
           pa = optimize->GetSampler()->GetParticleSystem()->TransformPoint(pa, T * prefT);
           pb = optimize->GetSampler()->GetParticleSystem()->TransformPoint(pb, T * prefT);
@@ -1030,7 +1064,6 @@ bool OptimizeParameterFile::read_cutting_planes(TiXmlHandle* docHandle, Optimize
           c[2] = pc[2];
         }
 
-        std::cout << "Adding plane" << std::endl;
         optimize->GetSampler()->SetCuttingPlane(shapeCount, a, b, c);
       }
     }
@@ -1119,7 +1152,6 @@ bool OptimizeParameterFile::read_cutting_spheres(TiXmlHandle* doc_handle, Optimi
 
               rad = radList[r_ctr++];
 
-              std::cout << "Adding sphere" << std::endl;
               optimize->GetSampler()->AddSphere(shapeCount, center, rad);
             }
           }
@@ -1127,6 +1159,117 @@ bool OptimizeParameterFile::read_cutting_spheres(TiXmlHandle* doc_handle, Optimi
       }
     }
   }
+  return true;
+}
+
+bool OptimizeParameterFile::read_cutting_ffcs(TiXmlHandle* docHandle, Optimize* optimize)
+{
+  TiXmlElement* elem;
+  std::istringstream inputsBuffer;
+  int num_inputs = this->get_num_inputs(docHandle);
+
+  int num_ffcs = num_inputs;
+
+  if (this->verbosity_level_ > 1) {
+    std::cout << "Number of free-form constraints " << num_ffcs << std::endl;
+  }
+  // Check that if ffcs are not given, return true. If we expected ffcs(num_ffcs_per_input was given), print a warning to cerr.
+  elem = docHandle->FirstChild("ffcs").Element();
+  if (!elem) {
+    return true;
+  }
+
+  inputsBuffer.str(elem->GetText());
+  auto flags = optimize->GetDomainFlags();
+
+  // load ffc filenames
+  std::vector<std::string> ffcFiles;
+  std::string ffcfilename;
+  while (inputsBuffer >> ffcfilename) {
+    ffcFiles.push_back(ffcfilename);
+  }
+
+  size_t count = 0;
+  std::string buffer;
+  if (ffcFiles.size() != num_ffcs) {
+    std::cerr << "ERROR: Error reading free-form constraint(ffc) data! Expected " << num_ffcs
+              << " but instead got " << ffcFiles.size()
+              << " instead. Can't use ffcs, please fix the input xml." << std::endl;
+    throw 1;
+  }
+  else {
+    for (size_t shapeCount = 0; shapeCount < num_inputs; shapeCount++) {
+      // Reading in ffc file for shape shapeCount # ffcCount
+      std::string fn = ffcFiles[count];
+      //std::cout << "Shape " << shapeCount << " ffc num " << ffcCount << " filename " <<  fn << std::endl;
+      bool query_read = true;
+
+      std::vector<std::vector<Eigen::Vector3d>> boundaries;
+      int boundary_count = -1;
+      Eigen::Vector3d query;
+
+      fstream newfile;
+      newfile.open(fn, ios::in);
+
+      if (newfile.is_open()) {   //checking whether the file is open
+        std::string tp;
+        while (getline(newfile, tp)) { //read data from file object and put it into string.
+          //cout << tp << "\n"; //print the data of the string
+          if (tp == "query") {
+            query_read = true;
+          }
+          else if (tp == "boundary_pts") {
+            query_read = false;
+            std::vector<Eigen::Vector3d> boundary;
+            boundaries.push_back(boundary);
+            boundary_count++;
+          }
+          else {
+            try {
+              if (query_read) {
+                std::istringstream iss(tp);
+                iss >> buffer;
+                query(0) = std::stod(buffer);
+                iss >> buffer;
+                query(1) = std::stod(buffer);
+                iss >> buffer;
+                query(2) = std::stod(buffer);
+                //cout << "Added query " << query.transpose() << "\n";
+              }
+              else {
+                Eigen::Vector3d bpt;
+                std::istringstream iss(tp);
+                iss >> buffer;
+                bpt(0) = std::stod(buffer);
+                iss >> buffer;
+                bpt(1) = std::stod(buffer);
+                iss >> buffer;
+                bpt(2) = std::stod(buffer);
+                boundaries[boundary_count].push_back(bpt);
+                //cout << "Added boundary " << bpt.transpose() << "\n";
+              }
+            }
+            catch (std::exception& e) {
+              cout << e.what() << '\n';
+              std::cerr << "ERROR: File " << fn
+                        << " threw an exception. Please check the correctness and formating of the file."
+                        << std::endl;
+              throw 1;
+            }
+          }
+        }
+        newfile.close(); //close the file object.
+      }
+      else {
+        std::cerr << "ERROR: File " << fn
+                  << " could not be opened. Please check that the file is available." << std::endl;
+        throw 1;
+      }
+      optimize->GetSampler()->AddFreeFormConstraint(shapeCount, boundaries, query);
+      count++;
+    }
+  }
+
   return true;
 }
 

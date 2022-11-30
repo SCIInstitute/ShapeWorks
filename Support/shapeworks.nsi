@@ -1,5 +1,6 @@
 ; ShapeWorks.nsi
 
+!include "Support\FileAssociation.nsh"
 
 ;--------------------------------s
 ; Include Modern UI
@@ -14,19 +15,11 @@ ManifestDPIAware true
 ;--------------------------------
 
 ;--------------------------------
-; Initialization function to properly set the installation directory
-Function .onInit
-  ${If} ${RunningX64}
-    StrCpy $INSTDIR "$PROGRAMFILES64\ShapeWorks"
-    SetRegView 64
-  ${EndIf}
-FunctionEnd
-
-;--------------------------------
 ; General
 
 ; The name of the installer
-Name "ShapeWorks-$%SW_VERSION%"
+!define PRODUCT "ShapeWorks"
+Name "$%SW_VERSION%"
 
 ; The file to write
 OutFile "$%SW_VERSION%.exe"
@@ -49,6 +42,11 @@ RequestExecutionLevel admin
  
 ;--------------------------------
 ;Installer Pages
+  !define MUI_ICON "Support/windows/installer_icon.ico"
+  !define MUI_UNICON "Support/windows/installer_icon.ico"
+  !define MUI_HEADERIMAGE
+  !define MUI_HEADERIMAGE_BITMAP "Support/windows/installer_header_image.bmp"
+  !define MUI_HEADERIMAGE_UNBITMAP "Support/windows/installer_header_image.bmp"
   !define MUI_FINISHPAGE_SHOWREADME "Windows_README.txt"
   !define MUI_FINISHPAGE_SHOWREADME_TEXT "Show README"
   !define MUI_FINISHPAGE_TITLE "Installation Complete"
@@ -72,13 +70,15 @@ Section "ShapeWorks (required)"
   SetOutPath $INSTDIR
   
   ; Put file there
-  File "conda_installs.bat"
+  File "install_shapeworks.bat"
   File "Windows_README.txt"
   File /r "bin"
   File /r "Examples"
-  File /r "Python"
+  File /r /x Studio /x Lib "Python"
   File /r "Documentation"
+  File /r "Installation"
 
+  ${registerExtension} "$INSTDIR\bin\ShapeWorksStudio.exe" ".swproj" "ShapeWorks Project"
   
   ; Write the installation path into the registry
   WriteRegStr HKLM SOFTWARE\ShapeWorks "Install_Dir" "$INSTDIR"
@@ -102,7 +102,6 @@ Section "Start Menu Shortcuts"
 SectionEnd
 
 ;--------------------------------
-
 ; Uninstaller
 
 Section "Uninstall"
@@ -117,8 +116,19 @@ Section "Uninstall"
   ; Remove shortcuts, if any
   Delete "$SMPROGRAMS\ShapeWorks\*.*"
 
+  ${unregisterExtension} ".swprojc" "ShapeWorks Project"
+
   ; Remove directories used
   RMDir "$SMPROGRAMS\ShapeWorks"
   RMDir "$INSTDIR"
 
 SectionEnd
+
+;--------------------------------
+;After Initialization Function
+Function .onInit
+  ${If} ${RunningX64}
+    StrCpy $INSTDIR "$PROGRAMFILES64\ShapeWorks"
+    SetRegView 64
+  ${EndIf}
+FunctionEnd

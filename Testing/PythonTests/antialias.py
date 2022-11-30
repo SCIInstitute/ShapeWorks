@@ -2,6 +2,8 @@ import os
 import sys
 from shapeworks import *
 
+success = True
+
 def antialiasTest1():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
   img.antialias()
@@ -10,10 +12,7 @@ def antialiasTest1():
 
   return img.compare(compareImg)
 
-val = antialiasTest1()
-
-if val is False:
-  sys.exit(1)
+success &= utils.test(antialiasTest1)
 
 def antialiasTest2():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -23,10 +22,7 @@ def antialiasTest2():
 
   return img.compare(compareImg)
 
-val = antialiasTest2()
-
-if val is False:
-  sys.exit(1)
+success &= utils.test(antialiasTest2)
 
 def antialiasTest3():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -36,7 +32,6 @@ def antialiasTest3():
 
   return img.compare(compareImg)
 
-val = antialiasTest3()
+success &= utils.test(antialiasTest3)
 
-if val is False:
-  sys.exit(1)
+sys.exit(not success)

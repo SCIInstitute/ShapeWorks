@@ -25,13 +25,13 @@ target_link_libraries(shapeworks_exe
   Image
   Common
   Mesh
-  Analyze
   Particles
   Optimize
   Groom
   Project
   ${ITK_LIBRARIES}
   OptimizeLibraries
+  Analyze
   )
 
 message(STATUS "opt libs ${OPTIMIZE_LIBRARIES}")

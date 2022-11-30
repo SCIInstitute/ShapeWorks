@@ -7,6 +7,7 @@ import numpy as np
 from abc import ABC, abstractmethod
 from sklearn.mixture import GaussianMixture
 import random
+from shapeworks.utils import sw_message
 
 
 ###################### Sampler Class ###################################
@@ -25,7 +26,7 @@ class Sampler(ABC):
 # instance of Sampler class that uses a single Gaussian
 class Gaussian_Sampler(Sampler):
 	def fit(self, embedded_matrix):
-		print("Fitting Gaussian distribution...")
+		sw_message("Fitting Gaussian distribution...")
 		self.embedded_matrix = embedded_matrix
 		self.mean = np.mean(embedded_matrix, axis=0)
 		self.cov = np.cov(embedded_matrix, rowvar=0)
@@ -38,13 +39,13 @@ class Gaussian_Sampler(Sampler):
 # mixture_num is the number of clusters to use (if 0 it autoselects the best number using the elbow method)
 class Mixture_Sampler(Sampler):
 	def fit(self, embedded_matrix, mixture_num):
-		print("Fitting Gaussian mixture model...")
+		sw_message("Fitting Gaussian mixture model...")
 		self.embedded_matrix = embedded_matrix
 		if mixture_num == 0:
 			mixture_num = self.selectClusterNum()
 		self.GMM = GaussianMixture(mixture_num, covariance_type='full', random_state=0)
 		self.GMM.fit(self.embedded_matrix)
-		print("Gaussian mixture model converged: " + str(self.GMM.converged_))
+		sw_message("Gaussian mixture model converged: " + str(self.GMM.converged_))
 	# get optimal cluster number by minimizing Akaike information criterion (AIC) and Bayesian information criterion (BIC)
 	def selectClusterNum(self):
 		n_components = np.arange(1, self.embedded_matrix.shape[1])
@@ -53,7 +54,7 @@ class Mixture_Sampler(Sampler):
 		aic_min_index = np.argmin(np.array([m.aic(self.embedded_matrix) for m in models]))
 		avg_index = int((bic_min_index + aic_min_index) / 2)
 		mixture_num = n_components[avg_index]
-		print("Using " + str(mixture_num) + " components.")
+		sw_message("Using " + str(mixture_num) + " components.")
 		return mixture_num
 	def sample(self):
 		rand_int = random.randint(1, 1000)
@@ -64,7 +65,7 @@ class Mixture_Sampler(Sampler):
 # instance of Sampler class that uses kernel density estimate
 class KDE_Sampler(Sampler):
 	def fit(self, embedded_matrix):
-		print("Fitting KDE...")
+		sw_message("Fitting KDE...")
 		self.embedded_matrix = embedded_matrix
 		# get sigma squared
 		nearest_neighbor_dists = []

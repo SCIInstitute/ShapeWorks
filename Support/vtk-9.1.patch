@@ -1,0 +1,21 @@
+diff --git a/Rendering/OpenGL2/vtkCocoaRenderWindow.mm b/Rendering/OpenGL2/vtkCocoaRenderWindow.mm
+index 0d63d49783..82e6b7c57f 100644
+--- a/Rendering/OpenGL2/vtkCocoaRenderWindow.mm
++++ b/Rendering/OpenGL2/vtkCocoaRenderWindow.mm
+@@ -228,6 +228,16 @@ vtkCocoaRenderWindow::vtkCocoaRenderWindow()
+ //----------------------------------------------------------------------------
+ vtkCocoaRenderWindow::~vtkCocoaRenderWindow()
+ {
++  // If we created a vtkCocoaGLView, clear its reference back to us.
++  if (this->GetViewCreated())
++  {
++    NSView* glView = (NSView*)this->GetWindowId();
++    if ([glView isKindOfClass:[vtkCocoaGLView class]])
++    {
++      [(vtkCocoaGLView*)glView setVTKRenderWindow:nullptr];
++    }
++  }
++
+   if (this->CursorHidden)
+   {
+     this->ShowCursor();

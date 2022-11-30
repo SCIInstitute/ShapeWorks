@@ -1,10 +1,14 @@
 import os
 import sys
+import numpy as np
 from shapeworks import *
 
+success = True
+
+# note: we just use numpy arrays for coordinates/indices, points, dimensions, vectors, and matrices
 def coordTest():
-  c1 = Coord(1, 1, 1)
-  c2 = Coord(2, 2, 1)
+  c1 = np.array([1.0, 1.0, 1.0])
+  c2 = np.array([2.0, 2.0, 1.0])
   
   c2[2] = 2
 
@@ -20,7 +24,6 @@ def coordTest():
 
   return c6[0] == 40 and c6[1] == 40 and c6[2] == 40
 
-val = coordTest()
+success &= utils.test(coordTest)
 
-if val is False:
-  sys.exit(1)
+sys.exit(not success)

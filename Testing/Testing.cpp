@@ -1,122 +1,12 @@
-#include <cstdlib>
-
 #include "Testing.h"
 
-#ifdef _WIN32
-static std::string find_in_path(std::string file) {
-  std::stringstream path(getenv("PATH"));
-  while (! path.eof()) {
-    std::string test;
-    struct stat info;
-    getline(path, test, ';');
-    std::string base = test;
-    test.append("/");
-    test.append(file);
-    if (stat(test.c_str(), &info) == 0) {
-      return base;
-    }
-  }
-  return "";
-}
-#endif
+#include <boost/filesystem.hpp>
+#include <cstdlib>
 
-/// set necessary env vars for running shapeworks executable and using python api
-// TODO: use googletest's setup/teardown: https://github.com/google/googletest/blob/master/googletest/docs/advanced.md
-void shapeworksEnvSetup()
-{
-  const char* curr_path(std::getenv("PATH"));
-  const char* curr_pythonpath(std::getenv("PYTHONPATH"));
-  const char* curr_ld_library_path(std::getenv("LD_LIBRARY_PATH"));
-
-#ifdef _WIN32
-  auto path(std::string(BUILD_DIR) + "\\bin\\Release" + ";"
-            + std::string(BUILD_DIR) + "\\bin\\RelWithDebInfo" + ";"
-            + std::string(BUILD_DIR) + "\\bin\\Debug" + ";"
-            + std::string(INSTALL_DIR) + "\\bin\\Release" + ";"
-            + std::string(INSTALL_DIR) + "\\bin\\RelWithDebInfo" + ";"
-            + std::string(INSTALL_DIR) + "\\bin\\Debug" + ";");
-  //path += std::string(DEPS_DIR) + "\\bin" + ";";
-  path += (curr_path ? curr_path : ""); // fixme: could be /bin/Debug if we ever figure out how to build Windows Debug
-  std::cout << "path: " << path << std::endl;
-  _putenv_s("PATH", path.c_str());
-
-  auto pythonpath(std::string(BUILD_DIR) + "\\bin\\Release" + ";"
-                  + std::string(BUILD_DIR) + "\\bin\\RelWithDebInfo" + ";"
-                  + std::string(BUILD_DIR) + "\\bin\\Debug" + ";"
-                  + std::string(INSTALL_DIR) + "\\bin" + ";"
-                  + std::string(INSTALL_DIR) + "\\lib" + ";");
-  //pythonpath += std::string(DEPS_DIR) + "\\bin\\lib\\site-packages" + ";";
-  pythonpath += (curr_pythonpath ? curr_pythonpath : "");
-  std::cout << "pythonpath: " << pythonpath << std::endl;
-  _putenv_s("PYTHONPATH", pythonpath.c_str());
-
-  std::string found_path = find_in_path("python.exe");
-  if (found_path != "") {
-     std::cerr << "python.exe found in: " << found_path << "\n";
-     _putenv_s("PYTHONHOME", found_path.c_str());
-  }
-
-#elif __linux__
-  auto path(std::string(BUILD_DIR) + "/bin" + ":"
-            + std::string(BUILD_DIR) + "/lib" + ":"
-            + std::string(INSTALL_DIR) + "/bin" + ":"
-            + std::string(INSTALL_DIR) + "/lib" + ":");
-  path += (curr_path ? curr_path : "");
-  std::cout << "path: " << path << std::endl;
-  setenv("PATH", path.c_str(), true);
-
-  auto pythonpath(std::string(BUILD_DIR) + "/bin" + ":"
-                  + std::string(BUILD_DIR) + "/lib" + ":"
-                  + std::string(INSTALL_DIR) + "/bin" + ":"
-                  + std::string(INSTALL_DIR) + "/lib" + ":");
-  //pythonpath += std::string(DEPS_DIR) + "/lib/python3.7/site-packages" + ":";
-  pythonpath += (curr_pythonpath ? curr_pythonpath : "");
-  std::cout << "pythonpath: " << pythonpath << std::endl;
-  setenv("PYTHONPATH", pythonpath.c_str(), true);
-
-  auto ld_library_path(std::string(BUILD_DIR) + "/lib" + ":"
-                       + std::string(BUILD_DIR) + "/bin" + ":"
-                       + std::string(INSTALL_DIR) + "/lib" + ":"
-                       + std::string(INSTALL_DIR) + "/bin" + ":");
-  //ld_library_path += std::string(DEPS_DIR) + "/lib" + ":";
-  //ld_library_path += std::string(QT_LIBDIR) + ":";
-  ld_library_path += (curr_ld_library_path ? curr_ld_library_path : "");
-  std::cout << "ld_library_path: " << ld_library_path << std::endl;
-  setenv("LD_LIBRARY_PATH", ld_library_path.c_str(), true);
-#else
-  auto path(std::string(BUILD_DIR) + "/bin" + ":"
-            + std::string(BUILD_DIR) + "/lib" + ":"
-            + std::string(BUILD_DIR) + "/bin/Debug" + ":"
-            + std::string(BUILD_DIR) + "/lib/Debug" + ":"
-            + std::string(BUILD_DIR) + "/bin/Release" + ":"
-            + std::string(BUILD_DIR) + "/lib/Release" + ":"
-            + std::string(INSTALL_DIR) + "/bin" + ":"
-            + std::string(INSTALL_DIR) + "/lib" + ":"
-            + std::string(INSTALL_DIR) + "/bin/Debug" + ":"
-            + std::string(INSTALL_DIR) + "/lib/Debug" + ":"
-            + std::string(INSTALL_DIR) + "/bin/Release" + ":"
-            + std::string(INSTALL_DIR) + "/lib/Release" + ":");
-  path += (curr_path ? curr_path : "");
-  std::cout << "path: " << path << std::endl;
-  setenv("PATH", path.c_str(), true);
-
-  auto pythonpath(std::string(BUILD_DIR) + "/bin" + ":"
-                  + std::string(BUILD_DIR) + "/lib" + ":"
-                  + std::string(BUILD_DIR) + "/bin/Debug" + ":"
-                  + std::string(BUILD_DIR) + "/lib/Debug" + ":"
-                  + std::string(BUILD_DIR) + "/bin/Release" + ":"
-                  + std::string(BUILD_DIR) + "/lib/Release" + ":"
-                  + std::string(INSTALL_DIR) + "/bin" + ":"
-                  + std::string(INSTALL_DIR) + "/lib" + ":"
-                  + std::string(INSTALL_DIR) + "/bin/Debug" + ":"
-                  + std::string(INSTALL_DIR) + "/lib/Debug" + ":"
-                  + std::string(INSTALL_DIR) + "/bin/Release" + ":"
-                  + std::string(INSTALL_DIR) + "/lib/Release" + ":");
-  //pythonpath += std::string(DEPS_DIR) + "/lib/python3.7/site-packages" + ":";
-  pythonpath += (curr_pythonpath ? curr_pythonpath : "");
-  std::cout << "pythonpath: " << pythonpath << std::endl;
-  setenv("PYTHONPATH", pythonpath.c_str(), true);
-#endif
+void setupenv(const std::string& testDirectory) {
+  // change to the shapeworksTests directory
+  auto shapeworksTestsDir(testDirectory);
+  chdir(shapeworksTestsDir.c_str());
 
   // set location of shapeworks DATA used by shell scripts
   std::string data(TEST_DATA_DIR);
@@ -125,21 +15,86 @@ void shapeworksEnvSetup()
 #else
   setenv("DATA", data.c_str(), true);
 #endif
-
-  // change to the shapeworksTests directory
-  auto shapeworksTestsDir(std::string(TEST_DATA_DIR) + "/../shapeworksTests");
-  chdir(shapeworksTestsDir.c_str());
-
-  std::cout << "test environment setup complete!" << std::endl;
 }
 
-//---------------------------------------------------------------------------
-void pythonEnvSetup()
-{
-  // set paths to find shapeworks python module
-  shapeworksEnvSetup();
+namespace shapeworks {
 
-  // change to the PythonTests directory
-  auto pythonTestsDir(std::string(TEST_DATA_DIR) + "/../PythonTests");
-  chdir(pythonTestsDir.c_str());
+//-----------------------------------------------------------------------------
+TestUtils& TestUtils::Instance() {
+  static TestUtils instance;
+  return instance;
 }
+
+//-----------------------------------------------------------------------------
+TestUtils::TestUtils() {}
+
+//-----------------------------------------------------------------------------
+TestUtils::~TestUtils() {
+  if (!temp_base_.empty() && !should_keep_dir()) {
+    try {
+      boost::filesystem::remove_all(temp_base_);
+    } catch (std::exception& e) {
+      std::cerr << "Error removing test output directory: " << temp_base_ << "\n";
+      std::cerr << "Error: " << e.what();
+    }
+  }
+  if (should_keep_dir()) {
+    std::cerr << "Test output left in: " << temp_base_ << "\n";
+  }
+}
+
+//-----------------------------------------------------------------------------
+std::string TestUtils::get_output_dir(std::string test_name) {
+  if (temp_base_.empty()) {
+    temp_base_ = boost::filesystem::temp_directory_path() / boost::filesystem::unique_path();
+    boost::filesystem::create_directories(temp_base_);
+    if (should_keep_dir()) {
+      std::cerr << "Test output will be kept in: " << temp_base_ << "\n";
+    }
+  }
+
+  boost::filesystem::path test_temp = temp_base_ / test_name;
+  boost::filesystem::create_directories(test_temp);
+
+  return test_temp.generic_string();
+}
+
+//-----------------------------------------------------------------------------
+void TestUtils::prep_temp(std::string test_folder, std::string test_name) {
+  auto temp_dir = get_output_dir(test_name);
+  recursive_copy(test_folder, temp_dir);
+  boost::filesystem::current_path(temp_dir);
+}
+
+//-----------------------------------------------------------------------------
+bool TestUtils::should_keep_dir() {
+  bool keep = false;
+  const char* keep_env = getenv("SW_KEEP_TEST_OUTPUT");
+  if (keep_env) {
+    if (std::string(keep_env) == "1") {
+      keep = true;
+    }
+  }
+
+  return keep;
+}
+
+//-----------------------------------------------------------------------------
+void TestUtils::recursive_copy(const boost::filesystem::path& src, const boost::filesystem::path& dst) {
+  // adapted from https://gist.github.com/ssteffl/30055ac128bb92801568899ebad73365
+
+  if (boost::filesystem::is_directory(src)) {
+    boost::filesystem::create_directories(dst);
+    for (boost::filesystem::directory_entry& item : boost::filesystem::directory_iterator(src)) {
+      recursive_copy(item.path(), dst / item.path().filename());
+    }
+  } else if (boost::filesystem::is_regular_file(src)) {
+    boost::filesystem::copy(src, dst);
+  } else {
+    throw std::runtime_error(dst.generic_string() + " not dir or file");
+  }
+}
+
+//-----------------------------------------------------------------------------
+
+}  // namespace shapeworks

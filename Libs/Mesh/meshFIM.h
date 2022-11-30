@@ -29,8 +29,8 @@
 #include <vcl_legacy_aliases.h>
 
 
-#include <vgl/algo/vgl_homg_operators_2d.h>
-#include <vgl/vgl_conic.h>
+//#include <vxl/core/vgl/algo/vgl_homg_operators_2d.h>
+//#include <vgl/vgl_conic.h>
 #include <vnl/vnl_matrix.h>
 #include <vnl/vnl_vector.h>
 #include <vnl/algo/vnl_matrix_inverse.h>
@@ -170,21 +170,21 @@ private:
   int GetTriangleInfoForPoint(point x, TriMesh::Face &triangleX, float &alphaX, float &betaX, float &gammaX);
 
   //Praful - for Riddhish project
-  float GetVirtualSource(vnl_vector<float> baryCoord, vnl_matrix<float> X, vnl_vector<float> ds, vnl_vector< float > &x0);
-  float ComputeThreePointApproximatedGeodesic(vnl_vector<float> x, vnl_vector<float> baryCoord, vnl_matrix<float> X, vnl_vector<float> ds, char *method);
+  //float GetVirtualSource(vnl_vector<float> baryCoord, vnl_matrix<float> X, vnl_vector<float> ds, vnl_vector< float > &x0);
+  //float ComputeThreePointApproximatedGeodesic(vnl_vector<float> x, vnl_vector<float> baryCoord, vnl_matrix<float> X, vnl_vector<float> ds, char *method);
   float ComputeCanonicalForm(point s, vnl_vector<float> &x, vnl_matrix<float> &X);
   float GetGeodesicDistance(int v1, int v2);
-  float GetBronsteinGeodesicDistance(TriMesh::Face Sa, TriMesh::Face Sb, vnl_vector <float> baryCoord_a, vnl_vector <float> baryCoord_b, char *method);
+  //float GetBronsteinGeodesicDistance(TriMesh::Face Sa, TriMesh::Face Sb, vnl_vector <float> baryCoord_a, vnl_vector <float> baryCoord_b, char *method);
 
   // SHIREEN - compute distance to landmarks based on geodesic approximation
-  float GetBronsteinGeodesicDistance(point a, point b, char *method);
+  //float GetBronsteinGeodesicDistance(point a, point b, char *method);
   void ComputeDistanceToLandmark(TriMesh *mesh, point landmark, bool apply_log, const char *outfilename);
   void UpdateGeodesicMapWithDistancesFromVertices(std::vector<int> vertexIdlist);
   // end SHIREEN
 
   // SHIREEN - computing geo distance on the fly for fuzzy geodesics
   int GetVertexInfoForPoint(point x);
-  std::vector<float> ComputeDistanceToCurve(TriMesh *mesh, std::vector< point > curvePoints);
+  //std::vector<float> ComputeDistanceToCurve(TriMesh *mesh, std::vector< point > curvePoints);
   void WriteFeaFile(TriMesh *mesh, char *outfilename);
   void WriteFeaFile(std::vector<float> fea, char *outfilename);
   // end SHIREEN

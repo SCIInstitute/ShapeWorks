@@ -9,7 +9,11 @@
 
 #include "itkImageDuplicator.h"
 #include "itkImageRegionIterator.h"
-#define _USE_MATH_DEFINES
+
+// Some systems require this to get M_PI and friends
+#ifndef _USE_MATH_DEFINES
+  #define _USE_MATH_DEFINES
+#endif
 
 
 int main(int argc, char *argv[])

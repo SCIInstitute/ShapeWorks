@@ -1,23 +1,30 @@
 #pragma once
 
-#include <string>
-#include <vector>
 #include <map>
 #include <memory>
 #include <set>
+#include <string>
+#include <vector>
 
-#include "Subject.h"
 #include "Parameters.h"
-
-// forward declaration
-namespace xlnt {
-class workbook;
-}
+#include "Subject.h"
 
 namespace shapeworks {
 
 class Project;
 using ProjectHandle = std::shared_ptr<Project>;
+
+//! Landmark class containing properties of each landmark
+class LandmarkDefinition {
+ public:
+  std::string domain_;
+  int domain_id_ = -1;
+  int landmark_id = -1;
+  std::string name_;
+  bool visible_ = true;
+  std::string color_;
+  std::string comment_;
+};
 
 //! Representation of a project.
 /*!
@@ -25,17 +32,26 @@ using ProjectHandle = std::shared_ptr<Project>;
  *
  */
 class Project {
-
-public:
+ public:
+  using StringMap = std::map<std::string, std::string>;
 
   Project();
   ~Project();
 
-  //! Load from XLSX file
+  //! Load from project file
   bool load(const std::string& filename);
 
-  //! Save to XLSX file
+  //! Save to project file
   bool save(const std::string& filename);
+
+  //! Set the project path
+  void set_project_path(const std::string& path);
+
+  //! Return the filename
+  std::string get_filename();
+
+  //! Set project filename
+  void set_filename(std::string filename);
 
   //! Return the headers of the subject sheet
   std::vector<std::string> get_headers();
@@ -49,11 +65,22 @@ public:
   //! Return the number of domains
   int get_number_of_domains_per_subject();
 
-  //! Return the list of Subjects
+  //! Return the domain names (e.g. femur, pelvis, etc)
+  std::vector<std::string> get_domain_names();
+
+  //! Set the domain names
+  void set_domain_names(std::vector<std::string> domain_names);
+
+  //! Return the Subjects (as a reference)
   std::vector<std::shared_ptr<Subject>>& get_subjects();
 
-  //! Return if segmentations are present
-  bool get_segmentations_present() const;
+  //! Set the Subjects
+  void set_subjects(const std::vector<std::shared_ptr<Subject>>& subjects);
+
+  void update_subjects();
+
+  //! Return if originals are present
+  bool get_originals_present() const;
 
   //! Return if groomed files are present
   bool get_groomed_present() const;
@@ -61,8 +88,14 @@ public:
   //! Return if particle files are present
   bool get_particles_present() const;
 
+  //! Return if images are present (e.g. CT/MRI)
+  bool get_images_present();
+
   //! Get feature names
   std::vector<std::string> get_feature_names();
+
+  //! Get image names
+  std::vector<std::string> get_image_names();
 
   //! Get group names
   std::vector<std::string> get_group_names();
@@ -71,13 +104,19 @@ public:
   std::vector<std::string> get_group_values(const std::string& group_name) const;
 
   //! Retrieve parameters based on key
-  Parameters get_parameters(const std::string& name);
+  Parameters get_parameters(const std::string& name, std::string domain_name = "");
 
-  //! Store parameters base on key
-  void set_parameters(const std::string& name, Parameters params);
+  //! Retrieve full parameter map for a given name
+  std::map<std::string, Parameters> get_parameter_map(const std::string& name);
 
-  //! Store from subject list to spreadsheet
-  void store_subjects();
+  //! Set parameter map for a given name
+  void set_parameter_map(const std::string& name, std::map<std::string, Parameters> map);
+
+  //! Store parameters based on key
+  void set_parameters(const std::string& name, Parameters params, std::string domain_name = "");
+
+  //! Clear parameters based on key
+  void clear_parameters(const std::string& name);
 
   //! Get the supported version (this version of the code)
   int get_supported_version() const;
@@ -85,61 +124,71 @@ public:
   //! Get the version of the currently loaded project
   int get_version() const;
 
-private:
+  //! Return the set of landmarks definitions for a particular domain
+  std::vector<LandmarkDefinition> get_landmarks(int domain_id);
 
-  // known prefixes
-  static constexpr const char* SEGMENTATION_PREFIX = "segmentation_";
-  static constexpr const char* GROOMED_PREFIX = "groomed_";
-  static constexpr const char* GROOMED_TRANSFORMS_PREFIX = "transform_";
-  static constexpr const char* FEATURE_PREFIX = "feature_";
-  static constexpr const char* LOCAL_PARTICLES = "local_particles";
-  static constexpr const char* WORLD_PARTICLES = "world_particles";
-  static constexpr const char* GROUP_PREFIX = "group_";
+  //! Return all landmark definitions
+  std::vector<std::vector<LandmarkDefinition>> get_all_landmark_definitions();
 
-  std::vector<std::string> get_list(std::vector<std::string> columns, int subject);
-  void set_list(std::vector<std::string> columns, int subject, std::vector<std::string> values);
+  //! Set all landmark definitions
+  void set_landmark_definitions(std::vector<std::vector<LandmarkDefinition>> defs);
 
-  void
-  set_map(int subject, const std::string& prefix, const std::map<std::string, std::string>& map);
+  //! Return if landmarks are present
+  bool get_landmarks_present();
 
-  std::vector<std::vector<double>>
-  get_transform_list(std::vector<std::string> columns, int subject);
+  //! Set landmarks for this project
+  void set_landmarks(int domain_id, std::vector<LandmarkDefinition> landmarks);
 
-  void set_transform_list(const std::vector<std::string>& columns, int subject,
-                          std::vector<std::vector<double>> transforms);
+  //! Add a new landmark
+  void new_landmark(int domain_id);
 
-  std::vector<std::string> get_matching_columns(const std::string& prefix);
+  //! Return the original domain types
+  std::vector<DomainType> get_original_domain_types();
 
-  std::vector<std::string> get_extra_columns() const;
+  //! Return the groomed domain types
+  std::vector<DomainType> get_groomed_domain_types();
 
-  std::string get_value(int column, int subject_id);
-  void set_value(int column, int subject_id, const std::string& value);
+  //! Set the original domain types
+  void set_original_domain_types(std::vector<DomainType> domain_types);
 
-  void set_value(const std::string& column_name, int subject_id, const std::string& value);
-  std::string get_subject_value(int column, int subject_id);
+  //! Get the groomed domain types
+  void set_groomed_domain_types(std::vector<DomainType> domain_types);
 
-  void load_subjects();
+ private:
+  void set_default_landmark_colors();
 
-  int get_index_for_column(const std::string& name, bool create_if_not_found = false) const;
+  void determine_feature_names();
 
-  void save_string_column(const std::string& name, std::vector<std::string> items);
-
-  int num_domains_per_subject_ = 0;
-
-  std::unique_ptr<xlnt::workbook> wb_;
+  std::string get_next_landmark_name(int domain_id);
+  std::string get_next_landmark_color(int domain_id);
 
   std::vector<std::shared_ptr<Subject>> subjects_;
 
   bool loaded_{false};
 
-  bool segmentations_present_{false};
+  std::string filename_;
+  std::string project_path_;
+
+  std::vector<std::string> default_landmark_colors_;
+
+  bool originals_present_{false};
   bool groomed_present_{false};
   bool particles_present_{false};
+  bool images_present_{false};
 
-  std::set<std::string> matching_columns_;
-  std::vector<std::string> mesh_scalars_;
+  std::vector<std::string> feature_names_;
+  std::vector<std::string> image_names_;
 
-  const int supported_version_{1};
-  int version_{1};
+  std::vector<std::vector<LandmarkDefinition>> landmark_definitions_;
+
+  std::vector<std::string> domain_names_;
+  std::vector<DomainType> original_domain_types_;
+  std::vector<DomainType> groomed_domain_types_;
+
+  // map of type (e.g. groom, optimize) to map (domain->Parameters)
+  std::map<std::string, std::map<std::string, Parameters>> parameters_;
+
+  const int supported_version_{2};
+  int version_{2};
 };
-}
+}  // namespace shapeworks

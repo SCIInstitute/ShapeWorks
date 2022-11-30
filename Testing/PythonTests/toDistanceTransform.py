@@ -2,15 +2,16 @@ import os
 import sys
 from shapeworks import *
 
-def toDistanceTransformTest():
-  mesh = Mesh(os.environ["DATA"] + "/femur.ply")
-  img = mesh.toDistanceTransform()
+success = True
 
-  compareImg = Image(os.environ["DATA"] + "/femurDT.nrrd")
+def toDistanceTransformTest():
+  mesh = Mesh(os.environ["DATA"] + "/femur_remesh.ply")
+  img = mesh.toDistanceTransform(PhysicalRegion(), (5,5,5))
+
+  compareImg = Image(os.environ["DATA"] + "/femur_remesh_dt.nrrd")
 
   return img.compare(compareImg)
 
-val = toDistanceTransformTest()
+success &= utils.test(toDistanceTransformTest)
 
-if val is False:
-  sys.exit(1)
+sys.exit(not success)

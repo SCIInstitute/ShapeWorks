@@ -34,12 +34,22 @@ fi
 export SW_VERSION=$VERSION
 ROOT=`pwd`
 
-cp -r ../build/bin/RelWithDebInfo bin
+BUILD="/c/build"
+CONDA_LOC="/c/Miniconda3/envs/shapeworks"
+cp ${CONDA_LOC}/python*.dll ${CONDA_LOC}/Library/bin/zlib.dll ${CONDA_LOC}/Library/bin/tbb12.dll ${CONDA_LOC}/Library/bin/zstd.dll ${CONDA_LOC}/Library/bin/libpng16.dll ${CONDA_LOC}/Library/bin/half.dll ${CONDA_LOC}/Library/bin/boost_filesystem.dll ${CONDA_LOC}/Library/bin/spdlog.dll $BUILD/bin/Release
+
+
+cp -r $BUILD/bin/Release bin
+rm bin/*Tests.pdb bin/Recon*.pdb bin/Mesh*.pdb
 rm -rf Post
 
 # Run auto-documentation
 cd $ROOT
-PATH=../build/bin/Release:bin:$PATH
+PATH=$BUILD/bin/Release/bin:$PATH
+
+# add $PATH to $PYTHONPATH
+PYTHONPATH=$PYTHONPATH:$PATH
+
 # check that 'shapeworks -h' is working
 shapeworks -h
 if [ $? -eq 0 ]; then
@@ -49,16 +59,39 @@ else
     exit 1
 fi
 python Python/RunShapeWorksAutoDoc.py --md_filename docs/tools/ShapeWorksCommands.md
+pip list
+export PYTHONPATH
+
+echo "PYTHONPATH before = $PYTHONPATH"
+
+# on windows, the PYTHONPATH should use semicolons
+if [[ $OSTYPE == "msys" ]]; then
+    PYTHONPATH=${PYTHONPATH//:/;}
+    PYTHONPATH=${PYTHONPATH//;\/d\//;D:/}
+    PYTHONPATH=${PYTHONPATH//;\/c\//;C:/}
+    PYTHONPATH=${PYTHONPATH//\/d\/a/D:/a}
+fi
+
+
+echo "PATH = $PATH"
+echo "PYTHONPATH after = $PYTHONPATH"
+echo "See if we can import shapeworks_py..."
+
+echo "import os; print(os.environ)" | python
+
+echo "import shapeworks; import shapeworks_py ; print(dir(shapeworks_py))" | python
+
+echo "running mkdocs build"
 mkdocs build
 mv site Documentation
 cp -a Documentation bin/
 
 # Remove tests, they won't work for users anyway
 rm bin/*Tests.exe
+rm -rf docs
 
 windeployqt "bin/ShapeWorksStudio.exe"
-windeployqt "bin/ShapeWorksView2.exe"
-../NSISPortable/App/NSIS/makensis.exe shapeworks.nsi
+../NSISPortable/App/NSIS/makensis.exe -V4 shapeworks.nsi 
 mkdir artifacts
 cp *.exe artifacts
 

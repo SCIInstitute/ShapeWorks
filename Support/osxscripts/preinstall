@@ -1,0 +1,6 @@
+#!/bin/bash
+
+echo "ShapeWorks preinstall"
+env
+echo "Removing previous ShapeWorks install"
+rm -rf /Applications/ShapeWorks

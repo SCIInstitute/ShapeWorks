@@ -1,0 +1,134 @@
+{
+    "data": [
+        {
+            "name": "",
+            "shape_1": "ellipsoid_00.vtk",
+            "groomed_1": "groomed/ellipsoid_00_groomed.vtk",
+            "local_particles_1": "ellipsoid_particles/ellipsoid_00_groomed_local.particles",
+            "world_particles_1": "ellipsoid_particles/ellipsoid_00_groomed_world.particles",
+            "alignment_1": "1.000000 0.000000 0.000000 -2.000000 0.000000 1.000000 0.000000 -4.999999 0.000000 0.000000 1.000000 -45.000000 0.000000 0.000000 0.000000 1.000000",
+            "procrustes_1": "1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000"
+        },
+        {
+            "name": "",
+            "shape_1": "ellipsoid_01.vtk",
+            "groomed_1": "groomed/ellipsoid_01_groomed.vtk",
+            "local_particles_1": "ellipsoid_particles/ellipsoid_01_groomed_local.particles",
+            "world_particles_1": "ellipsoid_particles/ellipsoid_01_groomed_world.particles",
+            "alignment_1": "1.000000 0.000000 0.000000 -31.000000 0.000000 1.000000 0.000000 -2.999999 0.000000 0.000000 1.000000 -47.000000 0.000000 0.000000 0.000000 1.000000",
+            "procrustes_1": "1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000"
+        },
+        {
+            "name": "",
+            "shape_1": "ellipsoid_02.vtk",
+            "groomed_1": "groomed/ellipsoid_02_groomed.vtk",
+            "local_particles_1": "ellipsoid_particles/ellipsoid_02_groomed_local.particles",
+            "world_particles_1": "ellipsoid_particles/ellipsoid_02_groomed_world.particles",
+            "alignment_1": "1.000000 0.000000 0.000000 -30.000000 0.000000 1.000000 0.000000 -42.000000 0.000000 0.000000 1.000000 -37.000000 0.000000 0.000000 0.000000 1.000000",
+            "procrustes_1": "1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000"
+        },
+        {
+            "name": "",
+            "shape_1": "ellipsoid_03.vtk",
+            "groomed_1": "groomed/ellipsoid_03_groomed.vtk",
+            "local_particles_1": "ellipsoid_particles/ellipsoid_03_groomed_local.particles",
+            "world_particles_1": "ellipsoid_particles/ellipsoid_03_groomed_world.particles",
+            "alignment_1": "1.000000 0.000000 0.000000 -22.000000 0.000000 1.000000 0.000000 -39.000000 0.000000 0.000000 1.000000 -47.000000 0.000000 0.000000 0.000000 1.000000",
+            "procrustes_1": "1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000 0.000000 0.000000 0.000000 0.000000 1.000000"
+        }
+    ],
+    "groom": {
+        "1": {
+            "alignment_enabled": "true",
+            "alignment_method": "Center",
+            "antialias": "true",
+            "antialias_amount": "10",
+            "blur": "true",
+            "blur_sigma": "2.000000",
+            "convert_to_mesh": "false",
+            "crop": "true",
+            "fastmarching": "true",
+            "fill_holes": "true",
+            "fill_mesh_holes": "false",
+            "groom_all_domains_the_same": "true",
+            "groom_output_prefix": "groomed",
+            "iso_spacing": "0.000000",
+            "isolate": "true",
+            "isotropic": "true",
+            "mesh_smooth": "false",
+            "mesh_smoothing_method": "Laplacian",
+            "mesh_smoothing_vtk_laplacian_iterations": "10",
+            "mesh_smoothing_vtk_laplacian_relaxation": "1.000000",
+            "mesh_smoothing_vtk_windowed_sinc_iterations": "10",
+            "mesh_smoothing_vtk_windowed_sinc_passband": "0.050000",
+            "pad": "true",
+            "pad_value": "10",
+            "reflect": "false",
+            "reflect_axis": "X",
+            "reflect_choice": "",
+            "reflect_column": "",
+            "remesh": "false",
+            "remesh_gradation": "1.000000",
+            "remesh_num_vertices": "3000",
+            "remesh_percent": "75.000000",
+            "remesh_percent_mode": "true",
+            "resample": "true",
+            "spacing": "0 0 0"
+        }
+    },
+    "optimize": {
+        "ending_regularization": "10.000000",
+        "geodesic_cache_multiplier": "0",
+        "initial_relative_weighting": "0.050000",
+        "iterations_per_split": "1000",
+        "multiscale": "false",
+        "multiscale_particles": "32",
+        "narrow_band": "4.000000",
+        "normals_strength": "10.000000",
+        "number_of_particles": "64",
+        "optimization_iterations": "1000",
+        "optimize_output_prefix": "<project>_particles",
+        "procrustes": "false",
+        "procrustes_interval": "10",
+        "procrustes_rotation_translation": "true",
+        "procrustes_scaling": "false",
+        "relative_weighting": "1.000000",
+        "starting_regularization": "1000.000000",
+        "use_geodesic_distance": "false",
+        "use_landmarks": "false",
+        "use_normals": "0"
+    },
+    "studio": {
+        "analysis_mode": "mean",
+        "feature_map": "",
+        "image_axis": "Z",
+        "notes": "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\np, li { white-space: pre-wrap; }\n</style></head><body style=\" font-family:'.AppleSystemUIFont'; font-size:13pt; font-weight:400; font-style:normal;\">\n<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\"><br /></p></body></html>",
+        "tool_state": "optimize",
+        "view_state": "Groomed",
+        "zoom_state": "2"
+    },
+    "project": {
+        "version": "2"
+    },
+    "analysis": {
+        "reconstruction_clusters": "3",
+        "reconstruction_decimation": "0.300000",
+        "reconstruction_max_angle": "60.000000"
+    },
+    "deepssm": {
+        "aug_num_dims": "3",
+        "aug_num_samples": "3",
+        "aug_percent_variability": "0.950000",
+        "aug_sampler_type": "Gaussian",
+        "testing_split": "20.000000",
+        "train_batch_size": "8",
+        "train_decay_learning_rate": "true",
+        "train_epochs": "100",
+        "train_fine_tuning": "true",
+        "train_fine_tuning_epochs": "2",
+        "train_fine_tuning_learning_rate": "0.001000",
+        "train_learning_rate": "0.001000",
+        "validation_split": "20.000000"
+    },
+    "landmarks": []
+}

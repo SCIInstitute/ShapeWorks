@@ -10,19 +10,6 @@
     - Run `mkdocs serve` from the root directory (containing mkdocs.yml)
     - Open and review `path/to/edited-or-added-md-files`
 
-See the below discussion:
-
-how can I look at the compiled version of these docs? (you might simply direct me to the place where this is explained in the docs)
-You can find this link in the main readme.
-
-Please visit ShapeWorks website for more information.
-
-I can open the individual .md files, but can't really give a final review until I've seen it in action.
-I think the only way you can see it in action is to checkout the branch and run mkdocs serve. These changes won't be reflected in the compiled version (i.e., gh-pages branch) till it is merged to master. @akenmorris ?
-I think it's completely reasonable to check out the branch and run mkdocs serve then browse to localhost:8000.
-I recommend explaining this right at the top of the pull request so people don't have to dig through the developer docs to remember the command every time they want to thoroughly review the updates.
-
-
 ## Naming and Organization
 
 !!! note "Where are the documentation files?" 
@@ -121,35 +108,10 @@ As ShapeWorks is hosted on [GitHub](https://github.com/SCIInstitute/ShapeWorks),
 
 We use Project Pages sites for documentation deployment. The site files are deployed to the `gh-pages` branch within the ShapeWorks repository.
 
-To generate static HTML files for the markdown files, [checkout](build.md#clone-source) the branch where source documentation (`mkdocs.yml`) is maintained and run the following command:
-
-```
-mkdocs gh-deploy
-```
-
-Using this command, MkDocs builds the project documentation and uses the ghp-import tool to commit them to the gh-pages branch and push the gh-pages branch to GitHub. *All behind the scenes ...*
-
-
-!!! danger  
-    Running `mkdocs gh-deploy` will update the documentation seen by everyone on [GitHub](https://github.com/SCIInstitute/ShapeWorks). It is recommented that deployed documentation on [GitHub](https://github.com/SCIInstitute/ShapeWorks) should be synced with documentation in the `master` branch.
-
-!!! important 
-    To deploy the documentation associated with software releases, please use the following command.
-
-    ```
-    mkdocs gh-deploy -m "Release Number"
-    ```
-
-Use `mkdocs gh-deploy --clean` to start a fresh deployment.   
-
-Use `mkdocs gh-deploy --help` for a full list of options available for the gh-deploy command.
-
-!!! danger "Take care when you deploy"
-    You can not review the built site before pushing it to GitHub. To verify any changes you made locally to the documentation, please use `mkdocs build` or `mkdocs serve`.  
+Deployment is taken care of automatically by GitHub Actions using the script `Support/deploy_docs.sh`
  
 !!! danger "Do not edit gh-pages"
-    Never manually edit files on the `gh-pages` branch because you will lose your work the next time you run the `gh-deploy` command.
-
+    Never manually edit files on the `gh-pages` branch because you will lose your work the next time the docs are deployed.
 
 ## Contributing to Documentation
 
@@ -174,7 +136,7 @@ Insert it in the markdown file using `<p><video src="https://sci.utah.edu/~shape
 The `DocumentationUtils` package in `Python` has APIs for auto-documenting command-line tools and *to-come-soon* python APIs. We use the `docs` folder to save the generated documentation.
 
 
-To generate documentation for the `shapeworks` commands, first be sure to run `conda_install.sh` as described in [How to Build ShapeWorks from Source?](build.md) to install `DocumentationUtils`.
+To generate documentation for the `shapeworks` commands, first be sure to run `install_shapeworks.sh` as described in [How to Build ShapeWorks from Source?](build.md) to install `DocumentationUtils`.
 
 
 Then, make sure that the `shapeworks` command is in your path (`set PATH=/path/to/shapeworks:$PATH`), then use Python to run the following command:
@@ -183,11 +145,20 @@ Then, make sure that the `shapeworks` command is in your path (`set PATH=/path/t
 ```shell
 $ python Python/RunShapeWorksAutoDoc.py --md_filename docs/tools/ShapeWorksCommands.md
 ```
-    
-    
+
 **Parameters**:    
 
   - `md_filename` is the markdown file name for the documentation file to be generated
+
+## Auto-generating C++ Doxygen API Documentation
+
+To generate C++ Doxygen API output into mkdocs, configure ShapeWorks with BUILD_DOCUMENTATION=ON.
+
+After building, run (from the root source directory):
+
+```shell
+$ ./Support/build_docs.sh ${BUILD_DIR}/Documentation/Doxygen/xml
+```
 
 
 ## See Also

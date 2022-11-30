@@ -10,126 +10,168 @@ optimization and, the post ShapeWorks visualization.
 First import the necessary modules
 """
 import os
-from GroomUtils import *
-from OptimizeUtils import *
-from AnalyzeUtils import *
-import CommonUtils
+import glob
+import subprocess
+import shapeworks as sw
 
 def Run_Pipeline(args):
-    """
-    Unzip the data for this tutorial.
-
-    The data is inside the Ellipsoids.zip, run the following function to unzip the 
-    data and create necessary supporting files into the Data/ directory. 
-    The files will be Extracted in a newly created directory: Output/Ellipsoids.
-    """
-
     print("\nStep 1. Extract Data\n")
-    if int(args.interactive) != 0:
-        input("Press Enter to continue")
-    # Get data
-    datasetName = "ellipsoid_1mode"
-    outputDirectory = "Output/ellipsoid/"
-    if not os.path.exists(outputDirectory):
-        os.makedirs(outputDirectory)
-    #If tiny_test then download subset of the data
+    """
+    Step 1: EXTRACT DATA
+
+    We define dataset_name which determines which dataset to download from 
+    the portal and the directory to save output from the use case in. 
+    """
+    dataset_name = "ellipsoid_1mode"
+    output_directory = "Output/ellipsoid/"
+    if not os.path.exists(output_directory):
+        os.makedirs(output_directory)
+
+    # If running a tiny_test, then download subset of the data
     if args.tiny_test:
         args.use_single_scale = 1
-        CommonUtils.download_subset(args.use_case,datasetName, outputDirectory)
-        fileList = sorted(glob.glob(outputDirectory + datasetName + "/segmentations/*.nrrd"))[:3]
-    #else download the entire dataset
+        sw.data.download_subset(
+            args.use_case, dataset_name, output_directory)
+        file_list = sorted(glob.glob(output_directory +
+                                     dataset_name + "/segmentations/*.nrrd"))[:3]
+    # Else download the entire dataset
     else:
-        CommonUtils.download_and_unzip_dataset(datasetName, outputDirectory)
+        sw.data.download_and_unzip_dataset(dataset_name, output_directory)
+        file_list = sorted(glob.glob(output_directory +
+                                     dataset_name + "/segmentations/*.nrrd"))
 
-        fileList = sorted(glob.glob(outputDirectory + datasetName + "/segmentations/*.nrrd"))
-    
-    # Select data if using subsample
-    if args.use_subsample:
-        sample_idx = sampledata(fileList, int(args.num_subsample))
-        fileList = [fileList[i] for i in sample_idx]
-    else:
-        sample_idx = []
+        # Select representative data if using subsample
+        if args.use_subsample:
+            inputImages =[sw.Image(filename) for filename in file_list]
+            sample_idx = sw.data.sample_images(inputImages, int(args.num_subsample))
+            file_list = [file_list[i] for i in sample_idx]
+
+    print("\nStep 2. Groom - Data Pre-processing\n")
+    """
+    Step 2: GROOM
+    The following grooming steps are performed:
+        - Crop (cropping first makes resampling faster)
+        - Resample to have isotropic spacing
+        - Pad with zeros
+        - Compute alignment transforms to use in optimization
+        - Compute distance transforms
+    For more information about grooming, please refer to:
+    http://sciinstitute.github.io/ShapeWorks/workflow/groom.html
+    """
+   
+    # Create a directory for groomed output
+    groom_dir = output_directory + 'groomed/'
+    if not os.path.exists(groom_dir):
+        os.makedirs(groom_dir)
 
     """
-    ## GROOM : Data Pre-processing 
-    For the unprepped data the first few steps are 
-    -- Isotropic resampling
-    -- Center
-    -- Center of Mass Alignment
-    -- Rigid Alignment
-    -- Largest Bounding Box and Cropping 
-    For a detailed explanation of grooming steps see: /docs/workflow/groom.md
+    We loop over the shape segmentation files and load the segmentations
+    and apply the intial grooming steps
     """
-    if args.skip_grooming:
-        print("Skipping grooming.")
-        dtDirecory = outputDirectory + datasetName + '/groomed/distance_transforms/'
-        indices = []
-        if args.tiny_test:
-            indices = [0,1,2]
-        elif args.use_subsample:
-            indices = sample_idx
-        dtFiles = CommonUtils.get_file_list(dtDirecory, ending=".nrrd", indices=indices)
-    else:
-        print("\nStep 2. Groom - Data Pre-processing\n")
-        if int(args.interactive) != 0:
-            input("Press Enter to continue")
+    # list of shape segmentations
+    shape_seg_list = []
+    # list of shape names (shape files prefixes) to be used for saving outputs
+    shape_names = []
+    for shape_filename in file_list:
+        print('Loading: ' + shape_filename)
+        # get current shape name
+        shape_name = shape_filename.split('/')[-1].replace('.nrrd', '')
+        shape_names.append(shape_name)
+        # load segmentation
+        shape_seg = sw.Image(shape_filename)
+        shape_seg_list.append(shape_seg)
 
-        groomDir = outputDirectory + 'groomed/'
-        if not os.path.exists(groomDir):
-            os.makedirs(groomDir)
-
-        """Apply isotropic resampling"""
-        isoresampledFiles = applyIsotropicResampling(groomDir + "resampled/segmentations", fileList)
-
-
-        """Apply centering"""
-        centeredFiles = center(groomDir + "centered/segmentations", isoresampledFiles)
-
-        """Apply center of mass alignment"""
-        comFiles = applyCOMAlignment(groomDir + "com_aligned/segmentations", centeredFiles, None)
-
-        """ Apply rigid alignment """
-        ref = FindReferenceImage(comFiles)
-        alignedFiles = applyRigidAlignment(groomDir + "aligned/segmentations", ref, comFiles)
-
-        """Compute largest bounding box and apply cropping"""
-        croppedFiles = applyCropping(groomDir + "cropped/segmentations", alignedFiles, alignedFiles)
-
-        """
-        We convert the scans to distance transforms, this step is common for both the 
-        prepped as well as unprepped data, just provide correct filenames.
-        """
-
-        print("\nStep 3. Groom - Convert to distance transforms\n")
-        if int(args.interactive) != 0:
-            input("Press Enter to continue")
-
-        dtFiles = applyDistanceTransforms(groomDir, croppedFiles)
-
+        # do initial grooming steps
+        print("Grooming: " + shape_name)
+         # Individually crop each segmentation using a computed bounding box
+        iso_value = 0.5  # voxel value for isosurface
+        bounding_box = sw.ImageUtils.boundingBox([shape_seg], iso_value).pad(2)
+        shape_seg.crop(bounding_box)
+        # Resample to isotropic spacing using linear interpolation
+        antialias_iterations = 30   # number of iterations for antialiasing
+        iso_spacing = [1, 1, 1]     # isotropic spacing
+        shape_seg.antialias(antialias_iterations).resample(iso_spacing, sw.InterpolationType.Linear).binarize()
+        # Pad segmentations with zeros
+        pad_size = 5    # number of voxels to pad for each dimension
+        pad_value = 0   # the constant value used to pad the segmentations
+        shape_seg.pad(pad_size, pad_value)
+        
+    """
+    To find the alignment transforms and save them for optimization,
+    we must break the loop to select a reference segmentation
+    """
+    ref_index = sw.find_reference_image_index(shape_seg_list)
+    ref_seg = shape_seg_list[ref_index].write(groom_dir + 'reference.nrrd')
+    ref_name = shape_names[ref_index]
+    print("Reference found: " + ref_name)
 
     """
-    ## OPTIMIZE : Particle Based Optimization
+    Now we can loop over all of the segmentations again to find the rigid
+    alignment transform and compute a distance transform
+    """
+    rigid_transforms = [] # Save rigid transorm matrices
+    for shape_seg, shape_name in zip(shape_seg_list, shape_names):
+        print('Finding alignment transform from ' + shape_name + ' to ' + ref_name)
+        # Get rigid transform
+        iso_value = 0.5      # voxel value for isosurface
+        icp_iterations = 100 # number of ICP iterations
+        rigid_transform = shape_seg.createRigidRegistrationTransform(
+            ref_seg, iso_value, icp_iterations)
+        # Convert to vtk format for optimization
+        rigid_transform = sw.utils.getVTKtransform(rigid_transform)
+        rigid_transforms.append(rigid_transform)
 
-    Now that we have the distance transform representation of data we create 
-    the parameter files for the shapeworks particle optimization routine.
+        # Convert segmentations to smooth signed distance transforms
+        print("Converting " + shape_name + " to distance transform")
+        iso_value = 0   # voxel value for isosurface
+        sigma = 1.5     # for Gaussian blur
+        shape_seg.antialias(antialias_iterations).computeDT(iso_value).gaussianBlur(sigma)
+
+    # Save distance transforms
+    groomed_files = sw.utils.save_images(groom_dir + 'distance_transforms/', shape_seg_list,
+                                    shape_names, extension='nrrd', compressed=True, verbose=True)
+
+
+    # Get data input (meshes if running in mesh mode, else distance transforms)
+    domain_type, groomed_files = sw.data.get_optimize_input(groomed_files, args.mesh_mode)
+
+    print("\nStep 3. Optimize - Particle Based Optimization\n")
+    """
+    Step 3: OPTIMIZE - Particle Based Optimization
+
+    Now that we have the groomed representation of data we create 
+    the spreadsheet for the shapeworks particle optimization routine.
     For more details on the plethora of parameters for shapeworks please refer 
-    to docs/workflow/optimze.md
-    First we need to create a dictionary for all the parameters required by this
-    optimization routine
+    to: http://sciinstitute.github.io/ShapeWorks/workflow/optimize.html
     """
 
-    print("\nStep 4. Optimize - Particle Based Optimization\n")
-    if int(args.interactive) != 0:
-        input("Press Enter to continue")
+    # Create project spreadsheet
+    project_location = output_directory + "shape_models/"
+    if not os.path.exists(project_location):
+        os.makedirs(project_location)
+    # Set subjects
+    subjects = []
+    number_domains = 1
+    for i in range(len(shape_seg_list)):
+        subject = sw.Subject()
+        subject.set_number_of_domains(number_domains)
+        rel_seg_files = sw.utils.get_relative_paths([os.getcwd() + '/' + file_list[i]], project_location)
+        subject.set_original_filenames(rel_seg_files)
+        rel_groom_files = sw.utils.get_relative_paths([os.getcwd() + '/' + groomed_files[i]], project_location)
+        subject.set_groomed_filenames(rel_groom_files)
+        transform = [ rigid_transforms[i].flatten() ]
+        subject.set_groomed_transforms(transform)
+        subjects.append(subject)
+    # Set project
+    project = sw.Project()
+    project.set_subjects(subjects)
+    parameters = sw.Parameters()
 
-    pointDir = outputDirectory + 'shape_models/'
-    if not os.path.exists(pointDir):
-        os.makedirs(pointDir)
-
-    parameterDictionary = {
+    # Create a dictionary for all the parameters required by optimization
+    parameter_dictionary = {
         "number_of_particles": 128,
         "use_normals": 0,
-        "normal_weight": 10.0,
+        "normals_strength": 10.0,
         "checkpointing_interval": 1000,
         "keep_checkpoints": 0,
         "iterations_per_split": 1000,
@@ -138,54 +180,42 @@ def Run_Pipeline(args):
         "ending_regularization": 1,
         "recompute_regularization_interval": 1,
         "domains_per_shape": 1,
-        "domain_type": 'image',
         "relative_weighting": 1,
         "initial_relative_weighting": 0.05,
         "procrustes_interval": 0,
         "procrustes_scaling": 0,
         "save_init_splits": 0,
-        "verbosity": 1
+        "verbosity": 0
     }
-
+    # If running a tiny test, reduce some parameters
     if args.tiny_test:
-        parameterDictionary["number_of_particles"] = 32
-        parameterDictionary["optimization_iterations"] = 25
-
+        parameter_dictionary["number_of_particles"] = 32
+        parameter_dictionary["optimization_iterations"] = 25
+    # Run multiscale optimization unless single scale is specified
     if not args.use_single_scale:
-        parameterDictionary["use_shape_statistics_after"] = 32
+        parameter_dictionary["multiscale"] = 1
+        parameter_dictionary["multiscale_particles"] = 32
 
+    # Add param dictionary to spreadsheet
+    for key in parameter_dictionary:
+        parameters.set(key, sw.Variant([parameter_dictionary[key]]))
+    parameters.set("domain_type", sw.Variant(domain_type[0]))
+    project.set_parameters("optimize", parameters)
+    spreadsheet_file = output_directory + "shape_models/ellipsoid_" + args.option_set + ".swproj"
+    project.save(spreadsheet_file)
+
+    # Run optimization
+    optimize_cmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
+    subprocess.check_call(optimize_cmd)
+
+    # If tiny test or verify, check results and exit
+    sw.utils.check_results(args, spreadsheet_file)
+
+    print("\nStep 4. Analysis - Launch ShapeWorksStudio")
     """
-    Now we execute a single scale particle optimization function.
+    Step 4: ANALYZE - open in studio
+    For more information about the analysis step, see:
+    # http://sciinstitute.github.io/ShapeWorks/workflow/analyze.html
     """
-    [localPointFiles, worldPointFiles] = runShapeWorksOptimize(pointDir, dtFiles, parameterDictionary)
-
-    if args.tiny_test:
-        print("Done with tiny test")
-        exit()
-          
-    """
-    ## ANALYZE : Shape Analysis and Visualization
-
-    Shapeworks yields relatively sparse correspondence models that may be inadequate to reconstruct 
-    thin structures and high curvature regions of the underlying anatomical surfaces. 
-    However, for many applications, we require a denser correspondence model, for example, 
-    to construct better surface meshes, make more detailed measurements, or conduct biomechanical 
-    or other simulations on mesh surfaces. One option for denser modeling is 
-    to increase the number of particles per shape sample. However, this approach necessarily 
-    increases the computational overhead, especially when modeling large clinical cohorts.
-
-    Here we adopt a template-deformation approach to establish an inter-sample dense surface correspondence, 
-    given a sparse set of optimized particles. To avoid introducing bias due to the template choice, we developed
-    an unbiased framework for template mesh construction. The dense template mesh is then constructed 
-    by triangulating the isosurface of the mean distance transform. This unbiased strategy will preserve 
-    the topology of the desired anatomy  by taking into account the shape population of interest. 
-    In order to recover a sample-specific surface mesh, a warping function is constructed using the 
-    sample-level particle system and the mean/template particle system as control points. 
-    This warping function is then used to deform the template dense mesh to the sample space.
-    """
-    
-    print("\nStep 5. Analysis - Launch ShapeWorksStudio - sparse correspondence model.\n")
-    if args.interactive != 0:
-        input("Press Enter to continue")
-
-    launchShapeWorksStudio(pointDir, dtFiles, localPointFiles, worldPointFiles)
+    analyze_cmd = ('ShapeWorksStudio ' + spreadsheet_file).split()
+    subprocess.check_call(analyze_cmd)

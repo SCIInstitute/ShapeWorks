@@ -92,7 +92,7 @@ def make_plot(source, xindex, yindex, xax=False, yax=False):
     plot.add_tools(PanTool(), WheelZoomTool())
     return plot
 
-def violin(data_csv):
+def violin(data_csv, show):
     # Get data frame
     types = []
     dims = []
@@ -111,11 +111,13 @@ def violin(data_csv):
     data = {'Data Type':types, 'PCA Mode':dims, "PCA Score":scores}
     df = pd.DataFrame(data) 
     # Plot
+    plt.clf()
     sns.set_style("whitegrid")
     ax = sns.violinplot(x=df['PCA Mode'], y=df['PCA Score'], hue=df['Data Type'],
                         data=df, palette="Set2", split=True, scale="area")
     # Save and show
     out_png = os.path.join(os.path.dirname(data_csv), "violin.png")
     plt.savefig(out_png)                                                                     
-    img = Image.open(out_png)
-    img.show() 
+    if show:
+        img = Image.open(out_png)
+        img.show() 

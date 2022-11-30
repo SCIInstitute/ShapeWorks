@@ -1,0 +1,4 @@
+Closest point to given point on mesh: [2.47784, 0.435486, -8.90329]
+- outside mesh: true
+- distance: 1.09883
+- face_id: 94

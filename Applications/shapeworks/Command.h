@@ -79,10 +79,34 @@ public:
 private:
 };
 
+class AnalyzeCommandGroup : public Command
+{
+public:
+  const std::string type() override { return "Analyze"; }
+
+private:
+};
+
+class ProjectCommandGroup : public Command
+{
+public:
+  const std::string type() override { return "Project"; }
+
+private:
+};
+
 class ParticleSystemCommand : public Command
 {
 public:
   const std::string type() override { return "ParticleSystem"; }
+
+private:
+};
+
+class ShapeworksCommand : public Command
+{
+public:
+  const std::string type() override { return "Shapeworks"; }
 
 private:
 };

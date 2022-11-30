@@ -1,369 +1,344 @@
 #include "Testing.h"
+#include <boost/filesystem/operations.hpp>
 
-// only need to run pythonEnvSetup once or it continuously appends to paths
-// FIXME: This is a problem if you only need to execute a single test (same problem in ShapeworksTests)
-TEST(pythonTests, setup)
-{
-  pythonEnvSetup();
-  ASSERT_TRUE(true);
+using namespace shapeworks;
+
+//---------------------------------------------------------------------------
+void run_isolated_test(const std::string& name) {
+  // store the initial path
+  auto initial_path = boost::filesystem::current_path();
+
+  TestUtils::Instance().prep_temp(std::string(TEST_DATA_DIR) + "/python/" + name, "python_" + name);
+
+  // -u generates unbuffered output, shown even if crashes
+  std::string command = "python -u " + name + ".py";
+  ASSERT_FALSE(system(command.c_str()));
+
+  // change dir back to initial path
+  boost::filesystem::current_path(initial_path);
+}
+
+//---------------------------------------------------------------------------
+void run_test(const std::string& name) {
+  std::string python_test_dir = std::string(TEST_DATA_DIR) + "/../PythonTests";
+  setupenv(python_test_dir);
+
+  // store the initial path
+  auto initial_path = boost::filesystem::current_path();
+
+  // change to temp dir
+  auto temp_dir = shapeworks::TestUtils::Instance().get_output_dir(name);
+  boost::filesystem::current_path(temp_dir);
+
+  std::string
+      command = "python -u " + python_test_dir + "/" + name; // -u generates unbuffered output, shown even if crashes
+  ASSERT_FALSE(system(command.c_str()));
+
+  // change dir back to initial path
+  boost::filesystem::current_path(initial_path);
 }
 
-TEST(pythonTests, gradientInterpolatorTest)
-{
-  ASSERT_FALSE(system("python gradientinterp.py"));
+TEST(pythonTests, shared_boundaryTest) {
+  run_test("shared_boundary.py");
 }
-  
-TEST(pythonTests, infoTest)
-{
-  ASSERT_FALSE(system("python info.py"));
+
+TEST(pythonTests, reconstructsurfaceTest) {
+  run_test("reconstructsurface.py");
+}
+
+TEST(pythonTests, reconstructpcaTest) {
+  run_test("reconstructpca.py");
+}
+
+TEST(pythonTests, transformTest) {
+  run_test("transform.py");
 }
-  
-TEST(pythonTests, copyTest)
-{
-  ASSERT_FALSE(system("python copy.py"));
+
+TEST(pythonTests, meshwriteTest) {
+  run_test("meshwrite.py");
+}
+
+TEST(pythonTests, subdivisionTest) {
+  run_test("subdivision.py");
+}
+
+TEST(pythonTests, sw2vtkmeshTest) {
+  run_test("sw2vtkmesh.py");
 }
 
-TEST(pythonTests, compareTest)
-{
-  ASSERT_FALSE(system("python compare.py"));
+TEST(pythonTests, meshcurvatureTest) {
+  run_test("meshcurvature.py");
 }
 
-TEST(pythonTests, compareFailTest)
-{
-  ASSERT_TRUE(system("python comparefail.py"));
+TEST(pythonTests, initImageTest) {
+  run_test("initImage.py");
 }
 
-TEST(pythonTests, antialiasTest)
-{
-  ASSERT_FALSE(system("python antialias.py"));
+TEST(pythonTests, toArrayTest) {
+  run_test("toArray.py");
 }
 
-TEST(pythonTests, antialiasFailTest)
-{
-  ASSERT_TRUE(system("python antialiasfail.py"));
+TEST(pythonTests, imageInfoTest) {
+  run_test("imageinfo.py");
 }
 
-TEST(pythonTests, resampleTest)
-{
-  ASSERT_FALSE(system("python resample.py"));
+TEST(pythonTests, meshInfoTest) {
+  run_test("meshinfo.py");
 }
 
-TEST(pythonTests, resizeTest)
-{
-  ASSERT_FALSE(system("python resize.py"));
+TEST(pythonTests, copyTest) {
+  run_test("copyImgMesh.py");
 }
 
-TEST(pythonTests, resizeFailTest)
-{
-  ASSERT_TRUE(system("python resizefail.py"));
+TEST(pythonTests, compareTest) {
+  run_test("compare.py");
 }
 
-TEST(pythonTests, recenterTest)
-{
-  ASSERT_FALSE(system("python recenter.py"));
+TEST(pythonTests, antialiasTest) {
+  run_test("antialias.py");
 }
 
-TEST(pythonTests, padTest)
-{
-  ASSERT_FALSE(system("python pad.py"));
+TEST(pythonTests, resampleTest) {
+  run_test("resample.py");
 }
 
-TEST(pythonTests, padFailTest)
-{
-  ASSERT_TRUE(system("python padfail.py"));
+TEST(pythonTests, resizeTest) {
+  run_test("resize.py");
 }
 
-TEST(pythonTests, translateTest)
-{
-  ASSERT_FALSE(system("python translate.py"));
+TEST(pythonTests, padTest) {
+  run_test("pad.py");
 }
 
-TEST(pythonTests, translatefailTest)
-{
-  ASSERT_TRUE(system("python translatefail.py"));
+TEST(pythonTests, recenterTest) {
+  run_test("recenter.py");
 }
 
-TEST(pythonTests, centerofmassTest)
-{
-  ASSERT_FALSE(system("python centerofmass.py"));
+TEST(pythonTests, translateTest) {
+  run_test("translate.py");
 }
 
-TEST(pythonTests, scaleTest)
-{
-  ASSERT_FALSE(system("python scale.py"));
+TEST(pythonTests, centerofmassTest) {
+  run_test("centerofmass.py");
 }
 
-TEST(pythonTests, scaleFailTest)
-{
-  ASSERT_TRUE(system("python scalefail.py"));
+TEST(pythonTests, scaleTest) {
+  run_test("scale.py");
 }
 
-TEST(pythonTests, rotateTest)
-{
-  ASSERT_FALSE(system("python rotate.py"));
+TEST(pythonTests, rotateTest) {
+  run_test("rotate.py");
 }
 
-TEST(pythonTests, rotateFailTest)
-{
-  ASSERT_TRUE(system("python rotatefail.py"));
+TEST(pythonTests, extractLabelTest) {
+  run_test("extractlabel.py");
 }
 
-TEST(pythonTests, extractLabelTest)
-{
-  ASSERT_FALSE(system("python extractlabel.py"));
+TEST(pythonTests, closeholesTest) {
+  run_test("closeholes.py");
 }
 
-TEST(pythonTests, closeHolesTest)
-{
-  ASSERT_FALSE(system("python closeholes.py"));
+TEST(pythonTests, binarizeTest) {
+  run_test("binarize.py");
 }
 
-TEST(pythonTests, binarizeTest)
-{
-  ASSERT_FALSE(system("python binarize.py"));
+TEST(pythonTests, computedtTest) {
+  run_test("computedt.py");
 }
 
-TEST(pythonTests, computeDTTest)
-{
-  ASSERT_FALSE(system("python computedt.py"));
+TEST(pythonTests, curvatureTest) {
+  run_test("curvature.py");
 }
 
-TEST(pythonTests, curvatureTest)
-{
-  ASSERT_FALSE(system("python curvature.py"));
+TEST(pythonTests, gradientTest) {
+  run_test("gradient.py");
 }
 
-TEST(pythonTests, curvatureFailTest)
-{
-  ASSERT_TRUE(system("python curvaturefail.py"));
+TEST(pythonTests, sigmoidTest) {
+  run_test("sigmoid.py");
 }
 
-TEST(pythonTests, gradientTest)
-{
-  ASSERT_FALSE(system("python gradient.py"));
+TEST(pythonTests, tplevelsetTest) {
+  run_test("tplevelset.py");
 }
 
-TEST(pythonTests, sigmoidTest)
-{
-  ASSERT_FALSE(system("python sigmoid.py"));
+TEST(pythonTests, intensityTest) {
+  run_test("intensity.py");
 }
 
-TEST(pythonTests, tplevelsetTest)
-{
-  ASSERT_FALSE(system("python tplevelset.py"));
+TEST(pythonTests, topoTest) {
+  run_test("topo.py");
 }
 
-TEST(pythonTests, tplevelsetFailTest)
-{
-  ASSERT_TRUE(system("python tplevelsetfail.py"));
+TEST(pythonTests, blurTest) {
+  run_test("blur.py");
 }
 
-TEST(pythonTests, intensityTest)
-{
-  ASSERT_FALSE(system("python intensity.py"));
+TEST(pythonTests, boundingboxTest) {
+  run_test("boundingbox.py");
 }
 
-TEST(pythonTests, topoTest)
-{
-  ASSERT_FALSE(system("python topo.py"));
+TEST(pythonTests, cropTest) {
+  run_test("crop.py");
 }
 
-TEST(pythonTests, blurTest)
-{
-  ASSERT_FALSE(system("python blur.py"));
+TEST(pythonTests, icpTest) {
+  run_test("icp.py");
 }
 
-TEST(pythonTests, boundingBox)
-{
-  ASSERT_FALSE(system("python boundingbox.py"));
+TEST(pythonTests, clipTest) {
+  run_test("clip.py");
 }
 
-TEST(pythonTests, boundingBoxFailTest)
-{
-  ASSERT_TRUE(system("python boundingboxfail.py"));
+TEST(pythonTests, reflectTest) {
+  run_test("reflect.py");
 }
 
-TEST(pythonTests, cropTest)
-{
-  ASSERT_FALSE(system("python crop.py"));
+TEST(pythonTests, warpTest) {
+  run_test("warp.py");
 }
 
-TEST(pythonTests, icpTest)
-{
-  ASSERT_FALSE(system("python icp.py"));
+TEST(pythonTests, coordsysTest) {
+  run_test("coordsys.py");
 }
 
-TEST(pythonTests, clipTest)
-{
-  ASSERT_FALSE(system("python clip.py"));
+TEST(pythonTests, setoriginTest) {
+  run_test("setorigin.py");
 }
 
-TEST(pythonTests, clipFailTest)
-{
-  ASSERT_TRUE(system("python clipfail.py"));
+TEST(pythonTests, setspacingTest) {
+  run_test("setspacing.py");
 }
 
-TEST(pythonTests, reflectTest)
-{
-  ASSERT_FALSE(system("python reflect.py"));
+TEST(pythonTests, negateTest) {
+  run_test("negate.py");
 }
 
-TEST(pythonTests, reflectFailTest)
-{
-  ASSERT_TRUE(system("python reflectfail.py"));
+TEST(pythonTests, addTest) {
+  run_test("add.py");
 }
 
-TEST(pythonTests, warpTest)
-{
-  ASSERT_FALSE(system("python warp.py"));
+TEST(pythonTests, subTest) {
+  run_test("sub.py");
 }
 
-TEST(pythonTests, warpFailTest)
-{
-  ASSERT_TRUE(system("python warpfail.py"));
+TEST(pythonTests, mulTest) {
+  run_test("mul.py");
 }
 
-TEST(pythonTests, setOriginTest)
-{
-  ASSERT_FALSE(system("python setorigin.py"));
+TEST(pythonTests, divTest) {
+  run_test("div.py");
 }
 
-TEST(pythonTests, setSpacingTest)
-{
-  ASSERT_FALSE(system("python setspacing.py"));
+TEST(pythonTests, smoothTest) {
+  run_test("smooth.py");
 }
 
-TEST(pythonTests, setSpacingFailTest)
-{
-  ASSERT_TRUE(system("python setspacingfail.py"));
+TEST(pythonTests, remeshTest) {
+  run_test("remesh.py");
 }
 
-TEST(pythonTests, negateTest)
-{
-  ASSERT_FALSE(system("python negate.py"));
+TEST(pythonTests, invertnormalsTest) {
+  run_test("invertNormals.py");
 }
 
-TEST(pythonTests, addTest)
-{
-  ASSERT_FALSE(system("python add.py"));
+TEST(pythonTests, fillholesTest) {
+  run_test("fillHoles.py");
 }
 
-TEST(pythonTests, addFailTest)
-{
-  ASSERT_TRUE(system("python addfail.py"));
+TEST(pythonTests, probevolumeTest) {
+  run_test("probeVolume.py");
 }
 
-TEST(pythonTests, subTest)
-{
-  ASSERT_FALSE(system("python sub.py"));
+TEST(pythonTests, coverageTest) {
+  run_test("coverage.py");
 }
 
-TEST(pythonTests, subFailTest)
-{
-  ASSERT_TRUE(system("python subfail.py"));
+TEST(pythonTests, distanceTest) {
+  run_test("distance.py");
 }
 
-TEST(pythonTests, mulTest)
-{
-  ASSERT_FALSE(system("python mul.py"));
+TEST(pythonTests, fixElementTest) {
+  run_test("fixelement.py");
 }
 
-TEST(pythonTests, divTest)
-{
-  ASSERT_FALSE(system("python div.py"));
+TEST(pythonTests, closestpointTest) {
+  run_test("closestpoint.py");
 }
 
-TEST(pythonTests, smoothTest)
-{
-  ASSERT_FALSE(system("python smooth.py"));
+TEST(pythonTests, closestpointidTest) {
+  run_test("closestpointid.py");
 }
 
-TEST(pythonTests, decimateTest)
-{
-  ASSERT_FALSE(system("python decimate.py"));
+TEST(pythonTests, meannormalsTest) {
+  run_test("meannormals.py");
 }
 
-TEST(pythonTests, invertNormalsTest)
-{
-  ASSERT_FALSE(system("python invertNormals.py"));
+TEST(pythonTests, getpointTest) {
+  run_test("getpoint.py");
 }
 
-TEST(pythonTests, fillHolesTest)
-{
-  ASSERT_FALSE(system("python fillHoles.py"));
+TEST(pythonTests, getfaceTest) {
+  run_test("getface.py");
 }
 
-TEST(pythonTests, probeVolumeTest)
-{
-  ASSERT_FALSE(system("python probeVolume.py"));
+TEST(pythonTests, facesTest) {
+  run_test("faces.py");
 }
 
-TEST(pythonTests, toImageTest)
-{
-  ASSERT_FALSE(system("python toImage.py"));
+TEST(pythonTests, pointsTest) {
+  run_test("points.py");
 }
 
-TEST(pythonTests, toDistanceTransformTest)
-{
-  ASSERT_FALSE(system("python toDistanceTransform.py"));
+TEST(pythonTests, geodesicTest) {
+  run_test("geodesic.py");
 }
 
-TEST(pythonTests, coverageTest)
-{
-  ASSERT_FALSE(system("python coverage.py"));
+TEST(pythonTests, computenormalsTest) {
+  run_test("computenormals.py");
 }
 
-TEST(pythonTests, distanceTest)
-{
-  ASSERT_FALSE(system("python distance.py"));
+TEST(pythonTests, toimageTest) {
+  run_test("toImage.py");
 }
 
-TEST(pythonTests, generateNormalsTest)
-{
-  ASSERT_FALSE(system("python generatenormals.py"));
+TEST(pythonTests, todistancetransformTest) {
+  run_test("toDistanceTransform.py");
 }
 
-TEST(pythonTests, fieldTest)
-{
-  ASSERT_FALSE(system("python field.py"));
+TEST(pythonTests, gradientinterpolatorTest) {
+  run_test("gradientinterp.py");
 }
 
-TEST(pythonTests, statsTest)
-{
-  ASSERT_FALSE(system("python stats.py"));
+TEST(pythonTests, fieldTest) {
+  run_test("field.py");
 }
 
-TEST(pythonTests, coordTest)
-{
-  ASSERT_FALSE(system("python coord.py"));
+// note: we just use numpy arrays for coordinates/indices, points, dimensions, vectors, and matrices
+TEST(pythonTests, coordTest) {
+  run_test("coord.py");
 }
 
-TEST(pythonTests, dimsTest)
-{
-  ASSERT_FALSE(system("python dims.py"));
+TEST(pythonTests, statsTest) {
+  run_test("stats.py");
 }
 
-TEST(pythonTests, pointTest)
-{
-  ASSERT_FALSE(system("python point.py"));
+TEST(pythonTests, optimizeTest) {
+  run_test("optimize.py");
 }
 
-TEST(pythonTests, vectorTest)
-{
-  ASSERT_FALSE(system("python vector.py"));
+TEST(pythonTests, pcaTest) {
+  run_test("pca.py");
 }
 
-TEST(pythonTests, ipoint3Test)
-{
-  ASSERT_FALSE(system("python ipoint3.py"));
+TEST(pythonTests, findreferencemeshTest) {
+  run_test("findReferenceMesh.py");
 }
 
-TEST(pythonTests, fpoint3Test)
-{
-  ASSERT_FALSE(system("python fpoint3.py"));
+TEST(pythonTests, isolateTest) {
+  run_test("isolate.py");
 }
 
-TEST(pythonTests, optimizeTest)
-{
-  ASSERT_FALSE(system("python optimize.py"));
+TEST(pythonTests, projectTest) {
+  run_isolated_test("project");
 }

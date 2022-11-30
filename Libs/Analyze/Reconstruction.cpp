@@ -573,6 +573,7 @@ void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, Imag
                 particles_indices.push_back(int(kk));
             }
         }
+        std::cout << "maxAngleDegrees_ = " << maxAngleDegrees_ << "\n";
         std::cout << "There are " << particles_indices.size() << " / " << this->goodPoints_.size() <<
                      " good points." << std::endl;
 
@@ -761,8 +762,8 @@ void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, Imag
                                                    static_cast<double>(this->numClusters_));
         multiplyImageFilterBeforeWarp->Update();
 
-        std::string meanDT_filename           = out_prefix_ + "_meanDT.nrrd" ;;
-        std::string meanDTBeforeWarp_filename = out_prefix_ + "_meanDT_beforeWarp.nrrd" ;;
+        std::string meanDT_filename           = out_prefix_ + "/" + "_meanDT.nrrd" ;;
+        std::string meanDTBeforeWarp_filename = out_prefix_ + "/" + "_meanDT_beforeWarp.nrrd" ;;
 
         if (this->output_enabled_)
         {
@@ -1221,11 +1222,11 @@ vtkSmartPointer<vtkPolyData> Reconstruction<TTransformType,TInterpolatorType, TC
         vtkSmartPointer<vtkPolyData> meshIn)
 {
     //for now, write formats and read them in
-    std::string infilename_vtk = out_prefix_ + "_dense-noQC.vtk";
-    std::string infilename_ply = out_prefix_ + "_dense-noQC.ply";
+    std::string infilename_vtk = out_prefix_ + "/" + "_dense-noQC.vtk";
+    std::string infilename_ply = out_prefix_ + "/" + "_dense-noQC.ply";
 
-    std::string outfilename_vtk = out_prefix_ + "_dense-QC.vtk";
-    std::string outfilename_ply = out_prefix_ + "_dense-QC.ply";
+    std::string outfilename_vtk = out_prefix_ + "/" + "_dense-QC.vtk";
+    std::string outfilename_ply = out_prefix_ + "/" + "_dense-QC.ply";
 
     if (this->output_enabled_) {
         writeVTK((char*)infilename_vtk.c_str(), meshIn);
@@ -1378,7 +1379,7 @@ ComputeMedianShape(std::vector<vnl_matrix<double> > & shapeList)
 
             vnl_matrix<double> shape_jj = shapeList[jj];
 
-            for(size_t kk =0 ; kk < shape_ii.size(); kk++)
+            for(size_t kk =0 ; kk < shape_ii.rows(); kk++)
                 sum += (fabs(shape_ii[kk][0] - shape_jj[kk][0]) + fabs(shape_ii[kk][1] - shape_jj[kk][1]) + fabs(shape_ii[kk][2] - shape_jj[kk][2]));
 
         }
@@ -1480,90 +1481,6 @@ void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, Imag
     std::cout << "KMeans++ finished...." << std::endl;
     centroidIndices = centers;
 }
-
-template < template < typename TCoordRep, unsigned > class TTransformType,
-           template < typename ImageType, typename TCoordRep > class TInterpolatorType,
-           typename TCoordRep, typename PixelType, typename ImageType>
-void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::MeshFromDT(
-        typename ImageType::Pointer dtImage, std::string meshFileName, int subdivision, bool butterfly_subdivision)
-{
-    typename ITK2VTKConnectorType::Pointer itk2vtkConnector = ITK2VTKConnectorType::New();
-    itk2vtkConnector->SetInput(dtImage);
-    itk2vtkConnector->Update();
-
-    vtkSmartPointer<vtkPolyData> denseMesh_;
-
-    denseMesh_ = this->extractIsosurface(itk2vtkConnector->GetOutput());
-    try
-    {
-        denseMesh_ = this->MeshQC(denseMesh_);
-    }
-    catch (std::runtime_error e)
-    {
-        if (denseMesh_ != NULL) {
-            throw std::runtime_error("Warning! MeshQC failed, but a dense mean was computed by VTK.");
-        }
-    }
-
-    if (subdivision > 0)
-    {
-        if (butterfly_subdivision)
-        {
-            vtkSmartPointer <vtkButterflySubdivisionFilter> subdivisionFilter = vtkSmartPointer <vtkButterflySubdivisionFilter>::New();
-            subdivisionFilter->SetInputData(denseMesh_);
-            subdivisionFilter->SetNumberOfSubdivisions(subdivision);
-            subdivisionFilter->Update();
-            denseMesh_ = subdivisionFilter->GetOutput();
-        }
-        else
-        {
-            vtkSmartPointer <vtkLoopSubdivisionFilter> subdivisionFilter = vtkSmartPointer <vtkLoopSubdivisionFilter>::New();
-            subdivisionFilter->SetInputData(denseMesh_);
-            subdivisionFilter->SetNumberOfSubdivisions(subdivision);
-            subdivisionFilter->Update();
-            denseMesh_ = subdivisionFilter->GetOutput();
-        }
-    }
-
-    std::string plyName = meshFileName;
-    std::string vtkName = meshFileName;
-    std::string str_vtk (".vtk");
-    std::string str_ply (".ply");
-    std::size_t found_in_ply = plyName.find(str_vtk);
-    std::size_t found_in_vtk = vtkName.find(str_ply);
-    if ( found_in_ply != std::string::npos)
-        plyName.replace( found_in_ply, str_vtk.size(), str_ply );
-
-    if ( found_in_vtk != std::string::npos)
-        vtkName.replace( found_in_vtk, str_ply.size(), str_vtk );
-
-    std::cout << "Writing: " + plyName << std::endl;
-    this->writePLY( (char*)plyName.c_str(), denseMesh_ );
-
-    std::cout << "Writing: " + vtkName << std::endl;
-    this->writeVTK( (char*)vtkName.c_str(), denseMesh_ );
-}
-
-template < template < typename TCoordRep, unsigned > class TTransformType,
-           template < typename ImageType, typename TCoordRep > class TInterpolatorType,
-           typename TCoordRep, typename PixelType, typename ImageType>
-void Reconstruction<TTransformType,TInterpolatorType, TCoordRep, PixelType, ImageType>::MeshFromDT(std::string dtFileName, std::string meshFileName, int subdivision, bool butterfly_subdivision)
-{
-    typedef itk::ImageFileReader< ImageType > ReaderType;
-    typename ReaderType::Pointer reader = ReaderType::New();
-
-    if (dtFileName.find(".nrrd") != std::string::npos) {
-        itk::NrrdImageIOFactory::RegisterOneFactory();
-    } else if (dtFileName.find(".mha") != std::string::npos) {
-        itk::MetaImageIOFactory::RegisterOneFactory();
-    }
-
-    std::cout << "Reading distance transform file : " << dtFileName << std::endl;
-    reader->SetFileName( dtFileName.c_str() );
-    reader->Update();
-    this->MeshFromDT(reader->GetOutput(), meshFileName, subdivision, butterfly_subdivision);
-}
-
 
 template < template < typename TCoordRep, unsigned > class TTransformType,
            template < typename ImageType, typename TCoordRep > class TInterpolatorType,

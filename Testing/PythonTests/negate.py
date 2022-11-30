@@ -2,6 +2,8 @@ import os
 import sys
 from shapeworks import *
 
+success = True
+
 def negateTest():
   img = Image(os.environ["DATA"] + "/la-bin.nrrd")
   img = -img
@@ -10,7 +12,6 @@ def negateTest():
 
   return img.compare(compareImg)
 
-val = negateTest()
+success &= utils.test(negateTest)
 
-if val is False:
-  sys.exit(1)
+sys.exit(not success)

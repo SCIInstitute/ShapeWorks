@@ -1,7 +1,11 @@
 // FEMesh.cpp: implementation of the FEMesh class.
 //
 //////////////////////////////////////////////////////////////////////
-#define _USE_MATH_DEFINES
+// Some systems require this to get M_PI and friends
+#ifndef _USE_MATH_DEFINES
+  #define _USE_MATH_DEFINES
+#endif
+
 #include <cmath>
 
 #include "stdafx.h"

@@ -1,92 +1,189 @@
 # -*- coding: utf-8 -*-
 """
 ====================================================================
-Full Example Pipeline for Statistical Shape Modeling with ShapeWorks
+Example ShapeWorks Pipeline for mesh grooming and optimization
 ====================================================================
-
-In this example we provide a full pipeline with an example dataset of axis 
-aligned ellipsoid meshes.
 """
 import os
-from GroomUtils import *
-from OptimizeUtils import *
-from AnalyzeUtils import *
-import CommonUtils
-
+import glob
+import subprocess
+import shapeworks as sw
 
 def Run_Pipeline(args):
-    """
-    If ellipsoid.zip is not there it will be downloaded from the ShapeWorks data portal.
-    femur.zip will be saved in the /Data folder and the data will be extracted 
-    in a newly created directory Output/ellipsoid_mesh.
-    """
     print("\nStep 1. Extract Data\n")
-    if int(args.interactive) != 0:
-        input("Press Enter to continue")
+    """
+    Step 1: EXTRACT DATA
+    We define dataset_name which determines which dataset to download from 
+    the portal and the directory to save output from the use case in. 
+    """
+    dataset_name = "ellipsoid_1mode"
+    output_directory = "Output/ellipsoid_mesh/"
+    if not os.path.exists(output_directory):
+        os.makedirs(output_directory)
 
-    datasetName = "ellipsoid_1mode_aligned"
-    outputDirectory = "Output/ellipsoid_mesh/"
-    if not os.path.exists(outputDirectory):
-        os.makedirs(outputDirectory)
-    #If tiny_test then download subset of the data
+    # If running a tiny_test, then download subset of the data
     if args.tiny_test:
         args.use_single_scale = 1
-        CommonUtils.download_subset(args.use_case,datasetName, outputDirectory)
-        meshFiles = sorted(glob.glob(outputDirectory + datasetName + "/meshes/*.ply"))[:3]
-    #else download the entire dataset
+        sw.data.download_subset(args.use_case, dataset_name, output_directory)
+        mesh_files = sorted(glob.glob(output_directory +
+                            dataset_name + "/meshes/*.vtk"))[:3]
+    # else download the entire dataset
     else:
-        CommonUtils.download_and_unzip_dataset(datasetName, outputDirectory)
-        meshFiles = sorted(glob.glob(outputDirectory + datasetName + "/meshes/*.ply"))
-    
-    # Select data if using subsample
-    if args.use_subsample:
-        sample_idx = samplemesh(meshFiles, int(args.num_subsample))
-        meshFiles = [meshFiles[i] for i in sample_idx]
+        sw.data.download_and_unzip_dataset(dataset_name, output_directory)
+        mesh_files = sorted(glob.glob(output_directory +
+                            dataset_name + "/meshes/*.vtk"))
 
-    pointDir = outputDirectory + 'shape_models/'
-    if not os.path.exists(pointDir):
-        os.makedirs(pointDir)
+        # Select data if using subsample
+        if args.use_subsample:
+            inputMeshes =[sw.Mesh(filename) for filename in mesh_files]
+            sample_idx = sw.data.sample_meshes(inputMeshes, int(args.num_subsample))
+            mesh_files = [mesh_files[i] for i in sample_idx]
 
-    parameterDictionary = {
-        "number_of_particles" : 128,
+
+    print("\nStep 2. Groom - Data Pre-processing\n")
+    """
+    Step 2: GROOMING 
+    The required grooming steps are: 
+    1. Remesh 
+    2. Reference selection
+    3. Rigid Alignment
+    For more information on grooming see docs/workflow/groom.md
+    http://sciinstitute.github.io/ShapeWorks/workflow/groom.html
+    """
+
+    # Create a directory for groomed output
+    groom_dir = output_directory + 'groomed/'
+    if not os.path.exists(groom_dir):
+        os.makedirs(groom_dir)
+
+    """
+    First, we need to loop over the mesh files and load them
+    """
+    mesh_list = []
+    mesh_names = []
+    for mesh_file in mesh_files:
+        print('Loading: ' + mesh_file)
+        # get current name
+        mesh_names.append(mesh_file.split('/')[-1].replace('.vtk', ''))
+        """
+        Grooming Step 1: load mesh and remesh
+        """
+        mesh = sw.Mesh(mesh_file).remeshPercent(percentage=0.99, adaptivity=1.0)
+        # append to the list
+        mesh_list.append(mesh)
+
+    """
+    Grooming Step 2: Select a reference
+    This step requires loading all of the meshes at once so the shape
+    closest to the mean can be found and selected as the reference. 
+    """
+    ref_index = sw.find_reference_mesh_index(mesh_list)
+    # Make a copy of the reference segmentation 
+    ref_mesh = mesh_list[ref_index]
+    # Center the reference mesh at 0,0,0
+    # ref_mesh.translate(-ref_mesh.center()).write(groom_dir + 'reference.vtk')
+    ref_mesh.write(groom_dir + 'reference.vtk')
+    ref_name = mesh_names[ref_index]
+    print("Reference found: " + ref_name)
+
+    """
+    Grooming Step 3: Rigid alignment
+    This step rigidly aligns each shape to the selected reference. 
+    """
+    Rigid_transforms = []
+    for mesh, name in zip(mesh_list, mesh_names):
+        print('Aligning ' + name + ' to ' + ref_name)
+        # compute rigid transformation
+        rigid_transform = mesh.createTransform(ref_mesh, sw.Mesh.AlignmentType.Rigid, 100)
+        Rigid_transforms.append(rigid_transform)
+
+    # Save groomed meshes
+    groomed_mesh_files = sw.utils.save_meshes(groom_dir + 'meshes/', mesh_list, mesh_names, extension='vtk')
+
+
+    print("\nStep 3. Optimize - Particle Based Optimization\n")
+    """
+    Step 3: OPTIMIZE - Particle Based Optimization
+
+    Now that we have the groomed representation of data we create 
+    the spreadsheet for the shapeworks particle optimization routine.
+    For more details on the plethora of parameters for shapeworks please refer 
+    to: http://sciinstitute.github.io/ShapeWorks/workflow/optimize.html
+    """
+
+    # Create project spreadsheet
+    project_location = output_directory + "shape_models/"
+    if not os.path.exists(project_location):
+        os.makedirs(project_location)
+    # Set subjects
+    subjects = []
+    number_domains = 1
+    for i in range(len(mesh_names)):
+        subject = sw.Subject()
+        subject.set_number_of_domains(number_domains)
+        rel_mesh_files = sw.utils.get_relative_paths([os.getcwd() + "/" + mesh_files[i]], project_location)
+        subject.set_original_filenames(rel_mesh_files)
+        rel_groom_file = sw.utils.get_relative_paths([os.getcwd() + "/" + groomed_mesh_files[i]], project_location)
+        subject.set_groomed_filenames(rel_groom_file)
+        transform = Rigid_transforms[i]
+        transforms = [ transform.flatten() ]
+        subject.set_groomed_transforms(transforms)
+        subjects.append(subject)
+    # Set project
+    project = sw.Project()
+    project.set_subjects(subjects)
+    parameters = sw.Parameters()
+
+    # Create a dictionary for all the parameters required by optimization
+    parameter_dictionary = {
+        "number_of_particles": 128,
         "use_normals": 0,
         "normal_weight": 10.0,
-        "checkpointing_interval" : 200,
-        "keep_checkpoints" : 0,
-        "iterations_per_split" : 500,
-        "optimization_iterations" : 500,
-        "starting_regularization" : 100,
-        "ending_regularization" : 0.1,
-        "recompute_regularization_interval" : 2,
-        "domains_per_shape" : 1,
-        "domain_type" : 'mesh',
-        "relative_weighting" : 10,
-        "initial_relative_weighting" : 0.01,
-        "procrustes_interval" : 0,
-        "procrustes_scaling" : 0,
-        "save_init_splits" : 0,
-        "verbosity" : 3
-      }
-
+        "checkpointing_interval": 1000,
+        "keep_checkpoints": 0,
+        "iterations_per_split": 1000,
+        "optimization_iterations": 1000,
+        "starting_regularization": 10,
+        "ending_regularization": 1,
+        "recompute_regularization_interval": 1,
+        "domains_per_shape": 1,
+        "relative_weighting": 1,
+        "initial_relative_weighting": 0.05,
+        "procrustes_interval": 0,
+        "procrustes_scaling": 0,
+        "save_init_splits": 0,
+        "verbosity": 0
+    }
+     # If running a tiny test, reduce some parameters
     if args.tiny_test:
-        parameterDictionary["number_of_particles"] = 32
-        parameterDictionary["optimization_iterations"] = 25
-
+        parameter_dictionary["number_of_particles"] = 32
+        parameter_dictionary["optimization_iterations"] = 25
+        parameter_dictionary["iterations_per_split"] = 25
+    # Run multiscale optimization unless single scale is specified
     if not args.use_single_scale:
-        parameterDictionary["use_shape_statistics_after"] = 32
+        parameter_dictionary["multiscale"] = 1
+        parameter_dictionary["multiscale_particles"] = 32
 
+    # Add param dictionary to spreadsheet
+    for key in parameter_dictionary:
+        parameters.set(key, sw.Variant([parameter_dictionary[key]]))
+    parameters.set("domain_type",sw.Variant('mesh'))
+    project.set_parameters("optimize", parameters)
+    spreadsheet_file = output_directory + "shape_models/ellipsoid_mesh_" + args.option_set+ ".xlsx"
+    project.save(spreadsheet_file)
 
+    # Run optimization
+    optimize_cmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
+    subprocess.check_call(optimize_cmd)
+
+    # If tiny test or verify, check results and exit
+    sw.utils.check_results(args, spreadsheet_file)
+
+    print("\nStep 4. Analysis - Launch ShapeWorksStudio")
     """
-    Now we execute a single scale particle optimization function.
+    Step 4: ANALYZE - open in studio
+    For more information about the analysis step, see:
+    # http://sciinstitute.github.io/ShapeWorks/workflow/analyze.html
     """
-    [localPointFiles, worldPointFiles] = runShapeWorksOptimize(pointDir, meshFiles, parameterDictionary)
-
-    if args.tiny_test:
-        print("Done with tiny test")
-        exit()
-
-    print("\nStep 5. Analysis - Launch ShapeWorksStudio - sparse correspondence model.\n")
-    if args.interactive != 0:
-        input("Press Enter to continue")
-
-    launchShapeWorksStudio(pointDir, meshFiles, localPointFiles, worldPointFiles)
+    analyze_cmd = ('ShapeWorksStudio ' + spreadsheet_file).split()
+    subprocess.check_call(analyze_cmd)

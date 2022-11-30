@@ -2,6 +2,8 @@ import os
 import sys
 from shapeworks import *
 
+success = True
+
 def setoriginTest1():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
   img.setOrigin()
@@ -10,10 +12,7 @@ def setoriginTest1():
 
   return img.compare(compareImg)
 
-val = setoriginTest1()
-
-if val is False:
-  sys.exit(1)
+success &= utils.test(setoriginTest1)
 
 def setoriginTest2():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -23,10 +22,7 @@ def setoriginTest2():
 
   return img.compare(compareImg)
 
-val = setoriginTest2()
-
-if val is False:
-  sys.exit(1)
+success &= utils.test(setoriginTest2)
 
 def setoriginTest3():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -36,10 +32,7 @@ def setoriginTest3():
 
   return img.compare(compareImg)
 
-val = setoriginTest3()
-
-if val is False:
-  sys.exit(1)
+success &= utils.test(setoriginTest3)
 
 def setoriginTest4():
   img = Image(os.environ["DATA"] + "/1x2x2.nrrd")
@@ -49,7 +42,6 @@ def setoriginTest4():
 
   return img.compare(compareImg)
 
-val = setoriginTest4()
+success &= utils.test(setoriginTest4)
 
-if val is False:
-  sys.exit(1)
+sys.exit(not success)
