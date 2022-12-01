@@ -9,7 +9,7 @@ add_executable(OptimizeTests
 target_link_libraries(OptimizeTests
   ${ITK_LIBRARIES} ${VTK_LIBRARIES}
   tinyxml Mesh Optimize Utils trimesh2 Particles
-  Testing pybind11::embed Project Image
+  Testing pybind11::embed Image Project
   )
 
 add_test(NAME OptimizeTests COMMAND OptimizeTests)
