@@ -71,7 +71,6 @@ Optimize::Optimize()
 //---------------------------------------------------------------------------
 bool Optimize::Run()
 {
-  std::cerr << "Optimize::Run\n";
   // control number of threads
   int num_threads = tbb::info::default_concurrency();
   const char* num_threads_env = getenv("TBB_NUM_THREADS");

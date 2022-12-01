@@ -42,13 +42,5 @@ RUN curl https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -
 RUN curl -L -o $HOME/linuxdeployqt.AppImage https://github.com/probonopd/linuxdeployqt/releases/download/5/linuxdeployqt-5-x86_64.AppImage && chmod +x $HOME/linuxdeployqt.AppImage ; cd $HOME ; ./linuxdeployqt.AppImage --appimage-extract
 RUN ln -s /root/squashfs-root/usr/bin/linuxdeployqt /usr/bin
 
-# Set compresion for ccache
+# Set compression for ccache
 RUN mkdir /root/.ccache && echo "compression = true" > /root/.ccache/ccache.conf
-
-#RUN apt-get install valgrind -y
-#RUN valgrind /bin/ls
-
-RUN wget https://sourceware.org/pub/valgrind/valgrind-3.20.0.tar.bz2 && tar -xjf valgrind-3.20.0.tar.bz2 && cd valgrind-3.20.0 && ./configure && make -j2 && make install
-RUN valgrind --version
-
-RUN apt-get install libc6-dbg -y
