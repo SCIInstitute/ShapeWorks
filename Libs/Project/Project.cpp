@@ -371,6 +371,10 @@ void Project::clear_parameters(const std::string& name) { parameters_.erase(name
 
 //---------------------------------------------------------------------------
 std::string Project::get_next_landmark_name(int domain_id) {
+  while (domain_id >= landmark_definitions_.size()) {
+    landmark_definitions_.push_back(std::vector<LandmarkDefinition>());
+  }
+
   return std::to_string(landmark_definitions_[domain_id].size() + 1);
 }
 
