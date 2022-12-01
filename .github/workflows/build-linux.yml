@@ -20,7 +20,7 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    container: akenmorris/ubuntu-build-box-sw64
+    container: akenmorris/ubuntu-build-box-sw64-valgrind
     
     steps:
 
@@ -92,10 +92,6 @@ jobs:
       env:
         PR_NUMBER: ${{ github.event.number }}
       run: conda activate shapeworks && source ./devenv.sh ./build/bin && PATH=$HOME:$PATH ./Support/package.sh tag ${GITHUB_WORKSPACE}/shapeworks-install $HOME/install
-
-    - name: install valgrind
-      shell: bash -l {0}
-      run: apt-get install -y valgrind
 
     - name: run with valgrind
       shell: bash -l {0}
