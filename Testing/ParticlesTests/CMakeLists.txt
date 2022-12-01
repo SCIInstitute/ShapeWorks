@@ -11,7 +11,8 @@ target_link_libraries(ParticlesTests
   ${VTK_LIBRARIES}
   Particles
   Testing
-  OptimizeLibraries
+  Optimize
+  Project
 )
 
 add_test(NAME ParticlesTests COMMAND ParticlesTests)
