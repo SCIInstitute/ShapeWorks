@@ -50,3 +50,5 @@ RUN mkdir /root/.ccache && echo "compression = true" > /root/.ccache/ccache.conf
 
 RUN wget https://sourceware.org/pub/valgrind/valgrind-3.20.0.tar.bz2 && tar -xjf valgrind-3.20.0.tar.bz2 && cd valgrind-3.20.0 && ./configure && make -j2 && make install
 RUN valgrind --version
+
+RUN apt-get install libc6-dbg -y
