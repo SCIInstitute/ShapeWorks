@@ -129,7 +129,6 @@ else
     cd ..
     
     rm lib/libxcb* lib/libX* lib/libfont* lib/libfreetype*
-    rm bin/vdb_print
     rm -rf geometry-central doc
 fi
 
