@@ -95,7 +95,7 @@ jobs:
 
     - name: install valgrind
       shell: bash -l {0}
-      run: conda activate shapeworks && conda install --yes valgrind
+      run: apt-get install -y valgrind
 
     - name: run with valgrind
       shell: bash -l {0}
