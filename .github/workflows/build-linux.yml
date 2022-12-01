@@ -93,6 +93,14 @@ jobs:
         PR_NUMBER: ${{ github.event.number }}
       run: conda activate shapeworks && source ./devenv.sh ./build/bin && PATH=$HOME:$PATH ./Support/package.sh tag ${GITHUB_WORKSPACE}/shapeworks-install $HOME/install
 
+    - name: install valgrind
+      shell: bash -l {0}
+      run: conda activate shapeworks && conda install --yes valgrind
+
+    - name: run with valgrind
+      shell: bash -l {0}
+      run: conda activate shapeworks && source ./devenv.sh ./build/bin && valgrind ./build/bin/OptimizeTests --gtest_filter=OptimizeTests.contour_domain_test
+
     - name: make test1
       shell: bash -l {0}
       run: conda activate shapeworks && source ./devenv.sh ./build/bin && cd build && ctest -VV
