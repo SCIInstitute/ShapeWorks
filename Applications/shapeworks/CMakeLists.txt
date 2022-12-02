@@ -23,7 +23,7 @@ target_include_directories(shapeworks_exe PUBLIC
 
 target_link_libraries(shapeworks_exe
   Mesh ${VTK_LIBRARIES} Optimize Utils trimesh2 Particles
-  Testing pybind11::embed Project Image Groom Analyze
+  pybind11::embed Project Image Groom Analyze
   )
 
 message(STATUS "opt libs ${OPTIMIZE_LIBRARIES}")
