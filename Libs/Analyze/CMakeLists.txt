@@ -53,8 +53,8 @@ target_include_directories(Analyze PUBLIC
 
 target_link_libraries(Analyze PUBLIC
   Mesh
-  Particles
   Utils
+  Particles
   )
 
 # set
