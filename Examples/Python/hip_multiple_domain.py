@@ -30,7 +30,7 @@ def Run_Pipeline(args):
 	""" 
 	
 	dataset_name = "hip"
-	output_directory = "Output/hip/"
+	output_directory = "Output/hip_multiple_domain/"
 	if not os.path.exists(output_directory):
 		os.makedirs(output_directory)
 
@@ -100,10 +100,7 @@ def Run_Pipeline(args):
 	#shape index for all shapes in domain 2
 	domain2_indx = domain_ids.index("pelvis")
 
-	# Set reference side (arbitrary)
-	ref_side = "L" # chosen so reflection happens in tiny test 
-	reflections = [] 
-	center_translations = []
+	
 	for mesh, name in zip(mesh_list, mesh_names):
 		"""
 		Grooming step 2: Apply clipping for finsing alignment transform
@@ -119,19 +116,6 @@ def Run_Pipeline(args):
 				# Clip mesh
 				print("Clipping: " + name)
 				mesh.clip(plane[0], plane[1], plane[2])
-
-		"""
-		Grooming Step 3: Get reflection transform - We have left and 
-		right femurs, so we reflect the non-reference side meshes 
-		so that all of the femurs can be aligned.
-		"""
-		reflection = np.eye(4) # Identity
-		if ref_side in name:
-			print("Creating reflection transform for: " + name)
-			reflection[0][0] = -1 # Reflect across X
-			mesh.applyTransform(reflection)
-		# reflection = np.eye(4) # Identity
-		# reflections.append(reflection)
 
 
 
@@ -156,9 +140,6 @@ def Run_Pipeline(args):
 		combined_meshes.append(combined_mesh)
 		del combined_mesh 
 
-		# domain1_reflections.append(reflections[i*domains_per_shape])
-		# domain2_reflections.append(reflections[i*domains_per_shape + 1])
-
 
 
 	ref_index = sw.find_reference_mesh_index(combined_meshes)
@@ -178,20 +159,13 @@ def Run_Pipeline(args):
 	# """
 
 	# Alginment matrix for domain 1 shapes using domain 1 reference 
-	rigid_domain_1 = calculate_transforms(domain_1_meshes, domain1_reference)
+	transforms_domain_1 = calculate_transforms(domain_1_meshes, domain1_reference)
 	# Alginment matrix for domain 2 shapes using domain 2 reference 
-	rigid_domain_2 = calculate_transforms(domain_2_meshes, domain2_reference)
+	transforms_domain_2 = calculate_transforms(domain_2_meshes, domain2_reference)
 	# Alginment matrix for all shapes using the combined reference mesh denoting the global alignment option
 	global_rigid_transform = calculate_transforms(combined_meshes, combined_reference)
 
-	# Combine transforms to pass to optimizer
-	transforms_domain_1 = rigid_domain_1
-	transforms_domain_2 = rigid_domain_2
-	global_transforms = global_rigid_transform
-	# for i in range(num_samples):
-	# 	transforms_domain_1.append(np.matmul(domain1_reflections[i],rigid_domain_1[i]))
-	# 	transforms_domain_2.append(np.matmul(domain2_reflections[i],rigid_domain_2[i]))
-	# 	global_transforms.append(np.matmul(domain1_reflections[i],global_rigid_transform[i]))
+	
 
 	# Save groomed meshes
 	groomed_mesh_files = sw.utils.save_meshes(groom_dir + 'meshes/', mesh_list, mesh_names, extension='vtk')
@@ -226,8 +200,7 @@ def Run_Pipeline(args):
 				transform.append(transforms_domain_1[i].flatten())
 			else:
 				transform.append(transforms_domain_2[i].flatten())
-			rel_plane_files += sw.utils.get_relative_paths([os.getcwd() + '/' + plane_files[i*domains_per_shape+d]], project_location)
-		subject.set_constraints_filenames(rel_plane_files)
+			
 		transform.append(global_transforms[i].flatten())
 		subject.set_groomed_transforms(transform)
 		subject.set_groomed_filenames(rel_groom_files)
