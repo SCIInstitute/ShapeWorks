@@ -1403,7 +1403,7 @@ void AnalysisTool::handle_group_pvalues_complete() {
 
 //---------------------------------------------------------------------------
 void AnalysisTool::handle_alignment_changed(int new_alignment) {
-  new_alignment -= 2;
+  new_alignment -= 2;  // minus two for local and global that come first (local == -1, global == -2)
   if (new_alignment == current_alignment_) {
     return;
   }
@@ -1421,6 +1421,7 @@ void AnalysisTool::handle_alignment_changed(int new_alignment) {
     }
 
     shape->set_particle_transform(transform);
+    shape->set_alignment_type(new_alignment);
   }
 
   evals_ready_ = false;
@@ -1533,12 +1534,14 @@ void AnalysisTool::compute_reconstructed_domain_transforms() {
     reconstruction_transforms_.resize(session_->get_domains_per_shape());
     for (int domain = 0; domain < session_->get_domains_per_shape(); domain++) {
       int num_shapes = shapes.size();
+      // create a new transform
       auto transform = vtkSmartPointer<vtkTransform>::New();
+      // get a pointer to the transform's data
       double* values = transform->GetMatrix()->GetData();
 
       for (int i = 0; i < shapes.size(); i++) {
-        vtkSmartPointer<vtkTransform> base = shapes[i]->get_alignment(0);
-        vtkSmartPointer<vtkTransform> offset = shapes[i]->get_alignment(domain);
+        auto base = shapes[i]->get_alignment(0);
+        auto offset = shapes[i]->get_alignment(domain);
 
         for (int j = 0; j < 16; j++) {
           values[j] += (base->GetMatrix()->GetData()[j] - offset->GetMatrix()->GetData()[j]) / num_shapes;

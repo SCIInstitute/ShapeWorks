@@ -1,5 +1,5 @@
+#include <Logging.h>
 #include <Visualization/Lightbox.h>
-
 #include <Visualization/StudioInteractorStyle.h>
 #include <vtkObjectFactory.h>
 #include <vtkRenderer.h>
@@ -24,18 +24,25 @@ void StudioInteractorStyle::OnLeftButtonDown() {
 
   // forward events
   vtkInteractorStyleTrackballCamera::OnLeftButtonDown();
-  // this->GetCurrentRenderer()->ResetCameraClippingRange();
 }
 
 //-----------------------------------------------------------------------------
 void StudioInteractorStyle::OnRightButtonDown() {
-  /*
-     int* clickPos = this->GetInteractor()->GetEventPosition();
-     this->lightbox_->handle_pick( clickPos );
-   */
+  right_button_down_ = true;
+  right_click_dragged_ = false;
   // forward events
   vtkInteractorStyleTrackballCamera::OnRightButtonDown();
-  // this->GetCurrentRenderer()->ResetCameraClippingRange();
+}
+
+//-----------------------------------------------------------------------------
+void StudioInteractorStyle::OnRightButtonUp() {
+  right_button_down_ = true;
+  vtkInteractorStyleTrackballCamera::OnRightButtonUp();
+  if (!right_click_dragged_) {
+    int* pos = GetInteractor()->GetEventPosition();
+    vtkRenderer* renderer = GetInteractor()->FindPokedRenderer(pos[0], pos[1]);
+    lightbox_->handle_right_click(pos, renderer);
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -106,6 +113,9 @@ void StudioInteractorStyle::OnMouseMove() {
   int* clickPos = this->GetInteractor()->GetEventPosition();
   this->lightbox_->handle_hover(clickPos);
 
+  if (right_button_down_) {
+    right_click_dragged_ = true;
+  }
   vtkInteractorStyleTrackballCamera::OnMouseMove();
 }
 

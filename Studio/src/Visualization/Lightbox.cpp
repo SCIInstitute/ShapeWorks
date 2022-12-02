@@ -1,5 +1,5 @@
+#include <Logging.h>
 #include <Shape.h>
-#include <StudioMesh.h>
 #include <Visualization/Lightbox.h>
 #include <Visualization/SliceView.h>
 #include <Visualization/StudioInteractorStyle.h>
@@ -336,14 +336,29 @@ void Lightbox::handle_key(int* click_pos, std::string key) {
 }
 
 //-----------------------------------------------------------------------------
+void Lightbox::handle_right_click(int* click_pos, vtkRenderer* renderer) {
+  for (int i = 0; i < viewers_.size(); i++) {
+    if (viewers_[i]->get_renderer() == renderer) {
+      if (viewers_[i]->get_shape()) {
+        Q_EMIT right_click(i + get_start_shape());
+      }
+    }
+  }
+}
+
+//-----------------------------------------------------------------------------
 void Lightbox::set_glyph_lut(vtkSmartPointer<vtkLookupTable> lut) {
-  Q_FOREACH (ViewerHandle viewer, viewers_) { viewer->set_lut(lut); }
+  Q_FOREACH (ViewerHandle viewer, viewers_) {
+    viewer->set_glyph_lut(lut);
+  }
 }
 
 //-----------------------------------------------------------------------------
 void Lightbox::set_session(QSharedPointer<Session> session) {
   session_ = session;
-  Q_FOREACH (ViewerHandle viewer, viewers_) { viewer->set_session(session); }
+  Q_FOREACH (ViewerHandle viewer, viewers_) {
+    viewer->set_session(session);
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -352,7 +367,9 @@ void Lightbox::set_visualizer(Visualizer* visualizer) { visualizer_ = visualizer
 //-----------------------------------------------------------------------------
 void Lightbox::handle_timer_callback() {
   timer_callback_count_ = (timer_callback_count_ + 1) % 19;
-  Q_FOREACH (ViewerHandle viewer, get_viewers()) { viewer->set_loading_screen(spinner_images_[timer_callback_count_]); }
+  Q_FOREACH (ViewerHandle viewer, get_viewers()) {
+    viewer->set_loading_screen(spinner_images_[timer_callback_count_]);
+  }
   renderer_->GetRenderWindow()->Render();
 }
 

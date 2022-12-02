@@ -32,8 +32,8 @@
 #include <vtkUnsignedLongArray.h>
 
 // shapeworks
-#include <Shape.h>
 #include <Logging.h>
+#include <Shape.h>
 #include <Utils/StudioUtils.h>
 #include <Visualization/LandmarkWidget.h>
 #include <Visualization/Lightbox.h>
@@ -209,7 +209,7 @@ void Viewer::handle_new_mesh() {
 bool Viewer::is_viewer_ready() { return viewer_ready_; }
 
 //-----------------------------------------------------------------------------
-void Viewer::set_visualizer(Visualizer *visualizer) { visualizer_ = visualizer; }
+void Viewer::set_visualizer(Visualizer* visualizer) { visualizer_ = visualizer; }
 
 //-----------------------------------------------------------------------------
 void Viewer::display_vector_field() {
@@ -223,7 +223,7 @@ void Viewer::display_vector_field() {
     glyphs_->ScalingOn();
     glyphs_->ClampingOff();
     glyphs_->SetScaleModeToDataScalingOff();
-    glyph_mapper_->SetLookupTable(lut_);
+    glyph_mapper_->SetLookupTable(glyph_lut_);
 
     glyph_points_->SetDataTypeToDouble();
     glyph_point_set_->SetPoints(glyph_points_);
@@ -346,7 +346,7 @@ void Viewer::compute_point_differences(const Eigen::VectorXd& vecs, vtkSmartPoin
     }
 
     auto id = locators[domain]->FindClosestPoint(point_set->GetPoint(i));
-    double *normal = polys[domain]->GetPointData()->GetNormals()->GetTuple(id);
+    double* normal = polys[domain]->GetPointData()->GetNormals()->GetTuple(id);
 
     float xd = vecs(i * 3 + 0);
     float yd = vecs(i * 3 + 1);
@@ -615,7 +615,12 @@ void Viewer::display_shape(std::shared_ptr<Shape> shape) {
 
   bool compare_ready = true;
   if (compare_settings.compare_enabled_) {
-    compare_meshes_ = shape->get_meshes(compare_settings.get_display_mode());
+    if (compare_settings.get_mean_shape_checked()) {
+      compare_meshes_ = visualizer_->get_mean_shape()->get_meshes(DisplayMode::Reconstructed);
+    } else {
+      compare_meshes_ = shape->get_meshes(compare_settings.get_display_mode());
+    }
+
     compare_ready = compare_meshes_.valid();
   }
 
@@ -653,7 +658,7 @@ void Viewer::display_shape(std::shared_ptr<Shape> shape) {
     for (size_t i = 0; i < meshes_.meshes().size(); i++) {
       MeshHandle mesh = meshes_.meshes()[i];
 
-      vtkSmartPointer<vtkPolyData> poly_data = mesh->get_poly_data();
+      auto poly_data = mesh->get_poly_data();
 
       auto feature_map = get_displayed_feature_map();
 
@@ -694,6 +699,20 @@ void Viewer::display_shape(std::shared_ptr<Shape> shape) {
         // compute surface to surface distance
         Mesh m(poly_data);
         auto compare_poly_data = compare_meshes_.meshes()[i]->get_poly_data();
+
+        if (compare_settings.get_mean_shape_checked()) {
+          auto transform =
+              visualizer_->get_transform(shape_, compare_settings.get_display_mode(), visualizer_->get_alignment_domain(), i);
+
+          transform->Inverse();
+          auto transform_filter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+          transform_filter->SetInputData(compare_poly_data);
+          transform_filter->SetTransform(transform);
+          transform_filter->Update();
+
+          compare_poly_data = transform_filter->GetOutput();
+        }
+
         Mesh m2(compare_poly_data);
         auto field = m.distance(m2)[0];
         m.setField("distance", field, Mesh::Point);
@@ -847,16 +866,19 @@ void Viewer::update_points() {
     return;
   }
 
-  Eigen::VectorXd correspondence_points;
+  std::vector<Eigen::VectorXd> correspondence_points;  // one set per domain
   if (session_->get_display_mode() == DisplayMode::Reconstructed) {
-    correspondence_points = shape_->get_correspondence_points_for_display();
+    correspondence_points = shape_->get_particles_for_display();
   } else {
-    correspondence_points = shape_->get_local_correspondence_points();
+    correspondence_points = shape_->get_particles().get_local_particles();
   }
 
-  int num_points = correspondence_points.size() / 3;
+  int num_points = 0;
+  for (int i = 0; i < correspondence_points.size(); i++) {
+    num_points += correspondence_points[i].size() / 3;
+  }
 
-  vtkFloatArray *scalars = (vtkFloatArray *) (glyph_point_set_->GetPointData()->GetScalars());
+  vtkFloatArray* scalars = (vtkFloatArray*)(glyph_point_set_->GetPointData()->GetScalars());
 
   Eigen::VectorXf scalar_values;
   if (showing_feature_map() && !session_->should_difference_vectors_show()) {
@@ -865,27 +887,39 @@ void Viewer::update_points() {
     scalar_values = shape_->get_point_features(feature_map);
   }
 
+  auto domain_visibility = visualizer_->get_domain_particle_visibilities();
+  if (domain_visibility.size() != correspondence_points.size()) {
+    domain_visibility.resize(correspondence_points.size(), true);
+  }
+
   if (num_points > 0) {
     viewer_ready_ = true;
-    glyphs_->SetRange(0.0, (double) num_points + 1);
-    glyph_mapper_->SetScalarRange(0.0, (double) num_points + 1.0);
+    glyphs_->SetRange(0.0, (double)num_points + 1);
+    glyph_mapper_->SetScalarRange(0.0, (double)num_points + 1.0);
 
     glyph_points_->Reset();
     scalars->Reset();
 
+    int point_index = 0;
     unsigned int idx = 0;
-    for (int i = 0; i < num_points; i++) {
-      double x = correspondence_points[idx++];
-      double y = correspondence_points[idx++];
-      double z = correspondence_points[idx++];
+    for (int d = 0; d < correspondence_points.size(); d++) {
+      int num_points_this_domain = correspondence_points[d].size() / 3;
 
-      if (slice_view_.should_point_show(x, y, z)) {
-        if (scalar_values.size() > i) {
-          scalars->InsertNextValue(scalar_values[i]);
-        } else {
-          scalars->InsertNextValue(i);
+      int d_index = 0;
+      for (int j = 0; j < num_points_this_domain; j++) {
+        double x = correspondence_points[d][d_index++];
+        double y = correspondence_points[d][d_index++];
+        double z = correspondence_points[d][d_index++];
+
+        if (slice_view_.should_point_show(x, y, z) && domain_visibility[d]) {
+          if (scalar_values.size() > point_index) {
+            scalars->InsertNextValue(scalar_values[point_index]);
+          } else {
+            scalars->InsertNextValue(point_index);
+          }
+          glyph_points_->InsertNextPoint(x, y, z);
         }
-        glyph_points_->InsertNextPoint(x, y, z);
+        point_index++;
       }
     }
   } else {
@@ -993,8 +1027,8 @@ void Viewer::update_actors() {
 void Viewer::remove_scalar_bar() { renderer_->RemoveActor(scalar_bar_actor_); }
 
 //-----------------------------------------------------------------------------
-vtkFloatArray *Viewer::get_particle_scalars() {
-  vtkFloatArray *scalars = (vtkFloatArray *) (glyph_point_set_->GetPointData()->GetScalars());
+vtkFloatArray* Viewer::get_particle_scalars() {
+  vtkFloatArray* scalars = (vtkFloatArray*)(glyph_point_set_->GetPointData()->GetScalars());
   return scalars;
 }
 
@@ -1011,7 +1045,7 @@ void Viewer::insert_compare_meshes() {
 
   for (size_t i = 0; i < compare_meshes_.meshes().size(); i++) {
     MeshHandle mesh = compare_meshes_.meshes()[i];
-    vtkSmartPointer<vtkPolyData> poly_data = mesh->get_poly_data();
+    auto poly_data = mesh->get_poly_data();
     auto mapper = compare_mappers_[i];
     auto actor = compare_actors_[i];
 
@@ -1035,7 +1069,15 @@ void Viewer::insert_compare_meshes() {
         }
         */
 
-    actor->SetUserTransform(transform);
+    if (settings.get_mean_shape_checked()) {
+      // mean shape will already be in place and doesn't need the local to global transform
+      auto identity = vtkSmartPointer<vtkTransform>::New();
+      identity->Identity();
+      actor->SetUserTransform(identity);
+    } else {
+      actor->SetUserTransform(transform);
+
+    }
     mapper->SetInputData(poly_data);
 
     int domain_scheme = (scheme_ + i + 1) % color_schemes_.size();
@@ -1095,7 +1137,7 @@ void Viewer::update_image_volume() {
 }
 
 //-----------------------------------------------------------------------------
-int Viewer::handle_pick(int *click_pos) {
+int Viewer::handle_pick(int* click_pos) {
   // First determine what was picked
   // we use a new prop picker here since the member one only uses the surface actors
   auto prop_picker = vtkSmartPointer<vtkPropPicker>::New();
@@ -1109,11 +1151,17 @@ int Viewer::handle_pick(int *click_pos) {
   // now determine which point was picked
   // we use a new cell picker here since the member only only uses the surface actors
   auto cell_picker = vtkSmartPointer<vtkCellPicker>::New();
-  cell_picker->Pick(click_pos[0], click_pos[1], 0, renderer_);
-  vtkDataArray *input_ids = glyphs_->GetOutput()->GetPointData()->GetArray("InputPointIds");
+  if (!cell_picker->Pick(click_pos[0], click_pos[1], 0, renderer_)) {
+    return -1;
+  }
+  vtkDataArray* input_ids = glyphs_->GetOutput()->GetPointData()->GetArray("InputPointIds");
 
   if (input_ids) {
-    vtkCell *cell = glyphs_->GetOutput()->GetCell(cell_picker->GetCellId());
+    vtkIdType cell_id = cell_picker->GetCellId();
+    if (cell_id == -1) {
+      return -1;
+    }
+    vtkCell* cell = glyphs_->GetOutput()->GetCell(cell_id);
 
     if (cell && cell->GetNumberOfPoints() > 0) {
       // get first PointId from picked cell
@@ -1133,14 +1181,14 @@ int Viewer::handle_pick(int *click_pos) {
 }
 
 //-----------------------------------------------------------------------------
-PickResult Viewer::handle_ctrl_click(int *click_pos) {
+PickResult Viewer::handle_ctrl_click(int* click_pos) {
   // First determine what was picked
   cell_picker_->Pick(click_pos[0], click_pos[1], 0, renderer_);
   PickResult result;
 
   for (int i = 0; i < unclipped_surface_actors_.size(); i++) {
     if (cell_picker_->GetActor() == unclipped_surface_actors_[i]) {
-      double *pos = cell_picker_->GetPickPosition();
+      double* pos = cell_picker_->GetPickPosition();
 
       auto transform = vtkSmartPointer<vtkTransform>::New();
       transform->DeepCopy(get_landmark_transform(i));
@@ -1156,10 +1204,10 @@ PickResult Viewer::handle_ctrl_click(int *click_pos) {
 }
 
 //-----------------------------------------------------------------------------
-void Viewer::set_lut(vtkSmartPointer<vtkLookupTable> lut) {
-  lut_ = lut;
+void Viewer::set_glyph_lut(vtkSmartPointer<vtkLookupTable> lut) {
+  glyph_lut_ = lut;
   if (!arrows_visible_ && !showing_feature_map()) {
-    glyph_mapper_->SetLookupTable(lut_);
+    glyph_mapper_->SetLookupTable(glyph_lut_);
   }
 }
 
@@ -1205,7 +1253,7 @@ bool Viewer::showing_feature_map() {
 }
 
 //-----------------------------------------------------------------------------
-void Viewer::update_feature_range(double *range) { update_difference_lut(range[0], range[1]); }
+void Viewer::update_feature_range(double* range) { update_difference_lut(range[0], range[1]); }
 
 //-----------------------------------------------------------------------------
 void Viewer::update_opacities() {

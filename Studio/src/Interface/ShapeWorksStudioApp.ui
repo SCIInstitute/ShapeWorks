@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1232</width>
+    <width>1243</width>
     <height>705</height>
    </rect>
   </property>
@@ -30,7 +30,54 @@ QWidget#image_widget {
 
 QToolButton#compare::checked {
 	background-color: rgb(170, 81, 0);
-}</string>
+}
+
+
+
+QToolButton { /* all types of tool button */
+    border: 2px solid #8f8f91;
+    border-radius: 4px;
+/*    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                      stop: 0 #f6f7fa, stop: 1 #dadbde);
+*/
+}
+
+QToolButton[popupMode=&quot;1&quot;] { /* only for MenuButtonPopup */
+    padding-right: 20px; /* make way for the popup button */
+}
+
+/*
+QToolButton:pressed {
+    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                      stop: 0 #dadbde, stop: 1 #f6f7fa);
+}
+*/
+
+/* the subcontrols below are used only in the MenuButtonPopup mode */
+QToolButton::menu-button {
+    border: 1px solid gray;
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
+    /* 16px width + 4px for border = 20px allocated above */
+    width: 16px;
+}
+
+QToolButton::menu-arrow {
+    image: url(&quot;:/Studio/Images/down_arrow.png&quot;);
+}
+
+QToolButton::menu-arrow:open {
+    top: 1px; left: 1px; /* shift it a bit */
+}
+
+QToolBar QToolButton {
+    border: none
+}
+
+QToolBar QToolButton::checked {
+	background-color: rgb(185, 185, 185);
+}
+</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
@@ -673,7 +720,7 @@ QToolButton#compare::checked {
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1232</width>
+     <width>1243</width>
      <height>24</height>
     </rect>
    </property>
