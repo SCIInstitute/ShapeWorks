@@ -3,12 +3,6 @@
 # exit when any command fails
 set -e
 
-# keep track of the last executed command
-trap 'last_command=$current_command; current_command=$BASH_COMMAND' DEBUG
-
-# echo an error message before exiting
-trap 'echo "\"${last_command}\" command filed with exit code $?."' EXIT
-
 if [ "$#" -ne 3 ]; then
     echo "Usage: $0 <version> <install_dir> <install_dep_dir>"
     exit 1
@@ -111,7 +105,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     for i in ShapeWorksStudio.app/Contents/Frameworks/*.dylib ; do
 	install_name_tool -change ${BASE_LIB}/libitkgdcmopenjp2-5.2.1.dylib @rpath/libitkgdcmopenjp2-5.2.1.dylib $i
     done
-    install_name_tool -id @rpath/libitkgdcmopenjp2-5.2.1.dylib libitkgdcmopenjp2-5.2.1.dylib
+    install_name_tool -id @rpath/libitkgdcmopenjp2-5.2.1.dylib ShapeWorksStudio.app/Contents/Frameworks/libitkgdcmopenjp2-5.2.1.dylib
 
     cd ..
 else
