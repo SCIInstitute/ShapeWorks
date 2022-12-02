@@ -609,6 +609,7 @@ Particles AnalysisTool::get_shape_points(int mode, double value) {
 //---------------------------------------------------------------------------
 Particles AnalysisTool::get_multi_level_shape_points(int mode, double value, int level)
 {
+  // Get Shape Points for Multi-Level Analysis 
  Eigen::MatrixXd eigenvectors;
  std::vector<double> eigenvalues;
  if(level == 2)
@@ -648,31 +649,15 @@ Particles AnalysisTool::get_multi_level_shape_points(int mode, double value, int
     ui_->explained_variance->setText("");
     ui_->cumulative_explained_variance->setText("");
   }
-  Eigen::VectorXd shape_dev_mean = stats_.MeanShapeDev(); // 3M
-  Eigen::VectorXd rel_pose_mean_ = stats_.MeanRelPose(); // 3K 
-  Eigen::VectorXd e_rel_pose_mean_reshaped; // 3M
-  unsigned int D = stats_.DomainsNumber();
+
+  unsigned int D = stats_.NumberOfObjects();
   unsigned int sz = stats_.Mean().size();
-  std::vector<int> number_of_points_ar = stats_.NumberOfPointsArray();
-  e_rel_pose_mean_reshaped.resize(sz);
-  for(unsigned int i = 0; i < D; i++){
-      int num_points = number_of_particles_ar[i];
-      int row = 0;
-      for(int idx = 0; idx < i; idx++){ row += (3 * number_of_particles_ar[idx]); }
-      for(unsigned int j = 0; j < num_points; j++){
-          e_rel_pose_mean_reshaped((row) + (j * 3)) = rel_pose_mean_(i * 3);
-          e_rel_pose_mean_reshaped((row) + (j * 3) + 1) = rel_pose_mean_(i * 3 + 1);
-          e_rel_pose_mean_reshaped((row) + (j * 3) + 2) = rel_pose_mean_(i * 3 + 2);
-      }
-  }
-  Eigen::VectorXd new_mean = shape_dev_mean + e_rel_pose_mean_reshaped;
-
   if(level == 2){
-    // temp_shape_mca = stats_.Mean() + (e * (value * lambda));
-    temp_shape_mca = new_mean + (e * (value * lambda));
-
+    // Morphological Variations
+    temp_shape_mca = stats_.Mean() + (e * (value * lambda));
   }
   else if(level == 3){
+    // Relative Pose Variations
     Eigen::VectorXd e_between;
     e_between.resize(sz);
     for(unsigned int i = 0; i < D; i++){
@@ -685,7 +670,7 @@ Particles AnalysisTool::get_multi_level_shape_points(int mode, double value, int
           e_between((row) + (j * 3) + 2) = e(i * 3 + 2);
       }
     }
-    temp_shape_mca = new_mean + (e_between * (value * lambda));
+    temp_shape_mca = stats_.Mean()  + (e_between * (value * lambda));
   }
   return convert_from_combined(temp_shape_mca);
 }

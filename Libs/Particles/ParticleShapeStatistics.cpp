@@ -219,7 +219,6 @@ int ParticleShapeStatistics::ComputeMultiLevelAnalysisStatistics(std::vector<Eig
 {
   unsigned int num_points = (int)(points[0].size() / (3 * dps)); // M_total
   m_dps = dps;
-  m_numPoints = num_points;
   m_N = points.size(); // Number of Subjects
   unsigned int n = m_N * VDimension; // for super matrix
   unsigned int m = 0;
@@ -238,15 +237,6 @@ int ParticleShapeStatistics::ComputeMultiLevelAnalysisStatistics(std::vector<Eig
   grand_mean.resize(n);
   grand_mean.fill(0.0);
   grand_mean = m_super_matrix.colwise().mean();
-  // Eigen::MatrixXd z_rel_pose_matrix;
-  // z_rel_pose_matrix.resize(m_super_matrix.rows(), m_super_matrix.cols());
-  // z_rel_pose_matrix.fill(0.0);
-  // for(unsigned int r=0; r < m_super_matrix.rows(); r++){
-  //   for (unsigned int c=0; c < m_N; c++){
-  //     z_rel_pose_matrix(r, c) = m_super_matrix(r, c) - grand_mean(c);
-  //   }
-  // }
-
   Eigen::MatrixXd z_shape_dev_centred;
   Eigen::MatrixXd z_rel_pose_centred;
   z_shape_dev_centred.resize(m, n);
@@ -257,9 +247,6 @@ int ParticleShapeStatistics::ComputeMultiLevelAnalysisStatistics(std::vector<Eig
     unsigned int row = 0;
     for(unsigned int idx = 0; idx < k; idx++){ row += this->m_num_particles_ar[idx]; }
     Eigen::MatrixXd z_k = m_super_matrix.block(row, 0, this->m_num_particles_ar[k], n);
-    // Eigen::MatrixXd z_k_rel_pose = z_rel_pose_matrix.block(row, 0, this->m_num_particles_ar[k], n);
-
-    // COM for each sub
     Eigen::RowVectorXd mean_k;
     mean_k.resize(n);
     mean_k.fill(0.0);

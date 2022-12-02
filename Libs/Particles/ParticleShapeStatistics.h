@@ -82,10 +82,8 @@ public:
 
   //! Returns the number of dimensions (this is number of points times Dimension)
   int NumberOfDimensions() const { return m_numDimensions; }
-  //! Return Number of objects for MLCA Analysis
-  int DomainsNumber() { return m_dps; }
-  //! Return Number of Points
-  int NumberOfPoints() { return m_numPoints; }
+  //! Return Number of objects present in Multi-Object Shape Structure
+  int NumberOfObjects() { return m_dps; }
   // !Returns Number of Particles Array
   std::vector<int> NumberOfPointsArray() { return m_num_particles_ar; }
 
@@ -97,11 +95,12 @@ public:
   const Eigen::MatrixXd &Eigenvectors() const { return m_eigenvectors; }
   const std::vector<double> &Eigenvalues() const { return m_eigenvalues; }
 
-  //! Returns the eigenvectors/eigenvalues for Shape and Pose Variations of MLCA
+  //! Returns the eigenvectors/eigenvalues for morphological and relative pose pariations of MLCA
   const Eigen::MatrixXd &EigenvectorsRelPose() { return m_Eigenvectors_rel_pose; }
   const std::vector<double> &EigenvaluesShapeDev() { return m_Eigenvalues_shape_dev; }
   const Eigen::MatrixXd &EigenvectorsShapeDev() { return m_Eigenvectors_shape_dev; }
   const std::vector<double> &EigenvaluesRelPose() { return m_Eigenvalues_rel_pose; }
+  //! Returns the mean vector of within and between subspace
   const Eigen::VectorXd &MeanShapeDev() { return m_mean_shape_dev; }
   const Eigen::VectorXd &MeanRelPose() { return m_mean_rel_pose; }
 
@@ -186,20 +185,19 @@ private:
   Eigen::VectorXd m_groupdiff;
   Eigen::VectorXd m_groupdiffnorm;
 
-  // MLCA vars
-  unsigned int m_dps;
-  unsigned int m_N;
-  unsigned int m_numPoints;
-  std::vector<int> m_num_particles_ar; 
-  Eigen::MatrixXd m_Eigenvectors_rel_pose;
-  Eigen::MatrixXd m_Eigenvectors_shape_dev;
-  std::vector<double> m_Eigenvalues_rel_pose;
-  std::vector<double> m_Eigenvalues_shape_dev;
+  // Variables for MLCA
+  unsigned int m_dps; // Number of objects in the multi-object shape structure
+  unsigned int m_N; // Number of Subjects
+  std::vector<int> m_num_particles_ar; // Number of Particles for each object in the multi-object shape structure
+  Eigen::MatrixXd m_Eigenvectors_rel_pose; // Eigenvectors defined for relative pose subspace
+  Eigen::MatrixXd m_Eigenvectors_shape_dev; // Eigenvectors defined for morphological subspace
+  std::vector<double> m_Eigenvalues_rel_pose; // Eigenvalues defined in relative pose subspace
+  std::vector<double> m_Eigenvalues_shape_dev; // Eigenvectors defined in morphological subspace
   Eigen::MatrixXd m_pointsMinusMean_for_rel_pose;
   Eigen::MatrixXd m_pointsMinusMean_for_shape_dev;
   Eigen::VectorXd m_mean_shape_dev;
   Eigen::VectorXd m_mean_rel_pose;
-  Eigen::MatrixXd m_super_matrix;
+  Eigen::MatrixXd m_super_matrix; // Shape Matrix reshaped, used to compute MLCA statistics 
 
   // used to keep the points' files that needs to be reloaded when new updates come in.
   std::vector<std::string> m_pointsfiles;
