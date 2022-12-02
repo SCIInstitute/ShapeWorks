@@ -42,5 +42,5 @@ RUN curl https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -
 RUN curl -L -o $HOME/linuxdeployqt.AppImage https://github.com/probonopd/linuxdeployqt/releases/download/5/linuxdeployqt-5-x86_64.AppImage && chmod +x $HOME/linuxdeployqt.AppImage ; cd $HOME ; ./linuxdeployqt.AppImage --appimage-extract
 RUN ln -s /root/squashfs-root/usr/bin/linuxdeployqt /usr/bin
 
-# Set compresion for ccache
+# Set compression for ccache
 RUN mkdir /root/.ccache && echo "compression = true" > /root/.ccache/ccache.conf

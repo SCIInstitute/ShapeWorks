@@ -8,11 +8,11 @@ set(HEADERS
   GroomParameters.h)
 
 target_link_libraries(Groom
-  Image
   Mesh
-  TBB::tbb
+  Image
   Utils
   Boost::filesystem
+  TBB::tbb
   )
 
 set_target_properties(Groom PROPERTIES PUBLIC_HEADER

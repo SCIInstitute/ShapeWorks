@@ -31,9 +31,9 @@ target_include_directories(Particles PUBLIC
 
 target_link_libraries(Particles PUBLIC
   Mesh
+  Optimize
   tinyxml
   Eigen3::Eigen
-  Project
   )
 
 # set

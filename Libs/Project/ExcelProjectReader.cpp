@@ -73,7 +73,7 @@ class ExcelProjectReader::Container {
         domain = header.substr(prefix.length());
       }
       if (header == "value") {
-        domain = "1"; // default
+        domain = ""; // default
       }
       for (int i = ws.lowest_row(); i < ws.highest_row(); i++) {
         std::string key = rows[i][0].to_string();

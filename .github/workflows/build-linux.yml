@@ -95,7 +95,7 @@ jobs:
     - name: make test
       shell: bash -l {0}
       run: conda activate shapeworks && source ./devenv.sh ./build/bin && cd build && ctest -VV
-  
+
     - name: Copy artifact
       shell: bash -l {0}
       run: cd  /__w/ShapeWorks/ShapeWorks/artifacts && ${GITHUB_WORKSPACE}/.github/workflows/copy_artifact.sh artifact-${{github.sha}}-linux *

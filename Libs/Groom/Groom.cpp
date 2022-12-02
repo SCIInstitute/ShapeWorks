@@ -610,6 +610,9 @@ vtkSmartPointer<vtkMatrix4x4> Groom::compute_landmark_transform(vtkSmartPointer<
 
 //---------------------------------------------------------------------------
 std::string Groom::get_output_filename(std::string input, DomainType domain_type) {
+  // lock for thread-safe member access
+  std::scoped_lock lock(mutex_);
+
   // grab parameters
   auto params = GroomParameters(this->project_);
 

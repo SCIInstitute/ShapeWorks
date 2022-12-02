@@ -1,7 +1,6 @@
 // std
-#include <iostream>
-
 #include <QWidget>
+#include <iostream>
 
 // qt
 #include <QCloseEvent>
@@ -13,8 +12,6 @@
 #include <QTextStream>
 #include <QWidgetAction>
 
-
-
 // vtk
 #include <vtkPointData.h>
 #include <vtkPolyDataWriter.h>
@@ -22,10 +19,10 @@
 
 // shapeworks
 #include <Applications/Configuration.h>
-#include <Mesh/Mesh.h>
-#include <Utils/StringUtils.h>
 #include <Logging.h>
+#include <Mesh/Mesh.h>
 #include <SurfaceReconstructor.h>
+#include <Utils/StringUtils.h>
 
 // studio
 #include <Analysis/AnalysisTool.h>
@@ -109,7 +106,6 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
   ui_->qvtkWidget->installEventFilter(wheel_event_forwarder_.data());
   ui_->qvtkWidget->setContextMenuPolicy(Qt::CustomContextMenu);
 
-  create_glyph_submenu();
   // analysis tool initializations
   analysis_tool_ = QSharedPointer<AnalysisTool>::create(preferences_);
   analysis_tool_->set_app(this);
@@ -134,10 +130,6 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
     restoreState(preferences_.get_window_state());
   }
 
-
-
-
-
   // set to import
   ui_->action_import_mode->setChecked(true);
   ui_->stacked_widget->setCurrentIndex(DisplayMode::Original);
@@ -150,6 +142,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
   action_group_->addAction(ui_->action_deepssm_mode);
 
   lightbox_ = LightboxHandle(new Lightbox());
+  connect(lightbox_.get(), &Lightbox::right_click, this, &ShapeWorksStudioApp::handle_lightbox_right_click);
 
   // visualizer initializations
   visualizer_ = QSharedPointer<Visualizer>::create(preferences_);
@@ -213,10 +206,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
   // glyph options signals/slots
   connect(ui_->glyphs_visible_button, SIGNAL(clicked()), this, SLOT(handle_glyph_changed()));
   connect(ui_->surface_visible_button, SIGNAL(clicked()), this, SLOT(handle_glyph_changed()));
-  connect(glyph_size_slider_, SIGNAL(valueChanged(int)), this, SLOT(handle_glyph_changed()));
-  connect(glyph_quality_slider_, SIGNAL(valueChanged(int)), this, SLOT(handle_glyph_changed()));
-  connect(glyph_auto_size_, &QCheckBox::clicked, this, &ShapeWorksStudioApp::handle_glyph_changed);
-  connect(glyph_arrow_scale_, &QCheckBox::clicked, this, &ShapeWorksStudioApp::handle_glyph_changed);
+
   preferences_.set_saved();
   enable_possible_actions();
 
@@ -232,6 +222,9 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
           &ShapeWorksStudioApp::action_export_particle_scalars_triggered);
   connect(ui_->action_export_all_subjects_particle_scalars, &QAction::triggered, this,
           &ShapeWorksStudioApp::action_export_all_subjects_particle_scalars_triggered);
+
+  connect(ui_->action_export_current_mesh, &QAction::triggered, this,
+          &ShapeWorksStudioApp::action_export_current_mesh_triggered);
 
   connect(ui_->save_as_swproj, &QAction::triggered, this, &ShapeWorksStudioApp::save_as_swproj_clicked);
   connect(ui_->save_as_xlsx, &QAction::triggered, this, &ShapeWorksStudioApp::save_as_xlsx_clicked);
@@ -275,9 +268,9 @@ void ShapeWorksStudioApp::on_actionShow_Tool_Window_triggered() {
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::on_action_open_project_triggered() {
-  auto type = tr("ShapeWorks Project (*.swproj);;XLSX files (*.xlsx)");
-
-  QString filename = QFileDialog::getOpenFileName(this, tr("Open Project..."), preferences_.get_last_directory(), type);
+  auto filter = tr("ShapeWorks Project (*.swproj *.xlsx)");
+  QString filename =
+      QFileDialog::getOpenFileName(this, tr("Open Project..."), preferences_.get_last_directory(), filter);
   if (filename.isEmpty()) {
     return;
   }
@@ -311,14 +304,10 @@ void ShapeWorksStudioApp::on_action_show_project_folder_triggered() {
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::save_as_swproj_clicked() {
-  save_project_as("swproj");
-}
+void ShapeWorksStudioApp::save_as_swproj_clicked() { save_project_as("swproj"); }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::save_as_xlsx_clicked() {
-  save_project_as("xlsx");
-}
+void ShapeWorksStudioApp::save_as_xlsx_clicked() { save_project_as("xlsx"); }
 
 //---------------------------------------------------------------------------
 bool ShapeWorksStudioApp::on_action_save_project_triggered() {
@@ -484,7 +473,7 @@ void ShapeWorksStudioApp::enable_possible_actions() {
 
   auto filename = session_->get_filename();
   bool save_enabled = filename == "" || filename.endsWith(".xlsx", Qt::CaseInsensitive) ||
-      filename.endsWith(".swproj", Qt::CaseInsensitive);
+                      filename.endsWith(".swproj", Qt::CaseInsensitive);
   ui_->action_save_project->setEnabled(save_enabled);
   ui_->menu_save_project_as->setEnabled(true);
   ui_->actionExport_PCA_Mesh->setEnabled(reconstructed);
@@ -521,15 +510,6 @@ void ShapeWorksStudioApp::enable_possible_actions() {
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::update_from_preferences() {
-  glyph_quality_slider_->setValue(preferences_.get_glyph_quality());
-  glyph_size_slider_->setValue(preferences_.get_glyph_size() * 10.0);
-  glyph_auto_size_->setChecked(preferences_.get_glyph_auto_size());
-  glyph_arrow_scale_->setChecked(preferences_.get_glyph_scale_arrows());
-  glyph_size_slider_->setEnabled(!glyph_auto_size_->isChecked());
-
-  glyph_quality_label_->setText(QString::number(preferences_.get_glyph_quality()));
-  glyph_size_label_->setText(QString::number(preferences_.get_glyph_size()));
-
   ui_->center_checkbox->setChecked(preferences_.get_center_checked());
 
   if (session_) {
@@ -563,6 +543,7 @@ void ShapeWorksStudioApp::update_scrollbar() {
 void ShapeWorksStudioApp::on_vertical_scroll_bar_valueChanged() {
   int value = ui_->vertical_scroll_bar->value();
   lightbox_->set_start_row(value);
+  visualizer_->update_viewer_properties();
 }
 
 //---------------------------------------------------------------------------
@@ -696,11 +677,11 @@ void ShapeWorksStudioApp::set_message(MessageType message_type, QString message)
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::create_glyph_submenu() {
   // Glyph options in the render window.
-  QMenu *menu = new QMenu();
-  QWidget *widget = new QWidget();
-  QGridLayout *layout = new QGridLayout(widget);
+  QMenu* menu = new QMenu();
+  QWidget* widget = new QWidget();
+  QGridLayout* layout = new QGridLayout(widget);
 
-  QLabel *size_label = new QLabel("Glyph Size: ");
+  QLabel* size_label = new QLabel("Glyph Size: ");
   layout->addWidget(size_label, 0, 0, 1, 1);
   size_label = new QLabel("Glyph Detail: ");
   layout->addWidget(size_label, 1, 0, 1, 1);
@@ -740,18 +721,61 @@ void ShapeWorksStudioApp::create_glyph_submenu() {
   layout->addWidget(glyph_arrow_scale_, 2, 0, 1, 1);
   widget->setLayout(layout);
 
-  QWidgetAction *widget_action = new QWidgetAction(widget);
+  glyph_quality_slider_->setValue(preferences_.get_glyph_quality());
+  glyph_size_slider_->setValue(preferences_.get_glyph_size() * 10.0);
+  glyph_auto_size_->setChecked(preferences_.get_glyph_auto_size());
+  glyph_arrow_scale_->setChecked(preferences_.get_glyph_scale_arrows());
+  glyph_size_slider_->setEnabled(!glyph_auto_size_->isChecked());
+
+  glyph_quality_label_->setText(QString::number(preferences_.get_glyph_quality()));
+  glyph_size_label_->setText(QString::number(preferences_.get_glyph_size()));
+
+  connect(glyph_size_slider_, &QSlider::valueChanged, this, &ShapeWorksStudioApp::handle_glyph_changed);
+  connect(glyph_quality_slider_, &QSlider::valueChanged, this, &ShapeWorksStudioApp::handle_glyph_changed);
+  connect(glyph_auto_size_, &QCheckBox::clicked, this, &ShapeWorksStudioApp::handle_glyph_changed);
+  connect(glyph_arrow_scale_, &QCheckBox::clicked, this, &ShapeWorksStudioApp::handle_glyph_changed);
+
+  if (!session_) {
+    return;
+  }
+
+  auto project = session_->get_project();
+  auto domain_names = project->get_domain_names();
+  domain_particle_checkboxes_.clear();
+  if (domain_names.size() > 1) {
+    auto line = new QFrame(widget);
+    line->setObjectName(QString::fromUtf8("line"));
+    line->setGeometry(QRect(320, 150, 118, 3));
+    line->setFrameShape(QFrame::HLine);
+    line->setFrameShadow(QFrame::Sunken);
+    layout->addWidget(line, 3, 0, 1, 4);
+
+    int row = 4;
+    for (const auto& name : domain_names) {
+      auto checkbox = new QCheckBox("Show " + QString::fromStdString(name), widget);
+      checkbox->setChecked(true);
+      connect(checkbox, &QCheckBox::clicked, this, &ShapeWorksStudioApp::handle_glyph_changed);
+      domain_particle_checkboxes_.push_back(checkbox);
+      layout->addWidget(checkbox, row, 0);
+      row++;
+    }
+  }
+
+  QWidgetAction* widget_action = new QWidgetAction(widget);
   widget_action->setDefaultWidget(widget);
   menu->addAction(widget_action);
   ui_->glyphs_visible_button->setMenu(menu);
+
+  glyph_quality_label_->setText(QString::number(preferences_.get_glyph_quality()));
+  glyph_size_label_->setText(QString::number(preferences_.get_glyph_size()));
 }
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::create_iso_submenu() {
   // Glyph options in the render window.
-  QMenu *menu = new QMenu();
-  QWidget *widget = new QWidget();
-  QGridLayout *layout = new QGridLayout(widget);
+  QMenu* menu = new QMenu();
+  QWidget* widget = new QWidget();
+  QGridLayout* layout = new QGridLayout(widget);
 
   if (!session_) {
     return;
@@ -766,10 +790,10 @@ void ShapeWorksStudioApp::create_iso_submenu() {
     if (names.size() > 1) {
       text = QString::fromStdString(name) + " opacity: ";
     }
-    QLabel *size_label = new QLabel(text);
+    QLabel* size_label = new QLabel(text);
     layout->addWidget(size_label, row, 0, 1, 1);
 
-    QSlider *slider = new QSlider(widget);
+    QSlider* slider = new QSlider(widget);
     slider->setOrientation(Qt::Horizontal);
     slider->setMinimum(1);
     slider->setMaximum(100);
@@ -786,7 +810,7 @@ void ShapeWorksStudioApp::create_iso_submenu() {
     iso_opacity_sliders_.push_back(slider);
   }
 
-  QWidgetAction *widget_action = new QWidgetAction(widget);
+  QWidgetAction* widget_action = new QWidgetAction(widget);
   widget_action->setDefaultWidget(widget);
   menu->addAction(widget_action);
   ui_->surface_visible_button->setMenu(menu);
@@ -799,9 +823,9 @@ void ShapeWorksStudioApp::create_compare_submenu() {
           &ShapeWorksStudioApp::handle_compare_settings_changed);
   connect(ui_->compare, &QToolButton::toggled, this, &ShapeWorksStudioApp::handle_compare_settings_changed);
 
-  QMenu *menu = new QMenu();
+  QMenu* menu = new QMenu();
 
-  QWidgetAction *widget_action = new QWidgetAction(compare_widget_);
+  QWidgetAction* widget_action = new QWidgetAction(compare_widget_);
   widget_action->setDefaultWidget(compare_widget_);
   menu->addAction(widget_action);
   ui_->compare->setMenu(menu);
@@ -838,6 +862,22 @@ void ShapeWorksStudioApp::handle_compare_settings_changed() {
     settings.compare_enabled_ = ui_->compare->isChecked();
     session_->set_compare_settings(settings);
   }
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::handle_lightbox_right_click(int index) {
+
+  QMenu *menu = new QMenu(nullptr);
+  menu->setAttribute(Qt::WA_DeleteOnClose);
+  menu->addAction("Export Mesh");
+  menu->popup(QCursor::pos());
+
+
+  connect(menu, &QMenu::triggered, menu, [=](QAction *action) {
+    action_export_current_mesh_triggered(index);
+  });
+
+
 }
 
 //---------------------------------------------------------------------------
@@ -882,6 +922,7 @@ void ShapeWorksStudioApp::new_session() {
   groom_tool_->set_session(session_);
   optimize_tool_->set_session(session_);
   deepssm_tool_->set_session(session_);
+  create_glyph_submenu();
   create_iso_submenu();
 
   update_table();
@@ -1005,7 +1046,7 @@ void ShapeWorksStudioApp::update_view_mode() {
 
     auto feature_maps = session_->get_project()->get_feature_names();
     ui_->feature_widget->setVisible(feature_maps.size() > 0 || feature_map_override != "" ||
-        session_->get_tool_state() == Session::ANALYSIS_C);
+                                    session_->get_tool_state() == Session::ANALYSIS_C);
 
     visualizer_->set_feature_map(feature_map);
     visualizer_->set_uniform_feature_range(get_feature_uniform_scale());
@@ -1123,6 +1164,7 @@ void ShapeWorksStudioApp::handle_optimize_complete() {
   ui_->view_mode_combobox->setCurrentIndex(DisplayMode::Groomed);
   session_->set_display_mode(DisplayMode::Groomed);
   visualizer_->set_mean(analysis_tool_->get_mean_shape_points().get_combined_global_particles());
+  visualizer_->set_mean_shape(analysis_tool_->get_mean_shape());
   visualizer_->update_lut();
   update_display();
 
@@ -1136,6 +1178,7 @@ void ShapeWorksStudioApp::handle_reconstruction_complete() {
   session_->handle_clear_cache();
   update_view_combo();
   visualizer_->set_mean(analysis_tool_->get_mean_shape_points().get_combined_global_particles());
+  visualizer_->set_mean_shape(analysis_tool_->get_mean_shape());
   visualizer_->update_lut();
   update_display(true);
   enable_possible_actions();
@@ -1192,6 +1235,13 @@ void ShapeWorksStudioApp::handle_glyph_changed() {
   glyph_quality_label_->setText(QString::number(preferences_.get_glyph_quality()));
   glyph_size_label_->setText(QString::number(preferences_.get_glyph_size()));
   // update_display(true);
+
+  std::vector<bool> domains_to_display;
+  for (auto& checkbox : domain_particle_checkboxes_) {
+    domains_to_display.push_back(checkbox->isChecked());
+  }
+  visualizer_->set_domain_particle_visibilities(domains_to_display);
+
   visualizer_->update_viewer_properties();
 }
 
@@ -1281,6 +1331,7 @@ void ShapeWorksStudioApp::update_display(bool force) {
     current_display_mode_ = mode;
 
     visualizer_->set_mean(analysis_tool_->get_mean_shape_points().get_combined_global_particles());
+    visualizer_->set_mean_shape(analysis_tool_->get_mean_shape());
 
     if (mode == AnalysisTool::MODE_ALL_SAMPLES_C) {
       session_->calculate_reconstructed_samples();
@@ -1409,7 +1460,6 @@ void ShapeWorksStudioApp::open_project(QString filename) {
   }
 
   session_->update_auto_glyph_size();
-  handle_glyph_changed();
 
   setWindowTitle(session_->get_display_name());
 
@@ -1420,7 +1470,9 @@ void ShapeWorksStudioApp::open_project(QString filename) {
 
   update_display(true);
 
+  create_glyph_submenu();
   create_iso_submenu();
+  handle_glyph_changed();
   handle_progress(100);
   SW_LOG("Project loaded: " + filename.toStdString());
 }
@@ -1429,19 +1481,19 @@ void ShapeWorksStudioApp::open_project(QString filename) {
 void ShapeWorksStudioApp::on_action_preferences_triggered() { preferences_window_->show(); }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::on_action_export_current_mesh_triggered() {
+void ShapeWorksStudioApp::action_export_current_mesh_triggered(int index) {
   bool single = StudioUtils::ask_multiple_domains_as_single(this, session_->get_project());
 
-  QString filename = ExportUtils::get_save_filename(this, tr("Export Current Mesh"), get_mesh_file_filter(), ".vtk");
+  QString filename = ExportUtils::get_save_filename(this, tr("Export Mesh"), get_mesh_file_filter(), ".vtk");
   if (filename.isEmpty()) {
     return;
   }
 
   if (single) {
-    write_mesh(visualizer_->get_current_mesh(), filename);
+    write_mesh(visualizer_->get_current_mesh(index), filename);
     handle_message("Wrote: " + filename.toStdString());
   } else {
-    auto meshes = visualizer_->get_current_meshes_transformed();
+    auto meshes = visualizer_->get_current_meshes_transformed(index);
     auto domain_names = session_->get_project()->get_domain_names();
 
     if (meshes.empty()) {
@@ -1514,7 +1566,7 @@ bool ShapeWorksStudioApp::write_scalars(vtkSmartPointer<vtkPolyData> poly_data, 
   output << "\n";
 
   // iterate over vertices
-  vtkPoints *points = poly_data->GetPoints();
+  vtkPoints* points = poly_data->GetPoints();
   int num_points = points->GetNumberOfPoints();
 
   for (int i = 0; i < num_points; i++) {
@@ -1583,10 +1635,10 @@ void ShapeWorksStudioApp::on_action_export_mesh_scalars_triggered() {
   }
 
   if (single) {
-    auto poly_data = visualizer_->get_current_mesh();
+    auto poly_data = visualizer_->get_current_mesh(0);
     write_scalars(poly_data, filename);
   } else {
-    auto meshes = visualizer_->get_current_meshes_transformed();
+    auto meshes = visualizer_->get_current_meshes_transformed(0);
     if (meshes.empty()) {
       SW_ERROR("Error exporting mesh: not ready yet");
       return;
@@ -1662,7 +1714,7 @@ void ShapeWorksStudioApp::action_export_screenshot_triggered() {
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::closeEvent(QCloseEvent *event) {
+void ShapeWorksStudioApp::closeEvent(QCloseEvent* event) {
   // close error dialog in case it is open
   error_message_dialog_.close();
   // close the preferences window in case it is open
@@ -1757,7 +1809,7 @@ void ShapeWorksStudioApp::save_project(QString filename) {
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_open_recent() {
-  QAction *action = qobject_cast<QAction *>(sender());
+  QAction* action = qobject_cast<QAction*>(sender());
   if (action) {
     auto user_data = action->data().toStringList();
     if (user_data.size() == 2) {
@@ -1792,7 +1844,7 @@ void ShapeWorksStudioApp::on_actionExport_PCA_Mesh_triggered() {
     for (size_t i = 0; i < shapes.size(); i++) {
       /// TODO: multiple-domain support
       auto msh = shapes[i]->get_reconstructed_meshes().meshes()[0]->get_poly_data();
-      vtkPolyDataWriter *writer = vtkPolyDataWriter::New();
+      vtkPolyDataWriter* writer = vtkPolyDataWriter::New();
       auto name = filename.toStdString();
       QFileInfo fi(filename);
       name = name.substr(0, name.find_last_of(".")) + std::to_string(i) + "." + fi.completeSuffix().toStdString();
@@ -1808,7 +1860,7 @@ void ShapeWorksStudioApp::on_actionExport_PCA_Mesh_triggered() {
   /// TODO: fix
   // auto msh = session_->get_mesh_manager()->get_mesh(shape);
 
-  vtkPolyDataWriter *writer = vtkPolyDataWriter::New();
+  vtkPolyDataWriter* writer = vtkPolyDataWriter::New();
   writer->SetFileName(filename.toStdString().c_str());
   /// TODO: fix
   // writer->SetInputData(msh);
@@ -1941,7 +1993,7 @@ void ShapeWorksStudioApp::update_feature_map_scale() {
   if (!auto_mode) {
     if (session_->get_feature_range_min() == 0 && session_->get_feature_range_max() == 0) {
       if (visualizer_->get_feature_range_valid()) {
-        double *range = visualizer_->get_feature_raw_range();
+        double* range = visualizer_->get_feature_raw_range();
         ui_->feature_min->setValue(range[0]);
         ui_->feature_max->setValue(range[1]);
       }
@@ -2081,7 +2133,7 @@ void ShapeWorksStudioApp::update_compare_menu() {
   compare_widget_->set_available(DisplayMode::Original, is_view_combo_item_enabled(DisplayMode::Original));
   compare_widget_->set_available(DisplayMode::Groomed, is_view_combo_item_enabled(DisplayMode::Groomed));
   compare_widget_->set_available(DisplayMode::Reconstructed, is_view_combo_item_enabled(DisplayMode::Reconstructed));
-
+  compare_widget_->set_mean_shape_available(is_view_combo_item_enabled(DisplayMode::Reconstructed));
   compare_widget_->set_available(static_cast<DisplayMode>(ui_->view_mode_combobox->currentIndex()), false);
 
   if (compare_widget_->check_any_available()) {
@@ -2115,7 +2167,7 @@ bool ShapeWorksStudioApp::should_reconstruct_view_show() {
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::dragEnterEvent(QDragEnterEvent *event) {
+void ShapeWorksStudioApp::dragEnterEvent(QDragEnterEvent* event) {
   bool accept = false;
 
   if (event->mimeData()->hasUrls()) {
@@ -2138,13 +2190,13 @@ void ShapeWorksStudioApp::dragEnterEvent(QDragEnterEvent *event) {
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::dragLeaveEvent(QDragLeaveEvent *event) {
+void ShapeWorksStudioApp::dragLeaveEvent(QDragLeaveEvent* event) {
   clearFocus();
   QWidget::dragLeaveEvent(event);
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::dropEvent(QDropEvent *event) {
+void ShapeWorksStudioApp::dropEvent(QDropEvent* event) {
   bool accept = false;
 
   QStringList files_to_load;
@@ -2175,7 +2227,6 @@ void ShapeWorksStudioApp::toggle_log_window() { log_window_.setVisible(!log_wind
 
 //---------------------------------------------------------------------------
 QSharedPointer<PythonWorker> ShapeWorksStudioApp::get_py_worker() { return py_worker_; }
-
 
 //---------------------------------------------------------------------------
 }  // namespace shapeworks

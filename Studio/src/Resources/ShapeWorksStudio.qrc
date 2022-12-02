@@ -55,5 +55,6 @@
         <file>Images/flag_off.png</file>
         <file>Images/planes_on.png</file>
         <file>Images/planes_off.png</file>
+        <file>Images/down_arrow.png</file>
     </qresource>
 </RCC>

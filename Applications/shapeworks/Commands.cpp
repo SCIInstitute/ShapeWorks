@@ -1,19 +1,15 @@
-// must be first
-#include <Optimize/Optimize.h>
-// must be first
+#include "Commands.h"
 
 #include <Analyze/Analyze.h>
 #include <Groom/Groom.h>
+#include <Logging.h>
+#include <Optimize/Optimize.h>
 #include <Optimize/OptimizeParameterFile.h>
 #include <Optimize/OptimizeParameters.h>
-#include <Utils/StringUtils.h>
-#include <Logging.h>
 #include <ShapeworksUtils.h>
+#include <Utils/StringUtils.h>
 
 #include <boost/filesystem.hpp>
-#include <limits>
-
-#include "Commands.h"
 
 namespace shapeworks {
 
@@ -244,8 +240,13 @@ void ConvertProjectCommand::buildParser() {
   const std::string desc = "convert a shapeworks project (xlsx or swproj)";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--name").action("store").type("string").set_default("").help("Path to input project file (xlsx or swproj).");
-  parser.add_option("--output").action("store").type("string").set_default("").help("Path to output project file (xlsx or swproj).");
+  parser.add_option("--name").action("store").type("string").set_default("").help(
+      "Path to input project file (xlsx or swproj).");
+  parser.add_option("--output")
+      .action("store")
+      .type("string")
+      .set_default("")
+      .help("Path to output project file (xlsx or swproj).");
 
   Command::buildParser();
 }

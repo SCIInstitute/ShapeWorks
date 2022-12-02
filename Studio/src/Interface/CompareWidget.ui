@@ -65,6 +65,13 @@
      </property>
     </widget>
    </item>
+   <item row="6" column="0">
+    <widget class="QRadioButton" name="mean_shape">
+     <property name="text">
+      <string>Mean Shape</string>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <resources/>
