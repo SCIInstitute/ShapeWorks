@@ -163,7 +163,7 @@ def Run_Pipeline(args):
 	# Alginment matrix for domain 2 shapes using domain 2 reference 
 	transforms_domain_2 = calculate_transforms(domain_2_meshes, domain2_reference)
 	# Alginment matrix for all shapes using the combined reference mesh denoting the global alignment option
-	global_rigid_transform = calculate_transforms(combined_meshes, combined_reference)
+	global_transforms = calculate_transforms(combined_meshes, combined_reference)
 
 	
 
