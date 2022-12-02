@@ -13,6 +13,7 @@ add_library(Optimize STATIC
   )
 
 target_link_libraries(Optimize PUBLIC
+  ${VTK_LIBRARIES}
   OpenVDB::openvdb
   Alignment
   trimesh2
@@ -21,7 +22,6 @@ target_link_libraries(Optimize PUBLIC
   Utils
   Particles
   ${ITK_LIBRARIES}
-  ${VTK_LIBRARIES}
   igl::core
   ${Boost_LIBRARIES}
   ${GEOMETRYCENTRAL_LIBRARY}

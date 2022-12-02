@@ -35,12 +35,12 @@ target_include_directories(Mesh PUBLIC
  )
 
 target_link_libraries(Mesh PUBLIC
+  ${VTK_LIBRARIES}
   Image
   Common
-  Optimize
+  Alignment
   Utils
   trimesh2
-  ${VTK_LIBRARIES}
   Eigen3::Eigen
   igl::core
   Particles
