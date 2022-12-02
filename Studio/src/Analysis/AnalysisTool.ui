@@ -1144,19 +1144,7 @@ QWidget#particles_panel {
                                 <property name="bottomMargin">
                                     <number>0</number>
                                 </property>
-                                <item>
-                                    <widget class="QRadioButton" name="vanillaPCAButton">
-                                                                    <property name="text">
-                                                                    <string>Shape and Relative Pose</string>
-                                                                    </property>
-                                                                    <property name="toolTip">
-                                                                        <string>PCA - Modes of Variation in the shared shape space of pose and morphology.</string>
-                                                                    </property>
-                                                                    <property name="checked">
-                                                                    <bool>true</bool>
-                                                                    </property>
-                                    </widget>
-                                </item>
+
                                 <item>
                                     <widget class="QRadioButton" name="mcaLevelWithinButton">
                                                                     <property name="text">
@@ -1186,6 +1174,19 @@ QWidget#particles_panel {
                                                                     </property>
                                                                     <property name="checked">
                                                                     <bool>false</bool>
+                                                                    </property>
+                                    </widget>
+                                </item>
+                                <item>
+                                    <widget class="QRadioButton" name="vanillaPCAButton">
+                                                                    <property name="text">
+                                                                    <string>Both</string>
+                                                                    </property>
+                                                                    <property name="toolTip">
+                                                                        <string>PCA done on the entire shape structure - Modes of Variation in the shared shape space of pose and morphology.</string>
+                                                                    </property>
+                                                                    <property name="checked">
+                                                                    <bool>true</bool>
                                                                     </property>
                                     </widget>
                                 </item>
