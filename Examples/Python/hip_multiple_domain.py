@@ -41,6 +41,8 @@ def Run_Pipeline(args):
 			args.use_case, dataset_name, output_directory)
 		mesh_files = sorted(glob.glob(output_directory +
 									 dataset_name + "/meshes/*.vtk"))[:6]
+		plane_files = sorted(glob.glob(output_directory +
+							dataset_name + "/constraints/*.json"))[:6]
 	# Else download the entire dataset
 	else:
 		sw.data.download_and_unzip_dataset(dataset_name, output_directory)
@@ -244,15 +246,16 @@ def Run_Pipeline(args):
 	parameters.set("domain_type",sw.Variant('mesh'))
 	project.set_parameters("optimize", parameters)
 
-	spreadsheet_file = output_directory + "shape_models/hip_multiple_domain.xlsx"
+	spreadsheet_file = output_directory + "shape_models/hip_multiple_domain_" + args.option_set + ".xlsx"
 	project.save(spreadsheet_file)
+	
 
 	# Run optimization
 	optimize_cmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
 	subprocess.check_call(optimize_cmd)
 
 	# # If tiny test or verify, check results and exit
-	# sw.utils.check_results(args, spreadsheet_file)
+	sw.utils.check_results(args, spreadsheet_file)
 
 	print("\nStep 4. Analysis - Launch ShapeWorksStudio")
 	"""
