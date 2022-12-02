@@ -1,5 +1,8 @@
 #!/bin/bash -x
 
+# exit when any command fails
+set -e
+
 if [ "$#" -ne 3 ]; then
     echo "Usage: $0 <version> <install_dir> <install_dep_dir>"
     exit 1
@@ -68,14 +71,13 @@ else
 fi
 
 cd "package/${VERSION}"
-rm bin/h5cc bin/h5c++ bin/itkTestDriver
 rm -rf include share v3p plugins libigl
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
     # Mac OSX
     cd bin
 
-    install_name_tool -add_rpath @executable_path/../Frameworks ShapeWorksStudio.app/Contents/MacOS/ShapeWorksStudio
+    install_name_tool -add_rpath @executable_path/../Frameworks ShapeWorksStudio.app/Contents/MacOS/ShapeWorksStudio || echo ok
     QT_LIB_LOCATION="@executable_path/ShapeWorksStudio.app/Contents/Frameworks"
     QT_LOADER_LIB_LOCATION="@loader_path/ShapeWorksStudio.app/Contents/Frameworks"
 
@@ -83,12 +85,12 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     cp -a ShapeWorksStudio.app/Contents/PlugIns .
 
     for i in *.so ; do
-	install_name_tool -add_rpath "@loader_path/../lib" $i
-	install_name_tool -add_rpath $QT_LOADER_LIB_LOCATION $i
+	install_name_tool -add_rpath "@loader_path/../lib" $i || echo ok
+	install_name_tool -add_rpath $QT_LOADER_LIB_LOCATION $i || echo ok
     done
 
     for i in * ; do
-	install_name_tool -add_rpath $QT_LIB_LOCATION $i
+	install_name_tool -add_rpath $QT_LIB_LOCATION $i || echo ok
     done
 
     # Copy libraries from anaconda
@@ -103,12 +105,12 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     for i in ShapeWorksStudio.app/Contents/Frameworks/*.dylib ; do
 	install_name_tool -change ${BASE_LIB}/libitkgdcmopenjp2-5.2.1.dylib @rpath/libitkgdcmopenjp2-5.2.1.dylib $i
     done
-    install_name_tool -id @rpath/libitkgdcmopenjp2-5.2.1.dylib libitkgdcmopenjp2-5.2.1.dylib
+    install_name_tool -id @rpath/libitkgdcmopenjp2-5.2.1.dylib ShapeWorksStudio.app/Contents/Frameworks/libitkgdcmopenjp2-5.2.1.dylib
 
     cd ..
 else
     # Copy libraries from anaconda
-    conda_libs="libboost_iostreams libboost_filesystem libbz2 liblzma liblz4 libtbb libHalf libpython libz libspd libfmt"
+    conda_libs="libboost_iostreams libboost_filesystem libbz2 liblzma liblz4 libtbb libHalf libpython libz libspd"
     for clib in $conda_libs; do
         cp ${CONDA_PREFIX}/lib/${clib}* lib
     done
@@ -121,7 +123,6 @@ else
     cd ..
     
     rm lib/libxcb* lib/libX* lib/libfont* lib/libfreetype*
-    rm bin/vdb_print
     rm -rf geometry-central doc
 fi
 
