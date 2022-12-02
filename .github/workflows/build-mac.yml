@@ -5,6 +5,7 @@ on:
     branches:
       - master
       - release_v*
+      - fix_1958_linux_deployment
     tags:
     - '*'
   pull_request:
