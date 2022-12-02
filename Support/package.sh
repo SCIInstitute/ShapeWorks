@@ -83,7 +83,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     # Mac OSX
     cd bin
 
-    install_name_tool -add_rpath @executable_path/../Frameworks ShapeWorksStudio.app/Contents/MacOS/ShapeWorksStudio
+    install_name_tool -add_rpath @executable_path/../Frameworks ShapeWorksStudio.app/Contents/MacOS/ShapeWorksStudio || echo ok
     QT_LIB_LOCATION="@executable_path/ShapeWorksStudio.app/Contents/Frameworks"
     QT_LOADER_LIB_LOCATION="@loader_path/ShapeWorksStudio.app/Contents/Frameworks"
 
@@ -91,12 +91,12 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     cp -a ShapeWorksStudio.app/Contents/PlugIns .
 
     for i in *.so ; do
-	install_name_tool -add_rpath "@loader_path/../lib" $i
-	install_name_tool -add_rpath $QT_LOADER_LIB_LOCATION $i
+	install_name_tool -add_rpath "@loader_path/../lib" $i || echo ok
+	install_name_tool -add_rpath $QT_LOADER_LIB_LOCATION $i || echo ok
     done
 
     for i in * ; do
-	install_name_tool -add_rpath $QT_LIB_LOCATION $i
+	install_name_tool -add_rpath $QT_LIB_LOCATION $i || echo ok
     done
 
     # Copy libraries from anaconda
