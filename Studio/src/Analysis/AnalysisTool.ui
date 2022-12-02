@@ -1122,7 +1122,7 @@ QWidget#particles_panel {
                             <property name="title">
                                 <string>Mode of Variation </string>
                             </property>
-                            <layout class="QHBoxLayout" name="horizontalLayout_mca_box">
+                            <layout class="QVBoxLayout" name="verticalLayout_mca_box">
                                 <property name="spacing">
                                     <number>0</number>
                                 </property>
@@ -1141,7 +1141,10 @@ QWidget#particles_panel {
                                 <item>
                                     <widget class="QRadioButton" name="vanillaPCAButton">
                                                                     <property name="text">
-                                                                    <string>Shared Space Variation</string>
+                                                                    <string>Morphology and Relative Pose</string>
+                                                                    </property>
+                                                                    <property name="toolTip">
+                                                                        <string>PCA - Modes of Variation in the shared shape space of pose and morphology.</string>
                                                                     </property>
                                                                     <property name="checked">
                                                                     <bool>true</bool>
@@ -1151,7 +1154,10 @@ QWidget#particles_panel {
                                 <item>
                                     <widget class="QRadioButton" name="mcaLevelWithinButton">
                                                                     <property name="text">
-                                                                    <string>Shape Variation</string>
+                                                                    <string>Morphology</string>
+                                                                    </property>
+                                                                    <property name="toolTip">
+                                                                        <string>Multi-Level Component Analysis - Modes of variation highlighting only morphological changes in shape subspace.</string>
                                                                     </property>
                                                                     <property name="checkable">
                                                                     <bool>true</bool>
@@ -1164,7 +1170,10 @@ QWidget#particles_panel {
                                 <item>
                                     <widget class="QRadioButton" name="mcaLevelBetweenButton">
                                                                     <property name="text">
-                                                                    <string>Relative Pose Variation</string>
+                                                                    <string>Relative Pose</string>
+                                                                    </property>
+                                                                    <property name="toolTip">
+                                                                        <string>Multi-Level Component Analysis - Modes of Variation highlighting only alignment changes for the multi-object structure in relative pose subspace.</string>
                                                                     </property>
                                                                     <property name="checkable">
                                                                     <bool>true</bool>
