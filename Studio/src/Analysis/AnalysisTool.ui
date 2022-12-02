@@ -1122,6 +1122,12 @@ QWidget#particles_panel {
                             <property name="title">
                                 <string>Mode of Variation </string>
                             </property>
+                        <property name="minimumSize">
+                            <size>
+                                <width>500</width>
+                                <height>50</height>
+                            </size>
+                       </property>
                             <layout class="QVBoxLayout" name="verticalLayout_mca_box">
                                 <property name="spacing">
                                     <number>0</number>
@@ -1141,7 +1147,7 @@ QWidget#particles_panel {
                                 <item>
                                     <widget class="QRadioButton" name="vanillaPCAButton">
                                                                     <property name="text">
-                                                                    <string>Morphology and Relative Pose</string>
+                                                                    <string>Shape and Relative Pose</string>
                                                                     </property>
                                                                     <property name="toolTip">
                                                                         <string>PCA - Modes of Variation in the shared shape space of pose and morphology.</string>
@@ -1154,7 +1160,7 @@ QWidget#particles_panel {
                                 <item>
                                     <widget class="QRadioButton" name="mcaLevelWithinButton">
                                                                     <property name="text">
-                                                                    <string>Morphology</string>
+                                                                    <string>Shape</string>
                                                                     </property>
                                                                     <property name="toolTip">
                                                                         <string>Multi-Level Component Analysis - Modes of variation highlighting only morphological changes in shape subspace.</string>
