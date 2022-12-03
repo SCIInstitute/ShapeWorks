@@ -1264,6 +1264,7 @@ void Viewer::update_opacities() {
       surface_actors_[i]->GetProperty()->SetOpacity(opacities[i]);
     }
   }
+  glyph_actor_->GetProperty()->SetOpacity(1.0);
 }
 
 //-----------------------------------------------------------------------------
