@@ -87,7 +87,7 @@ title: shapeworks
 | class | **[shapeworks::OptimizeTool](../Classes/classshapeworks_1_1OptimizeTool.md)**  |
 | class | **[shapeworks::PaintWidget](../Classes/classshapeworks_1_1PaintWidget.md)**  |
 | class | **[shapeworks::Parameters](../Classes/classshapeworks_1_1Parameters.md)** <br>Parameter settings.  |
-| class | **[shapeworks::ParticleColors](../Classes/classshapeworks_1_1ParticleColors.md)**  |
+| class | **[shapeworks::ParticleColors](../Classes/classshapeworks_1_1ParticleColors.md)** <br>Supplies particle colors.  |
 | class | **[shapeworks::ParticleDomain](../Classes/classshapeworks_1_1ParticleDomain.md)**  |
 | class | **[shapeworks::ParticleImageDomain](../Classes/classshapeworks_1_1ParticleImageDomain.md)**  |
 | class | **[shapeworks::ParticleImageDomainWithCurvature](../Classes/classshapeworks_1_1ParticleImageDomainWithCurvature.md)**  |
@@ -2452,4 +2452,4 @@ pi that doesn't depend on deprecated or non-std lib defines
 
 -------------------------------
 
-Updated on 2022-12-02 at 23:43:46 +0000
+Updated on 2022-12-03 at 09:41:16 +0000

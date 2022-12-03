@@ -1,5 +1,6 @@
 ---
 title: shapeworks::ParticleColors
+summary: Supplies particle colors. 
 
 ---
 
@@ -7,7 +8,10 @@ title: shapeworks::ParticleColors
 
 
 
+Supplies particle colors.  [More...](#detailed-description)
 
+
+`#include <ParticleColors.h>`
 
 Inherits from QObject
 
@@ -22,7 +26,17 @@ Inherits from QObject
 |                | Name           |
 | -------------- | -------------- |
 | | **[Q_ENUM](../Classes/classshapeworks_1_1ParticleColors.md#function-q-enum)**(ParticleColorsType ) |
-| vtkSmartPointer< vtkLookupTable > | **[construct](../Classes/classshapeworks_1_1ParticleColors.md#function-construct)**(ParticleColorsType type, int num) |
+| vtkSmartPointer< vtkLookupTable > | **[construct_distinct](../Classes/classshapeworks_1_1ParticleColors.md#function-construct-distinct)**() |
+
+## Detailed Description
+
+```cpp
+class shapeworks::ParticleColors;
+```
+
+Supplies particle colors. 
+
+The [ParticleColors](../Classes/classshapeworks_1_1ParticleColors.md) supplies distinct colors for particles 
 
 ## Public Types Documentation
 
@@ -47,16 +61,13 @@ Q_ENUM(
 ```
 
 
-### function construct
+### function construct_distinct
 
 ```cpp
-static vtkSmartPointer< vtkLookupTable > construct(
-    ParticleColorsType type,
-    int num
-)
+static vtkSmartPointer< vtkLookupTable > construct_distinct()
 ```
 
 
 -------------------------------
 
-Updated on 2022-12-02 at 23:43:47 +0000
+Updated on 2022-12-03 at 09:41:16 +0000

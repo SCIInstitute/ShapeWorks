@@ -17,7 +17,7 @@ title: Studio/src/Visualization/ParticleColors.h
 
 |                | Name           |
 | -------------- | -------------- |
-| class | **[shapeworks::ParticleColors](../Classes/classshapeworks_1_1ParticleColors.md)**  |
+| class | **[shapeworks::ParticleColors](../Classes/classshapeworks_1_1ParticleColors.md)** <br>Supplies particle colors.  |
 
 
 
@@ -27,10 +27,12 @@ title: Studio/src/Visualization/ParticleColors.h
 ```cpp
 #pragma once
 
-#include <QObject>
 #include <vtkLookupTable.h>
 
+#include <QObject>
+
 namespace shapeworks {
+
 
 class ParticleColors : public QObject {
   Q_OBJECT;
@@ -39,7 +41,7 @@ class ParticleColors : public QObject {
   enum ParticleColorsType { Distinct = 0, Original = 1 };
   Q_ENUM(ParticleColorsType);
 
-  static vtkSmartPointer<vtkLookupTable> construct(ParticleColorsType type, int num);
+  static vtkSmartPointer<vtkLookupTable> construct_distinct();
 };
 
 }  // namespace shapeworks
@@ -48,4 +50,4 @@ class ParticleColors : public QObject {
 
 -------------------------------
 
-Updated on 2022-12-02 at 23:43:49 +0000
+Updated on 2022-12-03 at 09:41:17 +0000
