@@ -10,7 +10,7 @@ The dataset available for this use case:
 
 
 ## Grooming Data
-This is how the meshes in the dataset look before grooming. ![This is how the joints in the dataset look before grooming.](https://sci.utah.edu/~shapeworks/doc-resources/pngs/hip_pre_groom.png)
+This is how the meshes in the dataset look before grooming. ![This is how the joints in the dataset look before grooming.](https://sci.utah.edu/~shapeworks/doc-resources/pngs/hip_pre_groomed.png)
 
 1. [**Smoothing and Remeshing**](../../workflow/groom.md#remesh): Meshes are smoothed and remeshed to ensure uniform vertices.
 2. [**Reference Selection**](../../workflow/groom.md#aligning-meshes): The reference is selected by first computing the mean (average) mesh, then selecting the mesh closest to that mean (i.e., medoid).
@@ -20,9 +20,9 @@ This is how the meshes in the dataset look before grooming. ![This is how the jo
 	c. Calcualte the global alignment matrix for the complete joint using the reference shape
 
 Here we show how the shapes would look like if the transforms are applied.
-![Meshes obtained after grooming w.r.t femurs](https://sci.utah.edu/~shapeworks/doc-resources/pngs/hip_post_groom_local_1.png)
-![Meshes obtained after grooming w.r.t pelvis](https://sci.utah.edu/~shapeworks/doc-resources/pngs/hip_post_groom_local_2.png)
-![Meshes obtained after grooming w.r.t the whole joint](https://sci.utah.edu/~shapeworks/doc-resources/pngs/hip_post_groom_global.png)
+Meshes obtained after grooming w.r.t femurs: ![Meshes obtained after grooming w.r.t femurs](https://sci.utah.edu/~shapeworks/doc-resources/pngs/hip_post_groom_local_1.png)
+Meshes obtained after grooming w.r.t pelvis: ![Meshes obtained after grooming w.r.t pelvis](https://sci.utah.edu/~shapeworks/doc-resources/pngs/hip_post_groom_local_2.png)
+Meshes obtained after grooming w.r.t the whole joint: ![Meshes obtained after grooming w.r.t the whole joint](https://sci.utah.edu/~shapeworks/doc-resources/pngs/hip_post_groom_global.png)
 
 ## Relevant Arguments
 [--use_subsample](../use-cases.md#-use_subsample)
