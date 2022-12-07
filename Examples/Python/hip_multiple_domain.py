@@ -63,9 +63,8 @@ def Run_Pipeline(args):
 	The required grooming steps are: 
 	1. Apply smoothing and remeshing and save groomed meshes
     2. Apply clipping with planes for finding alignment transform
-    3. Find reflection tansfrom
-    4. Select reference mesh
-    5. Find rigid alignment transform
+    3. Select reference mesh
+    4. Find rigid alignment transform
 	For more information on grooming see docs/workflow/groom.md
 	"""
 	# Create a directory for groomed output
@@ -122,7 +121,7 @@ def Run_Pipeline(args):
 
 
 	"""
-	Grooming Step 4: Select a reference
+	Grooming Step 3: Select a reference
 	This step requires loading all of the meshes at once so the shape
 	closest to the mean can be found and selected as the reference. 
 	"""
@@ -130,8 +129,6 @@ def Run_Pipeline(args):
 	num_samples = int(len(mesh_list)/domains_per_shape)
 	domain_1_meshes = []
 	domain_2_meshes = []
-	domain1_reflections = []
-	domain2_reflections = []
 	# create combined meshes and also generate independent domain mesh list
 	combined_meshes = []
 	for i in range(num_samples):
@@ -156,7 +153,7 @@ def Run_Pipeline(args):
 
 
 	# """
-	# Grooming Step 5: Rigid alignment
+	# Grooming Step 4: Rigid alignment
 	# We calculate three kinds of alignments
 	# """
 
@@ -227,9 +224,9 @@ def Run_Pipeline(args):
 		"save_init_splits" : 0,
 		"verbosity" : 0,
 		"use_normals": 1,
-		"normal_weight": 5.0
+		"normal_weight": 15.0
 	  }
-	num_particles = [128,256]
+	num_particles = [256,256]
 
 	# If running a tiny test, reduce some parameters
 	if args.tiny_test:
