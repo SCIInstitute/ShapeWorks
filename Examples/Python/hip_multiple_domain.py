@@ -82,10 +82,11 @@ def Run_Pipeline(args):
 	for mesh_file in mesh_files:
 		print('Loading: ' + mesh_file)
 		# get current shape name
-		mesh_name = mesh_file.split('/')[-1].replace('.vtk', '')
+		mesh_name = os.path.splitext(os.path.basename(mesh_file))[0]
 		mesh_names.append(mesh_name)
 		# get domain identifiers
-		domain_ids.append(mesh_name.split(".")[0].split("_")[-1])
+		domain_id = mesh_name.split("_")[-1]
+		domain_ids.append(domain_id)
 		
 		# load mesh
 		mesh = sw.Mesh(mesh_file)
@@ -101,7 +102,6 @@ def Run_Pipeline(args):
 	#shape index for all shapes in domain 2
 	domain2_indx = domain_ids.index("pelvis")
 
-	
 	for mesh, name in zip(mesh_list, mesh_names):
 		"""
 		Grooming step 2: Apply clipping for finsing alignment transform
