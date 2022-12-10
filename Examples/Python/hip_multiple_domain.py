@@ -91,8 +91,9 @@ def Run_Pipeline(args):
 		# load mesh
 		mesh = sw.Mesh(mesh_file)
 		# do initial grooming steps
-		print("Grooming: " + mesh_name)
-		mesh.remeshPercent(percentage=0.9, adaptivity=1.0)
+		if not args.tiny_test:
+			print("Grooming: " + mesh_name)
+			mesh.remeshPercent(percentage=0.9, adaptivity=1.0)
 		# append to the mesh list
 		mesh_list.append(mesh)
 
@@ -231,7 +232,8 @@ def Run_Pipeline(args):
 	# If running a tiny test, reduce some parameters
 	if args.tiny_test:
 		num_particles = [32,32]
-		parameter_dictionary["optimization_iterations"] = 30
+		parameter_dictionary["iterations_per_split"] = 25
+		parameter_dictionary["optimization_iterations"] = 25
 
 	#setting the argument to singlescale for the output filename
 	args.use_single_scale = True
