@@ -132,13 +132,11 @@ class AnalysisTool : public QWidget {
   void handle_group_animate_state_changed();
   void handle_group_timer();
 
-
   void handle_reconstruction_complete();
 
   void on_reconstructionButton_clicked();
 
-
-  //MCA
+  // MCA
   void mca_vanilla_pca_radio_toggled();
   void mca_between_radio_toggled();
   void mca_within_radio_toggled();

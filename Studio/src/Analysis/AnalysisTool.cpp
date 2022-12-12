@@ -155,22 +155,13 @@ std::vector<Shape::Point> AnalysisTool::get_group_difference_vectors() {
   return vecs;
 }
 //---------------------------------------------------------------------------
-void AnalysisTool::mca_vanilla_pca_radio_toggled()
-{ 
-  Q_EMIT mca_update();
-}
+void AnalysisTool::mca_vanilla_pca_radio_toggled() { Q_EMIT mca_update(); }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::mca_between_radio_toggled()
-{ 
-  Q_EMIT mca_update();
-}
+void AnalysisTool::mca_between_radio_toggled() { Q_EMIT mca_update(); }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::mca_within_radio_toggled()
-{ 
-  Q_EMIT mca_update();
-}
+void AnalysisTool::mca_within_radio_toggled() { Q_EMIT mca_update(); }
 
 //---------------------------------------------------------------------------
 void AnalysisTool::handle_reconstruction_complete() {
@@ -461,13 +452,13 @@ bool AnalysisTool::compute_stats() {
       points.push_back(shape->get_global_correspondence_points());
       group_ids.push_back(1);
     }
-    if(!flag_get_num_part){
+    if (!flag_get_num_part) {
       auto local_particles_ar = shape->get_particles().get_local_particles();
       unsigned int sz = local_particles_ar.size();
-      if(local_particles_ar.size() != dps){
+      if (local_particles_ar.size() != dps) {
         std::cerr << "Inconsistency in number of particles size";
       }
-      for(unsigned int i = 0; i < dps; i++){
+      for (unsigned int i = 0; i < dps; i++) {
         number_of_particles_ar[i] = local_particles_ar[i].size() / 3;
       }
     }
@@ -489,9 +480,11 @@ bool AnalysisTool::compute_stats() {
   stats_.ImportPoints(points, group_ids);
   // MCA needs to know number of particles per domain/object
   stats_.SetNumberOfParticlesArray(number_of_particles_ar);
-  if(dps > 1){ stats_.ComputeMultiLevelAnalysisStatistics(points, dps); }
+  if (dps > 1) {
+    stats_.ComputeMultiLevelAnalysisStatistics(points, dps);
+  }
   stats_.ComputeModes();
-  if(dps > 1){
+  if (dps > 1) {
     stats_.ComputeRelPoseModesForMca();
     stats_.ComputeShapeDevModesForMca();
   }
@@ -606,22 +599,18 @@ Particles AnalysisTool::get_shape_points(int mode, double value) {
 }
 
 //---------------------------------------------------------------------------
-Particles AnalysisTool::get_multi_level_shape_points(int mode, double value, int level)
-{
-  // Get Shape Points for Multi-Level Analysis 
- Eigen::MatrixXd eigenvectors;
- std::vector<double> eigenvalues;
- if(level == 2)
- {
-   eigenvectors = stats_.EigenvectorsShapeDev();
-   eigenvalues = stats_.EigenvaluesShapeDev();
- }
- else if (level == 3)
- {
-   eigenvectors = stats_.EigenvectorsRelPose();
-   eigenvalues = stats_.EigenvaluesRelPose();
- }
- if (!compute_stats() || eigenvectors.size() <= 1) {
+Particles AnalysisTool::get_multi_level_shape_points(int mode, double value, int level) {
+  // Get Shape Points for Multi-Level Analysis
+  Eigen::MatrixXd eigenvectors;
+  std::vector<double> eigenvalues;
+  if (level == 2) {
+    eigenvectors = stats_.EigenvectorsShapeDev();
+    eigenvalues = stats_.EigenvaluesShapeDev();
+  } else if (level == 3) {
+    eigenvectors = stats_.EigenvectorsRelPose();
+    eigenvalues = stats_.EigenvaluesRelPose();
+  }
+  if (!compute_stats() || eigenvectors.size() <= 1) {
     return Particles();
   }
   if (mode + 2 > eigenvalues.size()) {
@@ -643,33 +632,33 @@ Particles AnalysisTool::get_multi_level_shape_points(int mode, double value, int
   if (sum > 0) {
     ui_->explained_variance->setText(QString::number(vals[mode] / sum * 100, 'f', 1) + "%");
     ui_->cumulative_explained_variance->setText(QString::number(cumulation / sum * 100, 'f', 1) + "%");
-  }
-  else {
+  } else {
     ui_->explained_variance->setText("");
     ui_->cumulative_explained_variance->setText("");
   }
 
   unsigned int D = stats_.NumberOfObjects();
   unsigned int sz = stats_.Mean().size();
-  if(level == 2){
+  if (level == 2) {
     // Morphological Variations
     temp_shape_mca = stats_.Mean() + (e * (value * lambda));
-  }
-  else if(level == 3){
+  } else if (level == 3) {
     // Relative Pose Variations
     Eigen::VectorXd e_between;
     e_between.resize(sz);
-    for(unsigned int i = 0; i < D; i++){
+    for (unsigned int i = 0; i < D; i++) {
       int num_points = number_of_particles_ar[i];
       int row = 0;
-      for(int idx = 0; idx < i; idx++){ row += (3 * number_of_particles_ar[idx]); }
-      for(unsigned int j = 0; j < num_points; j++){
-          e_between((row) + (j * 3)) = e(i * 3);
-          e_between((row) + (j * 3) + 1) = e(i * 3 + 1);
-          e_between((row) + (j * 3) + 2) = e(i * 3 + 2);
+      for (int idx = 0; idx < i; idx++) {
+        row += (3 * number_of_particles_ar[idx]);
+      }
+      for (unsigned int j = 0; j < num_points; j++) {
+        e_between((row) + (j * 3)) = e(i * 3);
+        e_between((row) + (j * 3) + 1) = e(i * 3 + 1);
+        e_between((row) + (j * 3) + 2) = e(i * 3 + 2);
       }
     }
-    temp_shape_mca = stats_.Mean()  + (e_between * (value * lambda));
+    temp_shape_mca = stats_.Mean() + (e_between * (value * lambda));
   }
   return convert_from_combined(temp_shape_mca);
 }
@@ -711,9 +700,7 @@ void AnalysisTool::store_settings() {
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::shutdown() { 
-  pca_animate_timer_.stop();
-}
+void AnalysisTool::shutdown() { pca_animate_timer_.stop(); }
 
 //---------------------------------------------------------------------------
 void AnalysisTool::compute_shape_evaluations() {
@@ -740,7 +727,6 @@ void AnalysisTool::compute_shape_evaluations() {
   ui_->generalization_progress->setValue(0);
   ui_->specificity_progress->setValue(0);
 
-
   if ((stats_.matrix().rows() > 10000 || stats_.matrix().cols() > 10000) && !large_particle_disclaimer_waived_) {
     QMessageBox::StandardButton reply;
     reply = QMessageBox::question(this, "Are you sure?",
@@ -754,8 +740,9 @@ void AnalysisTool::compute_shape_evaluations() {
     large_particle_disclaimer_waived_ = true;
   }
 
-  std::vector<ShapeEvaluationJob::JobType> job_types = {ShapeEvaluationJob::JobType::CompactnessType, ShapeEvaluationJob::JobType::GeneralizationType,
-                    ShapeEvaluationJob::JobType::SpecificityType};
+  std::vector<ShapeEvaluationJob::JobType> job_types = {ShapeEvaluationJob::JobType::CompactnessType,
+                                                        ShapeEvaluationJob::JobType::GeneralizationType,
+                                                        ShapeEvaluationJob::JobType::SpecificityType};
 
   if (skip_evals_) {
     // compactness isn't ever a problem.
@@ -763,7 +750,6 @@ void AnalysisTool::compute_shape_evaluations() {
   }
 
   for (auto job_type : job_types) {
-
     switch (job_type) {
       case ShapeEvaluationJob::JobType::CompactnessType:
         SW_DEBUG("job type: compactness");
@@ -777,7 +763,6 @@ void AnalysisTool::compute_shape_evaluations() {
       default:
         SW_DEBUG("job type: wtf");
     }
-
 
     auto worker = Worker::create_worker();
     auto job = QSharedPointer<ShapeEvaluationJob>::create(job_type, stats_);
@@ -798,14 +783,12 @@ void AnalysisTool::on_pcaSlider_valueChanged() {
   QCoreApplication::processEvents();
   auto domain_names = session_->get_project()->get_domain_names();
   bool multiple_domains = domain_names.size() > 1;
-  if (multiple_domains){
+  if (multiple_domains) {
     Q_EMIT mca_update();
-  }
-  else {
+  } else {
     Q_EMIT pca_update();
   }
 }
-
 
 //---------------------------------------------------------------------------
 void AnalysisTool::on_group_slider_valueChanged() {
@@ -824,13 +807,11 @@ void AnalysisTool::on_group_slider_valueChanged() {
 void AnalysisTool::on_pcaModeSpinBox_valueChanged(int i) {
   auto domain_names = session_->get_project()->get_domain_names();
   bool multiple_domains = domain_names.size() > 1;
-  if (multiple_domains){
+  if (multiple_domains) {
     Q_EMIT mca_update();
-  }
-  else {
+  } else {
     Q_EMIT pca_update();
   }
-
 }
 
 //---------------------------------------------------------------------------
@@ -863,7 +844,6 @@ void AnalysisTool::handle_pca_timer() {
   ui_->pcaSlider->setValue(value);
 }
 
-
 //---------------------------------------------------------------------------
 void AnalysisTool::handle_group_animate_state_changed() {
   if (ui_->group_animate_checkbox->isChecked()) {
@@ -879,13 +859,11 @@ int AnalysisTool::get_mca_level() {
   bool vanilla_pca = ui_->vanillaPCAButton->isChecked();
   bool between = ui_->mcaLevelBetweenButton->isChecked();
   bool within = ui_->mcaLevelWithinButton->isChecked();
-  if (vanilla_pca){
+  if (vanilla_pca) {
     return 1;
-  }
-  else if(within){
+  } else if (within) {
     return 2;
-  }
-  else if(between){
+  } else if (between) {
     return 3;
   }
 }
@@ -996,13 +974,12 @@ void AnalysisTool::set_analysis_mode(std::string mode) {
     ui_->tabWidget->setCurrentWidget(ui_->pca_tab);
   } else if (mode == "regression") {
     ui_->tabWidget->setCurrentWidget(ui_->regression_tab);
-  } 
-  else if (mode == "mca"){
+  } else if (mode == "mca") {
     ui_->tabWidget->setCurrentWidget(ui_->pca_tab);
     ui_->vanillaPCAButton->setChecked(true);
     ui_->mcaLevelWithinButton->setChecked(false);
     ui_->mcaLevelBetweenButton->setChecked(false);
-  } 
+  }
 }
 
 //---------------------------------------------------------------------------
