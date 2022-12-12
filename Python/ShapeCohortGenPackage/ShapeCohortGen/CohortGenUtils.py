@@ -111,7 +111,7 @@ def generate_segmentations(generated_directories, randomize_size=False, spacing=
     for i in range(len(generated_directories)):
         meshFileNames = get_files_only(generated_directories[i]+"/meshes/")
         for j in range(len(meshFileNames)):
-            allMeshes.append(meshFileNames[i])
+            allMeshes.append(meshFileNames[j])
         allGenerated.append(meshFileNames)
 
 

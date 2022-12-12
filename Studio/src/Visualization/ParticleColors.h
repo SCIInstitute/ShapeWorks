@@ -1,10 +1,15 @@
 #pragma once
 
-#include <QObject>
 #include <vtkLookupTable.h>
+
+#include <QObject>
 
 namespace shapeworks {
 
+//! Supplies particle colors
+/*!
+ * The ParticleColors supplies distinct colors for particles
+ */
 class ParticleColors : public QObject {
   Q_OBJECT;
 
@@ -12,7 +17,7 @@ class ParticleColors : public QObject {
   enum ParticleColorsType { Distinct = 0, Original = 1 };
   Q_ENUM(ParticleColorsType);
 
-  static vtkSmartPointer<vtkLookupTable> construct(ParticleColorsType type, int num);
+  static vtkSmartPointer<vtkLookupTable> construct_distinct();
 };
 
 }  // namespace shapeworks
