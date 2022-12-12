@@ -442,7 +442,7 @@ bool AnalysisTool::compute_stats() {
       auto local_particles_ar = shape->get_particles().get_local_particles();
       unsigned int sz = local_particles_ar.size();
       if (local_particles_ar.size() != dps) {
-        std::cerr << "Inconsistency in number of particles size";
+        SW_ERROR("Inconsistency in number of particles size");
       }
       for (unsigned int i = 0; i < dps; i++) {
         number_of_particles_ar[i] = local_particles_ar[i].size() / 3;
