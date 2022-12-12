@@ -312,7 +312,7 @@ TEST(OptimizeTests, cutting_plane_test) {
   stats.ComputeModes();
   stats.PrincipalComponentProjections();
 
-  bool good = check_constraint_violations(app, 1.5e-1);
+  bool good = check_constraint_violations(app, 3.5e-1);
 
   auto end = shapeworks::ShapeworksUtils::now();
   std::cout << "Time taken to run cutting_plane optimize test: "
