@@ -142,11 +142,6 @@ class AnalysisTool : public QWidget {
 
   void on_reconstructionButton_clicked();
 
-  // MCA
-  void mca_vanilla_pca_radio_toggled();
-  void mca_between_radio_toggled();
-  void mca_within_radio_toggled();
-
   //! Set the currently selected feature map
   void set_feature_map(const std::string& feature_map);
 
@@ -201,8 +196,6 @@ class AnalysisTool : public QWidget {
   bool active_ = false;
 
   void pca_labels_changed(QString value, QString eigen, QString lambda);
-  void compute_mca_mode_shape();
-  void compute_mode_shape();
   void update_analysis_mode();
   void update_interface();
 

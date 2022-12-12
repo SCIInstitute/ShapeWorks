@@ -67,9 +67,9 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
   connect(&pca_animate_timer_, SIGNAL(timeout()), this, SLOT(handle_pca_timer()));
 
   // MCA animation
-  connect(ui_->mcaLevelBetweenButton, &QPushButton::clicked, this, &AnalysisTool::mca_between_radio_toggled);
-  connect(ui_->mcaLevelWithinButton, &QPushButton::clicked, this, &AnalysisTool::mca_within_radio_toggled);
-  connect(ui_->vanillaPCAButton, &QPushButton::clicked, this, &AnalysisTool::mca_vanilla_pca_radio_toggled);
+  connect(ui_->mcaLevelBetweenButton, &QPushButton::clicked, this, &AnalysisTool::mca_update);
+  connect(ui_->mcaLevelWithinButton, &QPushButton::clicked, this, &AnalysisTool::mca_update);
+  connect(ui_->vanillaPCAButton, &QPushButton::clicked, this, &AnalysisTool::mca_update);
 
   // group animation
   connect(ui_->group_animate_checkbox, &QCheckBox::stateChanged, this,
@@ -154,14 +154,6 @@ std::vector<Shape::Point> AnalysisTool::get_group_difference_vectors() {
   }
   return vecs;
 }
-//---------------------------------------------------------------------------
-void AnalysisTool::mca_vanilla_pca_radio_toggled() { Q_EMIT mca_update(); }
-
-//---------------------------------------------------------------------------
-void AnalysisTool::mca_between_radio_toggled() { Q_EMIT mca_update(); }
-
-//---------------------------------------------------------------------------
-void AnalysisTool::mca_within_radio_toggled() { Q_EMIT mca_update(); }
 
 //---------------------------------------------------------------------------
 void AnalysisTool::handle_reconstruction_complete() {
@@ -259,12 +251,6 @@ void AnalysisTool::update_interface() {
 bool AnalysisTool::group_pvalues_valid() {
   return group_pvalue_job_ && group_pvalue_job_->get_group_pvalues().rows() > 0;
 }
-
-//---------------------------------------------------------------------------
-void AnalysisTool::compute_mode_shape() {}
-
-//---------------------------------------------------------------------------
-void AnalysisTool::compute_mca_mode_shape() {}
 
 //---------------------------------------------------------------------------
 void AnalysisTool::handle_analysis_options() {
