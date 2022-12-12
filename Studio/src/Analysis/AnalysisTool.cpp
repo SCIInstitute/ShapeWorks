@@ -855,17 +855,18 @@ void AnalysisTool::handle_group_animate_state_changed() {
 }
 
 //---------------------------------------------------------------------------
-int AnalysisTool::get_mca_level() {
+AnalysisTool::McaMode AnalysisTool::get_mca_level() {
   bool vanilla_pca = ui_->vanillaPCAButton->isChecked();
   bool between = ui_->mcaLevelBetweenButton->isChecked();
   bool within = ui_->mcaLevelWithinButton->isChecked();
   if (vanilla_pca) {
-    return 1;
+    return McaMode::Vanilla;
   } else if (within) {
-    return 2;
+    return McaMode::Within;
   } else if (between) {
-    return 3;
+    return McaMode::Between;
   }
+  return McaMode::Vanilla;
 }
 
 //---------------------------------------------------------------------------

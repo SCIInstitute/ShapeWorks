@@ -1775,8 +1775,8 @@ void ShapeWorksStudioApp::compute_mode_shape() {
 void ShapeWorksStudioApp::compute_mca_mode_shape() {
   int pca_mode = analysis_tool_->get_pca_mode();
   double pca_value = analysis_tool_->get_pca_value();
-  int mca_level = analysis_tool_->get_mca_level();
-  if (mca_level == 1) {
+  auto mca_level = analysis_tool_->get_mca_level();
+  if (mca_level == AnalysisTool::McaMode::Vanilla) {
     visualizer_->display_shape(analysis_tool_->get_mode_shape(pca_mode, pca_value));
   } else {
     visualizer_->display_shape(analysis_tool_->get_mca_mode_shape(pca_mode, pca_value, mca_level));

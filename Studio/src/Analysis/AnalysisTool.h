@@ -36,6 +36,12 @@ class AnalysisTool : public QWidget {
     Local = -1,
   };
 
+  enum McaMode {
+    Vanilla,
+    Within,
+    Between
+  };
+
   using PointType = itk::Point<double, 3>;
 
   AnalysisTool(Preferences& prefs);
@@ -72,7 +78,7 @@ class AnalysisTool : public QWidget {
   double get_pca_value();
 
   bool pca_animate();
-  int get_mca_level();
+  McaMode get_mca_level();
 
   int get_sample_number();
 
