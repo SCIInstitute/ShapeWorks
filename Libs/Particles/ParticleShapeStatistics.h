@@ -49,7 +49,7 @@ class ParticleShapeStatistics {
   int ComputeRelPoseModesForMca();
 
   //! Set number of particles per domain/object (required for multi-level analysis)
-  void SetNumberOfParticlesArray(std::vector<int> num_particles_array);
+  void SetNumberOfParticlesArray(const std::vector<int>& num_particles_array);
 
   //! Loads a set of point files and pre-computes some statistics.
   int ReadPointFiles(const std::string& s);
@@ -65,7 +65,7 @@ class ParticleShapeStatistics {
   int ComputeModes();
 
   //! Return the number of modes
-  int get_num_modes();
+  int get_num_modes() const;
 
   //! Computes the principal component loadings, or projections onto the
   //!  principal componenent axes for each of the samples.  ComputeModes must be called first.
@@ -143,17 +143,16 @@ class ParticleShapeStatistics {
   //! Returns 0 on success and -1 on fail.*/
   int SimpleLinearRegression(const std::vector<double>& y, const std::vector<double>& x, double& a, double& b) const;
 
-  Eigen::VectorXd get_compactness(std::function<void(float)> progress_callback = nullptr);
-  Eigen::VectorXd get_specificity(std::function<void(float)> progress_callback = nullptr);
-  Eigen::VectorXd get_generalization(std::function<void(float)> progress_callback = nullptr);
+  Eigen::VectorXd get_compactness(const std::function<void(float)>& progress_callback = nullptr) const;
+  Eigen::VectorXd get_specificity(const std::function<void(float)>& progress_callback = nullptr) const;
+  Eigen::VectorXd get_generalization(const std::function<void(float)>& progress_callback = nullptr) const;
 
-  Eigen::MatrixXd get_group1_matrix();
-  Eigen::MatrixXd get_group2_matrix();
+  Eigen::MatrixXd get_group1_matrix() const;
+  Eigen::MatrixXd get_group2_matrix() const;
 
   Eigen::MatrixXd& matrix() { return m_Matrix; };
 
  private:
-  void compute_good_bad_points();
 
   unsigned int m_numSamples1;
   unsigned int m_numSamples2;

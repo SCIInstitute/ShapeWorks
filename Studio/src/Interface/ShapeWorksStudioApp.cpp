@@ -605,9 +605,10 @@ void ShapeWorksStudioApp::handle_pca_changed() {
 void ShapeWorksStudioApp::handle_slider_update() { analysis_tool_->update_slider(); }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::handle_mca_changed()
-{
-  if (!session_->particles_present()) { return; }
+void ShapeWorksStudioApp::handle_mca_changed() {
+  if (!session_->particles_present()) {
+    return;
+  }
   session_->handle_clear_cache();
   visualizer_->update_lut();
   compute_mca_mode_shape();
@@ -621,8 +622,7 @@ void ShapeWorksStudioApp::handle_pca_update() {
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::handle_mca_update()
-{
+void ShapeWorksStudioApp::handle_mca_update() {
   if (analysis_tool_->get_active() && analysis_tool_->get_analysis_mode() == AnalysisTool::MODE_MCA_C) {
     compute_mca_mode_shape();
   }
@@ -885,18 +885,12 @@ void ShapeWorksStudioApp::handle_compare_settings_changed() {
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_lightbox_right_click(int index) {
-
-  QMenu *menu = new QMenu(nullptr);
+  QMenu* menu = new QMenu(nullptr);
   menu->setAttribute(Qt::WA_DeleteOnClose);
   menu->addAction("Export Mesh");
   menu->popup(QCursor::pos());
 
-
-  connect(menu, &QMenu::triggered, menu, [=](QAction *action) {
-    action_export_current_mesh_triggered(index);
-  });
-
-
+  connect(menu, &QMenu::triggered, menu, [=](QAction* action) { action_export_current_mesh_triggered(index); });
 }
 
 //---------------------------------------------------------------------------
@@ -1778,18 +1772,15 @@ void ShapeWorksStudioApp::compute_mode_shape() {
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::compute_mca_mode_shape()
-{
+void ShapeWorksStudioApp::compute_mca_mode_shape() {
   int pca_mode = analysis_tool_->get_pca_mode();
   double pca_value = analysis_tool_->get_pca_value();
   int mca_level = analysis_tool_->get_mca_level();
   if (mca_level == 1) {
-     visualizer_->display_shape(analysis_tool_->get_mode_shape(pca_mode, pca_value));
-  }
-  else {
+    visualizer_->display_shape(analysis_tool_->get_mode_shape(pca_mode, pca_value));
+  } else {
     visualizer_->display_shape(analysis_tool_->get_mca_mode_shape(pca_mode, pca_value, mca_level));
   }
-
 }
 
 //---------------------------------------------------------------------------
