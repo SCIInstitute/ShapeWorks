@@ -36,6 +36,12 @@ class AnalysisTool : public QWidget {
     Local = -1,
   };
 
+  enum McaMode {
+    Vanilla,
+    Within,
+    Between
+  };
+
   using PointType = itk::Point<double, 3>;
 
   AnalysisTool(Preferences& prefs);
@@ -72,6 +78,7 @@ class AnalysisTool : public QWidget {
   double get_pca_value();
 
   bool pca_animate();
+  McaMode get_mca_level() const;
 
   int get_sample_number();
 
@@ -86,7 +93,10 @@ class AnalysisTool : public QWidget {
   ShapeHandle get_mean_shape();
 
   Particles get_shape_points(int mode, double value);
+  Particles get_multi_level_shape_points(int mode, double value, McaMode level);
   ShapeHandle get_mode_shape(int mode, double value);
+  ShapeHandle get_mca_mode_shape(int mode, double value, McaMode level);
+  ShapeHandle get_current_shape();
 
   ParticleShapeStatistics get_stats();
   void load_settings();
@@ -127,7 +137,6 @@ class AnalysisTool : public QWidget {
 
   void handle_group_animate_state_changed();
   void handle_group_timer();
-
 
   void handle_reconstruction_complete();
 
@@ -186,7 +195,6 @@ class AnalysisTool : public QWidget {
   bool active_ = false;
 
   void pca_labels_changed(QString value, QString eigen, QString lambda);
-  void compute_mode_shape();
   void update_analysis_mode();
   void update_interface();
 
@@ -224,6 +232,8 @@ class AnalysisTool : public QWidget {
 
   vnl_vector<double> empty_shape_;
   Eigen::VectorXd temp_shape_;
+  Eigen::VectorXd temp_shape_mca;
+  std::vector<int> number_of_particles_ar;
 
   bool pca_animate_direction_ = true;
   QTimer pca_animate_timer_;
