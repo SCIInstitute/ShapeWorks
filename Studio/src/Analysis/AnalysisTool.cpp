@@ -1,9 +1,4 @@
-// std
-#include <fstream>
-#include <iostream>
-
 // qt
-#include <QFileDialog>
 #include <QMessageBox>
 #include <QThread>
 
@@ -20,7 +15,6 @@
 #include <QMeshWarper.h>
 #include <Shape.h>
 #include <StudioMesh.h>
-#include <Visualization/Lightbox.h>
 #include <jkqtplotter/graphs/jkqtpscatter.h>
 #include <jkqtplotter/jkqtplotter.h>
 #include <ui_AnalysisTool.h>
@@ -585,14 +579,14 @@ Particles AnalysisTool::get_shape_points(int mode, double value) {
 }
 
 //---------------------------------------------------------------------------
-Particles AnalysisTool::get_multi_level_shape_points(int mode, double value, int level) {
+Particles AnalysisTool::get_multi_level_shape_points(int mode, double value, McaMode level) {
   // Get Shape Points for Multi-Level Analysis
   Eigen::MatrixXd eigenvectors;
   std::vector<double> eigenvalues;
-  if (level == 2) {
+  if (level == McaMode::Within) {
     eigenvectors = stats_.EigenvectorsShapeDev();
     eigenvalues = stats_.EigenvaluesShapeDev();
-  } else if (level == 3) {
+  } else if (level == McaMode::Between) {
     eigenvectors = stats_.EigenvectorsRelPose();
     eigenvalues = stats_.EigenvaluesRelPose();
   }
@@ -625,10 +619,10 @@ Particles AnalysisTool::get_multi_level_shape_points(int mode, double value, int
 
   unsigned int D = stats_.NumberOfObjects();
   unsigned int sz = stats_.Mean().size();
-  if (level == 2) {
+  if (level == McaMode::Within) {
     // Morphological Variations
     temp_shape_mca = stats_.Mean() + (e * (value * lambda));
-  } else if (level == 3) {
+  } else if (level == McaMode::Between) {
     // Relative Pose Variations
     Eigen::VectorXd e_between;
     e_between.resize(sz);
@@ -654,7 +648,7 @@ ShapeHandle AnalysisTool::get_mode_shape(int mode, double value) {
   return create_shape_from_points(get_shape_points(mode, value));
 }
 //---------------------------------------------------------------------------
-ShapeHandle AnalysisTool::get_mca_mode_shape(int mode, double value, int level) {
+ShapeHandle AnalysisTool::get_mca_mode_shape(int mode, double value, McaMode level) {
   return create_shape_from_points(get_multi_level_shape_points(mode, value, level));
 }
 
