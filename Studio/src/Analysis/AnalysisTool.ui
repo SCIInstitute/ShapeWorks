@@ -29,10 +29,6 @@ QWidget#pcaTab{
 	background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:0.960227, stop:0 rgba(221, 221, 221, 255), stop:0.155779 rgba(228, 228, 228, 255), stop:1 rgba(202, 204, 204, 255));      
 }
 
-QWidget#mcaTab{
-	background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:0.960227, stop:0 rgba(221, 221, 221, 255), stop:0.155779 rgba(228, 228, 228, 255), stop:1 rgba(202, 204, 204, 255));      
-}
-
 QWidget#regressionTab{
 	background-color: qlineargradient(spread:pad, x1:0.5, y1:0, x2:0.5, y2:0.960227, stop:0 rgba(221, 221, 221, 255), stop:0.155779 rgba(228, 228, 228, 255), stop:1 rgba(202, 204, 204, 255));      
 }
@@ -184,10 +180,6 @@ QWidget#pcaWidget{
 	border: 2px solid rgb(80, 80,80);
 }
 
-QWidget#mcaWidget{
-	border-radius: 3px;
-	border: 2px solid rgb(80, 80,80);
-}
 
 QWidget#sampleWidget{
 	border-radius: 3px;
@@ -543,7 +535,7 @@ QWidget#particles_panel {
             <item row="3" column="0" colspan="2">
              <widget class="QTabWidget" name="tabWidget">
               <property name="currentIndex">
-               <number>0</number>
+               <number>2</number>
               </property>
               <widget class="QWidget" name="mean_tab">
                <attribute name="title">
@@ -987,57 +979,6 @@ QWidget#particles_panel {
                    </property>
                    <item>
                     <layout class="QGridLayout" name="pcaGridLayout">
-                     <item row="0" column="1">
-                      <widget class="QSlider" name="pcaSlider">
-                       <property name="enabled">
-                        <bool>false</bool>
-                       </property>
-                       <property name="minimumSize">
-                        <size>
-                         <width>100</width>
-                         <height>0</height>
-                        </size>
-                       </property>
-                       <property name="toolTip">
-                        <string>Standard deviation slider</string>
-                       </property>
-                       <property name="minimum">
-                        <number>-20</number>
-                       </property>
-                       <property name="maximum">
-                        <number>20</number>
-                       </property>
-                       <property name="orientation">
-                        <enum>Qt::Horizontal</enum>
-                       </property>
-                       <property name="tickPosition">
-                        <enum>QSlider::TicksBelow</enum>
-                       </property>
-                       <property name="tickInterval">
-                        <number>10</number>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="0" column="0">
-                      <widget class="QLabel" name="label_10">
-                       <property name="text">
-                        <string>Std.Dev.</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item row="0" column="2">
-                      <widget class="QLabel" name="pcaValueLabel">
-                       <property name="minimumSize">
-                        <size>
-                         <width>35</width>
-                         <height>0</height>
-                        </size>
-                       </property>
-                       <property name="text">
-                        <string/>
-                       </property>
-                      </widget>
-                     </item>
                      <item row="1" column="1">
                       <widget class="QWidget" name="widget_23" native="true">
                        <property name="sizePolicy">
@@ -1110,90 +1051,140 @@ QWidget#particles_panel {
                        </layout>
                       </widget>
                      </item>
+                     <item row="0" column="0">
+                      <widget class="QLabel" name="label_10">
+                       <property name="text">
+                        <string>Std.Dev.</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="0" column="1">
+                      <widget class="QSlider" name="pcaSlider">
+                       <property name="enabled">
+                        <bool>false</bool>
+                       </property>
+                       <property name="minimumSize">
+                        <size>
+                         <width>100</width>
+                         <height>0</height>
+                        </size>
+                       </property>
+                       <property name="toolTip">
+                        <string>Standard deviation slider</string>
+                       </property>
+                       <property name="minimum">
+                        <number>-20</number>
+                       </property>
+                       <property name="maximum">
+                        <number>20</number>
+                       </property>
+                       <property name="orientation">
+                        <enum>Qt::Horizontal</enum>
+                       </property>
+                       <property name="tickPosition">
+                        <enum>QSlider::TicksBelow</enum>
+                       </property>
+                       <property name="tickInterval">
+                        <number>10</number>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="0" column="2">
+                      <widget class="QLabel" name="pcaValueLabel">
+                       <property name="minimumSize">
+                        <size>
+                         <width>35</width>
+                         <height>0</height>
+                        </size>
+                       </property>
+                       <property name="text">
+                        <string/>
+                       </property>
+                      </widget>
+                     </item>
                     </layout>
+                   </item>
+                   <item>
+                    <widget class="QGroupBox" name="mca_groupBox">
+                     <property name="title">
+                      <string>Mode of Variation </string>
+                     </property>
+                     <layout class="QVBoxLayout" name="verticalLayout_mca_box">
+                      <property name="spacing">
+                       <number>6</number>
+                      </property>
+                      <property name="leftMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="topMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="rightMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="bottomMargin">
+                       <number>0</number>
+                      </property>
+                      <item>
+                       <widget class="QRadioButton" name="mcaLevelWithinButton">
+                        <property name="sizePolicy">
+                         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                         </sizepolicy>
+                        </property>
+                        <property name="toolTip">
+                         <string>Multi-Level Component Analysis - Modes of variation highlighting only morphological changes in shape subspace.</string>
+                        </property>
+                        <property name="text">
+                         <string>Shape Only</string>
+                        </property>
+                        <property name="checkable">
+                         <bool>true</bool>
+                        </property>
+                        <property name="checked">
+                         <bool>false</bool>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QRadioButton" name="mcaLevelBetweenButton">
+                        <property name="toolTip">
+                         <string>Multi-Level Component Analysis - Modes of Variation highlighting only alignment changes for the multi-object structure in relative pose subspace.</string>
+                        </property>
+                        <property name="text">
+                         <string>Relative Pose Only</string>
+                        </property>
+                        <property name="checkable">
+                         <bool>true</bool>
+                        </property>
+                        <property name="checked">
+                         <bool>false</bool>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QRadioButton" name="vanillaPCAButton">
+                        <property name="toolTip">
+                         <string>PCA done on the entire shape structure - Modes of Variation in the shared shape space of pose and morphology.</string>
+                        </property>
+                        <property name="text">
+                         <string>Both</string>
+                        </property>
+                        <property name="checked">
+                         <bool>true</bool>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </widget>
                    </item>
                    <item>
                     <layout class="QGridLayout" name="gridLayout_3">
                      <property name="verticalSpacing">
                       <number>6</number>
                      </property>
-                    <item row="0" column="0">
-                        <widget class="QGroupBox" name="mca_groupBox">
-                            <property name="title">
-                                <string>Mode of Variation </string>
-                            </property>
-                        <property name="minimumSize">
-                            <size>
-                                <width>500</width>
-                                <height>50</height>
-                            </size>
-                       </property>
-                            <layout class="QVBoxLayout" name="verticalLayout_mca_box">
-                                <property name="spacing">
-                                    <number>0</number>
-                                </property>
-                                <property name="leftMargin">
-                                    <number>0</number>
-                                </property>
-                                <property name="topMargin">
-                                    <number>0</number>
-                                </property>
-                                <property name="rightMargin">
-                                    <number>0</number>
-                                </property>
-                                <property name="bottomMargin">
-                                    <number>0</number>
-                                </property>
-
-                                <item>
-                                    <widget class="QRadioButton" name="mcaLevelWithinButton">
-                                                                    <property name="text">
-                                                                    <string>Shape</string>
-                                                                    </property>
-                                                                    <property name="toolTip">
-                                                                        <string>Multi-Level Component Analysis - Modes of variation highlighting only morphological changes in shape subspace.</string>
-                                                                    </property>
-                                                                    <property name="checkable">
-                                                                    <bool>true</bool>
-                                                                    </property>
-                                                                    <property name="checked">
-                                                                    <bool>false</bool>
-                                                                    </property>
-                                    </widget>
-                                </item>
-                                <item>
-                                    <widget class="QRadioButton" name="mcaLevelBetweenButton">
-                                                                    <property name="text">
-                                                                    <string>Relative Pose</string>
-                                                                    </property>
-                                                                    <property name="toolTip">
-                                                                        <string>Multi-Level Component Analysis - Modes of Variation highlighting only alignment changes for the multi-object structure in relative pose subspace.</string>
-                                                                    </property>
-                                                                    <property name="checkable">
-                                                                    <bool>true</bool>
-                                                                    </property>
-                                                                    <property name="checked">
-                                                                    <bool>false</bool>
-                                                                    </property>
-                                    </widget>
-                                </item>
-                                <item>
-                                    <widget class="QRadioButton" name="vanillaPCAButton">
-                                                                    <property name="text">
-                                                                    <string>Both</string>
-                                                                    </property>
-                                                                    <property name="toolTip">
-                                                                        <string>PCA done on the entire shape structure - Modes of Variation in the shared shape space of pose and morphology.</string>
-                                                                    </property>
-                                                                    <property name="checked">
-                                                                    <bool>true</bool>
-                                                                    </property>
-                                    </widget>
-                                </item>
-                            </layout>
-                        </widget>
-                    </item>
-                     <item row="3" column="0">
+                     <item row="2" column="0">
                       <widget class="QLabel" name="label_8">
                        <property name="minimumSize">
                         <size>
@@ -1206,7 +1197,7 @@ QWidget#particles_panel {
                        </property>
                       </widget>
                      </item>
-                     <item row="2" column="1">
+                     <item row="1" column="1">
                       <widget class="QSpinBox" name="pcaModeSpinBox">
                        <property name="enabled">
                         <bool>false</bool>
@@ -1222,14 +1213,14 @@ QWidget#particles_panel {
                        </property>
                       </widget>
                      </item>
-                     <item row="1" column="1">
+                     <item row="0" column="1">
                       <widget class="QLabel" name="pcaLambdaLabel">
                        <property name="text">
                         <string/>
                        </property>
                       </widget>
                      </item>
-                     <item row="2" column="0">
+                     <item row="1" column="0">
                       <widget class="QLabel" name="label_11">
                        <property name="minimumSize">
                         <size>
@@ -1242,7 +1233,7 @@ QWidget#particles_panel {
                        </property>
                       </widget>
                      </item>
-                     <item row="5" column="0">
+                     <item row="4" column="0">
                       <widget class="QLabel" name="label_13">
                        <property name="minimumSize">
                         <size>
@@ -1255,7 +1246,7 @@ QWidget#particles_panel {
                        </property>
                       </widget>
                      </item>
-                     <item row="1" column="0">
+                     <item row="0" column="0">
                       <widget class="QLabel" name="label_9">
                        <property name="minimumSize">
                         <size>
@@ -1268,7 +1259,7 @@ QWidget#particles_panel {
                        </property>
                       </widget>
                      </item>
-                     <item row="4" column="0">
+                     <item row="3" column="0">
                       <widget class="QLabel" name="label_12">
                        <property name="minimumSize">
                         <size>
@@ -1281,21 +1272,21 @@ QWidget#particles_panel {
                        </property>
                       </widget>
                      </item>
-                     <item row="3" column="1">
+                     <item row="2" column="1">
                       <widget class="QLabel" name="pcaEigenValueLabel">
                        <property name="text">
                         <string/>
                        </property>
                       </widget>
                      </item>
-                     <item row="4" column="1">
+                     <item row="3" column="1">
                       <widget class="QLabel" name="explained_variance">
                        <property name="text">
                         <string/>
                        </property>
                       </widget>
                      </item>
-                     <item row="5" column="1">
+                     <item row="4" column="1">
                       <widget class="QLabel" name="cumulative_explained_variance">
                        <property name="text">
                         <string/>
