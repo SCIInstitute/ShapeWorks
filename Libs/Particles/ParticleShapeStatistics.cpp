@@ -203,9 +203,8 @@ void ParticleShapeStatistics::SetNumberOfParticlesArray(std::vector<int> num_par
 }
 
 //---------------------------------------------------------------------------
-int ParticleShapeStatistics::ComputeMultiLevelAnalysisStatistics(std::vector<Eigen::VectorXd> points,
+void ParticleShapeStatistics::ComputeMultiLevelAnalysisStatistics(std::vector<Eigen::VectorXd> points,
                                                                  unsigned int dps) {
-  unsigned int num_points = (int)(points[0].size() / (3 * dps));  // M_total
   m_dps = dps;
   m_N = points.size();                // Number of Subjects
   unsigned int n = m_N * VDimension;  // for super matrix
