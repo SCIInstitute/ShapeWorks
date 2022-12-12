@@ -51,7 +51,7 @@ public:
   //! Compute pose variations for MLCA
   int ComputeRelPoseModesForMca();
   //! Set number of particles per domain/object (required for multi-level analysis) 
-  void SetNumberOfParticlesAr(std::vector<int> num_particles_ar); 
+  void SetNumberOfParticlesArray(std::vector<int> num_particles_array);
   //! Loads a set of point files and pre-computes some statistics.
   int ReadPointFiles(const std::string &s);
 
@@ -85,7 +85,7 @@ public:
   //! Return Number of objects present in Multi-Object Shape Structure
   int NumberOfObjects() { return m_dps; }
   // !Returns Number of Particles Array
-  std::vector<int> NumberOfPointsArray() { return m_num_particles_ar; }
+  std::vector<int> NumberOfPointsArray() { return m_num_particles_array; }
 
   //! Returns the group ids
   int GroupID(unsigned int i) const { return m_groupIDs[i]; }
@@ -188,7 +188,7 @@ private:
   // Variables for MLCA
   unsigned int m_dps; // Number of objects in the multi-object shape structure
   unsigned int m_N; // Number of Subjects
-  std::vector<int> m_num_particles_ar; // Number of Particles for each object in the multi-object shape structure
+  std::vector<int> m_num_particles_array; // Number of Particles for each object in the multi-object shape structure
   Eigen::MatrixXd m_Eigenvectors_rel_pose; // Eigenvectors defined for relative pose subspace
   Eigen::MatrixXd m_Eigenvectors_shape_dev; // Eigenvectors defined for morphological subspace
   std::vector<double> m_Eigenvalues_rel_pose; // Eigenvalues defined in relative pose subspace

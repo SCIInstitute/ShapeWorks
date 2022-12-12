@@ -489,7 +489,7 @@ bool AnalysisTool::compute_stats() {
 
   stats_.ImportPoints(points, group_ids);
   // MCA needs to know number of particles per domain/object
-  stats_.SetNumberOfParticlesAr(number_of_particles_ar);
+  stats_.SetNumberOfParticlesArray(number_of_particles_ar);
   if(dps > 1){ stats_.ComputeMultiLevelAnalysisStatistics(points, dps); }
   stats_.ComputeModes();
   if(dps > 1){

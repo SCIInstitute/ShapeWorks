@@ -209,9 +209,9 @@ int ParticleShapeStatistics::ImportPoints(std::vector<Eigen::VectorXd> points, s
 }
 
 //---------------------------------------------------------------------------
-void ParticleShapeStatistics::SetNumberOfParticlesAr(std::vector<int> num_particles_ar)
+void ParticleShapeStatistics::SetNumberOfParticlesArray(std::vector<int> num_particles_array)
 {
-  this->m_num_particles_ar = num_particles_ar;
+  this->m_num_particles_array = num_particles_array;
 }
 
 //---------------------------------------------------------------------------
@@ -222,7 +222,7 @@ int ParticleShapeStatistics::ComputeMultiLevelAnalysisStatistics(std::vector<Eig
   m_N = points.size(); // Number of Subjects
   unsigned int n = m_N * VDimension; // for super matrix
   unsigned int m = 0;
-  for(unsigned int idx = 0; idx < dps; idx++) { m += (this->m_num_particles_ar[idx]); }
+  for(unsigned int idx = 0; idx < dps; idx++) { m += (this->m_num_particles_array[idx]); }
   m_super_matrix.resize(m, n);
   for(unsigned int i = 0; i < points.size(); i++){
     unsigned int p = m_super_matrix.rows();
@@ -245,8 +245,8 @@ int ParticleShapeStatistics::ComputeMultiLevelAnalysisStatistics(std::vector<Eig
   z_rel_pose_centred.fill(0.0);
   for(unsigned int k = 0; k < m_dps; k++){
     unsigned int row = 0;
-    for(unsigned int idx = 0; idx < k; idx++){ row += this->m_num_particles_ar[idx]; }
-    Eigen::MatrixXd z_k = m_super_matrix.block(row, 0, this->m_num_particles_ar[k], n);
+    for(unsigned int idx = 0; idx < k; idx++){ row += this->m_num_particles_array[idx]; }
+    Eigen::MatrixXd z_k = m_super_matrix.block(row, 0, this->m_num_particles_array[k], n);
     Eigen::RowVectorXd mean_k;
     mean_k.resize(n);
     mean_k.fill(0.0);
@@ -256,7 +256,7 @@ int ParticleShapeStatistics::ComputeMultiLevelAnalysisStatistics(std::vector<Eig
     }
 
     Eigen::MatrixXd z_shape_dev_centred_k;
-    z_shape_dev_centred_k.resize(this->m_num_particles_ar[k], n);
+    z_shape_dev_centred_k.resize(this->m_num_particles_array[k], n);
     z_shape_dev_centred_k.fill(0.0);
     Eigen::RowVectorXd diff_vec;
     diff_vec = (mean_k);
@@ -266,7 +266,7 @@ int ParticleShapeStatistics::ComputeMultiLevelAnalysisStatistics(std::vector<Eig
   }
   Eigen::MatrixXd z_shape_dev_objective;
   unsigned int M = 0;
-  for(unsigned int idx = 0; idx < dps; idx++) { M += (this->m_num_particles_ar[idx] * VDimension); }
+  for(unsigned int idx = 0; idx < dps; idx++) { M += (this->m_num_particles_array[idx] * VDimension); }
   z_shape_dev_objective.resize(M, m_N);
   for(unsigned int i = 0; i < m_N; i++){
     unsigned int p = m;
