@@ -66,10 +66,10 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
   connect(ui_->pcaAnimateCheckBox, SIGNAL(stateChanged(int)), this, SLOT(handle_pca_animate_state_changed()));
   connect(&pca_animate_timer_, SIGNAL(timeout()), this, SLOT(handle_pca_timer()));
 
-  //MCA animation  
-  connect(ui_->mcaLevelBetweenButton, SIGNAL(clicked()), this, SLOT(mca_between_radio_toggled()));
-  connect(ui_->mcaLevelWithinButton, SIGNAL(clicked()), this, SLOT(mca_within_radio_toggled()));
-  connect(ui_->vanillaPCAButton, SIGNAL(clicked()), this, SLOT(mca_vanilla_pca_radio_toggled()));
+  // MCA animation
+  connect(ui_->mcaLevelBetweenButton, &QPushButton::clicked, this, &AnalysisTool::mca_between_radio_toggled);
+  connect(ui_->mcaLevelWithinButton, &QPushButton::clicked, this, &AnalysisTool::mca_within_radio_toggled);
+  connect(ui_->vanillaPCAButton, &QPushButton::clicked, this, &AnalysisTool::mca_vanilla_pca_radio_toggled);
 
   // group animation
   connect(ui_->group_animate_checkbox, &QCheckBox::stateChanged, this,
@@ -164,7 +164,6 @@ void AnalysisTool::mca_vanilla_pca_radio_toggled()
 void AnalysisTool::mca_between_radio_toggled()
 { 
   Q_EMIT mca_update();
-  // Q_EMIT update_view();
 }
 
 //---------------------------------------------------------------------------

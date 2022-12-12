@@ -48,10 +48,13 @@ public:
 
   //! Compute shape variations for MLCA
   int ComputeShapeDevModesForMca();
+
   //! Compute pose variations for MLCA
   int ComputeRelPoseModesForMca();
+
   //! Set number of particles per domain/object (required for multi-level analysis) 
   void SetNumberOfParticlesArray(std::vector<int> num_particles_array);
+
   //! Loads a set of point files and pre-computes some statistics.
   int ReadPointFiles(const std::string &s);
 

@@ -237,12 +237,12 @@ int ParticleShapeStatistics::ComputeMultiLevelAnalysisStatistics(std::vector<Eig
   grand_mean.resize(n);
   grand_mean.fill(0.0);
   grand_mean = m_super_matrix.colwise().mean();
-  Eigen::MatrixXd z_shape_dev_centred;
-  Eigen::MatrixXd z_rel_pose_centred;
-  z_shape_dev_centred.resize(m, n);
-  z_rel_pose_centred.resize(m_dps, n);
-  z_shape_dev_centred.fill(0.0);
-  z_rel_pose_centred.fill(0.0);
+  Eigen::MatrixXd z_shape_dev_centered;
+  Eigen::MatrixXd z_rel_pose_centered;
+  z_shape_dev_centered.resize(m, n);
+  z_rel_pose_centered.resize(m_dps, n);
+  z_shape_dev_centered.fill(0.0);
+  z_rel_pose_centered.fill(0.0);
   for(unsigned int k = 0; k < m_dps; k++){
     unsigned int row = 0;
     for(unsigned int idx = 0; idx < k; idx++){ row += this->m_num_particles_array[idx]; }
@@ -252,16 +252,16 @@ int ParticleShapeStatistics::ComputeMultiLevelAnalysisStatistics(std::vector<Eig
     mean_k.fill(0.0);
     mean_k = z_k.colwise().mean();
     for(unsigned int x = 0; x < n; x++){
-      z_rel_pose_centred(k, x) = mean_k(x) - grand_mean(x);
+      z_rel_pose_centered(k, x) = mean_k(x) - grand_mean(x);
     }
 
-    Eigen::MatrixXd z_shape_dev_centred_k;
-    z_shape_dev_centred_k.resize(this->m_num_particles_array[k], n);
-    z_shape_dev_centred_k.fill(0.0);
+    Eigen::MatrixXd z_shape_dev_centered_k;
+    z_shape_dev_centered_k.resize(this->m_num_particles_array[k], n);
+    z_shape_dev_centered_k.fill(0.0);
     Eigen::RowVectorXd diff_vec;
     diff_vec = (mean_k);
-    z_shape_dev_centred_k = z_k.rowwise() - diff_vec;
-    z_shape_dev_centred.block(row, 0, z_shape_dev_centred_k.rows(), z_shape_dev_centred_k.cols()) = z_shape_dev_centred_k;
+    z_shape_dev_centered_k = z_k.rowwise() - diff_vec;
+    z_shape_dev_centered.block(row, 0, z_shape_dev_centered_k.rows(), z_shape_dev_centered_k.cols()) = z_shape_dev_centered_k;
 
   }
   Eigen::MatrixXd z_shape_dev_objective;
@@ -271,9 +271,9 @@ int ParticleShapeStatistics::ComputeMultiLevelAnalysisStatistics(std::vector<Eig
   for(unsigned int i = 0; i < m_N; i++){
     unsigned int p = m;
     for(unsigned int j = 0; j < p; j++){
-      z_shape_dev_objective(j * VDimension, i) = z_shape_dev_centred(j, i * VDimension);
-      z_shape_dev_objective(j * VDimension + 1, i) = z_shape_dev_centred(j, i * VDimension + 1);
-      z_shape_dev_objective(j * VDimension + 2, i) = z_shape_dev_centred(j, i * VDimension + 2);
+      z_shape_dev_objective(j * VDimension, i) = z_shape_dev_centered(j, i * VDimension);
+      z_shape_dev_objective(j * VDimension + 1, i) = z_shape_dev_centered(j, i * VDimension + 1);
+      z_shape_dev_objective(j * VDimension + 2, i) = z_shape_dev_centered(j, i * VDimension + 2);
     }
   }
   m_pointsMinusMean_for_shape_dev.resize(M, m_N);
@@ -285,9 +285,9 @@ int ParticleShapeStatistics::ComputeMultiLevelAnalysisStatistics(std::vector<Eig
   z_rel_pose_objective.resize(m_dps * VDimension, m_N);
   for(unsigned int k = 0; k < m_dps; k++){
     for(unsigned int i = 0; i < m_N; i++){
-      z_rel_pose_objective(k * VDimension, i) = z_rel_pose_centred(k, i * VDimension);
-      z_rel_pose_objective(k * VDimension + 1, i) = z_rel_pose_centred(k, i * VDimension + 1);
-      z_rel_pose_objective(k * VDimension + 2, i) = z_rel_pose_centred(k, i * VDimension + 2);
+      z_rel_pose_objective(k * VDimension, i) = z_rel_pose_centered(k, i * VDimension);
+      z_rel_pose_objective(k * VDimension + 1, i) = z_rel_pose_centered(k, i * VDimension + 1);
+      z_rel_pose_objective(k * VDimension + 2, i) = z_rel_pose_centered(k, i * VDimension + 2);
     }
   }
   m_pointsMinusMean_for_rel_pose.resize(m_dps * VDimension, m_N);
