@@ -96,6 +96,7 @@ class AnalysisTool : public QWidget {
   Particles get_multi_level_shape_points(int mode, double value, McaMode level);
   ShapeHandle get_mode_shape(int mode, double value);
   ShapeHandle get_mca_mode_shape(int mode, double value, McaMode level);
+  ShapeHandle get_current_shape();
 
   ParticleShapeStatistics get_stats();
   void load_settings();
@@ -110,7 +111,6 @@ class AnalysisTool : public QWidget {
   static const std::string MODE_ALL_SAMPLES_C;
   static const std::string MODE_MEAN_C;
   static const std::string MODE_PCA_C;
-  static const std::string MODE_MCA_C;
   static const std::string MODE_SINGLE_SAMPLE_C;
   static const std::string MODE_REGRESSION_C;
 
@@ -184,7 +184,6 @@ class AnalysisTool : public QWidget {
 
   void update_view();
   void pca_update();
-  void mca_update();
   void progress(int);
   void reconstruction_complete();
 

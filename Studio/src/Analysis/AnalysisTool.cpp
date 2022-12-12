@@ -24,7 +24,6 @@ namespace shapeworks {
 const std::string AnalysisTool::MODE_ALL_SAMPLES_C("all samples");
 const std::string AnalysisTool::MODE_MEAN_C("mean");
 const std::string AnalysisTool::MODE_PCA_C("pca");
-const std::string AnalysisTool::MODE_MCA_C("mca");
 const std::string AnalysisTool::MODE_SINGLE_SAMPLE_C("single sample");
 const std::string AnalysisTool::MODE_REGRESSION_C("regression");
 
@@ -60,10 +59,10 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
   connect(ui_->pcaAnimateCheckBox, SIGNAL(stateChanged(int)), this, SLOT(handle_pca_animate_state_changed()));
   connect(&pca_animate_timer_, SIGNAL(timeout()), this, SLOT(handle_pca_timer()));
 
-  // MCA animation
-  connect(ui_->mcaLevelBetweenButton, &QPushButton::clicked, this, &AnalysisTool::mca_update);
-  connect(ui_->mcaLevelWithinButton, &QPushButton::clicked, this, &AnalysisTool::mca_update);
-  connect(ui_->vanillaPCAButton, &QPushButton::clicked, this, &AnalysisTool::mca_update);
+  // multi-level PCA settings
+  connect(ui_->mcaLevelBetweenButton, &QPushButton::clicked, this, &AnalysisTool::pca_update);
+  connect(ui_->mcaLevelWithinButton, &QPushButton::clicked, this, &AnalysisTool::pca_update);
+  connect(ui_->vanillaPCAButton, &QPushButton::clicked, this, &AnalysisTool::pca_update);
 
   // group animation
   connect(ui_->group_animate_checkbox, &QCheckBox::stateChanged, this,
@@ -117,13 +116,8 @@ std::string AnalysisTool::get_analysis_mode() {
   if (ui_->tabWidget->currentWidget() == ui_->mean_tab) {
     return AnalysisTool::MODE_MEAN_C;
   }
-  auto domain_names = session_->get_project()->get_domain_names();
-  bool multiple_domains = domain_names.size() > 1;
-  if (ui_->tabWidget->currentWidget() == ui_->pca_tab && !multiple_domains) {
+  if (ui_->tabWidget->currentWidget() == ui_->pca_tab) {
     return AnalysisTool::MODE_PCA_C;
-  }
-  if (ui_->tabWidget->currentWidget() == ui_->pca_tab && multiple_domains) {
-    return AnalysisTool::MODE_MCA_C;
   }
   if (ui_->tabWidget->currentWidget() == ui_->regression_tab) {
     return AnalysisTool::MODE_REGRESSION_C;
@@ -653,6 +647,18 @@ ShapeHandle AnalysisTool::get_mca_mode_shape(int mode, double value, McaMode lev
 }
 
 //---------------------------------------------------------------------------
+ShapeHandle AnalysisTool::get_current_shape() {
+  int pca_mode = get_pca_mode();
+  double pca_value = get_pca_value();
+  auto mca_level = get_mca_level();
+  if (mca_level == AnalysisTool::McaMode::Vanilla) {
+    return get_mode_shape(pca_mode, pca_value);
+  } else {
+    return get_mca_mode_shape(pca_mode, pca_value, mca_level);
+  }
+}
+
+//---------------------------------------------------------------------------
 ParticleShapeStatistics AnalysisTool::get_stats() {
   compute_stats();
   return stats_;
@@ -761,13 +767,7 @@ void AnalysisTool::on_tabWidget_currentChanged() { update_analysis_mode(); }
 void AnalysisTool::on_pcaSlider_valueChanged() {
   // this will make the slider handle redraw making the UI appear more responsive
   QCoreApplication::processEvents();
-  auto domain_names = session_->get_project()->get_domain_names();
-  bool multiple_domains = domain_names.size() > 1;
-  if (multiple_domains) {
-    Q_EMIT mca_update();
-  } else {
-    Q_EMIT pca_update();
-  }
+  Q_EMIT pca_update();
 }
 
 //---------------------------------------------------------------------------
@@ -785,13 +785,7 @@ void AnalysisTool::on_group_slider_valueChanged() {
 
 //---------------------------------------------------------------------------
 void AnalysisTool::on_pcaModeSpinBox_valueChanged(int i) {
-  auto domain_names = session_->get_project()->get_domain_names();
-  bool multiple_domains = domain_names.size() > 1;
-  if (multiple_domains) {
-    Q_EMIT mca_update();
-  } else {
-    Q_EMIT pca_update();
-  }
+  Q_EMIT pca_update();
 }
 
 //---------------------------------------------------------------------------

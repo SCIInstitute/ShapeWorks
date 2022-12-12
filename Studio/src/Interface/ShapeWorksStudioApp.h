@@ -118,7 +118,6 @@ class ShapeWorksStudioApp : public QMainWindow {
 
   void handle_color_scheme();
   void handle_pca_update();
-  void handle_mca_update();
   void clear_message();
 
   // callbacks from logger
@@ -191,8 +190,7 @@ class ShapeWorksStudioApp : public QMainWindow {
 
   void update_display(bool force = false);
 
-  void compute_mode_shape();
-  void compute_mca_mode_shape();
+  void display_mode_shape();
 
   bool set_feature_map(std::string feature_map);
   std::string get_feature_map();

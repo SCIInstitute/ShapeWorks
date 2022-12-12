@@ -110,11 +110,10 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
   analysis_tool_ = QSharedPointer<AnalysisTool>::create(preferences_);
   analysis_tool_->set_app(this);
   ui_->stacked_widget->addWidget(analysis_tool_.data());
-  connect(analysis_tool_.data(), SIGNAL(update_view()), this, SLOT(handle_display_setting_changed()));
-  connect(analysis_tool_.data(), SIGNAL(pca_update()), this, SLOT(handle_pca_update()));
-  connect(analysis_tool_.data(), SIGNAL(mca_update()), this, SLOT(handle_mca_update()));
+  connect(analysis_tool_.data(), &AnalysisTool::update_view, this, &ShapeWorksStudioApp::handle_display_setting_changed);
+  connect(analysis_tool_.data(), &AnalysisTool::pca_update, this, &ShapeWorksStudioApp::handle_pca_update);
   connect(analysis_tool_.data(), &AnalysisTool::progress, this, &ShapeWorksStudioApp::handle_progress);
-  connect(analysis_tool_.data(), SIGNAL(reconstruction_complete()), this, SLOT(handle_reconstruction_complete()));
+  connect(analysis_tool_.data(), &AnalysisTool::reconstruction_complete, this, &ShapeWorksStudioApp::handle_reconstruction_complete);
 
   // DeepSSM tool init
   deepssm_tool_ = QSharedPointer<DeepSSMTool>::create(preferences_);
@@ -598,7 +597,7 @@ void ShapeWorksStudioApp::handle_pca_changed() {
   }
   session_->handle_clear_cache();
   visualizer_->update_lut();
-  compute_mode_shape();
+  display_mode_shape();
 }
 
 //---------------------------------------------------------------------------
@@ -611,20 +610,13 @@ void ShapeWorksStudioApp::handle_mca_changed() {
   }
   session_->handle_clear_cache();
   visualizer_->update_lut();
-  compute_mca_mode_shape();
+  display_mode_shape();
 }
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_pca_update() {
   if (analysis_tool_->get_active() && analysis_tool_->get_analysis_mode() == AnalysisTool::MODE_PCA_C) {
-    compute_mode_shape();
-  }
-}
-
-//---------------------------------------------------------------------------
-void ShapeWorksStudioApp::handle_mca_update() {
-  if (analysis_tool_->get_active() && analysis_tool_->get_analysis_mode() == AnalysisTool::MODE_MCA_C) {
-    compute_mca_mode_shape();
+    display_mode_shape();
   }
 }
 
@@ -1355,11 +1347,7 @@ void ShapeWorksStudioApp::update_display(bool force) {
         visualizer_->display_shape(analysis_tool_->get_mean_shape());
       } else if (mode == AnalysisTool::MODE_PCA_C) {
         session_->set_display_mode(DisplayMode::Reconstructed);
-        compute_mode_shape();
-        visualizer_->reset_camera();
-      } else if (mode == AnalysisTool::MODE_MCA_C) {
-        session_->set_display_mode(DisplayMode::Reconstructed);
-        compute_mca_mode_shape();
+        display_mode_shape();
         visualizer_->reset_camera();
       } else if (mode == AnalysisTool::MODE_SINGLE_SAMPLE_C) {
         visualizer_->display_sample(analysis_tool_->get_sample_number());
@@ -1764,24 +1752,7 @@ void ShapeWorksStudioApp::closeEvent(QCloseEvent* event) {
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::compute_mode_shape() {
-  int pca_mode = analysis_tool_->get_pca_mode();
-  double pca_value = analysis_tool_->get_pca_value();
-
-  visualizer_->display_shape(analysis_tool_->get_mode_shape(pca_mode, pca_value));
-}
-
-//---------------------------------------------------------------------------
-void ShapeWorksStudioApp::compute_mca_mode_shape() {
-  int pca_mode = analysis_tool_->get_pca_mode();
-  double pca_value = analysis_tool_->get_pca_value();
-  auto mca_level = analysis_tool_->get_mca_level();
-  if (mca_level == AnalysisTool::McaMode::Vanilla) {
-    visualizer_->display_shape(analysis_tool_->get_mode_shape(pca_mode, pca_value));
-  } else {
-    visualizer_->display_shape(analysis_tool_->get_mca_mode_shape(pca_mode, pca_value, mca_level));
-  }
-}
+void ShapeWorksStudioApp::display_mode_shape() { visualizer_->display_shape(analysis_tool_->get_current_shape()); }
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::update_recent_files() {
@@ -2143,7 +2114,7 @@ void ShapeWorksStudioApp::update_view_combo() {
   if (analysis_mode) {
     mode = analysis_tool_->get_analysis_mode();
   }
-  if (mode == AnalysisTool::MODE_MEAN_C || mode == AnalysisTool::MODE_PCA_C || mode == AnalysisTool::MODE_MCA_C) {
+  if (mode == AnalysisTool::MODE_MEAN_C || mode == AnalysisTool::MODE_PCA_C) {
     set_view_combo_item_enabled(DisplayMode::Original, false);
     set_view_combo_item_enabled(DisplayMode::Groomed, false);
   }
