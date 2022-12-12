@@ -428,7 +428,6 @@ bool AnalysisTool::compute_stats() {
     }
     if (!flag_get_num_part) {
       auto local_particles_ar = shape->get_particles().get_local_particles();
-      unsigned int sz = local_particles_ar.size();
       if (local_particles_ar.size() != dps) {
         SW_ERROR("Inconsistency in number of particles size");
       }
@@ -627,9 +626,9 @@ Particles AnalysisTool::get_multi_level_shape_points(int mode, double value, Mca
         row += (3 * number_of_particles_ar[idx]);
       }
       for (unsigned int j = 0; j < num_points; j++) {
-        e_between((row) + (j * 3)) = e(i * 3);
-        e_between((row) + (j * 3) + 1) = e(i * 3 + 1);
-        e_between((row) + (j * 3) + 2) = e(i * 3 + 2);
+        e_between(row + (j * 3)) = e(i * 3);
+        e_between(row + (j * 3) + 1) = e(i * 3 + 1);
+        e_between(row + (j * 3) + 2) = e(i * 3 + 2);
       }
     }
     temp_shape_mca = stats_.Mean() + (e_between * (value * lambda));
@@ -829,7 +828,7 @@ void AnalysisTool::handle_group_animate_state_changed() {
 }
 
 //---------------------------------------------------------------------------
-AnalysisTool::McaMode AnalysisTool::get_mca_level() {
+AnalysisTool::McaMode AnalysisTool::get_mca_level() const {
   bool vanilla_pca = ui_->vanillaPCAButton->isChecked();
   bool between = ui_->mcaLevelBetweenButton->isChecked();
   bool within = ui_->mcaLevelWithinButton->isChecked();

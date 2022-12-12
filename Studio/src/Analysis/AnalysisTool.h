@@ -78,7 +78,7 @@ class AnalysisTool : public QWidget {
   double get_pca_value();
 
   bool pca_animate();
-  McaMode get_mca_level();
+  McaMode get_mca_level() const;
 
   int get_sample_number();
 
