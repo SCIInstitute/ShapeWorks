@@ -55,6 +55,7 @@ Inherits from QMainWindow
 | void | **[on_auto_view_button_clicked](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-auto-view-button-clicked)**() |
 | void | **[handle_pca_changed](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-pca-changed)**() |
 | void | **[handle_slider_update](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-slider-update)**() |
+| void | **[handle_mca_changed](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-mca-changed)**() |
 | void | **[handle_project_changed](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-project-changed)**() |
 | void | **[handle_points_changed](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-points-changed)**() |
 | void | **[handle_groom_start](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-groom-start)**() |
@@ -380,6 +381,13 @@ void handle_pca_changed()
 
 ```cpp
 void handle_slider_update()
+```
+
+
+### slot handle_mca_changed
+
+```cpp
+void handle_mca_changed()
 ```
 
 
@@ -734,4 +742,4 @@ void dropEvent(
 
 -------------------------------
 
-Updated on 2022-12-10 at 09:04:09 +0000
+Updated on 2022-12-13 at 00:51:43 +0000

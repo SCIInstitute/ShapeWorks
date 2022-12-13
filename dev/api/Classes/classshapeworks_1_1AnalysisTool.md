@@ -16,6 +16,7 @@ Inherits from QWidget
 |                | Name           |
 | -------------- | -------------- |
 | enum| **[AlignmentType](../Classes/classshapeworks_1_1AnalysisTool.md#enum-alignmenttype)** { Global = -2, Local = -1} |
+| enum| **[McaMode](../Classes/classshapeworks_1_1AnalysisTool.md#enum-mcamode)** { Vanilla, Within, Between} |
 | using itk::Point< double, 3 > | **[PointType](../Classes/classshapeworks_1_1AnalysisTool.md#using-pointtype)**  |
 
 ## Public Slots
@@ -89,6 +90,7 @@ Inherits from QWidget
 | double | **[get_group_ratio](../Classes/classshapeworks_1_1AnalysisTool.md#function-get-group-ratio)**() |
 | double | **[get_pca_value](../Classes/classshapeworks_1_1AnalysisTool.md#function-get-pca-value)**() |
 | bool | **[pca_animate](../Classes/classshapeworks_1_1AnalysisTool.md#function-pca-animate)**() |
+| McaMode | **[get_mca_level](../Classes/classshapeworks_1_1AnalysisTool.md#function-get-mca-level)**() const |
 | int | **[get_sample_number](../Classes/classshapeworks_1_1AnalysisTool.md#function-get-sample-number)**() |
 | bool | **[compute_stats](../Classes/classshapeworks_1_1AnalysisTool.md#function-compute-stats)**() |
 | void | **[update_slider](../Classes/classshapeworks_1_1AnalysisTool.md#function-update-slider)**() |
@@ -97,7 +99,10 @@ Inherits from QWidget
 | [Particles](../Classes/classshapeworks_1_1Particles.md) | **[get_mean_shape_points](../Classes/classshapeworks_1_1AnalysisTool.md#function-get-mean-shape-points)**() |
 | ShapeHandle | **[get_mean_shape](../Classes/classshapeworks_1_1AnalysisTool.md#function-get-mean-shape)**() |
 | [Particles](../Classes/classshapeworks_1_1Particles.md) | **[get_shape_points](../Classes/classshapeworks_1_1AnalysisTool.md#function-get-shape-points)**(int mode, double value) |
+| [Particles](../Classes/classshapeworks_1_1Particles.md) | **[get_multi_level_shape_points](../Classes/classshapeworks_1_1AnalysisTool.md#function-get-multi-level-shape-points)**(int mode, double value, McaMode level) |
 | ShapeHandle | **[get_mode_shape](../Classes/classshapeworks_1_1AnalysisTool.md#function-get-mode-shape)**(int mode, double value) |
+| ShapeHandle | **[get_mca_mode_shape](../Classes/classshapeworks_1_1AnalysisTool.md#function-get-mca-mode-shape)**(int mode, double value, McaMode level) |
+| ShapeHandle | **[get_current_shape](../Classes/classshapeworks_1_1AnalysisTool.md#function-get-current-shape)**() |
 | [ParticleShapeStatistics](../Classes/classshapeworks_1_1ParticleShapeStatistics.md) | **[get_stats](../Classes/classshapeworks_1_1AnalysisTool.md#function-get-stats)**() |
 | void | **[load_settings](../Classes/classshapeworks_1_1AnalysisTool.md#function-load-settings)**() |
 | void | **[store_settings](../Classes/classshapeworks_1_1AnalysisTool.md#function-store-settings)**() |
@@ -123,6 +128,17 @@ Inherits from QWidget
 | ---------- | ----- | ----------- |
 | Global | -2|   |
 | Local | -1|   |
+
+
+
+
+### enum McaMode
+
+| Enumerator | Value | Description |
+| ---------- | ----- | ----------- |
+| Vanilla | |   |
+| Within | |   |
+| Between | |   |
 
 
 
@@ -580,6 +596,13 @@ bool pca_animate()
 ```
 
 
+### function get_mca_level
+
+```cpp
+McaMode get_mca_level() const
+```
+
+
 ### function get_sample_number
 
 ```cpp
@@ -641,6 +664,17 @@ Particles get_shape_points(
 ```
 
 
+### function get_multi_level_shape_points
+
+```cpp
+Particles get_multi_level_shape_points(
+    int mode,
+    double value,
+    McaMode level
+)
+```
+
+
 ### function get_mode_shape
 
 ```cpp
@@ -648,6 +682,24 @@ ShapeHandle get_mode_shape(
     int mode,
     double value
 )
+```
+
+
+### function get_mca_mode_shape
+
+```cpp
+ShapeHandle get_mca_mode_shape(
+    int mode,
+    double value,
+    McaMode level
+)
+```
+
+
+### function get_current_shape
+
+```cpp
+ShapeHandle get_current_shape()
 ```
 
 
@@ -734,4 +786,4 @@ static const std::string MODE_REGRESSION_C;
 
 -------------------------------
 
-Updated on 2022-12-10 at 09:04:08 +0000
+Updated on 2022-12-13 at 00:51:42 +0000

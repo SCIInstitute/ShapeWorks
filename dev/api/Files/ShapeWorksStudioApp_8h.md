@@ -123,6 +123,8 @@ class ShapeWorksStudioApp : public QMainWindow {
   void handle_pca_changed();
   void handle_slider_update();
 
+  void handle_mca_changed();
+
   void handle_project_changed();
   void handle_points_changed();
   void handle_groom_start();
@@ -212,7 +214,7 @@ class ShapeWorksStudioApp : public QMainWindow {
 
   void update_display(bool force = false);
 
-  void compute_mode_shape();
+  void display_mode_shape();
 
   bool set_feature_map(std::string feature_map);
   std::string get_feature_map();
@@ -292,4 +294,4 @@ class ShapeWorksStudioApp : public QMainWindow {
 
 -------------------------------
 
-Updated on 2022-12-10 at 09:04:10 +0000
+Updated on 2022-12-13 at 00:51:44 +0000

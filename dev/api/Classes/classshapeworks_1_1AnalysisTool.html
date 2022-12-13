@@ -2261,6 +2261,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#enum-mcamode" class="md-nav__link">
+    enum McaMode
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#using-pointtype" class="md-nav__link">
     using PointType
   </a>
@@ -2706,6 +2713,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-get_mca_level" class="md-nav__link">
+    function get_mca_level
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-get_sample_number" class="md-nav__link">
     function get_sample_number
   </a>
@@ -2762,8 +2776,29 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-get_multi_level_shape_points" class="md-nav__link">
+    function get_multi_level_shape_points
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-get_mode_shape" class="md-nav__link">
     function get_mode_shape
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_mca_mode_shape" class="md-nav__link">
+    function get_mca_mode_shape
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_current_shape" class="md-nav__link">
+    function get_current_shape
   </a>
   
 </li>
@@ -2895,6 +2930,10 @@
 <tr>
 <td>enum</td>
 <td Global="Global"><strong><a href="classshapeworks_1_1AnalysisTool.html#enum-alignmenttype">AlignmentType</a></strong></td>
+</tr>
+<tr>
+<td>enum</td>
+<td Between="Between" Vanilla_="Vanilla," Within_="Within,"><strong><a href="classshapeworks_1_1AnalysisTool.html#enum-mcamode">McaMode</a></strong></td>
 </tr>
 <tr>
 <td>using itk::Point&lt; double, 3 &gt;</td>
@@ -3162,6 +3201,10 @@
 <td><strong><a href="classshapeworks_1_1AnalysisTool.html#function-pca-animate">pca_animate</a></strong>()</td>
 </tr>
 <tr>
+<td>McaMode</td>
+<td><strong><a href="classshapeworks_1_1AnalysisTool.html#function-get-mca-level">get_mca_level</a></strong>() const</td>
+</tr>
+<tr>
 <td>int</td>
 <td><strong><a href="classshapeworks_1_1AnalysisTool.html#function-get-sample-number">get_sample_number</a></strong>()</td>
 </tr>
@@ -3194,8 +3237,20 @@
 <td><strong><a href="classshapeworks_1_1AnalysisTool.html#function-get-shape-points">get_shape_points</a></strong>(int mode, double value)</td>
 </tr>
 <tr>
+<td><a href="classshapeworks_1_1Particles.html">Particles</a></td>
+<td><strong><a href="classshapeworks_1_1AnalysisTool.html#function-get-multi-level-shape-points">get_multi_level_shape_points</a></strong>(int mode, double value, McaMode level)</td>
+</tr>
+<tr>
 <td>ShapeHandle</td>
 <td><strong><a href="classshapeworks_1_1AnalysisTool.html#function-get-mode-shape">get_mode_shape</a></strong>(int mode, double value)</td>
+</tr>
+<tr>
+<td>ShapeHandle</td>
+<td><strong><a href="classshapeworks_1_1AnalysisTool.html#function-get-mca-mode-shape">get_mca_mode_shape</a></strong>(int mode, double value, McaMode level)</td>
+</tr>
+<tr>
+<td>ShapeHandle</td>
+<td><strong><a href="classshapeworks_1_1AnalysisTool.html#function-get-current-shape">get_current_shape</a></strong>()</td>
 </tr>
 <tr>
 <td><a href="classshapeworks_1_1ParticleShapeStatistics.html">ParticleShapeStatistics</a></td>
@@ -3273,6 +3328,33 @@
 <tr>
 <td>Local</td>
 <td>-1</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="enum-mcamode">enum McaMode</h3>
+<table>
+<thead>
+<tr>
+<th>Enumerator</th>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Vanilla</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Within</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>Between</td>
+<td></td>
 <td></td>
 </tr>
 </tbody>
@@ -3495,6 +3577,9 @@
 <h3 id="function-pca_animate">function pca_animate</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">pca_animate</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
+<h3 id="function-get_mca_level">function get_mca_level</h3>
+<div class="highlight"><pre><span></span><code><span class="n">McaMode</span><span class="w"> </span><span class="n">get_mca_level</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+</code></pre></div>
 <h3 id="function-get_sample_number">function get_sample_number</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_sample_number</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
@@ -3524,11 +3609,28 @@
 <span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
+<h3 id="function-get_multi_level_shape_points">function get_multi_level_shape_points</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Particles</span><span class="w"> </span><span class="n">get_multi_level_shape_points</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">mode</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">McaMode</span><span class="w"> </span><span class="n">level</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
 <h3 id="function-get_mode_shape">function get_mode_shape</h3>
 <div class="highlight"><pre><span></span><code><span class="n">ShapeHandle</span><span class="w"> </span><span class="n">get_mode_shape</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">mode</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-get_mca_mode_shape">function get_mca_mode_shape</h3>
+<div class="highlight"><pre><span></span><code><span class="n">ShapeHandle</span><span class="w"> </span><span class="n">get_mca_mode_shape</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">mode</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">McaMode</span><span class="w"> </span><span class="n">level</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-get_current_shape">function get_current_shape</h3>
+<div class="highlight"><pre><span></span><code><span class="n">ShapeHandle</span><span class="w"> </span><span class="n">get_current_shape</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-get_stats">function get_stats</h3>
 <div class="highlight"><pre><span></span><code><span class="n">ParticleShapeStatistics</span><span class="w"> </span><span class="n">get_stats</span><span class="p">()</span><span class="w"></span>
@@ -3567,7 +3669,7 @@
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">MODE_REGRESSION_C</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-12-10 at 09:04:08 +0000</p>
+<p>Updated on 2022-12-13 at 00:51:42 +0000</p>
 
               
             </article>
