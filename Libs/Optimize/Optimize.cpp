@@ -112,8 +112,6 @@ bool Optimize::Run() {
 
   ComputeTotalIterations();
 
-  m_disable_procrustes = true;
-
   std::vector<int> final_number_of_particles = this->m_number_of_particles;
   int scale = 1;
   if (m_use_shape_statistics_after > 0) {
@@ -182,19 +180,13 @@ bool Optimize::Run() {
   this->UpdateExportablePoints();
 
   if (this->m_python_filename != "") {
-    this->m_iter_callback = nullptr;
+    this->iteration_callback_ = nullptr;
     py::finalize_interpreter();
   }
 
   UpdateProject();
 
   return true;
-}
-
-//---------------------------------------------------------------------------
-void Optimize::RunProcrustes() {
-  this->OptimizerStop();
-  m_procrustes->RunRegistration();
 }
 
 //---------------------------------------------------------------------------
@@ -545,9 +537,6 @@ void Optimize::Initialize() {
     SW_LOG("------------------------------");
   }
 
-  m_disable_procrustes = false;
-  m_optimizing = false;
-
   if (m_procrustes_interval != 0) {  // Initial registration
     for (int i = 0; i < this->m_domains_per_shape; i++) {
       if (m_sampler->GetParticleSystem()->GetNumberOfParticles(i) > 10) {
@@ -558,9 +547,7 @@ void Optimize::Initialize() {
     this->WriteTransformFile();
     this->WriteTransformFiles();
   }
-  m_disable_procrustes = true;
 
-  // Does nothing
   m_sampler->GetParticleSystem()->SynchronizePositions();
 
   m_sampler->GetCurvatureGradientFunction()->SetRho(0.0);
@@ -706,12 +693,12 @@ void Optimize::Initialize() {
       m_sampler->GetConstrainedModifiedCotangentGradientFunction()->SetMinimumNeighborhoodRadius(minRad);
     }
 
-    m_saturation_counter = 0;
     m_sampler->GetOptimizer()->SetMaximumNumberOfIterations(m_iterations_per_split);
     m_sampler->GetOptimizer()->SetNumberOfIterations(0);
     if (adaptive_initialization &&
-        m_sampler->GetParticleSystem()->GetNumberOfParticles(0) >= particles_before_adaptive_initialization)
+        m_sampler->GetParticleSystem()->GetNumberOfParticles(0) >= particles_before_adaptive_initialization) {
       m_sampler->GetOptimizer()->SetInitializationMode(true);
+    }
     m_sampler->Execute();
     m_sampler->GetOptimizer()->SetInitializationMode(false);
 
@@ -754,7 +741,6 @@ void Optimize::AddAdaptivity() {
   if (m_adaptivity_strength == 0.0) {
     return;
   }
-  m_disable_procrustes = true;
 
   if (this->m_pairwise_potential_type == 1) {
     this->SetCotanSigma();
@@ -770,7 +756,6 @@ void Optimize::AddAdaptivity() {
   m_sampler->GetLinkingFunction()->SetRelativeGradientScaling(m_initial_relative_weighting);
   m_sampler->GetLinkingFunction()->SetRelativeEnergyScaling(m_initial_relative_weighting);
 
-  m_saturation_counter = 0;
   m_sampler->GetOptimizer()->SetMaximumNumberOfIterations(m_iterations_per_split);
   m_sampler->GetOptimizer()->SetNumberOfIterations(0);
   m_sampler->Execute();
@@ -808,8 +793,6 @@ void Optimize::RunOptimize() {
     m_sampler->GetModifiedCotangentGradientFunction()->SetMinimumNeighborhoodRadius(minRad);
     m_sampler->GetConstrainedModifiedCotangentGradientFunction()->SetMinimumNeighborhoodRadius(minRad);
   }
-
-  m_disable_procrustes = false;
 
   if (m_procrustes_interval != 0) {  // Initial registration
     m_procrustes->RunRegistration();
@@ -878,7 +861,6 @@ void Optimize::RunOptimize() {
   m_total_energy.clear();
   m_str_energy = "opt";
 
-  m_saturation_counter = 0;
   m_sampler->GetOptimizer()->SetNumberOfIterations(0);
   m_sampler->GetOptimizer()->SetTolerance(0.0);
   m_sampler->Execute();
@@ -897,9 +879,6 @@ void Optimize::RunOptimize() {
 }
 
 //---------------------------------------------------------------------------
-void Optimize::OptimizeStart() { m_sampler->GetOptimizer()->StartOptimization(); }
-
-//---------------------------------------------------------------------------
 void Optimize::OptimizerStop() { m_sampler->GetOptimizer()->StopOptimization(); }
 
 //---------------------------------------------------------------------------
@@ -910,8 +889,8 @@ void Optimize::AbortOptimization() {
 
 //---------------------------------------------------------------------------
 void Optimize::IterateCallback(itk::Object*, const itk::EventObject&) {
-  if (this->m_iter_callback) {
-    this->m_iter_callback();
+  if (this->iteration_callback_) {
+    this->iteration_callback_();
   }
 
   this->m_iteration_count++;
@@ -1972,16 +1951,16 @@ void Optimize::SetPointFiles(const std::vector<std::string>& point_files) {
 //---------------------------------------------------------------------------
 int Optimize::GetNumShapes() { return this->m_num_shapes; }
 
-shapeworks::OptimizationVisualizer& Optimize::GetVisualizer() { return visualizer; }
+shapeworks::OptimizationVisualizer& Optimize::GetVisualizer() { return visualizer_; }
 
 void Optimize::SetShowVisualizer(bool show) {
   if (show && this->m_verbosity_level > 0) {
     std::cout << "WARNING Using the visualizer will increase run time!\n";
   }
-  this->show_visualizer = show;
+  this->show_visualizer_ = show;
 }
 
-bool Optimize::GetShowVisualizer() { return this->show_visualizer; }
+bool Optimize::GetShowVisualizer() { return this->show_visualizer_; }
 
 //---------------------------------------------------------------------------
 void Optimize::SetMeshFiles(const std::vector<std::string>& mesh_files) { m_sampler->SetMeshFiles(mesh_files); }
@@ -2185,7 +2164,7 @@ void Optimize::SetSharedBoundaryEnabled(bool enabled) { m_sampler->SetSharedBoun
 void Optimize::SetSharedBoundaryWeight(double weight) { m_sampler->SetSharedBoundaryWeight(weight); }
 
 void Optimize::ComputeTotalIterations() {
-  m_total_particle_iterations = 0;
+  total_particle_iterations_ = 0;
 
   int highest_particle_count = *std::max_element(m_number_of_particles.begin(), m_number_of_particles.end());
 
@@ -2195,12 +2174,12 @@ void Optimize::ComputeTotalIterations() {
   for (int i = 0; i < number_of_splits; i++) {
     for (int d = 0; d < m_number_of_particles.size(); d++) {
       double add = m_iterations_per_split * std::min(num_particles, m_number_of_particles[d]);
-      m_total_particle_iterations += add;
+      total_particle_iterations_ += add;
     }
 
     if (m_use_shape_statistics_after > 0 && num_particles >= m_use_shape_statistics_after) {
       for (int d = 0; d < m_number_of_particles.size(); d++) {
-        m_total_particle_iterations += m_optimization_iterations * std::min(num_particles, m_number_of_particles[d]);
+        total_particle_iterations_ += m_optimization_iterations * std::min(num_particles, m_number_of_particles[d]);
       }
     }
 
@@ -2210,7 +2189,7 @@ void Optimize::ComputeTotalIterations() {
   if (m_use_shape_statistics_after <= 0) {
     for (int d = 0; d < m_number_of_particles.size(); d++) {
       double add = m_optimization_iterations * std::min(num_particles, m_number_of_particles[d]);
-      m_total_particle_iterations += add;
+      total_particle_iterations_ += add;
     }
   }
 

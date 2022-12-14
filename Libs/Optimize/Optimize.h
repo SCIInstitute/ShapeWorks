@@ -15,7 +15,7 @@
 
 #include <Eigen/Eigen>
 
-// shapeworks particle system
+// shapeworks
 #include <Project/Project.h>
 
 #include "DomainType.h"
@@ -71,7 +71,7 @@ class Optimize {
   //! Set the Projects
   void SetProject(std::shared_ptr<Project> project);
 
-  void SetIterationCallbackFunction(const std::function<void(void)>& f) { this->m_iter_callback = f; }
+  void SetIterationCallbackFunction(const std::function<void(void)>& f) { this->iteration_callback_ = f; }
 
   //! Abort optimization
   void AbortOptimization();
@@ -308,10 +308,6 @@ class Optimize {
 
   void ComputeTotalIterations();
 
-  //! Run an iteration of procrustes
-  void RunProcrustes();
-
-  void OptimizeStart();
   void OptimizerStop();
 
   void ReadTransformFile();
@@ -323,8 +319,6 @@ class Optimize {
   void Initialize();
   void AddAdaptivity();
   void RunOptimize();
-
-  void SetInitialCorrespondenceMode();
 
   virtual void IterateCallback(itk::Object*, const itk::EventObject&);
 
@@ -372,8 +366,6 @@ class Optimize {
 
   int m_checkpoint_counter = 0;
   int m_procrustes_counter = 0;
-  int m_saturation_counter = 0;
-  bool m_disable_procrustes = true;
   bool m_use_cutting_planes = false;
   bool m_optimizing = false;
   bool m_use_regression = false;
@@ -432,9 +424,7 @@ class Optimize {
   bool m_geodesics_enabled = false;             // geodesics disabled by default
   size_t m_geodesic_cache_size_multiplier = 0;  // 0 => VtkMeshWrapper will use a heuristic to determine cache size
 
-  // Keeps track of which state the optimization is in.
-  unsigned int m_mode = 0;
-  /* m_spacing is used to scale the random update vector for particle splitting. */
+  // m_spacing is used to scale the random update vector for particle splitting.
   double m_spacing = 0;
 
   std::vector<std::string> m_filenames;
@@ -463,13 +453,11 @@ class Optimize {
   int m_split_number = 0;
 
   int current_particle_iterations_ = 0;
-  int m_total_particle_iterations = 0;
+  int total_particle_iterations_ = 0;
 
-  std::mt19937 m_rand{42};
-
-  std::function<void(void)> m_iter_callback;
-  bool show_visualizer = false;
-  shapeworks::OptimizationVisualizer visualizer;
+  std::function<void(void)> iteration_callback_;
+  bool show_visualizer_ = false;
+  shapeworks::OptimizationVisualizer visualizer_;
 
   std::shared_ptr<Project> project_;
 };
