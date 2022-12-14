@@ -125,8 +125,10 @@ bool Optimize::Run()
 
   this->SetParameters();
 
+  int highest_particle_count = *std::max_element(m_number_of_particles.begin(),m_number_of_particles.end());
+
   int number_of_splits = static_cast<int>(
-    std::log2(static_cast<double>(this->m_number_of_particles[0])));
+    std::log2(static_cast<double>(highest_particle_count)));
   this->m_iteration_count = 0;
 
   m_split_number = 0;
