@@ -304,10 +304,13 @@ public:
   //! transform a point if necessary
   vnl_vector_fixed<double, 3> TransformPoint(int domain, vnl_vector_fixed<double, 3> input);
 
+
 protected:
 
   //! Set the iteration callback. Derived classes should override to set their own callback
   virtual void SetIterationCallback();
+
+  void ComputeTotalIterations();
 
   //! Run an iteration of procrustes
   void RunProcrustes();
@@ -347,7 +350,7 @@ protected:
   void WriteParameters(std::string output_dir = "");
   void ReportBadParticles();
 
-  void SetParameters();
+  int SetParameters();
   void WriteModes();
 
   void PrintStartMessage(std::string str, unsigned int vlevel = 0) const;
@@ -459,11 +462,12 @@ protected:
   bool m_aborted = false;
   std::vector<std::array<itk::Point<double>, 3 >> m_cut_planes;
 
-  //itk::MemberCommand<Optimize>::Pointer m_iterate_command;
   int m_total_iterations = 0;
   int m_iteration_count = 0;
+  int m_split_number = 0;
 
-  int m_split_number{0};
+  int current_particle_iterations_ = 0;
+  int m_total_particle_iterations = 0;
 
   std::mt19937 m_rand{42};
 

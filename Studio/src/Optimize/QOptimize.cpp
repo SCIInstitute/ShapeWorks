@@ -1,6 +1,7 @@
 #include "QOptimize.h"
 
 #include <QMutexLocker>
+#include <Logging.h>
 
 namespace shapeworks {
 
@@ -111,7 +112,7 @@ void QOptimize::IterateCallback(itk::Object* caller, const itk::EventObject& e)
         }
       }
     }
-    Q_EMIT progress(this->m_iteration_count * 100 / this->m_total_iterations, message);
+    Q_EMIT progress(current_particle_iterations_ * 100 / m_total_particle_iterations, message);
   }
 }
 

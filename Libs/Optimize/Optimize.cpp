@@ -22,18 +22,18 @@
 #include <itkImageToVTKImageFilter.h>
 
 // shapeworks
-#include "TriMesh.h"
-#include "ParticleImageDomain.h"
-#include "ParticleImplicitSurfaceDomain.h"
-#include "object_reader.h"
-#include "object_writer.h"
+#include <Project/Project.h>
+
+#include "Logging.h"
+#include "Optimize.h"
 #include "OptimizeParameterFile.h"
 #include "OptimizeParameters.h"
-#include <Project/Project.h>
+#include "ParticleImageDomain.h"
+#include "ParticleImplicitSurfaceDomain.h"
+#include "TriMesh.h"
 #include "VtkMeshWrapper.h"
-
-#include "Optimize.h"
-#include <Project/Project.h>
+#include "object_reader.h"
+#include "object_writer.h"
 
 // pybind
 #include <pybind11/embed.h>
@@ -110,55 +110,27 @@ bool Optimize::Run()
 
   }
 
-  // sanity check
-  if (this->m_domains_per_shape != this->m_number_of_particles.size()) {
-    std::cerr <<
-              "Inconsistency in parameters... m_domains_per_shape != m_number_of_particles.size()\n";
+
+  if (!SetParameters()) {
     return false;
   }
 
-  // ensure use_shape_statistics_after doesn't increase the particle count over what was specified
-  for (int i = 0; i < this->m_number_of_particles.size(); i++) {
-    this->m_use_shape_statistics_after = std::min(this->m_use_shape_statistics_after,
-                                                  this->m_number_of_particles[i]);
-  }
-
-  this->SetParameters();
-
-  int highest_particle_count = *std::max_element(m_number_of_particles.begin(),m_number_of_particles.end());
-
-  int number_of_splits = static_cast<int>(
-    std::log2(static_cast<double>(highest_particle_count)));
-  this->m_iteration_count = 0;
-
+  current_particle_iterations_ = 0;
+  m_iteration_count = 0;
   m_split_number = 0;
 
-  if (this->m_use_shape_statistics_after <= 0) {
-    this->m_total_iterations = (number_of_splits * m_iterations_per_split) + m_optimization_iterations;
-  } else {
-    int number_of_splits_init = static_cast<int>(std::log2(static_cast<double>(m_use_shape_statistics_after)));
-    int number_of_splits_opt = static_cast<int>(
-                                   std::log2(static_cast<double>(highest_particle_count))) - number_of_splits_init;
+  ComputeTotalIterations();
 
-    // initialization phase iterations
-    m_total_iterations = (number_of_splits_init * m_iterations_per_split) + m_optimization_iterations;
-    // optimization phase iterations
-    m_total_iterations += number_of_splits_opt * (m_iterations_per_split + m_optimization_iterations);
-  }
-
-  if (this->m_verbosity_level > 0) {
-    std::cout << "Total number of iterations = " << this->m_total_iterations << "\n";
-  }
 
   m_disable_procrustes = true;
 
   std::vector<int> final_number_of_particles = this->m_number_of_particles;
   int scale = 1;
-  if (this->m_use_shape_statistics_after > 0) {
-    this->m_use_shape_statistics_in_init = false;
-    for (int i = 0; i < this->m_number_of_particles.size(); i++) {
+  if (m_use_shape_statistics_after > 0) {
+    m_use_shape_statistics_in_init = false;
+    for (int i = 0; i < m_number_of_particles.size(); i++) {
       // run up to only the specified starting point for multiscale
-      this->m_number_of_particles[i] = this->m_use_shape_statistics_after;
+      m_number_of_particles[i] = std::min(m_use_shape_statistics_after, m_number_of_particles[i]);
     }
   }
 
@@ -186,21 +158,21 @@ bool Optimize::Run()
     bool finished = false;
 
     while (!finished) {
-      this->m_sampler->ReInitialize();
+      m_sampler->ReInitialize();
 
       // determine if we have reached the final particle counts
       finished = true;
       for (int i = 0; i < this->m_number_of_particles.size(); i++) {
-        if (this->m_number_of_particles[i] < final_number_of_particles[i]) {
-          this->m_number_of_particles[i] *= 2;
+        if (m_number_of_particles[i] < final_number_of_particles[i]) {
+          m_number_of_particles[i] *= 2;
           finished = false;
         }
       }
 
       if (!finished) {
-        if (m_processing_mode >= 0) { this->Initialize(); }
-        if (m_processing_mode >= 1 || m_processing_mode == -1) { this->AddAdaptivity(); }
-        if (m_processing_mode >= 2 || m_processing_mode == -2) { this->RunOptimize(); }
+        if (m_processing_mode >= 0) { Initialize(); }
+        if (m_processing_mode >= 1 || m_processing_mode == -1) { AddAdaptivity(); }
+        if (m_processing_mode >= 2 || m_processing_mode == -2) { RunOptimize(); }
       }
     }
   }
@@ -225,12 +197,21 @@ void Optimize::RunProcrustes()
 }
 
 //---------------------------------------------------------------------------
-void Optimize::SetParameters()
-{
+int Optimize::SetParameters()  {
   if (this->m_verbosity_level == 0) {
-    std::cout <<
-              "Verbosity 0: This will be the only output on your screen, unless there are any errors. Increase the verbosity if needed."
-              << std::endl;
+    std::cout << "Verbosity 0: This will be the only output on your screen, "
+                 "unless there are any errors. Increase the verbosity if needed.\n";
+  }
+
+  // sanity check
+  if (m_domains_per_shape != m_number_of_particles.size()) {
+    SW_ERROR("Inconsistency in parameters... m_domains_per_shape != m_number_of_particles.size()");
+    return false;
+  }
+
+  // ensure that use_shape_statistics_after doesn't increase the particle count over what was specified
+  for (int i = 0; i < m_number_of_particles.size(); i++) {
+    m_use_shape_statistics_after = std::min(m_use_shape_statistics_after, m_number_of_particles[i]);
   }
 
   // Set up the optimization process
@@ -322,7 +303,7 @@ void Optimize::SetParameters()
   if (m_transform_file != "") { this->ReadTransformFile(); }
   if (m_prefix_transform_file != "") { this->ReadPrefixTransformFile(m_prefix_transform_file); }
 
-  //m_sampler->ApplyConstraintsToZeroCrossing();
+  return true;
 }
 
 //---------------------------------------------------------------------------
@@ -639,9 +620,9 @@ void Optimize::AddSinglePoint()
 void Optimize::Initialize()
 {
   if (m_verbosity_level > 0) {
-    std::cout << "------------------------------\n";
-    std::cout << "*** Initialize Step\n";
-    std::cout << "------------------------------\n";
+    SW_LOG("------------------------------");
+    SW_LOG("*** Initialize Step ***");
+    SW_LOG("------------------------------");
   }
 
   m_disable_procrustes = false;
@@ -841,7 +822,7 @@ void Optimize::Initialize()
   this->WriteTransformFiles();
   this->WriteCuttingPlanePoints();
   if (m_verbosity_level > 0) {
-    std::cout << "Finished initialization!!!" << std::endl;
+    SW_LOG("Finished initialization");
   }
 }
 
@@ -1040,6 +1021,10 @@ void Optimize::IterateCallback(itk::Object*, const itk::EventObject&)
   }
 
   this->m_iteration_count++;
+
+  for (int d = 0; d < m_domains_per_shape; d++) {
+    current_particle_iterations_ += m_sampler->GetParticleSystem()->GetNumberOfParticles(d);
+  }
 
   if (this->GetShowVisualizer()) {
     this->GetVisualizer().IterationCallback(m_sampler->GetParticleSystem());
@@ -2460,6 +2445,45 @@ void Optimize::SetSharedBoundaryEnabled(bool enabled)
 void Optimize::SetSharedBoundaryWeight(double weight)
 {
   m_sampler->SetSharedBoundaryWeight(weight);
+}
+
+void Optimize::ComputeTotalIterations() {
+
+  m_total_particle_iterations = 0;
+
+  int highest_particle_count = *std::max_element(m_number_of_particles.begin(), m_number_of_particles.end());
+
+  int number_of_splits = static_cast<int>(
+      std::log2(static_cast<double>(highest_particle_count)));
+
+  int num_particles = 2;
+  for (int i = 0; i < number_of_splits; i++) {
+    for (int d = 0; d < m_number_of_particles.size(); d++) {
+      double add = m_iterations_per_split * std::min(num_particles, m_number_of_particles[d]);
+      m_total_particle_iterations += add;
+    }
+
+    if (m_use_shape_statistics_after > 0 && num_particles >= m_use_shape_statistics_after) {
+      for (int d = 0; d < m_number_of_particles.size(); d++) {
+        m_total_particle_iterations += m_optimization_iterations * std::min(num_particles, m_number_of_particles[d]);
+      }
+    }
+
+    num_particles *= 2;
+  }
+
+  if (m_use_shape_statistics_after <= 0) {
+    for (int d = 0; d < m_number_of_particles.size(); d++) {
+      double add = m_optimization_iterations * std::min(num_particles, m_number_of_particles[d]);
+      m_total_particle_iterations += add;
+    }
+  }
+
+  m_total_iterations = (number_of_splits * m_iterations_per_split) + m_optimization_iterations;
+
+  if (this->m_verbosity_level > 0) {
+    SW_LOG("Total number of iterations: {}", m_total_iterations);
+  }
 }
 
 }
