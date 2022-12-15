@@ -428,6 +428,7 @@ bool OptimizeParameters::set_up_optimize(Optimize *optimize) {
         }
 
         auto poly_data = mesh.getVTKMesh();
+        std::cout << "poly_data->GetNumberOfCells()" << poly_data->GetNumberOfCells() << std::endl;
 
         if (poly_data) {
           // TODO This is a HACK for detecting contours
