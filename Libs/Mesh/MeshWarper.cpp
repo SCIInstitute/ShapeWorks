@@ -11,6 +11,8 @@
 #include <vtkPolyDataConnectivityFilter.h>
 #include <vtkTriangleFilter.h>
 
+#include <Logging.h>
+
 #include <set>
 
 namespace shapeworks {
@@ -26,6 +28,13 @@ vtkSmartPointer<vtkPolyData> MeshWarper::build_mesh(const Eigen::MatrixXd& parti
 
   if (!this->check_warp_ready()) {
     return nullptr;
+  }
+
+  if (particles.size() != reference_particles_.size()) {
+    // This may be a stale mesh warper
+    // don't return nullptr or the user will get an error
+    auto blank = vtkSmartPointer<vtkPolyData>::New();
+    return blank;
   }
 
   auto points = this->remove_bad_particles(particles);
