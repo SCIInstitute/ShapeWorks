@@ -522,6 +522,16 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle* docHandle, Optimize* o
 
       Mesh mesh = MeshUtils::threadSafeReadMesh(meshFiles[index].c_str());
 
+      if(optimize->GetMeshFFCMode() == 0){
+          if (this->verbosity_level_ > 1) {
+            std::cout << "ffcssize " << ffcs.size() << std::endl;
+          }
+            if (index < ffcs.size()) {
+              mesh.prepareFFCFields(ffcs[index].boundaries, ffcs[index].query);
+              mesh = Mesh(mesh.clipByField("inout", 0.0));
+            }
+        }
+
       if (index < planes.size()) {
         for (size_t i = 0; i < planes[index].size(); i++) {
           // Create vtk plane
@@ -534,16 +544,6 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle* docHandle, Optimize* o
           mesh.clip(plane);
         }
       }
-
-      if(optimize->GetMeshFFCMode() == 0){
-          if (this->verbosity_level_ > 1) {
-            std::cout << "ffcssize " << ffcs.size() << std::endl;
-          }
-            if (index < ffcs.size()) {
-              mesh.prepareFFCFields(ffcs[index].boundaries, ffcs[index].query);
-              mesh = Mesh(mesh.clipByField("inout", 0.0));
-            }
-        }
 
       auto poly_data = mesh.getVTKMesh();
 

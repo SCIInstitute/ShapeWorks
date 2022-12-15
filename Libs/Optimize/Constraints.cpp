@@ -717,14 +717,14 @@ bool Constraints::hasConstraints() {
 //-----------------------------------------------------------------------------
 void Constraints::clipMesh(Mesh &mesh)
 {
+    if (getFreeformConstraint().isSet()) {
+      auto& ffc = getFreeformConstraint();
+      mesh.prepareFFCFields(ffc.boundaries(), ffc.getQueryPoint(), true);
+      mesh = Mesh(mesh.clipByField("inout", 1.0));
+    }
+
   for (auto& plane : getPlaneConstraints()) {
     mesh.clip(plane.getVTKPlane());
-  }
-
-  if (getFreeformConstraint().isSet()) {
-    auto& ffc = getFreeformConstraint();
-    mesh.prepareFFCFields(ffc.boundaries(), ffc.getQueryPoint(), true);
-    mesh = Mesh(mesh.clipByField("inout", 1.0));
   }
 }
 
