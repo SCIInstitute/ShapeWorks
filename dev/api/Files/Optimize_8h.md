@@ -29,43 +29,43 @@ title: Libs/Optimize/Optimize.h
 #pragma once
 
 #ifdef _WIN32
-#pragma warning( disable: 4996 )
+#pragma warning(disable : 4996)
 #endif
 
 // std
-#include <vector>
-#include <string>
 #include <random>
+#include <string>
+#include <vector>
 
 // itk
-#include <itkImage.h>
 #include <itkCommand.h>
+#include <itkImage.h>
 
 #include <Eigen/Eigen>
 
-// shapeworks particle system
-#include "itkParticleSystem.h"
-#include "Sampler.h"
-#include "ParticleProcrustesRegistration.h"
-#include "itkParticleGoodBadAssessment.h"
-#include "itkParticleVectorFunction.h"
+// shapeworks
+#include <Project/Project.h>
+
 #include "DomainType.h"
 #include "MeshWrapper.h"
 #include "OptimizationVisualizer.h"
-#include <Project/Project.h>
-
+#include "ParticleProcrustesRegistration.h"
+#include "Sampler.h"
+#include "itkParticleSystem.h"
+#include "itkParticleVectorFunction.h"
 
 namespace shapeworks {
 
 class Project;
+class ParticleGoodBadAssessment;
 
 class MatrixContainer {
-  public:
+ public:
   Eigen::MatrixXd matrix_;
 };
 
 class Optimize {
-public:
+ public:
   using ImageType = itk::Image<float, 3>;
   using VectorType = itk::ParticleVectorFunction<3>::VectorType;
   using MatrixType = Eigen::MatrixXd;
@@ -82,9 +82,7 @@ public:
 
   void SetProject(std::shared_ptr<Project> project);
 
-
-  void SetIterationCallbackFunction(const std::function<void(void)> &f)
-  { this->m_iter_callback = f; }
+  void SetIterationCallbackFunction(const std::function<void(void)>& f) { this->iteration_callback_ = f; }
 
   void AbortOptimization();
 
@@ -94,7 +92,7 @@ public:
 
   virtual std::vector<std::vector<itk::Point<double>>> GetGlobalPoints();
 
-  void SetCutPlanes(std::vector<std::array<itk::Point<double>, 3 >> cut_planes);
+  void SetCutPlanes(std::vector<std::array<itk::Point<double>, 3>> cut_planes);
 
   void SetVerbosity(int verbosity_level);
 
@@ -135,14 +133,15 @@ public:
 
   void SetOutputCuttingPlaneFile(std::string output_cutting_plane_file);
   void SetUseCuttingPlanes(bool use_cutting_planes);
-  void SetCuttingPlane(unsigned int i,
-                       const vnl_vector_fixed<double, 3>& va,
-                       const vnl_vector_fixed<double, 3>& vb,
+  void SetCuttingPlane(unsigned int i, const vnl_vector_fixed<double, 3>& va, const vnl_vector_fixed<double, 3>& vb,
                        const vnl_vector_fixed<double, 3>& vc);
 
   void SetProcessingMode(int mode);
   void SetAdaptivityMode(int adaptivity_mode);
-  void SetMeshFFCMode(int mesh_ffc_mode){m_mesh_ffc_mode = mesh_ffc_mode; m_sampler->SetMeshFFCMode(mesh_ffc_mode);}
+  void SetMeshFFCMode(int mesh_ffc_mode) {
+    m_mesh_ffc_mode = mesh_ffc_mode;
+    m_sampler->SetMeshFFCMode(mesh_ffc_mode);
+  }
   void SetAdaptivityStrength(double adaptivity_strength);
   void SetPairwisePotentialType(int pairwise_potential_type);
   void SetTimePtsPerSubject(int time_pts_per_subject);
@@ -211,8 +210,7 @@ public:
 
   void PrintParamInfo();
 
-  std::shared_ptr<Sampler> GetSampler()
-  { return m_sampler; }
+  std::shared_ptr<Sampler> GetSampler() { return m_sampler; }
 
   MatrixContainer GetParticleSystem();
 
@@ -222,21 +220,19 @@ public:
 
   void SetGeodesicsCacheSizeMultiplier(size_t n);
 
-  shapeworks::OptimizationVisualizer &GetVisualizer();
+  shapeworks::OptimizationVisualizer& GetVisualizer();
   void SetShowVisualizer(bool show);
   bool GetShowVisualizer();
 
-  bool GetMeshFFCMode(){return m_mesh_ffc_mode;}
+  bool GetMeshFFCMode() { return m_mesh_ffc_mode; }
 
   vnl_vector_fixed<double, 3> TransformPoint(int domain, vnl_vector_fixed<double, 3> input);
 
-protected:
-
+ protected:
   virtual void SetIterationCallback();
 
-  void RunProcrustes();
+  void ComputeTotalIterations();
 
-  void OptimizeStart();
   void OptimizerStop();
 
   void ReadTransformFile();
@@ -248,8 +244,6 @@ protected:
   void Initialize();
   void AddAdaptivity();
   void RunOptimize();
-
-  void SetInitialCorrespondenceMode();
 
   virtual void IterateCallback(itk::Object*, const itk::EventObject&);
 
@@ -271,7 +265,7 @@ protected:
   void WriteParameters(std::string output_dir = "");
   void ReportBadParticles();
 
-  void SetParameters();
+  int SetParameters();
   void WriteModes();
 
   void PrintStartMessage(std::string str, unsigned int vlevel = 0) const;
@@ -289,7 +283,7 @@ protected:
 
   std::shared_ptr<Sampler> m_sampler;
   ParticleProcrustesRegistration::Pointer m_procrustes;
-  itk::ParticleGoodBadAssessment<float, 3>::Pointer m_good_bad;
+  std::shared_ptr<ParticleGoodBadAssessment> m_good_bad;
 
   unsigned int m_verbosity_level = 0;
 
@@ -297,8 +291,6 @@ protected:
 
   int m_checkpoint_counter = 0;
   int m_procrustes_counter = 0;
-  int m_saturation_counter = 0;
-  bool m_disable_procrustes = true;
   bool m_use_cutting_planes = false;
   bool m_optimizing = false;
   bool m_use_regression = false;
@@ -324,7 +316,7 @@ protected:
   int m_processing_mode = 3;
   int m_adaptivity_mode = 0;
   double m_adaptivity_strength = 0.0;
-  int m_pairwise_potential_type = 0;   // 0 - gaussian (Cates work), 1 - modified cotangent (Meyer),
+  int m_pairwise_potential_type = 0;  // 0 - gaussian (Cates work), 1 - modified cotangent (Meyer),
 
   bool m_mesh_ffc_mode = 0;
 
@@ -354,12 +346,10 @@ protected:
   bool m_fixed_domains_present = false;
   int m_use_shape_statistics_after = -1;
   std::string m_python_filename;
-  bool m_geodesics_enabled = false; // geodesics disabled by default
-  size_t m_geodesic_cache_size_multiplier = 0; // 0 => VtkMeshWrapper will use a heuristic to determine cache size
+  bool m_geodesics_enabled = false;             // geodesics disabled by default
+  size_t m_geodesic_cache_size_multiplier = 0;  // 0 => VtkMeshWrapper will use a heuristic to determine cache size
 
-  // Keeps track of which state the optimization is in.
-  unsigned int m_mode = 0;
-  /* m_spacing is used to scale the random update vector for particle splitting. */
+  // m_spacing is used to scale the random update vector for particle splitting.
   double m_spacing = 0;
 
   std::vector<std::string> m_filenames;
@@ -381,27 +371,26 @@ protected:
 
   bool m_file_output_enabled = true;
   bool m_aborted = false;
-  std::vector<std::array<itk::Point<double>, 3 >> m_cut_planes;
+  std::vector<std::array<itk::Point<double>, 3>> m_cut_planes;
 
-  //itk::MemberCommand<Optimize>::Pointer m_iterate_command;
   int m_total_iterations = 0;
   int m_iteration_count = 0;
+  int m_split_number = 0;
 
-  int m_split_number{0};
+  int current_particle_iterations_ = 0;
+  int total_particle_iterations_ = 0;
 
-  std::mt19937 m_rand{42};
-
-  std::function<void(void)> m_iter_callback;
-  bool show_visualizer = false;
-  shapeworks::OptimizationVisualizer visualizer;
+  std::function<void(void)> iteration_callback_;
+  bool show_visualizer_ = false;
+  shapeworks::OptimizationVisualizer visualizer_;
 
   std::shared_ptr<Project> project_;
 };
 
-}
+}  // namespace shapeworks
 ```
 
 
 -------------------------------
 
-Updated on 2022-12-13 at 00:51:44 +0000
+Updated on 2022-12-15 at 07:26:46 +0000

@@ -35,7 +35,6 @@ title: itk
 | class | **[itk::ParticleGaussianModeWriter](../Classes/classitk_1_1ParticleGaussianModeWriter.md)**  |
 | class | **[itk::ParticleGeneralShapeGradientMatrix](../Classes/classitk_1_1ParticleGeneralShapeGradientMatrix.md)** <br>Each column describes a shape. A shape may be composed of m_DomainsPerShape domains (default 1). ALL DOMAINS ARE _NOT_ ASSUMED TO HAVE THE SAME NUMBER OF PARTICLES!  |
 | class | **[itk::ParticleGeneralShapeMatrix](../Classes/classitk_1_1ParticleGeneralShapeMatrix.md)** <br>Each column describes a shape. A shape may be composed of m_DomainsPerShape domains (default 1). ALL DOMAINS ARE _NOT_ ASSUMED TO HAVE THE SAME NUMBER OF PARTICLES!  |
-| class | **[itk::ParticleGoodBadAssessment](../Classes/classitk_1_1ParticleGoodBadAssessment.md)**  |
 | class | **[itk::ParticleGradientDescentPositionOptimizer](../Classes/classitk_1_1ParticleGradientDescentPositionOptimizer.md)**  |
 | class | **[itk::ParticleMeanCurvatureAttribute](../Classes/classitk_1_1ParticleMeanCurvatureAttribute.md)**  |
 | class | **[itk::ParticleMeshBasedGeneralEntropyGradientFunction](../Classes/classitk_1_1ParticleMeshBasedGeneralEntropyGradientFunction.md)**  |
@@ -295,4 +294,4 @@ static int nbh26Table = {
 
 -------------------------------
 
-Updated on 2022-12-13 at 00:51:41 +0000
+Updated on 2022-12-15 at 07:26:45 +0000

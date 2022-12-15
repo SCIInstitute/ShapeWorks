@@ -45,7 +45,6 @@ title: Classes
 * **class [MeshSettings](../Classes/classMeshSettings.md)** <br>Settings for creating a mesh. 
 * **class [OptimizeParameterFile](../Classes/classOptimizeParameterFile.md)** 
 * **class [ParticleEvent:: Parent](../Classes/classParticleEvent_1_1_01Parent.md)** 
-* **class [ParticleProcrustesRegistration](../Classes/classParticleProcrustesRegistration.md)** <br>Class for replacing bad particles during optimization Author - Praful Agrawal Date - June 05, 2017. 
 * **class [Preferences](../Classes/classPreferences.md)** <br>Application preferences. 
 * **class [Procrustes3D](../Classes/classProcrustes3D.md)** 
 * **struct [Quad](../Classes/structQuad.md)** 
@@ -82,8 +81,6 @@ title: Classes
     * **class [ParticleGaussianModeWriter](../Classes/classitk_1_1ParticleGaussianModeWriter.md)** 
     * **class [ParticleGeneralShapeGradientMatrix](../Classes/classitk_1_1ParticleGeneralShapeGradientMatrix.md)** <br>Each column describes a shape. A shape may be composed of m_DomainsPerShape domains (default 1). ALL DOMAINS ARE _NOT_ ASSUMED TO HAVE THE SAME NUMBER OF PARTICLES! 
     * **class [ParticleGeneralShapeMatrix](../Classes/classitk_1_1ParticleGeneralShapeMatrix.md)** <br>Each column describes a shape. A shape may be composed of m_DomainsPerShape domains (default 1). ALL DOMAINS ARE _NOT_ ASSUMED TO HAVE THE SAME NUMBER OF PARTICLES! 
-    * **class [ParticleGoodBadAssessment](../Classes/classitk_1_1ParticleGoodBadAssessment.md)** 
-        * **struct [IdxCompare](../Classes/structitk_1_1ParticleGoodBadAssessment_1_1IdxCompare.md)** 
     * **class [ParticleGradientDescentPositionOptimizer](../Classes/classitk_1_1ParticleGradientDescentPositionOptimizer.md)** 
     * **class [ParticleMeanCurvatureAttribute](../Classes/classitk_1_1ParticleMeanCurvatureAttribute.md)** 
     * **class [ParticleMeshBasedGeneralEntropyGradientFunction](../Classes/classitk_1_1ParticleMeshBasedGeneralEntropyGradientFunction.md)** 
@@ -187,6 +184,7 @@ title: Classes
     * **class [Parameters](../Classes/classshapeworks_1_1Parameters.md)** <br>Parameter settings. 
     * **class [ParticleColors](../Classes/classshapeworks_1_1ParticleColors.md)** <br>Supplies particle colors. 
     * **class [ParticleDomain](../Classes/classshapeworks_1_1ParticleDomain.md)** 
+    * **class [ParticleGoodBadAssessment](../Classes/classshapeworks_1_1ParticleGoodBadAssessment.md)** <br>Performs good/bad points assessment and reports the bad positions of the particle system. 
     * **class [ParticleImageDomain](../Classes/classshapeworks_1_1ParticleImageDomain.md)** 
     * **class [ParticleImageDomainWithCurvature](../Classes/classshapeworks_1_1ParticleImageDomainWithCurvature.md)** 
     * **class [ParticleImageDomainWithGradN](../Classes/classshapeworks_1_1ParticleImageDomainWithGradN.md)** 
@@ -266,4 +264,4 @@ title: Classes
 
 -------------------------------
 
-Updated on 2022-12-13 at 00:51:44 +0000
+Updated on 2022-12-15 at 07:26:46 +0000

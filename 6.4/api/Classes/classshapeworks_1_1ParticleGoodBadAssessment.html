@@ -12,14 +12,14 @@
         <meta name="author" content="Shireen Elhabian et al.">
       
       
-        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Classes/structitk_1_1ParticleGoodBadAssessment_1_1IdxCompare.html">
+        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Classes/classshapeworks_1_1ParticleGoodBadAssessment.html">
       
       <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.3.8">
     
     
       
-        <title>itk::ParticleGoodBadAssessment::IdxCompare - ShapeWorks</title>
+        <title>shapeworks::ParticleGoodBadAssessment - ShapeWorks</title>
       
     
     
@@ -84,7 +84,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#itkparticlegoodbadassessmentidxcompare" class="md-skip">
+        <a href="#shapeworksparticlegoodbadassessment" class="md-skip">
           Skip to content
         </a>
       
@@ -122,7 +122,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              itk::ParticleGoodBadAssessment::IdxCompare
+              shapeworks::ParticleGoodBadAssessment
             
           </span>
         </div>
@@ -2211,6 +2211,13 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#public-types" class="md-nav__link">
+    Public Types
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#public-functions" class="md-nav__link">
     Public Functions
   </a>
@@ -2218,9 +2225,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#public-attributes" class="md-nav__link">
-    Public Attributes
+  <a href="#public-types-documentation" class="md-nav__link">
+    Public Types Documentation
   </a>
+  
+    <nav class="md-nav" aria-label="Public Types Documentation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#using-meancurvaturecachetype" class="md-nav__link">
+    using MeanCurvatureCacheType
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -2233,35 +2253,22 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#function-idxcompare" class="md-nav__link">
-    function IdxCompare
+  <a href="#function-set_domains_per_shape" class="md-nav__link">
+    function set_domains_per_shape
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-operator" class="md-nav__link">
-    function operator()
+  <a href="#function-set_criterion_angle" class="md-nav__link">
+    function set_criterion_angle
   </a>
   
 </li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#public-attributes-documentation" class="md-nav__link">
-    Public Attributes Documentation
-  </a>
-  
-    <nav class="md-nav" aria-label="Public Attributes Documentation">
-      <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#variable-target" class="md-nav__link">
-    variable target
+  <a href="#function-run_assessment" class="md-nav__link">
+    function run_assessment
   </a>
   
 </li>
@@ -2283,13 +2290,30 @@
             <article class="md-content__inner md-typeset">
               
                 
-  <a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/api/Classes/structitk_1_1ParticleGoodBadAssessment_1_1IdxCompare.md" title="Edit this page" class="md-content__button md-icon">
+  <a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/api/Classes/classshapeworks_1_1ParticleGoodBadAssessment.md" title="Edit this page" class="md-content__button md-icon">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
   </a>
 
 
 
-<h1 id="itkparticlegoodbadassessmentidxcompare">itk::ParticleGoodBadAssessment::IdxCompare</h1>
+<h1 id="shapeworksparticlegoodbadassessment">shapeworks::ParticleGoodBadAssessment</h1>
+<p>Performs good/bad points assessment and reports the bad positions of the particle system. </p>
+<p><code>#include &lt;ParticleGoodBadAssessment.h&gt;</code></p>
+<h2 id="public-types">Public Types</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>using <a href="classitk_1_1ParticleMeanCurvatureAttribute.html">itk::ParticleMeanCurvatureAttribute</a>&lt; float, 3 &gt;</td>
+<td><strong><a href="classshapeworks_1_1ParticleGoodBadAssessment.html#using-meancurvaturecachetype">MeanCurvatureCacheType</a></strong></td>
+</tr>
+</tbody>
+</table>
 <h2 id="public-functions">Public Functions</h2>
 <table>
 <thead>
@@ -2300,48 +2324,42 @@
 </thead>
 <tbody>
 <tr>
-<td></td>
-<td><strong><a href="structitk_1_1ParticleGoodBadAssessment_1_1IdxCompare.html#function-idxcompare">IdxCompare</a></strong>(const std::vector&lt; double &gt; &amp; target)</td>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1ParticleGoodBadAssessment.html#function-set-domains-per-shape">set_domains_per_shape</a></strong>(int i)</td>
 </tr>
 <tr>
-<td>bool</td>
-<td><strong><a href="structitk_1_1ParticleGoodBadAssessment_1_1IdxCompare.html#function-operator()">operator()</a></strong>(int a, int b) const</td>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1ParticleGoodBadAssessment.html#function-set-criterion-angle">set_criterion_angle</a></strong>(double a)</td>
+</tr>
+<tr>
+<td>std::vector&lt; std::vector&lt; int &gt; &gt;</td>
+<td><strong><a href="classshapeworks_1_1ParticleGoodBadAssessment.html#function-run-assessment">run_assessment</a></strong>(const <a href="classitk_1_1ParticleSystem.html">itk::ParticleSystem</a> * ps, <a href="classitk_1_1ParticleMeanCurvatureAttribute.html">MeanCurvatureCacheType</a> * mean_curvature_cache)</td>
 </tr>
 </tbody>
 </table>
-<h2 id="public-attributes">Public Attributes</h2>
-<table>
-<thead>
-<tr>
-<th></th>
-<th>Name</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>const std::vector&lt; double &gt; &amp;</td>
-<td><strong><a href="structitk_1_1ParticleGoodBadAssessment_1_1IdxCompare.html#variable-target">target</a></strong></td>
-</tr>
-</tbody>
-</table>
+<h2 id="public-types-documentation">Public Types Documentation</h2>
+<h3 id="using-meancurvaturecachetype">using MeanCurvatureCacheType</h3>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ParticleGoodBadAssessment</span><span class="o">::</span><span class="n">MeanCurvatureCacheType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleMeanCurvatureAttribute</span><span class="o">&lt;</span><span class="kt">float</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
-<h3 id="function-idxcompare">function IdxCompare</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">IdxCompare</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">target</span><span class="w"></span>
+<h3 id="function-set_domains_per_shape">function set_domains_per_shape</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_domains_per_shape</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
-<h3 id="function-operator">function operator()</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="p">()(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">b</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<h3 id="function-set_criterion_angle">function set_criterion_angle</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_criterion_angle</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">a</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
 </code></pre></div>
-<h2 id="public-attributes-documentation">Public Attributes Documentation</h2>
-<h3 id="variable-target">variable target</h3>
-<div class="highlight"><pre><span></span><code><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">target</span><span class="p">;</span><span class="w"></span>
+<h3 id="function-run_assessment">function run_assessment</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">run_assessment</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">ps</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">MeanCurvatureCacheType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">mean_curvature_cache</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-12-13 at 00:51:42 +0000</p>
+<p>Updated on 2022-12-15 at 07:26:45 +0000</p>
 
               
             </article>

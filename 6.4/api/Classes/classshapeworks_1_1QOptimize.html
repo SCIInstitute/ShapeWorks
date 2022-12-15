@@ -2884,11 +2884,7 @@
 <tbody>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#function-runprocrustes">RunProcrustes</a></strong>()<br>Run an iteration of procrustes.</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#function-optimizestart">OptimizeStart</a></strong>()</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-computetotaliterations">ComputeTotalIterations</a></strong>()</td>
 </tr>
 <tr>
 <td>void</td>
@@ -2925,10 +2921,6 @@
 <tr>
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#function-runoptimize">RunOptimize</a></strong>()</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#function-setinitialcorrespondencemode">SetInitialCorrespondenceMode</a></strong>()</td>
 </tr>
 <tr>
 <td>void</td>
@@ -2991,7 +2983,7 @@
 <td><strong><a href="classshapeworks_1_1Optimize.html#function-reportbadparticles">ReportBadParticles</a></strong>()</td>
 </tr>
 <tr>
-<td>void</td>
+<td>int</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#function-setparameters">SetParameters</a></strong>()</td>
 </tr>
 <tr>
@@ -3034,7 +3026,7 @@
 <td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-procrustes">m_procrustes</a></strong></td>
 </tr>
 <tr>
-<td><a href="classitk_1_1ParticleGoodBadAssessment.html">itk::ParticleGoodBadAssessment</a>&lt; float, 3 &gt;::Pointer</td>
+<td>std::shared_ptr&lt; <a href="classshapeworks_1_1ParticleGoodBadAssessment.html">ParticleGoodBadAssessment</a> &gt;</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-good-bad">m_good_bad</a></strong></td>
 </tr>
 <tr>
@@ -3056,14 +3048,6 @@
 <tr>
 <td>int</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-procrustes-counter">m_procrustes_counter</a></strong></td>
-</tr>
-<tr>
-<td>int</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-saturation-counter">m_saturation_counter</a></strong></td>
-</tr>
-<tr>
-<td>bool</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-disable-procrustes">m_disable_procrustes</a></strong></td>
 </tr>
 <tr>
 <td>bool</td>
@@ -3270,10 +3254,6 @@
 <td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-geodesic-cache-size-multiplier">m_geodesic_cache_size_multiplier</a></strong></td>
 </tr>
 <tr>
-<td>unsigned int</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-mode">m_mode</a></strong></td>
-</tr>
-<tr>
 <td>double</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-spacing">m_spacing</a></strong></td>
 </tr>
@@ -3350,20 +3330,24 @@
 <td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-split-number">m_split_number</a></strong></td>
 </tr>
 <tr>
-<td>std::mt19937</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-rand">m_rand</a></strong></td>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-current-particle-iterations-">current_particle_iterations_</a></strong></td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-total-particle-iterations-">total_particle_iterations_</a></strong></td>
 </tr>
 <tr>
 <td>std::function&lt; void(void)&gt;</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-iter-callback">m_iter_callback</a></strong></td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-iteration-callback-">iteration_callback_</a></strong></td>
 </tr>
 <tr>
 <td>bool</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#variable-show-visualizer">show_visualizer</a></strong></td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-show-visualizer-">show_visualizer_</a></strong></td>
 </tr>
 <tr>
 <td><a href="classshapeworks_1_1OptimizationVisualizer.html">shapeworks::OptimizationVisualizer</a></td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#variable-visualizer">visualizer</a></strong></td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-visualizer-">visualizer_</a></strong></td>
 </tr>
 <tr>
 <td>std::shared_ptr&lt; <a href="classshapeworks_1_1Project.html">Project</a> &gt;</td>
@@ -3422,7 +3406,7 @@
 </code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1Optimize.html#function-iteratecallback">shapeworks::Optimize::IterateCallback</a></p>
 <hr />
-<p>Updated on 2022-12-13 at 00:51:43 +0000</p>
+<p>Updated on 2022-12-15 at 07:26:45 +0000</p>
 
               
             </article>

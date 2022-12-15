@@ -3015,15 +3015,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-runprocrustes" class="md-nav__link">
-    function RunProcrustes
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-optimizestart" class="md-nav__link">
-    function OptimizeStart
+  <a href="#function-computetotaliterations" class="md-nav__link">
+    function ComputeTotalIterations
   </a>
   
 </li>
@@ -3087,13 +3080,6 @@
           <li class="md-nav__item">
   <a href="#function-runoptimize" class="md-nav__link">
     function RunOptimize
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-setinitialcorrespondencemode" class="md-nav__link">
-    function SetInitialCorrespondenceMode
   </a>
   
 </li>
@@ -3331,20 +3317,6 @@
           <li class="md-nav__item">
   <a href="#variable-m_procrustes_counter" class="md-nav__link">
     variable m_procrustes_counter
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#variable-m_saturation_counter" class="md-nav__link">
-    variable m_saturation_counter
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#variable-m_disable_procrustes" class="md-nav__link">
-    variable m_disable_procrustes
   </a>
   
 </li>
@@ -3707,13 +3679,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#variable-m_mode" class="md-nav__link">
-    variable m_mode
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#variable-m_spacing" class="md-nav__link">
     variable m_spacing
   </a>
@@ -3847,29 +3812,36 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#variable-m_rand" class="md-nav__link">
-    variable m_rand
+  <a href="#variable-current_particle_iterations_" class="md-nav__link">
+    variable current_particle_iterations_
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#variable-m_iter_callback" class="md-nav__link">
-    variable m_iter_callback
+  <a href="#variable-total_particle_iterations_" class="md-nav__link">
+    variable total_particle_iterations_
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#variable-show_visualizer" class="md-nav__link">
-    variable show_visualizer
+  <a href="#variable-iteration_callback_" class="md-nav__link">
+    variable iteration_callback_
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#variable-visualizer" class="md-nav__link">
-    variable visualizer
+  <a href="#variable-show_visualizer_" class="md-nav__link">
+    variable show_visualizer_
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#variable-visualizer_" class="md-nav__link">
+    variable visualizer_
   </a>
   
 </li>
@@ -4361,11 +4333,7 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#function-runprocrustes">RunProcrustes</a></strong>()<br>Run an iteration of procrustes.</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#function-optimizestart">OptimizeStart</a></strong>()</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-computetotaliterations">ComputeTotalIterations</a></strong>()</td>
 </tr>
 <tr>
 <td>void</td>
@@ -4402,10 +4370,6 @@
 <tr>
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#function-runoptimize">RunOptimize</a></strong>()</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#function-setinitialcorrespondencemode">SetInitialCorrespondenceMode</a></strong>()</td>
 </tr>
 <tr>
 <td>virtual void</td>
@@ -4472,7 +4436,7 @@
 <td><strong><a href="classshapeworks_1_1Optimize.html#function-reportbadparticles">ReportBadParticles</a></strong>()</td>
 </tr>
 <tr>
-<td>void</td>
+<td>int</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#function-setparameters">SetParameters</a></strong>()</td>
 </tr>
 <tr>
@@ -4523,7 +4487,7 @@
 <td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-procrustes">m_procrustes</a></strong></td>
 </tr>
 <tr>
-<td><a href="classitk_1_1ParticleGoodBadAssessment.html">itk::ParticleGoodBadAssessment</a>&lt; float, 3 &gt;::Pointer</td>
+<td>std::shared_ptr&lt; <a href="classshapeworks_1_1ParticleGoodBadAssessment.html">ParticleGoodBadAssessment</a> &gt;</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-good-bad">m_good_bad</a></strong></td>
 </tr>
 <tr>
@@ -4545,14 +4509,6 @@
 <tr>
 <td>int</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-procrustes-counter">m_procrustes_counter</a></strong></td>
-</tr>
-<tr>
-<td>int</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-saturation-counter">m_saturation_counter</a></strong></td>
-</tr>
-<tr>
-<td>bool</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-disable-procrustes">m_disable_procrustes</a></strong></td>
 </tr>
 <tr>
 <td>bool</td>
@@ -4759,10 +4715,6 @@
 <td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-geodesic-cache-size-multiplier">m_geodesic_cache_size_multiplier</a></strong></td>
 </tr>
 <tr>
-<td>unsigned int</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-mode">m_mode</a></strong></td>
-</tr>
-<tr>
 <td>double</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-spacing">m_spacing</a></strong></td>
 </tr>
@@ -4839,20 +4791,24 @@
 <td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-split-number">m_split_number</a></strong></td>
 </tr>
 <tr>
-<td>std::mt19937</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-rand">m_rand</a></strong></td>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-current-particle-iterations-">current_particle_iterations_</a></strong></td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-total-particle-iterations-">total_particle_iterations_</a></strong></td>
 </tr>
 <tr>
 <td>std::function&lt; void(void)&gt;</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-iter-callback">m_iter_callback</a></strong></td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-iteration-callback-">iteration_callback_</a></strong></td>
 </tr>
 <tr>
 <td>bool</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#variable-show-visualizer">show_visualizer</a></strong></td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-show-visualizer-">show_visualizer_</a></strong></td>
 </tr>
 <tr>
 <td><a href="classshapeworks_1_1OptimizationVisualizer.html">shapeworks::OptimizationVisualizer</a></td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#variable-visualizer">visualizer</a></strong></td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-visualizer-">visualizer_</a></strong></td>
 </tr>
 <tr>
 <td>std::shared_ptr&lt; <a href="classshapeworks_1_1Project.html">Project</a> &gt;</td>
@@ -5428,12 +5384,8 @@
 </code></pre></div>
 <p>Set the iteration callback. Derived classes should override to set their own callback. </p>
 <p><strong>Reimplemented by</strong>: <a href="classshapeworks_1_1QOptimize.html#function-setiterationcallback">shapeworks::QOptimize::SetIterationCallback</a></p>
-<h3 id="function-runprocrustes">function RunProcrustes</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">RunProcrustes</span><span class="p">()</span><span class="w"></span>
-</code></pre></div>
-<p>Run an iteration of procrustes. </p>
-<h3 id="function-optimizestart">function OptimizeStart</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">OptimizeStart</span><span class="p">()</span><span class="w"></span>
+<h3 id="function-computetotaliterations">function ComputeTotalIterations</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">ComputeTotalIterations</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-optimizerstop">function OptimizerStop</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">OptimizerStop</span><span class="p">()</span><span class="w"></span>
@@ -5463,9 +5415,6 @@
 </code></pre></div>
 <h3 id="function-runoptimize">function RunOptimize</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">RunOptimize</span><span class="p">()</span><span class="w"></span>
-</code></pre></div>
-<h3 id="function-setinitialcorrespondencemode">function SetInitialCorrespondenceMode</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetInitialCorrespondenceMode</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-iteratecallback">function IterateCallback</h3>
 <div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">IterateCallback</span><span class="p">(</span><span class="w"></span>
@@ -5542,7 +5491,7 @@
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">ReportBadParticles</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-setparameters">function SetParameters</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetParameters</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">SetParameters</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-writemodes">function WriteModes</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">WriteModes</span><span class="p">()</span><span class="w"></span>
@@ -5580,7 +5529,7 @@
 <div class="highlight"><pre><span></span><code><span class="n">ParticleProcrustesRegistration</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_procrustes</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
 <h3 id="variable-m_good_bad">variable m_good_bad</h3>
-<div class="highlight"><pre><span></span><code><span class="n">itk</span><span class="o">::</span><span class="n">ParticleGoodBadAssessment</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">float</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_good_bad</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">ParticleGoodBadAssessment</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_good_bad</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
 <h3 id="variable-m_verbosity_level">variable m_verbosity_level</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">m_verbosity_level</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
@@ -5596,12 +5545,6 @@
 </code></pre></div>
 <h3 id="variable-m_procrustes_counter">variable m_procrustes_counter</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">m_procrustes_counter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
-</code></pre></div>
-<h3 id="variable-m_saturation_counter">variable m_saturation_counter</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">m_saturation_counter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
-</code></pre></div>
-<h3 id="variable-m_disable_procrustes">variable m_disable_procrustes</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">m_disable_procrustes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
 <h3 id="variable-m_use_cutting_planes">variable m_use_cutting_planes</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">m_use_cutting_planes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"></span>
@@ -5756,9 +5699,6 @@
 <h3 id="variable-m_geodesic_cache_size_multiplier">variable m_geodesic_cache_size_multiplier</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">size_t</span><span class="w"> </span><span class="n">m_geodesic_cache_size_multiplier</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
-<h3 id="variable-m_mode">variable m_mode</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">m_mode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
-</code></pre></div>
 <h3 id="variable-m_spacing">variable m_spacing</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">m_spacing</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
@@ -5814,25 +5754,28 @@
 <div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">m_iteration_count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
 <h3 id="variable-m_split_number">variable m_split_number</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">m_split_number</span><span class="w"> </span><span class="p">{</span><span class="mi">0</span><span class="p">};</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">m_split_number</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
-<h3 id="variable-m_rand">variable m_rand</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">mt19937</span><span class="w"> </span><span class="n">m_rand</span><span class="w"> </span><span class="p">{</span><span class="mi">42</span><span class="p">};</span><span class="w"></span>
+<h3 id="variable-current_particle_iterations_">variable current_particle_iterations_</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">current_particle_iterations_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
-<h3 id="variable-m_iter_callback">variable m_iter_callback</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">void</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_iter_callback</span><span class="p">;</span><span class="w"></span>
+<h3 id="variable-total_particle_iterations_">variable total_particle_iterations_</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">total_particle_iterations_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
-<h3 id="variable-show_visualizer">variable show_visualizer</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">show_visualizer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"></span>
+<h3 id="variable-iteration_callback_">variable iteration_callback_</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">void</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="n">iteration_callback_</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
-<h3 id="variable-visualizer">variable visualizer</h3>
-<div class="highlight"><pre><span></span><code><span class="n">shapeworks</span><span class="o">::</span><span class="n">OptimizationVisualizer</span><span class="w"> </span><span class="n">visualizer</span><span class="p">;</span><span class="w"></span>
+<h3 id="variable-show_visualizer_">variable show_visualizer_</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">show_visualizer_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="variable-visualizer_">variable visualizer_</h3>
+<div class="highlight"><pre><span></span><code><span class="n">shapeworks</span><span class="o">::</span><span class="n">OptimizationVisualizer</span><span class="w"> </span><span class="n">visualizer_</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
 <h3 id="variable-project_">variable project_</h3>
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Project</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">project_</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-12-13 at 00:51:43 +0000</p>
+<p>Updated on 2022-12-15 at 07:26:45 +0000</p>
 
               
             </article>
