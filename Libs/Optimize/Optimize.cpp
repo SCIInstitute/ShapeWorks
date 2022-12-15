@@ -34,6 +34,8 @@
 #include "object_reader.h"
 #include "object_writer.h"
 
+#include "ParticleGoodBadAssessment.h"
+
 // pybind
 #include <pybind11/embed.h>
 #include <tbb/global_control.h>
@@ -277,10 +279,9 @@ int Optimize::SetParameters() {
     this->PrintParamInfo();
   }
 
-  m_good_bad = itk::ParticleGoodBadAssessment<float, 3>::New();
-  m_good_bad->SetDomainsPerShape(m_domains_per_shape);
-  m_good_bad->SetCriterionAngle(m_normal_angle);
-  m_good_bad->SetPerformAssessment(m_perform_good_bad);
+  m_good_bad = std::make_shared<ParticleGoodBadAssessment>();
+  m_good_bad->set_domains_per_shape(m_domains_per_shape);
+  m_good_bad->set_criterion_angle(m_normal_angle);
 
   m_energy_a.clear();
   m_energy_b.clear();
@@ -905,7 +906,7 @@ void Optimize::IterateCallback(itk::Object*, const itk::EventObject&) {
 
   if (m_perform_good_bad == true) {
     std::vector<std::vector<int>> tmp;
-    tmp = m_good_bad->RunAssessment(m_sampler->GetParticleSystem(), m_sampler->GetMeanCurvatureCache());
+    tmp = m_good_bad->run_assessment(m_sampler->GetParticleSystem(), m_sampler->GetMeanCurvatureCache());
 
     if (!tmp.empty()) {
       if (this->m_bad_ids.empty()) {

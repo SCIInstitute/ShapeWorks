@@ -23,13 +23,13 @@
 #include "OptimizationVisualizer.h"
 #include "ParticleProcrustesRegistration.h"
 #include "Sampler.h"
-#include "itkParticleGoodBadAssessment.h"
 #include "itkParticleSystem.h"
 #include "itkParticleVectorFunction.h"
 
 namespace shapeworks {
 
 class Project;
+class ParticleGoodBadAssessment;
 
 class MatrixContainer {
  public:
@@ -358,7 +358,7 @@ class Optimize {
 
   std::shared_ptr<Sampler> m_sampler;
   ParticleProcrustesRegistration::Pointer m_procrustes;
-  itk::ParticleGoodBadAssessment<float, 3>::Pointer m_good_bad;
+  std::shared_ptr<ParticleGoodBadAssessment> m_good_bad;
 
   unsigned int m_verbosity_level = 0;
 
