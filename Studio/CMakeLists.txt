@@ -160,6 +160,7 @@ SET(STUDIO_UTILS_SRCS
   Utils/StudioUtils.cpp
   Utils/AnalysisUtils.cpp
   Utils/ImageLabel.cpp
+  Utils/UpdateChecker.cpp
   )
 
 SET(STUDIO_UTILS_MOC_HDRS
