@@ -215,10 +215,10 @@ int OptimizeParameters::get_verbosity() { return this->params_.get("verbosity", 
 void OptimizeParameters::set_verbosity(int value) { this->params_.set("verbosity", value); }
 
 //---------------------------------------------------------------------------
-bool OptimizeParameters::get_mesh_ffc_mode() { return this->params_.get("mesh_ffc_mode", 0); }
+int OptimizeParameters::get_mesh_ffc_mode() { return this->params_.get("mesh_ffc_mode", 0); }
 
 //---------------------------------------------------------------------------
-void OptimizeParameters::set_mesh_ffc_mode(bool value) { this->params_.set("mesh_ffc_mode", value); }
+void OptimizeParameters::set_mesh_ffc_mode(int value) { this->params_.set("mesh_ffc_mode", value); }
 
 //---------------------------------------------------------------------------
 bool OptimizeParameters::get_use_landmarks() { return params_.get("use_landmarks", false); }
@@ -421,7 +421,8 @@ bool OptimizeParameters::set_up_optimize(Optimize *optimize) {
 
       if (domain_type == DomainType::Mesh) {
         Mesh mesh = MeshUtils::threadSafeReadMesh(filename.c_str());
-        if (domain_count < constraints.size()) {
+        std::cout << "get_mesh_ffc_mode() " << get_mesh_ffc_mode() << std::endl;
+        if (get_mesh_ffc_mode() == 0 && domain_count < constraints.size()) {
           Constraints constraint = constraints[domain_count];
           std::cout << "SetUpOptimize" << std::endl;
           constraint.clipMesh(mesh);

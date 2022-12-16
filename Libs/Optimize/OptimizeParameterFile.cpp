@@ -522,6 +522,9 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle* docHandle, Optimize* o
 
       Mesh mesh = MeshUtils::threadSafeReadMesh(meshFiles[index].c_str());
 
+      //debug
+      std::cout << "optimize->GetMeshFFCMode()" << optimize->GetMeshFFCMode() << std::endl;
+
       if(optimize->GetMeshFFCMode() == 0){
           if (this->verbosity_level_ > 1) {
             std::cout << "ffcssize " << ffcs.size() << std::endl;
@@ -530,19 +533,19 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle* docHandle, Optimize* o
               mesh.prepareFFCFields(ffcs[index].boundaries, ffcs[index].query);
               mesh = Mesh(mesh.clipByField("inout", 0.0));
             }
-        }
 
-      if (index < planes.size()) {
-        for (size_t i = 0; i < planes[index].size(); i++) {
-          // Create vtk plane
-          vtkSmartPointer<vtkPlane> plane = vtkSmartPointer<vtkPlane>::New();
-          plane->SetNormal(planes[index][i].first[0], planes[index][i].first[1],
-                           planes[index][i].first[2]);
-          plane->SetOrigin(planes[index][i].second[0], planes[index][i].second[1],
-                           planes[index][i].second[2]);
+            if (index < planes.size()) {
+              for (size_t i = 0; i < planes[index].size(); i++) {
+                // Create vtk plane
+                vtkSmartPointer<vtkPlane> plane = vtkSmartPointer<vtkPlane>::New();
+                plane->SetNormal(planes[index][i].first[0], planes[index][i].first[1],
+                                 planes[index][i].first[2]);
+                plane->SetOrigin(planes[index][i].second[0], planes[index][i].second[1],
+                                 planes[index][i].second[2]);
 
-          mesh.clip(plane);
-        }
+                mesh.clip(plane);
+              }
+            }
       }
 
       auto poly_data = mesh.getVTKMesh();

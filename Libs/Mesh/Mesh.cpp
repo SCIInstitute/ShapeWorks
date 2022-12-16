@@ -1457,7 +1457,7 @@ double Mesh::getFFCValue(Eigen::Vector3d query) const {
   Eigen::Vector3d values(this->getFieldValue("value", v1), this->getFieldValue("value", v2),
                          this->getFieldValue("value", v3));
 
-  return -(bary * values.transpose()).mean();
+  return (bary * values.transpose()).mean();
 }
 
 Eigen::Vector3d Mesh::getFFCGradient(Eigen::Vector3d query) const {
@@ -1557,14 +1557,14 @@ vtkSmartPointer<vtkDoubleArray> Mesh::computeInOutForFFCs(std::vector<size_t> al
       //std::cout << filled[i] << " ";
       if(filled[i] == 1){
           ins++;
-          inout->SetValue(vertecesi(0), 1.);
-          inout->SetValue(vertecesi(1), 1.);
-          inout->SetValue(vertecesi(2), 1.);
-      }
-      else{
           inout->SetValue(vertecesi(0), 0.);
           inout->SetValue(vertecesi(1), 0.);
           inout->SetValue(vertecesi(2), 0.);
+      }
+      else{
+          inout->SetValue(vertecesi(0), 1.);
+          inout->SetValue(vertecesi(1), 1.);
+          inout->SetValue(vertecesi(2), 1.);
           outs++;
       }
   }

@@ -402,7 +402,7 @@ protected:
   double m_adaptivity_strength = 0.0;
   int m_pairwise_potential_type = 0;   // 0 - gaussian (Cates work), 1 - modified cotangent (Meyer),
 
-  bool m_mesh_ffc_mode = 0;
+  int m_mesh_ffc_mode = 0;
 
   unsigned int m_timepts_per_subject = 1;
   int m_optimization_iterations = 2000;
