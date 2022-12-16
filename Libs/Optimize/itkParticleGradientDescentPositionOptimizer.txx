@@ -158,8 +158,6 @@ namespace itk
               if (m_ParticleSystem->GetDomain(dom)->GetConstraints()->GetActive()) {
                 AugmentedLagrangianConstraints(gradient, pt, dom, maximumUpdateAllowed);
               }
-              //debug
-//              std::cout << m_ParticleSystem->GetDomain(dom)->GetConstraints()->GetActive() << std::endl;
 
                 gradmag = gradient.magnitude();
 

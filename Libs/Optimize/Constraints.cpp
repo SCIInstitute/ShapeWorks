@@ -720,7 +720,7 @@ void Constraints::clipMesh(Mesh &mesh)
     if (getFreeformConstraint().isSet()) {
       auto& ffc = getFreeformConstraint();
       mesh.prepareFFCFields(ffc.boundaries(), ffc.getQueryPoint(), true);
-      mesh = Mesh(mesh.clipByField("inout", 1.0));
+      mesh = Mesh(mesh.clipByField("inout", 0.0));
     }
 
   for (auto& plane : getPlaneConstraints()) {
