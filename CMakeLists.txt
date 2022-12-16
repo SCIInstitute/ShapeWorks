@@ -211,7 +211,7 @@ add_subdirectory(Libs)
 add_subdirectory(Applications)
 
 if(Build_Studio)
-  add_subdirectory(Studio/src)
+  add_subdirectory(Studio)
 endif(Build_Studio)
 
 if (SHAPEWORKS_GUI)
