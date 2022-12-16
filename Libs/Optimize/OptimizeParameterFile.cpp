@@ -531,7 +531,7 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle* docHandle, Optimize* o
           }
             if (index < ffcs.size()) {
               mesh.prepareFFCFields(ffcs[index].boundaries, ffcs[index].query);
-              mesh = Mesh(mesh.clipByField("inout", 0.0));
+              mesh = Mesh(mesh.clipByField("inout", 1.0));
             }
 
             if (index < planes.size()) {

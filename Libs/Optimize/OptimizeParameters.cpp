@@ -368,7 +368,7 @@ bool OptimizeParameters::set_up_optimize(Optimize *optimize) {
       constraint.Read(file);
       constraints.push_back(constraint);
       auto domain_type = project_->get_groomed_domain_types()[f];
-      if (domain_type != DomainType::Mesh) {
+      if (domain_type != DomainType::Mesh || (domain_type == DomainType::Mesh && get_mesh_ffc_mode() == 1)) {
         for (auto& plane : constraint.getPlaneConstraints()) {
           auto& points = plane.points();
           vnl_vector_fixed<double, 3> a, b, c;

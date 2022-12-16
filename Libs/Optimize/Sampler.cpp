@@ -160,8 +160,10 @@ void Sampler::AllocateDomainsAndNeighborhoods() {
       }
     }
     else if(domain->GetDomainType() == shapeworks::DomainType::Mesh){
+        //debug
         std::cout << "m_meshFFCMode " << m_meshFFCMode << std::endl;
         if(m_meshFFCMode == 1){
+            std::cout << "m_FFCs.size() " << m_FFCs.size() << std::endl;
             // Adding free-form constraints to constraint object
             //std::cout << "m_FFCs.size() " << m_FFCs.size() << std::endl;
             if (m_FFCs.size() > i) {
