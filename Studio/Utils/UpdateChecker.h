@@ -1,5 +1,6 @@
 #pragma once
 
+
 namespace shapeworks {
 
 //! Update Checker
@@ -8,7 +9,15 @@ namespace shapeworks {
  */
 class UpdateChecker {
  public:
+
+  UpdateChecker();
+  ~UpdateChecker();
+
+  void runAutoUpdateCheck();
+  void runManualUpdateCheck();
+
  private:
+
 };
 
 }  // namespace shapeworks

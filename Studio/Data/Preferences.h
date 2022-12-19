@@ -116,6 +116,9 @@ class Preferences : public QObject {
   void set_export_pca_modes(QString string);
   QString get_export_pca_modes();
 
+  bool get_auto_update_check();
+  void set_auto_update_check(bool enabled);
+
  Q_SIGNALS:
 
   void color_scheme_changed(int newIndex);

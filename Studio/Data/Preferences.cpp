@@ -327,3 +327,13 @@ void Preferences::update_recent_files() {
   recent_files_ = no_dupes;
   recent_paths_ = no_dupe_paths;
 }
+
+//-----------------------------------------------------------------------------
+bool Preferences::get_auto_update_check() {
+  return settings_.value("General/auto_update_check", true).toBool();
+}
+
+//-----------------------------------------------------------------------------
+void Preferences::set_auto_update_check(bool enabled) {
+  settings_.setValue("General/auto_update_check", enabled);
+}
