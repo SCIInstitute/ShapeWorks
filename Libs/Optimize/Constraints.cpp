@@ -21,7 +21,7 @@ void Constraints::addPlane(const vnl_vector<double> &a, const vnl_vector<double>
     qp(1) = q[1];
     qp(2) = q[2];
     PlaneConstraint plane_c;
-    plane_c.setPlaneNormal(qp);
+    plane_c.setPlaneNormal(-qp);
     plane_c.setPlanePoint(a);
     planeConstraints_.push_back(plane_c);
     active_ = true;

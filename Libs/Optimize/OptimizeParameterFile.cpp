@@ -538,8 +538,8 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle* docHandle, Optimize* o
               for (size_t i = 0; i < planes[index].size(); i++) {
                 // Create vtk plane
                 vtkSmartPointer<vtkPlane> plane = vtkSmartPointer<vtkPlane>::New();
-                plane->SetNormal(planes[index][i].first[0], planes[index][i].first[1],
-                                 planes[index][i].first[2]);
+                plane->SetNormal(-planes[index][i].first[0], -planes[index][i].first[1],
+                                 -planes[index][i].first[2]);
                 plane->SetOrigin(planes[index][i].second[0], planes[index][i].second[1],
                                  planes[index][i].second[2]);
 

@@ -10,7 +10,7 @@ namespace shapeworks {
 //-----------------------------------------------------------------------------
 bool PlaneConstraint::isViolated(const Eigen::Vector3d &pt) const {
   double dist = planeNormal_.dot(pt - planePoint_);
-  if (dist < 0) {
+  if (dist > 0) {
     return true;
   }
   return false;
