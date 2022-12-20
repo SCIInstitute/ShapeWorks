@@ -1,0 +1,20 @@
+{
+	"num_corr": 64,
+	"num_samples": 23,
+	"particle_dir": "/home/sci/riddhishb/Documents/git-repos/ShapeworksPybind/NonLinearExp/2DSupershapes/ShapeModel_Aug_SW/",
+	"save_dir":"/home/sci/riddhishb/Documents/git-repos/ShapeworksPybind/NonLinearExp/2DSupershapes/ShapeModel_Aug_SW/",
+	"model_name": "test_model",
+	"prior_type": "diagonal",
+    "dimension": 2,
+    "learning_rate": 0.000010,
+    "weight_decay": 0.00005,
+    "batch_size":5,
+    "num_initial_iterations": 100001,
+    "maf_iterations": 50001,
+    "num_augment": 1000,
+    "viz_dir": "/home/sci/riddhishb/Documents/git-repos/ShapeworksPybind/ShapeWorks/Examples/Python/output_1000/viz/",
+    "vizualize": false,
+    "model_path":"current",
+    "save_iter":1,
+    "prior_update":"cov_full"
+  }
