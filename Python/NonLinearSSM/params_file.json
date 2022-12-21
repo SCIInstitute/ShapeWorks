@@ -1,7 +1,10 @@
 {
-	"num_corr": 64,
+	"device": "cuda:0",
+    "num_corr": 64,
 	"num_samples": 23,
-	"particle_dir": "/home/sci/riddhishb/Documents/git-repos/ShapeworksPybind/NonLinearExp/2DSupershapes/ShapeModel_Aug_SW/",
+    
+	"particles_dir": "/home/sci/nawazish.khan/non-linear-ssm-experiments/data/supershapes_3_lobes_particles/",
+    "out_dir": "/home/sci/nawazish.khan/non-linear-ssm-experiments/output/",
 	"save_dir":"/home/sci/riddhishb/Documents/git-repos/ShapeworksPybind/NonLinearExp/2DSupershapes/ShapeModel_Aug_SW/",
 	"model_name": "test_model",
 	"prior_type": "diagonal",

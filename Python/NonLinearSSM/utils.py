@@ -1,3 +1,70 @@
+import numpy as np
+import torch
+import math
+import glob
+
+class DatasetSuperShapes:
+    def __init__(self, numpy_data):
+        self.data = numpy_data
+        self.xdim = self.data.shape[1:]
+        self.num_samples = self.data.shape[0]
+        self.data = torch.from_numpy(self.data)
+        
+    def sample(self, n):
+        X = self.data[np.random.randint(self.data.shape[0], size=n)]
+        return X
+
+
+def super_formula_3D(m, n1, n2, n3, a, b, numPoints=100000):
+    def super_formula_2D(m, n1, n2, n3, a, b, theta):
+        r = abs((1 / a) * np.cos(m * theta / 4.0))**n2  +  abs((1 / b) * np.sin(m * theta / 4.0))**n3
+        return r**(-1 / n1)
+
+    numPointsRoot = round(math.sqrt(numPoints))
+    theta = np.linspace(-math.pi, math.pi, endpoint=True, num=numPointsRoot)
+    phi = np.linspace(-math.pi / 2.0, math.pi/2.0, endpoint=True, num=numPointsRoot)
+    theta, phi = np.meshgrid(theta, phi)
+    theta, phi = theta.flatten(), phi.flatten()
+    r1 = super_formula_2D(m, n1, n2, n3, a, b, theta)
+    r2 = super_formula_2D(m, n1, n2, n3, a, b, phi)
+    x = r1 * r2 * np.cos(theta) * np.cos(phi)
+    y = r1 * r2 * np.sin(theta) * np.cos(phi)
+    z = r2 * np.sin(phi)
+
+    return x, y, z
+
+def generate_3D_supershapes_point_cloud(N, M, d=3, m=3):
+    n1 = np.random.chisquare(4)
+    n2 = np.random.chisquare(4)
+    n3 = np.random.chisquare(4)
+    points_cloud = np.zeros([N, M, d])
+    a = 1
+    b = 1
+    for i in range(N):
+        X, Y, Z =  super_formula_3D(m, n1, n2, n3, a, b, M)
+        points = np.column_stack((X,Y,Z))
+        points_cloud[i, ...] = points[:, :2]
+    return points_cloud
+
+def load_shape_matrix(particle_dir, N, M, d=3, particle_system='world'):
+    point_files = sorted(glob.glob(f'{particle_dir}/*_{particle_system}.particles'))
+    if len(point_files) != N:
+        raise ValueError(f"Inconsistent particle files for {N} subjects")
+    else:
+        data = np.zeros([N, M, d])
+        for i in range(len(point_files)):
+            nm = point_files[i]
+            data[i, ...] = np.loadtxt(nm)[:, :2]
+
+    return data
+
+
+def get_particle_statistics(data):
+	data = data.reshape(data.shape[0], -1)
+	mu = data.mean(0)
+	covmat = np.cov(data.T)
+	return [mu, covmat]
+
 class DictMap(dict):
     """
     Example:
