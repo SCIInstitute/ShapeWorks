@@ -3,6 +3,8 @@
 #include <Logging.h>
 #include <StringUtils.h>
 
+#include <MeshWarper.h>
+
 #include <boost/filesystem.hpp>
 #include <nlohmann/json.hpp>
 
@@ -80,6 +82,8 @@ void Analyze::run_offline_analysis(std::string outfile) {
 
   // compute stats
   compute_stats();
+
+  initialize_mesh_warper();
 
   json j;
 
@@ -420,6 +424,38 @@ Particles Analyze::convert_from_combined(const Eigen::VectorXd& points) {
   }
 
   return particles;
+}
+
+//---------------------------------------------------------------------------
+void Analyze::initialize_mesh_warper() {
+  int median = stats_.ComputeMedianShape(-32);  //-32 = both groups
+
+  if (median < 0 || median >= get_shapes().size()) {
+    SW_ERROR("Unable to set reference mesh, stats returned invalid median index");
+    return;
+  }
+  std::shared_ptr<Shape> median_shape = get_shapes()[median];
+
+  auto mesh_group = median_shape->get_groomed_meshes(true);
+
+  if (!mesh_group.valid()) {
+    SW_ERROR("Unable to set reference mesh, groomed mesh is unavailable");
+    return;
+  }
+  auto meshes = mesh_group.meshes();
+  for (int i = 0; i < mesh_group.meshes().size(); i++) {
+    Eigen::VectorXd particles = median_shape->get_particles().get_local_particles(i);
+    Eigen::MatrixXd points = Eigen::Map<const Eigen::VectorXd>((double*)particles.data(), particles.size());
+    points.resize(3, points.size() / 3);
+    points.transposeInPlace();
+
+    auto poly_data = meshes[i]->get_poly_data();
+    Mesh mesh(poly_data);
+    median_shape->get_constraints(i).clipMesh(mesh);
+
+    mesh_manager_->get_mesh_warper(i)->set_reference_mesh(mesh.getVTKMesh(), points);
+  }
+
 }
 
 }  // namespace shapeworks
