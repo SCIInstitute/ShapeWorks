@@ -594,14 +594,7 @@
     Project Excel File
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#project-json-file" class="md-nav__link">
-    Project JSON File
-  </a>
-  
-    <nav class="md-nav" aria-label="Project JSON File">
+    <nav class="md-nav" aria-label="Project Excel File">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -2302,14 +2295,7 @@
     Project Excel File
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#project-json-file" class="md-nav__link">
-    Project JSON File
-  </a>
-  
-    <nav class="md-nav" aria-label="Project JSON File">
+    <nav class="md-nav" aria-label="Project Excel File">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -2351,9 +2337,6 @@
 </li>
 <li>
 <p><a href="parameters.html#project-excel-file">Project excel file</a></p>
-</li>
-<li>
-<p><a href="parameters.html#project-json-file">Project JSON file (swproj)</a></p>
 </li>
 </ul>
 <p>The project excel file format is continuously under development where new features are added. The XML will be depreciated soon, and users are encouraged to use the project excel file.  </p>
@@ -2447,36 +2430,6 @@ Many other columns will be filled in automatically by the ShapeWorks tools.</p>
 <p>After completing the grooming and optimization steps, this worksheet will look like this:</p>
 <p><img alt="ShapeWorks Studio FeatureMap Example Complete" src="../img/studio/studio_feature_map_example_complete.png" /></p>
 <p>There will also be new worksheets with parameters from those tools and other studio settings.</p>
-<h2 id="project-json-file">Project JSON File</h2>
-<p>ShapeWorks also supports a JSON version of the Excel project file for easier interoperability with other tools as well as text editor support.</p>
-<p>The format is very similar to that of the Excel spreadsheet with JSON objects for each sheet and for the data sheet, one object per subject with key/values the same as spreasheet columns.</p>
-<p>For example:</p>
-<div class="highlight"><pre><span></span><code>{
-    &quot;data&quot;: [
-        {
-            &quot;name&quot;: &quot;&quot;,
-            &quot;shape_femur&quot;: &quot;195916_R_FM_align.nrrd&quot;,
-            &quot;shape_pelvis&quot;: &quot;195916_R_PV_align.ply&quot;,
-            &quot;groomed_femur&quot;: &quot;groomed/195916_R_FM_align_DT.nrrd&quot;,
-            &quot;groomed_pelvis&quot;: &quot;groomed/195916_R_PV_align_groomed.vtk&quot;,
-        },
-        {
-            &quot;name&quot;: &quot;&quot;,
-            &quot;shape_femur&quot;: &quot;187609_R_FM_align.nrrd&quot;,
-            &quot;shape_pelvis&quot;: &quot;187609_R_PV_align.ply&quot;,
-            &quot;groomed_femur&quot;: &quot;groomed/187609_R_FM_align_DT.nrrd&quot;,
-            &quot;groomed_pelvis&quot;: &quot;groomed/187609_R_PV_align_groomed.vtk&quot;,
-        },
-    ...
-    &quot;optimize&quot;: {
-        &quot;ending_regularization&quot;: &quot;1.000000&quot;,
-        &quot;geodesic_cache_multiplier&quot;: &quot;0&quot;,
-        &quot;initial_relative_weighting&quot;: &quot;0.050000&quot;,
-        &quot;iterations_per_split&quot;: &quot;1000&quot;,
-        &quot;multiscale&quot;: &quot;false&quot;,
-        &quot;multiscale_particles&quot;: &quot;32&quot;,
-    ...
-</code></pre></div>
 <h3 id="python-api-for-generation-project-sheet">Python API for Generation Project Sheet</h3>
 <p>The <code>Project</code> class of <code>ShapeWorks</code> lets you create the project excel sheet. It comprises various functions to add the input shape names, groomed file names, optimization parameters, transform matrices, etc. A details description of the C++ class and its functions can be found <a href="http://sciinstitute.github.io/ShapeWorks/6.3/api/Classes/classshapeworks_1_1Project.html#detailed-description">here</a>. The C++ functions also have a python interface, the use of which is demonstrated in the use cases. 
 Setting up the project sheet using the python API entails the following steps:</p>

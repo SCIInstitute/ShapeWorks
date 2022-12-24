@@ -5,8 +5,6 @@
 
 * [Project excel file](parameters.md#project-excel-file)
 
-* [Project JSON file (swproj)](parameters.md#project-json-file)
-
 The project excel file format is continuously under development where new features are added. The XML will be depreciated soon, and users are encouraged to use the project excel file.  
 
 ### XML Parameter File
@@ -98,42 +96,6 @@ After completing the grooming and optimization steps, this worksheet will look l
 ![ShapeWorks Studio FeatureMap Example Complete](../img/studio/studio_feature_map_example_complete.png)
 
 There will also be new worksheets with parameters from those tools and other studio settings.
-
-## Project JSON File
-
-ShapeWorks also supports a JSON version of the Excel project file for easier interoperability with other tools as well as text editor support.
-
-The format is very similar to that of the Excel spreadsheet with JSON objects for each sheet and for the data sheet, one object per subject with key/values the same as spreasheet columns.
-
-For example:
-
-```
-{
-    "data": [
-        {
-            "name": "",
-            "shape_femur": "195916_R_FM_align.nrrd",
-            "shape_pelvis": "195916_R_PV_align.ply",
-            "groomed_femur": "groomed/195916_R_FM_align_DT.nrrd",
-            "groomed_pelvis": "groomed/195916_R_PV_align_groomed.vtk",
-        },
-        {
-            "name": "",
-            "shape_femur": "187609_R_FM_align.nrrd",
-            "shape_pelvis": "187609_R_PV_align.ply",
-            "groomed_femur": "groomed/187609_R_FM_align_DT.nrrd",
-            "groomed_pelvis": "groomed/187609_R_PV_align_groomed.vtk",
-        },
-	...
-	"optimize": {
-        "ending_regularization": "1.000000",
-        "geodesic_cache_multiplier": "0",
-        "initial_relative_weighting": "0.050000",
-        "iterations_per_split": "1000",
-        "multiscale": "false",
-        "multiscale_particles": "32",
-	...
-```		
 
 ### Python API for Generation Project Sheet
 The `Project` class of `ShapeWorks` lets you create the project excel sheet. It comprises various functions to add the input shape names, groomed file names, optimization parameters, transform matrices, etc. A details description of the C++ class and its functions can be found [here](http://sciinstitute.github.io/ShapeWorks/6.3/api/Classes/classshapeworks_1_1Project.html#detailed-description). The C++ functions also have a python interface, the use of which is demonstrated in the use cases. 
