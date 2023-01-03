@@ -140,6 +140,9 @@ namespace itk
               // maximumUpdateAllowed is set based on some fraction of the distance between particles
               // This is to avoid particles shooting past their neighbors
               double maximumUpdateAllowed;
+              // Before Evaluate: Set Base Particles + Set Jacobian
+              // Get z space gradients
+
               VectorType original_gradient = localGradientFunction->Evaluate(k, dom, m_ParticleSystem,
                                                                              maximumUpdateAllowed, energy);
 
@@ -173,6 +176,8 @@ namespace itk
                 // Step F update the point position in the particle system
                 m_ParticleSystem->SetPosition(newpoint, k, dom);
 
+                // After Evaluate: Cache and  Update Base particles based on new Z space particles
+
                 // Step G compute the new energy of the particle system
                 newenergy = localGradientFunction->Energy(k, dom, m_ParticleSystem);
 
@@ -186,6 +191,8 @@ namespace itk
                     domain->ApplyConstraints(pt, k);
                     m_ParticleSystem->SetPosition(pt, k, dom);
                     domain->InvalidateParticlePosition(k);
+
+                    // Invalidate Base Distribution particles 
 
                     m_TimeSteps[dom][k] /= factor;
                   } else // keep the move with timestep 1.0 anyway
