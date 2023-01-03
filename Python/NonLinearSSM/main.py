@@ -13,6 +13,7 @@ sw_opt = sw.Optimize()
 def before_callback():
     inv_net.norm_model.eval()
     particles = sw_opt.GetParticleSystem()
+    
 
     # Compute gradients
 

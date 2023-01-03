@@ -15,6 +15,23 @@ class DatasetSuperShapes:
         return X
 
 
+class Dataset:
+    def __init__(self, numpy_data):
+        self.data = numpy_data
+        self.xdim = self.data.shape[1:]
+        self.num_samples = self.data.shape[0]
+        self.data = torch.from_numpy(self.data)
+    
+    def get_id(self, i):
+        return self.data[i, ...]
+        
+    def datasize(self):
+        return self.data.shape[0]
+
+    def sample(self, n):
+        X = self.data[np.random.randint(self.data.shape[0], size=n)]
+        return X
+
 def super_formula_3D(m, n1, n2, n3, a, b, numPoints=100000):
     def super_formula_2D(m, n1, n2, n3, a, b, theta):
         r = abs((1 / a) * np.cos(m * theta / 4.0))**n2  +  abs((1 / b) * np.sin(m * theta / 4.0))**n3
