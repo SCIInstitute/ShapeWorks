@@ -13,6 +13,9 @@ class OptimizeParameters {
   explicit OptimizeParameters(ProjectHandle project);
   void save_to_project();
 
+  bool get_use_non_linear_optimize();
+  void set_use_non_linear_optimize(bool value);
+
   std::string get_optimize_output_prefix();
   void set_optimize_output_prefix(std::string prefix);
 
