@@ -66,12 +66,20 @@ class Optimize {
   //! Load a parameter file
   bool LoadParameterFile(std::string filename);
 
+  //! Load Shapeworks Project file
+  bool LoadXlsxProjectFile(std::string filename);
+
   bool SetUpOptimize(ProjectHandle projectFile);
 
   //! Set the Projects
   void SetProject(std::shared_ptr<Project> project);
 
+  void SaveProjectFileAfterOptimize(const std::string& filename);
+
   void SetIterationCallbackFunction(const std::function<void(void)>& f) { this->iteration_callback_ = f; }
+
+  // TODO: Add layers to this
+  void SetBeforeEvaluateCallbackFunction(const std::function<void(void)> &f);
 
   //! Abort optimization
   void AbortOptimization();
@@ -95,6 +103,9 @@ class Optimize {
   void SetDomainsPerShape(int domains_per_shape);
   //! Return the number of domains per shape
   int GetDomainsPerShape();
+
+  //! Set flag for Non Lineaer Optimization
+  void SetNonLinearOptimize(bool value);
 
   void SetDomainType(shapeworks::DomainType type);
   shapeworks::DomainType GetDomainType();
@@ -369,6 +380,7 @@ class Optimize {
   bool m_use_cutting_planes = false;
   bool m_optimizing = false;
   bool m_use_regression = false;
+  bool m_use_non_linear_optimize = false;
   bool m_use_mixed_effects = false;
 
   // IO Parameters

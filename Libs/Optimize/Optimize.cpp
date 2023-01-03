@@ -325,6 +325,11 @@ void Optimize::SetNumberOfParticles(std::vector<int> number_of_particles) {
 }
 
 //---------------------------------------------------------------------------
+void Optimize::SetNonLinearOptimize(bool value) {
+  this->m_use_non_linear_optimize = value;
+}
+
+//---------------------------------------------------------------------------
 std::vector<int> Optimize::GetNumberOfParticles() { return this->m_number_of_particles; }
 
 //---------------------------------------------------------------------------
@@ -2067,6 +2072,27 @@ bool Optimize::LoadParameterFile(std::string filename) {
   return true;
 }
 
+//---------------------------------------------------------------------------
+bool Optimize::LoadXlsxProjectFile(std::string filename)
+{
+  ProjectHandle project = std::make_shared<Project>();
+  project->load(filename);
+  OptimizeParameters params(project);
+  if(!params.set_up_optimize(this)){
+    std::cerr << "Error in loading xlsx sheet" << std::endl;
+    return false;
+  }
+  this->SetProject(project);
+  return true;
+}
+
+void Optimize::SaveProjectFileAfterOptimize(const std::string& filename)
+{
+  project_->save(filename);
+  // debug 
+  // std::cout << "Project File saved after Optimization " << std::endl;
+}
+
 bool Optimize::SetUpOptimize(ProjectHandle projectFile) {
   OptimizeParameters param(projectFile);
   param.set_up_optimize(this);
@@ -2132,6 +2158,12 @@ void Optimize::SetGeodesicsEnabled(bool is_enabled) { this->m_geodesics_enabled 
 
 //---------------------------------------------------------------------------
 void Optimize::SetGeodesicsCacheSizeMultiplier(size_t n) { this->m_geodesic_cache_size_multiplier = n; }
+
+void Optimize::SetBeforeEvaluateCallbackFunction(const std::function<void(void)>& f)
+{
+  // TODO: Add layers
+  this->m_sampler->GetOptimizer()->SetBeforeEvaluateCallbackFunction(f);
+}
 
 //---------------------------------------------------------------------------
 vnl_vector_fixed<double, 3> Optimize::TransformPoint(int domain, vnl_vector_fixed<double, 3> input) {

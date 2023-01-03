@@ -9,11 +9,11 @@ inv_net.train_invertible_network()
 
 
 # Set up Shapeworks Optimizer Object
-sw_opt = sw.Optimize()
+sw_opt = sw.Optimize()k
 def before_callback():
     inv_net.norm_model.eval()
     particles = sw_opt.GetParticleSystem()
-    
+
 
     # Compute gradients
 
