@@ -157,7 +157,7 @@ bool OptimizeParameterFile::set_visualizer_parameters(TiXmlHandle* docHandle, Op
 {
   TiXmlElement* elem = nullptr;
   // Currently the visualizer only works if you call AddMesh on it for every domain.
-  // In order to get it working for image domains, need to add code that extracts meshes from each image and adds them to the visualizer.
+  // In order to get it working for image domains, need to add code that extracts meshes from each image and adds them to the visualizer_.
   elem = docHandle->FirstChild("visualizer_enable").Element();
   if (elem) {
     optimize->SetShowVisualizer((bool) atoi(elem->GetText()));

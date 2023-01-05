@@ -81,3 +81,7 @@ TEST(UseCaseTests, peanut_shared_boundary) { run_test("peanut_shared_boundary");
 
 //---------------------------------------------------------------------------
 TEST(UseCaseTests, incremental_supershapes) { run_test("incremental_supershapes"); }
+
+//---------------------------------------------------------------------------
+TEST(UseCaseTests, hip_multiple_domain) { run_test("hip_multiple_domain"); }
+

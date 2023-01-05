@@ -30,6 +30,13 @@ vtkSmartPointer<vtkPolyData> MeshWarper::build_mesh(const Eigen::MatrixXd& parti
     return nullptr;
   }
 
+  if (particles.size() != reference_particles_.size()) {
+    // This may be a stale mesh warper
+    // don't return nullptr or the user will get an error
+    auto blank = vtkSmartPointer<vtkPolyData>::New();
+    return blank;
+  }
+
   auto points = this->remove_bad_particles(particles);
 
   vtkSmartPointer<vtkPolyData> poly_data = MeshWarper::warp_mesh(points);

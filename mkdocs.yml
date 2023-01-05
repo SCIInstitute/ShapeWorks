@@ -74,6 +74,7 @@ nav:
       - 'Lumps: Shape Model directly from Mesh':                     'use-cases/mesh-based/lumps.md'
       - 'Thin Cavity Bean: Shape Model with Geodesic Distances':     'use-cases/mesh-based/thin-cavity-bean.md'
       - 'Shape Model for Multiple Domains directly from Mesh':       'use-cases/mesh-based/ellipsoid-multiple-domain-mesh.md'
+      - 'Hip: Multiple Domains Alignment':                           'use-cases/mesh-based/hip.md'
    - Contour Based Use Cases:
       - 'Supershapes:Shape Model for Contour Domains':               'use-cases/contour-based/supershapes-contour.md'
    - Constraints Based Use Cases:
