@@ -718,27 +718,29 @@ void Viewer::display_shape(std::shared_ptr<Shape> shape) {
         m.setField("distance", field, Mesh::Point);
       }
 
-      if (feature_map != "" && poly_data) {
-        set_scalar_visibility(poly_data, mapper, feature_map.c_str());
-      } else {
-        if (session_->get_display_mode() != DisplayMode::Reconstructed) {
-          try {
-            auto& ffc = shape_->get_constraints(i).getFreeformConstraint();
-            if (ffc.getDefinition() != poly_data) {
-              ffc.computeBoundaries();
-              ffc.applyToPolyData(poly_data);
+      if (poly_data) {
+        if (feature_map != "") {
+          set_scalar_visibility(poly_data, mapper, feature_map.c_str());
+        } else {
+          if (session_->get_display_mode() != DisplayMode::Reconstructed) {
+            try {
+              auto& ffc = shape_->get_constraints(i).getFreeformConstraint();
+              if (ffc.getDefinition() != poly_data) {
+                ffc.computeBoundaries();
+                ffc.applyToPolyData(poly_data);
+              }
+            } catch (std::exception& e) {
+              SW_ERROR(std::string("Unable to apply free form constraints: ") + e.what());
             }
-          } catch (std::exception& e) {
-            SW_ERROR(std::string("Unable to apply free form constraints: ") + e.what());
           }
-        }
 
-        mapper->ScalarVisibilityOn();
-        mapper->SetScalarModeToUsePointData();
-        mapper->SetScalarRange(0, 1);
-        mapper->SetLookupTable(ffc_luts_[i]);
-        mesh->get_or_create_array(StudioMesh::FFC_PAINT, 1.0);
-        poly_data->GetPointData()->SetActiveScalars(StudioMesh::FFC_PAINT);
+          mapper->ScalarVisibilityOn();
+          mapper->SetScalarModeToUsePointData();
+          mapper->SetScalarRange(0, 1);
+          mapper->SetLookupTable(ffc_luts_[i]);
+          mesh->get_or_create_array(StudioMesh::FFC_PAINT, 1.0);
+          poly_data->GetPointData()->SetActiveScalars(StudioMesh::FFC_PAINT);
+        }
       }
     }
     update_points();
