@@ -11,6 +11,8 @@
 #include <vtkPolyDataConnectivityFilter.h>
 #include <vtkTriangleFilter.h>
 
+#include <Logging.h>
+
 #include <set>
 
 namespace shapeworks {
@@ -410,6 +412,12 @@ vtkSmartPointer<vtkPolyData> MeshWarper::recreate_mesh(vtkSmartPointer<vtkPolyDa
 bool MeshWarper::generate_warp() {
   // clean mesh
   this->reference_mesh_ = MeshWarper::prep_mesh(this->incoming_reference_mesh_);
+
+  if (reference_mesh_->GetNumberOfCells() == 0) {
+    SW_ERROR("MeshWarper: No cells in reference mesh");
+    warp_available_ = false;
+    return false;
+  }
 
   // prep points
   this->vertices_ = this->reference_particles_;
