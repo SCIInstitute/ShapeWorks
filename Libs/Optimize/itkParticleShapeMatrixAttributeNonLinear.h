@@ -34,15 +34,17 @@ public:
     return this->m_BaseShapeMatrix;
   }
   
-
   virtual void ResizeBaseShapeMatrix(int rs, int cs)
   {
     vnl_matrix<T> tmp(*m_BaseShapeMatrix); // copy existing  matrix
     
     // Create new column (shape)
-    m_BaseShapeMatrix.set_size(rs, cs);
+    m_BaseShapeMatrix->set_size(rs, cs);
+    m_BaseShapeMatrix_cache->set_size(rs, cs);
     
-    m_BaseShapeMatrix.fill(0.0);
+    m_BaseShapeMatrix->fill(0.0);
+    m_BaseShapeMatrix_cache->fill(0.0);
+
     
     // Copy old data into new matrix.
     for (unsigned int c = 0; c < tmp.cols(); c++)
@@ -144,43 +146,27 @@ public:
   int GetDomainsPerShape() const
   { return this->m_DomainsPerShape; }
 
-  void SetExplanatory(std::vector<double> v)
-  {
-    //    std::cout << "Setting expl " << std::endl;
-    ResizeExplanatory(v.size());
-    for (unsigned int i = 0; i < v.size(); i++)
-      {
-      //      std::cout << v[i] << std::endl;
-      m_Expl[i] = v[i];
-      }
-  }
-  void SetExplanatory(unsigned int i, double q)
-  { m_Expl[i] = q; }
-  const double &GetExplanatory(unsigned int i) const
-  { return m_Expl[i]; }
-  double &GetExplanatory(unsigned int i)
-  { return m_Expl[i]; }
-
-
   void Initialize()
   {
-    m_BaseShapeMatrix.fill(0.0);
+    m_BaseShapeMatrix->fill(0.0);
+    m_BaseShapeMatrix_cache->fill(0.0);
+
   }
   
   virtual void BeforeIteration()
   {
     m_UpdateCounter ++;
-    if (m_UpdateCounter >= m_NonLinearUpdatesInterval)
+    if (m_UpdateCounter >= m_NonLinearTrainingInterval)
       {
       m_UpdateCounter = 0;
-      this->m_BeforeGradientUpdatesCallback();
+      this->m_NonLinearTrainModelCallback();
       }
   }
 
-  void SetNonLinearUpdatesInterval( int i)
-  {    m_NonLinearUpdatesInterval = i;  }
-  int GetNonLinearUpdatesInterval() const
-  { return m_NonLinearUpdatesInterval; }
+  void m_NonLinearTrainingInterval( int i)
+  {    m_NonLinearTrainingInterval = i;  }
+  int m_NonLinearTrainingInterval() const
+  { return m_NonLinearTrainingInterval; }
   
 protected:
   ParticleShapeMatrixAttributeNonLinear() 
@@ -190,8 +176,9 @@ protected:
     this->m_DefinedCallbacks.PositionSetEvent = true;
     this->m_DefinedCallbacks.PositionRemoveEvent = true;
     m_UpdateCounter = 0;
-    m_NonLinearUpdatesInterval = 1;
+    m_NonLinearTrainingInterval = 50;
   }
+
   virtual ~ParticleShapeMatrixAttributeNonLinear() {};
 
   void PrintSelf(std::ostream& os, Indent indent) const
@@ -202,12 +189,15 @@ private:
   void operator=(const Self&); //purposely not implemented
 
   int m_UpdateCounter;
-  int m_NonLinearUpdatesInterval;
-  std::function<void(void)> m_BeforeGradientUpdatesCallback;
+  int m_NonLinearTrainingInterval;
 
-  
-  std::shared_ptr<vnl_matrix<double>> m_BaseShapeMatrix; // dM X (P+1)
-  std::shared_ptr<vnl_matrix<double>> m_BaseShapeMatrix_cache; // dM X (P+1)
+  // Callbacks from Python
+  std::function<void(void)> m_BeforeGradientUpdatesCallback;
+  std::function<void(void)> m_NonLinearTrainModelCallback;
+
+  // Z_0 --> Base Distribution
+  std::shared_ptr<vnl_matrix<double>> m_BaseShapeMatrix;
+  std::shared_ptr<vnl_matrix<double>> m_BaseShapeMatrix_cache;
 
 };
 
