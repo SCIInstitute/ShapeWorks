@@ -1505,174 +1505,97 @@ vtkSmartPointer<vtkPoints> Mesh::getIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi&
 vtkSmartPointer<vtkDoubleArray> Mesh::computeInOutForFFCs(std::vector<size_t> allBoundaryVerts, Eigen::Vector3d query,
                                                           Eigen::MatrixXd V, Eigen::MatrixXi F) {
 
-  // Apply triangle filter to allow face adjacency queries
-  vtkSmartPointer<vtkTriangleFilter> triangleFilter = vtkSmartPointer<vtkTriangleFilter>::New();
-  triangleFilter->SetInputData(poly_data_);
-  triangleFilter->Update();
-  poly_data_ = triangleFilter->GetOutput();
+  // find closest vertex to query
 
-  // Find a face that is inside by checking around the qury point
-  this->updateCellLocator();
-
-  double closestPoint[3];
-  vtkIdType cellId;
-  int subId;
-  double dist;
-  this->cellLocator->FindClosestPoint(query.data(), closestPoint, cellId, subId, dist);
-
-  std::cout << "cellId " << cellId << " this->numFaces() " << this->numFaces()<< std::endl;
-
-  filled = vector<bool>(this->numFaces(), 0);
-  dval = vector<double>(this->numFaces(), 0.);
-
-  // Flood filling
-  std::cout << "Filling" << std::endl;
-  currentFloodFill.push_back(cellId);
-
-  size_t it = 0;
-  while(this->currentFloodFill.size() > 0){
-    for(size_t ind = 0; ind < currentFloodFill.size(); ind++){
-        this->fill(size_t(currentFloodFill[ind]), F, allBoundaryVerts, it);
+  int closest = 0;
+  double minDist = std::numeric_limits<double>::max();
+  for(size_t i = 0; i < V.rows(); i++){
+    Eigen::Vector3d pt = V.row(i);
+    double dist = (pt - query).norm();
+    if(dist < minDist){
+      minDist = dist;
+      closest = i;
     }
-    currentFloodFill = nextFloodFill;
-    nextFloodFill.clear();
-    it++;
   }
-  std::cout << "Filling done" << std::endl;
 
+  // flood fill from query point to determine which vertices are inside the boundary
+  // (and which are outside)
+  size_t n_verts = V.rows();
+  std::vector<bool> visited(n_verts, false);
+  std::queue<size_t> q;
+  q.push(closest);
+  visited[closest] = true;
+
+  // mark all boundary points as visited
+  for (size_t i = 0; i < allBoundaryVerts.size(); i++) {
+    visited[allBoundaryVerts[i]] = true;
+  }
+
+  while (!q.empty()) {
+    size_t v = q.front();
+    q.pop();
+
+    for (int i = 0; i < F.rows(); i++) {
+      if (F(i, 0) == v) {
+        if (!visited[F(i, 1)]) {
+          visited[F(i, 1)] = true;
+          q.push(F(i, 1));
+        }
+        if (!visited[F(i, 2)]) {
+          visited[F(i, 2)] = true;
+          q.push(F(i, 2));
+        }
+      }
+      if (F(i, 1) == v) {
+        if (!visited[F(i, 0)]) {
+          visited[F(i, 0)] = true;
+          q.push(F(i, 0));
+        }
+        if (!visited[F(i, 2)]) {
+          visited[F(i, 2)] = true;
+          q.push(F(i, 2));
+        }
+      }
+      if (F(i, 2) == v) {
+        if (!visited[F(i, 0)]) {
+          visited[F(i, 0)] = true;
+          q.push(F(i, 0));
+        }
+        if (!visited[F(i, 1)]) {
+          visited[F(i, 1)] = true;
+          q.push(F(i, 1));
+        }
+      }
+    }
+  }
+
+  // Create an inout array with values 1 for inside and 0 for outside
   vtkSmartPointer<vtkDoubleArray> inout = vtkSmartPointer<vtkDoubleArray>::New();
-  inout->SetNumberOfComponents(1);
-  inout->SetNumberOfTuples(this->poly_data_->GetNumberOfPoints());
   inout->SetName("inout");
-
-  for(size_t i = 0; i < this->poly_data_->GetNumberOfPoints(); i++) {
-      inout->SetValue(i, 0.);
+  inout->SetNumberOfComponents(1);
+  inout->SetNumberOfTuples(n_verts);
+  for (size_t i = 0; i < n_verts; i++) {
+    if (visited[i]) {
+      inout->InsertTuple1(i, 1.0);
+    } else {
+      inout->InsertTuple1(i, 0.0);
+    }
   }
-
-  size_t ins = 0;
-  size_t outs = 0;
-
-  for(size_t i = 0; i < filled.size(); i++) {
-      auto vertecesi = F.row(i);
-      //std::cout << filled[i] << " ";
-      if(filled[i] == 1){
-          ins++;
-          inout->SetValue(vertecesi(0), 1.);
-          inout->SetValue(vertecesi(1), 1.);
-          inout->SetValue(vertecesi(2), 1.);
-      }
-      else{
-          inout->SetValue(vertecesi(0), 0.);
-          inout->SetValue(vertecesi(1), 0.);
-          inout->SetValue(vertecesi(2), 0.);
-          outs++;
-      }
-  }
-
-  std::cout << "ins/outs " << ins << " " << outs << std::endl;
-
-//  for (vtkIdType i = 0; i < this->poly_data_->GetNumberOfPoints(); i++) {
-//    this->poly_data_->GetPoint(i, fullp);
-
-//    halfi = kdhalf_locator->FindClosestPoint(fullp);
-//    halfmesh->GetPoint(halfi, halfp);
-//    // std::cout << i <<  " (" << fullp[0] << " " << fullp[1] << " " << fullp[2] << ") " << halfi << " (" << halfp[0] <<
-//    // " " << halfp[1] << " " << halfp[2] << " )" << std::endl;
-//    bool ptinhalfmesh = false;
-//    if (fullp[0] == halfp[0] && fullp[1] == halfp[1] && fullp[2] == halfp[2]) {
-//      // If in halfmesh
-//      ptinhalfmesh = true;
-//    }
-//    // The relationship becomes an xor operation between halfmeshisin and ptinhalfmesh to determine whether each point
-//    // is in or out. Thus we set values for the scalar field.
-//    if (!halfmeshisin ^ ptinhalfmesh) {
-//      if (arr) {
-//        inout->SetValue(i, std::min(1., arr->GetValue(i)));
-//      } else {
-//        inout->SetValue(i, 1.);
-//      }
-//    } else {
-//      inout->SetValue(i, 0.);
-//    }
-//  }
 
   // Setting scalar field
   this->setField("inout", inout, Mesh::Point);
 
   return inout;
+
 }
 
-// Flood fills mesh so that it stops at boundary constraints. Auxiliary recursive function for FFC implementation
-bool Mesh::fill(size_t cellInd, const Eigen::MatrixXi& F, const std::vector<size_t>& allBoundaryVerts, double step){
-    // If already checked, return
-    if(filled[cellInd]){return 0;}
 
-    // Else, set to checked and proceed
-    filled[cellInd] = 1;
-    dval[cellInd] = step;
-
-    //std::cout << cellInd << " " << std::endl;
-
-    // Find cell neighbors which share edges
-    std::set<vtkIdType> neighborsSet;
-
-    // Find all cells connected to point 0
-    vtkIdType cellId = 0;
-
-    //vtkNew<vtkIdList> cellPointIds;
-    vtkSmartPointer<vtkIdList> cellPointIds = vtkSmartPointer<vtkIdList>::New();
-    poly_data_->GetCellPoints(cellInd, cellPointIds);
-    for (vtkIdType i = 0; i < cellPointIds->GetNumberOfIds(); i++)
-     {
-       //vtkNew<vtkIdList> idList;
-       vtkSmartPointer<vtkIdList> idList = vtkSmartPointer<vtkIdList>::New();
-       idList->InsertNextId(cellPointIds->GetId(i));
-       idList->InsertNextId(cellPointIds->GetId((i+1)%cellPointIds->GetNumberOfIds()));
-
-       // get the neighbors of the cell
-       //vtkNew<vtkIdList> neighborCellIds;
-       vtkSmartPointer<vtkIdList> neighborCellIds = vtkSmartPointer<vtkIdList>::New();
-
-       poly_data_->GetCellNeighbors(cellId, idList,
-                                                     neighborCellIds);
-
-       for (vtkIdType j = 0; j < neighborCellIds->GetNumberOfIds(); j++)
-       {
-         neighborsSet.insert(neighborCellIds->GetId(j));
-       }
-     }
-    //std::cout << "neighborsSet.size() " << neighborsSet.size() << std::endl;
-
-    //std::vector<size_t> neighbors(neighborsSet.begin(), neighborsSet.end());
-
-    //std::cout << neighbors.size() << " ";
-
-    // If we haven't hit the boundary recursively fill the rest of the triangles
-    for (auto itr : neighborsSet){
-        if(size_t(itr) != cellInd){
-            auto vertexj = F.row(size_t(itr));
-            size_t boundary_vertices_in_j = 0;
-            for (size_t bvert = 0; bvert < allBoundaryVerts.size(); bvert++){
-                if(size_t(vertexj(0)) == allBoundaryVerts[bvert] || size_t(vertexj(1)) == allBoundaryVerts[bvert] || size_t(vertexj(2)) == allBoundaryVerts[bvert]){
-                    boundary_vertices_in_j++;
-                }
-            }
-            if(boundary_vertices_in_j < 2){
-                this->nextFloodFill.push_back(size_t(itr));
-            }
-            //std::cout << "(" << i << " " << boundary_vertices_in_j << " " << neighbors[j] << ") ";
-        }
-    }
-    return 0;
-}
 
 vtkSmartPointer<vtkDoubleArray> Mesh::setDistanceToBoundaryValueFieldForFFCs(vtkSmartPointer<vtkDoubleArray> values,
                                                                              vtkSmartPointer<vtkPoints> points,
                                                                              std::vector<size_t> boundaryVerts,
                                                                              vtkSmartPointer<vtkDoubleArray> inout,
                                                                              Eigen::MatrixXd V, Eigen::MatrixXi F) {
-  auto* arr = vtkDoubleArray::SafeDownCast(
-      poly_data_->GetPointData()->GetArray("value"));  // Check if a value field already exists
 
   values->SetNumberOfComponents(1);
   values->SetNumberOfTuples(this->poly_data_->GetNumberOfPoints());
@@ -1684,11 +1607,12 @@ vtkSmartPointer<vtkDoubleArray> Mesh::setDistanceToBoundaryValueFieldForFFCs(vtk
   absvalues->SetNumberOfComponents(1);
   absvalues->SetNumberOfTuples(this->poly_data_->GetNumberOfPoints());
   absvalues->SetName("absvalues");
+  for (size_t i = 0; i < points->GetNumberOfPoints(); i++) {
+    absvalues->SetValue(i, INFINITY);
+  }
 
   // std::cout << "Loading eval values for FFCs in domain " << dom << std::endl;
 
-  // debug
-  Eigen::MatrixXd C(this->poly_data_->GetNumberOfPoints(), 3);
 
   // Load the mesh on Geometry central
   {
@@ -1703,27 +1627,19 @@ vtkSmartPointer<vtkDoubleArray> Mesh::setDistanceToBoundaryValueFieldForFFCs(vtk
     for (size_t i = 0; i < boundaryVerts.size(); i++) {
       sourceVerts.push_back(gcmesh->vertex(boundaryVerts[i]));
     }
+
+
     // Finds minimum distance to any boundary vertex from any other vertex
     for (Vertex v : sourceVerts) {
       VertexData<double> distToSource = heatSolver.computeDistance(v);
       // std::cout << distToSource[0] << " (" << values->GetValue(0) << ") ";
       for (size_t i = 0; i < points->GetNumberOfPoints(); i++) {
-        if (distToSource[i] < std::abs(values->GetValue(i))) {
-          absvalues->SetValue(i, distToSource[i]);
-          if (inout->GetValue(i) == 1.) {
-            if (arr) {
-              values->SetValue(i, std::max<double>(arr->GetValue(i), -distToSource[i]));
-            } else {
-              values->SetValue(i, -distToSource[i]);
-            }
-            C(i, 0) = -distToSource[i];
-            C(i, 1) = -distToSource[i];
-            C(i, 2) = -distToSource[i];
+        if (distToSource[i] < absvalues->GetValue(i)) {
+          absvalues->SetValue(i, std::abs(distToSource[i]));
+          if (inout->GetValue(i) == 0.) {
+            values->SetValue(i, -distToSource[i]);
           } else {
             values->SetValue(i, distToSource[i]);
-            C(i, 0) = distToSource[i];
-            C(i, 1) = distToSource[i];
-            C(i, 2) = distToSource[i];
           }
         }
       }
@@ -1735,6 +1651,10 @@ vtkSmartPointer<vtkDoubleArray> Mesh::setDistanceToBoundaryValueFieldForFFCs(vtk
   // TODO: don't set local field since user can do this if needed, and the
   // function can be const. (return vector of Fields like Mesh::distance)
   this->setField("value", values, Mesh::Point);
+
+  this->setField("absvalues", absvalues, Mesh::Point);
+
+  write("/tmp/check.vtk");
 
   return absvalues;
 }
