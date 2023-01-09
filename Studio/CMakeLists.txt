@@ -15,6 +15,7 @@ find_package(Qt5Core REQUIRED)
 find_package(Qt5Gui REQUIRED)
 find_package(Qt5Xml REQUIRED)
 find_package(Qt5PrintSupport REQUIRED)
+find_package(Qt5Network REQUIRED)
 
 cmake_policy(SET CMP0020 NEW)
 
@@ -165,6 +166,7 @@ SET(STUDIO_UTILS_SRCS
 
 SET(STUDIO_UTILS_MOC_HDRS
   Utils/ImageLabel.h
+  Utils/UpdateChecker.h
   )
 
 SET(STUDIO_INTERFACE_SRCS
@@ -237,7 +239,7 @@ SET(STUDIO_MOC_HDRS
   ${STUDIO_PYTHON_MOC_HDRS}
   ${STUDIO_INTERFACE_MOC_HDRS}
   ${STUDIO_OPTIMIZE_MOC_HDRS}
-  ${STUDIO_UTILS_MOD_HDRS}
+  ${STUDIO_UTILS_MOC_HDRS}
   ${STUDIO_VISUALIZATION_MOC_HDRS}
 )
 
@@ -337,6 +339,7 @@ TARGET_LINK_LIBRARIES(ShapeWorksStudio
   Qt5::Gui
   Qt5::Xml
   Qt5::PrintSupport
+  Qt5::Network
   ${VTK_LIBRARIES}
   ${ITK_LIBRARIES}
   ${OPENGL_LIBRARIES}
