@@ -45,6 +45,7 @@
 #include <Utils/StudioUtils.h>
 #include <Visualization/Lightbox.h>
 #include <Visualization/Visualizer.h>
+#include <Utils/UpdateChecker.h>
 
 // ui
 #include <ui_ShapeWorksStudioApp.h>
@@ -230,6 +231,11 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
   connect(ui_->save_as_xlsx, &QAction::triggered, this, &ShapeWorksStudioApp::save_as_xlsx_clicked);
   update_feature_map_scale();
   SW_LOG("ShapeWorks Studio Initialized");
+
+
+  QTimer::singleShot(10000, this, [&]() { update_checker_.runManualUpdateCheck(); });
+
+
 }
 
 //---------------------------------------------------------------------------

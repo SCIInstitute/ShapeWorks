@@ -7,6 +7,7 @@
 #include <vtkSmartPointer.h>
 
 #include <Interface/StudioLogger.h>
+#include <Utils/UpdateChecker.h>
 
 #include <Eigen/Eigen>
 #include <QActionGroup>
@@ -39,6 +40,7 @@ class WheelEventForwarder;
 class StatusBarWidget;
 class PythonWorker;
 class CompareWidget;
+
 
 //! Main ShapeWorksStudio window
 /*!
@@ -264,5 +266,6 @@ class ShapeWorksStudioApp : public QMainWindow {
   QSharedPointer<PythonWorker> py_worker_;
 
   StudioLogger logger_;
+  UpdateChecker update_checker_;
 };
 }  // namespace shapeworks

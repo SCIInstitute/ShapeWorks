@@ -1,5 +1,7 @@
 #pragma once
 
+#include <QObject>
+#include <QNetworkReply>
 
 namespace shapeworks {
 
@@ -7,17 +9,21 @@ namespace shapeworks {
 /*!
  * This class checks for new versions of ShapeWorks to inform the user
  */
-class UpdateChecker {
- public:
+class UpdateChecker : public QObject {
+ Q_OBJECT
 
+ public:
   UpdateChecker();
   ~UpdateChecker();
 
   void runAutoUpdateCheck();
   void runManualUpdateCheck();
 
- private:
+ public Q_SLOTS:
+  void handleNetworkReply(QNetworkReply* reply);
 
+ private:
+  QNetworkAccessManager manager_;
 };
 
 }  // namespace shapeworks
