@@ -39,13 +39,13 @@ def before_gradient_updates_callback():
         det_jacobian = np.exp(log_det_jacobian)
 
         # Set params for ShapeWorks Optimizer
-        sw_opt.SetNonLinearBaseShapeMatrix(z0_data)
+        sw_opt.SetNonLinearBaseShapeMatrix(z0_particles)
         sw_opt.SetNonLinearJacobianMatrix(det_jacobian, log_det_jacobian)
 
 
 # Set callbacks for SW Opt object
 sw_opt.SetNonLinearTrainModelCallbackFunction(train_model_callback)
-sw_opt.BeforeGradientUpdatesCallbackFunction(before_gradient_updates_callback)
+sw_opt.SetBeforeGradientUpdatesCallbackFunction(before_gradient_updates_callback)
 
 # Run Optimizer
 sw_opt.Run()

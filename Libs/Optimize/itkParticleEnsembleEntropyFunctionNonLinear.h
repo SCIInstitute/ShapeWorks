@@ -1,6 +1,7 @@
 #pragma once
 
 #include "itkParticleShapeMatrixAttribute.h"
+#include "itkParticleShapeMatrixAttributeNonLinear.h"
 #include "itkParticleVectorFunction.h"
 #include <vector>
 
@@ -25,7 +26,7 @@ public:
   /** Type of particle system. */
   typedef typename Superclass::ParticleSystemType ParticleSystemType;
 
-  typedef ParticleShapeMatrixAttribute<double, VDimension> ShapeMatrixType;
+  typedef ParticleShapeMatrixAttributeNonLinear<double, VDimension> ShapeMatrixType;
 
   typedef typename ShapeMatrixType::DataType DataType;
   

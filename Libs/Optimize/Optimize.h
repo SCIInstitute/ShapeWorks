@@ -80,7 +80,7 @@ class Optimize {
 
   // Non-Linear SSM Callbacks
   void SetNonLinearTrainModelCallbackFunction(const std::function<void(void)> &f);
-  void BeforeGradientUpdatesCallbackFunction(const std::function<void(void)> &f);
+  void SetBeforeGradientUpdatesCallbackFunction(const std::function<void(void)> &f);
   void SetNonLinearBaseShapeMatrix(MatrixContainer matrix);
   void SetNonLinearJacobianMatrix(MatrixContainer det, MatrixContainer log_det);
   
@@ -315,6 +315,10 @@ class Optimize {
 
   //! transform a point if necessary
   vnl_vector_fixed<double, 3> TransformPoint(int domain, vnl_vector_fixed<double, 3> input);
+
+  bool GetOptimizing() {
+    return this->m_optimizing;
+  }
 
  protected:
   //! Set the iteration callback. Derived classes should override to set their own callback

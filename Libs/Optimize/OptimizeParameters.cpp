@@ -34,6 +34,16 @@ void OptimizeParameters::set_use_non_linear_optimize(bool value) {
 }
 
 //---------------------------------------------------------------------------
+int OptimizeParameters::get_non_linear_training_interval() {
+  return this->params_.get("non_linear_training_interval", 50);
+}
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_non_linear_training_interval(int value) {
+  this->params_.set("non_linear_training_interval", value);
+}
+
+//---------------------------------------------------------------------------
 std::vector<int> OptimizeParameters::get_number_of_particles() {
   return this->params_.get("number_of_particles", {128});
 }
@@ -261,7 +271,7 @@ bool OptimizeParameters::set_up_optimize(Optimize *optimize) {
   bool normals_enabled = this->get_use_normals()[0];
   optimize->SetDomainsPerShape(domains_per_shape);
   optimize->SetNumberOfParticles(this->get_number_of_particles());
-  optimzie->SetNonLinearOptimize(this->get_use_non_linear_optimize());
+  optimize->SetNonLinearOptimize(this->get_use_non_linear_optimize());
   // debug
   std::cout<< " Non Linear Optimize set : " << this->get_use_non_linear_optimize() << std::endl;
   optimize->SetInitialRelativeWeighting(this->get_initial_relative_weighting());

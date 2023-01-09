@@ -16,6 +16,9 @@ class OptimizeParameters {
   bool get_use_non_linear_optimize();
   void set_use_non_linear_optimize(bool value);
 
+  int get_non_linear_training_interval();
+  void set_non_linear_training_interval(int value);
+
   std::string get_optimize_output_prefix();
   void set_optimize_output_prefix(std::string prefix);
 

@@ -13,7 +13,7 @@ namespace itk
  */
 template <class T, unsigned int VDimension>
 class ITK_EXPORT ParticleShapeMatrixAttributeNonLinear
-  : public ParticleShapeMatrixAttributeNonLinear<T,VDimension>
+  : public ParticleShapeMatrixAttribute<T,VDimension>
 {
 public:
   /** Standard class typedefs */
@@ -51,8 +51,8 @@ public:
       {
       for (unsigned int r = 0; r < tmp.rows(); r++)
         {
-        m_BaseShapeMatrix(r,c) = tmp(r,c);
-        m_BaseShapeMatrix_cache(r,c) = tmp(r,c);
+        m_BaseShapeMatrix->put(r,c,  tmp(r,c));
+        m_BaseShapeMatrix_cache->put(r,c,  tmp(r,c));
         }
       } 
   }
@@ -68,7 +68,7 @@ public:
       {
       for (unsigned int r = 0; r < tmp.rows(); r++)
         {
-        m_JacobianMatrix(r,c) = tmp(r,c);
+        m_JacobianMatrix->put(r,c, tmp(r, c));
         }
       } 
   }
@@ -189,9 +189,9 @@ public:
     this->m_BeforeGradientUpdatesCallback();
   }
 
-  void m_NonLinearTrainingInterval( int i)
+  void SetNonLinearTrainingInterval( int i)
   {    m_NonLinearTrainingInterval = i;  }
-  int m_NonLinearTrainingInterval() const
+  int GetNonLinearTrainingInterval() const
   { return m_NonLinearTrainingInterval; }
   
 protected:

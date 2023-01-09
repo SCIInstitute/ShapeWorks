@@ -2164,7 +2164,7 @@ void Optimize::SetNonLinearTrainModelCallbackFunction(const std::function<void(v
   this->m_sampler->GetNonLinearShapeMatrixAttribute()->SetNonLinearTrainModelCallbackFunction(f);
 }
 
-void Optimize::BeforeGradientUpdatesCallbackFunction(const std::function<void(void)>& f)
+void Optimize::SetBeforeGradientUpdatesCallbackFunction(const std::function<void(void)>& f)
 {
   this->m_sampler->GetNonLinearShapeMatrixAttribute()->BeforeGradientUpdatesCallbackFunction(f);
 }

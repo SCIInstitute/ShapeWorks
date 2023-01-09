@@ -343,7 +343,7 @@ public:
   itk::ParticleEnsembleEntropyFunction<Dimension>* GetEnsembleEntropyFunction()
   { return m_EnsembleEntropyFunction.GetPointer(); }
 
-  itk::ParticleEnsembleEntropyFunction<Dimension>* GetEnsembleEntropyNonLinearFunction()
+  itk::ParticleEnsembleEntropyFunctionNonLinear<Dimension>* GetEnsembleEntropyNonLinearFunction()
   { return m_EnsembleEntropyNonLinearFunction.GetPointer(); }
 
   itk::ParticleEnsembleEntropyFunction<Dimension>* GetEnsembleRegressionEntropyFunction()
@@ -362,7 +362,7 @@ public:
   const itk::ParticleEnsembleEntropyFunction<Dimension>* GetEnsembleEntropyFunction() const
   { return m_EnsembleEntropyFunction.GetPointer(); }
 
-  const itk::ParticleEnsembleEntropyFunction<Dimension>* GetEnsembleEntropyNonLinearFunction() const
+  const itk::ParticleEnsembleEntropyFunctionNonLinear<Dimension>* GetEnsembleEntropyNonLinearFunction() const
   { return m_EnsembleEntropyNonLinearFunction.GetPointer(); }
 
   const itk::ParticleEnsembleEntropyFunction<Dimension>*

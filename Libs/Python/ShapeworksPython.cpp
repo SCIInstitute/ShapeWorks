@@ -1652,11 +1652,11 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def("SetIterationCallbackFunction",
        &Optimize::SetIterationCallbackFunction)
 
-  .def("SetNonLinearTrainingCallbackFunction",
-      &Optimize::SetNonLinearTrainingCallbackFunction)
+  .def("SetNonLinearTrainModelCallbackFunction",
+      &Optimize::SetNonLinearTrainModelCallbackFunction)
 
-  .def("BeforeGradientUpdatesCallbackFunction",
-      &Optimize::BeforeGradientUpdatesCallbackFunction)
+  .def("SetBeforeGradientUpdatesCallbackFunction",
+      &Optimize::SetBeforeGradientUpdatesCallbackFunction)
 
   .def("SetNonLinearBaseShapeMatrix",
      [](Optimize *opt,Eigen::MatrixXd updates){
@@ -1671,9 +1671,10 @@ PYBIND11_MODULE(shapeworks_py, m)
           container_det.matrix_ = updates_det;
           shapeworks::MatrixContainer container_log_det;
           container_log_det.matrix_ = updates_log_det;
-          opt->SetNonLinearJacobianMatrix(container_det, containet_log_det);
+          opt->SetNonLinearJacobianMatrix(container_det, container_log_det);
           }
      )
+  .def("GetOptimizing", &Optimize::GetOptimizing)
 
   .def("GetParticleSystem",
        &optimize_get_particle_system)
