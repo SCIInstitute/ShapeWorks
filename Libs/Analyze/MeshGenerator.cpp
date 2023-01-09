@@ -84,6 +84,8 @@ MeshHandle MeshGenerator::build_mesh_from_points(const Eigen::VectorXd& shape, i
     if (!poly_data) {
       std::string message = "Unable to warp mesh";
       SW_ERROR(message);
+      auto poly_data = vtkSmartPointer<vtkPolyData>::New();
+      mesh->set_poly_data(poly_data);
       mesh->set_error_message(message);
       return mesh;
     }
