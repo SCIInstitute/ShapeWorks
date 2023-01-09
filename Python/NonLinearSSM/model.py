@@ -20,6 +20,7 @@ params = DictMap(json.load(open('params_file.json')))
 M = params.num_corr
 N = params.num_samples
 d = params.dimension
+MODEL_SAVE_DIR = params.model_save_dir
 
 global DEVICE
 DEVICE = torch.device(params.device if torch.cuda.is_available() else 'cpu')
@@ -51,27 +52,28 @@ class InvertibleNetwork:
         torch.cuda.empty_cache()
         self.prior_mean, self.prior_cov, self.prior = get_prior_distribution(params)
         self.flow_model_type = flow_model_type
+        self.flows = get_flow_model(flow_model_type, d, M)
+    
+    def initialize_particles(self, init_particles_dir):
         self.init_particles = load_shape_matrix(init_particles_dir, N, M, d)
         self.init_particles_data = Dataset(self.init_particles)
-        self.flows = get_flow_model(flow_model_type, d, M)
-        self.norm_model = NormalizingFlowModel(self.prior, self.flows, DEVICE)
         
-    
-    def optimize_shape_model(self):
-        # TODO: add shapeworks optimize callbacks and complete the pipeline 
-        pass
-
-    def train_invertible_network(self):
-        logging.info('*********** Training Invertible Network *****************')
-        num_iter = params.num_initial_iterations # burn in iterations
-        batch_size = params.batch_size
-        optimizer = optim.Adam(self.model.parameters(), 
+    def initialize_model(self):
+        self.norm_model = NormalizingFlowModel(self.prior, self.flows, DEVICE)
+        self.optimizer = optim.Adam(self.norm_model.parameters(), 
                             lr=params.learning_rate,
                             weight_decay=params.weight_decay)
+
+    def train_invertible_network_from_scratch(self):
+        logging.info('*********** Training Invertible Network | Burn-in Particles *****************')
+        num_iter = params.num_initial_iterations # burn in iterations
+        batch_size = params.batch_size
+        optimizer = self.optimizer
         self.norm_model.train()
         particles = self.init_particles
+        loss = None
         for k in range(num_iter):
-            x = particles.sample(batch_size).to(DEVICE) # 
+            x = particles.sample(batch_size).to(DEVICE)
             x = x.reshape(batch_size, -1)
             z_all, prior_logprob, log_det = self.norm_model(x.float())
             logprob = prior_logprob + log_det
@@ -81,11 +83,52 @@ class InvertibleNetwork:
             optimizer.step()
             if k % 1000 == 0:
                 logging.info(f"Epoch = {k} | Loss = {loss.item()}")
-
         logging.info(f'********** Training Done **********')
-        
-        # Save model
-        
+        # Save last checkpoint
+        checkpoint_path = f'{MODEL_SAVE_DIR}/model.pt'
+        torch.save({
+            'epoch': num_iter,
+            'model_state_dict': self.norm_model.state_dict(),
+            'optimizer_state_dict': self.optimizer.state_dict(),
+            'loss': loss.item(),
+            }, checkpoint_path)
+
+    def train_invertible_network_from_last_checkpoint(self):
+        logging.info('*********** Training Invertible Network from Last Checkpoint *****************')
+        num_iter = params.train_iterations # burn in iterations
+        batch_size = params.batch_size
+        optimizer = self.optimizer
+
+        checkpoint_path = f'{MODEL_SAVE_DIR}/model.pt'
+        checkpoint = torch.load(checkpoint_path)
+        self.norm_model.load_state_dict(checkpoint['model_state_dict'])
+        optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+        epoch = checkpoint['epoch']
+        loss = checkpoint['loss']
+        self.norm_model.train()
+        particles = self.init_particles
+        loss = None
+        for k in range(num_iter):
+            x = particles.sample(batch_size).to(DEVICE)
+            x = x.reshape(batch_size, -1)
+            z_all, prior_logprob, log_det = self.norm_model(x.float())
+            logprob = prior_logprob + log_det
+            loss = -torch.sum(logprob)
+            self.norm_model.zero_grad()
+            loss.backward()
+            optimizer.step()
+            if k % 1000 == 0:
+                logging.info(f"Epoch = {k} | Loss = {loss.item()}")
+        logging.info(f'********** Training Done **********')
+        # Save last checkpoint
+        checkpoint_path = f'{MODEL_SAVE_DIR}/model.pt'
+        torch.save({
+            'epoch': num_iter,
+            'model_state_dict': self.norm_model.state_dict(),
+            'optimizer_state_dict': self.optimizer.state_dict(),
+            'loss': loss.item(),
+            }, checkpoint_path)
+
 
 
 

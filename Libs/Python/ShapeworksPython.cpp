@@ -1636,6 +1636,9 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def("LoadParameterFile",
        &Optimize::LoadParameterFile)
 
+  .def("LoadXlsxProjectFile",
+       &Optimize::LoadXlsxProjectFile)
+
   .def("SetUpOptimize",
        &Optimize::SetUpOptimize,
        "projectFile"_a )
@@ -1643,8 +1646,34 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def("Run",
        &Optimize::Run)
 
+  .def("SaveProjectFileAfterOptimize",
+       &Optimize::SaveProjectFileAfterOptimize)
+
   .def("SetIterationCallbackFunction",
        &Optimize::SetIterationCallbackFunction)
+
+  .def("SetNonLinearTrainingCallbackFunction",
+      &Optimize::SetNonLinearTrainingCallbackFunction)
+
+  .def("BeforeGradientUpdatesCallbackFunction",
+      &Optimize::BeforeGradientUpdatesCallbackFunction)
+
+  .def("SetNonLinearBaseShapeMatrix",
+     [](Optimize *opt,Eigen::MatrixXd updates){
+          shapeworks::MatrixContainer container;
+          container.matrix_ = updates;
+          opt->SetNonLinearBaseShapeMatrix(container);
+          }
+     )
+  .def("SetNonLinearJacobian",
+     [](Optimize *opt,Eigen::MatrixXd updates_det, Eigen::MatrixXd updates_log_det){
+          shapeworks::MatrixContainer container_det;
+          container_det.matrix_ = updates_det;
+          shapeworks::MatrixContainer container_log_det;
+          container_log_det.matrix_ = updates_log_det;
+          opt->SetNonLinearJacobianMatrix(container_det, containet_log_det);
+          }
+     )
 
   .def("GetParticleSystem",
        &optimize_get_particle_system)

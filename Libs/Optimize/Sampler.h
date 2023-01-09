@@ -16,7 +16,9 @@
 #include "CorrespondenceMode.h"
 #include "itkParticleDualVectorFunction.h"
 #include "itkParticleEnsembleEntropyFunction.h"
+#include "itkParticleEnsembleEntropyFunctionNonLinear.h"
 #include "itkParticleShapeLinearRegressionMatrixAttribute.h"
+# include "itkParticleShapeMatrixAttributeNonLinear.h"
 #include "itkParticleShapeMixedEffectsMatrixAttribute.h"
 #include "itkParticleMeshBasedGeneralEntropyGradientFunction.h"
 
@@ -164,6 +166,7 @@ public:
   {
     m_DomainsPerShape = n;
     m_LinearRegressionShapeMatrix->SetDomainsPerShape(n);
+    m_NonLinearShapeMatrix->SetDomainsPerShape(n);
     m_MixedEffectsShapeMatrix->SetDomainsPerShape(n);
     m_ShapeMatrix->SetDomainsPerShape(n);
     m_MeshBasedGeneralEntropyGradientFunction->SetDomainsPerShape(n);
@@ -244,6 +247,14 @@ public:
       m_LinkingFunction->SetFunctionB(m_EnsembleEntropyFunction);
       m_EnsembleEntropyFunction->UseEntropy();
     }
+    else if (mode == shapeworks::CorrespondenceMode::NonLinearEnsembleEntropy) {
+      m_LinkingFunction->SetFunctionB(m_EnsembleEntropyNonLinearFunction);
+      m_EnsembleEntropyNonLinearFunction->UseEntropy();
+    }
+    else if (mode == shapeworks::CorrespondenceMode::NonLinearEnsembleMeanEnergy) {
+      m_LinkingFunction->SetFunctionB(m_EnsembleEntropyNonLinearFunction);
+      m_EnsembleEntropyNonLinearFunction->UseMeanEnergy();
+    }
     else if (mode == shapeworks::CorrespondenceMode::EnsembleRegressionEntropy) {
       m_LinkingFunction->SetFunctionB(m_EnsembleRegressionEntropyFunction);
     }
@@ -311,6 +322,11 @@ public:
     return m_ShapeMatrix.GetPointer();
   }
 
+  itk::ParticleShapeMatrixAttributeNonLinear<double, Dimension>* GetNonLinearShapeMatrixAttribute()
+  {
+    return m_NonLinearShapeMatrix.GetPointer();
+  }
+
   itk::ParticleGeneralShapeMatrix<double, Dimension>* GetGeneralShapeMatrix()
   {
     return m_GeneralShapeMatrix.GetPointer();
@@ -327,6 +343,9 @@ public:
   itk::ParticleEnsembleEntropyFunction<Dimension>* GetEnsembleEntropyFunction()
   { return m_EnsembleEntropyFunction.GetPointer(); }
 
+  itk::ParticleEnsembleEntropyFunction<Dimension>* GetEnsembleEntropyNonLinearFunction()
+  { return m_EnsembleEntropyNonLinearFunction.GetPointer(); }
+
   itk::ParticleEnsembleEntropyFunction<Dimension>* GetEnsembleRegressionEntropyFunction()
   { return m_EnsembleRegressionEntropyFunction.GetPointer(); }
 
@@ -342,6 +361,9 @@ public:
 
   const itk::ParticleEnsembleEntropyFunction<Dimension>* GetEnsembleEntropyFunction() const
   { return m_EnsembleEntropyFunction.GetPointer(); }
+
+  const itk::ParticleEnsembleEntropyFunction<Dimension>* GetEnsembleEntropyNonLinearFunction() const
+  { return m_EnsembleEntropyNonLinearFunction.GetPointer(); }
 
   const itk::ParticleEnsembleEntropyFunction<Dimension>*
   GetEnsembleRegressionEntropyFunction() const
@@ -514,10 +536,13 @@ protected:
   itk::ParticleDualVectorFunction<Dimension>::Pointer m_LinkingFunction;
 
   itk::ParticleEnsembleEntropyFunction<Dimension>::Pointer m_EnsembleEntropyFunction;
+  itk::ParticleEnsembleEntropyFunctionNonLinear<Dimension>::Pointer m_EnsembleEntropyNonLinearFunction;
+
   itk::ParticleEnsembleEntropyFunction<Dimension>::Pointer m_EnsembleRegressionEntropyFunction;
   itk::ParticleEnsembleEntropyFunction<Dimension>::Pointer m_EnsembleMixedEffectsEntropyFunction;
 
   itk::ParticleShapeMatrixAttribute<double, Dimension>::Pointer m_ShapeMatrix;
+  itk::ParticleShapeMatrixAttributeNonLinear<double, Dimension>::Pointer m_NonLinearShapeMatrix;
 
   itk::ParticleShapeLinearRegressionMatrixAttribute<double, Dimension>::Pointer m_LinearRegressionShapeMatrix;
   itk::ParticleShapeMixedEffectsMatrixAttribute<double, Dimension>::Pointer m_MixedEffectsShapeMatrix;

@@ -31,6 +31,7 @@ Sampler::Sampler() {
 
   m_LinkingFunction = itk::ParticleDualVectorFunction<Dimension>::New();
   m_EnsembleEntropyFunction = itk::ParticleEnsembleEntropyFunction<Dimension>::New();
+  m_EnsembleEntropyNonLinearFunction = itk::ParticleEnsembleEntropyFunctionNonLinear<Dimension>::New();
   m_EnsembleRegressionEntropyFunction = itk::ParticleEnsembleEntropyFunction<Dimension>::New();
   m_EnsembleMixedEffectsEntropyFunction = itk::ParticleEnsembleEntropyFunction<Dimension>::New();
   m_MeshBasedGeneralEntropyGradientFunction = itk::ParticleMeshBasedGeneralEntropyGradientFunction<Dimension>::New();
@@ -39,10 +40,14 @@ Sampler::Sampler() {
   m_GeneralShapeMatrix = itk::ParticleGeneralShapeMatrix<double, Dimension>::New();
   m_GeneralShapeGradMatrix = itk::ParticleGeneralShapeGradientMatrix<double, Dimension>::New();
 
+  m_NonLinearShapeMatrix = itk::ParticleShapeMatrixAttributeNonLinear<double, Dimension>::New();
+
   m_LinearRegressionShapeMatrix = itk::ParticleShapeLinearRegressionMatrixAttribute<double, Dimension>::New();
   m_MixedEffectsShapeMatrix = itk::ParticleShapeMixedEffectsMatrixAttribute<double, Dimension>::New();
 
   m_EnsembleEntropyFunction->SetShapeMatrix(m_ShapeMatrix);
+
+  m_EnsembleEntropyNonLinearFunction->SetShapeMatrix(m_NonLinearShapeMatrix);
 
   m_EnsembleRegressionEntropyFunction->SetShapeMatrix(m_LinearRegressionShapeMatrix);
   m_EnsembleMixedEffectsEntropyFunction->SetShapeMatrix(m_MixedEffectsShapeMatrix);
@@ -51,6 +56,7 @@ Sampler::Sampler() {
   m_MeshBasedGeneralEntropyGradientFunction->SetShapeGradient(m_GeneralShapeGradMatrix);
 
   m_ParticleSystem->RegisterAttribute(m_ShapeMatrix);
+  m_ParticleSystem->RegisterAttribute(m_NonLinearShapeMatrix);
   m_ParticleSystem->RegisterAttribute(m_LinearRegressionShapeMatrix);
   m_ParticleSystem->RegisterAttribute(m_MixedEffectsShapeMatrix);
 
@@ -245,6 +251,7 @@ void Sampler::InitializeOptimizationFunctions() {
   m_OmegaGradientFunction->SetDomainNumber(0);
 
   m_LinearRegressionShapeMatrix->Initialize();
+  m_NonLinearShapeMatrix->Initialize();
   m_MixedEffectsShapeMatrix->Initialize();
   m_ShapeMatrix->Initialize();
 

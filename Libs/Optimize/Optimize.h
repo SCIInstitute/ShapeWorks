@@ -78,9 +78,12 @@ class Optimize {
 
   void SetIterationCallbackFunction(const std::function<void(void)>& f) { this->iteration_callback_ = f; }
 
-  // TODO: Add layers to this
-  void SetBeforeEvaluateCallbackFunction(const std::function<void(void)> &f);
-
+  // Non-Linear SSM Callbacks
+  void SetNonLinearTrainModelCallbackFunction(const std::function<void(void)> &f);
+  void BeforeGradientUpdatesCallbackFunction(const std::function<void(void)> &f);
+  void SetNonLinearBaseShapeMatrix(MatrixContainer matrix);
+  void SetNonLinearJacobianMatrix(MatrixContainer det, MatrixContainer log_det);
+  
   //! Abort optimization
   void AbortOptimization();
 

@@ -34,18 +34,18 @@ public:
     return this->m_BaseShapeMatrix;
   }
   
+  std::shared_ptr<vnl_matrix<double>> GetJacobainMatrix(){
+    return this->m_JacobianMatrix;
+  }
+  
   virtual void ResizeBaseShapeMatrix(int rs, int cs)
   {
-    vnl_matrix<T> tmp(*m_BaseShapeMatrix); // copy existing  matrix
-    
+    vnl_matrix<T> tmp(*m_BaseShapeMatrix); // copy existing  matrix 
     // Create new column (shape)
     m_BaseShapeMatrix->set_size(rs, cs);
     m_BaseShapeMatrix_cache->set_size(rs, cs);
-    
     m_BaseShapeMatrix->fill(0.0);
     m_BaseShapeMatrix_cache->fill(0.0);
-
-    
     // Copy old data into new matrix.
     for (unsigned int c = 0; c < tmp.cols(); c++)
       {
@@ -53,6 +53,22 @@ public:
         {
         m_BaseShapeMatrix(r,c) = tmp(r,c);
         m_BaseShapeMatrix_cache(r,c) = tmp(r,c);
+        }
+      } 
+  }
+
+    virtual void ResizeJacobianMatrix(int rs, int cs)
+  {
+    vnl_matrix<T> tmp(*m_JacobianMatrix); // copy existing  matrix
+    // Create new column (shape)
+    m_JacobianMatrix->set_size(rs, cs);
+    m_JacobianMatrix->fill(0.0);    
+    // Copy old data into new matrix.
+    for (unsigned int c = 0; c < tmp.cols(); c++)
+      {
+      for (unsigned int r = 0; r < tmp.rows(); r++)
+        {
+        m_JacobianMatrix(r,c) = tmp(r,c);
         }
       } 
   }
@@ -129,8 +145,9 @@ public:
     
     for (unsigned int i = 0; i < VDimension; i++)
       {
-      this->operator()(i+k, d / this->m_DomainsPerShape) =
-        pos[i] - m_MeanMatrix(i+k, d/ this->m_DomainsPerShape);
+      this->operator()(i+k, d / this->m_DomainsPerShape) = pos[i];
+        // pos[i] - m_MeanMatrix(i+k, d/ this->m_DomainsPerShape);
+
       }
   }
   
@@ -139,6 +156,14 @@ public:
     // NEED TO IMPLEMENT THIS
   }
   
+  void SetNonLinearTrainModelCallbackFunction(const std::function<void(void)> &f){
+    this->m_NonLinearTrainModelCallback = f;
+  }
+
+  void BeforeGradientUpdatesCallbackFunction(const std::function<void(void)> &f){
+    this->m_BeforeGradientUpdatesCallback = f;
+  }
+
   /** Set/Get the number of domains per shape.  This can only be safely done
       before shapes are initialized with points! */
   void SetDomainsPerShape(int i)
@@ -161,6 +186,7 @@ public:
       m_UpdateCounter = 0;
       this->m_NonLinearTrainModelCallback();
       }
+    this->m_BeforeGradientUpdatesCallback();
   }
 
   void m_NonLinearTrainingInterval( int i)
@@ -197,6 +223,8 @@ private:
 
   // Z_0 --> Base Distribution
   std::shared_ptr<vnl_matrix<double>> m_BaseShapeMatrix;
+  std::shared_ptr<vnl_matrix<double>> m_JacobianMatrix;
+
   std::shared_ptr<vnl_matrix<double>> m_BaseShapeMatrix_cache;
 
 };

@@ -2159,10 +2159,50 @@ void Optimize::SetGeodesicsEnabled(bool is_enabled) { this->m_geodesics_enabled 
 //---------------------------------------------------------------------------
 void Optimize::SetGeodesicsCacheSizeMultiplier(size_t n) { this->m_geodesic_cache_size_multiplier = n; }
 
-void Optimize::SetBeforeEvaluateCallbackFunction(const std::function<void(void)>& f)
+void Optimize::SetNonLinearTrainModelCallbackFunction(const std::function<void(void)>& f)
 {
-  // TODO: Add layers
-  this->m_sampler->GetOptimizer()->SetBeforeEvaluateCallbackFunction(f);
+  this->m_sampler->GetNonLinearShapeMatrixAttribute()->SetNonLinearTrainModelCallbackFunction(f);
+}
+
+void Optimize::BeforeGradientUpdatesCallbackFunction(const std::function<void(void)>& f)
+{
+  this->m_sampler->GetNonLinearShapeMatrixAttribute()->BeforeGradientUpdatesCallbackFunction(f);
+}
+
+//---------------------------------------------------------------------------
+void Optimize::SetNonLinearJacobianMatrix(MatrixContainer det_jac, MatrixContainer log_det_jac)
+{
+  std::cout << "---Setting up Jacobian Matrix in Optimize  0--- " << std::endl;
+  auto vnl = this->m_sampler->GetNonLinearShapeMatrixAttribute()->GetJacobainMatrix();
+  auto eigen = det_jac.matrix_;
+  vnl->set_size(eigen.rows(), eigen.cols());
+  for (int r = 0; r < eigen.rows(); r++) {
+    for (int c = 0; c < eigen.cols(); c++) {
+      vnl->put(r, c, eigen(r, c));
+    }
+  }
+  auto eigen_log_det = log_det_jac.matrix_;
+  vnl->set_size(eigen_log_det.rows(), eigen_log_det.cols());
+  for (int r = 0; r < eigen_log_det.rows(); r++) {
+    for (int c = 0; c < eigen_log_det.cols(); c++) {
+      vnl->put(r, c, eigen_log_det(r, c));
+    }
+  }
+  std::cout << "---Setting up Jacobian Matrix in Optimize  1--- " << std::endl;
+}
+//---------------------------------------------------------------------------
+void Optimize::SetNonLinearBaseShapeMatrix(MatrixContainer matrix)
+{
+  std::cout << "---Setting up Base Shape Matrix in Optimize  0--- " << std::endl;
+  auto vnl = this->m_sampler->GetNonLinearShapeMatrixAttribute()->GetBaseShapeMatrix();
+  auto eigen = matrix.matrix_;
+  vnl->set_size(eigen.rows(), eigen.cols());
+  for (int r = 0; r < eigen.rows(); r++) {
+    for (int c = 0; c < eigen.cols(); c++) {
+      vnl->put(r, c, eigen(r, c));
+    }
+  }
+  std::cout << "---Setting up Base Shape Matrix in Optimize  1--- " << std::endl;
 }
 
 //---------------------------------------------------------------------------
