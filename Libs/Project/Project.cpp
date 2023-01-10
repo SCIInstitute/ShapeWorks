@@ -158,10 +158,12 @@ void Project::update_subjects() {
   particles_present_ = !subject->get_world_particle_filenames().empty();
   images_present_ = !subject->get_feature_filenames().empty();
 
+  original_domain_types_.clear();
   while (original_domain_types_.size() < subject->get_original_filenames().size()) {
     int index = original_domain_types_.size();
     original_domain_types_.push_back(ProjectUtils::determine_domain_type(subject->get_original_filenames()[index]));
   }
+  groomed_domain_types_.clear();
   while (groomed_domain_types_.size() < subject->get_groomed_filenames().size()) {
     int index = groomed_domain_types_.size();
     groomed_domain_types_.push_back(ProjectUtils::determine_domain_type(subject->get_groomed_filenames()[index]));
