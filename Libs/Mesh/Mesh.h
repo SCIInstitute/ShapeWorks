@@ -301,20 +301,6 @@ class Mesh {
   Eigen::Vector3d computeBarycentricCoordinates(const Eigen::Vector3d& pt, int face)
       const;  // // WARNING: Copied directly from Meshwrapper. TODO: When refactoring, take this into account.
 
-  // Flood fill keeping track
-  std::vector<bool> filled;
-
-  //debug
-  std::vector<double> dval;
-
-  // Current processing vector
-  std::vector<size_t> currentFloodFill;
-  // Next processing vector
-  std::vector<size_t> nextFloodFill;
-
-  // Recursive flood fill
-  bool fill(size_t cellInd, const Eigen::MatrixXi& F, const std::vector<size_t>& allBoundaryVerts, double step);
-
 };
 
 /// stream insertion operators for Mesh

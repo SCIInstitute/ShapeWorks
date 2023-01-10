@@ -410,7 +410,7 @@ void Sampler::AddImage(ImageType::Pointer image, double narrow_band, std::string
     domain->SetImage(image, narrow_band_world);
 
     // Adding meshes for FFCs
-    vtkSmartPointer<vtkPolyData> mesh = Image(image).toMesh(1.0).getVTKMesh();
+    vtkSmartPointer<vtkPolyData> mesh = Image(image).toMesh(0.0).getVTKMesh();
     this->m_meshes.push_back(mesh);
   }
 

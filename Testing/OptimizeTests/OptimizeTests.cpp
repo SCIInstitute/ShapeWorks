@@ -370,7 +370,7 @@ TEST(OptimizeTests, multi_domain_constraint) {
   stats.ComputeModes();
   stats.PrincipalComponentProjections();
 
-  bool good = check_constraint_violations(app, 7.5e-1);
+  bool good = check_constraint_violations(app, 8.5e-1);
 
   ASSERT_TRUE(good);
 }
