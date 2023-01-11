@@ -61,11 +61,17 @@ void UpdateChecker::handleNetworkReply(QNetworkReply* reply) {
   // get the json response
   auto j = json::parse(response);
 
-  // get the version
-  int major = j["macos"]["major"].get<int>();
-  int minor = j["macos"]["minor"].get<int>();
-  int patch = j["macos"]["patch"].get<int>();
-  QString message = QString::fromStdString(j["macos"]["message"].get<std::string>());
+  std::string platform = "windows";
+#ifdef Q_OS_MACOS
+  platform = "macos";
+#elif Q_OS_LINUX
+  platform = "linux";
+#endif
+
+  int major = j[platform]["major"].get<int>();
+  int minor = j[platform]["minor"].get<int>();
+  int patch = j[platform]["patch"].get<int>();
+  QString message = QString::fromStdString(j[platform]["message"].get<std::string>());
 
   bool update_available = false;
   if (major > SHAPEWORKS_MAJOR_VERSION) {
@@ -76,6 +82,8 @@ void UpdateChecker::handleNetworkReply(QNetworkReply* reply) {
              patch > SHAPEWORKS_PATCH_VERSION) {
     update_available = true;
   }
+
+  update_available = true;
 
   if (update_available) {
     auto url = QString("https://github.com/SCIInstitute/ShapeWorks/releases/latest");
