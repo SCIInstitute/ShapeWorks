@@ -784,6 +784,7 @@ QToolBar QToolButton::checked {
     </property>
     <addaction name="actionAbout"/>
     <addaction name="actionKeyboard_Shortcuts"/>
+    <addaction name="action_check_for_updates"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuOptions"/>
@@ -1202,6 +1203,14 @@ QToolBar QToolButton::checked {
   <action name="save_as_xlsx">
    <property name="text">
     <string>Project Spreadsheet (xlsx)</string>
+   </property>
+  </action>
+  <action name="action_check_for_updates">
+   <property name="text">
+    <string>Check for Updates...</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::ApplicationSpecificRole</enum>
    </property>
   </action>
  </widget>
