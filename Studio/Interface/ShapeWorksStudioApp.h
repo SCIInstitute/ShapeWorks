@@ -7,7 +7,7 @@
 #include <vtkSmartPointer.h>
 
 #include <Interface/StudioLogger.h>
-#include <Utils/UpdateChecker.h>
+#include <Interface/UpdateChecker.h>
 
 #include <Eigen/Eigen>
 #include <QActionGroup>
@@ -70,6 +70,7 @@ class ShapeWorksStudioApp : public QMainWindow {
   void save_as_xlsx_clicked();
   void on_action_quit_triggered();
   void on_action_import_triggered();
+  void splash_screen_closed();
 
   void on_vertical_scroll_bar_valueChanged();
 
@@ -266,6 +267,6 @@ class ShapeWorksStudioApp : public QMainWindow {
   QSharedPointer<PythonWorker> py_worker_;
 
   StudioLogger logger_;
-  UpdateChecker update_checker_;
+  UpdateChecker update_checker_{preferences_};
 };
 }  // namespace shapeworks

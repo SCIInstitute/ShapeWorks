@@ -50,7 +50,7 @@ SplashScreen::SplashScreen(QWidget* parent, Preferences& preferences) : QDialog(
 SplashScreen::~SplashScreen() {}
 
 //---------------------------------------------------------------------------
-void SplashScreen::new_project() { this->close(); }
+void SplashScreen::new_project() { this->accept(); }
 
 //---------------------------------------------------------------------------
 void SplashScreen::quit() { reinterpret_cast<QWidget*>(this->parent())->close(); }
@@ -67,7 +67,7 @@ void SplashScreen::open_existing() {
   this->hide();
   QApplication::processEvents();
   Q_EMIT open_project(filename);
-  this->close();
+  accept();
 }
 
 //---------------------------------------------------------------------------
@@ -94,7 +94,7 @@ void SplashScreen::open_recent() {
   this->hide();
   QApplication::processEvents();
   Q_EMIT open_project(full_file_path);
-  this->close();
+  accept();
 }
 
 //---------------------------------------------------------------------------

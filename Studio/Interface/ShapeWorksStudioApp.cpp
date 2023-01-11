@@ -38,6 +38,7 @@
 #include <Interface/ShapeWorksStudioApp.h>
 #include <Interface/SplashScreen.h>
 #include <Interface/StatusBarWidget.h>
+#include <Interface/UpdateChecker.h>
 #include <Interface/WheelEventForwarder.h>
 #include <Optimize/OptimizeTool.h>
 #include <Python/PythonWorker.h>
@@ -45,7 +46,6 @@
 #include <Utils/StudioUtils.h>
 #include <Visualization/Lightbox.h>
 #include <Visualization/Visualizer.h>
-#include <Utils/UpdateChecker.h>
 
 // ui
 #include <ui_ShapeWorksStudioApp.h>
@@ -111,10 +111,12 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
   analysis_tool_ = QSharedPointer<AnalysisTool>::create(preferences_);
   analysis_tool_->set_app(this);
   ui_->stacked_widget->addWidget(analysis_tool_.data());
-  connect(analysis_tool_.data(), &AnalysisTool::update_view, this, &ShapeWorksStudioApp::handle_display_setting_changed);
+  connect(analysis_tool_.data(), &AnalysisTool::update_view, this,
+          &ShapeWorksStudioApp::handle_display_setting_changed);
   connect(analysis_tool_.data(), &AnalysisTool::pca_update, this, &ShapeWorksStudioApp::handle_pca_update);
   connect(analysis_tool_.data(), &AnalysisTool::progress, this, &ShapeWorksStudioApp::handle_progress);
-  connect(analysis_tool_.data(), &AnalysisTool::reconstruction_complete, this, &ShapeWorksStudioApp::handle_reconstruction_complete);
+  connect(analysis_tool_.data(), &AnalysisTool::reconstruction_complete, this,
+          &ShapeWorksStudioApp::handle_reconstruction_complete);
 
   // DeepSSM tool init
   deepssm_tool_ = QSharedPointer<DeepSSMTool>::create(preferences_);
@@ -232,10 +234,9 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
   update_feature_map_scale();
   SW_LOG("ShapeWorks Studio Initialized");
 
+  connect(splash_screen_.get(), &SplashScreen::accepted, this, &ShapeWorksStudioApp::splash_screen_closed);
 
-  QTimer::singleShot(10000, this, [&]() { update_checker_.runManualUpdateCheck(); });
-
-
+  connect(ui_->action_check_for_updates, &QAction::triggered, this, [&]() { update_checker_.runManualUpdateCheck(); });
 }
 
 //---------------------------------------------------------------------------
@@ -373,6 +374,11 @@ void ShapeWorksStudioApp::on_action_import_triggered() {
 
   visualizer_->update_lut();
   enable_possible_actions();
+}
+
+//---------------------------------------------------------------------------
+void ShapeWorksStudioApp::splash_screen_closed() {
+  QTimer::singleShot(2000, this, [&]() { update_checker_.runAutoUpdateCheck(); });
 }
 
 //---------------------------------------------------------------------------
@@ -1489,7 +1495,10 @@ void ShapeWorksStudioApp::open_project(QString filename) {
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::on_action_preferences_triggered() { preferences_window_->show(); }
+void ShapeWorksStudioApp::on_action_preferences_triggered() {
+  preferences_window_->set_values_from_preferences();
+  preferences_window_->show();
+}
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::action_export_current_mesh_triggered(int index) {

@@ -1,10 +1,12 @@
 // qt
 #include <Data/Preferences.h>
+#include <Logging.h>
 
 #include <QFile>
 #include <QFileInfo>
 #include <QSize>
 #include <QThread>
+#include <QDateTime>
 #include <iostream>
 
 //-----------------------------------------------------------------------------
@@ -329,11 +331,13 @@ void Preferences::update_recent_files() {
 }
 
 //-----------------------------------------------------------------------------
-bool Preferences::get_auto_update_check() {
-  return settings_.value("General/auto_update_check", true).toBool();
-}
+bool Preferences::get_auto_update_check() { return settings_.value("General/auto_update_check", true).toBool(); }
 
 //-----------------------------------------------------------------------------
-void Preferences::set_auto_update_check(bool enabled) {
-  settings_.setValue("General/auto_update_check", enabled);
+void Preferences::set_auto_update_check(bool enabled) { settings_.setValue("General/auto_update_check", enabled); }
+
+QDateTime Preferences::get_update_snooze_until() {
+  return settings_.value("General/update_snooze_until", QDateTime()).toDateTime();
 }
+
+void Preferences::set_update_snooze_until(QDateTime date) { settings_.setValue("General/update_snooze_until", date); }

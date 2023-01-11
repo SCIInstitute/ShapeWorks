@@ -119,6 +119,9 @@ class Preferences : public QObject {
   bool get_auto_update_check();
   void set_auto_update_check(bool enabled);
 
+  QDateTime get_update_snooze_until();
+  void set_update_snooze_until(QDateTime date);
+
  Q_SIGNALS:
 
   void color_scheme_changed(int newIndex);

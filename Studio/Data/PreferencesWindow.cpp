@@ -53,6 +53,7 @@ PreferencesWindow::PreferencesWindow(QWidget* parent, Preferences& prefs) : pref
           &PreferencesWindow::save_to_preferences);
   connect(ui_->discrete_color_mode, &QCheckBox::toggled, this, &PreferencesWindow::save_to_preferences);
   connect(ui_->reverse_color_map, &QCheckBox::toggled, this, &PreferencesWindow::save_to_preferences);
+  connect(ui_->auto_update_checkbox, &QCheckBox::toggled, this, &PreferencesWindow::save_to_preferences);
 }
 
 //-----------------------------------------------------------------------------
@@ -113,7 +114,7 @@ void PreferencesWindow::set_values_from_preferences() {
   ui_->groom_file_template->setText(preferences_.get_groom_file_template());
   ui_->optimize_file_template->setText(preferences_.get_optimize_file_template());
   ui_->geodesic_cache_multiplier->setValue(preferences_.get_geodesic_cache_multiplier());
-
+  ui_->auto_update_checkbox->setChecked(preferences_.get_auto_update_check());
   update_labels();
 }
 
@@ -143,6 +144,7 @@ void PreferencesWindow::save_to_preferences() {
   preferences_.set_particle_colors(ui_->particle_colors->currentIndex());
   preferences_.set_discrete_color_mode(ui_->discrete_color_mode->isChecked());
   preferences_.set_reverse_color_map(ui_->reverse_color_map->isChecked());
+  preferences_.set_auto_update_check(ui_->auto_update_checkbox->isChecked());
   update_labels();
   Q_EMIT update_view();
 }

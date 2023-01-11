@@ -161,12 +161,10 @@ SET(STUDIO_UTILS_SRCS
   Utils/StudioUtils.cpp
   Utils/AnalysisUtils.cpp
   Utils/ImageLabel.cpp
-  Utils/UpdateChecker.cpp
   )
 
 SET(STUDIO_UTILS_MOC_HDRS
   Utils/ImageLabel.h
-  Utils/UpdateChecker.h
   )
 
 SET(STUDIO_INTERFACE_SRCS
@@ -179,6 +177,7 @@ SET(STUDIO_INTERFACE_SRCS
   Interface/StatusBarWidget.cpp
   Interface/StudioLogger.cpp
   Interface/Style.cpp
+  Interface/UpdateChecker.cpp
   Interface/WheelEventForwarder.cpp
   )
 SET(STUDIO_INTERFACE_MOC_HDRS
@@ -190,6 +189,7 @@ SET(STUDIO_INTERFACE_MOC_HDRS
   Interface/SplashScreen.h
   Interface/StatusBarWidget.h
   Interface/StudioLogger.h
+  Interface/UpdateChecker.h
   Interface/WheelEventForwarder.h
   )
 
