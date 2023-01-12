@@ -115,6 +115,7 @@ void PreferencesWindow::set_values_from_preferences() {
   ui_->optimize_file_template->setText(preferences_.get_optimize_file_template());
   ui_->geodesic_cache_multiplier->setValue(preferences_.get_geodesic_cache_multiplier());
   ui_->auto_update_checkbox->setChecked(preferences_.get_auto_update_check());
+  ui_->telemetry_enabled->setChecked(preferences_.get_telemetry_enabled());
   update_labels();
 }
 
@@ -145,6 +146,7 @@ void PreferencesWindow::save_to_preferences() {
   preferences_.set_discrete_color_mode(ui_->discrete_color_mode->isChecked());
   preferences_.set_reverse_color_map(ui_->reverse_color_map->isChecked());
   preferences_.set_auto_update_check(ui_->auto_update_checkbox->isChecked());
+  preferences_.set_telemetry_enabled(ui_->telemetry_enabled->isChecked());
   update_labels();
   Q_EMIT update_view();
 }

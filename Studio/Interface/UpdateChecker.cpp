@@ -34,12 +34,12 @@ UpdateChecker::UpdateChecker(Preferences& prefs, QWidget* parent)
 
 UpdateChecker::~UpdateChecker() { delete ui_; }
 
-void UpdateChecker::runManualUpdateCheck() {
+void UpdateChecker::run_manual_update_check() {
   manual_trigger_ = true;
   run_update_check();
 }
 
-void UpdateChecker::runAutoUpdateCheck() {
+void UpdateChecker::run_auto_update_check() {
   if (prefs_.get_auto_update_check()) {
     QDateTime snooze_time = prefs_.get_update_snooze_until();
     if (!snooze_time.isValid() || QDateTime::currentDateTime() > snooze_time) {

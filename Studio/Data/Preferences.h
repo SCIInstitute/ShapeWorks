@@ -124,6 +124,12 @@ class Preferences : public QObject {
 
   QString get_device_id();
 
+  bool get_telemetry_enabled();
+  void set_telemetry_enabled(bool enabled);
+
+  bool get_telemetry_asked();
+  void set_telemetry_asked(bool asked);
+
  Q_SIGNALS:
 
   void color_scheme_changed(int newIndex);

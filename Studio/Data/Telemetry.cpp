@@ -7,6 +7,7 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QMessageBox>
 #include <QNetworkReply>
 #include <QUrlQuery>
 
@@ -17,25 +18,35 @@ Telemetry::Telemetry(Preferences& prefs) : prefs_(prefs) {
 }
 
 void Telemetry::record_event(const QString& name, const QVariantMap& params) {
+  if (!prefs_.get_telemetry_asked()) {
+    // ask the user if it's ok to collect anonymous usage data
+    int ret = QMessageBox::question(nullptr, "Data Collection",
+                                    "Would you like to help improve ShapeWorks by sending anonymous usage data?",
+                                    QMessageBox::Yes | QMessageBox::No);
+
+    prefs_.set_telemetry_asked(true);
+    prefs_.set_telemetry_enabled(ret == QMessageBox::Yes);
+  }
+
   auto device_id = prefs_.get_device_id();
-  auto paramsJson = QJsonObject{
+  auto params_json = QJsonObject{
       {"device_id", device_id}, {"platform", StudioUtils::get_platform_string()}, {"version", SHAPEWORKS_VERSION}};
 
   QString measurement_id{GA_MEASUREMENT_ID};
   QString api_secret{GA_API_SECRET};
 
-  if (measurement_id.isEmpty() || api_secret.isEmpty()) {
+  if (!prefs_.get_telemetry_enabled() || measurement_id.isEmpty() || api_secret.isEmpty()) {
     SW_LOG("Telemetry disabled");
     return;
   }
 
   for (auto it = params.constKeyValueBegin(); it != params.constKeyValueEnd(); it++) {
-    paramsJson.insert(it->first, QJsonValue::fromVariant(it->second));
+    params_json.insert(it->first, QJsonValue::fromVariant(it->second));
   }
 
   auto payload = QJsonObject{{"client_id", device_id},
                              {"timestamp_micros", QDateTime::currentMSecsSinceEpoch() * 1000},
-                             {"events", QJsonArray{QJsonObject{{"name", name}, {"params", paramsJson}}}}};
+                             {"events", QJsonArray{QJsonObject{{"name", name}, {"params", params_json}}}}};
 
   QNetworkRequest request(QUrl("https://www.google-analytics.com/mp/collect?&measurement_id=" + measurement_id +
                                "&api_secret=" + api_secret));

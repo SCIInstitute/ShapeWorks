@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>756</width>
-    <height>652</height>
+    <height>668</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -572,6 +572,13 @@
        <widget class="QCheckBox" name="auto_update_checkbox">
         <property name="text">
          <string>Automatically Check for Updates</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="telemetry_enabled">
+        <property name="text">
+         <string>Send Anonymous Usage Statistics</string>
         </property>
        </widget>
       </item>

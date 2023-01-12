@@ -2,13 +2,13 @@
 #include <Data/Preferences.h>
 #include <Logging.h>
 
+#include <QDateTime>
 #include <QFile>
 #include <QFileInfo>
 #include <QSize>
 #include <QThread>
-#include <QDateTime>
-#include <iostream>
 #include <QUuid>
+#include <iostream>
 
 //-----------------------------------------------------------------------------
 Preferences::Preferences() : settings_("Scientific Computing and Imaging Institute", "ShapeWorksStudio") {
@@ -346,3 +346,7 @@ void Preferences::set_update_snooze_until(QDateTime date) { settings_.setValue("
 QString Preferences::get_device_id() {
   return settings_.value("General/device_id", QUuid::createUuid().toString()).toString();
 }
+bool Preferences::get_telemetry_enabled() { return settings_.value("General/telemetry_enabled", true).toBool(); }
+void Preferences::set_telemetry_enabled(bool enabled) { settings_.setValue("General/telemetry_enabled", enabled); }
+bool Preferences::get_telemetry_asked() { return settings_.value("General/telemetry_asked", false).toBool(); }
+void Preferences::set_telemetry_asked(bool asked) { settings_.setValue("General/telemetry_asked", asked); }

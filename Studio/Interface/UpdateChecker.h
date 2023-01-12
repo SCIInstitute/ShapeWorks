@@ -22,8 +22,8 @@ class UpdateChecker : public QDialog {
   explicit UpdateChecker(Preferences& prefs, QWidget* parent = nullptr);
   ~UpdateChecker();
 
-  void runAutoUpdateCheck();
-  void runManualUpdateCheck();
+  void run_auto_update_check();
+  void run_manual_update_check();
 
 
  public Q_SLOTS:
