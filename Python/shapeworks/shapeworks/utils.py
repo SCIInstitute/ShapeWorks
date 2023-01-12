@@ -162,7 +162,7 @@ def compute_line_indices(n, is_closed=True):
     return lines
 
 def get_api_version():
-    return "6.3"
+    return "6.4"
 
 def set_sw_logger(log_object):
     """Set the shapeworks logger object"""
@@ -300,7 +300,7 @@ def check_results(args, project_spreadsheet):
 
 def check_results_pattern(args, project_spreadsheet, pattern):
     # If tiny test or verify, check results and exit
-    particle_dir = project_spreadsheet.replace(".xlsx", "_particles/")
+    particle_dir = project_spreadsheet.replace(".xlsx", "_particles/").replace(".swproj", "_particles/")
     world_point_files = []
     for file in sorted(os.listdir(particle_dir)):
         if pattern in file:

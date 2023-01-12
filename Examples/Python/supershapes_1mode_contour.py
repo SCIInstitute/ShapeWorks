@@ -17,11 +17,14 @@ def Run_Pipeline(args):
     process
     """
     print("\nStep 1. Extract Data\n")
-    dataset_name = "supershapes2D_1mode"
+    dataset_name = "supershapes_1mode"
+    # dataset_name = "supershapes2D_1mode"
     output_directory = "Output/supershapes_1mode_contour/"
-
+    if not os.path.exists(output_directory):
+        os.makedirs(output_directory)
     # See the generate_supershapes() function in this file for how the data is generated
-    sw.data.download_and_unzip_dataset(dataset_name, output_directory)
+    sw.download_and_unzip_dataset(dataset_name, output_directory)
+    dataset_name = "supershapes2D_1mode"
     contour_files = sorted(glob.glob(output_directory + dataset_name + "/contours/*.vtp"))
     
     """
@@ -40,7 +43,7 @@ def Run_Pipeline(args):
     Step 3: OPTIMIZE - Particle Based Optimization
     """
      # Create project spreadsheet
-    project_location = output_directory + "shape_models/"
+    project_location = output_directory #+ "shape_models/"
     if not os.path.exists(project_location):
         os.makedirs(project_location)
     # Set subjects
@@ -95,7 +98,8 @@ def Run_Pipeline(args):
     for key in parameter_dictionary:
         parameters.set(key,sw.Variant([parameter_dictionary[key]]))
     project.set_parameters("optimize",parameters)
-    spreadsheet_file = output_directory + "shape_models/supershapes_1mode_contour_" + args.option_set+ ".swproj"
+    # spreadsheet_file = output_directory + "shape_models/supershapes_1mode_contour_" + args.option_set+ ".swproj"
+    spreadsheet_file = project_location + "supershapes_1mode_contour_" + args.option_set+ ".swproj"
     project.save(spreadsheet_file)
 
     # Run optimization
