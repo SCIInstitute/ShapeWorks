@@ -67,8 +67,7 @@ QImage StudioUtils::vtk_image_to_qimage(vtkSmartPointer<vtkImageData> image_data
 }
 
 //---------------------------------------------------------------------------
-vtkSmartPointer<vtkPolyData> StudioUtils::reverse_poly_data(vtkSmartPointer<vtkPolyData> poly_data)
-{
+vtkSmartPointer<vtkPolyData> StudioUtils::reverse_poly_data(vtkSmartPointer<vtkPolyData> poly_data) {
   auto reverse_filter = vtkSmartPointer<vtkReverseSense>::New();
   reverse_filter->SetInputData(poly_data);
   reverse_filter->ReverseNormalsOff();
@@ -76,5 +75,16 @@ vtkSmartPointer<vtkPolyData> StudioUtils::reverse_poly_data(vtkSmartPointer<vtkP
   reverse_filter->Update();
   poly_data = reverse_filter->GetOutput();
   return poly_data;
+}
+
+//---------------------------------------------------------------------------
+QString StudioUtils::get_platform_string() {
+  QString platform = "windows";
+#ifdef Q_OS_MACOS
+  platform = "macos";
+#elif Q_OS_LINUX
+  platform = "linux";
+#endif
+  return platform;
 }
 }  // namespace shapeworks

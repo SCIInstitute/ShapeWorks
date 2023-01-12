@@ -122,6 +122,8 @@ class Preferences : public QObject {
   QDateTime get_update_snooze_until();
   void set_update_snooze_until(QDateTime date);
 
+  QString get_device_id();
+
  Q_SIGNALS:
 
   void color_scheme_changed(int newIndex);

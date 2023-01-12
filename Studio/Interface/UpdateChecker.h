@@ -1,7 +1,7 @@
 #pragma once
 
 #include <QDialog>
-#include <QNetworkReply>
+#include <QNetworkAccessManager>
 
 #include <Data/Preferences.h>
 
@@ -11,6 +11,10 @@ class UpdateChecker;
 
 namespace shapeworks {
 
+//! Update Checker
+/*!
+ * This class checks for new versions of ShapeWorks and informs the user with a dialog
+ */
 class UpdateChecker : public QDialog {
   Q_OBJECT
 
@@ -29,7 +33,7 @@ class UpdateChecker : public QDialog {
   void run_update_check();
 
   bool manual_trigger_{false};
-  QNetworkAccessManager manager_;
+  QNetworkAccessManager network_;
 
   Ui::UpdateChecker* ui_;
 

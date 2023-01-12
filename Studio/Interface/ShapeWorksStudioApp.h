@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Data/PreferencesWindow.h>
+#include <Data/Telemetry.h>
 #include <Interface/LogWindow.h>
 #include <Visualization/StudioVtkOutputWindow.h>
 #include <vtkPolyData.h>
@@ -268,5 +269,6 @@ class ShapeWorksStudioApp : public QMainWindow {
 
   StudioLogger logger_;
   UpdateChecker update_checker_{preferences_};
+  Telemetry telemetry_{preferences_};
 };
 }  // namespace shapeworks

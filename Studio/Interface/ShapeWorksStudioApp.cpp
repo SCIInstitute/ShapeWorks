@@ -30,6 +30,7 @@
 #include <Data/ExportUtils.h>
 #include <Data/Preferences.h>
 #include <Data/Session.h>
+#include <Data/Telemetry.h>
 #include <DeepSSM/DeepSSMTool.h>
 #include <Groom/GroomTool.h>
 #include <Interface/CompareWidget.h>
@@ -237,6 +238,8 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
   connect(splash_screen_.get(), &SplashScreen::accepted, this, &ShapeWorksStudioApp::splash_screen_closed);
 
   connect(ui_->action_check_for_updates, &QAction::triggered, this, [&]() { update_checker_.runManualUpdateCheck(); });
+
+  QTimer::singleShot(1000, this, [&]() { telemetry_.record_event("startup", {}); });
 }
 
 //---------------------------------------------------------------------------

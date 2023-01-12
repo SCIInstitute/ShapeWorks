@@ -8,6 +8,7 @@
 #include <QThread>
 #include <QDateTime>
 #include <iostream>
+#include <QUuid>
 
 //-----------------------------------------------------------------------------
 Preferences::Preferences() : settings_("Scientific Computing and Imaging Institute", "ShapeWorksStudio") {
@@ -341,3 +342,7 @@ QDateTime Preferences::get_update_snooze_until() {
 }
 
 void Preferences::set_update_snooze_until(QDateTime date) { settings_.setValue("General/update_snooze_until", date); }
+
+QString Preferences::get_device_id() {
+  return settings_.value("General/device_id", QUuid::createUuid().toString()).toString();
+}

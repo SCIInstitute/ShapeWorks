@@ -26,6 +26,9 @@ class StudioUtils {
 
   //! reverse a poly data
   static vtkSmartPointer<vtkPolyData> reverse_poly_data(vtkSmartPointer<vtkPolyData> poly_data);
+
+  static QString get_platform_string();
+
 };
 
 }  // namespace shapeworks

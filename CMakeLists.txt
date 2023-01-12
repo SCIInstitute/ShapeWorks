@@ -30,6 +30,9 @@ option(USE_PCH "Use pre-compiled headers" OFF)
 
 option(USE_ORIGIN_RPATH "Use $ORIGIN in rpath, for deployment" OFF)
 
+SET(GA_MEASUREMENT_ID "" CACHE STRING "Google Analytics Measurement ID")
+SET(GA_API_SECRET "" CACHE STRING "Google Analytics API Secret")
+
 if ("${Build_Studio}")
   set(SHAPEWORKS_GUI ON)
   set(SHAPEWORKS_QT_REQUIRED REQUIRED)

@@ -83,6 +83,7 @@ SET(STUDIO_DATA_SRCS
   Data/PreferencesWindow.cpp
   Data/Session.cpp
   Data/ShapeWorksWorker.cpp
+  Data/Telemetry.cpp
   Data/Worker.cpp
   )
 
@@ -94,6 +95,7 @@ SET(STUDIO_DATA_MOC_HDRS
   Data/PreferencesWindow.h
   Data/Session.h
   Data/ShapeWorksWorker.h
+  Data/Telemetry.h
   Data/Worker.h
   )
 

@@ -7,10 +7,11 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QMessageBox>
-#include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QNetworkRequest>
 #include <nlohmann/json.hpp>
+
+#include <Utils/StudioUtils.h>
 
 #include "ui_UpdateChecker.h"
 
@@ -21,7 +22,7 @@ namespace shapeworks {
 UpdateChecker::UpdateChecker(Preferences& prefs, QWidget* parent)
     : QDialog(parent), prefs_(prefs), ui_(new Ui::UpdateChecker) {
   ui_->setupUi(this);
-  connect(&manager_, &QNetworkAccessManager::finished, this, &UpdateChecker::handleNetworkReply);
+  connect(&network_, &QNetworkAccessManager::finished, this, &UpdateChecker::handleNetworkReply);
   connect(ui_->ok_button, &QPushButton::clicked, this, &UpdateChecker::hide);
   ui_->auto_update_checkbox->setChecked(prefs_.get_auto_update_check());
   connect(ui_->auto_update_checkbox, &QCheckBox::toggled, &prefs_, &Preferences::set_auto_update_check);
@@ -51,7 +52,7 @@ void UpdateChecker::runAutoUpdateCheck() {
 void UpdateChecker::run_update_check() {
   // check if a new version is available
   QNetworkRequest request(QUrl("http://www.sci.utah.edu/~shapeworks/version.json"));
-  manager_.get(request);
+  network_.get(request);
 }
 
 void UpdateChecker::handleNetworkReply(QNetworkReply* reply) {
@@ -61,12 +62,7 @@ void UpdateChecker::handleNetworkReply(QNetworkReply* reply) {
   // get the json response
   auto j = json::parse(response);
 
-  std::string platform = "windows";
-#ifdef Q_OS_MACOS
-  platform = "macos";
-#elif Q_OS_LINUX
-  platform = "linux";
-#endif
+  std::string platform = StudioUtils::get_platform_string().toStdString();
 
   int major = j[platform]["major"].get<int>();
   int minor = j[platform]["minor"].get<int>();
