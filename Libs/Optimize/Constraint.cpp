@@ -87,8 +87,8 @@ Eigen::Vector3d Constraint::lagragianGradient(const Eigen::Vector3d &pt, double 
   Eigen::Vector3d constraint_grad = constraintGradient(pt);
   double eval = constraintEval(pt);
   double maxterm = mu_ + C * eval;
-  if (maxterm < 0) {
-  //if ( C * eval < 0) {
+//  if (maxterm < 0) {
+  if ( C * eval < 0) {
     return Eigen::Vector3d(0, 0, 0);
   } else {
     return maxterm * constraint_grad;
