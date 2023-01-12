@@ -3,6 +3,7 @@
 #include <Data/Preferences.h>
 #include <Groom/QGroom.h>
 #include <Groom/GroomParameters.h>
+#include <Data/Telemetry.h>
 
 #include <QElapsedTimer>
 #include <QObject>
@@ -24,7 +25,7 @@ class GroomTool : public QWidget {
   Q_OBJECT;
 
  public:
-  GroomTool(Preferences& prefs);
+  GroomTool(Preferences& prefs, Telemetry& telemetry);
   ~GroomTool();
 
   //! Set the pointer to the session
@@ -89,6 +90,7 @@ class GroomTool : public QWidget {
   void update_reflect_choices();
 
   Preferences& preferences_;
+  Telemetry& telemetry_;
 
   QList<QThread*> threads_;
 

@@ -8,6 +8,7 @@
 #include <itkPoint.h>
 
 #include <Data/Preferences.h>
+#include <Data/Telemetry.h>
 
 class Ui_OptimizeTool;
 
@@ -24,7 +25,7 @@ Q_OBJECT;
 
 public:
 
-  OptimizeTool(Preferences& prefs);
+  OptimizeTool(Preferences& prefs, Telemetry& telemetry);
   ~OptimizeTool();
 
   /// set the pointer to the project
@@ -80,6 +81,8 @@ private:
   std::vector<QLineEdit*> particle_boxes_;
 
   Preferences& preferences_;
+  Telemetry& telemetry_;
+
 
   std::vector<QLineEdit*> line_edits_;
 

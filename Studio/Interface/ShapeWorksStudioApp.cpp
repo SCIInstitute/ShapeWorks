@@ -158,14 +158,14 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
   ui_->stacked_widget->addWidget(data_tool_.data());
 
   // groom tool initialization
-  groom_tool_ = QSharedPointer<GroomTool>::create(preferences_);
+  groom_tool_ = QSharedPointer<GroomTool>::create(preferences_, telemetry_);
   ui_->stacked_widget->addWidget(groom_tool_.data());
   connect(groom_tool_.data(), &GroomTool::groom_start, this, &ShapeWorksStudioApp::handle_groom_start);
   connect(groom_tool_.data(), &GroomTool::groom_complete, this, &ShapeWorksStudioApp::handle_groom_complete);
   connect(groom_tool_.data(), &GroomTool::progress, this, &ShapeWorksStudioApp::handle_progress);
 
   // optimize tool initialization
-  optimize_tool_ = QSharedPointer<OptimizeTool>::create(preferences_);
+  optimize_tool_ = QSharedPointer<OptimizeTool>::create(preferences_, telemetry_);
 
   ui_->stacked_widget->addWidget(optimize_tool_.data());
   connect(optimize_tool_.data(), SIGNAL(optimize_complete()), this, SLOT(handle_optimize_complete()));

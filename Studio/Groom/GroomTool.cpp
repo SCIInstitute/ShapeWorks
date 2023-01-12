@@ -1,9 +1,9 @@
 #include <Data/Session.h>
-#include <Shape.h>
 #include <Data/ShapeWorksWorker.h>
-#include <Groom/GroomTool.h>
 #include <Groom/GroomParameters.h>
+#include <Groom/GroomTool.h>
 #include <Logging.h>
+#include <Shape.h>
 #include <ui_GroomTool.h>
 
 #include <QDebug>
@@ -13,7 +13,7 @@
 namespace shapeworks {
 
 //---------------------------------------------------------------------------
-GroomTool::GroomTool(Preferences& prefs) : preferences_(prefs) {
+GroomTool::GroomTool(Preferences& prefs, Telemetry& telemetry) : preferences_(prefs), telemetry_(telemetry) {
   ui_ = new Ui_GroomTool;
   ui_->setupUi(this);
   qRegisterMetaType<std::string>();
@@ -88,8 +88,7 @@ GroomTool::GroomTool(Preferences& prefs) : preferences_(prefs) {
   connect(ui_->domain_box, qOverload<int>(&QComboBox::currentIndexChanged), this, &GroomTool::domain_changed);
 
   connect(ui_->mesh_smooth, &QCheckBox::stateChanged, this, &GroomTool::update_ui);
-  connect(ui_->mesh_smooth_method, qOverload<int>(&QComboBox::currentIndexChanged), this,
-          &GroomTool::update_ui);
+  connect(ui_->mesh_smooth_method, qOverload<int>(&QComboBox::currentIndexChanged), this, &GroomTool::update_ui);
 
   connect(ui_->resample_checkbox, &QCheckBox::stateChanged, this, &GroomTool::update_ui);
   connect(ui_->isotropic_checkbox, &QCheckBox::stateChanged, this, &GroomTool::update_ui);
@@ -106,10 +105,10 @@ GroomTool::GroomTool(Preferences& prefs) : preferences_(prefs) {
 
   connect(ui_->remesh_checkbox, &QCheckBox::stateChanged, this, &GroomTool::update_ui);
 
-  QIntValidator *above_zero = new QIntValidator(1, std::numeric_limits<int>::max(), this);
-  QIntValidator *zero_and_up = new QIntValidator(0, std::numeric_limits<int>::max(), this);
+  QIntValidator* above_zero = new QIntValidator(1, std::numeric_limits<int>::max(), this);
+  QIntValidator* zero_and_up = new QIntValidator(0, std::numeric_limits<int>::max(), this);
 
-  QDoubleValidator *double_validator = new QDoubleValidator(0, std::numeric_limits<double>::max(), 1000, this);
+  QDoubleValidator* double_validator = new QDoubleValidator(0, std::numeric_limits<double>::max(), 1000, this);
 
   ui_->laplacian_iterations->setValidator(zero_and_up);
   ui_->laplacian_relaxation->setValidator(double_validator);
@@ -263,7 +262,9 @@ void GroomTool::update_reflect_choices() {
 
   ui_->reflect_choice->clear();
   list.removeDuplicates();
-  Q_FOREACH (auto item, list) { ui_->reflect_choice->addItem(item); }
+  Q_FOREACH (auto item, list) {
+    ui_->reflect_choice->addItem(item);
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -277,8 +278,8 @@ void GroomTool::load_params() {
 
 //---------------------------------------------------------------------------
 void GroomTool::disable_actions() {
-  //ui_->skip_button->setEnabled(false);
-  // ui_->run_groom_button->setEnabled(false);
+  // ui_->skip_button->setEnabled(false);
+  //  ui_->run_groom_button->setEnabled(false);
 }
 
 //---------------------------------------------------------------------------
@@ -286,10 +287,10 @@ void GroomTool::enable_actions() {
   // ui_->run_groom_button->setEnabled(true);
 
   if (groom_is_running_) {
-    //ui_->skip_button->setEnabled(false);
+    // ui_->skip_button->setEnabled(false);
     ui_->run_groom_button->setText("Abort Groom");
   } else {
-    //ui_->skip_button->setEnabled(true);
+    // ui_->skip_button->setEnabled(true);
     ui_->run_groom_button->setText("Run Groom");
   }
 }
@@ -493,9 +494,9 @@ void GroomTool::on_run_groom_button_clicked() {
 
   enable_actions();
 
-  ShapeworksWorker *worker = new ShapeworksWorker(ShapeworksWorker::GroomType, groom_, nullptr, nullptr, session_);
+  ShapeworksWorker* worker = new ShapeworksWorker(ShapeworksWorker::GroomType, groom_, nullptr, nullptr, session_);
 
-  QThread *thread = new QThread;
+  QThread* thread = new QThread;
   worker->moveToThread(thread);
   connect(thread, SIGNAL(started()), worker, SLOT(process()));
   connect(worker, &ShapeworksWorker::finished, this, &GroomTool::handle_thread_complete);
@@ -511,11 +512,15 @@ void GroomTool::on_run_groom_button_clicked() {
 void GroomTool::handle_thread_complete() {
   Q_EMIT progress(95);
 
-  std::string duration = QString::number(timer_.elapsed() / 1000.0, 'f', 1).toStdString();
-  SW_LOG("Groom Complete.  Duration: " + duration + " seconds");
+  QString duration = QString::number(timer_.elapsed() / 1000.0, 'f', 1);
+  SW_LOG("Groom Complete.  Duration: {} seconds", duration);
+
+  telemetry_.record_event("groom", {{"duration_seconds", duration}});
 
   // trigger reload of meshes
-  Q_FOREACH (auto shape, session_->get_shapes()) { shape->reset_groomed_mesh(); }
+  Q_FOREACH (auto shape, session_->get_shapes()) {
+    shape->reset_groomed_mesh();
+  }
 
   Q_EMIT progress(100);
   Q_EMIT groom_complete();
@@ -641,7 +646,6 @@ void GroomTool::domain_changed() {
 
 //---------------------------------------------------------------------------
 void GroomTool::update_ui() {
-
   // enable/disable panels based on skip grooming checkbox
   ui_->alignment_panel->setEnabled(!ui_->skip_grooming->isChecked());
   ui_->image_panel->setEnabled(!ui_->skip_grooming->isChecked());

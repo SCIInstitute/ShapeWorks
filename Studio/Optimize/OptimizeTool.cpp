@@ -23,7 +23,7 @@
 using namespace shapeworks;
 
 //---------------------------------------------------------------------------
-OptimizeTool::OptimizeTool(Preferences& prefs) : preferences_(prefs) {
+OptimizeTool::OptimizeTool(Preferences& prefs, Telemetry& telemetry) : preferences_(prefs), telemetry_(telemetry) {
   ui_ = new Ui_OptimizeTool;
   ui_->setupUi(this);
 
@@ -125,6 +125,7 @@ void OptimizeTool::handle_optimize_complete() {
   optimization_is_running_ = false;
 
   auto particles = optimize_->GetParticles();
+
   session_->update_particles(particles);
 
   auto procrustes_transforms = optimize_->GetProcrustesTransforms();
@@ -136,6 +137,10 @@ void OptimizeTool::handle_optimize_complete() {
 
   QString duration = QString::number(elapsed_timer_.elapsed() / 1000.0, 'f', 1);
   SW_LOG("Optimize Complete.  Duration: " + duration.toStdString() + " seconds");
+
+  telemetry_.record_event("optimize", {{"duration_seconds", duration},
+                                       {"num_particles", QVariant::fromValue(session_->get_num_particles())}});
+
   Q_EMIT optimize_complete();
   update_run_button();
 }
