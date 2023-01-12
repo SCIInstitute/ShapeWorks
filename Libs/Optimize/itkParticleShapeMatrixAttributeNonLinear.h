@@ -35,7 +35,11 @@ public:
   }
   
   std::shared_ptr<vnl_matrix<double>> GetJacobainMatrix(){
-    return this->m_JacobianMatrix;
+    return this->m_JacobianMatrix_det;
+  }
+
+  std::shared_ptr<vnl_matrix<double>> GetDifferenceMatrix(){
+    return this->m_DifferenceMatrix;
   }
   
   virtual void ResizeBaseShapeMatrix(int rs, int cs)
@@ -57,20 +61,33 @@ public:
       } 
   }
 
-    virtual void ResizeJacobianMatrix(int rs, int cs)
+  virtual void ResizeDifferenceMatrix(int rs, int cs)
   {
-    vnl_matrix<T> tmp(*m_JacobianMatrix); // copy existing  matrix
+    vnl_matrix<T> tmp(*m_BaseShapeMatrix); // copy existing  matrix 
     // Create new column (shape)
-    m_JacobianMatrix->set_size(rs, cs);
-    m_JacobianMatrix->fill(0.0);    
+    m_DifferenceMatrix->set_size(rs, cs);
+    m_DifferenceMatrix->fill(0.0);
     // Copy old data into new matrix.
     for (unsigned int c = 0; c < tmp.cols(); c++)
       {
       for (unsigned int r = 0; r < tmp.rows(); r++)
         {
-        m_JacobianMatrix->put(r,c, tmp(r, c));
+        m_DifferenceMatrix->put(r,c,  tmp(r,c));
         }
       } 
+  }
+
+  virtual void ResizeJacobianMatrix(int cs)
+  {
+    vnl_matrix<T> tmp(*m_JacobianMatrix); // copy existing  matrix
+    // Create new column (shape)
+    m_JacobianMatrix->set_size(0, cs);
+    m_JacobianMatrix->fill(0.0);    
+    // Copy old data into new matrix.
+    for (unsigned int c = 0; c < tmp.cols(); c++)
+        {
+        m_JacobianMatrix->put(0,c, tmp(0, c));
+        }
   }
   
   
@@ -112,6 +129,7 @@ public:
                          this->cols());
       this->ResizeBaseShapeMatrix(PointsPerDomain * VDimension * this->m_DomainsPerShape,
                              this->cols());
+      this->ResizeJacobianMatrix(this->cols());                      
       }
     
     // CANNOT ADD POSITION INFO UNTIL ALL POINTS PER DOMAIN IS KNOWN
@@ -223,7 +241,9 @@ private:
 
   // Z_0 --> Base Distribution
   std::shared_ptr<vnl_matrix<double>> m_BaseShapeMatrix;
-  std::shared_ptr<vnl_matrix<double>> m_JacobianMatrix;
+  std::shared_ptr<vnl_matrix<double>> m_JacobianMatrix_det;
+  std::shared_ptr<vnl_matrix<double>> m_DifferenceMatrix;
+
 
   std::shared_ptr<vnl_matrix<double>> m_BaseShapeMatrix_cache;
 

@@ -71,7 +71,7 @@ def load_shape_matrix(particle_dir, N, M, d=3, particle_system='world'):
         data = np.zeros([N, M, d])
         for i in range(len(point_files)):
             nm = point_files[i]
-            data[i, ...] = np.loadtxt(nm)[:, :2]
+            data[i, ...] = np.loadtxt(nm)[:, :3]
 
     return data
 

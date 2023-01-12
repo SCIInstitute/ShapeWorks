@@ -1,10 +1,12 @@
+import shapeworks as sw
+import argparse
 from model import InvertibleNetwork
 from model import *
 
 # Shape Model Particles Directory
-burn_in_particles_dir = ''
-particles_dir = ''
-project_file_path = ''
+burn_in_particles_dir = '/home/sci/nawazish.khan/non-linear-ssm-experiments/data/supershapes_3_lobes_particles/'
+particles_dir = '/home/sci/nawazish.khan/non-linear-ssm-experiments/data/supershapes_3_lobes_particles/'
+project_file_path = '/home/sci/nawazish.khan/non-linear-ssm-experiments/data/supershapes_3_lobes.xlsx'
 
 # Set up Shapeworks Optimizer Object
 sw_opt = sw.Optimize()
@@ -15,6 +17,7 @@ global inv_net
 inv_net = InvertibleNetwork()
 inv_net.initialize_model()
 inv_net.initialize_particles(init_particles_dir=burn_in_particles_dir)
+print('Burn in training....')
 inv_net.train_invertible_network_from_scratch()
 
 # Define Callbacks
@@ -37,10 +40,21 @@ def before_gradient_updates_callback():
         log_det_jacobian = lls.detach().cpu().numpy()
         # Size = number of samples N
         det_jacobian = np.exp(log_det_jacobian)
+        assert lls.size()[0] == N
+        lls = lls.repeat(d*M, 1) 
 
+        # Difference matrix
+        _, _, p_z_0 = inv_net.get_prior_distribution()
+        diff_matrix = p_z_0.sample((N, )) * lls
+        diff_matrix = diff_matrix.detach().cpu().numpy()
         # Set params for ShapeWorks Optimizer
         sw_opt.SetNonLinearBaseShapeMatrix(z0_particles)
-        sw_opt.SetNonLinearJacobianMatrix(det_jacobian, log_det_jacobian)
+        sw_opt.SetNonLinearJacobianMatrix(det_jacobian)
+        sw_opt.SetNonLinearDifferenceMatrix(diff_matrix)
+        sw_opt.ComputeZ0CovarianceMatrix()
+        z0_cov = sw_opt.GetInverseCovarianceMatrix()
+        z0_mean = sw_opt.GetMean()
+        inv_net.update_prior_distribution(z0_mean, z0_cov)
 
 
 # Set callbacks for SW Opt object

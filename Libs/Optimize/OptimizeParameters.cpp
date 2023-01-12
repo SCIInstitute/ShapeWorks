@@ -272,6 +272,8 @@ bool OptimizeParameters::set_up_optimize(Optimize *optimize) {
   optimize->SetDomainsPerShape(domains_per_shape);
   optimize->SetNumberOfParticles(this->get_number_of_particles());
   optimize->SetNonLinearOptimize(this->get_use_non_linear_optimize());
+  optimize->SetNonLinearTrainingInterval(this->get_non_linear_training_interval());
+
   // debug
   std::cout<< " Non Linear Optimize set : " << this->get_use_non_linear_optimize() << std::endl;
   optimize->SetInitialRelativeWeighting(this->get_initial_relative_weighting());

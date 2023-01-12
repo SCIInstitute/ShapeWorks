@@ -330,6 +330,11 @@ void Optimize::SetNonLinearOptimize(bool value) {
 }
 
 //---------------------------------------------------------------------------
+void Optimize::SetNonLinearTrainingInterval(int value) {
+  this->m_non_linear_training_interval = value;
+}
+
+//---------------------------------------------------------------------------
 std::vector<int> Optimize::GetNumberOfParticles() { return this->m_number_of_particles; }
 
 //---------------------------------------------------------------------------
@@ -458,6 +463,10 @@ void Optimize::InitializeSampler() {
   m_sampler->GetEnsembleEntropyFunction()->SetRecomputeCovarianceInterval(1);
   m_sampler->GetEnsembleEntropyFunction()->SetHoldMinimumVariance(false);
 
+  m_sampler->GetEnsembleEntropyNonLinearFunction()->SetMinimumVariance(m_starting_regularization);
+  m_sampler->GetEnsembleEntropyNonLinearFunction()->SetRecomputeCovarianceInterval(1);
+  m_sampler->GetEnsembleEntropyNonLinearFunction()->SetHoldMinimumVariance(false);
+
   m_sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetMinimumVariance(m_starting_regularization);
   m_sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetRecomputeCovarianceInterval(1);
   m_sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetHoldMinimumVariance(false);
@@ -478,6 +487,7 @@ void Optimize::InitializeSampler() {
 
   m_sampler->SetAdaptivityMode(m_adaptivity_mode);
   m_sampler->GetEnsembleEntropyFunction()->SetRecomputeCovarianceInterval(m_recompute_regularization_interval);
+  m_sampler->GetEnsembleEntropyNonLinearFunction()->SetRecomputeCovarianceInterval(m_recompute_regularization_interval);
   m_sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetRecomputeCovarianceInterval(
       m_recompute_regularization_interval);
   m_sampler->GetEnsembleRegressionEntropyFunction()->SetRecomputeCovarianceInterval(
@@ -570,6 +580,8 @@ void Optimize::Initialize() {
 
     m_sampler->GetEnsembleEntropyFunction()->SetMinimumVarianceDecay(m_starting_regularization, m_ending_regularization,
                                                                      m_iterations_per_split);
+    m_sampler->GetEnsembleEntropyNonLinearFunction()->SetMinimumVarianceDecay(m_starting_regularization, m_ending_regularization,
+                                                                     m_iterations_per_split);                                                                  
 
     m_sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetMinimumVarianceDecay(
         m_starting_regularization, m_ending_regularization, m_iterations_per_split);
@@ -814,6 +826,9 @@ void Optimize::RunOptimize() {
 
   // Set up the minimum variance decay
   m_sampler->GetEnsembleEntropyFunction()->SetMinimumVarianceDecay(
+      m_starting_regularization, m_ending_regularization,
+      m_optimization_iterations - m_optimization_iterations_completed);
+  m_sampler->GetEnsembleEntropyNonLinearFunction()->SetMinimumVarianceDecay(
       m_starting_regularization, m_ending_regularization,
       m_optimization_iterations - m_optimization_iterations_completed);
 

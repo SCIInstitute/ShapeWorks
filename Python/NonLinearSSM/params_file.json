@@ -1,7 +1,7 @@
 {
-	"device": "cuda:0",
-    "num_corr": 64,
-	"num_samples": 23,
+	"device": "cuda:1",
+    "num_corr": 128,
+	"num_samples": 15,
     
 	"particles_dir": "/home/sci/nawazish.khan/non-linear-ssm-experiments/data/supershapes_3_lobes_particles/",
     "out_dir": "/home/sci/nawazish.khan/non-linear-ssm-experiments/output/",

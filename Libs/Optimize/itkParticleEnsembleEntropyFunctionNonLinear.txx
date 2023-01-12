@@ -181,11 +181,13 @@ ParticleEnsembleEntropyFunctionNonLinear<VDimension>
 
     energy = tmp(0,0); // Z0 Energy
 
+    auto jacobain_det = m_ShapeMatrix->GetJacobainMatrix();
+    auto diff_term = m_ShapeMatrix->GetDifferenceMatrix();
     for (unsigned int i = 0; i< VDimension; i++)
     {
         auto base_grad = m_PointsUpdateBase->get(k + i, d / DomainsPerShape);
-        double jacobain_det = 0.0;
-        double diff_term = 0.0;
+        double jacobain_det = jacobain_det->get(0, d / DomainsPerShape);
+        double diff_term = diff_term->get(k + i, d / DomainsPerShape);
         gradE[i] = base_grad * jacobain_det - diff_term;
     }
 
@@ -198,4 +200,3 @@ ParticleEnsembleEntropyFunctionNonLinear<VDimension>
 }
 
 } // end namespace
-

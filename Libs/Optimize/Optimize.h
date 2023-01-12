@@ -109,6 +109,7 @@ class Optimize {
 
   //! Set flag for Non Lineaer Optimization
   void SetNonLinearOptimize(bool value);
+  void SetNonLinearTrainingInterval(int value);
 
   void SetDomainType(shapeworks::DomainType type);
   shapeworks::DomainType GetDomainType();
@@ -388,6 +389,7 @@ class Optimize {
   bool m_optimizing = false;
   bool m_use_regression = false;
   bool m_use_non_linear_optimize = false;
+  int m_non_linear_training_interval = 50;
   bool m_use_mixed_effects = false;
 
   // IO Parameters
