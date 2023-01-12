@@ -73,20 +73,9 @@ void FreeFormConstraint::computeBoundaries() {
     return;
   }
 
-  // find valid query point
-  for (int i = 0; i < definitionPolyData_->GetNumberOfPoints(); i++) {
-    Eigen::Vector3d pos;
-    definitionPolyData_->GetPoint(i, pos.data());
-    double value;
-    array->GetTuple(i, &value);
-    if (value == 1.0) {  // find an included point
-      queryPoint_ = pos;
-    }
-  }
-
   auto contour = vtkSmartPointer<vtkContourFilter>::New();
   contour->SetInputData(definitionPolyData_);
-  contour->SetValue(0, 0.5);  // between 0 and 1
+  contour->SetValue(0, 1);  // between 0 and 1
   contour->Update();
 
   auto loop = vtkSmartPointer<vtkContourLoopExtraction>::New();
@@ -96,6 +85,7 @@ void FreeFormConstraint::computeBoundaries() {
 
   auto output = loop->GetOutput();
 
+  std::set<int> boundary_verts;
   for (int i = 0; i < output->GetNumberOfCells(); i++) {
     std::vector<Eigen::Vector3d> boundary;
     auto cell = output->GetCell(i);
@@ -106,6 +96,32 @@ void FreeFormConstraint::computeBoundaries() {
       boundary.push_back(pos);
     }
     boundaries_.push_back(boundary);
+  }
+
+  // find valid query point
+  for (int i = 0; i < definitionPolyData_->GetNumberOfPoints(); i++) {
+    Eigen::Vector3d pos;
+    definitionPolyData_->GetPoint(i, pos.data());
+    double value;
+    array->GetTuple(i, &value);
+    if (value == 1.0) {  // find an included point
+      bool match = false;
+      double min_dist = std::numeric_limits<double>::max();
+      for (auto boundary : boundaries_) {
+        for (auto p : boundary) {
+          // compute minimum distance from p to all boundary points
+          min_dist = std::min(min_dist, (p - pos).norm());
+          if (min_dist < 1e-6) {
+            match = true;
+          }
+        }
+      }
+
+      if (!match) {
+        queryPoint_ = pos;
+        break;
+      }
+    }
   }
 }
 
