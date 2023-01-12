@@ -1,5 +1,6 @@
-#include <iostream>
 
+
+#include <Logging.h>
 #include "ShapeEvaluationJob.h"
 namespace shapeworks {
 
@@ -18,13 +19,13 @@ void ShapeEvaluationJob::run()
   auto callback = std::bind(&ShapeEvaluationJob::receive_progress, this, std::placeholders::_1);
   switch (this->job_type_) {
   case JobType::CompactnessType:
-    emit result_ready(this->job_type_, this->stats_.get_compactness(callback));
+    Q_EMIT result_ready(this->job_type_, this->stats_.get_compactness(callback));
     break;
   case JobType::GeneralizationType:
-    emit result_ready(this->job_type_, this->stats_.get_generalization(callback));
+    Q_EMIT result_ready(this->job_type_, this->stats_.get_generalization(callback));
     break;
   case JobType::SpecificityType:
-    emit result_ready(this->job_type_, this->stats_.get_specificity(callback));
+    Q_EMIT result_ready(this->job_type_, this->stats_.get_specificity(callback));
     break;
   }
 }
@@ -38,6 +39,6 @@ QString ShapeEvaluationJob::name()
 //-----------------------------------------------------------------------------
 void ShapeEvaluationJob::receive_progress(float progress)
 {
-  emit report_progress(this->job_type_, progress);
+  Q_EMIT report_progress(this->job_type_, progress);
 }
 }

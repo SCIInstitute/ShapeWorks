@@ -1,9 +1,4 @@
-// std
-#include <fstream>
-#include <iostream>
-
 // qt
-#include <QFileDialog>
 #include <QMessageBox>
 #include <QThread>
 
@@ -20,7 +15,6 @@
 #include <QMeshWarper.h>
 #include <Shape.h>
 #include <StudioMesh.h>
-#include <Visualization/Lightbox.h>
 #include <jkqtplotter/graphs/jkqtpscatter.h>
 #include <jkqtplotter/jkqtplotter.h>
 #include <ui_AnalysisTool.h>
@@ -64,6 +58,11 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
 
   connect(ui_->pcaAnimateCheckBox, SIGNAL(stateChanged(int)), this, SLOT(handle_pca_animate_state_changed()));
   connect(&pca_animate_timer_, SIGNAL(timeout()), this, SLOT(handle_pca_timer()));
+
+  // multi-level PCA settings
+  connect(ui_->mcaLevelBetweenButton, &QPushButton::clicked, this, &AnalysisTool::pca_update);
+  connect(ui_->mcaLevelWithinButton, &QPushButton::clicked, this, &AnalysisTool::pca_update);
+  connect(ui_->vanillaPCAButton, &QPushButton::clicked, this, &AnalysisTool::pca_update);
 
   // group animation
   connect(ui_->group_animate_checkbox, &QCheckBox::stateChanged, this,
@@ -114,7 +113,6 @@ std::string AnalysisTool::get_analysis_mode() {
       return AnalysisTool::MODE_SINGLE_SAMPLE_C;
     }
   }
-
   if (ui_->tabWidget->currentWidget() == ui_->mean_tab) {
     return AnalysisTool::MODE_MEAN_C;
   }
@@ -150,9 +148,9 @@ void AnalysisTool::handle_reconstruction_complete() {
   session_->handle_clear_cache();
 
   session_->calculate_reconstructed_samples();
-  emit progress(100);
+  Q_EMIT progress(100);
   SW_LOG("Reconstruction Complete");
-  emit reconstruction_complete();
+  Q_EMIT reconstruction_complete();
   /// TODO: Studio
   /// ui_->run_optimize_button->setEnabled(true);
 
@@ -163,7 +161,7 @@ void AnalysisTool::handle_reconstruction_complete() {
 void AnalysisTool::on_reconstructionButton_clicked() {
   store_settings();
   SW_LOG("Please wait: running reconstruction step...");
-  emit progress(5);
+  Q_EMIT progress(5);
   QThread* thread = new QThread;
 
   ShapeworksWorker* worker =
@@ -175,7 +173,7 @@ void AnalysisTool::on_reconstructionButton_clicked() {
 
   connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
   thread->start();
-  emit progress(15);
+  Q_EMIT progress(15);
 }
 
 //---------------------------------------------------------------------------
@@ -243,9 +241,6 @@ bool AnalysisTool::group_pvalues_valid() {
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::compute_mode_shape() {}
-
-//---------------------------------------------------------------------------
 void AnalysisTool::handle_analysis_options() {
   if (ui_->tabWidget->currentWidget() == ui_->samples_tab) {
     ui_->pcaAnimateCheckBox->setChecked(false);
@@ -278,6 +273,14 @@ void AnalysisTool::handle_analysis_options() {
     ui_->pcaSlider->setEnabled(true);
     ui_->pcaAnimateCheckBox->setEnabled(true);
     ui_->pcaModeSpinBox->setEnabled(true);
+    auto domain_names = session_->get_project()->get_domain_names();
+    bool multiple_domains = domain_names.size() > 1;
+    if (multiple_domains) {
+      ui_->vanillaPCAButton->setEnabled(true);
+      ui_->mcaLevelWithinButton->setEnabled(true);
+      ui_->mcaLevelBetweenButton->setEnabled(true);
+      ui_->vanillaPCAButton->setChecked(true);
+    }
   } else {
     // regression mode
     ui_->sampleSpinBox->setEnabled(false);
@@ -288,7 +291,7 @@ void AnalysisTool::handle_analysis_options() {
     pca_animate_timer_.stop();
   }
 
-  emit update_view();
+  Q_EMIT update_view();
 }
 
 //---------------------------------------------------------------------------
@@ -297,7 +300,7 @@ void AnalysisTool::handle_median() {
     return;
   }
   ui_->sampleSpinBox->setValue(stats_.ComputeMedianShape(-32));  //-32 = both groups
-  emit update_view();
+  Q_EMIT update_view();
 }
 
 //-----------------------------------------------------------------------------
@@ -308,7 +311,7 @@ void AnalysisTool::on_mean_button_clicked() {
   ui_->group_animate_checkbox->setChecked(false);
   ui_->mean_button->setChecked(true);
   update_difference_particles();
-  emit update_view();
+  Q_EMIT update_view();
 }
 
 //-----------------------------------------------------------------------------
@@ -321,7 +324,7 @@ void AnalysisTool::on_group1_button_clicked() {
   ui_->group1_button->setChecked(true);
   ui_->group_p_values_button->setChecked(false);
   update_difference_particles();
-  emit update_view();
+  Q_EMIT update_view();
 }
 
 //-----------------------------------------------------------------------------
@@ -334,7 +337,7 @@ void AnalysisTool::on_group2_button_clicked() {
   ui_->group2_button->setChecked(true);
   ui_->group_p_values_button->setChecked(false);
   update_difference_particles();
-  emit update_view();
+  Q_EMIT update_view();
 }
 
 //-----------------------------------------------------------------------------
@@ -347,7 +350,7 @@ void AnalysisTool::on_difference_button_clicked() {
   ui_->group_animate_checkbox->setChecked(false);
   ui_->difference_button->setChecked(true);
   update_difference_particles();
-  emit update_view();
+  Q_EMIT update_view();
 }
 
 //---------------------------------------------------------------------------
@@ -401,6 +404,10 @@ bool AnalysisTool::compute_stats() {
   group1_list_.clear();
   group2_list_.clear();
 
+  auto domain_names = session_->get_project()->get_domain_names();
+  unsigned int dps = domain_names.size();
+  number_of_particles_ar.resize(dps);
+  bool flag_get_num_part = false;
   for (auto& shape : session_->get_shapes()) {
     if (groups_enabled) {
       auto value = shape->get_subject()->get_group_value(group_set);
@@ -419,6 +426,15 @@ bool AnalysisTool::compute_stats() {
       points.push_back(shape->get_global_correspondence_points());
       group_ids.push_back(1);
     }
+    if (!flag_get_num_part) {
+      auto local_particles_ar = shape->get_particles().get_local_particles();
+      if (local_particles_ar.size() != dps) {
+        SW_ERROR("Inconsistency in number of particles size");
+      }
+      for (unsigned int i = 0; i < dps; i++) {
+        number_of_particles_ar[i] = local_particles_ar[i].size() / 3;
+      }
+    }
   }
 
   if (points.empty()) {
@@ -435,11 +451,20 @@ bool AnalysisTool::compute_stats() {
   }
 
   stats_.ImportPoints(points, group_ids);
+  // MCA needs to know number of particles per domain/object
+  stats_.SetNumberOfParticlesArray(number_of_particles_ar);
+  if (dps > 1) {
+    stats_.ComputeMultiLevelAnalysisStatistics(points, dps);
+  }
   stats_.ComputeModes();
-
+  if (dps > 1) {
+    stats_.ComputeRelPoseModesForMca();
+    stats_.ComputeShapeDevModesForMca();
+  }
   update_difference_particles();
-
-  compute_shape_evaluations();
+  if (ui_->metrics_open_button->isChecked()) {
+    compute_shape_evaluations();
+  }
 
   stats_ready_ = true;
   std::vector<double> vals;
@@ -547,8 +572,89 @@ Particles AnalysisTool::get_shape_points(int mode, double value) {
 }
 
 //---------------------------------------------------------------------------
+Particles AnalysisTool::get_multi_level_shape_points(int mode, double value, McaMode level) {
+  // Get Shape Points for Multi-Level Analysis
+  Eigen::MatrixXd eigenvectors;
+  std::vector<double> eigenvalues;
+  if (level == McaMode::Within) {
+    eigenvectors = stats_.EigenvectorsShapeDev();
+    eigenvalues = stats_.EigenvaluesShapeDev();
+  } else if (level == McaMode::Between) {
+    eigenvectors = stats_.EigenvectorsRelPose();
+    eigenvalues = stats_.EigenvaluesRelPose();
+  }
+  if (!compute_stats() || eigenvectors.size() <= 1) {
+    return Particles();
+  }
+  if (mode + 2 > eigenvalues.size()) {
+    mode = eigenvalues.size() - 2;
+  }
+  unsigned int m = eigenvectors.cols() - (mode + 1);
+  Eigen::VectorXd e = eigenvectors.col(m);
+  double lambda = sqrt(eigenvalues[m]);
+  pca_labels_changed(QString::number(value, 'g', 2), QString::number(eigenvalues[m]), QString::number(value * lambda));
+  std::vector<double> vals;
+  for (int i = eigenvalues.size() - 1; i > 0; i--) {
+    vals.push_back(eigenvalues[i]);
+  }
+  double sum = std::accumulate(vals.begin(), vals.end(), 0.0);
+  double cumulation = 0;
+  for (size_t i = 0; i < mode + 1; ++i) {
+    cumulation += vals[i];
+  }
+  if (sum > 0) {
+    ui_->explained_variance->setText(QString::number(vals[mode] / sum * 100, 'f', 1) + "%");
+    ui_->cumulative_explained_variance->setText(QString::number(cumulation / sum * 100, 'f', 1) + "%");
+  } else {
+    ui_->explained_variance->setText("");
+    ui_->cumulative_explained_variance->setText("");
+  }
+
+  unsigned int D = stats_.NumberOfObjects();
+  unsigned int sz = stats_.Mean().size();
+  if (level == McaMode::Within) {
+    // Morphological Variations
+    temp_shape_mca = stats_.Mean() + (e * (value * lambda));
+  } else if (level == McaMode::Between) {
+    // Relative Pose Variations
+    Eigen::VectorXd e_between;
+    e_between.resize(sz);
+    for (unsigned int i = 0; i < D; i++) {
+      int num_points = number_of_particles_ar[i];
+      int row = 0;
+      for (int idx = 0; idx < i; idx++) {
+        row += (3 * number_of_particles_ar[idx]);
+      }
+      for (unsigned int j = 0; j < num_points; j++) {
+        e_between(row + (j * 3)) = e(i * 3);
+        e_between(row + (j * 3) + 1) = e(i * 3 + 1);
+        e_between(row + (j * 3) + 2) = e(i * 3 + 2);
+      }
+    }
+    temp_shape_mca = stats_.Mean() + (e_between * (value * lambda));
+  }
+  return convert_from_combined(temp_shape_mca);
+}
+
+//---------------------------------------------------------------------------
 ShapeHandle AnalysisTool::get_mode_shape(int mode, double value) {
   return create_shape_from_points(get_shape_points(mode, value));
+}
+//---------------------------------------------------------------------------
+ShapeHandle AnalysisTool::get_mca_mode_shape(int mode, double value, McaMode level) {
+  return create_shape_from_points(get_multi_level_shape_points(mode, value, level));
+}
+
+//---------------------------------------------------------------------------
+ShapeHandle AnalysisTool::get_current_shape() {
+  int pca_mode = get_pca_mode();
+  double pca_value = get_pca_value();
+  auto mca_level = get_mca_level();
+  if (mca_level == AnalysisTool::McaMode::Vanilla) {
+    return get_mode_shape(pca_mode, pca_value);
+  } else {
+    return get_mca_mode_shape(pca_mode, pca_value, mca_level);
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -606,9 +712,43 @@ void AnalysisTool::compute_shape_evaluations() {
   ui_->generalization_progress->setValue(0);
   ui_->specificity_progress->setValue(0);
 
-  auto job_types = {ShapeEvaluationJob::JobType::CompactnessType, ShapeEvaluationJob::JobType::GeneralizationType,
-                    ShapeEvaluationJob::JobType::SpecificityType};
+  if ((stats_.matrix().rows() > 10000 || stats_.matrix().cols() > 10000) && !large_particle_disclaimer_waived_) {
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(this, "Are you sure?",
+                                  "Shape evaluation on large numbers of particles or samples may exhaust "
+                                  "system memory and cause ShapeWorksStudio to become unresponsive, "
+                                  "are you sure you want to continue?",
+                                  QMessageBox::Yes | QMessageBox::No);
+    if (reply == QMessageBox::No) {
+      skip_evals_ = true;
+    }
+    large_particle_disclaimer_waived_ = true;
+  }
+
+  std::vector<ShapeEvaluationJob::JobType> job_types = {ShapeEvaluationJob::JobType::CompactnessType,
+                                                        ShapeEvaluationJob::JobType::GeneralizationType,
+                                                        ShapeEvaluationJob::JobType::SpecificityType};
+
+  if (skip_evals_) {
+    // compactness isn't ever a problem.
+    job_types = {ShapeEvaluationJob::JobType::CompactnessType};
+  }
+
   for (auto job_type : job_types) {
+    switch (job_type) {
+      case ShapeEvaluationJob::JobType::CompactnessType:
+        SW_DEBUG("job type: compactness");
+        break;
+      case ShapeEvaluationJob::JobType::GeneralizationType:
+        SW_DEBUG("job type: gen job");
+        break;
+      case ShapeEvaluationJob::JobType::SpecificityType:
+        SW_DEBUG("job type: spec job");
+        break;
+      default:
+        SW_DEBUG("job type: wtf");
+    }
+
     auto worker = Worker::create_worker();
     auto job = QSharedPointer<ShapeEvaluationJob>::create(job_type, stats_);
     connect(job.data(), &ShapeEvaluationJob::result_ready, this, &AnalysisTool::handle_eval_thread_complete);
@@ -626,8 +766,7 @@ void AnalysisTool::on_tabWidget_currentChanged() { update_analysis_mode(); }
 void AnalysisTool::on_pcaSlider_valueChanged() {
   // this will make the slider handle redraw making the UI appear more responsive
   QCoreApplication::processEvents();
-
-  emit pca_update();
+  Q_EMIT pca_update();
 }
 
 //---------------------------------------------------------------------------
@@ -640,11 +779,13 @@ void AnalysisTool::on_group_slider_valueChanged() {
   ui_->difference_button->setChecked(false);
   ui_->mean_button->setChecked(false);
 
-  emit update_view();
+  Q_EMIT update_view();
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::on_pcaModeSpinBox_valueChanged(int i) { emit pca_update(); }
+void AnalysisTool::on_pcaModeSpinBox_valueChanged(int i) {
+  Q_EMIT pca_update();
+}
 
 //---------------------------------------------------------------------------
 void AnalysisTool::handle_pca_animate_state_changed() {
@@ -684,6 +825,21 @@ void AnalysisTool::handle_group_animate_state_changed() {
   } else {
     group_animate_timer_.stop();
   }
+}
+
+//---------------------------------------------------------------------------
+AnalysisTool::McaMode AnalysisTool::get_mca_level() const {
+  bool vanilla_pca = ui_->vanillaPCAButton->isChecked();
+  bool between = ui_->mcaLevelBetweenButton->isChecked();
+  bool within = ui_->mcaLevelWithinButton->isChecked();
+  if (vanilla_pca) {
+    return McaMode::Vanilla;
+  } else if (within) {
+    return McaMode::Within;
+  } else if (between) {
+    return McaMode::Between;
+  }
+  return McaMode::Vanilla;
 }
 
 //---------------------------------------------------------------------------
@@ -738,6 +894,16 @@ void AnalysisTool::reset_stats() {
   ui_->pcaAnimateCheckBox->setEnabled(false);
   ui_->pcaModeSpinBox->setEnabled(false);
   ui_->pcaAnimateCheckBox->setChecked(false);
+  // MLCA
+  auto domain_names = session_->get_project()->get_domain_names();
+  bool multiple_domains = domain_names.size() > 1;
+  if (multiple_domains) {
+    ui_->vanillaPCAButton->setChecked(true);
+    ui_->mcaLevelWithinButton->setEnabled(false);
+    ui_->mcaLevelWithinButton->setEnabled(false);
+    ui_->mcaLevelBetweenButton->setEnabled(false);
+  }
+
   stats_ready_ = false;
   evals_ready_ = false;
   stats_ = ParticleShapeStatistics();
@@ -782,6 +948,11 @@ void AnalysisTool::set_analysis_mode(std::string mode) {
     ui_->tabWidget->setCurrentWidget(ui_->pca_tab);
   } else if (mode == "regression") {
     ui_->tabWidget->setCurrentWidget(ui_->regression_tab);
+  } else if (mode == "mca") {
+    ui_->tabWidget->setCurrentWidget(ui_->pca_tab);
+    ui_->vanillaPCAButton->setChecked(true);
+    ui_->mcaLevelWithinButton->setChecked(false);
+    ui_->mcaLevelBetweenButton->setChecked(false);
   }
 }
 
@@ -947,6 +1118,7 @@ void AnalysisTool::update_domain_alignment_box() {
 
   bool multiple_domains = domain_names.size() > 1;
   ui_->reference_domain_widget->setVisible(multiple_domains);
+  ui_->mca_groupBox->setVisible(multiple_domains);
   ui_->reference_domain->clear();
   if (multiple_domains) {
     ui_->reference_domain->addItem("Global Alignment");
@@ -1040,7 +1212,7 @@ void AnalysisTool::on_metrics_open_button_toggled() {
   ui_->metrics_content->setVisible(show);
 
   if (show) {
-    compute_stats();
+    compute_shape_evaluations();
   }
 }
 
@@ -1118,8 +1290,11 @@ void AnalysisTool::initialize_mesh_warper() {
 
 //---------------------------------------------------------------------------
 void AnalysisTool::handle_eval_thread_complete(ShapeEvaluationJob::JobType job_type, Eigen::VectorXd data) {
+  SW_DEBUG("eval thread is complete");
+
   switch (job_type) {
     case ShapeEvaluationJob::JobType::CompactnessType:
+      SW_DEBUG("compactness go");
       eval_compactness_ = data;
       create_plot(ui_->compactness_graph, data, "Compactness", "Number of Modes", "Explained Variance");
       ui_->compactness_graph->show();
@@ -1167,18 +1342,18 @@ void AnalysisTool::handle_eval_particle_normals_complete(std::vector<bool> good_
   session_->set_good_bad_particles(good_bad);
   session_->set_show_good_bad_particles(true);
   update_interface();
-  emit update_view();
+  Q_EMIT update_view();
 }
 
 //---------------------------------------------------------------------------
 void AnalysisTool::handle_group_pvalues_complete() {
-  emit progress(100);
-  emit update_view();
+  Q_EMIT progress(100);
+  Q_EMIT update_view();
 }
 
 //---------------------------------------------------------------------------
 void AnalysisTool::handle_alignment_changed(int new_alignment) {
-  new_alignment -= 2;
+  new_alignment -= 2;  // minus two for local and global that come first (local == -1, global == -2)
   if (new_alignment == current_alignment_) {
     return;
   }
@@ -1196,11 +1371,12 @@ void AnalysisTool::handle_alignment_changed(int new_alignment) {
     }
 
     shape->set_particle_transform(transform);
+    shape->set_alignment_type(new_alignment);
   }
 
   evals_ready_ = false;
   group_changed();
-  emit update_view();
+  Q_EMIT update_view();
 }
 
 //---------------------------------------------------------------------------
@@ -1245,7 +1421,7 @@ void AnalysisTool::handle_lda_complete() {
 //---------------------------------------------------------------------------
 void AnalysisTool::show_difference_to_mean_clicked() {
   update_difference_particles();
-  emit update_view();
+  Q_EMIT update_view();
 }
 
 //---------------------------------------------------------------------------
@@ -1262,7 +1438,7 @@ void AnalysisTool::reconstruction_method_changed() {
   if (previous_method != method) {
     session_->get_mesh_manager()->get_mesh_generator()->set_reconstruction_method(method);
     session_->handle_clear_cache();
-    emit reconstruction_complete();
+    Q_EMIT reconstruction_complete();
   }
 }
 
@@ -1308,12 +1484,14 @@ void AnalysisTool::compute_reconstructed_domain_transforms() {
     reconstruction_transforms_.resize(session_->get_domains_per_shape());
     for (int domain = 0; domain < session_->get_domains_per_shape(); domain++) {
       int num_shapes = shapes.size();
+      // create a new transform
       auto transform = vtkSmartPointer<vtkTransform>::New();
+      // get a pointer to the transform's data
       double* values = transform->GetMatrix()->GetData();
 
       for (int i = 0; i < shapes.size(); i++) {
-        vtkSmartPointer<vtkTransform> base = shapes[i]->get_alignment(0);
-        vtkSmartPointer<vtkTransform> offset = shapes[i]->get_alignment(domain);
+        auto base = shapes[i]->get_alignment(0);
+        auto offset = shapes[i]->get_alignment(domain);
 
         for (int j = 0; j < 16; j++) {
           values[j] += (base->GetMatrix()->GetData()[j] - offset->GetMatrix()->GetData()[j]) / num_shapes;

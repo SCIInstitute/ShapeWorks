@@ -6,6 +6,25 @@ SET(ANALYZE_MOC_HDRS
 
 qt5_wrap_cpp( ANALYZE_MOC_SRCS ${ANALYZE_MOC_HDRS} )
 
+SET(Analyze_headers
+  Analyze.h
+  CustomSurfaceReconstructionFilter.h
+  LegacyMeshGenerator.h
+  MeshCache.h
+  MeshGenerator.h
+  MeshGroup.h
+  MeshManager.h
+  MeshWorkQueue.h
+  MeshWorker.h
+  Particles.h
+  QMeshWarper.h
+  Shape.h
+  StudioEnums.h
+  StudioMesh.h
+  SurfaceReconstructor.h
+  Vis.h
+  vtkPolyDataToImageData.h
+ )
 
 add_library(Analyze STATIC
   Analyze.cpp
@@ -34,17 +53,17 @@ target_include_directories(Analyze PUBLIC
 
 target_link_libraries(Analyze PUBLIC
   Mesh
-  Particles
   Utils
+  Particles
   )
 
 # set
 set_target_properties(Analyze PROPERTIES PUBLIC_HEADER
   "${Analyze_headers}")
 
-install(TARGETS Analyze
-  ARCHIVE DESTINATION lib
-  RUNTIME DESTINATION lib
-  LIBRARY DESTINATION lib
-  PUBLIC_HEADER DESTINATION include
+install(TARGETS Analyze EXPORT ShapeWorksTargets
+  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  RUNTIME DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  PUBLIC_HEADER DESTINATION include/Analyze
   )

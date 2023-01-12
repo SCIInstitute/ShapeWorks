@@ -79,6 +79,12 @@ bool Preferences::get_glyph_auto_size() { return settings_.value("Project/glyph_
 void Preferences::set_glyph_auto_size(bool value) { settings_.setValue("Project/glyph_auto_size", value); }
 
 //-----------------------------------------------------------------------------
+bool Preferences::get_glyph_scale_arrows() { return settings_.value("Project/glyph_scale_arrows", true).toBool(); }
+
+//-----------------------------------------------------------------------------
+void Preferences::set_glyph_scale_arrows(bool value) { settings_.setValue("Project/glyph_scale_arrows", value); }
+
+//-----------------------------------------------------------------------------
 float Preferences::get_pca_range() { return settings_.value("Analysis/pca_range", 2.0).toFloat(); }
 
 //-----------------------------------------------------------------------------
@@ -95,6 +101,12 @@ void Preferences::set_color_scheme(int value) { settings_.setValue("Studio/color
 
 //-----------------------------------------------------------------------------
 int Preferences::get_color_scheme() { return settings_.value("Studio/color_scheme", 0).toInt(); }
+
+//-----------------------------------------------------------------------------
+void Preferences::set_particle_colors(int value) { settings_.setValue("Studio/particle_colors", value); }
+
+//-----------------------------------------------------------------------------
+int Preferences::get_particle_colors() { return settings_.value("Studio/particle_colors", 0).toInt(); }
 
 //-----------------------------------------------------------------------------
 void Preferences::set_color_map(int value) { settings_.setValue("Studio/color_map", value); }

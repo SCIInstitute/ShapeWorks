@@ -59,6 +59,9 @@ class Preferences : public QObject {
   bool get_glyph_auto_size();
   void set_glyph_auto_size(bool value);
 
+  bool get_glyph_scale_arrows();
+  void set_glyph_scale_arrows(bool value);
+
   float get_pca_range();
   void set_pca_range(float value);
 
@@ -67,6 +70,9 @@ class Preferences : public QObject {
 
   void set_color_scheme(int value);
   int get_color_scheme();
+
+  void set_particle_colors(int value);
+  int get_particle_colors();
 
   void set_color_map(int value);
   int get_color_map();

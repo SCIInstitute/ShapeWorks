@@ -63,7 +63,9 @@ class ShapeWorksStudioApp : public QMainWindow {
   void on_action_open_project_triggered();
   void on_action_show_project_folder_triggered();
   bool on_action_save_project_triggered();
-  bool on_action_save_project_as_triggered();
+  bool save_project_as(QString type);
+  void save_as_swproj_clicked();
+  void save_as_xlsx_clicked();
   void on_action_quit_triggered();
   void on_action_import_triggered();
 
@@ -80,7 +82,7 @@ class ShapeWorksStudioApp : public QMainWindow {
   void on_actionExport_Eigenvectors_triggered();
   void on_actionExport_PCA_Mode_Points_triggered();
   void on_action_preferences_triggered();
-  void on_action_export_current_mesh_triggered();
+  void action_export_current_mesh_triggered(int index = 0);
   void on_action_export_current_particles_triggered();
   void on_action_export_mesh_scalars_triggered();
   void on_action_export_pca_scores_triggered();
@@ -96,6 +98,8 @@ class ShapeWorksStudioApp : public QMainWindow {
 
   void handle_pca_changed();
   void handle_slider_update();
+
+  void handle_mca_changed();
 
   void handle_project_changed();
   void handle_points_changed();
@@ -130,12 +134,15 @@ class ShapeWorksStudioApp : public QMainWindow {
   void handle_clear_cache();
   void handle_compare_settings_changed();
 
+  void handle_lightbox_right_click(int index);
+
   void update_feature_map_selection(int index);
   void update_feature_map_scale();
 
   void image_combo_changed(int index);
 
   void show_splash_screen();
+  void hide_splash_screen();
   void about();
   void keyboard_shortcuts();
 
@@ -183,7 +190,7 @@ class ShapeWorksStudioApp : public QMainWindow {
 
   void update_display(bool force = false);
 
-  void compute_mode_shape();
+  void display_mode_shape();
 
   bool set_feature_map(std::string feature_map);
   std::string get_feature_map();
@@ -233,12 +240,14 @@ class ShapeWorksStudioApp : public QMainWindow {
   QLabel* glyph_size_label_;
   QLabel* glyph_quality_label_;
   QCheckBox* glyph_auto_size_;
+  QCheckBox* glyph_arrow_scale_{nullptr};
   QList<QAction*> recent_file_actions_;
   LogWindow log_window_;
   QPointer<StatusBarWidget> status_bar_;
   QSharedPointer<shapeworks::SplashScreen> splash_screen_;
   QErrorMessage error_message_dialog_;
   std::vector<QSlider*> iso_opacity_sliders_;
+  std::vector<QCheckBox*> domain_particle_checkboxes_;
 
   QString current_message_;
 

@@ -34,19 +34,18 @@ target_include_directories(Mesh PUBLIC
  $<INSTALL_INTERFACE:include>
  )
 
-target_link_libraries(
-  Mesh
+target_link_libraries(Mesh PUBLIC
+  ${VTK_LIBRARIES}
   Image
   Common
-  Optimize
+  Alignment
   Utils
   trimesh2
-  ${VTK_LIBRARIES}
   Eigen3::Eigen
   igl::core
   Particles
   TBB::tbb
-  geometry-central
+  ${GEOMETRYCENTRAL_LIBRARY}
   Boost::filesystem
   acvd::acvd
   )
@@ -56,11 +55,11 @@ set_target_properties(Mesh PROPERTIES PUBLIC_HEADER
  "${Mesh_headers};${PreviewMeshQC_headers}"
  )
 
-install(TARGETS Mesh
- ARCHIVE DESTINATION lib
- RUNTIME DESTINATION lib
- LIBRARY DESTINATION lib
- PUBLIC_HEADER DESTINATION include
+install(TARGETS Mesh EXPORT ShapeWorksTargets
+ ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+ RUNTIME DESTINATION ${CMAKE_INSTALL_LIBDIR}
+ LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+ PUBLIC_HEADER DESTINATION include/Mesh
  )
 
 

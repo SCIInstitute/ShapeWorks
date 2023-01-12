@@ -11,8 +11,8 @@
 
 #include "vnl/vnl_vector.h"
 
-#include <StudioMesh.h>
-#include <MeshWorkQueue.h>
+#include "StudioMesh.h"
+#include "MeshWorkQueue.h"
 
 class SurfaceReconstructor;
 

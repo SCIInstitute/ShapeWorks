@@ -196,6 +196,7 @@ SET(STUDIO_VISUALIZATION_SRCS
   Visualization/LandmarkWidget.cpp
   Visualization/PlaneWidget.cpp
   Visualization/PaintWidget.cpp
+  Visualization/ParticleColors.cpp
   Visualization/StudioInteractorStyle.cpp
   Visualization/StudioSliceInteractorStyle.cpp
   Visualization/SliceView.cpp
@@ -208,8 +209,9 @@ SET(STUDIO_VISUALIZATION_SRCS
 
 SET(STUDIO_VISUALIZATION_MOC_HDRS
   Visualization/Lightbox.h
-  Visualization/Visualizer.h
+  Visualization/ParticleColors.h
   Visualization/StudioVtkOutputWindow.h
+  Visualization/Visualizer.h
 )
 
 SET(STUDIO_SRCS
@@ -349,6 +351,20 @@ TARGET_LINK_LIBRARIES(ShapeWorksStudio
   JKQTPlotterSharedLib
   )
 
+IF(USE_PCH)
+  target_precompile_headers(ShapeWorksStudio PRIVATE
+    "<vtkPolyData.h>"
+    "<itkImage.h>"
+    "<itkAffineTransform.h>"
+    "<itkStatisticsImageFilter.h>"
+    "<Eigen/Dense>"
+    "<Eigen/Sparse>"
+    "<Eigen/Core>"
+    "<QCloseEvent>"
+    "<QFileDialog>"
+    )
+ENDIF(USE_PCH)
+
 INSTALL(TARGETS ShapeWorksStudio
   BUNDLE  DESTINATION bin
   RUNTIME DESTINATION bin COMPONENT Runtime
@@ -370,6 +386,6 @@ if (APPLE)
   # See https://doc.qt.io/qt-5/osx-deployment.html#macdeploy
   install(CODE "set(deployqt \"${deployqt}\")" COMPONENT Runtime)
   install(CODE [===[
-    execute_process(COMMAND "${deployqt}" "${CMAKE_INSTALL_PREFIX}/bin/ShapeWorksStudio.app")
+    execute_process(COMMAND "${deployqt}" "${CMAKE_INSTALL_PREFIX}/bin/ShapeWorksStudio.app" "-verbose=2")
     ]===] COMPONENT Runtime)
 endif()

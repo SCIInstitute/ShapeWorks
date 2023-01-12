@@ -134,6 +134,7 @@ def main():
         run_case("supershapes_1mode_contour --verify")
         run_case("peanut_shared_boundary --verify")
         run_case("incremental_supershapes --verify")
+        run_case("hip_multiple_domain --verify")
     #        run_case("deep_ssm --verify")
 
     end = time.time()

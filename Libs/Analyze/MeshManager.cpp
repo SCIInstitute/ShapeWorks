@@ -87,7 +87,7 @@ void MeshManager::handle_thread_complete(const MeshWorkItem& item, MeshHandle me
 
   check_error_status(mesh);
 
-  emit new_mesh();
+  Q_EMIT new_mesh();
 }
 
 //---------------------------------------------------------------------------
@@ -95,7 +95,7 @@ void MeshManager::check_error_status(MeshHandle mesh) {
   if (mesh->get_error_message() != "" && !error_emitted_) {
     error_emitted_ = true;
     std::string message =
-        "Error during mesh construction:\n\n" + mesh->get_error_message() + "\n\nFurther messages will be suppressed\n";
+        "Mesh construction failed:\n\n" + mesh->get_error_message() + ".\n\nFurther messages will be suppressed\n";
     SW_ERROR(message);
   }
 }
@@ -128,10 +128,10 @@ void MeshManager::handle_warper_progress() {
   float p = sum / num_domains * 100.0;
 
   if (p < 100.0) {
-    emit status("Generating Mesh Warp");
+    Q_EMIT status("Generating Mesh Warp");
   } else {
-    emit status("");
+    Q_EMIT status("");
   }
-  emit progress(p);
+  Q_EMIT progress(p);
 }
 }  // namespace shapeworks

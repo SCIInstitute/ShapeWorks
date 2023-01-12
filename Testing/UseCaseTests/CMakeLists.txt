@@ -7,6 +7,7 @@ add_executable(UseCaseTests
   )
 
 target_link_libraries(UseCaseTests
+  Mesh Optimize Utils
   ${ITK_LIBRARIES} ${VTK_LIBRARIES}
   Testing
   )

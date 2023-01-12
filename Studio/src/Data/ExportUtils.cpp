@@ -21,14 +21,20 @@ namespace shapeworks {
 QString ExportUtils::get_save_filename(ShapeWorksStudioApp* parent, QString title, QString filetypes,
                                        QString default_ext) {
   QString last_directory = parent->prefs().get_last_directory();
-  //QString filename = QFileDialog::getSaveFileName(parent, title, last_directory, filetypes);
-  QString filename = QFileDialog::getSaveFileName(parent, title, last_directory, "*.*");
+  QString filename = QFileDialog::getSaveFileName(parent, title, last_directory, filetypes, &default_ext);
   if (filename.isEmpty()) {
     return "";
   }
 
   if (QFileInfo(filename).suffix() == "") {
-    filename = filename + default_ext;
+    // workaround for open Qt bug: https://bugreports.qt.io/browse/QTBUG-27186
+    QString filter = default_ext;
+    // assumes filter will be something like "VTK files (*.vtk)"
+    QList split1 = filter.split(".");
+    if (split1.size() == 2) {
+      QString extension = split1[1].split(")")[0];
+      filename = filename + "." + extension;
+    }
   }
   parent->prefs().set_last_directory(QFileInfo(filename).absolutePath());
   return filename;

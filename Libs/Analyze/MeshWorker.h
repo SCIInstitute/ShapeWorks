@@ -12,9 +12,9 @@
 #include <QMetaType>
 #include <QRunnable>
 
-#include <MeshWorkQueue.h>
-#include <MeshCache.h>
-#include <MeshGenerator.h>
+#include "MeshWorkQueue.h"
+#include "MeshCache.h"
+#include "MeshGenerator.h"
 
 Q_DECLARE_METATYPE(vtkSmartPointer<vtkPolyData>);
 

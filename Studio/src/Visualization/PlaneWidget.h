@@ -1,5 +1,5 @@
 
-#include <Libs/Optimize/ParticleSystem/PlaneConstraint.h>
+#include <Optimize/PlaneConstraint.h>
 #include <vtkSmartPointer.h>
 
 #include <vector>

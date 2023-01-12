@@ -1,16 +1,50 @@
 #include <SurfaceReconstructor.h>
 
 #include <itkImage.h>
-#include <itkNrrdImageIOFactory.h>
-#include <itkMetaImageIOFactory.h>
 
-#include <Libs/Utils/Utils.h>
+#include <Utils/Utils.h>
+
+#include <Reconstruction.h>
+
+
+typedef float PixelType;
+typedef itk::Image< PixelType, 3 > ImageType;
+
+
+typedef double CoordinateRepType;
+typedef itk::CompactlySupportedRBFSparseKernelTransform < CoordinateRepType,
+                                                          3> RBFTransformType;
+typedef itk::ThinPlateSplineKernelTransform2< CoordinateRepType, 3> ThinPlateSplineType;
+
+typedef itk::LinearInterpolateImageFunction<ImageType, double > InterpolatorType;
+
+typedef Reconstruction < itk::CompactlySupportedRBFSparseKernelTransform,
+                         itk::LinearInterpolateImageFunction,
+                         CoordinateRepType, PixelType, ImageType> ReconstructionType;
+
+/*
+   typedef Reconstruction < itk::ThinPlateSplineKernelTransform2,
+                           itk::LinearInterpolateImageFunction,
+                           CoordinateRepType, PixelType, ImageType> ReconstructionType;
+ */
+
+typedef typename ReconstructionType::PointType PointType;
+typedef typename ReconstructionType::PointArrayType PointArrayType;
+
+
+
+class SurfaceReconstructorPrivate {
+ public:
+  ReconstructionType reconstructor_;
+};
 
 //---------------------------------------------------------------------------
-SurfaceReconstructor::SurfaceReconstructor()
+SurfaceReconstructor::SurfaceReconstructor() : private_(new SurfaceReconstructorPrivate)
 {
-  this->reconstructor_.setOutputEnabled(false);
+  private_->reconstructor_.setOutputEnabled(false);
 }
+
+SurfaceReconstructor::~SurfaceReconstructor() = default;
 
 //---------------------------------------------------------------------------
 void SurfaceReconstructor::initializeReconstruction(
@@ -20,13 +54,13 @@ void SurfaceReconstructor::initializeReconstruction(
   double maxAngle, float decimationPercent, int numClusters)
 {
 
-  this->reconstructor_.setDecimation(decimationPercent);
-  this->reconstructor_.setMaxAngle(maxAngle);
-  this->reconstructor_.setNumClusters(numClusters);
-  this->reconstructor_.setMeanBeforeWarpEnabled(false);
+  private_->reconstructor_.setDecimation(decimationPercent);
+  private_->reconstructor_.setMaxAngle(maxAngle);
+  private_->reconstructor_.setNumClusters(numClusters);
+  private_->reconstructor_.setMeanBeforeWarpEnabled(false);
 
   // compute the dense shape
-  vtkSmartPointer<vtkPolyData> denseMean = this->reconstructor_.getDenseMean(local_pts, global_pts,
+  vtkSmartPointer<vtkPolyData> denseMean = private_->reconstructor_.getDenseMean(local_pts, global_pts,
                                                                              distance_transforms);
 
   this->surface_reconstruction_available_ = true;
@@ -35,19 +69,19 @@ void SurfaceReconstructor::initializeReconstruction(
 //---------------------------------------------------------------------------
 bool SurfaceReconstructor::hasDenseMean()
 {
-  return this->reconstructor_.denseDone();
+  return private_->reconstructor_.denseDone();
 }
 
 //---------------------------------------------------------------------------
 void SurfaceReconstructor::writeMeanInfo(string baseName)
 {
-  this->reconstructor_.writeMeanInfo(baseName);
+  private_->reconstructor_.writeMeanInfo(baseName);
 }
 
 //---------------------------------------------------------------------------
 void SurfaceReconstructor::readMeanInfo(string dense, string sparse, string goodPoints)
 {
-  this->reconstructor_.readMeanInfo(dense, sparse, goodPoints);
+  private_->reconstructor_.readMeanInfo(dense, sparse, goodPoints);
 }
 
 //---------------------------------------------------------------------------
@@ -60,7 +94,7 @@ void SurfaceReconstructor::resetReconstruct()
 void SurfaceReconstructor::set_number_of_clusters(int num_clusters)
 {
   this->num_clusters_ = num_clusters;
-  this->reconstructor_.setNumClusters(this->num_clusters_);
+  private_->reconstructor_.setNumClusters(this->num_clusters_);
   std::cerr << "Setting number of reconstruction clusters to " << this->num_clusters_ << "\n";
 }
 
@@ -68,7 +102,7 @@ void SurfaceReconstructor::set_number_of_clusters(int num_clusters)
 void SurfaceReconstructor::set_normal_angle(double angle)
 {
   this->normal_angle_ = angle;
-  this->reconstructor_.setMaxAngle(this->normal_angle_);
+  private_->reconstructor_.setMaxAngle(this->normal_angle_);
   std::cerr << "Setting normal angle to " << this->normal_angle_ << "\n";
 }
 
@@ -76,7 +110,7 @@ void SurfaceReconstructor::set_normal_angle(double angle)
 void SurfaceReconstructor::set_decimation_percent(double decimation)
 {
   this->decimation_percent_ = decimation;
-  this->reconstructor_.setDecimation(this->decimation_percent_);
+  private_->reconstructor_.setDecimation(this->decimation_percent_);
   std::cerr << "Setting decimation percent to " << this->decimation_percent_ << "\n";
 }
 
@@ -104,7 +138,7 @@ vtkSmartPointer<vtkPolyData> SurfaceReconstructor::build_mesh(const Eigen::Vecto
     points.push_back(point);
   }
 
-  vtkSmartPointer<vtkPolyData> poly_data = this->reconstructor_.getMesh(points);
+  vtkSmartPointer<vtkPolyData> poly_data = private_->reconstructor_.getMesh(points);
   return poly_data;
 }
 

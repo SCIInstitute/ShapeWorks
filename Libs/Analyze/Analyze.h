@@ -1,8 +1,8 @@
 #pragma once
 
-#include <Libs/Project/Project.h>
+#include <Project/Project.h>
 #include <ParticleShapeStatistics.h>
-#include <Shape.h>
+#include "Shape.h"
 
 namespace shapeworks {
 
@@ -37,8 +37,12 @@ class Analyze {
   bool update_shapes();
   bool compute_stats();
 
+  //! To be merged with AnalysisTool's version
+  void initialize_mesh_warper();
+
   //! Break apart combined points into per-domain
   Particles convert_from_combined(const Eigen::VectorXd& points);
+
 
   ProjectHandle project_;
 

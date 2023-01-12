@@ -11,6 +11,8 @@
 # compiled portion of the Python bindings).
 #
 
+SW_MAJOR_VERSION=6.4
+
 (return 0 2>/dev/null) && sourced=1 || sourced=0
 
 if [[ "$sourced" == "0" ]]; then
@@ -39,7 +41,9 @@ done
 echo "set PYTHONPATH to $PYTHONPATH"
 
 # Set the python path for studio
-mkdir -p $HOME/.shapeworks ; python -c "import sys; print('\n'.join(sys.path))" > $HOME/.shapeworks/python_path.txt
+  mkdir -p $HOME/.shapeworks
+  python -c "import sys; print('\n'.join(sys.path))" > $HOME/.shapeworks/python_path_${SW_MAJOR_VERSION}.txt
+  python -c "import sys; print(sys.prefix)" > $HOME/.shapeworks/python_home_${SW_MAJOR_VERSION}.txt
 
 if [ -f ${BUILD}/shapeworks ] ; then
     echo "shapeworks executable found ${BUILD}"

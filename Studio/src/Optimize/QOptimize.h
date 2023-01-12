@@ -1,8 +1,8 @@
 #pragma once
 
 #ifndef Q_MOC_RUN
-#include <Libs/Analyze/Particles.h>
-#include <Libs/Optimize/Optimize.h>
+#include <Analyze/Particles.h>
+#include <Optimize/Optimize.h>
 #endif
 #include <QObject>
 #include <QMutex>
@@ -31,7 +31,7 @@ protected:
   virtual void SetIterationCallback() override;
   virtual void IterateCallback(itk::Object* caller, const itk::EventObject&) override;
 
-signals:
+Q_SIGNALS:
   void progress(int, QString);
 
 private:

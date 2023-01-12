@@ -14,7 +14,7 @@
 #include <vtkSphereSource.h>
 #include <vtkCellArray.h>
 
-#include "ParticleSystem/itkParticleSystem.h"
+#include "itkParticleSystem.h"
 
 namespace shapeworks
 {

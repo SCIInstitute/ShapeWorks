@@ -52,6 +52,7 @@ CMakeLists.txt.user
 # Python package meta info
 Python/DatasetUtilsPackage/DatasetUtils.egg-info
 Examples/Python/shapeworksPortalLogin.txt
+*.egg-info
 
 __pycache__/
 

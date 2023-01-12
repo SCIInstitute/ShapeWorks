@@ -1,17 +1,21 @@
 #pragma once
 
-#include <MeshGroup.h>
-#include <MeshManager.h>
-#include <StudioEnums.h>
-#include <StudioMesh.h>
-#include <Libs/Analyze/Particles.h>
-#include <Libs/Optimize/ParticleSystem/Constraints.h>
-#include <Libs/Project/Subject.h>
 #include <itkMatrixOffsetTransformBase.h>
 
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
 #include <string>
+
+// studio
+#include "MeshGroup.h"
+#include "MeshManager.h"
+#include "StudioEnums.h"
+#include "StudioMesh.h"
+
+// shapeworks
+#include <Analyze/Particles.h>
+#include <Optimize/Constraints.h>
+#include <Project/Subject.h>
 
 namespace shapeworks {
 
@@ -86,13 +90,17 @@ class Shape {
   void set_particles(Particles particles);
   Particles get_particles();
 
+  //! Set the particle transform (alignment)
   void set_particle_transform(vtkSmartPointer<vtkTransform> transform);
+
+  //! Set the alignment type
+  void set_alignment_type(int alignment);
 
   /// Get the global correspondence points
   Eigen::VectorXd get_global_correspondence_points();
 
   /// Get the global correspondence points for display
-  Eigen::VectorXd get_correspondence_points_for_display();
+  std::vector<Eigen::VectorXd> get_particles_for_display();
 
   /// Get the local correspondence points
   Eigen::VectorXd get_local_correspondence_points();
@@ -201,5 +209,6 @@ class Shape {
   std::string image_volume_filename_;
 
   std::vector<Constraints> constraints_;  // one set for each domain
+  int alignment_type_;
 };
 }  // namespace shapeworks

@@ -81,6 +81,7 @@ class Viewer {
 
   void set_show_glyphs(bool show);
   void set_show_surface(bool show);
+  void set_scale_arrows(bool scale);
 
   void update_points();
   void update_glyph_properties();
@@ -91,7 +92,7 @@ class Viewer {
 
   void set_selected_point(int id);
 
-  void set_lut(vtkSmartPointer<vtkLookupTable> lut);
+  void set_glyph_lut(vtkSmartPointer<vtkLookupTable> lut);
 
   void set_loading_screen(vtkSmartPointer<vtkImageData> loading_screen);
 
@@ -182,6 +183,7 @@ class Viewer {
 
   double glyph_size_ = 1.0f;
   double glyph_quality_ = 5.0f;
+  bool scale_arrows_{true};
   ColorMap color_series_;
 
   vtkSmartPointer<vtkRenderer> renderer_;
@@ -205,7 +207,7 @@ class Viewer {
   std::vector<vtkSmartPointer<vtkPolyDataMapper>> compare_mappers_;
   std::vector<vtkSmartPointer<vtkActor>> compare_actors_;
 
-  vtkSmartPointer<vtkLookupTable> lut_;
+  vtkSmartPointer<vtkLookupTable> glyph_lut_;
   vtkSmartPointer<vtkLookupTable> surface_lut_;
 
   vtkSmartPointer<vtkArrowSource> arrow_source_;

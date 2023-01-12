@@ -7,7 +7,7 @@
 #include <QThread>
 
 // shapeworks
-#include <Libs/Mesh/Mesh.h>
+#include <Mesh/Mesh.h>
 #include <Python/PythonWorker.h>
 #include <Logging.h>
 
@@ -172,7 +172,7 @@ void DeepSSMTool::run_clicked() {
 
 //---------------------------------------------------------------------------
 void DeepSSMTool::handle_thread_complete() {
-  emit progress(100);
+  Q_EMIT progress(100);
   this->update_meshes();
   this->tool_is_running_ = false;
   this->update_panels();
@@ -183,7 +183,7 @@ void DeepSSMTool::handle_progress(int val) {
   this->load_plots();
   this->update_tables();
   this->update_meshes();
-  emit progress(val);
+  Q_EMIT progress(val);
 }
 
 //---------------------------------------------------------------------------
@@ -343,7 +343,7 @@ void DeepSSMTool::show_training_meshes() {
       this->shapes_.push_back(shape);
     }
   }
-  emit update_view();
+  Q_EMIT update_view();
 }
 
 //---------------------------------------------------------------------------
@@ -383,7 +383,7 @@ void DeepSSMTool::show_testing_meshes() {
 
   this->update_testing_meshes();
 
-  emit update_view();
+  Q_EMIT update_view();
 }
 
 //---------------------------------------------------------------------------
@@ -449,7 +449,7 @@ void DeepSSMTool::update_testing_meshes() {
     SW_ERROR(e.what());
   }
 
-  emit update_view();
+  Q_EMIT update_view();
 }
 
 //---------------------------------------------------------------------------
@@ -460,7 +460,7 @@ void DeepSSMTool::update_meshes() {
   switch (this->current_tool_) {
     case DeepSSMTool::ToolMode::DeepSSM_SplitType:
       this->shapes_.clear();
-      emit update_view();
+      Q_EMIT update_view();
       break;
     case DeepSSMTool::ToolMode::DeepSSM_AugmentationType:
       this->show_augmentation_meshes();
@@ -521,7 +521,7 @@ void DeepSSMTool::show_augmentation_meshes() {
     }
   }
   this->load_plots();
-  emit update_view();
+  Q_EMIT update_view();
 }
 
 //---------------------------------------------------------------------------
@@ -603,7 +603,7 @@ void DeepSSMTool::restore_defaults() {
 //---------------------------------------------------------------------------
 void DeepSSMTool::run_tool(DeepSSMTool::ToolMode type) {
   this->current_tool_ = type;
-  emit progress(-1);
+  Q_EMIT progress(-1);
   if (type == DeepSSMTool::ToolMode::DeepSSM_AugmentationType) {
     SW_LOG("Please Wait: Running Data Augmentation...");
     // clean
