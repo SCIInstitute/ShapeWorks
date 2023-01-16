@@ -1,8 +1,20 @@
 #pragma once
 
+#include <spdlog/fmt/fmt.h>
+
 #include <functional>
 
-#include <spdlog/fmt/fmt.h>
+#include <QString>
+
+template <>
+struct fmt::formatter<QString> {
+  constexpr auto parse(format_parse_context& ctx) -> decltype(ctx.begin()) { return ctx.end(); }
+
+  template <typename FormatContext>
+  auto format(const QString& str, FormatContext& ctx) const -> decltype(ctx.out()) {
+    return fmt::format_to(ctx.out(), "{}", qUtf8Printable(str));
+  }
+};
 
 namespace shapeworks {
 
@@ -76,25 +88,25 @@ class Logging {
   std::string get_log_filename() const;
 
   //! Log a message, use SW_LOG macro
-  void log_message(const std::string& message, const int line, const char *file) const;
+  void log_message(const std::string& message, const int line, const char* file) const;
 
   //! Log a stack trace message, use SW_LOG_STACK macro
   void log_stack(const std::string& message) const;
 
   //! Log an error, use SW_ERROR macro
-  void log_error(const std::string& message, const int line, const char *file) const;
+  void log_error(const std::string& message, const int line, const char* file) const;
 
   //! Log a message, use SW_MESSAGE macro
-  void show_message(const std::string& message, const int line, const char *file) const;
+  void show_message(const std::string& message, const int line, const char* file) const;
 
   //! Log a message, use SW_STATUS macro
-  void show_status(const std::string& message, const int line, const char *file) const;
+  void show_status(const std::string& message, const int line, const char* file) const;
 
   //! Log a debug message, use SW_DEBUG macro
-  void log_debug(const std::string& message, const int line, const char *file) const;
+  void log_debug(const std::string& message, const int line, const char* file) const;
 
   //! Log a warning message, use SW_WARN macro
-  void log_warning(const std::string& message, const int line, const char *file) const;
+  void log_warning(const std::string& message, const int line, const char* file) const;
 
   //! Close the log, use SW_CLOSE_LOG macro
   void close_log();
@@ -147,7 +159,7 @@ class Logging {
   shapeworks::Logging::Instance().log_debug(fmt::format(message, ##__VA_ARGS__), __LINE__, __FILE__)
 
 //! Variable trace macro (e.g. output variable name = <variable value>)
-#define SW_TRACE(x) SW_DEBUG(#x" = {}",x);
+#define SW_TRACE(x) SW_DEBUG(#x " = {}", x);
 
 //! Log show message macro
 #define SW_MESSAGE(message, ...) \
