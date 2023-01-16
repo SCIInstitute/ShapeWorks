@@ -1,9 +1,9 @@
 ---
-title: Studio/src/Visualization/StudioVtkOutputWindow.h
+title: Studio/Visualization/StudioVtkOutputWindow.h
 
 ---
 
-# Studio/src/Visualization/StudioVtkOutputWindow.h
+# Studio/Visualization/StudioVtkOutputWindow.h
 
 
 
@@ -11,7 +11,7 @@ title: Studio/src/Visualization/StudioVtkOutputWindow.h
 
 | Name           |
 | -------------- |
-| **[shapeworks](../Namespaces/namespaceshapeworks.md)**  |
+| **[shapeworks](../Namespaces/namespaceshapeworks.md)** <br>User usage reporting (telemetry)  |
 
 ## Classes
 
@@ -55,4 +55,4 @@ class StudioVtkOutputWindow : public QObject, public vtkOutputWindow {
 
 -------------------------------
 
-Updated on 2023-01-10 at 05:56:13 +0000
+Updated on 2023-01-16 at 19:53:05 +0000

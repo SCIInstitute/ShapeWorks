@@ -1,9 +1,9 @@
 ---
-title: Studio/src/Visualization/PlaneWidget.h
+title: Studio/Visualization/PlaneWidget.h
 
 ---
 
-# Studio/src/Visualization/PlaneWidget.h
+# Studio/Visualization/PlaneWidget.h
 
 
 
@@ -11,7 +11,7 @@ title: Studio/src/Visualization/PlaneWidget.h
 
 | Name           |
 | -------------- |
-| **[shapeworks](../Namespaces/namespaceshapeworks.md)**  |
+| **[shapeworks](../Namespaces/namespaceshapeworks.md)** <br>User usage reporting (telemetry)  |
 
 ## Classes
 
@@ -106,4 +106,4 @@ class PlaneWidget {
 
 -------------------------------
 
-Updated on 2023-01-10 at 05:56:13 +0000
+Updated on 2023-01-16 at 19:53:05 +0000

@@ -1,9 +1,9 @@
 ---
-title: Studio/src/Groom/GroomTool.h
+title: Studio/Groom/GroomTool.h
 
 ---
 
-# Studio/src/Groom/GroomTool.h
+# Studio/Groom/GroomTool.h
 
 
 
@@ -11,7 +11,7 @@ title: Studio/src/Groom/GroomTool.h
 
 | Name           |
 | -------------- |
-| **[shapeworks](../Namespaces/namespaceshapeworks.md)**  |
+| **[shapeworks](../Namespaces/namespaceshapeworks.md)** <br>User usage reporting (telemetry)  |
 
 ## Classes
 
@@ -30,6 +30,7 @@ title: Studio/src/Groom/GroomTool.h
 #include <Data/Preferences.h>
 #include <Groom/QGroom.h>
 #include <Groom/GroomParameters.h>
+#include <Data/Telemetry.h>
 
 #include <QElapsedTimer>
 #include <QObject>
@@ -51,7 +52,7 @@ class GroomTool : public QWidget {
   Q_OBJECT;
 
  public:
-  GroomTool(Preferences& prefs);
+  GroomTool(Preferences& prefs, Telemetry& telemetry);
   ~GroomTool();
 
   void set_session(QSharedPointer<Session> session);
@@ -108,6 +109,7 @@ class GroomTool : public QWidget {
   void update_reflect_choices();
 
   Preferences& preferences_;
+  Telemetry& telemetry_;
 
   QList<QThread*> threads_;
 
@@ -130,4 +132,4 @@ class GroomTool : public QWidget {
 
 -------------------------------
 
-Updated on 2023-01-10 at 05:56:13 +0000
+Updated on 2023-01-16 at 19:53:05 +0000

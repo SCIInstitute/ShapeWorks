@@ -1,9 +1,9 @@
 ---
-title: Studio/src/Visualization/ColorMap.h
+title: Studio/Visualization/ColorMap.h
 
 ---
 
-# Studio/src/Visualization/ColorMap.h
+# Studio/Visualization/ColorMap.h
 
 
 
@@ -11,7 +11,7 @@ title: Studio/src/Visualization/ColorMap.h
 
 | Name           |
 | -------------- |
-| **[shapeworks](../Namespaces/namespaceshapeworks.md)**  |
+| **[shapeworks](../Namespaces/namespaceshapeworks.md)** <br>User usage reporting (telemetry)  |
 
 ## Classes
 
@@ -87,4 +87,4 @@ class ColorMaps : public std::vector<ColorMap> {
 
 -------------------------------
 
-Updated on 2023-01-10 at 05:56:13 +0000
+Updated on 2023-01-16 at 19:53:05 +0000

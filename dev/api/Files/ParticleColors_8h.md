@@ -1,9 +1,9 @@
 ---
-title: Studio/src/Visualization/ParticleColors.h
+title: Studio/Visualization/ParticleColors.h
 
 ---
 
-# Studio/src/Visualization/ParticleColors.h
+# Studio/Visualization/ParticleColors.h
 
 
 
@@ -11,7 +11,7 @@ title: Studio/src/Visualization/ParticleColors.h
 
 | Name           |
 | -------------- |
-| **[shapeworks](../Namespaces/namespaceshapeworks.md)**  |
+| **[shapeworks](../Namespaces/namespaceshapeworks.md)** <br>User usage reporting (telemetry)  |
 
 ## Classes
 
@@ -50,4 +50,4 @@ class ParticleColors : public QObject {
 
 -------------------------------
 
-Updated on 2023-01-10 at 05:56:13 +0000
+Updated on 2023-01-16 at 19:53:05 +0000

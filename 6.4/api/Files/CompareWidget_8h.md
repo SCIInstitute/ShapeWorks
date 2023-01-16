@@ -1,9 +1,9 @@
 ---
-title: Studio/src/Interface/CompareWidget.h
+title: Studio/Interface/CompareWidget.h
 
 ---
 
-# Studio/src/Interface/CompareWidget.h
+# Studio/Interface/CompareWidget.h
 
 
 
@@ -12,7 +12,7 @@ title: Studio/src/Interface/CompareWidget.h
 | Name           |
 | -------------- |
 | **[Ui](../Namespaces/namespaceUi.md)**  |
-| **[shapeworks](../Namespaces/namespaceshapeworks.md)**  |
+| **[shapeworks](../Namespaces/namespaceshapeworks.md)** <br>User usage reporting (telemetry)  |
 
 ## Classes
 
@@ -65,4 +65,4 @@ class CompareWidget : public QWidget {
 
 -------------------------------
 
-Updated on 2023-01-10 at 05:56:13 +0000
+Updated on 2023-01-16 at 19:53:05 +0000

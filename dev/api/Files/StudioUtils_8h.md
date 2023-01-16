@@ -1,9 +1,9 @@
 ---
-title: Studio/src/Utils/StudioUtils.h
+title: Studio/Utils/StudioUtils.h
 
 ---
 
-# Studio/src/Utils/StudioUtils.h
+# Studio/Utils/StudioUtils.h
 
 
 
@@ -11,7 +11,7 @@ title: Studio/src/Utils/StudioUtils.h
 
 | Name           |
 | -------------- |
-| **[shapeworks](../Namespaces/namespaceshapeworks.md)**  |
+| **[shapeworks](../Namespaces/namespaceshapeworks.md)** <br>User usage reporting (telemetry)  |
 
 ## Classes
 
@@ -49,6 +49,9 @@ class StudioUtils {
   static QImage vtk_image_to_qimage(vtkSmartPointer<vtkImageData> image_data);
 
   static vtkSmartPointer<vtkPolyData> reverse_poly_data(vtkSmartPointer<vtkPolyData> poly_data);
+
+  static QString get_platform_string();
+
 };
 
 }  // namespace shapeworks
@@ -57,4 +60,4 @@ class StudioUtils {
 
 -------------------------------
 
-Updated on 2023-01-10 at 05:56:13 +0000
+Updated on 2023-01-16 at 19:53:05 +0000

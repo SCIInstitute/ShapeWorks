@@ -1,9 +1,9 @@
 ---
-title: Studio/src/Analysis/ShapeEvaluationJob.h
+title: Studio/Analysis/ShapeEvaluationJob.h
 
 ---
 
-# Studio/src/Analysis/ShapeEvaluationJob.h
+# Studio/Analysis/ShapeEvaluationJob.h
 
 
 
@@ -11,7 +11,7 @@ title: Studio/src/Analysis/ShapeEvaluationJob.h
 
 | Name           |
 | -------------- |
-| **[shapeworks](../Namespaces/namespaceshapeworks.md)**  |
+| **[shapeworks](../Namespaces/namespaceshapeworks.md)** <br>User usage reporting (telemetry)  |
 
 ## Classes
 
@@ -97,4 +97,4 @@ Q_DECLARE_METATYPE(shapeworks::ShapeEvaluationJob::JobType);
 
 -------------------------------
 
-Updated on 2023-01-10 at 05:56:13 +0000
+Updated on 2023-01-16 at 19:53:05 +0000

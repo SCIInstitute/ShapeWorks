@@ -11,12 +11,13 @@ title: Libs/Common/Logging.h
 
 | Name           |
 | -------------- |
-| **[shapeworks](../Namespaces/namespaceshapeworks.md)**  |
+| **[shapeworks](../Namespaces/namespaceshapeworks.md)** <br>User usage reporting (telemetry)  |
 
 ## Classes
 
 |                | Name           |
 | -------------- | -------------- |
+| struct | **[fmt::formatter< QString >](../Classes/structfmt_1_1formatter_3_01QString_01_4.md)**  |
 | class | **[shapeworks::Logging](../Classes/classshapeworks_1_1Logging.md)** <br>ShapeWorks [Logging]() Library.  |
 
 ## Defines
@@ -103,7 +104,7 @@ Log debug macro.
 #define SW_TRACE(
     x
 )
-SW_DEBUG(#x" = {}",x);
+SW_DEBUG(#x " = {}", x);
 ```
 
 Variable trace macro (e.g. output variable name = <variable value>) 
@@ -148,9 +149,21 @@ Close session macro.
 ```cpp
 #pragma once
 
+#include <spdlog/fmt/fmt.h>
+
 #include <functional>
 
-#include <spdlog/fmt/fmt.h>
+#include <QString>
+
+template <>
+struct fmt::formatter<QString> {
+  constexpr auto parse(format_parse_context& ctx) -> decltype(ctx.begin()) { return ctx.end(); }
+
+  template <typename FormatContext>
+  auto format(const QString& str, FormatContext& ctx) const -> decltype(ctx.out()) {
+    return fmt::format_to(ctx.out(), "{}", qUtf8Printable(str));
+  }
+};
 
 namespace shapeworks {
 
@@ -164,19 +177,19 @@ class Logging {
 
   std::string get_log_filename() const;
 
-  void log_message(const std::string& message, const int line, const char *file) const;
+  void log_message(const std::string& message, const int line, const char* file) const;
 
   void log_stack(const std::string& message) const;
 
-  void log_error(const std::string& message, const int line, const char *file) const;
+  void log_error(const std::string& message, const int line, const char* file) const;
 
-  void show_message(const std::string& message, const int line, const char *file) const;
+  void show_message(const std::string& message, const int line, const char* file) const;
 
-  void show_status(const std::string& message, const int line, const char *file) const;
+  void show_status(const std::string& message, const int line, const char* file) const;
 
-  void log_debug(const std::string& message, const int line, const char *file) const;
+  void log_debug(const std::string& message, const int line, const char* file) const;
 
-  void log_warning(const std::string& message, const int line, const char *file) const;
+  void log_warning(const std::string& message, const int line, const char* file) const;
 
   void close_log();
 
@@ -217,7 +230,7 @@ class Logging {
 #define SW_DEBUG(message, ...) \
   shapeworks::Logging::Instance().log_debug(fmt::format(message, ##__VA_ARGS__), __LINE__, __FILE__)
 
-#define SW_TRACE(x) SW_DEBUG(#x" = {}",x);
+#define SW_TRACE(x) SW_DEBUG(#x " = {}", x);
 
 #define SW_MESSAGE(message, ...) \
   shapeworks::Logging::Instance().show_message(fmt::format(message, ##__VA_ARGS__), __LINE__, __FILE__)
@@ -233,4 +246,4 @@ class Logging {
 
 -------------------------------
 
-Updated on 2023-01-10 at 05:56:13 +0000
+Updated on 2023-01-16 at 19:53:05 +0000

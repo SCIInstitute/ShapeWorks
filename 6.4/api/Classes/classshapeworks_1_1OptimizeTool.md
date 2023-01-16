@@ -39,7 +39,7 @@ Inherits from QWidget
 
 |                | Name           |
 | -------------- | -------------- |
-| | **[OptimizeTool](../Classes/classshapeworks_1_1OptimizeTool.md#function-optimizetool)**([Preferences](../Classes/classPreferences.md) & prefs) |
+| | **[OptimizeTool](../Classes/classshapeworks_1_1OptimizeTool.md#function-optimizetool)**([Preferences](../Classes/classPreferences.md) & prefs, [Telemetry](../Classes/classshapeworks_1_1Telemetry.md) & telemetry) |
 | | **[~OptimizeTool](../Classes/classshapeworks_1_1OptimizeTool.md#function-~optimizetool)**() |
 | void | **[set_session](../Classes/classshapeworks_1_1OptimizeTool.md#function-set-session)**(QSharedPointer< [Session](../Classes/classshapeworks_1_1Session.md) > session)<br>set the pointer to the project  |
 | void | **[activate](../Classes/classshapeworks_1_1OptimizeTool.md#function-activate)**()<br>activate this tool  |
@@ -171,7 +171,8 @@ void status(
 
 ```cpp
 OptimizeTool(
-    Preferences & prefs
+    Preferences & prefs,
+    Telemetry & telemetry
 )
 ```
 
@@ -243,4 +244,4 @@ shut down any running threads
 
 -------------------------------
 
-Updated on 2023-01-10 at 05:56:12 +0000
+Updated on 2023-01-16 at 19:53:04 +0000

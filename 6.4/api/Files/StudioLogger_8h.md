@@ -1,9 +1,9 @@
 ---
-title: Studio/src/Interface/StudioLogger.h
+title: Studio/Interface/StudioLogger.h
 
 ---
 
-# Studio/src/Interface/StudioLogger.h
+# Studio/Interface/StudioLogger.h
 
 
 
@@ -49,4 +49,4 @@ class StudioLogger : public QObject {
 
 -------------------------------
 
-Updated on 2023-01-10 at 05:56:13 +0000
+Updated on 2023-01-16 at 19:53:05 +0000

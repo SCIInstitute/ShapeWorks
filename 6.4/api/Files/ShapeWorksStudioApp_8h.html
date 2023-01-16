@@ -19,7 +19,7 @@
     
     
       
-        <title>Studio/src/Interface/ShapeWorksStudioApp.h - ShapeWorks</title>
+        <title>Studio/Interface/ShapeWorksStudioApp.h - ShapeWorks</title>
       
     
     
@@ -84,7 +84,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#studiosrcinterfaceshapeworksstudioapph" class="md-skip">
+        <a href="#studiointerfaceshapeworksstudioapph" class="md-skip">
           Skip to content
         </a>
       
@@ -122,7 +122,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Studio/src/Interface/ShapeWorksStudioApp.h
+              Studio/Interface/ShapeWorksStudioApp.h
             
           </span>
         </div>
@@ -2249,7 +2249,7 @@
 
 
 
-<h1 id="studiosrcinterfaceshapeworksstudioapph">Studio/src/Interface/ShapeWorksStudioApp.h</h1>
+<h1 id="studiointerfaceshapeworksstudioapph">Studio/Interface/ShapeWorksStudioApp.h</h1>
 <h2 id="namespaces">Namespaces</h2>
 <table>
 <thead>
@@ -2259,7 +2259,7 @@
 </thead>
 <tbody>
 <tr>
-<td><strong><a href="../Namespaces/namespaceshapeworks.html">shapeworks</a></strong></td>
+<td><strong><a href="../Namespaces/namespaceshapeworks.html">shapeworks</a></strong> <br>User usage reporting (telemetry)</td>
 </tr>
 </tbody>
 </table>
@@ -2282,12 +2282,14 @@
 <div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
 
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/PreferencesWindow.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/Telemetry.h&gt;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Interface/LogWindow.h&gt;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Visualization/StudioVtkOutputWindow.h&gt;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkPolyData.h&gt;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkSmartPointer.h&gt;</span><span class="cp"></span>
 
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Interface/StudioLogger.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Interface/UpdateChecker.h&gt;</span><span class="cp"></span>
 
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Eigen/Eigen&gt;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QActionGroup&gt;</span><span class="cp"></span>
@@ -2322,6 +2324,7 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">CompareWidget</span><span class="p">;</span><span class="w"></span>
 
 
+
 <span class="k">class</span><span class="w"> </span><span class="nc">ShapeWorksStudioApp</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">QMainWindow</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 <span class="w">  </span><span class="n">Q_OBJECT</span><span class="w"></span>
 <span class="w"> </span><span class="k">public</span><span class="o">:</span><span class="w"></span>
@@ -2346,6 +2349,7 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">save_as_xlsx_clicked</span><span class="p">();</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_action_quit_triggered</span><span class="p">();</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_action_import_triggered</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">splash_screen_closed</span><span class="p">();</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_vertical_scroll_bar_valueChanged</span><span class="p">();</span><span class="w"></span>
 
@@ -2541,11 +2545,13 @@
 <span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">PythonWorker</span><span class="o">&gt;</span><span class="w"> </span><span class="n">py_worker_</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">  </span><span class="n">StudioLogger</span><span class="w"> </span><span class="n">logger_</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">UpdateChecker</span><span class="w"> </span><span class="n">update_checker_</span><span class="p">{</span><span class="n">preferences_</span><span class="p">};</span><span class="w"></span>
+<span class="w">  </span><span class="n">Telemetry</span><span class="w"> </span><span class="n">telemetry_</span><span class="p">{</span><span class="n">preferences_</span><span class="p">};</span><span class="w"></span>
 <span class="p">};</span><span class="w"></span>
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-01-10 at 05:56:13 +0000</p>
+<p>Updated on 2023-01-16 at 19:53:05 +0000</p>
 
               
             </article>

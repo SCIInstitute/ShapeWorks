@@ -1,9 +1,9 @@
 ---
-title: Studio/src/Interface/ShapeWorksStudioApp.h
+title: Studio/Interface/ShapeWorksStudioApp.h
 
 ---
 
-# Studio/src/Interface/ShapeWorksStudioApp.h
+# Studio/Interface/ShapeWorksStudioApp.h
 
 
 
@@ -11,7 +11,7 @@ title: Studio/src/Interface/ShapeWorksStudioApp.h
 
 | Name           |
 | -------------- |
-| **[shapeworks](../Namespaces/namespaceshapeworks.md)**  |
+| **[shapeworks](../Namespaces/namespaceshapeworks.md)** <br>User usage reporting (telemetry)  |
 
 ## Classes
 
@@ -28,12 +28,14 @@ title: Studio/src/Interface/ShapeWorksStudioApp.h
 #pragma once
 
 #include <Data/PreferencesWindow.h>
+#include <Data/Telemetry.h>
 #include <Interface/LogWindow.h>
 #include <Visualization/StudioVtkOutputWindow.h>
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
 
 #include <Interface/StudioLogger.h>
+#include <Interface/UpdateChecker.h>
 
 #include <Eigen/Eigen>
 #include <QActionGroup>
@@ -68,6 +70,7 @@ class PythonWorker;
 class CompareWidget;
 
 
+
 class ShapeWorksStudioApp : public QMainWindow {
   Q_OBJECT
  public:
@@ -92,6 +95,7 @@ class ShapeWorksStudioApp : public QMainWindow {
   void save_as_xlsx_clicked();
   void on_action_quit_triggered();
   void on_action_import_triggered();
+  void splash_screen_closed();
 
   void on_vertical_scroll_bar_valueChanged();
 
@@ -287,6 +291,8 @@ class ShapeWorksStudioApp : public QMainWindow {
   QSharedPointer<PythonWorker> py_worker_;
 
   StudioLogger logger_;
+  UpdateChecker update_checker_{preferences_};
+  Telemetry telemetry_{preferences_};
 };
 }  // namespace shapeworks
 ```
@@ -294,4 +300,4 @@ class ShapeWorksStudioApp : public QMainWindow {
 
 -------------------------------
 
-Updated on 2023-01-10 at 05:56:13 +0000
+Updated on 2023-01-16 at 19:53:05 +0000

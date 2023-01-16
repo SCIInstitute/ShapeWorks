@@ -1,9 +1,9 @@
 ---
-title: Studio/src/Data/Preferences.h
+title: Studio/Data/Preferences.h
 
 ---
 
-# Studio/src/Data/Preferences.h
+# Studio/Data/Preferences.h
 
 
 
@@ -133,6 +133,20 @@ class Preferences : public QObject {
   void set_export_pca_modes(QString string);
   QString get_export_pca_modes();
 
+  bool get_auto_update_check();
+  void set_auto_update_check(bool enabled);
+
+  QDateTime get_update_snooze_until();
+  void set_update_snooze_until(QDateTime date);
+
+  QString get_device_id();
+
+  bool get_telemetry_enabled();
+  void set_telemetry_enabled(bool enabled);
+
+  bool get_telemetry_asked();
+  void set_telemetry_asked(bool asked);
+
  Q_SIGNALS:
 
   void color_scheme_changed(int newIndex);
@@ -153,4 +167,4 @@ class Preferences : public QObject {
 
 -------------------------------
 
-Updated on 2023-01-10 at 05:56:13 +0000
+Updated on 2023-01-16 at 19:53:05 +0000

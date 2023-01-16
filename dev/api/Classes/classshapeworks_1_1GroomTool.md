@@ -45,7 +45,7 @@ Inherits from QWidget
 
 |                | Name           |
 | -------------- | -------------- |
-| | **[GroomTool](../Classes/classshapeworks_1_1GroomTool.md#function-groomtool)**([Preferences](../Classes/classPreferences.md) & prefs) |
+| | **[GroomTool](../Classes/classshapeworks_1_1GroomTool.md#function-groomtool)**([Preferences](../Classes/classPreferences.md) & prefs, [Telemetry](../Classes/classshapeworks_1_1Telemetry.md) & telemetry) |
 | | **[~GroomTool](../Classes/classshapeworks_1_1GroomTool.md#function-~groomtool)**() |
 | void | **[set_session](../Classes/classshapeworks_1_1GroomTool.md#function-set-session)**(QSharedPointer< [Session](../Classes/classshapeworks_1_1Session.md) > session)<br>Set the pointer to the session.  |
 | void | **[activate](../Classes/classshapeworks_1_1GroomTool.md#function-activate)**()<br>activate this tool  |
@@ -230,7 +230,8 @@ void progress(
 
 ```cpp
 GroomTool(
-    Preferences & prefs
+    Preferences & prefs,
+    Telemetry & telemetry
 )
 ```
 
@@ -302,4 +303,4 @@ shut down any running threads
 
 -------------------------------
 
-Updated on 2023-01-10 at 05:56:11 +0000
+Updated on 2023-01-16 at 19:53:04 +0000

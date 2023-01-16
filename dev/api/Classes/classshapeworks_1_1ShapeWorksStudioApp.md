@@ -29,6 +29,7 @@ Inherits from QMainWindow
 | void | **[save_as_xlsx_clicked](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-save-as-xlsx-clicked)**() |
 | void | **[on_action_quit_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-action-quit-triggered)**() |
 | void | **[on_action_import_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-action-import-triggered)**() |
+| void | **[splash_screen_closed](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-splash-screen-closed)**() |
 | void | **[on_vertical_scroll_bar_valueChanged](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-vertical-scroll-bar-valuechanged)**() |
 | void | **[on_action_import_mode_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-action-import-mode-triggered)**() |
 | void | **[on_action_groom_mode_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-action-groom-mode-triggered)**() |
@@ -195,6 +196,13 @@ void on_action_quit_triggered()
 
 ```cpp
 void on_action_import_triggered()
+```
+
+
+### slot splash_screen_closed
+
+```cpp
+void splash_screen_closed()
 ```
 
 
@@ -742,4 +750,4 @@ void dropEvent(
 
 -------------------------------
 
-Updated on 2023-01-10 at 05:56:12 +0000
+Updated on 2023-01-16 at 19:53:04 +0000

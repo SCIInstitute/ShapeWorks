@@ -21,6 +21,7 @@ Utilities for Studio.
 | QStringList | **[to_string_list](../Classes/classshapeworks_1_1StudioUtils.md#function-to-string-list)**(std::vector< std::string > vector)<br>convert a vector of std::string to QStringList  |
 | QImage | **[vtk_image_to_qimage](../Classes/classshapeworks_1_1StudioUtils.md#function-vtk-image-to-qimage)**(vtkSmartPointer< vtkImageData > image_data)<br>convert vtkImageData to QImage  |
 | vtkSmartPointer< vtkPolyData > | **[reverse_poly_data](../Classes/classshapeworks_1_1StudioUtils.md#function-reverse-poly-data)**(vtkSmartPointer< vtkPolyData > poly_data)<br>reverse a poly data  |
+| QString | **[get_platform_string](../Classes/classshapeworks_1_1StudioUtils.md#function-get-platform-string)**() |
 
 ## Public Functions Documentation
 
@@ -64,6 +65,13 @@ static vtkSmartPointer< vtkPolyData > reverse_poly_data(
 
 reverse a poly data 
 
+### function get_platform_string
+
+```cpp
+static QString get_platform_string()
+```
+
+
 -------------------------------
 
-Updated on 2023-01-10 at 05:56:12 +0000
+Updated on 2023-01-16 at 19:53:04 +0000

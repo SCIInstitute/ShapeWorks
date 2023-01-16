@@ -1,9 +1,9 @@
 ---
-title: Studio/src/Visualization/Lightbox.h
+title: Studio/Visualization/Lightbox.h
 
 ---
 
-# Studio/src/Visualization/Lightbox.h
+# Studio/Visualization/Lightbox.h
 
 
 
@@ -11,7 +11,7 @@ title: Studio/src/Visualization/Lightbox.h
 
 | Name           |
 | -------------- |
-| **[shapeworks](../Namespaces/namespaceshapeworks.md)**  |
+| **[shapeworks](../Namespaces/namespaceshapeworks.md)** <br>User usage reporting (telemetry)  |
 
 ## Classes
 
@@ -181,4 +181,4 @@ class Lightbox : public QObject {
 
 -------------------------------
 
-Updated on 2023-01-10 at 05:56:13 +0000
+Updated on 2023-01-16 at 19:53:05 +0000

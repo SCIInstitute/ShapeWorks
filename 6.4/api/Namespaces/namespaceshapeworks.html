@@ -2246,6 +2246,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#detailed-description" class="md-nav__link">
+    Detailed Description
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#types-documentation" class="md-nav__link">
     Types Documentation
   </a>
@@ -3780,6 +3787,7 @@
 
 
 <h1 id="shapeworks">shapeworks</h1>
+<p>User usage reporting (telemetry)  <a href="#detailed-description">More...</a></p>
 <h2 id="namespaces">Namespaces</h2>
 <table>
 <thead>
@@ -4308,7 +4316,15 @@
 </tr>
 <tr>
 <td>class</td>
+<td><strong><a href="../Classes/classshapeworks_1_1Telemetry.html">shapeworks::Telemetry</a></strong></td>
+</tr>
+<tr>
+<td>class</td>
 <td><strong><a href="../Classes/classshapeworks_1_1TriMeshWrapper.html">shapeworks::TriMeshWrapper</a></strong></td>
+</tr>
+<tr>
+<td>class</td>
+<td><strong><a href="../Classes/classshapeworks_1_1UpdateChecker.html">shapeworks::UpdateChecker</a></strong> <br>Update Checker.</td>
 </tr>
 <tr>
 <td>class</td>
@@ -4926,7 +4942,7 @@
 </tr>
 <tr>
 <td>TransformPtr</td>
-<td><strong><a href="namespaceshapeworks.html#function-createtransform">createTransform</a></strong>(const Matrix33 &amp; mat, const Vector3 &amp; translate =makeVector({0, 0, 0}))</td>
+<td><strong><a href="namespaceshapeworks.html#function-createtransform">createTransform</a></strong>(const Matrix33 &amp; mat, const Vector3 &amp; translate =<a href="namespaceshapeworks.html#function-makevector">makeVector</a>({0, 0, 0}))</td>
 </tr>
 <tr>
 <td>Plane</td>
@@ -4945,7 +4961,7 @@
 <td><strong><a href="namespaceshapeworks.html#function-getnormal">getNormal</a></strong>(const Plane plane)</td>
 </tr>
 <tr>
-<td>MeshTransform</td>
+<td><a href="namespaceshapeworks.html#using-meshtransform">MeshTransform</a></td>
 <td><strong><a href="namespaceshapeworks.html#function-createmeshtransform">createMeshTransform</a></strong>(const vtkSmartPointer&lt; vtkMatrix4x4 &gt; &amp; mat)</td>
 </tr>
 <tr>
@@ -4954,7 +4970,7 @@
 </tr>
 <tr>
 <td>Point</td>
-<td><strong><a href="namespaceshapeworks.html#function-topoint">toPoint</a></strong>(const Coord &amp; c)</td>
+<td><strong><a href="namespaceshapeworks.html#function-topoint">toPoint</a></strong>(const <a href="namespaceshapeworks.html#using-coord">Coord</a> &amp; c)</td>
 </tr>
 <tr>
 <td>Vector</td>
@@ -4973,19 +4989,19 @@
 <td><strong><a href="namespaceshapeworks.html#function-topoint">toPoint</a></strong>(const Vector &amp; v)</td>
 </tr>
 <tr>
-<td>Coord</td>
+<td><a href="namespaceshapeworks.html#using-coord">Coord</a></td>
 <td><strong><a href="namespaceshapeworks.html#function-tocoord">toCoord</a></strong>(const Dims &amp; d)</td>
 </tr>
 <tr>
 <td>Dims</td>
-<td><strong><a href="namespaceshapeworks.html#function-todims">toDims</a></strong>(const Coord &amp; c)</td>
+<td><strong><a href="namespaceshapeworks.html#function-todims">toDims</a></strong>(const <a href="namespaceshapeworks.html#using-coord">Coord</a> &amp; c)</td>
 </tr>
 <tr>
 <td>Dims</td>
 <td><strong><a href="namespaceshapeworks.html#function-todims">toDims</a></strong>(const Point &amp; p)</td>
 </tr>
 <tr>
-<td>Coord</td>
+<td><a href="namespaceshapeworks.html#using-coord">Coord</a></td>
 <td><strong><a href="namespaceshapeworks.html#function-tocoord">toCoord</a></strong>(const Point &amp; p)</td>
 </tr>
 <tr>
@@ -5017,12 +5033,12 @@
 <td><strong><a href="namespaceshapeworks.html#function-length">length</a></strong>(const Vector3 &amp; v)</td>
 </tr>
 <tr>
-<td>Axis</td>
+<td><a href="namespaceshapeworks.html#enum-axis">Axis</a></td>
 <td><strong><a href="namespaceshapeworks.html#function-toaxis">toAxis</a></strong>(const std::string &amp; str)</td>
 </tr>
 <tr>
 <td>std::string</td>
-<td><strong><a href="namespaceshapeworks.html#function-axistostring">axisToString</a></strong>(Axis axis)</td>
+<td><strong><a href="namespaceshapeworks.html#function-axistostring">axisToString</a></strong>(<a href="namespaceshapeworks.html#enum-axis">Axis</a> axis)</td>
 </tr>
 <tr>
 <td>bool</td>
@@ -5030,7 +5046,7 @@
 </tr>
 <tr>
 <td>bool</td>
-<td><strong><a href="namespaceshapeworks.html#function-axis-is-valid">axis_is_valid</a></strong>(const Axis &amp; axis)</td>
+<td><strong><a href="namespaceshapeworks.html#function-axis-is-valid">axis_is_valid</a></strong>(const <a href="namespaceshapeworks.html#enum-axis">Axis</a> &amp; axis)</td>
 </tr>
 <tr>
 <td>double</td>
@@ -5158,7 +5174,7 @@
 </tr>
 <tr>
 <td>py::array</td>
-<td><strong><a href="namespaceshapeworks.html#function-arrtopy">arrToPy</a></strong>(Array &amp; array, ArrayTransferOptions xfer =COPY_ARRAY)<br>convert a vtkDataArray (AOS assumed) to a py::array using specified means of transfer</td>
+<td><strong><a href="namespaceshapeworks.html#function-arrtopy">arrToPy</a></strong>(Array &amp; array, <a href="namespaceshapeworks.html#enum-arraytransferoptions">ArrayTransferOptions</a> xfer =COPY_ARRAY)<br>convert a vtkDataArray (AOS assumed) to a py::array using specified means of transfer</td>
 </tr>
 <tr>
 <td>Eigen::MatrixXd</td>
@@ -5170,10 +5186,10 @@
 </tr>
 <tr>
 <td>Eigen::Matrix&lt; double, 4, 4, Eigen::RowMajor &gt;</td>
-<td><strong><a href="namespaceshapeworks.html#function-vtktransformtoeigen">vtkTransformToEigen</a></strong>(MeshTransform vtk_xform)</td>
+<td><strong><a href="namespaceshapeworks.html#function-vtktransformtoeigen">vtkTransformToEigen</a></strong>(<a href="namespaceshapeworks.html#using-meshtransform">MeshTransform</a> vtk_xform)</td>
 </tr>
 <tr>
-<td>MeshTransform</td>
+<td><a href="namespaceshapeworks.html#using-meshtransform">MeshTransform</a></td>
 <td><strong><a href="namespaceshapeworks.html#function-eigen44tovtktransform">eigen44ToVtkTransform</a></strong>(const Eigen::Matrix&lt; double, 4, 4, Eigen::RowMajor &gt; &amp; eigen_mat)</td>
 </tr>
 <tr>
@@ -5217,6 +5233,9 @@
 </tr>
 </tbody>
 </table>
+<h2 id="detailed-description">Detailed Description</h2>
+<p>User usage reporting (telemetry) </p>
+<p>This class posts anonymous usage reporting statistics for usage tracking and software improvement purposes </p>
 <h2 id="types-documentation">Types Documentation</h2>
 <h3 id="enum-displaymode">enum DisplayMode</h3>
 <table>
@@ -6651,7 +6670,7 @@
 </code></pre></div>
 <p>pi that doesn't depend on deprecated or non-std lib defines </p>
 <hr />
-<p>Updated on 2023-01-10 at 05:56:11 +0000</p>
+<p>Updated on 2023-01-16 at 19:53:03 +0000</p>
 
               
             </article>

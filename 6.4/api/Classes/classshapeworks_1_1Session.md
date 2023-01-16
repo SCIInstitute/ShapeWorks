@@ -111,7 +111,7 @@ Inherits from QObject, QEnableSharedFromThis< Session >
 | bool | **[set_image_name](../Classes/classshapeworks_1_1Session.md#function-set-image-name)**(std::string image_name) |
 | std::string | **[get_image_name](../Classes/classshapeworks_1_1Session.md#function-get-image-name)**() |
 | void | **[set_image_axis](../Classes/classshapeworks_1_1Session.md#function-set-image-axis)**(QString axis) |
-| Axis | **[get_image_axis](../Classes/classshapeworks_1_1Session.md#function-get-image-axis)**() |
+| [Axis](../Namespaces/namespaceshapeworks.md#enum-axis) | **[get_image_axis](../Classes/classshapeworks_1_1Session.md#function-get-image-axis)**() |
 | void | **[set_image_3d_mode](../Classes/classshapeworks_1_1Session.md#function-set-image-3d-mode)**(bool mode) |
 | bool | **[get_image_3d_mode](../Classes/classshapeworks_1_1Session.md#function-get-image-3d-mode)**() |
 | void | **[set_image_share_window_and_level](../Classes/classshapeworks_1_1Session.md#function-set-image-share-window-and-level)**(bool enabled) |
@@ -1146,4 +1146,4 @@ static const std::string DEEPSSM_C;
 
 -------------------------------
 
-Updated on 2023-01-10 at 05:56:12 +0000
+Updated on 2023-01-16 at 19:53:04 +0000

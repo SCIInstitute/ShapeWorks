@@ -1,11 +1,12 @@
 ---
 title: shapeworks
+summary: User usage reporting (telemetry) 
 
 ---
 
 # shapeworks
 
-
+User usage reporting (telemetry)  [More...](#detailed-description)
 
 ## Namespaces
 
@@ -143,7 +144,9 @@ title: shapeworks
 | class | **[shapeworks::StudioVtkOutputWindow](../Classes/classshapeworks_1_1StudioVtkOutputWindow.md)** <br>Implementation of vtkOutputWindow to capture and display VTK error messages.  |
 | class | **[shapeworks::Style](../Classes/classshapeworks_1_1Style.md)**  |
 | class | **[shapeworks::Subject](../Classes/classshapeworks_1_1Subject.md)** <br>Representation of a single subject.  |
+| class | **[shapeworks::Telemetry](../Classes/classshapeworks_1_1Telemetry.md)**  |
 | class | **[shapeworks::TriMeshWrapper](../Classes/classshapeworks_1_1TriMeshWrapper.md)**  |
+| class | **[shapeworks::UpdateChecker](../Classes/classshapeworks_1_1UpdateChecker.md)** <br>Update Checker.  |
 | class | **[shapeworks::Variant](../Classes/classshapeworks_1_1Variant.md)** <br>[Variant]() class to represent multiple types.  |
 | class | **[shapeworks::VectorImage](../Classes/classshapeworks_1_1VectorImage.md)** <br>Gradient (vector) image.  |
 | class | **[shapeworks::Viewer](../Classes/classshapeworks_1_1Viewer.md)** <br>3D [Viewer]() |
@@ -302,22 +305,22 @@ title: shapeworks
 | std::ostream & | **[operator<<](../Namespaces/namespaceshapeworks.md#function-operator<<)**(std::ostream & os, const [PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md) & region) |
 | Vector3 | **[makeVector](../Namespaces/namespaceshapeworks.md#function-makevector)**(std::array< double, 3 > && arr)<br>Enables `makeVector({1,2,3});`, construction using an initializer list (likely an accidental omission in current ITK version)  |
 | PointArray | **[makePointArray](../Namespaces/namespaceshapeworks.md#function-makepointarray)**(int size, Point3 value) |
-| TransformPtr | **[createTransform](../Namespaces/namespaceshapeworks.md#function-createtransform)**(const Matrix33 & mat, const Vector3 & translate =makeVector({0, 0, 0})) |
+| TransformPtr | **[createTransform](../Namespaces/namespaceshapeworks.md#function-createtransform)**(const Matrix33 & mat, const Vector3 & translate =[makeVector](../Namespaces/namespaceshapeworks.md#function-makevector)({0, 0, 0})) |
 | Plane | **[makePlane](../Namespaces/namespaceshapeworks.md#function-makeplane)**(const Point & p, const Vector3 & n)<br>Make a plane.  |
 | Plane | **[makePlane](../Namespaces/namespaceshapeworks.md#function-makeplane)**(const Point & p0, const Point & p1, const Point & p2) |
 | Point | **[getOrigin](../Namespaces/namespaceshapeworks.md#function-getorigin)**(const Plane plane)<br>Get origin and normal of plane.  |
 | Vector3 | **[getNormal](../Namespaces/namespaceshapeworks.md#function-getnormal)**(const Plane plane) |
-| MeshTransform | **[createMeshTransform](../Namespaces/namespaceshapeworks.md#function-createmeshtransform)**(const vtkSmartPointer< vtkMatrix4x4 > & mat) |
+| [MeshTransform](../Namespaces/namespaceshapeworks.md#using-meshtransform) | **[createMeshTransform](../Namespaces/namespaceshapeworks.md#function-createmeshtransform)**(const vtkSmartPointer< vtkMatrix4x4 > & mat) |
 | Point | **[toPoint](../Namespaces/namespaceshapeworks.md#function-topoint)**(const Dims & d)<br>For deliberate conversions between types.  |
-| Point | **[toPoint](../Namespaces/namespaceshapeworks.md#function-topoint)**(const Coord & c) |
+| Point | **[toPoint](../Namespaces/namespaceshapeworks.md#function-topoint)**(const [Coord](../Namespaces/namespaceshapeworks.md#using-coord) & c) |
 | Vector | **[toVector](../Namespaces/namespaceshapeworks.md#function-tovector)**(const Dims & d) |
 | Vector | **[toVector](../Namespaces/namespaceshapeworks.md#function-tovector)**(const Point & p) |
 | Vector | **[toVector](../Namespaces/namespaceshapeworks.md#function-tovector)**(const itk::CovariantVector< double, 3 > & v) |
 | Point | **[toPoint](../Namespaces/namespaceshapeworks.md#function-topoint)**(const Vector & v) |
-| Coord | **[toCoord](../Namespaces/namespaceshapeworks.md#function-tocoord)**(const Dims & d) |
-| Dims | **[toDims](../Namespaces/namespaceshapeworks.md#function-todims)**(const Coord & c) |
+| [Coord](../Namespaces/namespaceshapeworks.md#using-coord) | **[toCoord](../Namespaces/namespaceshapeworks.md#function-tocoord)**(const Dims & d) |
+| Dims | **[toDims](../Namespaces/namespaceshapeworks.md#function-todims)**(const [Coord](../Namespaces/namespaceshapeworks.md#using-coord) & c) |
 | Dims | **[toDims](../Namespaces/namespaceshapeworks.md#function-todims)**(const Point & p) |
-| Coord | **[toCoord](../Namespaces/namespaceshapeworks.md#function-tocoord)**(const Point & p) |
+| [Coord](../Namespaces/namespaceshapeworks.md#using-coord) | **[toCoord](../Namespaces/namespaceshapeworks.md#function-tocoord)**(const Point & p) |
 | template <typename P \> <br>P | **[negate](../Namespaces/namespaceshapeworks.md#function-negate)**(const P & p)<br>Negation operator (ITK only has it for Vectors, but sometimes useful for Points)  |
 | Vector3 | **[negate](../Namespaces/namespaceshapeworks.md#function-negate)**(const Vector3 & v)<br>Negate function for Vector (requires makeVector)  |
 | template <typename P \> <br>P | **[invertValue](../Namespaces/namespaceshapeworks.md#function-invertvalue)**(const P & p)<br>Inversion function for all but Vector.  |
@@ -325,10 +328,10 @@ title: shapeworks
 | Vector3 | **[dotProduct](../Namespaces/namespaceshapeworks.md#function-dotproduct)**(const Vector3 & a, const Vector3 & b)<br>Vector dot and cross products.  |
 | Vector3 | **[crossProduct](../Namespaces/namespaceshapeworks.md#function-crossproduct)**(const Vector3 & a, const Vector3 & b) |
 | double | **[length](../Namespaces/namespaceshapeworks.md#function-length)**(const Vector3 & v) |
-| Axis | **[toAxis](../Namespaces/namespaceshapeworks.md#function-toaxis)**(const std::string & str) |
-| std::string | **[axisToString](../Namespaces/namespaceshapeworks.md#function-axistostring)**(Axis axis) |
+| [Axis](../Namespaces/namespaceshapeworks.md#enum-axis) | **[toAxis](../Namespaces/namespaceshapeworks.md#function-toaxis)**(const std::string & str) |
+| std::string | **[axisToString](../Namespaces/namespaceshapeworks.md#function-axistostring)**([Axis](../Namespaces/namespaceshapeworks.md#enum-axis) axis) |
 | bool | **[axis_is_valid](../Namespaces/namespaceshapeworks.md#function-axis-is-valid)**(const Vector3 & axis)<br>Ensure an axis is valid.  |
-| bool | **[axis_is_valid](../Namespaces/namespaceshapeworks.md#function-axis-is-valid)**(const Axis & axis) |
+| bool | **[axis_is_valid](../Namespaces/namespaceshapeworks.md#function-axis-is-valid)**(const [Axis](../Namespaces/namespaceshapeworks.md#enum-axis) & axis) |
 | double | **[degToRad](../Namespaces/namespaceshapeworks.md#function-degtorad)**(const double deg)<br>convert degrees to radians  |
 | double | **[mean](../Namespaces/namespaceshapeworks.md#function-mean)**(const Field field)<br>incrementally compute (single-component) mean of field  |
 | double | **[stddev](../Namespaces/namespaceshapeworks.md#function-stddev)**(const Field field)<br>compute (single-component) standard deviation of field  |
@@ -360,11 +363,11 @@ title: shapeworks
 | void | **[setOwnership](../Namespaces/namespaceshapeworks.md#function-setownership)**(py::array & array, bool owns)<br>sets the OWNDATA flag of the given array to `owns` |
 | Image::ImageType::Pointer | **[wrapNumpyArr](../Namespaces/namespaceshapeworks.md#function-wrapnumpyarr)**(py::array & np_array)<br>helper function for Image.init and Image.assign  |
 | Array | **[pyToArr](../Namespaces/namespaceshapeworks.md#function-pytoarr)**(py::array & np_array, bool take_ownership =true)<br>converts py::array to vtkDataArray, optionally taking ownership of data  |
-| py::array | **[arrToPy](../Namespaces/namespaceshapeworks.md#function-arrtopy)**(Array & array, ArrayTransferOptions xfer =COPY_ARRAY)<br>convert a vtkDataArray (AOS assumed) to a py::array using specified means of transfer  |
+| py::array | **[arrToPy](../Namespaces/namespaceshapeworks.md#function-arrtopy)**(Array & array, [ArrayTransferOptions](../Namespaces/namespaceshapeworks.md#enum-arraytransferoptions) xfer =COPY_ARRAY)<br>convert a vtkDataArray (AOS assumed) to a py::array using specified means of transfer  |
 | Eigen::MatrixXd | **[itkTransformToEigen](../Namespaces/namespaceshapeworks.md#function-itktransformtoeigen)**(TransformPtr itk_xform) |
 | TransformPtr | **[eigen44ToItkTransform](../Namespaces/namespaceshapeworks.md#function-eigen44toitktransform)**(const Eigen::Matrix< double, 4, 4 > & eigen_mat) |
-| Eigen::Matrix< double, 4, 4, Eigen::RowMajor > | **[vtkTransformToEigen](../Namespaces/namespaceshapeworks.md#function-vtktransformtoeigen)**(MeshTransform vtk_xform) |
-| MeshTransform | **[eigen44ToVtkTransform](../Namespaces/namespaceshapeworks.md#function-eigen44tovtktransform)**(const Eigen::Matrix< double, 4, 4, Eigen::RowMajor > & eigen_mat) |
+| Eigen::Matrix< double, 4, 4, Eigen::RowMajor > | **[vtkTransformToEigen](../Namespaces/namespaceshapeworks.md#function-vtktransformtoeigen)**([MeshTransform](../Namespaces/namespaceshapeworks.md#using-meshtransform) vtk_xform) |
+| [MeshTransform](../Namespaces/namespaceshapeworks.md#using-meshtransform) | **[eigen44ToVtkTransform](../Namespaces/namespaceshapeworks.md#function-eigen44tovtktransform)**(const Eigen::Matrix< double, 4, 4, Eigen::RowMajor > & eigen_mat) |
 | template <typename T ,unsigned NRows,unsigned NCols\> <br>Eigen::Matrix< T, NRows, NCols, Eigen::RowMajor > | **[itkToEigen](../Namespaces/namespaceshapeworks.md#function-itktoeigen)**(const itk::Matrix< T, NRows, NCols > & itk_mat)<br>Conversion (by copy) of itk matrix to Eigen::Matrix.  |
 | template <typename T ,int NRows,int NCols\> <br>itk::Matrix< T, NRows, NCols > | **[eigenToItk](../Namespaces/namespaceshapeworks.md#function-eigentoitk)**(const Eigen::Matrix< T, NRows, NCols, Eigen::RowMajor > & eigen_mat)<br>Conversion (by copy) of Eigen::Matrix to itk (i.e., vnl) matrix.  |
 | template <typename T \> <br>Eigen::Map< VnlMatrix< T > > | **[vnlToEigen](../Namespaces/namespaceshapeworks.md#function-vnltoeigen)**(const vnl_matrix< T > & vnl_mat)<br>Wrap vnl matrix data to Eigen Matrix.  |
@@ -377,6 +380,12 @@ title: shapeworks
 |                | Name           |
 | -------------- | -------------- |
 | const auto | **[Pi](../Namespaces/namespaceshapeworks.md#variable-pi)** <br>pi that doesn't depend on deprecated or non-std lib defines  |
+
+## Detailed Description
+
+User usage reporting (telemetry) 
+
+This class posts anonymous usage reporting statistics for usage tracking and software improvement purposes 
 
 ## Types Documentation
 
@@ -2453,4 +2462,4 @@ pi that doesn't depend on deprecated or non-std lib defines
 
 -------------------------------
 
-Updated on 2023-01-10 at 05:56:11 +0000
+Updated on 2023-01-16 at 19:53:03 +0000

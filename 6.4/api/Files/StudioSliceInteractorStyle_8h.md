@@ -1,9 +1,9 @@
 ---
-title: Studio/src/Visualization/StudioSliceInteractorStyle.h
+title: Studio/Visualization/StudioSliceInteractorStyle.h
 
 ---
 
-# Studio/src/Visualization/StudioSliceInteractorStyle.h
+# Studio/Visualization/StudioSliceInteractorStyle.h
 
 
 
@@ -11,7 +11,7 @@ title: Studio/src/Visualization/StudioSliceInteractorStyle.h
 
 | Name           |
 | -------------- |
-| **[shapeworks](../Namespaces/namespaceshapeworks.md)**  |
+| **[shapeworks](../Namespaces/namespaceshapeworks.md)** <br>User usage reporting (telemetry)  |
 
 ## Classes
 
@@ -77,4 +77,4 @@ class StudioSliceInteractorStyle : public vtkInteractorStyleImage {
 
 -------------------------------
 
-Updated on 2023-01-10 at 05:56:13 +0000
+Updated on 2023-01-16 at 19:53:05 +0000

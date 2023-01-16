@@ -105,6 +105,15 @@ Inherits from QObject
 | void | **[set_export_pca_range](../Classes/classPreferences.md#function-set-export-pca-range)**(double range) |
 | void | **[set_export_pca_modes](../Classes/classPreferences.md#function-set-export-pca-modes)**(QString string) |
 | QString | **[get_export_pca_modes](../Classes/classPreferences.md#function-get-export-pca-modes)**() |
+| bool | **[get_auto_update_check](../Classes/classPreferences.md#function-get-auto-update-check)**() |
+| void | **[set_auto_update_check](../Classes/classPreferences.md#function-set-auto-update-check)**(bool enabled) |
+| QDateTime | **[get_update_snooze_until](../Classes/classPreferences.md#function-get-update-snooze-until)**() |
+| void | **[set_update_snooze_until](../Classes/classPreferences.md#function-set-update-snooze-until)**(QDateTime date) |
+| QString | **[get_device_id](../Classes/classPreferences.md#function-get-device-id)**() |
+| bool | **[get_telemetry_enabled](../Classes/classPreferences.md#function-get-telemetry-enabled)**() |
+| void | **[set_telemetry_enabled](../Classes/classPreferences.md#function-set-telemetry-enabled)**(bool enabled) |
+| bool | **[get_telemetry_asked](../Classes/classPreferences.md#function-get-telemetry-asked)**() |
+| void | **[set_telemetry_asked](../Classes/classPreferences.md#function-set-telemetry-asked)**(bool asked) |
 
 ## Detailed Description
 
@@ -734,6 +743,77 @@ QString get_export_pca_modes()
 ```
 
 
+### function get_auto_update_check
+
+```cpp
+bool get_auto_update_check()
+```
+
+
+### function set_auto_update_check
+
+```cpp
+void set_auto_update_check(
+    bool enabled
+)
+```
+
+
+### function get_update_snooze_until
+
+```cpp
+QDateTime get_update_snooze_until()
+```
+
+
+### function set_update_snooze_until
+
+```cpp
+void set_update_snooze_until(
+    QDateTime date
+)
+```
+
+
+### function get_device_id
+
+```cpp
+QString get_device_id()
+```
+
+
+### function get_telemetry_enabled
+
+```cpp
+bool get_telemetry_enabled()
+```
+
+
+### function set_telemetry_enabled
+
+```cpp
+void set_telemetry_enabled(
+    bool enabled
+)
+```
+
+
+### function get_telemetry_asked
+
+```cpp
+bool get_telemetry_asked()
+```
+
+
+### function set_telemetry_asked
+
+```cpp
+void set_telemetry_asked(
+    bool asked
+)
+```
+
+
 -------------------------------
 
-Updated on 2023-01-10 at 05:56:12 +0000
+Updated on 2023-01-16 at 19:53:04 +0000

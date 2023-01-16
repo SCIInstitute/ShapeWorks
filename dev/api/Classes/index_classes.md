@@ -58,6 +58,8 @@ title: Classes
 * **class [Utils](../Classes/classUtils.md)** 
 * **struct [VTKEXPORT](../Classes/structVTKEXPORT.md)** 
 * **class [Vis](../Classes/classVis.md)** 
+* **namespace [fmt](../Namespaces/namespacefmt.md)** 
+    * **struct [formatter< QString >](../Classes/structfmt_1_1formatter_3_01QString_01_4.md)** 
 * **namespace [itk](../Namespaces/namespaceitk.md)** 
     * **class [AdvancedTransform](../Classes/classitk_1_1AdvancedTransform.md)** <br>Transform maps points, vectors and covariant vectors from an input space to an output space. 
     * **class [BSplineInterpolateImageFunctionWithDoubleCoefficents](../Classes/classitk_1_1BSplineInterpolateImageFunctionWithDoubleCoefficents.md)** 
@@ -111,7 +113,7 @@ title: Classes
 * **class [object_reader](../Classes/classobject__reader.md)** 
 * **class [object_writer](../Classes/classobject__writer.md)** 
 * **class [quatd](../Classes/classquatd.md)** 
-* **namespace [shapeworks](../Namespaces/namespaceshapeworks.md)** 
+* **namespace [shapeworks](../Namespaces/namespaceshapeworks.md)** <br>User usage reporting (telemetry) 
     * **class [AnalysisTool](../Classes/classshapeworks_1_1AnalysisTool.md)** 
     * **class [AnalysisUtils](../Classes/classshapeworks_1_1AnalysisUtils.md)** 
     * **class [Analyze](../Classes/classshapeworks_1_1Analyze.md)** <br>High level analyze API. 
@@ -241,7 +243,9 @@ title: Classes
     * **class [StudioVtkOutputWindow](../Classes/classshapeworks_1_1StudioVtkOutputWindow.md)** <br>Implementation of vtkOutputWindow to capture and display VTK error messages. 
     * **class [Style](../Classes/classshapeworks_1_1Style.md)** 
     * **class [Subject](../Classes/classshapeworks_1_1Subject.md)** <br>Representation of a single subject. 
+    * **class [Telemetry](../Classes/classshapeworks_1_1Telemetry.md)** 
     * **class [TriMeshWrapper](../Classes/classshapeworks_1_1TriMeshWrapper.md)** 
+    * **class [UpdateChecker](../Classes/classshapeworks_1_1UpdateChecker.md)** <br>Update Checker. 
     * **class [Variant](../Classes/classshapeworks_1_1Variant.md)** <br>[Variant]() class to represent multiple types. 
     * **class [VectorImage](../Classes/classshapeworks_1_1VectorImage.md)** <br>Gradient (vector) image. 
     * **class [Viewer](../Classes/classshapeworks_1_1Viewer.md)** <br>3D [Viewer]()
@@ -264,4 +268,4 @@ title: Classes
 
 -------------------------------
 
-Updated on 2023-01-10 at 05:56:13 +0000
+Updated on 2023-01-16 at 19:53:05 +0000

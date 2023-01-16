@@ -9,9 +9,10 @@ title: Namespaces
 
 
 * **namespace [Ui](../Namespaces/namespaceUi.md)** 
+* **namespace [fmt](../Namespaces/namespacefmt.md)** 
 * **namespace [itk](../Namespaces/namespaceitk.md)** 
     * **namespace [Functor](../Namespaces/namespaceitk_1_1Functor.md)** 
-* **namespace [shapeworks](../Namespaces/namespaceshapeworks.md)** 
+* **namespace [shapeworks](../Namespaces/namespaceshapeworks.md)** <br>User usage reporting (telemetry) 
     * **namespace [project](../Namespaces/namespaceshapeworks_1_1project.md)** 
         * **namespace [prefixes](../Namespaces/namespaceshapeworks_1_1project_1_1prefixes.md)** 
         * **namespace [types](../Namespaces/namespaceshapeworks_1_1project_1_1types.md)** 
@@ -22,4 +23,4 @@ title: Namespaces
 
 -------------------------------
 
-Updated on 2023-01-10 at 05:56:13 +0000
+Updated on 2023-01-16 at 19:53:05 +0000

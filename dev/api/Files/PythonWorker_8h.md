@@ -1,9 +1,9 @@
 ---
-title: Studio/src/Python/PythonWorker.h
+title: Studio/Python/PythonWorker.h
 
 ---
 
-# Studio/src/Python/PythonWorker.h
+# Studio/Python/PythonWorker.h
 
 
 
@@ -11,7 +11,7 @@ title: Studio/src/Python/PythonWorker.h
 
 | Name           |
 | -------------- |
-| **[shapeworks](../Namespaces/namespaceshapeworks.md)**  |
+| **[shapeworks](../Namespaces/namespaceshapeworks.md)** <br>User usage reporting (telemetry)  |
 
 ## Classes
 
@@ -92,4 +92,4 @@ class PythonWorker : public QObject {
 
 -------------------------------
 
-Updated on 2023-01-10 at 05:56:13 +0000
+Updated on 2023-01-16 at 19:53:05 +0000

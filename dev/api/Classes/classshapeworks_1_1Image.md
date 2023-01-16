@@ -66,7 +66,7 @@ title: shapeworks::Image
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[translate](../Classes/classshapeworks_1_1Image.md#function-translate)**(const Vector3 & v)<br>helper to simply translate image  |
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[scale](../Classes/classshapeworks_1_1Image.md#function-scale)**(const Vector3 & v)<br>helper to simply scale image around center (not origin)  |
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[rotate](../Classes/classshapeworks_1_1Image.md#function-rotate)**(const double angle, const Vector3 & axis)<br>helper to simply rotate around axis through center (not origin) by given angle (in radians)  |
-| [Image](../Classes/classshapeworks_1_1Image.md) & | **[rotate](../Classes/classshapeworks_1_1Image.md#function-rotate)**(const double angle, Axis axis)<br>helper to simply rotate around axis through center (not origin) by given angle (in radians)  |
+| [Image](../Classes/classshapeworks_1_1Image.md) & | **[rotate](../Classes/classshapeworks_1_1Image.md#function-rotate)**(const double angle, [Axis](../Namespaces/namespaceshapeworks.md#enum-axis) axis)<br>helper to simply rotate around axis through center (not origin) by given angle (in radians)  |
 | TransformPtr | **[createCenterOfMassTransform](../Classes/classshapeworks_1_1Image.md#function-createcenterofmasstransform)**()<br>creates a transform that translates center of mass to center of image  |
 | TransformPtr | **[createRigidRegistrationTransform](../Classes/classshapeworks_1_1Image.md#function-createrigidregistrationtransform)**(const [Image](../Classes/classshapeworks_1_1Image.md) & target_dt, float isoValue =0.0, unsigned iterations =20) |
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[applyTransform](../Classes/classshapeworks_1_1Image.md#function-applytransform)**(const TransformPtr transform, InterpolationType interp =Linear)<br>applies the given transformation to the image by using resampling filter  |
@@ -84,7 +84,7 @@ title: shapeworks::Image
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[gaussianBlur](../Classes/classshapeworks_1_1Image.md#function-gaussianblur)**(double sigma =0.0)<br>applies gaussian blur with given sigma  |
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[crop](../Classes/classshapeworks_1_1Image.md#function-crop)**([PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md) region, const int padding =0)<br>crops the image down to the given region, with optional padding added  |
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[clip](../Classes/classshapeworks_1_1Image.md#function-clip)**(const Plane plane, const PixelType val =0.0)<br>clips an image using a cutting plane  |
-| [Image](../Classes/classshapeworks_1_1Image.md) & | **[reflect](../Classes/classshapeworks_1_1Image.md#function-reflect)**(const Axis & axis) |
+| [Image](../Classes/classshapeworks_1_1Image.md) & | **[reflect](../Classes/classshapeworks_1_1Image.md#function-reflect)**(const [Axis](../Namespaces/namespaceshapeworks.md#enum-axis) & axis) |
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[setOrigin](../Classes/classshapeworks_1_1Image.md#function-setorigin)**(Point3 origin =Point3({0, 0, 0}))<br>sets the image origin in physical space to the given value  |
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[setSpacing](../Classes/classshapeworks_1_1Image.md#function-setspacing)**(Vector3 spacing)<br>sets the image spacing to the given value  |
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[setCoordsys](../Classes/classshapeworks_1_1Image.md#function-setcoordsys)**(ImageType::DirectionType coordsys)<br>sets the coordinate system in which this image lives in physical space  |
@@ -105,8 +105,8 @@ title: shapeworks::Image
 | [PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md) | **[physicalBoundingBox](../Classes/classshapeworks_1_1Image.md#function-physicalboundingbox)**(PixelType isovalue) const<br>bounding box of largest region of data >= the given isoValue in physical space  |
 | [PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md) | **[logicalToPhysical](../Classes/classshapeworks_1_1Image.md#function-logicaltophysical)**([IndexRegion](../Classes/classshapeworks_1_1IndexRegion.md) region) const<br>converts a bounding box in logical (index) space to this image's index coordinates  |
 | [IndexRegion](../Classes/classshapeworks_1_1IndexRegion.md) | **[physicalToLogical](../Classes/classshapeworks_1_1Image.md#function-physicaltological)**([PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md) region) const<br>converts a bounding box in physical space to this image's logical (index) coordinates  |
-| Point3 | **[logicalToPhysical](../Classes/classshapeworks_1_1Image.md#function-logicaltophysical)**(const Coord & c) const<br>converts from pixel coordinates to physical space  |
-| Coord | **[physicalToLogical](../Classes/classshapeworks_1_1Image.md#function-physicaltological)**(const Point3 & p) const<br>converts from a physical coordinate to a logical coordinate  |
+| Point3 | **[logicalToPhysical](../Classes/classshapeworks_1_1Image.md#function-logicaltophysical)**(const [Coord](../Namespaces/namespaceshapeworks.md#using-coord) & c) const<br>converts from pixel coordinates to physical space  |
+| [Coord](../Namespaces/namespaceshapeworks.md#using-coord) | **[physicalToLogical](../Classes/classshapeworks_1_1Image.md#function-physicaltological)**(const Point3 & p) const<br>converts from a physical coordinate to a logical coordinate  |
 | ImageIterator | **[iterator](../Classes/classshapeworks_1_1Image.md#function-iterator)**()<br>creates an image iterator and returns it  |
 | bool | **[compare](../Classes/classshapeworks_1_1Image.md#function-compare)**(const [Image](../Classes/classshapeworks_1_1Image.md) & other, bool verifyall =true, double tolerance =0.0, double precision =1e-12) const<br>compares this with another image using the region of interest filter  |
 | bool | **[operator==](../Classes/classshapeworks_1_1Image.md#function-operator==)**(const [Image](../Classes/classshapeworks_1_1Image.md) & other) const<br>compares this with another image using the region of interest filter  |
@@ -1043,4 +1043,4 @@ friend struct SharedCommandData(
 
 -------------------------------
 
-Updated on 2023-01-10 at 05:56:13 +0000
+Updated on 2023-01-16 at 19:53:05 +0000

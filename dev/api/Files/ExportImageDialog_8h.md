@@ -1,9 +1,9 @@
 ---
-title: Studio/src/Interface/ExportImageDialog.h
+title: Studio/Interface/ExportImageDialog.h
 
 ---
 
-# Studio/src/Interface/ExportImageDialog.h
+# Studio/Interface/ExportImageDialog.h
 
 
 
@@ -11,7 +11,7 @@ title: Studio/src/Interface/ExportImageDialog.h
 
 | Name           |
 | -------------- |
-| **[shapeworks](../Namespaces/namespaceshapeworks.md)**  |
+| **[shapeworks](../Namespaces/namespaceshapeworks.md)** <br>User usage reporting (telemetry)  |
 
 ## Classes
 
@@ -76,4 +76,4 @@ class ExportImageDialog : public QDialog {
 
 -------------------------------
 
-Updated on 2023-01-10 at 05:56:13 +0000
+Updated on 2023-01-16 at 19:53:05 +0000
