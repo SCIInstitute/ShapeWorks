@@ -79,8 +79,6 @@ void UpdateChecker::handleNetworkReply(QNetworkReply* reply) {
     update_available = true;
   }
 
-  update_available = true;
-
   if (update_available) {
     auto url = QString("https://github.com/SCIInstitute/ShapeWorks/releases/latest");
 
