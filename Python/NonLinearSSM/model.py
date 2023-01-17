@@ -10,7 +10,6 @@ import torch
 import torch.optim as optim
 from torch.distributions.multivariate_normal import MultivariateNormal as MVN
 
-
 from utils import *
 from nflib.flows import (
    ModifiedMAF, MAF, AffineHalfFlow, NormalizingFlowModel,
