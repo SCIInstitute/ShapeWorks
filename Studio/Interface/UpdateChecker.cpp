@@ -3,6 +3,7 @@
 #include <Applications/Configuration.h>
 #include <Data/Preferences.h>
 #include <Logging.h>
+#include <Utils/StudioUtils.h>
 
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -10,8 +11,6 @@
 #include <QNetworkReply>
 #include <QNetworkRequest>
 #include <nlohmann/json.hpp>
-
-#include <Utils/StudioUtils.h>
 
 #include "ui_UpdateChecker.h"
 
@@ -57,7 +56,6 @@ void UpdateChecker::run_update_check() {
 
 void UpdateChecker::handleNetworkReply(QNetworkReply* reply) {
   std::string response = QString(reply->readAll()).toStdString();
-  SW_DEBUG("UpdateChecker::handleNetworkReply: {}", response);
 
   // get the json response
   auto j = json::parse(response);
