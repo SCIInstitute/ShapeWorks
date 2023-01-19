@@ -82,7 +82,12 @@ class Optimize {
   void SetNonLinearTrainModelCallbackFunction(const std::function<void(void)> &f);
   void SetBeforeGradientUpdatesCallbackFunction(const std::function<void(void)> &f);
   void SetNonLinearBaseShapeMatrix(MatrixContainer matrix);
-  void SetNonLinearJacobianMatrix(MatrixContainer det, MatrixContainer log_det);
+  void SetNonLinearDifferenceMatrix(MatrixContainer matrix);
+  void SetNonLinearJacobianMatrix(MatrixContainer det);
+  void ComputeBaseSpaceCovarianceMatrix();
+  MatrixContainer GetBaseSpaceInverseCovarianceMatrix();
+  MatrixContainer GetBaseSpaceMean();
+
   
   //! Abort optimization
   void AbortOptimization();

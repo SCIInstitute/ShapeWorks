@@ -34,7 +34,7 @@ public:
     return this->m_BaseShapeMatrix;
   }
   
-  std::shared_ptr<vnl_matrix<double>> GetJacobainMatrix(){
+  std::shared_ptr<vnl_matrix<double>> GetJacobianMatrix(){
     return this->m_JacobianMatrix_det;
   }
 
@@ -79,14 +79,14 @@ public:
 
   virtual void ResizeJacobianMatrix(int cs)
   {
-    vnl_matrix<T> tmp(*m_JacobianMatrix); // copy existing  matrix
+    vnl_matrix<T> tmp(*m_JacobianMatrix_det); // copy existing  matrix
     // Create new column (shape)
-    m_JacobianMatrix->set_size(0, cs);
-    m_JacobianMatrix->fill(0.0);    
+    m_JacobianMatrix_det->set_size(0, cs);
+    m_JacobianMatrix_det->fill(0.0);    
     // Copy old data into new matrix.
     for (unsigned int c = 0; c < tmp.cols(); c++)
         {
-        m_JacobianMatrix->put(0,c, tmp(0, c));
+        m_JacobianMatrix_det->put(0,c, tmp(0, c));
         }
   }
   
@@ -105,6 +105,9 @@ public:
       {
       this->ResizeMatrix(this->rows(), this->cols()+1);
       this->ResizeBaseShapeMatrix(this->rows(), this->cols()+1);
+      this->ResizeDifferenceMatrix(this->rows(), this->cols()+1);
+      this->ResizeJacobianMatrix(this->cols()+1);                      
+
       }    
   }
   
@@ -128,6 +131,8 @@ public:
       this->ResizeMatrix(PointsPerDomain * VDimension * this->m_DomainsPerShape,
                          this->cols());
       this->ResizeBaseShapeMatrix(PointsPerDomain * VDimension * this->m_DomainsPerShape,
+                             this->cols());
+      this->ResizeDifferenceMatrix(PointsPerDomain * VDimension * this->m_DomainsPerShape,
                              this->cols());
       this->ResizeJacobianMatrix(this->cols());                      
       }

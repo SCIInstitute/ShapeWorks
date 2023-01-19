@@ -82,16 +82,8 @@ def find_medoid_mesh():
     out_dir = f'{INPUT_DIR}/{DATASET}/burn_in_model/'
     meshes[median_index].write(f'{out_dir}/{shape_names[median_index]}.medoid_mesh.vtk')
 
-def get_medoid_mesh_points():
-    burn_in_dir = f'{INPUT_DIR}/{DATASET}/burn_in_model/'
-    mesh = sw.Mesh(f'{burn_in_dir}/medoid_mesh.vtk')
-    points = mesh.Points()
-    # sample 1024 points
-    sampled_points = points[np.random.choice(points.shape[0], 1024, replace=False)]
-    np.savetxt(f'{burn_in_dir}/medoid_mesh.particles')
-    print('Particle set generated')
 
-def create_burn_in_sw_project(dataset_name='supershapes_3_lobes', burn_in_dir_name='supershapes_3_lobes_particles'):
+def create_burn_in_sw_project_supershapes(dataset_name='supershapes_3_lobes', burn_in_dir_name='supershapes_3_lobes_particles'):
     mesh_dir = f'{INPUT_DIR}/{dataset_name}/meshes/'
     mesh_files = sorted(glob.glob(f'{mesh_dir}/*ply'))
     burn_in_dir = f'{INPUT_DIR}/{dataset_name}/{burn_in_dir_name}/'
@@ -118,4 +110,35 @@ def create_burn_in_sw_project(dataset_name='supershapes_3_lobes', burn_in_dir_na
     spreadsheet_file = f"{INPUT_DIR}/{dataset_name}/{dataset_name}_project.xlsx"
     project.save(spreadsheet_file)
 
-create_burn_in_sw_project()
+
+def create_burn_in_sw_project(input_dir, input_type, burn_in_dir, dataset_name):
+    input_files = sorted(glob.glob(f'{input_dir}/*.{input_type}'))
+    print(f'Loaded {len(input_files)} Files ...')
+    subjects = []
+    for i in range(len(input_files)):
+        subject = sw.Subject()
+        subject.set_number_of_domains(1)
+        subject.set_original_filenames([input_files[i]])
+        subject.set_groomed_filenames([input_files[i]])
+        rel_particle_file = glob.glob(f'{burn_in_dir}/{input_files[i].split("/")[-1].split(f".{input_type}")[0]}*.particles')
+        assert len(rel_particle_file) == 1
+        subject.set_landmarks_filenames([rel_particle_file[0]])
+        subjects.append(subject)
+
+    project = sw.Project()
+    project.set_subjects(subjects)
+    parameters = sw.Parameters()
+    # Add param dictionary to spreadsheet
+    for key in parameter_dictionary:
+        parameters.set(key, sw.Variant([parameter_dictionary[key]]))
+    parameters.set("domain_type",sw.Variant('mesh'))
+    project.set_parameters("optimize", parameters)
+    spreadsheet_file = f"{INPUT_DIR}/{dataset_name}/{dataset_name}_project.xlsx"
+    project.save(spreadsheet_file)
+
+pancreas_seg_dir = '/home/sci/nawazish.khan/non-linear-ssm-experiments/Pancreas/segmentations-centered/'
+pancreas_meshes_dir = '/home/sci/nawazish.khan/non-linear-ssm-experiments/Pancreas/meshes/'
+
+
+# create_burn_in_sw_project(input_dir=pancreas_seg_dir, input_type='nrrd', burn_in_dir='/home/sci/nawazish.khan/non-linear-ssm-experiments/Pancreas/burn_in_model/', dataset_name='Pancreas')
+create_burn_in_sw_project(input_dir=pancreas_meshes_dir, input_type='vtk', burn_in_dir='/home/sci/nawazish.khan/non-linear-ssm-experiments/Pancreas/burn_in_model/', dataset_name='Pancreas')

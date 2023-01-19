@@ -23,12 +23,16 @@ inv_net.train_invertible_network_from_scratch()
 # Define Callbacks
 def train_model_callback():
     if sw_opt.GetOptimizing():
+        print('Train Model callback in Python 0....')
+        # Make sure prior is updated properly before training for new iteration
         inv_net.initialize_model()
         inv_net.initialize_particles(init_particles_dir=particles_dir)
         inv_net.train_invertible_network_from_last_checkpoint()
+        print('Train Model callback in Python 1....')
 
 def before_gradient_updates_callback():
     if sw_opt.GetOptimizing():
+        print(f'Before Gradient updates callback from Python 0....')
         inv_net.norm_model.eval()
         particles = sw_opt.GetParticleSystem() # Z space
         particles = torch.from_numpy(particles.T).to(DEVICE)
@@ -51,17 +55,19 @@ def before_gradient_updates_callback():
         sw_opt.SetNonLinearBaseShapeMatrix(z0_particles)
         sw_opt.SetNonLinearJacobianMatrix(det_jacobian)
         sw_opt.SetNonLinearDifferenceMatrix(diff_matrix)
-        sw_opt.ComputeZ0CovarianceMatrix()
-        z0_cov = sw_opt.GetInverseCovarianceMatrix()
-        z0_mean = sw_opt.GetMean()
+        sw_opt.ComputeBaseSpaceCovarianceMatrix()
+        z0_cov = sw_opt.GetBaseSpaceInverseCovarianceMatrix() # dM X dM
+        z0_mean = sw_opt.GetBaseSpaceMean() # dM vector
+        print(f'Mean shape is {z0_mean.shape}')
         inv_net.update_prior_distribution(z0_mean, z0_cov)
-
+        print(f'Gradient updates callback from Python 1....')
 
 # Set callbacks for SW Opt object
 sw_opt.SetNonLinearTrainModelCallbackFunction(train_model_callback)
 sw_opt.SetBeforeGradientUpdatesCallbackFunction(before_gradient_updates_callback)
 
 # Run Optimizer
+print("Running Shapeworks Optimization")
 sw_opt.Run()
 sw_opt.SaveProjectFileAfterOptimize()
 

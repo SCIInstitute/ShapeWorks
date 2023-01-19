@@ -76,6 +76,25 @@ public:
   const ShapeMatrixType *GetShapeMatrix() const
   {   return  m_ShapeMatrix.GetPointer();  }
 
+  std::shared_ptr<vnl_matrix<double>> GetBaseSpaceInverseCovarianceMatrix(){
+    return this->m_InverseCovMatrix;
+  }
+
+  void ComputeBaseSpaceCovarianceMatrix()
+  {
+    std::cout << "Computing Base Space Covariance Computations separately 0" << std::endl;
+    if (m_Counter == 0)
+    {
+      this->ComputeCovarianceMatrix();
+    }
+    std::cout << "Computing Base Space Covariance Computations separately 1" << std::endl;
+  }
+
+
+  std::shared_ptr<vnl_matrix<double>> GetBaseSpaceMean(){
+    return this->m_points_mean;
+  }
+
   /** Called before each iteration of a solver. */
   virtual void BeforeIteration()
   {
@@ -83,7 +102,8 @@ public:
 
     if (m_Counter == 0)
       {
-      this->ComputeCovarianceMatrix();
+      // this->ComputeCovarianceMatrix();
+      std::cout << "Skipping Base Space Covariance Computations in BeforeIteration, already did with callback" << std::endl;
       }
   }
 

@@ -2184,27 +2184,22 @@ void Optimize::SetBeforeGradientUpdatesCallbackFunction(const std::function<void
   this->m_sampler->GetNonLinearShapeMatrixAttribute()->BeforeGradientUpdatesCallbackFunction(f);
 }
 
+
 //---------------------------------------------------------------------------
-void Optimize::SetNonLinearJacobianMatrix(MatrixContainer det_jac, MatrixContainer log_det_jac)
+void Optimize::SetNonLinearJacobianMatrix(MatrixContainer matrix)
 {
-  std::cout << "---Setting up Jacobian Matrix in Optimize  0--- " << std::endl;
-  auto vnl = this->m_sampler->GetNonLinearShapeMatrixAttribute()->GetJacobainMatrix();
-  auto eigen = det_jac.matrix_;
+  std::cout << "---Setting up Jacoboian Matrix in Optimize  0--- " << std::endl;
+  auto vnl = this->m_sampler->GetNonLinearShapeMatrixAttribute()->GetJacobianMatrix();
+  auto eigen = matrix.matrix_;
   vnl->set_size(eigen.rows(), eigen.cols());
   for (int r = 0; r < eigen.rows(); r++) {
     for (int c = 0; c < eigen.cols(); c++) {
       vnl->put(r, c, eigen(r, c));
     }
   }
-  auto eigen_log_det = log_det_jac.matrix_;
-  vnl->set_size(eigen_log_det.rows(), eigen_log_det.cols());
-  for (int r = 0; r < eigen_log_det.rows(); r++) {
-    for (int c = 0; c < eigen_log_det.cols(); c++) {
-      vnl->put(r, c, eigen_log_det(r, c));
-    }
-  }
-  std::cout << "---Setting up Jacobian Matrix in Optimize  1--- " << std::endl;
+  std::cout << "---Setting up Jacoboian Matrix in Optimize  1--- " << std::endl;
 }
+
 //---------------------------------------------------------------------------
 void Optimize::SetNonLinearBaseShapeMatrix(MatrixContainer matrix)
 {
@@ -2218,6 +2213,65 @@ void Optimize::SetNonLinearBaseShapeMatrix(MatrixContainer matrix)
     }
   }
   std::cout << "---Setting up Base Shape Matrix in Optimize  1--- " << std::endl;
+}
+
+//---------------------------------------------------------------------------
+void Optimize::SetNonLinearDifferenceMatrix(MatrixContainer matrix)
+{
+  std::cout << "---Setting up Difference Matrix in Optimize  0--- " << std::endl;
+  auto vnl = this->m_sampler->GetNonLinearShapeMatrixAttribute()->GetDifferenceMatrix();
+  auto eigen = matrix.matrix_;
+  vnl->set_size(eigen.rows(), eigen.cols());
+  for (int r = 0; r < eigen.rows(); r++) {
+    for (int c = 0; c < eigen.cols(); c++) {
+      vnl->put(r, c, eigen(r, c));
+    }
+  }
+  std::cout << "---Setting up Difference in Optimize  1--- " << std::endl;
+}
+
+//---------------------------------------------------------------------------
+void Optimize::ComputeBaseSpaceCovarianceMatrix()
+{
+  this->m_sampler->GetEnsembleEntropyNonLinearFunction()->ComputeBaseSpaceCovarianceMatrix();
+}
+
+//---------------------------------------------------------------------------
+MatrixContainer Optimize::GetBaseSpaceInverseCovarianceMatrix()
+{
+  std::cout << "Getting Base Space CovMatrix 0..." << std::endl;
+  auto vnl_matrix = m_sampler->GetEnsembleEntropyNonLinearFunction()->GetBaseSpaceInverseCovarianceMatrix();
+  MatrixType matrix;
+  matrix.resize(vnl_matrix->rows(), vnl_matrix->cols());
+
+  for (int i = 0; i < vnl_matrix->rows(); i++) {
+    for (int j = 0; j < vnl_matrix->cols(); j++) {
+      matrix(i, j) = vnl_matrix->get(i, j);
+    }
+  }
+  std::cout << "Getting Base Space CovMatrix 1..." << std::endl;
+  MatrixContainer container;
+  container.matrix_ = matrix;
+  return container;
+}
+
+//---------------------------------------------------------------------------
+MatrixContainer Optimize::GetBaseSpaceMean()
+{
+  std::cout << "Getting Base Space Mean 0..." << std::endl;
+  auto vnl_matrix = m_sampler->GetEnsembleEntropyNonLinearFunction()->GetBaseSpaceMean();
+  MatrixType matrix;
+  matrix.resize(vnl_matrix->rows(), vnl_matrix->cols());
+
+  for (int i = 0; i < vnl_matrix->rows(); i++) {
+    for (int j = 0; j < vnl_matrix->cols(); j++) {
+      matrix(i, j) = vnl_matrix->get(i, j);
+    }
+  }
+  std::cout << "Getting Base Space Mean 1..." << std::endl;
+  MatrixContainer container;
+  container.matrix_ = matrix;
+  return container;
 }
 
 //---------------------------------------------------------------------------

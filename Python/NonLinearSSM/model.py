@@ -56,8 +56,8 @@ class InvertibleNetwork:
         self.flow_model_type = flow_model_type
         self.flows = get_flow_model(flow_model_type, d, M)
     
-    def initialize_particles(self, init_particles_dir):
-        self.init_particles = load_shape_matrix(init_particles_dir, N, M, d)
+    def initialize_particles(self, init_particles_dir, particle_system='warped'):
+        self.init_particles = load_shape_matrix(init_particles_dir, N, M, d, particle_system=particle_system)
         self.init_particles_data = Dataset(self.init_particles)
 
     def update_prior_distribution(self, z0_particles):
@@ -137,3 +137,4 @@ class InvertibleNetwork:
             'optimizer_state_dict': self.optimizer.state_dict(),
             'loss': loss.item(),
             }, checkpoint_path)
+        print(f'Model saved')
