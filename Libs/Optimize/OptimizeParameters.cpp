@@ -365,7 +365,7 @@ bool OptimizeParameters::set_up_optimize(Optimize *optimize) {
     for (int f = 0; f < files.size(); f++) {
       auto file = files[f];
       Constraints constraint;
-      constraint.Read(file);
+      constraint.read(file);
       constraints.push_back(constraint);
       auto domain_type = project_->get_groomed_domain_types()[f];
       if (domain_type != DomainType::Mesh) {

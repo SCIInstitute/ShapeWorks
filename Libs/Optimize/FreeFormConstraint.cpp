@@ -10,7 +10,7 @@ namespace shapeworks {
 //-----------------------------------------------------------------------------
 bool FreeFormConstraint::readyForOptimize() const { return mesh_ != nullptr; }
 
-bool FreeFormConstraint::isViolated(const Eigen::Vector3d &pt) const {
+bool FreeFormConstraint::isViolated(const Eigen::Vector3d& pt) const {
   if (constraintEval(pt) >= 0) {
     return false;
   } else {
@@ -20,8 +20,10 @@ bool FreeFormConstraint::isViolated(const Eigen::Vector3d &pt) const {
 
 //-----------------------------------------------------------------------------
 void FreeFormConstraint::setDefinition(vtkSmartPointer<vtkPolyData> polyData) {
+  // ownership of the free form constraint is now held in the definitionPolyData_
   definitionPolyData_ = polyData;
   boundaries_.clear();
+  inoutPolyData_ = nullptr;
 }
 
 //-----------------------------------------------------------------------------
@@ -42,14 +44,14 @@ void FreeFormConstraint::applyToPolyData(vtkSmartPointer<vtkPolyData> polyData) 
   auto array = createFFCPaint(polyData);
   array->FillComponent(0, 1.0);
   for (int i = 0; i < polyData->GetNumberOfPoints(); i++) {
-    double *value = inout->GetTuple(i);
+    double* value = inout->GetTuple(i);
     float f = value[0];
     array->SetTuple(i, &f);
   }
 }
 
 //-----------------------------------------------------------------------------
-std::vector<std::vector<Eigen::Vector3d>> &FreeFormConstraint::boundaries() { return boundaries_; }
+std::vector<std::vector<Eigen::Vector3d>>& FreeFormConstraint::boundaries() { return boundaries_; }
 
 //-----------------------------------------------------------------------------
 void FreeFormConstraint::computeBoundaries() {
@@ -59,7 +61,7 @@ void FreeFormConstraint::computeBoundaries() {
 
   boundaries_.clear();
 
-  vtkFloatArray *array = vtkFloatArray::SafeDownCast(definitionPolyData_->GetPointData()->GetArray("ffc_paint"));
+  vtkFloatArray* array = vtkFloatArray::SafeDownCast(definitionPolyData_->GetPointData()->GetArray("ffc_paint"));
   if (!array) {
     return;
   }
@@ -126,8 +128,8 @@ void FreeFormConstraint::reset() {
 }
 
 //-----------------------------------------------------------------------------
-vtkFloatArray *FreeFormConstraint::createFFCPaint(vtkSmartPointer<vtkPolyData> polyData) {
-  vtkFloatArray *array = vtkFloatArray::SafeDownCast(polyData->GetPointData()->GetArray("ffc_paint"));
+vtkFloatArray* FreeFormConstraint::createFFCPaint(vtkSmartPointer<vtkPolyData> polyData) {
+  vtkFloatArray* array = vtkFloatArray::SafeDownCast(polyData->GetPointData()->GetArray("ffc_paint"));
   if (!array) {
     array = vtkFloatArray::New();
     array->SetName("ffc_paint");
@@ -137,6 +139,17 @@ vtkFloatArray *FreeFormConstraint::createFFCPaint(vtkSmartPointer<vtkPolyData> p
   }
   polyData->Modified();
   return array;
+}
+
+//-----------------------------------------------------------------------------
+void FreeFormConstraint::createInoutPolyData() {
+  // create a polydata with the inout field from definitionPolyData_, if there is one
+  if (!definitionPolyData_) {
+    return;
+  }
+
+  inoutPolyData_ = vtkSmartPointer<vtkPolyData>::New();
+  inoutPolyData_->DeepCopy(definitionPolyData_);
 }
 //-----------------------------------------------------------------------------
 

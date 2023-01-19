@@ -80,8 +80,8 @@ class Constraints {
   bool GetActive() { return active_; }
   void SetActive(bool ac) { active_ = ac; }
 
-  void Read(std::string filename);
-  void Write(std::string filename);
+  void read(std::string filename);
+  void write(std::string filename);
 
   FreeFormConstraint& getFreeformConstraint();
 

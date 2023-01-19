@@ -22,13 +22,13 @@ class FreeFormConstraint : public Constraint {
 
   bool readyForOptimize() const;
 
-  bool isViolated(const Eigen::Vector3d &pt) const override;
+  bool isViolated(const Eigen::Vector3d& pt) const override;
 
   void print() const override { std::cout << "FF" << std::endl; }
 
-  Eigen::Vector3d constraintGradient(const Eigen::Vector3d &pt) const override { return mesh_->getFFCGradient(pt); }
+  Eigen::Vector3d constraintGradient(const Eigen::Vector3d& pt) const override { return mesh_->getFFCGradient(pt); }
 
-  double constraintEval(const Eigen::Vector3d &pt) const override { return mesh_->getFFCValue(pt); }
+  double constraintEval(const Eigen::Vector3d& pt) const override { return mesh_->getFFCValue(pt); }
 
   //! Set polydata where per-vertex free form constraint definition exists
   void setDefinition(vtkSmartPointer<vtkPolyData> polyData);
@@ -39,17 +39,26 @@ class FreeFormConstraint : public Constraint {
   //! Apply the free form constraint to a polydata
   void applyToPolyData(vtkSmartPointer<vtkPolyData> polyData);
 
-  //! Access the set of boundaries
-  std::vector<std::vector<Eigen::Vector3d>> &boundaries();
+  //! @deprecated Access the set of boundaries
+  std::vector<std::vector<Eigen::Vector3d>>& boundaries();
 
-  //! Get query (inside) point
+  //! @deprecated Get query (inside) point
   Eigen::Vector3d getQueryPoint() { return queryPoint_; };
 
-  //! Set query (inside) point
+  //! @deprecated Set query (inside) point
   void setQueryPoint(Eigen::Vector3d queryPoint) { queryPoint_ = queryPoint; };
 
-  //! Compute boundaries from definition polydata with ffc_paint scalars
+  //! @deprecated Compute boundaries from definition polydata with ffc_paint scalars
   void computeBoundaries();
+
+  //! Set the in/out polydata
+  void setInoutPolyData(vtkSmartPointer<vtkPolyData> polyData) { inoutPolyData_ = polyData; }
+
+  //! Get the in/out polydata
+  vtkSmartPointer<vtkPolyData> getInoutPolyData() { return inoutPolyData_; };
+
+  //! Create the in/out poly data from the definition poly data
+  void createInoutPolyData();
 
   //! Return if this FFC is set or not
   bool isSet();
@@ -61,8 +70,7 @@ class FreeFormConstraint : public Constraint {
   void reset();
 
  private:
-
-  vtkFloatArray *createFFCPaint(vtkSmartPointer<vtkPolyData> polyData);
+  vtkFloatArray* createFFCPaint(vtkSmartPointer<vtkPolyData> polyData);
 
   std::shared_ptr<shapeworks::Mesh> mesh_;
 
@@ -71,6 +79,7 @@ class FreeFormConstraint : public Constraint {
 
   std::vector<std::vector<Eigen::Vector3d>> boundaries_;
   Eigen::Vector3d queryPoint_;
+  vtkSmartPointer<vtkPolyData> inoutPolyData_;
 };
 
 }  // namespace shapeworks

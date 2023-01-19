@@ -250,7 +250,7 @@ bool Shape::import_constraints(std::vector<std::string> filenames) {
     Constraints constraints;
     try {
       if (!(filenames[i] == "")) {
-        constraints.Read(filenames[i]);
+        constraints.read(filenames[i]);
       }
     } catch (std::exception& e) {
       SW_ERROR(e.what());
@@ -293,7 +293,7 @@ bool Shape::store_constraints() {
 
   for (int i = 0; i < filenames.size(); i++) {
     try {
-      get_constraints(i).Write(filenames[i]);
+      get_constraints(i).write(filenames[i]);
     } catch (std::exception& e) {
       SW_ERROR(e.what());
       return false;

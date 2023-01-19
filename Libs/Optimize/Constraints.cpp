@@ -1,11 +1,66 @@
 #include "Constraints.h"
 
+#include <vtkFloatArray.h>
+#include <vtkPointData.h>
+
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
 
 namespace shapeworks {
 
-void Constraints::addPlane(const vnl_vector<double> &a, const vnl_vector<double> &b, const vnl_vector<double> &c) {
+//-----------------------------------------------------------------------------
+static json get_json_field(vtkSmartPointer<vtkPolyData> polyData) {
+  // store points from inout to json
+  json j;
+
+  if (!polyData) {
+    return j;
+  }
+
+  json inoutJson;
+  json pointsJson;
+  // for each point in inout store x,y,z
+  for (int i = 0; i < polyData->GetNumberOfPoints(); i++) {
+    double p[3];
+    polyData->GetPoint(i, p);
+    pointsJson.push_back({p[0], p[1], p[2]});
+  }
+
+  // store scalars from inout to json
+  json scalarsJson;
+  vtkFloatArray* array = vtkFloatArray::SafeDownCast(polyData->GetPointData()->GetArray("ffc_paint"));
+  if (array) {
+    for (int i = 0; i < array->GetNumberOfTuples(); i++) {
+      scalarsJson[i].push_back(array->GetValue(i));
+    }
+    j = {{"points", pointsJson}, {"scalars", scalarsJson}};
+  }
+
+  return j;
+}
+
+//-----------------------------------------------------------------------------
+static vtkSmartPointer<vtkPolyData> get_polydata_from_json_field(json j) {
+  if (!j.contains("points") || !j.contains("scalars")) {
+    return nullptr;
+  }
+
+  auto polyData = vtkSmartPointer<vtkPolyData>::New();
+  auto points = vtkSmartPointer<vtkPoints>::New();
+  auto scalars = vtkSmartPointer<vtkFloatArray>::New();
+  scalars->SetName("ffc_paint");
+  for (auto p : j["points"]) {
+    points->InsertNextPoint(p[0].get<double>(), p[1].get<double>(), p[2].get<double>());
+  }
+  for (auto s : j["scalars"]) {
+    scalars->InsertNextValue(s[0].get<double>());
+  }
+  polyData->SetPoints(points);
+  polyData->GetPointData()->AddArray(scalars);
+  return polyData;
+}
+
+void Constraints::addPlane(const vnl_vector<double>& a, const vnl_vector<double>& b, const vnl_vector<double>& c) {
   // See http://mathworld.wolfram.com/Plane.html, for example
   vnl_vector<double> q;
   if (DIMENSION == 3) {
@@ -28,7 +83,7 @@ void Constraints::addPlane(const vnl_vector<double> &a, const vnl_vector<double>
   }
 }
 
-void Constraints::addSphere(const vnl_vector_fixed<double, DIMENSION> &v, double r) {
+void Constraints::addSphere(const vnl_vector_fixed<double, DIMENSION>& v, double r) {
   Eigen::Vector3d c;
   c(0) = v[0];
   c(1) = v[1];
@@ -40,11 +95,11 @@ void Constraints::addSphere(const vnl_vector_fixed<double, DIMENSION> &v, double
   active_ = true;
 }
 
-bool Constraints::transformConstraints(const vnl_matrix_fixed<double, 4, 4> &transform) {
+bool Constraints::transformConstraints(const vnl_matrix_fixed<double, 4, 4>& transform) {
   return transformPlanes(transform) & true;
 }
 
-bool Constraints::transformPlanes(const vnl_matrix_fixed<double, 4, 4> &transform) {
+bool Constraints::transformPlanes(const vnl_matrix_fixed<double, 4, 4>& transform) {
   std::cout << "Transforming planes" << transform << std::endl;
 
   // Convert vnl_matrix to Eigen Matrix
@@ -96,11 +151,11 @@ bool Constraints::transformPlanes(const vnl_matrix_fixed<double, 4, 4> &transfor
   return true;
 }
 
-std::stringstream Constraints::applyBoundaryConstraints(vnl_vector_fixed<double, 3> &gradE, const Point3 &pos) {
+std::stringstream Constraints::applyBoundaryConstraints(vnl_vector_fixed<double, 3>& gradE, const Point3& pos) {
   return applyPlaneConstraints(gradE, pos);
 }
 
-std::stringstream Constraints::applyBoundaryConstraints(vnl_vector_fixed<float, 3> &gradE, const Point3 &pos) {
+std::stringstream Constraints::applyBoundaryConstraints(vnl_vector_fixed<float, 3>& gradE, const Point3& pos) {
   vnl_vector_fixed<double, 3> gradD;
   gradD[0] = double(gradE[0]);
   gradD[1] = double(gradE[1]);
@@ -125,7 +180,7 @@ Eigen::Vector3d Constraints::linePlaneIntersect(Eigen::Vector3d n, Eigen::Vector
 }
 
 bool Constraints::PlanePlaneIntersect(Eigen::Vector3d n1, Eigen::Vector3d p1, Eigen::Vector3d n2, Eigen::Vector3d p2,
-                                      Eigen::Vector3d &l0_result, Eigen::Vector3d &l1_result) {
+                                      Eigen::Vector3d& l0_result, Eigen::Vector3d& l1_result) {
   Eigen::Vector4d pl1;
   pl1(0) = n1(0);
   pl1(1) = n1(1);
@@ -159,7 +214,7 @@ bool Constraints::PlanePlaneIntersect(Eigen::Vector3d n1, Eigen::Vector3d p1, Ei
 // This function implementation performs a series of projections onto planes such that at the end, the gradient update
 // is close to the original(<45 degrees) and the magnitude is less than or equal to the original. Read comments for more
 // information.
-std::stringstream Constraints::applyPlaneConstraints(vnl_vector_fixed<double, 3> &gradE, const Point3 &pos) {
+std::stringstream Constraints::applyPlaneConstraints(vnl_vector_fixed<double, 3>& gradE, const Point3& pos) {
   // Error offset to account for precision error
   double eps = 1e-10;
 
@@ -361,7 +416,7 @@ std::stringstream Constraints::applyPlaneConstraints(vnl_vector_fixed<double, 3>
   return stream;
 }
 
-bool Constraints::isAnyViolated(const Point3 &pos) {
+bool Constraints::isAnyViolated(const Point3& pos) {
   Eigen::Vector3d pt;
   pt(0) = pos[0];
   pt(1) = pos[1];
@@ -405,7 +460,7 @@ void Constraints::printAll() {
   }
 }
 
-std::string Constraints::violationReport(const Point3 &pos) {
+std::string Constraints::violationReport(const Point3& pos) {
   Eigen::Vector3d pt;
   pt(0) = pos[0];
   pt(1) = pos[1];
@@ -431,7 +486,7 @@ std::string Constraints::violationReport(const Point3 &pos) {
   return stream.str();
 }
 
-std::vector<std::vector<double>> Constraints::violationReportData(const Point3 &pos) {
+std::vector<std::vector<double>> Constraints::violationReportData(const Point3& pos) {
   std::vector<std::vector<double>> alls;
   Eigen::Vector3d pt;
   pt(0) = pos[0];
@@ -456,7 +511,7 @@ std::vector<std::vector<double>> Constraints::violationReportData(const Point3 &
   return alls;
 }
 
-vnl_vector_fixed<double, 3> Constraints::constraintsGradient(const Point3 &pos) const {
+vnl_vector_fixed<double, 3> Constraints::constraintsGradient(const Point3& pos) const {
   Eigen::Vector3d pt;
   pt(0) = pos[0];
   pt(1) = pos[1];
@@ -478,7 +533,7 @@ vnl_vector_fixed<double, 3> Constraints::constraintsGradient(const Point3 &pos) 
   return gradE;
 }
 
-vnl_vector_fixed<double, 3> Constraints::constraintsLagrangianGradient(const Point3 &pos, const Point3 &prepos,
+vnl_vector_fixed<double, 3> Constraints::constraintsLagrangianGradient(const Point3& pos, const Point3& prepos,
                                                                        double C) {
   Eigen::Vector3d pt;
   pt(0) = pos[0];
@@ -489,7 +544,7 @@ vnl_vector_fixed<double, 3> Constraints::constraintsLagrangianGradient(const Poi
   prept(1) = prepos[1];
   prept(2) = prepos[2];
   Eigen::Vector3d grad = Eigen::Vector3d(0, 0, 0);
-  //std::stringstream stream;
+  // std::stringstream stream;
   for (size_t i = 0; i < planeConstraints_.size(); i++) {
     // if(planeConsts[i].ConstraintEval(pt)>0) stream << "CuttingPlane " << i << "/" << planeConsts.size() << ": "
     // << planeConsts[i].LagragianGradient(pt, C).transpose() << " ::: " << planeConsts[i].ConstraintEval(pt) <<
@@ -506,8 +561,8 @@ vnl_vector_fixed<double, 3> Constraints::constraintsLagrangianGradient(const Poi
   for (size_t i = 0; i < 3; i++) {
     gradE[i] = grad(i);
   }
-  //stream << "gradE " << gradE << std::endl;
-  // std::cout << stream.str();
+  // stream << "gradE " << gradE << std::endl;
+  //  std::cout << stream.str();
   return gradE;
 }
 
@@ -531,7 +586,7 @@ void Constraints::InitializeLagrangianParameters(double lambda, double mu, doubl
 }
 
 //-----------------------------------------------------------------------------
-void Constraints::UpdateZs(const Point3 &pos, double C) {
+void Constraints::UpdateZs(const Point3& pos, double C) {
   Eigen::Vector3d pt;
   pt(0) = pos[0];
   pt(1) = pos[1];
@@ -548,7 +603,7 @@ void Constraints::UpdateZs(const Point3 &pos, double C) {
 }
 
 //-----------------------------------------------------------------------------
-void Constraints::UpdateMus(const Point3 &pos, double C) {
+void Constraints::UpdateMus(const Point3& pos, double C) {
   Eigen::Vector3d pt;
   pt(0) = pos[0];
   pt(1) = pos[1];
@@ -609,7 +664,7 @@ bool Constraints::applyPlaneConstraints(vnl_vector_fixed<double, 3> &gradE, cons
 */
 
 //-----------------------------------------------------------------------------
-void Constraints::Read(std::string filename) {
+void Constraints::read(std::string filename) {
   std::ifstream in(filename);
   if (!in.good()) {
     throw std::runtime_error("Unable to open " + filename + " for reading");
@@ -619,7 +674,7 @@ void Constraints::Read(std::string filename) {
     in >> j;
     planeConstraints_.clear();
     if (j.contains("planes")) {
-      for (const auto &planeJson : j["planes"]) {
+      for (const auto& planeJson : j["planes"]) {
         PlaneConstraint plane;
         if (planeJson.contains("points")) {
           for (auto p : planeJson["points"]) {
@@ -635,29 +690,33 @@ void Constraints::Read(std::string filename) {
     }
     if (j.contains("free_form_constraints")) {
       auto ffcJson = j["free_form_constraints"];
-      for (const auto &boundaryJson : ffcJson["boundaries"]) {
-        std::vector<Eigen::Vector3d> boundary;
-        for (auto p : boundaryJson["points"]) {
-          boundary.push_back({p[0].get<double>(), p[1].get<double>(), p[2].get<double>()});
+      if (j.contains("field")) {  // new constraints (field storage)
+        freeFormConstraint_.setInoutPolyData(get_polydata_from_json_field(j["field"]));
+      } else {  // old constraints (boundary/query point)
+        for (const auto& boundaryJson : ffcJson["boundaries"]) {
+          std::vector<Eigen::Vector3d> boundary;
+          for (auto p : boundaryJson["points"]) {
+            boundary.push_back({p[0].get<double>(), p[1].get<double>(), p[2].get<double>()});
+          }
+          freeFormConstraint_.boundaries().push_back(boundary);
         }
-        freeFormConstraint_.boundaries().push_back(boundary);
+        auto p = ffcJson["query_point"];
+        freeFormConstraint_.setQueryPoint({p[0].get<double>(), p[1].get<double>(), p[2].get<double>()});
       }
-      auto p = ffcJson["query_point"];
-      freeFormConstraint_.setQueryPoint({p[0].get<double>(), p[1].get<double>(), p[2].get<double>()});
     }
-  } catch (json::exception &e) {
+  } catch (json::exception& e) {
     throw std::runtime_error("Unabled to parse constraint file " + filename + " : " + e.what());
   }
 }
 
 //-----------------------------------------------------------------------------
-void Constraints::Write(std::string filename) {
+void Constraints::write(std::string filename) {
   json planes;
   std::vector<json> planeJsons;
-  for (auto &plane : planeConstraints_) {
+  for (auto& plane : planeConstraints_) {
     json planeJson;
     std::vector<json> points;
-    for (auto &point : plane.points()) {
+    for (auto& point : plane.points()) {
       points.push_back({point[0], point[1], point[2]});
     }
     planeJson["points"] = points;
@@ -670,14 +729,17 @@ void Constraints::Write(std::string filename) {
   }
 
   freeFormConstraint_.computeBoundaries();
+  freeFormConstraint_.createInoutPolyData();
+
+  j["field"] = get_json_field(freeFormConstraint_.getInoutPolyData());
 
   if (!freeFormConstraint_.boundaries().empty()) {
     json ffcJson;
     std::vector<json> boundariesJson;
-    for (const auto &boundary : freeFormConstraint_.boundaries()) {
+    for (const auto& boundary : freeFormConstraint_.boundaries()) {
       json boundaryJson;
       std::vector<json> points;
-      for (const auto &point : boundary) {
+      for (const auto& point : boundary) {
         points.push_back({point[0], point[1], point[2]});
       }
       boundaryJson["points"] = points;
@@ -699,7 +761,7 @@ void Constraints::Write(std::string filename) {
 }
 
 //-----------------------------------------------------------------------------
-FreeFormConstraint &Constraints::getFreeformConstraint() { return freeFormConstraint_; }
+FreeFormConstraint& Constraints::getFreeformConstraint() { return freeFormConstraint_; }
 
 //-----------------------------------------------------------------------------
 bool Constraints::hasConstraints() {
@@ -715,8 +777,7 @@ bool Constraints::hasConstraints() {
 }
 
 //-----------------------------------------------------------------------------
-void Constraints::clipMesh(Mesh &mesh)
-{
+void Constraints::clipMesh(Mesh& mesh) {
   for (auto& plane : getPlaneConstraints()) {
     mesh.clip(plane.getVTKPlane());
   }
