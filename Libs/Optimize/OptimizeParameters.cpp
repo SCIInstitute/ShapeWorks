@@ -391,7 +391,7 @@ bool OptimizeParameters::set_up_optimize(Optimize *optimize) {
 
         auto& ffc = constraint.getFreeformConstraint();
         if (ffc.isSet()) {
-          optimize->GetSampler()->AddFreeFormConstraint(domain_count, ffc.boundaries(), ffc.getQueryPoint());
+          optimize->GetSampler()->AddFreeFormConstraint(domain_count, ffc);
         }
       }
 

@@ -383,14 +383,11 @@ void Sampler::AddSphere(unsigned int i, vnl_vector_fixed<double, Dimension>& c, 
   }
 }
 
-void Sampler::AddFreeFormConstraint(unsigned int i, const std::vector<std::vector<Eigen::Vector3d> > boundaries,
-                                    const Eigen::Vector3d query) {
-  if (m_FFCs.size() < i + 1) {
-    m_FFCs.resize(i + 1);
+void Sampler::AddFreeFormConstraint(int domain, const FreeFormConstraint &ffc) {
+  if (m_FFCs.size() < domain + 1) {
+    m_FFCs.resize(domain + 1);
   }
-
-  m_FFCs[i].boundaries = boundaries;
-  m_FFCs[i].query = query;
+  m_FFCs[domain] = ffc;
 }
 
 void Sampler::AddImage(ImageType::Pointer image, double narrow_band, std::string name) {
@@ -419,14 +416,13 @@ bool Sampler::initialize_ffcs(size_t dom) {
   auto mesh = std::make_shared<Mesh>(m_meshes[dom]);
   if (m_verbosity >= 1) std::cout << "dom " << dom << " point count " << mesh->numPoints() << " faces " << mesh->numFaces() << std::endl;
 
-  if (m_FFCs[dom].boundaries.size() > 0) {
-    if (m_verbosity >= 1) {
-      std::cout << "Splitting mesh FFC for domain " << dom << " shape with query point "
-                << m_FFCs[dom].query.transpose() << std::endl;
-    }
-    mesh->prepareFFCFields(m_FFCs[dom].boundaries, m_FFCs[dom].query);
+  if (m_FFCs[dom].isSet()) {
     this->m_DomainList[dom]->GetConstraints()->addFreeFormConstraint(mesh);
+    m_FFCs[dom].
   }
+
+  // todo, initialize ffc gradient fields
+
 
 
 #if defined(VIZFFC)

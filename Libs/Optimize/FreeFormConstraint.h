@@ -69,7 +69,11 @@ class FreeFormConstraint : public Constraint {
   //! Reset to initial state
   void reset();
 
+  void computeGradientFields(std::shared_ptr<Mesh> mesh);
+
  private:
+
+  vtkFloatArray* getInOutScalars();
   vtkFloatArray* createFFCPaint(vtkSmartPointer<vtkPolyData> polyData);
 
   std::shared_ptr<shapeworks::Mesh> mesh_;

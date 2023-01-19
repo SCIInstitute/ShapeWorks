@@ -784,8 +784,8 @@ void Constraints::clipMesh(Mesh& mesh) {
 
   if (getFreeformConstraint().isSet()) {
     auto& ffc = getFreeformConstraint();
-    mesh.prepareFFCFields(ffc.boundaries(), ffc.getQueryPoint(), true);
-    mesh = Mesh(mesh.clipByField("inout", 1.0));
+    ffc.applyToPolyData(mesh.getVTKMesh());
+    mesh = Mesh(mesh.clipByField("ffc_paint", 1.0));
   }
 }
 

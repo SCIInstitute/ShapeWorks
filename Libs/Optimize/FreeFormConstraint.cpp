@@ -3,6 +3,7 @@
 #include <vtkContourFilter.h>
 #include <vtkContourLoopExtraction.h>
 #include <vtkFloatArray.h>
+#include <vtkKdTreePointLocator.h>
 #include <vtkPointData.h>
 
 namespace shapeworks {
@@ -30,7 +31,7 @@ void FreeFormConstraint::setDefinition(vtkSmartPointer<vtkPolyData> polyData) {
 void FreeFormConstraint::applyToPolyData(vtkSmartPointer<vtkPolyData> polyData) {
   Mesh mesh(polyData);
 
-  if (boundaries_.empty()) {
+  if (!inoutPolyData_) {
     auto array = createFFCPaint(polyData);
     if (!painted_) {
       array->FillComponent(0, 1.0);
@@ -38,15 +39,22 @@ void FreeFormConstraint::applyToPolyData(vtkSmartPointer<vtkPolyData> polyData) 
     return;
   }
 
-  mesh.prepareFFCFields(boundaries_, queryPoint_, true);
-  auto inout = mesh.getField("inout", Mesh::FieldType::Point);
+  vtkFloatArray* inout = vtkFloatArray::SafeDownCast(inoutPolyData_->GetPointData()->GetArray("ffc_paint"));
 
   auto array = createFFCPaint(polyData);
   array->FillComponent(0, 1.0);
+
+  // create a kd tree point locator
+  vtkSmartPointer<vtkKdTreePointLocator> kdTree = vtkSmartPointer<vtkKdTreePointLocator>::New();
+  kdTree->SetDataSet(inoutPolyData_);
+  kdTree->BuildLocator();
+
+  // iterate over all points in polyData and find the closest point in the kd tree
   for (int i = 0; i < polyData->GetNumberOfPoints(); i++) {
-    double* value = inout->GetTuple(i);
-    float f = value[0];
-    array->SetTuple(i, &f);
+    double p[3];
+    polyData->GetPoint(i, p);
+    vtkIdType id = kdTree->FindClosestPoint(p);
+    array->SetTuple(i, inout->GetTuple(id));
   }
 }
 
@@ -151,6 +159,42 @@ void FreeFormConstraint::createInoutPolyData() {
   inoutPolyData_ = vtkSmartPointer<vtkPolyData>::New();
   inoutPolyData_->DeepCopy(definitionPolyData_);
 }
+
+//-----------------------------------------------------------------------------
+void FreeFormConstraint::computeGradientFields(std::shared_ptr<Mesh> mesh) {
+  applyToPolyData(mesh->getVTKMesh());
+  setDefinition(mesh->getVTKMesh());
+  computeBoundaries();
+
+
+  std::vector<size_t> boundaryVerts;
+  for (auto& boundary : boundaries_) {
+    for (auto& pos : boundary) {
+      boundaryVerts.push_back(pos);
+    }
+  }
+
+  // Extract mesh vertices and faces
+  Eigen::MatrixXd V;
+  Eigen::MatrixXi F;
+
+  vtkSmartPointer<vtkPoints> points;
+  points = mesh->getIGLMesh(V, F);
+  auto values = vtkSmartPointer<vtkDoubleArray>::New();
+  auto absvalues = setDistanceToBoundaryValueFieldForFFCs(values, points, boundaryVerts, getInOutScalars(), V, F);
+  mesh->getVTKMesh()->GetPointData()->SetActiveScalars("value");
+  std::vector<Eigen::Matrix3d> face_grad = mesh->setGradientFieldForFFCs(absvalues, V, F);
+}
+
+//-----------------------------------------------------------------------------
+vtkFloatArray* FreeFormConstraint::getInOutScalars() {
+  if (!inoutPolyData_) {
+    return nullptr;
+  }
+  vtkFloatArray* array = vtkFloatArray::SafeDownCast(inoutPolyData_->GetPointData()->GetArray("ffc_paint"));
+  return array;
+}
+
 //-----------------------------------------------------------------------------
 
 }  // namespace shapeworks

@@ -68,12 +68,6 @@ public:
     double radius;
   };
 
-  /** Convenient typedef for storing free form constraint information */
-  struct FFCType {
-     std::vector< std::vector< Eigen::Vector3d > > boundaries;
-     Eigen::Vector3d query;
-  };
-
   /** Returns the particle system used in the surface sampling. */
   itkGetObjectMacro(ParticleSystem, itk::ParticleSystem);
 
@@ -177,9 +171,7 @@ public:
                        const vnl_vector_fixed<double, Dimension>& va,
                        const vnl_vector_fixed<double, Dimension>& vb,
                        const vnl_vector_fixed<double, Dimension>& vc);
-  void AddFreeFormConstraint(unsigned int i,
-                             const std::vector< std::vector< Eigen::Vector3d > > boundaries,
-                             const Eigen::Vector3d query);
+  void AddFreeFormConstraint(int domain, const FreeFormConstraint &ffc);
 
   /** Transform a cutting plane based on procrustes transformation */
   void TransformCuttingPlanes(unsigned int i);
@@ -452,7 +444,7 @@ public:
 
   }
 
-  std::vector<FFCType> GetFFCs() { return m_FFCs; }
+  std::vector<FreeFormConstraint> GetFFCs() { return m_FFCs; }
 
   void SetMeshFFCMode(bool mesh_ffc_mode) {m_meshFFCMode = mesh_ffc_mode;}
 
@@ -548,7 +540,7 @@ private:
   std::string m_PrefixTransformFile;
   std::vector<std::vector<CuttingPlaneType>> m_CuttingPlanes;
   std::vector<std::vector<SphereType>> m_Spheres;
-  std::vector<FFCType> m_FFCs;
+  std::vector<FreeFormConstraint> m_FFCs;
   std::vector<vtkSmartPointer<vtkPolyData>> m_meshes;
   bool m_meshFFCMode = false;
 

@@ -238,6 +238,8 @@ class Mesh {
   bool prepareFFCFields(std::vector<std::vector<Eigen::Vector3d>> boundaries, Eigen::Vector3d query,
                         bool onlyGenerateInOut = false);
 
+  void computeFFCGradients(vtkSmartPointer<vtkDoubleArray> inout);
+
   /// Gets values for FFCs
   double getFFCValue(Eigen::Vector3d query) const;
 

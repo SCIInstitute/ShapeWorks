@@ -1393,6 +1393,7 @@ bool Mesh::prepareFFCFields(std::vector<std::vector<Eigen::Vector3d>> boundaries
       auto absvalues = setDistanceToBoundaryValueFieldForFFCs(values, points, boundaryVerts, inout, V, F);
       this->poly_data_->GetPointData()->SetActiveScalars("value");
       std::vector<Eigen::Matrix3d> face_grad = this->setGradientFieldForFFCs(absvalues, V, F);
+
     }
 
   }  // Per boundary for loop end
@@ -1716,6 +1717,19 @@ Mesh& Mesh::operator+=(const Mesh& otherMesh) {
 
   this->invalidateLocators();
   return *this;
+}
+
+void Mesh::computeFFCGradients(vtkSmartPointer<vtkDoubleArray> inout){
+  // Extract mesh vertices and faces
+  Eigen::MatrixXd V;
+  Eigen::MatrixXi F;
+
+  vtkSmartPointer<vtkPoints> points;
+  points = getIGLMesh(V, F);
+  auto values = vtkSmartPointer<vtkDoubleArray>::New();
+  auto absvalues = setDistanceToBoundaryValueFieldForFFCs(values, points, boundaryVerts, inout, V, F);
+  this->poly_data_->GetPointData()->SetActiveScalars("value");
+  std::vector<Eigen::Matrix3d> face_grad = this->setGradientFieldForFFCs(absvalues, V, F);
 }
 
 }  // namespace shapeworks
