@@ -149,6 +149,7 @@ void FreeFormConstraint::reset() {
     auto array = createFFCPaint(definitionPolyData_);
     array->FillComponent(0, 1.0);
   }
+  inoutPolyData_ = nullptr;
   boundaries_.clear();
   painted_ = false;
 }

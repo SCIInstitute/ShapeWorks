@@ -1162,6 +1162,10 @@ CompareSettings Session::get_compare_settings() { return compare_settings_; }
 void Session::trigger_repaint() { Q_EMIT repaint(); }
 
 //---------------------------------------------------------------------------
+void Session::trigger_reinsert_shapes() { Q_EMIT reinsert_shapes(); }
+
+
+//---------------------------------------------------------------------------
 void Session::set_display_mode(DisplayMode mode) {
   if (!is_loading()) {
     params_.set("view_state", display_mode_to_string(mode));

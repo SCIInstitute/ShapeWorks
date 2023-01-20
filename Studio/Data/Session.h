@@ -233,7 +233,10 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   void set_compare_settings(CompareSettings settings);
   CompareSettings get_compare_settings();
 
+
   void trigger_repaint();
+
+  void trigger_reinsert_shapes();
 
   /// set display mode (original, groomed, reconstructed)
   void set_display_mode(DisplayMode mode);
@@ -265,6 +268,7 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   void image_slice_settings_changed();
   void ffc_paint_mode_changed();
   void repaint();
+  void reinsert_shapes();
 
  public:
   // constants

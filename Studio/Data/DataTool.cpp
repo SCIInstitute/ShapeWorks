@@ -225,6 +225,7 @@ void DataTool::delete_ffc_clicked() {
     ffc.reset();
   }
   session_->trigger_ffc_changed();
+  session_->trigger_reinsert_shapes();
   session_->trigger_repaint();
 }
 
