@@ -1,11 +1,14 @@
 #include "FreeFormConstraint.h"
 
 #include <Logging.h>
+#include <vtkClipPolyData.h>
 #include <vtkContourFilter.h>
 #include <vtkContourLoopExtraction.h>
+#include <vtkDijkstraGraphGeodesicPath.h>
 #include <vtkFloatArray.h>
 #include <vtkKdTreePointLocator.h>
 #include <vtkPointData.h>
+#include <vtkSelectPolyData.h>
 
 // libigl
 #include <igl/cotmatrix.h>
@@ -46,12 +49,16 @@ void FreeFormConstraint::setDefinition(vtkSmartPointer<vtkPolyData> polyData) {
 void FreeFormConstraint::applyToPolyData(vtkSmartPointer<vtkPolyData> polyData) {
   Mesh mesh(polyData);
 
-  if (!inoutPolyData_) {
+  if (!inoutPolyData_ && boundaries_.empty()) {  // nothing defined (old or new)
     auto array = createFFCPaint(polyData);
     if (!painted_) {
       array->FillComponent(0, 1.0);
     }
     return;
+  }
+
+  if (!inoutPolyData_ && !boundaries_.empty()) {  // legacy FFC definitions using only boundary/query point
+    convertLegacyFFC(polyData);
   }
 
   vtkFloatArray* inout = vtkFloatArray::SafeDownCast(inoutPolyData_->GetPointData()->GetArray("ffc_paint"));
@@ -221,11 +228,6 @@ void FreeFormConstraint::computeGradientFields(std::shared_ptr<Mesh> mesh) {
   absvalues->SetNumberOfTuples(poly_data->GetNumberOfPoints());
   absvalues->SetName("absvalues");
 
-  // std::cout << "Loading eval values for FFCs in domain " << dom << std::endl;
-
-  // debug
-  Eigen::MatrixXd C(poly_data->GetNumberOfPoints(), 3);
-
   // Load the mesh on Geometry central
   {
     using namespace geometrycentral::surface;
@@ -255,8 +257,6 @@ void FreeFormConstraint::computeGradientFields(std::shared_ptr<Mesh> mesh) {
       }
     }
   }
-
-  // std::cout << "Setting field" << std::endl;
 
   // TODO: don't set local field since user can do this if needed, and the
   // function can be const. (return vector of Fields like Mesh::distance)
@@ -353,6 +353,165 @@ std::vector<Eigen::Matrix3d> FreeFormConstraint::setGradientFieldForFFCs(std::sh
   mesh->setField("vff", vff, Mesh::Face);
 
   return face_grad;
+}
+
+void FreeFormConstraint::convertLegacyFFC(vtkSmartPointer<vtkPolyData> polyData) {
+  SW_LOG("Converting legacy FFC");
+  if (polyData->GetPointData()->GetArray("ffc_paint")) {
+    // clear out any old versions of the inout array or else they will get merged in
+    polyData->GetPointData()->RemoveArray("ffc_paint");
+  }
+
+  auto boundaries = boundaries_;
+
+  // Extract mesh vertices and faces
+  Eigen::MatrixXd V;
+  Eigen::MatrixXi F;
+
+  Mesh mesh(polyData);
+  vtkSmartPointer<vtkPoints> points;
+  points = mesh.getIGLMesh(V, F);
+
+  for (size_t bound = 0; bound < boundaries.size(); bound++) {
+    // Creating cutting loop
+    vtkPoints* selectionPoints = vtkPoints::New();
+    std::vector<size_t> boundaryVerts;
+
+    // the locator is continuously rebuilt during this function, so don't use the cached version
+    auto tmp_locator = vtkSmartPointer<vtkKdTreePointLocator>::New();
+    tmp_locator->SetDataSet(polyData);
+    tmp_locator->BuildLocator();
+
+    // Create path creator
+    auto dijkstra = vtkSmartPointer<vtkDijkstraGraphGeodesicPath>::New();
+    dijkstra->SetInputData(polyData);
+
+    vtkIdType lastId = 0;
+    for (size_t i = 0; i < boundaries[bound].size(); i++) {
+      Eigen::Vector3d pt = boundaries[bound][i];
+      double ptdob[3] = {pt[0], pt[1], pt[2]};
+      vtkIdType ptid = tmp_locator->FindClosestPoint(ptdob);
+      polyData->GetPoint(ptid, ptdob);
+
+      // Add first point in boundary
+      if (i == 0) {
+        lastId = ptid;
+        selectionPoints->InsertNextPoint(polyData->GetPoint(ptid));
+        boundaryVerts.push_back(ptid);
+      }
+
+      // If the current and last vertices are different, then add all vertices in the path to the boundaryVerts list
+      if (lastId != ptid) {
+        selectionPoints->InsertNextPoint(polyData->GetPoint(ptid));
+        boundaryVerts.push_back(ptid);
+      }
+
+      lastId = ptid;
+    }
+
+    if (selectionPoints->GetNumberOfPoints() < 3) {
+      /// TODO: log an event that this occurred.  It's not really fatal as we may be applying to a mesh where this
+      /// doesn't apply
+      continue;
+    }
+
+    auto select = vtkSmartPointer<vtkSelectPolyData>::New();
+    select->SetLoop(selectionPoints);
+    select->SetInputData(polyData);
+    select->GenerateSelectionScalarsOn();
+    select->SetSelectionModeToLargestRegion();
+
+    // Clipping mesh
+    auto selectclip = vtkSmartPointer<vtkClipPolyData>::New();
+    selectclip->SetInputConnection(select->GetOutputPort());
+    selectclip->SetValue(0.0);
+    selectclip->Update();
+
+    auto* halfmesh = selectclip->GetOutput();
+
+    if (halfmesh->GetNumberOfPoints() == 0) {
+      /// TODO: log an event that this occurred.  It's not really fatal as we may be applying to a mesh where this
+      /// doesn't apply
+      continue;
+    }
+
+    vtkSmartPointer<vtkFloatArray> inout = computeInOutForFFCs(polyData, queryPoint_, halfmesh);
+  }
+
+  setDefinition(polyData);
+  createInoutPolyData();
+}
+
+vtkSmartPointer<vtkFloatArray> FreeFormConstraint::computeInOutForFFCs(vtkSmartPointer<vtkPolyData> polyData, Eigen::Vector3d query,
+                                                                        vtkSmartPointer<vtkPolyData> halfmesh) {
+  // Finding which half is in and which is out.
+  bool halfmeshisin = true;
+  auto* arr =
+      vtkFloatArray::SafeDownCast(polyData->GetPointData()->GetArray("ffc_paint"));  // Check if an inout already exists
+
+  // Create half-mesh tree
+  auto kdhalf_locator = vtkSmartPointer<vtkKdTreePointLocator>::New();
+  kdhalf_locator->SetDataSet(halfmesh);
+  kdhalf_locator->BuildLocator();
+
+  // Create full-mesh tree
+  auto pointLocator = vtkSmartPointer<vtkKdTreePointLocator>::New();
+  pointLocator->SetDataSet(polyData);
+  pointLocator->BuildLocator();
+  
+  // Checking which mesh is closer to the query point. Recall that the query point must not necessarely lie on the mesh,
+  // so we check both the half mesh and the full mesh.
+  double querypt[3] = {query[0], query[1], query[2]};
+
+  vtkIdType halfi = kdhalf_locator->FindClosestPoint(querypt);
+  vtkIdType fulli = pointLocator->FindClosestPoint(querypt);
+
+  double halfp[3];
+  halfmesh->GetPoint(halfi, halfp);
+
+  double fullp[3];
+  polyData->GetPoint(fulli, fullp);
+
+  if (halfp[0] != fullp[0] || halfp[1] != fullp[1] || halfp[2] != fullp[2]) {
+    halfmeshisin = false;  // If the closest point in halfmesh is not the closest point in fullmesh, then halfmesh is
+                           // not the in mesh.
+  }
+
+  vtkSmartPointer<vtkFloatArray> inout = vtkSmartPointer<vtkFloatArray>::New();
+  inout->SetNumberOfComponents(1);
+  inout->SetNumberOfTuples(polyData->GetNumberOfPoints());
+  inout->SetName("ffc_paint");
+
+  for (vtkIdType i = 0; i < polyData->GetNumberOfPoints(); i++) {
+    polyData->GetPoint(i, fullp);
+
+    halfi = kdhalf_locator->FindClosestPoint(fullp);
+    halfmesh->GetPoint(halfi, halfp);
+    // std::cout << i <<  " (" << fullp[0] << " " << fullp[1] << " " << fullp[2] << ") " << halfi << " (" << halfp[0] <<
+    // " " << halfp[1] << " " << halfp[2] << " )" << std::endl;
+    bool ptinhalfmesh = false;
+    if (fullp[0] == halfp[0] && fullp[1] == halfp[1] && fullp[2] == halfp[2]) {
+      // If in halfmesh
+      ptinhalfmesh = true;
+    }
+    // The relationship becomes an xor operation between halfmeshisin and ptinhalfmesh to determine whether each point
+    // is in or out. Thus we set values for the scalar field.
+    if (!halfmeshisin ^ ptinhalfmesh) {
+      if (arr) {
+        inout->SetValue(i, std::min<float>(1.0f, arr->GetValue(i)));
+      } else {
+        inout->SetValue(i, 1.);
+      }
+    } else {
+      inout->SetValue(i, 0.);
+    }
+  }
+
+  // Setting scalar field
+  inout->SetName("ffc_paint");
+  polyData->GetPointData()->AddArray(inout);
+
+  return inout;
 }
 
 }  // namespace shapeworks

@@ -71,6 +71,12 @@ class FreeFormConstraint : public Constraint {
 
   void computeGradientFields(std::shared_ptr<Mesh> mesh);
 
+  void convertLegacyFFC(vtkSmartPointer<vtkPolyData> polyData);
+
+  /// Computes whether point is inside or outside the boundary
+  vtkSmartPointer<vtkFloatArray> computeInOutForFFCs(vtkSmartPointer<vtkPolyData> polyData, Eigen::Vector3d query,
+                                                      vtkSmartPointer<vtkPolyData> halfmesh);  // similar issues to above
+
  private:
 
   /// Computes the gradient vector field for FFCs w.r.t the boundary
