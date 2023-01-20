@@ -69,23 +69,23 @@ class FreeFormConstraint : public Constraint {
   //! Reset to initial state
   void reset();
 
+  //! Compute gradient fields for a mesh
   void computeGradientFields(std::shared_ptr<Mesh> mesh);
 
+  //! Convert legacy FFC to new format
   void convertLegacyFFC(vtkSmartPointer<vtkPolyData> polyData);
 
-  /// Computes whether point is inside or outside the boundary
-  vtkSmartPointer<vtkFloatArray> computeInOutForFFCs(vtkSmartPointer<vtkPolyData> polyData, Eigen::Vector3d query,
-                                                      vtkSmartPointer<vtkPolyData> halfmesh);  // similar issues to above
 
  private:
 
-  /// Computes the gradient vector field for FFCs w.r.t the boundary
-  std::vector<Eigen::Matrix3d> setGradientFieldForFFCs(std::shared_ptr<Mesh> mesh, vtkSmartPointer<vtkDoubleArray> absvalues, Eigen::MatrixXd V,
+  //! Computes whether point is inside or outside the boundary
+  vtkSmartPointer<vtkFloatArray> computeInOutForFFCs(vtkSmartPointer<vtkPolyData> polyData, Eigen::Vector3d query,
+                                                     vtkSmartPointer<vtkPolyData> halfmesh);
+
+  //! Computes the gradient vector field for FFCs w.r.t the boundary
+  std::vector<Eigen::Matrix3d> setGradientFieldForFFCs(std::shared_ptr<Mesh> mesh,
+                                                       vtkSmartPointer<vtkDoubleArray> absvalues, Eigen::MatrixXd V,
                                                        Eigen::MatrixXi F);
-
-  /// Computes scalar distance field w.r.t. the boundary
-  void setDistanceToBoundaryValueFieldForFFCs(std::shared_ptr<Mesh> mesh);
-
 
   vtkFloatArray* getInOutScalars();
   vtkFloatArray* createFFCPaint(vtkSmartPointer<vtkPolyData> polyData);

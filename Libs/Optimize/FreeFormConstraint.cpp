@@ -442,8 +442,9 @@ void FreeFormConstraint::convertLegacyFFC(vtkSmartPointer<vtkPolyData> polyData)
   createInoutPolyData();
 }
 
-vtkSmartPointer<vtkFloatArray> FreeFormConstraint::computeInOutForFFCs(vtkSmartPointer<vtkPolyData> polyData, Eigen::Vector3d query,
-                                                                        vtkSmartPointer<vtkPolyData> halfmesh) {
+vtkSmartPointer<vtkFloatArray> FreeFormConstraint::computeInOutForFFCs(vtkSmartPointer<vtkPolyData> polyData,
+                                                                       Eigen::Vector3d query,
+                                                                       vtkSmartPointer<vtkPolyData> halfmesh) {
   // Finding which half is in and which is out.
   bool halfmeshisin = true;
   auto* arr =
@@ -458,7 +459,7 @@ vtkSmartPointer<vtkFloatArray> FreeFormConstraint::computeInOutForFFCs(vtkSmartP
   auto pointLocator = vtkSmartPointer<vtkKdTreePointLocator>::New();
   pointLocator->SetDataSet(polyData);
   pointLocator->BuildLocator();
-  
+
   // Checking which mesh is closer to the query point. Recall that the query point must not necessarely lie on the mesh,
   // so we check both the half mesh and the full mesh.
   double querypt[3] = {query[0], query[1], query[2]};
