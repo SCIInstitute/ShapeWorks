@@ -321,7 +321,7 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
 
   bool ffc_painting_active_ = false;
   bool ffc_painting_inclusive_mode_ = false;
-  double ffc_paint_size = 50;
+  double ffc_paint_size_ = 50;
 
   bool is_loading_ = false;
   CompareSettings compare_settings_;

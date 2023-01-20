@@ -1114,12 +1114,12 @@ bool Session::get_ffc_paint_mode_inclusive() { return ffc_painting_inclusive_mod
 
 //---------------------------------------------------------------------------
 void Session::set_ffc_paint_size(double size) {
-  ffc_paint_size = size;
+  ffc_paint_size_ = size;
   Q_EMIT ffc_paint_mode_changed();
 }
 
 //---------------------------------------------------------------------------
-double Session::get_ffc_paint_size() { return ffc_paint_size; }
+double Session::get_ffc_paint_size() { return ffc_paint_size_; }
 
 //---------------------------------------------------------------------------
 bool Session::get_show_good_bad_particles() { return params_.get("show_good_bad_particles", false); }

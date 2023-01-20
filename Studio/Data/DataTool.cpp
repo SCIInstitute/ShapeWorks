@@ -2,9 +2,9 @@
 #include <Data/LandmarkItemDelegate.h>
 #include <Data/LandmarkTableModel.h>
 #include <Data/Session.h>
-#include <Shape.h>
 #include <Data/ShapeWorksWorker.h>
 #include <Logging.h>
+#include <Shape.h>
 #include <StudioMesh.h>
 #include <ui_DataTool.h>
 
@@ -42,7 +42,6 @@ DataTool::DataTool(Preferences& prefs) : preferences_(prefs) {
 
   connect(ui_->landmark_domain_box_, qOverload<int>(&QComboBox::currentIndexChanged), this,
           &DataTool::landmark_domain_changed);
-  connect(ui_->ffc_active_, &QCheckBox::toggled, this, &DataTool::handle_ffc_active_changed);
 
   connect(ui_->delete_plane_, &QPushButton::clicked, this, &DataTool::delete_planes_clicked);
   connect(ui_->delete_ffc_, &QPushButton::clicked, this, &DataTool::delete_ffc_clicked);
@@ -96,6 +95,14 @@ DataTool::~DataTool() {}
 //---------------------------------------------------------------------------
 void DataTool::set_session(QSharedPointer<Session> session) {
   session_ = session;
+
+  // set (reset) values
+  ui_->ffc_brush_size_->setValue(static_cast<int>(session->get_ffc_paint_size()));
+  ui_->ffc_brush_size_->setSliderPosition(static_cast<int>(session->get_ffc_paint_size()));
+  ui_->ffc_included_mode_->setChecked(session->get_ffc_paint_mode_inclusive());
+  ui_->ffc_excluded_mode_->setChecked(!session->get_ffc_paint_mode_inclusive());
+  ui_->ffc_active_->setChecked(session->get_ffc_paint_active());
+
   connect(ui_->landmark_drag_mode, &QCheckBox::stateChanged, session_.data(), &Session::set_landmark_drag_mode);
   connect(ui_->show_landmark_labels, &QCheckBox::stateChanged, session_.data(), &Session::set_show_landmark_labels);
   connect(session.data(), &Session::planes_changed, this, &DataTool::update_plane_table);
@@ -104,6 +111,7 @@ void DataTool::set_session(QSharedPointer<Session> session) {
 
   connect(ui_->ffc_brush_size_, &QSlider::valueChanged, session.data(), &Session::set_ffc_paint_size);
   connect(ui_->ffc_included_mode_, &QRadioButton::toggled, session.data(), &Session::set_ffc_paint_mode_inclusive);
+  connect(ui_->ffc_active_, &QCheckBox::toggled, session.data(), &Session::set_ffc_paint_active);
 
   update_table();
   handle_landmark_mode_changed();
@@ -429,12 +437,6 @@ void DataTool::handle_constraints_mode_changed() {
   if (ui_->landmarks_open_button->isChecked() && ui_->constraints_open_button->isChecked()) {
     ui_->landmarks_open_button->setChecked(false);
   }
-}
-
-//---------------------------------------------------------------------------
-void DataTool::handle_ffc_active_changed() {
-  // maybe just direct connect unless we add something else?
-  session_->set_ffc_paint_active(ui_->ffc_active_->isChecked());
 }
 
 //---------------------------------------------------------------------------
