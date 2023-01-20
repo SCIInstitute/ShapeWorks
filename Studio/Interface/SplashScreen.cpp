@@ -57,8 +57,10 @@ void SplashScreen::quit() { reinterpret_cast<QWidget*>(this->parent())->close();
 
 //---------------------------------------------------------------------------
 void SplashScreen::open_existing() {
-  QString filename = QFileDialog::getOpenFileName(this, tr("Open Project..."), this->preferences_.get_last_directory(),
-                                                  tr("XLSX files (*.xlsx)"));
+  auto filter = tr("ShapeWorks Project (*.swproj *.xlsx)");
+
+  QString filename =
+      QFileDialog::getOpenFileName(this, tr("Open Project..."), preferences_.get_last_directory(), filter);
   if (filename.isEmpty()) {
     return;
   }

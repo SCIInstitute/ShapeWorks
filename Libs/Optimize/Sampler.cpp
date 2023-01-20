@@ -418,12 +418,8 @@ bool Sampler::initialize_ffcs(size_t dom) {
 
   if (m_FFCs[dom].isSet()) {
     this->m_DomainList[dom]->GetConstraints()->addFreeFormConstraint(mesh);
-    m_FFCs[dom].
+    m_FFCs[dom].computeGradientFields(mesh);
   }
-
-  // todo, initialize ffc gradient fields
-
-
 
 #if defined(VIZFFC)
   MeshUtils mutil;

@@ -73,6 +73,14 @@ class FreeFormConstraint : public Constraint {
 
  private:
 
+  /// Computes the gradient vector field for FFCs w.r.t the boundary
+  std::vector<Eigen::Matrix3d> setGradientFieldForFFCs(std::shared_ptr<Mesh> mesh, vtkSmartPointer<vtkDoubleArray> absvalues, Eigen::MatrixXd V,
+                                                       Eigen::MatrixXi F);
+
+  /// Computes scalar distance field w.r.t. the boundary
+  void setDistanceToBoundaryValueFieldForFFCs(std::shared_ptr<Mesh> mesh);
+
+
   vtkFloatArray* getInOutScalars();
   vtkFloatArray* createFFCPaint(vtkSmartPointer<vtkPolyData> polyData);
 

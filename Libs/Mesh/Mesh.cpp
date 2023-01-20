@@ -1390,9 +1390,9 @@ bool Mesh::prepareFFCFields(std::vector<std::vector<Eigen::Vector3d>> boundaries
 
     if (!onlyGenerateInOut) {
       auto values = vtkSmartPointer<vtkDoubleArray>::New();
-      auto absvalues = setDistanceToBoundaryValueFieldForFFCs(values, points, boundaryVerts, inout, V, F);
+      //auto absvalues = setDistanceToBoundaryValueFieldForFFCs(values, points, boundaryVerts, inout, V, F);
       this->poly_data_->GetPointData()->SetActiveScalars("value");
-      std::vector<Eigen::Matrix3d> face_grad = this->setGradientFieldForFFCs(absvalues, V, F);
+      //std::vector<Eigen::Matrix3d> face_grad = this->setGradientFieldForFFCs(absvalues, V, F);
 
     }
 
@@ -1553,155 +1553,6 @@ vtkSmartPointer<vtkDoubleArray> Mesh::computeInOutForFFCs(Eigen::Vector3d query,
   return inout;
 }
 
-vtkSmartPointer<vtkDoubleArray> Mesh::setDistanceToBoundaryValueFieldForFFCs(vtkSmartPointer<vtkDoubleArray> values,
-                                                                             vtkSmartPointer<vtkPoints> points,
-                                                                             std::vector<size_t> boundaryVerts,
-                                                                             vtkSmartPointer<vtkDoubleArray> inout,
-                                                                             Eigen::MatrixXd V, Eigen::MatrixXi F) {
-  auto* arr = vtkDoubleArray::SafeDownCast(
-      poly_data_->GetPointData()->GetArray("value"));  // Check if a value field already exists
-
-  values->SetNumberOfComponents(1);
-  values->SetNumberOfTuples(this->poly_data_->GetNumberOfPoints());
-  values->SetName("values");
-  for (size_t i = 0; i < points->GetNumberOfPoints(); i++) {
-    values->SetValue(i, INFINITY);
-  }
-  vtkSmartPointer<vtkDoubleArray> absvalues = vtkSmartPointer<vtkDoubleArray>::New();
-  absvalues->SetNumberOfComponents(1);
-  absvalues->SetNumberOfTuples(this->poly_data_->GetNumberOfPoints());
-  absvalues->SetName("absvalues");
-
-  // std::cout << "Loading eval values for FFCs in domain " << dom << std::endl;
-
-  // debug
-  Eigen::MatrixXd C(this->poly_data_->GetNumberOfPoints(), 3);
-
-  // Load the mesh on Geometry central
-  {
-    using namespace geometrycentral::surface;
-    std::unique_ptr<SurfaceMesh> gcmesh;
-    std::unique_ptr<VertexPositionGeometry> gcgeometry;
-    std::tie(gcmesh, gcgeometry) = makeSurfaceMeshAndGeometry(V, F);
-    HeatMethodDistanceSolver heatSolver(*gcgeometry);
-
-    // Some vertices as source set
-    std::vector<Vertex> sourceVerts;
-    for (size_t i = 0; i < boundaryVerts.size(); i++) {
-      sourceVerts.push_back(gcmesh->vertex(boundaryVerts[i]));
-    }
-    // Finds minimum distance to any boundary vertex from any other vertex
-    for (Vertex v : sourceVerts) {
-      VertexData<double> distToSource = heatSolver.computeDistance(v);
-      // std::cout << distToSource[0] << " (" << values->GetValue(0) << ") ";
-      for (size_t i = 0; i < points->GetNumberOfPoints(); i++) {
-        if (distToSource[i] < std::abs(values->GetValue(i))) {
-          absvalues->SetValue(i, distToSource[i]);
-          if (inout->GetValue(i) == 1.) {
-            if (arr) {
-              values->SetValue(i, std::max<double>(arr->GetValue(i), -distToSource[i]));
-            } else {
-              values->SetValue(i, -distToSource[i]);
-            }
-            C(i, 0) = -distToSource[i];
-            C(i, 1) = -distToSource[i];
-            C(i, 2) = -distToSource[i];
-          } else {
-            values->SetValue(i, distToSource[i]);
-            C(i, 0) = distToSource[i];
-            C(i, 1) = distToSource[i];
-            C(i, 2) = distToSource[i];
-          }
-        }
-      }
-    }
-  }
-
-  // std::cout << "Setting field" << std::endl;
-
-  // TODO: don't set local field since user can do this if needed, and the
-  // function can be const. (return vector of Fields like Mesh::distance)
-  this->setField("value", values, Mesh::Point);
-
-  return absvalues;
-}
-
-std::vector<Eigen::Matrix3d> Mesh::setGradientFieldForFFCs(vtkSmartPointer<vtkDoubleArray> absvalues, Eigen::MatrixXd V,
-                                                           Eigen::MatrixXi F) {
-  // Definition of gradient field
-  auto vf = vtkSmartPointer<vtkDoubleArray>::New();
-  vf->SetNumberOfComponents(3);
-  vf->SetNumberOfTuples(this->poly_data_->GetNumberOfPoints());
-  vf->SetName("vf");
-
-  // *Computing gradients for FFCs for each face
-  // Compute gradient operator
-  // std::cout << "Gradient preprocessing like in Karthik's code" << std::endl;
-  Eigen::SparseMatrix<double> G;
-  igl::grad(V, F, G);
-  // Flattened version of libigl's gradient operator
-  std::vector<Eigen::Matrix3d> face_grad;
-
-  Eigen::MatrixXd grads(this->poly_data_->GetNumberOfPoints(), 3);
-  grads.fill(0.);
-
-  // Flatten the gradient operator so we can quickly compute the gradient at a given point
-  face_grad.resize(F.rows());
-  size_t n_insertions = 0;
-  for (int k = 0; k < G.outerSize(); k++) {
-    for (Eigen::SparseMatrix<double>::InnerIterator it(G, k); it; ++it) {
-      const double val = it.value();
-      const auto r = it.row();
-      const auto c = it.col();
-
-      const auto f = r % F.rows();
-      const auto axis = r / F.rows();
-      for (int i = 0; i < 3; i++) {
-        if (F(f, i) == c) {
-          face_grad[f](axis, i) = val;
-          n_insertions++;
-          break;
-        }
-      }
-    }
-  }
-
-  // std::cout << "Computing grads" << std::endl;
-
-  // Definition of gradient field for faces
-  vtkSmartPointer<vtkDoubleArray> vff = vtkSmartPointer<vtkDoubleArray>::New();
-  vff->SetNumberOfComponents(3);
-  vff->SetNumberOfTuples(this->poly_data_->GetNumberOfCells());
-  vff->SetName("vff");
-
-  // Computes grad vec for each face
-  for (size_t i = 0; i < F.rows(); i++) {
-    const Eigen::Vector3d vert_dists(absvalues->GetValue(F(i, 0)), absvalues->GetValue(F(i, 1)),
-                                     absvalues->GetValue(F(i, 2)));
-
-    // Compute gradient of geodesics
-    const auto& G = face_grad[i];
-    Eigen::Vector3d out_grad_eigen = (G * vert_dists).rowwise().sum();
-    grads.row(F(i, 0)) += out_grad_eigen;
-    grads.row(F(i, 1)) += out_grad_eigen;
-    grads.row(F(i, 2)) += out_grad_eigen;
-    vff->SetTuple3(i, out_grad_eigen(0), out_grad_eigen(1), out_grad_eigen(2));
-    // out_grad_eigen *= geo_dist / out_grad_eigen.norm();
-  }
-
-  // Setting gradient field
-  for (size_t i = 0; i < this->poly_data_->GetNumberOfPoints(); i++) {
-    vf->SetTuple3(i, grads(i, 0), grads(i, 1), grads(i, 2));
-  }
-
-  // TODO: don't set field in this mesh since the user can do this if they want
-  // it to be part of the mesh, and the function can therefore be const.
-  this->setField("Gradient", vf, Mesh::Point);
-  this->setField("vff", vff, Mesh::Face);
-
-  return face_grad;
-}
-
 Mesh& Mesh::operator+=(const Mesh& otherMesh) {
   // Append the two meshes
   auto appendFilter = vtkSmartPointer<vtkAppendPolyData>::New();
@@ -1717,19 +1568,6 @@ Mesh& Mesh::operator+=(const Mesh& otherMesh) {
 
   this->invalidateLocators();
   return *this;
-}
-
-void Mesh::computeFFCGradients(vtkSmartPointer<vtkDoubleArray> inout){
-  // Extract mesh vertices and faces
-  Eigen::MatrixXd V;
-  Eigen::MatrixXi F;
-
-  vtkSmartPointer<vtkPoints> points;
-  points = getIGLMesh(V, F);
-  auto values = vtkSmartPointer<vtkDoubleArray>::New();
-  auto absvalues = setDistanceToBoundaryValueFieldForFFCs(values, points, boundaryVerts, inout, V, F);
-  this->poly_data_->GetPointData()->SetActiveScalars("value");
-  std::vector<Eigen::Matrix3d> face_grad = this->setGradientFieldForFFCs(absvalues, V, F);
 }
 
 }  // namespace shapeworks

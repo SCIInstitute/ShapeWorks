@@ -1,5 +1,6 @@
 #include "Constraints.h"
 
+#include <Logging.h>
 #include <vtkFloatArray.h>
 #include <vtkPointData.h>
 
@@ -27,13 +28,13 @@ static json get_json_field(vtkSmartPointer<vtkPolyData> polyData) {
   }
 
   // store scalars from inout to json
-  json scalarsJson;
   vtkFloatArray* array = vtkFloatArray::SafeDownCast(polyData->GetPointData()->GetArray("ffc_paint"));
   if (array) {
-    for (int i = 0; i < array->GetNumberOfTuples(); i++) {
-      scalarsJson[i].push_back(array->GetValue(i));
+    std::vector<int> scalars;
+    for (int i = 0; i < polyData->GetNumberOfPoints(); i++) {
+      scalars.push_back(array->GetValue(i));
     }
-    j = {{"points", pointsJson}, {"scalars", scalarsJson}};
+    j = {{"points", pointsJson}, {"scalars", scalars}};
   }
 
   return j;
@@ -53,7 +54,7 @@ static vtkSmartPointer<vtkPolyData> get_polydata_from_json_field(json j) {
     points->InsertNextPoint(p[0].get<double>(), p[1].get<double>(), p[2].get<double>());
   }
   for (auto s : j["scalars"]) {
-    scalars->InsertNextValue(s[0].get<double>());
+    scalars->InsertNextValue(s.get<float>());
   }
   polyData->SetPoints(points);
   polyData->GetPointData()->AddArray(scalars);
@@ -690,8 +691,8 @@ void Constraints::read(std::string filename) {
     }
     if (j.contains("free_form_constraints")) {
       auto ffcJson = j["free_form_constraints"];
-      if (j.contains("field")) {  // new constraints (field storage)
-        freeFormConstraint_.setInoutPolyData(get_polydata_from_json_field(j["field"]));
+      if (ffcJson.contains("field")) {  // new constraints (field storage)
+        freeFormConstraint_.setInoutPolyData(get_polydata_from_json_field(ffcJson["field"]));
       } else {  // old constraints (boundary/query point)
         for (const auto& boundaryJson : ffcJson["boundaries"]) {
           std::vector<Eigen::Vector3d> boundary;
@@ -731,25 +732,25 @@ void Constraints::write(std::string filename) {
   freeFormConstraint_.computeBoundaries();
   freeFormConstraint_.createInoutPolyData();
 
-  j["field"] = get_json_field(freeFormConstraint_.getInoutPolyData());
-
-  if (!freeFormConstraint_.boundaries().empty()) {
+  if (freeFormConstraint_.isSet()) {
     json ffcJson;
-    std::vector<json> boundariesJson;
-    for (const auto& boundary : freeFormConstraint_.boundaries()) {
-      json boundaryJson;
-      std::vector<json> points;
-      for (const auto& point : boundary) {
-        points.push_back({point[0], point[1], point[2]});
+    ffcJson["field"] = get_json_field(freeFormConstraint_.getInoutPolyData());
+    if (!freeFormConstraint_.boundaries().empty()) {
+      std::vector<json> boundariesJson;
+      for (const auto& boundary : freeFormConstraint_.boundaries()) {
+        json boundaryJson;
+        std::vector<json> points;
+        for (const auto& point : boundary) {
+          points.push_back({point[0], point[1], point[2]});
+        }
+        boundaryJson["points"] = points;
+        boundariesJson.push_back(boundaryJson);
       }
-      boundaryJson["points"] = points;
-      boundariesJson.push_back(boundaryJson);
+
+      ffcJson["boundaries"] = boundariesJson;
+      auto query = freeFormConstraint_.getQueryPoint();
+      ffcJson["query_point"] = {query[0], query[1], query[2]};
     }
-
-    ffcJson["boundaries"] = boundariesJson;
-    auto query = freeFormConstraint_.getQueryPoint();
-    ffcJson["query_point"] = {query[0], query[1], query[2]};
-
     j["free_form_constraints"] = ffcJson;
   }
 
@@ -769,10 +770,16 @@ bool Constraints::hasConstraints() {
     return true;
   }
 
-  freeFormConstraint_.computeBoundaries();
-  if (!freeFormConstraint_.boundaries().empty()) {
+  // freeFormConstraint_.computeBoundaries();
+  if (freeFormConstraint_.isSet()) {
+    SW_LOG("yes FF constraints");
     return true;
   }
+  // if (freeFormConstraint_.getInoutPolyData() != nullptr || !freeFormConstraint_.boundaries().empty()) {
+  //    SW_LOG("yes constraints");
+  //    return true;
+  //  }
+  SW_LOG("no constraints");
   return false;
 }
 
