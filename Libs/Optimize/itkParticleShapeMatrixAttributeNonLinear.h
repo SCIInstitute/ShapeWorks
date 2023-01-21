@@ -47,16 +47,13 @@ public:
     vnl_matrix<T> tmp(*m_BaseShapeMatrix); // copy existing  matrix 
     // Create new column (shape)
     m_BaseShapeMatrix->set_size(rs, cs);
-    m_BaseShapeMatrix_cache->set_size(rs, cs);
     m_BaseShapeMatrix->fill(0.0);
-    m_BaseShapeMatrix_cache->fill(0.0);
     // Copy old data into new matrix.
     for (unsigned int c = 0; c < tmp.cols(); c++)
       {
       for (unsigned int r = 0; r < tmp.rows(); r++)
         {
         m_BaseShapeMatrix->put(r,c,  tmp(r,c));
-        m_BaseShapeMatrix_cache->put(r,c,  tmp(r,c));
         }
       } 
   }
@@ -172,6 +169,8 @@ public:
         // pos[i] - m_MeanMatrix(i+k, d/ this->m_DomainsPerShape);
 
       }
+      // Feed Z space to network and get new base particles
+      this->m_UpdateBaseParticlesCallback();
   }
   
   virtual void PositionRemoveEventCallback(Object *, const EventObject &) 
@@ -183,8 +182,12 @@ public:
     this->m_NonLinearTrainModelCallback = f;
   }
 
-  void BeforeGradientUpdatesCallbackFunction(const std::function<void(void)> &f){
+  void SetBeforeGradientUpdatesCallbackFunction(const std::function<void(void)> &f){
     this->m_BeforeGradientUpdatesCallback = f;
+  }
+
+  void SetUpdateBaseParticlesCallbackFunction(const std::function<void(void)> &f){
+    this->m_UpdateBaseParticlesCallback = f;
   }
 
   /** Set/Get the number of domains per shape.  This can only be safely done
@@ -197,8 +200,6 @@ public:
   void Initialize()
   {
     m_BaseShapeMatrix->fill(0.0);
-    m_BaseShapeMatrix_cache->fill(0.0);
-
   }
   
   virtual void BeforeIteration()
@@ -243,6 +244,7 @@ private:
   // Callbacks from Python
   std::function<void(void)> m_BeforeGradientUpdatesCallback;
   std::function<void(void)> m_NonLinearTrainModelCallback;
+  std::function<void(void)> m_UpdateBaseParticlesCallback;
 
   // Z_0 --> Base Distribution
   std::shared_ptr<vnl_matrix<double>> m_BaseShapeMatrix;
@@ -250,7 +252,6 @@ private:
   std::shared_ptr<vnl_matrix<double>> m_DifferenceMatrix;
 
 
-  std::shared_ptr<vnl_matrix<double>> m_BaseShapeMatrix_cache;
 
 };
 

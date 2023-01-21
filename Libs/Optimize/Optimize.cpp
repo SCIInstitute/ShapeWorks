@@ -2174,16 +2174,23 @@ void Optimize::SetGeodesicsEnabled(bool is_enabled) { this->m_geodesics_enabled 
 //---------------------------------------------------------------------------
 void Optimize::SetGeodesicsCacheSizeMultiplier(size_t n) { this->m_geodesic_cache_size_multiplier = n; }
 
+//---------------------------------------------------------------------------
 void Optimize::SetNonLinearTrainModelCallbackFunction(const std::function<void(void)>& f)
 {
   this->m_sampler->GetNonLinearShapeMatrixAttribute()->SetNonLinearTrainModelCallbackFunction(f);
 }
 
+//---------------------------------------------------------------------------
 void Optimize::SetBeforeGradientUpdatesCallbackFunction(const std::function<void(void)>& f)
 {
-  this->m_sampler->GetNonLinearShapeMatrixAttribute()->BeforeGradientUpdatesCallbackFunction(f);
+  this->m_sampler->GetNonLinearShapeMatrixAttribute()->SetBeforeGradientUpdatesCallbackFunction(f);
 }
 
+//---------------------------------------------------------------------------
+void Optimize::SetUpdateBaseParticlesCallbackFunction(const std::function<void(void)>& f)
+{
+  this->m_sampler->GetNonLinearShapeMatrixAttribute()->SetUpdateBaseParticlesCallbackFunction(f);
+}
 
 //---------------------------------------------------------------------------
 void Optimize::SetNonLinearJacobianMatrix(MatrixContainer matrix)

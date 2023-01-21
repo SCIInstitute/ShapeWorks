@@ -81,6 +81,7 @@ class Optimize {
   // Non-Linear SSM Callbacks
   void SetNonLinearTrainModelCallbackFunction(const std::function<void(void)> &f);
   void SetBeforeGradientUpdatesCallbackFunction(const std::function<void(void)> &f);
+  void SetUpdateBaseParticlesCallbackFunction(const std::function<void(void)> &f);
   void SetNonLinearBaseShapeMatrix(MatrixContainer matrix);
   void SetNonLinearDifferenceMatrix(MatrixContainer matrix);
   void SetNonLinearJacobianMatrix(MatrixContainer det);

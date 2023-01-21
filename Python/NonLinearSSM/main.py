@@ -30,6 +30,20 @@ def train_model_callback():
         inv_net.train_invertible_network_from_last_checkpoint()
         print('Train Model callback in Python 1....')
 
+def update_base_particles_callback():
+    if sw_opt.GetOptimizing():
+        print(f'Updating Base Particles callback from Python 0....')
+        inv_net.norm_model.eval()
+        particles = sw_opt.GetParticleSystem() # Z space
+        particles = torch.from_numpy(particles.T).to(DEVICE)
+        par_procc = particles.reshape(-1, M, 3)
+        par_procc = par_procc[:,:,:d].reshape(N, -1)
+        z0_datas, lg, lls = inv_net.norm_model(par_procc.float())
+        z0_data = z0_datas[-1]
+        z0_particles = z0_data.detach().cpu().numpy()
+        sw_opt.SetNonLinearBaseShapeMatrix(z0_particles)
+        print(f'Updating Base Particles callback from Python 1....')
+
 def before_gradient_updates_callback():
     if sw_opt.GetOptimizing():
         print(f'Before Gradient updates callback from Python 0....')
@@ -65,6 +79,8 @@ def before_gradient_updates_callback():
 # Set callbacks for SW Opt object
 sw_opt.SetNonLinearTrainModelCallbackFunction(train_model_callback)
 sw_opt.SetBeforeGradientUpdatesCallbackFunction(before_gradient_updates_callback)
+sw_opt.SetUpdateBaseParticlesCallback(update_base_particles_callback)
+
 
 # Run Optimizer
 print("Running Shapeworks Optimization")

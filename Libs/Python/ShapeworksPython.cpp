@@ -1657,6 +1657,9 @@ PYBIND11_MODULE(shapeworks_py, m)
 
   .def("SetBeforeGradientUpdatesCallbackFunction",
       &Optimize::SetBeforeGradientUpdatesCallbackFunction)
+  
+  .def("SetUpdateBaseParticlesCallbackFunction",
+      &Optimize::SetUpdateBaseParticlesCallbackFunction)
 
   .def("ComputeBaseSpaceCovarianceMatrix",
        &Optimize::ComputeBaseSpaceCovarianceMatrix)

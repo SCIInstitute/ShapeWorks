@@ -176,9 +176,7 @@ namespace itk
                 // Step F update the point position in the particle system
                 m_ParticleSystem->SetPosition(newpoint, k, dom);
 
-                // After Evaluate: Cache and  Update Base particles based on new Z space particles
 
-                // Step G compute the new energy of the particle system
                 newenergy = localGradientFunction->Energy(k, dom, m_ParticleSystem);
 
                 if (newenergy < energy) // good move, increase timestep for next time
@@ -187,12 +185,12 @@ namespace itk
                   if (gradmag > maxchange) maxchange = gradmag;
                   break;
                 } else {// bad move, reset point position and back off on timestep
+                  std::cout << "Resetting Particle Position " << std::endl;
                   if (m_TimeSteps[dom][k] > minimumTimeStep) {
                     domain->ApplyConstraints(pt, k);
                     m_ParticleSystem->SetPosition(pt, k, dom);
                     domain->InvalidateParticlePosition(k);
 
-                    // Invalidate Base Distribution particles 
 
                     m_TimeSteps[dom][k] /= factor;
                   } else // keep the move with timestep 1.0 anyway
