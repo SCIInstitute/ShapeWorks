@@ -97,7 +97,7 @@ def create_burn_in_sw_project(input_dir, input_type, burn_in_dir, dataset_name, 
         subject.set_original_filenames([input_files[i]])
         subject.set_groomed_filenames([input_files[i]])
         rel_particle_file = glob.glob(f'{burn_in_dir}/{input_files[i].split("/")[-1].split(f".{input_type}")[0]}*.particles')
-        if len(rel_particle_file) == 1:
+        if len(rel_particle_file) >= 0:
             if os.path.exists(rel_particle_file[0]):
                 subject.set_landmarks_filenames([rel_particle_file[0]])
                 subjects.append(subject)
@@ -118,13 +118,13 @@ pancreas_meshes_dir = '/home/sci/nawazish.khan/non-linear-ssm-experiments/Pancre
 burn_in_dir = '/home/sci/nawazish.khan/non-linear-ssm-experiments/Pancreas/burn_in_model_subset1/'
 
 supershapes_mesh_dir = '/home/sci/nawazish.khan/non-linear-ssm-experiments/Supershapes/'
-supershapes_particles_dir = ''
+supershapes_particles_dir = '/home/sci/nawazish.khan/non-linear-ssm-experiments/Supershapes/burn_in_model_particles/'
 # create_burn_in_sw_project(input_dir=pancreas_seg_dir, input_type='nrrd', burn_in_dir='/home/sci/nawazish.khan/non-linear-ssm-experiments/Pancreas/burn_in_model/', dataset_name='Pancreas')
 # create_burn_in_sw_project(input_dir=pancreas_meshes_dir, input_type='vtk', burn_in_dir=burn_in_dir,
 #                           project_name='project_subset1',
 #                           dataset_name='Pancreas')
 
-generate_supershapes_data(num_samples=30, out_dir=supershapes_mesh_dir)
-# create_burn_in_sw_project(input_dir=pancreas_meshes_dir, input_type='ply', burn_in_dir=burn_in_dir,
-#                           project_name='project_5_lobes',
-#                           dataset_name='Supershapes')
+# generate_supershapes_data(num_samples=30, out_dir=supershapes_mesh_dir)
+create_burn_in_sw_project(input_dir=f'{supershapes_mesh_dir}/meshes/', input_type='ply', burn_in_dir=supershapes_particles_dir,
+                          project_name='project_5_lobes',
+                          dataset_name='Supershapes')

@@ -3,7 +3,7 @@ import os
 import json
 import glob
 import logging
-
+import time
 import numpy as np
 import numpy.linalg as la
 import torch
@@ -26,7 +26,7 @@ def get_prior_distribution(params, device):
         for i in range(1, 2):
             prior_cov[i, i] = 0.5 * prior_cov[i-1, i-1]
         for i in range(2, d*M):
-            prior_cov[i, i] = 0.00000001
+            prior_cov[i, i] = 0.0001
 
     prior_mean = prior_mean.to(device)
     prior_cov = prior_cov.to(device)
@@ -45,10 +45,11 @@ def update_prior_util(mean, cov, device, modify_cov=False):
 
 def get_flow_model(flow_model_type, d, M, device):
     if flow_model_type == 'MAF':
-        # return [MAF(dim=d*M, parity=i%2, device=DEVICE, nh=128) for i in range(10)]
         return [ModifiedMAF(dim=d*M, parity=i%2, device=device, nh=128) for i in range(10)]
-    if flow_model_type == 'RealNVP':
+    elif flow_model_type == 'RealNVP':
         return [AffineHalfFlow(dim=d*M, parity=i%2, device=device, nh=128) for i in range(10)]
+    elif flow_model_type == 'OriginalMAF':
+        return [MAF(dim=d*M, parity=i%2, device=device, nh=128) for i in range(10)]
         
 
 class InvertibleNetwork:
@@ -89,6 +90,7 @@ class InvertibleNetwork:
         particles = self.init_particles_data
         loss = None
         for k in range(num_iter):
+            st_time = time.time()
             x = particles.sample(batch_size).to(self.device)
             x = x.reshape(batch_size, -1)
             z_all, prior_logprob, log_det = self.norm_model(x.float())
@@ -97,8 +99,9 @@ class InvertibleNetwork:
             self.norm_model.zero_grad()
             loss.backward()
             optimizer.step()
-            if k % 1000 == 0:
-                print(f"Epoch = {k} | Loss = {loss.item()}")
+            if k % 100 == 0:
+                end_time = time.time()
+                print(f"Epoch = {k} | Loss = {loss.item()} | Time = {end_time-st_time:.4f}")
         print(f'********** Training Done **********')
         # Save last checkpoint
         checkpoint_path = f'{self.model_save_dir}/model_{self.flow_model_type}.pt'

@@ -1,0 +1,16 @@
+{
+	"device": "cuda:1",
+    "num_particles": 256,
+	"num_samples": 28,
+	"prior_type": "diagonal",
+    "dimension": 3,
+    "learning_rate": 0.000010,
+    "weight_decay": 0.00005,
+    "batch_size":5,
+    "num_initial_iterations": 3000,
+    "working_dir": "/home/sci/nawazish.khan/non-linear-ssm-experiments/Supershapes/",
+    "project_name": "Supershapes_project_5_lobes",
+    "burn_in_dir": "burn_in_model_particles",
+    "train_iterations": 1000,
+    "flow_model_type": "MAF"
+  }

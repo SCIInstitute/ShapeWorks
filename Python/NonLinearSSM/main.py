@@ -9,6 +9,7 @@ param_fn = sys.argv[1]
 print(f'Params loaded from file {param_fn}')
 params = DictMap(json.load(open(param_fn)))
 DEVICE = torch.device(params.device if torch.cuda.is_available() else 'cpu')
+print(f'DEVICE = {DEVICE}')
 WORKING_DIR = params.working_dir
 M = params.num_particles
 N = params.num_samples
@@ -88,7 +89,7 @@ def before_gradient_updates_callback():
 # Set callbacks for SW Opt object
 sw_opt.SetNonLinearTrainModelCallbackFunction(train_model_callback)
 sw_opt.SetBeforeGradientUpdatesCallbackFunction(before_gradient_updates_callback)
-sw_opt.SetUpdateBaseParticlesCallback(update_base_particles_callback)
+sw_opt.SetUpdateBaseParticlesCallbackFunction(update_base_particles_callback)
 
 # Run Optimizer
 print("Running Shapeworks Optimization")

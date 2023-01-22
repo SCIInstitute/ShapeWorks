@@ -22,7 +22,8 @@ def generate(num_samples, out_dir, randomize_center=False, randomize_rotation=Fa
         print("Generating shape " + str(i+1) + " out of " + str(num_samples))
         # Define shape params
         if randomize_m:
-            m = np.random.randint(3,8)
+            # m = np.random.randint(3,8)
+            m = np.random.randint(3,6)
         name = "id" + get_id_str(i+start_id) + "_ss" + str(m)
         if n_distribution == "chisquare":
             n1 = np.random.chisquare(4)

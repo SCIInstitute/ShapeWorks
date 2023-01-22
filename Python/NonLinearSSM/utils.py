@@ -65,6 +65,9 @@ def generate_3D_supershapes_point_cloud(N, M, d=3, m=3):
 
 def load_shape_matrix(particle_dir, N, M, d=3, particle_system='world'):
     point_files = sorted(glob.glob(f'{particle_dir}/*_{particle_system}.particles'))
+    if len(point_files)==0:
+        point_files = sorted(glob.glob(f'{particle_dir}/*_world.particles'))
+
     if len(point_files) != N:
         raise ValueError(f"Inconsistent particle files for {N} subjects")
     else:
