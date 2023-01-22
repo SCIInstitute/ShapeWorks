@@ -1,0 +1,16 @@
+{
+	"device": "cuda:1",
+    "num_particles": 1024,
+	"num_samples": 30,
+	"prior_type": "diagonal",
+    "dimension": 3,
+    "learning_rate": 0.000010,
+    "weight_decay": 0.00005,
+    "batch_size":5,
+    "num_initial_iterations": 3000,
+    "working_dir": "/home/sci/nawazish.khan/non-linear-ssm-experiments/Pancreas/",
+    "project_name": "Pancreas_project_subset1",
+    "burn_in_dir": "burn_in_model_subset1",
+    "train_iterations": 1000,
+    "flow_model_type": "MAF"
+  }

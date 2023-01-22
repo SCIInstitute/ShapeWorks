@@ -368,12 +368,6 @@ bool OptimizeParameters::set_up_optimize(Optimize *optimize) {
     }
   }
 
-  if (get_use_non_linear_optimize())
-  {
-    // TODO: set up shape matrix - new approach
-
-  }
-
   if (get_use_fixed_subjects()) {
     std::vector<int> domain_flags;
     int count = 0;

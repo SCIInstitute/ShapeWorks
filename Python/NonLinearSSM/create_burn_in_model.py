@@ -7,6 +7,7 @@ import glob
 import shapeworks as sw
 import numpy as np
 import os
+import ShapeCohortGen
 
 parameter_dictionary = {
         "number_of_particles": 1024,
@@ -82,36 +83,11 @@ def find_medoid_mesh():
     out_dir = f'{INPUT_DIR}/{DATASET}/burn_in_model/'
     meshes[median_index].write(f'{out_dir}/{shape_names[median_index]}.medoid_mesh.vtk')
 
+def generate_supershapes_data(num_samples, out_dir):
+    ss_generator = ShapeCohortGen.SupershapesCohortGenerator(out_dir)
+    meshFiles = ss_generator.generate(num_samples, randomize_center=False, randomize_rotation=False, m=-1)
 
-def create_burn_in_sw_project_supershapes(dataset_name='supershapes_3_lobes', burn_in_dir_name='supershapes_3_lobes_particles'):
-    mesh_dir = f'{INPUT_DIR}/{dataset_name}/meshes/'
-    mesh_files = sorted(glob.glob(f'{mesh_dir}/*ply'))
-    burn_in_dir = f'{INPUT_DIR}/{dataset_name}/{burn_in_dir_name}/'
-    subjects = []
-    for i in range(len(mesh_files)):
-        subject = sw.Subject()
-        subject.set_number_of_domains(1)
-        subject.set_original_filenames([mesh_files[i]])
-        subject.set_original_filenames([mesh_files[i]])
-        rel_particle_file = f'{burn_in_dir}/{mesh_files[i].split("/")[-1].split(".ply")[0]}_local.particles'
-        print(rel_particle_file)
-        assert os.path.exists(rel_particle_file)
-        subject.set_landmarks_filenames([rel_particle_file])
-        subjects.append(subject)
-
-    project = sw.Project()
-    project.set_subjects(subjects)
-    parameters = sw.Parameters()
-    # Add param dictionary to spreadsheet
-    for key in parameter_dictionary:
-        parameters.set(key, sw.Variant([parameter_dictionary[key]]))
-    parameters.set("domain_type",sw.Variant('mesh'))
-    project.set_parameters("optimize", parameters)
-    spreadsheet_file = f"{INPUT_DIR}/{dataset_name}/{dataset_name}_project.xlsx"
-    project.save(spreadsheet_file)
-
-
-def create_burn_in_sw_project(input_dir, input_type, burn_in_dir, dataset_name):
+def create_burn_in_sw_project(input_dir, input_type, burn_in_dir, dataset_name, project_name='project'):
     input_files = sorted(glob.glob(f'{input_dir}/*.{input_type}'))
     print(f'Loaded {len(input_files)} Files ...')
     subjects = []
@@ -121,9 +97,10 @@ def create_burn_in_sw_project(input_dir, input_type, burn_in_dir, dataset_name):
         subject.set_original_filenames([input_files[i]])
         subject.set_groomed_filenames([input_files[i]])
         rel_particle_file = glob.glob(f'{burn_in_dir}/{input_files[i].split("/")[-1].split(f".{input_type}")[0]}*.particles')
-        assert len(rel_particle_file) == 1
-        subject.set_landmarks_filenames([rel_particle_file[0]])
-        subjects.append(subject)
+        if len(rel_particle_file) == 1:
+            if os.path.exists(rel_particle_file[0]):
+                subject.set_landmarks_filenames([rel_particle_file[0]])
+                subjects.append(subject)
 
     project = sw.Project()
     project.set_subjects(subjects)
@@ -131,14 +108,23 @@ def create_burn_in_sw_project(input_dir, input_type, burn_in_dir, dataset_name):
     # Add param dictionary to spreadsheet
     for key in parameter_dictionary:
         parameters.set(key, sw.Variant([parameter_dictionary[key]]))
-    parameters.set("domain_type",sw.Variant('mesh'))
+    parameters.set("domain_type",sw.Variant('mesh' if input_type == 'vtk' or input_type=='ply' else 'segmentation'))
     project.set_parameters("optimize", parameters)
-    spreadsheet_file = f"{INPUT_DIR}/{dataset_name}/{dataset_name}_project.xlsx"
+    spreadsheet_file = f"{INPUT_DIR}/{dataset_name}/{dataset_name}_{project_name}.xlsx"
     project.save(spreadsheet_file)
 
 pancreas_seg_dir = '/home/sci/nawazish.khan/non-linear-ssm-experiments/Pancreas/segmentations-centered/'
 pancreas_meshes_dir = '/home/sci/nawazish.khan/non-linear-ssm-experiments/Pancreas/meshes/'
+burn_in_dir = '/home/sci/nawazish.khan/non-linear-ssm-experiments/Pancreas/burn_in_model_subset1/'
 
-
+supershapes_mesh_dir = '/home/sci/nawazish.khan/non-linear-ssm-experiments/Supershapes/'
+supershapes_particles_dir = ''
 # create_burn_in_sw_project(input_dir=pancreas_seg_dir, input_type='nrrd', burn_in_dir='/home/sci/nawazish.khan/non-linear-ssm-experiments/Pancreas/burn_in_model/', dataset_name='Pancreas')
-create_burn_in_sw_project(input_dir=pancreas_meshes_dir, input_type='vtk', burn_in_dir='/home/sci/nawazish.khan/non-linear-ssm-experiments/Pancreas/burn_in_model/', dataset_name='Pancreas')
+# create_burn_in_sw_project(input_dir=pancreas_meshes_dir, input_type='vtk', burn_in_dir=burn_in_dir,
+#                           project_name='project_subset1',
+#                           dataset_name='Pancreas')
+
+generate_supershapes_data(num_samples=30, out_dir=supershapes_mesh_dir)
+# create_burn_in_sw_project(input_dir=pancreas_meshes_dir, input_type='ply', burn_in_dir=burn_in_dir,
+#                           project_name='project_5_lobes',
+#                           dataset_name='Supershapes')
