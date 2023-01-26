@@ -6,6 +6,7 @@ Common utility functions
 import os
 import re
 from shutil import rmtree
+import filecmp
 from pathlib import Path
 import shapeworks as sw
 import base64
@@ -126,6 +127,26 @@ def download_subset(use_case,datasetName,outputDirectory):
                     mesh.file.download(mesh_dir)
 
 
+
+
+class dircmp(filecmp.dircmp):
+    def phase3(self):
+        fcomp = filecmp.cmpfiles(self.left, self.right, self.common_files,
+                                 shallow=False)
+        self.same_files, self.diff_files, self.funny_files = fcomp
+
+
+def is_same(dir1, dir2):
+    compared = dircmp(dir1, dir2)
+    different = compared.left_only or compared.right_only or compared.diff_files or compared.funny_files
+    if different:
+        print(dir1, dir2, different)
+        return False
+    for subdir in compared.common_dirs:
+        if not is_same(os.path.join(dir1, subdir), os.path.join(dir2, subdir)):
+            return False
+    return True
+
 def download_and_unzip_dataset(datasetName, outputDirectory):
 
     username,password = login()
@@ -140,12 +161,26 @@ def download_and_unzip_dataset(datasetName, outputDirectory):
             # Download a full dataset in bulk
             print("not enough files")
             dataset = Dataset.from_name(datasetName)
-            print(dataset)
-            print(datasetName)
             print(outputDirectory+datasetName+"/")
             download_path = Path(outputDirectory)
             if not download_path.exists():
                 rmtree(str(download_path))
-                
-            dataset.download(download_path)
+            # project = Project()    
+        for project in dataset.projects:
+            project.download(Path(download_path))
+            # project = Project.from_id(dataset.id)
+            # project.download(download_path)
+
+    # with swcc_session() as session:
+    #     token = session.login(username, password)
+    #     session = swcc_session(token=token).__enter__()
+
+    #     print(f'Downloading {datasetName} dataset and project.')
+    #     dataset = Dataset.from_name(datasetName)
+    #     download_path = Path(outputDirectory)
+    #     for project in dataset.projects:
+    #         project.download(Path(download_path))
+
+        print('Done. \n')
+
 # download_and_unzip_dataset("femur_cut","/home/sci/mkaranam/Desktop/ShapeWorks/Examples/Python/Output/femur_download/")
