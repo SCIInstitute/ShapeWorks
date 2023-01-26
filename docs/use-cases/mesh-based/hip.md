@@ -3,7 +3,7 @@
 ## What is the Use Case?
 
 
-The `hip_multiple_domain` use case demonstrates using ShapeWorks tools to perform shape modelings for anatomies with multiple structures (domains). The use case uses the hip joint to demonstrate the capability of ShapeWorks to capture inter-domains correlations and interactions directly on triangular surface meshes. The use cases showcases how to calculate the different alignment options available for multiple organ anatomies.
+The `hip_multiple_domain` use case demonstrates using ShapeWorks tools to perform shape modelings for anatomies with multiple structures (domains). The use case uses the hip joint to demonstrate the capability of ShapeWorks to capture inter-domains correlations and interactions directly on triangular surface meshes. The use case showcases how to calculate the different alignment options available for multiple organ anatomies.
 The dataset available for this use case:
 
 * hip - a collection of femur and pelvis bones.
@@ -57,3 +57,9 @@ num_particles = [256,256]
 ## Analyzing Shape Model
 Once the python code runs the optimization, the files are saved in the `Output` folder after which ShapeWorks Studio is launched from the python code to analyze the model. 
 Here is the optimized shape.
+
+Modes of variation of the hip joint with global alignment![Modes of variation of the hip joint with global alignment](https://sci.utah.edu/~shapeworks/doc-resources/gifs/hip_global.gif){ width=50% }
+
+Modes of variation of the hip joint by aligning w.r.t the femur![Modes of variation of the hip joint by aligning w.r.t the femur](https://sci.utah.edu/~shapeworks/doc-resources/gifs/hip_domain1.gif){ width=50% }
+
+Modes of variation of the hip joint by aligning w.r.t the pelvis![Modes of variation of the hip joint by aligning w.r.t the pelvis](https://sci.utah.edu/~shapeworks/doc-resources/gifs/hip_domain2.gif){ width=50% }
