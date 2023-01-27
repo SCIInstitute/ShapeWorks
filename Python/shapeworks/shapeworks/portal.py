@@ -16,7 +16,7 @@ import os
 from swcc.api import swcc_session
 from swcc.models import (Dataset, GroomedSegmentation, OptimizedParticles, Project, Segmentation, Subject)
 from itertools import islice
-_LOGIN_FILE_NAME = 'shapeworksPortalLogin_new.txt'
+_LOGIN_FILE_NAME = 'Output/shapeworksPortalLogin_new.txt'
 
 def printDataPortalWelcome():
     print(' _____    ___      .     ')
@@ -165,9 +165,10 @@ def download_and_unzip_dataset(datasetName, outputDirectory):
             download_path = Path(outputDirectory)
             if not download_path.exists():
                 rmtree(str(download_path))
-            # project = Project()    
-        for project in dataset.projects:
-            project.download(Path(download_path))
+            # project = Project()   
+            for project in dataset.projects:
+                project.download(Path(download_path))
+                break
             # project = Project.from_id(dataset.id)
             # project.download(download_path)
 
