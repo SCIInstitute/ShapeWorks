@@ -150,7 +150,7 @@ ParticleEnsembleEntropyFunctionNonLinear<VDimension>
     // 1. return gradients in Z space
     // 2. Maxdt - maximum update allowed -- Gradient Magnitude
     // 3. Energy - in Z0 space
-    
+    std::cout << "Evaluate Non Linear 0" << std::endl;
     const unsigned int DomainsPerShape = m_ShapeMatrix->GetDomainsPerShape();
 
     // maxdt  = m_MinimumEigenValue;
@@ -190,7 +190,7 @@ ParticleEnsembleEntropyFunctionNonLinear<VDimension>
         double diff_term = m_ShapeMatrix->GetDifferenceMatrix()->get(k + i, d / DomainsPerShape);
         gradE[i] = base_grad * jacobain_det - diff_term;
     }
-
+    std::cout << "Evaluate Non Linear 1" << std::endl;
     maxdt  = gradE.magnitude();
 
 

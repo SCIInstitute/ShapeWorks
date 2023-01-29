@@ -1,5 +1,5 @@
 {
-	"device": "cuda:1",
+	"device": "cuda:0",
     "num_particles": 1024,
 	"num_samples": 30,
 	"prior_type": "diagonal",

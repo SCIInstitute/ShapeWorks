@@ -9,7 +9,7 @@
     "batch_size":5,
     "num_initial_iterations": 3000,
     "working_dir": "/home/sci/nawazish.khan/non-linear-ssm-experiments/Supershapes/",
-    "project_name": "Supershapes_project_5_lobes",
+    "project_name": "Supershapes_project_5_lobes_new",
     "burn_in_dir": "burn_in_model_particles",
     "train_iterations": 1000,
     "flow_model_type": "OriginalMAF"

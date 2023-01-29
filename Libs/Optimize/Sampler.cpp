@@ -56,7 +56,9 @@ Sampler::Sampler() {
   m_MeshBasedGeneralEntropyGradientFunction->SetShapeGradient(m_GeneralShapeGradMatrix);
 
   m_ParticleSystem->RegisterAttribute(m_ShapeMatrix);
+  // std::cout << "Before Register" << std::endl;
   m_ParticleSystem->RegisterAttribute(m_NonLinearShapeMatrix);
+  // std::cout << "After Register" << std::endl;
   m_ParticleSystem->RegisterAttribute(m_LinearRegressionShapeMatrix);
   m_ParticleSystem->RegisterAttribute(m_MixedEffectsShapeMatrix);
 
@@ -251,7 +253,9 @@ void Sampler::InitializeOptimizationFunctions() {
   m_OmegaGradientFunction->SetDomainNumber(0);
 
   m_LinearRegressionShapeMatrix->Initialize();
+  std::cout << "Before Non Linear Shape Matrix Initialize " << std::endl;
   m_NonLinearShapeMatrix->Initialize();
+  std::cout << "After Non Linear Shape Matrix Initialize " << std::endl;
   m_MixedEffectsShapeMatrix->Initialize();
   m_ShapeMatrix->Initialize();
 
@@ -284,7 +288,15 @@ void Sampler::Execute() {
   if (this->GetInitializing() == true) return;
 
   // this->GetOptimizer()->SetShapeMatrix(this->m_ShapeMatrix);
-  this->GetOptimizer()->StartOptimization();
+  std::cout << "Before start optimization" << std::endl;
+  std::cout << "Correspondence Mode is " << m_CorrespondenceMode << std::endl;
+  if(m_CorrespondenceMode == shapeworks::CorrespondenceMode::NonLinearEnsembleEntropy)
+  {
+    this->GetOptimizer()->StartNonLinearOptimization();
+  }
+  else{
+    this->GetOptimizer()->StartOptimization();
+  }
 }
 
 void Sampler::ReadTransforms() {

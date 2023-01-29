@@ -76,15 +76,20 @@ public:
 
   virtual void ResizeJacobianMatrix(int cs)
   {
-    vnl_matrix<T> tmp(*m_JacobianMatrix_det); // copy existing  matrix
-    // Create new column (shape)
-    m_JacobianMatrix_det->set_size(0, cs);
-    m_JacobianMatrix_det->fill(0.0);    
-    // Copy old data into new matrix.
-    for (unsigned int c = 0; c < tmp.cols(); c++)
-        {
-        m_JacobianMatrix_det->put(0,c, tmp(0, c));
-        }
+    std::cout << "Before resize jacobian " << std::endl;
+    if (cs > m_JacobianMatrix_det->cols()){
+      vnl_matrix<T> tmp(*m_JacobianMatrix_det); // copy existing  matrix
+      // Create new column (shape)
+      m_JacobianMatrix_det->set_size(1, cs);
+      m_JacobianMatrix_det->fill(0.0);    
+      // Copy old data into new matrix.
+      for (unsigned int c = 0; c < tmp.cols(); c++)
+          {
+          m_JacobianMatrix_det->put(0,c, tmp(0, c));
+          }
+    }
+    std::cout << "After resize jacobian " << std::endl;
+    
   }
   
   
@@ -103,7 +108,7 @@ public:
       this->ResizeMatrix(this->rows(), this->cols()+1);
       this->ResizeBaseShapeMatrix(this->rows(), this->cols()+1);
       this->ResizeDifferenceMatrix(this->rows(), this->cols()+1);
-      this->ResizeJacobianMatrix(this->cols()+1);                      
+      this->ResizeJacobianMatrix(this->cols());                      
 
       }    
   }
@@ -148,6 +153,7 @@ public:
   
   virtual void PositionSetEventCallback(Object *o, const EventObject &e) 
   {
+      // std::cout << "Before Position Set Callback 0" <<  std::endl;
     const itk::ParticlePositionSetEvent &event
       = dynamic_cast <const itk::ParticlePositionSetEvent &>(e);
   
@@ -167,10 +173,15 @@ public:
       {
       this->operator()(i+k, d / this->m_DomainsPerShape) = pos[i];
         // pos[i] - m_MeanMatrix(i+k, d/ this->m_DomainsPerShape);
-
       }
       // Feed Z space to network and get new base particles
-      this->m_UpdateBaseParticlesCallback();
+      if(this->m_UpdateBaseParticlesCallback)
+      {
+        // std::cout << "Making Update Base Particles Callback 0" << std::endl;
+        this->m_UpdateBaseParticlesCallback();
+        // std::cout << " Update Base Particles Callback Done 1" << std::endl;
+      }
+      // std::cout << "After Position Set Callback 1" <<  std::endl;
   }
   
   virtual void PositionRemoveEventCallback(Object *, const EventObject &) 
@@ -199,18 +210,31 @@ public:
 
   void Initialize()
   {
+    // m_BaseShapeMatrix->set_size(10, 10);
+    // m_DifferenceMatrix->set_size(10, 10);
+    // m_JacobianMatrix_det->set_size(10, 10);
+
+
     m_BaseShapeMatrix->fill(0.0);
+    m_JacobianMatrix_det->fill(0.0);
+    m_DifferenceMatrix->fill(0.0);
   }
   
   virtual void BeforeIteration()
   {
+    std::cout << "Update counter value = " << m_UpdateCounter << std::endl;
     m_UpdateCounter ++;
     if (m_UpdateCounter >= m_NonLinearTrainingInterval)
       {
       m_UpdateCounter = 0;
+      std::cout << "Before Training Callback 0" << std::endl;
       this->m_NonLinearTrainModelCallback();
+      std::cout << "After Training Callback 1" << std::endl;
       }
+    std::cout << "Before Gradient Callback 0" << std::endl;
     this->m_BeforeGradientUpdatesCallback();
+    std::cout << "After Gradient Callback 1" << std::endl;
+
   }
 
   void SetNonLinearTrainingInterval( int i)
@@ -227,6 +251,9 @@ protected:
     this->m_DefinedCallbacks.PositionRemoveEvent = true;
     m_UpdateCounter = 0;
     m_NonLinearTrainingInterval = 50;
+    m_BaseShapeMatrix = std::make_shared<vnl_matrix<double>>();
+    m_DifferenceMatrix = std::make_shared<vnl_matrix<double>>();
+    m_JacobianMatrix_det = std::make_shared<vnl_matrix<double>>();
   }
 
   virtual ~ParticleShapeMatrixAttributeNonLinear() {};

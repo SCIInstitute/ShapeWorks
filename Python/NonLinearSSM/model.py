@@ -33,13 +33,13 @@ def get_prior_distribution(params, device):
     prior = MVN(prior_mean, prior_cov)
     return prior_mean, prior_cov, prior
 
-def update_prior_util(mean, cov, device, modify_cov=False):
+def update_prior_util(mean, cov, device, modify_cov=True):
+    cov = torch.from_numpy(cov).float().to(device)
     if modify_cov:
-        _, D, _ = la.svd(cov)
-        cov = torch.from_numpy(np.diag(D)).float().to(device)
-    else:
-        cov = torch.from_numpy(cov).float().to(device)
+        S= torch.linalg.svdvals(cov)
+        cov = torch.diag(S)
     mean = torch.from_numpy(mean).float().to(device)
+    mean = mean.squeeze()
     prior = MVN(mean, cov)
     return mean, cov, prior
 
@@ -121,7 +121,7 @@ class InvertibleNetwork:
 
         checkpoint_path = f'{self.model_save_dir}/model_{self.flow_model_type}.pt'
         checkpoint = torch.load(checkpoint_path)
-        self.norm_model.load_state_dict(checkpoint['model_state_dict'])
+        self.norm_model.load_state_dict(checkpoint['model_state_dict'], map_location=self.device)
         optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
         epoch = checkpoint['epoch']
         loss = checkpoint['loss']
@@ -149,3 +149,17 @@ class InvertibleNetwork:
             'loss': loss.item(),
             }, checkpoint_path)
         print(f'Model saved')
+
+    def serialize_model(self):
+        print('*********** Serializing to TorchScript Module *****************')
+        optimizer = self.optimizer
+        checkpoint_path = f'{self.model_save_dir}/model_{self.flow_model_type}.pt'
+        checkpoint = torch.load(checkpoint_path, map_location=self.device)
+        self.norm_model.load_state_dict(checkpoint['model_state_dict'])
+        optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+        self.norm_model.eval()
+
+        sm = torch.jit.script(self.norm_model)
+        sm.save(f"{self.model_save_dir}/serialized_model.pt")
+
+        print(f'******************** Serialized Module saved ************************')

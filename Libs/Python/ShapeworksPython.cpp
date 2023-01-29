@@ -1679,7 +1679,7 @@ PYBIND11_MODULE(shapeworks_py, m)
           }
      )
 
-  .def("SetNonLinearJacobian",
+  .def("SetNonLinearJacobianMatrix",
      [](Optimize *opt,Eigen::MatrixXd updates_det){
           shapeworks::MatrixContainer container_det;
           container_det.matrix_ = updates_det;
@@ -1688,11 +1688,19 @@ PYBIND11_MODULE(shapeworks_py, m)
      )
   .def("GetOptimizing", &Optimize::GetOptimizing)
 
-  .def("GetBaseSpaceMean",
-       &Optimize::GetBaseSpaceMean)  
-
   .def("GetBaseSpaceInverseCovarianceMatrix",
-       &Optimize::GetBaseSpaceInverseCovarianceMatrix)  
+       [](Optimize *opt){
+          shapeworks::MatrixContainer container = opt->GetBaseSpaceInverseCovarianceMatrix();
+          return container.matrix_;
+     }
+     )
+     
+  .def("GetBaseSpaceMean",
+       [](Optimize *opt){
+          shapeworks::MatrixContainer container = opt->GetBaseSpaceMean();
+          return container.matrix_;
+     }
+     )
 
   .def("GetParticleSystem",
        &optimize_get_particle_system)

@@ -1,3 +1,4 @@
+from random import sample
 import shapeworks as sw
 import argparse
 from model import InvertibleNetwork
@@ -23,6 +24,7 @@ sw_opt = sw.Optimize()
 # Create SW Project File with Optimization Params and burn_in_particles as landmarks
 sw_opt.LoadXlsxProjectFile(project_file_path)
 
+print('Project Loaded')
 global inv_net
 inv_net = InvertibleNetwork(params=params)
 inv_net.initialize_model()
@@ -45,12 +47,15 @@ def update_base_particles_callback():
         print(f'Updating Base Particles callback from Python 0....')
         inv_net.norm_model.eval()
         particles = sw_opt.GetParticleSystem() # Z space
+        # print(f'Particle System shape {particles.shape}')
         particles = torch.from_numpy(particles.T).to(DEVICE)
         par_procc = particles.reshape(-1, M, 3)
         par_procc = par_procc[:,:,:d].reshape(N, -1)
+        # print(f'Tensor shape {par_procc.size()}')
         z0_datas, lg, lls = inv_net.norm_model(par_procc.float())
         z0_data = z0_datas[-1]
         z0_particles = z0_data.detach().cpu().numpy()
+        z0_particles = z0_particles.T
         sw_opt.SetNonLinearBaseShapeMatrix(z0_particles)
         print(f'Updating Base Particles callback from Python 1....')
 
@@ -59,21 +64,29 @@ def before_gradient_updates_callback():
         print(f'Before Gradient updates callback from Python 0....')
         inv_net.norm_model.eval()
         particles = sw_opt.GetParticleSystem() # Z space
+        # print(f'Particle System shape {particles.shape}')
         particles = torch.from_numpy(particles.T).to(DEVICE)
         par_procc = particles.reshape(-1, M, 3)
         par_procc = par_procc[:,:,:d].reshape(N, -1)
+        # print(f'Tensor shape {par_procc.size()}')
         z0_datas, lg, lls = inv_net.norm_model(par_procc.float())
         z0_data = z0_datas[-1]
         z0_particles = z0_data.detach().cpu().numpy()
+        z0_particles = z0_particles.T
         log_det_jacobian = lls.detach().cpu().numpy()
         # Size = number of samples N
         det_jacobian = np.exp(log_det_jacobian)
+        print(f'det_jacobian size = {det_jacobian.shape}')
+        det_jacobian = det_jacobian[:, None]
+        det_jacobian = det_jacobian.T
         assert lls.size()[0] == N
-        lls = lls.repeat(d*M, 1) 
+        lls = lls.repeat(d*M, 1)
 
         # Difference matrix
         _, _, p_z_0 = inv_net.get_prior_distribution()
-        diff_matrix = p_z_0.sample((N, )) * lls
+        sampled_pz = p_z_0.sample((N, ))
+        # print(f'z0_particles shape = {z0_particles.shape} samples p_z size = {sampled_pz.size()} and final lls size = {lls.size()}')
+        diff_matrix = sampled_pz.T * lls
         diff_matrix = diff_matrix.detach().cpu().numpy()
         # Set params for ShapeWorks Optimizer
         sw_opt.SetNonLinearBaseShapeMatrix(z0_particles)
@@ -82,7 +95,7 @@ def before_gradient_updates_callback():
         sw_opt.ComputeBaseSpaceCovarianceMatrix()
         z0_cov = sw_opt.GetBaseSpaceInverseCovarianceMatrix() # dM X dM
         z0_mean = sw_opt.GetBaseSpaceMean() # dM vector
-        print(f'Mean shape is {z0_mean.shape}')
+        # print(f'Mean shape is {z0_mean.shape}')
         inv_net.update_prior_distribution(z0_mean, z0_cov)
         print(f'Gradient updates callback from Python 1....')
 

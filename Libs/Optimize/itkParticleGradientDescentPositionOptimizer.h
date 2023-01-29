@@ -66,7 +66,15 @@ public:
   {
     this->StartAdaptiveGaussSeidelOptimization();
   }
+
+  void StartNonLinearOptimization()
+  {
+    this->StartAdaptiveGaussSeidelOptimizationNonLinear();
+  }
+
   void StartAdaptiveGaussSeidelOptimization();
+
+  void StartAdaptiveGaussSeidelOptimizationNonLinear();
 
   void AugmentedLagrangianConstraints(VectorType& gradient, const PointType& pt, const size_t& dom,
                                       const double& maximumUpdateAllowed);

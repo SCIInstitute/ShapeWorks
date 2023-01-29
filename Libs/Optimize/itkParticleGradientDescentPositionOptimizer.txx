@@ -55,6 +55,217 @@ namespace itk
 
   template <class TGradientNumericType, unsigned int VDimension>
   void ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
+    ::StartAdaptiveGaussSeidelOptimizationNonLinear()
+  {
+    /// uncomment this to run single threaded
+    //tbb::task_scheduler_init init(1);
+
+    if (this->m_AbortProcessing) {
+      return;
+    }
+    const double factor = 1.1;
+
+    // NOTE: THIS METHOD WILL NOT WORK AS WRITTEN IF PARTICLES ARE
+    // ADDED TO THE SYSTEM DURING OPTIMIZATION.
+
+    m_StopOptimization = false;
+    if (m_NumberOfIterations >= m_MaximumNumberOfIterations) {
+      m_StopOptimization = true;
+    }
+    //m_GradientFunction->SetParticleSystem(m_ParticleSystem);
+
+    typedef typename DomainType::VnlVectorType NormalType;
+
+    ResetTimeStepVectors();
+    double minimumTimeStep = 1.0;
+
+    const double pi = std::acos(-1.0);
+    unsigned int numdomains = m_ParticleSystem->GetNumberOfDomains();
+
+    unsigned int counter = 0;
+
+    double maxchange = 0.0;
+    while (m_StopOptimization == false) // iterations loop
+    {
+
+      double dampening = 1;
+      int startDampening = m_MaximumNumberOfIterations / 2;
+      if (m_NumberOfIterations > startDampening) {
+        dampening = exp(-double(m_NumberOfIterations - startDampening) * 5.0 / double(m_MaximumNumberOfIterations - startDampening));
+      }
+      minimumTimeStep = dampening;
+
+      maxchange = 0.0;
+
+      const auto accTimerBegin = std::chrono::steady_clock::now();
+      m_GradientFunction->SetParticleSystem(m_ParticleSystem);
+        if (counter % global_iteration == 0)
+            m_GradientFunction->BeforeIteration();
+        counter++;
+
+        // Iterate over each domain
+      const auto domains_per_shape = m_ParticleSystem->GetDomainsPerShape();
+
+      // clone initial particle system
+      auto initial_particle_system = m_ParticleSystem->GetPositions();
+
+      tbb::parallel_for(
+        tbb::blocked_range<size_t>{0, numdomains / domains_per_shape},
+        [&](const tbb::blocked_range<size_t>& r) {
+          for (size_t shape = r.begin(); shape < r.end(); ++shape) {
+            for (int shape_dom_idx = 0; shape_dom_idx < domains_per_shape; shape_dom_idx++) {
+              auto dom = shape*domains_per_shape + shape_dom_idx;
+              if (m_ParticleSystem->GetDomainFlag(dom) == true) {
+                return;
+              }
+
+          const shapeworks::ParticleDomain *domain = m_ParticleSystem->GetDomain(dom);
+
+            typename GradientFunctionType::Pointer localGradientFunction = m_GradientFunction;
+            localGradientFunction = m_GradientFunction->Clone();
+            localGradientFunction->SetDomainNumber(dom);
+            // Compute all possible gradient updates
+            // Iterate over each particle position
+            for (auto k = 0; k < m_ParticleSystem->GetPositions(dom)->GetSize(); k++) {
+              if (m_TimeSteps[dom][k] < minimumTimeStep) {
+                m_TimeSteps[dom][k] = minimumTimeStep;
+              }
+              // Compute gradient update.
+              double energy = 0.0;
+              localGradientFunction->BeforeEvaluate(k, dom, m_ParticleSystem);
+              // maximumUpdateAllowed is set based on some fraction of the distance between particles
+              // This is to avoid particles shooting past their neighbors
+              double maximumUpdateAllowed;
+              VectorType original_gradient = localGradientFunction->Evaluate(k, dom, m_ParticleSystem,
+                                                                             maximumUpdateAllowed, energy);
+              PointType pt = m_ParticleSystem->GetPositions(dom)->Get(k);
+              VectorType original_gradient_projectedOntoTangentSpace = domain->ProjectVectorToSurfaceTangent(
+                      original_gradient, pt, k);
+              double newenergy, gradmag;
+              // while (true) {
+              VectorType gradient = original_gradient_projectedOntoTangentSpace * m_TimeSteps[dom][k];
+              if (m_ParticleSystem->GetDomain(dom)->GetConstraints()->GetActive()) {
+                AugmentedLagrangianConstraints(gradient, pt, dom, maximumUpdateAllowed);
+              }
+                gradmag = gradient.magnitude();
+                if (gradmag > maximumUpdateAllowed) {
+                  gradient = gradient * maximumUpdateAllowed / gradmag;
+                  gradmag = gradient.magnitude();
+                }
+                PointType newpoint = domain->UpdateParticlePosition(pt, k, gradient);
+                m_ParticleSystem->SetPosition(newpoint, k, dom);
+              // end while(true)
+            } // for each particle
+          }
+        }// for each domain
+      });
+
+      //update particle system
+      std::cout << "Updating Base Particle System New 0" << std::endl;
+
+      std::cout << "Updating Base Particle System New 0" << std::endl;
+
+      tbb::parallel_for(
+        tbb::blocked_range<size_t>{0, numdomains / domains_per_shape},
+        [&](const tbb::blocked_range<size_t>& r) {
+          for (size_t shape = r.begin(); shape < r.end(); ++shape) {
+            for (int shape_dom_idx = 0; shape_dom_idx < domains_per_shape; shape_dom_idx++) {
+              auto dom = shape*domains_per_shape + shape_dom_idx;
+              if (m_ParticleSystem->GetDomainFlag(dom) == true) {
+                return;
+              }
+
+          const shapeworks::ParticleDomain *domain = m_ParticleSystem->GetDomain(dom);
+            typename GradientFunctionType::Pointer localGradientFunction = m_GradientFunction;
+            localGradientFunction = m_GradientFunction->Clone();
+            localGradientFunction->SetDomainNumber(dom);
+            for (auto k = 0; k < m_ParticleSystem->GetPositions(dom)->GetSize(); k++) {
+              if (m_TimeSteps[dom][k] < minimumTimeStep) {
+                m_TimeSteps[dom][k] = minimumTimeStep;
+              }
+              // Compute gradient update.
+              double energy = 0.0;
+              double maximumUpdateAllowed;
+              PointType pt = initial_particle_system[dom]->Get(k);
+
+              // Step 1 Project the gradient vector onto the tangent plane
+              VectorType original_gradient_projectedOntoTangentSpace = domain->ProjectVectorToSurfaceTangent(
+                      original_gradient, pt, k);
+              double newenergy, gradmag;
+              while (true) {
+                // Step A scale the projected gradient by the current time step
+                VectorType gradient = gradient_matrix[dom][k];
+                energy = energy_matrix[dom][k];
+                gradmag = gradient.magnitude();
+
+                newenergy = localGradientFunction->Energy(k, dom, m_ParticleSystem);
+                if (newenergy < energy) // good move, increase timestep for next time
+                {
+                  m_TimeSteps[dom][k] *= factor;
+                  if (gradmag > maxchange) maxchange = gradmag;
+                  break;
+                } else {// bad move, reset point position and back off on timestep
+                  std::cout << "Resetting Particle Position " << std::endl;
+                  if (m_TimeSteps[dom][k] > minimumTimeStep) {
+                    domain->ApplyConstraints(pt, k);
+                    m_ParticleSystem->SetPosition(pt, k, dom);
+                    domain->InvalidateParticlePosition(k);
+                    m_TimeSteps[dom][k] /= factor;
+                  } else // keep the move with timestep 1.0 anyway
+                  {
+                    if (gradmag > maxchange) maxchange = gradmag;
+                    break;
+                  }
+                }
+              } // end while(true)
+            } // for each particle
+          }
+        }// for each domain
+      });
+
+
+      m_NumberOfIterations++;
+      m_GradientFunction->AfterIteration();
+
+      const auto accTimerEnd = std::chrono::steady_clock::now();
+      const auto msElapsed = std::chrono::duration_cast<std::chrono::milliseconds>(accTimerEnd - accTimerBegin).count();
+
+      if (m_verbosity > 2)
+      {
+        std::cout << m_NumberOfIterations << ". " << msElapsed << "ms";
+#ifdef LOG_MEMORY_USAGE
+        double vmUsage, residentSet;
+        process_mem_usage(vmUsage, residentSet);
+        std::cout << " | Mem=" << residentSet << "KB";
+#endif
+        std::cout << std::endl;
+      }
+      else if (m_verbosity > 1) {
+        if (m_NumberOfIterations % (m_MaximumNumberOfIterations / 10) == 0) {
+          std::cerr << "Iteration " << m_NumberOfIterations << ", maxchange = " << maxchange << ", minimumTimeStep = " << minimumTimeStep << std::endl;
+        }
+      }
+
+      this->InvokeEvent(itk::IterationEvent());
+
+      // Check for convergence.  Optimization is considered to have converged if
+      // max number of iterations is reached or maximum distance moved by any
+      // particle is less than the specified precision.
+      if (maxchange < m_Tolerance) {
+        std::cerr << "Iteration " << m_NumberOfIterations << ", maxchange = " << maxchange << std::endl;
+        m_StopOptimization = true;
+      }
+
+      if (m_NumberOfIterations >= m_MaximumNumberOfIterations) {
+        m_StopOptimization = true;
+      }
+
+    } // end while stop optimization
+  }
+
+
+  template <class TGradientNumericType, unsigned int VDimension>
+  void ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
     ::StartAdaptiveGaussSeidelOptimization()
   {
     /// uncomment this to run single threaded
@@ -146,14 +357,17 @@ namespace itk
               VectorType original_gradient = localGradientFunction->Evaluate(k, dom, m_ParticleSystem,
                                                                              maximumUpdateAllowed, energy);
 
+              std::cout << "evaluate done 0" << std::endl;
               PointType pt = m_ParticleSystem->GetPositions(dom)->Get(k);
 
               // Step 1 Project the gradient vector onto the tangent plane
               VectorType original_gradient_projectedOntoTangentSpace = domain->ProjectVectorToSurfaceTangent(
                       original_gradient, pt, k);
+              std::cout << "evaluate done 1" << std::endl;
 
               double newenergy, gradmag;
               while (true) {
+                std::cout << "Inside energy loop 0" << std::endl;
                 // Step A scale the projected gradient by the current time step
                 VectorType gradient = original_gradient_projectedOntoTangentSpace * m_TimeSteps[dom][k];
 
@@ -176,8 +390,10 @@ namespace itk
                 // Step F update the point position in the particle system
                 m_ParticleSystem->SetPosition(newpoint, k, dom);
 
-
+                std::cout << "Computing New Energy 0" << std::endl;
                 newenergy = localGradientFunction->Energy(k, dom, m_ParticleSystem);
+                std::cout << "Computing New Energy 1" << std::endl;
+
 
                 if (newenergy < energy) // good move, increase timestep for next time
                 {
@@ -199,6 +415,7 @@ namespace itk
                     break;
                   }
                 }
+                std::cout << "Inside energy loop 1" << std::endl;
               } // end while(true)
             } // for each particle
           }

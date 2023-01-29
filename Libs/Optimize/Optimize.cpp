@@ -2135,7 +2135,9 @@ void Optimize::SetProject(std::shared_ptr<Project> project) { project_ = project
 
 //---------------------------------------------------------------------------
 MatrixContainer Optimize::GetParticleSystem() {
-  auto shape_matrix = m_sampler->GetGeneralShapeMatrix();
+  // auto shape_matrix = m_sampler->GetGeneralShapeMatrix();
+  auto shape_matrix = m_sampler->GetNonLinearShapeMatrixAttribute();
+
 
   MatrixType matrix;
   matrix.resize(shape_matrix->rows(), shape_matrix->cols());
@@ -2212,7 +2214,7 @@ void Optimize::SetUpdateBaseParticlesCallbackFunction(const std::function<void(v
 //---------------------------------------------------------------------------
 void Optimize::SetNonLinearJacobianMatrix(MatrixContainer matrix)
 {
-  std::cout << "---Setting up Jacoboian Matrix in Optimize  0--- " << std::endl;
+  // std::cout << "---Setting up Jacoboian Matrix in Optimize  0--- " << std::endl;
   auto vnl = this->m_sampler->GetNonLinearShapeMatrixAttribute()->GetJacobianMatrix();
   auto eigen = matrix.matrix_;
   vnl->set_size(eigen.rows(), eigen.cols());
@@ -2221,13 +2223,13 @@ void Optimize::SetNonLinearJacobianMatrix(MatrixContainer matrix)
       vnl->put(r, c, eigen(r, c));
     }
   }
-  std::cout << "---Setting up Jacoboian Matrix in Optimize  1--- " << std::endl;
+  // std::cout << "---Setting up Jacoboian Matrix in Optimize  1--- " << std::endl;
 }
 
 //---------------------------------------------------------------------------
 void Optimize::SetNonLinearBaseShapeMatrix(MatrixContainer matrix)
 {
-  std::cout << "---Setting up Base Shape Matrix in Optimize  0--- " << std::endl;
+  // std::cout << "---Setting up Base Shape Matrix in Optimize  0--- " << std::endl;
   auto vnl = this->m_sampler->GetNonLinearShapeMatrixAttribute()->GetBaseShapeMatrix();
   auto eigen = matrix.matrix_;
   vnl->set_size(eigen.rows(), eigen.cols());
@@ -2236,13 +2238,13 @@ void Optimize::SetNonLinearBaseShapeMatrix(MatrixContainer matrix)
       vnl->put(r, c, eigen(r, c));
     }
   }
-  std::cout << "---Setting up Base Shape Matrix in Optimize  1--- " << std::endl;
+  // std::cout << "---Setting up Base Shape Matrix in Optimize  1--- " << std::endl;
 }
 
 //---------------------------------------------------------------------------
 void Optimize::SetNonLinearDifferenceMatrix(MatrixContainer matrix)
 {
-  std::cout << "---Setting up Difference Matrix in Optimize  0--- " << std::endl;
+  // std::cout << "---Setting up Difference Matrix in Optimize  0--- " << std::endl;
   auto vnl = this->m_sampler->GetNonLinearShapeMatrixAttribute()->GetDifferenceMatrix();
   auto eigen = matrix.matrix_;
   vnl->set_size(eigen.rows(), eigen.cols());
@@ -2251,7 +2253,7 @@ void Optimize::SetNonLinearDifferenceMatrix(MatrixContainer matrix)
       vnl->put(r, c, eigen(r, c));
     }
   }
-  std::cout << "---Setting up Difference in Optimize  1--- " << std::endl;
+  // std::cout << "---Setting up Difference in Optimize  1--- " << std::endl;
 }
 
 //---------------------------------------------------------------------------

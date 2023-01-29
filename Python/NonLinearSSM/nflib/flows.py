@@ -37,6 +37,7 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 from torch import nn
+from torch.distributions.multivariate_normal import MultivariateNormal
 
 from nflib.nets import LeafParam, MLP, ARMLP
 
@@ -307,7 +308,6 @@ class NormalizingFlow(nn.Module):
 
 class NormalizingFlowModel(nn.Module):
     """ A Normalizing Flow Model is a (prior, flow) pair """
-    
     def __init__(self, prior, flows, device):
         super().__init__()
         self.prior = prior
@@ -327,3 +327,13 @@ class NormalizingFlowModel(nn.Module):
         z = self.prior.sample((num_samples,))
         xs, _ = self.flow.backward(z)
         return xs, z
+
+def jit_prob_dist(prob_dist: torch.distributions.distribution.Distribution)->torch.nn.Module:
+    class JITProbDist(torch.nn.Module):
+        @torch.jit.ignore
+        def sample(self, x):
+            return prob_dist.sample(x)
+        @torch.jit.ignore
+        def log_prob(self, x):
+            return prob_dist.log_prob(x)
+    return JITProbDist()
