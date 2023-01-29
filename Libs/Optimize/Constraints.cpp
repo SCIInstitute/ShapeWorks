@@ -43,6 +43,7 @@ static json get_json_field(vtkSmartPointer<vtkPolyData> polyData) {
 //-----------------------------------------------------------------------------
 static vtkSmartPointer<vtkPolyData> get_polydata_from_json_field(json j) {
   if (!j.contains("points") || !j.contains("scalars")) {
+    SW_LOG("Invalid json field for polydata");
     return nullptr;
   }
 
@@ -691,9 +692,11 @@ void Constraints::read(std::string filename) {
     }
     if (j.contains("free_form_constraints")) {
       auto ffcJson = j["free_form_constraints"];
-      if (ffcJson.contains("field")) {  // new constraints (field storage)
+      if (ffcJson.contains("field") && !ffcJson["field"].is_null()) {  // new constraints (field storage)
+        SW_DEBUG("Loading free-form constraint from field");
         freeFormConstraint_.setInoutPolyData(get_polydata_from_json_field(ffcJson["field"]));
       } else {  // old constraints (boundary/query point)
+        SW_DEBUG("Loading free-form constraint from boundary/query point");
         for (const auto& boundaryJson : ffcJson["boundaries"]) {
           std::vector<Eigen::Vector3d> boundary;
           for (auto p : boundaryJson["points"]) {
@@ -770,15 +773,10 @@ bool Constraints::hasConstraints() {
     return true;
   }
 
-  // freeFormConstraint_.computeBoundaries();
   if (freeFormConstraint_.isSet()) {
-    SW_LOG("yes FF constraints");
     return true;
   }
-  // if (freeFormConstraint_.getInoutPolyData() != nullptr || !freeFormConstraint_.boundaries().empty()) {
-  //    SW_LOG("yes constraints");
-  //    return true;
-  //  }
+
   SW_LOG("no constraints");
   return false;
 }
