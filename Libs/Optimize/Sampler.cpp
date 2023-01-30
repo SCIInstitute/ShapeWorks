@@ -6,6 +6,7 @@
 #include "ParticleImageDomain.h"
 #include "itkParticlePositionReader.h"
 #include "object_reader.h"
+#include <Logging.h>
 
 namespace shapeworks {
 
@@ -116,6 +117,7 @@ void Sampler::AllocateDomainsAndNeighborhoods() {
       // Adding free-form constraints to constraint object
       // std::cout << "m_FFCs.size() " << m_FFCs.size() << std::endl;
       if (m_FFCs.size() > i) {
+        SW_LOG("Initializing FFCs for domain {} / {}", i, m_DomainList.size());
         initialize_ffcs(i);
       }
 

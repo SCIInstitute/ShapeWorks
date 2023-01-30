@@ -188,8 +188,6 @@ void FreeFormConstraint::createInoutPolyData() {
 
 //-----------------------------------------------------------------------------
 void FreeFormConstraint::computeGradientFields(std::shared_ptr<Mesh> mesh) {
-  SW_DEBUG("Computing gradient fields for FFC");
-
   auto poly_data = mesh->getVTKMesh();
   applyToPolyData(mesh->getVTKMesh());
   setDefinition(mesh->getVTKMesh());
@@ -279,7 +277,6 @@ vtkFloatArray* FreeFormConstraint::getInOutScalars() {
 std::vector<Eigen::Matrix3d> FreeFormConstraint::setGradientFieldForFFCs(std::shared_ptr<Mesh> mesh,
                                                                          vtkSmartPointer<vtkDoubleArray> absvalues,
                                                                          Eigen::MatrixXd V, Eigen::MatrixXi F) {
-  SW_DEBUG("Setting gradient field for FFCs");
   auto poly_data = mesh->getVTKMesh();
   // Definition of gradient field
   auto vf = vtkSmartPointer<vtkDoubleArray>::New();
@@ -356,7 +353,6 @@ std::vector<Eigen::Matrix3d> FreeFormConstraint::setGradientFieldForFFCs(std::sh
 }
 
 void FreeFormConstraint::convertLegacyFFC(vtkSmartPointer<vtkPolyData> polyData) {
-  SW_LOG("Converting legacy FFC");
   if (polyData->GetPointData()->GetArray("ffc_paint")) {
     // clear out any old versions of the inout array or else they will get merged in
     polyData->GetPointData()->RemoveArray("ffc_paint");
