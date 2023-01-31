@@ -63,8 +63,13 @@ Studio provides a number of preference options.
 | Number of PCA Steps | Number of steps for PCA slider bar |
 | Geodesics Cache Size Multiplier |  Multiplier value for geodesics caching |
 | Log Location | A display of where the current log file is located |
-
+| Automatically Check for Updates | Whether Studio should automatically check for updates to ShapeWorks |
+| Send Anonymous Usage Statistics | Whether Studio should send anonymous usage statistics to the ShapeWorks team to help improve the software |
 <br/>
+
+## Data Collection  
+
+ShapeWorks Studio can optionally send anonymous usage statistics to the ShapeWorks team.  This data helps the team by providing basic user tracking numbers that we report to funding agencies to help in acquiring additional funding.  Additionally, we are prospectively collecting a few usage parameters that may aid in development of particular features.  No user data (images, meshes, segmentations, etc) are ever transferred, only basic user event information (e.g. number of times optimize is run).
 
 ## Viewer Controls
 
