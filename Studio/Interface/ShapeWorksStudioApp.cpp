@@ -380,7 +380,7 @@ void ShapeWorksStudioApp::on_action_import_triggered() {
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::splash_screen_closed() {
-  QTimer::singleShot(5000, this, [&]() {
+  QTimer::singleShot(1000, this, [&]() {
     telemetry_.record_event("startup", {});
     update_checker_.run_auto_update_check();
   });
