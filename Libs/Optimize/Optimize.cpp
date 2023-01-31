@@ -73,7 +73,7 @@ bool Optimize::Run() {
   if (num_threads_env) {
     num_threads = std::max(1, atoi(num_threads_env));
   }
-  std::cerr << "ShapeWorks: TBB using " << num_threads << " threads\n";
+  SW_DEBUG("TBB using {} threads", num_threads);
   tbb::global_control c(tbb::global_control::max_allowed_parallelism, num_threads);
 
   if (this->m_python_filename != "") {
