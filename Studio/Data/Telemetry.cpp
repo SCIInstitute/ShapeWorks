@@ -20,12 +20,19 @@ Telemetry::Telemetry(Preferences& prefs) : prefs_(prefs) {
 void Telemetry::record_event(const QString& name, const QVariantMap& params) {
   if (!prefs_.get_telemetry_asked()) {
     // ask the user if it's ok to collect anonymous usage data
-    int ret = QMessageBox::question(nullptr, "Data Collection",
-                                    "Would you like to help improve ShapeWorks by sending anonymous usage data?",
-                                    QMessageBox::Yes | QMessageBox::No);
+    QMessageBox message_box(QMessageBox::Question, "Data Collection",
+                            "Would you like to help improve ShapeWorks by sending anonymous usage data?<br><br>"
+                            "This can be changed at any time in the preferences window.<br><br>"
+                            "More information can be found <a "
+                            "href=http://sciinstitute.github.io/ShapeWorks/latest/studio/"
+                            "getting-started-with-studio.html#data-collection>here</a>");
+    message_box.setTextFormat(Qt::RichText);
+    message_box.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    message_box.exec();
 
+    // check if yes was clicked
+    prefs_.set_telemetry_enabled(message_box.clickedButton() == message_box.button(QMessageBox::Yes));
     prefs_.set_telemetry_asked(true);
-    prefs_.set_telemetry_enabled(ret == QMessageBox::Yes);
   }
 
   auto device_id = prefs_.get_device_id();
