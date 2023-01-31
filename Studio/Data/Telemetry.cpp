@@ -18,7 +18,7 @@ Telemetry::Telemetry(Preferences& prefs) : prefs_(prefs) {
 }
 
 void Telemetry::record_event(const QString& name, const QVariantMap& params) {
-  if (!prefs_.get_telemetry_asked() || 1) {
+  if (!prefs_.get_telemetry_asked()) {
     // ask the user if it's ok to collect anonymous usage data
     QMessageBox message_box(QMessageBox::Question, "Data Collection",
                             "Would you like to help improve ShapeWorks by sending anonymous usage data?<br><br>"
