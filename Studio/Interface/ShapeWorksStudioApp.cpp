@@ -234,6 +234,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
   connect(ui_->save_as_xlsx, &QAction::triggered, this, &ShapeWorksStudioApp::save_as_xlsx_clicked);
   update_feature_map_scale();
   SW_LOG("ShapeWorks Studio Initialized");
+  SW_DEBUG("Debug logging enabled");
 
   connect(splash_screen_.get(), &SplashScreen::accepted, this, &ShapeWorksStudioApp::splash_screen_closed);
 
