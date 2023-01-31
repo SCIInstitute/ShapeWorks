@@ -14,7 +14,6 @@ title: shapeworks::Sampler
 |                | Name           |
 | -------------- | -------------- |
 | struct | **[CuttingPlaneType](../Classes/structshapeworks_1_1Sampler_1_1CuttingPlaneType.md)**  |
-| struct | **[FFCType](../Classes/structshapeworks_1_1Sampler_1_1FFCType.md)**  |
 | struct | **[SphereType](../Classes/structshapeworks_1_1Sampler_1_1SphereType.md)**  |
 
 ## Public Types
@@ -57,7 +56,7 @@ title: shapeworks::Sampler
 | void | **[SetFeaGradFiles](../Classes/classshapeworks_1_1Sampler.md#function-setfeagradfiles)**(const std::vector< std::string > & s) |
 | void | **[SetDomainsPerShape](../Classes/classshapeworks_1_1Sampler.md#function-setdomainspershape)**(int n) |
 | void | **[SetCuttingPlane](../Classes/classshapeworks_1_1Sampler.md#function-setcuttingplane)**(unsigned int i, const vnl_vector_fixed< double, Dimension > & va, const vnl_vector_fixed< double, Dimension > & vb, const vnl_vector_fixed< double, Dimension > & vc) |
-| void | **[AddFreeFormConstraint](../Classes/classshapeworks_1_1Sampler.md#function-addfreeformconstraint)**(unsigned int i, const std::vector< std::vector< Eigen::Vector3d > > boundaries, const Eigen::Vector3d query) |
+| void | **[AddFreeFormConstraint](../Classes/classshapeworks_1_1Sampler.md#function-addfreeformconstraint)**(int domain, const [FreeFormConstraint](../Classes/classshapeworks_1_1FreeFormConstraint.md) & ffc) |
 | void | **[TransformCuttingPlanes](../Classes/classshapeworks_1_1Sampler.md#function-transformcuttingplanes)**(unsigned int i) |
 | void | **[AddSphere](../Classes/classshapeworks_1_1Sampler.md#function-addsphere)**(unsigned int i, vnl_vector_fixed< double, Dimension > & c, double r) |
 | virtual void | **[SetAdaptivityMode](../Classes/classshapeworks_1_1Sampler.md#function-setadaptivitymode)**(int mode) |
@@ -110,7 +109,7 @@ title: shapeworks::Sampler
 | virtual void | **[Execute](../Classes/classshapeworks_1_1Sampler.md#function-execute)**() |
 | std::vector< std::vector< std::pair< Eigen::Vector3d, Eigen::Vector3d > > > | **[ComputeCuttingPlanes](../Classes/classshapeworks_1_1Sampler.md#function-computecuttingplanes)**() |
 | Eigen::Vector3d | **[ComputePlaneNormal](../Classes/classshapeworks_1_1Sampler.md#function-computeplanenormal)**(const vnl_vector< double > & a, const vnl_vector< double > & b, const vnl_vector< double > & c) |
-| std::vector< [FFCType](../Classes/structshapeworks_1_1Sampler_1_1FFCType.md) > | **[GetFFCs](../Classes/classshapeworks_1_1Sampler.md#function-getffcs)**() |
+| std::vector< [FreeFormConstraint](../Classes/classshapeworks_1_1FreeFormConstraint.md) > | **[GetFFCs](../Classes/classshapeworks_1_1Sampler.md#function-getffcs)**() |
 | void | **[SetMeshFFCMode](../Classes/classshapeworks_1_1Sampler.md#function-setmeshffcmode)**(bool mesh_ffc_mode) |
 
 ## Protected Functions
@@ -452,9 +451,8 @@ Optionally supply a cutting plane that will be set as a particle optimization co
 
 ```cpp
 void AddFreeFormConstraint(
-    unsigned int i,
-    const std::vector< std::vector< Eigen::Vector3d > > boundaries,
-    const Eigen::Vector3d query
+    int domain,
+    const FreeFormConstraint & ffc
 )
 ```
 
@@ -880,7 +878,7 @@ inline Eigen::Vector3d ComputePlaneNormal(
 ### function GetFFCs
 
 ```cpp
-inline std::vector< FFCType > GetFFCs()
+inline std::vector< FreeFormConstraint > GetFFCs()
 ```
 
 
@@ -1145,4 +1143,4 @@ itk::ParticleMeshBasedGeneralEntropyGradientFunction< Dimension >::Pointer m_Mes
 
 -------------------------------
 
-Updated on 2023-01-31 at 02:05:29 +0000
+Updated on 2023-01-31 at 02:20:23 +0000

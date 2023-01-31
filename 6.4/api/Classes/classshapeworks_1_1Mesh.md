@@ -89,7 +89,6 @@ title: shapeworks::Mesh
 | bool | **[compareField](../Classes/classshapeworks_1_1Mesh.md#function-comparefield)**(const [Mesh](../Classes/classshapeworks_1_1Mesh.md) & other_mesh, const std::string & name1, const std::string & name2 ="", const double eps =-1.0) const<br>compare field of meshes to be (eps)equal (same field for both if only one specified)  |
 | bool | **[compare](../Classes/classshapeworks_1_1Mesh.md#function-compare)**(const [Mesh](../Classes/classshapeworks_1_1Mesh.md) & other_mesh, const double eps =-1.0) const<br>compare meshes  |
 | bool | **[operator==](../Classes/classshapeworks_1_1Mesh.md#function-operator==)**(const [Mesh](../Classes/classshapeworks_1_1Mesh.md) & other) const<br>compare meshes  |
-| bool | **[prepareFFCFields](../Classes/classshapeworks_1_1Mesh.md#function-prepareffcfields)**(std::vector< std::vector< Eigen::Vector3d > > boundaries, Eigen::Vector3d query, bool onlyGenerateInOut =false)<br>Prepares the mesh for FFCs by setting scalar and vector fields.  |
 | double | **[getFFCValue](../Classes/classshapeworks_1_1Mesh.md#function-getffcvalue)**(Eigen::Vector3d query) const<br>Gets values for FFCs.  |
 | Eigen::Vector3d | **[getFFCGradient](../Classes/classshapeworks_1_1Mesh.md#function-getffcgradient)**(Eigen::Vector3d query) const<br>Gets gradients for FFCs.  |
 | MeshPoints | **[getIGLMesh](../Classes/classshapeworks_1_1Mesh.md#function-getiglmesh)**(Eigen::MatrixXd & V, Eigen::MatrixXi & F) const<br>Formats mesh into an IGL format.  |
@@ -779,18 +778,6 @@ inline bool operator==(
 
 compare meshes 
 
-### function prepareFFCFields
-
-```cpp
-bool prepareFFCFields(
-    std::vector< std::vector< Eigen::Vector3d > > boundaries,
-    Eigen::Vector3d query,
-    bool onlyGenerateInOut =false
-)
-```
-
-Prepares the mesh for FFCs by setting scalar and vector fields. 
-
 ### function getFFCValue
 
 ```cpp
@@ -854,4 +841,4 @@ friend struct SharedCommandData(
 
 -------------------------------
 
-Updated on 2023-01-31 at 02:05:29 +0000
+Updated on 2023-01-31 at 02:20:24 +0000

@@ -42,6 +42,7 @@ Inherits from QObject, QEnableSharedFromThis< Session >
 | void | **[image_slice_settings_changed](../Classes/classshapeworks_1_1Session.md#signal-image-slice-settings-changed)**() |
 | void | **[ffc_paint_mode_changed](../Classes/classshapeworks_1_1Session.md#signal-ffc-paint-mode-changed)**() |
 | void | **[repaint](../Classes/classshapeworks_1_1Session.md#signal-repaint)**() |
+| void | **[reinsert_shapes](../Classes/classshapeworks_1_1Session.md#signal-reinsert-shapes)**() |
 
 ## Public Functions
 
@@ -142,6 +143,7 @@ Inherits from QObject, QEnableSharedFromThis< Session >
 | void | **[set_compare_settings](../Classes/classshapeworks_1_1Session.md#function-set-compare-settings)**([CompareSettings](../Classes/classshapeworks_1_1CompareSettings.md) settings) |
 | [CompareSettings](../Classes/classshapeworks_1_1CompareSettings.md) | **[get_compare_settings](../Classes/classshapeworks_1_1Session.md#function-get-compare-settings)**() |
 | void | **[trigger_repaint](../Classes/classshapeworks_1_1Session.md#function-trigger-repaint)**() |
+| void | **[trigger_reinsert_shapes](../Classes/classshapeworks_1_1Session.md#function-trigger-reinsert-shapes)**() |
 | void | **[set_display_mode](../Classes/classshapeworks_1_1Session.md#function-set-display-mode)**(DisplayMode mode)<br>set display mode (original, groomed, reconstructed)  |
 | DisplayMode | **[get_display_mode](../Classes/classshapeworks_1_1Session.md#function-get-display-mode)**()<br>return the current display mode  |
 | bool | **[is_supported_file_format](../Classes/classshapeworks_1_1Session.md#function-is-supported-file-format)**(std::string filename) |
@@ -299,6 +301,13 @@ void ffc_paint_mode_changed()
 
 ```cpp
 void repaint()
+```
+
+
+### signal reinsert_shapes
+
+```cpp
+void reinsert_shapes()
 ```
 
 
@@ -1070,6 +1079,13 @@ void trigger_repaint()
 ```
 
 
+### function trigger_reinsert_shapes
+
+```cpp
+void trigger_reinsert_shapes()
+```
+
+
 ### function set_display_mode
 
 ```cpp
@@ -1146,4 +1162,4 @@ static const std::string DEEPSSM_C;
 
 -------------------------------
 
-Updated on 2023-01-31 at 02:05:29 +0000
+Updated on 2023-01-31 at 02:20:23 +0000

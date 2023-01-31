@@ -217,7 +217,6 @@ title: Classes
     * **struct [Reconstruction](../Classes/structshapeworks_1_1Reconstruction.md)** 
     * **class [Sampler](../Classes/classshapeworks_1_1Sampler.md)** 
         * **struct [CuttingPlaneType](../Classes/structshapeworks_1_1Sampler_1_1CuttingPlaneType.md)** 
-        * **struct [FFCType](../Classes/structshapeworks_1_1Sampler_1_1FFCType.md)** 
         * **struct [SphereType](../Classes/structshapeworks_1_1Sampler_1_1SphereType.md)** 
     * **class [Session](../Classes/classshapeworks_1_1Session.md)** <br>Representation of a session. 
     * **class [Shape](../Classes/classshapeworks_1_1Shape.md)** <br>Representation of a single shape/patient/subject. 
@@ -268,4 +267,4 @@ title: Classes
 
 -------------------------------
 
-Updated on 2023-01-31 at 02:05:30 +0000
+Updated on 2023-01-31 at 02:20:25 +0000

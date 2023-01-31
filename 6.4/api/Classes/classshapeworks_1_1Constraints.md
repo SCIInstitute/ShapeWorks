@@ -48,8 +48,8 @@ title: shapeworks::Constraints
 | void | **[UpdateMus](../Classes/classshapeworks_1_1Constraints.md#function-updatemus)**(const Point3 & pos, double C) |
 | bool | **[GetActive](../Classes/classshapeworks_1_1Constraints.md#function-getactive)**() |
 | void | **[SetActive](../Classes/classshapeworks_1_1Constraints.md#function-setactive)**(bool ac) |
-| void | **[Read](../Classes/classshapeworks_1_1Constraints.md#function-read)**(std::string filename) |
-| void | **[Write](../Classes/classshapeworks_1_1Constraints.md#function-write)**(std::string filename) |
+| void | **[read](../Classes/classshapeworks_1_1Constraints.md#function-read)**(std::string filename) |
+| void | **[write](../Classes/classshapeworks_1_1Constraints.md#function-write)**(std::string filename) |
 | [FreeFormConstraint](../Classes/classshapeworks_1_1FreeFormConstraint.md) & | **[getFreeformConstraint](../Classes/classshapeworks_1_1Constraints.md#function-getfreeformconstraint)**() |
 | bool | **[hasConstraints](../Classes/classshapeworks_1_1Constraints.md#function-hasconstraints)**() |
 | void | **[clipMesh](../Classes/classshapeworks_1_1Constraints.md#function-clipmesh)**([Mesh](../Classes/classshapeworks_1_1Mesh.md) & mesh) |
@@ -322,19 +322,19 @@ inline void SetActive(
 ```
 
 
-### function Read
+### function read
 
 ```cpp
-void Read(
+void read(
     std::string filename
 )
 ```
 
 
-### function Write
+### function write
 
 ```cpp
-void Write(
+void write(
     std::string filename
 )
 ```
@@ -365,4 +365,4 @@ void clipMesh(
 
 -------------------------------
 
-Updated on 2023-01-31 at 02:05:29 +0000
+Updated on 2023-01-31 at 02:20:23 +0000

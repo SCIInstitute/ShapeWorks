@@ -2498,7 +2498,10 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_compare_settings</span><span class="p">(</span><span class="n">CompareSettings</span><span class="w"> </span><span class="n">settings</span><span class="p">);</span><span class="w"></span>
 <span class="w">  </span><span class="n">CompareSettings</span><span class="w"> </span><span class="nf">get_compare_settings</span><span class="p">();</span><span class="w"></span>
 
+
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">trigger_repaint</span><span class="p">();</span><span class="w"></span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">trigger_reinsert_shapes</span><span class="p">();</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_display_mode</span><span class="p">(</span><span class="n">DisplayMode</span><span class="w"> </span><span class="n">mode</span><span class="p">);</span><span class="w"></span>
 
@@ -2527,6 +2530,7 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">image_slice_settings_changed</span><span class="p">();</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">ffc_paint_mode_changed</span><span class="p">();</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">repaint</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">reinsert_shapes</span><span class="p">();</span><span class="w"></span>
 
 <span class="w"> </span><span class="k">public</span><span class="o">:</span><span class="w"></span>
 <span class="w">  </span><span class="c1">// constants</span>
@@ -2577,7 +2581,7 @@
 
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">ffc_painting_active_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">ffc_painting_inclusive_mode_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">ffc_paint_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">50</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">ffc_paint_size_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">50</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_loading_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="n">CompareSettings</span><span class="w"> </span><span class="n">compare_settings_</span><span class="p">;</span><span class="w"></span>
@@ -2586,7 +2590,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-01-31 at 02:05:30 +0000</p>
+<p>Updated on 2023-01-31 at 02:20:25 +0000</p>
 
               
             </article>

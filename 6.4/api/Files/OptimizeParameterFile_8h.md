@@ -72,8 +72,6 @@ private:
 
   bool read_cutting_spheres(TiXmlHandle* doc_handle, Optimize* optimize);
 
-  bool read_cutting_ffcs(TiXmlHandle* docHandle, Optimize* optimize);
-
   bool read_explanatory_variables(TiXmlHandle* doc_handle, Optimize* optimize);
 
   bool read_flag_particles(TiXmlHandle* doc_handle, Optimize* optimize);
@@ -95,4 +93,4 @@ private:
 
 -------------------------------
 
-Updated on 2023-01-31 at 02:05:30 +0000
+Updated on 2023-01-31 at 02:20:24 +0000

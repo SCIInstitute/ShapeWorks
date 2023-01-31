@@ -46,13 +46,13 @@ class FreeFormConstraint : public Constraint {
 
   bool readyForOptimize() const;
 
-  bool isViolated(const Eigen::Vector3d &pt) const override;
+  bool isViolated(const Eigen::Vector3d& pt) const override;
 
   void print() const override { std::cout << "FF" << std::endl; }
 
-  Eigen::Vector3d constraintGradient(const Eigen::Vector3d &pt) const override { return mesh_->getFFCGradient(pt); }
+  Eigen::Vector3d constraintGradient(const Eigen::Vector3d& pt) const override { return mesh_->getFFCGradient(pt); }
 
-  double constraintEval(const Eigen::Vector3d &pt) const override { return mesh_->getFFCValue(pt); }
+  double constraintEval(const Eigen::Vector3d& pt) const override { return mesh_->getFFCValue(pt); }
 
   void setDefinition(vtkSmartPointer<vtkPolyData> polyData);
 
@@ -60,7 +60,7 @@ class FreeFormConstraint : public Constraint {
 
   void applyToPolyData(vtkSmartPointer<vtkPolyData> polyData);
 
-  std::vector<std::vector<Eigen::Vector3d>> &boundaries();
+  std::vector<std::vector<Eigen::Vector3d>>& boundaries();
 
   Eigen::Vector3d getQueryPoint() { return queryPoint_; };
 
@@ -68,15 +68,34 @@ class FreeFormConstraint : public Constraint {
 
   void computeBoundaries();
 
+  void setInoutPolyData(vtkSmartPointer<vtkPolyData> polyData) { inoutPolyData_ = polyData; }
+
+  vtkSmartPointer<vtkPolyData> getInoutPolyData() { return inoutPolyData_; };
+
+  void createInoutPolyData();
+
   bool isSet();
 
   void setPainted(bool painted);
 
   void reset();
 
+  void computeGradientFields(std::shared_ptr<Mesh> mesh);
+
+  void convertLegacyFFC(vtkSmartPointer<vtkPolyData> polyData);
+
+
  private:
 
-  vtkFloatArray *createFFCPaint(vtkSmartPointer<vtkPolyData> polyData);
+  vtkSmartPointer<vtkFloatArray> computeInOutForFFCs(vtkSmartPointer<vtkPolyData> polyData, Eigen::Vector3d query,
+                                                     vtkSmartPointer<vtkPolyData> halfmesh);
+
+  std::vector<Eigen::Matrix3d> setGradientFieldForFFCs(std::shared_ptr<Mesh> mesh,
+                                                       vtkSmartPointer<vtkDoubleArray> absvalues, Eigen::MatrixXd V,
+                                                       Eigen::MatrixXi F);
+
+  vtkFloatArray* getInOutScalars();
+  vtkFloatArray* createFFCPaint(vtkSmartPointer<vtkPolyData> polyData);
 
   std::shared_ptr<shapeworks::Mesh> mesh_;
 
@@ -85,6 +104,7 @@ class FreeFormConstraint : public Constraint {
 
   std::vector<std::vector<Eigen::Vector3d>> boundaries_;
   Eigen::Vector3d queryPoint_;
+  vtkSmartPointer<vtkPolyData> inoutPolyData_;
 };
 
 }  // namespace shapeworks
@@ -93,4 +113,4 @@ class FreeFormConstraint : public Constraint {
 
 -------------------------------
 
-Updated on 2023-01-31 at 02:05:30 +0000
+Updated on 2023-01-31 at 02:20:24 +0000

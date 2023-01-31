@@ -195,9 +195,6 @@ class Mesh {
 
   static std::vector<std::string> getSupportedTypes() { return {"vtk", "vtp", "ply", "stl", "obj"}; }
 
-  bool prepareFFCFields(std::vector<std::vector<Eigen::Vector3d>> boundaries, Eigen::Vector3d query,
-                        bool onlyGenerateInOut = false);
-
   double getFFCValue(Eigen::Vector3d query) const;
 
   Eigen::Vector3d getFFCGradient(Eigen::Vector3d query) const;
@@ -231,16 +228,6 @@ class Mesh {
   mutable vtkSmartPointer<vtkKdTreePointLocator> pointLocator;
   void updatePointLocator() const;
 
-  std::vector<Eigen::Matrix3d> setGradientFieldForFFCs(vtkSmartPointer<vtkDoubleArray> absvalues, Eigen::MatrixXd V,
-                                                       Eigen::MatrixXi F);
-
-  vtkSmartPointer<vtkDoubleArray> setDistanceToBoundaryValueFieldForFFCs(
-      vtkSmartPointer<vtkDoubleArray> values, MeshPoints points, std::vector<size_t> boundaryVerts,
-      vtkSmartPointer<vtkDoubleArray> inout, Eigen::MatrixXd V,
-      Eigen::MatrixXi F);  // fixme: sets value, returns absvalues, not sure why
-
-  vtkSmartPointer<vtkDoubleArray> computeInOutForFFCs(Eigen::Vector3d query,
-                                                      MeshType halfmesh);  // similar issues to above
 
   Eigen::Vector3d computeBarycentricCoordinates(const Eigen::Vector3d& pt, int face)
       const;  // // WARNING: Copied directly from Meshwrapper. TODO: When refactoring, take this into account.
@@ -260,4 +247,4 @@ class MeshReader {
 
 -------------------------------
 
-Updated on 2023-01-31 at 02:05:30 +0000
+Updated on 2023-01-31 at 02:20:24 +0000

@@ -241,7 +241,10 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   void set_compare_settings(CompareSettings settings);
   CompareSettings get_compare_settings();
 
+
   void trigger_repaint();
+
+  void trigger_reinsert_shapes();
 
   void set_display_mode(DisplayMode mode);
 
@@ -270,6 +273,7 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   void image_slice_settings_changed();
   void ffc_paint_mode_changed();
   void repaint();
+  void reinsert_shapes();
 
  public:
   // constants
@@ -320,7 +324,7 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
 
   bool ffc_painting_active_ = false;
   bool ffc_painting_inclusive_mode_ = false;
-  double ffc_paint_size = 50;
+  double ffc_paint_size_ = 50;
 
   bool is_loading_ = false;
   CompareSettings compare_settings_;
@@ -332,4 +336,4 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
 
 -------------------------------
 
-Updated on 2023-01-31 at 02:05:30 +0000
+Updated on 2023-01-31 at 02:20:25 +0000

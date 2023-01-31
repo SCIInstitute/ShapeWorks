@@ -2345,6 +2345,27 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-setinoutpolydata" class="md-nav__link">
+    function setInoutPolyData
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-getinoutpolydata" class="md-nav__link">
+    function getInoutPolyData
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-createinoutpolydata" class="md-nav__link">
+    function createInoutPolyData
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-isset" class="md-nav__link">
     function isSet
   </a>
@@ -2361,6 +2382,20 @@
           <li class="md-nav__item">
   <a href="#function-reset" class="md-nav__link">
     function reset
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-computegradientfields" class="md-nav__link">
+    function computeGradientFields
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-convertlegacyffc" class="md-nav__link">
+    function convertLegacyFFC
   </a>
   
 </li>
@@ -2447,19 +2482,31 @@
 </tr>
 <tr>
 <td>std::vector&lt; std::vector&lt; Eigen::Vector3d &gt; &gt; &amp;</td>
-<td><strong><a href="classshapeworks_1_1FreeFormConstraint.html#function-boundaries">boundaries</a></strong>()<br>Access the set of boundaries.</td>
+<td><strong><a href="classshapeworks_1_1FreeFormConstraint.html#function-boundaries">boundaries</a></strong>()</td>
 </tr>
 <tr>
 <td>Eigen::Vector3d</td>
-<td><strong><a href="classshapeworks_1_1FreeFormConstraint.html#function-getquerypoint">getQueryPoint</a></strong>()<br>Get query (inside) point.</td>
+<td><strong><a href="classshapeworks_1_1FreeFormConstraint.html#function-getquerypoint">getQueryPoint</a></strong>()</td>
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1FreeFormConstraint.html#function-setquerypoint">setQueryPoint</a></strong>(Eigen::Vector3d queryPoint)<br>Set query (inside) point.</td>
+<td><strong><a href="classshapeworks_1_1FreeFormConstraint.html#function-setquerypoint">setQueryPoint</a></strong>(Eigen::Vector3d queryPoint)</td>
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1FreeFormConstraint.html#function-computeboundaries">computeBoundaries</a></strong>()<br>Compute boundaries from definition polydata with ffc_paint scalars.</td>
+<td><strong><a href="classshapeworks_1_1FreeFormConstraint.html#function-computeboundaries">computeBoundaries</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1FreeFormConstraint.html#function-setinoutpolydata">setInoutPolyData</a></strong>(vtkSmartPointer&lt; vtkPolyData &gt; polyData)<br>Set the in/out polydata.</td>
+</tr>
+<tr>
+<td>vtkSmartPointer&lt; vtkPolyData &gt;</td>
+<td><strong><a href="classshapeworks_1_1FreeFormConstraint.html#function-getinoutpolydata">getInoutPolyData</a></strong>()<br>Get the in/out polydata.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1FreeFormConstraint.html#function-createinoutpolydata">createInoutPolyData</a></strong>()<br>Create the in/out poly data from the definition poly data.</td>
 </tr>
 <tr>
 <td>bool</td>
@@ -2472,6 +2519,14 @@
 <tr>
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1FreeFormConstraint.html#function-reset">reset</a></strong>()<br>Reset to initial state.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1FreeFormConstraint.html#function-computegradientfields">computeGradientFields</a></strong>(std::shared_ptr&lt; <a href="classshapeworks_1_1Mesh.html">Mesh</a> &gt; mesh)<br>Compute gradient fields for a mesh.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1FreeFormConstraint.html#function-convertlegacyffc">convertLegacyFFC</a></strong>(vtkSmartPointer&lt; vtkPolyData &gt; polyData)<br>Convert legacy FFC to new format.</td>
 </tr>
 </tbody>
 </table>
@@ -2622,21 +2677,39 @@
 <h3 id="function-boundaries">function boundaries</h3>
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">boundaries</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
-<p>Access the set of boundaries. </p>
+<p><strong>Deprecated</strong>: </p>
+<p>Access the set of boundaries </p>
 <h3 id="function-getquerypoint">function getQueryPoint</h3>
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">getQueryPoint</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
-<p>Get query (inside) point. </p>
+<p><strong>Deprecated</strong>: </p>
+<p>Get query (inside) point </p>
 <h3 id="function-setquerypoint">function setQueryPoint</h3>
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">setQueryPoint</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">queryPoint</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
-<p>Set query (inside) point. </p>
+<p><strong>Deprecated</strong>: </p>
+<p>Set query (inside) point </p>
 <h3 id="function-computeboundaries">function computeBoundaries</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">computeBoundaries</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
-<p>Compute boundaries from definition polydata with ffc_paint scalars. </p>
+<p><strong>Deprecated</strong>: </p>
+<p>Compute boundaries from definition polydata with ffc_paint scalars </p>
+<h3 id="function-setinoutpolydata">function setInoutPolyData</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">setInoutPolyData</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">polyData</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>Set the in/out polydata. </p>
+<h3 id="function-getinoutpolydata">function getInoutPolyData</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">getInoutPolyData</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<p>Get the in/out polydata. </p>
+<h3 id="function-createinoutpolydata">function createInoutPolyData</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">createInoutPolyData</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<p>Create the in/out poly data from the definition poly data. </p>
 <h3 id="function-isset">function isSet</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">isSet</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
@@ -2651,8 +2724,20 @@
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">reset</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
 <p>Reset to initial state. </p>
+<h3 id="function-computegradientfields">function computeGradientFields</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">computeGradientFields</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Mesh</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">mesh</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>Compute gradient fields for a mesh. </p>
+<h3 id="function-convertlegacyffc">function convertLegacyFFC</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">convertLegacyFFC</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">polyData</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>Convert legacy FFC to new format. </p>
 <hr />
-<p>Updated on 2023-01-31 at 02:05:29 +0000</p>
+<p>Updated on 2023-01-31 at 02:20:23 +0000</p>
 
               
             </article>
