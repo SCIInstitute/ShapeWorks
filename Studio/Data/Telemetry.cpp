@@ -35,8 +35,13 @@ void Telemetry::record_event(const QString& name, const QVariantMap& params) {
   QString measurement_id{GA_MEASUREMENT_ID};
   QString api_secret{GA_API_SECRET};
 
-  if (!prefs_.get_telemetry_enabled() || measurement_id.isEmpty() || api_secret.isEmpty()) {
-    SW_LOG("Telemetry disabled");
+  if (measurement_id.isEmpty() || api_secret.isEmpty()) {
+    SW_LOG("Telemetry disabled, no measurement id or api secret");
+    return;
+  }
+
+  if (!prefs_.get_telemetry_enabled()) {
+    SW_LOG("Telemetry disabled by preferences");
     return;
   }
 
@@ -56,7 +61,7 @@ void Telemetry::record_event(const QString& name, const QVariantMap& params) {
 
 void Telemetry::handle_network_reply(QNetworkReply* reply) {
   std::string response = QString(reply->readAll()).toStdString();
-  SW_LOG("Telemetry::handleNetworkReply: {}", response);
+  // SW_LOG("Telemetry::handleNetworkReply: {}", response);
 }
 
 }  // namespace shapeworks

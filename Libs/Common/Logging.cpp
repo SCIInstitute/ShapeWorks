@@ -105,8 +105,10 @@ void Logging::log_debug(const std::string& message, const int line, const char *
   if (log_open_) {
     spd::get("file")->debug(str);
   }
-  if (debug_callback_) {
-    debug_callback_(str);
+  if (spd::get_level() == spd::level::debug) {
+    if (debug_callback_) {
+      debug_callback_(str);
+    }
   }
 }
 

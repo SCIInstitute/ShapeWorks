@@ -234,6 +234,7 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
   connect(ui_->save_as_xlsx, &QAction::triggered, this, &ShapeWorksStudioApp::save_as_xlsx_clicked);
   update_feature_map_scale();
   SW_LOG("ShapeWorks Studio Initialized");
+  SW_DEBUG("Debug logging enabled");
 
   connect(splash_screen_.get(), &SplashScreen::accepted, this, &ShapeWorksStudioApp::splash_screen_closed);
 
@@ -916,6 +917,7 @@ void ShapeWorksStudioApp::new_session() {
   connect(session_.data(), &Session::update_display, this, &ShapeWorksStudioApp::handle_display_setting_changed);
   connect(session_.data(), &Session::update_view_mode, this, &ShapeWorksStudioApp::update_view_mode);
   connect(session_.data(), &Session::new_mesh, this, &ShapeWorksStudioApp::handle_new_mesh);
+  connect(session_.data(), &Session::reinsert_shapes, this, [&]() { update_display(true); });
 
   connect(ui_->feature_auto_scale, &QCheckBox::toggled, this, &ShapeWorksStudioApp::update_feature_map_scale);
   connect(ui_->feature_auto_scale, &QCheckBox::toggled, session_.data(), &Session::set_feature_auto_scale);
