@@ -1,72 +1,62 @@
 #include "QOptimize.h"
 
-#include <QMutexLocker>
 #include <Logging.h>
+
+#include <QMutexLocker>
 
 namespace shapeworks {
 
-QOptimize::QOptimize(QObject* parent) :
-  QObject(parent),
-  Optimize()
-{}
+QOptimize::QOptimize(QObject* parent) : QObject(parent), Optimize() {}
 
 //---------------------------------------------------------------------------
-QOptimize::~QOptimize()
-{}
+QOptimize::~QOptimize() {}
 
 //---------------------------------------------------------------------------
-std::vector<std::vector<itk::Point<double>>> QOptimize::GetLocalPoints()
-{
+std::vector<std::vector<itk::Point<double>>> QOptimize::GetLocalPoints() {
   QMutexLocker locker(&qmutex_);
-  return this->m_local_points;
+  return m_local_points;
 }
 
 //---------------------------------------------------------------------------
-std::vector<std::vector<itk::Point<double>>> QOptimize::GetGlobalPoints()
-{
+std::vector<std::vector<itk::Point<double>>> QOptimize::GetGlobalPoints() {
   QMutexLocker locker(&qmutex_);
-  return this->m_global_points;
+  return m_global_points;
 }
 
 //---------------------------------------------------------------------------
-void QOptimize::UpdateExportablePoints()
-{
+void QOptimize::UpdateExportablePoints() {
   QMutexLocker locker(&qmutex_);
   Optimize::UpdateExportablePoints();
 }
 
 //---------------------------------------------------------------------------
-void QOptimize::SetIterationCallback()
-{
-  this->iterate_command_ = itk::MemberCommand<QOptimize>::New();
-  this->iterate_command_->SetCallbackFunction(this, &QOptimize::IterateCallback);
-  m_sampler->GetOptimizer()->AddObserver(itk::IterationEvent(), this->iterate_command_);
+void QOptimize::SetIterationCallback() {
+  iterate_command_ = itk::MemberCommand<QOptimize>::New();
+  iterate_command_->SetCallbackFunction(this, &QOptimize::IterateCallback);
+  m_sampler->GetOptimizer()->AddObserver(itk::IterationEvent(), iterate_command_);
 }
 
 //---------------------------------------------------------------------------
-void QOptimize::IterateCallback(itk::Object* caller, const itk::EventObject& e)
-{
-
-  if (this->m_aborted) {
+void QOptimize::IterateCallback(itk::Object* caller, const itk::EventObject& e) {
+  if (m_aborted) {
     return;
   }
 
   // run superclass iterateCallback
   Optimize::IterateCallback(caller, e);
 
-  auto transform = this->m_sampler->GetParticleSystem()->GetTransform();
+  auto transform = m_sampler->GetParticleSystem()->GetTransform();
 
   if (transform(0, 0) != transform(0, 0)) {
-    //throw on NaN
+    // throw on NaN
     throw std::runtime_error("Optimize failed! Please try changing parameters.");
   }
 
   bool update = false;
-  if (!this->time_since_last_update_.isValid()) {
+  if (!time_since_last_update_.isValid()) {
     update = true;
-  }
-  else {
-    auto time_since = this->time_since_last_update_.elapsed();
+  } else {
+    auto time_since = time_since_last_update_.elapsed();
     if (time_since > 100) {
       update = true;
     }
@@ -76,39 +66,35 @@ void QOptimize::IterateCallback(itk::Object* caller, const itk::EventObject& e)
   int stage_total_iterations = m_sampler->GetOptimizer()->GetMaximumNumberOfIterations();
   int num_particles = m_sampler->GetParticleSystem()->GetNumberOfParticles(0);
   QString message;
-  if (this->m_optimizing) {
+  if (m_optimizing) {
     message = "Optimizing: ";
-  }
-  else {
+  } else {
     message = "Initializing: ";
   }
 
-  message = message + "Particles: " + QString::number(num_particles) + ", Iteration: " +
-            QString::number(stage_num_iterations) + " / " + QString::number(stage_total_iterations);
+  message = message + "Particles: " + QString::number(num_particles) +
+            ", Iteration: " + QString::number(stage_num_iterations) + " / " + QString::number(stage_total_iterations);
 
   if (update) {
-    this->time_since_last_update_.start();
+    time_since_last_update_.start();
     {
       QMutexLocker locker(&qmutex_);
 
-      this->m_local_points.clear();
-      this->m_global_points.clear();
+      m_local_points.clear();
+      m_global_points.clear();
 
       // copy particles
-      for (size_t d = 0; d < this->m_sampler->
-           GetParticleSystem()->GetNumberOfDomains(); d++) {
-
+      for (size_t d = 0; d < m_sampler->GetParticleSystem()->GetNumberOfDomains(); d++) {
         // blank set of points
-        this->m_local_points.push_back(std::vector<itk::Point<double>>());
-        this->m_global_points.push_back(std::vector<itk::Point<double>>());
+        m_local_points.push_back(std::vector<itk::Point<double>>());
+        m_global_points.push_back(std::vector<itk::Point<double>>());
 
         // for each particle
-        for (size_t j = 0; j < this->m_sampler->
-             GetParticleSystem()->GetNumberOfParticles(d); j++) {
-          auto pos = this->m_sampler->GetParticleSystem()->GetPosition(j, d);
-          auto pos2 = this->m_sampler->GetParticleSystem()->GetTransformedPosition(j, d);
-          this->m_local_points[d].push_back(pos);
-          this->m_global_points[d].push_back(pos2);
+        for (size_t j = 0; j < m_sampler->GetParticleSystem()->GetNumberOfParticles(d); j++) {
+          auto pos = m_sampler->GetParticleSystem()->GetPosition(j, d);
+          auto pos2 = m_sampler->GetParticleSystem()->GetTransformedPosition(j, d);
+          m_local_points[d].push_back(pos);
+          m_global_points[d].push_back(pos2);
         }
       }
     }
@@ -117,21 +103,20 @@ void QOptimize::IterateCallback(itk::Object* caller, const itk::EventObject& e)
 }
 
 //---------------------------------------------------------------------------
-std::vector<Particles> QOptimize::GetParticles()
-{
+std::vector<Particles> QOptimize::GetParticles() {
   QMutexLocker locker(&qmutex_);
 
   std::vector<Particles> particles;
 
-  int num_domains_per_subject = this->GetDomainsPerShape();
-  int num_subjects = this->GetNumShapes() / num_domains_per_subject;
+  int num_domains_per_subject = GetDomainsPerShape();
+  int num_subjects = GetNumShapes() / num_domains_per_subject;
   particles.resize(num_subjects);
 
   int subject = 0;
   int domain = 0;
-  for (int i = 0; i < this->m_local_points.size(); i++) {
-    particles[subject].set_local_particles(domain, this->m_local_points[i]);
-    particles[subject].set_world_particles(domain, this->m_global_points[i]);
+  for (int i = 0; i < m_local_points.size(); i++) {
+    particles[subject].set_local_particles(domain, m_local_points[i]);
+    particles[subject].set_world_particles(domain, m_global_points[i]);
     domain++;
     if (domain == num_domains_per_subject) {
       subject++;
@@ -143,11 +128,10 @@ std::vector<Particles> QOptimize::GetParticles()
 }
 
 //---------------------------------------------------------------------------
-std::vector<std::vector<std::vector<double>>> QOptimize::GetProcrustesTransforms()
-{
+std::vector<std::vector<std::vector<double>>> QOptimize::GetProcrustesTransforms() {
   QMutexLocker locker(&qmutex_);
   auto transforms = Optimize::GetProcrustesTransforms();
   return transforms;
 }
 
-}
+}  // namespace shapeworks
