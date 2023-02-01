@@ -9,6 +9,7 @@
 #include <QJsonObject>
 #include <QMessageBox>
 #include <QNetworkReply>
+#include <QOperatingSystemVersion>
 #include <QUrlQuery>
 
 namespace shapeworks {
@@ -35,40 +36,107 @@ void Telemetry::record_event(const QString& name, const QVariantMap& params) {
     prefs_.set_telemetry_asked(true);
   }
 
-  auto device_id = prefs_.get_device_id();
-  auto params_json = QJsonObject{
-      {"device_id", device_id}, {"platform", StudioUtils::get_platform_string()}, {"version", SHAPEWORKS_VERSION}};
-
   QString measurement_id{GA_MEASUREMENT_ID};
   QString api_secret{GA_API_SECRET};
 
   if (measurement_id.isEmpty() || api_secret.isEmpty()) {
     SW_LOG("Telemetry disabled, no measurement id or api secret");
+    enabled_ = false;
     return;
   }
 
   if (!prefs_.get_telemetry_enabled()) {
     SW_LOG("Telemetry disabled by preferences");
+    enabled_ = false;
     return;
   }
+
+  active_event_ = create_event(name, params);
+  send_event(active_event_);
+}
+
+void Telemetry::handle_network_reply(QNetworkReply* reply) {
+  try {
+    std::string response = QString(reply->readAll()).toStdString();
+    // parse reply as json
+    QJsonDocument json = QJsonDocument::fromJson(response.c_str());
+    // get response from json
+    QJsonObject json_obj = json.object();
+    if (json_obj["response"].toString() == "ok") {
+      SW_DEBUG("Telemetry::handleNetworkReply: ok");
+
+      auto events = prefs_.get_pending_telemetry_events();
+      if (!events.empty()) {
+        SW_DEBUG("Telemetry::handleNetworkReply: sending pending events");
+        auto event = events.front();
+        events.pop_front();
+        prefs_.set_pending_telemetry_events(events);
+        send_event(event);
+      }
+
+      return;
+    }
+  } catch (std::exception& e) {
+    SW_DEBUG("Telemetry::handleNetworkReply: exception: {}", e.what());
+    return;
+  }
+
+  enabled_ = false;
+  // store event for later retry
+  SW_DEBUG("Storing event for later retry");
+  store_event(active_event_);
+  active_event_ = "";
+}
+
+QString Telemetry::create_event(const QString& name, const QVariantMap& params) {
+  auto device_id = prefs_.get_device_id();
+  auto params_json = QJsonObject{
+      {"device_id", device_id}, {"platform", StudioUtils::get_platform_string()}, {"version", SHAPEWORKS_VERSION}};
+
+  const auto os = QOperatingSystemVersion::current();
+  params_json["operating_system"] =
+      QString{"%1 %2.%3"}.arg(os.name(), QString::number(os.majorVersion()), QString::number(os.minorVersion()));
+  params_json["operating_system_language"] = QLocale::system().nativeLanguageName();
 
   for (auto it = params.constKeyValueBegin(); it != params.constKeyValueEnd(); it++) {
     params_json.insert(it->first, QJsonValue::fromVariant(it->second));
   }
 
-  auto payload = QJsonObject{{"client_id", device_id},
-                             {"timestamp_micros", QDateTime::currentMSecsSinceEpoch() * 1000},
-                             {"events", QJsonArray{QJsonObject{{"name", name}, {"params", params_json}}}}};
+  auto event = QJsonObject{{"client_id", device_id},
+                           {"timestamp_micros", QDateTime::currentMSecsSinceEpoch() * 1000},
+                           {"events", QJsonArray{QJsonObject{{"name", name}, {"params", params_json}}}}};
 
-  QNetworkRequest request(QUrl("https://www.google-analytics.com/mp/collect?&measurement_id=" + measurement_id +
-                               "&api_secret=" + api_secret));
-  request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
-  network_.post(request, QJsonDocument(payload).toJson());
+  return QJsonDocument(event).toJson();
 }
 
-void Telemetry::handle_network_reply(QNetworkReply* reply) {
-  std::string response = QString(reply->readAll()).toStdString();
-  // SW_LOG("Telemetry::handleNetworkReply: {}", response);
+void Telemetry::send_event(const QString& event) {
+  if (!enabled_) {
+    store_event(event);
+    return;
+  }
+
+  QString api_secret{GA_API_SECRET};
+
+  QUrlQuery query;
+  query.addQueryItem("secret", api_secret);
+
+  QString server = "http://127.0.0.1:5001";
+  QUrl url(server + "/post_json");
+  url.setQuery(query);
+  QNetworkRequest network_request(url);
+
+  active_event_ = event;
+  network_request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+  network_.post(network_request, event.toUtf8());
+}
+
+void Telemetry::store_event(const QString& event) {
+  auto events = prefs_.get_pending_telemetry_events();
+  events.push_back(event);
+  while (events.size() > 100) {  // only keep the last 100 events
+    events.pop_front();
+  }
+  prefs_.set_pending_telemetry_events(events);
 }
 
 }  // namespace shapeworks
