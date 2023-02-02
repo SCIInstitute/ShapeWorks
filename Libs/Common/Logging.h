@@ -2,9 +2,8 @@
 
 #include <spdlog/fmt/fmt.h>
 
-#include <functional>
-
 #include <QString>
+#include <functional>
 
 template <>
 struct fmt::formatter<QString> {
@@ -103,7 +102,7 @@ class Logging {
   void show_status(const std::string& message, const int line, const char* file) const;
 
   //! Display progress (0-100)
-  void show_progress(double value);
+  void show_progress(double value, const std::string& message);
 
   //! Log a debug message, use SW_DEBUG macro
   void log_debug(const std::string& message, const int line, const char* file) const;
@@ -130,7 +129,7 @@ class Logging {
   void set_status_callback(const std::function<void(std::string)>& callback);
 
   //! Set a progress callback function to be called whenever a progress update is posted
-  void set_progress_callback(const std::function<void(double)>& callback);
+  void set_progress_callback(const std::function<void(double, std::string)>& callback);
 
  private:
   //! Constructor
@@ -149,8 +148,7 @@ class Logging {
 
   std::function<void(std::string)> status_callback_;
 
-  std::function<void(double)> progress_callback_;
-
+  std::function<void(double, std::string)> progress_callback_;
 };
 
 //! Log stack macro
@@ -183,8 +181,8 @@ class Logging {
 #define SW_STATUS(message, ...) \
   shapeworks::Logging::Instance().show_status(fmt::format(message, ##__VA_ARGS__), __LINE__, __FILE__)
 
-#define SW_PROGRESS(value) \
-  shapeworks::Logging::Instance().show_progress(value);
+#define SW_PROGRESS(value, message, ...) \
+  shapeworks::Logging::Instance().show_progress(value, fmt::format(message, ##__VA_ARGS__));
 
 //! Close session macro
 #define SW_CLOSE_LOG() shapeworks::Logging::Instance().close_log();

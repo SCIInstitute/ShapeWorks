@@ -16,7 +16,8 @@ void StudioLogger::register_callbacks() {
   Logging::Instance().set_debug_callback(debug_callback);
   auto status_callback = std::bind(&StudioLogger::handle_status, this, std::placeholders::_1);
   Logging::Instance().set_status_callback(status_callback);
-  auto progress_callback = std::bind(&StudioLogger::handle_progress, this, std::placeholders::_1);
+  auto progress_callback =
+      std::bind(&StudioLogger::handle_progress, this, std::placeholders::_1, std::placeholders::_2);
   Logging::Instance().set_progress_callback(progress_callback);
 }
 
@@ -31,4 +32,4 @@ void StudioLogger::handle_debug(std::string str) { Q_EMIT debug(str); }
 //---------------------------------------------------------------------------
 void StudioLogger::handle_status(std::string str) { Q_EMIT status(str); }
 //---------------------------------------------------------------------------
-void StudioLogger::handle_progress(double value) { Q_EMIT progress(static_cast<int>(value)); }
+void StudioLogger::handle_progress(double value, std::string str) { Q_EMIT progress(static_cast<int>(value), str); }

@@ -2224,22 +2224,21 @@ void Optimize::UpdateProgress() {
 
     std::string message;
     if (m_optimizing) {
-      message = "Optimizing: ";
+      message = "Optimizing";
     } else {
-      message = "Initializing: ";
+      message = "Initializing";
     }
 
     int stage_num_iterations = m_sampler->GetOptimizer()->GetNumberOfIterations();
     int stage_total_iterations = m_sampler->GetOptimizer()->GetMaximumNumberOfIterations();
     int num_particles = m_sampler->GetParticleSystem()->GetNumberOfParticles(0);
 
-    message = fmt::format("{}: Particles: {}, Iteration: {} / {}", message, num_particles, stage_num_iterations,
+    message = fmt::format("{} : Particles: {}, Iteration: {} / {}", message, num_particles, stage_num_iterations,
                           stage_total_iterations);
     message = fmt::format("{} ({:02d}:{:02d}:{:02d} remaining)", message, hours, minutes, seconds);
 
     double progress = current_particle_iterations_ * 100 / total_particle_iterations_;
-    SW_STATUS(message);
-    SW_PROGRESS(progress);
+    SW_PROGRESS(progress, message);
 
     if (m_show_progress) {
       // show percentage complete

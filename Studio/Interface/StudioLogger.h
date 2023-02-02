@@ -18,7 +18,7 @@ class StudioLogger : public QObject {
   void handle_warning(std::string str);
   void handle_debug(std::string str);
   void handle_status(std::string str);
-  void handle_progress(double value);
+  void handle_progress(double value, std::string str);
 
  Q_SIGNALS:
   void message(std::string str);
@@ -26,5 +26,5 @@ class StudioLogger : public QObject {
   void warning(std::string str);
   void debug(std::string str);
   void status(std::string str);
-  void progress(int value);
+  void progress(int value, std::string str);
 };

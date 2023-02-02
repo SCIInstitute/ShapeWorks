@@ -123,9 +123,9 @@ void Logging::log_warning(const std::string& message, const int line, const char
 }
 
 //-----------------------------------------------------------------------------
-void Logging::show_progress(double value) {
+void Logging::show_progress(double value, const std::string& message) {
   if (progress_callback_) {
-    progress_callback_(value);
+    progress_callback_(value, message);
   }
 }
 
@@ -155,6 +155,6 @@ void Logging::set_debug_callback(const std::function<void(std::string)>& callbac
 void Logging::set_status_callback(const std::function<void(std::string)>& callback) { status_callback_ = callback; }
 
 //-----------------------------------------------------------------------------
-void Logging::set_progress_callback(const std::function<void(double)>& callback) { progress_callback_ = callback; }
+void Logging::set_progress_callback(const std::function<void(double, std::string)>& callback) { progress_callback_ = callback; }
 
 }  // namespace shapeworks
