@@ -2233,13 +2233,20 @@ void Optimize::UpdateProgress() {
     int stage_total_iterations = m_sampler->GetOptimizer()->GetMaximumNumberOfIterations();
     int num_particles = m_sampler->GetParticleSystem()->GetNumberOfParticles(0);
 
-    message =
-        fmt::format("Particles: {}, Iteration: {} / {}", num_particles, stage_num_iterations, stage_total_iterations);
+    message = fmt::format("{}: Particles: {}, Iteration: {} / {}", message, num_particles, stage_num_iterations,
+                          stage_total_iterations);
     message = fmt::format("{} ({:02d}:{:02d}:{:02d} remaining)", message, hours, minutes, seconds);
 
     double progress = current_particle_iterations_ * 100 / total_particle_iterations_;
     SW_STATUS(message);
     SW_PROGRESS(progress);
+
+    if (m_show_progress) {
+      // show percentage complete
+      std::cout << fmt::format("{} ({:.2f}%)     ", message, progress) << "\r";
+      // flush stdout
+      std::cout.flush();
+    }
   }
 }
 }  // namespace shapeworks

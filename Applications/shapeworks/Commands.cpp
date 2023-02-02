@@ -75,12 +75,14 @@ void OptimizeCommand::buildParser() {
   parser.prog(prog).description(desc);
 
   parser.add_option("--name").action("store").type("string").set_default("").help("Path to project file.");
+  parser.add_option("--progress").action("store_true").set_default(false).help("Show progress [default: false].");
 
   Command::buildParser();
 }
 
 bool OptimizeCommand::execute(const optparse::Values& options, SharedCommandData& sharedData) {
   const std::string& projectFile(static_cast<std::string>(options.get("name")));
+  bool show_progress = static_cast<bool>(options.get("progress"));
 
   if (projectFile.length() == 0) {
     std::cerr << "Must specify project name with --name <project.xlsx|.swproj>\n";
@@ -90,6 +92,8 @@ bool OptimizeCommand::execute(const optparse::Values& options, SharedCommandData
   bool isProject = StringUtils::hasSuffix(projectFile, "xlsx") || StringUtils::hasSuffix(projectFile, "swproj");
 
   Optimize app;
+  app.SetShowProgress(show_progress);
+
   if (isProject) {
     try {
       // load spreadsheet project
