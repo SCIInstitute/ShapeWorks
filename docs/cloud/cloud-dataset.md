@@ -16,4 +16,4 @@ The thumbnail for a dataset can be generated in the [Shape Viewer](cloud-shape-v
 
 ## Upload Dataset
 
-Uploading a dataset to Shapeworks Cloud can only be done from SWCC, the ShapeWorks Cloud Component. <!-- insert link here -->
+Uploading a dataset to Shapeworks Cloud can only be done from SWCC, the ShapeWorks Cloud Client. Go to [ShapeWorks Cloud Client](swcc.md#datasets) for more information.
