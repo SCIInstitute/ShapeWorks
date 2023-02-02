@@ -195,16 +195,15 @@ bool Optimize::Run() {
 
 //---------------------------------------------------------------------------
 int Optimize::SetParameters() {
-  if (this->m_verbosity_level == 0) {
-    std::cout << "Verbosity 0: This will be the only output on your screen, "
-                 "unless there are any errors. Increase the verbosity if needed.\n";
-  }
-
   // sanity check
   if (m_domains_per_shape != m_number_of_particles.size()) {
     SW_ERROR("Inconsistency in parameters... m_domains_per_shape != m_number_of_particles.size()");
     return false;
   }
+
+
+  SW_ERROR("Inconsistency in parameters... m_domains_per_shape != m_number_of_particles.size()");
+  return false;
 
   // ensure that use_shape_statistics_after doesn't increase the particle count over what was specified
   for (int i = 0; i < m_number_of_particles.size(); i++) {
@@ -2237,15 +2236,17 @@ void Optimize::UpdateProgress() {
                           stage_total_iterations);
     message = fmt::format("{} ({:02d}:{:02d}:{:02d} remaining)", message, hours, minutes, seconds);
 
-    double progress = current_particle_iterations_ * 100 / total_particle_iterations_;
+    double progress =
+        static_cast<double>(current_particle_iterations_) * 100 / static_cast<double>(total_particle_iterations_);
     SW_PROGRESS(progress, message);
-
-    if (m_show_progress) {
-      // show percentage complete
-      std::cout << fmt::format("{} ({:.2f}%)     ", message, progress) << "\r";
-      // flush stdout
-      std::cout.flush();
-    }
+    /*
+        if (m_show_progress) {
+          // show percentage complete
+          std::cout << fmt::format("{} ({:.2f}%)     ", message, progress) << "\r";
+          // flush stdout
+          std::cout.flush();
+        }
+        */
   }
 }
 }  // namespace shapeworks
