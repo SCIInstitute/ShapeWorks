@@ -28,13 +28,12 @@
 #include "Optimize.h"
 #include "OptimizeParameterFile.h"
 #include "OptimizeParameters.h"
+#include "ParticleGoodBadAssessment.h"
 #include "ParticleImageDomain.h"
 #include "ParticleImplicitSurfaceDomain.h"
 #include "VtkMeshWrapper.h"
 #include "object_reader.h"
 #include "object_writer.h"
-
-#include "ParticleGoodBadAssessment.h"
 
 // pybind
 #include <pybind11/embed.h>
@@ -67,6 +66,9 @@ Optimize::Optimize() { this->m_sampler = std::make_shared<Sampler>(); }
 
 //---------------------------------------------------------------------------
 bool Optimize::Run() {
+  m_start_time = std::chrono::system_clock::now();
+  m_last_update_time = m_start_time;
+
   // control number of threads
   int num_threads = tbb::info::default_concurrency();
   const char* num_threads_env = getenv("TBB_NUM_THREADS");
@@ -967,6 +969,7 @@ void Optimize::IterateCallback(itk::Object*, const itk::EventObject&) {
       }
     }
   }
+  UpdateProgress();
 }
 
 //---------------------------------------------------------------------------
@@ -2164,6 +2167,7 @@ void Optimize::SetSharedBoundaryEnabled(bool enabled) { m_sampler->SetSharedBoun
 //---------------------------------------------------------------------------
 void Optimize::SetSharedBoundaryWeight(double weight) { m_sampler->SetSharedBoundaryWeight(weight); }
 
+//---------------------------------------------------------------------------
 void Optimize::ComputeTotalIterations() {
   total_particle_iterations_ = 0;
 
@@ -2201,4 +2205,41 @@ void Optimize::ComputeTotalIterations() {
   }
 }
 
+//---------------------------------------------------------------------------
+void Optimize::UpdateProgress() {
+  auto now = std::chrono::system_clock::now();
+
+  // compute time since last update in milliseconds
+  auto time_since_last_update = std::chrono::duration_cast<std::chrono::milliseconds>(now - m_last_update_time);
+
+  if (time_since_last_update.count() > 100) {
+    m_last_update_time = now;
+    std::chrono::duration<double> elapsed_seconds =
+        std::chrono::duration_cast<std::chrono::seconds>(now - m_start_time);
+    double seconds_per_iteration = elapsed_seconds.count() / current_particle_iterations_;
+    double seconds_remaining = seconds_per_iteration * (total_particle_iterations_ - current_particle_iterations_);
+    int hours = static_cast<int>(seconds_remaining / 3600);
+    int minutes = static_cast<int>((seconds_remaining - (hours * 3600)) / 60);
+    int seconds = static_cast<int>(seconds_remaining - (hours * 3600) - (minutes * 60));
+
+    std::string message;
+    if (m_optimizing) {
+      message = "Optimizing: ";
+    } else {
+      message = "Initializing: ";
+    }
+
+    int stage_num_iterations = m_sampler->GetOptimizer()->GetNumberOfIterations();
+    int stage_total_iterations = m_sampler->GetOptimizer()->GetMaximumNumberOfIterations();
+    int num_particles = m_sampler->GetParticleSystem()->GetNumberOfParticles(0);
+
+    message =
+        fmt::format("Particles: {}, Iteration: {} / {}", num_particles, stage_num_iterations, stage_total_iterations);
+    message = fmt::format("{} ({:02d}:{:02d}:{:02d} remaining)", message, hours, minutes, seconds);
+
+    double progress = current_particle_iterations_ * 100 / total_particle_iterations_;
+    SW_STATUS(message);
+    SW_PROGRESS(progress);
+  }
+}
 }  // namespace shapeworks

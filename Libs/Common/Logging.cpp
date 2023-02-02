@@ -10,9 +10,9 @@ namespace spd = spdlog;
 namespace shapeworks {
 
 //-----------------------------------------------------------------------------
-static std::string create_header(const int line, const char *filename) {
-  const char *name = (strrchr(filename, '/') ? strrchr(filename, '/') + 1 : filename);
-  const char *name2 = (strrchr(name, '\\') ? strrchr(name, '\\') + 1 : name);
+static std::string create_header(const int line, const char* filename) {
+  const char* name = (strrchr(filename, '/') ? strrchr(filename, '/') + 1 : filename);
+  const char* name2 = (strrchr(name, '\\') ? strrchr(name, '\\') + 1 : name);
   std::string header = "[" + std::string(name2) + "|" + std::to_string(line) + "]";
   return header;
 }
@@ -53,7 +53,7 @@ bool Logging::check_log_open() const { return log_open_; }
 std::string Logging::get_log_filename() const { return log_filename_; }
 
 //-----------------------------------------------------------------------------
-void Logging::log_message(const std::string& message, const int line, const char *file) const {
+void Logging::log_message(const std::string& message, const int line, const char* file) const {
   spd::info(message);
   if (log_open_) {
     spd::get("file")->info(message);
@@ -72,7 +72,7 @@ void Logging::log_stack(const std::string& message) const {
 }
 
 //-----------------------------------------------------------------------------
-void Logging::log_error(const std::string& message, const int line, const char *file) const {
+void Logging::log_error(const std::string& message, const int line, const char* file) const {
   spd::error(message);
   if (log_open_) {
     spd::get("file")->error(message);
@@ -83,7 +83,7 @@ void Logging::log_error(const std::string& message, const int line, const char *
 }
 
 //-----------------------------------------------------------------------------
-void Logging::show_message(const std::string& message, const int line, const char *file) const {
+void Logging::show_message(const std::string& message, const int line, const char* file) const {
   log_message(message, line, file);
   if (message_callback_) {
     message_callback_(message);
@@ -91,15 +91,14 @@ void Logging::show_message(const std::string& message, const int line, const cha
 }
 
 //-----------------------------------------------------------------------------
-void Logging::show_status(const std::string& message, const int line, const char *file) const {
-  log_message(message, line, file);
-  if (message_callback_) {
-    message_callback_(message);
+void Logging::show_status(const std::string& message, const int line, const char* file) const {
+  if (status_callback_) {
+    status_callback_(message);
   }
 }
 
 //-----------------------------------------------------------------------------
-void Logging::log_debug(const std::string& message, const int line, const char *file) const {
+void Logging::log_debug(const std::string& message, const int line, const char* file) const {
   std::string str = create_header(line, file) + " " + message;
   spd::debug(str);
   if (log_open_) {
@@ -113,13 +112,20 @@ void Logging::log_debug(const std::string& message, const int line, const char *
 }
 
 //-----------------------------------------------------------------------------
-void Logging::log_warning(const std::string& message, const int line, const char *file) const {
+void Logging::log_warning(const std::string& message, const int line, const char* file) const {
   spd::warn(message);
   if (log_open_) {
     spd::get("file")->warn(message);
   }
   if (warning_callback_) {
     warning_callback_(message);
+  }
+}
+
+//-----------------------------------------------------------------------------
+void Logging::show_progress(double value) {
+  if (progress_callback_) {
+    progress_callback_(value);
   }
 }
 
@@ -144,5 +150,11 @@ void Logging::set_warning_callback(const std::function<void(std::string)>& callb
 
 //-----------------------------------------------------------------------------
 void Logging::set_debug_callback(const std::function<void(std::string)>& callback) { debug_callback_ = callback; }
+
+//-----------------------------------------------------------------------------
+void Logging::set_status_callback(const std::function<void(std::string)>& callback) { status_callback_ = callback; }
+
+//-----------------------------------------------------------------------------
+void Logging::set_progress_callback(const std::function<void(double)>& callback) { progress_callback_ = callback; }
 
 }  // namespace shapeworks

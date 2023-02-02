@@ -76,6 +76,8 @@ ShapeWorksStudioApp::ShapeWorksStudioApp() {
   connect(&logger_, &StudioLogger::error, this, &ShapeWorksStudioApp::handle_error);
   connect(&logger_, &StudioLogger::warning, this, &ShapeWorksStudioApp::handle_warning);
   connect(&logger_, &StudioLogger::debug, this, &ShapeWorksStudioApp::handle_debug);
+  connect(&logger_, &StudioLogger::status, this, &ShapeWorksStudioApp::handle_status);
+  connect(&logger_, &StudioLogger::progress, this, &ShapeWorksStudioApp::handle_progress);
 
   // default hide
   ui_->feature_widget->hide();
@@ -655,9 +657,10 @@ void ShapeWorksStudioApp::handle_message(std::string str) {
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::handle_status(QString str) {
-  status_bar_->set_message(MessageType::normal, str);
-  current_message_ = str;
+void ShapeWorksStudioApp::handle_status(std::string str) {
+  auto qstr = QString::fromStdString(str);
+  status_bar_->set_message(MessageType::normal, qstr);
+  current_message_ = qstr;
 }
 
 //---------------------------------------------------------------------------
