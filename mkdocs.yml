@@ -56,6 +56,7 @@ nav:
    - 'Optimize Module':                      'cloud/cloud-optimize-module.md'
    - 'Analyze Module':                       'cloud/cloud-analyze-module.md'
    - 'Shape Viewer':                         'cloud/cloud-shape-viewer.md'
+   - 'ShapeWorks Cloud Client':              'cloud/swcc.md'
 - ShapeWorks Tools:
    - 'ShapeWorks Commands': 'tools/ShapeWorksCommands.md'
 - ShapeWorks in Python:
