@@ -201,10 +201,6 @@ int Optimize::SetParameters() {
     return false;
   }
 
-
-  SW_ERROR("Inconsistency in parameters... m_domains_per_shape != m_number_of_particles.size()");
-  return false;
-
   // ensure that use_shape_statistics_after doesn't increase the particle count over what was specified
   for (int i = 0; i < m_number_of_particles.size(); i++) {
     m_use_shape_statistics_after = std::min(m_use_shape_statistics_after, m_number_of_particles[i]);

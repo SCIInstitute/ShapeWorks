@@ -54,7 +54,7 @@ static void setup_callbacks(bool show_progress, bool xml_status) {
   if (xml_status) {
     auto progress_callback = [](double progress, std::string message) {
       // show percentage complete
-      std::cout << fmt::format("<xml><message>{}</message><progress>{:.1f}</progress></xml>", message, progress)
+      std::cout << fmt::format("<xml><status>{}</status><progress>{:.1f}</progress></xml>", message, progress)
                 << "\n";
       std::cout.flush();
     };
