@@ -126,9 +126,6 @@ def download_subset(use_case,datasetName,outputDirectory):
                     print(mesh_dir)
                     mesh.file.download(mesh_dir)
 
-
-
-
 class dircmp(filecmp.dircmp):
     def phase3(self):
         fcomp = filecmp.cmpfiles(self.left, self.right, self.common_files,
@@ -184,4 +181,8 @@ def download_and_unzip_dataset(datasetName, outputDirectory):
 
         print('Done. \n')
 
-# download_and_unzip_dataset("femur_cut","/home/sci/mkaranam/Desktop/ShapeWorks/Examples/Python/Output/femur_download/")
+if __name__ == "__main__":
+    download_and_unzip_dataset(
+        "femur_cut",
+        "/home/sci/mkaranam/Desktop/ShapeWorks/Examples/Python/Output/femur_download/"
+    )

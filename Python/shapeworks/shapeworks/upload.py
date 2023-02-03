@@ -5,12 +5,11 @@ import glob
 from swcc.api import swcc_session
 from swcc.models import Dataset
 import shapeworks as sw
-from swcc.models import (Dataset, GroomedSegmentation, OptimizedParticles, Project, Segmentation, Subject)
+from swcc.models import (Dataset, Project)
 import getpass
 from pathlib import Path
 from swcc.api import swcc_session
 from swcc.models import Dataset, Project
-import argparse
 
 def get_text(filename):
     license = Path(filename).read_text()
@@ -34,45 +33,6 @@ def create_data_file(filename,shape_files,image_files=None):
     writer.save()
 
 def upload_dataset(dataset_name,license_filename,ack_filename,description,project_file,overwrite=True):
-
-    # if dataset_name=="":
-    #     print("Please provide Dataset name")
-    #     return 
-    # if project_file=="":
-    #     print("Please provide project file location")
-    #     return 
-    # username = input('Enter username: ')
-    # password = getpass.getpass('Enter password: ')
-    # with swcc_session()  as session:
-    #     token = session.login(username, password)
-    #     session = swcc_session(token=token).__enter__()
-    #     print('Authenticated with running server.')
-        
-
-    #     print('Uploading demo dataset and project.')
-    #     dataset = Dataset.from_name(dataset_name)
-    #     if overwrite:
-    #         if dataset:
-    #             print('Deleting previous version of %s' % dataset_name)
-    #             dataset.delete()
-            
-    #     if not dataset:
-    #         dataset = Dataset(
-    #             name=dataset_name,
-    #             description=description,
-    #             license=get_text(license_filename),
-    #             acknowledgement=get_text(ack_filename),
-    #         ).force_create()
-    #     project_file = Path(project_file)
-    #     project = Project(
-    #         file=project_file,
-    #         description=description,
-    #         dataset=dataset,
-    #         # last_cached_analysis="project_demo_analysis.json",
-    #     ).create()
-
-    #     print('Done.')
-
     username = input("Username: ")
     password = getpass.getpass("Password: ")
     
@@ -82,45 +42,38 @@ def upload_dataset(dataset_name,license_filename,ack_filename,description,projec
         session = swcc_session(token=token).__enter__()
 
         print(f'Uploading {dataset_name} dataset and project (overwrite=True)')
-        dataset = Dataset(
-            name=dataset_name,
-            # private=private,
-            description=description,
-            license='No license',
-            acknowledgement='No acknowledgement',
-        ).force_create()
+        dataset = Dataset.from_name(dataset_name)
+        if overwrite:
+            if dataset:
+                print('Deleting previous version of %s' % dataset_name)
+                dataset.delete()
+        if not dataset:
+            dataset = Dataset(
+                name=dataset_name,
+                # private=private,
+                description=description,
+                license=get_text(license_filename),
+                acknowledgement=get_text(ack_filename),
+            ).force_create()
         project_file = Path(upload_dir, project_file)
         project = Project(
             file=project_file,
             description='Project created via SWCC',
             dataset=dataset,
-            # last_cached_analysis="project_demo_analysis.json",
         ).create()
         print(project)
 
         print('Done. \n')
 
 if __name__=="__main__":
-    # dataset_names = ["supershapes_1mode"]
-    # project_files = ["/home/sci/mkaranam/Desktop/ShapeWorks/Examples/Python/Output/supershapes_1mode_contour/supershapes_1mode_contour_multiscale.swproj"]
-    # descriptions = ["Uploading supershapes 1 mode dataset"]
-    # for i in range(len(project_files)):
-    #     print(dataset_names[i])
-    #     upload_dataset(dataset_names[i],"/home/sci/mkaranam/Desktop/ShapeWorks/LICENSE.txt","/home/sci/mkaranam/Desktop/ShapeWorks/LICENSE.txt",
-    #     descriptions[i],project_files[i])
-    # dataset_names = ["thin_cavity_bean"]
-    # project_files = ["/home/sci/mkaranam/Desktop/ShapeWorks/Examples/Python/Output/thin_cavity_bean/thin_cavity_bean_multiscale.swproj"]
-    # descriptions = ["Uploading thin cavity bean dataset"]
-    # for i in range(len(project_files)):
-    #     print(dataset_names[i])
-    #     upload_dataset(dataset_names[i],"/home/sci/mkaranam/Desktop/ShapeWorks/LICENSE.txt","/home/sci/mkaranam/Desktop/ShapeWorks/LICENSE.txt",
-    #     descriptions[i],project_files[i])
-
-
-    dataset_names = ["femur_cut_tiny_test"]
-    project_files = ["/home/sci/mkaranam/Desktop/ShapeWorks/Examples/Python/Output/femur_cut/femur_cut_tiny_test_multiscale.swproj"]
-    descriptions = ["Uploading femur cut tiny test dataset"]
+    dataset_names = ["incremental_supershapes_tiny_test"]
+    project_files = ["/home/sci/zahid.aziz/Desktop/Research/Repos/ShapeWorks/Examples/Python/Output/incremental_supershapes_updated/incremental_supershapes_tiny_test.swproj"]
+    descriptions = ["Uploading incremental supershapes tiny test dataset"]
     for i in range(len(project_files)):
         print(dataset_names[i])
-        upload_dataset(dataset_names[i],"/home/sci/mkaranam/Desktop/ShapeWorks/LICENSE.txt","/home/sci/mkaranam/Desktop/ShapeWorks/LICENSE.txt",
-        descriptions[i],project_files[i])
+        upload_dataset(
+            dataset_names[i],
+            "../../../Examples/Python/Output/LICENSE.txt",
+            "../../../Examples/Python/Output/LICENSE.txt",
+            descriptions[i],project_files[i]
+        )
