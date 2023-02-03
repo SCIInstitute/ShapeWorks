@@ -29,7 +29,7 @@ def Run_Pipeline(args):
 
     # If running a tiny_test, then download subset of the data
     if args.tiny_test:
-        dataset_name = "femur_cut_tinytest"
+        dataset_name = "femur_cut_tiny_test"
         args.use_single_scale = True
         # sw.download_subset(args.use_case, dataset_name, output_directory) 
         sw.download_and_unzip_dataset(dataset_name, output_directory)

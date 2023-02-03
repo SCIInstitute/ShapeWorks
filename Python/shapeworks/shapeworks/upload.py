@@ -100,7 +100,7 @@ def upload_dataset(dataset_name,license_filename,ack_filename,description,projec
 
         print('Done. \n')
 
-#if __name__=="__main__":
+if __name__=="__main__":
     # dataset_names = ["supershapes_1mode"]
     # project_files = ["/home/sci/mkaranam/Desktop/ShapeWorks/Examples/Python/Output/supershapes_1mode_contour/supershapes_1mode_contour_multiscale.swproj"]
     # descriptions = ["Uploading supershapes 1 mode dataset"]
@@ -108,10 +108,19 @@ def upload_dataset(dataset_name,license_filename,ack_filename,description,projec
     #     print(dataset_names[i])
     #     upload_dataset(dataset_names[i],"/home/sci/mkaranam/Desktop/ShapeWorks/LICENSE.txt","/home/sci/mkaranam/Desktop/ShapeWorks/LICENSE.txt",
     #     descriptions[i],project_files[i])
-    # dataset_names = ["ellipsoid"]
-    # project_files = ["/home/sci/mkaranam/Desktop/ShapeWorks/Examples/Python/Output/ellipsoid/ellipsoid_multiscale.swproj"]
-    # descriptions = ["Uploading ellipsoid old dataset"]
+    # dataset_names = ["thin_cavity_bean"]
+    # project_files = ["/home/sci/mkaranam/Desktop/ShapeWorks/Examples/Python/Output/thin_cavity_bean/thin_cavity_bean_multiscale.swproj"]
+    # descriptions = ["Uploading thin cavity bean dataset"]
     # for i in range(len(project_files)):
     #     print(dataset_names[i])
     #     upload_dataset(dataset_names[i],"/home/sci/mkaranam/Desktop/ShapeWorks/LICENSE.txt","/home/sci/mkaranam/Desktop/ShapeWorks/LICENSE.txt",
     #     descriptions[i],project_files[i])
+
+
+    dataset_names = ["femur_cut_tiny_test"]
+    project_files = ["/home/sci/mkaranam/Desktop/ShapeWorks/Examples/Python/Output/femur_cut/femur_cut_tiny_test_multiscale.swproj"]
+    descriptions = ["Uploading femur cut tiny test dataset"]
+    for i in range(len(project_files)):
+        print(dataset_names[i])
+        upload_dataset(dataset_names[i],"/home/sci/mkaranam/Desktop/ShapeWorks/LICENSE.txt","/home/sci/mkaranam/Desktop/ShapeWorks/LICENSE.txt",
+        descriptions[i],project_files[i])
