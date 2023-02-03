@@ -2204,10 +2204,7 @@ void Optimize::ComputeTotalIterations() {
 void Optimize::UpdateProgress() {
   auto now = std::chrono::system_clock::now();
 
-  // compute time since last update in milliseconds
-  auto time_since_last_update = std::chrono::duration_cast<std::chrono::milliseconds>(now - m_last_update_time);
-
-  if (time_since_last_update.count() > 100) {
+  if ((now - m_last_update_time) > std::chrono::milliseconds(100)) {
     m_last_update_time = now;
     std::chrono::duration<double> elapsed_seconds =
         std::chrono::duration_cast<std::chrono::seconds>(now - m_start_time);
@@ -2230,19 +2227,20 @@ void Optimize::UpdateProgress() {
 
     message = fmt::format("{} : Particles: {}, Iteration: {} / {}", message, num_particles, stage_num_iterations,
                           stage_total_iterations);
-    message = fmt::format("{} ({:02d}:{:02d}:{:02d} remaining)", message, hours, minutes, seconds);
+
+    if ((now - m_last_remaining_update_time) > std::chrono::seconds(1)) {
+      m_remaining_time_message = fmt::format("({:02d}:{:02d}:{:02d} remaining)", hours, minutes, seconds);
+      m_last_remaining_update_time = now;
+    }
+
+    // only show the time remaining if it's been more than 3 seconds
+    if (elapsed_seconds > std::chrono::seconds(3)) {
+      message = fmt::format("{} {}", message, m_remaining_time_message);
+    }
 
     double progress =
         static_cast<double>(current_particle_iterations_) * 100 / static_cast<double>(total_particle_iterations_);
     SW_PROGRESS(progress, message);
-    /*
-        if (m_show_progress) {
-          // show percentage complete
-          std::cout << fmt::format("{} ({:.2f}%)     ", message, progress) << "\r";
-          // flush stdout
-          std::cout.flush();
-        }
-        */
   }
 }
 }  // namespace shapeworks

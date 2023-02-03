@@ -44,8 +44,8 @@ bool Example::execute(const optparse::Values &options, SharedCommandData &shared
 static void setup_callbacks(bool show_progress, bool xml_status) {
   if (show_progress) {
     auto progress_callback = [](double progress, std::string message) {
-      // show percentage complete
-      std::cout << fmt::format("{} ({:.1f}%)     ", message, progress) << "\r";
+      // show status message and percentage complete
+      std::cout << fmt::format("{} ({:.1f}%)        \r", message, progress);
       std::cout.flush();
     };
     Logging::Instance().set_progress_callback(progress_callback);
@@ -53,15 +53,14 @@ static void setup_callbacks(bool show_progress, bool xml_status) {
 
   if (xml_status) {
     auto progress_callback = [](double progress, std::string message) {
-      // show percentage complete
-      std::cout << fmt::format("<xml><status>{}</status><progress>{:.1f}</progress></xml>", message, progress)
-                << "\n";
+      // print status message and percentage complete
+      std::cout << fmt::format("<xml><status>{}</status><progress>{:.1f}</progress></xml>\n", message, progress);
       std::cout.flush();
     };
     Logging::Instance().set_progress_callback(progress_callback);
 
     auto error_callback = [](std::string message) {
-      std::cout << fmt::format("<xml><error>{}</error></xml>", message) << "\n";
+      std::cout << fmt::format("<xml><error>{}</error></xml>\n", message);
       std::cout.flush();
     };
     Logging::Instance().set_error_callback(error_callback);
@@ -121,8 +120,6 @@ bool OptimizeCommand::execute(const optparse::Values& options, SharedCommandData
   bool isProject = StringUtils::hasSuffix(projectFile, "xlsx") || StringUtils::hasSuffix(projectFile, "swproj");
 
   Optimize app;
-  app.SetShowProgress(show_progress);
-
   setup_callbacks(show_progress, xml_status);
 
   if (isProject) {

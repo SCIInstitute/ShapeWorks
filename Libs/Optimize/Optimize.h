@@ -303,7 +303,6 @@ class Optimize {
   vnl_vector_fixed<double, 3> TransformPoint(int domain, vnl_vector_fixed<double, 3> input);
 
   void UpdateProgress();
-  void SetShowProgress(bool show) { m_show_progress = show; }
 
  protected:
   //! Set the iteration callback. Derived classes should override to set their own callback
@@ -466,7 +465,8 @@ class Optimize {
 
   std::chrono::system_clock::time_point m_start_time;
   std::chrono::system_clock::time_point m_last_update_time;
-  bool m_show_progress = false;
+  std::chrono::system_clock::time_point m_last_remaining_update_time;
+  std::string m_remaining_time_message;
 
 };
 
