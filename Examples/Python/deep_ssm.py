@@ -39,7 +39,8 @@ def Run_Pipeline(args):
         os.environ['OMP_NUM_THREADS'] = "1"
     # If running a tiny_test, then download subset of the data
     if args.tiny_test:
-        sw.portal.download_subset(args.use_case, dataset_name, output_directory)
+        dataset_name =  "deep_ssm_femur_tiny_test"
+        sw.download_and_unzip_dataset(dataset_name, output_directory)
         dataset_name = "femur"
         mesh_files = sorted(glob.glob(output_directory +
                             dataset_name + "/meshes/*.ply"))[:5]
@@ -48,7 +49,7 @@ def Run_Pipeline(args):
         plane_files = sorted(glob.glob(output_directory +
                             dataset_name + "/constraints/*.json"))[:5]
     else:
-        sw.portal.download_and_unzip_dataset(dataset_name, output_directory)
+        sw.download_and_unzip_dataset(dataset_name, output_directory)
         dataset_name = "femur"
         mesh_files = sorted(glob.glob(output_directory +
                             dataset_name + "/meshes/*.ply"))
