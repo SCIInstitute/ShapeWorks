@@ -310,7 +310,7 @@ class NormalizingFlowModel(nn.Module):
     """ A Normalizing Flow Model is a (prior, flow) pair """
     def __init__(self, prior, flows, device):
         super().__init__()
-        self.prior = prior
+        self.prior = jit_prob_dist(prior)
         self.device = device
         self.flow = NormalizingFlow(flows, device)
     
@@ -328,12 +328,26 @@ class NormalizingFlowModel(nn.Module):
         xs, _ = self.flow.backward(z)
         return xs, z
 
-def jit_prob_dist(prob_dist: torch.distributions.distribution.Distribution)->torch.nn.Module:
+def jit_prob_dist(
+    prob_dist: torch.distributions.distribution.Distribution,
+) -> torch.nn.Module:
     class JITProbDist(torch.nn.Module):
         @torch.jit.ignore
-        def sample(self, x):
-            return prob_dist.sample(x)
+        def sample(self):
+            return prob_dist.sample()
         @torch.jit.ignore
         def log_prob(self, x):
             return prob_dist.log_prob(x)
+
     return JITProbDist()
+
+
+# def jit_prob_dist(prob_dist: torch.distributions.distribution.Distribution)->torch.nn.Module:
+#     class JITProbDist(torch.nn.Module):
+#         @torch.jit.ignore
+#         def sample(self, x):
+#             return prob_dist.sample(x)
+#         @torch.jit.ignore
+#         def log_prob(self, x):
+#             return prob_dist.log_prob(x)
+#     return JITProbDist()
