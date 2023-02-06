@@ -8,7 +8,7 @@ import torch
 import torch.optim as optim
 
 from data import fetch_dataloaders
-from NormalizingFlowsLib.maf import (MAF)
+from NormalizingFlowsLib.maf import (MAF, RealNVP)
 
 def train(model, dataloader, optimizer, epoch, args):
 
@@ -105,7 +105,7 @@ class InvertibleNetwork:
         self.device = params.device
         self.model_type = params.model
 
-    def initialize_particles(self, init_particles_dir, particle_system='world'):
+    def initialize_particles(self, init_particles_dir, particle_system):
         self.train_dataloader, self.test_dataloader = fetch_dataloaders(init_particles_dir, batch_size=self.params.batch_size, device=self.params.device,
                                                  particle_system=particle_system, seed=self.params.seed, train_test_split=self.params.train_test_split)
         self.params.input_size = self.train_dataloader.dataset.input_size
@@ -114,8 +114,14 @@ class InvertibleNetwork:
 
     def initialize_model(self):
         args = self.params
-        self.model = MAF(args.n_blocks, args.input_size, args.hidden_size, args.n_hidden, args.cond_label_size,
-                    args.activation_fn, args.input_order, batch_norm=not args.no_batch_norm)
+        if args.model == 'maf':
+            self.model = MAF(args.n_blocks, args.input_size, args.hidden_size, args.n_hidden, args.cond_label_size,
+                        args.activation_fn, args.input_order, batch_norm=not args.no_batch_norm)
+        elif args.model =='realnvp':
+            self.model = RealNVP(args.n_blocks, args.input_size, args.hidden_size, args.n_hidden, args.cond_label_size,
+                            batch_norm=not args.no_batch_norm)
+        else:
+            raise ValueError('Unrecognized model.')
         self.model = self.model.to(args.device)
         self.optimizer = torch.optim.Adam(self.model.parameters(), lr=args.lr, weight_decay=1e-6)
     

@@ -247,7 +247,7 @@ class MADE(nn.Module):
         super().__init__()
         # base distribution for calculation of log prob under the model
         base_dist_mean = mean if mean is not None else torch.zeros(input_size)
-        base_dist_var = cov if cov is not None else torch.zeros(input_size)
+        base_dist_var = cov if cov is not None else torch.ones(input_size)
         self.register_buffer('base_dist_mean', base_dist_mean)
         self.register_buffer('base_dist_var', base_dist_var)
 
@@ -302,7 +302,7 @@ class MAF(nn.Module):
         super().__init__()
         # base distribution for calculation of log prob under the model
         base_dist_mean = mean if mean is not None else torch.zeros(input_size)
-        base_dist_var = cov if cov is not None else torch.zeros(input_size)
+        base_dist_var = cov if cov is not None else torch.ones(input_size)
         self.register_buffer('base_dist_mean', base_dist_mean)
         self.register_buffer('base_dist_var', base_dist_var)
 
@@ -336,7 +336,8 @@ class RealNVP(nn.Module):
 
         # base distribution for calculation of log prob under the model
         base_dist_mean = mean if mean is not None else torch.zeros(input_size)
-        base_dist_var = cov if cov is not None else torch.zeros(input_size)
+        base_dist_var = cov if cov is not None else torch.ones(input_size)
+        # print(f'INPUT SIZE IS  {input_size}')
         self.register_buffer('base_dist_mean', base_dist_mean)
         self.register_buffer('base_dist_var', base_dist_var)
 

@@ -19,10 +19,11 @@ def one_hot(x, label_size):
     out[torch.arange(len(x)), x] = 1
     return out
 
-def load_shape_matrix(particle_dir, particle_system='world'):
+def load_shape_matrix(particle_dir, particle_system='warped'):
     point_files = sorted(glob.glob(f'{particle_dir}/*_{particle_system}.particles'))
     if len(point_files)==0:
         point_files = sorted(glob.glob(f'{particle_dir}/*_world.particles'))
+    print(f'----- Loading particles data from {particle_dir.split("/")[-1]}  -------')
     N = len(point_files)
     M = np.loadtxt(point_files[0]).shape[0]
     d = np.loadtxt(point_files[0]).shape[1]
