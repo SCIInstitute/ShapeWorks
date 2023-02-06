@@ -490,7 +490,7 @@ void GroomTool::on_run_groom_button_clicked() {
   SW_LOG("Please wait: running groom step...");
   Q_EMIT progress(0);
 
-  groom_ = QSharedPointer<QGroom>(new QGroom(session_->get_project()));
+  groom_ = QSharedPointer<Groom>(new Groom(session_->get_project()));
 
   enable_actions();
 
@@ -500,7 +500,6 @@ void GroomTool::on_run_groom_button_clicked() {
   worker->moveToThread(thread);
   connect(thread, SIGNAL(started()), worker, SLOT(process()));
   connect(worker, &ShapeworksWorker::finished, this, &GroomTool::handle_thread_complete);
-  connect(groom_.data(), &QGroom::progress, this, &GroomTool::handle_progress);
   connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
   thread->start();
 
@@ -561,7 +560,7 @@ void GroomTool::skip_grooming_toggled() {
   store_params();
 
   if (ui_->skip_grooming->isChecked()) {
-    groom_ = QSharedPointer<QGroom>(new QGroom(session_->get_project()));
+    groom_ = QSharedPointer<Groom>(new Groom(session_->get_project()));
     groom_->run();
     SW_MESSAGE("Skipped Grooming");
     Q_EMIT groom_complete();

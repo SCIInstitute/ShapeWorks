@@ -2,9 +2,8 @@
 
 #include <spdlog/fmt/fmt.h>
 
-#include <functional>
-
 #include <QString>
+#include <functional>
 
 template <>
 struct fmt::formatter<QString> {
@@ -102,6 +101,9 @@ class Logging {
   //! Log a message, use SW_STATUS macro
   void show_status(const std::string& message, const int line, const char* file) const;
 
+  //! Display progress (0-100)
+  void show_progress(double value, const std::string& message);
+
   //! Log a debug message, use SW_DEBUG macro
   void log_debug(const std::string& message, const int line, const char* file) const;
 
@@ -120,8 +122,14 @@ class Logging {
   //! Set a warning callback function to be called whenever a warning is posted
   void set_warning_callback(const std::function<void(std::string)>& callback);
 
-  //! Set a debug messagecallback function to be called whenever a debug message is posted
+  //! Set a debug message callback function to be called whenever a debug message is posted
   void set_debug_callback(const std::function<void(std::string)>& callback);
+
+  //! Set a status callback function to be called whenever a status message is posted
+  void set_status_callback(const std::function<void(std::string)>& callback);
+
+  //! Set a progress callback function to be called whenever a progress update is posted
+  void set_progress_callback(const std::function<void(double, std::string)>& callback);
 
  private:
   //! Constructor
@@ -137,6 +145,10 @@ class Logging {
   std::function<void(std::string)> warning_callback_;
 
   std::function<void(std::string)> debug_callback_;
+
+  std::function<void(std::string)> status_callback_;
+
+  std::function<void(double, std::string)> progress_callback_;
 };
 
 //! Log stack macro
@@ -168,6 +180,9 @@ class Logging {
 //! Don't write to log, but set status (e.g. in the Studio statusbar)
 #define SW_STATUS(message, ...) \
   shapeworks::Logging::Instance().show_status(fmt::format(message, ##__VA_ARGS__), __LINE__, __FILE__)
+
+#define SW_PROGRESS(value, message, ...) \
+  shapeworks::Logging::Instance().show_progress(value, fmt::format(message, ##__VA_ARGS__));
 
 //! Close session macro
 #define SW_CLOSE_LOG() shapeworks::Logging::Instance().close_log();

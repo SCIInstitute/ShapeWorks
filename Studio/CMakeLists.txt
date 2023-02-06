@@ -115,11 +115,9 @@ SET(STUDIO_JOB_MOC_HDRS
 
 SET(STUDIO_GROOM_SRCS
   Groom/GroomTool.cpp
-  Groom/QGroom.cpp
   )
 SET(STUDIO_GROOM_MOC_HDRS
   Groom/GroomTool.h
-  Groom/QGroom.h
   )
 
 SET(STUDIO_PYTHON_SRCS
