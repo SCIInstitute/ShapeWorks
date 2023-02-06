@@ -4,6 +4,7 @@
 #include "itkParticleShapeMatrixAttributeNonLinear.h"
 #include "itkParticleVectorFunction.h"
 #include <vector>
+#include <torch/script.h> // One-stop header.
 
 namespace itk
 {

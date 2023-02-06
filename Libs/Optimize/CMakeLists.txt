@@ -12,6 +12,8 @@ add_library(Optimize STATIC
   ${Optimize_sources}
   )
 
+message("IIIIIHHDSJHFKJS Found Torch under ${TORCH_LIBRARIES}")
+
 target_link_libraries(Optimize PUBLIC
   ${VTK_LIBRARIES}
   OpenVDB::openvdb
@@ -24,6 +26,7 @@ target_link_libraries(Optimize PUBLIC
   ${ITK_LIBRARIES}
   igl::core
   ${Boost_LIBRARIES}
+  ${TORCH_LIBRARIES}
   ${GEOMETRYCENTRAL_LIBRARY}
   nlohmann_json::nlohmann_json
   ${SW_PYTHON_LIBS}

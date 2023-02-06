@@ -3,6 +3,7 @@
 #include "itkParticleShapeMatrixAttribute.h"
 #include "vnl/vnl_vector.h"
 #include "itkParticleSystem.h"
+#include <torch/script.h> // One-stop header.
 
 namespace itk
 {

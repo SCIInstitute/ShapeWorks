@@ -289,14 +289,13 @@ void Sampler::Execute() {
 
   // this->GetOptimizer()->SetShapeMatrix(this->m_ShapeMatrix);
   std::cout << "Before start optimization" << std::endl;
-  std::cout << "Correspondence Mode is " << m_CorrespondenceMode << std::endl;
-  if(m_CorrespondenceMode == shapeworks::CorrespondenceMode::NonLinearEnsembleEntropy)
-  {
-    this->GetOptimizer()->StartNonLinearOptimization();
-  }
-  else{
-    this->GetOptimizer()->StartOptimization();
-  }
+  // std::cout << "Correspondence Mode is " << m_CorrespondenceMode << std::endl;
+  // if(m_CorrespondenceMode == shapeworks::CorrespondenceMode::NonLinearEnsembleEntropy)
+  // {
+  //   this->GetOptimizer()->StartNonLinearOptimization();
+  // }
+
+  this->GetOptimizer()->StartOptimization();
 }
 
 void Sampler::ReadTransforms() {
