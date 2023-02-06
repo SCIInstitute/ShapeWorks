@@ -2285,16 +2285,16 @@
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Analyze/Particles.h&gt;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Optimize/Optimize.h&gt;</span><span class="cp"></span>
 <span class="cp">#endif</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QObject&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QMutex&gt;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QElapsedTimer&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QMutex&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QObject&gt;</span><span class="cp"></span>
 
 <span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 
 <span class="k">class</span><span class="w"> </span><span class="nc">QOptimize</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">QObject</span><span class="p">,</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Optimize</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="n">Q_OBJECT</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">Q_OBJECT</span><span class="p">;</span><span class="w"></span>
 
-<span class="k">public</span><span class="o">:</span><span class="w"></span>
+<span class="w"> </span><span class="k">public</span><span class="o">:</span><span class="w"></span>
 <span class="w">  </span><span class="n">QOptimize</span><span class="p">(</span><span class="n">QObject</span><span class="o">*</span><span class="w"> </span><span class="n">parent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">nullptr</span><span class="p">);</span><span class="w"></span>
 <span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">QOptimize</span><span class="p">();</span><span class="w"></span>
 
@@ -2307,28 +2307,26 @@
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">UpdateExportablePoints</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="p">;</span><span class="w"></span>
 
-<span class="k">protected</span><span class="o">:</span><span class="w"></span>
+<span class="w"> </span><span class="k">protected</span><span class="o">:</span><span class="w"></span>
 <span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetIterationCallback</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">IterateCallback</span><span class="p">(</span><span class="n">itk</span><span class="o">::</span><span class="n">Object</span><span class="o">*</span><span class="w"> </span><span class="n">caller</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">EventObject</span><span class="o">&amp;</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="p">;</span><span class="w"></span>
 
-<span class="nl">Q_SIGNALS</span><span class="p">:</span><span class="w"></span>
+<span class="w"> </span><span class="nl">Q_SIGNALS</span><span class="p">:</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">progress</span><span class="p">(</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">QString</span><span class="p">);</span><span class="w"></span>
 
-<span class="k">private</span><span class="o">:</span><span class="w"></span>
-
+<span class="w"> </span><span class="k">private</span><span class="o">:</span><span class="w"></span>
 <span class="w">  </span><span class="n">itk</span><span class="o">::</span><span class="n">MemberCommand</span><span class="o">&lt;</span><span class="n">QOptimize</span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">iterate_command_</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">  </span><span class="c1">// for concurrent access</span>
 <span class="w">  </span><span class="n">QMutex</span><span class="w"> </span><span class="n">qmutex_</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">  </span><span class="n">QElapsedTimer</span><span class="w"> </span><span class="n">time_since_last_update_</span><span class="p">;</span><span class="w"></span>
-
 <span class="p">};</span><span class="w"></span>
 
-<span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-01-31 at 20:35:22 +0000</p>
+<p>Updated on 2023-02-06 at 20:26:00 +0000</p>
 
               
             </article>

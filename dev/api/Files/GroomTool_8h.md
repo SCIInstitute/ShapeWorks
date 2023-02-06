@@ -28,7 +28,7 @@ title: Studio/Groom/GroomTool.h
 #pragma once
 
 #include <Data/Preferences.h>
-#include <Groom/QGroom.h>
+#include <Groom/Groom.h>
 #include <Groom/GroomParameters.h>
 #include <Data/Telemetry.h>
 
@@ -116,7 +116,7 @@ class GroomTool : public QWidget {
   Ui_GroomTool* ui_;
   QSharedPointer<Session> session_;
 
-  QSharedPointer<shapeworks::QGroom> groom_;
+  QSharedPointer<shapeworks::Groom> groom_;
 
   QElapsedTimer timer_;
 
@@ -132,4 +132,4 @@ class GroomTool : public QWidget {
 
 -------------------------------
 
-Updated on 2023-01-31 at 20:35:22 +0000
+Updated on 2023-02-06 at 20:26:00 +0000

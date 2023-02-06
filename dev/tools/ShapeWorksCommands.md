@@ -79,7 +79,11 @@ shapeworks  groom [args]...
 
 **-h, --help:** show this help message and exit
 
-**--name=STRING:** Path to project file.  
+**--name=STRING:** Path to project file.
+
+**--progress:** Show progress [default: false].
+
+**--xmlconsole:** XML console output [default: false].  
   
 <a href="#top">Back to Top</a>
   
@@ -2083,7 +2087,11 @@ shapeworks  optimize [args]...
 
 **-h, --help:** show this help message and exit
 
-**--name=STRING:** Path to project file.  
+**--name=STRING:** Path to project file.
+
+**--progress:** Show progress [default: false].
+
+**--xmlconsole:** XML console output [default: false].  
   
 <a href="#top">Back to Top</a>
   

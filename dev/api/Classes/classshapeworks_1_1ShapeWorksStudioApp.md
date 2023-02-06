@@ -76,9 +76,10 @@ Inherits from QMainWindow
 | void | **[handle_error](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-error)**(std::string str) |
 | void | **[handle_warning](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-warning)**(std::string str) |
 | void | **[handle_debug](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-debug)**(std::string str) |
-| void | **[message_callback](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-message-callback)**(std::string str) |
-| void | **[handle_status](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-status)**(QString str) |
+| void | **[handle_status](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-status)**(std::string str) |
+| void | **[handle_progress_with_message](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-progress-with-message)**(int amt, std::string str) |
 | void | **[handle_progress](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-progress)**(int amt) |
+| void | **[message_callback](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-message-callback)**(std::string str) |
 | void | **[handle_new_mesh](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-new-mesh)**() |
 | void | **[handle_clear_cache](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-clear-cache)**() |
 | void | **[handle_compare_settings_changed](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-compare-settings-changed)**() |
@@ -540,20 +541,21 @@ void handle_debug(
 ```
 
 
-### slot message_callback
+### slot handle_status
 
 ```cpp
-void message_callback(
+void handle_status(
     std::string str
 )
 ```
 
 
-### slot handle_status
+### slot handle_progress_with_message
 
 ```cpp
-void handle_status(
-    QString str
+void handle_progress_with_message(
+    int amt,
+    std::string str
 )
 ```
 
@@ -563,6 +565,15 @@ void handle_status(
 ```cpp
 void handle_progress(
     int amt
+)
+```
+
+
+### slot message_callback
+
+```cpp
+void message_callback(
+    std::string str
 )
 ```
 
@@ -750,4 +761,4 @@ void dropEvent(
 
 -------------------------------
 
-Updated on 2023-01-31 at 20:35:21 +0000
+Updated on 2023-02-06 at 20:25:59 +0000

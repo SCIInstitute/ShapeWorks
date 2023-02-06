@@ -23,6 +23,8 @@ Inherits from QObject
 | void | **[error](../Classes/classStudioLogger.md#signal-error)**(std::string str) |
 | void | **[warning](../Classes/classStudioLogger.md#signal-warning)**(std::string str) |
 | void | **[debug](../Classes/classStudioLogger.md#signal-debug)**(std::string str) |
+| void | **[status](../Classes/classStudioLogger.md#signal-status)**(std::string str) |
+| void | **[progress](../Classes/classStudioLogger.md#signal-progress)**(int value, std::string str) |
 
 ## Public Functions
 
@@ -35,6 +37,8 @@ Inherits from QObject
 | void | **[handle_error](../Classes/classStudioLogger.md#function-handle-error)**(std::string str) |
 | void | **[handle_warning](../Classes/classStudioLogger.md#function-handle-warning)**(std::string str) |
 | void | **[handle_debug](../Classes/classStudioLogger.md#function-handle-debug)**(std::string str) |
+| void | **[handle_status](../Classes/classStudioLogger.md#function-handle-status)**(std::string str) |
+| void | **[handle_progress](../Classes/classStudioLogger.md#function-handle-progress)**(double value, std::string str) |
 
 ## Public Signals Documentation
 
@@ -69,6 +73,25 @@ void warning(
 
 ```cpp
 void debug(
+    std::string str
+)
+```
+
+
+### signal status
+
+```cpp
+void status(
+    std::string str
+)
+```
+
+
+### signal progress
+
+```cpp
+void progress(
+    int value,
     std::string str
 )
 ```
@@ -133,6 +156,25 @@ void handle_debug(
 ```
 
 
+### function handle_status
+
+```cpp
+void handle_status(
+    std::string str
+)
+```
+
+
+### function handle_progress
+
+```cpp
+void handle_progress(
+    double value,
+    std::string str
+)
+```
+
+
 -------------------------------
 
-Updated on 2023-01-31 at 20:35:21 +0000
+Updated on 2023-02-06 at 20:25:59 +0000

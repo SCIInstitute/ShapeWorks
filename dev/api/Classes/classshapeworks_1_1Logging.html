@@ -2296,6 +2296,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-show_progress" class="md-nav__link">
+    function show_progress
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-log_debug" class="md-nav__link">
     function log_debug
   </a>
@@ -2340,6 +2347,20 @@
           <li class="md-nav__item">
   <a href="#function-set_debug_callback" class="md-nav__link">
     function set_debug_callback
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-set_status_callback" class="md-nav__link">
+    function set_status_callback
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-set_progress_callback" class="md-nav__link">
+    function set_progress_callback
   </a>
   
 </li>
@@ -2418,6 +2439,10 @@
 </tr>
 <tr>
 <td>void</td>
+<td><strong><a href="classshapeworks_1_1Logging.html#function-show-progress">show_progress</a></strong>(double value, const std::string &amp; message)<br>Display progress (0-100)</td>
+</tr>
+<tr>
+<td>void</td>
 <td><strong><a href="classshapeworks_1_1Logging.html#function-log-debug">log_debug</a></strong>(const std::string &amp; message, const int line, const char * file) const<br>Log a debug message, use SW_DEBUG macro.</td>
 </tr>
 <tr>
@@ -2442,7 +2467,15 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Logging.html#function-set-debug-callback">set_debug_callback</a></strong>(const std::function&lt; void(std::string)&gt; &amp; callback)<br>Set a debug messagecallback function to be called whenever a debug message is posted.</td>
+<td><strong><a href="classshapeworks_1_1Logging.html#function-set-debug-callback">set_debug_callback</a></strong>(const std::function&lt; void(std::string)&gt; &amp; callback)<br>Set a debug message callback function to be called whenever a debug message is posted.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Logging.html#function-set-status-callback">set_status_callback</a></strong>(const std::function&lt; void(std::string)&gt; &amp; callback)<br>Set a status callback function to be called whenever a status message is posted.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Logging.html#function-set-progress-callback">set_progress_callback</a></strong>(const std::function&lt; void(double, std::string)&gt; &amp; callback)<br>Set a progress callback function to be called whenever a progress update is posted.</td>
 </tr>
 </tbody>
 </table>
@@ -2534,6 +2567,13 @@
 <span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
 </code></pre></div>
 <p>Log a message, use SW_STATUS macro. </p>
+<h3 id="function-show_progress">function show_progress</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">show_progress</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">message</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>Display progress (0-100) </p>
 <h3 id="function-log_debug">function log_debug</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">log_debug</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">message</span><span class="p">,</span><span class="w"></span>
@@ -2577,9 +2617,21 @@
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">void</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">callback</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
-<p>Set a debug messagecallback function to be called whenever a debug message is posted. </p>
+<p>Set a debug message callback function to be called whenever a debug message is posted. </p>
+<h3 id="function-set_status_callback">function set_status_callback</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_status_callback</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">void</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">callback</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>Set a status callback function to be called whenever a status message is posted. </p>
+<h3 id="function-set_progress_callback">function set_progress_callback</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_progress_callback</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">void</span><span class="p">(</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">callback</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<p>Set a progress callback function to be called whenever a progress update is posted. </p>
 <hr />
-<p>Updated on 2023-01-31 at 20:35:21 +0000</p>
+<p>Updated on 2023-02-06 at 20:25:59 +0000</p>
 
               
             </article>

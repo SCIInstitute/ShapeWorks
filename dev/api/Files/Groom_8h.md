@@ -50,7 +50,6 @@ class Groom {
                                                                   vtkSmartPointer<vtkPoints> target);
 
  protected:
-  virtual void update_progress(){};
 
   std::atomic<float> progress_ = 0;
   std::atomic<int> total_ops_ = 0;
@@ -113,4 +112,4 @@ class Groom {
 
 -------------------------------
 
-Updated on 2023-01-31 at 20:35:21 +0000
+Updated on 2023-02-06 at 20:25:59 +0000

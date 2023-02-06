@@ -228,6 +228,8 @@ class Optimize {
 
   vnl_vector_fixed<double, 3> TransformPoint(int domain, vnl_vector_fixed<double, 3> input);
 
+  void UpdateProgress();
+
  protected:
   virtual void SetIterationCallback();
 
@@ -385,6 +387,12 @@ class Optimize {
   shapeworks::OptimizationVisualizer visualizer_;
 
   std::shared_ptr<Project> project_;
+
+  std::chrono::system_clock::time_point m_start_time;
+  std::chrono::system_clock::time_point m_last_update_time;
+  std::chrono::system_clock::time_point m_last_remaining_update_time;
+  std::string m_remaining_time_message;
+
 };
 
 }  // namespace shapeworks
@@ -393,4 +401,4 @@ class Optimize {
 
 -------------------------------
 
-Updated on 2023-01-31 at 20:35:22 +0000
+Updated on 2023-02-06 at 20:25:59 +0000

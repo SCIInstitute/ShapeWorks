@@ -35,7 +35,7 @@ Inherits from QObject
 
 |                | Name           |
 | -------------- | -------------- |
-| | **[ShapeworksWorker](../Classes/classshapeworks_1_1ShapeworksWorker.md#function-shapeworksworker)**(ThreadType type, QSharedPointer< [QGroom](../Classes/classshapeworks_1_1QGroom.md) > groom, QSharedPointer< [Optimize](../Classes/classshapeworks_1_1Optimize.md) > optimize, QSharedPointer< [OptimizeParameters](../Classes/classshapeworks_1_1OptimizeParameters.md) > optimize_parameters, QSharedPointer< [Session](../Classes/classshapeworks_1_1Session.md) > session, double maxAngle =45., float decimationPercent =0.3f, int numClusters =5) |
+| | **[ShapeworksWorker](../Classes/classshapeworks_1_1ShapeworksWorker.md#function-shapeworksworker)**(ThreadType type, QSharedPointer< [Groom](../Classes/classshapeworks_1_1Groom.md) > groom, QSharedPointer< [Optimize](../Classes/classshapeworks_1_1Optimize.md) > optimize, QSharedPointer< [OptimizeParameters](../Classes/classshapeworks_1_1OptimizeParameters.md) > optimize_parameters, QSharedPointer< [Session](../Classes/classshapeworks_1_1Session.md) > session, double maxAngle =45., float decimationPercent =0.3f, int numClusters =5) |
 | | **[~ShapeworksWorker](../Classes/classshapeworks_1_1ShapeworksWorker.md#function-~shapeworksworker)**() |
 
 ## Public Types Documentation
@@ -90,7 +90,7 @@ void finished()
 ```cpp
 ShapeworksWorker(
     ThreadType type,
-    QSharedPointer< QGroom > groom,
+    QSharedPointer< Groom > groom,
     QSharedPointer< Optimize > optimize,
     QSharedPointer< OptimizeParameters > optimize_parameters,
     QSharedPointer< Session > session,
@@ -110,4 +110,4 @@ ShapeworksWorker(
 
 -------------------------------
 
-Updated on 2023-01-31 at 20:35:21 +0000
+Updated on 2023-02-06 at 20:25:59 +0000

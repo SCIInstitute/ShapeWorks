@@ -210,7 +210,6 @@ title: Classes
     * **class [ProjectReader](../Classes/classshapeworks_1_1ProjectReader.md)** <br>Base class for [Project](../Classes/classshapeworks_1_1Project.md) readers. 
     * **class [ProjectUtils](../Classes/classshapeworks_1_1ProjectUtils.md)** 
     * **class [PythonWorker](../Classes/classshapeworks_1_1PythonWorker.md)** 
-    * **class [QGroom](../Classes/classshapeworks_1_1QGroom.md)** <br>Qt Wrapper for [Groom](../Classes/classshapeworks_1_1Groom.md). 
     * **class [QMeshWarper](../Classes/classshapeworks_1_1QMeshWarper.md)** <br>Wraps [MeshWarper](../Classes/classshapeworks_1_1MeshWarper.md) as a QObject. 
     * **class [QOptimize](../Classes/classshapeworks_1_1QOptimize.md)** <br>Wraps [Optimize](../Classes/classshapeworks_1_1Optimize.md) as a QObject. 
     * **class [ReconstructSurface](../Classes/classshapeworks_1_1ReconstructSurface.md)** 
@@ -267,4 +266,4 @@ title: Classes
 
 -------------------------------
 
-Updated on 2023-01-31 at 20:35:22 +0000
+Updated on 2023-02-06 at 20:26:00 +0000

@@ -153,11 +153,11 @@ class ShapeWorksStudioApp : public QMainWindow {
   void handle_error(std::string str);
   void handle_warning(std::string str);
   void handle_debug(std::string str);
+  void handle_status(std::string str);
+  void handle_progress_with_message(int amt, std::string str);
+  void handle_progress(int amt);
 
   void message_callback(std::string str);
-
-  void handle_status(QString str);
-  void handle_progress(int amt);
   void handle_new_mesh();
   void handle_clear_cache();
   void handle_compare_settings_changed();
@@ -300,4 +300,4 @@ class ShapeWorksStudioApp : public QMainWindow {
 
 -------------------------------
 
-Updated on 2023-01-31 at 20:35:22 +0000
+Updated on 2023-02-06 at 20:26:00 +0000

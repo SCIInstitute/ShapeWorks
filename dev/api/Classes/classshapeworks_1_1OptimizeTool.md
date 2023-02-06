@@ -33,7 +33,7 @@ Inherits from QWidget
 | void | **[optimize_start](../Classes/classshapeworks_1_1OptimizeTool.md#signal-optimize-start)**() |
 | void | **[optimize_complete](../Classes/classshapeworks_1_1OptimizeTool.md#signal-optimize-complete)**() |
 | void | **[progress](../Classes/classshapeworks_1_1OptimizeTool.md#signal-progress)**(int ) |
-| void | **[status](../Classes/classshapeworks_1_1OptimizeTool.md#signal-status)**(QString ) |
+| void | **[status](../Classes/classshapeworks_1_1OptimizeTool.md#signal-status)**(std::string ) |
 
 ## Public Functions
 
@@ -160,7 +160,7 @@ void progress(
 
 ```cpp
 void status(
-    QString 
+    std::string 
 )
 ```
 
@@ -244,4 +244,4 @@ shut down any running threads
 
 -------------------------------
 
-Updated on 2023-01-31 at 20:35:21 +0000
+Updated on 2023-02-06 at 20:25:58 +0000

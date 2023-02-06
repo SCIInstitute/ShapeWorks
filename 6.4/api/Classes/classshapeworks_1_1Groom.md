@@ -13,8 +13,6 @@ High level groom API.  [More...](#detailed-description)
 
 `#include <Groom.h>`
 
-Inherited by [shapeworks::QGroom](../Classes/classshapeworks_1_1QGroom.md)
-
 ## Public Functions
 
 |                | Name           |
@@ -25,12 +23,6 @@ Inherited by [shapeworks::QGroom](../Classes/classshapeworks_1_1QGroom.md)
 | bool | **[get_aborted](../Classes/classshapeworks_1_1Groom.md#function-get-aborted)**()<br>Return if grooming was aborted.  |
 | double | **[compute_landmark_distance](../Classes/classshapeworks_1_1Groom.md#function-compute-landmark-distance)**(vtkSmartPointer< vtkPoints > one, vtkSmartPointer< vtkPoints > two)<br>Util to compute square distance between paired landmarks.  |
 | vtkSmartPointer< vtkMatrix4x4 > | **[compute_landmark_transform](../Classes/classshapeworks_1_1Groom.md#function-compute-landmark-transform)**(vtkSmartPointer< vtkPoints > source, vtkSmartPointer< vtkPoints > target)<br>Util to compute landmark transform.  |
-
-## Protected Functions
-
-|                | Name           |
-| -------------- | -------------- |
-| virtual void | **[update_progress](../Classes/classshapeworks_1_1Groom.md#function-update-progress)**()<br>call to be overridden by subclasses  |
 
 ## Protected Attributes
 
@@ -107,19 +99,6 @@ static vtkSmartPointer< vtkMatrix4x4 > compute_landmark_transform(
 
 Util to compute landmark transform. 
 
-## Protected Functions Documentation
-
-### function update_progress
-
-```cpp
-inline virtual void update_progress()
-```
-
-call to be overridden by subclasses 
-
-**Reimplemented by**: [shapeworks::QGroom::update_progress](../Classes/classshapeworks_1_1QGroom.md#function-update-progress)
-
-
 ## Protected Attributes Documentation
 
 ### variable progress_
@@ -145,4 +124,4 @@ std::atomic< int > progress_counter_ = 0;
 
 -------------------------------
 
-Updated on 2023-01-31 at 20:35:20 +0000
+Updated on 2023-02-06 at 20:25:58 +0000

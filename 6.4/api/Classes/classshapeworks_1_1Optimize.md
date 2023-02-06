@@ -127,6 +127,7 @@ Inherited by [shapeworks::QOptimize](../Classes/classshapeworks_1_1QOptimize.md)
 | bool | **[GetShowVisualizer](../Classes/classshapeworks_1_1Optimize.md#function-getshowvisualizer)**() |
 | bool | **[GetMeshFFCMode](../Classes/classshapeworks_1_1Optimize.md#function-getmeshffcmode)**() |
 | vnl_vector_fixed< double, 3 > | **[TransformPoint](../Classes/classshapeworks_1_1Optimize.md#function-transformpoint)**(int domain, vnl_vector_fixed< double, 3 > input)<br>transform a point if necessary  |
+| void | **[UpdateProgress](../Classes/classshapeworks_1_1Optimize.md#function-updateprogress)**() |
 
 ## Protected Functions
 
@@ -256,6 +257,10 @@ Inherited by [shapeworks::QOptimize](../Classes/classshapeworks_1_1QOptimize.md)
 | bool | **[show_visualizer_](../Classes/classshapeworks_1_1Optimize.md#variable-show-visualizer-)**  |
 | [shapeworks::OptimizationVisualizer](../Classes/classshapeworks_1_1OptimizationVisualizer.md) | **[visualizer_](../Classes/classshapeworks_1_1Optimize.md#variable-visualizer-)**  |
 | std::shared_ptr< [Project](../Classes/classshapeworks_1_1Project.md) > | **[project_](../Classes/classshapeworks_1_1Optimize.md#variable-project-)**  |
+| std::chrono::system_clock::time_point | **[m_start_time](../Classes/classshapeworks_1_1Optimize.md#variable-m-start-time)**  |
+| std::chrono::system_clock::time_point | **[m_last_update_time](../Classes/classshapeworks_1_1Optimize.md#variable-m-last-update-time)**  |
+| std::chrono::system_clock::time_point | **[m_last_remaining_update_time](../Classes/classshapeworks_1_1Optimize.md#variable-m-last-remaining-update-time)**  |
+| std::string | **[m_remaining_time_message](../Classes/classshapeworks_1_1Optimize.md#variable-m-remaining-time-message)**  |
 
 ## Detailed Description
 
@@ -1251,6 +1256,13 @@ vnl_vector_fixed< double, 3 > TransformPoint(
 
 transform a point if necessary 
 
+### function UpdateProgress
+
+```cpp
+void UpdateProgress()
+```
+
+
 ## Protected Functions Documentation
 
 ### function SetIterationCallback
@@ -2133,6 +2145,34 @@ std::shared_ptr< Project > project_;
 ```
 
 
+### variable m_start_time
+
+```cpp
+std::chrono::system_clock::time_point m_start_time;
+```
+
+
+### variable m_last_update_time
+
+```cpp
+std::chrono::system_clock::time_point m_last_update_time;
+```
+
+
+### variable m_last_remaining_update_time
+
+```cpp
+std::chrono::system_clock::time_point m_last_remaining_update_time;
+```
+
+
+### variable m_remaining_time_message
+
+```cpp
+std::string m_remaining_time_message;
+```
+
+
 -------------------------------
 
-Updated on 2023-01-31 at 20:35:21 +0000
+Updated on 2023-02-06 at 20:25:58 +0000

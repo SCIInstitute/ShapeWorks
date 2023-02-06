@@ -2218,13 +2218,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#protected-functions" class="md-nav__link">
-    Protected Functions
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#protected-attributes" class="md-nav__link">
     Protected Attributes
   </a>
@@ -2294,26 +2287,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#protected-functions-documentation" class="md-nav__link">
-    Protected Functions Documentation
-  </a>
-  
-    <nav class="md-nav" aria-label="Protected Functions Documentation">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#function-update_progress" class="md-nav__link">
-    function update_progress
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#protected-attributes-documentation" class="md-nav__link">
     Protected Attributes Documentation
   </a>
@@ -2368,7 +2341,6 @@
 <h1 id="shapeworksgroom">shapeworks::Groom</h1>
 <p>High level groom API.  <a href="#detailed-description">More...</a></p>
 <p><code>#include &lt;Groom.h&gt;</code></p>
-<p>Inherited by <a href="classshapeworks_1_1QGroom.html">shapeworks::QGroom</a></p>
 <h2 id="public-functions">Public Functions</h2>
 <table>
 <thead>
@@ -2401,21 +2373,6 @@
 <tr>
 <td>vtkSmartPointer&lt; vtkMatrix4x4 &gt;</td>
 <td><strong><a href="classshapeworks_1_1Groom.html#function-compute-landmark-transform">compute_landmark_transform</a></strong>(vtkSmartPointer&lt; vtkPoints &gt; source, vtkSmartPointer&lt; vtkPoints &gt; target)<br>Util to compute landmark transform.</td>
-</tr>
-</tbody>
-</table>
-<h2 id="protected-functions">Protected Functions</h2>
-<table>
-<thead>
-<tr>
-<th></th>
-<th>Name</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>virtual void</td>
-<td><strong><a href="classshapeworks_1_1Groom.html#function-update-progress">update_progress</a></strong>()<br>call to be overridden by subclasses</td>
 </tr>
 </tbody>
 </table>
@@ -2479,12 +2436,6 @@
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <p>Util to compute landmark transform. </p>
-<h2 id="protected-functions-documentation">Protected Functions Documentation</h2>
-<h3 id="function-update_progress">function update_progress</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">update_progress</span><span class="p">()</span><span class="w"></span>
-</code></pre></div>
-<p>call to be overridden by subclasses </p>
-<p><strong>Reimplemented by</strong>: <a href="classshapeworks_1_1QGroom.html#function-update-progress">shapeworks::QGroom::update_progress</a></p>
 <h2 id="protected-attributes-documentation">Protected Attributes Documentation</h2>
 <h3 id="variable-progress_">variable progress_</h3>
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">atomic</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">progress_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
@@ -2496,7 +2447,7 @@
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">atomic</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">progress_counter_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-01-31 at 20:35:20 +0000</p>
+<p>Updated on 2023-02-06 at 20:25:58 +0000</p>
 
               
             </article>

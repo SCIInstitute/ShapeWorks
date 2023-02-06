@@ -2646,13 +2646,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#slot-message_callback" class="md-nav__link">
-    slot message_callback
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#slot-handle_status" class="md-nav__link">
     slot handle_status
   </a>
@@ -2660,8 +2653,22 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#slot-handle_progress_with_message" class="md-nav__link">
+    slot handle_progress_with_message
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#slot-handle_progress" class="md-nav__link">
     slot handle_progress
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#slot-message_callback" class="md-nav__link">
+    slot message_callback
   </a>
   
 </li>
@@ -3119,15 +3126,19 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1ShapeWorksStudioApp.html#slot-message-callback">message_callback</a></strong>(std::string str)</td>
+<td><strong><a href="classshapeworks_1_1ShapeWorksStudioApp.html#slot-handle-status">handle_status</a></strong>(std::string str)</td>
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1ShapeWorksStudioApp.html#slot-handle-status">handle_status</a></strong>(QString str)</td>
+<td><strong><a href="classshapeworks_1_1ShapeWorksStudioApp.html#slot-handle-progress-with-message">handle_progress_with_message</a></strong>(int amt, std::string str)</td>
 </tr>
 <tr>
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1ShapeWorksStudioApp.html#slot-handle-progress">handle_progress</a></strong>(int amt)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1ShapeWorksStudioApp.html#slot-message-callback">message_callback</a></strong>(std::string str)</td>
 </tr>
 <tr>
 <td>void</td>
@@ -3438,19 +3449,25 @@
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">str</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
-<h3 id="slot-message_callback">slot message_callback</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">message_callback</span><span class="p">(</span><span class="w"></span>
+<h3 id="slot-handle_status">slot handle_status</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_status</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">str</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
-<h3 id="slot-handle_status">slot handle_status</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_status</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">QString</span><span class="w"> </span><span class="n">str</span><span class="w"></span>
+<h3 id="slot-handle_progress_with_message">slot handle_progress_with_message</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_progress_with_message</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">amt</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">str</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <h3 id="slot-handle_progress">slot handle_progress</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_progress</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">amt</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="slot-message_callback">slot message_callback</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">message_callback</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">str</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <h3 id="slot-handle_new_mesh">slot handle_new_mesh</h3>
@@ -3541,7 +3558,7 @@
 <span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-01-31 at 20:35:21 +0000</p>
+<p>Updated on 2023-02-06 at 20:25:59 +0000</p>
 
               
             </article>

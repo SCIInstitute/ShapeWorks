@@ -85,7 +85,7 @@ class MeshManager : public QObject {
   void error_encountered(QString message);
 
   void progress(int);
-  void status(QString);
+  void status(std::string);
 
  private:
   std::shared_ptr<MeshReconstructors> reconstructors_ = std::make_shared<MeshReconstructors>();
@@ -116,4 +116,4 @@ class MeshManager : public QObject {
 
 -------------------------------
 
-Updated on 2023-01-31 at 20:35:21 +0000
+Updated on 2023-02-06 at 20:25:59 +0000

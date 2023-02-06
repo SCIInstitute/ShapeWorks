@@ -2871,6 +2871,10 @@
 <td>vnl_vector_fixed&lt; double, 3 &gt;</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#function-transformpoint">TransformPoint</a></strong>(int domain, vnl_vector_fixed&lt; double, 3 &gt; input)<br>transform a point if necessary</td>
 </tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-updateprogress">UpdateProgress</a></strong>()</td>
+</tr>
 </tbody>
 </table>
 <p><strong>Protected Functions inherited from <a href="classshapeworks_1_1Optimize.html">shapeworks::Optimize</a></strong></p>
@@ -3353,6 +3357,22 @@
 <td>std::shared_ptr&lt; <a href="classshapeworks_1_1Project.html">Project</a> &gt;</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#variable-project-">project_</a></strong></td>
 </tr>
+<tr>
+<td>std::chrono::system_clock::time_point</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-start-time">m_start_time</a></strong></td>
+</tr>
+<tr>
+<td>std::chrono::system_clock::time_point</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-last-update-time">m_last_update_time</a></strong></td>
+</tr>
+<tr>
+<td>std::chrono::system_clock::time_point</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-last-remaining-update-time">m_last_remaining_update_time</a></strong></td>
+</tr>
+<tr>
+<td>std::string</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-remaining-time-message">m_remaining_time_message</a></strong></td>
+</tr>
 </tbody>
 </table>
 <h2 id="public-signals-documentation">Public Signals Documentation</h2>
@@ -3406,7 +3426,7 @@
 </code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1Optimize.html#function-iteratecallback">shapeworks::Optimize::IterateCallback</a></p>
 <hr />
-<p>Updated on 2023-01-31 at 20:35:21 +0000</p>
+<p>Updated on 2023-02-06 at 20:25:59 +0000</p>
 
               
             </article>

@@ -33,7 +33,7 @@ title: Studio/Data/ShapeWorksWorker.h
 
 namespace shapeworks {
 class Optimize;
-class QGroom;
+class Groom;
 class OptimizeParameters;
 
 class ShapeworksWorker : public QObject {
@@ -45,7 +45,7 @@ public:
   };
 
   ShapeworksWorker(ThreadType type,
-                   QSharedPointer<QGroom> groom,
+                   QSharedPointer<Groom> groom,
                    QSharedPointer<Optimize> optimize,
                    QSharedPointer<OptimizeParameters> optimize_parameters,
                    QSharedPointer<Session> session,
@@ -64,7 +64,7 @@ Q_SIGNALS:
 
 private:
 
-  QSharedPointer<QGroom> groom_;
+  QSharedPointer<Groom> groom_;
   QSharedPointer<Optimize> optimize_;
   QSharedPointer<OptimizeParameters> optimize_parameters_;
   QSharedPointer<Session> session_;
@@ -79,4 +79,4 @@ private:
 
 -------------------------------
 
-Updated on 2023-01-31 at 20:35:22 +0000
+Updated on 2023-02-06 at 20:26:00 +0000

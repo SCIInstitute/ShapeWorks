@@ -28,13 +28,16 @@ ShapeWorks [Logging]() Library.  [More...](#detailed-description)
 | void | **[log_error](../Classes/classshapeworks_1_1Logging.md#function-log-error)**(const std::string & message, const int line, const char * file) const<br>Log an error, use SW_ERROR macro.  |
 | void | **[show_message](../Classes/classshapeworks_1_1Logging.md#function-show-message)**(const std::string & message, const int line, const char * file) const<br>Log a message, use SW_MESSAGE macro.  |
 | void | **[show_status](../Classes/classshapeworks_1_1Logging.md#function-show-status)**(const std::string & message, const int line, const char * file) const<br>Log a message, use SW_STATUS macro.  |
+| void | **[show_progress](../Classes/classshapeworks_1_1Logging.md#function-show-progress)**(double value, const std::string & message)<br>Display progress (0-100)  |
 | void | **[log_debug](../Classes/classshapeworks_1_1Logging.md#function-log-debug)**(const std::string & message, const int line, const char * file) const<br>Log a debug message, use SW_DEBUG macro.  |
 | void | **[log_warning](../Classes/classshapeworks_1_1Logging.md#function-log-warning)**(const std::string & message, const int line, const char * file) const<br>Log a warning message, use SW_WARN macro.  |
 | void | **[close_log](../Classes/classshapeworks_1_1Logging.md#function-close-log)**()<br>Close the log, use SW_CLOSE_LOG macro.  |
 | void | **[set_error_callback](../Classes/classshapeworks_1_1Logging.md#function-set-error-callback)**(const std::function< void(std::string)> & callback)<br>Set an error callback function to be called whenever an error is raised.  |
 | void | **[set_message_callback](../Classes/classshapeworks_1_1Logging.md#function-set-message-callback)**(const std::function< void(std::string)> & callback)<br>Set a message callback function to be called whenever an message is posted.  |
 | void | **[set_warning_callback](../Classes/classshapeworks_1_1Logging.md#function-set-warning-callback)**(const std::function< void(std::string)> & callback)<br>Set a warning callback function to be called whenever a warning is posted.  |
-| void | **[set_debug_callback](../Classes/classshapeworks_1_1Logging.md#function-set-debug-callback)**(const std::function< void(std::string)> & callback)<br>Set a debug messagecallback function to be called whenever a debug message is posted.  |
+| void | **[set_debug_callback](../Classes/classshapeworks_1_1Logging.md#function-set-debug-callback)**(const std::function< void(std::string)> & callback)<br>Set a debug message callback function to be called whenever a debug message is posted.  |
+| void | **[set_status_callback](../Classes/classshapeworks_1_1Logging.md#function-set-status-callback)**(const std::function< void(std::string)> & callback)<br>Set a status callback function to be called whenever a status message is posted.  |
+| void | **[set_progress_callback](../Classes/classshapeworks_1_1Logging.md#function-set-progress-callback)**(const std::function< void(double, std::string)> & callback)<br>Set a progress callback function to be called whenever a progress update is posted.  |
 
 ## Detailed Description
 
@@ -190,6 +193,17 @@ void show_status(
 
 Log a message, use SW_STATUS macro. 
 
+### function show_progress
+
+```cpp
+void show_progress(
+    double value,
+    const std::string & message
+)
+```
+
+Display progress (0-100) 
+
 ### function log_debug
 
 ```cpp
@@ -260,8 +274,28 @@ void set_debug_callback(
 )
 ```
 
-Set a debug messagecallback function to be called whenever a debug message is posted. 
+Set a debug message callback function to be called whenever a debug message is posted. 
+
+### function set_status_callback
+
+```cpp
+void set_status_callback(
+    const std::function< void(std::string)> & callback
+)
+```
+
+Set a status callback function to be called whenever a status message is posted. 
+
+### function set_progress_callback
+
+```cpp
+void set_progress_callback(
+    const std::function< void(double, std::string)> & callback
+)
+```
+
+Set a progress callback function to be called whenever a progress update is posted. 
 
 -------------------------------
 
-Updated on 2023-01-31 at 20:35:21 +0000
+Updated on 2023-02-06 at 20:25:59 +0000

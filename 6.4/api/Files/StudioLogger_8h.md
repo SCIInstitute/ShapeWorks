@@ -37,16 +37,20 @@ class StudioLogger : public QObject {
   void handle_error(std::string str);
   void handle_warning(std::string str);
   void handle_debug(std::string str);
+  void handle_status(std::string str);
+  void handle_progress(double value, std::string str);
 
  Q_SIGNALS:
   void message(std::string str);
   void error(std::string str);
   void warning(std::string str);
   void debug(std::string str);
+  void status(std::string str);
+  void progress(int value, std::string str);
 };
 ```
 
 
 -------------------------------
 
-Updated on 2023-01-31 at 20:35:22 +0000
+Updated on 2023-02-06 at 20:26:00 +0000

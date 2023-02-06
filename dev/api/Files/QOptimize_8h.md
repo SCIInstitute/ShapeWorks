@@ -31,16 +31,16 @@ title: Studio/Optimize/QOptimize.h
 #include <Analyze/Particles.h>
 #include <Optimize/Optimize.h>
 #endif
-#include <QObject>
-#include <QMutex>
 #include <QElapsedTimer>
+#include <QMutex>
+#include <QObject>
 
 namespace shapeworks {
 
 class QOptimize : public QObject, public Optimize {
-Q_OBJECT;
+  Q_OBJECT;
 
-public:
+ public:
   QOptimize(QObject* parent = nullptr);
   virtual ~QOptimize();
 
@@ -53,28 +53,26 @@ public:
 
   void UpdateExportablePoints() override;
 
-protected:
+ protected:
   virtual void SetIterationCallback() override;
   virtual void IterateCallback(itk::Object* caller, const itk::EventObject&) override;
 
-Q_SIGNALS:
+ Q_SIGNALS:
   void progress(int, QString);
 
-private:
-
+ private:
   itk::MemberCommand<QOptimize>::Pointer iterate_command_;
 
   // for concurrent access
   QMutex qmutex_;
 
   QElapsedTimer time_since_last_update_;
-
 };
 
-}
+}  // namespace shapeworks
 ```
 
 
 -------------------------------
 
-Updated on 2023-01-31 at 20:35:22 +0000
+Updated on 2023-02-06 at 20:26:00 +0000

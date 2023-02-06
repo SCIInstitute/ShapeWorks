@@ -29,7 +29,7 @@ Inherits from QObject
 | void | **[new_mesh](../Classes/classshapeworks_1_1MeshManager.md#signal-new-mesh)**() |
 | void | **[error_encountered](../Classes/classshapeworks_1_1MeshManager.md#signal-error-encountered)**(QString message) |
 | void | **[progress](../Classes/classshapeworks_1_1MeshManager.md#signal-progress)**(int ) |
-| void | **[status](../Classes/classshapeworks_1_1MeshManager.md#signal-status)**(QString ) |
+| void | **[status](../Classes/classshapeworks_1_1MeshManager.md#signal-status)**(std::string ) |
 
 ## Public Functions
 
@@ -109,7 +109,7 @@ void progress(
 
 ```cpp
 void status(
-    QString 
+    std::string 
 )
 ```
 
@@ -241,4 +241,4 @@ clear the cache
 
 -------------------------------
 
-Updated on 2023-01-31 at 20:35:20 +0000
+Updated on 2023-02-06 at 20:25:58 +0000

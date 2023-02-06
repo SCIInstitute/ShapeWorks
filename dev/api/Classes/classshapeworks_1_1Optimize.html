@@ -2994,6 +2994,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#function-updateprogress" class="md-nav__link">
+    function UpdateProgress
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -3853,6 +3860,34 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#variable-m_start_time" class="md-nav__link">
+    variable m_start_time
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#variable-m_last_update_time" class="md-nav__link">
+    variable m_last_update_time
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#variable-m_last_remaining_update_time" class="md-nav__link">
+    variable m_last_remaining_update_time
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#variable-m_remaining_time_message" class="md-nav__link">
+    variable m_remaining_time_message
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -4315,6 +4350,10 @@
 <tr>
 <td>vnl_vector_fixed&lt; double, 3 &gt;</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#function-transformpoint">TransformPoint</a></strong>(int domain, vnl_vector_fixed&lt; double, 3 &gt; input)<br>transform a point if necessary</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-updateprogress">UpdateProgress</a></strong>()</td>
 </tr>
 </tbody>
 </table>
@@ -4813,6 +4852,22 @@
 <tr>
 <td>std::shared_ptr&lt; <a href="classshapeworks_1_1Project.html">Project</a> &gt;</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#variable-project-">project_</a></strong></td>
+</tr>
+<tr>
+<td>std::chrono::system_clock::time_point</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-start-time">m_start_time</a></strong></td>
+</tr>
+<tr>
+<td>std::chrono::system_clock::time_point</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-last-update-time">m_last_update_time</a></strong></td>
+</tr>
+<tr>
+<td>std::chrono::system_clock::time_point</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-last-remaining-update-time">m_last_remaining_update_time</a></strong></td>
+</tr>
+<tr>
+<td>std::string</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-remaining-time-message">m_remaining_time_message</a></strong></td>
 </tr>
 </tbody>
 </table>
@@ -5378,6 +5433,9 @@
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <p>transform a point if necessary </p>
+<h3 id="function-updateprogress">function UpdateProgress</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">UpdateProgress</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
 <h2 id="protected-functions-documentation">Protected Functions Documentation</h2>
 <h3 id="function-setiterationcallback">function SetIterationCallback</h3>
 <div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetIterationCallback</span><span class="p">()</span><span class="w"></span>
@@ -5774,8 +5832,20 @@
 <h3 id="variable-project_">variable project_</h3>
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Project</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">project_</span><span class="p">;</span><span class="w"></span>
 </code></pre></div>
+<h3 id="variable-m_start_time">variable m_start_time</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">chrono</span><span class="o">::</span><span class="n">system_clock</span><span class="o">::</span><span class="n">time_point</span><span class="w"> </span><span class="n">m_start_time</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="variable-m_last_update_time">variable m_last_update_time</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">chrono</span><span class="o">::</span><span class="n">system_clock</span><span class="o">::</span><span class="n">time_point</span><span class="w"> </span><span class="n">m_last_update_time</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="variable-m_last_remaining_update_time">variable m_last_remaining_update_time</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">chrono</span><span class="o">::</span><span class="n">system_clock</span><span class="o">::</span><span class="n">time_point</span><span class="w"> </span><span class="n">m_last_remaining_update_time</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
+<h3 id="variable-m_remaining_time_message">variable m_remaining_time_message</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">m_remaining_time_message</span><span class="p">;</span><span class="w"></span>
+</code></pre></div>
 <hr />
-<p>Updated on 2023-01-31 at 20:35:21 +0000</p>
+<p>Updated on 2023-02-06 at 20:25:58 +0000</p>
 
               
             </article>

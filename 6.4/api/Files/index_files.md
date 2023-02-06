@@ -192,7 +192,6 @@ title: Files
         * **file [Studio/DeepSSM/DeepSSMTool.h](../Files/DeepSSMTool_8h.md#file-deepssmtool.h)** 
     * **dir [Studio/Groom](../Files/dir_4481568adb70067b4bb4b5ce096891b2.md#dir-studio/groom)** 
         * **file [Studio/Groom/GroomTool.h](../Files/GroomTool_8h.md#file-groomtool.h)** 
-        * **file [Studio/Groom/QGroom.h](../Files/QGroom_8h.md#file-qgroom.h)** 
     * **dir [Studio/Interface](../Files/dir_f27aadd9c7f02e71212dbf7893d91496.md#dir-studio/interface)** 
         * **file [Studio/Interface/CompareWidget.h](../Files/CompareWidget_8h.md#file-comparewidget.h)** 
         * **file [Studio/Interface/ExportImageDialog.h](../Files/ExportImageDialog_8h.md#file-exportimagedialog.h)** 
@@ -244,4 +243,4 @@ title: Files
 
 -------------------------------
 
-Updated on 2023-01-31 at 20:35:22 +0000
+Updated on 2023-02-06 at 20:26:00 +0000
