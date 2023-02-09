@@ -2200,6 +2200,12 @@ void Optimize::SetNonLinearTrainModelCallbackFunction(const std::function<void(v
 }
 
 //---------------------------------------------------------------------------
+void Optimize::LoadPytorchModel(const std::string model_path, const std::string gpu_id)
+{
+  int x = this->m_sampler->GetNonLinearShapeMatrixAttribute()->LoadPytorchModel(model_path, gpu_id);
+}
+
+//---------------------------------------------------------------------------
 void Optimize::SetBeforeGradientUpdatesCallbackFunction(const std::function<void(void)>& f)
 {
   this->m_sampler->GetNonLinearShapeMatrixAttribute()->SetBeforeGradientUpdatesCallbackFunction(f);

@@ -194,6 +194,19 @@ public:
     this->m_NonLinearTrainModelCallback = f;
   }
 
+  int LoadPytorchModel(const std::string model_path, const std::string gpu_id){
+    try {
+      this->m_module = torch::jit::load(model_path, torch::kCUDA);
+      this->m_gpu_id = gpu_id;
+      this->m_module.to(gpu_id);
+    }
+    catch (const c10::Error& e) {
+      std::cerr << "Error loading the model \n";
+      return -1;
+    }
+    return 0;
+  }
+
   void SetBeforeGradientUpdatesCallbackFunction(const std::function<void(void)> &f){
     this->m_BeforeGradientUpdatesCallback = f;
   }
@@ -268,6 +281,7 @@ private:
 
   int m_UpdateCounter;
   int m_NonLinearTrainingInterval;
+  int m_gpu_id;
 
   // Callbacks from Python
   std::function<void(void)> m_BeforeGradientUpdatesCallback;
@@ -279,8 +293,7 @@ private:
   std::shared_ptr<vnl_matrix<double>> m_JacobianMatrix_det;
   std::shared_ptr<vnl_matrix<double>> m_DifferenceMatrix;
 
-
-
+  torch::jit::script::Module m_module;
 };
 
 } // end namespace

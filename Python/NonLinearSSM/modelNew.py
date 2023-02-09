@@ -8,7 +8,7 @@ import torch
 import torch.optim as optim
 
 from data import fetch_dataloaders
-from NormalizingFlowsLib.maf import (MAF, RealNVP)
+from NormalizingFlowsLib.mafMVN import (MAF, RealNVP)
 
 def train(model, dataloader, optimizer, epoch, args):
 
@@ -130,15 +130,35 @@ class InvertibleNetwork:
     
     def serialize_model(self):
         print('*********** Serializing to TorchScript Module *****************')
-
         checkpoint_path = f'{self.params.output_dir}/model_checkpoint.pt'
         state = torch.load(checkpoint_path, map_location=self.device)
-        print(state.keys())
+        self.model.load_state_dict(state['model_state'])
+        self.optimizer.load_state_dict(state['optimizer_state'])
+        self.model.eval()
+        sm = torch.jit.script(self.model)
+        sm.save(f"{self.params.output_dir}/serialized_model.pt")
+        print(f'******************** Serialized Module saved ************************')
+
+    def test_model(self):
+        print('*********** Serializing to TorchScript Module *****************')
+        checkpoint_path = f'{self.params.output_dir}/best_model_checkpoint.pt'
+        state = torch.load(checkpoint_path, map_location=self.device)
         self.model.load_state_dict(state['model_state'])
         self.optimizer.load_state_dict(state['optimizer_state'])
         self.model.eval()
 
-        sm = torch.jit.script(self.model)
-        sm.save(f"{self.params.output_dir}/serialized_model.pt")
+        for data in self.test_dataloader:
+            # check if labeled dataset
+            print(f'len data = {len(data)}')
+            if len(data) == 1:
+                x, y = data[0], None
+            else:
+                x, y = data
+                y = y.to(self.params.device)
+            print(f'x initial size = {x.size()}')
+            x = x.view(x.shape[0], -1).to(self.params.device)
 
-        print(f'******************** Serialized Module saved ************************')
+            # loss = - model.log_prob(x, y if args.cond_label_size else None).mean(0)
+            z0_particles, lls = self.model(x)
+            print(f'input size {x.size()} z0 size = {z0_particles.size()} lls size = {lls.size()}')
+            break

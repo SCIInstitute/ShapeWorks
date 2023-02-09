@@ -22,45 +22,113 @@ import copy
 
 from typing import List
 
-class Normal:
-    @property
-    def mean(self):
-        return self.loc
+import math
+import torch
+from torch.types import _size
+from typing import Tuple, Final
 
-    @property
-    def stddev(self):
-        return self.scale
+def _standard_normal(shape, dtype, device):
+    return torch.normal(torch.zeros(shape, dtype=dtype, device=device),
+                            torch.ones(shape, dtype=dtype, device=device))
 
-    @property
-    def variance(self):
-        return self.stddev.pow(2)
+def _extended_shape(self, sample_shape: _size = torch.Size()) -> Tuple[int, ...]:
+        """
+        Returns the size of the sample returned by the distribution, given
+        a `sample_shape`. Note, that the batch and event shapes of a distribution
+        instance are fixed at the time of construction. If this is empty, the
+        returned shape is upcast to (1,).
+        Args:
+            sample_shape (torch.Size): the size of the sample to be drawn.
+        """
+        if not isinstance(sample_shape, torch.Size):
+            sample_shape = torch.Size(sample_shape)
+        return torch.Size(sample_shape + self._batch_shape + self._event_shape)
 
-    def __init__(self, loc: torch.Tensor, scale: torch.Tensor):
-        resized_ = torch.broadcast_tensors(loc, scale)
-        self.loc = resized_[0]
-        self.scale = resized_[1]
-        self._batch_shape = list(self.loc.size())
+def _batch_mv(bmat, bvec):
+    r"""
+    Performs a batched matrix-vector product, with compatible but different batch shapes.
 
-    def _extended_shape(self, sample_shape: List[int]) -> List[int]:
-        return sample_shape + self._batch_shape
+    This function takes as input `bmat`, containing :math:`n \times n` matrices, and
+    `bvec`, containing length :math:`n` vectors.
 
-    def sample(self, sample_shape: List[int]) -> torch.Tensor:
-        shape = self._extended_shape(sample_shape)
-        return torch.normal(self.loc.expand(shape), self.scale.expand(shape))
+    Both `bmat` and `bvec` may have any number of leading dimensions, which correspond
+    to a batch shape. They are not necessarily assumed to have the same batch shape,
+    just ones which can be broadcasted.
+    """
+    return torch.matmul(bmat, bvec.unsqueeze(-1)).squeeze(-1)
 
-    def rsample(self, sample_shape: List[int]) -> torch.Tensor:
-        shape: List[int] = self._extended_shape(sample_shape)
-        eps = torch.normal(torch.zeros(shape, device=self.loc.device),
-                           torch.ones(shape, device=self.scale.device))
-        return self.loc + eps * self.scale
 
-    def log_prob(self, value: torch.Tensor) -> torch.Tensor:
-        var = (self.scale ** 2)
-        log_scale = self.scale.log()
-        return -((value - self.loc) ** 2) / (2 * var) - log_scale - math.log(math.sqrt(2 * math.pi))
+def _batch_mahalanobis(bL, bx):
+    r"""
+    Computes the squared Mahalanobis distance :math:`\mathbf{x}^\top\mathbf{M}^{-1}\mathbf{x}`
+    for a factored :math:`\mathbf{M} = \mathbf{L}\mathbf{L}^\top`.
 
-    def entropy(self) -> torch.Tensor:
-        return 0.5 + 0.5 * math.log(2 * math.pi) + torch.log(self.scale)
+    Accepts batches for both bL and bx. They are not necessarily assumed to have the same batch
+    shape, but `bL` one should be able to broadcasted to `bx` one.
+    """
+    n = bx.size(-1)
+    bx_batch_shape = bx.shape[:-1]
+
+    # Assume that bL.shape = (i, 1, n, n), bx.shape = (..., i, j, n),
+    # we are going to make bx have shape (..., 1, j,  i, 1, n) to apply batched tri.solve
+    bx_batch_dims = len(bx_batch_shape)
+    bL_batch_dims = bL.dim() - 2
+    outer_batch_dims = bx_batch_dims - bL_batch_dims
+    old_batch_dims = outer_batch_dims + bL_batch_dims
+    new_batch_dims = outer_batch_dims + 2 * bL_batch_dims
+    # Reshape bx with the shape (..., 1, i, j, 1, n)
+    bx_new_shape = bx.shape[:outer_batch_dims]
+    for (sL, sx) in zip(bL.shape[:-2], bx.shape[outer_batch_dims:-1]):
+        bx_new_shape += (sx // sL, sL)
+    bx_new_shape += (n,)
+    bx = bx.reshape(bx_new_shape)
+    # Permute bx to make it have shape (..., 1, j, i, 1, n)
+    permute_dims = (list(range(outer_batch_dims)) +
+                    list(range(outer_batch_dims, new_batch_dims, 2)) +
+                    list(range(outer_batch_dims + 1, new_batch_dims, 2)) +
+                    [new_batch_dims])
+    bx = bx.permute(permute_dims)
+
+    flat_L = bL.reshape(-1, n, n)  # shape = b x n x n
+    flat_x = bx.reshape(-1, flat_L.size(0), n)  # shape = c x b x n
+    flat_x_swap = flat_x.permute(1, 2, 0)  # shape = b x n x c
+    M_swap = torch.linalg.solve_triangular(flat_L, flat_x_swap, upper=False).pow(2).sum(-2)  # shape = b x c
+    M = M_swap.t()  # shape = c x b
+
+    # Now we revert the above reshape and permute operators.
+    permuted_M = M.reshape(bx.shape[:-1])  # shape = (..., 1, j, i, 1)
+    permute_inv_dims = list(range(outer_batch_dims))
+    for i in range(bL_batch_dims):
+        permute_inv_dims += [outer_batch_dims + i, old_batch_dims + i]
+    reshaped_M = permuted_M.permute(permute_inv_dims)  # shape = (..., 1, i, j, 1)
+    return reshaped_M.reshape(bx_batch_shape)
+
+class MultivariateNormal():
+    def __init__(self, loc:torch.Tensor, covariance_matrix: torch.Tensor):
+        if loc.dim() < 1:
+            raise ValueError("loc must be at least one-dimensional.")
+        if (covariance_matrix is None):
+            raise ValueError("Exactly covariance_matrix may be specified.")
+
+        if covariance_matrix is not None:
+            if covariance_matrix.dim() < 2:
+                raise ValueError("covariance_matrix must be at least two-dimensional, "
+                                 "with optional leading batch dimensions")
+            # batch_shape = torch.broadcast_shapes(covariance_matrix.shape[:-2], loc.shape[:-1])
+            batch_shape = torch.Size([])
+            self.covariance_matrix = covariance_matrix.expand(batch_shape + (-1, -1))
+        self.loc = loc.expand(batch_shape + (-1,))
+        self._event_shape = self.loc.shape[-1:]
+        self._batch_shape = batch_shape
+        if covariance_matrix is not None:
+            self._unbroadcasted_scale_tril = torch.linalg.cholesky(covariance_matrix)
+
+    def log_prob(self, value:torch.Tensor) -> torch.Tensor:
+        diff = value - self.loc
+        M = _batch_mahalanobis(self._unbroadcasted_scale_tril, diff)
+        half_log_det = self._unbroadcasted_scale_tril.diagonal(dim1=-2, dim2=-1).log().sum(-1)
+        return -0.5 * (self._event_shape[0] * math.log(2 * math.pi) + M) - half_log_det
+
 
 def create_masks(input_size, hidden_size, n_hidden, input_order='sequential', input_degrees=None):
     # MADE paper sec 4:
@@ -114,7 +182,7 @@ class MaskedLinear(nn.Linear):
 
 class LinearMaskedCoupling(nn.Module):
     """ Modified RealNVP Coupling Layers per the MAF paper """
-    def __init__(self, input_size, hidden_size, n_hidden, mask, cond_label_size=None):
+    def __init__(self, input_size, hidden_size, n_hidden, mask, cond_label_size=None)->None:
         super().__init__()
 
         self.register_buffer('mask', mask)
@@ -132,7 +200,7 @@ class LinearMaskedCoupling(nn.Module):
         for i in range(len(self.t_net)):
             if not isinstance(self.t_net[i], nn.Linear): self.t_net[i] = nn.ReLU()
 
-    def forward(self, x):
+    def forward(self, x:torch.Tensor)-> Tuple[torch.Tensor, torch.Tensor]:
         # apply mask
         mx = x * self.mask
 
@@ -145,7 +213,8 @@ class LinearMaskedCoupling(nn.Module):
 
         return u, log_abs_det_jacobian
 
-    def inverse(self, u):
+    @torch.jit.export
+    def inverse(self, u:torch.Tensor)-> Tuple[torch.Tensor, torch.Tensor]:
         # apply mask
         mu = u * self.mask
 
@@ -158,10 +227,10 @@ class LinearMaskedCoupling(nn.Module):
 
         return x, log_abs_det_jacobian
 
-
+ 
 class BatchNorm(nn.Module):
     """ RealNVP BatchNorm layer """
-    def __init__(self, input_size, momentum=0.9, eps=1e-5):
+    def __init__(self, input_size, momentum=0.9, eps=1e-5)->None:
         super().__init__()
         self.momentum = momentum
         self.eps = eps
@@ -172,7 +241,7 @@ class BatchNorm(nn.Module):
         self.register_buffer('running_mean', torch.zeros(input_size))
         self.register_buffer('running_var', torch.ones(input_size))
 
-    def forward(self, x):
+    def forward(self, x:torch.Tensor)-> Tuple[torch.Tensor, torch.Tensor] :
         if self.training:
             self.batch_mean = x.mean(0)
             self.batch_var = x.var(0) # note MAF paper uses biased variance estimate; ie x.var(0, unbiased=False)
@@ -197,7 +266,8 @@ class BatchNorm(nn.Module):
 #            (var + self.eps).log().sum().data.numpy(), y.var(0).log().sum().data.numpy(), log_abs_det_jacobian.mean(0).item(), self.log_gamma.mean(), self.beta.mean()))
         return y, log_abs_det_jacobian.expand_as(x)
 
-    def inverse(self, y):
+    @torch.jit.export
+    def inverse(self, y:torch.Tensor)-> Tuple[torch.Tensor, torch.Tensor]:
         if self.training:
             mean = self.batch_mean
             var = self.batch_var
@@ -213,20 +283,36 @@ class BatchNorm(nn.Module):
         return x, log_abs_det_jacobian.expand_as(x)
 
 
-class FlowSequential(nn.Sequential):
+@torch.jit.interface
+class ModuleInterface(torch.nn.Module):
+    def forward(self, input: torch.Tensor) -> torch.Tensor: # `input` has a same name in Sequential forward
+        pass
+    def inverse(self, input: torch.Tensor) -> torch.Tensor: # `input` has a same name in Sequential forward
+        pass   
+
+class FlowSequential(nn.Module):
     """ Container for layers of a normalizing flow """
+    def __init__(self, args:torch.nn.ModuleList, n_layers: int):
+        super().__init__()
+        self.layers: torch.nn.ModuleList = args
+        self.n_layers = n_layers
+
     def forward(self, x):
         sum_log_abs_det_jacobians = 0
-        for module in self:
-            x, log_abs_det_jacobian = module(x)
+        for module_layer in self.layers:
+            x, log_abs_det_jacobian = module_layer(x)
             sum_log_abs_det_jacobians = sum_log_abs_det_jacobians + log_abs_det_jacobian
         return x, sum_log_abs_det_jacobians
 
     def inverse(self, u):
         sum_log_abs_det_jacobians = 0
-        for module in reversed(self):
-            u, log_abs_det_jacobian = module.inverse(u)
+        for module_layer in self.layers[::-1]:
+            # layer: LinearMaskedCoupling = self.layers[i]
+            u, log_abs_det_jacobian = module_layer.inverse(u)
             sum_log_abs_det_jacobians = sum_log_abs_det_jacobians + log_abs_det_jacobian
+        # for i, module in enumerate(list(self.layers)):
+        #     u, log_abs_det_jacobian = self.layers[i].inverse(u)
+        #     sum_log_abs_det_jacobians = sum_log_abs_det_jacobians + log_abs_det_jacobian
         return u, sum_log_abs_det_jacobians
 
 # --------------------
@@ -248,7 +334,7 @@ class MADE(nn.Module):
         super().__init__()
         # base distribution for calculation of log prob under the model
         base_dist_mean = mean if mean is not None else torch.zeros(input_size)
-        base_dist_var = cov if cov is not None else torch.ones(input_size)
+        base_dist_var = cov if cov is not None else torch.eye(input_size)
         self.register_buffer('base_dist_mean', base_dist_mean)
         self.register_buffer('base_dist_var', base_dist_var)
 
@@ -273,7 +359,7 @@ class MADE(nn.Module):
 
     @property
     def base_dist(self):
-        return D.Normal(self.base_dist_mean, self.base_dist_var)
+        return MultivariateNormal(self.base_dist_mean, self.base_dist_var)
 
     def forward(self, x):
         # MAF eq 4 -- return mean and log std
@@ -296,14 +382,19 @@ class MADE(nn.Module):
 
     def log_prob(self, x):
         u, log_abs_det_jacobian = self.forward(x)
-        return torch.sum(self.base_dist.log_prob(u) + log_abs_det_jacobian, dim=1)
+        base_dist_val = self.base_dist.log_prob(u)
+        req_t = torch.zeros_like(log_abs_det_jacobian)
+        req_t[:, 1] = base_dist_val
+        # return torch.sum(self.base_dist.log_prob(u) + sum_log_abs_det_jacobians, dim=1)
+        return torch.sum(req_t + log_abs_det_jacobian, dim=1)
+
 
 class MAF(nn.Module):
     def __init__(self, n_blocks, input_size, hidden_size, n_hidden, cond_label_size=None, activation='relu', input_order='sequential', batch_norm=True, mean=None, cov=None):
         super().__init__()
         # base distribution for calculation of log prob under the model
         base_dist_mean = mean if mean is not None else torch.zeros(input_size)
-        base_dist_var = cov if cov is not None else torch.ones(input_size)
+        base_dist_var = cov if cov is not None else torch.eye(input_size)
         self.register_buffer('base_dist_mean', base_dist_mean)
         self.register_buffer('base_dist_var', base_dist_var)
 
@@ -315,21 +406,34 @@ class MAF(nn.Module):
             self.input_degrees = modules[-1].input_degrees.flip(0)
             modules += batch_norm * [BatchNorm(input_size)]
 
-        self.net = FlowSequential(*modules)
+        # self.net = FlowSequential(*modules)
+        list_modules = nn.ModuleList(modules)
+        self.net = FlowSequential(list_modules)
 
     @property
     def base_dist(self):
-        return D.Normal(self.base_dist_mean, self.base_dist_var)
+        return MultivariateNormal(self.base_dist_mean, self.base_dist_var)
 
     def forward(self, x):
         return self.net(x)
 
+    @torch.jit.export
     def inverse(self, u):
         return self.net.inverse(u)
 
+    @torch.jit.export
     def log_prob(self, x):
         u, sum_log_abs_det_jacobians = self.forward(x)
-        return torch.sum(self.base_dist.log_prob(u) + sum_log_abs_det_jacobians, dim=1)
+        base_dist_val = self.base_dist.log_prob(u)
+        req_t = torch.zeros_like(sum_log_abs_det_jacobians)
+        req_t[:, 1] = base_dist_val
+        # return torch.sum(self.base_dist.log_prob(u) + sum_log_abs_det_jacobians, dim=1)
+        return torch.sum(req_t + sum_log_abs_det_jacobians, dim=1)
+
+    @torch.jit.export
+    def base_dist_log_prob(self, x:torch.Tensor) -> torch.Tensor:
+        return self.base_dist.log_prob(x)
+
 
 class RealNVP(nn.Module):
     def __init__(self, n_blocks, input_size, hidden_size, n_hidden, cond_label_size=None, batch_norm=True, mean=None, cov=None):
@@ -337,7 +441,7 @@ class RealNVP(nn.Module):
 
         # base distribution for calculation of log prob under the model
         base_dist_mean = mean if mean is not None else torch.zeros(input_size)
-        base_dist_var = cov if cov is not None else torch.ones(input_size)
+        base_dist_var = cov if cov is not None else torch.eye(input_size)
         # print(f'INPUT SIZE IS  {input_size}')
         self.register_buffer('base_dist_mean', base_dist_mean)
         self.register_buffer('base_dist_var', base_dist_var)
@@ -350,20 +454,32 @@ class RealNVP(nn.Module):
             mask = 1 - mask
             modules += batch_norm * [BatchNorm(input_size)]
 
-        self.net = FlowSequential(*modules)
+        # self.net = FlowSequential(*modules)
+        list_modules = nn.ModuleList(modules)
+        self.net = FlowSequential(list_modules, len(modules))
+
 
     @property
     def base_dist(self):
-        return D.Normal(self.base_dist_mean, self.base_dist_var)
+        return MultivariateNormal(self.base_dist_mean, self.base_dist_var)
 
     def forward(self, x):
         return self.net(x)
 
+    @torch.jit.export
     def inverse(self, u):
-        return self.net.inverse(u)
+        return self.net.inverse(u)  
 
+    @torch.jit.export
     def log_prob(self, x):
         u, sum_log_abs_det_jacobians = self.forward(x)
-        lls = self.base_dist.log_prob(u)
-        print(f'shape of sum_log_abs_det_jacobians {sum_log_abs_det_jacobians.size()} and lls {lls[0:, 0:3]} and lls {lls[1, 0:3]}')
-        return torch.sum(self.base_dist.log_prob(u) + sum_log_abs_det_jacobians, dim=1)
+        base_dist_val = self.base_dist.log_prob(u)
+        req_t = torch.zeros_like(sum_log_abs_det_jacobians)
+        req_t[:, 1] = base_dist_val
+        # return torch.sum(self.base_dist.log_prob(u) + sum_log_abs_det_jacobians, dim=1)
+        return torch.sum(req_t + sum_log_abs_det_jacobians, dim=1)
+    
+    @torch.jit.export
+    def base_dist_log_prob(self, x:torch.Tensor) -> torch.Tensor:
+        return self.base_dist.log_prob(x)
+

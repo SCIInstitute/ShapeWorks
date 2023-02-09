@@ -6,7 +6,7 @@
     "dimension": 3,
 
 
-    "batch_size":5,
+    "batch_size":2,
     "num_initial_iterations": 3000,
 
     "working_dir": "/home/sci/nawazish.khan/non-linear-ssm-experiments/Supershapes/",
@@ -22,7 +22,7 @@
     "input_order": "random",
     "no_batch_norm": true,
     "conditional": false,
-    "n_epochs": 500,
+    "n_epochs": 20,
     "start_epoch": 0,
     "lr": 1e-2,
     "log_interval": 1000,
