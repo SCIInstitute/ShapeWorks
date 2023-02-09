@@ -281,7 +281,7 @@ private:
 
   int m_UpdateCounter;
   int m_NonLinearTrainingInterval;
-  int m_gpu_id;
+  std::string m_gpu_id;
 
   // Callbacks from Python
   std::function<void(void)> m_BeforeGradientUpdatesCallback;
