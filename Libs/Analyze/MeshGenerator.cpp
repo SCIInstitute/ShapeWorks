@@ -84,7 +84,7 @@ MeshHandle MeshGenerator::build_mesh_from_points(const Eigen::VectorXd& shape, i
     if (!poly_data) {
       std::string message = "Unable to warp mesh";
       SW_ERROR(message);
-      auto poly_data = vtkSmartPointer<vtkPolyData>::New();
+      poly_data = vtkSmartPointer<vtkPolyData>::New();
       mesh->set_poly_data(poly_data);
       mesh->set_error_message(message);
       return mesh;
@@ -124,9 +124,9 @@ MeshHandle MeshGenerator::build_mesh_from_image(ImageType::Pointer image, float 
     mesh->set_poly_data(Mesh(marching->GetOutput()).clean().computeNormals().getVTKMesh());
 
   } catch (itk::ExceptionObject& excep) {
-    std::cerr << "Exception caught!" << std::endl;
-    std::cerr << excep << std::endl;
-    mesh->set_error_message(std::string("Exception: ") + excep.what());
+    auto message = std::string("Exception: ") + excep.what();
+    SW_ERROR(message);
+    mesh->set_error_message(message);
   }
   return mesh;
 }
