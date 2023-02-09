@@ -1,15 +1,16 @@
 #include <Groom.h>
 #include <GroomParameters.h>
-#include <Libs/Image/Image.h>
-#include <Libs/Mesh/Mesh.h>
-#include <Libs/Mesh/MeshUtils.h>
-#include <Libs/Project/ProjectUtils.h>
-#include <Libs/Utils/StringUtils.h>
+#include <Image/Image.h>
+#include <Mesh/Mesh.h>
+#include <Mesh/MeshUtils.h>
+#include <Project/ProjectUtils.h>
+#include <Utils/StringUtils.h>
 #include <itkRegionOfInterestImageFilter.h>
 #include <tbb/parallel_for.h>
 #include <vtkCenterOfMass.h>
 #include <vtkLandmarkTransform.h>
 #include <vtkPointSet.h>
+#include <Logging.h>
 
 #include <boost/filesystem.hpp>
 #include <vector>
@@ -27,6 +28,7 @@ Groom::Groom(ProjectHandle project) { this->project_ = project; }
 
 //---------------------------------------------------------------------------
 bool Groom::run() {
+  used_names_.clear();
   this->progress_ = 0;
   this->progress_counter_ = 0;
   this->total_ops_ = this->get_total_ops();
@@ -85,16 +87,16 @@ bool Groom::image_pipeline(std::shared_ptr<Subject> subject, size_t domain) {
   // grab parameters
   auto params = GroomParameters(this->project_, this->project_->get_domain_names()[domain]);
 
-  auto path = subject->get_original_filenames()[domain];
+  auto original = subject->get_original_filenames()[domain];
 
   // load the image
-  Image image(path);
+  Image image(original);
 
   // define a groom transform
   vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
   transform->Identity();
 
-  if (this->skip_grooming_) {
+  if (params.get_skip_grooming()) {
     std::vector<std::vector<double>> groomed_transforms;
     groomed_transforms.push_back(ProjectUtils::convert_transform(transform));
     subject->set_groomed_transforms(groomed_transforms);
@@ -108,7 +110,7 @@ bool Groom::image_pipeline(std::shared_ptr<Subject> subject, size_t domain) {
       if (domain >= groomed_filenames.size()) {
         groomed_filenames.resize(domain + 1);
       }
-      groomed_filenames[domain] = path;
+      groomed_filenames[domain] = original;
 
       // store filenames back to subject
       subject->set_groomed_filenames(groomed_filenames);
@@ -139,12 +141,12 @@ bool Groom::image_pipeline(std::shared_ptr<Subject> subject, size_t domain) {
   }
 
   // groomed filename
-  std::string groomed_name = this->get_output_filename(path, DomainType::Image);
+  std::string groomed_name = this->get_output_filename(original, DomainType::Image);
 
   if (params.get_convert_to_mesh()) {
     Mesh mesh = image.toMesh(0.0);
     this->run_mesh_pipeline(mesh, params);
-    groomed_name = this->get_output_filename(path, DomainType::Mesh);
+    groomed_name = this->get_output_filename(original, DomainType::Mesh);
     // save the groomed mesh
     MeshUtils::threadSafeWriteMesh(groomed_name, mesh);
   } else {
@@ -267,17 +269,17 @@ bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject, size_t domain) {
   // grab parameters
   auto params = GroomParameters(this->project_, this->project_->get_domain_names()[domain]);
 
-  auto path = subject->get_original_filenames()[domain];
+  auto original = subject->get_original_filenames()[domain];
 
   // groomed mesh name
-  std::string groom_name = this->get_output_filename(path, DomainType::Mesh);
+  std::string groom_name = this->get_output_filename(original, DomainType::Mesh);
 
-  Mesh mesh = MeshUtils::threadSafeReadMesh(path);
+  Mesh mesh = MeshUtils::threadSafeReadMesh(original);
 
   // define a groom transform
   auto transform = vtkSmartPointer<vtkTransform>::New();
 
-  if (!this->skip_grooming_) {
+  if (!params.get_skip_grooming()) {
     this->run_mesh_pipeline(mesh, params);
 
     // reflection
@@ -294,10 +296,12 @@ bool Groom::mesh_pipeline(std::shared_ptr<Subject> subject, size_t domain) {
     if (params.get_use_center()) {
       this->add_center_transform(transform, mesh);
     }
+    // save the groomed mesh
+    MeshUtils::threadSafeWriteMesh(groom_name, mesh);
+  } else {
+    groom_name = original;
   }
 
-  // save the groomed mesh
-  MeshUtils::threadSafeWriteMesh(groom_name, mesh);
 
   {
     // lock for project data structure
@@ -359,17 +363,17 @@ bool Groom::contour_pipeline(std::shared_ptr<Subject> subject, size_t domain) {
   // grab parameters
   auto params = GroomParameters(this->project_, this->project_->get_domain_names()[domain]);
 
-  auto path = subject->get_original_filenames()[domain];
+  auto original = subject->get_original_filenames()[domain];
 
   // groomed mesh name
-  std::string groom_name = this->get_output_filename(path, DomainType::Mesh);
+  std::string groom_name = this->get_output_filename(original, DomainType::Mesh);
 
-  Mesh mesh = MeshUtils::threadSafeReadMesh(path);
+  Mesh mesh = MeshUtils::threadSafeReadMesh(original);
 
   // define a groom transform
   auto transform = vtkSmartPointer<vtkTransform>::New();
 
-  if (!this->skip_grooming_) {
+  if (!params.get_skip_grooming()) {
     // reflection
     if (params.get_reflect()) {
       auto table = subject->get_table_values();
@@ -384,10 +388,13 @@ bool Groom::contour_pipeline(std::shared_ptr<Subject> subject, size_t domain) {
     if (params.get_use_center()) {
       this->add_center_transform(transform, mesh);
     }
-  }
 
-  // save the groomed contour
-  MeshUtils::threadSafeWriteMesh(groom_name, mesh);
+    // save the groomed contour
+    MeshUtils::threadSafeWriteMesh(groom_name, mesh);
+
+  } else {
+    groom_name = original;
+  }
 
   {
     // lock for project data structure
@@ -427,6 +434,7 @@ int Groom::get_total_ops() {
 
   int num_tools = 0;
 
+  project_->update_subjects();
   auto domains = this->project_->get_domain_names();
   auto subjects = this->project_->get_subjects();
 
@@ -445,7 +453,7 @@ int Groom::get_total_ops() {
     }
 
     bool run_mesh = project_->get_original_domain_types()[i] == DomainType::Mesh ||
-                    (project_->get_original_domain_types()[i] == DomainType::Image && params.get_convert_to_mesh());
+        (project_->get_original_domain_types()[i] == DomainType::Image && params.get_convert_to_mesh());
 
     if (run_mesh) {
       num_tools += params.get_fill_holes_tool() ? 1 : 0;
@@ -463,11 +471,8 @@ void Groom::increment_progress(int amount) {
   std::scoped_lock lock(mutex);
   this->progress_counter_ += amount;
   this->progress_ = static_cast<float>(this->progress_counter_) / static_cast<float>(this->total_ops_) * 100.0;
-  this->update_progress();
+  SW_PROGRESS(progress_, fmt::format("Grooming ({}/{} ops)", progress_counter_, total_ops_));
 }
-
-//---------------------------------------------------------------------------
-void Groom::set_skip_grooming(bool skip) { this->skip_grooming_ = skip; }
 
 //---------------------------------------------------------------------------
 void Groom::abort() { this->abort_ = true; }
@@ -606,6 +611,9 @@ vtkSmartPointer<vtkMatrix4x4> Groom::compute_landmark_transform(vtkSmartPointer<
 
 //---------------------------------------------------------------------------
 std::string Groom::get_output_filename(std::string input, DomainType domain_type) {
+  // lock for thread-safe member access
+  std::scoped_lock lock(mutex_);
+
   // grab parameters
   auto params = GroomParameters(this->project_);
 
@@ -638,7 +646,17 @@ std::string Groom::get_output_filename(std::string input, DomainType domain_type
     }
   }
 
-  auto output = path + "/" + StringUtils::getBaseFilenameWithoutExtension(input) + suffix;
+  auto name = path + "/" + StringUtils::getBaseFilenameWithoutExtension(input);
+
+  // check for and handle name clashes, e.g. a/foo.vtk, b/foo.vtk (see #1387)
+  auto base_name = name;
+  int count = 2;
+  while (used_names_.find(name) != used_names_.end()) {
+    name = base_name + std::to_string(count++);
+  }
+  used_names_.insert(name);
+
+  auto output = name + suffix;
 
   return output;
 }

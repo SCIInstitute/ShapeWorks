@@ -1,19 +1,15 @@
-// must be first
-#include <Libs/Optimize/Optimize.h>
-// must be first
+#include "Commands.h"
 
-#include <Libs/Analyze/Analyze.h>
-#include <Libs/Groom/Groom.h>
-#include <Libs/Optimize/OptimizeParameterFile.h>
-#include <Libs/Optimize/OptimizeParameters.h>
-#include <Libs/Utils/StringUtils.h>
+#include <Analyze/Analyze.h>
+#include <Groom/Groom.h>
 #include <Logging.h>
+#include <Optimize/Optimize.h>
+#include <Optimize/OptimizeParameterFile.h>
+#include <Optimize/OptimizeParameters.h>
 #include <ShapeworksUtils.h>
+#include <Utils/StringUtils.h>
 
 #include <boost/filesystem.hpp>
-#include <limits>
-
-#include "Commands.h"
 
 namespace shapeworks {
 
@@ -44,6 +40,32 @@ bool Example::execute(const optparse::Values &options, SharedCommandData &shared
   return true;
 }
 #endif
+
+static void setup_callbacks(bool show_progress, bool xml_status) {
+  if (show_progress) {
+    auto progress_callback = [](double progress, std::string message) {
+      // show status message and percentage complete
+      std::cout << fmt::format("{} ({:.1f}%)        \r", message, progress);
+      std::cout.flush();
+    };
+    Logging::Instance().set_progress_callback(progress_callback);
+  }
+
+  if (xml_status) {
+    auto progress_callback = [](double progress, std::string message) {
+      // print status message and percentage complete
+      std::cout << fmt::format("<xml><status>{}</status><progress>{:.1f}</progress></xml>\n", message, progress);
+      std::cout.flush();
+    };
+    Logging::Instance().set_progress_callback(progress_callback);
+
+    auto error_callback = [](std::string message) {
+      std::cout << fmt::format("<xml><error>{}</error></xml>\n", message);
+      std::cout.flush();
+    };
+    Logging::Instance().set_error_callback(error_callback);
+  }
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // Seed
@@ -79,12 +101,16 @@ void OptimizeCommand::buildParser() {
   parser.prog(prog).description(desc);
 
   parser.add_option("--name").action("store").type("string").set_default("").help("Path to project file.");
+  parser.add_option("--progress").action("store_true").set_default(false).help("Show progress [default: false].");
+  parser.add_option("--xmlconsole").action("store_true").set_default(false).help("XML console output [default: false].");
 
   Command::buildParser();
 }
 
 bool OptimizeCommand::execute(const optparse::Values& options, SharedCommandData& sharedData) {
   const std::string& projectFile(static_cast<std::string>(options.get("name")));
+  bool show_progress = static_cast<bool>(options.get("progress"));
+  bool xml_status = static_cast<bool>(options.get("xmlconsole"));
 
   if (projectFile.length() == 0) {
     std::cerr << "Must specify project name with --name <project.xlsx|.swproj>\n";
@@ -94,6 +120,8 @@ bool OptimizeCommand::execute(const optparse::Values& options, SharedCommandData
   bool isProject = StringUtils::hasSuffix(projectFile, "xlsx") || StringUtils::hasSuffix(projectFile, "swproj");
 
   Optimize app;
+  setup_callbacks(show_progress, xml_status);
+
   if (isProject) {
     try {
       // load spreadsheet project
@@ -121,7 +149,7 @@ bool OptimizeCommand::execute(const optparse::Values& options, SharedCommandData
 
       return success;
     } catch (std::exception& e) {
-      std::cerr << "Error: " << e.what() << "\n";
+      SW_ERROR(e.what());
       return false;
     }
   } else {
@@ -140,17 +168,23 @@ void GroomCommand::buildParser() {
   parser.prog(prog).description(desc);
 
   parser.add_option("--name").action("store").type("string").set_default("").help("Path to project file.");
+  parser.add_option("--progress").action("store_true").set_default(false).help("Show progress [default: false].");
+  parser.add_option("--xmlconsole").action("store_true").set_default(false).help("XML console output [default: false].");
 
   Command::buildParser();
 }
 
 bool GroomCommand::execute(const optparse::Values& options, SharedCommandData& sharedData) {
   const std::string& projectFile(static_cast<std::string>(options.get("name")));
+  bool show_progress = static_cast<bool>(options.get("progress"));
+  bool xml_status = static_cast<bool>(options.get("xmlconsole"));
 
   if (projectFile.length() == 0) {
     std::cerr << "Must specify project name with --name <project.xlsx|.swproj>\n";
     return false;
   }
+
+  setup_callbacks(show_progress, xml_status);
 
   try {
     ProjectHandle project = std::make_shared<Project>();
@@ -172,7 +206,7 @@ bool GroomCommand::execute(const optparse::Values& options, SharedCommandData& s
     }
     return success;
   } catch (std::exception& e) {
-    std::cerr << "Error: " << e.what() << "\n";
+    SW_ERROR(e.what());
     return false;
   }
 }
@@ -244,8 +278,13 @@ void ConvertProjectCommand::buildParser() {
   const std::string desc = "convert a shapeworks project (xlsx or swproj)";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--name").action("store").type("string").set_default("").help("Path to input project file (xlsx or swproj).");
-  parser.add_option("--output").action("store").type("string").set_default("").help("Path to output project file (xlsx or swproj).");
+  parser.add_option("--name").action("store").type("string").set_default("").help(
+      "Path to input project file (xlsx or swproj).");
+  parser.add_option("--output")
+      .action("store")
+      .type("string")
+      .set_default("")
+      .help("Path to output project file (xlsx or swproj).");
 
   Command::buildParser();
 }

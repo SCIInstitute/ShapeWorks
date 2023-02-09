@@ -1,6 +1,6 @@
 #include <Eigen/Eigen>
 
-#include <Libs/Optimize/Optimize.h>
+#include <Optimize/Optimize.h>
 
 Eigen::MatrixXd optimize_get_particle_system(shapeworks::Optimize *opt)
 {
@@ -1722,7 +1722,13 @@ PYBIND11_MODULE(shapeworks_py, m)
       "Return the domain names (e.g. femur, pelvis, etc)")
 
   .def("get_subjects",
-      &Project::get_subjects,
+      [](Project &project) -> decltype(auto) {
+        std::vector<Subject> py_subjects;
+        for (auto s :project.get_subjects()) {
+          py_subjects.push_back(*s);
+        }
+        return py_subjects;
+      },
       "Return the list of Subjects")
 
   .def("get_originals_present",
@@ -1880,7 +1886,7 @@ PYBIND11_MODULE(shapeworks_py, m)
 
   .def("get_group_values",
       &Subject::get_group_values,
-      "Get the group values")
+      "Get the group values map")
 
   .def("get_group_value",
       &Subject::get_group_value,
@@ -1888,8 +1894,15 @@ PYBIND11_MODULE(shapeworks_py, m)
       "group_name"_a)
 
   .def("set_group_values",
-      &Subject::set_group_values,
-      "Set a specific group value"
+       [](Subject& subject, std::map<std::string,std::string> map) -> decltype(auto) {
+         project::types::StringMap m;
+
+         for (auto& [k, v] : map) {
+           m[k] = v;
+         }
+         subject.set_group_values(m);
+       },
+      "Set group values map"
       "group_values"_a)
 
   .def("get_extra_values",

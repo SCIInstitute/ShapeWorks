@@ -29,8 +29,8 @@ void MeshWorker::run()
     size_t combined_size = (shape_size * 2) + mesh_size;
     item->memory_size = combined_size;
   }
-  emit result_ready(*item, mesh);
-  emit finished();
+  Q_EMIT result_ready(*item, mesh);
+  Q_EMIT finished();
 }
 
 }

@@ -1,17 +1,17 @@
 #include "OptimizeParameterFile.h"
 #include "Optimize.h"
-#include "ParticleSystem/DomainType.h"
+#include "DomainType.h"
 
 #include <itkImageFileReader.h>
 #include <vtkPLYReader.h>
 
-#include <tinyxml.h>
+#include "ExternalLibs/tinyxml/tinyxml.h"
 
-#include "ParticleSystem/MeshWrapper.h"
-#include "ParticleSystem/TriMeshWrapper.h"
-#include "ParticleSystem/VtkMeshWrapper.h"
-#include <Libs/Utils/StringUtils.h>
-#include <Libs/Mesh/MeshUtils.h>
+#include "MeshWrapper.h"
+#include "TriMeshWrapper.h"
+#include "VtkMeshWrapper.h"
+#include <Utils/StringUtils.h>
+#include <Mesh/MeshUtils.h>
 
 namespace shapeworks {
 
@@ -157,7 +157,7 @@ bool OptimizeParameterFile::set_visualizer_parameters(TiXmlHandle* docHandle, Op
 {
   TiXmlElement* elem = nullptr;
   // Currently the visualizer only works if you call AddMesh on it for every domain.
-  // In order to get it working for image domains, need to add code that extracts meshes from each image and adds them to the visualizer.
+  // In order to get it working for image domains, need to add code that extracts meshes from each image and adds them to the visualizer_.
   elem = docHandle->FirstChild("visualizer_enable").Element();
   if (elem) {
     optimize->SetShowVisualizer((bool) atoi(elem->GetText()));
@@ -540,8 +540,8 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle* docHandle, Optimize* o
             std::cout << "ffcssize " << ffcs.size() << std::endl;
           }
             if (index < ffcs.size()) {
-              mesh.prepareFFCFields(ffcs[index].boundaries, ffcs[index].query);
-              mesh = Mesh(mesh.clipByField("inout", 0.0));
+              ffcs[index].applyToPolyData(mesh.getVTKMesh());
+              mesh = Mesh(mesh.clipByField("ffc_paint", 0.0));
             }
         }
 
@@ -822,7 +822,7 @@ bool OptimizeParameterFile::read_constraints(TiXmlHandle* doc_handle, Optimize* 
     return false;
   }
 
-  return this->read_cutting_ffcs(doc_handle, optimize);
+  return true;
 }
 
 //---------------------------------------------------------------------------
@@ -1162,116 +1162,6 @@ bool OptimizeParameterFile::read_cutting_spheres(TiXmlHandle* doc_handle, Optimi
   return true;
 }
 
-bool OptimizeParameterFile::read_cutting_ffcs(TiXmlHandle* docHandle, Optimize* optimize)
-{
-  TiXmlElement* elem;
-  std::istringstream inputsBuffer;
-  int num_inputs = this->get_num_inputs(docHandle);
-
-  int num_ffcs = num_inputs;
-
-  if (this->verbosity_level_ > 1) {
-    std::cout << "Number of free-form constraints " << num_ffcs << std::endl;
-  }
-  // Check that if ffcs are not given, return true. If we expected ffcs(num_ffcs_per_input was given), print a warning to cerr.
-  elem = docHandle->FirstChild("ffcs").Element();
-  if (!elem) {
-    return true;
-  }
-
-  inputsBuffer.str(elem->GetText());
-  auto flags = optimize->GetDomainFlags();
-
-  // load ffc filenames
-  std::vector<std::string> ffcFiles;
-  std::string ffcfilename;
-  while (inputsBuffer >> ffcfilename) {
-    ffcFiles.push_back(ffcfilename);
-  }
-
-  size_t count = 0;
-  std::string buffer;
-  if (ffcFiles.size() != num_ffcs) {
-    std::cerr << "ERROR: Error reading free-form constraint(ffc) data! Expected " << num_ffcs
-              << " but instead got " << ffcFiles.size()
-              << " instead. Can't use ffcs, please fix the input xml." << std::endl;
-    throw 1;
-  }
-  else {
-    for (size_t shapeCount = 0; shapeCount < num_inputs; shapeCount++) {
-      // Reading in ffc file for shape shapeCount # ffcCount
-      std::string fn = ffcFiles[count];
-      //std::cout << "Shape " << shapeCount << " ffc num " << ffcCount << " filename " <<  fn << std::endl;
-      bool query_read = true;
-
-      std::vector<std::vector<Eigen::Vector3d>> boundaries;
-      int boundary_count = -1;
-      Eigen::Vector3d query;
-
-      fstream newfile;
-      newfile.open(fn, ios::in);
-
-      if (newfile.is_open()) {   //checking whether the file is open
-        std::string tp;
-        while (getline(newfile, tp)) { //read data from file object and put it into string.
-          //cout << tp << "\n"; //print the data of the string
-          if (tp == "query") {
-            query_read = true;
-          }
-          else if (tp == "boundary_pts") {
-            query_read = false;
-            std::vector<Eigen::Vector3d> boundary;
-            boundaries.push_back(boundary);
-            boundary_count++;
-          }
-          else {
-            try {
-              if (query_read) {
-                std::istringstream iss(tp);
-                iss >> buffer;
-                query(0) = std::stod(buffer);
-                iss >> buffer;
-                query(1) = std::stod(buffer);
-                iss >> buffer;
-                query(2) = std::stod(buffer);
-                //cout << "Added query " << query.transpose() << "\n";
-              }
-              else {
-                Eigen::Vector3d bpt;
-                std::istringstream iss(tp);
-                iss >> buffer;
-                bpt(0) = std::stod(buffer);
-                iss >> buffer;
-                bpt(1) = std::stod(buffer);
-                iss >> buffer;
-                bpt(2) = std::stod(buffer);
-                boundaries[boundary_count].push_back(bpt);
-                //cout << "Added boundary " << bpt.transpose() << "\n";
-              }
-            }
-            catch (std::exception& e) {
-              cout << e.what() << '\n';
-              std::cerr << "ERROR: File " << fn
-                        << " threw an exception. Please check the correctness and formating of the file."
-                        << std::endl;
-              throw 1;
-            }
-          }
-        }
-        newfile.close(); //close the file object.
-      }
-      else {
-        std::cerr << "ERROR: File " << fn
-                  << " could not be opened. Please check that the file is available." << std::endl;
-        throw 1;
-      }
-      optimize->GetSampler()->AddFreeFormConstraint(shapeCount, boundaries, query);
-      count++;
-    }
-  }
-
-  return true;
-}
 
 //---------------------------------------------------------------------------
 bool OptimizeParameterFile::read_explanatory_variables(TiXmlHandle* doc_handle, Optimize* optimize)

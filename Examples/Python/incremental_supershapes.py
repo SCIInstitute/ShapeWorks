@@ -86,6 +86,7 @@ def Run_Pipeline(args):
     """
     Step 2: Sort meshes into batches
     We sort meshes using the specified sorting method.
+    We sort meshes using the specified sorting method.
     """
     print("\nStep 2: Sort meshes into batches")
     if sorting_type == "random":
@@ -137,6 +138,7 @@ def Run_Pipeline(args):
     For more details on the plethora of parameters for shapeworks please refer 
     to: http://sciinstitute.github.io/ShapeWorks/workflow/optimize.html
     """
+    print("\nStep 3: Optimize particles on initial shapes.")
     print("\nStep 3: Optimize particles on initial shapes.")
     # Create project spreadsheet
     project_location = output_directory + "/"
@@ -205,6 +207,12 @@ def Run_Pipeline(args):
     optimize_cmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
     print(optimize_cmd)
     subprocess.check_call(optimize_cmd)
+
+    # Analyze initial model
+    if args.interactive:
+        print("\nOpening studio to display initial model. \nClose studio to continue running the use case.\n")
+        analyze_cmd = ('ShapeWorksStudio ' + spreadsheet_file).split()
+        subprocess.check_call(analyze_cmd)
 
     # Analyze initial model
     if args.interactive:

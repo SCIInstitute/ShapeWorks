@@ -51,6 +51,8 @@ constexpr const char* REMESH_GRADATION = "remesh_gradation";
 
 constexpr const char* GROOM_ALL_DOMAINS_THE_SAME = "groom_all_domains_the_same";
 
+constexpr const char* SKIP_GROOMING = "skip_grooming";
+
 }
 
 namespace Defaults {
@@ -90,6 +92,7 @@ const double remesh_gradation = 1.0;
 
 const bool groom_all_domains_the_same = true;
 
+const bool skip_grooming = false;
 }
 
 //---------------------------------------------------------------------------
@@ -572,7 +575,16 @@ double GroomParameters::get_remesh_gradation()
 void GroomParameters::set_remesh_gradation(double gradation)
 {
   this->params_.set(Keys::REMESH_GRADATION, gradation);
+}
 
+//---------------------------------------------------------------------------
+bool GroomParameters::get_skip_grooming() {
+  return params_.get(Keys::SKIP_GROOMING, Defaults::skip_grooming);
+}
+
+//---------------------------------------------------------------------------
+void GroomParameters::set_skip_grooming(bool skip) {
+  params_.set(Keys::SKIP_GROOMING, skip);
 }
 }
 //---------------------------------------------------------------------------

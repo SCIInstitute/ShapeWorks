@@ -1,5 +1,5 @@
-#include <Libs/Mesh/Mesh.h>
-#include <Libs/Mesh/MeshWarper.h>
+#include <Mesh/Mesh.h>
+#include <Mesh/MeshWarper.h>
 #include <igl/biharmonic_coordinates.h>
 #include <igl/point_mesh_squared_distance.h>
 #include <igl/remove_unreferenced.h>
@@ -10,6 +10,8 @@
 #include <vtkPointLocator.h>
 #include <vtkPolyDataConnectivityFilter.h>
 #include <vtkTriangleFilter.h>
+
+#include <Logging.h>
 
 #include <set>
 
@@ -26,6 +28,13 @@ vtkSmartPointer<vtkPolyData> MeshWarper::build_mesh(const Eigen::MatrixXd& parti
 
   if (!this->check_warp_ready()) {
     return nullptr;
+  }
+
+  if (particles.size() != reference_particles_.size()) {
+    // This may be a stale mesh warper
+    // don't return nullptr or the user will get an error
+    auto blank = vtkSmartPointer<vtkPolyData>::New();
+    return blank;
   }
 
   auto points = this->remove_bad_particles(particles);

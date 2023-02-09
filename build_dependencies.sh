@@ -1,7 +1,16 @@
 #!/bin/bash
 
 #set -v   #verbose execution for debugging
-set -x   #tracing execution for debugging (echos all commands from script)
+#set -x   #tracing execution for debugging (echos all commands from script)
+
+# check to make sure `source` was not used
+(return 0 2>/dev/null) && sourced=1 || sourced=0
+if [[ "$sourced" == "1" ]]; then
+  echo "ERROR: do not use \"source\" when executing this script"
+  return
+fi
+
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
 # defaults
 BUILD_CLEAN=0
@@ -16,10 +25,9 @@ VTK_VER="v9.1.0"
 VTK_VER_STR="9.1"
 ITK_VER="v5.2.1"
 ITK_VER_STR="5.2"
-EIGEN_VER="3.4.0"
 QT_MIN_VER="5.15.4"
 XLNT_VER="538f80794c7d736afc0a452d21313606cc5538fc"
-JKQTPLOTTER_VER="v2019.11.3-high_dpi-rpath"
+JKQTPLOTTER_VER="v2022.11.30-refix-rpath"
 OpenVDB_VER="v9.1.0"
 libigl_VER="v2.3.0"
 geometry_central_VER="8b20898f6c7be1eab827a9f720c8fd45e58ae63c" # This library isn't using tagged versions
@@ -130,6 +138,9 @@ build_vtk()
   cd vtk
   git checkout -f tags/${VTK_VER}
 
+  patch -p1 < ${SCRIPT_DIR}/Support/vtk-9.1.patch
+  cat Rendering/OpenGL2/vtkCocoaRenderWindow.mm
+  
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
   mkdir -p build && cd build
   if [[ $OSTYPE == "msys" ]]; then
@@ -139,7 +150,7 @@ build_vtk()
       VTK_DIR="${INSTALL_DIR}/lib/cmake/vtk-${VTK_VER_STR}"
       VTK_DIR=$(echo $VTK_DIR | sed s/\\\\/\\//g)
   else
-      cmake -DCMAKE_CXX_FLAGS="$FLAGS" -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DVTK_Group_Qt:BOOL=${BUILD_GUI} -DVTK_QT_VERSION=5 -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DVTK_PYTHON_VERSION=3 -DVTK_GROUP_ENABLE_Qt=YES -DVTK_MODULE_ENABLE_VTK_GUISupportQtQuick:STRING=DONT_WANT -DBUILD_EXAMPLES:BOOL=OFF ${VTK_EXTRA_OPTIONS} -DVTK_MODULE_USE_EXTERNAL_VTK_pugixml=ON -Wno-dev ..
+      cmake -DCMAKE_CXX_FLAGS="$FLAGS" -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=OFF -DBUILD_TESTING:BOOL=OFF -DVTK_Group_Qt:BOOL=${BUILD_GUI} -DVTK_QT_VERSION=5 -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DVTK_PYTHON_VERSION=3 -DVTK_GROUP_ENABLE_Qt=YES -DVTK_MODULE_ENABLE_VTK_GUISupportQtQuick:STRING=DONT_WANT -DBUILD_EXAMPLES:BOOL=OFF ${VTK_EXTRA_OPTIONS} -DVTK_MODULE_USE_EXTERNAL_VTK_pugixml=ON -Wno-dev ..
       make -j${NUM_PROCS} install || exit 1
       VTK_DIR=${INSTALL_DIR}/lib/cmake/vtk-${VTK_VER_STR}
   fi
@@ -172,30 +183,6 @@ build_itk()
   if [[ $CLEAN_AFTER = 1 ]]; then make clean; fi
 }
 
-build_eigen()
-{
-  echo ""
-  echo "## Building Eigen..."
-  cd ${BUILD_DIR}
-  git clone https://gitlab.com/libeigen/eigen.git
-  cd eigen
-  git checkout -f tags/${EIGEN_VER}
-
-  if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
-  mkdir -p build && cd build
-
-  if [[ $OSTYPE == "msys" ]]; then
-      cmake -DCMAKE_CXX_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_C_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_SHARED_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_EXE_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_SHARED_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" ..
-      cmake --build . --config ${BUILD_TYPE} --parallel || exit 1
-      cmake --build . --config ${BUILD_TYPE} --target install
-      EIGEN_DIR=$(echo ${INSTALL_DIR}\\share\\eigen3\\cmake | sed -e 's/\\/\\\\/g')
-  else
-      cmake -DCMAKE_CXX_FLAGS="$FLAGS" -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DCMAKE_BUILD_TYPE=${BUILD_TYPE} ..
-      make -j${NUM_PROCS} install || exit 1
-      EIGEN_DIR=${INSTALL_DIR}/share/eigen3/cmake
-  fi
-}
-
 build_xlnt()
 {
   echo ""
@@ -203,7 +190,7 @@ build_xlnt()
   cd ${BUILD_DIR}
   git clone https://github.com/tfussell/xlnt.git
   cd xlnt
-  git checkout -f tags/${XLNT_VER}
+  git checkout -f ${XLNT_VER}
   git submodule init
   git submodule update
 
@@ -279,7 +266,7 @@ build_openvdb()
       cmake --build . --config ${BUILD_TYPE} --target install
   elif [[ "$OSTYPE" == "linux"* ]]; then
       cmake -DCMAKE_CXX_FLAGS="$FLAGS" -DUSE_BLOSC=OFF ${CONCURRENT_FLAG} -DCMAKE_PREFIX_PATH=${CONDA_PREFIX} -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DCMAKE_INSTALL_LIBDIR=lib -DOPENVDB_CORE_STATIC=OFF -DUSE_EXPLICIT_INSTANTIATION=OFF -DOPENVDB_BUILD_BINARIES=OFF -DCMAKE_BUILD_TYPE=${BUILD_TYPE} ..
-      make install || exit 1
+      make -j${NUM_PROCS} install || exit 1
   else
       cmake -DCMAKE_CXX_FLAGS="$FLAGS" -DUSE_BLOSC=OFF ${CONCURRENT_FLAG} -DCMAKE_PREFIX_PATH=${CONDA_PREFIX} -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DCMAKE_INSTALL_LIBDIR=lib -DOPENVDB_CORE_STATIC=OFF -DOPENVDB_BUILD_BINARIES=OFF -DCMAKE_BUILD_TYPE=${BUILD_TYPE} ..
       make -j${NUM_PROCS} install || exit 1
@@ -305,11 +292,32 @@ build_geometry_central()
 {
   echo " "
   echo "## Building Geometry central..."
-  cd ${INSTALL_DIR}
+  cd ${BUILD_DIR}
   git clone --recursive https://github.com/nmwsharp/geometry-central.git
   cd geometry-central
   git checkout -f ${geometry_central_VER}
+  mkdir build
+  
+  if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
+  mkdir -p build && cd build
 
+  if [[ $OSTYPE == "msys" ]]; then
+      cmake -DCMAKE_CXX_FLAGS="-FS" -DCMAKE_C_FLAGS="-FS" -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" ..
+      cmake --build . --config ${BUILD_TYPE} --parallel || exit 1
+      # no make install, so we do this manually
+      cd ..
+      cp -a include/geometrycentral ${INSTALL_DIR}/include
+      cp build/src/Release/geometry-central.lib ${INSTALL_DIR}/lib
+  else
+      cmake -DCMAKE_CXX_FLAGS="-fPIC $FLAGS" -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DCMAKE_BUILD_TYPE=${BUILD_TYPE} ..
+      make -j${NUM_PROCS}
+      # no make install, so we do this manually
+      cd ..
+      cp -a include/geometrycentral ${INSTALL_DIR}/include
+      cp build/src/*geom* ${INSTALL_DIR}/lib
+  fi
+
+  
   GEOMETRY_CENTRAL_DIR=${INSTALL_DIR}/geometry-central
 }
 
@@ -321,6 +329,12 @@ build_acvd()
   git clone https://github.com/valette/ACVD.git acvd
   cd acvd
   git checkout -f ${ACVD_VER}
+
+  # silence a bunch of output
+  sed -i'.original' -e 's/cout/if(0)cout/' Common/vtkCurvatureMeasure.cxx
+  sed -i'.original' -e 's/cout/if(0)cout/' DiscreteRemeshing/vtkDiscreteRemeshing.h
+  sed -i'.original' -e 's/cout/if(0)cout/' DiscreteRemeshing/vtkQEMetricForClustering.h
+  sed -i'.original' -e 's/cout/if(0)cout/' Common/vtkUniformClustering.h
 
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
   mkdir -p build && cd build
@@ -402,10 +416,6 @@ build_all()
     build_vtk
   fi
 
-  if [[ -z $EIGEN_DIR ]]; then
-    build_eigen
-  fi
-
   if [[ -z $ITK_DIR ]]; then
     build_itk
   fi
@@ -478,4 +488,3 @@ echo "BUILD_TYPE: ${BUILD_TYPE}"
 (time build_all 2>&1) 2>&1 | tee ${BUILD_LOG}
 RC=( "${PIPESTATUS[@]}" )
 exit ${RC[0]}
-

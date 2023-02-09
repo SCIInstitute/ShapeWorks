@@ -8,7 +8,7 @@
 #include "ParticleShapeStatistics.h"
 #include "ParticleNormalEvaluation.h"
 #include "ReconstructSurface.h"
-#include <Libs/Optimize/ParticleSystem/VtkMeshWrapper.h>
+#include <Optimize/VtkMeshWrapper.h>
 
 using namespace shapeworks;
 

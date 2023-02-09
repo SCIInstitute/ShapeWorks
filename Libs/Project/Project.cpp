@@ -1,11 +1,10 @@
-#include <Libs/Mesh/MeshUtils.h>
 #include <Logging.h>
+#include <Mesh/MeshUtils.h>
 #include <Project.h>
 #include <StringUtils.h>
 #include <vtkPointData.h>
 
 #include <boost/filesystem.hpp>
-#include <cstring>
 #include <memory>
 
 #include "ExcelProjectReader.h"
@@ -73,8 +72,12 @@ void Project::set_project_path(const std::string& new_pathname) {
   auto fixup = [&](StringList paths) {
     StringList new_paths;
     for (const auto& path : paths) {
-      auto canonical = fs::canonical(path, old_path);
-      new_paths.push_back(fs::relative(canonical, new_path).string());
+      if (fs::exists(path)) {
+        auto canonical = fs::canonical(path, old_path);
+        new_paths.push_back(fs::relative(canonical, new_path).string());
+      } else {
+        new_paths.push_back(path);
+      }
     }
     return new_paths;
   };
@@ -155,10 +158,12 @@ void Project::update_subjects() {
   particles_present_ = !subject->get_world_particle_filenames().empty();
   images_present_ = !subject->get_feature_filenames().empty();
 
+  original_domain_types_.clear();
   while (original_domain_types_.size() < subject->get_original_filenames().size()) {
     int index = original_domain_types_.size();
     original_domain_types_.push_back(ProjectUtils::determine_domain_type(subject->get_original_filenames()[index]));
   }
+  groomed_domain_types_.clear();
   while (groomed_domain_types_.size() < subject->get_groomed_filenames().size()) {
     int index = groomed_domain_types_.size();
     groomed_domain_types_.push_back(ProjectUtils::determine_domain_type(subject->get_groomed_filenames()[index]));
@@ -276,17 +281,18 @@ void Project::determine_feature_names() {
     if (get_original_domain_types()[d] == DomainType::Mesh) {
       if (subject->get_original_filenames().size() > d) {
         auto filename = subject->get_original_filenames()[d];
-        try {
-          auto poly_data = MeshUtils::threadSafeReadMesh(filename).getVTKMesh();
-          if (poly_data) {
-            vtkIdType num_arrays = poly_data->GetPointData()->GetNumberOfArrays();
-            for (vtkIdType i = 0; i < num_arrays; i++) {
-              mesh_scalars.push_back(StringUtils::safeString(poly_data->GetPointData()->GetArrayName(i)));
+        if (fs::exists(filename)) {
+          try {
+            auto poly_data = MeshUtils::threadSafeReadMesh(filename).getVTKMesh();
+            if (poly_data) {
+              vtkIdType num_arrays = poly_data->GetPointData()->GetNumberOfArrays();
+              for (vtkIdType i = 0; i < num_arrays; i++) {
+                mesh_scalars.push_back(StringUtils::safeString(poly_data->GetPointData()->GetArrayName(i)));
+              }
             }
+          } catch (std::exception& e) {
+            SW_ERROR("Unable to read features from mesh: {}", filename);
           }
-        } catch (std::exception& e) {
-          /// TODO: convert to new logging
-          std::cerr << std::string("Unable to read features from mesh: ") + filename << "\n";
         }
       }
     }
@@ -332,6 +338,7 @@ Parameters Project::get_parameters(const std::string& name, std::string domain_n
 std::map<std::string, Parameters> Project::get_parameter_map(const std::string& name) {
   std::map<std::string, Parameters> map;
   auto domains = get_domain_names();
+  domains.insert(domains.begin(), 1, "");  // add global parameters
   for (int i = 0; i < domains.size(); i++) {
     map[domains[i]] = get_parameters(name, domains[i]);
   }
@@ -366,6 +373,10 @@ void Project::clear_parameters(const std::string& name) { parameters_.erase(name
 
 //---------------------------------------------------------------------------
 std::string Project::get_next_landmark_name(int domain_id) {
+  while (domain_id >= landmark_definitions_.size()) {
+    landmark_definitions_.push_back(std::vector<LandmarkDefinition>());
+  }
+
   return std::to_string(landmark_definitions_[domain_id].size() + 1);
 }
 

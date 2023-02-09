@@ -1,9 +1,12 @@
 #
 # Installs conda environment for building ShapeWorks
 #
+
+SW_MAJOR_VERSION=6.4
+
 echo ""
 echo "Note: this script only supports bash and zsh shells "
-echo "      It must be called using \"source ./install_shapeworks.sh [optional_env_name]\""
+echo "      It must be called using \"source ./install_shapeworks.sh [--developer] [--user] [optional_env_name]\""
 echo ""
 
 (return 0 2>/dev/null) && sourced=1 || sourced=0
@@ -13,12 +16,41 @@ if [[ "$sourced" == "0" ]]; then
   exit 1
 fi
 
+
+DEVELOPER=NO
+if [ -d ".git" ]; then # default to developer if in a git repo
+    DEVELOPER=YES
+fi
+    
+POSITIONAL_ARGS=()
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    --developer)
+      DEVELOPER=YES
+      shift # past argument
+      ;;
+    --user)
+      DEVELOPER=NO
+      shift # past argument
+      ;;
+    -*|--*)
+      echo "Unknown option $1"
+      exit 1
+      ;;
+    *)
+      POSITIONAL_ARGS+=("$1") # save positional arg
+      shift # past argument
+      ;;
+  esac
+done
+
 CONDAENV=shapeworks
-if [[ "$#" -eq 1 ]]; then
-   CONDAENV=$1
+if [[ "${#POSITIONAL_ARGS[@]}" -eq 1 ]]; then
+   CONDAENV=${POSITIONAL_ARGS[0]}
 fi
 
-echo "Creating new conda environment for ShapeWorks called $CONDAENV..."
+echo "Creating new conda environment for ShapeWorks called \"$CONDAENV\"..."
+
 
 # PyTorch installation
 function install_pytorch() {
@@ -69,57 +101,76 @@ function install_conda() {
   # add default channels
   conda config --add channels anaconda
   conda config --add channels conda-forge
-  
+
+  CONDA_PACKAGES=(python=3.9.13 \
+    openblas=0.3.20 \
+    'vtk=9.1.0=qt*' \
+    scikit-learn=1.1.1 \
+    pip=22.1.2
+   )		      
+
+  if [[ "$DEVELOPER" == "YES" ]] ; then
+    echo "Developer packages enabled"
+
+    CONDA_PACKAGES+=(cmake=3.23.2 \
+		     gtest=1.11.0 \
+		     gmock=1.11.0 \
+		     doxygen=1.9.2 \
+		     graphviz=4.0.0 \
+		     tbb=2021.5.0 \
+		     tbb-devel=2021.5.0 \
+		     boost=1.74.0 \
+		     openexr=3.1.5 \
+		     ilmbase=2.5.5 \
+		     pybind11=2.9.2 \
+		     nlohmann_json=3.10.5 \
+		     spdlog=1.10.0 \
+		     pkg-config=0.29.2 \
+		     openh264==2.3.0 \
+		     libhwloc=2.8.0 \
+		     qt-main=5.15.4 \
+		    )
+    
+    # linux (only) deps
+    if [[ "$(uname)" == "Linux" ]]; then
+	# required by install_python_module.sh
+	CONDA_PACKAGES+=(zlib=1.2.12 patchelf=0.14.5)
+    fi
+  fi
+
+  echo "Installing CONDA_PACKAGES = ${CONDA_PACKAGES[@]}"
+
   # create and activate shapeworks env
-  if ! conda create --yes --name $CONDAENV python=3.9.13; then return 1; fi
+  if ! conda create --yes --name $CONDAENV ${CONDA_PACKAGES[@]} ; then
+      return 1;
+  fi
+
   eval "$(conda shell.bash hook)"
   if ! conda activate $CONDAENV; then return 1; fi
   
   # install conda into the shell
   conda init
 
-  # install shapeworks deps
-  if ! conda install --yes \
-    cmake=3.23.2 \
-    gtest=1.11.0 \
-    gmock=1.11.0 \
-    colorama=0.4.4 \
-    requests=2.27.1 \
-    geotiff=1.7.1 \
-    numpy=1.22.4 \
-    openblas=0.3.20 \
-    doxygen=1.9.2 \
-    graphviz=4.0.0 \
-    'vtk=9.1.0=qt*' \
-    scikit-learn=1.1.1 \
-    tbb=2021.5.0 \
-    tbb-devel=2021.5.0 \
-    boost=1.74.0 \
-    openexr=3.1.5 \
-    ilmbase=2.5.5 \
-    pybind11=2.9.2 \
-    nlohmann_json=3.10.5 \
-    spdlog=1.10.0 \
-    pkg-config=0.29.2 \
-    openh264==2.3.0 \
-    libhwloc=2.8.0 \
-    pip=22.1.2
-  then return 1; fi
-
-  # linux (only) deps
-  if [[ "$(uname)" == "Linux" ]]; then
-    if ! conda install --yes \
-      zlib=1.2.12 \
-      patchelf=0.14.5                          # required by install_python_module.sh
-    then return 1; fi
-  fi
-
   if [ -d ".git" ]; then  # don't invoke if not in a git clone directory
     if ! pip install mkdocs-jupyter==0.21.0;              then return 1; fi # for adding notebooks to our documentation (supports toc and executation before deployment)
     if ! pip install pyyaml==6.0;                         then return 1; fi # for mkdocs
     if ! pip install markdown-it-py==2.1.0;               then return 1; fi # for mkdocs
+    if ! pip install jupyter_contrib_nbextensions==0.5.1; then return 1; fi
+    if ! pip install mdutils==1.4.0;                      then return 1; fi # lib for writing markdown files (auto-documentation)
+    if ! pip install mkdocs==1.3.0;                       then return 1; fi # lib for generating documentation from markdown
+    if ! pip install mkdocs-material==8.3.8;              then return 1; fi # theme for mkdocs
+    if ! pip install mkdocstrings==0.19.0;                then return 1; fi # needed for python api docs
+    if ! pip install mkdocstrings-python==0.7.1;          then return 1; fi # needed for python api docs
+    if ! pip install mike==1.1.2;                         then return 1; fi # deploys versioned documentation to gh-pages
+    if ! pip install jinja2==3.1.2;                       then return 1; fi # only version of jinja that works (needed by mkdocs)
+    if ! pip install Pygments==2.12.0;                    then return 1; fi # Needed by mkdocs
+    if ! pip install python-markdown-math==0.8;           then return 1; fi # lib for rendering equations in docs
+    if ! pip install pymdown-extensions==9.5;             then return 1; fi # lib to support checkbox lists in documentation
   fi
 
+  if ! pip install numpy==1.22.4;                       then return 1; fi
+  if ! pip install requests==2.27.1;                    then return 1; fi
+  if ! pip install colorama==0.4.5;                     then return 1; fi
   if ! pip install notebook==6.1.5;                     then return 1; fi
   if ! pip install trimesh==3.12.6;                     then return 1; fi
   if ! pip install termcolor==1.1.0;                    then return 1; fi
@@ -134,22 +185,14 @@ function install_conda() {
   if ! pip install SimpleITK==2.1.1.2;                  then return 1; fi
   if ! pip install bokeh==2.4.3;                        then return 1; fi
   if ! pip install seaborn==0.11.2;                     then return 1; fi
-  if ! pip install mdutils==1.4.0;                      then return 1; fi # lib for writing markdown files (auto-documentation)
-  if ! pip install mkdocs==1.3.0;                       then return 1; fi # lib for generating documentation from markdown
-  if ! pip install mkdocs-material==8.3.8;              then return 1; fi # theme for mkdocs
-  if ! pip install mkdocstrings==0.19.0;                then return 1; fi # needed for python api docs
-  if ! pip install mkdocstrings-python==0.7.1;          then return 1; fi # needed for python api docs
-  if ! pip install mike==1.1.2;                         then return 1; fi # deploys versioned documentation to gh-pages
-  if ! pip install jinja2==3.1.2;                       then return 1; fi # only version of jinja that works (needed by mkdocs)
-  if ! pip install Pygments==2.12.0;                    then return 1; fi # Needed by mkdocs
-  if ! pip install python-markdown-math==0.8;           then return 1; fi # lib for rendering equations in docs
-  if ! pip install pymdown-extensions==9.5;             then return 1; fi # lib to support checkbox lists in documentation
   if ! pip install Python/DatasetUtilsPackage;          then return 1; fi # install the local GirderConnector code as a package
   if ! pip install Python/DocumentationUtilsPackage;    then return 1; fi # install shapeworks auto-documentation as a package
   if ! pip install Python/DataAugmentationUtilsPackage; then return 1; fi # install data augmentation code as a package
   if ! pip install Python/DeepSSMUtilsPackage;          then return 1; fi # install DeepSSM code as a package
   if ! pip install Python/ShapeCohortGenPackage;        then return 1; fi # install shape cohort generation code as a package
 
+
+  
   ./Installation/install_python_module.sh   # install python module
   ./Installation/conda_env_setup.sh         # install conda [de]activate scripts
 
@@ -179,12 +222,11 @@ function install_conda() {
 
 
   # for spell check markdown cells in jupyter notebooks and table of contents (toc2)
-  conda install --yes jupyter_contrib_nbextensions=0.5.1
   jupyter contrib nbextension install --user
   jupyter nbextension enable spellchecker/main
   jupyter nbextension enable toc2/main
 
-  if [ -d ".git" ]; then  # don't invoke if not in a git clone directory
+  if [[ "$DEVELOPER" == "YES" ]] ; then
     # installing nbstripout to strip out notebooks cell outputs before committing 
     nbstripout --install
     nbstripout --install --attributes .gitattributes
@@ -192,8 +234,9 @@ function install_conda() {
 
   # Set the python path for studio
   conda activate $CONDAENV
-  mkdir -p $HOME/.shapeworks ; python -c "import sys; print('\n'.join(sys.path))" > $HOME/.shapeworks/python_path.txt
-  python -c "import sys; print(sys.prefix)" > $HOME/.shapeworks/python_home.txt
+  mkdir -p $HOME/.shapeworks
+  python -c "import sys; print('\n'.join(sys.path))" > $HOME/.shapeworks/python_path_${SW_MAJOR_VERSION}.txt
+  python -c "import sys; print(sys.prefix)" > $HOME/.shapeworks/python_home_${SW_MAJOR_VERSION}.txt
 
   return 0
 }

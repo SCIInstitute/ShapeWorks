@@ -3,6 +3,8 @@
 #include <Logging.h>
 #include <StringUtils.h>
 
+#include <MeshWarper.h>
+
 #include <boost/filesystem.hpp>
 #include <nlohmann/json.hpp>
 
@@ -10,8 +12,24 @@ using json = nlohmann::ordered_json;
 
 namespace shapeworks {
 
+
 //---------------------------------------------------------------------------
-static json create_charts(ParticleShapeStatistics* stats) {
+static json get_eigen_vectors(ParticleShapeStatistics *stats) {
+  auto values = stats->Eigenvectors();
+
+  std::vector<double> vals;
+  for (size_t i = values.cols() - 1, ii = 0; i > 0; i--, ii++) {
+    auto col = values.col(i);
+    for (int j = 0; j < col.size(); j++) {
+      vals.push_back(col[j]);
+    }
+  }
+
+  return vals;
+}
+
+//---------------------------------------------------------------------------
+static json create_charts(ParticleShapeStatistics *stats) {
   std::vector<int> x(stats->get_num_modes());
   for (int i = 0; i < x.size(); i++) {
     x[i] = i + 1;
@@ -65,10 +83,12 @@ void Analyze::run_offline_analysis(std::string outfile) {
   // compute stats
   compute_stats();
 
+  initialize_mesh_warper();
+
   json j;
 
-  double range = 2.0;
-  double steps = 11;
+  double range = 2.0; // TODO: make this configurable
+  double steps = 11; // TODO: make this configurable
   int half_steps = (steps / 2.0);
   double increment = range / half_steps;
 
@@ -89,15 +109,22 @@ void Analyze::run_offline_analysis(std::string outfile) {
   auto mean_shape = get_mean_shape();
   auto meshes = mean_shape->get_reconstructed_meshes(true);
   std::vector<std::string> mean_meshes;
+  std::vector<std::string> mean_particles;
   for (int d = 0; d < num_domains; d++) {
     std::string domain_id = std::to_string(d);
     auto mesh = meshes.meshes()[d];
     std::string filename = "mean_shape_" + domain_id + ".vtk";
     Mesh(mesh->get_poly_data()).write(filename);
     mean_meshes.push_back(filename);
+
+    filename = "mean_shape_" + domain_id + ".pts";
+    auto local_particles = mean_shape->get_particles().get_local_particles(d);
+    Particles::save_particles_file(filename, local_particles);
+    mean_particles.push_back(filename);
   }
   json mean_meshes_item;
   mean_meshes_item["meshes"] = mean_meshes;
+  mean_meshes_item["particle_files"] = mean_particles;
   j["mean"] = mean_meshes_item;
 
   // export modes
@@ -138,18 +165,26 @@ void Analyze::run_offline_analysis(std::string outfile) {
         item["lambda"] = lambda * pca_value;
 
         std::vector<std::string> items;
+        std::vector<std::string> worlds;
         for (int d = 0; d < num_domains; d++) {
           std::string domain_id = std::to_string(d);
           auto mesh = mode_meshes.meshes()[d];
           std::string name = "pca_mode_" + std::to_string(mode + 1) + "_domain_" + std::to_string(d) + "_" + prefix +
-                             "_" + pca_string + ".vtk";
-          items.push_back(name);
+              "_" + pca_string;
+          std::string vtk_filename = name + ".vtk";
+          items.push_back(vtk_filename);
 
-          boost::filesystem::path file(name);
-          boost::filesystem::path filename = base / file;
+          auto filename = base / boost::filesystem::path(vtk_filename);
           Mesh(mesh->get_poly_data()).write(filename.string());
+
+          auto particle_filename = name + ".pts";
+          worlds.push_back(particle_filename);
+          filename = base / boost::filesystem::path(particle_filename);
+          Particles::save_particles_file(filename.string(), shape->get_particles().get_world_particles(d));
+
         }
         item["meshes"] = items;
+        item["particles"] = worlds;
         jmodes.push_back(item);
       };
 
@@ -160,8 +195,26 @@ void Analyze::run_offline_analysis(std::string outfile) {
     modes.push_back(jmode);
   }
 
+  j["eigen_vectors"] = get_eigen_vectors(&stats_);
+  j["eigen_values"] = stats_.Eigenvalues();
   j["modes"] = modes;
   j["charts"] = create_charts(&stats_);
+
+  std::vector<json> shapes;
+  for (int i=0;i<shapes_.size();i++) {
+    auto &s = shapes_[i];
+    auto meshes = s->get_reconstructed_meshes(true);
+    std::vector<std::string> filenames;
+    for (int d = 0; d < num_domains; d++) {
+      auto mesh = meshes.meshes()[d];
+      std::string vtk_filename = "sample_"+std::to_string(i)+"_"+std::to_string(d)+".vtk";
+      auto filename = base / boost::filesystem::path(vtk_filename);
+      Mesh(mesh->get_poly_data()).write(filename.string());
+      filenames.push_back(vtk_filename);
+    }
+    shapes.push_back(filenames);
+  }
+  j["reconstructed_samples"] = shapes;
 
   std::ofstream file(outfile);
   if (!file.good()) {
@@ -371,6 +424,38 @@ Particles Analyze::convert_from_combined(const Eigen::VectorXd& points) {
   }
 
   return particles;
+}
+
+//---------------------------------------------------------------------------
+void Analyze::initialize_mesh_warper() {
+  int median = stats_.ComputeMedianShape(-32);  //-32 = both groups
+
+  if (median < 0 || median >= get_shapes().size()) {
+    SW_ERROR("Unable to set reference mesh, stats returned invalid median index");
+    return;
+  }
+  std::shared_ptr<Shape> median_shape = get_shapes()[median];
+
+  auto mesh_group = median_shape->get_groomed_meshes(true);
+
+  if (!mesh_group.valid()) {
+    SW_ERROR("Unable to set reference mesh, groomed mesh is unavailable");
+    return;
+  }
+  auto meshes = mesh_group.meshes();
+  for (int i = 0; i < mesh_group.meshes().size(); i++) {
+    Eigen::VectorXd particles = median_shape->get_particles().get_local_particles(i);
+    Eigen::MatrixXd points = Eigen::Map<const Eigen::VectorXd>((double*)particles.data(), particles.size());
+    points.resize(3, points.size() / 3);
+    points.transposeInPlace();
+
+    auto poly_data = meshes[i]->get_poly_data();
+    Mesh mesh(poly_data);
+    median_shape->get_constraints(i).clipMesh(mesh);
+
+    mesh_manager_->get_mesh_warper(i)->set_reference_mesh(mesh.getVTKMesh(), points);
+  }
+
 }
 
 }  // namespace shapeworks

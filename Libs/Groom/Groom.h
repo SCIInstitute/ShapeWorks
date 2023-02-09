@@ -1,8 +1,8 @@
 #pragma once
 
-#include <GroomParameters.h>
-#include <Libs/Image/Image.h>
-#include <Libs/Project/Project.h>
+#include "GroomParameters.h"
+#include <Image/Image.h>
+#include <Project/Project.h>
 
 namespace shapeworks {
 
@@ -19,9 +19,6 @@ class Groom {
   //! Run the grooming
   bool run();
 
-  //! Set if grooming steps should be skipped
-  void set_skip_grooming(bool skip);
-
   //! Set abort as soon as possible
   void abort();
 
@@ -36,8 +33,6 @@ class Groom {
                                                                   vtkSmartPointer<vtkPoints> target);
 
  protected:
-  //! call to be overridden by subclasses
-  virtual void update_progress(){};
 
   std::atomic<float> progress_ = 0;
   std::atomic<int> total_ops_ = 0;
@@ -63,7 +58,7 @@ class Groom {
   //! Run the contour based pipeline on a single subject
   bool contour_pipeline(std::shared_ptr<Subject> subject, size_t domain);
 
-  //! Return the output filename for a given intpu tfile
+  //! Return the output filename for a given input file
   std::string get_output_filename(std::string input, DomainType domain_type);
 
   bool run_alignment();
@@ -94,10 +89,10 @@ class Groom {
 
   ProjectHandle project_;
 
-  bool skip_grooming_ = false;
-
   bool abort_ = false;
 
   std::mutex mutex_;
+
+  std::set<std::string> used_names_;
 };
 }  // namespace shapeworks
