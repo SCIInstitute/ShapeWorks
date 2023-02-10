@@ -2,6 +2,8 @@
 # Installs conda environment for building ShapeWorks
 #
 
+echo "Checking Conda"
+
 SW_MAJOR_VERSION=6.4
 
 echo ""
