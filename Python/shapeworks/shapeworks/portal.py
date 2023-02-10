@@ -31,13 +31,22 @@ def saveLogin(loginState):
 
 def loadLogin():
     if not os.path.exists(_LOGIN_FILE_NAME):
-        return None
+        if 'SW_CLOUD_LOGIN' in os.environ:
+            print('Using cloud login from $SW_CLOUD_LOGIN')
+            combined = os.environ['SW_CLOUD_LOGIN']
+            username = combined.split(":")[0]
+            password = combined.split(":")[1]
+            PasswordHash = base64.b64encode(password.encode()).decode("ascii")
+            loginState = {'username': username, 'PasswordHash': PasswordHash}
+            saveLogin(loginState)
+            return loginState
+        else:
+            return None
     with open(_LOGIN_FILE_NAME) as json_file:
         loginState = json.load(json_file)
         return loginState
     
 def getLoginDetails():
-    
     print('')
     username = input("Username: ")
     password = getpass.getpass("Password: ")
