@@ -165,9 +165,8 @@ def download_and_unzip_dataset(datasetName, outputDirectory):
         # Check if the unzipped data is present and number of files are more than 3 for full use case
         if generate_download_flag(outputDirectory,datasetName):
             # Download a full dataset in bulk
-            print("not enough files")
+            print(f"Downloading files to {outputDirectory+datasetName}")
             dataset = Dataset.from_name(datasetName)
-            print(outputDirectory+datasetName+"/")
             download_path = Path(outputDirectory)
             if not download_path.exists():
                 rmtree(str(download_path))
