@@ -16,12 +16,12 @@ import os
 from swcc.api import swcc_session
 from swcc.models import (Dataset, GroomedSegmentation, OptimizedParticles, Project, Segmentation, Subject)
 from itertools import islice
-_LOGIN_FILE_NAME = 'Output/shapeworksPortalLogin_new.txt'
+_LOGIN_FILE_NAME = 'Output/shapeworksCloudLogin.txt'
 
 def printDataPortalWelcome():
     print(' _____    ___      .     ')
     print('|     |  /   \    / \    ')
-    print('| ShapeWorks Portal  \   ')
+    print('|  ShapeWorks Cloud  \   ')
     print('|_____|  \___/  /_____\  ')
     print()
 
@@ -47,7 +47,9 @@ def loadLogin():
         return loginState
     
 def getLoginDetails():
-    print('')
+    print("\nPlease enter your ShapeWorks Cloud login:\n")
+    print("New ShapeWorks Cloud user please register an account:\n")
+    print("   https://www.shapeworks-cloud.org\n")
     username = input("Username: ")
     password = getpass.getpass("Password: ")
     try:
@@ -67,9 +69,7 @@ def getLoginDetails():
 def login():
     printDataPortalWelcome()
     if loadLogin() is None:
-        print("Getting login")
         getLoginDetails()
-
     print("Login to ShapeWorks Data Portal successful")
     loginDetails = loadLogin()
     username = loginDetails['username']
