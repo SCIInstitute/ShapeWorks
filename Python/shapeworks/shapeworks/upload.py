@@ -66,9 +66,9 @@ def upload_dataset(dataset_name,license_filename,ack_filename,description,projec
         print('Done. \n')
 
 if __name__=="__main__":
-    dataset_names = ["thin_cavity_bean"]
-    project_files = ["/home/sci/mkaranam/Desktop/ShapeWorks/Examples/Python/Output/thin_cavity_bean/thin_cavity_bean_multiscale.swproj"]
-    descriptions = ["Uploading thin cavity bean dataset"]
+    dataset_names = ["femur_pvalues"]
+    project_files = ["/home/sci/mkaranam/Desktop/ShapeWorksLatest/ShapeWorks/Examples/Python/Output/femur_pvalues/femur_pvalues/femur_pvalues.swproj"]
+    descriptions = ["Uploading femur pvalues dataset"]
     for i in range(len(project_files)):
         print(dataset_names[i])
         upload_dataset(
