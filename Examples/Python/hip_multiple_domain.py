@@ -180,7 +180,7 @@ def Run_Pipeline(args):
 	http://sciinstitute.github.io/ShapeWorks/workflow/optimize.html
 	"""
 	# Create project spreadsheet
-	project_location = output_directory + "shape_models/"
+	project_location = output_directory #+ "shape_models/"
 	if not os.path.exists(project_location):
 		os.makedirs(project_location)
 	# Set subjects
@@ -245,7 +245,8 @@ def Run_Pipeline(args):
 	parameters.set("domain_type",sw.Variant('mesh'))
 	project.set_parameters("optimize", parameters)
 
-	spreadsheet_file = output_directory + "shape_models/hip_multiple_domain_" + args.option_set + ".xlsx"
+	# spreadsheet_file = output_directory + "shape_models/hip_multiple_domain_" + args.option_set + ".xlsx"
+	spreadsheet_file = output_directory + "hip_multiple_domain_" + args.option_set + ".swproj"
 	project.save(spreadsheet_file)
 	
 
