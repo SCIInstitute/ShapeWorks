@@ -66,7 +66,6 @@ public:
   {
     this->StartAdaptiveGaussSeidelOptimization();
   }
-
   void StartAdaptiveGaussSeidelOptimization();
 
   void AugmentedLagrangianConstraints(VectorType& gradient, const PointType& pt, const size_t& dom,
@@ -114,10 +113,6 @@ public:
   itkGetObjectMacro(GradientFunction, GradientFunctionType);
   itkSetObjectMacro(GradientFunction, GradientFunctionType);
 
-
-  // void SetBeforeEvaluateCallbackFunction(const std::function<void(void)> &f)
-  // { this->m_BeforeEvaluateCallback = f; }
-
   /// Determines if this is an initialization (true) or an optimization (false)
   void SetInitializationMode(bool b){m_initialization_mode = b;}
 
@@ -155,7 +150,6 @@ private:
   double m_initialization_start_scaling_factor;
 
   void ResetTimeStepVectors();
-  // std::function<void(void)> m_BeforeEvaluateCallback;
 };
 
 

@@ -124,22 +124,22 @@ public:
     for (unsigned int i = 0; i < VDimension; i++)
       {
       this->operator()(i+k, d / this->m_DomainsPerShape) = pos[i];
-        // pos[i] - m_MeanMatrix(i+k, d/ this->m_DomainsPerShape);
       }
     // Get shape vector for this domain
     vnl_matrix<double> shape_vec_new = this->get_n_columns(d/this->m_DomainsPerShape, 1); // shape: dM X 1
     unsigned int dM = this->rows();
+    torch::Tensor z0_particles;
     try
     {
       // Pass through invertible network
       torch::NoGradGuard no_grad;
-      torch::Tensor shape_vec_new_tensor = torch::from_blob(shape_vec_new.data(), {1,dM});
+      torch::Tensor shape_vec_new_tensor = torch::from_blob(shape_vec_new.data_block(), {1,dM});
       std::vector<torch::jit::IValue> inputs;
-      inputs.push_back(shape_vec_new_tensor.to(at::kCUDA));
+      inputs.push_back(shape_vec_new_tensor.to(this->m_device));
       auto outputs = this->m_module.forward(inputs).toTuple();
       // std::cout << "Update Particles, Forward pass done " << std::endl;
-      torch::Tensor z0_particles = outputs->elements()[0].toTensor();
-      z0_particles = z0_particles_tensor.to(torch::TensorOptions(torch::kCPU).dtype(at::kDouble)); 
+      z0_particles = outputs->elements()[0].toTensor();
+      z0_particles = z0_particles.to(torch::TensorOptions(torch::kCPU).dtype(at::kDouble)); 
     }
     catch (const c10::Error& e) {
       std::cerr << "Error in Libtorch Operations in Particle Set Callback\n";
@@ -147,7 +147,8 @@ public:
 
     for (unsigned int i = 0; i < VDimension; i++)
       {
-      this->m_BaseShapeMatrix->put(i+k, d / this->m_DomainsPerShape, z0_particles[0][i+k].item<double>());
+        double z0_value = z0_particles[0][i+k].item<double>();
+        this->m_BaseShapeMatrix->put(i+k, d / this->m_DomainsPerShape, z0_value);
       }
   }
   
@@ -177,16 +178,16 @@ public:
       std::cerr << "Error loading the model \n";
       return -1;
     }
-    std::cout << "Model initialized successfully" << std::endl;
+    std::cout << "***** Pytorch Model Loaded successfully in SW *****" << std::endl;
     return 0;
   }
 
-  torch::jit::script::Module& GetInvertibleNetwork()
+  torch::jit::script::Module GetInvertibleNetwork()
   {
-    return this->m_Module;
+    return this->m_module;
   }
 
-  torch::Device& GetDeviceType(){
+  torch::Device GetDeviceType(){
     return this->m_device;
   }
 
@@ -209,20 +210,20 @@ public:
   
   virtual void BeforeIteration()
   {
-    std::cout << "Update counter value = " << m_UpdateCounter << std::endl;
+    std::cout << "Training Update counter value = " << m_UpdateCounter << std::endl;
     m_UpdateCounter ++;
     if (m_UpdateCounter >= m_NonLinearTrainingInterval)
       {
       m_UpdateCounter = 0;
       if (this->m_NonLinearTrainModelCallback)
       {
-        std::cout << "Before Training Callback CPP 0" << std::endl;
+        std::cout << "Before Training Callback C++ 0" << std::endl;
         this->m_NonLinearTrainModelCallback();
       }
       else{
         std::cout << "callback not initialized yet" << std::endl;
       }
-      std::cout << "After Training Callback CPP 1" << std::endl;
+      std::cout << "After Training Callback C++ 1" << std::endl;
       }
 
   }
@@ -258,14 +259,12 @@ private:
   int m_gpu_id;
 
   // Callbacks from Python
-  std::function<void(void)> m_BeforeGradientUpdatesCallback;
   std::function<void(void)> m_NonLinearTrainModelCallback;
-  std::function<void(void)> m_UpdateBaseParticlesCallback;
 
   // Z_0 --> Base Distribution
   std::shared_ptr<vnl_matrix<double>> m_BaseShapeMatrix;
   torch::jit::script::Module m_module;
-  torch::Device m_device;
+  torch::Device m_device = torch::kCPU;
 };
 
 } // end namespace

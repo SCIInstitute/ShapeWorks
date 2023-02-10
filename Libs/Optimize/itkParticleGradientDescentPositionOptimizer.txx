@@ -53,7 +53,6 @@ namespace itk
     }
   }
 
-
   template <class TGradientNumericType, unsigned int VDimension>
   void ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
     ::StartAdaptiveGaussSeidelOptimization()
@@ -239,7 +238,6 @@ namespace itk
 
     } // end while stop optimization
   }
-
 
 template<class TGradientNumericType, unsigned int VDimension>
 void

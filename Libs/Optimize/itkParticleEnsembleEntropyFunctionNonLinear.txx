@@ -147,10 +147,7 @@ ParticleEnsembleEntropyFunctionNonLinear<VDimension>
 ::Evaluate(unsigned int idx, unsigned int d, const ParticleSystemType * system,
            double &maxdt, double &energy) const
 {
-    // 1. return gradients in Z space
-    // 2. Maxdt - maximum update allowed -- Gradient Magnitude
-    // 3. Energy - in Z0 space
-    std::cout << "Evaluate Non Linear 0" << std::endl;
+    std::cout << "****** Start Evaluate Non Linear 0" << std::endl;
     const unsigned int DomainsPerShape = m_ShapeMatrix->GetDomainsPerShape();
 
     // maxdt  = m_MinimumEigenValue;
@@ -182,25 +179,28 @@ ParticleEnsembleEntropyFunctionNonLinear<VDimension>
 
     energy = tmp(0,0); // Z0 Energy
 
-    auto inv_net = m_ShapeMatrix->GetInvertibleNetwork();
-    // Get z0_particles 
-    vnl_matrix<double> shape_vec_new = base_shape_matrix->get_n_columns(d/this->m_DomainsPerShape, 1); // shape: dM X 1
+    // Get New gradient updates
+    vnl_matrix<double> shape_vec_new = base_shape_matrix->get_n_columns(d/DomainsPerShape, 1); // shape: dM X 1
     unsigned int dM = m_ShapeMatrix->rows();
+    double log_det_jacobian_val, det_jacobian_val, p_z_0_val, p_z_val;
     try{
-        torch::Tensor shape_vec_new_tensor = torch::from_blob(shape_vec_new.data(), {1,dM});
+        torch::NoGradGuard no_grad;
+        auto inv_net = m_ShapeMatrix->GetInvertibleNetwork();
+        auto device = m_ShapeMatrix->GetDeviceType();
+        torch::Tensor shape_vec_new_tensor = torch::from_blob(shape_vec_new.data_block(), {1,dM});
         std::vector<torch::jit::IValue> inputs;
-        inputs.push_back(shape_vec_new_tensor.to(at::kCUDA));
+        inputs.push_back(shape_vec_new_tensor.to(device));
         auto outputs = inv_net.forward(inputs).toTuple();
         // std::cout << " In Evaluate, Forward pass done " << std::endl;
         torch::Tensor z0_particles_tensor = outputs->elements()[0].toTensor();
         z0_particles_tensor = z0_particles_tensor.to(torch::TensorOptions(torch::kCPU).dtype(at::kDouble)); 
         torch::Tensor log_det_jacobian_tensor = outputs->elements()[1].toTensor();
         log_det_jacobian_tensor = log_det_jacobian_tensor.to(torch::TensorOptions(torch::kCPU).dtype(at::kDouble)); 
-        double log_det_jacobian_val = log_det_jacobian_tensor.sum().item<double>();
-        double det_jacobian_val = std::exp(log_det_jacobian_val);
+        log_det_jacobian_val = log_det_jacobian_tensor.sum().item<double>();
+        det_jacobian_val = std::exp(log_det_jacobian_val);
         torch::Tensor p_z_0 = inv_net.get_method("base_dist_log_prob")(inputs).toTensor();
-        auto p_z_0_val = p_z_0.item<double>();
-        double p_z_val = p_z_0_val * det_jacobian_val;
+        p_z_0_val = p_z_0.item<double>();
+        p_z_val = p_z_0_val * det_jacobian_val;
     }
     catch (const c10::Error& e) {
         std::cerr << "Errors in Libtorch operations in Evaluate functions\n";
