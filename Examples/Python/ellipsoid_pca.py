@@ -11,9 +11,9 @@ import sys
 def Run_Pipeline(args):
 
     ellipsoids_dir = 'Output/ellipsoid'
-    shape_models_dir = ellipsoids_dir+'/shape_models/ellipsoid_multiscale_particles'
+    shape_models_dir = ellipsoids_dir+'/ellipsoid_multiscale_particles'
     if args.tiny_test:
-        shape_models_dir = ellipsoids_dir+'/shape_models/ellipsoid_tiny_test_multiscale_particles'
+        shape_models_dir = ellipsoids_dir+'/ellipsoid_tiny_test_multiscale_particles'
     if not os.path.exists(shape_models_dir):
         print(f'Ellipsoids output not found in {shape_models_dir}. Please run the ellipsoid use case first.', file=sys.stderr)
         sys.exit(1)
