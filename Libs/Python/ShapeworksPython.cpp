@@ -1658,37 +1658,6 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def("SetNonLinearTrainModelCallbackFunction",
       &Optimize::SetNonLinearTrainModelCallbackFunction)
 
-  .def("SetBeforeGradientUpdatesCallbackFunction",
-      &Optimize::SetBeforeGradientUpdatesCallbackFunction)
-  
-  .def("SetUpdateBaseParticlesCallbackFunction",
-      &Optimize::SetUpdateBaseParticlesCallbackFunction)
-
-  .def("ComputeBaseSpaceCovarianceMatrix",
-       &Optimize::ComputeBaseSpaceCovarianceMatrix)
-
-  .def("SetNonLinearBaseShapeMatrix",
-     [](Optimize *opt,Eigen::MatrixXd updates){
-          shapeworks::MatrixContainer container;
-          container.matrix_ = updates;
-          opt->SetNonLinearBaseShapeMatrix(container);
-          }
-     )
-  .def("SetNonLinearDifferenceMatrix",
-     [](Optimize *opt,Eigen::MatrixXd updates){
-          shapeworks::MatrixContainer container;
-          container.matrix_ = updates;
-          opt->SetNonLinearDifferenceMatrix(container);
-          }
-     )
-
-  .def("SetNonLinearJacobianMatrix",
-     [](Optimize *opt,Eigen::MatrixXd updates_det){
-          shapeworks::MatrixContainer container_det;
-          container_det.matrix_ = updates_det;
-          opt->SetNonLinearJacobianMatrix(container_det);
-          }
-     )
   .def("GetOptimizing", &Optimize::GetOptimizing)
 
   .def("GetBaseSpaceInverseCovarianceMatrix",

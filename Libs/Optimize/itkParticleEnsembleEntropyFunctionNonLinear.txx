@@ -162,10 +162,11 @@ ParticleEnsembleEntropyFunctionNonLinear<VDimension>
         k += system->GetNumberOfParticles(i) * VDimension;
     k += idx*VDimension;
 
+    auto base_shape_matrix = m_ShapeMatrix->GetBaseShapeMatrix();
     vnl_matrix_type Xi(3,1,0.0);
-    Xi(0,0) = m_ShapeMatrix->operator()(k  , d/DomainsPerShape) - m_points_mean->get(k, 0);
-    Xi(1,0) = m_ShapeMatrix->operator()(k+1, d/DomainsPerShape) - m_points_mean->get(k+1, 0);
-    Xi(2,0) = m_ShapeMatrix->operator()(k+2, d/DomainsPerShape) - m_points_mean->get(k+2, 0);
+    Xi(0,0) = base_shape_matrix->operator()(k  , d/DomainsPerShape) - m_points_mean->get(k, 0);
+    Xi(1,0) = base_shape_matrix->operator()(k+1, d/DomainsPerShape) - m_points_mean->get(k+1, 0);
+    Xi(2,0) = base_shape_matrix->operator()(k+2, d/DomainsPerShape) - m_points_mean->get(k+2, 0);
 
 
     vnl_matrix_type tmp1(3, 3, 0.0);
@@ -181,19 +182,36 @@ ParticleEnsembleEntropyFunctionNonLinear<VDimension>
 
     energy = tmp(0,0); // Z0 Energy
 
-    // auto jacobain_det = m_ShapeMatrix->GetJacobianMatrix();
-    // auto diff_term = m_ShapeMatrix->GetDifferenceMatrix();
+    auto inv_net = m_ShapeMatrix->GetInvertibleNetwork();
+    // Get z0_particles 
+    vnl_matrix<double> shape_vec_new = base_shape_matrix->get_n_columns(d/this->m_DomainsPerShape, 1); // shape: dM X 1
+    unsigned int dM = m_ShapeMatrix->rows();
+    try{
+        torch::Tensor shape_vec_new_tensor = torch::from_blob(shape_vec_new.data(), {1,dM});
+        std::vector<torch::jit::IValue> inputs;
+        inputs.push_back(shape_vec_new_tensor.to(at::kCUDA));
+        auto outputs = inv_net.forward(inputs).toTuple();
+        // std::cout << " In Evaluate, Forward pass done " << std::endl;
+        torch::Tensor z0_particles_tensor = outputs->elements()[0].toTensor();
+        z0_particles_tensor = z0_particles_tensor.to(torch::TensorOptions(torch::kCPU).dtype(at::kDouble)); 
+        torch::Tensor log_det_jacobian_tensor = outputs->elements()[1].toTensor();
+        log_det_jacobian_tensor = log_det_jacobian_tensor.to(torch::TensorOptions(torch::kCPU).dtype(at::kDouble)); 
+        double log_det_jacobian_val = log_det_jacobian_tensor.sum().item<double>();
+        double det_jacobian_val = std::exp(log_det_jacobian_val);
+        torch::Tensor p_z_0 = inv_net.get_method("base_dist_log_prob")(inputs).toTensor();
+        auto p_z_0_val = p_z_0.item<double>();
+        double p_z_val = p_z_0_val * det_jacobian_val;
+    }
+    catch (const c10::Error& e) {
+        std::cerr << "Errors in Libtorch operations in Evaluate functions\n";
+  }
+
     for (unsigned int i = 0; i< VDimension; i++)
     {
         auto base_grad = m_PointsUpdateBase->get(k + i, d / DomainsPerShape);
-        double jacobain_det = m_ShapeMatrix->GetJacobianMatrix()->get(0, d / DomainsPerShape);
-        double diff_term = m_ShapeMatrix->GetDifferenceMatrix()->get(k + i, d / DomainsPerShape);
-        gradE[i] = base_grad * jacobain_det - diff_term;
+        gradE[i] = (base_grad * det_jacobian_val) - (p_z_val * log_det_jacobian_val) ;
     }
-    std::cout << "Evaluate Non Linear 1" << std::endl;
     maxdt  = gradE.magnitude();
-
-
     return system->TransformVector(gradE,
                                    system->GetInversePrefixTransform(d) *
                                    system->GetInverseTransform(d));

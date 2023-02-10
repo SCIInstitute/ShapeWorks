@@ -141,23 +141,17 @@ namespace itk
               // maximumUpdateAllowed is set based on some fraction of the distance between particles
               // This is to avoid particles shooting past their neighbors
               double maximumUpdateAllowed;
-              // Before Evaluate: Set Base Particles + Set Jacobian
-              // Get z space gradients
-
               VectorType original_gradient = localGradientFunction->Evaluate(k, dom, m_ParticleSystem,
                                                                              maximumUpdateAllowed, energy);
 
-              std::cout << "evaluate done 0" << std::endl;
               PointType pt = m_ParticleSystem->GetPositions(dom)->Get(k);
 
               // Step 1 Project the gradient vector onto the tangent plane
               VectorType original_gradient_projectedOntoTangentSpace = domain->ProjectVectorToSurfaceTangent(
                       original_gradient, pt, k);
-              std::cout << "evaluate done 1" << std::endl;
 
               double newenergy, gradmag;
               while (true) {
-                std::cout << "Inside energy loop 0" << std::endl;
                 // Step A scale the projected gradient by the current time step
                 VectorType gradient = original_gradient_projectedOntoTangentSpace * m_TimeSteps[dom][k];
 
@@ -180,10 +174,8 @@ namespace itk
                 // Step F update the point position in the particle system
                 m_ParticleSystem->SetPosition(newpoint, k, dom);
 
-                std::cout << "Computing New Energy 0" << std::endl;
+                // Step G compute the new energy of the particle system
                 newenergy = localGradientFunction->Energy(k, dom, m_ParticleSystem);
-                std::cout << "Computing New Energy 1" << std::endl;
-
 
                 if (newenergy < energy) // good move, increase timestep for next time
                 {
@@ -191,12 +183,10 @@ namespace itk
                   if (gradmag > maxchange) maxchange = gradmag;
                   break;
                 } else {// bad move, reset point position and back off on timestep
-                  std::cout << "Resetting Particle Position " << std::endl;
                   if (m_TimeSteps[dom][k] > minimumTimeStep) {
                     domain->ApplyConstraints(pt, k);
                     m_ParticleSystem->SetPosition(pt, k, dom);
                     domain->InvalidateParticlePosition(k);
-
 
                     m_TimeSteps[dom][k] /= factor;
                   } else // keep the move with timestep 1.0 anyway
@@ -205,7 +195,6 @@ namespace itk
                     break;
                   }
                 }
-                std::cout << "Inside energy loop 1" << std::endl;
               } // end while(true)
             } // for each particle
           }
@@ -250,6 +239,7 @@ namespace itk
 
     } // end while stop optimization
   }
+
 
 template<class TGradientNumericType, unsigned int VDimension>
 void

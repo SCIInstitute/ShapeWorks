@@ -2200,73 +2200,11 @@ void Optimize::SetNonLinearTrainModelCallbackFunction(const std::function<void(v
 }
 
 //---------------------------------------------------------------------------
-void Optimize::LoadPytorchModel(const std::string model_path, const std::string gpu_id)
+void Optimize::LoadPytorchModel(const std::string model_path, int gpu_id)
 {
   int x = this->m_sampler->GetNonLinearShapeMatrixAttribute()->LoadPytorchModel(model_path, gpu_id);
 }
 
-//---------------------------------------------------------------------------
-void Optimize::SetBeforeGradientUpdatesCallbackFunction(const std::function<void(void)>& f)
-{
-  this->m_sampler->GetNonLinearShapeMatrixAttribute()->SetBeforeGradientUpdatesCallbackFunction(f);
-}
-
-//---------------------------------------------------------------------------
-void Optimize::SetUpdateBaseParticlesCallbackFunction(const std::function<void(void)>& f)
-{
-  this->m_sampler->GetNonLinearShapeMatrixAttribute()->SetUpdateBaseParticlesCallbackFunction(f);
-}
-
-//---------------------------------------------------------------------------
-void Optimize::SetNonLinearJacobianMatrix(MatrixContainer matrix)
-{
-  // std::cout << "---Setting up Jacoboian Matrix in Optimize  0--- " << std::endl;
-  auto vnl = this->m_sampler->GetNonLinearShapeMatrixAttribute()->GetJacobianMatrix();
-  auto eigen = matrix.matrix_;
-  vnl->set_size(eigen.rows(), eigen.cols());
-  for (int r = 0; r < eigen.rows(); r++) {
-    for (int c = 0; c < eigen.cols(); c++) {
-      vnl->put(r, c, eigen(r, c));
-    }
-  }
-  // std::cout << "---Setting up Jacoboian Matrix in Optimize  1--- " << std::endl;
-}
-
-//---------------------------------------------------------------------------
-void Optimize::SetNonLinearBaseShapeMatrix(MatrixContainer matrix)
-{
-  // std::cout << "---Setting up Base Shape Matrix in Optimize  0--- " << std::endl;
-  auto vnl = this->m_sampler->GetNonLinearShapeMatrixAttribute()->GetBaseShapeMatrix();
-  auto eigen = matrix.matrix_;
-  vnl->set_size(eigen.rows(), eigen.cols());
-  for (int r = 0; r < eigen.rows(); r++) {
-    for (int c = 0; c < eigen.cols(); c++) {
-      vnl->put(r, c, eigen(r, c));
-    }
-  }
-  // std::cout << "---Setting up Base Shape Matrix in Optimize  1--- " << std::endl;
-}
-
-//---------------------------------------------------------------------------
-void Optimize::SetNonLinearDifferenceMatrix(MatrixContainer matrix)
-{
-  // std::cout << "---Setting up Difference Matrix in Optimize  0--- " << std::endl;
-  auto vnl = this->m_sampler->GetNonLinearShapeMatrixAttribute()->GetDifferenceMatrix();
-  auto eigen = matrix.matrix_;
-  vnl->set_size(eigen.rows(), eigen.cols());
-  for (int r = 0; r < eigen.rows(); r++) {
-    for (int c = 0; c < eigen.cols(); c++) {
-      vnl->put(r, c, eigen(r, c));
-    }
-  }
-  // std::cout << "---Setting up Difference in Optimize  1--- " << std::endl;
-}
-
-//---------------------------------------------------------------------------
-void Optimize::ComputeBaseSpaceCovarianceMatrix()
-{
-  this->m_sampler->GetEnsembleEntropyNonLinearFunction()->ComputeBaseSpaceCovarianceMatrix();
-}
 
 //---------------------------------------------------------------------------
 MatrixContainer Optimize::GetBaseSpaceInverseCovarianceMatrix()

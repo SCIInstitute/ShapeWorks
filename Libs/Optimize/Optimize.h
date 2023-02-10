@@ -81,14 +81,7 @@ class Optimize {
 
   // Non-Linear SSM Callbacks
   void SetNonLinearTrainModelCallbackFunction(const std::function<void(void)> &f);
-  void SetBeforeGradientUpdatesCallbackFunction(const std::function<void(void)> &f);
-  void SetUpdateBaseParticlesCallbackFunction(const std::function<void(void)> &f);
-  void LoadPytorchModel(const std::string model_path,  const std::string gpu_id);
-
-  void SetNonLinearBaseShapeMatrix(MatrixContainer matrix);
-  void SetNonLinearDifferenceMatrix(MatrixContainer matrix);
-  void SetNonLinearJacobianMatrix(MatrixContainer det);
-  void ComputeBaseSpaceCovarianceMatrix();
+  void LoadPytorchModel(const std::string model_path,  int gpu_id);
   MatrixContainer GetBaseSpaceInverseCovarianceMatrix();
   MatrixContainer GetBaseSpaceMean();
 
