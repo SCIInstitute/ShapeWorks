@@ -86,29 +86,38 @@ def dataset_exists_check(use_case):
             existsFlag = True
     return existsFlag
 
-def generate_download_flag(outputDirectory,folder):
+def count_existing_files(directory):
+    total = 0
+    for root, _, files in os.walk(directory):
+        if len(files):
+            print(f"{len(files)} files found in {root}")
+        # excluding file in particle folders and in root directory (swproj file)
+        if not("particle" in root) and root != directory:
+            total += len(files)
+    print(f"\nTotal shape files found in {directory}: {total}\n")
+    return total
+
+def generate_download_flag(outputDirectory, folder):
     download_flag = False
     #if output/dataset + subfolders exits 
 
     dataset = Dataset.from_name(folder)
-    if(os.path.exists(outputDirectory+folder)):
-            # if the folder is empty or has less than 3 files then download
-            if(len(os.listdir(outputDirectory+folder))==0) and dataset:
-                download_flag = True
-            else:
-                print("Data available in " + folder + "  is sufficient, no new data will be downloaded")
-
+    if os.path.exists(outputDirectory):
+        # if the folder is empty or has less than 3 files then download
+        file_count = count_existing_files(outputDirectory)
+        if file_count < 6 and dataset:
+            download_flag = True
+        elif file_count == 6 and dataset and not("tiny_test" in folder):
+            download_flag = True
+        else:
+            print("Data available in " + outputDirectory + "  is sufficient, no new data will be downloaded")
     #if the subfolder folder does not exists then download
     else:
         download_flag = True        
     return download_flag
             
 def download_subset(use_case,datasetName,outputDirectory):
-    import DatasetUtils
-    import re
     username,password = login()
-    # fileList = DatasetUtils.getFileList(datasetName)
-    outputDirectory = outputDirectory #+ datasetName+"/"
     print('Downloading subset')
     print(outputDirectory)
     with swcc_session()  as session:
@@ -154,12 +163,9 @@ def is_same(dir1, dir2):
     return True
 
 def download_and_unzip_dataset(datasetName, outputDirectory):
-
     username,password = login()
-
     #api as a context manager
     with swcc_session()  as session:
-        
         token = session.login(username, password)
         session = swcc_session(token=token).__enter__()
         # Check if the unzipped data is present and number of files are more than 3 for full use case
@@ -174,23 +180,11 @@ def download_and_unzip_dataset(datasetName, outputDirectory):
             for project in dataset.projects:
                 project.download(Path(download_path))
                 break
-            # project = Project.from_id(dataset.id)
-            # project.download(download_path)
-
-    # with swcc_session() as session:
-    #     token = session.login(username, password)
-    #     session = swcc_session(token=token).__enter__()
-
-    #     print(f'Downloading {datasetName} dataset and project.')
-    #     dataset = Dataset.from_name(datasetName)
-    #     download_path = Path(outputDirectory)
-    #     for project in dataset.projects:
-    #         project.download(Path(download_path))
 
         print('Done. \n')
 
 if __name__ == "__main__":
     download_and_unzip_dataset(
         "femur_cut",
-        "/home/sci/mkaranam/Desktop/ShapeWorks/Examples/Python/Output/femur_download/"
+        "Output/femur_download/"
     )
