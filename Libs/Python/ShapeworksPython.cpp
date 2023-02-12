@@ -1655,24 +1655,8 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def("SetIterationCallbackFunction",
        &Optimize::SetIterationCallbackFunction)
 
-  .def("SetNonLinearTrainModelCallbackFunction",
-      &Optimize::SetNonLinearTrainModelCallbackFunction)
 
   .def("GetOptimizing", &Optimize::GetOptimizing)
-
-  .def("GetBaseSpaceInverseCovarianceMatrix",
-       [](Optimize *opt){
-          shapeworks::MatrixContainer container = opt->GetBaseSpaceInverseCovarianceMatrix();
-          return container.matrix_;
-     }
-     )
-     
-  .def("GetBaseSpaceMean",
-       [](Optimize *opt){
-          shapeworks::MatrixContainer container = opt->GetBaseSpaceMean();
-          return container.matrix_;
-     }
-     )
 
   .def("GetParticleSystem",
        &optimize_get_particle_system)

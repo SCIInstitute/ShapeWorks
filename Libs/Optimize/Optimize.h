@@ -78,13 +78,6 @@ class Optimize {
 
   void SetIterationCallbackFunction(const std::function<void(void)>& f) { this->iteration_callback_ = f; }
 
-  // Non-Linear SSM Callbacks
-  void SetNonLinearTrainModelCallbackFunction(const std::function<void(void)> &f);
-  void LoadPytorchModel(const std::string model_path,  int gpu_id);
-  MatrixContainer GetBaseSpaceInverseCovarianceMatrix();
-  MatrixContainer GetBaseSpaceMean();
-
-  
   //! Abort optimization
   void AbortOptimization();
 

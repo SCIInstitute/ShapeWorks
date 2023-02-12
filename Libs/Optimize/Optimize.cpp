@@ -2194,57 +2194,6 @@ void Optimize::SetGeodesicsEnabled(bool is_enabled) { this->m_geodesics_enabled 
 void Optimize::SetGeodesicsCacheSizeMultiplier(size_t n) { this->m_geodesic_cache_size_multiplier = n; }
 
 //---------------------------------------------------------------------------
-void Optimize::SetNonLinearTrainModelCallbackFunction(const std::function<void(void)>& f)
-{
-  this->m_sampler->GetNonLinearShapeMatrixAttribute()->SetNonLinearTrainModelCallbackFunction(f);
-}
-
-//---------------------------------------------------------------------------
-void Optimize::LoadPytorchModel(const std::string model_path, int gpu_id)
-{
-  int x = this->m_sampler->GetNonLinearShapeMatrixAttribute()->LoadPytorchModel(model_path, gpu_id);
-}
-
-
-//---------------------------------------------------------------------------
-MatrixContainer Optimize::GetBaseSpaceInverseCovarianceMatrix()
-{
-  std::cout << "Getting Base Space CovMatrix 0..." << std::endl;
-  auto vnl_matrix = m_sampler->GetEnsembleEntropyNonLinearFunction()->GetBaseSpaceInverseCovarianceMatrix();
-  MatrixType matrix;
-  matrix.resize(vnl_matrix->rows(), vnl_matrix->cols());
-
-  for (int i = 0; i < vnl_matrix->rows(); i++) {
-    for (int j = 0; j < vnl_matrix->cols(); j++) {
-      matrix(i, j) = vnl_matrix->get(i, j);
-    }
-  }
-  std::cout << "Getting Base Space CovMatrix 1..." << std::endl;
-  MatrixContainer container;
-  container.matrix_ = matrix;
-  return container;
-}
-
-//---------------------------------------------------------------------------
-MatrixContainer Optimize::GetBaseSpaceMean()
-{
-  std::cout << "Getting Base Space Mean 0..." << std::endl;
-  auto vnl_matrix = m_sampler->GetEnsembleEntropyNonLinearFunction()->GetBaseSpaceMean();
-  MatrixType matrix;
-  matrix.resize(vnl_matrix->rows(), vnl_matrix->cols());
-
-  for (int i = 0; i < vnl_matrix->rows(); i++) {
-    for (int j = 0; j < vnl_matrix->cols(); j++) {
-      matrix(i, j) = vnl_matrix->get(i, j);
-    }
-  }
-  std::cout << "Getting Base Space Mean 1..." << std::endl;
-  MatrixContainer container;
-  container.matrix_ = matrix;
-  return container;
-}
-
-//---------------------------------------------------------------------------
 vnl_vector_fixed<double, 3> Optimize::TransformPoint(int domain, vnl_vector_fixed<double, 3> input) {
   // If initial transform provided, transform cutting plane points
   if (GetPrefixTransformFile() == "" || GetTransformFile() == "") {

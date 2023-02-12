@@ -3,7 +3,7 @@
 #include "itkParticleShapeMatrixAttribute.h"
 #include "vnl/vnl_vector.h"
 #include "itkParticleSystem.h"
-#include <torch/script.h> // One-stop header.
+#include <torch/script.h>
 
 namespace itk
 {
@@ -162,41 +162,6 @@ public:
   
   void SetNonLinearTrainModelCallbackFunction(const std::function<void(void)> &f){
     this->m_NonLinearTrainModelCallback = f;
-  }
-
-  int LoadPytorchModel(const std::string model_path, int gpu_id){
-    try {
-      if (gpu_id == -1){
-        this->m_module = torch::jit::load(model_path);
-        this->m_device = torch::Device(torch::kCPU);
-      }
-      else{
-        this->m_module = torch::jit::load(model_path);
-        this->m_device = torch::Device(torch::kCUDA, gpu_id);
-      }
-      this->m_gpu_id = gpu_id;
-      this->m_module.to(this->m_device);
-    }
-    catch (const c10::Error& e) {
-      std::cerr << "Error loading the model \n";
-      return -1;
-    }
-    std::cout << "***** Pytorch Model Loaded successfully in SW *****" << std::endl;
-    return 0;
-  }
-
-  torch::jit::script::Module GetInvertibleNetwork()
-  {
-    return this->m_module;
-  }
-
-  torch::Device GetDeviceType(){
-    return this->m_device;
-  }
-
-  int GetGpuId()
-  {
-    return this->m_gpu_id;
   }
 
   /** Set/Get the number of domains per shape.  This can only be safely done
