@@ -35,7 +35,7 @@ namespace InvertibleNet
         } catch (nlohmann::json::exception &e) {
             throw std::runtime_error("Unabled to parse json param file " + filename + " : " + e.what());
         }
-        std::cout << "Model Params Loaded " << std::endl;
+        std::cout << "Inv Net Model Params Loaded from JSON file " << std::endl;
     }
 
     //-----------------------------------------------------------------------------
@@ -144,7 +144,6 @@ namespace InvertibleNet
         }
         catch (const c10::Error& e) {
             std::cerr << "Error in Forward Pass during Particle Set | " << e.what(); 
-            return -1;
         }
     }
 
@@ -172,7 +171,6 @@ namespace InvertibleNet
         }
         catch (const c10::Error& e) {
             std::cerr << "Error in Forward Pass during Energy/Gradient Computations | " << e.what(); 
-            return -1;
         }
     }
 
