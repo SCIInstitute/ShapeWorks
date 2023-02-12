@@ -25,7 +25,6 @@
 #include "Sampler.h"
 #include "itkParticleSystem.h"
 #include "itkParticleVectorFunction.h"
-#include <torch/script.h> // One-stop header.
 
 namespace shapeworks {
 
