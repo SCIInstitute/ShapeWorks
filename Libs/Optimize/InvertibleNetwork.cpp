@@ -1,4 +1,6 @@
+#pragma once
 #include "InvertibleNetwork.h"
+#include <torch/script.h>
 
 namespace InvertibleNet
 {
@@ -35,7 +37,8 @@ namespace InvertibleNet
         } catch (nlohmann::json::exception &e) {
             throw std::runtime_error("Unabled to parse json param file " + filename + " : " + e.what());
         }
-        std::cout << "Inv Net Model Params Loaded from JSON file " << std::endl;
+        std::cout << "Inv Net Model Params Loaded from JSON file " << this->m_model_path << " device " << this->m_device_id << std::endl;
+        this->InitializeModel();
     }
 
     //-----------------------------------------------------------------------------
@@ -107,7 +110,6 @@ namespace InvertibleNet
     int Model::InitializeModel()
     {
         try {
-            this->m_module = torch::jit::load(this->m_model_path);
             if (this->m_device_id >= 0)
             {
                 this->m_device = torch::Device(torch::kCUDA, 0);
@@ -115,7 +117,13 @@ namespace InvertibleNet
             else{
                 this->m_device = torch::Device(torch::kCPU);
             }
-            this->m_module.to(this->m_device);
+            std::cout << " Initializing 1 " << std::endl;
+            const std::string fn = this->m_model_path;
+            torch::jit::script::Module m = torch::jit::load(fn, this->m_device);
+            std::cout << " Initializing 2 " << std::endl;
+            this->m_module = m;
+            std::cout << " Initializing 3 " << std::endl;
+            // this->m_module.to(this->m_device);
             this->m_module_exists = true;
             torch::manual_seed(this->m_seed_val);
             torch::cuda::manual_seed(this->m_seed_val);

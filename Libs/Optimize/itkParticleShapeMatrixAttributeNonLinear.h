@@ -192,7 +192,7 @@ public:
     if (!filename.empty())
     {
       this->m_inv_net->LoadParams(filename);
-      this->m_inv_net->InitializeModel();
+      // this->m_inv_net->InitializeModel();
     }
   }
 
