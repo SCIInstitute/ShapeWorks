@@ -3,6 +3,7 @@
 #include "itkParticleShapeMatrixAttribute.h"
 #include "vnl/vnl_vector.h"
 #include "itkParticleSystem.h"
+#include "InvertibleNetwork.h"
 #include <torch/script.h>
 
 namespace itk
@@ -34,7 +35,7 @@ public:
   std::shared_ptr<vnl_matrix<double>> GetBaseShapeMatrix(){
     return this->m_BaseShapeMatrix;
   }
-    
+
   virtual void ResizeBaseShapeMatrix(int rs, int cs)
   {
     vnl_matrix<T> tmp(*m_BaseShapeMatrix); // copy existing  matrix 
@@ -125,43 +126,30 @@ public:
       {
       this->operator()(i+k, d / this->m_DomainsPerShape) = pos[i];
       }
-    if (this->m_NonLinearTrainModelCallback)
+    if (this->m_inv_net->GetModelInitialized())
     {
-      // Get shape vector for this domain
+      std::cout << "Setting Z0 New " << std::endl;
       vnl_matrix<double> shape_vec_new = this->get_n_columns(d/this->m_DomainsPerShape, 1); // shape: dM X 1
       unsigned int dM = this->rows();
-      torch::Tensor z0_particles;
       try
       {
-        // Pass through invertible network
-        torch::NoGradGuard no_grad;
         torch::Tensor shape_vec_new_tensor = torch::from_blob(shape_vec_new.data_block(), {1,dM});
-        std::vector<torch::jit::IValue> inputs;
-        inputs.push_back(shape_vec_new_tensor.to(this->m_device));
-        auto outputs = this->m_module.forward(inputs).toTuple();
-        // std::cout << "Update Particles, Forward pass done " << std::endl;
-        z0_particles = outputs->elements()[0].toTensor();
-        z0_particles = z0_particles.to(torch::TensorOptions(torch::kCPU).dtype(at::kDouble)); 
-      }
-      catch (const c10::Error& e) {
-        std::cerr << "Error in Libtorch Operations in Particle Set Callback\n";
-      }
-
-      for (unsigned int i = 0; i < VDimension; i++)
+        torch::Tensor z0_particles = this->m_inv_net->ForwardPass(shape_vec_new_tensor);
+        for (unsigned int i = 0; i < VDimension; i++)
         {
           double z0_value = z0_particles[0][i+k].item<double>();
           this->m_BaseShapeMatrix->put(i+k, d / this->m_DomainsPerShape, z0_value);
         }
+      }
+      catch (const c10::Error& e) {
+        std::cerr << "Error in LibTorch Operations in Particle Set Callback | " << e.what() << "\n";
+      }
     }
   }
   
   virtual void PositionRemoveEventCallback(Object *, const EventObject &) 
   {
     // NEED TO IMPLEMENT THIS
-  }
-  
-  void SetNonLinearTrainModelCallbackFunction(const std::function<void(void)> &f){
-    this->m_NonLinearTrainModelCallback = f;
   }
 
   /** Set/Get the number of domains per shape.  This can only be safely done
@@ -182,18 +170,16 @@ public:
     m_UpdateCounter ++;
     if (m_UpdateCounter >= m_NonLinearTrainingInterval)
       {
-      m_UpdateCounter = 0;
-      if (this->m_NonLinearTrainModelCallback)
-      {
-        std::cout << "Before Training Callback C++ 0" << std::endl;
-        this->m_NonLinearTrainModelCallback();
+        m_UpdateCounter = 0;
+        if (this->m_inv_net->GetModelInitialized())
+        {
+          vnl_matrix<T> tmp(*this); // copy existing  matrix
+          unsigned int dM = this->rows();
+          torch::Tensor sm;
+          try{ sm = torch::from_blob(tmp.data_block(), {dM,dM});} catch (const c10::Error& e){ std::cerr << "Errors in SM init | " << e.what() << "\n";}
+          this->m_inv_net->TrainModel(sm);
+        }
       }
-      else{
-        std::cout << "callback not initialized yet" << std::endl;
-      }
-      std::cout << "After Training Callback C++ 1" << std::endl;
-      }
-
   }
 
   void SetNonLinearTrainingInterval( int i)
@@ -201,11 +187,36 @@ public:
   int GetNonLinearTrainingInterval() const
   { return m_NonLinearTrainingInterval; }
 
-  void SetInvNetParamsFilename( std::string filename)
-  {    m_inv_net_params_filename = filename;  }
-  std::string GetInvNetParamsFilename() const
-  { return m_inv_net_params_filename; }
-  
+  void LoadInvNet( std::string filename)
+  {    
+    if (!filename.empty())
+    {
+      this->m_inv_net->LoadParams(filename);
+      this->m_inv_net->InitializeModel();
+    }
+  }
+
+  void SetBaseDistParams( std::shared_ptr<vnl_matrix<double>>& vnl_mean, std::shared_ptr<vnl_matrix<double>>& vnl_cov)
+  {
+    try
+    {
+      unsigned int dM = vnl_cov->rows();
+      torch::Tensor mean = torch::from_blob(vnl_mean->data_block(), {1,dM});
+      torch::Tensor cov = torch::from_blob(vnl_cov->data_block(), {dM,dM});
+      this->m_inv_net->SetBaseDistMean(mean);
+      this->m_inv_net->SetBaseDistVar(cov);
+    }
+    catch (const c10::Error& e) {
+      std::cerr << "Errors in Libtorch operations while updating base distribution params | " << e.what() << "\n";
+    }
+  }
+
+  void DoForwardPass(torch::Tensor& input_tensor, double& log_det_jacobian_val, double& p_z_0_val)
+  {
+    this->m_inv_net->ForwardPass(input_tensor, log_det_jacobian_val, p_z_0_val);
+  }
+
+
 protected:
   ParticleShapeMatrixAttributeNonLinear() 
   {
@@ -213,9 +224,11 @@ protected:
     this->m_DefinedCallbacks.PositionAddEvent = true;
     this->m_DefinedCallbacks.PositionSetEvent = true;
     this->m_DefinedCallbacks.PositionRemoveEvent = true;
+    
     m_UpdateCounter = 0;
-    m_NonLinearTrainingInterval = 50;
+    m_NonLinearTrainingInterval = 10;
     m_BaseShapeMatrix = std::make_shared<vnl_matrix<double>>();
+    m_inv_net = std::make_shared<InvertibleNet::Model>();
   }
 
   virtual ~ParticleShapeMatrixAttributeNonLinear() {};
@@ -229,17 +242,8 @@ private:
 
   int m_UpdateCounter;
   int m_NonLinearTrainingInterval;
-  int m_gpu_id;
-
-  // Callbacks from Python
-  std::function<void(void)> m_NonLinearTrainModelCallback;
-
-  // Z_0 --> Base Distribution
   std::shared_ptr<vnl_matrix<double>> m_BaseShapeMatrix;
-  torch::jit::script::Module m_module;
-  torch::Device m_device = torch::kCPU;
-
-  std::string m_inv_net_params_filename;
+  InvertibleNet::Model::Pointer m_inv_net;
 };
 
 } // end namespace
