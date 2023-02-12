@@ -200,6 +200,11 @@ public:
   {    m_NonLinearTrainingInterval = i;  }
   int GetNonLinearTrainingInterval() const
   { return m_NonLinearTrainingInterval; }
+
+  void SetInvNetParamsFilename( std::string filename)
+  {    m_inv_net_params_filename = filename;  }
+  std::string GetInvNetParamsFilename() const
+  { return m_inv_net_params_filename; }
   
 protected:
   ParticleShapeMatrixAttributeNonLinear() 
@@ -233,6 +238,8 @@ private:
   std::shared_ptr<vnl_matrix<double>> m_BaseShapeMatrix;
   torch::jit::script::Module m_module;
   torch::Device m_device = torch::kCPU;
+
+  std::string m_inv_net_params_filename;
 };
 
 } // end namespace

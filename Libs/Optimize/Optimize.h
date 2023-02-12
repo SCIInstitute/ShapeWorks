@@ -104,6 +104,7 @@ class Optimize {
   //! Set flag for Non Lineaer Optimization
   void SetNonLinearOptimize(bool value);
   void SetNonLinearTrainingInterval(int value);
+  void SetInvNetParamsFilename(std::string value);
 
   void SetDomainType(shapeworks::DomainType type);
   shapeworks::DomainType GetDomainType();
@@ -384,6 +385,7 @@ class Optimize {
   bool m_use_regression = false;
   bool m_use_non_linear_optimize = false;
   int m_non_linear_training_interval = 50;
+  std::string m_inv_net_params_filename = "";
   bool m_use_mixed_effects = false;
 
   // IO Parameters

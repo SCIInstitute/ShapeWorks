@@ -44,6 +44,16 @@ void OptimizeParameters::set_non_linear_training_interval(int value) {
 }
 
 //---------------------------------------------------------------------------
+std::string OptimizeParameters::get_inv_net_params_filename() {
+  return this->params_.get("inv_net_params_filename", "");
+}
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_inv_net_params_filename(std::string fn) {
+  this->params_.set("inv_net_params_filename", fn);
+}
+
+//---------------------------------------------------------------------------
 std::vector<int> OptimizeParameters::get_number_of_particles() {
   return this->params_.get("number_of_particles", {128});
 }
@@ -273,6 +283,7 @@ bool OptimizeParameters::set_up_optimize(Optimize *optimize) {
   optimize->SetNumberOfParticles(this->get_number_of_particles());
   optimize->SetNonLinearOptimize(this->get_use_non_linear_optimize());
   optimize->SetNonLinearTrainingInterval(this->get_non_linear_training_interval());
+  optimize->SetInvNetParamsFilename(this->get_inv_net_params_filename());
 
   // debug
   std::cout<< " Non Linear Optimize set : " << this->get_use_non_linear_optimize() << std::endl;

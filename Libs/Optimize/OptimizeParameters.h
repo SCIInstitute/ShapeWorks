@@ -19,6 +19,9 @@ class OptimizeParameters {
   int get_non_linear_training_interval();
   void set_non_linear_training_interval(int value);
 
+  std::string get_inv_net_params_filename();
+  void set_inv_net_params_filename(std::string value);
+
   std::string get_optimize_output_prefix();
   void set_optimize_output_prefix(std::string prefix);
 

@@ -335,6 +335,11 @@ void Optimize::SetNonLinearTrainingInterval(int value) {
 }
 
 //---------------------------------------------------------------------------
+void Optimize::SetInvNetParamsFilename(std::string value) {
+  this->m_inv_net_params_filename = value;
+}
+
+//---------------------------------------------------------------------------
 std::vector<int> Optimize::GetNumberOfParticles() { return this->m_number_of_particles; }
 
 //---------------------------------------------------------------------------
@@ -467,6 +472,7 @@ void Optimize::InitializeSampler() {
   m_sampler->GetEnsembleEntropyNonLinearFunction()->SetRecomputeCovarianceInterval(1);
   m_sampler->GetEnsembleEntropyNonLinearFunction()->SetHoldMinimumVariance(false);
   m_sampler->GetEnsembleEntropyNonLinearFunction()->GetShapeMatrix()->SetNonLinearTrainingInterval(m_non_linear_training_interval);
+  m_sampler->GetEnsembleEntropyNonLinearFunction()->GetShapeMatrix()->SetInvNetParamsFilename(m_inv_net_params_filename);
 
   m_sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetMinimumVariance(m_starting_regularization);
   m_sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetRecomputeCovarianceInterval(1);

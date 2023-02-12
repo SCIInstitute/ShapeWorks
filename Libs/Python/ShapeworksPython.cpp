@@ -1636,9 +1636,6 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def("LoadParameterFile",
        &Optimize::LoadParameterFile)
 
-  .def("LoadPytorchModel",
-       &Optimize::LoadPytorchModel)
-
   .def("LoadXlsxProjectFile",
        &Optimize::LoadXlsxProjectFile)
 
