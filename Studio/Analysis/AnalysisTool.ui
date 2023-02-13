@@ -535,7 +535,7 @@ QWidget#particles_panel {
             <item row="3" column="0" colspan="2">
              <widget class="QTabWidget" name="tabWidget">
               <property name="currentIndex">
-               <number>2</number>
+               <number>0</number>
               </property>
               <widget class="QWidget" name="mean_tab">
                <attribute name="title">
@@ -603,7 +603,7 @@ QWidget#particles_panel {
                     </widget>
                    </item>
                    <item row="2" column="1">
-                    <widget class="QSlider" name="group_slider">
+                    <widget class="CustomSlider" name="group_slider">
                      <property name="toolTip">
                       <string>Group slider</string>
                      </property>
@@ -1059,15 +1059,9 @@ QWidget#particles_panel {
                       </widget>
                      </item>
                      <item row="0" column="1">
-                      <widget class="QSlider" name="pcaSlider">
+                      <widget class="CustomSlider" name="pcaSlider">
                        <property name="enabled">
                         <bool>false</bool>
-                       </property>
-                       <property name="minimumSize">
-                        <size>
-                         <width>100</width>
-                         <height>0</height>
-                        </size>
                        </property>
                        <property name="toolTip">
                         <string>Standard deviation slider</string>
@@ -2189,6 +2183,11 @@ Reference Domain</string>
    <extends>QWidget</extends>
    <header>jkqtplotter/jkqtplotter.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>CustomSlider</class>
+   <extends>QSlider</extends>
+   <header>Interface/CustomSlider.h</header>
   </customwidget>
  </customwidgets>
  <resources>

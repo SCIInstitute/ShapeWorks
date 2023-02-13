@@ -14,17 +14,17 @@ CustomSlider::CustomSlider(QWidget* parent) : QSlider(parent) {
   this->setStyleSheet(
       "\
       QSlider::groove:horizontal {\
-        height: 8px; /* the groove expands to the size of the slider by default. by giving it a height, it has a fixed size */ \
+        border: 1px solid #262626;\
+        height: 3px;\
         background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #B1B1B1, stop:1 #c4c4c4);\
-        margin: 2px 0;\
+        margin: 0 5px;\
       }\
       \
       QSlider::handle:horizontal {\
         background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #b4b4b4, stop:1 #8f8f8f);\
         border: 1px solid #5c5c5c;\
         width: 12px;\
-        height: 12px; \
-        margin: -2px 0; /* handle is placed by default on the contents rect of the groove. Expand outside the groove */ \
+        margin: -8px -6px;\
         border-radius: 3px;\
       }\
     ");
