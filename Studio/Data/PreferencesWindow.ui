@@ -107,7 +107,7 @@
           </widget>
          </item>
          <item row="1" column="1">
-          <widget class="QSlider" name="geodesic_cache_multiplier">
+          <widget class="CustomSlider" name="geodesic_cache_multiplier">
            <property name="minimum">
             <number>0</number>
            </property>
@@ -200,7 +200,7 @@
          </widget>
         </item>
         <item row="1" column="2">
-         <widget class="QSlider" name="mesh_cache_memory">
+         <widget class="CustomSlider" name="mesh_cache_memory">
           <property name="maximum">
            <number>100</number>
           </property>
@@ -240,7 +240,7 @@
          </widget>
         </item>
         <item row="4" column="2">
-         <widget class="QSlider" name="num_threads">
+         <widget class="CustomSlider" name="num_threads">
           <property name="minimum">
            <number>1</number>
           </property>
@@ -587,6 +587,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CustomSlider</class>
+   <extends>QSlider</extends>
+   <header>Interface/CustomSlider.h</header>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>pca_range</tabstop>
   <tabstop>pca_steps</tabstop>

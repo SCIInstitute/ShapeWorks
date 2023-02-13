@@ -1607,7 +1607,7 @@ QWidget#domain_panel {
                    </widget>
                   </item>
                   <item row="3" column="1">
-                   <widget class="QSlider" name="remesh_gradation_slider">
+                   <widget class="CustomSlider" name="remesh_gradation_slider">
                     <property name="maximum">
                      <number>100</number>
                     </property>
@@ -1620,7 +1620,7 @@ QWidget#domain_panel {
                    </widget>
                   </item>
                   <item row="1" column="1">
-                   <widget class="QSlider" name="remesh_percent_slider">
+                   <widget class="CustomSlider" name="remesh_percent_slider">
                     <property name="maximum">
                      <number>100</number>
                     </property>
@@ -2013,6 +2013,13 @@ QWidget#domain_panel {
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CustomSlider</class>
+   <extends>QSlider</extends>
+   <header>Interface/CustomSlider.h</header>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>mesh_fill_holes</tabstop>
   <tabstop>mesh_smooth</tabstop>

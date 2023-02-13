@@ -729,7 +729,7 @@ void ShapeWorksStudioApp::create_glyph_submenu() {
   layout->addWidget(glyph_size_label_, 0, 1, 1, 1);
   layout->addWidget(glyph_quality_label_, 1, 1, 1, 1);
 
-  glyph_size_slider_ = new QSlider(widget);
+  glyph_size_slider_ = new CustomSlider(widget);
   glyph_size_slider_->setOrientation(Qt::Horizontal);
   glyph_size_slider_->setMinimum(1);
   glyph_size_slider_->setMaximum(100);
@@ -742,7 +742,7 @@ void ShapeWorksStudioApp::create_glyph_submenu() {
 
   glyph_arrow_scale_ = new QCheckBox("Scale arrows");
 
-  glyph_quality_slider_ = new QSlider(widget);
+  glyph_quality_slider_ = new CustomSlider(widget);
   glyph_quality_slider_->setMinimum(1);
   glyph_quality_slider_->setMaximum(20);
   glyph_quality_slider_->setPageStep(3);
@@ -766,8 +766,8 @@ void ShapeWorksStudioApp::create_glyph_submenu() {
   glyph_quality_label_->setText(QString::number(preferences_.get_glyph_quality()));
   glyph_size_label_->setText(QString::number(preferences_.get_glyph_size()));
 
-  connect(glyph_size_slider_, &QSlider::valueChanged, this, &ShapeWorksStudioApp::handle_glyph_changed);
-  connect(glyph_quality_slider_, &QSlider::valueChanged, this, &ShapeWorksStudioApp::handle_glyph_changed);
+  connect(glyph_size_slider_, &CustomSlider::valueChanged, this, &ShapeWorksStudioApp::handle_glyph_changed);
+  connect(glyph_quality_slider_, &CustomSlider::valueChanged, this, &ShapeWorksStudioApp::handle_glyph_changed);
   connect(glyph_auto_size_, &QCheckBox::clicked, this, &ShapeWorksStudioApp::handle_glyph_changed);
   connect(glyph_arrow_scale_, &QCheckBox::clicked, this, &ShapeWorksStudioApp::handle_glyph_changed);
 
@@ -829,7 +829,7 @@ void ShapeWorksStudioApp::create_iso_submenu() {
     QLabel* size_label = new QLabel(text);
     layout->addWidget(size_label, row, 0, 1, 1);
 
-    QSlider* slider = new QSlider(widget);
+    CustomSlider* slider = new CustomSlider(widget);
     slider->setOrientation(Qt::Horizontal);
     slider->setMinimum(1);
     slider->setMaximum(100);
@@ -838,7 +838,7 @@ void ShapeWorksStudioApp::create_iso_submenu() {
     slider->setTickInterval(10);
     slider->setValue(100);
     slider->setMinimumWidth(200);
-    connect(slider, &QSlider::valueChanged, this, &ShapeWorksStudioApp::handle_opacity_changed);
+    connect(slider, &CustomSlider::valueChanged, this, &ShapeWorksStudioApp::handle_opacity_changed);
 
     layout->addWidget(slider, row, 1, 1, 1);
     widget->setLayout(layout);
