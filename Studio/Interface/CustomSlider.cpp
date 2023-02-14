@@ -13,6 +13,9 @@
 CustomSlider::CustomSlider(QWidget* parent) : QSlider(parent) {
   this->setStyleSheet(
       "\
+      QSlider {\
+        min-height: 24px\
+      }\
       QSlider::groove:horizontal {\
         border: 1px solid #262626;\
         height: 3px;\
