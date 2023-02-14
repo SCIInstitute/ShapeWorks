@@ -44,6 +44,8 @@ using namespace pybind11::literals;
 #include "EigenUtils.h"
 #include "pybind_utils.h"
 
+#include "PythonAnalyze.h"
+
 using namespace shapeworks;
 
 PYBIND11_MODULE(shapeworks_py, m)
@@ -1477,6 +1479,8 @@ PYBIND11_MODULE(shapeworks_py, m)
        &ParticleShapeStatistics::PercentVarByMode,
        "return the variance accounted for by the principal components")
   ;
+
+  define_python_analyze(m);
 
   py::class_<ReconstructSurface<ThinPlateSplineTransform>>(m, "ReconstructSurface_ThinPlateSplineTransform")
 

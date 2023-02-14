@@ -1,9 +1,8 @@
 #include "Analyze.h"
 
 #include <Logging.h>
-#include <StringUtils.h>
-
 #include <MeshWarper.h>
+#include <StringUtils.h>
 
 #include <boost/filesystem.hpp>
 #include <nlohmann/json.hpp>
@@ -12,9 +11,8 @@ using json = nlohmann::ordered_json;
 
 namespace shapeworks {
 
-
 //---------------------------------------------------------------------------
-static json get_eigen_vectors(ParticleShapeStatistics *stats) {
+static json get_eigen_vectors(ParticleShapeStatistics* stats) {
   auto values = stats->Eigenvectors();
 
   std::vector<double> vals;
@@ -29,7 +27,7 @@ static json get_eigen_vectors(ParticleShapeStatistics *stats) {
 }
 
 //---------------------------------------------------------------------------
-static json create_charts(ParticleShapeStatistics *stats) {
+static json create_charts(ParticleShapeStatistics* stats) {
   std::vector<int> x(stats->get_num_modes());
   for (int i = 0; i < x.size(); i++) {
     x[i] = i + 1;
@@ -65,7 +63,16 @@ static json create_charts(ParticleShapeStatistics *stats) {
 
 //---------------------------------------------------------------------------
 Analyze::Analyze(ProjectHandle project) : project_(project), mesh_manager_(new MeshManager()) {
+  SW_LOG("Analyze::Analyze");
   mesh_manager_->set_cache_enabled(false);
+
+  // load data from the project
+  update_shapes();
+
+  // compute stats
+  compute_stats();
+
+  initialize_mesh_warper();
 }
 
 //---------------------------------------------------------------------------
@@ -77,18 +84,10 @@ void Analyze::run_offline_analysis(std::string outfile) {
 
   auto base = boost::filesystem::path(outfile).parent_path();
 
-  // load data from the project
-  update_shapes();
-
-  // compute stats
-  compute_stats();
-
-  initialize_mesh_warper();
-
   json j;
 
-  double range = 2.0; // TODO: make this configurable
-  double steps = 11; // TODO: make this configurable
+  double range = 2.0;  // TODO: make this configurable
+  double steps = 11;   // TODO: make this configurable
   int half_steps = (steps / 2.0);
   double increment = range / half_steps;
 
@@ -169,8 +168,8 @@ void Analyze::run_offline_analysis(std::string outfile) {
         for (int d = 0; d < num_domains; d++) {
           std::string domain_id = std::to_string(d);
           auto mesh = mode_meshes.meshes()[d];
-          std::string name = "pca_mode_" + std::to_string(mode + 1) + "_domain_" + std::to_string(d) + "_" + prefix +
-              "_" + pca_string;
+          std::string name =
+              "pca_mode_" + std::to_string(mode + 1) + "_domain_" + std::to_string(d) + "_" + prefix + "_" + pca_string;
           std::string vtk_filename = name + ".vtk";
           items.push_back(vtk_filename);
 
@@ -181,7 +180,6 @@ void Analyze::run_offline_analysis(std::string outfile) {
           worlds.push_back(particle_filename);
           filename = base / boost::filesystem::path(particle_filename);
           Particles::save_particles_file(filename.string(), shape->get_particles().get_world_particles(d));
-
         }
         item["meshes"] = items;
         item["particles"] = worlds;
@@ -201,13 +199,13 @@ void Analyze::run_offline_analysis(std::string outfile) {
   j["charts"] = create_charts(&stats_);
 
   std::vector<json> shapes;
-  for (int i=0;i<shapes_.size();i++) {
-    auto &s = shapes_[i];
+  for (int i = 0; i < shapes_.size(); i++) {
+    auto& s = shapes_[i];
     auto meshes = s->get_reconstructed_meshes(true);
     std::vector<std::string> filenames;
     for (int d = 0; d < num_domains; d++) {
       auto mesh = meshes.meshes()[d];
-      std::string vtk_filename = "sample_"+std::to_string(i)+"_"+std::to_string(d)+".vtk";
+      std::string vtk_filename = "sample_" + std::to_string(i) + "_" + std::to_string(d) + ".vtk";
       auto filename = base / boost::filesystem::path(vtk_filename);
       Mesh(mesh->get_poly_data()).write(filename.string());
       filenames.push_back(vtk_filename);
@@ -231,6 +229,7 @@ int Analyze::get_num_modes() { return shapes_.size() - 1; }
 
 //---------------------------------------------------------------------------
 Particles Analyze::get_mean_shape_points() {
+  SW_DEBUG("get_mean_shape_points");
   if (!compute_stats()) {
     return Particles();
   }
@@ -240,6 +239,7 @@ Particles Analyze::get_mean_shape_points() {
 
 //---------------------------------------------------------------------------
 ShapeHandle Analyze::get_mean_shape() {
+  SW_DEBUG("get_mean_shape");
   auto shape_points = get_mean_shape_points();
   ShapeHandle shape = create_shape_from_points(shape_points);
 
@@ -343,6 +343,8 @@ bool Analyze::update_shapes() {
 
 //---------------------------------------------------------------------------
 bool Analyze::compute_stats() {
+  SW_DEBUG("compute_stats");
+
   if (stats_ready_) {
     return true;
   }
@@ -363,7 +365,9 @@ bool Analyze::compute_stats() {
   group1_list_.clear();
   group2_list_.clear();
 
+  SW_LOG("number of shapes: {}", shapes_.size());
   for (auto& shape : shapes_) {
+    SW_LOG("shape: {}", shape->get_subject()->get_display_name());
     if (groups_enabled) {
       auto value = shape->get_subject()->get_group_value(group_set);
       if (value == left_group) {
@@ -384,6 +388,7 @@ bool Analyze::compute_stats() {
   }
 
   if (points.empty()) {
+    SW_WARN("No points");
     return false;
   }
 
@@ -455,7 +460,6 @@ void Analyze::initialize_mesh_warper() {
 
     mesh_manager_->get_mesh_warper(i)->set_reference_mesh(mesh.getVTKMesh(), points);
   }
-
 }
 
 }  // namespace shapeworks
