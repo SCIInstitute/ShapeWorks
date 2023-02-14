@@ -777,7 +777,6 @@ bool Constraints::hasConstraints() {
     return true;
   }
 
-  SW_LOG("no constraints");
   return false;
 }
 
