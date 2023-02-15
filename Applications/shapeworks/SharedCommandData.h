@@ -8,18 +8,29 @@
 
 namespace shapeworks {
 
+// struct SharedCommandData
+// {
+//   Image image;
+//   std::unique_ptr<Mesh> mesh;
+//   PhysicalRegion region;
+//   ParticleSystem particleSystem;
+//   Field field;
+
+//   bool validImage() const { return image.itk_image_ != nullptr; }
+//   bool validMesh() const { return mesh != nullptr; }
+//   bool validParticleSystem() const {return particleSystem.N() >= 1 && particleSystem.D() >= 1; }
+// };
 struct SharedCommandData
 {
-  Image image;
-  std::unique_ptr<Mesh> mesh;
-  PhysicalRegion region;
-  ParticleSystem particleSystem;
-  Field field;
+  int image;
+  int mesh;
+  int region;
+  int particleSystem;
+  int field;
 
-  bool validImage() const { return image.itk_image_ != nullptr; }
-  bool validMesh() const { return mesh != nullptr; }
-  bool validParticleSystem() const {return particleSystem.N() >= 1 && particleSystem.D() >= 1; }
+  bool validImage() const { return true; }
+  bool validMesh() const { return true; }
+  bool validParticleSystem() const {return true; }
 };
-
 
 } // shapeworks

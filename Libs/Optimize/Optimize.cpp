@@ -39,6 +39,7 @@
 // pybind
 #include <pybind11/embed.h>
 #include <tbb/global_control.h>
+#include <torch/script.h>
 
 namespace py = pybind11;
 
@@ -63,16 +64,35 @@ static std::string find_in_path(std::string file) {
 #endif
 
 //---------------------------------------------------------------------------
-Optimize::Optimize() { this->m_sampler = std::make_shared<Sampler>(); }
+Optimize::Optimize() { 
+  
+      // std::cout << "in Optimizee. constructor " << std::endl;
+      // const char* file_name = "/home/sci/nawazish.khan/non-linear-ssm-experiments/Supershapes/pytorch_models_NEW_MODELS/serialized_model.pt";
+      // torch::jit::script::Module module;
+      // std::cout << " Initializing 1 " << std::endl;
+
+      // module = torch::jit::load(file_name);
+      // std::cout << " Initializing 2 " << std::endl;
+      
+      // torch::Device m_device = torch::Device(torch::kCUDA, 0);
+      // module.to(m_device);
+      // std::cout << " Initializing 3 " << std::endl;
+  this->m_sampler = std::make_shared<Sampler>();
+
+  
+}
 
 //---------------------------------------------------------------------------
 bool Optimize::Run() {
   // control number of threads
-  int num_threads = tbb::info::default_concurrency();
-  const char* num_threads_env = getenv("TBB_NUM_THREADS");
-  if (num_threads_env) {
-    num_threads = std::max(1, atoi(num_threads_env));
-  }
+  // int num_threads = tbb::info::default_concurrency();
+  // const char* num_threads_env = getenv("TBB_NUM_THREADS");
+  // if (num_threads_env) {
+  //   num_threads = std::max(1, atoi(num_threads_env));
+  // }
+  int num_threads = 1;
+  std:: cout << "Setting number of threads to "<< num_threads << std::endl;
+  
   std::cerr << "ShapeWorks: TBB using " << num_threads << " threads\n";
   tbb::global_control c(tbb::global_control::max_allowed_parallelism, num_threads);
 
@@ -846,6 +866,7 @@ void Optimize::RunOptimize() {
   m_sampler->GetEnsembleEntropyNonLinearFunction()->SetMinimumVarianceDecay(
       m_starting_regularization, m_ending_regularization,
       m_optimization_iterations - m_optimization_iterations_completed);
+  m_sampler->GetEnsembleEntropyNonLinearFunction()->SetOptimizingValue(m_optimizing);
 
   m_sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetMinimumVarianceDecay(
       m_starting_regularization, m_ending_regularization,

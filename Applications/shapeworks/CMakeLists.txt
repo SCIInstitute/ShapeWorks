@@ -4,9 +4,6 @@ set(shapeworks_sources
   Executable.cpp
   Command.cpp
   Commands.cpp
-  ImageCommands.cpp
-  ParticleSystemCommands.cpp
-  MeshCommands.cpp
   )
 set(shapeworks_headers
   Executable.h
@@ -22,8 +19,7 @@ target_include_directories(shapeworks_exe PUBLIC
   $<INSTALL_INTERFACE:include>)
 
 target_link_libraries(shapeworks_exe
-  Mesh ${VTK_LIBRARIES} Optimize Utils trimesh2 Particles
-  pybind11::embed Project Image Groom Analyze
+${TORCH_LIBRARIES} Project Optimize Utils
   )
 
 message(STATUS "opt libs ${OPTIMIZE_LIBRARIES}")

@@ -126,14 +126,17 @@ public:
       {
       this->operator()(i+k, d / this->m_DomainsPerShape) = pos[i];
       }
-    if (this->m_inv_net->GetModelInitialized())
+    
+    if (this->m_optimizing_check && this->m_inv_net->GetModelInitialized())
     {
-      std::cout << "Setting Z0 New " << std::endl;
       vnl_matrix<double> shape_vec_new = this->get_n_columns(d/this->m_DomainsPerShape, 1); // shape: dM X 1
       unsigned int dM = this->rows();
+      std::cout << "Setting Z0 New " << dM << "shape vec size " << shape_vec_new.rows() << shape_vec_new.cols() << std::endl;
+
       try
       {
         torch::Tensor shape_vec_new_tensor = torch::from_blob(shape_vec_new.data_block(), {1,dM});
+        std::cout << "Tensor input size " << shape_vec_new_tensor.sizes() << std::endl;
         torch::Tensor z0_particles = this->m_inv_net->ForwardPass(shape_vec_new_tensor);
         for (unsigned int i = 0; i < VDimension; i++)
         {
@@ -158,6 +161,17 @@ public:
   { this->m_DomainsPerShape = i; }
   int GetDomainsPerShape() const
   { return this->m_DomainsPerShape; }
+
+  void SetOptimizingValue(bool value)
+  {
+    this->m_optimizing_check = value;
+  }
+
+  bool GetOptimizingValue()
+  {
+    return this->m_optimizing_check;
+  }
+
 
   void Initialize()
   {
@@ -192,7 +206,6 @@ public:
     if (!filename.empty())
     {
       this->m_inv_net->LoadParams(filename);
-      // this->m_inv_net->InitializeModel();
     }
   }
 
@@ -229,6 +242,7 @@ protected:
     m_NonLinearTrainingInterval = 10;
     m_BaseShapeMatrix = std::make_shared<vnl_matrix<double>>();
     m_inv_net = std::make_shared<InvertibleNet::Model>();
+    m_optimizing_check = false;
   }
 
   virtual ~ParticleShapeMatrixAttributeNonLinear() {};
@@ -242,6 +256,7 @@ private:
 
   int m_UpdateCounter;
   int m_NonLinearTrainingInterval;
+  bool m_optimizing_check = true;
   std::shared_ptr<vnl_matrix<double>> m_BaseShapeMatrix;
   InvertibleNet::Model::Pointer m_inv_net;
 };
