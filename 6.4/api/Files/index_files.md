@@ -194,6 +194,7 @@ title: Files
         * **file [Studio/Groom/GroomTool.h](../Files/GroomTool_8h.md#file-groomtool.h)** 
     * **dir [Studio/Interface](../Files/dir_f27aadd9c7f02e71212dbf7893d91496.md#dir-studio/interface)** 
         * **file [Studio/Interface/CompareWidget.h](../Files/CompareWidget_8h.md#file-comparewidget.h)** 
+        * **file [Studio/Interface/CustomSlider.h](../Files/CustomSlider_8h.md#file-customslider.h)** 
         * **file [Studio/Interface/ExportImageDialog.h](../Files/ExportImageDialog_8h.md#file-exportimagedialog.h)** 
         * **file [Studio/Interface/KeyboardShortcuts.h](../Files/KeyboardShortcuts_8h.md#file-keyboardshortcuts.h)** 
         * **file [Studio/Interface/LogWindow.h](../Files/LogWindow_8h.md#file-logwindow.h)** 
@@ -243,4 +244,4 @@ title: Files
 
 -------------------------------
 
-Updated on 2023-02-11 at 08:14:51 +0000
+Updated on 2023-02-15 at 21:45:30 +0000

@@ -2309,6 +2309,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#define-sw_log_once" class="md-nav__link">
+    define SW_LOG_ONCE
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2421,6 +2428,10 @@
 <td></td>
 <td><strong><a href="Logging_8h.html#define-sw-close-log">SW_CLOSE_LOG</a></strong>() <br>Close session macro.</td>
 </tr>
+<tr>
+<td></td>
+<td><strong><a href="Logging_8h.html#define-sw-log-once">SW_LOG_ONCE</a></strong>(message, ...) <br>Log once macro, will only log the message once.</td>
+</tr>
 </tbody>
 </table>
 <h2 id="macros-documentation">Macros Documentation</h2>
@@ -2501,6 +2512,20 @@
 <span class="n">shapeworks</span><span class="o">::</span><span class="n">Logging</span><span class="o">::</span><span class="n">Instance</span><span class="p">().</span><span class="n">close_log</span><span class="p">();</span><span class="w"></span>
 </code></pre></div>
 <p>Close session macro. </p>
+<h3 id="define-sw_log_once">define SW_LOG_ONCE</h3>
+<div class="highlight"><pre><span></span><code><span class="cp">#define SW_LOG_ONCE(</span>
+<span class="w">    </span><span class="n">message</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="p">...</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+<span class="p">{</span><span class="w"> </span>\
+<span class="w">    </span><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">logged</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"> </span>\
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">logged</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span>\
+<span class="w">      </span><span class="n">SW_LOG</span><span class="p">(</span><span class="n">message</span><span class="p">,</span><span class="w"> </span><span class="err">##</span><span class="n">__VA_ARGS__</span><span class="p">);</span><span class="w"> </span>\
+<span class="w">      </span><span class="n">logged</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w"> </span>\
+<span class="w">    </span><span class="p">}</span><span class="w"> </span>\
+<span class="p">}</span><span class="w"></span>
+</code></pre></div>
+<p>Log once macro, will only log the message once. </p>
 <h2 id="source-code">Source code</h2>
 <div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
 
@@ -2607,10 +2632,18 @@
 
 <span class="cp">#define SW_CLOSE_LOG() shapeworks::Logging::Instance().close_log();</span>
 
+<span class="cp">#define SW_LOG_ONCE(message, ...) \</span>
+<span class="cp">{ \</span>
+<span class="cp">    static bool logged = false; \</span>
+<span class="cp">    if (!logged) { \</span>
+<span class="cp">      SW_LOG(message, ##__VA_ARGS__); \</span>
+<span class="cp">      logged = true; \</span>
+<span class="cp">    } \</span>
+<span class="cp">}</span>
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-02-11 at 08:14:51 +0000</p>
+<p>Updated on 2023-02-15 at 21:45:30 +0000</p>
 
               
             </article>

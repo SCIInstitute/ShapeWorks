@@ -47,9 +47,9 @@ title: Studio/Interface/ShapeWorksStudioApp.h
 #include <QMainWindow>
 #include <QPointer>
 #include <QProgressBar>
-#include <QSlider>
 #include <QSpinBox>
 #include <QTimer>
+#include <Interface/CustomSlider.h>
 
 // Forward Qt class declarations
 class Ui_ShapeWorksStudioApp;
@@ -262,8 +262,8 @@ class ShapeWorksStudioApp : public QMainWindow {
   QSharedPointer<WheelEventForwarder> wheel_event_forwarder_;
 
   // programmatic UI elements
-  QSlider* glyph_size_slider_;
-  QSlider* glyph_quality_slider_;
+  CustomSlider* glyph_size_slider_;
+  CustomSlider* glyph_quality_slider_;
   QLabel* glyph_size_label_;
   QLabel* glyph_quality_label_;
   QCheckBox* glyph_auto_size_;
@@ -273,7 +273,7 @@ class ShapeWorksStudioApp : public QMainWindow {
   QPointer<StatusBarWidget> status_bar_;
   QSharedPointer<shapeworks::SplashScreen> splash_screen_;
   QErrorMessage error_message_dialog_;
-  std::vector<QSlider*> iso_opacity_sliders_;
+  std::vector<CustomSlider*> iso_opacity_sliders_;
   std::vector<QCheckBox*> domain_particle_checkboxes_;
 
   QString current_message_;
@@ -300,4 +300,4 @@ class ShapeWorksStudioApp : public QMainWindow {
 
 -------------------------------
 
-Updated on 2023-02-11 at 08:14:51 +0000
+Updated on 2023-02-15 at 21:45:30 +0000

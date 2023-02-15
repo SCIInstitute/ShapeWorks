@@ -2301,9 +2301,9 @@
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QMainWindow&gt;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QPointer&gt;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QProgressBar&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QSlider&gt;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QSpinBox&gt;</span><span class="cp"></span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QTimer&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Interface/CustomSlider.h&gt;</span><span class="cp"></span>
 
 <span class="c1">// Forward Qt class declarations</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Ui_ShapeWorksStudioApp</span><span class="p">;</span><span class="w"></span>
@@ -2516,8 +2516,8 @@
 <span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">WheelEventForwarder</span><span class="o">&gt;</span><span class="w"> </span><span class="n">wheel_event_forwarder_</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">  </span><span class="c1">// programmatic UI elements</span>
-<span class="w">  </span><span class="n">QSlider</span><span class="o">*</span><span class="w"> </span><span class="n">glyph_size_slider_</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="n">QSlider</span><span class="o">*</span><span class="w"> </span><span class="n">glyph_quality_slider_</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">CustomSlider</span><span class="o">*</span><span class="w"> </span><span class="n">glyph_size_slider_</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">CustomSlider</span><span class="o">*</span><span class="w"> </span><span class="n">glyph_quality_slider_</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="n">QLabel</span><span class="o">*</span><span class="w"> </span><span class="n">glyph_size_label_</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="n">QLabel</span><span class="o">*</span><span class="w"> </span><span class="n">glyph_quality_label_</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="n">QCheckBox</span><span class="o">*</span><span class="w"> </span><span class="n">glyph_auto_size_</span><span class="p">;</span><span class="w"></span>
@@ -2527,7 +2527,7 @@
 <span class="w">  </span><span class="n">QPointer</span><span class="o">&lt;</span><span class="n">StatusBarWidget</span><span class="o">&gt;</span><span class="w"> </span><span class="n">status_bar_</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">shapeworks</span><span class="o">::</span><span class="n">SplashScreen</span><span class="o">&gt;</span><span class="w"> </span><span class="n">splash_screen_</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="n">QErrorMessage</span><span class="w"> </span><span class="n">error_message_dialog_</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">QSlider</span><span class="o">*&gt;</span><span class="w"> </span><span class="n">iso_opacity_sliders_</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">CustomSlider</span><span class="o">*&gt;</span><span class="w"> </span><span class="n">iso_opacity_sliders_</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">QCheckBox</span><span class="o">*&gt;</span><span class="w"> </span><span class="n">domain_particle_checkboxes_</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">  </span><span class="n">QString</span><span class="w"> </span><span class="n">current_message_</span><span class="p">;</span><span class="w"></span>
@@ -2551,7 +2551,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-02-11 at 08:14:51 +0000</p>
+<p>Updated on 2023-02-15 at 21:45:30 +0000</p>
 
               
             </article>

@@ -11,6 +11,7 @@ title: Classes
 * **class [ColorScheme](../Classes/classColorScheme.md)** 
     * **struct [rgb](../Classes/structColorScheme_1_1rgb.md)** 
 * **class [ColorSchemes](../Classes/classColorSchemes.md)** 
+* **class [CustomSlider](../Classes/classCustomSlider.md)** 
 * **class [CustomSurfaceReconstructionFilter](../Classes/classCustomSurfaceReconstructionFilter.md)** 
 * **class [FEAreaCoverage](../Classes/classFEAreaCoverage.md)** 
     * **class [Surface](../Classes/classFEAreaCoverage_1_1Surface.md)** 
@@ -266,4 +267,4 @@ title: Classes
 
 -------------------------------
 
-Updated on 2023-02-11 at 08:14:51 +0000
+Updated on 2023-02-15 at 21:45:30 +0000

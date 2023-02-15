@@ -34,6 +34,7 @@ title: Libs/Common/Logging.h
 |  | **[SW_STATUS](../Files/Logging_8h.md#define-sw-status)**(message, ...) <br>Don't write to log, but set status (e.g. in the Studio statusbar)  |
 |  | **[SW_PROGRESS](../Files/Logging_8h.md#define-sw-progress)**(value, message, ...)  |
 |  | **[SW_CLOSE_LOG](../Files/Logging_8h.md#define-sw-close-log)**() <br>Close session macro.  |
+|  | **[SW_LOG_ONCE](../Files/Logging_8h.md#define-sw-log-once)**(message, ...) <br>Log once macro, will only log the message once.  |
 
 
 
@@ -157,6 +158,24 @@ shapeworks::Logging::Instance().close_log();
 
 Close session macro. 
 
+### define SW_LOG_ONCE
+
+```cpp
+#define SW_LOG_ONCE(
+    message,
+    ...
+)
+{ \
+    static bool logged = false; \
+    if (!logged) { \
+      SW_LOG(message, ##__VA_ARGS__); \
+      logged = true; \
+    } \
+}
+```
+
+Log once macro, will only log the message once. 
+
 ## Source code
 
 ```cpp
@@ -265,10 +284,18 @@ class Logging {
 
 #define SW_CLOSE_LOG() shapeworks::Logging::Instance().close_log();
 
+#define SW_LOG_ONCE(message, ...) \
+{ \
+    static bool logged = false; \
+    if (!logged) { \
+      SW_LOG(message, ##__VA_ARGS__); \
+      logged = true; \
+    } \
+}
 }  // namespace shapeworks
 ```
 
 
 -------------------------------
 
-Updated on 2023-02-11 at 08:14:51 +0000
+Updated on 2023-02-15 at 21:45:30 +0000
