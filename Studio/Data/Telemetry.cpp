@@ -63,11 +63,11 @@ void Telemetry::handle_network_reply(QNetworkReply* reply) {
     // get response from json
     QJsonObject json_obj = json.object();
     if (json_obj["response"].toString() == "ok") {
-      SW_DEBUG("Telemetry::handleNetworkReply: ok");
+      //SW_DEBUG("Telemetry::handleNetworkReply: ok");
 
       auto events = prefs_.get_pending_telemetry_events();
       if (!events.empty()) {
-        SW_DEBUG("Telemetry::handleNetworkReply: sending pending events");
+        //SW_DEBUG("Telemetry::handleNetworkReply: sending pending events");
         auto event = events.front();
         events.pop_front();
         prefs_.set_pending_telemetry_events(events);
@@ -77,13 +77,12 @@ void Telemetry::handle_network_reply(QNetworkReply* reply) {
       return;
     }
   } catch (std::exception& e) {
-    SW_DEBUG("Telemetry::handleNetworkReply: exception: {}", e.what());
+    //SW_DEBUG("Telemetry::handleNetworkReply: exception: {}", e.what());
     return;
   }
 
   enabled_ = false;
   // store event for later retry
-  SW_DEBUG("Storing event for later retry");
   store_event(active_event_);
   active_event_ = "";
 }
@@ -120,7 +119,7 @@ void Telemetry::send_event(const QString& event) {
   QUrlQuery query;
   query.addQueryItem("secret", api_secret);
 
-  QString server = "http://127.0.0.1:5001";
+  QString server = "https://tracker.shapeworks-cloud.org:5001";
   QUrl url(server + "/post_json");
   url.setQuery(query);
   QNetworkRequest network_request(url);
