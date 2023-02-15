@@ -920,17 +920,19 @@ void AnalysisTool::enable_actions(bool newly_enabled) {
     update_domain_alignment_box();
   }
 
-  auto domain_types = session_->get_groomed_domain_types();
-  bool image_domain = domain_types.size() > 0 && domain_types[0] == DomainType::Image;
-  ui_->distance_transfom_radio_button->setEnabled(session_->particles_present() && session_->get_groomed_present() &&
-                                                  image_domain);
+  if (session_->particles_present()) {
+    auto domain_types = session_->get_groomed_domain_types();
+    bool image_domain = domain_types.size() > 0 && domain_types[0] == DomainType::Image;
+    ui_->distance_transfom_radio_button->setEnabled(session_->particles_present() && session_->get_groomed_present() &&
+                                                    image_domain);
 
-  ui_->mesh_warping_radio_button->setEnabled(session_->particles_present() && session_->get_groomed_present());
+    ui_->mesh_warping_radio_button->setEnabled(session_->particles_present() && session_->get_groomed_present());
 
-  if (!ui_->mesh_warping_radio_button->isEnabled()) {
-    ui_->legacy_radio_button->setChecked(true);
+    if (!ui_->mesh_warping_radio_button->isEnabled()) {
+      ui_->legacy_radio_button->setChecked(true);
+    }
+    reconstruction_method_changed();
   }
-  reconstruction_method_changed();
 
   update_group_boxes();
   ui_->sampleSpinBox->setMaximum(session_->get_num_shapes() - 1);
