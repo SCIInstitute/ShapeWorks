@@ -45,7 +45,7 @@ vtkSmartPointer<vtkPolyData> MeshWarper::build_mesh(const Eigen::MatrixXd& parti
     double* p = poly_data->GetPoint(i);
     if (std::isnan(p[0]) || std::isnan(p[1]) || std::isnan(p[2])) {
       this->warp_available_ = false;  // failed
-      std::cerr << "Reconstruction Failed\n";
+      SW_ERROR("Reconstruction failed. NaN detected in mesh.");
       return nullptr;
     }
   }
@@ -438,7 +438,7 @@ bool MeshWarper::generate_warp() {
   Eigen::MatrixXd vertices = referenceMesh.points();
   this->faces_ = referenceMesh.faces();
 
-  // perform warp
+  // generate the warp
   if (!MeshWarper::generate_warp_matrix(vertices, this->faces_, this->vertices_, this->warp_)) {
     this->update_progress(1.0);
     this->warp_available_ = false;
@@ -473,7 +473,7 @@ bool MeshWarper::generate_warp_matrix(Eigen::MatrixXd TV, Eigen::MatrixXi TF, co
   // faster and looks OK
   const int k = 2;
   if (!igl::biharmonic_coordinates(TV, TF, S, k, W)) {
-    std::cerr << "igl:biharmonic_coordinates failed\n";
+    SW_ERROR("Mesh Warp Error: igl:biharmonic_coordinates failed");
     return false;
   }
   // Throw away interior tet-vertices, keep weights and indices of boundary

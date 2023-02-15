@@ -140,7 +140,7 @@ StringList ProjectUtils::get_values(StringList prefixes, StringList domain_names
     for (auto& [key, value] : key_map) {
       for (const auto& prefix : prefixes) {
         if (key == prefix + domain) {
-          values.push_back(value);
+          values.push_back(StringUtils::replace_string(value, "\\", "/"));
         }
       }
     }

@@ -20,9 +20,9 @@
 #include <QMainWindow>
 #include <QPointer>
 #include <QProgressBar>
-#include <QSlider>
 #include <QSpinBox>
 #include <QTimer>
+#include <Interface/CustomSlider.h>
 
 // Forward Qt class declarations
 class Ui_ShapeWorksStudioApp;
@@ -129,11 +129,11 @@ class ShapeWorksStudioApp : public QMainWindow {
   void handle_error(std::string str);
   void handle_warning(std::string str);
   void handle_debug(std::string str);
+  void handle_status(std::string str);
+  void handle_progress_with_message(int amt, std::string str);
+  void handle_progress(int amt);
 
   void message_callback(std::string str);
-
-  void handle_status(QString str);
-  void handle_progress(int amt);
   void handle_new_mesh();
   void handle_clear_cache();
   void handle_compare_settings_changed();
@@ -239,8 +239,8 @@ class ShapeWorksStudioApp : public QMainWindow {
   QSharedPointer<WheelEventForwarder> wheel_event_forwarder_;
 
   // programmatic UI elements
-  QSlider* glyph_size_slider_;
-  QSlider* glyph_quality_slider_;
+  CustomSlider* glyph_size_slider_;
+  CustomSlider* glyph_quality_slider_;
   QLabel* glyph_size_label_;
   QLabel* glyph_quality_label_;
   QCheckBox* glyph_auto_size_;
@@ -250,7 +250,7 @@ class ShapeWorksStudioApp : public QMainWindow {
   QPointer<StatusBarWidget> status_bar_;
   QSharedPointer<shapeworks::SplashScreen> splash_screen_;
   QErrorMessage error_message_dialog_;
-  std::vector<QSlider*> iso_opacity_sliders_;
+  std::vector<CustomSlider*> iso_opacity_sliders_;
   std::vector<QCheckBox*> domain_particle_checkboxes_;
 
   QString current_message_;

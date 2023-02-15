@@ -10,6 +10,7 @@
 #include <vtkCenterOfMass.h>
 #include <vtkLandmarkTransform.h>
 #include <vtkPointSet.h>
+#include <Logging.h>
 
 #include <boost/filesystem.hpp>
 #include <vector>
@@ -470,7 +471,7 @@ void Groom::increment_progress(int amount) {
   std::scoped_lock lock(mutex);
   this->progress_counter_ += amount;
   this->progress_ = static_cast<float>(this->progress_counter_) / static_cast<float>(this->total_ops_) * 100.0;
-  this->update_progress();
+  SW_PROGRESS(progress_, fmt::format("Grooming ({}/{} ops)", progress_counter_, total_ops_));
 }
 
 //---------------------------------------------------------------------------

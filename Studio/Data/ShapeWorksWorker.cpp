@@ -2,7 +2,7 @@
 #include <Shape.h>
 #include <Data/ShapeWorksWorker.h>
 #include <SurfaceReconstructor.h>
-#include <Groom/QGroom.h>
+#include <Groom/Groom.h>
 #include <Optimize/OptimizeParameters.h>
 #include <Optimize/Optimize.h>
 #include <Logging.h>
@@ -10,7 +10,7 @@
 namespace shapeworks {
 
 //---------------------------------------------------------------------------
-ShapeworksWorker::ShapeworksWorker(ThreadType type, QSharedPointer<QGroom> groom, QSharedPointer<Optimize> optimize,
+ShapeworksWorker::ShapeworksWorker(ThreadType type, QSharedPointer<Groom> groom, QSharedPointer<Optimize> optimize,
                                    QSharedPointer<OptimizeParameters> optimize_parameters,
                                    QSharedPointer<Session> session, double maxAngle, float decimationPercent,
                                    int numClusters)

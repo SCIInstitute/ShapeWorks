@@ -40,13 +40,13 @@ void Telemetry::record_event(const QString& name, const QVariantMap& params) {
   QString api_secret{GA_API_SECRET};
 
   if (measurement_id.isEmpty() || api_secret.isEmpty()) {
-    SW_LOG("Telemetry disabled, no measurement id or api secret");
+    SW_LOG_ONCE("Telemetry disabled, no measurement id or api secret");
     enabled_ = false;
     return;
   }
 
   if (!prefs_.get_telemetry_enabled()) {
-    SW_LOG("Telemetry disabled by preferences");
+    SW_LOG_ONCE("Telemetry disabled by preferences");
     enabled_ = false;
     return;
   }

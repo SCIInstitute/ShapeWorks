@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Data/Preferences.h>
-#include <Groom/QGroom.h>
+#include <Groom/Groom.h>
 #include <Groom/GroomParameters.h>
 #include <Data/Telemetry.h>
 
@@ -97,7 +97,7 @@ class GroomTool : public QWidget {
   Ui_GroomTool* ui_;
   QSharedPointer<Session> session_;
 
-  QSharedPointer<shapeworks::QGroom> groom_;
+  QSharedPointer<shapeworks::Groom> groom_;
 
   QElapsedTimer timer_;
 
