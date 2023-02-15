@@ -105,7 +105,6 @@ function install_conda() {
   CONDA_PACKAGES=(python=3.9.13 \
     openblas=0.3.20 \
     'vtk=9.1.0=qt*' \
-    scikit-learn=1.1.1 \
     pip=22.1.2
    )		      
 
@@ -186,6 +185,7 @@ function install_conda() {
   if ! pip install bokeh==2.4.3;                        then return 1; fi
   if ! pip install seaborn==0.11.2;                     then return 1; fi
   if ! pip install swcc==0.7.0;                         then return 1; fi
+  if ! pip install scikit-learn==1.1.1;                 then return 1; fi
   if ! pip install Python/DatasetUtilsPackage;          then return 1; fi # install the local GirderConnector code as a package
   if ! pip install Python/DocumentationUtilsPackage;    then return 1; fi # install shapeworks auto-documentation as a package
   if ! pip install Python/DataAugmentationUtilsPackage; then return 1; fi # install data augmentation code as a package
