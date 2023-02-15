@@ -57,8 +57,6 @@ void UpdateChecker::run_update_check() {
 void UpdateChecker::handleNetworkReply(QNetworkReply* reply) {
   std::string response = QString(reply->readAll()).toStdString();
 
-  response = "<junk/>";
-
   // get the json response
   try {
     auto j = json::parse(response);
