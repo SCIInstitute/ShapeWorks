@@ -302,6 +302,8 @@ class Optimize {
   //! transform a point if necessary
   vnl_vector_fixed<double, 3> TransformPoint(int domain, vnl_vector_fixed<double, 3> input);
 
+  void UpdateProgress();
+
  protected:
   //! Set the iteration callback. Derived classes should override to set their own callback
   virtual void SetIterationCallback();
@@ -460,6 +462,12 @@ class Optimize {
   shapeworks::OptimizationVisualizer visualizer_;
 
   std::shared_ptr<Project> project_;
+
+  std::chrono::system_clock::time_point m_start_time;
+  std::chrono::system_clock::time_point m_last_update_time;
+  std::chrono::system_clock::time_point m_last_remaining_update_time;
+  std::string m_remaining_time_message;
+
 };
 
 }  // namespace shapeworks

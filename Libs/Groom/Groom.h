@@ -33,8 +33,6 @@ class Groom {
                                                                   vtkSmartPointer<vtkPoints> target);
 
  protected:
-  //! call to be overridden by subclasses
-  virtual void update_progress(){};
 
   std::atomic<float> progress_ = 0;
   std::atomic<int> total_ops_ = 0;

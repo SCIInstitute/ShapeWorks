@@ -68,7 +68,7 @@ Q_SIGNALS:
   void optimize_complete();
 
   void progress(int);
-  void status(QString);
+  void status(std::string);
 
 private:
 

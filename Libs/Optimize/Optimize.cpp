@@ -28,13 +28,12 @@
 #include "Optimize.h"
 #include "OptimizeParameterFile.h"
 #include "OptimizeParameters.h"
+#include "ParticleGoodBadAssessment.h"
 #include "ParticleImageDomain.h"
 #include "ParticleImplicitSurfaceDomain.h"
 #include "VtkMeshWrapper.h"
 #include "object_reader.h"
 #include "object_writer.h"
-
-#include "ParticleGoodBadAssessment.h"
 
 // pybind
 #include <pybind11/embed.h>
@@ -67,6 +66,9 @@ Optimize::Optimize() { this->m_sampler = std::make_shared<Sampler>(); }
 
 //---------------------------------------------------------------------------
 bool Optimize::Run() {
+  m_start_time = std::chrono::system_clock::now();
+  m_last_update_time = m_start_time;
+
   // control number of threads
   int num_threads = tbb::info::default_concurrency();
   const char* num_threads_env = getenv("TBB_NUM_THREADS");
@@ -193,11 +195,6 @@ bool Optimize::Run() {
 
 //---------------------------------------------------------------------------
 int Optimize::SetParameters() {
-  if (this->m_verbosity_level == 0) {
-    std::cout << "Verbosity 0: This will be the only output on your screen, "
-                 "unless there are any errors. Increase the verbosity if needed.\n";
-  }
-
   // sanity check
   if (m_domains_per_shape != m_number_of_particles.size()) {
     SW_ERROR("Inconsistency in parameters... m_domains_per_shape != m_number_of_particles.size()");
@@ -967,6 +964,7 @@ void Optimize::IterateCallback(itk::Object*, const itk::EventObject&) {
       }
     }
   }
+  UpdateProgress();
 }
 
 //---------------------------------------------------------------------------
@@ -2164,6 +2162,7 @@ void Optimize::SetSharedBoundaryEnabled(bool enabled) { m_sampler->SetSharedBoun
 //---------------------------------------------------------------------------
 void Optimize::SetSharedBoundaryWeight(double weight) { m_sampler->SetSharedBoundaryWeight(weight); }
 
+//---------------------------------------------------------------------------
 void Optimize::ComputeTotalIterations() {
   total_particle_iterations_ = 0;
 
@@ -2201,4 +2200,47 @@ void Optimize::ComputeTotalIterations() {
   }
 }
 
+//---------------------------------------------------------------------------
+void Optimize::UpdateProgress() {
+  auto now = std::chrono::system_clock::now();
+
+  if ((now - m_last_update_time) > std::chrono::milliseconds(100)) {
+    m_last_update_time = now;
+    std::chrono::duration<double> elapsed_seconds =
+        std::chrono::duration_cast<std::chrono::seconds>(now - m_start_time);
+    double seconds_per_iteration = elapsed_seconds.count() / current_particle_iterations_;
+    double seconds_remaining = seconds_per_iteration * (total_particle_iterations_ - current_particle_iterations_);
+    int hours = static_cast<int>(seconds_remaining / 3600);
+    int minutes = static_cast<int>((seconds_remaining - (hours * 3600)) / 60);
+    int seconds = static_cast<int>(seconds_remaining - (hours * 3600) - (minutes * 60));
+
+    std::string message;
+    if (m_optimizing) {
+      message = "Optimizing";
+    } else {
+      message = "Initializing";
+    }
+
+    int stage_num_iterations = m_sampler->GetOptimizer()->GetNumberOfIterations();
+    int stage_total_iterations = m_sampler->GetOptimizer()->GetMaximumNumberOfIterations();
+    int num_particles = m_sampler->GetParticleSystem()->GetNumberOfParticles(0);
+
+    message = fmt::format("{} : Particles: {}, Iteration: {} / {}", message, num_particles, stage_num_iterations,
+                          stage_total_iterations);
+
+    if ((now - m_last_remaining_update_time) > std::chrono::seconds(1)) {
+      m_remaining_time_message = fmt::format("({:02d}:{:02d}:{:02d} remaining)", hours, minutes, seconds);
+      m_last_remaining_update_time = now;
+    }
+
+    // only show the time remaining if it's been more than 3 seconds
+    if (elapsed_seconds > std::chrono::seconds(3)) {
+      message = fmt::format("{} {}", message, m_remaining_time_message);
+    }
+
+    double progress =
+        static_cast<double>(current_particle_iterations_) * 100 / static_cast<double>(total_particle_iterations_);
+    SW_PROGRESS(progress, message);
+  }
+}
 }  // namespace shapeworks

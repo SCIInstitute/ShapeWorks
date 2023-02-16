@@ -115,11 +115,9 @@ SET(STUDIO_JOB_MOC_HDRS
 
 SET(STUDIO_GROOM_SRCS
   Groom/GroomTool.cpp
-  Groom/QGroom.cpp
   )
 SET(STUDIO_GROOM_MOC_HDRS
   Groom/GroomTool.h
-  Groom/QGroom.h
   )
 
 SET(STUDIO_PYTHON_SRCS
@@ -171,6 +169,7 @@ SET(STUDIO_UTILS_MOC_HDRS
 
 SET(STUDIO_INTERFACE_SRCS
   Interface/CompareWidget.cpp
+  Interface/CustomSlider.cpp
   Interface/ExportImageDialog.cpp
   Interface/KeyboardShortcuts.cpp
   Interface/LogWindow.cpp
@@ -184,6 +183,7 @@ SET(STUDIO_INTERFACE_SRCS
   )
 SET(STUDIO_INTERFACE_MOC_HDRS
   Interface/CompareWidget.h
+  Interface/CustomSlider.h
   Interface/ExportImageDialog.h
   Interface/KeyboardShortcuts.h
   Interface/LogWindow.h

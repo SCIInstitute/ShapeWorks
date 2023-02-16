@@ -12,7 +12,7 @@ CompareWidget::CompareWidget(QWidget *parent) : QWidget(parent), ui_(new Ui::Com
   connect(ui_->original, &QCheckBox::toggled, this, &CompareWidget::settings_changed);
   connect(ui_->groomed, &QCheckBox::toggled, this, &CompareWidget::settings_changed);
   connect(ui_->reconstructed, &QCheckBox::toggled, this, &CompareWidget::settings_changed);
-  connect(ui_->opacity, &QSlider::valueChanged, this, &CompareWidget::settings_changed);
+  connect(ui_->opacity, &CustomSlider::valueChanged, this, &CompareWidget::settings_changed);
   connect(ui_->mean_shape, &QCheckBox::toggled, this, &CompareWidget::settings_changed);
 }
 
