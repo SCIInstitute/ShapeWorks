@@ -2300,7 +2300,17 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">handle_network_reply</span><span class="p">(</span><span class="n">QNetworkReply</span><span class="o">*</span><span class="w"> </span><span class="n">reply</span><span class="p">);</span><span class="w"></span>
 
 <span class="w"> </span><span class="k">private</span><span class="o">:</span><span class="w"></span>
+<span class="w">  </span><span class="n">QString</span><span class="w"> </span><span class="n">create_event</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">QString</span><span class="o">&amp;</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">QVariantMap</span><span class="o">&amp;</span><span class="w"> </span><span class="n">params</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">send_event</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">QString</span><span class="o">&amp;</span><span class="w"> </span><span class="n">event</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">store_event</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">QString</span><span class="o">&amp;</span><span class="w"> </span><span class="n">event</span><span class="p">);</span><span class="w"></span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w"></span>
+
 <span class="w">  </span><span class="n">QNetworkAccessManager</span><span class="w"> </span><span class="n">network_</span><span class="p">;</span><span class="w"></span>
+
+<span class="w">  </span><span class="n">QString</span><span class="w"> </span><span class="n">active_event_</span><span class="p">;</span><span class="w"></span>
 
 <span class="w">  </span><span class="n">Preferences</span><span class="o">&amp;</span><span class="w"> </span><span class="n">prefs_</span><span class="p">;</span><span class="w"></span>
 <span class="p">};</span><span class="w"></span>
@@ -2308,7 +2318,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-02-15 at 21:45:30 +0000</p>
+<p>Updated on 2023-02-16 at 01:32:45 +0000</p>
 
               
             </article>

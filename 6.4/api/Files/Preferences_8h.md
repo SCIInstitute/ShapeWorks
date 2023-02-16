@@ -147,6 +147,9 @@ class Preferences : public QObject {
   bool get_telemetry_asked();
   void set_telemetry_asked(bool asked);
 
+  QStringList get_pending_telemetry_events();
+  void set_pending_telemetry_events(QStringList events);
+
  Q_SIGNALS:
 
   void color_scheme_changed(int newIndex);
@@ -167,4 +170,4 @@ class Preferences : public QObject {
 
 -------------------------------
 
-Updated on 2023-02-15 at 21:45:30 +0000
+Updated on 2023-02-16 at 01:32:45 +0000

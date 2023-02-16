@@ -46,7 +46,17 @@ class Telemetry : public QObject {
   void handle_network_reply(QNetworkReply* reply);
 
  private:
+  QString create_event(const QString& name, const QVariantMap& params);
+
+  void send_event(const QString& event);
+
+  void store_event(const QString& event);
+
+  bool enabled_ = true;
+
   QNetworkAccessManager network_;
+
+  QString active_event_;
 
   Preferences& prefs_;
 };
@@ -57,4 +67,4 @@ class Telemetry : public QObject {
 
 -------------------------------
 
-Updated on 2023-02-15 at 21:45:30 +0000
+Updated on 2023-02-16 at 01:32:45 +0000

@@ -114,6 +114,8 @@ Inherits from QObject
 | void | **[set_telemetry_enabled](../Classes/classPreferences.md#function-set-telemetry-enabled)**(bool enabled) |
 | bool | **[get_telemetry_asked](../Classes/classPreferences.md#function-get-telemetry-asked)**() |
 | void | **[set_telemetry_asked](../Classes/classPreferences.md#function-set-telemetry-asked)**(bool asked) |
+| QStringList | **[get_pending_telemetry_events](../Classes/classPreferences.md#function-get-pending-telemetry-events)**() |
+| void | **[set_pending_telemetry_events](../Classes/classPreferences.md#function-set-pending-telemetry-events)**(QStringList events) |
 
 ## Detailed Description
 
@@ -814,6 +816,22 @@ void set_telemetry_asked(
 ```
 
 
+### function get_pending_telemetry_events
+
+```cpp
+QStringList get_pending_telemetry_events()
+```
+
+
+### function set_pending_telemetry_events
+
+```cpp
+void set_pending_telemetry_events(
+    QStringList events
+)
+```
+
+
 -------------------------------
 
-Updated on 2023-02-15 at 21:45:30 +0000
+Updated on 2023-02-16 at 01:32:44 +0000
