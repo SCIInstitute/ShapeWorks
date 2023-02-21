@@ -1,7 +1,8 @@
 #pragma once
 
-#include <Project/Project.h>
 #include <ParticleShapeStatistics.h>
+#include <Project/Project.h>
+
 #include "Shape.h"
 
 namespace shapeworks {
@@ -19,6 +20,7 @@ class Analyze {
   void run_offline_analysis(std::string outfile);
 
   ShapeList get_shapes();
+  int get_num_subjects();
 
   int get_num_modes();
 
@@ -32,8 +34,9 @@ class Analyze {
 
   ShapeHandle create_shape_from_points(Particles points);
 
- private:
+  Eigen::VectorXf get_subject_features(int subject, std::string feature_name);
 
+ private:
   bool update_shapes();
   bool compute_stats();
 
@@ -43,7 +46,6 @@ class Analyze {
   //! Break apart combined points into per-domain
   Particles convert_from_combined(const Eigen::VectorXd& points);
 
-
   ProjectHandle project_;
 
   // collection of shapes
@@ -52,11 +54,9 @@ class Analyze {
   ShapeList group1_list_;
   ShapeList group2_list_;
 
-
   std::shared_ptr<MeshManager> mesh_manager_;
 
   ParticleShapeStatistics stats_;
   bool stats_ready_ = false;
-
 };
 }  // namespace shapeworks

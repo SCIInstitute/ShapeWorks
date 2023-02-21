@@ -462,4 +462,23 @@ void Analyze::initialize_mesh_warper() {
   }
 }
 
+//---------------------------------------------------------------------------
+int Analyze::get_num_subjects() { return shapes_.size(); }
+
+//---------------------------------------------------------------------------
+Eigen::VectorXf Analyze::get_subject_features(int subject, std::string feature_name) {
+  if (subject >= shapes_.size()) {
+    return Eigen::VectorXf();
+  }
+
+  auto shape = shapes_[subject];
+  auto particles = shape->get_particles();
+  auto points = particles.get_world_points(0);
+
+  auto reconstructed_meshes = shape->get_reconstructed_meshes(true);
+
+  shape->load_feature(DisplayMode::Reconstructed, feature_name);
+  return shape->get_point_features(feature_name);
+}
+
 }  // namespace shapeworks

@@ -4,6 +4,7 @@
 
 #include <Analyze/Analyze.h>
 #include <Analyze/Shape.h>
+#include <pybind11/eigen.h>
 
 namespace py = pybind11;
 using namespace pybind11::literals;
@@ -23,9 +24,15 @@ void define_python_analyze(py::module_ m) {
       .def("run_offline_analysis", &Analyze::run_offline_analysis)
       .def("get_shapes", &Analyze::get_shapes)
       .def("get_num_modes", &Analyze::get_num_modes)
-      .def("get_mean_shape_points", &Analyze::get_mean_shape_points)
+      .def("get_mean_shape_points",
+           [](Analyze& analyze) -> decltype(auto) {
+             auto particles = analyze.get_mean_shape_points();
+             return particles.get_combined_global_particles();
+           })
       .def("get_shape_points", &Analyze::get_shape_points)
       .def("get_mode_shape", &Analyze::get_mode_shape)
       .def("groups_active", &Analyze::groups_active)
+      .def("get_subject_features", &Analyze::get_subject_features)
+      .def("get_num_subjects", &Analyze::get_num_subjects)
       .def("create_shape_from_points", &Analyze::create_shape_from_points);
 }
