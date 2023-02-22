@@ -9,7 +9,10 @@ import scipy
 import spm1d
 import vtk
 from vtk.util.numpy_support import vtk_to_numpy
-import os
+
+from shapeworks.utils import sw_message
+from shapeworks.utils import sw_progress
+from shapeworks.utils import sw_check_abort
 
 import os, sys
 from tqdm import tqdm
@@ -47,11 +50,10 @@ class CorrespondenceNetwork:
     def set_model_type(self, model_type):
         self.flag_model = model_type
 
-
     def compute_mean_shape(self):
+        sw_message("Computing mean shape")
         mesh = self.analyze.get_mean_shape()
         mesh.write("mesh.vtk")
-
 
         #read in vtk mean surface and get vertices and normals
         reader = vtk.vtkPolyDataReader()
@@ -65,7 +67,9 @@ class CorrespondenceNetwork:
         mesh_normals = vtk_to_numpy(surface.GetPointData().GetNormals())
         mesh_points = vtk_to_numpy(surface.GetPoints().GetData())
         mean_shape_points = self.analyze.get_mean_shape_points()
-
+        # reshape to 3 columns
+        mean_shape = mean_shape_points.reshape(-1, 3)
+        return mesh_points, mesh_normals, mean_shape
 
     def run(self):
         project = self.project
@@ -76,28 +80,10 @@ class CorrespondenceNetwork:
         activities = self.activities
         num_subjects = analyze.get_num_subjects()
         timepoints = self.timepoints
+        mesh_points, mesh_normals, mean_shape = self.compute_mean_shape()
 
         # #### scalar thickness dataset - each subject has particle values for a single timepoint and no activities ####
         if flag_model == 'cortthick':
-
-            print("Computing mean shape")
-            mesh = analyze.get_mean_shape()
-            mesh.write("mesh.vtk")
-
-            # read in vtk mean surface and get vertices and normals
-            reader = vtk.vtkPolyDataReader()
-            reader.SetFileName("mesh.vtk")
-            reader.Update()
-            surface = reader.GetOutput()
-            norms = vtk.vtkPolyDataNormals()
-            norms.SetInputData(surface)
-            norms.ComputePointNormalsOn()
-            norms.Update()
-            mesh_normals = vtk_to_numpy(surface.GetPointData().GetNormals())
-            mesh_points = vtk_to_numpy(surface.GetPoints().GetData())
-            mean_shape_points = analyze.get_mean_shape_points()
-            # reshape to 3 columns
-            mean_shape = mean_shape_points.reshape(-1, 3)
 
             target_group = self.target_group
             print(f"Groups available in this project = {project.get_group_names()}")
