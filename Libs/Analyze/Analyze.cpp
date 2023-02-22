@@ -481,4 +481,14 @@ Eigen::VectorXf Analyze::get_subject_features(int subject, std::string feature_n
   return shape->get_point_features(feature_name);
 }
 
+
+//---------------------------------------------------------------------------
+int Analyze::get_num_particles() {
+  if (shapes_.empty()) {
+    return 0;
+  }
+  auto particles = shapes_[0]->get_particles();
+  return particles.get_combined_local_particles().size() / 3;
+}
+
 }  // namespace shapeworks

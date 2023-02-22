@@ -17,18 +17,32 @@ class Analyze {
  public:
   Analyze(ProjectHandle project);
 
+  /// Run offline analysis, saving results to outfile
   void run_offline_analysis(std::string outfile);
 
+  /// Return the list of shapes
   ShapeList get_shapes();
+
+  /// Return the number of subjects
   int get_num_subjects();
 
+  /// Return the number of modes
   int get_num_modes();
 
+  /// Return the number of particles
+  int get_num_particles();
+
+  /// Return the mean shape
   Particles get_mean_shape_points();
+
+  /// Return the mean shape
   ShapeHandle get_mean_shape();
 
+  /// Return the particles for a given mode and value
   Particles get_shape_points(int mode, double value);
+  /// Return the shape for a given mode and value
   ShapeHandle get_mode_shape(int mode, double value);
+
 
   bool groups_active() { return false; }
 

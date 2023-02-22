@@ -34,5 +34,6 @@ void define_python_analyze(py::module_ m) {
       .def("groups_active", &Analyze::groups_active)
       .def("get_subject_features", &Analyze::get_subject_features)
       .def("get_num_subjects", &Analyze::get_num_subjects)
+      .def("get_num_particles", &Analyze::get_num_particles)
       .def("create_shape_from_points", &Analyze::create_shape_from_points);
 }
