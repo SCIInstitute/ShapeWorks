@@ -187,4 +187,13 @@ class Logging {
 //! Close session macro
 #define SW_CLOSE_LOG() shapeworks::Logging::Instance().close_log();
 
+//! Log once macro, will only log the message once
+#define SW_LOG_ONCE(message, ...) \
+{ \
+    static bool logged = false; \
+    if (!logged) { \
+      SW_LOG(message, ##__VA_ARGS__); \
+      logged = true; \
+    } \
+}
 }  // namespace shapeworks

@@ -109,7 +109,7 @@ void DataTool::set_session(QSharedPointer<Session> session) {
   connect(session.data(), &Session::ffc_changed, this, &DataTool::update_ffc_table);
   landmark_table_model_->set_session(session);
 
-  connect(ui_->ffc_brush_size_, &QSlider::valueChanged, session.data(), &Session::set_ffc_paint_size);
+  connect(ui_->ffc_brush_size_, &CustomSlider::valueChanged, session.data(), &Session::set_ffc_paint_size);
   connect(ui_->ffc_included_mode_, &QRadioButton::toggled, session.data(), &Session::set_ffc_paint_mode_inclusive);
   connect(ui_->ffc_active_, &QCheckBox::toggled, session.data(), &Session::set_ffc_paint_active);
 

@@ -368,7 +368,7 @@ QToolBar QToolButton::checked {
            </widget>
           </item>
           <item>
-           <widget class="QSlider" name="zoom_slider">
+           <widget class="CustomSlider" name="zoom_slider">
             <property name="maximumSize">
              <size>
               <width>100</width>
@@ -1215,6 +1215,11 @@ QToolBar QToolButton::checked {
   </action>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>CustomSlider</class>
+   <extends>QSlider</extends>
+   <header>Interface/CustomSlider.h</header>
+  </customwidget>
   <customwidget>
    <class>QVTKOpenGLNativeWidget</class>
    <extends>QWidget</extends>

@@ -344,9 +344,19 @@ QDateTime Preferences::get_update_snooze_until() {
 void Preferences::set_update_snooze_until(QDateTime date) { settings_.setValue("General/update_snooze_until", date); }
 
 QString Preferences::get_device_id() {
-  return settings_.value("General/device_id", QUuid::createUuid().toString()).toString();
+  QString id = settings_.value("General/device_id", QUuid::createUuid().toString()).toString();
+  settings_.setValue("General/device_id", id);
+  return id;
 }
+
 bool Preferences::get_telemetry_enabled() { return settings_.value("General/telemetry_enabled", true).toBool(); }
 void Preferences::set_telemetry_enabled(bool enabled) { settings_.setValue("General/telemetry_enabled", enabled); }
 bool Preferences::get_telemetry_asked() { return settings_.value("General/telemetry_asked", false).toBool(); }
 void Preferences::set_telemetry_asked(bool asked) { settings_.setValue("General/telemetry_asked", asked); }
+
+QStringList Preferences::get_pending_telemetry_events() {
+  return settings_.value("Telemetry/pending_events").toStringList();
+}
+void Preferences::set_pending_telemetry_events(QStringList events) {
+  settings_.setValue("Telemetry/pending_events", events);
+}

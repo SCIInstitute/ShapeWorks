@@ -1,9 +1,9 @@
 #pragma once
 
+#include <Data/Preferences.h>
+
 #include <QDialog>
 #include <QNetworkAccessManager>
-
-#include <Data/Preferences.h>
 
 namespace Ui {
 class UpdateChecker;
@@ -25,7 +25,6 @@ class UpdateChecker : public QDialog {
   void run_auto_update_check();
   void run_manual_update_check();
 
-
  public Q_SLOTS:
   void handleNetworkReply(QNetworkReply* reply);
 
@@ -38,7 +37,6 @@ class UpdateChecker : public QDialog {
   Ui::UpdateChecker* ui_;
 
   Preferences& prefs_;
-
 };
 
 }  // namespace shapeworks

@@ -58,48 +58,53 @@ void UpdateChecker::handleNetworkReply(QNetworkReply* reply) {
   std::string response = QString(reply->readAll()).toStdString();
 
   // get the json response
-  auto j = json::parse(response);
+  try {
+    auto j = json::parse(response);
+    std::string platform = StudioUtils::get_platform_string().toStdString();
 
-  std::string platform = StudioUtils::get_platform_string().toStdString();
+    int major = j[platform]["major"].get<int>();
+    int minor = j[platform]["minor"].get<int>();
+    int patch = j[platform]["patch"].get<int>();
+    QString message = QString::fromStdString(j[platform]["message"].get<std::string>());
 
-  int major = j[platform]["major"].get<int>();
-  int minor = j[platform]["minor"].get<int>();
-  int patch = j[platform]["patch"].get<int>();
-  QString message = QString::fromStdString(j[platform]["message"].get<std::string>());
-
-  bool update_available = false;
-  if (major > SHAPEWORKS_MAJOR_VERSION) {
-    update_available = true;
-  } else if (major == SHAPEWORKS_MAJOR_VERSION && minor > SHAPEWORKS_MINOR_VERSION) {
-    update_available = true;
-  } else if (major == SHAPEWORKS_MAJOR_VERSION && minor == SHAPEWORKS_MINOR_VERSION &&
-             patch > SHAPEWORKS_PATCH_VERSION) {
-    update_available = true;
-  }
-
-  if (update_available) {
-    auto url = QString("https://github.com/SCIInstitute/ShapeWorks/releases/latest");
-
-    auto title = QString("New version available");
-    setWindowTitle(title);
-    ui_->label->setTextFormat(Qt::RichText);
-    ui_->label->setOpenExternalLinks(true);
-    ui_->label->setTextInteractionFlags(Qt::TextBrowserInteraction);
-    ui_->label->setText(QString("A new version of ShapeWorks is available.<br><br>"
-                                "To download the latest version, please visit:<br><br><a href=\"%1\">%1</a><br><br>" +
-                                message)
-                            .arg(url));
-
-    show();
-    raise();
-
-  } else {
-    if (manual_trigger_) {
-      // show a messagebox saying there is no update
-      auto title = QString("No update available");
-      auto info = QString("You are running the latest version of ShapeWorks.");
-      QMessageBox::information(nullptr, title, info, QMessageBox::Ok);
+    bool update_available = false;
+    if (major > SHAPEWORKS_MAJOR_VERSION) {
+      update_available = true;
+    } else if (major == SHAPEWORKS_MAJOR_VERSION && minor > SHAPEWORKS_MINOR_VERSION) {
+      update_available = true;
+    } else if (major == SHAPEWORKS_MAJOR_VERSION && minor == SHAPEWORKS_MINOR_VERSION &&
+               patch > SHAPEWORKS_PATCH_VERSION) {
+      update_available = true;
     }
+
+    if (update_available) {
+      auto url = QString("https://github.com/SCIInstitute/ShapeWorks/releases/latest");
+
+      auto title = QString("New version available");
+      setWindowTitle(title);
+      ui_->label->setTextFormat(Qt::RichText);
+      ui_->label->setOpenExternalLinks(true);
+      ui_->label->setTextInteractionFlags(Qt::TextBrowserInteraction);
+      ui_->label->setText(QString("A new version of ShapeWorks is available.<br><br>"
+                                  "To download the latest version, please visit:<br><br><a href=\"%1\">%1</a><br><br>" +
+                                  message)
+                              .arg(url));
+
+      show();
+      raise();
+
+    } else {
+      if (manual_trigger_) {
+        // show a messagebox saying there is no update
+        auto title = QString("No update available");
+        auto info = QString("You are running the latest version of ShapeWorks.");
+        QMessageBox::information(nullptr, title, info, QMessageBox::Ok);
+      }
+    }
+
+  } catch (json::exception& e) {
+    SW_LOG("Unable to check for updates: " + std::string(e.what()));
+    return;
   }
 }
 }  // namespace shapeworks
