@@ -151,7 +151,7 @@ def Run_Pipeline(args):
     parameter_dictionary = {
         "number_of_particles": 128,
         "use_normals": 0,
-        "normal_weight": 10.0,
+        "normals_strength": 10.0,
         "checkpointing_interval": 300,
         "keep_checkpoints": 0,
         "iterations_per_split": 300,

@@ -16,19 +16,19 @@ def get_parameter_text(parameterKey,parameterValue,domains_per_shape):
         text = text + str(parameterValue[i]) + "\n"
     return text
      
-def get_attribute_scales_text(use_normals,normal_weight,domains_per_shape):
+def get_attribute_scales_text(use_normals,normals_strength,domains_per_shape):
 
     text = "\n"
     if(type(use_normals) is not list):
         use_normals = list([use_normals])
-    if(type(normal_weight) is not list):
-        normal_weight = list([normal_weight])
+    if(type(normals_strength) is not list):
+        normals_strength = list([normals_strength])
     for i in range(domains_per_shape):
 
         if(use_normals[i]==0):
             text = text + "1.0 \n 1.0 \n 1.0\n"
         else:
-            text = text + "1.0 \n 1.0 \n 1.0 \n "+ str(normal_weight[i])+ "\n "  + str(normal_weight[i])+ "\n " + str(normal_weight[i])+ "\n"
+            text = text + "1.0 \n 1.0 \n 1.0 \n "+ str(normals_strength[i])+ "\n "  + str(normals_strength[i])+ "\n " + str(normals_strength[i])+ "\n"
     return text
 
 
@@ -40,9 +40,9 @@ def create_SWRun_xml(xmlfilename, inDataFiles, parameterDictionary, outDir):
     number_of_particles.text = get_parameter_text('number_of_particles',parameterDictionary['number_of_particles'],parameterDictionary['domains_per_shape'])
     use_normals = ET.SubElement(root, 'use_normals')
     use_normals.text = get_parameter_text('use_normals',parameterDictionary['use_normals'],parameterDictionary['domains_per_shape'])
-    normal_weight = parameterDictionary['normal_weight']
+    normals_strength = parameterDictionary['normals_strength']
     attribute_scales = ET.SubElement(root, 'attribute_scales')
-    attribute_scales.text = get_attribute_scales_text(parameterDictionary['use_normals'],parameterDictionary['normal_weight'],parameterDictionary['domains_per_shape'])
+    attribute_scales.text = get_attribute_scales_text(parameterDictionary['use_normals'],parameterDictionary['normals_strength'],parameterDictionary['domains_per_shape'])
     checkpointing_interval = ET.SubElement(root, 'checkpointing_interval')
     checkpointing_interval.text = "\n" + str(parameterDictionary['checkpointing_interval']) + "\n"
     keep_checkpoints = ET.SubElement(root, 'keep_checkpoints')
@@ -133,13 +133,13 @@ def create_SWRun_fixed_domains(xmlfilename, inDataFiles, parameterDictionary, ou
     number_of_particles.text = "\n" + str(parameterDictionary['number_of_particles']) + "\n"
     use_normals = ET.SubElement(root, 'use_normals')
     use_normals.text = "\n" + str(parameterDictionary['use_normals']) + "\n"
-    normal_weight = parameterDictionary['normal_weight']
+    normals_strength = parameterDictionary['normals_strength']
     if parameterDictionary['use_normals'] == 0:
         attribute_scales = ET.SubElement(root, 'attribute_scales')
         attribute_scales.text = "\n 1.0 \n 1.0 \n 1.0\n"
     else:
         attribute_scales = ET.SubElement(root, 'attribute_scales')
-        attribute_scales.text = "\n 1.0 \n 1.0 \n 1.0 \n "+ str(normal_weight)+ "\n "  + str(normal_weight)+ "\n " + str(normal_weight)+ "\n"
+        attribute_scales.text = "\n 1.0 \n 1.0 \n 1.0 \n "+ str(normals_strength)+ "\n "  + str(normals_strength)+ "\n " + str(normals_strength)+ "\n"
     checkpointing_interval = ET.SubElement(root, 'checkpointing_interval')
     checkpointing_interval.text = "\n" + str(parameterDictionary['checkpointing_interval']) + "\n"
     keep_checkpoints = ET.SubElement(root, 'keep_checkpoints')

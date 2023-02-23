@@ -44,14 +44,14 @@ Here is the list of the parameters to be included in the `<parameters.xml>` file
 ### Parameter Dictionary in Python
 Prior to `ShapeWorks 6.3`, all the ![use cases](../getting-started/examples.md)In `Examples/Python/<use-case-name.py>`,we used XML files to run optimization. A python code - `Examples/Python/OptimizeUtils.py` was used to convert a list of parameter dictionary in python to an XML file. 
 
-Below is a list of the currently exposed algorithmic parameters. All the keys of this parameter dictionary correspond to the [XML tags](#xml-parameter-file), except for `"normal_weight"` that sets the `<attribute_scales>` of the surface normal vector.
+Below is a list of the currently exposed algorithmic parameters. All the keys of this parameter dictionary correspond to the [XML tags](#xml-parameter-file), except for `"normals_strength"` that sets the `<attribute_scales>` of the surface normal vector.
 
 ```python
 {
 	"number_of_particles": 1024,
 	"use_shape_statistics_after": 32, 
 	"use_normals": 0, 
-	"normal_weight": 0.0, 
+	"normals_strength": 0.0, 
 	"checkpointing_interval" : 10000, 
 	"keep_checkpoints" : 0, 
 	"iterations_per_split" : 4000, 
@@ -217,7 +217,7 @@ If there are multiple domains, the subjects will contain list of string of filen
     parameter_dictionary = {
 	"number_of_particles" : 512,
 	"use_normals": 0,
-	"normal_weight": 10.0,
+	"normals_strength": 10.0,
 	"checkpointing_interval" : 200,
 	"keep_checkpoints" : 0,
 	"iterations_per_split" : 1000,
