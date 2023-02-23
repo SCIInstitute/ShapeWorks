@@ -73,13 +73,13 @@ GroomTool::GroomTool(Preferences& prefs, Telemetry& telemetry) : preferences_(pr
       "Set the adaptivity of remeshing, higher will allocate more triangles around areas of high curvature.");
 
   // connect percent controls
-  connect(ui_->remesh_percent_slider, &QSlider::valueChanged, this,
+  connect(ui_->remesh_percent_slider, &CustomSlider::valueChanged, this,
           [this](int value) { ui_->remesh_percent_spinbox->setValue(value); });
   connect(ui_->remesh_percent_spinbox, qOverload<double>(&QDoubleSpinBox::valueChanged), this,
           [=](double value) { ui_->remesh_percent_slider->setValue(static_cast<int>(value)); });
 
   // connect gradation controls
-  connect(ui_->remesh_gradation_slider, &QSlider::valueChanged, this,
+  connect(ui_->remesh_gradation_slider, &CustomSlider::valueChanged, this,
           [=](int value) { ui_->remesh_gradation_spinbox->setValue(value / 50.0); });
   connect(ui_->remesh_gradation_spinbox, qOverload<double>(&QDoubleSpinBox::valueChanged), this,
           [=](double value) { ui_->remesh_gradation_slider->setValue(static_cast<int>(value * 50.0)); });

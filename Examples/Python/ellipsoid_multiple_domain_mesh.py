@@ -24,7 +24,6 @@ def Run_Pipeline(args):
     We define dataset_name which determines which dataset to download from 
     the portal and the directory to save output from the use case in. 
     """
-    # dataset_name = "ellipsoid_joint_rotation"
     output_directory = "Output/ellipsoid_multiple_domain_mesh/"
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
@@ -32,8 +31,6 @@ def Run_Pipeline(args):
     # If running a tiny_test, then download subset of the data
     if args.tiny_test:
         dataset_name = "ellipsoid_multiple_domain_mesh_tiny_test"
-        # sw.data.download_subset(
-        #     args.use_case, dataset_name, output_directory)
         sw.download_and_unzip_dataset(dataset_name, output_directory)
         dataset_name = "ellipsoid_joint_rotation"
         mesh_files = sorted(glob.glob(output_directory +
@@ -206,7 +203,6 @@ def Run_Pipeline(args):
     parameters.set("number_of_particles" ,sw.Variant(num_particles))
     project.set_parameters("optimize", parameters)
     
-    # spreadsheet_file = output_directory + "shape_models/ellipsoid_multiple_domain_mesh_" + args.option_set + ".swproj"
     spreadsheet_file = output_directory + "ellipsoid_multiple_domain_mesh_" + args.option_set + ".swproj"
     project.save(spreadsheet_file)
 

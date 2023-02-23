@@ -46,7 +46,7 @@ PreferencesWindow::PreferencesWindow(QWidget* parent, Preferences& prefs) : pref
           &PreferencesWindow::save_to_preferences);
   connect(ui_->orientation_marker_corner, qOverload<int>(&QComboBox::currentIndexChanged), this,
           &PreferencesWindow::save_to_preferences);
-  connect(ui_->geodesic_cache_multiplier, &QSlider::valueChanged, this, &PreferencesWindow::save_to_preferences);
+  connect(ui_->geodesic_cache_multiplier, &CustomSlider::valueChanged, this, &PreferencesWindow::save_to_preferences);
   connect(ui_->color_map, qOverload<int>(&QComboBox::currentIndexChanged), this,
           &PreferencesWindow::save_to_preferences);
   connect(ui_->particle_colors, qOverload<int>(&QComboBox::currentIndexChanged), this,

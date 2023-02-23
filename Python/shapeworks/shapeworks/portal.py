@@ -16,12 +16,12 @@ import os
 from swcc.api import swcc_session
 from swcc.models import (Dataset, GroomedSegmentation, OptimizedParticles, Project, Segmentation, Subject)
 from itertools import islice
-_LOGIN_FILE_NAME = 'Output/shapeworksPortalLogin_new.txt'
+_LOGIN_FILE_NAME = 'Output/shapeworksCloudLogin.txt'
 
 def printDataPortalWelcome():
     print(' _____    ___      .     ')
     print('|     |  /   \    / \    ')
-    print('| ShapeWorks Portal  \   ')
+    print('|  ShapeWorks Cloud  \   ')
     print('|_____|  \___/  /_____\  ')
     print()
 
@@ -31,14 +31,25 @@ def saveLogin(loginState):
 
 def loadLogin():
     if not os.path.exists(_LOGIN_FILE_NAME):
-        return None
+        if 'SW_CLOUD_LOGIN' in os.environ:
+            print('Using cloud login from $SW_CLOUD_LOGIN')
+            combined = os.environ['SW_CLOUD_LOGIN']
+            username = combined.split(":")[0]
+            password = combined.split(":")[1]
+            PasswordHash = base64.b64encode(password.encode()).decode("ascii")
+            loginState = {'username': username, 'PasswordHash': PasswordHash}
+            saveLogin(loginState)
+            return loginState
+        else:
+            return None
     with open(_LOGIN_FILE_NAME) as json_file:
         loginState = json.load(json_file)
         return loginState
     
 def getLoginDetails():
-    
-    print('')
+    print("\nPlease enter your ShapeWorks Cloud login:\n")
+    print("New ShapeWorks Cloud user please register an account:\n")
+    print("   https://www.shapeworks-cloud.org\n")
     username = input("Username: ")
     password = getpass.getpass("Password: ")
     try:
@@ -58,9 +69,7 @@ def getLoginDetails():
 def login():
     printDataPortalWelcome()
     if loadLogin() is None:
-        print("Getting login")
         getLoginDetails()
-
     print("Login to ShapeWorks Data Portal successful")
     loginDetails = loadLogin()
     username = loginDetails['username']
@@ -77,29 +86,38 @@ def dataset_exists_check(use_case):
             existsFlag = True
     return existsFlag
 
-def generate_download_flag(outputDirectory,folder):
+def count_existing_files(directory):
+    total = 0
+    for root, _, files in os.walk(directory):
+        if len(files):
+            print(f"{len(files)} files found in {root}")
+        # excluding file in particle folders and in root directory (swproj file)
+        if not("particle" in root) and root != directory:
+            total += len(files)
+    print(f"\nTotal shape files found in {directory}: {total}\n")
+    return total
+
+def generate_download_flag(outputDirectory, folder):
     download_flag = False
     #if output/dataset + subfolders exits 
 
     dataset = Dataset.from_name(folder)
-    if(os.path.exists(outputDirectory+folder)):
-            # if the folder is empty or has less than 3 files then download
-            if(len(os.listdir(outputDirectory+folder))==0) and dataset:
-                download_flag = True
-            else:
-                print("Data available in " + folder + "  is sufficient, no new data will be downloaded")
-
+    if os.path.exists(outputDirectory):
+        # if the folder is empty or has less than 3 files then download
+        file_count = count_existing_files(outputDirectory)
+        if file_count < 6 and dataset:
+            download_flag = True
+        elif file_count == 6 and dataset and not("tiny_test" in folder):
+            download_flag = True
+        else:
+            print("Data available in " + outputDirectory + "  is sufficient, no new data will be downloaded")
     #if the subfolder folder does not exists then download
     else:
         download_flag = True        
     return download_flag
             
 def download_subset(use_case,datasetName,outputDirectory):
-    import DatasetUtils
-    import re
     username,password = login()
-    # fileList = DatasetUtils.getFileList(datasetName)
-    outputDirectory = outputDirectory #+ datasetName+"/"
     print('Downloading subset')
     print(outputDirectory)
     with swcc_session()  as session:
@@ -145,20 +163,16 @@ def is_same(dir1, dir2):
     return True
 
 def download_and_unzip_dataset(datasetName, outputDirectory):
-
     username,password = login()
-
     #api as a context manager
     with swcc_session()  as session:
-        
         token = session.login(username, password)
         session = swcc_session(token=token).__enter__()
         # Check if the unzipped data is present and number of files are more than 3 for full use case
         if generate_download_flag(outputDirectory,datasetName):
             # Download a full dataset in bulk
-            print("not enough files")
+            print(f"Downloading files to {outputDirectory+datasetName}")
             dataset = Dataset.from_name(datasetName)
-            print(outputDirectory+datasetName+"/")
             download_path = Path(outputDirectory)
             if not download_path.exists():
                 rmtree(str(download_path))
@@ -166,23 +180,11 @@ def download_and_unzip_dataset(datasetName, outputDirectory):
             for project in dataset.projects:
                 project.download(Path(download_path))
                 break
-            # project = Project.from_id(dataset.id)
-            # project.download(download_path)
-
-    # with swcc_session() as session:
-    #     token = session.login(username, password)
-    #     session = swcc_session(token=token).__enter__()
-
-    #     print(f'Downloading {datasetName} dataset and project.')
-    #     dataset = Dataset.from_name(datasetName)
-    #     download_path = Path(outputDirectory)
-    #     for project in dataset.projects:
-    #         project.download(Path(download_path))
 
         print('Done. \n')
 
 if __name__ == "__main__":
     download_and_unzip_dataset(
         "femur_cut",
-        "/home/sci/mkaranam/Desktop/ShapeWorks/Examples/Python/Output/femur_download/"
+        "Output/femur_download/"
     )
