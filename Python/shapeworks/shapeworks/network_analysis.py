@@ -23,8 +23,7 @@ import shapeworks as sw
 np.random.seed(0)
 
 
-class CorrespondenceNetwork:
-
+class NetworkAnalysis:
     def __init__(self, project):
         self.project = project
         self.analyze = sw.Analyze(self.project)
@@ -69,18 +68,19 @@ class CorrespondenceNetwork:
         mean_shape_points = self.analyze.get_mean_shape_points()
         # reshape to 3 columns
         mean_shape = mean_shape_points.reshape(-1, 3)
-        return mesh_points, mesh_normals, mean_shape
+        return mesh_points, mesh_normals, mean_shape, surface
 
     def run(self):
         project = self.project
         analyze = self.analyze
         num_pts = analyze.get_num_particles()
+        activities = self.activities
         flag_model = self.flag_model
         flag_analysis = self.flag_analysis
         activities = self.activities
         num_subjects = analyze.get_num_subjects()
         timepoints = self.timepoints
-        mesh_points, mesh_normals, mean_shape = self.compute_mean_shape()
+        mesh_points, mesh_normals, mean_shape, surface = self.compute_mean_shape()
 
         # #### scalar thickness dataset - each subject has particle values for a single timepoint and no activities ####
         if flag_model == 'cortthick':
@@ -244,7 +244,9 @@ class CorrespondenceNetwork:
 
         result_path = "results/"
         # variables for SPM
-        n_iter = 10000
+        ### Alan : this was 10,000
+        #    n_iter = 10000
+        n_iter = 200
         poi = 0.05  # p-value of interest
         pthresh = [0.05]  # ,0.025,0.01,0.005,0.001
 
@@ -868,5 +870,6 @@ class CorrespondenceNetwork:
 
         # In[21]:
 
-
-
+        self.particles = particles
+        self.group = group
+        self.pts_index = pts_index
