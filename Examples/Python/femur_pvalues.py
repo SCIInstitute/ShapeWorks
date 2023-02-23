@@ -5,13 +5,13 @@ import pandas as pd
 import json
 
 def Run_Pipeline(args):
-    output_directory = 'Output/'
+    output_directory = 'Output/femur_pvalues/'
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
 
     dataset_name = 'femur_pvalues'
     sw.download_and_unzip_dataset(dataset_name, output_directory)
-    swproj_file = f'{output_directory}{dataset_name}/femur_pvalues.swproj'
+    swproj_file = f'{output_directory}/femur_pvalues.swproj'
     csvfile = convert_swproj_to_csv(swproj_file)
     data = pd.read_csv(csvfile)
 
