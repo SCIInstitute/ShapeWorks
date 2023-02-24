@@ -29,23 +29,27 @@ def Run_Pipeline(args):
 	the portal and the directory to save output from the use case in. 
 	""" 
 	
-	dataset_name = "hip"
+
 	output_directory = "Output/hip_multiple_domain/"
 	if not os.path.exists(output_directory):
 		os.makedirs(output_directory)
 
-	
 	# If running a tiny_test, then download subset of the data
 	if args.tiny_test:
-		sw.data.download_subset(
-			args.use_case, dataset_name, output_directory)
+		dataset_name="hip_multiple_domain_tiny_test"
+		# sw.data.download_subset(
+		# 	args.use_case, dataset_name, output_directory)
+		sw.download_and_unzip_dataset(dataset_name, output_directory)
+		dataset_name = "hip"
 		mesh_files = sorted(glob.glob(output_directory +
 									 dataset_name + "/meshes/*.vtk"))[:6]
 		plane_files = sorted(glob.glob(output_directory +
 							dataset_name + "/constraints/*.json"))[:6]
 	# Else download the entire dataset
 	else:
-		sw.data.download_and_unzip_dataset(dataset_name, output_directory)
+		dataset_name = "hip_multiple_domain"
+		sw.download_and_unzip_dataset(dataset_name, output_directory)
+		dataset_name = "hip"
 		mesh_files = sorted(glob.glob(output_directory +
 									 dataset_name + "/meshes/*.vtk"))
 		plane_files = sorted(glob.glob(output_directory +

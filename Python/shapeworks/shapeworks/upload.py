@@ -66,9 +66,9 @@ def upload_dataset(dataset_name,license_filename,ack_filename,description,projec
         print('Done. \n')
 
 if __name__=="__main__":
-    dataset_names = ["femur_pvalues"]
-    project_files = ["/home/sci/mkaranam/Desktop/ShapeWorks/Examples/Python/Output/femur_pvalues/femur_pvalues/femur_pvalues.swproj"]
-    descriptions = ["Uploading femur pvalues dataset"]
+    dataset_names = ["hip_multiple_domain_tiny_test"]
+    project_files = ["/home/sci/mkaranam/Desktop/ShapeWorks/Examples/Python/Output/hip_multiple_domain/hip_multiple_domain_tiny_test_singlescale.swproj"]
+    descriptions = ["Uploading hip multiple domain tiny test dataset"]
     for i in range(len(project_files)):
         print(dataset_names[i])
         upload_dataset(
