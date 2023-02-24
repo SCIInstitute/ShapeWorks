@@ -29,7 +29,6 @@ def Run_Pipeline(args):
     if args.tiny_test:
         dataset_name = "thin_cavity_bean_tiny_test"
         args.use_single_scale = 1
-        # sw.data.download_subset(args.use_case, dataset_name, output_directory)
         sw.download_and_unzip_dataset(dataset_name, output_directory)
         dataset_name = "thin_cavity_bean"
         mesh_files = sorted(glob.glob(output_directory +
@@ -68,7 +67,7 @@ def Run_Pipeline(args):
     """
 
      # Create project spreadsheet
-    project_location = output_directory #+ "shape_models/"
+    project_location = output_directory
     if not os.path.exists(project_location):
         os.makedirs(project_location)
     # Set subjects
@@ -123,7 +122,6 @@ def Run_Pipeline(args):
         parameters.set(key,sw.Variant([parameter_dictionary[key]]))
     parameters.set("domain_type",sw.Variant('mesh'))
     project.set_parameters("optimize",parameters)
-    # spreadsheet_file = output_directory + "shape_models/thin_cavity_bean_" + args.option_set+ ".xlsx"
     spreadsheet_file = output_directory + "thin_cavity_bean_" + args.option_set+ ".swproj"
     project.save(spreadsheet_file)
 

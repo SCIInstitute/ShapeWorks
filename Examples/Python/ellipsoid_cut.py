@@ -20,8 +20,6 @@ def Run_Pipeline(args):
     We define dataset_name which determines which dataset to download from 
     the portal and the directory to save output from the use case in. 
     """
-    # dataset_name = "ellipsoid_1mode_aligned"
-    # dataset_name = "ellipsoid_cut"
     output_directory = "Output/ellipsoid_cut/"
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
@@ -30,8 +28,6 @@ def Run_Pipeline(args):
     if args.tiny_test:
         dataset_name = "ellipsoid_cut_tiny_test"
         args.use_single_scale = 1
-        # sw.data.download_subset(
-        #     args.use_case, dataset_name, output_directory)
         sw.download_and_unzip_dataset(dataset_name, output_directory)
         dataset_name = "ellipsoid_1mode_aligned"
         file_list = sorted(glob.glob(output_directory +
@@ -118,7 +114,7 @@ def Run_Pipeline(args):
     """
 
      # Create project spreadsheet
-    project_location = output_directory #+ "shape_models/"
+    project_location = output_directory
     if not os.path.exists(project_location):
         os.makedirs(project_location)
     # Set subjects

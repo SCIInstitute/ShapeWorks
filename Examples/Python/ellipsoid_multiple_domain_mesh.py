@@ -145,7 +145,7 @@ def Run_Pipeline(args):
     """
 
     # Create project spreadsheet
-    project_location = output_directory #+ "shape_models/"
+    project_location = output_directory
     if not os.path.exists(project_location):
         os.makedirs(project_location)
     # Set subjects

@@ -22,7 +22,6 @@ def Run_Pipeline(args):
     the portal and the directory to save output from the use case in. 
     """
     print("\nStep 1. Extract Data\n")
-    # dataset_name = "peanut"
     output_directory = "Output/peanut_shared_boundary/"
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
@@ -31,7 +30,6 @@ def Run_Pipeline(args):
     if args.tiny_test:
         dataset_name = "peanut_shared_boundary_tiny_test"
         args.use_single_scale = 1
-        # sw.data.download_subset(args.use_case, dataset_name, output_directory)
         sw.download_and_unzip_dataset(dataset_name, output_directory)
         dataset_name = "peanut"
         mesh_files = sorted(glob.glob(output_directory +
@@ -149,7 +147,7 @@ def Run_Pipeline(args):
     """
 
     # Create project spreadsheet
-    project_location = output_directory #+ "shape_models/"
+    project_location = output_directory 
     if not os.path.exists(project_location):
         os.makedirs(project_location)
     domains_per_shape = 4
@@ -219,7 +217,6 @@ def Run_Pipeline(args):
         parameters.set(key, sw.Variant([parameter_dictionary[key]]))
     parameters.set("number_of_particles" ,sw.Variant(num_particles))
     project.set_parameters("optimize", parameters)
-    # spreadsheet_file = output_directory + "shape_models/peanut_shared_boundary_" + args.option_set + ".swproj"
     spreadsheet_file = output_directory + "peanut_shared_boundary_" + args.option_set + ".swproj"
     project.save(spreadsheet_file)
 

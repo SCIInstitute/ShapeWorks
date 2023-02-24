@@ -4,7 +4,6 @@ from pathlib import Path
 import glob 
 from swcc.api import swcc_session
 from swcc.models import Dataset
-import shapeworks as sw
 from swcc.models import (Dataset, Project)
 import getpass
 from pathlib import Path
@@ -26,7 +25,6 @@ def create_data_file(filename,shape_files,image_files=None):
         df["shape_file"] = shape_files
         if image_files is not None:
             print(len(shape_files),len(image_files))
-            # assert len(shape_files)!=len(image_files),"number of shape files don't match the number of image files"
             df["image_file"] = image_files
     writer = pd.ExcelWriter(filename, engine ="xlsxwriter")
     df.to_excel(writer,sheet_name="data",index=False)
@@ -64,16 +62,3 @@ def upload_dataset(dataset_name,license_filename,ack_filename,description,projec
         print(project)
 
         print('Done. \n')
-
-if __name__=="__main__":
-    dataset_names = ["hip_multiple_domain_tiny_test"]
-    project_files = ["/home/sci/mkaranam/Desktop/ShapeWorks/Examples/Python/Output/hip_multiple_domain/hip_multiple_domain_tiny_test_singlescale.swproj"]
-    descriptions = ["Uploading hip multiple domain tiny test dataset"]
-    for i in range(len(project_files)):
-        print(dataset_names[i])
-        upload_dataset(
-            dataset_names[i],
-            "../../../Examples/Python/Output/LICENSE.txt",
-            "../../../Examples/Python/Output/LICENSE.txt",
-            descriptions[i],project_files[i]
-        )

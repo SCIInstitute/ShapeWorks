@@ -28,7 +28,6 @@ def Run_Pipeline(args):
 	We define dataset_name which determines which dataset to download from 
 	the portal and the directory to save output from the use case in. 
 	""" 
-	
 
 	output_directory = "Output/hip_multiple_domain/"
 	if not os.path.exists(output_directory):
@@ -37,8 +36,6 @@ def Run_Pipeline(args):
 	# If running a tiny_test, then download subset of the data
 	if args.tiny_test:
 		dataset_name="hip_multiple_domain_tiny_test"
-		# sw.data.download_subset(
-		# 	args.use_case, dataset_name, output_directory)
 		sw.download_and_unzip_dataset(dataset_name, output_directory)
 		dataset_name = "hip"
 		mesh_files = sorted(glob.glob(output_directory +
@@ -184,7 +181,7 @@ def Run_Pipeline(args):
 	http://sciinstitute.github.io/ShapeWorks/workflow/optimize.html
 	"""
 	# Create project spreadsheet
-	project_location = output_directory #+ "shape_models/"
+	project_location = output_directory
 	if not os.path.exists(project_location):
 		os.makedirs(project_location)
 	# Set subjects
@@ -249,7 +246,6 @@ def Run_Pipeline(args):
 	parameters.set("domain_type",sw.Variant('mesh'))
 	project.set_parameters("optimize", parameters)
 
-	# spreadsheet_file = output_directory + "shape_models/hip_multiple_domain_" + args.option_set + ".xlsx"
 	spreadsheet_file = output_directory + "hip_multiple_domain_" + args.option_set + ".swproj"
 	project.save(spreadsheet_file)
 	

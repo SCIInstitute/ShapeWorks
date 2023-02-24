@@ -156,17 +156,12 @@ def Run_Pipeline(args):
     http://sciinstitute.github.io/ShapeWorks/workflow/optimize.html
     """
 
-    # Make directory to save optimization output
-    # point_dir = output_directory + 'shape_models/' + args.option_set
-    # if not os.path.exists(point_dir):
-    #     os.makedirs(point_dir)
-
     point_dir = output_directory + args.option_set
     if not os.path.exists(point_dir):
         os.makedirs(point_dir)
 
     # Create spreadsheet
-    project_location = output_directory #+ "shape_models/"
+    project_location = output_directory
     subjects = []
     number_domains = 1
     for i in range(len(shape_seg_list)):
@@ -221,7 +216,6 @@ def Run_Pipeline(args):
         parameters.set(key, sw.Variant([parameter_dictionary[key]]))
     parameters.set("domain_type", sw.Variant(domain_type[0]))
     project.set_parameters("optimize", parameters)
-    # spreadsheet_file = output_directory + "shape_models/left_atrium_" + args.option_set + ".swproj"
     spreadsheet_file = output_directory + "left_atrium_" + args.option_set + ".swproj"
     project.save(spreadsheet_file)
 

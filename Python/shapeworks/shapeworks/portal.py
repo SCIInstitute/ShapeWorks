@@ -8,13 +8,12 @@ import re
 from shutil import rmtree
 import filecmp
 from pathlib import Path
-import shapeworks as sw
 import base64
 import getpass
 import json
 import os
 from swcc.api import swcc_session
-from swcc.models import (Dataset, GroomedSegmentation, OptimizedParticles, Project, Segmentation, Subject)
+from swcc.models import Dataset
 from itertools import islice
 _LOGIN_FILE_NAME = 'Output/shapeworksCloudLogin.txt'
 
@@ -176,15 +175,9 @@ def download_and_unzip_dataset(datasetName, outputDirectory):
             download_path = Path(outputDirectory)
             if not download_path.exists():
                 rmtree(str(download_path))
-            # project = Project()   
             for project in dataset.projects:
                 project.download(Path(download_path))
                 break
 
         print('Done. \n')
 
-if __name__ == "__main__":
-    download_and_unzip_dataset(
-        "femur_cut",
-        "Output/femur_download/"
-    )

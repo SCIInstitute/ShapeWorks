@@ -3,7 +3,6 @@ import shapeworks as sw
 import numpy as np
 import pandas as pd
 import json
-import json
 
 def Run_Pipeline(args):
     output_directory = 'Output/femur_pvalues/'
