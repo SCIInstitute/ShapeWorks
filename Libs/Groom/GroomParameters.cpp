@@ -2,8 +2,6 @@
 
 #include <Logging.h>
 
-#include <iostream>
-
 namespace shapeworks {
 
 const std::string GroomParameters::GROOM_SMOOTH_VTK_LAPLACIAN_C("Laplacian");
@@ -451,5 +449,7 @@ bool GroomParameters::get_skip_grooming() { return params_.get(Keys::SKIP_GROOMI
 
 //---------------------------------------------------------------------------
 void GroomParameters::set_skip_grooming(bool skip) { params_.set(Keys::SKIP_GROOMING, skip); }
+
+//---------------------------------------------------------------------------
 }  // namespace shapeworks
 //---------------------------------------------------------------------------

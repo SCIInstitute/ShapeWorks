@@ -8,6 +8,12 @@ namespace shapeworks {
 
 class Optimize;
 
+/**
+ * \class OptimizeParameters
+ * \ingroup Group-Optimize
+ *
+ * This class encapsulated processing of Optimization parameters
+ */
 class OptimizeParameters {
  public:
   explicit OptimizeParameters(ProjectHandle project);
