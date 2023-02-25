@@ -183,20 +183,27 @@ ParticleEnsembleEntropyFunctionNonLinear<VDimension>
     vnl_matrix<double> shape_vec_new = base_shape_matrix->get_n_columns(d/DomainsPerShape, 1); // shape: dM X 1
     unsigned int dM = m_ShapeMatrix->rows();
     double log_det_jacobian_val = 0.0;
-    double det_jacobian_val, p_z_val;
+    double det_jacobian_val = 0.0;
     try{
         torch::Tensor shape_vec_new_tensor = torch::from_blob(shape_vec_new.data_block(), {dM});
+        std:: cout << "Gradient 1" <<  std::endl;
         torch::Tensor jacobian_matrix = torch::zeros({dM, dM}, this->m_ShapeMatrix->GetDevice());
+        std:: cout << "Gradient 2" <<  std::endl;
         torch::Tensor p_z_0 = torch::zeros({1, dM}, this->m_ShapeMatrix->GetDevice());
+        std:: cout << "Gradient 3" <<  std::endl;
         this->m_ShapeMatrix->DoForwardPass(shape_vec_new_tensor, jacobian_matrix, log_det_jacobian_val, p_z_0);
+        std:: cout << "Gradient 4" <<  std::endl;
         p_z_0 = p_z_0.view({1, dM});
-
+        std:: cout << "Gradient 5" <<  std::endl;
         det_jacobian_val = std::exp(log_det_jacobian_val);
         torch::Tensor p_z = det_jacobian_val * p_z_0;
+        std:: cout << "Gradient 6" <<  std::endl;
         vnl_matrix cur_shape_grad = m_PointsUpdateBase->get_n_columns(d / DomainsPerShape, 1);
         torch::Tensor dH_dz0 = torch::from_blob(cur_shape_grad.data_block(), {1,dM});
+        std:: cout << "Gradient 7" <<  std::endl;
         torch::Tensor dH_dz = torch::linalg_matmul(dH_dz0, jacobian_matrix) + (log_det_jacobian_val * p_z);
-
+        dH_dz = dH_dz.to(torch::TensorOptions(torch::kCPU).dtype(at::kDouble)); 
+        std:: cout << "Gradient 8" <<  dH_dz.sizes() << std::endl;
         for (unsigned int i = 0; i< VDimension; i++)
         {
             gradE[i] = dH_dz.index({0, k+1}).item<double>();
@@ -204,7 +211,6 @@ ParticleEnsembleEntropyFunctionNonLinear<VDimension>
         // maxdt  = (m_MinimumEigenValue * det_jacobian_val) - (p_z_val * log_det_jacobian_val);
         maxdt  = gradE.magnitude();
         // TODO: Look alternate strategies
-        
     }
     catch (const c10::Error& e) {
         std::cerr << "Errors in Libtorch operations while Gradient Set | " << e.what() << "\n";

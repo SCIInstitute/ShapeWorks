@@ -5,6 +5,7 @@
 #include "itkParticleSystem.h"
 #include "InvertibleNetwork.h"
 #include <torch/script.h>
+#include "vnl/algo/vnl_symmetric_eigensystem.h"
 
 namespace itk
 {
@@ -132,7 +133,6 @@ public:
       vnl_matrix<double> shape_vec_new = this->get_n_columns(d/this->m_DomainsPerShape, 1); // shape: dM X 1
       unsigned int dM = this->rows();
       std::cout << "Setting Z0 New " << dM << "shape vec size " << shape_vec_new.rows() << shape_vec_new.cols() << std::endl;
-
       try
       {
         torch::Tensor shape_vec_new_tensor = torch::from_blob(shape_vec_new.data_block(), {1,dM});
@@ -146,6 +146,7 @@ public:
       }
       catch (const c10::Error& e) {
         std::cerr << "Error in LibTorch Operations in Particle Set Callback | " << e.what() << "\n";
+        return EXIT_FAILURE;
       }
     }
   }
@@ -187,11 +188,16 @@ public:
         m_UpdateCounter = 0;
         if (this->m_inv_net->GetModelInitialized())
         {
-          vnl_matrix<T> tmp(*this); // copy existing  matrix
-          unsigned int dM = this->rows();
-          torch::Tensor sm;
-          try{ sm = torch::from_blob(tmp.data_block(), {dM,dM});} catch (const c10::Error& e){ std::cerr << "Errors in SM init | " << e.what() << "\n";}
-          this->m_inv_net->TrainModel(sm);
+          try {
+              vnl_matrix<T> tmp(*this); // copy existing  matrix
+              unsigned int dM = this->rows();
+              torch::Tensor sm;
+              try{ sm = torch::from_blob(tmp.data_block(), {dM,dM});} catch (const c10::Error& e){ std::cerr << "Errors in SM init | " << e.what() << "\n";}
+              this->m_inv_net->TrainModel(sm);
+          } catch (const std::exception &e) {
+            std::cout << e.what() << std::endl;
+            return EXIT_FAILURE;
+          }
         }
       }
   }
@@ -214,8 +220,11 @@ public:
     try
     {
       unsigned int dM = vnl_cov->rows();
-      torch::Tensor mean = torch::from_blob(vnl_mean->data_block(), {1,dM});
-      torch::Tensor cov = torch::from_blob(vnl_cov->data_block(), {dM,dM});
+      torch::Tensor mean = torch::from_blob(vnl_mean->data_block(), {dM});
+      // Run  Eigen spectrum on covariance matrix
+      vnl_svd <double> svd_inv(vnl_cov);
+      vnl_diag_matrix<double> invLambda = svd_inv.W();
+      torch::Tensor cov = torch::from_blob(invLambda.data_block(), {dM});
       this->m_inv_net->SetBaseDistMean(mean);
       this->m_inv_net->SetBaseDistVar(cov);
     }
@@ -224,16 +233,16 @@ public:
     }
   }
 
-  void DoForwardPass(torch::Tensor& input_tensor, double& log_det_jacobian_val, double& p_z_0_val)
+  void DoForwardPass(torch::Tensor& input_tensor, torch::Tensor& jacobian_matrix,  double& log_det_jacobian_val, torch::Tensor& p_z_0_val)
   {
-    this->m_inv_net->ForwardPass(input_tensor, log_det_jacobian_val, p_z_0_val);
+    // Forward pass for graident updates
+    this->m_inv_net->ForwardPass(input_tensor, jacobian_matrix, log_det_jacobian_val, p_z_0_val);
   }
 
   torch::Device GetDevice()
   {
     this->m_inv_net->GetDevice();
   }
-
 
 protected:
   ParticleShapeMatrixAttributeNonLinear() 
