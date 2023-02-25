@@ -2,6 +2,9 @@
 #include <torch/script.h>
 #include <torch/torch.h>
 #include <nlohmann/json.hpp>
+#include "vnl/vnl_matrix.h"
+#include "vnl/vnl_vector.h"
+
 
 namespace InvertibleNet
 {
@@ -55,6 +58,11 @@ class Model
         virtual ~Model(){};
 
         int TrainModel(torch::Tensor& shape_matrix);
+
+        torch::Device GetDevice()
+        {
+            return this->m_device;
+        }
         void SetBaseDistMean(const torch::Tensor x)
         {
             this->m_base_dist_mean = x;
@@ -71,6 +79,7 @@ class Model
         void LoadParams(const std::string filepath);
         torch::Tensor ForwardPass(torch::Tensor& input_tensor);
         void ForwardPass(torch::Tensor& input_tensor, double& log_det_jacobian_val, double& p_z_0_val);
+        void ForwardPass(torch::Tensor& input_tensor, double& log_det_jacobian_val, torch::Tensor& jacobian_matrix, torch::Tensor& p_z_0_val);
 
     private:
         torch::jit::script::Module m_module;

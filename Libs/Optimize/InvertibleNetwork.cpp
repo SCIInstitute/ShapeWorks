@@ -2,6 +2,7 @@
 #include "InvertibleNetwork.h"
 #include <torch/script.h>
 
+
 namespace InvertibleNet
 {
     //-----------------------------------------------------------------------------
@@ -172,13 +173,43 @@ namespace InvertibleNet
 
             torch::Tensor log_det_jacobian_tensor = outputs->elements()[1].toTensor();
             log_det_jacobian_tensor = log_det_jacobian_tensor.to(torch::TensorOptions(torch::kCPU).dtype(at::kDouble)); 
-            log_det_jacobian_val = log_det_jacobian_tensor.sum().item<double>();
+            log_det_jacobian_val = log_det_jacobian_tensor.sum(0).item<double>();
 
             torch::Tensor p_z_0 = this->m_module.get_method("base_dist_log_prob")(inputs).toTensor();
             p_z_0_val = p_z_0.item<double>();
         }
         catch (const c10::Error& e) {
             std::cerr << "Error in Forward Pass during Energy/Gradient Computations | " << e.what(); 
+        }
+    }
+
+        //-----------------------------------------------------------------------------
+    void Model::ForwardPass(torch::Tensor& input_tensor,double& log_det_jacobian_val, torch::Tensor& jacobian_matrix, torch::Tensor& p_z_0)
+    {
+        try
+        {
+            this->m_module.eval();
+            unsigned int dM = input_tensor.sizes()[0];
+            torch::Tensor input_t = input_tensor.repeat({dM, 1}); // for jacobian
+            input_t.set_requires_grad(true);
+            std::vector<torch::jit::IValue> inputs;
+            inputs.push_back(input_t.to(this->m_device));
+            auto outputs = this->m_module.forward(inputs).toTuple();
+
+            torch::Tensor z0_particles_tensor = outputs->elements()[0].toTensor();
+            torch::Tensor ones = torch::ones({dM, dM}, this->m_device);
+            z0_particles_tensor.backward(ones);
+            jacobian_matrix = input_t.grad();
+
+            torch::Tensor log_det_jacobian_tensor = outputs->elements()[1].toTensor();
+            log_det_jacobian_tensor = log_det_jacobian_tensor.to(torch::TensorOptions(torch::kCPU).dtype(at::kDouble)); 
+            log_det_jacobian_val = log_det_jacobian_tensor.index({1}).sum().item<double>();
+
+            p_z_0 = this->m_module.get_method("base_dist_log_prob")(inputs).toTensor();
+        }
+        catch (const c10::Error& e) {
+            std::cerr << "Error in Forward Pass during Energy/Gradient Computations | " << e.what();
+            return EXIT_FAILURE;
         }
     }
 

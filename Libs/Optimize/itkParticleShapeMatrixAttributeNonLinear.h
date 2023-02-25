@@ -229,6 +229,11 @@ public:
     this->m_inv_net->ForwardPass(input_tensor, log_det_jacobian_val, p_z_0_val);
   }
 
+  torch::Device GetDevice()
+  {
+    this->m_inv_net->GetDevice();
+  }
+
 
 protected:
   ParticleShapeMatrixAttributeNonLinear() 
