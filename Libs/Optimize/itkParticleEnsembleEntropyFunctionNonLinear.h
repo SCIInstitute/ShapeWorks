@@ -215,8 +215,17 @@ protected:
   double m_MinimumEigenValue;
   double m_CurrentEnergy;
   bool m_HoldMinimumVariance;
-  double m_MinimumVarianceDecay    VectorType gradE;
+  double m_MinimumVarianceDecay;
+  double m_MinimumVarianceDecayConstant;
+  int m_RecomputeCovarianceInterval;	
+  int m_Counter;	
+  bool m_UseMeanEnergy;	
+  bool m_optimizing_check;	
 
+  std::shared_ptr<vnl_matrix_type> m_points_mean; // 3Nx3N - used for energy computation	
+  std::shared_ptr<vnl_matrix_type> m_InverseCovMatrix; //3NxM - used for energy computation	
+
+};
 
 
 } //end namespace
