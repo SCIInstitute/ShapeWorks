@@ -146,7 +146,6 @@ public:
       }
       catch (const c10::Error& e) {
         std::cerr << "Error in LibTorch Operations in Particle Set Callback | " << e.what() << "\n";
-        return EXIT_FAILURE;
       }
     }
   }
@@ -196,7 +195,6 @@ public:
               this->m_inv_net->TrainModel(sm);
           } catch (const std::exception &e) {
             std::cout << e.what() << std::endl;
-            return EXIT_FAILURE;
           }
         }
       }

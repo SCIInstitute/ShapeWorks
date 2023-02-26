@@ -209,7 +209,6 @@ namespace InvertibleNet
         }
         catch (const c10::Error& e) {
             std::cerr << "Error in Forward Pass during Energy/Gradient Computations | " << e.what();
-            return EXIT_FAILURE;
         }
     }
 
