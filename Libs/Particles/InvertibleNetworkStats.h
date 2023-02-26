@@ -6,11 +6,6 @@
 namespace InvertibleNetStats
 {
 
-enum class OptimizerType : int {
-    SGD = 0,
-    Adam = 1
-};
-
 class CustomDataset : public torch::data::Dataset<CustomDataset> {
 private:
     torch::Tensor shape_matrix;

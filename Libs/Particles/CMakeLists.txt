@@ -6,6 +6,7 @@ set(Particles_sources
  ShapeEvaluation.cpp
  ReconstructSurface.cpp
  ParticleNormalEvaluation.cpp
+ InvertibleNetworkStats.cpp
  )
 
 set(Particles_headers
@@ -17,6 +18,7 @@ set(Particles_headers
  ShapeEvaluation.h
  ReconstructSurface.h
  ParticleNormalEvaluation.h
+ InvertibleNetworkStats.h
  )
 
 add_library(Particles STATIC
@@ -34,6 +36,7 @@ target_link_libraries(Particles PUBLIC
   Optimize
   tinyxml
   Eigen3::Eigen
+  ${TORCH_LIBRARIES}
   )
 
 # set

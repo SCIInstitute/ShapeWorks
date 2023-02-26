@@ -53,6 +53,9 @@ file(TO_CMAKE_PATH ${OpenVDB_DIR} OpenVDB_DIR) # fixes path to use forward slash
 list(APPEND CMAKE_MODULE_PATH ${OpenVDB_DIR})
 find_package(OpenVDB MODULE REQUIRED)
 
+set(Torch_DIR /home/sci/nawazish.khan/libtorch/share/cmake/Torch/)
+find_package(Torch REQUIRED)
+
 # use ccache if available
 find_program(CCACHE_PROGRAM ccache)
 if(CCACHE_PROGRAM)
