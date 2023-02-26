@@ -187,15 +187,12 @@ public:
         m_UpdateCounter = 0;
         if (this->m_inv_net->GetModelInitialized())
         {
-          try {
-              vnl_matrix<T> tmp(*this); // copy existing  matrix
-              unsigned int dM = this->rows();
-              torch::Tensor sm;
-              try{ sm = torch::from_blob(tmp.data_block(), {dM,dM});} catch (const c10::Error& e){ std::cerr << "Errors in SM init | " << e.what() << "\n";}
-              this->m_inv_net->TrainModel(sm);
-          } catch (const std::exception &e) {
-            std::cout << e.what() << std::endl;
-          }
+
+          vnl_matrix<T> tmp(*this); // copy existing  matrix
+          unsigned int dM = this->rows();
+          torch::Tensor sm;
+          try{ sm = torch::from_blob(tmp.data_block(), {dM,dM});} catch (const c10::Error& e){ std::cerr << "Errors in SM init | " << e.what() << "\n";}
+          this->m_inv_net->TrainModel(sm);
         }
       }
   }
@@ -220,7 +217,8 @@ public:
       unsigned int dM = vnl_cov->rows();
       torch::Tensor mean = torch::from_blob(vnl_mean->data_block(), {dM});
       // Run  Eigen spectrum on covariance matrix
-      vnl_svd <double> svd_inv(vnl_cov);
+      vnl_matrix<T> tmp(*vnl_cov); // copy existing  matrix
+      vnl_svd <double> svd_inv(tmp);
       vnl_diag_matrix<double> invLambda = svd_inv.W();
       torch::Tensor cov = torch::from_blob(invLambda.data_block(), {dM});
       this->m_inv_net->SetBaseDistMean(mean);
@@ -240,7 +238,7 @@ public:
   torch::Device GetDevice()
   {
     this->m_inv_net->GetDevice();
-  }
+  };
 
 protected:
   ParticleShapeMatrixAttributeNonLinear() 

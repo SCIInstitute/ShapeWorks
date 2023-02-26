@@ -62,7 +62,8 @@ class Model
         torch::Device GetDevice()
         {
             return this->m_device;
-        }
+        };
+
         void SetBaseDistMean(const torch::Tensor x)
         {
             this->m_base_dist_mean = x;
@@ -78,8 +79,7 @@ class Model
         };
         void LoadParams(const std::string filepath);
         torch::Tensor ForwardPass(torch::Tensor& input_tensor);
-        void ForwardPass(torch::Tensor& input_tensor, double& log_det_jacobian_val, double& p_z_0_val);
-        void ForwardPass(torch::Tensor& input_tensor, double& log_det_jacobian_val, torch::Tensor& jacobian_matrix, torch::Tensor& p_z_0_val);
+        void ForwardPass(torch::Tensor& input_tensor, torch::Tensor& jacobian_matrix, double& log_det_jacobian_val,torch::Tensor& p_z_0_val);
 
     private:
         torch::jit::script::Module m_module;

@@ -206,7 +206,7 @@ ParticleEnsembleEntropyFunctionNonLinear<VDimension>
         std:: cout << "Gradient 8" <<  dH_dz.sizes() << std::endl;
         for (unsigned int i = 0; i< VDimension; i++)
         {
-            gradE[i] = dH_dz.index({0, k+1}).item<double>();
+            gradE[i] = dH_dz[0][k+i].item<double>();
         }
         // maxdt  = (m_MinimumEigenValue * det_jacobian_val) - (p_z_val * log_det_jacobian_val);
         maxdt  = gradE.magnitude();

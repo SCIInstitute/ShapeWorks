@@ -86,9 +86,9 @@ namespace InvertibleNet
                     std::vector<torch::jit::IValue> input;
                     input.push_back(data.to(this->m_device));
                     optimizer.zero_grad();
-                    auto output = this->m_module.forward(input).toTuple();
-                    auto loss = this->m_module.get_method("log_prob")(input).toTensor();
-                    loss = -loss.mean(0);
+                    // auto output = this->m_module.forward(input).toTuple();
+                    auto outputs = this->m_module.get_method("log_prob")(input).toTuple();
+                    auto loss = -((outputs->elements()[0].toTensor()).mean(0));
                     loss.backward();
                     optimizer.step();                
                     batch_index += 1;
@@ -157,34 +157,7 @@ namespace InvertibleNet
     }
 
     //-----------------------------------------------------------------------------
-    void Model::ForwardPass(torch::Tensor& input_tensor, double& log_det_jacobian_val, double& p_z_0_val)
-    {
-        try
-        {
-            torch::NoGradGuard no_grad;
-            this->m_module.eval();
-
-            std::vector<torch::jit::IValue> inputs;
-            inputs.push_back(input_tensor.to(this->m_device));
-            auto outputs = this->m_module.forward(inputs).toTuple();
-
-            torch::Tensor z0_particles_tensor = outputs->elements()[0].toTensor();
-            z0_particles_tensor = z0_particles_tensor.to(torch::TensorOptions(torch::kCPU).dtype(at::kDouble));
-
-            torch::Tensor log_det_jacobian_tensor = outputs->elements()[1].toTensor();
-            log_det_jacobian_tensor = log_det_jacobian_tensor.to(torch::TensorOptions(torch::kCPU).dtype(at::kDouble)); 
-            log_det_jacobian_val = log_det_jacobian_tensor.sum(0).item<double>();
-
-            torch::Tensor p_z_0 = this->m_module.get_method("base_dist_log_prob")(inputs).toTensor();
-            p_z_0_val = p_z_0.item<double>();
-        }
-        catch (const c10::Error& e) {
-            std::cerr << "Error in Forward Pass during Energy/Gradient Computations | " << e.what(); 
-        }
-    }
-
-        //-----------------------------------------------------------------------------
-    void Model::ForwardPass(torch::Tensor& input_tensor,double& log_det_jacobian_val, torch::Tensor& jacobian_matrix, torch::Tensor& p_z_0)
+    void Model::ForwardPass(torch::Tensor& input_tensor, torch::Tensor& jacobian_matrix, double& log_det_jacobian_val, torch::Tensor& p_z_0)
     {
         try
         {
