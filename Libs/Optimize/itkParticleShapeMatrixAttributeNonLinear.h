@@ -146,6 +146,7 @@ public:
       }
       catch (const c10::Error& e) {
         std::cerr << "Error in LibTorch Operations in Particle Set Callback | " << e.what() << "\n";
+         std::exit(EXIT_FAILURE);
       }
     }
   }
@@ -191,7 +192,7 @@ public:
           vnl_matrix<T> tmp(*this); // copy existing  matrix
           unsigned int dM = this->rows();
           torch::Tensor sm;
-          try{ sm = torch::from_blob(tmp.data_block(), {dM,dM});} catch (const c10::Error& e){ std::cerr << "Errors in SM init | " << e.what() << "\n";}
+          try{ sm = torch::from_blob(tmp.data_block(), {dM,dM});} catch (const c10::Error& e){ std::cerr << "Errors in SM init | " << e.what() << "\n";  std::exit(EXIT_FAILURE); } 
           this->m_inv_net->TrainModel(sm);
         }
       }
@@ -226,6 +227,7 @@ public:
     }
     catch (const c10::Error& e) {
       std::cerr << "Errors in Libtorch operations while updating base distribution params | " << e.what() << "\n";
+       std::exit(EXIT_FAILURE);
     }
   }
 

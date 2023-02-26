@@ -37,6 +37,7 @@ namespace InvertibleNet
 
         } catch (nlohmann::json::exception &e) {
             throw std::runtime_error("Unabled to parse json param file " + filename + " : " + e.what());
+             std::exit(EXIT_FAILURE);
         }
         std::cout << "Inv Net Model Params Loaded from JSON file " << this->m_model_path << " device " << this->m_device_id << std::endl;
         this->InitializeModel();
@@ -102,6 +103,7 @@ namespace InvertibleNet
         }  
         catch (const c10::Error& e) {
             std::cerr << "Error while training the model in SW | " << e.what(); 
+            std::exit(EXIT_FAILURE);
             return -1;
         }
        
@@ -118,12 +120,12 @@ namespace InvertibleNet
             else{
                 this->m_device = torch::Device(torch::kCPU);
             }
-            std::cout << " Initializing 1 " << std::endl;
+            // std::cout << " Initializing 1 " << std::endl;
             const std::string fn = this->m_model_path;
             torch::jit::script::Module m = torch::jit::load(fn, this->m_device);
-            std::cout << " Initializing 2 " << std::endl;
+            // std::cout << " Initializing 2 " << std::endl;
             this->m_module = m;
-            std::cout << " Initializing 3 " << std::endl;
+            // std::cout << " Initializing 3 " << std::endl;
             // this->m_module.to(this->m_device);
             this->m_module_exists = true;
             torch::manual_seed(this->m_seed_val);
@@ -132,6 +134,7 @@ namespace InvertibleNet
         }
         catch (const c10::Error& e) {
             std::cerr << "Error loading the pre-trained model in SW | " << e.what(); 
+            std::exit(EXIT_FAILURE);
             return -1;
         }
         return 0;
@@ -142,17 +145,22 @@ namespace InvertibleNet
     {
         try
         {
+            std::cout << "FwdPass 1 " << std::endl;
             torch::NoGradGuard no_grad;
             this->m_module.eval();
             std::vector<torch::jit::IValue> inputs;
             inputs.push_back(input_tensor.to(this->m_device));
             auto outputs = this->m_module.forward(inputs).toTuple();
+            std::cout << "FwdPass 2 " << std::endl;
             torch::Tensor z0_particles = outputs->elements()[0].toTensor();
+            std::cout << "FwdPass 3 " << std::endl;
             z0_particles = z0_particles.to(torch::TensorOptions(torch::kCPU).dtype(at::kDouble)); 
+            std::cout << "FwdPass 4 " << std::endl;
             return z0_particles;
         }
         catch (const c10::Error& e) {
             std::cerr << "Error in Forward Pass during Particle Set | " << e.what(); 
+             std::exit(EXIT_FAILURE);
         }
     }
 
@@ -162,26 +170,39 @@ namespace InvertibleNet
         try
         {
             this->m_module.eval();
+            std::cout << "Forward Pass 1 " << std::endl;
             unsigned int dM = input_tensor.sizes()[0];
             torch::Tensor input_t = input_tensor.repeat({dM, 1}); // for jacobian
+            std::cout << "Forward Pass 1 " << std::endl;
             input_t.set_requires_grad(true);
+            std::cout << "Forward Pass 2 " << std::endl;
             std::vector<torch::jit::IValue> inputs;
             inputs.push_back(input_t.to(this->m_device));
-            auto outputs = this->m_module.forward(inputs).toTuple();
+            auto outputs = this->m_module.get_method("log_prob")(inputs).toTuple();
+            std::cout << "Forward Pass 3 " << std::endl;
 
             torch::Tensor z0_particles_tensor = outputs->elements()[0].toTensor();
             torch::Tensor ones = torch::ones({dM, dM}, this->m_device);
+            std::cout << "Forward Pass 4 " << std::endl;
             z0_particles_tensor.backward(ones);
+            std::cout << "Forward Pass 5 " << std::endl;
             jacobian_matrix = input_t.grad();
+            std::cout << "Forward Pass 6 " << std::endl;
 
             torch::Tensor log_det_jacobian_tensor = outputs->elements()[1].toTensor();
+            std::cout << "Forward Pass 7 " << std::endl;
             log_det_jacobian_tensor = log_det_jacobian_tensor.to(torch::TensorOptions(torch::kCPU).dtype(at::kDouble)); 
             log_det_jacobian_val = log_det_jacobian_tensor.index({1}).sum().item<double>();
+            std::cout << "Forward Pass 8 " << std::endl;
 
-            p_z_0 = this->m_module.get_method("base_dist_log_prob")(inputs).toTensor();
+            auto all_probs = this->m_module.get_method("base_dist_log_prob")(inputs).toTensor();
+            p_z_0 = all_probs[0].view({1, dM});
+            std::cout << "Forward Pass 9 " << std::endl;
+
         }
         catch (const c10::Error& e) {
-            std::cerr << "Error in Forward Pass during Energy/Gradient Computations | " << e.what();
+            std::cout << "Error in Forward Pass during Energy/Gradient Computations | " << e.what();
+             std::exit(EXIT_FAILURE);
         }
     }
 
