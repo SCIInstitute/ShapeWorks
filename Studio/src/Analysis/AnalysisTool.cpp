@@ -449,8 +449,8 @@ bool AnalysisTool::compute_stats() {
       return false;
     }
   }
-
-  stats_.ImportPoints(points, group_ids);
+  std::vector<Eigen::VectorXd> base_points = stats_.GenerateBaseSpaceParticles(points)
+  stats_.ImportPoints(base_points, group_ids);
   // MCA needs to know number of particles per domain/object
   stats_.SetNumberOfParticlesArray(number_of_particles_ar);
   if (dps > 1) {

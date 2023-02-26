@@ -41,6 +41,8 @@ class ParticleShapeStatistics {
 
   //! Loads a set of point files and pre-computes statistics for multi-level analysis
   void ComputeMultiLevelAnalysisStatistics(std::vector<Eigen::VectorXd> points, unsigned int dps);
+  void InitializeInvertibleNetwork(std::string model_path);
+  std::vector<Eigen::VectorXd> GenerateBaseSpaceParticles(std::vector<Eigen::VectorXd> points);
 
   //! Compute shape variations for MLCA
   int ComputeShapeDevModesForMca();
