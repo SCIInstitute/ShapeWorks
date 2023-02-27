@@ -42,7 +42,7 @@ const std::string fixed_subjects_column = "fixed_subjects_column";
 const std::string fixed_subjects_choice = "fixed_subjects_choice";
 const std::string checkpointing_interval = "checkpointing_interval";
 const std::string save_init_splits = "save_init_splits";
-
+const std::string keep_checkpoints = "keep_checkpoints";
 }  // namespace Keys
 
 //---------------------------------------------------------------------------
@@ -75,7 +75,10 @@ OptimizeParameters::OptimizeParameters(ProjectHandle project) {
                                          Keys::fixed_subjects_column,
                                          Keys::fixed_subjects_choice,
                                          Keys::checkpointing_interval,
-                                         Keys::save_init_splits};
+                                         Keys::save_init_splits,
+                                         Keys::keep_checkpoints
+
+  };
 
   // check if params_ has any unknown keys
   for (auto& param : params_.get_map()) {
@@ -86,14 +89,10 @@ OptimizeParameters::OptimizeParameters(ProjectHandle project) {
 }
 
 //---------------------------------------------------------------------------
-void OptimizeParameters::save_to_project() {
-  project_->set_parameters(Parameters::OPTIMIZE_PARAMS, params_);
-}
+void OptimizeParameters::save_to_project() { project_->set_parameters(Parameters::OPTIMIZE_PARAMS, params_); }
 
 //---------------------------------------------------------------------------
-std::vector<int> OptimizeParameters::get_number_of_particles() {
-  return params_.get(Keys::number_of_particles, {128});
-}
+std::vector<int> OptimizeParameters::get_number_of_particles() { return params_.get(Keys::number_of_particles, {128}); }
 
 //---------------------------------------------------------------------------
 void OptimizeParameters::set_number_of_particles(std::vector<int> number_of_particles) {
@@ -117,9 +116,7 @@ double OptimizeParameters::get_relative_weighting() { return params_.get(Keys::r
 void OptimizeParameters::set_relative_weighting(double value) { params_.set(Keys::relative_weighting, value); }
 
 //---------------------------------------------------------------------------
-double OptimizeParameters::get_starting_regularization() {
-  return params_.get(Keys::starting_regularization, 1000.0);
-}
+double OptimizeParameters::get_starting_regularization() { return params_.get(Keys::starting_regularization, 1000.0); }
 
 //---------------------------------------------------------------------------
 void OptimizeParameters::set_starting_regularization(double value) {
@@ -130,9 +127,7 @@ void OptimizeParameters::set_starting_regularization(double value) {
 double OptimizeParameters::get_ending_regularization() { return params_.get(Keys::ending_regularization, 10.0); }
 
 //---------------------------------------------------------------------------
-void OptimizeParameters::set_ending_regularization(double value) {
-  params_.set(Keys::ending_regularization, value);
-}
+void OptimizeParameters::set_ending_regularization(double value) { params_.set(Keys::ending_regularization, value); }
 
 //---------------------------------------------------------------------------
 int OptimizeParameters::get_iterations_per_split() { return params_.get(Keys::iterations_per_split, 1000); }
@@ -144,17 +139,13 @@ void OptimizeParameters::set_iterations_per_split(int value) { params_.set(Keys:
 int OptimizeParameters::get_optimization_iterations() { return params_.get(Keys::optimization_iterations, 1000); }
 
 //---------------------------------------------------------------------------
-void OptimizeParameters::set_optimization_iterations(int value) {
-  params_.set(Keys::optimization_iterations, value);
-}
+void OptimizeParameters::set_optimization_iterations(int value) { params_.set(Keys::optimization_iterations, value); }
 
 //---------------------------------------------------------------------------
 bool OptimizeParameters::get_use_geodesic_distance() { return params_.get(Keys::use_geodesic_distance, false); }
 
 //---------------------------------------------------------------------------
-void OptimizeParameters::set_use_geodesic_distance(bool value) {
-  params_.set(Keys::use_geodesic_distance, value);
-}
+void OptimizeParameters::set_use_geodesic_distance(bool value) { params_.set(Keys::use_geodesic_distance, value); }
 
 //---------------------------------------------------------------------------
 std::vector<bool> OptimizeParameters::get_use_normals() {
@@ -166,9 +157,7 @@ std::vector<bool> OptimizeParameters::get_use_normals() {
 }
 
 //---------------------------------------------------------------------------
-void OptimizeParameters::set_use_normals(std::vector<bool> use_normals) {
-  params_.set(Keys::use_normals, use_normals);
-}
+void OptimizeParameters::set_use_normals(std::vector<bool> use_normals) { params_.set(Keys::use_normals, use_normals); }
 
 //---------------------------------------------------------------------------
 double OptimizeParameters::get_normals_strength() { return params_.get(Keys::normals_strength, 10); }
@@ -270,9 +259,7 @@ std::string OptimizeParameters::get_output_prefix() {
 }
 
 //---------------------------------------------------------------------------
-int OptimizeParameters::get_geodesic_cache_multiplier() {
-  return params_.get(Keys::geodesic_cache_multiplier, 0);
-}
+int OptimizeParameters::get_geodesic_cache_multiplier() { return params_.get(Keys::geodesic_cache_multiplier, 0); }
 
 //---------------------------------------------------------------------------
 void OptimizeParameters::set_geodesic_cache_multiplier(int value) {
@@ -574,6 +561,7 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
 
   optimize->SetCheckpointingInterval(get_checkpoint_interval());
   optimize->SetSaveInitSplits(get_save_init_splits());
+  optimize->SetKeepCheckpoints(get_keep_checkpoints() ? 1 : 0);
 
   optimize->SetFilenames(StringUtils::getFileNamesFromPaths(filenames));
   optimize->SetOutputTransformFile("transform");
@@ -606,3 +594,8 @@ bool OptimizeParameters::get_save_init_splits() { return params_.get(Keys::save_
 
 //---------------------------------------------------------------------------
 void OptimizeParameters::set_save_init_splits(bool enabled) { params_.set(Keys::save_init_splits, enabled); }
+
+//---------------------------------------------------------------------------
+bool OptimizeParameters::get_keep_checkpoints() { return params_.get(Keys::keep_checkpoints, false); }
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_keep_checkpoints(bool enabled) { params_.set(Keys::keep_checkpoints, enabled); }
