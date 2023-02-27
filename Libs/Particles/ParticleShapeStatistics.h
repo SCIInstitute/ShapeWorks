@@ -11,6 +11,7 @@
 #include "Shapeworks.h"
 #include "itkParticlePositionReader.h"
 #include "itkParticlePositionWriter.h"
+#include "InvertibleNetworkStats.h"
 
 namespace shapeworks {
 
@@ -42,7 +43,8 @@ class ParticleShapeStatistics {
   //! Loads a set of point files and pre-computes statistics for multi-level analysis
   void ComputeMultiLevelAnalysisStatistics(std::vector<Eigen::VectorXd> points, unsigned int dps);
   void InitializeInvertibleNetwork(std::string model_path);
-  std::vector<Eigen::VectorXd> GenerateBaseSpaceParticles(std::vector<Eigen::VectorXd> points);
+  std::vector<Eigen::VectorXd> GenerateBaseSpaceShapeMatrix(std::vector<Eigen::VectorXd> points);
+  Eigen::VectorXd GenerateTargetShapeVector(Eigen::VectorXd point);
 
   //! Compute shape variations for MLCA
   int ComputeShapeDevModesForMca();
@@ -207,6 +209,9 @@ class ParticleShapeStatistics {
   // 0 = bad, 1 = good
   std::vector<bool> m_goodPoints;
   std::vector<Eigen::VectorXd> points_;
+
+  //Non-Linear
+  InvertibleNetStats::Model::Pointer m_inv_net;
 };
 
 }  // namespace shapeworks

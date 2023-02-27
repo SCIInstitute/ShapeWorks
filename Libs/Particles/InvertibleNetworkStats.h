@@ -2,6 +2,8 @@
 #include <torch/script.h>
 #include <torch/torch.h>
 #include <nlohmann/json.hpp>
+#include <Eigen/Eigen>
+
 
 namespace InvertibleNetStats
 {
@@ -55,6 +57,9 @@ class Model
         void LoadParams(const std::string filepath);
 
         torch::Tensor ForwardPass(torch::Tensor& input_tensor);
+        torch::Tensor InversePass(torch::Tensor& input_tensor);
+        std::vector<Eigen::VectorXd> ForwardPass(std::vector<Eigen::VectorXd> points);
+        Eigen::VectorXd InversePass(Eigen::VectorXd point);
 
     private:
         torch::jit::script::Module m_module;

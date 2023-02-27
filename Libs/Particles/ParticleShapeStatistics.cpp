@@ -10,6 +10,26 @@
 
 namespace shapeworks {
 
+//---------------------------------------------------------------------------
+void ParticleShapeStatistics::InitializeInvertibleNetwork(std::string model_path)
+{
+  this->m_inv_net = std::make_shared<InvertibleNetStats::Model>();
+  this->m_inv_net->LoadParams(model_path);
+}
+
+//---------------------------------------------------------------------------
+std::vector<Eigen::VectorXd> ParticleShapeStatistics::GenerateBaseSpaceShapeMatrix(std::vector<Eigen::VectorXd> points)
+{
+  this->m_inv_net->ForwardPass(points);
+}
+
+//---------------------------------------------------------------------------
+Eigen::VectorXd ParticleShapeStatistics::GenerateTargetShapeVector(Eigen::VectorXd point)
+{
+  this->m_inv_net->InversePass(point);
+}
+
+//---------------------------------------------------------------------------
 int ParticleShapeStatistics::SimpleLinearRegression(const std::vector<double>& y, const std::vector<double>& x,
                                                     double& a, double& b) const {
   if (x.size() != y.size()) return -1;

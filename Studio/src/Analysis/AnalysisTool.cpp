@@ -449,7 +449,10 @@ bool AnalysisTool::compute_stats() {
       return false;
     }
   }
-  std::vector<Eigen::VectorXd> base_points = stats_.GenerateBaseSpaceParticles(points)
+  //TODO: initialize stats_ invertible network with path
+  std::string fpath = "/home/sci/nawazish.khan/non-linear-ssm-experiments/studio_file.json";
+  stats_.InitializeInvertibleNetwork(fpath);
+  std::vector<Eigen::VectorXd> base_points = stats_.GenerateBaseSpaceShapeMatrix(points);
   stats_.ImportPoints(base_points, group_ids);
   // MCA needs to know number of particles per domain/object
   stats_.SetNumberOfParticlesArray(number_of_particles_ar);
@@ -515,20 +518,20 @@ Particles AnalysisTool::get_mean_shape_points() {
   }
 
   if (ui_->group1_button->isChecked() || ui_->difference_button->isChecked()) {
-    return convert_from_combined(stats_.Group1Mean());
+    return convert_from_combined(stats_.GenerateTargetShapeVector(stats_.Group1Mean()));
   } else if (ui_->group2_button->isChecked()) {
-    return convert_from_combined(stats_.Group2Mean());
+    return convert_from_combined(stats_.GenerateTargetShapeVector(stats_.Group2Mean()));
   } else if (ui_->mean_button->isChecked()) {
-    return convert_from_combined(stats_.Mean());
+    return convert_from_combined(stats_.GenerateTargetShapeVector(stats_.Mean()));
   }
 
   if (groups_active()) {
     auto group_ratio = get_group_ratio();
     temp_shape_ = stats_.Group1Mean() + (stats_.GroupDifference() * group_ratio);
-    return convert_from_combined(temp_shape_);
+    return convert_from_combined(stats_.GenerateTargetShapeVector(temp_shape_));
   }
 
-  return convert_from_combined(stats_.Mean());
+  return convert_from_combined(stats_.GenerateTargetShapeVector(stats_.Mean()));
 }
 
 //-----------------------------------------------------------------------------
@@ -566,7 +569,7 @@ Particles AnalysisTool::get_shape_points(int mode, double value) {
     ui_->cumulative_explained_variance->setText("");
   }
 
-  temp_shape_ = stats_.Mean() + (e * (value * lambda));
+  temp_shape_ = stats_.GenerateTargetShapeVector(stats_.Mean() + (e * (value * lambda)));
 
   return convert_from_combined(temp_shape_);
 }
