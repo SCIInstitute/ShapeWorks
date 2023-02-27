@@ -152,7 +152,6 @@ def Run_Pipeline(args):
         "optimization_iterations": 10,
         "starting_regularization": 100,
         "ending_regularization": 0.1,
-        "recompute_regularization_interval": 2,
         "relative_weighting": 15,
         "initial_relative_weighting": 0.05,
         "procrustes_interval": 0,
