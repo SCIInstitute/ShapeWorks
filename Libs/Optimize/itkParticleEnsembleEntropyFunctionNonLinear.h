@@ -5,6 +5,7 @@
 #include "itkParticleVectorFunction.h"
 #include <vector>
 #include <torch/script.h>
+#include <c10/cuda/CUDACachingAllocator.h>
 
 namespace itk
 {

@@ -218,6 +218,8 @@ ParticleEnsembleEntropyFunctionNonLinear<VDimension>
         std::cout << "Errors in Libtorch operations while Gradient Set | " << e.what() << "\n";
         std::exit(EXIT_FAILURE);
   }
+    c10::cuda::CUDACachingAllocator::emptyCache();
+
     return system->TransformVector(gradE,
                                    system->GetInversePrefixTransform(d) *
                                    system->GetInverseTransform(d));

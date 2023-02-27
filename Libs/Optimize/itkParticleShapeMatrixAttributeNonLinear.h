@@ -6,6 +6,7 @@
 #include "InvertibleNetwork.h"
 #include <torch/script.h>
 #include "vnl/algo/vnl_symmetric_eigensystem.h"
+#include <c10/cuda/CUDACachingAllocator.h>
 
 namespace itk
 {
@@ -148,6 +149,7 @@ public:
         std::cerr << "Error in LibTorch Operations in Particle Set Callback | " << e.what() << "\n";
          std::exit(EXIT_FAILURE);
       }
+      c10::cuda::CUDACachingAllocator::emptyCache();
     }
   }
   
@@ -195,6 +197,7 @@ public:
           try{ sm = torch::from_blob(tmp.data_block(), {dM,dM});} catch (const c10::Error& e){ std::cerr << "Errors in SM init | " << e.what() << "\n";  std::exit(EXIT_FAILURE); } 
           this->m_inv_net->TrainModel(sm);
         }
+        c10::cuda::CUDACachingAllocator::emptyCache();
       }
   }
 
@@ -229,6 +232,8 @@ public:
       std::cerr << "Errors in Libtorch operations while updating base distribution params | " << e.what() << "\n";
        std::exit(EXIT_FAILURE);
     }
+    c10::cuda::CUDACachingAllocator::emptyCache();
+
   }
 
   void DoForwardPass(torch::Tensor& input_tensor, torch::Tensor& jacobian_matrix,  double& log_det_jacobian_val, torch::Tensor& p_z_0_val)
