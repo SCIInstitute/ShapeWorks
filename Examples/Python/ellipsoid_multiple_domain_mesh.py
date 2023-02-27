@@ -12,7 +12,6 @@ First import the necessary modules
 import os
 import glob
 import shapeworks as sw
-import OptimizeUtils
 import AnalyzeUtils
 import numpy as np 
 import subprocess
