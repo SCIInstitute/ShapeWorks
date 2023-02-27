@@ -225,7 +225,7 @@ def Run_Pipeline(args):
 		"save_init_splits" : 0,
 		"verbosity" : 0,
 		"use_normals": 1,
-		"normals_strength": 15.0
+		"normals_strength": 10.0
 	  }
 	num_particles = [256,256]
 
