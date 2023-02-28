@@ -8,6 +8,12 @@ namespace shapeworks {
 
 class Optimize;
 
+/**
+ * \class OptimizeParameters
+ * \ingroup Group-Optimize
+ *
+ * This class encapsulated processing of Optimization parameters
+ */
 class OptimizeParameters {
  public:
   explicit OptimizeParameters(ProjectHandle project);
@@ -99,6 +105,10 @@ class OptimizeParameters {
 
   bool get_save_init_splits();
   void set_save_init_splits(bool enabled);
+
+  bool get_keep_checkpoints();
+  void set_keep_checkpoints(bool enabled);
+
 
  private:
   std::string get_output_prefix();

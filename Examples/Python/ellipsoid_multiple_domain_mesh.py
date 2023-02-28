@@ -12,7 +12,6 @@ First import the necessary modules
 import os
 import glob
 import shapeworks as sw
-import OptimizeUtils
 import AnalyzeUtils
 import numpy as np 
 import subprocess
@@ -177,8 +176,6 @@ def Run_Pipeline(args):
         "optimization_iterations" : 200,
         "starting_regularization" :1000,
         "ending_regularization" : 0.1,
-        "recompute_regularization_interval" : 1,
-        "domains_per_shape" : domains_per_shape,
         "relative_weighting" : 10, 
         "initial_relative_weighting" : 0.1,
         "procrustes_interval" : 0,

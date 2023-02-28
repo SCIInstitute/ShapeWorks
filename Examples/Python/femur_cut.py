@@ -190,25 +190,20 @@ def Run_Pipeline(args):
     parameter_dictionary = {
         "number_of_particles" : 512,
         "use_normals": 0,
-        "normal_weight": 10.0,
+        "normals_strength": 10.0,
         "checkpointing_interval" : 200,
         "keep_checkpoints" : 0,
         "iterations_per_split" : 1000,
         "optimization_iterations" : 500,
         "starting_regularization" : 100,
         "ending_regularization" : 0.1,
-        "recompute_regularization_interval" : 2,
-        "domains_per_shape" : 1,
         "relative_weighting" : 10,
         "initial_relative_weighting" : 0.1,
         "procrustes" : 1,
         "procrustes_interval" : 1,
         "procrustes_scaling" : 1,
         "save_init_splits" : 1,
-        "debug_projection" : 0,
         "verbosity" : 0,
-        "use_statistics_in_init" : 0,
-        "adaptivity_mode": 0
     } 
     # If running a tiny test, reduce some parameters
     if args.tiny_test:
@@ -218,11 +213,10 @@ def Run_Pipeline(args):
     # Run multiscale optimization unless single scale is specified
     if not args.use_single_scale:
         parameter_dictionary["multiscale"] = 1
-        parameter_dictionary["use_shape_statistics_after"] = 64
+        parameter_dictionary["multiscale_particles"] = 64
 
     for key in parameter_dictionary:
         parameters.set(key,sw.Variant([parameter_dictionary[key]]))
-    parameters.set("domain_type",sw.Variant('mesh'))
     project.set_parameters("optimize",parameters)
     spreadsheet_file = output_directory + "shape_models/femur_cut_" + args.option_set+ ".xlsx"
     project.save(spreadsheet_file)
