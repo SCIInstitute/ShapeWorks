@@ -7,9 +7,9 @@
 
 * [Project JSON file (swproj)](parameters.md#project-json-file)
 
-The project excel file format is continuously under development where new features are added. The XML will be depreciated soon, and users are encouraged to use the project excel file.  
+The project excel/json file formats are the current standard project file format. The older XML format is deprecated and will not have newer features added to it.  Users are encouraged to use the project excel/json file.  
 
-### XML Parameter File
+### XML Parameter File (deprecated)
 	
 Here is the list of the parameters to be included in the `<parameters.xml>` file.
 
@@ -28,7 +28,6 @@ Here is the list of the parameters to be included in the `<parameters.xml>` file
 * `<use_shape_statistics_after>`: (default: -1) (e.g., 32 or 64) The number of particles after which to use shape space entropy (i.e., the covariance structure) in the initialization and optimization steps. Use -1 if you want shape statistics only used when the number of particles reaches the desired `<number_of_particles>`. Hence, all initialization and optimization steps will use mean energy till the `<number_of_particles>` is reached.
 * `<starting_regularization>`: (default: 1000) Sets the starting regularization value (usually high value).
 * `<ending_regularization>`: (default: 1.0) Sets the ending regularization value (usually small value less than 1).
-* `<recompute_regularization_interval>`: (default: 1) Skip interval (i.e., number of iterations) to exponentially decay the regularization value.
 * `<initial_relative_weighting>`: (default: 0.05) The relative weight of the correspondence term in the initialization steps to make sure that optimization steps start with evenly spaced particle distributions that cover the entire surfaces (usually in the order of ~0.1 or 0.01).
 * `<relative_weighting>`: (default: 1) The relative weight of the correspondence term in the optimization steps.
 * `<procrustes_scaling>`: (default: 1) A flag to enable factoring out scaling in the shape space when performing the Procrustes alignment.
@@ -49,7 +48,6 @@ Below is a list of the currently exposed algorithmic parameters. All the keys of
 ```python
 {
 	"number_of_particles": 1024,
-	"use_shape_statistics_after": 32, 
 	"use_normals": 0, 
 	"normals_strength": 0.0, 
 	"checkpointing_interval" : 10000, 
@@ -58,9 +56,6 @@ Below is a list of the currently exposed algorithmic parameters. All the keys of
 	"optimization_iterations" : 500, 
 	"starting_regularization" : 10, 
 	"ending_regularization" : 1, 
-	"recompute_regularization_interval" : 2,
-	"domains_per_shape" : 1,
-	"domain_type" : 'mesh',
 	"relative_weighting" : 10,
 	"initial_relative_weighting" : 1,
 	"procrustes_interval" : 1,
