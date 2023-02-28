@@ -49,7 +49,7 @@ Below are the default optimization parameters for this use case.
 		"save_init_splits" : 0,
 		"verbosity" : 0,
 		"use_normals": 1,
-		"normal_weight": 15.0
+		"normals_strength": 15.0
 }
 num_particles = [256,256]
 ```

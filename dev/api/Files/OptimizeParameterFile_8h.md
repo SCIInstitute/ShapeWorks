@@ -27,10 +27,10 @@ title: Libs/Optimize/OptimizeParameterFile.h
 ```cpp
 #pragma once
 
+#include <exception>
+#include <sstream>
 #include <string>
 #include <vector>
-#include <sstream>
-#include <exception>
 
 class TiXmlHandle;
 
@@ -38,15 +38,13 @@ namespace shapeworks {
 class Optimize;
 
 class OptimizeParameterFile {
-public:
-
+ public:
   OptimizeParameterFile();
 
   bool load_parameter_file(std::string filename, Optimize* optimize);
 
-private:
-
-  bool set_visualizer_parameters(TiXmlHandle *docHandle, Optimize *optimize);
+ private:
+  bool set_visualizer_parameters(TiXmlHandle* docHandle, Optimize* optimize);
 
   bool set_io_parameters(TiXmlHandle* docHandle, Optimize* optimize);
 
@@ -80,17 +78,16 @@ private:
 
   int get_num_inputs(TiXmlHandle* docHandle);
 
-private:
-
+ private:
   std::vector<int> read_int_list(TiXmlHandle* doc_handle, std::string name);
 
   int verbosity_level_ = 0;
 };
 
-}
+}  // namespace shapeworks
 ```
 
 
 -------------------------------
 
-Updated on 2023-02-27 at 19:53:45 +0000
+Updated on 2023-02-28 at 18:42:27 +0000

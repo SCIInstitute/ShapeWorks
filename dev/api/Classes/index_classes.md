@@ -44,7 +44,6 @@ title: Classes
 * **struct [Intersection](../Classes/structIntersection.md)** 
 * **class [LegacyMeshGenerator](../Classes/classLegacyMeshGenerator.md)** 
 * **class [MeshSettings](../Classes/classMeshSettings.md)** <br>Settings for creating a mesh. 
-* **class [OptimizeParameterFile](../Classes/classOptimizeParameterFile.md)** 
 * **class [ParticleEvent:: Parent](../Classes/classParticleEvent_1_1_01Parent.md)** 
 * **class [Preferences](../Classes/classPreferences.md)** <br>Application preferences. 
 * **class [Procrustes3D](../Classes/classProcrustes3D.md)** 
@@ -267,4 +266,4 @@ title: Classes
 
 -------------------------------
 
-Updated on 2023-02-27 at 19:53:46 +0000
+Updated on 2023-02-28 at 18:42:27 +0000

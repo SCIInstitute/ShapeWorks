@@ -7,7 +7,10 @@ title: shapeworks::GroomParameters
 
 
 
+ [More...](#detailed-description)
 
+
+`#include <GroomParameters.h>`
 
 ## Public Functions
 
@@ -102,6 +105,15 @@ title: shapeworks::GroomParameters
 | const std::string | **[GROOM_ALIGNMENT_CENTER_C](../Classes/classshapeworks_1_1GroomParameters.md#variable-groom-alignment-center-c)**  |
 | const std::string | **[GROOM_ALIGNMENT_ICP_C](../Classes/classshapeworks_1_1GroomParameters.md#variable-groom-alignment-icp-c)**  |
 | const std::string | **[GROOM_ALIGNMENT_LANDMARK_C](../Classes/classshapeworks_1_1GroomParameters.md#variable-groom-alignment-landmark-c)**  |
+
+## Detailed Description
+
+```cpp
+class shapeworks::GroomParameters;
+```
+
+
+This class encapsulated processing of [Groom](../Classes/classshapeworks_1_1Groom.md) parameters 
 
 ## Public Functions Documentation
 
@@ -774,4 +786,4 @@ static const std::string GROOM_ALIGNMENT_LANDMARK_C;
 
 -------------------------------
 
-Updated on 2023-02-27 at 19:53:44 +0000
+Updated on 2023-02-28 at 18:42:25 +0000

@@ -2286,20 +2286,11 @@
 <span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
 
 <span class="k">class</span><span class="w"> </span><span class="nc">GroomParameters</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="k">enum</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">MeshSmoothingOption</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">laplacian</span><span class="p">,</span><span class="w"> </span><span class="n">sinc</span><span class="w"> </span><span class="p">};</span><span class="w"></span>
 
-<span class="w">  </span><span class="k">enum</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">MeshSmoothingOption</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">laplacian</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">sinc</span><span class="w"></span>
-<span class="w">  </span><span class="p">};</span><span class="w"></span>
-
-<span class="w">  </span><span class="k">enum</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">AlignmentOption</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">none</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">center</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">icp</span><span class="w"></span>
-<span class="w">  </span><span class="p">};</span><span class="w"></span>
+<span class="w">  </span><span class="k">enum</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">AlignmentOption</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">none</span><span class="p">,</span><span class="w"> </span><span class="n">center</span><span class="p">,</span><span class="w"> </span><span class="n">icp</span><span class="w"> </span><span class="p">};</span><span class="w"></span>
 
 <span class="w"> </span><span class="k">public</span><span class="o">:</span><span class="w"></span>
-
 <span class="w">  </span><span class="k">explicit</span><span class="w"> </span><span class="n">GroomParameters</span><span class="p">(</span><span class="n">ProjectHandle</span><span class="w"> </span><span class="n">project</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">domain_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">);</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_domain_name</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">domain_name</span><span class="p">);</span><span class="w"></span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">save_to_project</span><span class="p">();</span><span class="w"></span>
@@ -2423,15 +2414,14 @@
 <span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">GROOM_ALIGNMENT_LANDMARK_C</span><span class="p">;</span><span class="w"></span>
 
 <span class="w"> </span><span class="k">private</span><span class="o">:</span><span class="w"></span>
-
 <span class="w">  </span><span class="n">Parameters</span><span class="w"> </span><span class="n">params_</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="n">ProjectHandle</span><span class="w"> </span><span class="n">project_</span><span class="p">;</span><span class="w"></span>
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">domain_name_</span><span class="p">;</span><span class="w"></span>
 <span class="p">};</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-02-27 at 19:53:45 +0000</p>
+<p>Updated on 2023-02-28 at 18:42:26 +0000</p>
 
               
             </article>

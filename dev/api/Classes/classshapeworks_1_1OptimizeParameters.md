@@ -7,7 +7,10 @@ title: shapeworks::OptimizeParameters
 
 
 
+ [More...](#detailed-description)
 
+
+`#include <OptimizeParameters.h>`
 
 ## Public Functions
 
@@ -73,6 +76,17 @@ title: shapeworks::OptimizeParameters
 | void | **[set_checkpoint_interval](../Classes/classshapeworks_1_1OptimizeParameters.md#function-set-checkpoint-interval)**(int iterations) |
 | bool | **[get_save_init_splits](../Classes/classshapeworks_1_1OptimizeParameters.md#function-get-save-init-splits)**() |
 | void | **[set_save_init_splits](../Classes/classshapeworks_1_1OptimizeParameters.md#function-set-save-init-splits)**(bool enabled) |
+| bool | **[get_keep_checkpoints](../Classes/classshapeworks_1_1OptimizeParameters.md#function-get-keep-checkpoints)**() |
+| void | **[set_keep_checkpoints](../Classes/classshapeworks_1_1OptimizeParameters.md#function-set-keep-checkpoints)**(bool enabled) |
+
+## Detailed Description
+
+```cpp
+class shapeworks::OptimizeParameters;
+```
+
+
+This class encapsulated processing of Optimization parameters 
 
 ## Public Functions Documentation
 
@@ -560,6 +574,22 @@ void set_save_init_splits(
 ```
 
 
+### function get_keep_checkpoints
+
+```cpp
+bool get_keep_checkpoints()
+```
+
+
+### function set_keep_checkpoints
+
+```cpp
+void set_keep_checkpoints(
+    bool enabled
+)
+```
+
+
 -------------------------------
 
-Updated on 2023-02-27 at 19:53:44 +0000
+Updated on 2023-02-28 at 18:42:25 +0000

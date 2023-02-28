@@ -84,7 +84,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#xml-parameter-file" class="md-skip">
+        <a href="#xml-parameter-file-deprecated" class="md-skip">
           Skip to content
         </a>
       
@@ -576,8 +576,8 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#xml-parameter-file" class="md-nav__link">
-    XML Parameter File
+  <a href="#xml-parameter-file-deprecated" class="md-nav__link">
+    XML Parameter File (deprecated)
   </a>
   
 </li>
@@ -2284,8 +2284,8 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#xml-parameter-file" class="md-nav__link">
-    XML Parameter File
+  <a href="#xml-parameter-file-deprecated" class="md-nav__link">
+    XML Parameter File (deprecated)
   </a>
   
 </li>
@@ -2356,8 +2356,8 @@
 <p><a href="parameters.html#project-json-file">Project JSON file (swproj)</a></p>
 </li>
 </ul>
-<p>The project excel file format is continuously under development where new features are added. The XML will be depreciated soon, and users are encouraged to use the project excel file.  </p>
-<h3 id="xml-parameter-file">XML Parameter File</h3>
+<p>The project excel/json file formats are the current standard project file format. The older XML format is deprecated and will not have newer features added to it.  Users are encouraged to use the project excel/json file.  </p>
+<h3 id="xml-parameter-file-deprecated">XML Parameter File (deprecated)</h3>
 <p>Here is the list of the parameters to be included in the <code>&lt;parameters.xml&gt;</code> file.</p>
 <ul>
 <li><code>&lt;inputs&gt;</code>: List of surface meshes or distance transforms (i.e., groom stage output) that comprises your dataset.</li>
@@ -2375,7 +2375,6 @@
 <li><code>&lt;use_shape_statistics_after&gt;</code>: (default: -1) (e.g., 32 or 64) The number of particles after which to use shape space entropy (i.e., the covariance structure) in the initialization and optimization steps. Use -1 if you want shape statistics only used when the number of particles reaches the desired <code>&lt;number_of_particles&gt;</code>. Hence, all initialization and optimization steps will use mean energy till the <code>&lt;number_of_particles&gt;</code> is reached.</li>
 <li><code>&lt;starting_regularization&gt;</code>: (default: 1000) Sets the starting regularization value (usually high value).</li>
 <li><code>&lt;ending_regularization&gt;</code>: (default: 1.0) Sets the ending regularization value (usually small value less than 1).</li>
-<li><code>&lt;recompute_regularization_interval&gt;</code>: (default: 1) Skip interval (i.e., number of iterations) to exponentially decay the regularization value.</li>
 <li><code>&lt;initial_relative_weighting&gt;</code>: (default: 0.05) The relative weight of the correspondence term in the initialization steps to make sure that optimization steps start with evenly spaced particle distributions that cover the entire surfaces (usually in the order of ~0.1 or 0.01).</li>
 <li><code>&lt;relative_weighting&gt;</code>: (default: 1) The relative weight of the correspondence term in the optimization steps.</li>
 <li><code>&lt;procrustes_scaling&gt;</code>: (default: 1) A flag to enable factoring out scaling in the shape space when performing the Procrustes alignment.</li>
@@ -2390,21 +2389,17 @@
 </ul>
 <h3 id="parameter-dictionary-in-python">Parameter Dictionary in Python</h3>
 <p>Prior to <code>ShapeWorks 6.3</code>, all the <img alt="use cases" src="../getting-started/examples.html" />In <code>Examples/Python/&lt;use-case-name.py&gt;</code>,we used XML files to run optimization. A python code - <code>Examples/Python/OptimizeUtils.py</code> was used to convert a list of parameter dictionary in python to an XML file. </p>
-<p>Below is a list of the currently exposed algorithmic parameters. All the keys of this parameter dictionary correspond to the <a href="#xml-parameter-file">XML tags</a>, except for <code>"normal_weight"</code> that sets the <code>&lt;attribute_scales&gt;</code> of the surface normal vector.</p>
+<p>Below is a list of the currently exposed algorithmic parameters. All the keys of this parameter dictionary correspond to the <a href="#xml-parameter-file">XML tags</a>, except for <code>"normals_strength"</code> that sets the <code>&lt;attribute_scales&gt;</code> of the surface normal vector.</p>
 <p><div class="highlight"><pre><span></span><code><span class="p">{</span>
     <span class="s2">&quot;number_of_particles&quot;</span><span class="p">:</span> <span class="mi">1024</span><span class="p">,</span>
-    <span class="s2">&quot;use_shape_statistics_after&quot;</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span> 
     <span class="s2">&quot;use_normals&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> 
-    <span class="s2">&quot;normal_weight&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> 
+    <span class="s2">&quot;normals_strength&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> 
     <span class="s2">&quot;checkpointing_interval&quot;</span> <span class="p">:</span> <span class="mi">10000</span><span class="p">,</span> 
     <span class="s2">&quot;keep_checkpoints&quot;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span> 
     <span class="s2">&quot;iterations_per_split&quot;</span> <span class="p">:</span> <span class="mi">4000</span><span class="p">,</span> 
     <span class="s2">&quot;optimization_iterations&quot;</span> <span class="p">:</span> <span class="mi">500</span><span class="p">,</span> 
     <span class="s2">&quot;starting_regularization&quot;</span> <span class="p">:</span> <span class="mi">10</span><span class="p">,</span> 
     <span class="s2">&quot;ending_regularization&quot;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span> 
-    <span class="s2">&quot;recompute_regularization_interval&quot;</span> <span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
-    <span class="s2">&quot;domains_per_shape&quot;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-    <span class="s2">&quot;domain_type&quot;</span> <span class="p">:</span> <span class="s1">&#39;mesh&#39;</span><span class="p">,</span>
     <span class="s2">&quot;relative_weighting&quot;</span> <span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
     <span class="s2">&quot;initial_relative_weighting&quot;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
     <span class="s2">&quot;procrustes_interval&quot;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
@@ -2554,7 +2549,7 @@ If the shape is marked with "fixed" = "no", new correspondences will be placed o
     <span class="n">parameter_dictionary</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">&quot;number_of_particles&quot;</span> <span class="p">:</span> <span class="mi">512</span><span class="p">,</span>
     <span class="s2">&quot;use_normals&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-    <span class="s2">&quot;normal_weight&quot;</span><span class="p">:</span> <span class="mf">10.0</span><span class="p">,</span>
+    <span class="s2">&quot;normals_strength&quot;</span><span class="p">:</span> <span class="mf">10.0</span><span class="p">,</span>
     <span class="s2">&quot;checkpointing_interval&quot;</span> <span class="p">:</span> <span class="mi">200</span><span class="p">,</span>
     <span class="s2">&quot;keep_checkpoints&quot;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
     <span class="s2">&quot;iterations_per_split&quot;</span> <span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>

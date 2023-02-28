@@ -32,20 +32,11 @@ title: Libs/Groom/GroomParameters.h
 namespace shapeworks {
 
 class GroomParameters {
+  enum class MeshSmoothingOption { laplacian, sinc };
 
-  enum class MeshSmoothingOption {
-    laplacian,
-    sinc
-  };
-
-  enum class AlignmentOption {
-    none,
-    center,
-    icp
-  };
+  enum class AlignmentOption { none, center, icp };
 
  public:
-
   explicit GroomParameters(ProjectHandle project, std::string domain_name = "");
   void set_domain_name(std::string domain_name);
   void save_to_project();
@@ -169,15 +160,14 @@ class GroomParameters {
   const static std::string GROOM_ALIGNMENT_LANDMARK_C;
 
  private:
-
   Parameters params_;
   ProjectHandle project_;
   std::string domain_name_;
 };
-}
+}  // namespace shapeworks
 ```
 
 
 -------------------------------
 
-Updated on 2023-02-27 at 19:53:45 +0000
+Updated on 2023-02-28 at 18:42:26 +0000

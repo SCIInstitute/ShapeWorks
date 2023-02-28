@@ -127,6 +127,10 @@ class OptimizeParameters {
   bool get_save_init_splits();
   void set_save_init_splits(bool enabled);
 
+  bool get_keep_checkpoints();
+  void set_keep_checkpoints(bool enabled);
+
+
  private:
   std::string get_output_prefix();
 
@@ -144,4 +148,4 @@ class OptimizeParameters {
 
 -------------------------------
 
-Updated on 2023-02-27 at 19:53:45 +0000
+Updated on 2023-02-28 at 18:42:27 +0000
