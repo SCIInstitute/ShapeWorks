@@ -190,7 +190,6 @@ def Run_Pipeline(args):
         "optimization_iterations" : 2500,
         "starting_regularization" :100,
         "ending_regularization" : 0.01,
-        "domains_per_shape" : 4,
         "relative_weighting" : 12, 
         "initial_relative_weighting" : 0.01,
         "procrustes_interval" : 3,
@@ -198,8 +197,6 @@ def Run_Pipeline(args):
         "save_init_splits" : 0,
         "verbosity" : 0,
         "multiscale_particles" : 8,
-        "recompute_regularization_interval" : 2
-
       }
 
     # If running a tiny test, reduce some parameters

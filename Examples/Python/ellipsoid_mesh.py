@@ -166,7 +166,6 @@ def Run_Pipeline(args):
     # Add param dictionary to spreadsheet
     for key in parameter_dictionary:
         parameters.set(key, sw.Variant([parameter_dictionary[key]]))
-    parameters.set("domain_type",sw.Variant('mesh'))
     project.set_parameters("optimize", parameters)
     spreadsheet_file = output_directory + "shape_models/ellipsoid_mesh_" + args.option_set+ ".xlsx"
     project.save(spreadsheet_file)

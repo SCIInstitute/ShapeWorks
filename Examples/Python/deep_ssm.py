@@ -245,7 +245,6 @@ def Run_Pipeline(args):
 
     for key in parameter_dictionary:
         parameters.set(key,sw.Variant([parameter_dictionary[key]]))
-    parameters.set("domain_type",sw.Variant('mesh'))
     project.set_parameters("optimize",parameters)
     spreadsheet_file = data_dir + "train.xlsx"
     project.save(spreadsheet_file)

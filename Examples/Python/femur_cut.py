@@ -197,8 +197,6 @@ def Run_Pipeline(args):
         "optimization_iterations" : 500,
         "starting_regularization" : 100,
         "ending_regularization" : 0.1,
-        "recompute_regularization_interval" : 2,
-        "domains_per_shape" : 1,
         "relative_weighting" : 10,
         "initial_relative_weighting" : 0.1,
         "procrustes" : 1,
@@ -222,7 +220,6 @@ def Run_Pipeline(args):
 
     for key in parameter_dictionary:
         parameters.set(key,sw.Variant([parameter_dictionary[key]]))
-    parameters.set("domain_type",sw.Variant('mesh'))
     project.set_parameters("optimize",parameters)
     spreadsheet_file = output_directory + "shape_models/femur_cut_" + args.option_set+ ".xlsx"
     project.save(spreadsheet_file)
