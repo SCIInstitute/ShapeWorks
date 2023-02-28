@@ -190,8 +190,6 @@ def Run_Pipeline(args):
         "optimization_iterations": 4000,
         "starting_regularization": 1000,
         "ending_regularization": 10,
-        "recompute_regularization_interval": 2,
-        "domains_per_shape": 1,
         "relative_weighting": 10,
         "procrustes": 1,
         "initial_relative_weighting": 0.1,
@@ -214,7 +212,6 @@ def Run_Pipeline(args):
     # Add param dictionary to spreadsheet
     for key in parameter_dictionary:
         parameters.set(key, sw.Variant([parameter_dictionary[key]]))
-    parameters.set("domain_type", sw.Variant(domain_type[0]))
     project.set_parameters("optimize", parameters)
     spreadsheet_file = output_directory + "shape_models/left_atrium_" + args.option_set + ".xlsx"
     project.save(spreadsheet_file)
