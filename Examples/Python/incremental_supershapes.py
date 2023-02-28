@@ -279,10 +279,6 @@ def Run_Pipeline(args):
         # Add param dictionary to spreadsheet
         for key in parameter_dictionary:
             parameters.set(key, sw.Variant([parameter_dictionary[key]]))
-<<<<<<< HEAD
-        parameters.set("domain_type", sw.Variant('mesh'))
-=======
->>>>>>> master
         project.set_parameters("optimize", parameters)
         spreadsheet_file = output_directory + "/incremental_supershapes.swproj"
         project.save(spreadsheet_file)
