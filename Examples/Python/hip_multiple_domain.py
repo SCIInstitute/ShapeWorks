@@ -219,14 +219,12 @@ def Run_Pipeline(args):
 		"optimization_iterations" : 5000,
 		"starting_regularization" :1000,
 		"ending_regularization" : 10,
-		"recompute_regularization_interval" : 1,
-		"domains_per_shape" : domains_per_shape,
 		"relative_weighting" : 10, 
 		"initial_relative_weighting" : 0.1,
 		"save_init_splits" : 0,
 		"verbosity" : 0,
 		"use_normals": 1,
-		"normal_weight": 15.0
+		"normals_strength": 10.0
 	  }
 	num_particles = [256,256]
 
@@ -243,7 +241,6 @@ def Run_Pipeline(args):
 	for key in parameter_dictionary:
 		parameters.set(key, sw.Variant([parameter_dictionary[key]]))
 	parameters.set("number_of_particles" ,sw.Variant(num_particles))
-	parameters.set("domain_type",sw.Variant('mesh'))
 	project.set_parameters("optimize", parameters)
 
 	spreadsheet_file = output_directory + "hip_multiple_domain_" + args.option_set + ".swproj"

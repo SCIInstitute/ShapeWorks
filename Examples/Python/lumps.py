@@ -103,8 +103,6 @@ def Run_Pipeline(args):
         "optimization_iterations": 500,
         "starting_regularization": 10,
         "ending_regularization": 1,
-        "recompute_regularization_interval": 1,
-        "domains_per_shape": 1,
         "relative_weighting": 10,
         "initial_relative_weighting": 1,
         "procrustes_interval": 0,
@@ -117,7 +115,6 @@ def Run_Pipeline(args):
         parameter_dictionary["number_of_particles"] = 256
         parameter_dictionary["iterations_per_split"] = 100
         parameter_dictionary["optimization_iterations"] = 100
-        parameter_dictionary["visualizer_enable"] = 0
     # Run multiscale optimization unless single scale is specified
     if not args.use_single_scale:
         parameter_dictionary["multiscale"] = 1
@@ -125,7 +122,6 @@ def Run_Pipeline(args):
     
     for key in parameter_dictionary:
         parameters.set(key,sw.Variant([parameter_dictionary[key]]))
-    parameters.set("domain_type",sw.Variant('mesh'))
     project.set_parameters("optimize",parameters)
     spreadsheet_file = output_directory + "lumps_" + args.option_set+ ".swproj"
     project.save(spreadsheet_file)

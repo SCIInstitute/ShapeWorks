@@ -165,15 +165,13 @@ def Run_Pipeline(args):
     parameter_dictionary = {
         "number_of_particles": 128,
         "use_normals": 0,
-        "normal_weight": 10.0,
+        "normals_strength": 10.0,
         "checkpointing_interval": 300,
         "keep_checkpoints": 0,
         "iterations_per_split": 300,
         "optimization_iterations": 300,
         "starting_regularization": 10,
         "ending_regularization": 1,
-        "recompute_regularization_interval": 1,
-        "domains_per_shape": 1,
         "relative_weighting": 1,
         "initial_relative_weighting": 0.05,
         "procrustes_interval": 0,
@@ -195,7 +193,6 @@ def Run_Pipeline(args):
     # Add param dictionary to spreadsheet
     for key in parameter_dictionary:
         parameters.set(key, sw.Variant([parameter_dictionary[key]]))
-    parameters.set("domain_type", sw.Variant('mesh'))
     project.set_parameters("optimize", parameters)
     spreadsheet_file = output_directory + "/incremental_supershapes.swproj"
     project.save(spreadsheet_file)
@@ -282,7 +279,10 @@ def Run_Pipeline(args):
         # Add param dictionary to spreadsheet
         for key in parameter_dictionary:
             parameters.set(key, sw.Variant([parameter_dictionary[key]]))
+<<<<<<< HEAD
         parameters.set("domain_type", sw.Variant('mesh'))
+=======
+>>>>>>> master
         project.set_parameters("optimize", parameters)
         spreadsheet_file = output_directory + "/incremental_supershapes.swproj"
         project.save(spreadsheet_file)
