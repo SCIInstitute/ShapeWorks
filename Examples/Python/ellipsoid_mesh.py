@@ -145,7 +145,6 @@ def Run_Pipeline(args):
         "optimization_iterations": 1000,
         "starting_regularization": 10,
         "ending_regularization": 1,
-        "domains_per_shape": 1,
         "relative_weighting": 1,
         "initial_relative_weighting": 0.05,
         "procrustes_interval": 0,
