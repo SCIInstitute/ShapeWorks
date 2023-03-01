@@ -184,7 +184,7 @@ function install_conda() {
   if ! pip install SimpleITK==2.1.1.2;                  then return 1; fi
   if ! pip install bokeh==2.4.3;                        then return 1; fi
   if ! pip install seaborn==0.11.2;                     then return 1; fi
-  if ! pip install swcc==1.0.1;                         then return 1; fi
+  if ! pip install swcc==1.0.2;                         then return 1; fi
   if ! pip install scikit-learn==1.1.1;                 then return 1; fi
   if ! pip install Python/DatasetUtilsPackage;          then return 1; fi # install the local GirderConnector code as a package
   if ! pip install Python/DocumentationUtilsPackage;    then return 1; fi # install shapeworks auto-documentation as a package
