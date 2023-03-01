@@ -21,6 +21,8 @@ class JKQTPlotter;
 
 namespace shapeworks {
 
+class NetworkAnalysisWidget;
+
 class Session;
 class Lightbox;
 class ShapeWorksStudioApp;
@@ -36,11 +38,7 @@ class AnalysisTool : public QWidget {
     Local = -1,
   };
 
-  enum McaMode {
-    Vanilla,
-    Within,
-    Between
-  };
+  enum McaMode { Vanilla, Within, Between };
 
   using PointType = itk::Point<double, 3>;
 
@@ -259,5 +257,7 @@ class AnalysisTool : public QWidget {
   bool block_group_change_ = false;
 
   AlignmentType current_alignment_{AlignmentType::Local};
+
+  NetworkAnalysisWidget* network_analysis_widget_{nullptr};
 };
 }  // namespace shapeworks

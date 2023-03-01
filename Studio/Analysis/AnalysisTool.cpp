@@ -19,6 +19,8 @@
 #include <jkqtplotter/jkqtplotter.h>
 #include <ui_AnalysisTool.h>
 
+#include "NetworkAnalysisWidget.h"
+
 namespace shapeworks {
 
 const std::string AnalysisTool::MODE_ALL_SAMPLES_C("all samples");
@@ -31,6 +33,12 @@ const std::string AnalysisTool::MODE_REGRESSION_C("regression");
 AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
   ui_ = new Ui_AnalysisTool;
   ui_->setupUi(this);
+
+  //network_analysis_widget_ = new NetworkAnalysisWidget(preferences_);
+  //layout()->addWidget(network_analysis_widget_);
+
+  auto spacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
+  layout()->addItem(spacer);
 
 #ifdef Q_OS_MACOS
   ui_->tabWidget->tabBar()->setMinimumWidth(200);
