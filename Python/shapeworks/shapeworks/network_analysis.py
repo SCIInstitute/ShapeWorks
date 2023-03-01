@@ -830,6 +830,8 @@ class NetworkAnalysis:
         elif flag_analysis == 'ttest':
             particle_fvalues_size[particles.astype(int), :, :] = fvalues_size[:, :, :, pthresh.index(poi)]
             particle_fvalues_1d[particles.astype(int), :, :] = tradzsig.reshape(len(particles), timepoints, len(fdesc))
+            self.particle_fvalues_size = particle_fvalues_size
+            self.particle_fvalues_1d = particle_fvalues_1d
             for analysis in ['1D', 'network']:
                 for comparison in fdesc:
                     if analysis == '1D':
@@ -840,6 +842,7 @@ class NetworkAnalysis:
                             [mean_shape, particle_fvalues_size[:, :, :].reshape(len(particles), 1)], axis=1)
                     np.savetxt(result_path + 'Points_' + analysis + comparison + '_' + str(num_pts) + '.txt',
                                pointsdata, delimiter='\t', header='\t'.join(headers), comments='')
+
 
             g0data = np.concatenate(
                 [mean_shape, np.mean(all_data[:, :, group == 0, :], axis=2).reshape(len(particles), 1)], axis=1)
