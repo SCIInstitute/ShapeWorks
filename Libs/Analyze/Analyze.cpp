@@ -62,6 +62,60 @@ static json create_charts(ParticleShapeStatistics* stats) {
 }
 
 //---------------------------------------------------------------------------
+void write_offline_groups(json& j, ProjectHandle project, Analyze& analyze, boost::filesystem::path base) {
+  auto group_names = project->get_group_names();
+
+  std::vector<json> group_jsons;
+  for (auto& group_name : group_names) {
+    auto group_values = project->get_group_values(group_name);
+
+    // iterate over all pairs of group values
+    for (int i = 0; i < group_values.size(); i++) {
+      for (int j = i + 1; j < group_values.size(); j++) {
+        json group_json;
+        group_json["name"] = group_name;
+        group_json["group1"] = group_values[i];
+        group_json["group2"] = group_values[j];
+        analyze.set_group_selection(group_name, group_values[i], group_values[j]);
+
+        std::vector<json> values;
+        const int num_steps = 11;
+        for (int k = 0; k < num_steps; k++) {
+          json value;
+          double ratio = k / (num_steps - 1.0);
+          value["ratio"] = ratio;
+          std::vector<std::string> json_meshes;
+          std::vector<std::string> worlds;
+          auto shape = analyze.get_group_shape(ratio);
+          for (int d = 0; d < project->get_number_of_domains_per_subject(); d++) {
+            std::string domain_id = std::to_string(d);
+            auto meshes = shape->get_reconstructed_meshes(true);
+            auto mesh = meshes.meshes()[d];
+            auto name = "group_" + group_name + "_" + group_values[i] + "_" + group_values[j] + "_" +
+                        std::to_string(k) + "_" + domain_id;
+            std::string vtk_filename = name + ".vtk";
+            auto filename = base / boost::filesystem::path(vtk_filename);
+            Mesh(mesh->get_poly_data()).write(filename.string());
+            json_meshes.push_back(vtk_filename);
+
+            auto particle_filename = name + ".pts";
+            worlds.push_back(particle_filename);
+            filename = base / boost::filesystem::path(particle_filename);
+            Particles::save_particles_file(filename.string(), shape->get_particles().get_world_particles(d));
+          }
+          value["meshes"] = json_meshes;
+          value["particles"] = worlds;
+          values.push_back(value);
+        }
+        group_json["values"] = values;
+        group_jsons.push_back(group_json);
+      }
+    }
+  }
+  j["groups"] = group_jsons;
+}
+
+//---------------------------------------------------------------------------
 Analyze::Analyze(ProjectHandle project) : project_(project), mesh_manager_(new MeshManager()) {
   SW_LOG("Analyze::Analyze");
   mesh_manager_->set_cache_enabled(false);
@@ -214,6 +268,8 @@ void Analyze::run_offline_analysis(std::string outfile) {
   }
   j["reconstructed_samples"] = shapes;
 
+  write_offline_groups(j, project_, *this, base);
+
   std::ofstream file(outfile);
   if (!file.good()) {
     throw std::runtime_error("Unable to open " + outfile + " for writing");
@@ -343,8 +399,6 @@ bool Analyze::update_shapes() {
 
 //---------------------------------------------------------------------------
 bool Analyze::compute_stats() {
-  SW_DEBUG("compute_stats");
-
   if (stats_ready_) {
     return true;
   }
@@ -354,13 +408,7 @@ bool Analyze::compute_stats() {
   std::vector<Eigen::VectorXd> points;
   std::vector<int> group_ids;
 
-  std::string group_set = "need to add groups1";
-  std::string left_group = "need to add groups2";
-  std::string right_group = "need to add groups3";
-
-  /// TODO: implement groups
-  /// bool groups_enabled = groups_active();
-  bool groups_enabled = false;
+  bool groups_enabled = selected_group_ != "";
 
   group1_list_.clear();
   group2_list_.clear();
@@ -369,17 +417,18 @@ bool Analyze::compute_stats() {
   for (auto& shape : shapes_) {
     SW_LOG("shape: {}", shape->get_subject()->get_display_name());
     if (groups_enabled) {
-      auto value = shape->get_subject()->get_group_value(group_set);
-      if (value == left_group) {
+      auto value = shape->get_subject()->get_group_value(selected_group_);
+      if (value == group1_) {
         points.push_back(shape->get_global_correspondence_points());
         group_ids.push_back(1);
         group1_list_.push_back(shape);
-      } else if (value == right_group) {
+      } else if (value == group2_) {
         points.push_back(shape->get_global_correspondence_points());
         group_ids.push_back(2);
         group2_list_.push_back(shape);
       } else {
-        // we don't include it
+        // we don't include this shape in the analysis since it is in neither selected group
+        // we only do pairs for this analysis
       }
     } else {
       points.push_back(shape->get_global_correspondence_points());
@@ -481,7 +530,6 @@ Eigen::VectorXf Analyze::get_subject_features(int subject, std::string feature_n
   return shape->get_point_features(feature_name);
 }
 
-
 //---------------------------------------------------------------------------
 int Analyze::get_num_particles() {
   if (shapes_.empty()) {
@@ -489,6 +537,32 @@ int Analyze::get_num_particles() {
   }
   auto particles = shapes_[0]->get_particles();
   return particles.get_combined_local_particles().size() / 3;
+}
+
+//---------------------------------------------------------------------------
+void Analyze::set_group_selection(std::string group_name, std::string group1, std::string group2) {
+  selected_group_ = group_name;
+  group1_ = group1;
+  group2_ = group2;
+  stats_ready_ = false;
+  compute_stats();
+}
+
+//---------------------------------------------------------------------------
+Particles Analyze::get_group_shape_particles(double ratio) {
+  if (!compute_stats()) {
+    return Particles();
+  }
+
+  auto particles = stats_.Group1Mean() + (stats_.GroupDifference() * ratio);
+
+  return convert_from_combined(particles);
+}
+//---------------------------------------------------------------------------
+ShapeHandle Analyze::get_group_shape(double ratio) {
+  auto shape_points = get_group_shape_particles(ratio);
+  ShapeHandle shape = create_shape_from_points(shape_points);
+  return shape;
 }
 
 }  // namespace shapeworks
