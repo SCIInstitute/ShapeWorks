@@ -62,7 +62,7 @@ static json create_charts(ParticleShapeStatistics* stats) {
 }
 
 //---------------------------------------------------------------------------
-void write_offline_groups(json& j, ProjectHandle project, Analyze& analyze, boost::filesystem::path base) {
+void write_offline_groups(json& json_object, ProjectHandle project, Analyze& analyze, boost::filesystem::path base) {
   auto group_names = project->get_group_names();
 
   std::vector<json> group_jsons;
@@ -112,7 +112,7 @@ void write_offline_groups(json& j, ProjectHandle project, Analyze& analyze, boos
       }
     }
   }
-  j["groups"] = group_jsons;
+  json_object["groups"] = group_jsons;
 }
 
 //---------------------------------------------------------------------------
@@ -209,13 +209,13 @@ void Analyze::run_offline_analysis(std::string outfile) {
       double pca_value = increment * i;
       std::string pca_string = QString::number(pca_value, 'g', 2).toStdString();
 
-      auto process_value = [&](double pca_value, std::string prefix) {
-        auto shape = get_mode_shape(mode, pca_value);
+      auto process_value = [&](double pca_value_param, std::string prefix) {
+        auto shape = get_mode_shape(mode, pca_value_param);
         auto mode_meshes = shape->get_reconstructed_meshes(true);
 
         json item;
-        item["pca_value"] = pca_value;
-        item["lambda"] = lambda * pca_value;
+        item["pca_value"] = pca_value_param;
+        item["lambda"] = lambda * pca_value_param;
 
         std::vector<std::string> items;
         std::vector<std::string> worlds;
@@ -255,10 +255,10 @@ void Analyze::run_offline_analysis(std::string outfile) {
   std::vector<json> shapes;
   for (int i = 0; i < shapes_.size(); i++) {
     auto& s = shapes_[i];
-    auto meshes = s->get_reconstructed_meshes(true);
+    auto shape_meshes = s->get_reconstructed_meshes(true);
     std::vector<std::string> filenames;
     for (int d = 0; d < num_domains; d++) {
-      auto mesh = meshes.meshes()[d];
+      auto mesh = shape_meshes.meshes()[d];
       std::string vtk_filename = "sample_" + std::to_string(i) + "_" + std::to_string(d) + ".vtk";
       auto filename = base / boost::filesystem::path(vtk_filename);
       Mesh(mesh->get_poly_data()).write(filename.string());
