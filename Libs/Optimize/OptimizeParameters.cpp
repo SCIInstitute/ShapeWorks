@@ -1,166 +1,230 @@
+#include "OptimizeParameters.h"
+
+#include <Image/Image.h>
+#include <Logging.h>
+#include <Mesh/MeshUtils.h>
+#include <Utils/StringUtils.h>
+
 #include <boost/algorithm/string.hpp>
 #include <boost/filesystem.hpp>
 #include <functional>
 
-#include <Image/Image.h>
-#include <Mesh/MeshUtils.h>
-#include <Utils/StringUtils.h>
-
-#include "OptimizeParameters.h"
 #include "Optimize.h"
 #include "VtkMeshWrapper.h"
 
 using namespace shapeworks;
 
+namespace Keys {
+const std::string number_of_particles = "number_of_particles";
+const std::string initial_relative_weighting = "initial_relative_weighting";
+const std::string relative_weighting = "relative_weighting";
+const std::string starting_regularization = "starting_regularization";
+const std::string ending_regularization = "ending_regularization";
+const std::string iterations_per_split = "iterations_per_split";
+const std::string optimization_iterations = "optimization_iterations";
+const std::string use_geodesic_distance = "use_geodesic_distance";
+const std::string geodesic_cache_multiplier = "geodesic_cache_multiplier";
+const std::string use_normals = "use_normals";
+const std::string normals_strength = "normals_strength";
+const std::string procrustes = "procrustes";
+const std::string procrustes_scaling = "procrustes_scaling";
+const std::string procrustes_rotation_translation = "procrustes_rotation_translation";
+const std::string procrustes_interval = "procrustes_interval";
+const std::string multiscale = "multiscale";
+const std::string multiscale_particles = "multiscale_particles";
+const std::string optimize_output_prefix = "optimize_output_prefix";
+const std::string narrow_band = "narrow_band";
+const std::string verbosity = "verbosity";
+const std::string mesh_ffc_mode = "mesh_ffc_mode";
+const std::string use_landmarks = "use_landmarks";
+const std::string use_fixed_subjects = "use_fixed_subjects";
+const std::string fixed_subjects_column = "fixed_subjects_column";
+const std::string fixed_subjects_choice = "fixed_subjects_choice";
+const std::string checkpointing_interval = "checkpointing_interval";
+const std::string save_init_splits = "save_init_splits";
+const std::string keep_checkpoints = "keep_checkpoints";
+}  // namespace Keys
+
 //---------------------------------------------------------------------------
 OptimizeParameters::OptimizeParameters(ProjectHandle project) {
-  this->project_ = project;
-  this->params_ = this->project_->get_parameters(Parameters::OPTIMIZE_PARAMS);
+  project_ = project;
+  params_ = project_->get_parameters(Parameters::OPTIMIZE_PARAMS);
+  std::vector<std::string> all_params = {Keys::number_of_particles,
+                                         Keys::initial_relative_weighting,
+                                         Keys::relative_weighting,
+                                         Keys::starting_regularization,
+                                         Keys::ending_regularization,
+                                         Keys::iterations_per_split,
+                                         Keys::optimization_iterations,
+                                         Keys::use_geodesic_distance,
+                                         Keys::geodesic_cache_multiplier,
+                                         Keys::use_normals,
+                                         Keys::normals_strength,
+                                         Keys::procrustes,
+                                         Keys::procrustes_scaling,
+                                         Keys::procrustes_rotation_translation,
+                                         Keys::procrustes_interval,
+                                         Keys::multiscale,
+                                         Keys::multiscale_particles,
+                                         Keys::optimize_output_prefix,
+                                         Keys::narrow_band,
+                                         Keys::verbosity,
+                                         Keys::mesh_ffc_mode,
+                                         Keys::use_landmarks,
+                                         Keys::use_fixed_subjects,
+                                         Keys::fixed_subjects_column,
+                                         Keys::fixed_subjects_choice,
+                                         Keys::checkpointing_interval,
+                                         Keys::save_init_splits,
+                                         Keys::keep_checkpoints
+
+  };
+
+  // check if params_ has any unknown keys
+  for (auto& param : params_.get_map()) {
+    if (std::find(all_params.begin(), all_params.end(), param.first) == all_params.end()) {
+      SW_WARN("Unknown Optimization parameter: " + param.first);
+    }
+  }
 }
 
 //---------------------------------------------------------------------------
-void OptimizeParameters::save_to_project() {
-  this->project_->set_parameters(Parameters::OPTIMIZE_PARAMS, this->params_);
-}
+void OptimizeParameters::save_to_project() { project_->set_parameters(Parameters::OPTIMIZE_PARAMS, params_); }
 
 //---------------------------------------------------------------------------
-std::vector<int> OptimizeParameters::get_number_of_particles() {
-  return this->params_.get("number_of_particles", {128});
-}
+std::vector<int> OptimizeParameters::get_number_of_particles() { return params_.get(Keys::number_of_particles, {128}); }
 
 //---------------------------------------------------------------------------
 void OptimizeParameters::set_number_of_particles(std::vector<int> number_of_particles) {
-  return this->params_.set("number_of_particles", number_of_particles);
+  return params_.set(Keys::number_of_particles, number_of_particles);
 }
 
 //---------------------------------------------------------------------------
 double OptimizeParameters::get_initial_relative_weighting() {
-  return this->params_.get("initial_relative_weighting", 0.05);
+  return params_.get(Keys::initial_relative_weighting, 0.05);
 }
 
 //---------------------------------------------------------------------------
 void OptimizeParameters::set_initial_relative_weighting(double value) {
-  this->params_.set("initial_relative_weighting", value);
+  params_.set(Keys::initial_relative_weighting, value);
 }
 
 //---------------------------------------------------------------------------
-double OptimizeParameters::get_relative_weighting() { return this->params_.get("relative_weighting", 1.0); }
+double OptimizeParameters::get_relative_weighting() { return params_.get(Keys::relative_weighting, 1.0); }
 
 //---------------------------------------------------------------------------
-void OptimizeParameters::set_relative_weighting(double value) { this->params_.set("relative_weighting", value); }
+void OptimizeParameters::set_relative_weighting(double value) { params_.set(Keys::relative_weighting, value); }
 
 //---------------------------------------------------------------------------
-double OptimizeParameters::get_starting_regularization() {
-  return this->params_.get("starting_regularization", 1000.0);
-}
+double OptimizeParameters::get_starting_regularization() { return params_.get(Keys::starting_regularization, 1000.0); }
 
 //---------------------------------------------------------------------------
 void OptimizeParameters::set_starting_regularization(double value) {
-  this->params_.set("starting_regularization", value);
+  params_.set(Keys::starting_regularization, value);
 }
 
 //---------------------------------------------------------------------------
-double OptimizeParameters::get_ending_regularization() { return this->params_.get("ending_regularization", 10.0); }
+double OptimizeParameters::get_ending_regularization() { return params_.get(Keys::ending_regularization, 10.0); }
 
 //---------------------------------------------------------------------------
-void OptimizeParameters::set_ending_regularization(double value) { this->params_.set("ending_regularization", value); }
+void OptimizeParameters::set_ending_regularization(double value) { params_.set(Keys::ending_regularization, value); }
 
 //---------------------------------------------------------------------------
-int OptimizeParameters::get_iterations_per_split() { return this->params_.get("iterations_per_split", 1000); }
+int OptimizeParameters::get_iterations_per_split() { return params_.get(Keys::iterations_per_split, 1000); }
 
 //---------------------------------------------------------------------------
-void OptimizeParameters::set_iterations_per_split(int value) { this->params_.set("iterations_per_split", value); }
+void OptimizeParameters::set_iterations_per_split(int value) { params_.set(Keys::iterations_per_split, value); }
 
 //---------------------------------------------------------------------------
-int OptimizeParameters::get_optimization_iterations() { return this->params_.get("optimization_iterations", 1000); }
+int OptimizeParameters::get_optimization_iterations() { return params_.get(Keys::optimization_iterations, 1000); }
 
 //---------------------------------------------------------------------------
-void OptimizeParameters::set_optimization_iterations(int value) { this->params_.set("optimization_iterations", value); }
+void OptimizeParameters::set_optimization_iterations(int value) { params_.set(Keys::optimization_iterations, value); }
 
 //---------------------------------------------------------------------------
-bool OptimizeParameters::get_use_geodesic_distance() { return this->params_.get("use_geodesic_distance", false); }
+bool OptimizeParameters::get_use_geodesic_distance() { return params_.get(Keys::use_geodesic_distance, false); }
 
 //---------------------------------------------------------------------------
-void OptimizeParameters::set_use_geodesic_distance(bool value) { this->params_.set("use_geodesic_distance", value); }
+void OptimizeParameters::set_use_geodesic_distance(bool value) { params_.set(Keys::use_geodesic_distance, value); }
 
 //---------------------------------------------------------------------------
 std::vector<bool> OptimizeParameters::get_use_normals() {
-  std::vector<bool> use_normals = this->params_.get("use_normals", {false});
-  if (use_normals.empty()) use_normals.push_back(false);
+  std::vector<bool> use_normals = params_.get(Keys::use_normals, {false});
+  if (use_normals.empty()) {
+    use_normals.push_back(false);
+  }
   return use_normals;
 }
 
 //---------------------------------------------------------------------------
-void OptimizeParameters::set_use_normals(std::vector<bool> use_normals) {
-  this->params_.set("use_normals", use_normals);
-}
+void OptimizeParameters::set_use_normals(std::vector<bool> use_normals) { params_.set(Keys::use_normals, use_normals); }
 
 //---------------------------------------------------------------------------
-double OptimizeParameters::get_normals_strength() { return this->params_.get("normals_strength", 10); }
+double OptimizeParameters::get_normals_strength() { return params_.get(Keys::normals_strength, 10); }
 
 //---------------------------------------------------------------------------
-void OptimizeParameters::set_normals_strength(double value) { this->params_.set("normals_strength", value); }
+void OptimizeParameters::set_normals_strength(double value) { params_.set(Keys::normals_strength, value); }
 
 //---------------------------------------------------------------------------
-bool OptimizeParameters::get_use_procrustes() { return this->params_.get("procrustes", false); }
+bool OptimizeParameters::get_use_procrustes() { return params_.get(Keys::procrustes, false); }
 
 //---------------------------------------------------------------------------
-void OptimizeParameters::set_use_procrustes(bool value) { this->params_.set("procrustes", value); }
+void OptimizeParameters::set_use_procrustes(bool value) { params_.set(Keys::procrustes, value); }
 
 //---------------------------------------------------------------------------
-bool OptimizeParameters::get_use_procrustes_scaling() { return this->params_.get("procrustes_scaling", false); }
+bool OptimizeParameters::get_use_procrustes_scaling() { return params_.get(Keys::procrustes_scaling, false); }
 
 //---------------------------------------------------------------------------
-void OptimizeParameters::set_use_procrustes_scaling(bool value) { this->params_.set("procrustes_scaling", value); }
+void OptimizeParameters::set_use_procrustes_scaling(bool value) { params_.set(Keys::procrustes_scaling, value); }
 
 //---------------------------------------------------------------------------
 bool OptimizeParameters::get_use_procrustes_rotation_translation() {
-  return this->params_.get("procrustes_rotation_translation", true);
+  return params_.get(Keys::procrustes_rotation_translation, true);
 }
 
 //---------------------------------------------------------------------------
 void OptimizeParameters::set_use_procrustes_rotation_translation(bool value) {
-  this->params_.set("procrustes_rotation_translation", value);
+  params_.set(Keys::procrustes_rotation_translation, value);
 }
 
 //---------------------------------------------------------------------------
-int OptimizeParameters::get_procrustes_interval() { return this->params_.get("procrustes_interval", 10); }
+int OptimizeParameters::get_procrustes_interval() { return params_.get(Keys::procrustes_interval, 10); }
 
 //---------------------------------------------------------------------------
-void OptimizeParameters::set_procrustes_interval(int value) { this->params_.set("procrustes_interval", value); }
+void OptimizeParameters::set_procrustes_interval(int value) { params_.set(Keys::procrustes_interval, value); }
 
 //---------------------------------------------------------------------------
-bool OptimizeParameters::get_use_multiscale() { return this->params_.get("multiscale", false); }
+bool OptimizeParameters::get_use_multiscale() { return params_.get(Keys::multiscale, false); }
 
 //---------------------------------------------------------------------------
-void OptimizeParameters::set_use_multiscale(bool value) { this->params_.set("multiscale", value); }
+void OptimizeParameters::set_use_multiscale(bool value) { params_.set(Keys::multiscale, value); }
 
 //---------------------------------------------------------------------------
-int OptimizeParameters::get_multiscale_particles() { return this->params_.get("multiscale_particles", 32); }
+int OptimizeParameters::get_multiscale_particles() { return params_.get(Keys::multiscale_particles, 32); }
 
 //---------------------------------------------------------------------------
-void OptimizeParameters::set_multiscale_particles(int value) { this->params_.set("multiscale_particles", value); }
+void OptimizeParameters::set_multiscale_particles(int value) { params_.set(Keys::multiscale_particles, value); }
 
 //---------------------------------------------------------------------------
-void OptimizeParameters::set_abort_load(bool value) { this->abort_load_ = value; }
+void OptimizeParameters::set_abort_load(bool value) { abort_load_ = value; }
 
 //---------------------------------------------------------------------------
-void OptimizeParameters::set_load_callback(const std::function<void(int)>& f) { this->load_callback_ = f; }
+void OptimizeParameters::set_load_callback(const std::function<void(int)>& f) { load_callback_ = f; }
 
 //---------------------------------------------------------------------------
 std::string OptimizeParameters::get_optimize_output_prefix() {
-  return this->params_.get("optimize_output_prefix", "<project>_particles");
+  return params_.get(Keys::optimize_output_prefix, "<project>_particles");
 }
 
 //---------------------------------------------------------------------------
 void OptimizeParameters::set_optimize_output_prefix(std::string prefix) {
-  this->params_.set("optimize_output_prefix", prefix);
+  params_.set(Keys::optimize_output_prefix, prefix);
 }
 
 //---------------------------------------------------------------------------
 std::string OptimizeParameters::get_output_prefix() {
   // if the project is not saved, use the path of the input filename
-  auto filename = this->project_->get_filename();
+  auto filename = project_->get_filename();
   if (filename == "") {
     filename = ".";
   }
@@ -170,13 +234,13 @@ std::string OptimizeParameters::get_output_prefix() {
     base = ".";
   }
 
-  auto project_name = StringUtils::getBaseFilenameWithoutExtension(this->project_->get_filename());
+  auto project_name = StringUtils::getBaseFilenameWithoutExtension(project_->get_filename());
 
   if (project_name == "") {
     project_name = "new_project";
   }
 
-  auto prefix = this->get_optimize_output_prefix();
+  auto prefix = get_optimize_output_prefix();
   boost::replace_all(prefix, "<project>", project_name);
 
   auto path = base;
@@ -186,7 +250,7 @@ std::string OptimizeParameters::get_output_prefix() {
     try {
       boost::filesystem::create_directories(path);
     } catch (std::exception& e) {
-      throw std::runtime_error("Unable to create output directory: \"" + path + "\"");
+      throw std::runtime_error("Unable to create output directory: \"" + path + "\" (" + e.what() + ")");
     }
   }
 
@@ -195,73 +259,77 @@ std::string OptimizeParameters::get_output_prefix() {
 }
 
 //---------------------------------------------------------------------------
-int OptimizeParameters::get_geodesic_cache_multiplier() { return this->params_.get("geodesic_cache_multiplier", 0); }
+int OptimizeParameters::get_geodesic_cache_multiplier() { return params_.get(Keys::geodesic_cache_multiplier, 0); }
 
 //---------------------------------------------------------------------------
 void OptimizeParameters::set_geodesic_cache_multiplier(int value) {
-  this->params_.set("geodesic_cache_multiplier", value);
+  params_.set(Keys::geodesic_cache_multiplier, value);
 }
 
 //---------------------------------------------------------------------------
-double OptimizeParameters::get_narrow_band() { return this->params_.get("narrow_band", 4.0); }
+double OptimizeParameters::get_narrow_band() { return params_.get(Keys::narrow_band, 4.0); }
 
 //---------------------------------------------------------------------------
-void OptimizeParameters::set_narrow_band(double value) { this->params_.set("narrow_band", value); }
+void OptimizeParameters::set_narrow_band(double value) { params_.set(Keys::narrow_band, value); }
 
 //---------------------------------------------------------------------------
-int OptimizeParameters::get_verbosity() { return this->params_.get("verbosity", 0); }
+int OptimizeParameters::get_verbosity() { return params_.get(Keys::verbosity, 0); }
 
 //---------------------------------------------------------------------------
-void OptimizeParameters::set_verbosity(int value) { this->params_.set("verbosity", value); }
+void OptimizeParameters::set_verbosity(int value) { params_.set(Keys::verbosity, value); }
 
 //---------------------------------------------------------------------------
-bool OptimizeParameters::get_mesh_ffc_mode() { return this->params_.get("mesh_ffc_mode", 0); }
+bool OptimizeParameters::get_mesh_ffc_mode() { return params_.get(Keys::mesh_ffc_mode, 0); }
 
 //---------------------------------------------------------------------------
-void OptimizeParameters::set_mesh_ffc_mode(bool value) { this->params_.set("mesh_ffc_mode", value); }
+void OptimizeParameters::set_mesh_ffc_mode(bool value) { params_.set(Keys::mesh_ffc_mode, value); }
 
 //---------------------------------------------------------------------------
-bool OptimizeParameters::get_use_landmarks() { return params_.get("use_landmarks", false); }
+bool OptimizeParameters::get_use_landmarks() { return params_.get(Keys::use_landmarks, false); }
 
 //---------------------------------------------------------------------------
-void OptimizeParameters::set_use_landmarks(bool value) { this->params_.set("use_landmarks", value); }
+void OptimizeParameters::set_use_landmarks(bool value) { params_.set(Keys::use_landmarks, value); }
 
 //---------------------------------------------------------------------------
-bool OptimizeParameters::get_use_fixed_subjects() { return params_.get("use_fixed_subjects", false); }
+bool OptimizeParameters::get_use_fixed_subjects() { return params_.get(Keys::use_fixed_subjects, false); }
 
 //---------------------------------------------------------------------------
-void OptimizeParameters::set_use_fixed_subjects(bool value) { params_.set("use_fixed_subjects", value); }
+void OptimizeParameters::set_use_fixed_subjects(bool value) { params_.set(Keys::use_fixed_subjects, value); }
 
 //---------------------------------------------------------------------------
-std::string OptimizeParameters::get_fixed_subjects_column() { return params_.get("fixed_subjects_column", ""); }
+std::string OptimizeParameters::get_fixed_subjects_column() { return params_.get(Keys::fixed_subjects_column, ""); }
 
 //---------------------------------------------------------------------------
-void OptimizeParameters::set_fixed_subject_column(std::string column) { params_.set("fixed_subjects_column", column); }
+void OptimizeParameters::set_fixed_subject_column(std::string column) {
+  params_.set(Keys::fixed_subjects_column, column);
+}
 
 //---------------------------------------------------------------------------
-std::string OptimizeParameters::get_fixed_subjects_choice() { return params_.get("fixed_subjects_choice", ""); }
+std::string OptimizeParameters::get_fixed_subjects_choice() { return params_.get(Keys::fixed_subjects_choice, ""); }
 
 //---------------------------------------------------------------------------
-void OptimizeParameters::set_fixed_subjects_choice(std::string choice) { params_.set("fixed_subjects_choice", choice); }
+void OptimizeParameters::set_fixed_subjects_choice(std::string choice) {
+  params_.set(Keys::fixed_subjects_choice, choice);
+}
 
 //---------------------------------------------------------------------------
-bool OptimizeParameters::set_up_optimize(Optimize *optimize) {
-  optimize->SetVerbosity(this->get_verbosity());
-  int domains_per_shape = this->project_->get_number_of_domains_per_subject();
-  bool normals_enabled = this->get_use_normals()[0];
+bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
+  optimize->SetVerbosity(get_verbosity());
+  int domains_per_shape = project_->get_number_of_domains_per_subject();
+  bool normals_enabled = get_use_normals()[0];
   optimize->SetDomainsPerShape(domains_per_shape);
-  optimize->SetNumberOfParticles(this->get_number_of_particles());
-  optimize->SetInitialRelativeWeighting(this->get_initial_relative_weighting());
-  optimize->SetRelativeWeighting(this->get_relative_weighting());
-  optimize->SetStartingRegularization(this->get_starting_regularization());
-  optimize->SetEndingRegularization(this->get_ending_regularization());
-  optimize->SetIterationsPerSplit(this->get_iterations_per_split());
-  optimize->SetOptimizationIterations(this->get_optimization_iterations());
-  optimize->SetGeodesicsEnabled(this->get_use_geodesic_distance());
-  optimize->SetGeodesicsCacheSizeMultiplier(this->get_geodesic_cache_multiplier());
-  optimize->SetNarrowBand(this->get_narrow_band());
-  optimize->SetOutputDir(this->get_output_prefix());
-  optimize->SetMeshFFCMode(this->get_mesh_ffc_mode());
+  optimize->SetNumberOfParticles(get_number_of_particles());
+  optimize->SetInitialRelativeWeighting(get_initial_relative_weighting());
+  optimize->SetRelativeWeighting(get_relative_weighting());
+  optimize->SetStartingRegularization(get_starting_regularization());
+  optimize->SetEndingRegularization(get_ending_regularization());
+  optimize->SetIterationsPerSplit(get_iterations_per_split());
+  optimize->SetOptimizationIterations(get_optimization_iterations());
+  optimize->SetGeodesicsEnabled(get_use_geodesic_distance());
+  optimize->SetGeodesicsCacheSizeMultiplier(get_geodesic_cache_multiplier());
+  optimize->SetNarrowBand(get_narrow_band());
+  optimize->SetOutputDir(get_output_prefix());
+  optimize->SetMeshFFCMode(get_mesh_ffc_mode());
 
   // TODO Remove this once Studio has controls for shared boundary
   optimize->SetSharedBoundaryEnabled(true);
@@ -280,7 +348,7 @@ bool OptimizeParameters::set_up_optimize(Optimize *optimize) {
 
     if (normals_enabled) {  // not yet differentiating per domain
       use_normals.push_back(1);
-      double normals_strength = this->get_normals_strength();
+      double normals_strength = get_normals_strength();
       attr_scales.push_back(normals_strength);
       attr_scales.push_back(normals_strength);
       attr_scales.push_back(normals_strength);
@@ -301,28 +369,28 @@ bool OptimizeParameters::set_up_optimize(Optimize *optimize) {
   optimize->SetAttributesPerDomain(attributes_per_domain);
 
   int procrustes_interval = 0;
-  if (this->get_use_procrustes()) {
-    procrustes_interval = this->get_procrustes_interval();
+  if (get_use_procrustes()) {
+    procrustes_interval = get_procrustes_interval();
   }
   optimize->SetProcrustesInterval(procrustes_interval);
   optimize->SetProcrustesScaling(get_use_procrustes_scaling());
   optimize->SetProcrustesRotationTranslation(get_use_procrustes_rotation_translation());
 
   int multiscale_particles = 0;
-  if (this->get_use_multiscale()) {
-    multiscale_particles = this->get_multiscale_particles();
+  if (get_use_multiscale()) {
+    multiscale_particles = get_multiscale_particles();
   }
   optimize->SetUseShapeStatisticsAfter(multiscale_particles);
 
   // should add the images last
-  auto subjects = this->project_->get_subjects();
+  auto subjects = project_->get_subjects();
 
   if (subjects.empty()) {
     throw std::invalid_argument("No subjects to optimize");
   }
 
   for (auto s : subjects) {
-    if (this->abort_load_) {
+    if (abort_load_) {
       return false;
     }
     auto files = s->get_groomed_filenames();
@@ -334,11 +402,11 @@ bool OptimizeParameters::set_up_optimize(Optimize *optimize) {
   if (get_use_landmarks()) {
     // landmarks/point files
     std::vector<std::string> point_files;
-    for (auto& s : subjects) {
+    for (const auto& s : subjects) {
       auto landmarks = s->get_landmarks_filenames();
       point_files.insert(std::end(point_files), std::begin(landmarks), std::end(landmarks));
     }
-    if (point_files.size() > 0) {
+    if (!point_files.empty()) {
       optimize->SetPointFiles(point_files);
     }
   }
@@ -346,7 +414,7 @@ bool OptimizeParameters::set_up_optimize(Optimize *optimize) {
   if (get_use_fixed_subjects()) {
     std::vector<int> domain_flags;
     int count = 0;
-    for (auto& subject : subjects) {
+    for (const auto& subject : subjects) {
       for (int i = 0; i < domains_per_shape; i++) {  // need one flag for each domain
         if (is_subject_fixed(subject)) {
           domain_flags.push_back(count);
@@ -403,7 +471,7 @@ bool OptimizeParameters::set_up_optimize(Optimize *optimize) {
   int count = 0;
   domain_count = 0;
   for (auto s : subjects) {
-    if (this->abort_load_) {
+    if (abort_load_) {
       return false;
     }
     auto files = s->get_groomed_filenames();
@@ -478,7 +546,7 @@ bool OptimizeParameters::set_up_optimize(Optimize *optimize) {
 
       auto name = StringUtils::getBaseFilenameWithoutExtension(filename);
 
-      auto prefix = this->get_output_prefix();
+      auto prefix = get_output_prefix();
       local_particle_filenames.push_back(prefix + name + "_local.particles");
       world_particle_filenames.push_back(prefix + name + "_world.particles");
     }
@@ -486,14 +554,14 @@ bool OptimizeParameters::set_up_optimize(Optimize *optimize) {
     s->set_world_particle_filenames(world_particle_filenames);
 
     count++;
-    if (this->load_callback_) {
-      this->load_callback_(count);
+    if (load_callback_) {
+      load_callback_(count);
     }
   }
 
-
   optimize->SetCheckpointingInterval(get_checkpoint_interval());
   optimize->SetSaveInitSplits(get_save_init_splits());
+  optimize->SetKeepCheckpoints(get_keep_checkpoints() ? 1 : 0);
 
   optimize->SetFilenames(StringUtils::getFileNamesFromPaths(filenames));
   optimize->SetOutputTransformFile("transform");
@@ -514,21 +582,20 @@ bool OptimizeParameters::is_subject_fixed(std::shared_ptr<Subject> subject) {
 }
 
 //---------------------------------------------------------------------------
-int OptimizeParameters::get_checkpoint_interval() {
-  return params_.get("checkpointing_interval", 0);
-}
+int OptimizeParameters::get_checkpoint_interval() { return params_.get(Keys::checkpointing_interval, 0); }
 
 //---------------------------------------------------------------------------
 void OptimizeParameters::set_checkpoint_interval(int iterations) {
-  params_.set("checkpointing_interval", iterations);
+  params_.set(Keys::checkpointing_interval, iterations);
 }
 
 //---------------------------------------------------------------------------
-bool OptimizeParameters::get_save_init_splits() {
-  return params_.get("save_init_splits", false);
-}
+bool OptimizeParameters::get_save_init_splits() { return params_.get(Keys::save_init_splits, false); }
 
 //---------------------------------------------------------------------------
-void OptimizeParameters::set_save_init_splits(bool enabled) {
-  params_.set("save_init_splits", enabled);
-}
+void OptimizeParameters::set_save_init_splits(bool enabled) { params_.set(Keys::save_init_splits, enabled); }
+
+//---------------------------------------------------------------------------
+bool OptimizeParameters::get_keep_checkpoints() { return params_.get(Keys::keep_checkpoints, false); }
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_keep_checkpoints(bool enabled) { params_.set(Keys::keep_checkpoints, enabled); }

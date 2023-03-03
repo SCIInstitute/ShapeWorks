@@ -148,8 +148,6 @@ def Run_Pipeline(args):
         "optimization_iterations": 3000,
         "starting_regularization": 100,
         "ending_regularization": 10,
-        "recompute_regularization_interval": 2,
-        "domains_per_shape": 1,
         "relative_weighting": 15,
         "initial_relative_weighting": 0.05,
         "verbosity": 0,
@@ -166,7 +164,6 @@ def Run_Pipeline(args):
     # Add param dictionary to spreadsheet
     for key in parameter_dictionary:
         parameters.set(key,sw.Variant([parameter_dictionary[key]]))
-    parameters.set("domain_type", sw.Variant(domain_type[0]))
     project.set_parameters("optimize",parameters)
     spreadsheet_file = project_location + "/ellipsoid_cut_" + args.option_set+ ".swproj"
     project.save(spreadsheet_file)

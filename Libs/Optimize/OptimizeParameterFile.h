@@ -1,11 +1,14 @@
 #pragma once
 
+#include <exception>
+#include <sstream>
 #include <string>
 #include <vector>
-#include <sstream>
-#include <exception>
 
 class TiXmlHandle;
+
+namespace shapeworks {
+class Optimize;
 
 /**
  * \class OptimizeParameterFile
@@ -19,21 +22,15 @@ class TiXmlHandle;
  * appropriate values for an Optimize object.
  *
  */
-
-namespace shapeworks {
-class Optimize;
-
 class OptimizeParameterFile {
-public:
-
+ public:
   OptimizeParameterFile();
 
   //! Load a parameter file and set the values on an Optimize object
   bool load_parameter_file(std::string filename, Optimize* optimize);
 
-private:
-
-  bool set_visualizer_parameters(TiXmlHandle *docHandle, Optimize *optimize);
+ private:
+  bool set_visualizer_parameters(TiXmlHandle* docHandle, Optimize* optimize);
 
   bool set_io_parameters(TiXmlHandle* docHandle, Optimize* optimize);
 
@@ -67,11 +64,10 @@ private:
 
   int get_num_inputs(TiXmlHandle* docHandle);
 
-private:
-
+ private:
   std::vector<int> read_int_list(TiXmlHandle* doc_handle, std::string name);
 
   int verbosity_level_ = 0;
 };
 
-}
+}  // namespace shapeworks

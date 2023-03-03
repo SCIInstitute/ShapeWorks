@@ -97,8 +97,6 @@ def Run_Pipeline(args):
         "optimization_iterations": 2500,
         "starting_regularization": 3000,
         "ending_regularization": 0.1,
-        "recompute_regularization_interval": 1,
-        "domains_per_shape": 1,
         "relative_weighting": 15,
         "initial_relative_weighting": 0.01,
         "procrustes_interval": 0,
@@ -120,7 +118,6 @@ def Run_Pipeline(args):
     # Add param dictionary to spreadsheet
     for key in parameter_dictionary:
         parameters.set(key,sw.Variant([parameter_dictionary[key]]))
-    parameters.set("domain_type",sw.Variant('mesh'))
     project.set_parameters("optimize",parameters)
     spreadsheet_file = output_directory + "thin_cavity_bean_" + args.option_set+ ".swproj"
     project.save(spreadsheet_file)
