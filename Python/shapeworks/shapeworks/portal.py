@@ -90,8 +90,8 @@ def count_existing_files(directory):
     for root, _, files in os.walk(directory):
         if len(files):
             print(f"{len(files)} files found in {root}")
-        # excluding file in particle folders and in root directory (swproj file)
-        if not("particle" in root) and root != directory:
+        # excluding file in particle and constraints folders and in root directory (swproj file)
+        if not("particle" in root) and root != directory and len(files) >= 3 and not("constraints" in root):
             total += len(files)
     print(f"\nTotal shape files found in {directory}: {total}\n")
     return total
