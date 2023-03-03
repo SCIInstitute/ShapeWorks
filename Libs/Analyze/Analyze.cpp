@@ -1,9 +1,8 @@
 #include "Analyze.h"
 
 #include <Logging.h>
-#include <StringUtils.h>
-
 #include <MeshWarper.h>
+#include <StringUtils.h>
 
 #include <boost/filesystem.hpp>
 #include <nlohmann/json.hpp>
@@ -12,9 +11,8 @@ using json = nlohmann::ordered_json;
 
 namespace shapeworks {
 
-
 //---------------------------------------------------------------------------
-static json get_eigen_vectors(ParticleShapeStatistics *stats) {
+static json get_eigen_vectors(ParticleShapeStatistics* stats) {
   auto values = stats->Eigenvectors();
 
   std::vector<double> vals;
@@ -29,7 +27,7 @@ static json get_eigen_vectors(ParticleShapeStatistics *stats) {
 }
 
 //---------------------------------------------------------------------------
-static json create_charts(ParticleShapeStatistics *stats) {
+static json create_charts(ParticleShapeStatistics* stats) {
   std::vector<int> x(stats->get_num_modes());
   for (int i = 0; i < x.size(); i++) {
     x[i] = i + 1;
@@ -64,8 +62,71 @@ static json create_charts(ParticleShapeStatistics *stats) {
 }
 
 //---------------------------------------------------------------------------
+void write_offline_groups(json& json_object, ProjectHandle project, Analyze& analyze, boost::filesystem::path base) {
+  auto group_names = project->get_group_names();
+
+  std::vector<json> group_jsons;
+  for (auto& group_name : group_names) {
+    auto group_values = project->get_group_values(group_name);
+
+    // iterate over all pairs of group values
+    for (int i = 0; i < group_values.size(); i++) {
+      for (int j = i + 1; j < group_values.size(); j++) {
+        json group_json;
+        group_json["name"] = group_name;
+        group_json["group1"] = group_values[i];
+        group_json["group2"] = group_values[j];
+        analyze.set_group_selection(group_name, group_values[i], group_values[j]);
+
+        std::vector<json> values;
+        const int num_steps = 11;
+        for (int k = 0; k < num_steps; k++) {
+          json value;
+          double ratio = k / (num_steps - 1.0);
+          value["ratio"] = ratio;
+          std::vector<std::string> json_meshes;
+          std::vector<std::string> worlds;
+          auto shape = analyze.get_group_shape(ratio);
+          for (int d = 0; d < project->get_number_of_domains_per_subject(); d++) {
+            std::string domain_id = std::to_string(d);
+            auto meshes = shape->get_reconstructed_meshes(true);
+            auto mesh = meshes.meshes()[d];
+            auto name = "group_" + group_name + "_" + group_values[i] + "_" + group_values[j] + "_" +
+                        std::to_string(k) + "_" + domain_id;
+            std::string vtk_filename = name + ".vtk";
+            auto filename = base / boost::filesystem::path(vtk_filename);
+            Mesh(mesh->get_poly_data()).write(filename.string());
+            json_meshes.push_back(vtk_filename);
+
+            auto particle_filename = name + ".pts";
+            worlds.push_back(particle_filename);
+            filename = base / boost::filesystem::path(particle_filename);
+            Particles::save_particles_file(filename.string(), shape->get_particles().get_world_particles(d));
+          }
+          value["meshes"] = json_meshes;
+          value["particles"] = worlds;
+          values.push_back(value);
+        }
+        group_json["values"] = values;
+        group_jsons.push_back(group_json);
+      }
+    }
+  }
+  json_object["groups"] = group_jsons;
+}
+
+//---------------------------------------------------------------------------
 Analyze::Analyze(ProjectHandle project) : project_(project), mesh_manager_(new MeshManager()) {
+  SW_LOG("Analyze::Analyze");
   mesh_manager_->set_cache_enabled(false);
+
+  // load data from the project
+  update_shapes();
+
+  // compute stats
+  compute_stats();
+
+  initialize_mesh_warper();
 }
 
 //---------------------------------------------------------------------------
@@ -77,18 +138,10 @@ void Analyze::run_offline_analysis(std::string outfile) {
 
   auto base = boost::filesystem::path(outfile).parent_path();
 
-  // load data from the project
-  update_shapes();
-
-  // compute stats
-  compute_stats();
-
-  initialize_mesh_warper();
-
   json j;
 
-  double range = 2.0; // TODO: make this configurable
-  double steps = 11; // TODO: make this configurable
+  double range = 2.0;  // TODO: make this configurable
+  double steps = 11;   // TODO: make this configurable
   int half_steps = (steps / 2.0);
   double increment = range / half_steps;
 
@@ -156,21 +209,21 @@ void Analyze::run_offline_analysis(std::string outfile) {
       double pca_value = increment * i;
       std::string pca_string = QString::number(pca_value, 'g', 2).toStdString();
 
-      auto process_value = [&](double pca_value, std::string prefix) {
-        auto shape = get_mode_shape(mode, pca_value);
+      auto process_value = [&](double pca_value_param, std::string prefix) {
+        auto shape = get_mode_shape(mode, pca_value_param);
         auto mode_meshes = shape->get_reconstructed_meshes(true);
 
         json item;
-        item["pca_value"] = pca_value;
-        item["lambda"] = lambda * pca_value;
+        item["pca_value"] = pca_value_param;
+        item["lambda"] = lambda * pca_value_param;
 
         std::vector<std::string> items;
         std::vector<std::string> worlds;
         for (int d = 0; d < num_domains; d++) {
           std::string domain_id = std::to_string(d);
           auto mesh = mode_meshes.meshes()[d];
-          std::string name = "pca_mode_" + std::to_string(mode + 1) + "_domain_" + std::to_string(d) + "_" + prefix +
-              "_" + pca_string;
+          std::string name =
+              "pca_mode_" + std::to_string(mode + 1) + "_domain_" + std::to_string(d) + "_" + prefix + "_" + pca_string;
           std::string vtk_filename = name + ".vtk";
           items.push_back(vtk_filename);
 
@@ -181,7 +234,6 @@ void Analyze::run_offline_analysis(std::string outfile) {
           worlds.push_back(particle_filename);
           filename = base / boost::filesystem::path(particle_filename);
           Particles::save_particles_file(filename.string(), shape->get_particles().get_world_particles(d));
-
         }
         item["meshes"] = items;
         item["particles"] = worlds;
@@ -201,13 +253,13 @@ void Analyze::run_offline_analysis(std::string outfile) {
   j["charts"] = create_charts(&stats_);
 
   std::vector<json> shapes;
-  for (int i=0;i<shapes_.size();i++) {
-    auto &s = shapes_[i];
-    auto meshes = s->get_reconstructed_meshes(true);
+  for (int i = 0; i < shapes_.size(); i++) {
+    auto& s = shapes_[i];
+    auto shape_meshes = s->get_reconstructed_meshes(true);
     std::vector<std::string> filenames;
     for (int d = 0; d < num_domains; d++) {
-      auto mesh = meshes.meshes()[d];
-      std::string vtk_filename = "sample_"+std::to_string(i)+"_"+std::to_string(d)+".vtk";
+      auto mesh = shape_meshes.meshes()[d];
+      std::string vtk_filename = "sample_" + std::to_string(i) + "_" + std::to_string(d) + ".vtk";
       auto filename = base / boost::filesystem::path(vtk_filename);
       Mesh(mesh->get_poly_data()).write(filename.string());
       filenames.push_back(vtk_filename);
@@ -215,6 +267,8 @@ void Analyze::run_offline_analysis(std::string outfile) {
     shapes.push_back(filenames);
   }
   j["reconstructed_samples"] = shapes;
+
+  write_offline_groups(j, project_, *this, base);
 
   std::ofstream file(outfile);
   if (!file.good()) {
@@ -231,6 +285,7 @@ int Analyze::get_num_modes() { return shapes_.size() - 1; }
 
 //---------------------------------------------------------------------------
 Particles Analyze::get_mean_shape_points() {
+  SW_DEBUG("get_mean_shape_points");
   if (!compute_stats()) {
     return Particles();
   }
@@ -240,6 +295,7 @@ Particles Analyze::get_mean_shape_points() {
 
 //---------------------------------------------------------------------------
 ShapeHandle Analyze::get_mean_shape() {
+  SW_DEBUG("get_mean_shape");
   auto shape_points = get_mean_shape_points();
   ShapeHandle shape = create_shape_from_points(shape_points);
 
@@ -352,30 +408,27 @@ bool Analyze::compute_stats() {
   std::vector<Eigen::VectorXd> points;
   std::vector<int> group_ids;
 
-  std::string group_set = "need to add groups1";
-  std::string left_group = "need to add groups2";
-  std::string right_group = "need to add groups3";
-
-  /// TODO: implement groups
-  /// bool groups_enabled = groups_active();
-  bool groups_enabled = false;
+  bool groups_enabled = selected_group_ != "";
 
   group1_list_.clear();
   group2_list_.clear();
 
+  SW_LOG("number of shapes: {}", shapes_.size());
   for (auto& shape : shapes_) {
+    SW_LOG("shape: {}", shape->get_subject()->get_display_name());
     if (groups_enabled) {
-      auto value = shape->get_subject()->get_group_value(group_set);
-      if (value == left_group) {
+      auto value = shape->get_subject()->get_group_value(selected_group_);
+      if (value == group1_) {
         points.push_back(shape->get_global_correspondence_points());
         group_ids.push_back(1);
         group1_list_.push_back(shape);
-      } else if (value == right_group) {
+      } else if (value == group2_) {
         points.push_back(shape->get_global_correspondence_points());
         group_ids.push_back(2);
         group2_list_.push_back(shape);
       } else {
-        // we don't include it
+        // we don't include this shape in the analysis since it is in neither selected group
+        // we only do pairs for this analysis
       }
     } else {
       points.push_back(shape->get_global_correspondence_points());
@@ -384,6 +437,7 @@ bool Analyze::compute_stats() {
   }
 
   if (points.empty()) {
+    SW_WARN("No points");
     return false;
   }
 
@@ -455,7 +509,60 @@ void Analyze::initialize_mesh_warper() {
 
     mesh_manager_->get_mesh_warper(i)->set_reference_mesh(mesh.getVTKMesh(), points);
   }
+}
 
+//---------------------------------------------------------------------------
+int Analyze::get_num_subjects() { return shapes_.size(); }
+
+//---------------------------------------------------------------------------
+Eigen::VectorXf Analyze::get_subject_features(int subject, std::string feature_name) {
+  if (subject >= shapes_.size()) {
+    return Eigen::VectorXf();
+  }
+
+  auto shape = shapes_[subject];
+  auto particles = shape->get_particles();
+  auto points = particles.get_world_points(0);
+
+  auto reconstructed_meshes = shape->get_reconstructed_meshes(true);
+
+  shape->load_feature(DisplayMode::Reconstructed, feature_name);
+  return shape->get_point_features(feature_name);
+}
+
+//---------------------------------------------------------------------------
+int Analyze::get_num_particles() {
+  if (shapes_.empty()) {
+    return 0;
+  }
+  auto particles = shapes_[0]->get_particles();
+  return particles.get_combined_local_particles().size() / 3;
+}
+
+//---------------------------------------------------------------------------
+void Analyze::set_group_selection(std::string group_name, std::string group1, std::string group2) {
+  selected_group_ = group_name;
+  group1_ = group1;
+  group2_ = group2;
+  stats_ready_ = false;
+  compute_stats();
+}
+
+//---------------------------------------------------------------------------
+Particles Analyze::get_group_shape_particles(double ratio) {
+  if (!compute_stats()) {
+    return Particles();
+  }
+
+  auto particles = stats_.Group1Mean() + (stats_.GroupDifference() * ratio);
+
+  return convert_from_combined(particles);
+}
+//---------------------------------------------------------------------------
+ShapeHandle Analyze::get_group_shape(double ratio) {
+  auto shape_points = get_group_shape_particles(ratio);
+  ShapeHandle shape = create_shape_from_points(shape_points);
+  return shape;
 }
 
 }  // namespace shapeworks
