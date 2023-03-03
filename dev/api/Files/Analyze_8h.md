@@ -27,8 +27,9 @@ title: Libs/Analyze/Analyze.h
 ```cpp
 #pragma once
 
-#include <Project/Project.h>
 #include <ParticleShapeStatistics.h>
+#include <Project/Project.h>
+
 #include "Shape.h"
 
 namespace shapeworks {
@@ -42,10 +43,18 @@ class Analyze {
 
   ShapeList get_shapes();
 
+  int get_num_subjects();
+
   int get_num_modes();
 
+  int get_num_particles();
+
   Particles get_mean_shape_points();
+
   ShapeHandle get_mean_shape();
+
+  Particles get_group_shape_particles(double ratio);
+  ShapeHandle get_group_shape(double ratio);
 
   Particles get_shape_points(int mode, double value);
   ShapeHandle get_mode_shape(int mode, double value);
@@ -54,15 +63,17 @@ class Analyze {
 
   ShapeHandle create_shape_from_points(Particles points);
 
- private:
+  Eigen::VectorXf get_subject_features(int subject, std::string feature_name);
 
+  void set_group_selection(std::string group_name, std::string group1, std::string group2);
+
+ private:
   bool update_shapes();
   bool compute_stats();
 
   void initialize_mesh_warper();
 
   Particles convert_from_combined(const Eigen::VectorXd& points);
-
 
   ProjectHandle project_;
 
@@ -72,12 +83,14 @@ class Analyze {
   ShapeList group1_list_;
   ShapeList group2_list_;
 
-
   std::shared_ptr<MeshManager> mesh_manager_;
 
   ParticleShapeStatistics stats_;
   bool stats_ready_ = false;
 
+  std::string selected_group_;
+  std::string group1_;
+  std::string group2_;
 };
 }  // namespace shapeworks
 ```
@@ -85,4 +98,4 @@ class Analyze {
 
 -------------------------------
 
-Updated on 2023-02-28 at 18:42:26 +0000
+Updated on 2023-03-03 at 23:21:15 +0000

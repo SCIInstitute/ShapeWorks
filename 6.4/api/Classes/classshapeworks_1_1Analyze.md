@@ -18,15 +18,21 @@ High level analyze API.  [More...](#detailed-description)
 |                | Name           |
 | -------------- | -------------- |
 | | **[Analyze](../Classes/classshapeworks_1_1Analyze.md#function-analyze)**(ProjectHandle project) |
-| void | **[run_offline_analysis](../Classes/classshapeworks_1_1Analyze.md#function-run-offline-analysis)**(std::string outfile) |
-| ShapeList | **[get_shapes](../Classes/classshapeworks_1_1Analyze.md#function-get-shapes)**() |
-| int | **[get_num_modes](../Classes/classshapeworks_1_1Analyze.md#function-get-num-modes)**() |
-| [Particles](../Classes/classshapeworks_1_1Particles.md) | **[get_mean_shape_points](../Classes/classshapeworks_1_1Analyze.md#function-get-mean-shape-points)**() |
-| ShapeHandle | **[get_mean_shape](../Classes/classshapeworks_1_1Analyze.md#function-get-mean-shape)**() |
-| [Particles](../Classes/classshapeworks_1_1Particles.md) | **[get_shape_points](../Classes/classshapeworks_1_1Analyze.md#function-get-shape-points)**(int mode, double value) |
-| ShapeHandle | **[get_mode_shape](../Classes/classshapeworks_1_1Analyze.md#function-get-mode-shape)**(int mode, double value) |
+| void | **[run_offline_analysis](../Classes/classshapeworks_1_1Analyze.md#function-run-offline-analysis)**(std::string outfile)<br>Run offline analysis, saving results to outfile.  |
+| ShapeList | **[get_shapes](../Classes/classshapeworks_1_1Analyze.md#function-get-shapes)**()<br>Return the list of shapes.  |
+| int | **[get_num_subjects](../Classes/classshapeworks_1_1Analyze.md#function-get-num-subjects)**()<br>Return the number of subjects.  |
+| int | **[get_num_modes](../Classes/classshapeworks_1_1Analyze.md#function-get-num-modes)**()<br>Return the number of modes.  |
+| int | **[get_num_particles](../Classes/classshapeworks_1_1Analyze.md#function-get-num-particles)**()<br>Return the number of particles.  |
+| [Particles](../Classes/classshapeworks_1_1Particles.md) | **[get_mean_shape_points](../Classes/classshapeworks_1_1Analyze.md#function-get-mean-shape-points)**()<br>Return the mean shape.  |
+| ShapeHandle | **[get_mean_shape](../Classes/classshapeworks_1_1Analyze.md#function-get-mean-shape)**()<br>Return the mean shape.  |
+| [Particles](../Classes/classshapeworks_1_1Particles.md) | **[get_group_shape_particles](../Classes/classshapeworks_1_1Analyze.md#function-get-group-shape-particles)**(double ratio) |
+| ShapeHandle | **[get_group_shape](../Classes/classshapeworks_1_1Analyze.md#function-get-group-shape)**(double ratio) |
+| [Particles](../Classes/classshapeworks_1_1Particles.md) | **[get_shape_points](../Classes/classshapeworks_1_1Analyze.md#function-get-shape-points)**(int mode, double value)<br>Return the particles for a given mode and value.  |
+| ShapeHandle | **[get_mode_shape](../Classes/classshapeworks_1_1Analyze.md#function-get-mode-shape)**(int mode, double value)<br>Return the shape for a given mode and value.  |
 | bool | **[groups_active](../Classes/classshapeworks_1_1Analyze.md#function-groups-active)**() |
 | ShapeHandle | **[create_shape_from_points](../Classes/classshapeworks_1_1Analyze.md#function-create-shape-from-points)**([Particles](../Classes/classshapeworks_1_1Particles.md) points) |
+| Eigen::VectorXf | **[get_subject_features](../Classes/classshapeworks_1_1Analyze.md#function-get-subject-features)**(int subject, std::string feature_name) |
+| void | **[set_group_selection](../Classes/classshapeworks_1_1Analyze.md#function-set-group-selection)**(std::string group_name, std::string group1, std::string group2) |
 
 ## Detailed Description
 
@@ -57,6 +63,7 @@ void run_offline_analysis(
 )
 ```
 
+Run offline analysis, saving results to outfile. 
 
 ### function get_shapes
 
@@ -64,6 +71,15 @@ void run_offline_analysis(
 ShapeList get_shapes()
 ```
 
+Return the list of shapes. 
+
+### function get_num_subjects
+
+```cpp
+int get_num_subjects()
+```
+
+Return the number of subjects. 
 
 ### function get_num_modes
 
@@ -71,6 +87,15 @@ ShapeList get_shapes()
 int get_num_modes()
 ```
 
+Return the number of modes. 
+
+### function get_num_particles
+
+```cpp
+int get_num_particles()
+```
+
+Return the number of particles. 
 
 ### function get_mean_shape_points
 
@@ -78,11 +103,31 @@ int get_num_modes()
 Particles get_mean_shape_points()
 ```
 
+Return the mean shape. 
 
 ### function get_mean_shape
 
 ```cpp
 ShapeHandle get_mean_shape()
+```
+
+Return the mean shape. 
+
+### function get_group_shape_particles
+
+```cpp
+Particles get_group_shape_particles(
+    double ratio
+)
+```
+
+
+### function get_group_shape
+
+```cpp
+ShapeHandle get_group_shape(
+    double ratio
+)
 ```
 
 
@@ -95,6 +140,7 @@ Particles get_shape_points(
 )
 ```
 
+Return the particles for a given mode and value. 
 
 ### function get_mode_shape
 
@@ -105,6 +151,7 @@ ShapeHandle get_mode_shape(
 )
 ```
 
+Return the shape for a given mode and value. 
 
 ### function groups_active
 
@@ -122,6 +169,27 @@ ShapeHandle create_shape_from_points(
 ```
 
 
+### function get_subject_features
+
+```cpp
+Eigen::VectorXf get_subject_features(
+    int subject,
+    std::string feature_name
+)
+```
+
+
+### function set_group_selection
+
+```cpp
+void set_group_selection(
+    std::string group_name,
+    std::string group1,
+    std::string group2
+)
+```
+
+
 -------------------------------
 
-Updated on 2023-02-28 at 18:42:25 +0000
+Updated on 2023-03-03 at 23:21:14 +0000

@@ -2254,8 +2254,22 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-get_num_subjects" class="md-nav__link">
+    function get_num_subjects
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-get_num_modes" class="md-nav__link">
     function get_num_modes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_num_particles" class="md-nav__link">
+    function get_num_particles
   </a>
   
 </li>
@@ -2270,6 +2284,20 @@
           <li class="md-nav__item">
   <a href="#function-get_mean_shape" class="md-nav__link">
     function get_mean_shape
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_group_shape_particles" class="md-nav__link">
+    function get_group_shape_particles
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_group_shape" class="md-nav__link">
+    function get_group_shape
   </a>
   
 </li>
@@ -2298,6 +2326,20 @@
           <li class="md-nav__item">
   <a href="#function-create_shape_from_points" class="md-nav__link">
     function create_shape_from_points
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_subject_features" class="md-nav__link">
+    function get_subject_features
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-set_group_selection" class="md-nav__link">
+    function set_group_selection
   </a>
   
 </li>
@@ -2343,31 +2385,47 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Analyze.html#function-run-offline-analysis">run_offline_analysis</a></strong>(std::string outfile)</td>
+<td><strong><a href="classshapeworks_1_1Analyze.html#function-run-offline-analysis">run_offline_analysis</a></strong>(std::string outfile)<br>Run offline analysis, saving results to outfile.</td>
 </tr>
 <tr>
 <td>ShapeList</td>
-<td><strong><a href="classshapeworks_1_1Analyze.html#function-get-shapes">get_shapes</a></strong>()</td>
+<td><strong><a href="classshapeworks_1_1Analyze.html#function-get-shapes">get_shapes</a></strong>()<br>Return the list of shapes.</td>
 </tr>
 <tr>
 <td>int</td>
-<td><strong><a href="classshapeworks_1_1Analyze.html#function-get-num-modes">get_num_modes</a></strong>()</td>
+<td><strong><a href="classshapeworks_1_1Analyze.html#function-get-num-subjects">get_num_subjects</a></strong>()<br>Return the number of subjects.</td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1Analyze.html#function-get-num-modes">get_num_modes</a></strong>()<br>Return the number of modes.</td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1Analyze.html#function-get-num-particles">get_num_particles</a></strong>()<br>Return the number of particles.</td>
 </tr>
 <tr>
 <td><a href="classshapeworks_1_1Particles.html">Particles</a></td>
-<td><strong><a href="classshapeworks_1_1Analyze.html#function-get-mean-shape-points">get_mean_shape_points</a></strong>()</td>
+<td><strong><a href="classshapeworks_1_1Analyze.html#function-get-mean-shape-points">get_mean_shape_points</a></strong>()<br>Return the mean shape.</td>
 </tr>
 <tr>
 <td>ShapeHandle</td>
-<td><strong><a href="classshapeworks_1_1Analyze.html#function-get-mean-shape">get_mean_shape</a></strong>()</td>
+<td><strong><a href="classshapeworks_1_1Analyze.html#function-get-mean-shape">get_mean_shape</a></strong>()<br>Return the mean shape.</td>
 </tr>
 <tr>
 <td><a href="classshapeworks_1_1Particles.html">Particles</a></td>
-<td><strong><a href="classshapeworks_1_1Analyze.html#function-get-shape-points">get_shape_points</a></strong>(int mode, double value)</td>
+<td><strong><a href="classshapeworks_1_1Analyze.html#function-get-group-shape-particles">get_group_shape_particles</a></strong>(double ratio)</td>
 </tr>
 <tr>
 <td>ShapeHandle</td>
-<td><strong><a href="classshapeworks_1_1Analyze.html#function-get-mode-shape">get_mode_shape</a></strong>(int mode, double value)</td>
+<td><strong><a href="classshapeworks_1_1Analyze.html#function-get-group-shape">get_group_shape</a></strong>(double ratio)</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Particles.html">Particles</a></td>
+<td><strong><a href="classshapeworks_1_1Analyze.html#function-get-shape-points">get_shape_points</a></strong>(int mode, double value)<br>Return the particles for a given mode and value.</td>
+</tr>
+<tr>
+<td>ShapeHandle</td>
+<td><strong><a href="classshapeworks_1_1Analyze.html#function-get-mode-shape">get_mode_shape</a></strong>(int mode, double value)<br>Return the shape for a given mode and value.</td>
 </tr>
 <tr>
 <td>bool</td>
@@ -2376,6 +2434,14 @@
 <tr>
 <td>ShapeHandle</td>
 <td><strong><a href="classshapeworks_1_1Analyze.html#function-create-shape-from-points">create_shape_from_points</a></strong>(<a href="classshapeworks_1_1Particles.html">Particles</a> points)</td>
+</tr>
+<tr>
+<td>Eigen::VectorXf</td>
+<td><strong><a href="classshapeworks_1_1Analyze.html#function-get-subject-features">get_subject_features</a></strong>(int subject, std::string feature_name)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Analyze.html#function-set-group-selection">set_group_selection</a></strong>(std::string group_name, std::string group1, std::string group2)</td>
 </tr>
 </tbody>
 </table>
@@ -2395,17 +2461,40 @@
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">outfile</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
+<p>Run offline analysis, saving results to outfile. </p>
 <h3 id="function-get_shapes">function get_shapes</h3>
 <div class="highlight"><pre><span></span><code><span class="n">ShapeList</span><span class="w"> </span><span class="n">get_shapes</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
+<p>Return the list of shapes. </p>
+<h3 id="function-get_num_subjects">function get_num_subjects</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_num_subjects</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<p>Return the number of subjects. </p>
 <h3 id="function-get_num_modes">function get_num_modes</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_num_modes</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
+<p>Return the number of modes. </p>
+<h3 id="function-get_num_particles">function get_num_particles</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_num_particles</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<p>Return the number of particles. </p>
 <h3 id="function-get_mean_shape_points">function get_mean_shape_points</h3>
 <div class="highlight"><pre><span></span><code><span class="n">Particles</span><span class="w"> </span><span class="n">get_mean_shape_points</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
+<p>Return the mean shape. </p>
 <h3 id="function-get_mean_shape">function get_mean_shape</h3>
 <div class="highlight"><pre><span></span><code><span class="n">ShapeHandle</span><span class="w"> </span><span class="n">get_mean_shape</span><span class="p">()</span><span class="w"></span>
+</code></pre></div>
+<p>Return the mean shape. </p>
+<h3 id="function-get_group_shape_particles">function get_group_shape_particles</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Particles</span><span class="w"> </span><span class="n">get_group_shape_particles</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">ratio</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-get_group_shape">function get_group_shape</h3>
+<div class="highlight"><pre><span></span><code><span class="n">ShapeHandle</span><span class="w"> </span><span class="n">get_group_shape</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">ratio</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
 </code></pre></div>
 <h3 id="function-get_shape_points">function get_shape_points</h3>
 <div class="highlight"><pre><span></span><code><span class="n">Particles</span><span class="w"> </span><span class="n">get_shape_points</span><span class="p">(</span><span class="w"></span>
@@ -2413,12 +2502,14 @@
 <span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
+<p>Return the particles for a given mode and value. </p>
 <h3 id="function-get_mode_shape">function get_mode_shape</h3>
 <div class="highlight"><pre><span></span><code><span class="n">ShapeHandle</span><span class="w"> </span><span class="n">get_mode_shape</span><span class="p">(</span><span class="w"></span>
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">mode</span><span class="p">,</span><span class="w"></span>
 <span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
+<p>Return the shape for a given mode and value. </p>
 <h3 id="function-groups_active">function groups_active</h3>
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">groups_active</span><span class="p">()</span><span class="w"></span>
 </code></pre></div>
@@ -2427,8 +2518,21 @@
 <span class="w">    </span><span class="n">Particles</span><span class="w"> </span><span class="n">points</span><span class="w"></span>
 <span class="p">)</span><span class="w"></span>
 </code></pre></div>
+<h3 id="function-get_subject_features">function get_subject_features</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXf</span><span class="w"> </span><span class="n">get_subject_features</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">subject</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">feature_name</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
+<h3 id="function-set_group_selection">function set_group_selection</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_group_selection</span><span class="p">(</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">group_name</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">group1</span><span class="p">,</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">group2</span><span class="w"></span>
+<span class="p">)</span><span class="w"></span>
+</code></pre></div>
 <hr />
-<p>Updated on 2023-02-28 at 18:42:25 +0000</p>
+<p>Updated on 2023-03-03 at 23:21:14 +0000</p>
 
               
             </article>
