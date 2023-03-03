@@ -30,6 +30,10 @@ class NetworkAnalysis:
         self.timepoints = 1
         self.activites = []
         self.flag_analysis = 'ttest'
+        self.flag_model = 'cortthick'
+        self.flag_run_permutations = True
+        self.flag_run_cluster = True
+        self.flag_run_1dspm = True
 
     def set_run_1dspm(self, run_1dspm):
         self.flag_run_1dspm = run_1dspm
@@ -42,6 +46,7 @@ class NetworkAnalysis:
 
     def set_target_feature(self, target_feature):
         self.activities = [ target_feature ]
+        self.target_feature = target_feature
 
     def set_target_group(self, target_group):
         self.target_group = target_group
@@ -71,6 +76,7 @@ class NetworkAnalysis:
         return mesh_points, mesh_normals, mean_shape, surface
 
     def run(self):
+        print("got here1", file=sys.stderr)
         project = self.project
         analyze = self.analyze
         num_pts = analyze.get_num_particles()
@@ -102,7 +108,7 @@ class NetworkAnalysis:
 
             activity = 0
             for s in tqdm(range(num_subjects)):
-                features = analyze.get_subject_features(s, "ShellThickness")
+                features = analyze.get_subject_features(s, self.target_feature)
                 # reshape into a matrix
                 features = features.reshape(-1, 1)
                 all_data[:, :, s, activity] = features
@@ -226,6 +232,7 @@ class NetworkAnalysis:
 
         # In[4]:
 
+        print("got here2", file=sys.stderr)
         print(str(len(group[group == 0])), 'in', group_values[0], 'group; ', str(len(group[group == 1])), 'in',
               group_values[1], 'group')
         print(str(len(particles)), 'of', str(num_pts), 'particles analyzed.')
@@ -236,11 +243,14 @@ class NetworkAnalysis:
         kdtree = scipy.spatial.KDTree(mesh_points)
         dist, pts_index = kdtree.query(mean_shape[particles, :])
 
+        print("got here3", file=sys.stderr)
+
         # In[6]:
 
         pts_index.mean()
 
         # In[7]:
+        print("got here4", file=sys.stderr)
 
         result_path = "results/"
         # variables for SPM
@@ -255,6 +265,7 @@ class NetworkAnalysis:
         ng = len(np.unique(group))
         na = len(activities)
         ns = len(subjects)
+        print("got here5", file=sys.stderr)
 
         if os.path.exists(result_path) is not True:
             os.mkdir(result_path)
@@ -830,8 +841,8 @@ class NetworkAnalysis:
         elif flag_analysis == 'ttest':
             particle_fvalues_size[particles.astype(int), :, :] = fvalues_size[:, :, :, pthresh.index(poi)]
             particle_fvalues_1d[particles.astype(int), :, :] = tradzsig.reshape(len(particles), timepoints, len(fdesc))
-            self.particle_fvalues_size = particle_fvalues_size
-            self.particle_fvalues_1d = particle_fvalues_1d
+            self.particle_fvalues_size = particle_fvalues_size[:,0,0]
+            self.particle_fvalues_1d = particle_fvalues_1d[:,0,0]
             for analysis in ['1D', 'network']:
                 for comparison in fdesc:
                     if analysis == '1D':

@@ -27,6 +27,7 @@ class Session;
 class Lightbox;
 class ShapeWorksStudioApp;
 class GroupPvalueJob;
+class NetworkAnalysisJob;
 class StatsGroupLDAJob;
 
 class AnalysisTool : public QWidget {
@@ -53,6 +54,7 @@ class AnalysisTool : public QWidget {
 
   /// set the pointer to the application
   void set_app(ShapeWorksStudioApp* app);
+  ShapeWorksStudioApp* get_app() { return app_; }
 
   //! Set if this tool is active
   void set_active(bool active);
@@ -162,6 +164,7 @@ class AnalysisTool : public QWidget {
   void initialize_mesh_warper();
 
   void group_p_values_clicked();
+  void network_analysis_clicked();
 
   void handle_eval_thread_complete(ShapeEvaluationJob::JobType job_type, Eigen::VectorXd data);
   void handle_eval_thread_progress(ShapeEvaluationJob::JobType job_type, float progress);
@@ -169,6 +172,7 @@ class AnalysisTool : public QWidget {
   void handle_eval_particle_normals_complete(std::vector<bool> good_bad);
 
   void handle_group_pvalues_complete();
+  void handle_network_analysis_complete();
   void handle_alignment_changed(int new_alignment);
 
   void run_good_bad_particles();
@@ -244,6 +248,7 @@ class AnalysisTool : public QWidget {
   ShapeList group1_list_;
   ShapeList group2_list_;
 
+
   std::string feature_map_;
 
   std::vector<std::string> current_group_names_;
@@ -253,6 +258,8 @@ class AnalysisTool : public QWidget {
 
   QSharedPointer<GroupPvalueJob> group_pvalue_job_;
   QSharedPointer<StatsGroupLDAJob> group_lda_job_;
+  QSharedPointer<NetworkAnalysisJob> network_analysis_job_;
+
   bool group_lda_job_running_ = false;
   bool block_group_change_ = false;
 

@@ -8,6 +8,7 @@
 #include <Data/ShapeWorksWorker.h>
 #include <Interface/ShapeWorksStudioApp.h>
 #include <Job/GroupPvalueJob.h>
+#include <Job/NetworkAnalysisJob.h>
 #include <Job/ParticleNormalEvaluationJob.h>
 #include <Job/StatsGroupLDAJob.h>
 #include <Logging.h>
@@ -34,8 +35,8 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
   ui_ = new Ui_AnalysisTool;
   ui_->setupUi(this);
 
-  //network_analysis_widget_ = new NetworkAnalysisWidget(preferences_);
-  //layout()->addWidget(network_analysis_widget_);
+  network_analysis_widget_ = new NetworkAnalysisWidget(this, preferences_);
+  layout()->addWidget(network_analysis_widget_);
 
   auto spacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
   layout()->addItem(spacer);
@@ -81,6 +82,7 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
   connect(ui_->group_left, qOverload<int>(&QComboBox::currentIndexChanged), this, &AnalysisTool::group_changed);
   connect(ui_->group_right, qOverload<int>(&QComboBox::currentIndexChanged), this, &AnalysisTool::group_changed);
   connect(ui_->group_p_values_button, &QPushButton::clicked, this, &AnalysisTool::group_p_values_clicked);
+  connect(ui_->network_analysis_button, &QPushButton::clicked, this, &AnalysisTool::network_analysis_clicked);
 
   connect(ui_->reference_domain, qOverload<int>(&QComboBox::currentIndexChanged), this,
           &AnalysisTool::handle_alignment_changed);
@@ -384,6 +386,17 @@ void AnalysisTool::group_p_values_clicked() {
     connect(group_pvalue_job_.data(), &GroupPvalueJob::finished, this, &AnalysisTool::handle_group_pvalues_complete);
     app_->get_py_worker()->run_job(group_pvalue_job_);
   }
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::network_analysis_clicked() {
+  network_analysis_job_ =
+      QSharedPointer<NetworkAnalysisJob>::create(session_->get_project(), ui_->group_box->currentText().toStdString(),
+                                                 ui_->network_feature->currentText().toStdString());
+  connect(network_analysis_job_.data(), &NetworkAnalysisJob::progress, this, &AnalysisTool::progress);
+  connect(network_analysis_job_.data(), &NetworkAnalysisJob::finished, this,
+          &AnalysisTool::handle_network_analysis_complete);
+  app_->get_py_worker()->run_job(network_analysis_job_);
 }
 
 //-----------------------------------------------------------------------------
@@ -791,9 +804,7 @@ void AnalysisTool::on_group_slider_valueChanged() {
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::on_pcaModeSpinBox_valueChanged(int i) {
-  Q_EMIT pca_update();
-}
+void AnalysisTool::on_pcaModeSpinBox_valueChanged(int i) { Q_EMIT pca_update(); }
 
 //---------------------------------------------------------------------------
 void AnalysisTool::handle_pca_animate_state_changed() {
@@ -974,6 +985,12 @@ ShapeHandle AnalysisTool::get_mean_shape() {
       group_pvalue_job_->get_group_pvalues().rows() > 0) {
     shape->set_point_features("p_values", group_pvalue_job_->get_group_pvalues());
     shape->set_override_feature("p_values");
+  }
+
+  if (ui_->network_analysis_button->isChecked() && network_analysis_job_ &&
+      network_analysis_job_->get_tvalues().rows() > 0) {
+    shape->set_point_features("t_values", network_analysis_job_->get_tvalues());
+    shape->set_override_feature("t_values");
   }
 
   int num_points = shape_points.get_combined_global_particles().size() / 3;
@@ -1361,6 +1378,12 @@ void AnalysisTool::handle_group_pvalues_complete() {
   Q_EMIT update_view();
 }
 
+void AnalysisTool::handle_network_analysis_complete() {
+  SW_LOG("Network analysis complete");
+  Q_EMIT progress(100);
+  Q_EMIT update_view();
+}
+
 //---------------------------------------------------------------------------
 void AnalysisTool::handle_alignment_changed(int new_alignment) {
   new_alignment -= 2;  // minus two for local and global that come first (local == -1, global == -2)
@@ -1457,6 +1480,15 @@ void AnalysisTool::set_active(bool active) {
   if (!active) {
     ui_->pcaAnimateCheckBox->setChecked(false);
     pca_animate_timer_.stop();
+  } else {
+    auto features = session_->get_project()->get_feature_names();
+    ui_->network_feature->clear();
+    // convert to QStringList
+    QStringList qfeatures;
+    for (auto feature : features) {
+      qfeatures.append(QString::fromStdString(feature));
+    }
+    ui_->network_feature->addItems(qfeatures);
   }
   active_ = active;
   update_interface();
@@ -1558,4 +1590,5 @@ void AnalysisTool::create_plot(JKQTPlotter* plot, Eigen::VectorXd data, QString 
   plot->addGraph(graph);
   plot->zoomToFit();
 }
+
 }  // namespace shapeworks

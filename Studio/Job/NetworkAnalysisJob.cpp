@@ -1,41 +1,51 @@
+#include <Libs/Project/Project.h>
+#include <pybind11/eigen.h>
 #include <pybind11/embed.h>
 #include <pybind11/stl.h>
-#include <pybind11/eigen.h>
+
 namespace py = pybind11;
-using namespace pybind11::literals; // to bring in the `_a` literal
+using namespace pybind11::literals;  // to bring in the `_a` literal
 
 #include <Job/NetworkAnalysisJob.h>
 
 namespace shapeworks {
 
 //---------------------------------------------------------------------------
-NetworkAnalysisJob::NetworkAnalysisJob(ParticleShapeStatistics stats) : stats_(stats)
-{}
+NetworkAnalysisJob::NetworkAnalysisJob(std::shared_ptr<Project> project, std::string target_group,
+                                       std::string target_feature)
+    : project_(project), target_group_(target_group), target_feature_(target_feature) {}
 
 //---------------------------------------------------------------------------
-void NetworkAnalysisJob::run()
-{
+void NetworkAnalysisJob::run() {
   auto group_1_data = this->stats_.get_group1_matrix();
   auto group_2_data = this->stats_.get_group2_matrix();
   py::module sw = py::module::import("shapeworks");
-  py::object compute = sw.attr("stats").attr("compute_pvalues_for_group_difference_studio");
-  Eigen::MatrixXd pvalues = compute(group_1_data, group_2_data, 100).cast<Eigen::MatrixXd>();
 
-  this->group_pvalues_.resize(pvalues.rows());
-  for (int i = 0; i < pvalues.rows(); i++) {
-    this->group_pvalues_(i) = pvalues(i, 0);
+  // auto stats = sw.attr("stats");
+
+  py::type network_analysis_class = sw.attr("NetworkAnalysis");
+  py::object network_analysis = network_analysis_class(project_);
+  network_analysis.attr("set_target_group")(target_group_);
+  network_analysis.attr("set_target_feature")(target_feature_);
+  py::object res = network_analysis.attr("run")();
+
+  // py::object compute = network_analysis.attr("run");
+  // Eigen::MatrixXd pvalues = compute(group_1_data, group_2_data, 100).cast<Eigen::MatrixXd>();
+
+  Eigen::MatrixXd tvalues = network_analysis.attr("particle_fvalues_size").cast<Eigen::MatrixXd>();
+
+  // self.particle_fvalues_size = particle_fvalues_size
+  // self.particle_fvalues_1d = particle_fvalues_1d
+
+  tvalues_.resize(tvalues.rows());
+  for (int i = 0; i < tvalues.rows(); i++) {
+    tvalues_(i) = tvalues(i, 0);
   }
 }
 
 //---------------------------------------------------------------------------
-QString NetworkAnalysisJob::name()
-{
-  return "Group p-values";
-}
+QString NetworkAnalysisJob::name() { return "Network Analysis"; }
 //---------------------------------------------------------------------------
 
-Eigen::VectorXf NetworkAnalysisJob::get_group_pvalues()
-{
-  return this->group_pvalues_;
-}
-}
+Eigen::VectorXf NetworkAnalysisJob::get_tvalues() { return tvalues_; }
+}  // namespace shapeworks

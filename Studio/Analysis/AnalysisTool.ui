@@ -602,94 +602,6 @@ QWidget#particles_panel {
                      </property>
                     </widget>
                    </item>
-                   <item row="2" column="1">
-                    <widget class="CustomSlider" name="group_slider">
-                     <property name="toolTip">
-                      <string>Group slider</string>
-                     </property>
-                     <property name="maximum">
-                      <number>20</number>
-                     </property>
-                     <property name="pageStep">
-                      <number>1</number>
-                     </property>
-                     <property name="value">
-                      <number>10</number>
-                     </property>
-                     <property name="orientation">
-                      <enum>Qt::Horizontal</enum>
-                     </property>
-                     <property name="tickPosition">
-                      <enum>QSlider::TicksBelow</enum>
-                     </property>
-                     <property name="tickInterval">
-                      <number>10</number>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="4" column="2">
-                    <widget class="QPushButton" name="group2_button">
-                     <property name="enabled">
-                      <bool>true</bool>
-                     </property>
-                     <property name="toolTip">
-                      <string>Mean of right group</string>
-                     </property>
-                     <property name="text">
-                      <string>Mean</string>
-                     </property>
-                     <property name="checkable">
-                      <bool>true</bool>
-                     </property>
-                     <property name="checked">
-                      <bool>false</bool>
-                     </property>
-                     <property name="autoExclusive">
-                      <bool>false</bool>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="4" column="0">
-                    <widget class="QPushButton" name="group1_button">
-                     <property name="enabled">
-                      <bool>true</bool>
-                     </property>
-                     <property name="toolTip">
-                      <string>Mean of left group</string>
-                     </property>
-                     <property name="text">
-                      <string>Mean</string>
-                     </property>
-                     <property name="checkable">
-                      <bool>true</bool>
-                     </property>
-                     <property name="checked">
-                      <bool>false</bool>
-                     </property>
-                     <property name="autoExclusive">
-                      <bool>false</bool>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="4" column="1">
-                    <widget class="QPushButton" name="difference_button">
-                     <property name="enabled">
-                      <bool>true</bool>
-                     </property>
-                     <property name="toolTip">
-                      <string>Diff of left to right</string>
-                     </property>
-                     <property name="text">
-                      <string>Diff --&gt;</string>
-                     </property>
-                     <property name="checkable">
-                      <bool>true</bool>
-                     </property>
-                     <property name="autoExclusive">
-                      <bool>false</bool>
-                     </property>
-                    </widget>
-                   </item>
                    <item row="5" column="1">
                     <widget class="QPushButton" name="group_p_values_button">
                      <property name="enabled">
@@ -706,13 +618,6 @@ QWidget#particles_panel {
                      </property>
                      <property name="autoExclusive">
                       <bool>false</bool>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="2" column="0">
-                    <widget class="QComboBox" name="group_left">
-                     <property name="toolTip">
-                      <string>Group 1</string>
                      </property>
                     </widget>
                    </item>
@@ -770,17 +675,64 @@ QWidget#particles_panel {
                      </layout>
                     </widget>
                    </item>
-                   <item row="0" column="1" colspan="2">
-                    <widget class="QComboBox" name="group_box">
-                     <property name="toolTip">
-                      <string>Select group set</string>
-                     </property>
-                    </widget>
-                   </item>
                    <item row="0" column="0">
                     <widget class="QLabel" name="label_3">
                      <property name="text">
                       <string>Group Set</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="2" column="0">
+                    <widget class="QComboBox" name="group_left">
+                     <property name="toolTip">
+                      <string>Group 1</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="2" column="1">
+                    <widget class="CustomSlider" name="group_slider">
+                     <property name="toolTip">
+                      <string>Group slider</string>
+                     </property>
+                     <property name="maximum">
+                      <number>20</number>
+                     </property>
+                     <property name="pageStep">
+                      <number>1</number>
+                     </property>
+                     <property name="value">
+                      <number>10</number>
+                     </property>
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="tickPosition">
+                      <enum>QSlider::TicksBelow</enum>
+                     </property>
+                     <property name="tickInterval">
+                      <number>10</number>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="4" column="2">
+                    <widget class="QPushButton" name="group2_button">
+                     <property name="enabled">
+                      <bool>true</bool>
+                     </property>
+                     <property name="toolTip">
+                      <string>Mean of right group</string>
+                     </property>
+                     <property name="text">
+                      <string>Mean</string>
+                     </property>
+                     <property name="checkable">
+                      <bool>true</bool>
+                     </property>
+                     <property name="checked">
+                      <bool>false</bool>
+                     </property>
+                     <property name="autoExclusive">
+                      <bool>false</bool>
                      </property>
                     </widget>
                    </item>
@@ -791,7 +743,33 @@ QWidget#particles_panel {
                      </property>
                     </widget>
                    </item>
-                   <item row="6" column="0" colspan="3">
+                   <item row="0" column="1" colspan="2">
+                    <widget class="QComboBox" name="group_box">
+                     <property name="toolTip">
+                      <string>Select group set</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="4" column="1">
+                    <widget class="QPushButton" name="difference_button">
+                     <property name="enabled">
+                      <bool>true</bool>
+                     </property>
+                     <property name="toolTip">
+                      <string>Diff of left to right</string>
+                     </property>
+                     <property name="text">
+                      <string>Diff --&gt;</string>
+                     </property>
+                     <property name="checkable">
+                      <bool>true</bool>
+                     </property>
+                     <property name="autoExclusive">
+                      <bool>false</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="7" column="0" colspan="3">
                     <widget class="QWidget" name="lda_panel" native="true">
                      <layout class="QGridLayout" name="gridLayout_20">
                       <property name="leftMargin">
@@ -855,6 +833,70 @@ QWidget#particles_panel {
                         </property>
                         <property name="alignment">
                          <set>Qt::AlignCenter</set>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </widget>
+                   </item>
+                   <item row="4" column="0">
+                    <widget class="QPushButton" name="group1_button">
+                     <property name="enabled">
+                      <bool>true</bool>
+                     </property>
+                     <property name="toolTip">
+                      <string>Mean of left group</string>
+                     </property>
+                     <property name="text">
+                      <string>Mean</string>
+                     </property>
+                     <property name="checkable">
+                      <bool>true</bool>
+                     </property>
+                     <property name="checked">
+                      <bool>false</bool>
+                     </property>
+                     <property name="autoExclusive">
+                      <bool>false</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="6" column="0" colspan="3">
+                    <widget class="QGroupBox" name="groupBox">
+                     <property name="title">
+                      <string>Network Analysis</string>
+                     </property>
+                     <layout class="QGridLayout" name="gridLayout_15">
+                      <item row="0" column="0">
+                       <widget class="QLabel" name="label_6">
+                        <property name="text">
+                         <string>Feature Map</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="0" column="1">
+                       <widget class="QComboBox" name="network_feature">
+                        <property name="toolTip">
+                         <string>Select group set</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="1" column="0" colspan="2">
+                       <widget class="QPushButton" name="network_analysis_button">
+                        <property name="enabled">
+                         <bool>true</bool>
+                        </property>
+                        <property name="toolTip">
+                         <string>Network Analysis</string>
+                        </property>
+                        <property name="text">
+                         <string>Run</string>
+                        </property>
+                        <property name="checkable">
+                         <bool>true</bool>
+                        </property>
+                        <property name="autoExclusive">
+                         <bool>false</bool>
                         </property>
                        </widget>
                       </item>
