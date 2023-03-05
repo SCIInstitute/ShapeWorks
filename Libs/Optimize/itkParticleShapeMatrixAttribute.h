@@ -19,13 +19,13 @@ namespace itk
  */
 template <class T, unsigned int VDimension>
 class ITK_EXPORT ParticleShapeMatrixAttribute
-        : public vnl_matrix<T>, public ParticleAttribute<VDimension>
+        : public vnl_matrix<T>, public ParticleAttribute
 {
 public:
     /** Standard class typedefs */
     typedef T DataType;
     typedef ParticleShapeMatrixAttribute Self;
-    typedef ParticleAttribute<VDimension> Superclass;
+    typedef ParticleAttribute Superclass;
     typedef SmartPointer<Self>  Pointer;
     typedef SmartPointer<const Self>  ConstPointer;
     typedef WeakPointer<const Self>  ConstWeakPointer;

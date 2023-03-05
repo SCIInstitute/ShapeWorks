@@ -13,13 +13,13 @@ namespace itk
  */
 template <class T, unsigned int VDimension>
 class ITK_EXPORT ParticleContainerArrayAttribute
-  : public std::vector<typename ParticleContainer<T>::Pointer >, public ParticleAttribute<VDimension>
+  : public std::vector<typename ParticleContainer<T>::Pointer >, public ParticleAttribute
 {
 public:
   /** Standard class typedefs */
   typedef T DataType;
   typedef ParticleContainerArrayAttribute Self;
-  typedef ParticleAttribute<VDimension> Superclass;
+  typedef ParticleAttribute Superclass;
   typedef SmartPointer<Self>  Pointer;
   typedef SmartPointer<const Self>  ConstPointer;
   typedef WeakPointer<const Self>  ConstWeakPointer;

@@ -1,30 +1,25 @@
 #pragma once
 
+#include "itkCommand.h"
 #include "itkDataObject.h"
+#include "itkParticleEvents.h"
 #include "itkPoint.h"
 #include "itkWeakPointer.h"
-#include "itkCommand.h"
-#include "itkParticleEvents.h"
 
-namespace itk
-{
-
-//class ParticleSystem;
+namespace itk {
 
 /** \class ParticleAttribute
- *  \brief 
+ *  \brief
  */
-template< unsigned int VDimension>
-class ITK_EXPORT ParticleAttribute : public DataObject
-{
-public:
+class ParticleAttribute : public DataObject {
+ public:
   /** Standard class typedefs */
   typedef ParticleAttribute Self;
   typedef DataObject Superclass;
-  typedef SmartPointer<Self>  Pointer;
-  typedef SmartPointer<const Self>  ConstPointer;
-  typedef WeakPointer<const Self>  ConstWeakPointer;
-  
+  typedef SmartPointer<Self> Pointer;
+  typedef SmartPointer<const Self> ConstPointer;
+  typedef WeakPointer<const Self> ConstWeakPointer;
+
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
@@ -35,17 +30,17 @@ public:
       subclass.  The ParticleSystem class will reference this structure to
       determine which callbacks to register.  This is just a list of every
       event defined in itkParticleEvent.h */
-  struct DefinedCallbacksStruct
-  {
-    DefinedCallbacksStruct() : Event(false),
-                               EventWithIndex(false),
-                               DomainAddEvent(false),
-                               TransformSetEvent(false),
-                               PrefixTransformSetEvent(false),
-                               NeighborhoodSetEvent(false),
-                               PositionSetEvent(false),
-                               PositionAddEvent(false),
-                               PositionRemoveEvent(false) {}
+  struct DefinedCallbacksStruct {
+    DefinedCallbacksStruct()
+        : Event(false),
+          EventWithIndex(false),
+          DomainAddEvent(false),
+          TransformSetEvent(false),
+          PrefixTransformSetEvent(false),
+          NeighborhoodSetEvent(false),
+          PositionSetEvent(false),
+          PositionAddEvent(false),
+          PositionRemoveEvent(false) {}
     bool Event;
     bool EventWithIndex;
     bool DomainAddEvent;
@@ -56,45 +51,33 @@ public:
     bool PositionAddEvent;
     bool PositionRemoveEvent;
   };
-  
-  DefinedCallbacksStruct  m_DefinedCallbacks;
+
+  DefinedCallbacksStruct m_DefinedCallbacks;
 
   /** Callbacks that may be defined by a subclass.  If a subclass defines one
       of these callback methods, the corresponding flag in m_DefinedCallbacks
       should be set to true so that the ParticleSystem will know to register
       the appropriate event with this method. */
-//   virtual void EventCallback(ParticleSystem<VDimension> *, const ParticleEvent &) {}
-//   virtual void EventWithIndexCallback(ParticleSystem<VDimension> *, const ParticleEventWithIndex &) {}
-//   virtual void DomainAddEventCallback(ParticleSystem<VDimension> *, const ParticleDomainAddEvent &) {}
 
-//   virtual void TransformSetEventCallback(ParticleSystem<VDimension> *, const ParticleTransformSetEvent &) {}
-//   virtual void NeighborhoodSetEventCallback(ParticleSystem<VDimension> *, const ParticleNeighborhoodSetEvent &) {}
-//   virtual void PositionSetEventCallback(ParticleSystem<VDimension> *, const ParticlePositionSetEvent &) {}
-//   virtual void PositionAddEventCallback(ParticleSystem<VDimension> *, const ParticlePositionAddEvent &) {}
-//   virtual void PositionRemoveEventCallback(ParticleSystem<VDimension> *,
-//   const ParticlePositionRemoveEvent &) {}
+  virtual void EventCallback(Object*, const EventObject&) {}
+  virtual void EventWithIndexCallback(Object*, const EventObject&) {}
+  virtual void DomainAddEventCallback(Object*, const EventObject&) {}
+  virtual void TransformSetEventCallback(Object*, const EventObject&) {}
+  virtual void PrefixTransformSetEventCallback(Object*, const EventObject&) {}
+  virtual void NeighborhoodSetEventCallback(Object*, const EventObject&) {}
+  virtual void PositionSetEventCallback(Object*, const EventObject&) {}
+  virtual void PositionAddEventCallback(Object*, const EventObject&) {}
+  virtual void PositionRemoveEventCallback(Object*, const EventObject&) {}
 
-  virtual void EventCallback(Object *, const EventObject &) {}
-  virtual void EventWithIndexCallback(Object *, const EventObject &) {}
-  virtual void DomainAddEventCallback(Object *, const EventObject &) {}
-  virtual void TransformSetEventCallback(Object *, const EventObject &) {}
-  virtual void PrefixTransformSetEventCallback(Object *, const EventObject &) {}
-  virtual void NeighborhoodSetEventCallback(Object *, const EventObject &) {}
-  virtual void PositionSetEventCallback(Object *, const EventObject &) {}
-  virtual void PositionAddEventCallback(Object *, const EventObject &) {}
-  virtual void PositionRemoveEventCallback(Object *, const EventObject &) {}
-
-protected:
+ protected:
   ParticleAttribute() {}
-  virtual ~ParticleAttribute() {};
+  virtual ~ParticleAttribute(){};
 
-  void PrintSelf(std::ostream& os, Indent indent) const
-  {  Superclass::PrintSelf(os,indent);  }
+  void PrintSelf(std::ostream& os, Indent indent) const { Superclass::PrintSelf(os, indent); }
 
-private:
-  ParticleAttribute(const Self&); //purposely not implemented
-  void operator=(const Self&); //purposely not implemented
+ private:
+  ParticleAttribute(const Self&);  // purposely not implemented
+  void operator=(const Self&);     // purposely not implemented
 };
 
-} // end namespace itk
-
+}  // end namespace itk

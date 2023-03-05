@@ -335,52 +335,52 @@ double ParticleSystem::ComputeMaxDistNearestNeighbors(size_t dom){
     return maxDistNN;
 }
 
-void ParticleSystem::RegisterAttribute(ParticleAttribute<3> *attr) {
+void ParticleSystem::RegisterAttribute(ParticleAttribute *attr) {
   // Register any methods defined by the attribute as observers of this
   // ParticleSystem with appropriate events.
   if (attr->m_DefinedCallbacks.Event == true) {
-    MemberCommand<ParticleAttribute<3>>::Pointer tmpcmd = MemberCommand<ParticleAttribute<3>>::New();
-    tmpcmd->SetCallbackFunction(attr, &ParticleAttribute<3>::EventCallback);
+    MemberCommand<ParticleAttribute>::Pointer tmpcmd = MemberCommand<ParticleAttribute>::New();
+    tmpcmd->SetCallbackFunction(attr, &ParticleAttribute::EventCallback);
     this->AddObserver(ParticleEvent(), tmpcmd);
   }
   if (attr->m_DefinedCallbacks.EventWithIndex == true) {
-    MemberCommand<ParticleAttribute<3>>::Pointer tmpcmd = MemberCommand<ParticleAttribute<3>>::New();
-    tmpcmd->SetCallbackFunction(attr, &ParticleAttribute<3>::EventWithIndexCallback);
+    MemberCommand<ParticleAttribute>::Pointer tmpcmd = MemberCommand<ParticleAttribute>::New();
+    tmpcmd->SetCallbackFunction(attr, &ParticleAttribute::EventWithIndexCallback);
     this->AddObserver(ParticleEventWithIndex(), tmpcmd);
   }
   if (attr->m_DefinedCallbacks.DomainAddEvent == true) {
-    MemberCommand<ParticleAttribute<3>>::Pointer tmpcmd = MemberCommand<ParticleAttribute<3>>::New();
-    tmpcmd->SetCallbackFunction(attr, &ParticleAttribute<3>::DomainAddEventCallback);
+    MemberCommand<ParticleAttribute>::Pointer tmpcmd = MemberCommand<ParticleAttribute>::New();
+    tmpcmd->SetCallbackFunction(attr, &ParticleAttribute::DomainAddEventCallback);
     this->AddObserver(ParticleDomainAddEvent(), tmpcmd);
   }
   if (attr->m_DefinedCallbacks.TransformSetEvent == true) {
-    MemberCommand<ParticleAttribute<3>>::Pointer tmpcmd = MemberCommand<ParticleAttribute<3>>::New();
-    tmpcmd->SetCallbackFunction(attr, &ParticleAttribute<3>::TransformSetEventCallback);
+    MemberCommand<ParticleAttribute>::Pointer tmpcmd = MemberCommand<ParticleAttribute>::New();
+    tmpcmd->SetCallbackFunction(attr, &ParticleAttribute::TransformSetEventCallback);
     this->AddObserver(ParticleTransformSetEvent(), tmpcmd);
   }
   if (attr->m_DefinedCallbacks.PrefixTransformSetEvent == true) {
-    MemberCommand<ParticleAttribute<3>>::Pointer tmpcmd = MemberCommand<ParticleAttribute<3>>::New();
-    tmpcmd->SetCallbackFunction(attr, &ParticleAttribute<3>::PrefixTransformSetEventCallback);
+    MemberCommand<ParticleAttribute>::Pointer tmpcmd = MemberCommand<ParticleAttribute>::New();
+    tmpcmd->SetCallbackFunction(attr, &ParticleAttribute::PrefixTransformSetEventCallback);
     this->AddObserver(ParticlePrefixTransformSetEvent(), tmpcmd);
   }
   if (attr->m_DefinedCallbacks.NeighborhoodSetEvent == true) {
-    MemberCommand<ParticleAttribute<3>>::Pointer tmpcmd = MemberCommand<ParticleAttribute<3>>::New();
-    tmpcmd->SetCallbackFunction(attr, &ParticleAttribute<3>::NeighborhoodSetEventCallback);
+    MemberCommand<ParticleAttribute>::Pointer tmpcmd = MemberCommand<ParticleAttribute>::New();
+    tmpcmd->SetCallbackFunction(attr, &ParticleAttribute::NeighborhoodSetEventCallback);
     this->AddObserver(ParticleNeighborhoodSetEvent(), tmpcmd);
   }
   if (attr->m_DefinedCallbacks.PositionSetEvent == true) {
-    MemberCommand<ParticleAttribute<3>>::Pointer tmpcmd = MemberCommand<ParticleAttribute<3>>::New();
-    tmpcmd->SetCallbackFunction(attr, &ParticleAttribute<3>::PositionSetEventCallback);
+    MemberCommand<ParticleAttribute>::Pointer tmpcmd = MemberCommand<ParticleAttribute>::New();
+    tmpcmd->SetCallbackFunction(attr, &ParticleAttribute::PositionSetEventCallback);
     this->AddObserver(ParticlePositionSetEvent(), tmpcmd);
   }
   if (attr->m_DefinedCallbacks.PositionAddEvent == true) {
-    MemberCommand<ParticleAttribute<3>>::Pointer tmpcmd = MemberCommand<ParticleAttribute<3>>::New();
-    tmpcmd->SetCallbackFunction(attr, &ParticleAttribute<3>::PositionAddEventCallback);
+    MemberCommand<ParticleAttribute>::Pointer tmpcmd = MemberCommand<ParticleAttribute>::New();
+    tmpcmd->SetCallbackFunction(attr, &ParticleAttribute::PositionAddEventCallback);
     this->AddObserver(ParticlePositionAddEvent(), tmpcmd);
   }
   if (attr->m_DefinedCallbacks.PositionRemoveEvent == true) {
-    MemberCommand<ParticleAttribute<3>>::Pointer tmpcmd = MemberCommand<ParticleAttribute<3>>::New();
-    tmpcmd->SetCallbackFunction(attr, &ParticleAttribute<3>::PositionRemoveEventCallback);
+    MemberCommand<ParticleAttribute>::Pointer tmpcmd = MemberCommand<ParticleAttribute>::New();
+    tmpcmd->SetCallbackFunction(attr, &ParticleAttribute::PositionRemoveEventCallback);
     this->AddObserver(ParticlePositionRemoveEvent(), tmpcmd);
   }
 }
