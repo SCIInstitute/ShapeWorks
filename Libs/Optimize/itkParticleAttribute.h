@@ -32,8 +32,7 @@ class ParticleAttribute : public DataObject {
       event defined in itkParticleEvent.h */
   struct DefinedCallbacksStruct {
     DefinedCallbacksStruct()
-        : Event(false),
-          EventWithIndex(false),
+        : EventWithIndex(false),
           DomainAddEvent(false),
           TransformSetEvent(false),
           PrefixTransformSetEvent(false),
@@ -41,7 +40,6 @@ class ParticleAttribute : public DataObject {
           PositionSetEvent(false),
           PositionAddEvent(false),
           PositionRemoveEvent(false) {}
-    bool Event;
     bool EventWithIndex;
     bool DomainAddEvent;
     bool TransformSetEvent;
@@ -59,7 +57,6 @@ class ParticleAttribute : public DataObject {
       should be set to true so that the ParticleSystem will know to register
       the appropriate event with this method. */
 
-  virtual void EventCallback(Object*, const EventObject&) {}
   virtual void EventWithIndexCallback(Object*, const EventObject&) {}
   virtual void DomainAddEventCallback(Object*, const EventObject&) {}
   virtual void TransformSetEventCallback(Object*, const EventObject&) {}

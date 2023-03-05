@@ -1182,11 +1182,11 @@ bool OptimizeParameterFile::read_explanatory_variables(TiXmlHandle* doc_handle, 
     evars.push_back(etmp);
   }
 
-  dynamic_cast < itk::ParticleShapeLinearRegressionMatrixAttribute<double, 3>* >
+  dynamic_cast < itk::ParticleShapeLinearRegressionMatrixAttribute* >
   (optimize->GetSampler()->GetEnsembleRegressionEntropyFunction()->GetShapeMatrix())->SetExplanatory(
     evars);
 
-  dynamic_cast < itk::ParticleShapeMixedEffectsMatrixAttribute<double, 3>* >
+  dynamic_cast < itk::ParticleShapeMixedEffectsMatrixAttribute* >
   (optimize->GetSampler()->GetEnsembleMixedEffectsEntropyFunction()->GetShapeMatrix())->
     SetExplanatory(evars);
 

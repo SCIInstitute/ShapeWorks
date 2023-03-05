@@ -15,15 +15,14 @@ namespace itk
  *
  *
  */
-template <class T, unsigned int VDimension>
 class ITK_EXPORT ParticleShapeMixedEffectsMatrixAttribute
-  : public ParticleShapeMatrixAttribute<T,VDimension>
+  : public ParticleShapeMatrixAttribute
 {
 public:
   /** Standard class typedefs */
-  typedef T DataType;
+  typedef double DataType;
   typedef ParticleShapeMixedEffectsMatrixAttribute Self;
-  typedef ParticleShapeMatrixAttribute<T,VDimension> Superclass;
+  typedef ParticleShapeMatrixAttribute Superclass;
   typedef SmartPointer<Self>  Pointer;
   typedef SmartPointer<const Self>  ConstPointer;
   typedef WeakPointer<const Self>  ConstWeakPointer;
@@ -76,7 +75,7 @@ public:
   
   virtual void ResizeMeanMatrix(int rs, int cs)
   {
-    vnl_matrix<T> tmp = m_MeanMatrix; // copy existing  matrix
+    vnl_matrix<double> tmp = m_MeanMatrix; // copy existing  matrix
     
     // Create new column (shape)
     m_MeanMatrix.set_size(rs, cs);
@@ -131,6 +130,8 @@ public:
   
   virtual void PositionAddEventCallback(Object *o, const EventObject &e) 
   {
+    const int VDimension = 3;
+
     const itk::ParticlePositionAddEvent &event
       = dynamic_cast<const itk::ParticlePositionAddEvent &>(e);
     const itk::ParticleSystem *ps
@@ -166,6 +167,8 @@ public:
   
   virtual void PositionSetEventCallback(Object *o, const EventObject &e) 
   {
+    const int VDimension = 3;
+
     const itk::ParticlePositionSetEvent &event
       = dynamic_cast <const itk::ParticlePositionSetEvent &>(e);
   

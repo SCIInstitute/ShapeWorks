@@ -1581,7 +1581,7 @@ void Optimize::WriteParameters(std::string output_dir) {
   std::vector<double> intercept;
 
   if (m_use_mixed_effects == true) {
-    vnl_vector<double> slopevec = dynamic_cast<itk::ParticleShapeMixedEffectsMatrixAttribute<double, 3>*>(
+    vnl_vector<double> slopevec = dynamic_cast<itk::ParticleShapeMixedEffectsMatrixAttribute*>(
                                       m_sampler->GetEnsembleMixedEffectsEntropyFunction()->GetShapeMatrix())
                                       ->GetSlope();
 
@@ -1595,7 +1595,7 @@ void Optimize::WriteParameters(std::string output_dir) {
     }
     out.close();
 
-    vnl_vector<double> interceptvec = dynamic_cast<itk::ParticleShapeMixedEffectsMatrixAttribute<double, 3>*>(
+    vnl_vector<double> interceptvec = dynamic_cast<itk::ParticleShapeMixedEffectsMatrixAttribute*>(
                                           m_sampler->GetEnsembleMixedEffectsEntropyFunction()->GetShapeMatrix())
                                           ->GetIntercept();
 
@@ -1615,7 +1615,7 @@ void Optimize::WriteParameters(std::string output_dir) {
     std::cout << "writing " << slopename << std::endl;
     std::cout << "writing " << interceptname << std::endl;
 
-    vnl_matrix<double> sloperand_mat = dynamic_cast<itk::ParticleShapeMixedEffectsMatrixAttribute<double, 3>*>(
+    vnl_matrix<double> sloperand_mat = dynamic_cast<itk::ParticleShapeMixedEffectsMatrixAttribute*>(
                                            m_sampler->GetEnsembleMixedEffectsEntropyFunction()->GetShapeMatrix())
                                            ->GetSlopeRandom();
 
@@ -1628,7 +1628,7 @@ void Optimize::WriteParameters(std::string output_dir) {
     }
     out.close();
 
-    vnl_matrix<double> interceptrand_mat = dynamic_cast<itk::ParticleShapeMixedEffectsMatrixAttribute<double, 3>*>(
+    vnl_matrix<double> interceptrand_mat = dynamic_cast<itk::ParticleShapeMixedEffectsMatrixAttribute*>(
                                                m_sampler->GetEnsembleMixedEffectsEntropyFunction()->GetShapeMatrix())
                                                ->GetInterceptRandom();
 
@@ -1641,7 +1641,7 @@ void Optimize::WriteParameters(std::string output_dir) {
     }
     out.close();
   } else {
-    vnl_vector<double> slopevec = dynamic_cast<itk::ParticleShapeLinearRegressionMatrixAttribute<double, 3>*>(
+    vnl_vector<double> slopevec = dynamic_cast<itk::ParticleShapeLinearRegressionMatrixAttribute*>(
                                       m_sampler->GetEnsembleRegressionEntropyFunction()->GetShapeMatrix())
                                       ->GetSlope();
 
@@ -1656,7 +1656,7 @@ void Optimize::WriteParameters(std::string output_dir) {
     out.close();
 
     std::vector<double> intercept;
-    vnl_vector<double> interceptvec = dynamic_cast<itk::ParticleShapeLinearRegressionMatrixAttribute<double, 3>*>(
+    vnl_vector<double> interceptvec = dynamic_cast<itk::ParticleShapeLinearRegressionMatrixAttribute*>(
                                           m_sampler->GetEnsembleRegressionEntropyFunction()->GetShapeMatrix())
                                           ->GetIntercept();
 

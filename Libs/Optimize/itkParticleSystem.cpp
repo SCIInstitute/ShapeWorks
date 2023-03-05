@@ -338,11 +338,6 @@ double ParticleSystem::ComputeMaxDistNearestNeighbors(size_t dom){
 void ParticleSystem::RegisterAttribute(ParticleAttribute *attr) {
   // Register any methods defined by the attribute as observers of this
   // ParticleSystem with appropriate events.
-  if (attr->m_DefinedCallbacks.Event == true) {
-    MemberCommand<ParticleAttribute>::Pointer tmpcmd = MemberCommand<ParticleAttribute>::New();
-    tmpcmd->SetCallbackFunction(attr, &ParticleAttribute::EventCallback);
-    this->AddObserver(ParticleEvent(), tmpcmd);
-  }
   if (attr->m_DefinedCallbacks.EventWithIndex == true) {
     MemberCommand<ParticleAttribute>::Pointer tmpcmd = MemberCommand<ParticleAttribute>::New();
     tmpcmd->SetCallbackFunction(attr, &ParticleAttribute::EventWithIndexCallback);
