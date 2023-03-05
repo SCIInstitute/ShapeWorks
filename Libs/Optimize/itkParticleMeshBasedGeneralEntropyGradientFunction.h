@@ -30,7 +30,7 @@ public:
     typedef typename Superclass::ParticleSystemType ParticleSystemType;
 
     typedef ParticleGeneralShapeMatrix<double, VDimension> ShapeDataType;
-    typedef ParticleGeneralShapeGradientMatrix<double, VDimension> ShapeGradientType;
+    typedef ParticleGeneralShapeGradientMatrix ShapeGradientType;
 
     typedef typename ShapeDataType::DataType DataType;
 

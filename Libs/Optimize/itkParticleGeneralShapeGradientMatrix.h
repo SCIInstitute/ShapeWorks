@@ -25,15 +25,14 @@ namespace itk
  *
  * Each column represents a single shape.
  */
-template <class T, unsigned int VDimension>
 class ITK_EXPORT ParticleGeneralShapeGradientMatrix
-        : public vnl_matrix<T>, public ParticleAttribute<VDimension>
+        : public vnl_matrix<double>, public ParticleAttribute<3>
 {
 public:
     /** Standard class typedefs */
-    typedef T DataType;
+    typedef double DataType;
     typedef ParticleGeneralShapeGradientMatrix Self;
-    typedef ParticleAttribute<VDimension> Superclass;
+    typedef ParticleAttribute<3> Superclass;
     typedef SmartPointer<Self>  Pointer;
     typedef SmartPointer<const Self>  ConstPointer;
     typedef WeakPointer<const Self>  ConstWeakPointer;
@@ -74,14 +73,14 @@ public:
         m_use_normals[i] = val;
     }
 
-    virtual void SetMatrix(const vnl_matrix<T> &m)
+    virtual void SetMatrix(const vnl_matrix<double> &m)
     {
-        vnl_matrix<T>::operator=(m);
+        vnl_matrix<double>::operator=(m);
     }
 
     virtual void ResizeMatrix(int rs, int cs)
     {
-        vnl_matrix<T> tmp(*this); // copy existing  matrix
+        vnl_matrix<double> tmp(*this); // copy existing  matrix
 
         // Create new column (shape)
         this->set_size(rs, cs);
@@ -105,21 +104,21 @@ public:
         {
             if (m_use_xyz[i])
             {
-                k += VDimension * ps->GetNumberOfParticles(i);
-                num += VDimension;
+                k += 3 * ps->GetNumberOfParticles(i);
+                num += 3;
             }
             if (m_use_normals[i])
             {
-                k += VDimension * ps->GetNumberOfParticles(i);
-                num += VDimension;
+                k += 3 * ps->GetNumberOfParticles(i);
+                num += 3;
             }
             k += m_AttributesPerDomain[i]* ps->GetNumberOfParticles(i);
             num += m_AttributesPerDomain[i];
         }
         if (m_use_xyz[dom])
-            k += idx * VDimension;
+            k += idx * 3;
         if (m_use_normals[dom])
-            k += idx * VDimension;
+            k += idx * 3;
         k += idx * m_AttributesPerDomain[dom];
 
 
@@ -127,9 +126,9 @@ public:
         int s = 0;
         if (m_use_xyz[dom])
         {
-            for (unsigned int i = 0; i < VDimension; i++)
+            for (unsigned int i = 0; i < 3; i++)
             {
-                for (unsigned int j = 0; j < VDimension; j++)
+                for (unsigned int j = 0; j < 3; j++)
                 {
                     if (i == j)
                         this->operator()(i+k, j + 3* (d / m_DomainsPerShape)) = 1.0*m_AttributeScales[num+i];
@@ -138,21 +137,21 @@ public:
                 }
 
             }
-            k += VDimension;
-            s += VDimension;
+            k += 3;
+            s += 3;
         }
         if (m_use_normals[dom])
         {
 
             if (ps->GetDomainFlag(d))
             {
-                for (unsigned int c = s; c < s+VDimension; c++)
+                for (unsigned int c = s; c < s+3; c++)
                 {
-                    for (unsigned int vd = 0; vd < VDimension; vd++)
+                    for (unsigned int vd = 0; vd < 3; vd++)
                         this->operator()(c-s+k, vd + 3 * (d / m_DomainsPerShape)) = 0.0*m_AttributeScales[num+c];
                 }
-                s += VDimension;
-                k += VDimension;
+                s += 3;
+                k += 3;
             }
             else
             {
@@ -163,13 +162,13 @@ public:
 
                 typename shapeworks::ParticleImageDomainWithGradN<float>::VnlMatrixType mat1;
                 mat1.set_identity();
-                vnl_matrix<float> nrml(VDimension, 1);
+                vnl_matrix<float> nrml(3, 1);
                 nrml.fill(0.0);
                 nrml(0,0) = normal[0]; nrml(1,0) = normal[1]; nrml(2,0) = normal[2];
                 typename shapeworks::ParticleImageDomainWithGradN<float>::VnlMatrixType mat2 = nrml * nrml.transpose();
 
-                for (unsigned int x1 = 0; x1 < VDimension; x1++) {
-                    for (unsigned int x2 = 0; x2 < VDimension; x2++) {
+                for (unsigned int x1 = 0; x1 < 3; x1++) {
+                    for (unsigned int x2 = 0; x2 < 3; x2++) {
                         mat1(x1, x2) -= mat2(x1, x2);
                         grad_n(x1, x2)   /= grad_mag;
                     }
@@ -178,23 +177,23 @@ public:
                 // mat3 = H/|grad_f| * (I - n*n');
                 typename shapeworks::ParticleImageDomainWithGradN<float>::VnlMatrixType mat3 = grad_n * mat1;
                 typename itk::ParticleSystem::VnlMatrixType tmp;
-                tmp.set_size(VDimension, VDimension);
+                tmp.set_size(3, 3);
                 tmp.fill(0.0);
-                for (unsigned int c = 0; c<VDimension; c++)
+                for (unsigned int c = 0; c<3; c++)
                 {
-                    for (unsigned vd = 0; vd<VDimension; vd++)
+                    for (unsigned vd = 0; vd<3; vd++)
                         tmp(c,vd) = mat3(c,vd);
                 }
 
                 tmp = ps->TransformNormalDerivative(tmp, ps->GetTransform(d) * ps->GetPrefixTransform(d));
 
-                for (unsigned int c = s; c < s+VDimension; c++)
+                for (unsigned int c = s; c < s+3; c++)
                 {
-                    for (unsigned int vd = 0; vd < VDimension; vd++)
+                    for (unsigned int vd = 0; vd < 3; vd++)
                         this->operator()(c-s+k, vd + 3 * (d / m_DomainsPerShape)) = tmp(c-s, vd)*m_AttributeScales[num+c];
                 }
-                s += VDimension;
-                k += VDimension;
+                s += 3;
+                k += 3;
             }
         }
 
@@ -205,7 +204,7 @@ public:
             {
                 for (int aa = 0; aa < m_AttributesPerDomain[dom]; aa++)
                 {
-                    for (unsigned int vd = 0; vd < VDimension; vd++)
+                    for (unsigned int vd = 0; vd < 3; vd++)
                         this->operator()(aa+k, vd + 3 * (d / m_DomainsPerShape)) = 0.0*m_AttributeScales[num+aa+s];
                 }
             }
@@ -226,7 +225,7 @@ public:
                         = static_cast<const shapeworks::ParticleImplicitSurfaceDomain<float> *>(ps->GetDomain(d));
                     meshFIM *ptr = domain->GetMesh();
                     dc = ptr->GetFeatureDerivative(pt, aa);
-                    for (int vd = 0; vd < VDimension; vd++)
+                    for (int vd = 0; vd < 3; vd++)
                         this->operator()(aa+k, vd + 3 * (d / m_DomainsPerShape)) = dc[vd]*m_AttributeScales[num+aa+s];
                 }
             }
@@ -254,9 +253,9 @@ public:
         for (int i = 0; i < m_DomainsPerShape; i++)
         {
             if (m_use_xyz[i])
-                numRows += VDimension * ps->GetNumberOfParticles(i);
+                numRows += 3 * ps->GetNumberOfParticles(i);
             if (m_use_normals[i])
-                numRows += VDimension * ps->GetNumberOfParticles(i);
+                numRows += 3 * ps->GetNumberOfParticles(i);
             numRows += m_AttributesPerDomain[i]* ps->GetNumberOfParticles(i);
         }
 
