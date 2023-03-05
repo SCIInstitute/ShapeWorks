@@ -11,7 +11,7 @@ namespace itk {
  *  \brief
  */
 template <class T>
-class ITK_EXPORT ParticleContainer : public DataObject {
+class ParticleContainer : public DataObject {
  public:
   /** Standard class typedefs */
   typedef T DataType;

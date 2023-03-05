@@ -38,7 +38,7 @@ Sampler::Sampler() {
 
   m_ShapeMatrix = itk::ParticleShapeMatrixAttribute::New();
   m_GeneralShapeMatrix = itk::ParticleGeneralShapeMatrix::New();
-  m_GeneralShapeGradMatrix = itk::ParticleGeneralShapeGradientMatrix::New();
+  m_GeneralShapeGradMatrix = itk::ShapeGradientMatrix::New();
 
   m_LinearRegressionShapeMatrix = itk::ParticleShapeLinearRegressionMatrixAttribute::New();
   m_MixedEffectsShapeMatrix = itk::ParticleShapeMixedEffectsMatrixAttribute::New();

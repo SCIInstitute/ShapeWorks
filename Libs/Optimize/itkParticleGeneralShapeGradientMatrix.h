@@ -21,11 +21,11 @@ namespace itk {
  *
  * Each column represents a single shape.
  */
-class ParticleGeneralShapeGradientMatrix : public vnl_matrix<double>, public ParticleAttribute {
+class ShapeGradientMatrix : public vnl_matrix<double>, public ParticleAttribute {
  public:
   /** Standard class typedefs */
   typedef double DataType;
-  typedef ParticleGeneralShapeGradientMatrix Self;
+  typedef ShapeGradientMatrix Self;
   typedef ParticleAttribute Superclass;
   typedef SmartPointer<Self> Pointer;
   typedef SmartPointer<const Self> ConstPointer;
@@ -36,7 +36,7 @@ class ParticleGeneralShapeGradientMatrix : public vnl_matrix<double>, public Par
   itkNewMacro(Self)
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(ParticleGeneralShapeGradientMatrix, ParticleAttribute)
+  itkTypeMacro(ShapeGradientMatrix, ParticleAttribute)
 
   virtual void BeforeIteration() {}
   virtual void AfterIteration() {}
@@ -232,7 +232,7 @@ class ParticleGeneralShapeGradientMatrix : public vnl_matrix<double>, public Par
   }
 
  protected:
-  ParticleGeneralShapeGradientMatrix() {
+  ShapeGradientMatrix() {
     m_DomainsPerShape = 1;
 
     this->m_DefinedCallbacks.DomainAddEvent = true;
@@ -240,14 +240,14 @@ class ParticleGeneralShapeGradientMatrix : public vnl_matrix<double>, public Par
     this->m_DefinedCallbacks.PositionSetEvent = true;
     this->m_DefinedCallbacks.PositionRemoveEvent = true;
   }
-  virtual ~ParticleGeneralShapeGradientMatrix() {}
+  virtual ~ShapeGradientMatrix() {}
 
   void PrintSelf(std::ostream& os, Indent indent) const { Superclass::PrintSelf(os, indent); }
 
   int m_DomainsPerShape;
 
  private:
-  ParticleGeneralShapeGradientMatrix(const Self&);  // purposely not implemented
+  ShapeGradientMatrix(const Self&);  // purposely not implemented
   void operator=(const Self&);                      // purposely not implemented
 
   std::vector<bool> m_use_xyz;

@@ -6,6 +6,10 @@ namespace itk {
 /**
  * \class ParticleEvent.
  *  Parent class for all Particle events.   Carries thread id information.
+ *
+ *  Event that carries Position index and a Domain index information.  This is
+ *  used, for example to indicate which position has changed in the particle
+ *  system on InvokeEvent.
  */
 class ParticleEvent : public EventObject {
  public:
@@ -19,9 +23,16 @@ class ParticleEvent : public EventObject {
   void SetThreadID(int i) { m_ThreadID = i; }
 
   /** Copy constructor and operator= */
-  ParticleEvent(const ParticleEvent& v) : EventObject(v) { m_ThreadID = v.m_ThreadID; }
+  ParticleEvent(const ParticleEvent& v) : EventObject(v) {
+    m_ThreadID = v.m_ThreadID;
+    m_PositionIndex = v.m_PositionIndex;
+    m_DomainIndex = v.m_DomainIndex;
+  }
   const ParticleEvent& operator=(const ParticleEvent& v) {
     m_ThreadID = v.m_ThreadID;
+    m_PositionIndex = v.m_PositionIndex;
+    m_DomainIndex = v.m_DomainIndex;
+
     return *this;
   }
 
@@ -32,34 +43,6 @@ class ParticleEvent : public EventObject {
 
   virtual ::itk::EventObject* MakeObject() const { return new Self; }
 
- private:
-  int m_ThreadID;
-};
-
-/**
- * \class ParticleEventWithIndex
- *
- *  Event that carries Position index and a Domain index information.  This is
- *  used, for example to indicate which position has changed in the particle
- *  system on InvokeEvent.
- */
-class ParticleEventWithIndex : public ParticleEvent {
- public:
-  ParticleEventWithIndex() {}
-  ~ParticleEventWithIndex() {}
-
-  /** Copy constructor and operator=. */
-  ParticleEventWithIndex(const ParticleEventWithIndex& v) {
-    m_PositionIndex = v.m_PositionIndex;
-    m_DomainIndex = v.m_DomainIndex;
-  }
-  const ParticleEventWithIndex& operator=(const ParticleEventWithIndex& v) {
-    ParticleEvent::operator=(v);
-    m_PositionIndex = v.m_PositionIndex;
-    m_DomainIndex = v.m_DomainIndex;
-    return *this;
-  }
-
   /** Get/Set the index value. */
   inline void SetPositionIndex(int i) { m_PositionIndex = i; }
   int GetPositionIndex() const { return m_PositionIndex; }
@@ -69,16 +52,17 @@ class ParticleEventWithIndex : public ParticleEvent {
   int GetDomainIndex() const { return m_DomainIndex; }
 
  private:
+  int m_ThreadID;
   int m_PositionIndex;
   int m_DomainIndex;
 };
 
-itkEventMacro(ParticleDomainAddEvent, ParticleEventWithIndex);
-itkEventMacro(ParticleTransformSetEvent, ParticleEventWithIndex);
-itkEventMacro(ParticlePrefixTransformSetEvent, ParticleEventWithIndex);
-itkEventMacro(ParticleNeighborhoodSetEvent, ParticleEventWithIndex);
-itkEventMacro(ParticlePositionSetEvent, ParticleEventWithIndex);
-itkEventMacro(ParticlePositionAddEvent, ParticleEventWithIndex);
-itkEventMacro(ParticlePositionRemoveEvent, ParticleEventWithIndex);
+itkEventMacro(ParticleDomainAddEvent, ParticleEvent);
+itkEventMacro(ParticleTransformSetEvent, ParticleEvent);
+itkEventMacro(ParticlePrefixTransformSetEvent, ParticleEvent);
+itkEventMacro(ParticleNeighborhoodSetEvent, ParticleEvent);
+itkEventMacro(ParticlePositionSetEvent, ParticleEvent);
+itkEventMacro(ParticlePositionAddEvent, ParticleEvent);
+itkEventMacro(ParticlePositionRemoveEvent, ParticleEvent);
 
 }  // end namespace itk

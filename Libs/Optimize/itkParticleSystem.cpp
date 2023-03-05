@@ -338,11 +338,6 @@ double ParticleSystem::ComputeMaxDistNearestNeighbors(size_t dom){
 void ParticleSystem::RegisterAttribute(ParticleAttribute *attr) {
   // Register any methods defined by the attribute as observers of this
   // ParticleSystem with appropriate events.
-  if (attr->m_DefinedCallbacks.EventWithIndex == true) {
-    MemberCommand<ParticleAttribute>::Pointer tmpcmd = MemberCommand<ParticleAttribute>::New();
-    tmpcmd->SetCallbackFunction(attr, &ParticleAttribute::EventWithIndexCallback);
-    this->AddObserver(ParticleEventWithIndex(), tmpcmd);
-  }
   if (attr->m_DefinedCallbacks.DomainAddEvent == true) {
     MemberCommand<ParticleAttribute>::Pointer tmpcmd = MemberCommand<ParticleAttribute>::New();
     tmpcmd->SetCallbackFunction(attr, &ParticleAttribute::DomainAddEventCallback);
@@ -378,6 +373,7 @@ void ParticleSystem::RegisterAttribute(ParticleAttribute *attr) {
     tmpcmd->SetCallbackFunction(attr, &ParticleAttribute::PositionRemoveEventCallback);
     this->AddObserver(ParticlePositionRemoveEvent(), tmpcmd);
   }
+
 }
 
 }  // namespace itk

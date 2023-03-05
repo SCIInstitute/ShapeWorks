@@ -32,15 +32,13 @@ class ParticleAttribute : public DataObject {
       event defined in itkParticleEvent.h */
   struct DefinedCallbacksStruct {
     DefinedCallbacksStruct()
-        : EventWithIndex(false),
-          DomainAddEvent(false),
+        : DomainAddEvent(false),
           TransformSetEvent(false),
           PrefixTransformSetEvent(false),
           NeighborhoodSetEvent(false),
           PositionSetEvent(false),
           PositionAddEvent(false),
           PositionRemoveEvent(false) {}
-    bool EventWithIndex;
     bool DomainAddEvent;
     bool TransformSetEvent;
     bool PrefixTransformSetEvent;

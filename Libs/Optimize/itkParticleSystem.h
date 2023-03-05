@@ -63,7 +63,7 @@ class ParticleSystem : public DataObject {
 
   /** Class used to compute neighborhoods of points. One is associated with
       each domain.*/
-  typedef ParticleNeighborhood<VDimension> NeighborhoodType;
+  typedef ParticleNeighborhood NeighborhoodType;
 
   /** Point container type.  One is associated with each domain.*/
   typedef ParticleContainer<PointType> PointContainerType;
