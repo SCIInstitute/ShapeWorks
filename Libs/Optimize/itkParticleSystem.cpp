@@ -2,7 +2,7 @@
 
 namespace itk {
 
-ParticleSystem::PointType ParticleSystem::TransformPoint(const PointType &p, const TransformType &T) const {
+ParticleSystem::PointType ParticleSystem::TransformPoint(const PointType& p, const TransformType& T) const {
   PointType ans;
 
   ans[0] = T[0][0] * p[0] + T[0][1] * p[1] + T[0][2] * p[2] + T[0][3];
@@ -12,7 +12,7 @@ ParticleSystem::PointType ParticleSystem::TransformPoint(const PointType &p, con
   return ans;
 }
 
-ParticleSystem::VectorType ParticleSystem::TransformVector(const VectorType &p, const TransformType &T) const {
+ParticleSystem::VectorType ParticleSystem::TransformVector(const VectorType& p, const TransformType& T) const {
   VectorType ans;
 
   ans[0] = T[0][0] * p[0] + T[0][1] * p[1] + T[0][2] * p[2];
@@ -22,8 +22,8 @@ ParticleSystem::VectorType ParticleSystem::TransformVector(const VectorType &p, 
   return ans;
 }
 
-ParticleSystem::VnlMatrixType ParticleSystem::TransformNormalDerivative(const VnlMatrixType &p,
-                                                                        const TransformType &T) const {
+ParticleSystem::VnlMatrixType ParticleSystem::TransformNormalDerivative(const VnlMatrixType& p,
+                                                                        const TransformType& T) const {
   VnlMatrixType ans;
 
   ans = T.extract(3, 3) * p;  // rotation and scaling part
@@ -83,7 +83,7 @@ void ParticleSystem::AddDomain(DomainType::Pointer input) {
   this->InvokeEvent(e);
 }
 
-void ParticleSystem::PrintSelf(std::ostream &os, Indent indent) const {
+void ParticleSystem::PrintSelf(std::ostream& os, Indent indent) const {
   Superclass::PrintSelf(os, indent);
 
   os << indent << "m_IndexCounters.size(): " << m_IndexCounters.size() << std::endl;
@@ -91,7 +91,7 @@ void ParticleSystem::PrintSelf(std::ostream &os, Indent indent) const {
   os << indent << "m_Domains.size() : " << m_Domains.size() << std::endl;
 }
 
-void ParticleSystem::SetTransform(unsigned int i, const TransformType &T) {
+void ParticleSystem::SetTransform(unsigned int i, const TransformType& T) {
   if (i > static_cast<int>(m_Transforms.size()) - 1 || m_Transforms.empty()) {
     m_Transforms.resize(i + 1);
     m_InverseTransforms.resize(i + 1);
@@ -105,7 +105,7 @@ void ParticleSystem::SetTransform(unsigned int i, const TransformType &T) {
   this->InvokeEvent(e);
 }
 
-void ParticleSystem::SetPrefixTransform(unsigned int i, const TransformType &T) {
+void ParticleSystem::SetPrefixTransform(unsigned int i, const TransformType& T) {
   if (i > static_cast<int>(m_PrefixTransforms.size()) - 1 || m_PrefixTransforms.empty()) {
     m_PrefixTransforms.resize(i + 1);
     m_InversePrefixTransforms.resize(i + 1);
@@ -120,7 +120,7 @@ void ParticleSystem::SetPrefixTransform(unsigned int i, const TransformType &T) 
   this->InvokeEvent(e);
 }
 
-void ParticleSystem::SetNeighborhood(unsigned int i, NeighborhoodType *N) {
+void ParticleSystem::SetNeighborhood(unsigned int i, NeighborhoodType* N) {
   if (m_DomainFlags[i] == true) return;
   m_Neighborhoods[i] = N;
   m_Neighborhoods[i]->SetDomain(m_Domains[i]);
@@ -132,7 +132,7 @@ void ParticleSystem::SetNeighborhood(unsigned int i, NeighborhoodType *N) {
   this->InvokeEvent(e);
 }
 
-const typename ParticleSystem::PointType &ParticleSystem::AddPosition(const PointType &p, unsigned int d) {
+const typename ParticleSystem::PointType& ParticleSystem::AddPosition(const PointType& p, unsigned int d) {
   m_Positions[d]->operator[](m_IndexCounters[d]) = p;
 
   // Potentially modifies position!
@@ -161,7 +161,7 @@ const typename ParticleSystem::PointType &ParticleSystem::AddPosition(const Poin
   return m_Positions[d]->operator[](m_IndexCounters[d] - 1);
 }
 
-const typename ParticleSystem::PointType &ParticleSystem::SetPosition(const PointType &p, unsigned long int k,
+const typename ParticleSystem::PointType& ParticleSystem::SetPosition(const PointType& p, unsigned long int k,
                                                                       unsigned int d) {
   if (m_FixedParticleFlags[d % m_DomainsPerShape][k] == false) {
     // Potentially modifies position!
@@ -188,7 +188,7 @@ const typename ParticleSystem::PointType &ParticleSystem::SetPosition(const Poin
   return m_Positions[d]->operator[](k);
 }
 
-void ParticleSystem::AddPositionList(const std::vector<PointType> &p, unsigned int d) {
+void ParticleSystem::AddPositionList(const std::vector<PointType>& p, unsigned int d) {
   // Traverse the list and add each point to the domain.
   for (typename std::vector<PointType>::const_iterator it = p.begin(); it != p.end(); it++) {
     this->AddPosition(*it, d);
@@ -268,8 +268,10 @@ void ParticleSystem::AdvancedAllParticleSplitting(double epsilon, unsigned int d
           // constraints to generate a new particle position.
 
           int local_domain = dom_to_process + j * domains_per_shape;
-          auto transformed_vector = TransformVector(random, GetInversePrefixTransform(local_domain) * GetInverseTransform(local_domain));
-          PointType newpos = GetDomain(local_domain)->GetPositionAfterSplit(lists[j][i], transformed_vector, random, epsilon);
+          auto transformed_vector =
+              TransformVector(random, GetInversePrefixTransform(local_domain) * GetInverseTransform(local_domain));
+          PointType newpos =
+              GetDomain(local_domain)->GetPositionAfterSplit(lists[j][i], transformed_vector, random, epsilon);
 
           // Go to surface
           if (!this->m_DomainFlags[local_domain] &&
@@ -302,33 +304,33 @@ void ParticleSystem::AdvancedAllParticleSplitting(double epsilon, unsigned int d
   }      // if end
 }
 
-double ParticleSystem::ComputeMaxDistNearestNeighbors(size_t dom){
-    std::vector<PointType> list;
-    for (auto k = 0; k < GetPositions(dom)->GetSize(); k++) {
-      list.push_back(GetPositions(dom)->Get(k));
+double ParticleSystem::ComputeMaxDistNearestNeighbors(size_t dom) {
+  std::vector<PointType> list;
+  for (auto k = 0; k < GetPositions(dom)->GetSize(); k++) {
+    list.push_back(GetPositions(dom)->Get(k));
+  }
+
+  double maxDistNN = 0;
+
+  for (size_t i = 0; i < list.size(); i++) {
+    size_t closest_particle = 0;
+    double closest_particle_distance = (list[i] - list[0]).GetNorm();
+    for (size_t j = 1; j < list.size(); j++) {
+      double dist = (list[i] - list[j]).GetNorm();
+      if (dist < closest_particle_distance) {
+        closest_particle_distance = dist;
+        closest_particle = j;
+      }
     }
-
-    double maxDistNN = 0;
-
-    for(size_t i = 0; i < list.size(); i++){
-        size_t closest_particle = 0;
-        double closest_particle_distance = (list[i]-list[0]).GetNorm();
-        for(size_t j = 1; j < list.size(); j++){
-            double dist = (list[i]-list[j]).GetNorm();
-            if(dist < closest_particle_distance){
-                closest_particle_distance = dist;
-                closest_particle = j;
-            }
-        }
-        if(closest_particle_distance > maxDistNN){
-            maxDistNN = closest_particle_distance;
-        }
+    if (closest_particle_distance > maxDistNN) {
+      maxDistNN = closest_particle_distance;
     }
+  }
 
-    return maxDistNN;
+  return maxDistNN;
 }
 
-void ParticleSystem::RegisterAttribute(ParticleAttribute *attr) {
+void ParticleSystem::RegisterAttribute(ParticleAttribute* attr) {
   // Register any methods defined by the attribute as observers of this
   // ParticleSystem with appropriate events.
   if (attr->m_DefinedCallbacks.DomainAddEvent == true) {
@@ -366,7 +368,6 @@ void ParticleSystem::RegisterAttribute(ParticleAttribute *attr) {
     tmpcmd->SetCallbackFunction(attr, &ParticleAttribute::PositionRemoveEventCallback);
     this->AddObserver(ParticlePositionRemoveEvent(), tmpcmd);
   }
-
 }
 
 }  // namespace itk
