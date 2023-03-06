@@ -159,7 +159,7 @@ public:
     m_DomainsPerShape = n;
     m_LinearRegressionShapeMatrix->SetDomainsPerShape(n);
     m_MixedEffectsShapeMatrix->SetDomainsPerShape(n);
-    m_ShapeMatrix->SetDomainsPerShape(n);
+    m_LegacyShapeMatrix->SetDomainsPerShape(n);
     m_MeshBasedGeneralEntropyGradientFunction->SetDomainsPerShape(n);
     m_GeneralShapeMatrix->SetDomainsPerShape(n);
     m_GeneralShapeGradMatrix->SetDomainsPerShape(n);
@@ -298,12 +298,12 @@ public:
     m_GeneralShapeGradMatrix->SetAttributesPerDomain(s1);
   }
 
-  itk::ParticleShapeMatrixAttribute* GetShapeMatrix()
+  itk::LegacyShapeMatrix* GetShapeMatrix()
   {
-    return m_ShapeMatrix.GetPointer();
+    return m_LegacyShapeMatrix.GetPointer();
   }
 
-  itk::ParticleGeneralShapeMatrix* GetGeneralShapeMatrix()
+  itk::ShapeMatrix* GetGeneralShapeMatrix()
   {
     return m_GeneralShapeMatrix.GetPointer();
   }
@@ -509,12 +509,12 @@ protected:
   itk::ParticleEnsembleEntropyFunction<Dimension>::Pointer m_EnsembleRegressionEntropyFunction;
   itk::ParticleEnsembleEntropyFunction<Dimension>::Pointer m_EnsembleMixedEffectsEntropyFunction;
 
-  itk::ParticleShapeMatrixAttribute::Pointer m_ShapeMatrix;
+  itk::LegacyShapeMatrix::Pointer m_LegacyShapeMatrix;
 
   itk::ParticleShapeLinearRegressionMatrixAttribute::Pointer m_LinearRegressionShapeMatrix;
   itk::ParticleShapeMixedEffectsMatrixAttribute::Pointer m_MixedEffectsShapeMatrix;
 
-  itk::ParticleGeneralShapeMatrix::Pointer m_GeneralShapeMatrix;
+  itk::ShapeMatrix::Pointer m_GeneralShapeMatrix;
   itk::ShapeGradientMatrix::Pointer m_GeneralShapeGradMatrix;
 
   itk::ParticleMeshBasedGeneralEntropyGradientFunction<Dimension>::Pointer m_MeshBasedGeneralEntropyGradientFunction;

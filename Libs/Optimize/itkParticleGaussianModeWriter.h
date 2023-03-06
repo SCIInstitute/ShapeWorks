@@ -25,7 +25,7 @@ public:
 
   /** Type of particle system and associated classes. */
   typedef ParticleSystem ParticleSystemType;
-  typedef ParticleShapeMatrixAttribute ShapeMatrixType;
+  typedef LegacyShapeMatrix ShapeMatrixType;
   typedef typename ShapeMatrixType::DataType DataType;
   
   /** Vector & Point types. */

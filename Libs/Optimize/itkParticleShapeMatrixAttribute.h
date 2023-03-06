@@ -16,11 +16,11 @@ namespace itk {
  *
  * Each column represents a single shape.
  */
-class ParticleShapeMatrixAttribute : public vnl_matrix<double>, public ParticleAttribute {
+class LegacyShapeMatrix : public vnl_matrix<double>, public ParticleAttribute {
  public:
   /** Standard class typedefs */
   typedef double DataType;
-  typedef ParticleShapeMatrixAttribute Self;
+  typedef LegacyShapeMatrix Self;
   typedef ParticleAttribute Superclass;
   typedef SmartPointer<Self> Pointer;
   typedef SmartPointer<const Self> ConstPointer;
@@ -30,7 +30,7 @@ class ParticleShapeMatrixAttribute : public vnl_matrix<double>, public ParticleA
   itkNewMacro(Self)
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(ParticleShapeMatrixAttribute, ParticleAttribute)
+  itkTypeMacro(LegacyShapeMatrix, ParticleAttribute)
 
   /** Callbacks that may be defined by a subclass.  If a subclass defines one
       of these callback methods, the corresponding flag in m_DefinedCallbacks
@@ -131,20 +131,20 @@ class ParticleShapeMatrixAttribute : public vnl_matrix<double>, public ParticleA
   virtual void SetMatrix(const vnl_matrix<double>& m) { vnl_matrix<double>::operator=(m); }
 
  protected:
-  ParticleShapeMatrixAttribute() : m_DomainsPerShape(1) {
+  LegacyShapeMatrix() : m_DomainsPerShape(1) {
     this->m_DefinedCallbacks.DomainAddEvent = true;
     this->m_DefinedCallbacks.PositionAddEvent = true;
     this->m_DefinedCallbacks.PositionSetEvent = true;
     this->m_DefinedCallbacks.PositionRemoveEvent = true;
   }
-  virtual ~ParticleShapeMatrixAttribute() {}
+  virtual ~LegacyShapeMatrix() {}
 
   void PrintSelf(std::ostream& os, Indent indent) const { Superclass::PrintSelf(os, indent); }
 
   int m_DomainsPerShape;
 
  private:
-  ParticleShapeMatrixAttribute(const Self&);  // purposely not implemented
+  LegacyShapeMatrix(const Self&);  // purposely not implemented
   void operator=(const Self&);                // purposely not implemented
 };
 

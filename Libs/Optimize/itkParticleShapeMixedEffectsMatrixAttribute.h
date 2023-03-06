@@ -16,13 +16,12 @@ namespace itk
  *
  */
 class ITK_EXPORT ParticleShapeMixedEffectsMatrixAttribute
-  : public ParticleShapeMatrixAttribute
-{
+  : public LegacyShapeMatrix {
 public:
   /** Standard class typedefs */
   typedef double DataType;
   typedef ParticleShapeMixedEffectsMatrixAttribute Self;
-  typedef ParticleShapeMatrixAttribute Superclass;
+  typedef LegacyShapeMatrix Superclass;
   typedef SmartPointer<Self>  Pointer;
   typedef SmartPointer<const Self>  ConstPointer;
   typedef WeakPointer<const Self>  ConstWeakPointer;
@@ -31,7 +30,7 @@ public:
   itkNewMacro(Self);
   
   /** Run-time type information (and related methods). */
-  itkTypeMacro(ParticleShapeMixedEffectsMatrixAttribute, ParticleShapeMatrixAttribute);
+  itkTypeMacro(ParticleShapeMixedEffectsMatrixAttribute, LegacyShapeMatrix);
   
   
   void UpdateMeanMatrix()

@@ -25,7 +25,7 @@ public:
   /** Type of particle system. */
   typedef typename Superclass::ParticleSystemType ParticleSystemType;
 
-  typedef ParticleShapeMatrixAttribute ShapeMatrixType;
+  typedef LegacyShapeMatrix ShapeMatrixType;
 
   typedef typename ShapeMatrixType::DataType DataType;
   

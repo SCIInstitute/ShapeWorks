@@ -19,11 +19,11 @@ namespace itk {
  *
  * Each column represents a single shape.
  */
-class ParticleGeneralShapeMatrix : public vnl_matrix<double>, public ParticleAttribute {
+class ShapeMatrix : public vnl_matrix<double>, public ParticleAttribute {
  public:
   /** Standard class typedefs */
   typedef double DataType;
-  typedef ParticleGeneralShapeMatrix Self;
+  typedef ShapeMatrix Self;
   typedef ParticleAttribute Superclass;
   typedef SmartPointer<Self> Pointer;
   typedef SmartPointer<const Self> ConstPointer;
@@ -34,10 +34,10 @@ class ParticleGeneralShapeMatrix : public vnl_matrix<double>, public ParticleAtt
   /** Method for creation through the object factory. */
   itkNewMacro(Self)
 
-      /** Run-time type information (and related methods). */
-      itkTypeMacro(ParticleGeneralShapeMatrix, ParticleAttribute)
+  /** Run-time type information (and related methods). */
+  itkTypeMacro(ShapeMatrix, ParticleAttribute)
 
-          virtual void BeforeIteration() {}
+  virtual void BeforeIteration() {}
   virtual void AfterIteration() {}
 
   /** Set/Get the number of domains per shape.  This can only be safely done
@@ -207,7 +207,7 @@ class ParticleGeneralShapeMatrix : public vnl_matrix<double>, public ParticleAtt
   }
 
  protected:
-  ParticleGeneralShapeMatrix() {
+  ShapeMatrix() {
     m_DomainsPerShape = 1;
 
     this->m_DefinedCallbacks.DomainAddEvent = true;
@@ -215,14 +215,14 @@ class ParticleGeneralShapeMatrix : public vnl_matrix<double>, public ParticleAtt
     this->m_DefinedCallbacks.PositionSetEvent = true;
     this->m_DefinedCallbacks.PositionRemoveEvent = true;
   }
-  virtual ~ParticleGeneralShapeMatrix() {}
+  virtual ~ShapeMatrix() {}
 
   void PrintSelf(std::ostream& os, Indent indent) const { Superclass::PrintSelf(os, indent); }
 
   int m_DomainsPerShape;
 
  private:
-  ParticleGeneralShapeMatrix(const Self&);  // purposely not implemented
+  ShapeMatrix(const Self&);  // purposely not implemented
   void operator=(const Self&);              // purposely not implemented
 
   std::vector<bool> m_use_xyz;

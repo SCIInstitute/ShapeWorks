@@ -10,12 +10,12 @@ namespace itk {
  *
  *
  */
-class ParticleShapeLinearRegressionMatrixAttribute : public ParticleShapeMatrixAttribute {
+class ParticleShapeLinearRegressionMatrixAttribute : public LegacyShapeMatrix {
  public:
   /** Standard class typedefs */
   typedef double DataType;
   typedef ParticleShapeLinearRegressionMatrixAttribute Self;
-  typedef ParticleShapeMatrixAttribute Superclass;
+  typedef LegacyShapeMatrix Superclass;
   typedef SmartPointer<Self> Pointer;
   typedef SmartPointer<const Self> ConstPointer;
   typedef WeakPointer<const Self> ConstWeakPointer;
@@ -24,7 +24,7 @@ class ParticleShapeLinearRegressionMatrixAttribute : public ParticleShapeMatrixA
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(ParticleShapeLinearRegressionMatrixAttribute, ParticleShapeMatrixAttribute);
+  itkTypeMacro(ParticleShapeLinearRegressionMatrixAttribute, LegacyShapeMatrix);
 
   void UpdateMeanMatrix() {
     // for each sample
