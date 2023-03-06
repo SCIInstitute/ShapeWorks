@@ -1,5 +1,5 @@
 
-#include "SamplingFunction.h"
+#include "CurvatureSamplingFunction.h"
 
 #include <Logging.h>
 
