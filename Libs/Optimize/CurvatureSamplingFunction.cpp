@@ -11,10 +11,10 @@
 
 namespace itk {
 
-double ParticleCurvatureEntropyGradientFunction::EstimateSigma(unsigned int idx, unsigned int dom,
-                                                               const shapeworks::ParticleDomain* domain,
-                                                               const PointType& pos, double initial_sigma,
-                                                               double precision, int& err, double& avgKappa) const {
+double CurvatureSamplingFunction::EstimateSigma(unsigned int idx, unsigned int dom,
+                                                const shapeworks::ParticleDomain* domain, const PointType& pos,
+                                                double initial_sigma, double precision, int& err,
+                                                double& avgKappa) const {
   avgKappa = 0.0;
   const double min_sigma = 1.0e-4;
   const double epsilon = 1.0e-5;
@@ -91,8 +91,7 @@ double ParticleCurvatureEntropyGradientFunction::EstimateSigma(unsigned int idx,
   return sigma;
 }
 
-void ParticleCurvatureEntropyGradientFunction::BeforeEvaluate(unsigned int idx, unsigned int d,
-                                                              const ParticleSystemType* system) {
+void CurvatureSamplingFunction::BeforeEvaluate(unsigned int idx, unsigned int d, const ParticleSystemType* system) {
   m_MaxMoveFactor = 0.1;
 
   // Compute the neighborhood size and the optimal sigma.
@@ -172,8 +171,9 @@ void ParticleCurvatureEntropyGradientFunction::BeforeEvaluate(unsigned int idx, 
   this->GetSpatialSigmaCache()->operator[](d)->operator[](idx) = m_CurrentSigma;
 }
 
-ParticleCurvatureEntropyGradientFunction::VectorType ParticleCurvatureEntropyGradientFunction::Evaluate(
-    unsigned int idx, unsigned int d, const ParticleSystemType* system, double& maxmove, double& energy) const {
+CurvatureSamplingFunction::VectorType CurvatureSamplingFunction::Evaluate(unsigned int idx, unsigned int d,
+                                                                          const ParticleSystemType* system,
+                                                                          double& maxmove, double& energy) const {
   const double epsilon = 1.0e-6;
 
   // Get the position for which we are computing the gradient.
@@ -245,9 +245,9 @@ ParticleCurvatureEntropyGradientFunction::VectorType ParticleCurvatureEntropyGra
   gradE = gradE / m_avgKappa;
   return gradE;
 }
-void ParticleCurvatureEntropyGradientFunction::UpdateNeighborhood(
-    const ParticleCurvatureEntropyGradientFunction::PointType& pos, int idx, int d, double radius,
-    const ParticleCurvatureEntropyGradientFunction::ParticleSystemType* system) {
+void CurvatureSamplingFunction::UpdateNeighborhood(const CurvatureSamplingFunction::PointType& pos, int idx, int d,
+                                                   double radius,
+                                                   const CurvatureSamplingFunction::ParticleSystemType* system) {
   const auto domains_per_shape = system->GetDomainsPerShape();
   const auto domain_base = d / domains_per_shape;
   const auto domain_sub = d % domains_per_shape;
@@ -307,7 +307,7 @@ void ParticleCurvatureEntropyGradientFunction::UpdateNeighborhood(
     }
   }
 }
-double ParticleCurvatureEntropyGradientFunction::ComputeKappa(double mc, unsigned int d) const {
+double CurvatureSamplingFunction::ComputeKappa(double mc, unsigned int d) const {
   double maxmc =
       m_MeanCurvatureCache->GetMeanCurvature(d) + 2.0 * m_MeanCurvatureCache->GetCurvatureStandardDeviation(d);
   double minmc =

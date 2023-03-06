@@ -10,7 +10,7 @@
 namespace itk {
 
 /**
- * \class ParticleCurvatureEntropyGradientFunction
+ * \class CurvatureSamplingFunction
  *
  * This function returns an estimate of the gradient of the entropy of a
  * particle distribution with respect to change in position of a specific
@@ -19,28 +19,28 @@ namespace itk {
  * surface with respect to both position and extrinsic surface curvature.
  *
  */
-class ParticleCurvatureEntropyGradientFunction : public ParticleEntropyGradientFunction {
+class CurvatureSamplingFunction : public ParticleEntropyGradientFunction {
  public:
   constexpr static int VDimension = 3;
   typedef float
       TGradientNumericType;  // This has always been used on float images, so the curvature cache is also float
   /** Standard class typedefs. */
-  typedef ParticleCurvatureEntropyGradientFunction Self;
+  typedef CurvatureSamplingFunction Self;
   typedef SmartPointer<Self> Pointer;
   typedef SmartPointer<const Self> ConstPointer;
   typedef ParticleEntropyGradientFunction Superclass;
-  itkTypeMacro(ParticleCurvatureEntropyGradientFunction, ParticleEntropyGradientFunction);
+  itkTypeMacro(CurvatureSamplingFunction, ParticleEntropyGradientFunction);
 
   /** Inherit some parent typedefs. */
-  typedef typename Superclass::GradientNumericType GradientNumericType;
-  typedef typename Superclass::ParticleSystemType ParticleSystemType;
-  typedef typename Superclass::VectorType VectorType;
-  typedef typename Superclass::PointType PointType;
-  typedef typename Superclass::GradientVectorType GradientVectorType;
+  typedef Superclass::GradientNumericType GradientNumericType;
+  typedef Superclass::ParticleSystemType ParticleSystemType;
+  typedef Superclass::VectorType VectorType;
+  typedef Superclass::PointType PointType;
+  typedef Superclass::GradientVectorType GradientVectorType;
 
   typedef ParticleMeanCurvatureAttribute<TGradientNumericType, VDimension> MeanCurvatureCacheType;
 
-  typedef typename shapeworks::ParticleImageDomainWithCurvature<TGradientNumericType>::VnlMatrixType VnlMatrixType;
+  typedef shapeworks::ParticleImageDomainWithCurvature<TGradientNumericType>::VnlMatrixType VnlMatrixType;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -48,14 +48,11 @@ class ParticleCurvatureEntropyGradientFunction : public ParticleEntropyGradientF
   /** Dimensionality of the domain of the particle system. */
   itkStaticConstMacro(Dimension, unsigned int, VDimension);
 
-  /** The first argument is a pointer to the particle system.  The second
-      argument is the index of the domain within that particle system.  The
-      third argument is the index of the particle location within the given
-      domain. */
   inline virtual VectorType Evaluate(unsigned int a, unsigned int b, const ParticleSystemType* c, double& d) const {
     double e;
     return this->Evaluate(a, b, c, d, e);
   }
+
   virtual VectorType Evaluate(unsigned int, unsigned int, const ParticleSystemType*, double&, double&) const;
 
   virtual void BeforeEvaluate(unsigned int, unsigned int, const ParticleSystemType*);
@@ -80,11 +77,7 @@ class ParticleCurvatureEntropyGradientFunction : public ParticleEntropyGradientF
                                const PointType& pos, double initial_sigma, double precision, int& err,
                                double& avgKappa) const;
 
-  /** */
-  //  void ComputeKappaValues();
-
-  /** Access the cache of curvature-based weight values for each particle
-      position. */
+  // Access the cache of curvature-based weight values for each particle position
   void SetMeanCurvatureCache(MeanCurvatureCacheType* s) { m_MeanCurvatureCache = s; }
   MeanCurvatureCacheType* GetMeanCurvatureCache() { return m_MeanCurvatureCache.GetPointer(); }
 
@@ -102,7 +95,7 @@ class ParticleCurvatureEntropyGradientFunction : public ParticleEntropyGradientF
   virtual ParticleVectorFunction::Pointer Clone() {
     // todo Do we really need to clone all of this?
 
-    ParticleCurvatureEntropyGradientFunction::Pointer copy = ParticleCurvatureEntropyGradientFunction::New();
+    CurvatureSamplingFunction::Pointer copy = CurvatureSamplingFunction::New();
     copy->SetParticleSystem(this->GetParticleSystem());
     copy->m_Counter = this->m_Counter;
     copy->m_Rho = this->m_Rho;
@@ -127,15 +120,12 @@ class ParticleCurvatureEntropyGradientFunction : public ParticleEntropyGradientF
   }
 
  protected:
-  ParticleCurvatureEntropyGradientFunction() : m_Counter(0), m_Rho(1.0) {}
-  virtual ~ParticleCurvatureEntropyGradientFunction() {}
-  void operator=(const ParticleCurvatureEntropyGradientFunction&);
-  ParticleCurvatureEntropyGradientFunction(const ParticleCurvatureEntropyGradientFunction&);
-  typename MeanCurvatureCacheType::Pointer m_MeanCurvatureCache;
-  //  double m_Gamma;
-  //  double m_Beta;
-  //  double m_CurvatureScale;
-  //  double m_SamplesPerCurvature;
+  CurvatureSamplingFunction() : m_Counter(0), m_Rho(1.0) {}
+  virtual ~CurvatureSamplingFunction() {}
+  void operator=(const CurvatureSamplingFunction&);
+  CurvatureSamplingFunction(const CurvatureSamplingFunction&);
+  MeanCurvatureCacheType::Pointer m_MeanCurvatureCache;
+
   unsigned int m_Counter;
   double m_Rho;
 

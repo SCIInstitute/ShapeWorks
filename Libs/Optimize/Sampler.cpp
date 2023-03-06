@@ -14,7 +14,7 @@ Sampler::Sampler() {
   m_ParticleSystem = itk::ParticleSystem::New();
 
   m_GradientFunction = itk::ParticleEntropyGradientFunction::New();
-  m_CurvatureGradientFunction = itk::ParticleCurvatureEntropyGradientFunction::New();
+  m_CurvatureGradientFunction = itk::CurvatureSamplingFunction::New();
 
   m_ModifiedCotangentGradientFunction =
       itk::ParticleModifiedCotangentEntropyGradientFunction<ImageType::PixelType, Dimension>::New();
