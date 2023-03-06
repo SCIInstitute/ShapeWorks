@@ -11,7 +11,7 @@
 #include "TriMesh.h"
 #include "itkParticleConstrainedModifiedCotangentEntropyGradientFunction.h"
 #include "itkParticleContainerArrayAttribute.h"
-#include "itkParticleCurvatureEntropyGradientFunction.h"
+#include "SamplingFunction.h"
 #include "itkParticleDualVectorFunction.h"
 #include "itkParticleEnsembleEntropyFunction.h"
 #include "itkParticleEntropyGradientFunction.h"
@@ -77,7 +77,7 @@ class Sampler {
   virtual ~Sampler(){};
 
   /** Returns a pointer to the gradient function used. */
-  itk::ParticleEntropyGradientFunction<ImageType::PixelType, Dimension>* GetGradientFunction() {
+  itk::ParticleEntropyGradientFunction* GetGradientFunction() {
     return m_GradientFunction;
   }
 
@@ -410,7 +410,7 @@ class Sampler {
 
   OptimizerType::Pointer m_Optimizer;
 
-  itk::ParticleEntropyGradientFunction<ImageType::PixelType, Dimension>::Pointer m_GradientFunction;
+  itk::ParticleEntropyGradientFunction::Pointer m_GradientFunction;
   itk::ParticleCurvatureEntropyGradientFunction::Pointer m_CurvatureGradientFunction;
 
   itk::ParticleModifiedCotangentEntropyGradientFunction<ImageType::PixelType, Dimension>::Pointer

@@ -58,9 +58,12 @@ namespace itk {
  * \f]
  *
  */
-template <class TGradientNumericType, unsigned int VDimension>
 class ParticleEntropyGradientFunction : public ParticleVectorFunction {
  public:
+  constexpr static int VDimension = 3;
+  typedef float
+      TGradientNumericType;  // This has always been used on float images, so the curvature cache is also float
+
   /** Standard class typedefs. */
   typedef ParticleEntropyGradientFunction Self;
   typedef SmartPointer<Self> Pointer;
@@ -88,13 +91,10 @@ class ParticleEntropyGradientFunction : public ParticleVectorFunction {
   /** Dimensionality of the domain of the particle system. */
   itkStaticConstMacro(Dimension, unsigned int, VDimension);
 
-  /** The first argument is a pointer to the particle system.  The second
-      argument is the index of the domain within that particle system.  The
-      third argument is the index of the particle location within the given
-      domain. */
-  virtual VectorType Evaluate(unsigned int, unsigned int, const ParticleSystemType*, double&) const;
+  virtual VectorType Evaluate(unsigned int idx, unsigned int d, const ParticleSystemType* system, double& maxdt) const;
 
-  virtual VectorType Evaluate(unsigned int, unsigned int, const ParticleSystemType*, double&, double&) const {
+  virtual VectorType Evaluate(unsigned int idx, unsigned int d, const ParticleSystemType* system, double& maxdt,
+                              double& energy) const {
     itkExceptionMacro("This method not implemented");
     return VectorType();
   }
@@ -150,8 +150,7 @@ class ParticleEntropyGradientFunction : public ParticleVectorFunction {
   //  void ComputeNeighborho0d();
 
   virtual ParticleVectorFunction::Pointer Clone() {
-    typename ParticleEntropyGradientFunction<TGradientNumericType, VDimension>::Pointer copy =
-        ParticleEntropyGradientFunction<TGradientNumericType, VDimension>::New();
+    ParticleEntropyGradientFunction::Pointer copy = ParticleEntropyGradientFunction::New();
 
     // from itkParticleVectorFunction
     copy->m_DomainNumber = this->m_DomainNumber;
@@ -181,5 +180,3 @@ class ParticleEntropyGradientFunction : public ParticleVectorFunction {
 };
 
 }  // namespace itk
-
-#include "itkParticleEntropyGradientFunction.txx"

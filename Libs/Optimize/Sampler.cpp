@@ -11,10 +11,9 @@
 namespace shapeworks {
 
 Sampler::Sampler() {
-  // Allocate the particle system members.
   m_ParticleSystem = itk::ParticleSystem::New();
 
-  m_GradientFunction = itk::ParticleEntropyGradientFunction<ImageType::PixelType, Dimension>::New();
+  m_GradientFunction = itk::ParticleEntropyGradientFunction::New();
   m_CurvatureGradientFunction = itk::ParticleCurvatureEntropyGradientFunction::New();
 
   m_ModifiedCotangentGradientFunction =
@@ -24,7 +23,6 @@ Sampler::Sampler() {
 
   m_OmegaGradientFunction = itk::ParticleOmegaGradientFunction<ImageType::PixelType, Dimension>::New();
 
-  // Allocate some optimization code.
   m_Optimizer = OptimizerType::New();
 
   m_PointsFiles.push_back("");

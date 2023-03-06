@@ -19,16 +19,16 @@ namespace itk {
  * surface with respect to both position and extrinsic surface curvature.
  *
  */
-class ParticleCurvatureEntropyGradientFunction
-    : public ParticleEntropyGradientFunction<float, 3> {
+class ParticleCurvatureEntropyGradientFunction : public ParticleEntropyGradientFunction {
  public:
   constexpr static int VDimension = 3;
-  typedef float TGradientNumericType; // This has always been used on float images, so the curvature cache is also float
+  typedef float
+      TGradientNumericType;  // This has always been used on float images, so the curvature cache is also float
   /** Standard class typedefs. */
   typedef ParticleCurvatureEntropyGradientFunction Self;
   typedef SmartPointer<Self> Pointer;
   typedef SmartPointer<const Self> ConstPointer;
-  typedef ParticleEntropyGradientFunction<float, VDimension> Superclass;
+  typedef ParticleEntropyGradientFunction Superclass;
   itkTypeMacro(ParticleCurvatureEntropyGradientFunction, ParticleEntropyGradientFunction);
 
   /** Inherit some parent typedefs. */
@@ -66,13 +66,7 @@ class ParticleCurvatureEntropyGradientFunction
     return e;
   }
 
-  inline double ComputeKappa(double mc, unsigned int d) const {
-    double maxmc =
-        m_MeanCurvatureCache->GetMeanCurvature(d) + 2.0 * m_MeanCurvatureCache->GetCurvatureStandardDeviation(d);
-    double minmc =
-        m_MeanCurvatureCache->GetMeanCurvature(d) - 2.0 * m_MeanCurvatureCache->GetCurvatureStandardDeviation(d);
-    return 1.0 + m_Rho * (mc - minmc) / (maxmc - minmc);
-  }
+  inline double ComputeKappa(double mc, unsigned int d) const;
 
   virtual void AfterIteration() {}
 
@@ -108,8 +102,7 @@ class ParticleCurvatureEntropyGradientFunction
   virtual ParticleVectorFunction::Pointer Clone() {
     // todo Do we really need to clone all of this?
 
-    ParticleCurvatureEntropyGradientFunction::Pointer copy =
-        ParticleCurvatureEntropyGradientFunction::New();
+    ParticleCurvatureEntropyGradientFunction::Pointer copy = ParticleCurvatureEntropyGradientFunction::New();
     copy->SetParticleSystem(this->GetParticleSystem());
     copy->m_Counter = this->m_Counter;
     copy->m_Rho = this->m_Rho;
@@ -161,70 +154,9 @@ class ParticleCurvatureEntropyGradientFunction
         : pi_pair(pi_pair_), weight(weight_), distance(distance_), dom(dom_) {}
   };
   std::vector<CrossDomainNeighborhood> m_CurrentNeighborhood;
-  void UpdateNeighborhood(const PointType& pos, int idx, int d, double radius, const ParticleSystemType* system) {
-    const auto domains_per_shape = system->GetDomainsPerShape();
-    const auto domain_base = d / domains_per_shape;
-    const auto domain_sub = d % domains_per_shape;
+  void UpdateNeighborhood(const PointType& pos, int idx, int d, double radius, const ParticleSystemType* system);
 
-    m_CurrentNeighborhood.clear();
-    for (int offset = 0; offset < domains_per_shape; offset++) {
-      const auto domain_t = domain_base * domains_per_shape + offset;
-      const auto neighborhood_ = system->GetNeighborhood(domain_t).GetPointer();
-      using ImageType = itk::Image<float, Dimension>;
-      auto neighborhood__ = dynamic_cast<const ParticleSurfaceNeighborhood<ImageType>*>(neighborhood_);
-
-      // unfortunately required because we need to mutate the cosine weighting state
-      auto neighborhood = const_cast<ParticleSurfaceNeighborhood<ImageType>*>(neighborhood__);
-
-      if (!m_IsSharedBoundaryEnabled && domain_t != d) {
-        continue;
-      }
-      const bool this_is_contour = system->GetDomain(d)->GetDomainType() == shapeworks::DomainType::Contour;
-      if (this_is_contour && domain_t != d) {
-        continue;
-      }
-      const bool other_is_contour = system->GetDomain(domain_t)->GetDomainType() == shapeworks::DomainType::Contour;
-      if (!other_is_contour && domain_t != d) {
-        continue;
-      }
-
-      // Sampling term is only computed if:
-      // * Both domains are the same
-      // * This is not a contour, but the other domain is a contour
-
-      std::vector<double> weights;
-      std::vector<double> distances;
-      std::vector<ParticlePointIndexPair<3>> res;
-      if (domain_t == d) {
-        // same domain
-        res = neighborhood->FindNeighborhoodPoints(pos, idx, weights, distances, radius);
-      } else {
-        // cross domain
-
-        bool weighting_state = neighborhood->IsWeightingEnabled();
-        // Disable cosine-falloff weighting for cross-domain sampling term. Contours don't have normals.
-        neighborhood->SetWeightingEnabled(false);
-        neighborhood->SetForceEuclidean(true);
-
-        res = neighborhood->FindNeighborhoodPoints(pos, -1, weights, distances, radius);
-
-        neighborhood->SetForceEuclidean(false);
-        neighborhood->SetWeightingEnabled(weighting_state);
-      }
-
-      assert(weights.size() == distances.size() && res.size() == weights.size());
-
-      // todo should avoid this copy. requires changing way too many APIs
-      for (int i = 0; i < res.size(); i++) {
-        const double weight = domain_t == d ? weights[i] : m_SharedBoundaryWeight;
-        m_CurrentNeighborhood.emplace_back(res[i], weight, distances[i], domain_t);
-      }
-    }
-  }
-
-  float m_MaxMoveFactor;
+  float m_MaxMoveFactor = 0;
 };
 
 }  // namespace itk
-
-#include "itkParticleCurvatureEntropyGradientFunction.txx"

@@ -39,7 +39,7 @@ IF(USE_PCH)
     "<Eigen/Core>"
     "<map>"
     "<itkCommand.h>"
-    "<openvdb/openvdb.h>"cd 
+    "<openvdb/openvdb.h>"
     )
 ENDIF(USE_PCH)
 
