@@ -3,22 +3,12 @@
 
 #include <Utils/Utils.h>
 #include <math.h>
+
 #include "vnl/algo/vnl_svd.h"
 #include "vnl/vnl_diag_matrix.h"
 
-/*
-#include <time.h>
-
-#include <ctime>
-
-#include "ParticleImageDomainWithGradN.h"
-#include "ParticleImageDomainWithGradients.h"
-#include "ParticleImplicitSurfaceDomain.h"
-#include "TriMesh.h"
-#include "vnl/algo/vnl_symmetric_eigensystem.h"
-*/
-
 namespace itk {
+
 void CorrespondenceFunction::ComputeUpdates(const ParticleSystemType* c) {
   num_dims = m_ShapeData->rows();
   num_samples = m_ShapeData->cols();
@@ -152,8 +142,12 @@ CorrespondenceFunction::VectorType CorrespondenceFunction ::Evaluate(unsigned in
   int sampNum = d / m_DomainsPerShape;  // shape number
 
   int sz_Yidx = 0;
-  if (m_UseXYZ[dom]) sz_Yidx += 3;
-  if (m_UseNormals[dom]) sz_Yidx += 3;
+  if (m_UseXYZ[dom]) {
+    sz_Yidx += 3;
+  }
+  if (m_UseNormals[dom]) {
+    sz_Yidx += 3;
+  }
   sz_Yidx += m_AttributesPerDomain[dom];
 
   int num = sz_Yidx * idx;
@@ -169,10 +163,11 @@ CorrespondenceFunction::VectorType CorrespondenceFunction ::Evaluate(unsigned in
 
   vnl_matrix_type tmp1(sz_Yidx, sz_Yidx, 0.0);
 
-  if (this->m_UseMeanEnergy)
+  if (this->m_UseMeanEnergy) {
     tmp1.set_identity();
-  else
+  } else {
     tmp1 = m_InverseCovMatrix->extract(sz_Yidx, sz_Yidx, num, num);
+  }
 
   vnl_matrix_type Y_dom_idx(sz_Yidx, 1, 0.0);
 
@@ -190,7 +185,9 @@ CorrespondenceFunction::VectorType CorrespondenceFunction ::Evaluate(unsigned in
 
   VectorType gradE;
   unsigned int k = idx * VDimension + num;
-  for (unsigned int i = 0; i < VDimension; i++) gradE[i] = m_PointsUpdate->get(k + i, sampNum);
+  for (unsigned int i = 0; i < VDimension; i++) {
+    gradE[i] = m_PointsUpdate->get(k + i, sampNum);
+  }
 
   return system->TransformVector(gradE, system->GetInversePrefixTransform(d) * system->GetInverseTransform(d));
 }
