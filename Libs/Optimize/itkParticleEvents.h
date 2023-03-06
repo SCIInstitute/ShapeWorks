@@ -5,7 +5,7 @@
 namespace itk {
 /**
  * \class ParticleEvent.
- *  Parent class for all Particle events.   Carries thread id information.
+ *  Parent class for all Particle events.
  *
  *  Event that carries Position index and a Domain index information.  This is
  *  used, for example to indicate which position has changed in the particle
@@ -15,21 +15,16 @@ class ParticleEvent : public EventObject {
  public:
   typedef ParticleEvent Self;
 
-  ParticleEvent() : m_ThreadID(0) {}
+  ParticleEvent() {}
   virtual ~ParticleEvent() {}
 
-  /** Get/Set the thread responsible for handling this particular event. */
-  int GetThreadID() const { return m_ThreadID; }
-  void SetThreadID(int i) { m_ThreadID = i; }
 
   /** Copy constructor and operator= */
   ParticleEvent(const ParticleEvent& v) : EventObject(v) {
-    m_ThreadID = v.m_ThreadID;
     m_PositionIndex = v.m_PositionIndex;
     m_DomainIndex = v.m_DomainIndex;
   }
   const ParticleEvent& operator=(const ParticleEvent& v) {
-    m_ThreadID = v.m_ThreadID;
     m_PositionIndex = v.m_PositionIndex;
     m_DomainIndex = v.m_DomainIndex;
 
@@ -52,7 +47,6 @@ class ParticleEvent : public EventObject {
   int GetDomainIndex() const { return m_DomainIndex; }
 
  private:
-  int m_ThreadID;
   int m_PositionIndex;
   int m_DomainIndex;
 };

@@ -115,16 +115,11 @@ class ParticleSystem : public DataObject {
       is thrown.  Set is intended to be used for moving particles. The
       SetTransformedPosition sets the position using a Point transformed by the
       m_Transform associated with the given domain.*/
-  const PointType &AddPosition(const PointType &, unsigned int d = 0, int threadId = 0);
-  const PointType &SetPosition(const PointType &, unsigned long int k, unsigned int d = 0, int threadId = 0);
+  const PointType &AddPosition(const PointType &, unsigned int d = 0);
+  const PointType &SetPosition(const PointType &, unsigned long int k, unsigned int d = 0);
 
-  //  inline const PointType &SetTransformedPosition(const PointType &p,
-  //                                                 unsigned long int k,  unsigned int d=0, int threadId=0)
-  //  {
-  //    this->SetPosition( this->TransformPoint(p, m_InverseTransform[d]), k, d, threadId );
-  //  }
 
-  void RemovePosition(unsigned long int k, unsigned int d = 0, int threadId = 0);
+  void RemovePosition(unsigned long int k, unsigned int d = 0);
 
   /** Return a position with index k from domain d.  Note the order in which the 2
       integers must be specified!   The domain number is specified second and
@@ -147,15 +142,15 @@ class ParticleSystem : public DataObject {
       original particle.  The new particles are added using the AddPosition
       method, so all appropriate callbacks are invoked. */
 
-  void SplitAllParticles(double epsilon, int threadId = 0);
-  void SplitParticle(double epsilon, unsigned int idx, unsigned int d = 0, int threadId = 0);
+  void SplitAllParticles(double epsilon);
+  void SplitParticle(double epsilon, unsigned int idx, unsigned int d = 0);
   void AdvancedAllParticleSplitting(double epsilon, unsigned int domains_per_shape, unsigned int dom_to_process);
   // Debug function
   void PrintParticleSystem();
 
   /** Set/Get the neighborhood object associated with domain k. */
-  void SetNeighborhood(unsigned int, NeighborhoodType *, int threadId = 0);
-  void SetNeighborhood(NeighborhoodType *n, int threadId = 0) { this->SetNeighborhood(0, n, threadId); }
+  void SetNeighborhood(unsigned int, NeighborhoodType *);
+  void SetNeighborhood(NeighborhoodType *n) { this->SetNeighborhood(0, n); }
   NeighborhoodType::ConstPointer GetNeighborhood(unsigned int k) const { return m_Neighborhoods[k]; }
 
   /** Return the neighborhood of points with radius r around point p in domain
@@ -204,7 +199,7 @@ class ParticleSystem : public DataObject {
       for a list of positions that are contained within the domain, and a
       default neighborhood calculator.  The final, optional argument indicates
       the calling thread id.*/
-  void AddDomain(DomainType::Pointer input, int threadId = 0);
+  void AddDomain(DomainType::Pointer input);
 
   /** Return an iterator that points to the first element of the list of the
       domains. */
@@ -235,10 +230,10 @@ class ParticleSystem : public DataObject {
       method and an identity transform is set in its place.  The calling
       program is responsible for knowing when an inverse transform cannot be
       computed. */
-  void SetTransform(unsigned int i, const TransformType &, int threadId = 0);
-  void SetTransform(const TransformType &p, int threadId = 0) { this->SetTransform(0, p, threadId); }
-  void SetPrefixTransform(unsigned int i, const TransformType &, int threadId = 0);
-  void SetPrefixTransform(const TransformType &p, int threadId = 0) { this->SetPrefixTransform(0, p, threadId); }
+  void SetTransform(unsigned int i, const TransformType &);
+  void SetTransform(const TransformType &p) { this->SetTransform(0, p); }
+  void SetPrefixTransform(unsigned int i, const TransformType &);
+  void SetPrefixTransform(const TransformType &p) { this->SetPrefixTransform(0, p); }
 
   /** Return an iterator that points to the first element of the list of the
       transforms. */
@@ -298,7 +293,7 @@ class ParticleSystem : public DataObject {
 
   /** Adds a list of points to the specified domain.  The arguments are the
      std::vector of points and the domain number. */
-  void AddPositionList(const std::vector<PointType> &, unsigned int d = 0, int threadId = 0);
+  void AddPositionList(const std::vector<PointType> &, unsigned int d = 0);
 
   /** Transforms a point using the given transform. NOTE: Scaling is not
       currently implemented. (This method may be converted to virtual and

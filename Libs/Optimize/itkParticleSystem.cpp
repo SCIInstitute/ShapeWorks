@@ -56,7 +56,7 @@ void ParticleSystem::SetNumberOfDomains(unsigned int num) {
   this->Modified();
 }
 
-void ParticleSystem::AddDomain(DomainType::Pointer input, int threadId) {
+void ParticleSystem::AddDomain(DomainType::Pointer input) {
   this->Modified();
 
   for (unsigned int idx = 0; idx < m_Domains.size(); ++idx) {
@@ -80,7 +80,6 @@ void ParticleSystem::AddDomain(DomainType::Pointer input, int threadId) {
   ParticleDomainAddEvent e;
   e.SetDomainIndex(m_Domains.size() - 1);
   e.SetPositionIndex(0);
-  e.SetThreadID(threadId);
   this->InvokeEvent(e);
 }
 
@@ -92,7 +91,7 @@ void ParticleSystem::PrintSelf(std::ostream &os, Indent indent) const {
   os << indent << "m_Domains.size() : " << m_Domains.size() << std::endl;
 }
 
-void ParticleSystem::SetTransform(unsigned int i, const TransformType &T, int threadId) {
+void ParticleSystem::SetTransform(unsigned int i, const TransformType &T) {
   if (i > static_cast<int>(m_Transforms.size()) - 1 || m_Transforms.empty()) {
     m_Transforms.resize(i + 1);
     m_InverseTransforms.resize(i + 1);
@@ -102,12 +101,11 @@ void ParticleSystem::SetTransform(unsigned int i, const TransformType &T, int th
 
   // Notify any observers.
   ParticleTransformSetEvent e;
-  e.SetThreadID(threadId);
   e.SetDomainIndex(i);
   this->InvokeEvent(e);
 }
 
-void ParticleSystem::SetPrefixTransform(unsigned int i, const TransformType &T, int threadId) {
+void ParticleSystem::SetPrefixTransform(unsigned int i, const TransformType &T) {
   if (i > static_cast<int>(m_PrefixTransforms.size()) - 1 || m_PrefixTransforms.empty()) {
     m_PrefixTransforms.resize(i + 1);
     m_InversePrefixTransforms.resize(i + 1);
@@ -118,12 +116,11 @@ void ParticleSystem::SetPrefixTransform(unsigned int i, const TransformType &T, 
 
   // Notify any observers.
   ParticlePrefixTransformSetEvent e;
-  e.SetThreadID(threadId);
   e.SetDomainIndex(i);
   this->InvokeEvent(e);
 }
 
-void ParticleSystem::SetNeighborhood(unsigned int i, NeighborhoodType *N, int threadId) {
+void ParticleSystem::SetNeighborhood(unsigned int i, NeighborhoodType *N) {
   if (m_DomainFlags[i] == true) return;
   m_Neighborhoods[i] = N;
   m_Neighborhoods[i]->SetDomain(m_Domains[i]);
@@ -131,13 +128,11 @@ void ParticleSystem::SetNeighborhood(unsigned int i, NeighborhoodType *N, int th
 
   // Notify any observers.
   ParticleNeighborhoodSetEvent e;
-  e.SetThreadID(threadId);
   e.SetDomainIndex(i);
   this->InvokeEvent(e);
 }
 
-const typename ParticleSystem::PointType &ParticleSystem::AddPosition(const PointType &p, unsigned int d,
-                                                                      int threadId) {
+const typename ParticleSystem::PointType &ParticleSystem::AddPosition(const PointType &p, unsigned int d) {
   m_Positions[d]->operator[](m_IndexCounters[d]) = p;
 
   // Potentially modifies position!
@@ -148,7 +143,7 @@ const typename ParticleSystem::PointType &ParticleSystem::AddPosition(const Poin
     m_Domains[d]->ApplyConstraints(m_Positions[d]->operator[](idx), idx);
     // debugg
     // std::cout << " after apply " << m_Positions[d]->operator[](m_IndexCounters[d]) << std::endl;
-    m_Neighborhoods[d]->AddPosition(m_Positions[d]->operator[](idx), idx, threadId);
+    m_Neighborhoods[d]->AddPosition(m_Positions[d]->operator[](idx), idx);
   }
 
   // Increase the FixedParticleFlag list size if necessary.
@@ -158,7 +153,6 @@ const typename ParticleSystem::PointType &ParticleSystem::AddPosition(const Poin
 
   // Notify any observers.
   ParticlePositionAddEvent e;
-  e.SetThreadID(threadId);
   e.SetDomainIndex(d);
   e.SetPositionIndex(m_IndexCounters[d]);
   this->InvokeEvent(e);
@@ -168,7 +162,7 @@ const typename ParticleSystem::PointType &ParticleSystem::AddPosition(const Poin
 }
 
 const typename ParticleSystem::PointType &ParticleSystem::SetPosition(const PointType &p, unsigned long int k,
-                                                                      unsigned int d, int threadId) {
+                                                                      unsigned int d) {
   if (m_FixedParticleFlags[d % m_DomainsPerShape][k] == false) {
     // Potentially modifies position!
     if (m_DomainFlags[d] == false) {
@@ -180,13 +174,12 @@ const typename ParticleSystem::PointType &ParticleSystem::SetPosition(const Poin
       // Debuggg
       // std::cout << " updated " << m_Positions[d]->operator[](k) << std::endl;
 
-      m_Neighborhoods[d]->SetPosition(m_Positions[d]->operator[](k), k, threadId);
+      m_Neighborhoods[d]->SetPosition(m_Positions[d]->operator[](k), k);
     }
   }
 
   // Notify any observers.
   ParticlePositionSetEvent e;
-  e.SetThreadID(threadId);
   e.SetDomainIndex(d);
   e.SetPositionIndex(k);
 
@@ -195,10 +188,10 @@ const typename ParticleSystem::PointType &ParticleSystem::SetPosition(const Poin
   return m_Positions[d]->operator[](k);
 }
 
-void ParticleSystem::AddPositionList(const std::vector<PointType> &p, unsigned int d, int threadId) {
+void ParticleSystem::AddPositionList(const std::vector<PointType> &p, unsigned int d) {
   // Traverse the list and add each point to the domain.
   for (typename std::vector<PointType>::const_iterator it = p.begin(); it != p.end(); it++) {
-    this->AddPosition(*it, d, threadId);
+    this->AddPosition(*it, d);
   }
 }
 
@@ -296,7 +289,7 @@ void ParticleSystem::AdvancedAllParticleSplitting(double epsilon, unsigned int d
         if (good) {
           for (size_t j = 0; j < lists.size(); j++) {
             int local_domain = dom_to_process + j * domains_per_shape;
-            this->AddPosition(newposs_good[j], local_domain, 0);
+            this->AddPosition(newposs_good[j], local_domain);
             // Debuggg
             // std::cout << "Domain " << j << " Curr Pos " << lists[j][i] << " random "
             // << random  << " epsilon " << epsilon << " picked " << newposs_good[j] << std::endl;
