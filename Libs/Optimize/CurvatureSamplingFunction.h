@@ -134,6 +134,7 @@ class CurvatureSamplingFunction : public ParticleEntropyGradientFunction {
   double m_SharedBoundaryWeight{1.0};
 
   double m_CurrentSigma;
+
   struct CrossDomainNeighborhood {
     ParticlePointIndexPair<3> pi_pair;
     double weight;
