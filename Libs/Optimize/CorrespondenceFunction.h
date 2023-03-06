@@ -1,10 +1,5 @@
 #pragma once
 
-/*
- * Author: Praful
- * Class for mesh based features/attributes for shape correspondence
- */
-
 #include <numeric>
 #include <vector>
 
@@ -14,18 +9,19 @@
 
 namespace itk {
 
-class ParticleMeshBasedGeneralEntropyGradientFunction : public ParticleVectorFunction<3> {
+//! Correspondence term
+class CorrespondenceFunction : public ParticleVectorFunction<3> {
  public:
   constexpr static int VDimension = 3;
   /** Standard class typedefs. */
-  typedef ParticleMeshBasedGeneralEntropyGradientFunction Self;
+  typedef CorrespondenceFunction Self;
   typedef SmartPointer<Self> Pointer;
   typedef SmartPointer<const Self> ConstPointer;
   typedef ParticleVectorFunction<VDimension> Superclass;
-  itkTypeMacro(ParticleMeshBasedGeneralEntropyGradientFunction, ParticleVectorFunction)
+  itkTypeMacro(CorrespondenceFunction, ParticleVectorFunction)
 
-      /** Type of particle system. */
-      typedef typename Superclass::ParticleSystemType ParticleSystemType;
+  /** Type of particle system. */
+  typedef typename Superclass::ParticleSystemType ParticleSystemType;
 
   typedef shapeworks::ShapeMatrix ShapeDataType;
   typedef shapeworks::ShapeGradientMatrix ShapeGradientType;
@@ -41,15 +37,15 @@ class ParticleMeshBasedGeneralEntropyGradientFunction : public ParticleVectorFun
   /** Method for creation through the object factory. */
   itkNewMacro(Self)
 
-      /** Dimensionality of the domain of the particle system. */
-      itkStaticConstMacro(Dimension, unsigned int, VDimension);
+  /** Dimensionality of the domain of the particle system. */
+  itkStaticConstMacro(Dimension, unsigned int, VDimension);
 
-  /**Access the shape matrix. */
+  //! Access the shape matrix
   void SetShapeData(ShapeDataType* s) { m_ShapeData = s; }
   ShapeDataType* GetShapeData() { return m_ShapeData.GetPointer(); }
   const ShapeDataType* GetShapeData() const { return m_ShapeData.GetPointer(); }
 
-  /**Access the shape gradient matrix. */
+  //! Access the shape gradient matrix
   void SetShapeGradient(ShapeGradientType* s) { m_ShapeGradient = s; }
   ShapeGradientType* GetShapeGradient() { return m_ShapeGradient.GetPointer(); }
   const ShapeGradientType* GetShapeGradient() const { return m_ShapeGradient.GetPointer(); }
@@ -135,7 +131,7 @@ class ParticleMeshBasedGeneralEntropyGradientFunction : public ParticleVectorFun
   }
 
   virtual typename ParticleVectorFunction<VDimension>::Pointer Clone() {
-    auto copy = ParticleMeshBasedGeneralEntropyGradientFunction::New();
+    auto copy = CorrespondenceFunction::New();
 
     // from itkParticleVectorFunction
     copy->m_DomainNumber = this->m_DomainNumber;
@@ -166,7 +162,7 @@ class ParticleMeshBasedGeneralEntropyGradientFunction : public ParticleVectorFun
   }
 
  protected:
-  ParticleMeshBasedGeneralEntropyGradientFunction() {
+  CorrespondenceFunction() {
     // m_MinimumVarianceBase = 1.0;//exp(log(1.0e-5)/10000.0);
     m_HoldMinimumVariance = true;
     m_MinimumVariance = 1.0e-5;
@@ -183,9 +179,9 @@ class ParticleMeshBasedGeneralEntropyGradientFunction : public ParticleVectorFun
     m_InverseCovMatrix = std::make_shared<vnl_matrix_type>(10, 10);
     m_points_mean = std::make_shared<vnl_matrix_type>(10, 10);
   }
-  virtual ~ParticleMeshBasedGeneralEntropyGradientFunction() {}
-  void operator=(const ParticleMeshBasedGeneralEntropyGradientFunction&);
-  ParticleMeshBasedGeneralEntropyGradientFunction(const ParticleMeshBasedGeneralEntropyGradientFunction&);
+  virtual ~CorrespondenceFunction() {}
+  void operator=(const CorrespondenceFunction&);
+  CorrespondenceFunction(const CorrespondenceFunction&);
 
   typename ShapeDataType::Pointer m_ShapeData;
   typename ShapeGradientType::Pointer m_ShapeGradient;
