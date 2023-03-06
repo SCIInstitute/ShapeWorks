@@ -14,9 +14,9 @@
 
 namespace itk {
 
-template <unsigned int VDimension>
-class ParticleMeshBasedGeneralEntropyGradientFunction : public ParticleVectorFunction<VDimension> {
+class ParticleMeshBasedGeneralEntropyGradientFunction : public ParticleVectorFunction<3> {
  public:
+  constexpr static int VDimension = 3;
   /** Standard class typedefs. */
   typedef ParticleMeshBasedGeneralEntropyGradientFunction Self;
   typedef SmartPointer<Self> Pointer;
@@ -135,8 +135,7 @@ class ParticleMeshBasedGeneralEntropyGradientFunction : public ParticleVectorFun
   }
 
   virtual typename ParticleVectorFunction<VDimension>::Pointer Clone() {
-    typename ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>::Pointer copy =
-        ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>::New();
+    auto copy = ParticleMeshBasedGeneralEntropyGradientFunction::New();
 
     // from itkParticleVectorFunction
     copy->m_DomainNumber = this->m_DomainNumber;
@@ -213,5 +212,3 @@ class ParticleMeshBasedGeneralEntropyGradientFunction : public ParticleVectorFun
   int num_dims, num_samples;
 };
 }  // namespace itk
-
-#include "itkParticleMeshBasedGeneralEntropyGradientFunction.txx"

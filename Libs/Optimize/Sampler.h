@@ -18,7 +18,7 @@
 #include "itkParticleEnsembleEntropyFunction.h"
 #include "itkParticleShapeLinearRegressionMatrixAttribute.h"
 #include "itkParticleShapeMixedEffectsMatrixAttribute.h"
-#include "itkParticleMeshBasedGeneralEntropyGradientFunction.h"
+#include "CorrespondenceFunction.h"
 
 #include "itkParticleModifiedCotangentEntropyGradientFunction.h"
 #include "itkParticleConstrainedModifiedCotangentEntropyGradientFunction.h"
@@ -325,7 +325,7 @@ public:
   itk::ParticleEnsembleEntropyFunction<Dimension>* GetEnsembleMixedEffectsEntropyFunction()
   { return m_EnsembleMixedEffectsEntropyFunction.GetPointer(); }
 
-  itk::ParticleMeshBasedGeneralEntropyGradientFunction<Dimension>*
+  itk::ParticleMeshBasedGeneralEntropyGradientFunction*
   GetMeshBasedGeneralEntropyGradientFunction()
   { return m_MeshBasedGeneralEntropyGradientFunction.GetPointer(); }
 
@@ -343,7 +343,7 @@ public:
   GetEnsembleMixedEffectsEntropyFunction() const
   { return m_EnsembleMixedEffectsEntropyFunction.GetPointer(); }
 
-  const itk::ParticleMeshBasedGeneralEntropyGradientFunction<Dimension>*
+  const itk::ParticleMeshBasedGeneralEntropyGradientFunction*
   GetMeshBasedGeneralEntropyGradientFunction() const
   { return m_MeshBasedGeneralEntropyGradientFunction.GetPointer(); }
 
@@ -517,7 +517,7 @@ protected:
   shapeworks::ShapeMatrix::Pointer m_GeneralShapeMatrix;
   shapeworks::ShapeGradientMatrix::Pointer m_GeneralShapeGradMatrix;
 
-  itk::ParticleMeshBasedGeneralEntropyGradientFunction<Dimension>::Pointer m_MeshBasedGeneralEntropyGradientFunction;
+  itk::ParticleMeshBasedGeneralEntropyGradientFunction::Pointer m_MeshBasedGeneralEntropyGradientFunction;
 
   bool initialize_ffcs(size_t dom);
 

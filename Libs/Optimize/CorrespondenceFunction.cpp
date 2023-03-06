@@ -1,5 +1,5 @@
-#pragma once
 
+#include "CorrespondenceFunction.h"
 #include "TriMesh.h"
 #include <math.h>
 #include "vnl/algo/vnl_symmetric_eigensystem.h"
@@ -14,10 +14,7 @@
 
 namespace itk
 {
-template <unsigned int VDimension>
-void
-ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
-::ComputeUpdates(const ParticleSystemType *c)
+void ParticleMeshBasedGeneralEntropyGradientFunction::ComputeUpdates(const ParticleSystemType *c)
 {
     num_dims = m_ShapeData->rows();
     num_samples = m_ShapeData->cols();
@@ -199,9 +196,8 @@ ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
 
 }
 
-template <unsigned int VDimension>
-typename ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>::VectorType
-ParticleMeshBasedGeneralEntropyGradientFunction<VDimension>
+ParticleMeshBasedGeneralEntropyGradientFunction::VectorType
+ParticleMeshBasedGeneralEntropyGradientFunction
 ::Evaluate(unsigned int idx, unsigned int d, const ParticleSystemType * system,
            double &maxdt, double &energy) const
 {
