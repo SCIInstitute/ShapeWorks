@@ -37,8 +37,8 @@ Sampler::Sampler() {
   m_MeshBasedGeneralEntropyGradientFunction = itk::ParticleMeshBasedGeneralEntropyGradientFunction<Dimension>::New();
 
   m_LegacyShapeMatrix = itk::LegacyShapeMatrix::New();
-  m_GeneralShapeMatrix = itk::ShapeMatrix::New();
-  m_GeneralShapeGradMatrix = itk::ShapeGradientMatrix::New();
+  m_GeneralShapeMatrix = shapeworks::ShapeMatrix::New();
+  m_GeneralShapeGradMatrix = shapeworks::ShapeGradientMatrix::New();
 
   m_LinearRegressionShapeMatrix = itk::ParticleShapeLinearRegressionMatrixAttribute::New();
   m_MixedEffectsShapeMatrix = itk::ParticleShapeMixedEffectsMatrixAttribute::New();

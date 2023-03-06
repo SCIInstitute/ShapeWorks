@@ -9,7 +9,7 @@
 #include <vector>
 
 #include "ShapeGradientMatrix.h"
-#include "itkParticleGeneralShapeMatrix.h"
+#include "ShapeMatrix.h"
 #include "itkParticleVectorFunction.h"
 
 namespace itk {
@@ -27,8 +27,8 @@ class ParticleMeshBasedGeneralEntropyGradientFunction : public ParticleVectorFun
       /** Type of particle system. */
       typedef typename Superclass::ParticleSystemType ParticleSystemType;
 
-  typedef ShapeMatrix ShapeDataType;
-  typedef ShapeGradientMatrix ShapeGradientType;
+  typedef shapeworks::ShapeMatrix ShapeDataType;
+  typedef shapeworks::ShapeGradientMatrix ShapeGradientType;
 
   typedef typename ShapeDataType::DataType DataType;
 

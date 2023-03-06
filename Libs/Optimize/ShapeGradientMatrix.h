@@ -10,8 +10,8 @@
 #include "itkWeakPointer.h"
 #include "vnl/vnl_matrix.h"
 
-namespace itk {
-/** \class ParticleGeneralShapeGradientMatrix
+namespace shapeworks {
+/** \class ShapeGradientMatrix
  *
  * \brief Each column describes a shape.  A shape may be composed of
  * m_DomainsPerShape domains (default 1). ALL DOMAINS ARE *NOT* ASSUMED TO HAVE THE
@@ -20,17 +20,17 @@ namespace itk {
  *
  * Each column represents a single shape.
  */
-class ShapeGradientMatrix : public vnl_matrix<double>, public ParticleAttribute {
+class ShapeGradientMatrix : public vnl_matrix<double>, public itk::ParticleAttribute {
  public:
   /** Standard class typedefs */
   typedef double DataType;
   typedef ShapeGradientMatrix Self;
   typedef ParticleAttribute Superclass;
-  typedef SmartPointer<Self> Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
-  typedef WeakPointer<const Self> ConstWeakPointer;
+  typedef itk::SmartPointer<Self> Pointer;
+  typedef itk::SmartPointer<const Self> ConstPointer;
+  typedef itk::WeakPointer<const Self> ConstWeakPointer;
 
-  typedef ParticleSystem ParticleSystemType;
+  typedef itk::ParticleSystem ParticleSystemType;
   /** Method for creation through the object factory. */
   itkNewMacro(Self)
 
@@ -74,14 +74,14 @@ class ShapeGradientMatrix : public vnl_matrix<double>, public ParticleAttribute 
 
   void SetValues(const ParticleSystemType* ps, int idx, int d);
 
-  virtual void DomainAddEventCallback(Object*, const EventObject& e) {
+  virtual void DomainAddEventCallback(Object*, const itk::EventObject& e) {
     const itk::ParticleDomainAddEvent& event = dynamic_cast<const itk::ParticleDomainAddEvent&>(e);
     unsigned int d = event.GetDomainIndex();
 
     if (d % m_DomainsPerShape == 0) this->ResizeMatrix(this->rows(), this->cols() + 3);  // 3 columns for every shape
   }
 
-  virtual void PositionAddEventCallback(Object* o, const EventObject& e) {
+  virtual void PositionAddEventCallback(Object* o, const itk::EventObject& e) {
     // update the size of matrix based on xyz, normals and number of attributes being used
     const itk::ParticlePositionAddEvent& event = dynamic_cast<const itk::ParticlePositionAddEvent&>(e);
     const itk::ParticleSystem* ps = dynamic_cast<const itk::ParticleSystem*>(o);
@@ -106,7 +106,7 @@ class ShapeGradientMatrix : public vnl_matrix<double>, public ParticleAttribute 
     this->SetValues(ps, idx, d);
   }
 
-  virtual void PositionSetEventCallback(Object* o, const EventObject& e) {
+  virtual void PositionSetEventCallback(Object* o, const itk::EventObject& e) {
     // update xyz, normals and number of attributes being used
     const itk::ParticlePositionSetEvent& event = dynamic_cast<const itk::ParticlePositionSetEvent&>(e);
     const itk::ParticleSystem* ps = dynamic_cast<const itk::ParticleSystem*>(o);
@@ -116,7 +116,7 @@ class ShapeGradientMatrix : public vnl_matrix<double>, public ParticleAttribute 
     this->SetValues(ps, idx, d);
   }
 
-  virtual void PositionRemoveEventCallback(Object*, const EventObject&) {
+  virtual void PositionRemoveEventCallback(Object*, const itk::EventObject&) {
     // NEED TO IMPLEMENT THIS
   }
 
@@ -131,7 +131,7 @@ class ShapeGradientMatrix : public vnl_matrix<double>, public ParticleAttribute 
   }
   virtual ~ShapeGradientMatrix() {}
 
-  void PrintSelf(std::ostream& os, Indent indent) const { Superclass::PrintSelf(os, indent); }
+  void PrintSelf(std::ostream& os, itk::Indent indent) const { Superclass::PrintSelf(os, indent); }
 
   int m_DomainsPerShape;
 

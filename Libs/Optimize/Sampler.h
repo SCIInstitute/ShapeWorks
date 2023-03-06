@@ -303,12 +303,12 @@ public:
     return m_LegacyShapeMatrix.GetPointer();
   }
 
-  itk::ShapeMatrix* GetGeneralShapeMatrix()
+  shapeworks::ShapeMatrix* GetGeneralShapeMatrix()
   {
     return m_GeneralShapeMatrix.GetPointer();
   }
 
-  itk::ShapeGradientMatrix* GetGeneralShapeGradientMatrix()
+  shapeworks::ShapeGradientMatrix* GetGeneralShapeGradientMatrix()
   {
     return m_GeneralShapeGradMatrix.GetPointer();
   }
@@ -514,8 +514,8 @@ protected:
   itk::ParticleShapeLinearRegressionMatrixAttribute::Pointer m_LinearRegressionShapeMatrix;
   itk::ParticleShapeMixedEffectsMatrixAttribute::Pointer m_MixedEffectsShapeMatrix;
 
-  itk::ShapeMatrix::Pointer m_GeneralShapeMatrix;
-  itk::ShapeGradientMatrix::Pointer m_GeneralShapeGradMatrix;
+  shapeworks::ShapeMatrix::Pointer m_GeneralShapeMatrix;
+  shapeworks::ShapeGradientMatrix::Pointer m_GeneralShapeGradMatrix;
 
   itk::ParticleMeshBasedGeneralEntropyGradientFunction<Dimension>::Pointer m_MeshBasedGeneralEntropyGradientFunction;
 

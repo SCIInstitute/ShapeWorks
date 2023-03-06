@@ -33,9 +33,9 @@ class LegacyShapeMatrix : public vnl_matrix<double>, public ParticleAttribute {
   itkTypeMacro(LegacyShapeMatrix, ParticleAttribute)
 
   /** Callbacks that may be defined by a subclass.  If a subclass defines one
-      of these callback methods, the corresponding flag in m_DefinedCallbacks
-      should be set to true so that the ParticleSystem will know to register
-      the appropriate event with this method. */
+       of these callback methods, the corresponding flag in m_DefinedCallbacks
+       should be set to true so that the ParticleSystem will know to register
+       the appropriate event with this method. */
   virtual void DomainAddEventCallback(Object*, const EventObject& e) {
     const itk::ParticleDomainAddEvent& event = dynamic_cast<const itk::ParticleDomainAddEvent&>(e);
     unsigned int d = event.GetDomainIndex();
@@ -145,7 +145,7 @@ class LegacyShapeMatrix : public vnl_matrix<double>, public ParticleAttribute {
 
  private:
   LegacyShapeMatrix(const Self&);  // purposely not implemented
-  void operator=(const Self&);                // purposely not implemented
+  void operator=(const Self&);     // purposely not implemented
 };
 
 }  // namespace itk

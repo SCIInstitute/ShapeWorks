@@ -9,8 +9,9 @@
 #include "itkParticleSystem.h"
 #include "itkWeakPointer.h"
 #include "vnl/vnl_matrix.h"
-namespace itk {
-/** \class ParticleGeneralShapeMatrix
+namespace shapeworks {
+
+/** \class ShapeMatrix
  *
  * \brief Each column describes a shape.  A shape may be composed of
  * m_DomainsPerShape domains (default 1). ALL DOMAINS ARE *NOT* ASSUMED TO HAVE THE
@@ -19,17 +20,17 @@ namespace itk {
  *
  * Each column represents a single shape.
  */
-class ShapeMatrix : public vnl_matrix<double>, public ParticleAttribute {
+class ShapeMatrix : public vnl_matrix<double>, public itk::ParticleAttribute {
  public:
   /** Standard class typedefs */
   typedef double DataType;
   typedef ShapeMatrix Self;
   typedef ParticleAttribute Superclass;
-  typedef SmartPointer<Self> Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
-  typedef WeakPointer<const Self> ConstWeakPointer;
+  typedef itk::SmartPointer<Self> Pointer;
+  typedef itk::SmartPointer<const Self> ConstPointer;
+  typedef itk::WeakPointer<const Self> ConstWeakPointer;
 
-  typedef ParticleSystem ParticleSystemType;
+  typedef itk::ParticleSystem ParticleSystemType;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self)
@@ -72,7 +73,7 @@ class ShapeMatrix : public vnl_matrix<double>, public ParticleAttribute {
     }
   }
 
-  virtual void DomainAddEventCallback(Object*, const EventObject& e) {
+  virtual void DomainAddEventCallback(Object*, const itk::EventObject& e) {
     const itk::ParticleDomainAddEvent& event = dynamic_cast<const itk::ParticleDomainAddEvent&>(e);
     unsigned int d = event.GetDomainIndex();
 
@@ -148,11 +149,11 @@ class ShapeMatrix : public vnl_matrix<double>, public ParticleAttribute {
     }
   }
 
-  virtual void PositionAddEventCallback(Object* o, const EventObject& e) {
+  virtual void PositionAddEventCallback(Object* o, const itk::EventObject& e) {
     const int VDimension = 3;
 
     // update the size of matrix based on xyz, normals and number of attributes being used
-    const ParticlePositionAddEvent& event = dynamic_cast<const ParticlePositionAddEvent&>(e);
+    const itk::ParticlePositionAddEvent& event = dynamic_cast<const itk::ParticlePositionAddEvent&>(e);
     const ParticleSystemType* ps = dynamic_cast<const ParticleSystemType*>(o);
     const int d = event.GetDomainIndex();
     const unsigned int idx = event.GetPositionIndex();
@@ -169,9 +170,9 @@ class ShapeMatrix : public vnl_matrix<double>, public ParticleAttribute {
     this->SetValues(ps, idx, d);
   }
 
-  virtual void PositionSetEventCallback(Object* o, const EventObject& e) {
+  virtual void PositionSetEventCallback(Object* o, const itk::EventObject& e) {
     // update xyz, normals and number of attributes being used
-    const ParticlePositionSetEvent& event = dynamic_cast<const ParticlePositionSetEvent&>(e);
+    const itk::ParticlePositionSetEvent& event = dynamic_cast<const itk::ParticlePositionSetEvent&>(e);
     const ParticleSystemType* ps = dynamic_cast<const ParticleSystemType*>(o);
     const int d = event.GetDomainIndex();
     const unsigned int idx = event.GetPositionIndex();
@@ -179,7 +180,7 @@ class ShapeMatrix : public vnl_matrix<double>, public ParticleAttribute {
     this->SetValues(ps, idx, d);
   }
 
-  virtual void PositionRemoveEventCallback(Object*, const EventObject&) {
+  virtual void PositionRemoveEventCallback(Object*, const itk::EventObject&) {
     // NEED TO IMPLEMENT THIS
   }
 
@@ -217,7 +218,7 @@ class ShapeMatrix : public vnl_matrix<double>, public ParticleAttribute {
   }
   virtual ~ShapeMatrix() {}
 
-  void PrintSelf(std::ostream& os, Indent indent) const { Superclass::PrintSelf(os, indent); }
+  void PrintSelf(std::ostream& os, itk::Indent indent) const { Superclass::PrintSelf(os, indent); }
 
   int m_DomainsPerShape;
 
@@ -232,4 +233,4 @@ class ShapeMatrix : public vnl_matrix<double>, public ParticleAttribute {
 
 };  // end class
 
-}  // namespace itk
+}  // namespace shapeworks
