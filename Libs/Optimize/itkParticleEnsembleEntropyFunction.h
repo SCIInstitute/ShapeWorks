@@ -2,6 +2,7 @@
 
 #include <vector>
 
+#include "itkParticleEnsembleEntropyFunction.h"
 #include "itkParticleShapeMatrixAttribute.h"
 #include "itkParticleVectorFunction.h"
 
@@ -171,4 +172,3 @@ class ParticleEnsembleEntropyFunction : public ParticleVectorFunction {
 
 }  // namespace itk
 
-#include "itkParticleEnsembleEntropyFunction.txx"

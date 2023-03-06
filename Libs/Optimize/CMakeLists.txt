@@ -29,6 +29,21 @@ target_link_libraries(Optimize PUBLIC
   ${SW_PYTHON_LIBS}
   )
 
+
+IF(USE_PCH)
+  target_precompile_headers(Optimize PRIVATE
+    "<vtkPolyData.h>"
+    "<itkImage.h>"
+    "<Eigen/Dense>"
+    "<Eigen/Sparse>"
+    "<Eigen/Core>"
+    "<map>"
+    "<itkCommand.h>"
+    "<openvdb/openvdb.h>"cd 
+    )
+ENDIF(USE_PCH)
+
+
 # Create an interface library that will bring pybind11::embed along
 # This can't be used to create the shared libary for the Python API
 # Otherwise, you have two pythons and the init clashes an gives a

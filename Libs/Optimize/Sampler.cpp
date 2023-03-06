@@ -15,7 +15,7 @@ Sampler::Sampler() {
   m_ParticleSystem = itk::ParticleSystem::New();
 
   m_GradientFunction = itk::ParticleEntropyGradientFunction<ImageType::PixelType, Dimension>::New();
-  m_CurvatureGradientFunction = itk::ParticleCurvatureEntropyGradientFunction<ImageType::PixelType, Dimension>::New();
+  m_CurvatureGradientFunction = itk::ParticleCurvatureEntropyGradientFunction::New();
 
   m_ModifiedCotangentGradientFunction =
       itk::ParticleModifiedCotangentEntropyGradientFunction<ImageType::PixelType, Dimension>::New();
@@ -34,7 +34,7 @@ Sampler::Sampler() {
   m_EnsembleEntropyFunction = itk::ParticleEnsembleEntropyFunction::New();
   m_EnsembleRegressionEntropyFunction = itk::ParticleEnsembleEntropyFunction::New();
   m_EnsembleMixedEffectsEntropyFunction = itk::ParticleEnsembleEntropyFunction::New();
-  m_MeshBasedGeneralEntropyGradientFunction = itk::CorrespondenceFunction::New();
+  m_CorrespondenceFunction = itk::CorrespondenceFunction::New();
 
   m_LegacyShapeMatrix = itk::LegacyShapeMatrix::New();
   m_GeneralShapeMatrix = shapeworks::ShapeMatrix::New();
@@ -48,8 +48,8 @@ Sampler::Sampler() {
   m_EnsembleRegressionEntropyFunction->SetShapeMatrix(m_LinearRegressionShapeMatrix);
   m_EnsembleMixedEffectsEntropyFunction->SetShapeMatrix(m_MixedEffectsShapeMatrix);
 
-  m_MeshBasedGeneralEntropyGradientFunction->SetShapeData(m_GeneralShapeMatrix);
-  m_MeshBasedGeneralEntropyGradientFunction->SetShapeGradient(m_GeneralShapeGradMatrix);
+  m_CorrespondenceFunction->SetShapeData(m_GeneralShapeMatrix);
+  m_CorrespondenceFunction->SetShapeGradient(m_GeneralShapeGradMatrix);
 
   m_ParticleSystem->RegisterAttribute(m_LegacyShapeMatrix);
   m_ParticleSystem->RegisterAttribute(m_LinearRegressionShapeMatrix);

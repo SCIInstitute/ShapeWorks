@@ -3,6 +3,7 @@
 #include "itkDataObject.h"
 #include "itkParticleAttribute.h"
 #include "itkParticleContainer.h"
+#include "itkParticleSystem.h"
 #include "itkWeakPointer.h"
 #include "vnl/vnl_matrix.h"
 
