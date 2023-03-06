@@ -7,8 +7,9 @@
 #include "itkWeakPointer.h"
 
 namespace itk {
-/** \class ParticleContainer
- *  \brief
+/*!
+ * @class ParticleContainer
+ * @brief This class seems to be only a wrapper around std::vector implementing ITK DataObject (for smart pointer?)
  */
 template <class T>
 class ParticleContainer : public DataObject {

@@ -8,8 +8,9 @@
 
 namespace itk {
 
-/** \class ParticleAttribute
- *  \brief
+/*!
+ * @class ParticleAttribute
+ * @brief This class appears to be an listener interface for an observer pattern
  */
 class ParticleAttribute : public DataObject {
  public:
@@ -55,7 +56,6 @@ class ParticleAttribute : public DataObject {
       should be set to true so that the ParticleSystem will know to register
       the appropriate event with this method. */
 
-  virtual void EventWithIndexCallback(Object*, const EventObject&) {}
   virtual void DomainAddEventCallback(Object*, const EventObject&) {}
   virtual void TransformSetEventCallback(Object*, const EventObject&) {}
   virtual void PrefixTransformSetEventCallback(Object*, const EventObject&) {}

@@ -31,11 +31,9 @@ class ShapeGradientMatrix : public vnl_matrix<double>, public itk::ParticleAttri
   typedef itk::WeakPointer<const Self> ConstWeakPointer;
 
   typedef itk::ParticleSystem ParticleSystemType;
-  /** Method for creation through the object factory. */
-  itkNewMacro(Self)
 
-  /** Run-time type information (and related methods). */
-  itkTypeMacro(ShapeGradientMatrix, ParticleAttribute)
+  itkNewMacro(Self);
+  itkTypeMacro(ShapeGradientMatrix, ParticleAttribute);
 
   virtual void BeforeIteration() {}
   virtual void AfterIteration() {}
@@ -50,11 +48,15 @@ class ShapeGradientMatrix : public vnl_matrix<double>, public itk::ParticleAttri
   void SetAttributeScales(const std::vector<double>& s) { m_AttributeScales = s; }
 
   void SetXYZ(int i, bool val) {
-    if (m_use_xyz.size() != m_DomainsPerShape) m_use_xyz.resize(m_DomainsPerShape);
+    if (m_use_xyz.size() != m_DomainsPerShape) {
+      m_use_xyz.resize(m_DomainsPerShape);
+    }
     m_use_xyz[i] = val;
   }
   void SetNormals(int i, bool val) {
-    if (m_use_normals.size() != m_DomainsPerShape) m_use_normals.resize(m_DomainsPerShape);
+    if (m_use_normals.size() != m_DomainsPerShape) {
+      m_use_normals.resize(m_DomainsPerShape);
+    }
     m_use_normals[i] = val;
   }
 
@@ -68,7 +70,9 @@ class ShapeGradientMatrix : public vnl_matrix<double>, public itk::ParticleAttri
 
     // Copy old data into new matrix.
     for (unsigned int c = 0; c < tmp.cols(); c++) {
-      for (unsigned int r = 0; r < tmp.rows(); r++) this->operator()(r, c) = tmp(r, c);
+      for (unsigned int r = 0; r < tmp.rows(); r++) {
+        this->operator()(r, c) = tmp(r, c);
+      }
     }
   }
 
@@ -78,7 +82,9 @@ class ShapeGradientMatrix : public vnl_matrix<double>, public itk::ParticleAttri
     const itk::ParticleDomainAddEvent& event = dynamic_cast<const itk::ParticleDomainAddEvent&>(e);
     unsigned int d = event.GetDomainIndex();
 
-    if (d % m_DomainsPerShape == 0) this->ResizeMatrix(this->rows(), this->cols() + 3);  // 3 columns for every shape
+    if (d % m_DomainsPerShape == 0) {
+      this->ResizeMatrix(this->rows(), this->cols() + 3);  // 3 columns for every shape
+    }
   }
 
   virtual void PositionAddEventCallback(Object* o, const itk::EventObject& e) {
@@ -146,4 +152,4 @@ class ShapeGradientMatrix : public vnl_matrix<double>, public itk::ParticleAttri
 
 };  // end class
 
-}  // namespace itk
+}  // namespace shapeworks
