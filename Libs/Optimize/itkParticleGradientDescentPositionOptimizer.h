@@ -53,7 +53,7 @@ public:
   typedef ParticleSystem ParticleSystemType;
 
   /** Type of the gradient function. */
-  typedef ParticleVectorFunction<VDimension> GradientFunctionType;
+  typedef ParticleVectorFunction GradientFunctionType;
   
   /** Numerical vector type. */
   typedef typename GradientFunctionType::VectorType VectorType;

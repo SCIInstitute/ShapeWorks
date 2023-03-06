@@ -157,7 +157,7 @@ public:
   { return m_Rho; }
 
 
-  virtual typename ParticleVectorFunction<VDimension>::Pointer Clone()
+  virtual ParticleVectorFunction::Pointer Clone()
   {
     typename ParticleOmegaGradientFunction<TGradientNumericType, VDimension>::Pointer copy = ParticleOmegaGradientFunction<TGradientNumericType, VDimension>::New();
     copy->SetParticleSystem(this->GetParticleSystem());
@@ -182,7 +182,7 @@ public:
     copy->spherePts = this->spherePts;
     copy->CToP = this->CToP;
 
-    return (typename ParticleVectorFunction<VDimension>::Pointer)copy;
+    return (ParticleVectorFunction::Pointer)copy;
   }
 
 protected:

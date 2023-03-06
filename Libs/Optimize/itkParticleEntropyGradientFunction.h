@@ -1,12 +1,12 @@
 #pragma once
 
-#include "itkParticleVectorFunction.h"
-#include "itkParticleContainerArrayAttribute.h"
-#include "ParticleImageDomainWithGradients.h"
 #include <vector>
 
-namespace itk
-{
+#include "ParticleImageDomainWithGradients.h"
+#include "itkParticleContainerArrayAttribute.h"
+#include "itkParticleVectorFunction.h"
+
+namespace itk {
 
 /**
  * \class ParticleEntropyGradientFunction
@@ -59,15 +59,14 @@ namespace itk
  *
  */
 template <class TGradientNumericType, unsigned int VDimension>
-class ParticleEntropyGradientFunction : public ParticleVectorFunction<VDimension>
-{
-public:
- /** Standard class typedefs. */
+class ParticleEntropyGradientFunction : public ParticleVectorFunction {
+ public:
+  /** Standard class typedefs. */
   typedef ParticleEntropyGradientFunction Self;
-  typedef SmartPointer<Self>  Pointer;
-  typedef SmartPointer<const Self>  ConstPointer;
-  typedef ParticleVectorFunction<VDimension> Superclass;
-  itkTypeMacro( ParticleEntropyGradientFunction, ParticleVectorFunction);
+  typedef SmartPointer<Self> Pointer;
+  typedef SmartPointer<const Self> ConstPointer;
+  typedef ParticleVectorFunction Superclass;
+  itkTypeMacro(ParticleEntropyGradientFunction, ParticleVectorFunction);
 
   /** Data type representing individual gradient components. */
   typedef TGradientNumericType GradientNumericType;
@@ -81,8 +80,8 @@ public:
   /** Vector & Point types. */
   typedef typename Superclass::VectorType VectorType;
   typedef typename ParticleSystemType::PointType PointType;
-  typedef  vnl_vector_fixed<TGradientNumericType, VDimension> GradientVectorType;
-  
+  typedef vnl_vector_fixed<TGradientNumericType, VDimension> GradientVectorType;
+
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
@@ -93,92 +92,66 @@ public:
       argument is the index of the domain within that particle system.  The
       third argument is the index of the particle location within the given
       domain. */
-  virtual VectorType Evaluate(unsigned int, unsigned int, const ParticleSystemType *,
-                              double &) const;
+  virtual VectorType Evaluate(unsigned int, unsigned int, const ParticleSystemType*, double&) const;
 
-  virtual VectorType Evaluate(unsigned int, unsigned int, const ParticleSystemType *,
-                              double &, double &) const
-  {
+  virtual VectorType Evaluate(unsigned int, unsigned int, const ParticleSystemType*, double&, double&) const {
     itkExceptionMacro("This method not implemented");
     return VectorType();
   }
-  virtual double Energy(unsigned int, unsigned int, const ParticleSystemType *) const
-  {
+  virtual double Energy(unsigned int, unsigned int, const ParticleSystemType*) const {
     itkExceptionMacro("This method not implemented");
     return 0.0;
   }
 
-  virtual void ResetBuffers()
-  {
-    m_SpatialSigmaCache->ZeroAllValues();
-  }
-    
-  
+  virtual void ResetBuffers() { m_SpatialSigmaCache->ZeroAllValues(); }
+
   /** Estimate the best sigma for Parzen windowing in a given neighborhood.
       The best sigma is the sigma that maximizes probability at the given point  */
-  virtual double EstimateSigma(unsigned int idx, const typename ParticleSystemType::PointVectorType &neighborhood, const shapeworks::ParticleDomain *domain,
-                                const std::vector<double> &weights,
-                                    const PointType &pos, double initial_sigma,  double precision,  int &err) const;
+  virtual double EstimateSigma(unsigned int idx, const typename ParticleSystemType::PointVectorType& neighborhood,
+                               const shapeworks::ParticleDomain* domain, const std::vector<double>& weights,
+                               const PointType& pos, double initial_sigma, double precision, int& err) const;
 
   /** Returns a weighting coefficient based on the angle between two
      vectors. Weights smoothly approach zero as the angle between two
      normals approaches 90 degrees. */
-  TGradientNumericType AngleCoefficient(const GradientVectorType&,
-                                        const GradientVectorType&) const;
-  
+  TGradientNumericType AngleCoefficient(const GradientVectorType&, const GradientVectorType&) const;
+
   /** Minimum radius of the neighborhood of points that are considered in the
       calculation. The neighborhood is a spherical radius in 3D space. The
       actual radius used in a calculation may exceed this value, but will not
       exceed the MaximumNeighborhoodRadius. */
-  void SetMinimumNeighborhoodRadius( double s)
-  { m_MinimumNeighborhoodRadius = s; }
-  double GetMinimumNeighborhoodRadius() const
-  { return m_MinimumNeighborhoodRadius; }
+  void SetMinimumNeighborhoodRadius(double s) { m_MinimumNeighborhoodRadius = s; }
+  double GetMinimumNeighborhoodRadius() const { return m_MinimumNeighborhoodRadius; }
 
   /** Maximum radius of the neighborhood of points that are considered in the
       calculation. The neighborhood is a spherical radius in 3D space. */
-  void SetMaximumNeighborhoodRadius( double s)
-  { m_MaximumNeighborhoodRadius = s; }
-  double GetMaximumNeighborhoodRadius() const
-  { return m_MaximumNeighborhoodRadius; }
+  void SetMaximumNeighborhoodRadius(double s) { m_MaximumNeighborhoodRadius = s; }
+  double GetMaximumNeighborhoodRadius() const { return m_MaximumNeighborhoodRadius; }
 
   /** Numerical parameters*/
-  void SetFlatCutoff(double s)
-  { m_FlatCutoff = s; }
-  double GetFlatCutoff() const
-  { return m_FlatCutoff; }
-  void SetNeighborhoodToSigmaRatio(double s)
-  { m_NeighborhoodToSigmaRatio = s; }
-  double GetNeighborhoodToSigmaRatio() const
-  { return m_NeighborhoodToSigmaRatio; }
+  void SetFlatCutoff(double s) { m_FlatCutoff = s; }
+  double GetFlatCutoff() const { return m_FlatCutoff; }
+  void SetNeighborhoodToSigmaRatio(double s) { m_NeighborhoodToSigmaRatio = s; }
+  double GetNeighborhoodToSigmaRatio() const { return m_NeighborhoodToSigmaRatio; }
 
   /**Access the cache of sigma values for each particle position.  This cache
      is populated by registering this object as an observer of the correct
      particle system (see SetParticleSystem).*/
-  void SetSpatialSigmaCache( SigmaCacheType *s)
-  {    m_SpatialSigmaCache = s;  }
-  SigmaCacheType *GetSpatialSigmaCache()
-  {   return  m_SpatialSigmaCache.GetPointer();  }
-  const SigmaCacheType *GetSpatialSigmaCache() const
-  {   return  m_SpatialSigmaCache.GetPointer();  }
+  void SetSpatialSigmaCache(SigmaCacheType* s) { m_SpatialSigmaCache = s; }
+  SigmaCacheType* GetSpatialSigmaCache() { return m_SpatialSigmaCache.GetPointer(); }
+  const SigmaCacheType* GetSpatialSigmaCache() const { return m_SpatialSigmaCache.GetPointer(); }
 
   /** Compute a set of weights based on the difference in the normals of a
       central point and each of its neighbors.  Difference of > 90 degrees
       results in a weight of 0. */
-  void ComputeAngularWeights(const PointType &,
-                             int,
-                             const typename ParticleSystemType::PointVectorType &,
-                             const shapeworks::ParticleDomain *,
-                             std::vector<double> &) const;
-
+  void ComputeAngularWeights(const PointType&, int, const typename ParticleSystemType::PointVectorType&,
+                             const shapeworks::ParticleDomain*, std::vector<double>&) const;
 
   //  void ComputeNeighborho0d();
-  
 
-  virtual typename ParticleVectorFunction<VDimension>::Pointer Clone()
-  {
+  virtual ParticleVectorFunction::Pointer Clone() {
     typename ParticleEntropyGradientFunction<TGradientNumericType, VDimension>::Pointer copy =
-      ParticleEntropyGradientFunction<TGradientNumericType, VDimension>::New();
+        ParticleEntropyGradientFunction<TGradientNumericType, VDimension>::New();
 
     // from itkParticleVectorFunction
     copy->m_DomainNumber = this->m_DomainNumber;
@@ -189,18 +162,16 @@ public:
     copy->m_MaximumNeighborhoodRadius = this->m_MaximumNeighborhoodRadius;
     copy->m_MinimumNeighborhoodRadius = this->m_MinimumNeighborhoodRadius;
     copy->m_NeighborhoodToSigmaRatio = this->m_NeighborhoodToSigmaRatio;
-    copy->m_SpatialSigmaCache =  this->m_SpatialSigmaCache;
+    copy->m_SpatialSigmaCache = this->m_SpatialSigmaCache;
 
-    return (typename ParticleVectorFunction<VDimension>::Pointer)copy;
-
+    return (typename ParticleVectorFunction::Pointer)copy;
   }
 
-protected:
-  
+ protected:
   ParticleEntropyGradientFunction() : m_FlatCutoff(0.05), m_NeighborhoodToSigmaRatio(3.0) {}
   virtual ~ParticleEntropyGradientFunction() {}
-  void operator=(const ParticleEntropyGradientFunction &);
-  ParticleEntropyGradientFunction(const ParticleEntropyGradientFunction &);
+  void operator=(const ParticleEntropyGradientFunction&);
+  ParticleEntropyGradientFunction(const ParticleEntropyGradientFunction&);
 
   double m_MinimumNeighborhoodRadius;
   double m_MaximumNeighborhoodRadius;
@@ -209,16 +180,6 @@ protected:
   typename SigmaCacheType::Pointer m_SpatialSigmaCache;
 };
 
-
-} //end namespace
-
-#if ITK_TEMPLATE_EXPLICIT
-# include "Templates/itkParticleEntropyGradientFunction+-.h"
-#endif
-
-#if ITK_TEMPLATE_TXX
-# include "itkParticleEntropyGradientFunction.txx"
-#endif
+}  // namespace itk
 
 #include "itkParticleEntropyGradientFunction.txx"
-

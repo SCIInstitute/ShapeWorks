@@ -157,7 +157,7 @@ public:
     return m_IsSharedBoundaryEnabled;
   }
 
-  virtual typename ParticleVectorFunction<VDimension>::Pointer Clone()
+  virtual typename ParticleVectorFunction::Pointer Clone()
   {
     // todo Do we really need to clone all of this?
 
@@ -182,7 +182,7 @@ public:
     copy->m_DomainNumber = this->m_DomainNumber;
     copy->m_ParticleSystem = this->m_ParticleSystem;
 
-    return (typename ParticleVectorFunction<VDimension>::Pointer)copy;
+    return (ParticleVectorFunction::Pointer)copy;
   }
 
 protected:

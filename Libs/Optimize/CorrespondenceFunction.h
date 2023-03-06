@@ -10,23 +10,23 @@
 namespace itk {
 
 //! Correspondence term
-class CorrespondenceFunction : public ParticleVectorFunction<3> {
+class CorrespondenceFunction : public ParticleVectorFunction {
  public:
   constexpr static int VDimension = 3;
   /** Standard class typedefs. */
   typedef CorrespondenceFunction Self;
   typedef SmartPointer<Self> Pointer;
   typedef SmartPointer<const Self> ConstPointer;
-  typedef ParticleVectorFunction<VDimension> Superclass;
+  typedef ParticleVectorFunction Superclass;
   itkTypeMacro(CorrespondenceFunction, ParticleVectorFunction)
 
   /** Type of particle system. */
-  typedef typename Superclass::ParticleSystemType ParticleSystemType;
+  typedef Superclass::ParticleSystemType ParticleSystemType;
 
   typedef shapeworks::ShapeMatrix ShapeDataType;
   typedef shapeworks::ShapeGradientMatrix ShapeGradientType;
 
-  typedef typename ShapeDataType::DataType DataType;
+  typedef ShapeDataType::DataType DataType;
 
   /** Vector & Point types. */
   typedef typename Superclass::VectorType VectorType;
@@ -35,7 +35,7 @@ class CorrespondenceFunction : public ParticleVectorFunction<3> {
   typedef vnl_matrix<DataType> vnl_matrix_type;
 
   /** Method for creation through the object factory. */
-  itkNewMacro(Self)
+  itkNewMacro(Self);
 
   /** Dimensionality of the domain of the particle system. */
   itkStaticConstMacro(Dimension, unsigned int, VDimension);
@@ -130,7 +130,7 @@ class CorrespondenceFunction : public ParticleVectorFunction<3> {
     return flag;
   }
 
-  virtual typename ParticleVectorFunction<VDimension>::Pointer Clone() {
+  virtual ParticleVectorFunction::Pointer Clone() {
     auto copy = CorrespondenceFunction::New();
 
     // from itkParticleVectorFunction
@@ -158,7 +158,7 @@ class CorrespondenceFunction : public ParticleVectorFunction<3> {
     copy->m_ShapeData = this->m_ShapeData;
     copy->m_ShapeGradient = this->m_ShapeGradient;
 
-    return (typename ParticleVectorFunction<VDimension>::Pointer)copy;
+    return (ParticleVectorFunction::Pointer)copy;
   }
 
  protected:

@@ -313,33 +313,33 @@ public:
     return m_GeneralShapeGradMatrix.GetPointer();
   }
 
-  itk::ParticleDualVectorFunction<Dimension>* GetLinkingFunction()
+  itk::ParticleDualVectorFunction* GetLinkingFunction()
   { return m_LinkingFunction.GetPointer(); }
 
-  itk::ParticleEnsembleEntropyFunction<Dimension>* GetEnsembleEntropyFunction()
+  itk::ParticleEnsembleEntropyFunction* GetEnsembleEntropyFunction()
   { return m_EnsembleEntropyFunction.GetPointer(); }
 
-  itk::ParticleEnsembleEntropyFunction<Dimension>* GetEnsembleRegressionEntropyFunction()
+  itk::ParticleEnsembleEntropyFunction* GetEnsembleRegressionEntropyFunction()
   { return m_EnsembleRegressionEntropyFunction.GetPointer(); }
 
-  itk::ParticleEnsembleEntropyFunction<Dimension>* GetEnsembleMixedEffectsEntropyFunction()
+  itk::ParticleEnsembleEntropyFunction* GetEnsembleMixedEffectsEntropyFunction()
   { return m_EnsembleMixedEffectsEntropyFunction.GetPointer(); }
 
   itk::CorrespondenceFunction*
   GetMeshBasedGeneralEntropyGradientFunction()
   { return m_MeshBasedGeneralEntropyGradientFunction.GetPointer(); }
 
-  const itk::ParticleDualVectorFunction<Dimension>* GetLinkingFunction() const
+  const itk::ParticleDualVectorFunction* GetLinkingFunction() const
   { return m_LinkingFunction.GetPointer(); }
 
-  const itk::ParticleEnsembleEntropyFunction<Dimension>* GetEnsembleEntropyFunction() const
+  const itk::ParticleEnsembleEntropyFunction* GetEnsembleEntropyFunction() const
   { return m_EnsembleEntropyFunction.GetPointer(); }
 
-  const itk::ParticleEnsembleEntropyFunction<Dimension>*
+  const itk::ParticleEnsembleEntropyFunction*
   GetEnsembleRegressionEntropyFunction() const
   { return m_EnsembleRegressionEntropyFunction.GetPointer(); }
 
-  const itk::ParticleEnsembleEntropyFunction<Dimension>*
+  const itk::ParticleEnsembleEntropyFunction*
   GetEnsembleMixedEffectsEntropyFunction() const
   { return m_EnsembleMixedEffectsEntropyFunction.GetPointer(); }
 
@@ -503,11 +503,11 @@ protected:
 
   shapeworks::CorrespondenceMode m_CorrespondenceMode;
 
-  itk::ParticleDualVectorFunction<Dimension>::Pointer m_LinkingFunction;
+  itk::ParticleDualVectorFunction::Pointer m_LinkingFunction;
 
-  itk::ParticleEnsembleEntropyFunction<Dimension>::Pointer m_EnsembleEntropyFunction;
-  itk::ParticleEnsembleEntropyFunction<Dimension>::Pointer m_EnsembleRegressionEntropyFunction;
-  itk::ParticleEnsembleEntropyFunction<Dimension>::Pointer m_EnsembleMixedEffectsEntropyFunction;
+  itk::ParticleEnsembleEntropyFunction::Pointer m_EnsembleEntropyFunction;
+  itk::ParticleEnsembleEntropyFunction::Pointer m_EnsembleRegressionEntropyFunction;
+  itk::ParticleEnsembleEntropyFunction::Pointer m_EnsembleMixedEffectsEntropyFunction;
 
   itk::LegacyShapeMatrix::Pointer m_LegacyShapeMatrix;
 
