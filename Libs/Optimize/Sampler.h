@@ -385,8 +385,8 @@ class Sampler {
   SamplingFunction::Pointer m_GradientFunction;
   CurvatureSamplingFunction::Pointer m_CurvatureGradientFunction;
 
-  ParticleContainerArrayAttribute<double, Dimension>::Pointer m_Sigma1Cache;
-  ParticleContainerArrayAttribute<double, Dimension>::Pointer m_Sigma2Cache;
+  GenericContainerArray<double>::Pointer m_Sigma1Cache;
+  GenericContainerArray<double>::Pointer m_Sigma2Cache;
 
   MeanCurvatureCacheType::Pointer m_MeanCurvatureCache;
 

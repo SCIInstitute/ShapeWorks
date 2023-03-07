@@ -13,14 +13,14 @@ namespace shapeworks
  *  \brief
  */
 template <class TNumericType, unsigned int VDimension>
-class ITK_EXPORT ParticleMeanCurvatureAttribute
-  : public ParticleContainerArrayAttribute<TNumericType,VDimension>
+class ParticleMeanCurvatureAttribute
+  : public GenericContainerArray<TNumericType>
 {
 public:
   /** Standard class typedefs */
   typedef TNumericType NumericType;
   typedef ParticleMeanCurvatureAttribute Self;
-  typedef ParticleContainerArrayAttribute<TNumericType,VDimension> Superclass;
+  typedef GenericContainerArray<TNumericType> Superclass;
   typedef itk::SmartPointer<Self>  Pointer;
   typedef itk::SmartPointer<const Self>  ConstPointer;
   typedef itk::WeakPointer<const Self>  ConstWeakPointer;
@@ -34,7 +34,7 @@ public:
   itkNewMacro(Self);
   
   /** Run-time type information (and related methods). */
-  itkTypeMacro(ParticleMeanCurvatureAttribute, ParticleContainerArrayAttribute);
+  itkTypeMacro(ParticleMeanCurvatureAttribute, GenericContainerArray);
 
   void SetVerbosity(unsigned int val)
   {

@@ -2,26 +2,25 @@
 
 #include <vector>
 
-#include "itkDataObject.h"
-#include "Observer.h"
 #include "GenericContainer.h"
+#include "Observer.h"
+#include "itkDataObject.h"
 #include "itkParticleEvents.h"
 #include "itkWeakPointer.h"
 
 namespace shapeworks {
 
 /*!
- * @class ParticleContainerArrayAttribute
- * @brief This class appears to be an array of ParticleContainers (e.g. std::vector) that implements the ParticleAttribute
- * listener interface.  The array size tracks the number of domains in the system.
+ * @class GenericContainerArray
+ * @brief This class appears to be an array of GenericContainers (e.g. std::vector) that implements the Observer
+ * interface.  The array size tracks the number of domains in the system.  E.g. one per domain
  */
-template <class T, unsigned int VDimension>
-class ParticleContainerArrayAttribute : public std::vector<typename GenericContainer<T>::Pointer>,
-                                                   public Observer {
+template <class T>
+class GenericContainerArray : public std::vector<typename GenericContainer<T>::Pointer>, public Observer {
  public:
   /** Standard class typedefs */
   typedef T DataType;
-  typedef ParticleContainerArrayAttribute Self;
+  typedef GenericContainerArray Self;
   typedef Observer Superclass;
   typedef itk::SmartPointer<Self> Pointer;
   typedef itk::SmartPointer<const Self> ConstPointer;
@@ -60,18 +59,18 @@ class ParticleContainerArrayAttribute : public std::vector<typename GenericConta
   }
 
  protected:
-  ParticleContainerArrayAttribute() {
+  GenericContainerArray() {
     this->m_DefinedCallbacks.DomainAddEvent = true;
     this->m_DefinedCallbacks.PositionAddEvent = true;
     this->m_DefinedCallbacks.PositionRemoveEvent = true;
   }
-  virtual ~ParticleContainerArrayAttribute(){};
+  virtual ~GenericContainerArray(){};
 
   void PrintSelf(std::ostream& os, itk::Indent indent) const { Superclass::PrintSelf(os, indent); }
 
  private:
-  ParticleContainerArrayAttribute(const Self&);  // purposely not implemented
-  void operator=(const Self&);                   // purposely not implemented
+  GenericContainerArray(const Self&);  // purposely not implemented
+  void operator=(const Self&);         // purposely not implemented
 };
 
 }  // namespace shapeworks

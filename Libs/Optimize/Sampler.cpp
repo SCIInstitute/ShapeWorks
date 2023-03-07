@@ -51,12 +51,12 @@ Sampler::Sampler() {
 
 void Sampler::AllocateDataCaches() {
   // Set up the various data caches that the optimization functions will use.
-  m_Sigma1Cache = ParticleContainerArrayAttribute<double, Dimension>::New();
+  m_Sigma1Cache = GenericContainerArray<double>::New();
   m_ParticleSystem->RegisterAttribute(m_Sigma1Cache);
   m_GradientFunction->SetSpatialSigmaCache(m_Sigma1Cache);
   m_CurvatureGradientFunction->SetSpatialSigmaCache(m_Sigma1Cache);
 
-  m_Sigma2Cache = ParticleContainerArrayAttribute<double, Dimension>::New();
+  m_Sigma2Cache = GenericContainerArray<double>::New();
   m_ParticleSystem->RegisterAttribute(m_Sigma2Cache);
 
   m_MeanCurvatureCache = ParticleMeanCurvatureAttribute<ImageType::PixelType, Dimension>::New();

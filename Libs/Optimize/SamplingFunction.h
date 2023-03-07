@@ -75,7 +75,7 @@ class SamplingFunction : public VectorFunction {
   typedef TGradientNumericType GradientNumericType;
 
   /** Cache type for the sigma values. */
-  typedef ParticleContainerArrayAttribute<double, VDimension> SigmaCacheType;
+  typedef GenericContainerArray<double> SigmaCacheType;
 
   /** Vector & Point types. */
   typedef typename Superclass::VectorType VectorType;
