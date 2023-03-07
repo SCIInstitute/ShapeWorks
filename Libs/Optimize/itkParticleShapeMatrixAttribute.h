@@ -6,6 +6,7 @@
 #include "itkParticleSystem.h"
 #include "itkWeakPointer.h"
 #include "vnl/vnl_matrix.h"
+#include <cmath>
 
 namespace itk {
 /** \class ParticleShapeMatrixAttribute
@@ -112,7 +113,7 @@ class LegacyShapeMatrix : public vnl_matrix<double>, public ParticleAttribute {
     bool flag = false;
     for (unsigned int r = 0; r < this->rows(); r++) {
       for (unsigned int c = 0; c < this->cols(); c++) {
-        if (isnan(this->operator()(r, c))) {
+        if (std::isnan(this->operator()(r, c))) {
           flag = true;
           break;
         }

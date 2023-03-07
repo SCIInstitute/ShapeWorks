@@ -2,6 +2,7 @@
 
 #include <numeric>
 #include <vector>
+#include <cmath>
 
 #include "ShapeGradientMatrix.h"
 #include "ShapeMatrix.h"
@@ -121,7 +122,7 @@ class CorrespondenceFunction : public ParticleVectorFunction {
     bool flag = false;
     for (int i = 0; i < mat.rows(); i++) {
       for (int j = 0; j < mat.cols(); j++) {
-        if (isnan(mat(i, j))) {
+        if (std::isnan(mat(i, j))) {
           flag = true;
           break;
         }
