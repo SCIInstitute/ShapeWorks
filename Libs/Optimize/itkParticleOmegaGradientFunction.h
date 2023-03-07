@@ -1,6 +1,6 @@
 #pragma once
 
-#include "itkParticleEntropyGradientFunction.h"
+#include "SamplingFunction.h"
 #include "ParticleImageDomainWithGradients.h"
 #include "ParticleImageDomainWithCurvature.h"
 #include "itkParticleMeanCurvatureAttribute.h"

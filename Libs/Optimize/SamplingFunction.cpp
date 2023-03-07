@@ -1,6 +1,6 @@
 
 
-#include "itkParticleEntropyGradientFunction.h"
+#include "SamplingFunction.h"
 
 #include <Logging.h>
 

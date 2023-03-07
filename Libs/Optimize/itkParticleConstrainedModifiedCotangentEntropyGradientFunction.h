@@ -8,7 +8,7 @@
 #include "ParticleImageDomainWithGradients.h"
 #include "itkCommand.h"
 #include "itkMath.h"
-#include "itkParticleEntropyGradientFunction.h"
+#include "SamplingFunction.h"
 #include "itkParticleMeanCurvatureAttribute.h"
 
 #define NBHD_SIGMA_FACTOR 1.3

@@ -3,7 +3,7 @@
 #include "ParticleImageDomainWithCurvature.h"
 #include "ParticleImageDomainWithGradients.h"
 #include "itkCommand.h"
-#include "itkParticleEntropyGradientFunction.h"
+#include "SamplingFunction.h"
 #include "itkParticleMeanCurvatureAttribute.h"
 #include "itkParticleSurfaceNeighborhood.h"
 

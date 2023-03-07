@@ -14,7 +14,7 @@
 #include "CurvatureSamplingFunction.h"
 #include "itkParticleDualVectorFunction.h"
 #include "itkParticleEnsembleEntropyFunction.h"
-#include "itkParticleEntropyGradientFunction.h"
+#include "SamplingFunction.h"
 #include "itkParticleGradientDescentPositionOptimizer.h"
 #include "itkParticleMeanCurvatureAttribute.h"
 #include "itkParticleModifiedCotangentEntropyGradientFunction.h"

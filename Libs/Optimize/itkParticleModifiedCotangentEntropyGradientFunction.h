@@ -3,17 +3,13 @@
 #include "ParticleImageDomainWithCurvature.h"
 #include "ParticleImageDomainWithGradients.h"
 #include "itkCommand.h"
-#include "itkParticleEntropyGradientFunction.h"
+#include "SamplingFunction.h"
 #include "itkParticleMeanCurvatureAttribute.h"
 
-// PRATEEP
 #include <math.h>
-
 #include <fstream>
-
 #include "itkMath.h"
 
-// end PRATEEP
 
 namespace itk {
 
