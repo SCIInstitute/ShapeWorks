@@ -16,7 +16,7 @@
 namespace shapeworks {
 
 /**
- * \class ParticleConstrainedModifiedCotangentEntropyGradientFunction
+ * \class ConstrainedModifiedCotangentSamplingFunction
  *
  * This function returns an estimate of the gradient of the entropy of a
  * particle distribution with respect to change in position of a specific
@@ -34,15 +34,14 @@ namespace shapeworks {
  *
  */
 template <class TGradientNumericType, unsigned int VDimension>
-class ParticleConstrainedModifiedCotangentEntropyGradientFunction
-    : public SamplingFunction {
+class ConstrainedModifiedCotangentSamplingFunction : public SamplingFunction {
  public:
   /** Standard class typedefs. */
-  typedef ParticleConstrainedModifiedCotangentEntropyGradientFunction Self;
+  typedef ConstrainedModifiedCotangentSamplingFunction Self;
   typedef itk::SmartPointer<Self> Pointer;
   typedef itk::SmartPointer<const Self> ConstPointer;
   typedef SamplingFunction Superclass;
-  itkTypeMacro(ParticleConstrainedModifiedCotangentEntropyGradientFunction, SamplingFunction);
+  itkTypeMacro(ConstrainedModifiedCotangentSamplingFunction, SamplingFunction);
 
   /** Inherit some parent typedefs. */
   typedef typename Superclass::GradientNumericType GradientNumericType;
@@ -146,8 +145,9 @@ class ParticleConstrainedModifiedCotangentEntropyGradientFunction
   void SetDiagnosticsOutputPrefix(const std::string s) { m_diagnostics_prefix = s; }
 
   virtual ParticleVectorFunction::Pointer Clone() {
-    typename ParticleConstrainedModifiedCotangentEntropyGradientFunction<TGradientNumericType, VDimension>::Pointer
-        copy = ParticleConstrainedModifiedCotangentEntropyGradientFunction<TGradientNumericType, VDimension>::New();
+    typename ConstrainedModifiedCotangentSamplingFunction<TGradientNumericType, VDimension>::Pointer
+        copy =
+        ConstrainedModifiedCotangentSamplingFunction<TGradientNumericType, VDimension>::New();
     copy->SetParticleSystem(this->GetParticleSystem());
     copy->m_Counter = this->m_Counter;
     copy->m_CurrentWeights = this->m_CurrentWeights;
@@ -170,12 +170,12 @@ class ParticleConstrainedModifiedCotangentEntropyGradientFunction
   }
 
  protected:
-  ParticleConstrainedModifiedCotangentEntropyGradientFunction()
+  ConstrainedModifiedCotangentSamplingFunction()
       : m_Counter(0), m_DomainsPerShape(1), m_GlobalSigma(-1.0) {}
-  virtual ~ParticleConstrainedModifiedCotangentEntropyGradientFunction() {}
-  void operator=(const ParticleConstrainedModifiedCotangentEntropyGradientFunction&);
-  ParticleConstrainedModifiedCotangentEntropyGradientFunction(
-      const ParticleConstrainedModifiedCotangentEntropyGradientFunction&);
+  virtual ~ConstrainedModifiedCotangentSamplingFunction() {}
+  void operator=(const ConstrainedModifiedCotangentSamplingFunction&);
+  ConstrainedModifiedCotangentSamplingFunction(
+      const ConstrainedModifiedCotangentSamplingFunction&);
 
   unsigned int m_Counter;
 

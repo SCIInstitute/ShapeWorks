@@ -20,12 +20,12 @@ namespace shapeworks {
  *
  * Each column represents a single shape.
  */
-class ShapeGradientMatrix : public vnl_matrix<double>, public ParticleAttribute {
+class ShapeGradientMatrix : public vnl_matrix<double>, public Observer {
  public:
   /** Standard class typedefs */
   typedef double DataType;
   typedef ShapeGradientMatrix Self;
-  typedef ParticleAttribute Superclass;
+  typedef Observer Superclass;
   typedef itk::SmartPointer<Self> Pointer;
   typedef itk::SmartPointer<const Self> ConstPointer;
   typedef itk::WeakPointer<const Self> ConstWeakPointer;
@@ -33,7 +33,7 @@ class ShapeGradientMatrix : public vnl_matrix<double>, public ParticleAttribute 
   typedef ParticleSystem ParticleSystemType;
 
   itkNewMacro(Self);
-  itkTypeMacro(ShapeGradientMatrix, ParticleAttribute);
+  itkTypeMacro(ShapeGradientMatrix, Observer);
 
   virtual void BeforeIteration() {}
   virtual void AfterIteration() {}

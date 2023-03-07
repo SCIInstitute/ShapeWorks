@@ -90,7 +90,7 @@ class Sampler {
     return m_ModifiedCotangentGradientFunction;
   }
 
-  ParticleConstrainedModifiedCotangentEntropyGradientFunction<ImageType::PixelType, Dimension>*
+  ConstrainedModifiedCotangentSamplingFunction<ImageType::PixelType, Dimension>*
   GetConstrainedModifiedCotangentGradientFunction() {
     return m_ConstrainedModifiedCotangentGradientFunction;
   }
@@ -414,7 +414,7 @@ class Sampler {
 
   ParticleModifiedCotangentEntropyGradientFunction<ImageType::PixelType, Dimension>::Pointer
       m_ModifiedCotangentGradientFunction;
-  ParticleConstrainedModifiedCotangentEntropyGradientFunction<ImageType::PixelType, Dimension>::Pointer
+  ConstrainedModifiedCotangentSamplingFunction<ImageType::PixelType, Dimension>::Pointer
       m_ConstrainedModifiedCotangentGradientFunction;
 
   ParticleOmegaGradientFunction<ImageType::PixelType, Dimension>::Pointer m_OmegaGradientFunction;

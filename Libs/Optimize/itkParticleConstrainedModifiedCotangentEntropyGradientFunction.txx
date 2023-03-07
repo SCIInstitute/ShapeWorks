@@ -29,8 +29,7 @@
 namespace shapeworks {
 
 template <class TGradientNumericType, unsigned int VDimension>
-void
-ParticleConstrainedModifiedCotangentEntropyGradientFunction<TGradientNumericType, VDimension>
+void ConstrainedModifiedCotangentSamplingFunction<TGradientNumericType, VDimension>
 ::EstimateGlobalSigma(const ParticleSystemType * system)
 {
     //m_GlobalSigma = 1.0;
@@ -121,8 +120,7 @@ ParticleConstrainedModifiedCotangentEntropyGradientFunction<TGradientNumericType
 }
 
 template <class TGradientNumericType, unsigned int VDimension>
-void
-ParticleConstrainedModifiedCotangentEntropyGradientFunction<TGradientNumericType, VDimension>
+void ConstrainedModifiedCotangentSamplingFunction<TGradientNumericType, VDimension>
 ::BeforeEvaluate(unsigned int idx, unsigned int d, const ParticleSystemType * system)
 {
     // Praful -- SHIREEN
@@ -239,8 +237,8 @@ ParticleConstrainedModifiedCotangentEntropyGradientFunction<TGradientNumericType
 
 
 template <class TGradientNumericType, unsigned int VDimension>
-typename ParticleConstrainedModifiedCotangentEntropyGradientFunction<TGradientNumericType, VDimension>::VectorType
-ParticleConstrainedModifiedCotangentEntropyGradientFunction<TGradientNumericType, VDimension>
+typename ConstrainedModifiedCotangentSamplingFunction<TGradientNumericType, VDimension>::VectorType
+ConstrainedModifiedCotangentSamplingFunction<TGradientNumericType, VDimension>
 ::Evaluate(unsigned int idx, unsigned int d, const ParticleSystemType * system,
            double &maxmove, double &energy) const
 {

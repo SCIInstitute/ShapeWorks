@@ -7,13 +7,14 @@
 namespace shapeworks {
 
 /*!
- * @class ParticleAttribute
- * @brief This class is an observer interface (observer pattern)
+ * @class Observer
+ * @brief This class is an observer interface for classes to monitor for
+ * changes to the optimizer (observer pattern)
  */
-class ParticleAttribute : public itk::DataObject {
+class Observer : public itk::DataObject {
  public:
   /** Standard class typedefs */
-  typedef ParticleAttribute Self;
+  typedef Observer Self;
   typedef DataObject Superclass;
   typedef itk::SmartPointer<Self> Pointer;
   typedef itk::SmartPointer<const Self> ConstPointer;
@@ -23,7 +24,7 @@ class ParticleAttribute : public itk::DataObject {
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(ParticleAttribute, DataObject);
+  itkTypeMacro(Observer, DataObject);
 
   /** Data structure indicating which callback functions are defined by a
       subclass.  The ParticleSystem class will reference this structure to
@@ -62,13 +63,13 @@ class ParticleAttribute : public itk::DataObject {
   virtual void PositionRemoveEventCallback(Object*, const itk::EventObject&) {}
 
  protected:
-  ParticleAttribute() {}
-  virtual ~ParticleAttribute(){};
+  Observer() {}
+  virtual ~Observer(){};
 
   void PrintSelf(std::ostream& os, itk::Indent indent) const { Superclass::PrintSelf(os, indent); }
 
  private:
-  ParticleAttribute(const Self&);  // purposely not implemented
+  Observer(const Self&);  // purposely not implemented
   void operator=(const Self&);     // purposely not implemented
 };
 

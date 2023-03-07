@@ -19,7 +19,7 @@ Sampler::Sampler() {
   m_ModifiedCotangentGradientFunction =
       ParticleModifiedCotangentEntropyGradientFunction<ImageType::PixelType, Dimension>::New();
   m_ConstrainedModifiedCotangentGradientFunction =
-      ParticleConstrainedModifiedCotangentEntropyGradientFunction<ImageType::PixelType, Dimension>::New();
+      ConstrainedModifiedCotangentSamplingFunction<ImageType::PixelType, Dimension>::New();
 
   m_OmegaGradientFunction = ParticleOmegaGradientFunction<ImageType::PixelType, Dimension>::New();
 

@@ -18,12 +18,12 @@ namespace shapeworks {
  *
  * Each column represents a single shape.
  */
-class LegacyShapeMatrix : public vnl_matrix<double>, public ParticleAttribute {
+class LegacyShapeMatrix : public vnl_matrix<double>, public Observer {
  public:
   /** Standard class typedefs */
   typedef double DataType;
   typedef LegacyShapeMatrix Self;
-  typedef ParticleAttribute Superclass;
+  typedef Observer Superclass;
   typedef itk::SmartPointer<Self> Pointer;
   typedef itk::SmartPointer<const Self> ConstPointer;
   typedef itk::WeakPointer<const Self> ConstWeakPointer;
@@ -32,7 +32,7 @@ class LegacyShapeMatrix : public vnl_matrix<double>, public ParticleAttribute {
   itkNewMacro(Self)
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(LegacyShapeMatrix, ParticleAttribute)
+  itkTypeMacro(LegacyShapeMatrix, Observer)
 
   /** Callbacks that may be defined by a subclass.  If a subclass defines one
        of these callback methods, the corresponding flag in m_DefinedCallbacks

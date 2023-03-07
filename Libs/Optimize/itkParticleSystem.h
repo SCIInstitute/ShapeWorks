@@ -89,7 +89,7 @@ class ParticleSystem : public itk::DataObject {
       observer of this itk::Object (AddObserver).  Relevant state information
       is passed to objects in particle events.
   */
-  void RegisterAttribute(ParticleAttribute *);
+  void RegisterAttribute(Observer*);
 
   /** Invokes the set event on all particle positions, resetting them to their
       current value.  This method may be called to synchronize positional

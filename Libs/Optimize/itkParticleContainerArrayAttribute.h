@@ -17,12 +17,12 @@ namespace shapeworks {
  */
 template <class T, unsigned int VDimension>
 class ParticleContainerArrayAttribute : public std::vector<typename ParticleContainer<T>::Pointer>,
-                                                   public ParticleAttribute {
+                                                   public Observer {
  public:
   /** Standard class typedefs */
   typedef T DataType;
   typedef ParticleContainerArrayAttribute Self;
-  typedef ParticleAttribute Superclass;
+  typedef Observer Superclass;
   typedef itk::SmartPointer<Self> Pointer;
   typedef itk::SmartPointer<const Self> ConstPointer;
   typedef itk::WeakPointer<const Self> ConstWeakPointer;
@@ -31,7 +31,7 @@ class ParticleContainerArrayAttribute : public std::vector<typename ParticleCont
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(ParticleContainer, ParticleAttribute);
+  itkTypeMacro(ParticleContainer, Observer);
 
   /** Callbacks that may be defined by a subclass.  If a subclass defines one
       of these callback methods, the corresponding flag in m_DefinedCallbacks

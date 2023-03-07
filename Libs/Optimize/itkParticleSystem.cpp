@@ -330,42 +330,42 @@ double ParticleSystem::ComputeMaxDistNearestNeighbors(size_t dom) {
   return maxDistNN;
 }
 
-void ParticleSystem::RegisterAttribute(ParticleAttribute* attr) {
+void ParticleSystem::RegisterAttribute(Observer* attr) {
   // Register any methods defined by the attribute as observers of this
   // ParticleSystem with appropriate events.
   if (attr->m_DefinedCallbacks.DomainAddEvent == true) {
-    itk::MemberCommand<ParticleAttribute>::Pointer tmpcmd = itk::MemberCommand<ParticleAttribute>::New();
-    tmpcmd->SetCallbackFunction(attr, &ParticleAttribute::DomainAddEventCallback);
+    itk::MemberCommand<Observer>::Pointer tmpcmd = itk::MemberCommand<Observer>::New();
+    tmpcmd->SetCallbackFunction(attr, &Observer::DomainAddEventCallback);
     this->AddObserver(ParticleDomainAddEvent(), tmpcmd);
   }
   if (attr->m_DefinedCallbacks.TransformSetEvent == true) {
-    itk::MemberCommand<ParticleAttribute>::Pointer tmpcmd = itk::MemberCommand<ParticleAttribute>::New();
-    tmpcmd->SetCallbackFunction(attr, &ParticleAttribute::TransformSetEventCallback);
+    itk::MemberCommand<Observer>::Pointer tmpcmd = itk::MemberCommand<Observer>::New();
+    tmpcmd->SetCallbackFunction(attr, &Observer::TransformSetEventCallback);
     this->AddObserver(ParticleTransformSetEvent(), tmpcmd);
   }
   if (attr->m_DefinedCallbacks.PrefixTransformSetEvent == true) {
-    itk::MemberCommand<ParticleAttribute>::Pointer tmpcmd = itk::MemberCommand<ParticleAttribute>::New();
-    tmpcmd->SetCallbackFunction(attr, &ParticleAttribute::PrefixTransformSetEventCallback);
+    itk::MemberCommand<Observer>::Pointer tmpcmd = itk::MemberCommand<Observer>::New();
+    tmpcmd->SetCallbackFunction(attr, &Observer::PrefixTransformSetEventCallback);
     this->AddObserver(ParticlePrefixTransformSetEvent(), tmpcmd);
   }
   if (attr->m_DefinedCallbacks.NeighborhoodSetEvent == true) {
-    itk::MemberCommand<ParticleAttribute>::Pointer tmpcmd = itk::MemberCommand<ParticleAttribute>::New();
-    tmpcmd->SetCallbackFunction(attr, &ParticleAttribute::NeighborhoodSetEventCallback);
+    itk::MemberCommand<Observer>::Pointer tmpcmd = itk::MemberCommand<Observer>::New();
+    tmpcmd->SetCallbackFunction(attr, &Observer::NeighborhoodSetEventCallback);
     this->AddObserver(ParticleNeighborhoodSetEvent(), tmpcmd);
   }
   if (attr->m_DefinedCallbacks.PositionSetEvent == true) {
-    itk::MemberCommand<ParticleAttribute>::Pointer tmpcmd = itk::MemberCommand<ParticleAttribute>::New();
-    tmpcmd->SetCallbackFunction(attr, &ParticleAttribute::PositionSetEventCallback);
+    itk::MemberCommand<Observer>::Pointer tmpcmd = itk::MemberCommand<Observer>::New();
+    tmpcmd->SetCallbackFunction(attr, &Observer::PositionSetEventCallback);
     this->AddObserver(ParticlePositionSetEvent(), tmpcmd);
   }
   if (attr->m_DefinedCallbacks.PositionAddEvent == true) {
-    itk::MemberCommand<ParticleAttribute>::Pointer tmpcmd = itk::MemberCommand<ParticleAttribute>::New();
-    tmpcmd->SetCallbackFunction(attr, &ParticleAttribute::PositionAddEventCallback);
+    itk::MemberCommand<Observer>::Pointer tmpcmd = itk::MemberCommand<Observer>::New();
+    tmpcmd->SetCallbackFunction(attr, &Observer::PositionAddEventCallback);
     this->AddObserver(ParticlePositionAddEvent(), tmpcmd);
   }
   if (attr->m_DefinedCallbacks.PositionRemoveEvent == true) {
-    itk::MemberCommand<ParticleAttribute>::Pointer tmpcmd = itk::MemberCommand<ParticleAttribute>::New();
-    tmpcmd->SetCallbackFunction(attr, &ParticleAttribute::PositionRemoveEventCallback);
+    itk::MemberCommand<Observer>::Pointer tmpcmd = itk::MemberCommand<Observer>::New();
+    tmpcmd->SetCallbackFunction(attr, &Observer::PositionRemoveEventCallback);
     this->AddObserver(ParticlePositionRemoveEvent(), tmpcmd);
   }
 }
