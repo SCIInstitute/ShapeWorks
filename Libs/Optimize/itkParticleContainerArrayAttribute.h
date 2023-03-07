@@ -16,7 +16,7 @@ namespace shapeworks {
  * listener interface.  The array size tracks the number of domains in the system.
  */
 template <class T, unsigned int VDimension>
-class ParticleContainerArrayAttribute : public std::vector<typename ParticleContainer<T>::Pointer>,
+class ParticleContainerArrayAttribute : public std::vector<typename GenericContainer<T>::Pointer>,
                                                    public Observer {
  public:
   /** Standard class typedefs */
@@ -39,7 +39,7 @@ class ParticleContainerArrayAttribute : public std::vector<typename ParticleCont
       the appropriate event with this method. */
   virtual void DomainAddEventCallback(Object*, const itk::EventObject&) {
     this->resize(this->size() + 1);
-    this->operator[](this->size() - 1) = ParticleContainer<T>::New();
+    this->operator[](this->size() - 1) = GenericContainer<T>::New();
   }
 
   virtual void PositionAddEventCallback(Object* o, const itk::EventObject& e) {

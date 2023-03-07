@@ -8,15 +8,17 @@
 
 namespace shapeworks {
 /*!
- * @class ParticleContainer
+ * @class GenericContainer
  * @brief This class seems to be only a wrapper around std::vector implementing ITK DataObject (for smart pointer?)
+ *
+ * One difference being that the set operator will expand the vector if the index is out of bounds.
  */
 template <class T>
-class ParticleContainer : public itk::DataObject {
+class GenericContainer : public itk::DataObject {
  public:
   /** Standard class typedefs */
   typedef T DataType;
-  typedef ParticleContainer Self;
+  typedef GenericContainer Self;
   typedef DataObject Superclass;
   typedef itk::SmartPointer<Self> Pointer;
   typedef itk::SmartPointer<const Self> ConstPointer;
@@ -45,16 +47,16 @@ class ParticleContainer : public itk::DataObject {
   unsigned long int GetSize() const { return data.size(); }
 
  protected:
-  ParticleContainer() {}
+  GenericContainer() {}
   void PrintSelf(std::ostream& os, itk::Indent indent) const {
     Superclass::PrintSelf(os, indent);
 
     os << indent << "ParticleContainer: " << std::endl;
   }
-  virtual ~ParticleContainer(){};
+  virtual ~GenericContainer(){};
 
  private:
-  ParticleContainer(const Self&);  // purposely not implemented
+  GenericContainer(const Self&);  // purposely not implemented
   void operator=(const Self&);     // purposely not implemented
 
   std::vector<T> data;

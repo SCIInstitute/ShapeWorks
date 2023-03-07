@@ -104,7 +104,7 @@ class ParticleRegionNeighborhood : public ParticleNeighborhood {
     NodePointerType NodePointer;
   };
 
-  typedef ParticleContainer<IteratorNodePair> IteratorMapType;
+  typedef GenericContainer<IteratorNodePair> IteratorMapType;
 
  protected:
   typename PointTreeType::Pointer m_Tree;

@@ -48,7 +48,7 @@ class ParticleNeighborhood : public itk::DataObject {
 
   /** Container type for points.  This matches the itkParticleSystem container
       type. */
-  typedef ParticleContainer<PointType> PointContainerType;
+  typedef GenericContainer<PointType> PointContainerType;
 
   /** Point list (vector) type.  This is the type of list returned by FindNeighborhoodPoints. */
   typedef std::vector<ParticlePointIndexPair<VDimension> > PointVectorType;

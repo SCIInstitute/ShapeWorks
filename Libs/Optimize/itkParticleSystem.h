@@ -66,7 +66,7 @@ class ParticleSystem : public itk::DataObject {
   typedef ParticleNeighborhood NeighborhoodType;
 
   /** Point container type.  One is associated with each domain.*/
-  typedef ParticleContainer<PointType> PointContainerType;
+  typedef GenericContainer<PointType> PointContainerType;
 
   typedef NeighborhoodType::PointVectorType PointVectorType;
 
