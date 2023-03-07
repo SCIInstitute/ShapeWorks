@@ -21,7 +21,7 @@ bool ReadParticleSystem::execute(const optparse::Values &options, SharedCommandD
 {
   std::vector<std::string> filenames = options.get("names");
   try {
-    sharedData.particleSystem = ParticleSystem(filenames);
+    sharedData.particleSystem = ParticleSystemEvaluation(filenames);
     return true;
   } catch(...) {
     std::cerr << "exception while reading particle system" << std::endl;
