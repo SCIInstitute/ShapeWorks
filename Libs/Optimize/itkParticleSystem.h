@@ -8,7 +8,7 @@
 #include "itkDataObject.h"
 #include "itkEventObject.h"
 #include "itkObjectFactory.h"
-#include "itkParticleAttribute.h"
+#include "Observer.h"
 #include "itkParticleContainer.h"
 #include "ParticleDomain.h"
 #include "itkParticleEvents.h"
@@ -19,7 +19,7 @@
 #include "vnl/vnl_matrix_fixed.h"
 #include "vnl/vnl_vector_fixed.h"
 
-namespace itk {
+namespace shapeworks {
 /** \class ParticleSystem
  *  \brief  A facade class managing interactions with a particle system.
  *
@@ -35,22 +35,22 @@ namespace itk {
  * particular domain into another coordinate frame, for example, a common
  * coordinate frame.
  */
-class ParticleSystem : public DataObject {
+class ParticleSystem : public itk::DataObject {
  public:
   static constexpr int VDimension = 3;
 
   /** Standard class typedefs */
   typedef ParticleSystem Self;
   typedef DataObject Superclass;
-  typedef SmartPointer<Self> Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
-  typedef WeakPointer<const Self> ConstWeakPointer;
+  typedef itk::SmartPointer<Self> Pointer;
+  typedef itk::SmartPointer<const Self> ConstPointer;
+  typedef itk::WeakPointer<const Self> ConstWeakPointer;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(ParticleSystem, DataObject);
+  itkTypeMacro(ParticleSystem, itk::DataObject);
 
   /** Dimensionality of the domain of the particle system. */
   itkStaticConstMacro(Dimension, unsigned int, VDimension);
@@ -59,7 +59,7 @@ class ParticleSystem : public DataObject {
   using DomainType = shapeworks::ParticleDomain;
 
   /** Point type used to store particle locations. */
-  typedef Point<double, VDimension> PointType;
+  typedef itk::Point<double, VDimension> PointType;
 
   /** Class used to compute neighborhoods of points. One is associated with
       each domain.*/
@@ -374,7 +374,7 @@ class ParticleSystem : public DataObject {
 
  protected:
   ParticleSystem();
-  void PrintSelf(std::ostream &os, Indent indent) const;
+  void PrintSelf(std::ostream &os, itk::Indent indent) const;
   virtual ~ParticleSystem(){};
 
   /** Return an iterator that points to the first element of the list of the
@@ -458,4 +458,4 @@ class ParticleSystem : public DataObject {
   std::mt19937 m_rand{42};
 };
 
-}  // end namespace itk
+}  // end namespace shapeworks

@@ -9,7 +9,7 @@
 #include "vnl/vnl_matrix_fixed.h"
 #include "vnl/vnl_vector_fixed.h"
 
-namespace itk {
+namespace shapeworks {
 
 double CurvatureSamplingFunction::EstimateSigma(unsigned int idx, unsigned int dom,
                                                 const shapeworks::ParticleDomain* domain, const PointType& pos,
@@ -315,4 +315,4 @@ double CurvatureSamplingFunction::ComputeKappa(double mc, unsigned int d) const 
   return 1.0 + m_Rho * (mc - minmc) / (maxmc - minmc);
 }
 
-}  // namespace itk
+}  // namespace shapeworks

@@ -15,7 +15,7 @@ class ParticleProcrustesRegistration {
   using Pointer = std::shared_ptr<ParticleProcrustesRegistration>;
 
   // Particle system typedefs
-  using ParticleSystemType = itk::ParticleSystem;
+  using ParticleSystemType = ParticleSystem;
   using PointType = ParticleSystemType::PointType;
 
   void SetParticleSystem(ParticleSystemType *p) { m_ParticleSystem = p; }

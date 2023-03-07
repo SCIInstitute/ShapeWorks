@@ -51,7 +51,7 @@ class MatrixContainer {
 class Optimize {
  public:
   using ImageType = itk::Image<float, 3>;
-  using VectorType = itk::ParticleVectorFunction::VectorType;
+  using VectorType = ParticleVectorFunction::VectorType;
   using MatrixType = Eigen::MatrixXd;
 
   //! Constructor

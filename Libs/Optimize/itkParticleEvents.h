@@ -2,7 +2,7 @@
 
 #include "itkEventObject.h"
 
-namespace itk {
+namespace shapeworks {
 /**
  * \class ParticleEvent.
  *  Parent class for all Particle events.
@@ -11,7 +11,7 @@ namespace itk {
  *  used, for example to indicate which position has changed in the particle
  *  system on InvokeEvent.
  */
-class ParticleEvent : public EventObject {
+class ParticleEvent : public itk::EventObject {
  public:
   typedef ParticleEvent Self;
 
@@ -20,7 +20,7 @@ class ParticleEvent : public EventObject {
 
 
   /** Copy constructor and operator= */
-  ParticleEvent(const ParticleEvent& v) : EventObject(v) {
+  ParticleEvent(const ParticleEvent& v) : itk::EventObject(v) {
     m_PositionIndex = v.m_PositionIndex;
     m_DomainIndex = v.m_DomainIndex;
   }
@@ -59,4 +59,4 @@ itkEventMacro(ParticlePositionSetEvent, ParticleEvent);
 itkEventMacro(ParticlePositionAddEvent, ParticleEvent);
 itkEventMacro(ParticlePositionRemoveEvent, ParticleEvent);
 
-}  // end namespace itk
+}  // end namespace shapeworks

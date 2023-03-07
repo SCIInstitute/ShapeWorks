@@ -4,7 +4,7 @@
 #include "vnl/vnl_vector_fixed.h"
 #include "vnl/vnl_matrix.h"
 
-namespace itk {
+namespace shapeworks {
 
 template <class TGradientNumericType, unsigned int VDimension>
 double
@@ -232,7 +232,7 @@ ParticleOmegaGradientFunction<TGradientNumericType, VDimension>
 
     for (unsigned int pidx = 0; pidx < domain->GetConstraints()->getPlaneConstraints().size(); pidx++)
     {
-        m_CurrentNeighborhood.push_back( itk::ParticlePointIndexPair<VDimension>( planePts[pidx], 0 ) );
+        m_CurrentNeighborhood.push_back( ParticlePointIndexPair<VDimension>( planePts[pidx], 0 ) );
         // SHIREEN
         m_CurrentWeights.push_back( 0.3 );
         // end SHIREEN
@@ -241,7 +241,7 @@ ParticleOmegaGradientFunction<TGradientNumericType, VDimension>
     // Add the closest points on any spheres that are defined in the domain.
     for ( unsigned int i = 0; i < domain->GetConstraints()->getSphereConstraints().size(); i++ )
     {
-        m_CurrentNeighborhood.push_back( itk::ParticlePointIndexPair<VDimension>( spherePts[i], 0 ) );
+        m_CurrentNeighborhood.push_back( ParticlePointIndexPair<VDimension>( spherePts[i], 0 ) );
 //            if (CToP[i] > abs(domain->GetSphereRadius(i)) && domain->GetSphereRadius(i) < 0)
 //            {
 //                std::cerr << "Original position outside the sphere: " << d << "\t" << idx << std::endl;
@@ -290,7 +290,7 @@ ParticleOmegaGradientFunction<TGradientNumericType, VDimension>
 
         for (unsigned int pidx = 0; pidx < domain->GetConstraints()->getPlaneConstraints().size(); pidx++)
         {
-            m_CurrentNeighborhood.push_back( itk::ParticlePointIndexPair<VDimension>( planePts[pidx], 0 ) );
+            m_CurrentNeighborhood.push_back( ParticlePointIndexPair<VDimension>( planePts[pidx], 0 ) );
             // SHIREEN
             m_CurrentWeights.push_back( 0.3 );
             // end SHIREEN
@@ -299,7 +299,7 @@ ParticleOmegaGradientFunction<TGradientNumericType, VDimension>
 
         for ( unsigned int i = 0; i < domain->GetConstraints()->getSphereConstraints().size(); i++ )
         {
-            m_CurrentNeighborhood.push_back( itk::ParticlePointIndexPair<VDimension>( spherePts[i], 0 ) );
+            m_CurrentNeighborhood.push_back( ParticlePointIndexPair<VDimension>( spherePts[i], 0 ) );
 //                if (CToP[i] > abs(domain->GetSphereRadius(i)) && domain->GetSphereRadius(i) < 0)
 //                {
 //                    std::cerr << "Original position outside the sphere: " << d << "\t" << idx << std::endl;
@@ -333,7 +333,7 @@ ParticleOmegaGradientFunction<TGradientNumericType, VDimension>
 
         for (unsigned int pidx = 0; pidx < domain->GetConstraints()->getPlaneConstraints().size(); pidx++)
         {
-            m_CurrentNeighborhood.push_back( itk::ParticlePointIndexPair<VDimension>( planePts[pidx], 0 ) );
+            m_CurrentNeighborhood.push_back( ParticlePointIndexPair<VDimension>( planePts[pidx], 0 ) );
             // SHIREEN
             m_CurrentWeights.push_back( 0.3 );
             // end SHIREEN
@@ -342,7 +342,7 @@ ParticleOmegaGradientFunction<TGradientNumericType, VDimension>
 
         for ( unsigned int i = 0; i < domain->GetConstraints()->getSphereConstraints().size(); i++ )
         {
-            m_CurrentNeighborhood.push_back( itk::ParticlePointIndexPair<VDimension>( spherePts[i], 0 ) );
+            m_CurrentNeighborhood.push_back( ParticlePointIndexPair<VDimension>( spherePts[i], 0 ) );
 //                if (CToP[i] > abs(domain->GetSphereRadius(i)) && domain->GetSphereRadius(i) < 0)
 //                {
 //                    std::cerr << "Original position outside the sphere: " << d << "\t" << idx << std::endl;

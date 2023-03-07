@@ -3,7 +3,7 @@
 namespace shapeworks {
 
 void ShapeGradientMatrix::SetValues(const ParticleSystemType* ps, int idx, int d) {
-  const typename itk::ParticleSystem::PointType posLocal = ps->GetPosition(idx, d);
+  const typename ParticleSystem::PointType posLocal = ps->GetPosition(idx, d);
 
   unsigned int k = 0;
   int dom = d % m_DomainsPerShape;
@@ -76,7 +76,7 @@ void ShapeGradientMatrix::SetValues(const ParticleSystemType* ps, int idx, int d
 
       // mat3 = H/|grad_f| * (I - n*n');
       shapeworks::ParticleImageDomainWithGradN<float>::VnlMatrixType mat3 = grad_n * mat1;
-      itk::ParticleSystem::VnlMatrixType tmp;
+      ParticleSystem::VnlMatrixType tmp;
       tmp.set_size(3, 3);
       tmp.fill(0.0);
       for (unsigned int c = 0; c < 3; c++) {
@@ -127,4 +127,4 @@ void ShapeGradientMatrix::SetValues(const ParticleSystemType* ps, int idx, int d
   }
 }
 
-}  // namespace itk
+}  // namespace shapeworks

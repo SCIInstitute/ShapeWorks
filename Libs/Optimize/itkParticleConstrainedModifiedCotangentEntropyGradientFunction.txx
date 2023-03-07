@@ -26,7 +26,7 @@
 #include <vtkKdTreePointLocator.h>
 #include <vtkKdTree.h>
 
-namespace itk {
+namespace shapeworks {
 
 template <class TGradientNumericType, unsigned int VDimension>
 void
@@ -170,7 +170,7 @@ ParticleConstrainedModifiedCotangentEntropyGradientFunction<TGradientNumericType
       D = -fabs(D);
       itk::Point<double, VDimension> planept;
       for (unsigned int i = 0; i < VDimension; i++) { planept[i] = x[i] - (cpnorm[i] * D); }
-      m_CurrentNeighborhood.push_back(itk::ParticlePointIndexPair<VDimension>(planept, 0));
+      m_CurrentNeighborhood.push_back(ParticlePointIndexPair<VDimension>(planept, 0));
       m_CurrentWeights.push_back(0.3);
       // end PRATEEP
 
@@ -228,7 +228,7 @@ ParticleConstrainedModifiedCotangentEntropyGradientFunction<TGradientNumericType
           spherept[j] = sphereConsts[ i ].getCenter()(j) + (q[j] * sphereConsts[ i ].getRadius());
 
         //spherepoints.push_back( spherept );
-        m_CurrentNeighborhood.push_back(itk::ParticlePointIndexPair<VDimension>(spherept, 0));
+        m_CurrentNeighborhood.push_back(ParticlePointIndexPair<VDimension>(spherept, 0));
 
         // give small weight to this sphere point
         // m_CurrentWeights.push_back( 0.01 );

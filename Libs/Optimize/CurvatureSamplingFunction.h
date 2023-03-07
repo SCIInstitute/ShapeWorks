@@ -7,7 +7,7 @@
 #include "itkParticleMeanCurvatureAttribute.h"
 #include "itkParticleSurfaceNeighborhood.h"
 
-namespace itk {
+namespace shapeworks {
 
 /**
  * \class CurvatureSamplingFunction
@@ -26,8 +26,8 @@ class CurvatureSamplingFunction : public SamplingFunction {
       TGradientNumericType;  // This has always been used on float images, so the curvature cache is also float
   /** Standard class typedefs. */
   typedef CurvatureSamplingFunction Self;
-  typedef SmartPointer<Self> Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+  typedef itk::SmartPointer<Self> Pointer;
+  typedef itk::SmartPointer<const Self> ConstPointer;
   typedef SamplingFunction Superclass;
   itkTypeMacro(CurvatureSamplingFunction, SamplingFunction);
 
@@ -150,4 +150,4 @@ class CurvatureSamplingFunction : public SamplingFunction {
   float m_MaxMoveFactor = 0;
 };
 
-}  // namespace itk
+}  // namespace shapeworks

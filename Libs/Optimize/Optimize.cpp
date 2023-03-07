@@ -409,7 +409,7 @@ void Optimize::SetAdaptivityStrength(double adaptivity_strength) { this->m_adapt
 
 //---------------------------------------------------------------------------
 void Optimize::ReadTransformFile() {
-  object_reader<itk::ParticleSystem::TransformType> reader;
+  object_reader<ParticleSystem::TransformType> reader;
   reader.SetFileName(m_transform_file);
   reader.Update();
   for (unsigned int i = 0; i < m_sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
@@ -419,7 +419,7 @@ void Optimize::ReadTransformFile() {
 
 //---------------------------------------------------------------------------
 void Optimize::ReadPrefixTransformFile(const std::string& fn) {
-  object_reader<itk::ParticleSystem::TransformType> reader;
+  object_reader<ParticleSystem::TransformType> reader;
   reader.SetFileName(fn.c_str());
   reader.Update();
   for (unsigned int i = 0; i < m_sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
@@ -510,7 +510,7 @@ double Optimize::GetMinNeighborhoodRadius() {
 
 //---------------------------------------------------------------------------
 void Optimize::AddSinglePoint() {
-  typedef itk::ParticleSystem ParticleSystemType;
+  typedef ParticleSystem ParticleSystemType;
   typedef ParticleSystemType::PointType PointType;
 
   PointType firstPointPosition = m_sampler->GetParticleSystem()->GetDomain(0)->GetZeroCrossingPoint();
@@ -1185,7 +1185,7 @@ void Optimize::WriteTransformFile(std::string iter_prefix) const {
 
   std::string output_file = iter_prefix;
 
-  std::vector<itk::ParticleSystem::TransformType> tlist;
+  std::vector<ParticleSystem::TransformType> tlist;
 
   for (unsigned int i = 0; i < m_sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
     tlist.push_back(m_sampler->GetParticleSystem()->GetTransform(i));
@@ -1193,7 +1193,7 @@ void Optimize::WriteTransformFile(std::string iter_prefix) const {
 
   std::string str = "writing " + output_file + " ...";
   PrintStartMessage(str);
-  object_writer<itk::ParticleSystem::TransformType> writer;
+  object_writer<ParticleSystem::TransformType> writer;
   writer.SetFileName(output_file);
   writer.SetInput(tlist);
   writer.Update();
@@ -1581,7 +1581,7 @@ void Optimize::WriteParameters(std::string output_dir) {
   std::vector<double> intercept;
 
   if (m_use_mixed_effects == true) {
-    vnl_vector<double> slopevec = dynamic_cast<itk::ParticleShapeMixedEffectsMatrixAttribute*>(
+    vnl_vector<double> slopevec = dynamic_cast<ParticleShapeMixedEffectsMatrixAttribute*>(
                                       m_sampler->GetEnsembleMixedEffectsEntropyFunction()->GetShapeMatrix())
                                       ->GetSlope();
 
@@ -1595,7 +1595,7 @@ void Optimize::WriteParameters(std::string output_dir) {
     }
     out.close();
 
-    vnl_vector<double> interceptvec = dynamic_cast<itk::ParticleShapeMixedEffectsMatrixAttribute*>(
+    vnl_vector<double> interceptvec = dynamic_cast<ParticleShapeMixedEffectsMatrixAttribute*>(
                                           m_sampler->GetEnsembleMixedEffectsEntropyFunction()->GetShapeMatrix())
                                           ->GetIntercept();
 
@@ -1615,7 +1615,7 @@ void Optimize::WriteParameters(std::string output_dir) {
     std::cout << "writing " << slopename << std::endl;
     std::cout << "writing " << interceptname << std::endl;
 
-    vnl_matrix<double> sloperand_mat = dynamic_cast<itk::ParticleShapeMixedEffectsMatrixAttribute*>(
+    vnl_matrix<double> sloperand_mat = dynamic_cast<ParticleShapeMixedEffectsMatrixAttribute*>(
                                            m_sampler->GetEnsembleMixedEffectsEntropyFunction()->GetShapeMatrix())
                                            ->GetSlopeRandom();
 
@@ -1628,7 +1628,7 @@ void Optimize::WriteParameters(std::string output_dir) {
     }
     out.close();
 
-    vnl_matrix<double> interceptrand_mat = dynamic_cast<itk::ParticleShapeMixedEffectsMatrixAttribute*>(
+    vnl_matrix<double> interceptrand_mat = dynamic_cast<ParticleShapeMixedEffectsMatrixAttribute*>(
                                                m_sampler->GetEnsembleMixedEffectsEntropyFunction()->GetShapeMatrix())
                                                ->GetInterceptRandom();
 
@@ -1641,7 +1641,7 @@ void Optimize::WriteParameters(std::string output_dir) {
     }
     out.close();
   } else {
-    vnl_vector<double> slopevec = dynamic_cast<itk::ParticleShapeLinearRegressionMatrixAttribute*>(
+    vnl_vector<double> slopevec = dynamic_cast<ParticleShapeLinearRegressionMatrixAttribute*>(
                                       m_sampler->GetEnsembleRegressionEntropyFunction()->GetShapeMatrix())
                                       ->GetSlope();
 
@@ -1656,7 +1656,7 @@ void Optimize::WriteParameters(std::string output_dir) {
     out.close();
 
     std::vector<double> intercept;
-    vnl_vector<double> interceptvec = dynamic_cast<itk::ParticleShapeLinearRegressionMatrixAttribute*>(
+    vnl_vector<double> interceptvec = dynamic_cast<ParticleShapeLinearRegressionMatrixAttribute*>(
                                           m_sampler->GetEnsembleRegressionEntropyFunction()->GetShapeMatrix())
                                           ->GetIntercept();
 
@@ -2138,14 +2138,14 @@ vnl_vector_fixed<double, 3> Optimize::TransformPoint(int domain, vnl_vector_fixe
     return input;
   }
 
-  itk::ParticleSystem::PointType pa;
+  ParticleSystem::PointType pa;
 
   pa[0] = input[0];
   pa[1] = input[1];
   pa[2] = input[2];
 
-  itk::ParticleSystem::TransformType T = GetSampler()->GetParticleSystem()->GetTransform(domain);
-  itk::ParticleSystem::TransformType prefT = GetSampler()->GetParticleSystem()->GetPrefixTransform(domain);
+  ParticleSystem::TransformType T = GetSampler()->GetParticleSystem()->GetTransform(domain);
+  ParticleSystem::TransformType prefT = GetSampler()->GetParticleSystem()->GetPrefixTransform(domain);
   pa = GetSampler()->GetParticleSystem()->TransformPoint(pa, T * prefT);
 
   vnl_vector_fixed<double, 3> output;

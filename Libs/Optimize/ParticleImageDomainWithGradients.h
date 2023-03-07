@@ -119,4 +119,4 @@ private:
   openvdb::VectorGrid::Ptr m_VDBGradient;
 };
 
-} // end namespace itk
+} // end namespace shapeworks

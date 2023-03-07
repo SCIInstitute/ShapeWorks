@@ -6,7 +6,7 @@
 #include "itkParticleMeanCurvatureAttribute.h"
 #include "itkCommand.h"
 
-namespace itk
+namespace shapeworks
 {
 
 /**
@@ -25,8 +25,8 @@ class ParticleOmegaGradientFunction
 public:
   /** Standard class typedefs. */
   typedef ParticleOmegaGradientFunction Self;
-  typedef SmartPointer<Self>  Pointer;
-  typedef SmartPointer<const Self>  ConstPointer;
+  typedef itk::SmartPointer<Self>  Pointer;
+  typedef itk::SmartPointer<const Self>  ConstPointer;
   typedef SamplingFunction Superclass;
   itkTypeMacro( ParticleOmegaGradientFunction, SamplingFunction);
 

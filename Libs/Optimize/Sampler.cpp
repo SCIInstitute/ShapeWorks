@@ -11,35 +11,35 @@
 namespace shapeworks {
 
 Sampler::Sampler() {
-  m_ParticleSystem = itk::ParticleSystem::New();
+  m_ParticleSystem = ParticleSystem::New();
 
-  m_GradientFunction = itk::SamplingFunction::New();
-  m_CurvatureGradientFunction = itk::CurvatureSamplingFunction::New();
+  m_GradientFunction = SamplingFunction::New();
+  m_CurvatureGradientFunction = CurvatureSamplingFunction::New();
 
   m_ModifiedCotangentGradientFunction =
-      itk::ParticleModifiedCotangentEntropyGradientFunction<ImageType::PixelType, Dimension>::New();
+      ParticleModifiedCotangentEntropyGradientFunction<ImageType::PixelType, Dimension>::New();
   m_ConstrainedModifiedCotangentGradientFunction =
-      itk::ParticleConstrainedModifiedCotangentEntropyGradientFunction<ImageType::PixelType, Dimension>::New();
+      ParticleConstrainedModifiedCotangentEntropyGradientFunction<ImageType::PixelType, Dimension>::New();
 
-  m_OmegaGradientFunction = itk::ParticleOmegaGradientFunction<ImageType::PixelType, Dimension>::New();
+  m_OmegaGradientFunction = ParticleOmegaGradientFunction<ImageType::PixelType, Dimension>::New();
 
   m_Optimizer = OptimizerType::New();
 
   m_PointsFiles.push_back("");
   m_MeshFiles.push_back("");
 
-  m_LinkingFunction = itk::ParticleDualVectorFunction::New();
-  m_EnsembleEntropyFunction = itk::ParticleEnsembleEntropyFunction::New();
-  m_EnsembleRegressionEntropyFunction = itk::ParticleEnsembleEntropyFunction::New();
-  m_EnsembleMixedEffectsEntropyFunction = itk::ParticleEnsembleEntropyFunction::New();
-  m_CorrespondenceFunction = itk::CorrespondenceFunction::New();
+  m_LinkingFunction = ParticleDualVectorFunction::New();
+  m_EnsembleEntropyFunction = ParticleEnsembleEntropyFunction::New();
+  m_EnsembleRegressionEntropyFunction = ParticleEnsembleEntropyFunction::New();
+  m_EnsembleMixedEffectsEntropyFunction = ParticleEnsembleEntropyFunction::New();
+  m_CorrespondenceFunction = CorrespondenceFunction::New();
 
-  m_LegacyShapeMatrix = itk::LegacyShapeMatrix::New();
-  m_GeneralShapeMatrix = shapeworks::ShapeMatrix::New();
-  m_GeneralShapeGradMatrix = shapeworks::ShapeGradientMatrix::New();
+  m_LegacyShapeMatrix = LegacyShapeMatrix::New();
+  m_GeneralShapeMatrix = ShapeMatrix::New();
+  m_GeneralShapeGradMatrix = ShapeGradientMatrix::New();
 
-  m_LinearRegressionShapeMatrix = itk::ParticleShapeLinearRegressionMatrixAttribute::New();
-  m_MixedEffectsShapeMatrix = itk::ParticleShapeMixedEffectsMatrixAttribute::New();
+  m_LinearRegressionShapeMatrix = ParticleShapeLinearRegressionMatrixAttribute::New();
+  m_MixedEffectsShapeMatrix = ParticleShapeMixedEffectsMatrixAttribute::New();
 
   m_EnsembleEntropyFunction->SetShapeMatrix(m_LegacyShapeMatrix);
 
@@ -58,7 +58,7 @@ Sampler::Sampler() {
 
 void Sampler::AllocateDataCaches() {
   // Set up the various data caches that the optimization functions will use.
-  m_Sigma1Cache = itk::ParticleContainerArrayAttribute<double, Dimension>::New();
+  m_Sigma1Cache = ParticleContainerArrayAttribute<double, Dimension>::New();
   m_ParticleSystem->RegisterAttribute(m_Sigma1Cache);
   m_GradientFunction->SetSpatialSigmaCache(m_Sigma1Cache);
   m_CurvatureGradientFunction->SetSpatialSigmaCache(m_Sigma1Cache);
@@ -68,10 +68,10 @@ void Sampler::AllocateDataCaches() {
 
   m_OmegaGradientFunction->SetSpatialSigmaCache(m_Sigma1Cache);
 
-  m_Sigma2Cache = itk::ParticleContainerArrayAttribute<double, Dimension>::New();
+  m_Sigma2Cache = ParticleContainerArrayAttribute<double, Dimension>::New();
   m_ParticleSystem->RegisterAttribute(m_Sigma2Cache);
 
-  m_MeanCurvatureCache = itk::ParticleMeanCurvatureAttribute<ImageType::PixelType, Dimension>::New();
+  m_MeanCurvatureCache = ParticleMeanCurvatureAttribute<ImageType::PixelType, Dimension>::New();
   m_MeanCurvatureCache->SetVerbosity(m_verbosity);
   m_CurvatureGradientFunction->SetMeanCurvatureCache(m_MeanCurvatureCache);
   m_OmegaGradientFunction->SetMeanCurvatureCache(m_MeanCurvatureCache);
@@ -191,7 +191,7 @@ void Sampler::ReadPointsFiles() {
   // If points file names have been specified, then read the initial points.
   for (unsigned int i = 0; i < m_PointsFiles.size(); i++) {
     if (m_PointsFiles[i] != "") {
-      itk::ParticlePositionReader::Pointer reader = itk::ParticlePositionReader::New();
+      ParticlePositionReader::Pointer reader = ParticlePositionReader::New();
       reader->SetFileName(m_PointsFiles[i].c_str());
       reader->Update();
       this->GetParticleSystem()->AddPositionList(reader->GetOutput(), i);
@@ -282,7 +282,7 @@ void Sampler::Execute() {
 
 void Sampler::ReadTransforms() {
   if (m_TransformFile != "") {
-    object_reader<itk::ParticleSystem::TransformType> reader;
+    object_reader<ParticleSystem::TransformType> reader;
     reader.SetFileName(m_TransformFile.c_str());
     reader.Update();
 
@@ -291,7 +291,7 @@ void Sampler::ReadTransforms() {
   }
 
   if (m_PrefixTransformFile != "") {
-    object_reader<itk::ParticleSystem::TransformType> reader;
+    object_reader<ParticleSystem::TransformType> reader;
     reader.SetFileName(m_PrefixTransformFile.c_str());
     reader.Update();
 
@@ -314,7 +314,7 @@ void Sampler::ReInitialize() {
 
 void Sampler::AddMesh(std::shared_ptr<shapeworks::MeshWrapper> mesh) {
   auto domain = std::make_shared<MeshDomain>();
-  m_NeighborhoodList.push_back(itk::ParticleSurfaceNeighborhood<ImageType>::New());
+  m_NeighborhoodList.push_back(ParticleSurfaceNeighborhood<ImageType>::New());
   if (mesh) {
     this->m_Spacing = 1;
     domain->SetMesh(mesh);
@@ -326,7 +326,7 @@ void Sampler::AddMesh(std::shared_ptr<shapeworks::MeshWrapper> mesh) {
 
 void Sampler::AddContour(vtkSmartPointer<vtkPolyData> poly_data) {
   auto domain = std::make_shared<ContourDomain>();
-  m_NeighborhoodList.push_back(itk::ParticleSurfaceNeighborhood<ImageType>::New());
+  m_NeighborhoodList.push_back(ParticleSurfaceNeighborhood<ImageType>::New());
   if (poly_data != nullptr) {
     this->m_Spacing = 1;
     domain->SetPolyLine(poly_data);
@@ -393,7 +393,7 @@ void Sampler::AddFreeFormConstraint(int domain, const FreeFormConstraint &ffc) {
 void Sampler::AddImage(ImageType::Pointer image, double narrow_band, std::string name) {
   auto domain = std::make_shared<ParticleImplicitSurfaceDomain<ImageType::PixelType>>();
 
-  m_NeighborhoodList.push_back(itk::ParticleSurfaceNeighborhood<ImageType>::New());
+  m_NeighborhoodList.push_back(ParticleSurfaceNeighborhood<ImageType>::New());
 
   if (image) {
     this->m_Spacing = image->GetSpacing()[0];

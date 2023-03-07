@@ -3,12 +3,12 @@
 
 #include <cmath>
 
-namespace itk
+namespace shapeworks
 {
 
 template <unsigned int VDimension>
 void PowerOfTwoPointTreeNode<VDimension>
-::PrintSelf(std::ostream& os, Indent indent) const
+::PrintSelf(std::ostream& os, itk::Indent indent) const
 {
   os << indent << "PowerOfTwoPointTreeNode: ";
   os << "m_LowerBound = " << m_LowerBound;
@@ -187,7 +187,7 @@ void PowerOfTwoPointTree<VDimension>::BranchNode(NodePointerType &parent,
 }
 
 template  <unsigned int VDimension>
-void PowerOfTwoPointTree<VDimension>::PrintSelf(std::ostream& os, Indent indent) const
+void PowerOfTwoPointTree<VDimension>::PrintSelf(std::ostream& os, itk::Indent indent) const
 {
     os << indent << "BranchesPerNode = " << BranchesPerNode << std::endl;
     os << indent << "m_Depth = " << m_Depth << std::endl;
@@ -196,5 +196,5 @@ void PowerOfTwoPointTree<VDimension>::PrintSelf(std::ostream& os, Indent indent)
     Superclass::PrintSelf(os, indent);
 }
 
-} // end namespace itk
+} // end namespace shapeworks
 

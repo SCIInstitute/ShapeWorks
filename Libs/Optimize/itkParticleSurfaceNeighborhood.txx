@@ -1,6 +1,6 @@
 #pragma once
 
-namespace itk {
+namespace shapeworks {
 template <class TImage>
 typename ParticleSurfaceNeighborhood<TImage>::PointVectorType
 ParticleSurfaceNeighborhood<TImage>::FindNeighborhoodPoints(const PointType &center, int idx,
@@ -86,4 +86,4 @@ ParticleSurfaceNeighborhood<TImage>::FindNeighborhoodPoints(const PointType &cen
   return this->FindNeighborhoodPoints(center, idx, weights, distances, radius);
 }
 
-}  // namespace itk
+}  // namespace shapeworks

@@ -18,7 +18,7 @@
 #include "vnl/vnl_vector_fixed.h"
 #include "vnl/vnl_matrix.h"
 
-namespace itk {
+namespace shapeworks {
 
 template <class TGradientNumericType, unsigned int VDimension>
 typename ParticleModifiedCotangentEntropyGradientFunction<TGradientNumericType, VDimension>::VectorType

@@ -1,6 +1,6 @@
 #include "itkParticleSystem.h"
 
-namespace itk {
+namespace shapeworks {
 
 ParticleSystem::PointType ParticleSystem::TransformPoint(const PointType& p, const TransformType& T) const {
   PointType ans;
@@ -83,7 +83,7 @@ void ParticleSystem::AddDomain(DomainType::Pointer input) {
   this->InvokeEvent(e);
 }
 
-void ParticleSystem::PrintSelf(std::ostream& os, Indent indent) const {
+void ParticleSystem::PrintSelf(std::ostream& os, itk::Indent indent) const {
   Superclass::PrintSelf(os, indent);
 
   os << indent << "m_IndexCounters.size(): " << m_IndexCounters.size() << std::endl;
@@ -334,40 +334,40 @@ void ParticleSystem::RegisterAttribute(ParticleAttribute* attr) {
   // Register any methods defined by the attribute as observers of this
   // ParticleSystem with appropriate events.
   if (attr->m_DefinedCallbacks.DomainAddEvent == true) {
-    MemberCommand<ParticleAttribute>::Pointer tmpcmd = MemberCommand<ParticleAttribute>::New();
+    itk::MemberCommand<ParticleAttribute>::Pointer tmpcmd = itk::MemberCommand<ParticleAttribute>::New();
     tmpcmd->SetCallbackFunction(attr, &ParticleAttribute::DomainAddEventCallback);
     this->AddObserver(ParticleDomainAddEvent(), tmpcmd);
   }
   if (attr->m_DefinedCallbacks.TransformSetEvent == true) {
-    MemberCommand<ParticleAttribute>::Pointer tmpcmd = MemberCommand<ParticleAttribute>::New();
+    itk::MemberCommand<ParticleAttribute>::Pointer tmpcmd = itk::MemberCommand<ParticleAttribute>::New();
     tmpcmd->SetCallbackFunction(attr, &ParticleAttribute::TransformSetEventCallback);
     this->AddObserver(ParticleTransformSetEvent(), tmpcmd);
   }
   if (attr->m_DefinedCallbacks.PrefixTransformSetEvent == true) {
-    MemberCommand<ParticleAttribute>::Pointer tmpcmd = MemberCommand<ParticleAttribute>::New();
+    itk::MemberCommand<ParticleAttribute>::Pointer tmpcmd = itk::MemberCommand<ParticleAttribute>::New();
     tmpcmd->SetCallbackFunction(attr, &ParticleAttribute::PrefixTransformSetEventCallback);
     this->AddObserver(ParticlePrefixTransformSetEvent(), tmpcmd);
   }
   if (attr->m_DefinedCallbacks.NeighborhoodSetEvent == true) {
-    MemberCommand<ParticleAttribute>::Pointer tmpcmd = MemberCommand<ParticleAttribute>::New();
+    itk::MemberCommand<ParticleAttribute>::Pointer tmpcmd = itk::MemberCommand<ParticleAttribute>::New();
     tmpcmd->SetCallbackFunction(attr, &ParticleAttribute::NeighborhoodSetEventCallback);
     this->AddObserver(ParticleNeighborhoodSetEvent(), tmpcmd);
   }
   if (attr->m_DefinedCallbacks.PositionSetEvent == true) {
-    MemberCommand<ParticleAttribute>::Pointer tmpcmd = MemberCommand<ParticleAttribute>::New();
+    itk::MemberCommand<ParticleAttribute>::Pointer tmpcmd = itk::MemberCommand<ParticleAttribute>::New();
     tmpcmd->SetCallbackFunction(attr, &ParticleAttribute::PositionSetEventCallback);
     this->AddObserver(ParticlePositionSetEvent(), tmpcmd);
   }
   if (attr->m_DefinedCallbacks.PositionAddEvent == true) {
-    MemberCommand<ParticleAttribute>::Pointer tmpcmd = MemberCommand<ParticleAttribute>::New();
+    itk::MemberCommand<ParticleAttribute>::Pointer tmpcmd = itk::MemberCommand<ParticleAttribute>::New();
     tmpcmd->SetCallbackFunction(attr, &ParticleAttribute::PositionAddEventCallback);
     this->AddObserver(ParticlePositionAddEvent(), tmpcmd);
   }
   if (attr->m_DefinedCallbacks.PositionRemoveEvent == true) {
-    MemberCommand<ParticleAttribute>::Pointer tmpcmd = MemberCommand<ParticleAttribute>::New();
+    itk::MemberCommand<ParticleAttribute>::Pointer tmpcmd = itk::MemberCommand<ParticleAttribute>::New();
     tmpcmd->SetCallbackFunction(attr, &ParticleAttribute::PositionRemoveEventCallback);
     this->AddObserver(ParticlePositionRemoveEvent(), tmpcmd);
   }
 }
 
-}  // namespace itk
+}  // namespace shapeworks

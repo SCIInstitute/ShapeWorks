@@ -6,7 +6,7 @@
 #include "itkParticleShapeMatrixAttribute.h"
 #include "itkParticleVectorFunction.h"
 
-namespace itk {
+namespace shapeworks {
 
 /**
  * \class ParticleEnsembleEntropyFunction
@@ -17,8 +17,8 @@ class ParticleEnsembleEntropyFunction : public ParticleVectorFunction {
   constexpr static unsigned int VDimension = 3;
   /** Standard class typedefs. */
   typedef ParticleEnsembleEntropyFunction Self;
-  typedef SmartPointer<Self> Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+  typedef itk::SmartPointer<Self> Pointer;
+  typedef itk::SmartPointer<const Self> ConstPointer;
   typedef ParticleVectorFunction Superclass;
   itkTypeMacro(ParticleEnsembleEntropyFunction, ParticleVectorFunction);
 
@@ -170,5 +170,5 @@ class ParticleEnsembleEntropyFunction : public ParticleVectorFunction {
   std::shared_ptr<vnl_matrix_type> m_InverseCovMatrix;  // 3NxM - used for energy computation
 };
 
-}  // namespace itk
+}  // namespace shapeworks
 

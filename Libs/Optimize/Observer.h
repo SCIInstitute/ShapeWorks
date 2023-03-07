@@ -2,24 +2,22 @@
 
 #include "itkCommand.h"
 #include "itkDataObject.h"
-#include "itkParticleEvents.h"
-#include "itkPoint.h"
 #include "itkWeakPointer.h"
 
-namespace itk {
+namespace shapeworks {
 
 /*!
  * @class ParticleAttribute
- * @brief This class appears to be an listener interface for an observer pattern
+ * @brief This class is an observer interface (observer pattern)
  */
-class ParticleAttribute : public DataObject {
+class ParticleAttribute : public itk::DataObject {
  public:
   /** Standard class typedefs */
   typedef ParticleAttribute Self;
   typedef DataObject Superclass;
-  typedef SmartPointer<Self> Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
-  typedef WeakPointer<const Self> ConstWeakPointer;
+  typedef itk::SmartPointer<Self> Pointer;
+  typedef itk::SmartPointer<const Self> ConstPointer;
+  typedef itk::WeakPointer<const Self> ConstWeakPointer;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -29,8 +27,7 @@ class ParticleAttribute : public DataObject {
 
   /** Data structure indicating which callback functions are defined by a
       subclass.  The ParticleSystem class will reference this structure to
-      determine which callbacks to register.  This is just a list of every
-      event defined in itkParticleEvent.h */
+      determine which callbacks to register. */
   struct DefinedCallbacksStruct {
     DefinedCallbacksStruct()
         : DomainAddEvent(false),
@@ -56,23 +53,23 @@ class ParticleAttribute : public DataObject {
       should be set to true so that the ParticleSystem will know to register
       the appropriate event with this method. */
 
-  virtual void DomainAddEventCallback(Object*, const EventObject&) {}
-  virtual void TransformSetEventCallback(Object*, const EventObject&) {}
-  virtual void PrefixTransformSetEventCallback(Object*, const EventObject&) {}
-  virtual void NeighborhoodSetEventCallback(Object*, const EventObject&) {}
-  virtual void PositionSetEventCallback(Object*, const EventObject&) {}
-  virtual void PositionAddEventCallback(Object*, const EventObject&) {}
-  virtual void PositionRemoveEventCallback(Object*, const EventObject&) {}
+  virtual void DomainAddEventCallback(Object*, const itk::EventObject&) {}
+  virtual void TransformSetEventCallback(Object*, const itk::EventObject&) {}
+  virtual void PrefixTransformSetEventCallback(Object*, const itk::EventObject&) {}
+  virtual void NeighborhoodSetEventCallback(Object*, const itk::EventObject&) {}
+  virtual void PositionSetEventCallback(Object*, const itk::EventObject&) {}
+  virtual void PositionAddEventCallback(Object*, const itk::EventObject&) {}
+  virtual void PositionRemoveEventCallback(Object*, const itk::EventObject&) {}
 
  protected:
   ParticleAttribute() {}
   virtual ~ParticleAttribute(){};
 
-  void PrintSelf(std::ostream& os, Indent indent) const { Superclass::PrintSelf(os, indent); }
+  void PrintSelf(std::ostream& os, itk::Indent indent) const { Superclass::PrintSelf(os, indent); }
 
  private:
   ParticleAttribute(const Self&);  // purposely not implemented
   void operator=(const Self&);     // purposely not implemented
 };
 
-}  // end namespace itk
+}  // namespace shapeworks

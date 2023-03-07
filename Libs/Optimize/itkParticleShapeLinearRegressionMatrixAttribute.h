@@ -4,7 +4,7 @@
 #include "itkParticleSystem.h"
 #include "vnl/vnl_vector.h"
 
-namespace itk {
+namespace shapeworks {
 /** \class ParticleShapeLinearRegressionMatrixAttribute
  *
  *
@@ -16,9 +16,9 @@ class ParticleShapeLinearRegressionMatrixAttribute : public LegacyShapeMatrix {
   typedef double DataType;
   typedef ParticleShapeLinearRegressionMatrixAttribute Self;
   typedef LegacyShapeMatrix Superclass;
-  typedef SmartPointer<Self> Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
-  typedef WeakPointer<const Self> ConstWeakPointer;
+  typedef itk::SmartPointer<Self> Pointer;
+  typedef itk::SmartPointer<const Self> ConstPointer;
+  typedef itk::WeakPointer<const Self> ConstWeakPointer;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -86,8 +86,8 @@ class ParticleShapeLinearRegressionMatrixAttribute : public LegacyShapeMatrix {
       of these callback methods, the corresponding flag in m_DefinedCallbacks
       should be set to true so that the ParticleSystem will know to register
       the appropriate event with this method. */
-  virtual void DomainAddEventCallback(Object*, const EventObject& e) {
-    const itk::ParticleDomainAddEvent& event = dynamic_cast<const itk::ParticleDomainAddEvent&>(e);
+  virtual void DomainAddEventCallback(Object*, const itk::EventObject& e) {
+    const ParticleDomainAddEvent& event = dynamic_cast<const ParticleDomainAddEvent&>(e);
     unsigned int d = event.GetDomainIndex();
 
     if (d % this->m_DomainsPerShape == 0) {
@@ -97,12 +97,12 @@ class ParticleShapeLinearRegressionMatrixAttribute : public LegacyShapeMatrix {
     }
   }
 
-  virtual void PositionAddEventCallback(Object* o, const EventObject& e) {
-    const itk::ParticlePositionAddEvent& event = dynamic_cast<const itk::ParticlePositionAddEvent&>(e);
-    const itk::ParticleSystem* ps = dynamic_cast<const itk::ParticleSystem*>(o);
+  virtual void PositionAddEventCallback(Object* o, const itk::EventObject& e) {
+    const ParticlePositionAddEvent& event = dynamic_cast<const ParticlePositionAddEvent&>(e);
+    const ParticleSystem* ps = dynamic_cast<const ParticleSystem*>(o);
     const int d = event.GetDomainIndex();
     const unsigned int idx = event.GetPositionIndex();
-    const typename itk::ParticleSystem::PointType pos = ps->GetTransformedPosition(idx, d);
+    const typename ParticleSystem::PointType pos = ps->GetTransformedPosition(idx, d);
 
     const unsigned int PointsPerDomain = ps->GetNumberOfParticles(d);
 
@@ -123,13 +123,13 @@ class ParticleShapeLinearRegressionMatrixAttribute : public LegacyShapeMatrix {
     //   std::cout << "Row " << k << " Col " << d / this->m_DomainsPerShape << " = " << pos << std::endl;
   }
 
-  virtual void PositionSetEventCallback(Object* o, const EventObject& e) {
-    const itk::ParticlePositionSetEvent& event = dynamic_cast<const itk::ParticlePositionSetEvent&>(e);
+  virtual void PositionSetEventCallback(Object* o, const itk::EventObject& e) {
+    const ParticlePositionSetEvent& event = dynamic_cast<const ParticlePositionSetEvent&>(e);
 
-    const itk::ParticleSystem* ps = dynamic_cast<const itk::ParticleSystem*>(o);
+    const ParticleSystem* ps = dynamic_cast<const ParticleSystem*>(o);
     const int d = event.GetDomainIndex();
     const unsigned int idx = event.GetPositionIndex();
-    const typename itk::ParticleSystem::PointType pos = ps->GetTransformedPosition(idx, d);
+    const typename ParticleSystem::PointType pos = ps->GetTransformedPosition(idx, d);
     const unsigned int PointsPerDomain = ps->GetNumberOfParticles(d);
 
     // Modify matrix info
@@ -141,7 +141,7 @@ class ParticleShapeLinearRegressionMatrixAttribute : public LegacyShapeMatrix {
     }
   }
 
-  virtual void PositionRemoveEventCallback(Object*, const EventObject&) {
+  virtual void PositionRemoveEventCallback(Object*, const itk::EventObject&) {
     // NEED TO IMPLEMENT THIS
   }
 
@@ -238,7 +238,7 @@ class ParticleShapeLinearRegressionMatrixAttribute : public LegacyShapeMatrix {
   }
   virtual ~ParticleShapeLinearRegressionMatrixAttribute(){};
 
-  void PrintSelf(std::ostream& os, Indent indent) const { Superclass::PrintSelf(os, indent); }
+  void PrintSelf(std::ostream& os, itk::Indent indent) const { Superclass::PrintSelf(os, indent); }
 
  private:
   ParticleShapeLinearRegressionMatrixAttribute(const Self&);  // purposely not implemented
@@ -258,4 +258,4 @@ class ParticleShapeLinearRegressionMatrixAttribute : public LegacyShapeMatrix {
   vnl_matrix<double> m_MeanMatrix;
 };
 
-}  // namespace itk
+}  // namespace shapeworks

@@ -877,9 +877,9 @@ bool OptimizeParameterFile::read_distribution_cutting_plane(TiXmlHandle* doc_han
 
       // If initial transform provided, transform cutting plane points
       if (optimize->GetPrefixTransformFile() != "" && optimize->GetTransformFile() != "") {
-        itk::ParticleSystem::PointType pa;
-        itk::ParticleSystem::PointType pb;
-        itk::ParticleSystem::PointType pc;
+        ParticleSystem::PointType pa;
+        ParticleSystem::PointType pb;
+        ParticleSystem::PointType pc;
 
         pa[0] = a[0];
         pa[1] = a[1];
@@ -891,10 +891,10 @@ bool OptimizeParameterFile::read_distribution_cutting_plane(TiXmlHandle* doc_han
         pc[1] = c[1];
         pc[2] = c[2];
 
-        itk::ParticleSystem::TransformType T =
+        ParticleSystem::TransformType T =
           optimize->GetSampler()->GetParticleSystem()->GetTransform(
             shapeCount);
-        itk::ParticleSystem::TransformType prefT =
+        ParticleSystem::TransformType prefT =
           optimize->GetSampler()->GetParticleSystem()->GetPrefixTransform(shapeCount);
         pa = optimize->GetSampler()->GetParticleSystem()->TransformPoint(pa, T * prefT);
         pb = optimize->GetSampler()->GetParticleSystem()->TransformPoint(pb, T * prefT);
@@ -1030,9 +1030,9 @@ bool OptimizeParameterFile::read_cutting_planes(TiXmlHandle* docHandle, Optimize
 
         // If initial transform provided, transform cutting plane points
         if (optimize->GetPrefixTransformFile() != "" && optimize->GetTransformFile() != "") {
-          itk::ParticleSystem::PointType pa;
-          itk::ParticleSystem::PointType pb;
-          itk::ParticleSystem::PointType pc;
+          ParticleSystem::PointType pa;
+          ParticleSystem::PointType pb;
+          ParticleSystem::PointType pc;
 
           pa[0] = a[0];
           pa[1] = a[1];
@@ -1044,10 +1044,10 @@ bool OptimizeParameterFile::read_cutting_planes(TiXmlHandle* docHandle, Optimize
           pc[1] = c[1];
           pc[2] = c[2];
 
-          itk::ParticleSystem::TransformType T =
+          ParticleSystem::TransformType T =
             optimize->GetSampler()->GetParticleSystem()->GetTransform(
               shapeCount);
-          itk::ParticleSystem::TransformType prefT =
+          ParticleSystem::TransformType prefT =
             optimize->GetSampler()->GetParticleSystem()->GetPrefixTransform(shapeCount);
           pa = optimize->GetSampler()->GetParticleSystem()->TransformPoint(pa, T * prefT);
           pb = optimize->GetSampler()->GetParticleSystem()->TransformPoint(pb, T * prefT);
@@ -1182,11 +1182,11 @@ bool OptimizeParameterFile::read_explanatory_variables(TiXmlHandle* doc_handle, 
     evars.push_back(etmp);
   }
 
-  dynamic_cast < itk::ParticleShapeLinearRegressionMatrixAttribute* >
+  dynamic_cast < ParticleShapeLinearRegressionMatrixAttribute* >
   (optimize->GetSampler()->GetEnsembleRegressionEntropyFunction()->GetShapeMatrix())->SetExplanatory(
     evars);
 
-  dynamic_cast < itk::ParticleShapeMixedEffectsMatrixAttribute* >
+  dynamic_cast < ParticleShapeMixedEffectsMatrixAttribute* >
   (optimize->GetSampler()->GetEnsembleMixedEffectsEntropyFunction()->GetShapeMatrix())->
     SetExplanatory(evars);
 

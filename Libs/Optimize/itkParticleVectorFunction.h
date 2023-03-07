@@ -6,7 +6,7 @@
 #include "itkWeakPointer.h"
 #include "vnl/vnl_vector_fixed.h"
 
-namespace itk {
+namespace shapeworks {
 
 /**
  * \class ParticleVectorFunction
@@ -16,14 +16,14 @@ namespace itk {
  * result.
  *
  */
-class ParticleVectorFunction : public LightObject {
+class ParticleVectorFunction : public itk::LightObject {
  public:
   constexpr static unsigned int VDimension = 3;
   /** Standard class typedefs. */
   typedef ParticleVectorFunction Self;
-  typedef SmartPointer<Self> Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
-  typedef LightObject Superclass;
+  typedef itk::SmartPointer<Self> Pointer;
+  typedef itk::SmartPointer<const Self> ConstPointer;
+  typedef itk::LightObject Superclass;
   itkTypeMacro(ParticleVectorFunction, LightObject);
 
   /** Type of particle system. */
@@ -91,4 +91,4 @@ class ParticleVectorFunction : public LightObject {
   unsigned int m_DomainNumber;
 };
 
-}  // namespace itk
+}  // namespace shapeworks

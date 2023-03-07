@@ -110,4 +110,4 @@ private:
   typename openvdb::VectorGrid::Ptr m_VDBGradNorms[3];
 };
 
-} // end namespace itk
+} // end namespace shapeworks

@@ -6,7 +6,7 @@
 
 #include "ParticleImageDomainWithGradients.h"
 
-namespace itk {
+namespace shapeworks {
 
 SamplingFunction::TGradientNumericType SamplingFunction::AngleCoefficient(
     const GradientVectorType& p_i_normal, const GradientVectorType& p_j_normal) const {
@@ -230,4 +230,4 @@ SamplingFunction::VectorType SamplingFunction::Evaluate(unsigned int idx, unsign
   return gradE;
 }
 
-}  // namespace itk
+}  // namespace shapeworks

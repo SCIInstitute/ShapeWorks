@@ -1,14 +1,14 @@
 #pragma once
 
 #include "itkDataObject.h"
-#include "itkParticleAttribute.h"
+#include "Observer.h"
 #include "itkParticleContainer.h"
 #include "itkParticleSystem.h"
 #include "itkWeakPointer.h"
 #include "vnl/vnl_matrix.h"
 #include <cmath>
 
-namespace itk {
+namespace shapeworks {
 /** \class ParticleShapeMatrixAttribute
  *
  * \brief Each column describes a shape.  A shape may be composed of
@@ -24,9 +24,9 @@ class LegacyShapeMatrix : public vnl_matrix<double>, public ParticleAttribute {
   typedef double DataType;
   typedef LegacyShapeMatrix Self;
   typedef ParticleAttribute Superclass;
-  typedef SmartPointer<Self> Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
-  typedef WeakPointer<const Self> ConstWeakPointer;
+  typedef itk::SmartPointer<Self> Pointer;
+  typedef itk::SmartPointer<const Self> ConstPointer;
+  typedef itk::WeakPointer<const Self> ConstWeakPointer;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self)
@@ -38,8 +38,8 @@ class LegacyShapeMatrix : public vnl_matrix<double>, public ParticleAttribute {
        of these callback methods, the corresponding flag in m_DefinedCallbacks
        should be set to true so that the ParticleSystem will know to register
        the appropriate event with this method. */
-  virtual void DomainAddEventCallback(Object*, const EventObject& e) {
-    const itk::ParticleDomainAddEvent& event = dynamic_cast<const itk::ParticleDomainAddEvent&>(e);
+  virtual void DomainAddEventCallback(Object*, const itk::EventObject& e) {
+    const ParticleDomainAddEvent& event = dynamic_cast<const ParticleDomainAddEvent&>(e);
     unsigned int d = event.GetDomainIndex();
 
     if (d % m_DomainsPerShape == 0) this->ResizeMatrix(this->rows(), this->cols() + 1);
@@ -57,13 +57,13 @@ class LegacyShapeMatrix : public vnl_matrix<double>, public ParticleAttribute {
     }
   }
 
-  virtual void PositionAddEventCallback(Object* o, const EventObject& e) {
+  virtual void PositionAddEventCallback(Object* o, const itk::EventObject& e) {
     const int VDimension = 3;
-    const itk::ParticlePositionAddEvent& event = dynamic_cast<const itk::ParticlePositionAddEvent&>(e);
-    const itk::ParticleSystem* ps = dynamic_cast<const itk::ParticleSystem*>(o);
+    const ParticlePositionAddEvent& event = dynamic_cast<const ParticlePositionAddEvent&>(e);
+    const ParticleSystem* ps = dynamic_cast<const ParticleSystem*>(o);
     const int d = event.GetDomainIndex();
     const unsigned int idx = event.GetPositionIndex();
-    const typename itk::ParticleSystem::PointType pos = ps->GetTransformedPosition(idx, d);
+    const typename ParticleSystem::PointType pos = ps->GetTransformedPosition(idx, d);
 
     int numRows = 0;
     for (int i = 0; i < m_DomainsPerShape; i++) numRows += VDimension * ps->GetNumberOfParticles(i);
@@ -78,13 +78,13 @@ class LegacyShapeMatrix : public vnl_matrix<double>, public ParticleAttribute {
     for (unsigned int i = 0; i < VDimension; i++) this->operator()(i + k, d / m_DomainsPerShape) = pos[i];
   }
 
-  virtual void PositionSetEventCallback(Object* o, const EventObject& e) {
+  virtual void PositionSetEventCallback(Object* o, const itk::EventObject& e) {
     const int VDimension = 3;
-    const itk::ParticlePositionSetEvent& event = dynamic_cast<const itk::ParticlePositionSetEvent&>(e);
-    const itk::ParticleSystem* ps = dynamic_cast<const itk::ParticleSystem*>(o);
+    const ParticlePositionSetEvent& event = dynamic_cast<const ParticlePositionSetEvent&>(e);
+    const ParticleSystem* ps = dynamic_cast<const ParticleSystem*>(o);
     const int d = event.GetDomainIndex();
     const unsigned int idx = event.GetPositionIndex();
-    const typename itk::ParticleSystem::PointType pos = ps->GetTransformedPosition(idx, d);
+    const typename ParticleSystem::PointType pos = ps->GetTransformedPosition(idx, d);
 
     unsigned int k = 0;
     int dom = d % m_DomainsPerShape;
@@ -94,7 +94,7 @@ class LegacyShapeMatrix : public vnl_matrix<double>, public ParticleAttribute {
     for (unsigned int i = 0; i < VDimension; i++) this->operator()(i + k, d / m_DomainsPerShape) = pos[i];
   }
 
-  virtual void PositionRemoveEventCallback(Object*, const EventObject&) {
+  virtual void PositionRemoveEventCallback(Object*, const itk::EventObject&) {
     // NEED TO IMPLEMENT THIS
   }
 
@@ -141,7 +141,7 @@ class LegacyShapeMatrix : public vnl_matrix<double>, public ParticleAttribute {
   }
   virtual ~LegacyShapeMatrix() {}
 
-  void PrintSelf(std::ostream& os, Indent indent) const { Superclass::PrintSelf(os, indent); }
+  void PrintSelf(std::ostream& os, itk::Indent indent) const { Superclass::PrintSelf(os, indent); }
 
   int m_DomainsPerShape;
 
@@ -150,4 +150,4 @@ class LegacyShapeMatrix : public vnl_matrix<double>, public ParticleAttribute {
   void operator=(const Self&);     // purposely not implemented
 };
 
-}  // namespace itk
+}  // namespace shapeworks

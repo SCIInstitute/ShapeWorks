@@ -457,7 +457,7 @@ void Shape::generate_meshes(std::vector<std::string> filenames, MeshGroup& mesh_
 
 //---------------------------------------------------------------------------
 bool Shape::import_point_file(std::string filename, Eigen::VectorXd& points) {
-  return ParticleSystem::ReadParticleFile(filename, points);
+  return ParticleSystemEvaluation::ReadParticleFile(filename, points);
 }
 
 //---------------------------------------------------------------------------

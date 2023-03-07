@@ -6,27 +6,27 @@
 #include "itkDataObject.h"
 #include "itkWeakPointer.h"
 
-namespace itk {
+namespace shapeworks {
 /*!
  * @class ParticleContainer
  * @brief This class seems to be only a wrapper around std::vector implementing ITK DataObject (for smart pointer?)
  */
 template <class T>
-class ParticleContainer : public DataObject {
+class ParticleContainer : public itk::DataObject {
  public:
   /** Standard class typedefs */
   typedef T DataType;
   typedef ParticleContainer Self;
   typedef DataObject Superclass;
-  typedef SmartPointer<Self> Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
-  typedef WeakPointer<const Self> ConstWeakPointer;
+  typedef itk::SmartPointer<Self> Pointer;
+  typedef itk::SmartPointer<const Self> ConstPointer;
+  typedef itk::WeakPointer<const Self> ConstWeakPointer;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(ParticleContainer, DataObject);
+  itkTypeMacro(ParticleContainer, itk::DataObject);
 
   /** Returns a reference to the object associated with index k.  If the index
       k does not already exist, this method inserts a new entry for k. */
@@ -46,7 +46,7 @@ class ParticleContainer : public DataObject {
 
  protected:
   ParticleContainer() {}
-  void PrintSelf(std::ostream& os, Indent indent) const {
+  void PrintSelf(std::ostream& os, itk::Indent indent) const {
     Superclass::PrintSelf(os, indent);
 
     os << indent << "ParticleContainer: " << std::endl;
@@ -60,4 +60,4 @@ class ParticleContainer : public DataObject {
   std::vector<T> data;
 };
 
-}  // end namespace itk
+}  // end namespace shapeworks

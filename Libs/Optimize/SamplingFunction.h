@@ -6,7 +6,7 @@
 #include "itkParticleContainerArrayAttribute.h"
 #include "itkParticleVectorFunction.h"
 
-namespace itk {
+namespace shapeworks {
 
 /**
  * \class ParticleEntropyGradientFunction
@@ -66,8 +66,8 @@ class SamplingFunction : public ParticleVectorFunction {
 
   /** Standard class typedefs. */
   typedef SamplingFunction Self;
-  typedef SmartPointer<Self> Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+  typedef itk::SmartPointer<Self> Pointer;
+  typedef itk::SmartPointer<const Self> ConstPointer;
   typedef ParticleVectorFunction Superclass;
   itkTypeMacro(SamplingFunction, ParticleVectorFunction);
 
@@ -179,4 +179,4 @@ class SamplingFunction : public ParticleVectorFunction {
   typename SigmaCacheType::Pointer m_SpatialSigmaCache;
 };
 
-}  // namespace itk
+}  // namespace shapeworks

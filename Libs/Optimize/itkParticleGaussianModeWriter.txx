@@ -5,7 +5,7 @@
 #include "itkParticlePositionWriter.h"
 #include <string>
 
-namespace itk
+namespace shapeworks
 {
 
 template <unsigned int VDimension>

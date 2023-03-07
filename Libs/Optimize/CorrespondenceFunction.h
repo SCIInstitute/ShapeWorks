@@ -8,7 +8,7 @@
 #include "ShapeMatrix.h"
 #include "itkParticleVectorFunction.h"
 
-namespace itk {
+namespace shapeworks {
 
 //! Correspondence term
 class CorrespondenceFunction : public ParticleVectorFunction {
@@ -16,8 +16,8 @@ class CorrespondenceFunction : public ParticleVectorFunction {
   constexpr static int VDimension = 3;
   /** Standard class typedefs. */
   typedef CorrespondenceFunction Self;
-  typedef SmartPointer<Self> Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+  typedef itk::SmartPointer<Self> Pointer;
+  typedef itk::SmartPointer<const Self> ConstPointer;
   typedef ParticleVectorFunction Superclass;
   itkTypeMacro(CorrespondenceFunction, ParticleVectorFunction)
 
@@ -208,4 +208,4 @@ class CorrespondenceFunction : public ParticleVectorFunction {
   std::shared_ptr<vnl_matrix_type> m_InverseCovMatrix;
   int num_dims, num_samples;
 };
-}  // namespace itk
+}  // namespace shapeworks

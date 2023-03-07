@@ -9,7 +9,7 @@
 #include "itkPoint.h"
 #include "itkWeakPointer.h"
 
-namespace itk {
+namespace shapeworks {
 /** \class ParticleNeighborhood
  *
  * A ParticleNeighborhood is responsible for computing neighborhoods of
@@ -20,15 +20,15 @@ namespace itk {
  * FindNeighborhoodPoints is called.
  */
 
-class ParticleNeighborhood : public DataObject {
+class ParticleNeighborhood : public itk::DataObject {
  public:
   constexpr static unsigned int VDimension = 3;
   /** Standard class typedefs */
   typedef ParticleNeighborhood Self;
   typedef DataObject Superclass;
-  typedef SmartPointer<Self> Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
-  typedef WeakPointer<const Self> ConstWeakPointer;
+  typedef itk::SmartPointer<Self> Pointer;
+  typedef itk::SmartPointer<const Self> ConstPointer;
+  typedef itk::WeakPointer<const Self> ConstWeakPointer;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -40,7 +40,7 @@ class ParticleNeighborhood : public DataObject {
   itkStaticConstMacro(Dimension, unsigned int, VDimension);
 
   /** Point type used to store particle locations. */
-  typedef Point<double, VDimension> PointType;
+  typedef itk::Point<double, VDimension> PointType;
 
   /** Domain type.  The Domain object provides bounds and distance
       information. */
@@ -100,7 +100,7 @@ class ParticleNeighborhood : public DataObject {
 
  protected:
   ParticleNeighborhood() {}
-  void PrintSelf(std::ostream& os, Indent indent) const { Superclass::PrintSelf(os, indent); }
+  void PrintSelf(std::ostream& os, itk::Indent indent) const { Superclass::PrintSelf(os, indent); }
   virtual ~ParticleNeighborhood(){};
 
  private:
@@ -111,4 +111,4 @@ class ParticleNeighborhood : public DataObject {
   typename DomainType::Pointer m_Domain;
 };
 
-}  // end namespace itk
+}  // end namespace shapeworks

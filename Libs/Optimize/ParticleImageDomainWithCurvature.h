@@ -138,4 +138,4 @@ private:
 
 };
 
-} // end namespace itk
+} // end namespace shapeworks

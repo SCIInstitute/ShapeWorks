@@ -11,7 +11,7 @@
 #include "itkMath.h"
 
 
-namespace itk {
+namespace shapeworks {
 
 /**
  * \class ParticleModifiedCotangentEntropyGradientFunction
@@ -35,8 +35,8 @@ class ParticleModifiedCotangentEntropyGradientFunction
  public:
   /** Standard class typedefs. */
   typedef ParticleModifiedCotangentEntropyGradientFunction Self;
-  typedef SmartPointer<Self> Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+  typedef itk::SmartPointer<Self> Pointer;
+  typedef itk::SmartPointer<const Self> ConstPointer;
   typedef SamplingFunction Superclass;
   itkTypeMacro(ParticleModifiedCotangentEntropyGradientFunction, SamplingFunction);
 
@@ -148,6 +148,6 @@ class ParticleModifiedCotangentEntropyGradientFunction
   std::vector<double> m_GlobalSigma;
 };
 
-}  // namespace itk
+}  // namespace shapeworks
 
 #include "itkParticleModifiedCotangentEntropyGradientFunction.txx"

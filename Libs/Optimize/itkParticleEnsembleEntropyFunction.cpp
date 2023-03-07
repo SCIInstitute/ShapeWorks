@@ -10,7 +10,7 @@
 #include "itkParticleGaussianModeWriter.h"
 #include "vnl/algo/vnl_symmetric_eigensystem.h"
 
-namespace itk {
+namespace shapeworks {
 void ParticleEnsembleEntropyFunction ::WriteModes(const std::string& prefix, int n) const {
   typename ParticleGaussianModeWriter<VDimension>::Pointer writer = ParticleGaussianModeWriter<VDimension>::New();
   writer->SetShapeMatrix(m_ShapeMatrix);
@@ -162,4 +162,4 @@ ParticleEnsembleEntropyFunction::VectorType ParticleEnsembleEntropyFunction ::Ev
   return system->TransformVector(gradE, system->GetInversePrefixTransform(d) * system->GetInverseTransform(d));
 }
 
-}  // namespace itk
+}  // namespace shapeworks

@@ -5,7 +5,7 @@
 
 namespace shapeworks {
 
-std::vector<std::vector<int>> ParticleGoodBadAssessment::run_assessment(const itk::ParticleSystem* ps,
+std::vector<std::vector<int>> ParticleGoodBadAssessment::run_assessment(const ParticleSystem* ps,
                                                                         MeanCurvatureCacheType* mean_curvature_cache) {
   const int total_domains = ps->GetNumberOfDomains();
   const int num_shapes = total_domains / domains_per_shape_;
@@ -51,8 +51,8 @@ std::vector<std::vector<int>> ParticleGoodBadAssessment::run_assessment(const it
   return bad_ids;
 }
 
-vnl_matrix<double> ParticleGoodBadAssessment::compute_particles_normals(int d, const itk::ParticleSystem* ps) {
-  using PointType = itk::ParticleSystem::PointType;
+vnl_matrix<double> ParticleGoodBadAssessment::compute_particles_normals(int d, const ParticleSystem* ps) {
+  using PointType = ParticleSystem::PointType;
   using NormalType = vnl_vector_fixed<float, 3>;
 
   int num = ps->GetNumberOfParticles(d);

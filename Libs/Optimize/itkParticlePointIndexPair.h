@@ -1,7 +1,7 @@
 #pragma once
 
 #include "itkPoint.h"
-namespace itk {
+namespace shapeworks {
 /**
     Struct containing a Point and an index value associated with a point.  This
     object is used mainly by itkParticleNeighborhood*/
@@ -23,4 +23,4 @@ struct ParticlePointIndexPair {
   unsigned int Index;
 };
 
-}  // namespace itk
+}  // namespace shapeworks

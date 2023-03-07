@@ -7,7 +7,7 @@
 #include "vnl/algo/vnl_svd.h"
 #include "vnl/vnl_diag_matrix.h"
 
-namespace itk {
+namespace shapeworks {
 
 void CorrespondenceFunction::ComputeUpdates(const ParticleSystemType* c) {
   num_dims = m_ShapeData->rows();
@@ -192,4 +192,4 @@ CorrespondenceFunction::VectorType CorrespondenceFunction ::Evaluate(unsigned in
   return system->TransformVector(gradE, system->GetInversePrefixTransform(d) * system->GetInverseTransform(d));
 }
 
-}  // namespace itk
+}  // namespace shapeworks

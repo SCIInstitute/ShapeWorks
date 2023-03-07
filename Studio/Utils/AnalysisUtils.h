@@ -9,7 +9,7 @@ namespace shapeworks {
   class AnalysisUtils {
   public:
 
-    static ParticleSystem get_local_particle_system(Session* session, int domain);
+    static ParticleSystemEvaluation get_local_particle_system(Session* session, int domain);
 
 
   };

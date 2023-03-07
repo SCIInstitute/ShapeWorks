@@ -48,9 +48,9 @@ class Sampler {
   using ImageType = itk::Image<PixelType, Dimension>;
   using PointType = ImageType::PointType;
 
-  using MeanCurvatureCacheType = itk::ParticleMeanCurvatureAttribute<PixelType, Dimension>;
+  using MeanCurvatureCacheType = ParticleMeanCurvatureAttribute<PixelType, Dimension>;
   using TransformType = vnl_matrix_fixed<double, Dimension + 1, Dimension + 1>;
-  using OptimizerType = itk::ParticleGradientDescentPositionOptimizer<PixelType, Dimension>;
+  using OptimizerType = ParticleGradientDescentPositionOptimizer<PixelType, Dimension>;
 
   /** Convenient typedef for storing cutting plane information */
   struct CuttingPlaneType {
@@ -66,9 +66,9 @@ class Sampler {
   };
 
   /** Returns the particle system used in the surface sampling. */
-  itkGetObjectMacro(ParticleSystem, itk::ParticleSystem);
+  itkGetObjectMacro(ParticleSystem, ParticleSystem);
 
-  itkGetConstObjectMacro(ParticleSystem, itk::ParticleSystem);
+  itkGetConstObjectMacro(ParticleSystem, ParticleSystem);
 
   //! Constructor
   Sampler();
@@ -77,25 +77,25 @@ class Sampler {
   virtual ~Sampler(){};
 
   /** Returns a pointer to the gradient function used. */
-  itk::SamplingFunction* GetGradientFunction() {
+  SamplingFunction* GetGradientFunction() {
     return m_GradientFunction;
   }
 
-  itk::CurvatureSamplingFunction* GetCurvatureGradientFunction() {
+  CurvatureSamplingFunction* GetCurvatureGradientFunction() {
     return m_CurvatureGradientFunction;
   }
 
-  itk::ParticleModifiedCotangentEntropyGradientFunction<ImageType::PixelType, Dimension>*
+  ParticleModifiedCotangentEntropyGradientFunction<ImageType::PixelType, Dimension>*
   GetModifiedCotangentGradientFunction() {
     return m_ModifiedCotangentGradientFunction;
   }
 
-  itk::ParticleConstrainedModifiedCotangentEntropyGradientFunction<ImageType::PixelType, Dimension>*
+  ParticleConstrainedModifiedCotangentEntropyGradientFunction<ImageType::PixelType, Dimension>*
   GetConstrainedModifiedCotangentGradientFunction() {
     return m_ConstrainedModifiedCotangentGradientFunction;
   }
 
-  itk::ParticleOmegaGradientFunction<ImageType::PixelType, Dimension>* GetOmegaGradientFunction() {
+  ParticleOmegaGradientFunction<ImageType::PixelType, Dimension>* GetOmegaGradientFunction() {
     return m_OmegaGradientFunction;
   }
 
@@ -265,43 +265,42 @@ class Sampler {
     m_GeneralShapeGradMatrix->SetAttributesPerDomain(s1);
   }
 
-  itk::LegacyShapeMatrix* GetShapeMatrix() { return m_LegacyShapeMatrix.GetPointer(); }
+  LegacyShapeMatrix* GetShapeMatrix() { return m_LegacyShapeMatrix.GetPointer(); }
 
-  shapeworks::ShapeMatrix* GetGeneralShapeMatrix() { return m_GeneralShapeMatrix.GetPointer(); }
+  ShapeMatrix* GetGeneralShapeMatrix() { return m_GeneralShapeMatrix.GetPointer(); }
+  ShapeGradientMatrix* GetGeneralShapeGradientMatrix() { return m_GeneralShapeGradMatrix.GetPointer(); }
 
-  shapeworks::ShapeGradientMatrix* GetGeneralShapeGradientMatrix() { return m_GeneralShapeGradMatrix.GetPointer(); }
+  ParticleDualVectorFunction* GetLinkingFunction() { return m_LinkingFunction.GetPointer(); }
 
-  itk::ParticleDualVectorFunction* GetLinkingFunction() { return m_LinkingFunction.GetPointer(); }
+  ParticleEnsembleEntropyFunction* GetEnsembleEntropyFunction() { return m_EnsembleEntropyFunction.GetPointer(); }
 
-  itk::ParticleEnsembleEntropyFunction* GetEnsembleEntropyFunction() { return m_EnsembleEntropyFunction.GetPointer(); }
-
-  itk::ParticleEnsembleEntropyFunction* GetEnsembleRegressionEntropyFunction() {
+  ParticleEnsembleEntropyFunction* GetEnsembleRegressionEntropyFunction() {
     return m_EnsembleRegressionEntropyFunction.GetPointer();
   }
 
-  itk::ParticleEnsembleEntropyFunction* GetEnsembleMixedEffectsEntropyFunction() {
+  ParticleEnsembleEntropyFunction* GetEnsembleMixedEffectsEntropyFunction() {
     return m_EnsembleMixedEffectsEntropyFunction.GetPointer();
   }
 
-  itk::CorrespondenceFunction* GetMeshBasedGeneralEntropyGradientFunction() {
+  CorrespondenceFunction* GetMeshBasedGeneralEntropyGradientFunction() {
     return m_CorrespondenceFunction.GetPointer();
   }
 
-  const itk::ParticleDualVectorFunction* GetLinkingFunction() const { return m_LinkingFunction.GetPointer(); }
+  const ParticleDualVectorFunction* GetLinkingFunction() const { return m_LinkingFunction.GetPointer(); }
 
-  const itk::ParticleEnsembleEntropyFunction* GetEnsembleEntropyFunction() const {
+  const ParticleEnsembleEntropyFunction* GetEnsembleEntropyFunction() const {
     return m_EnsembleEntropyFunction.GetPointer();
   }
 
-  const itk::ParticleEnsembleEntropyFunction* GetEnsembleRegressionEntropyFunction() const {
+  const ParticleEnsembleEntropyFunction* GetEnsembleRegressionEntropyFunction() const {
     return m_EnsembleRegressionEntropyFunction.GetPointer();
   }
 
-  const itk::ParticleEnsembleEntropyFunction* GetEnsembleMixedEffectsEntropyFunction() const {
+  const ParticleEnsembleEntropyFunction* GetEnsembleMixedEffectsEntropyFunction() const {
     return m_EnsembleMixedEffectsEntropyFunction.GetPointer();
   }
 
-  const itk::CorrespondenceFunction* GetMeshBasedGeneralEntropyGradientFunction() const {
+  const CorrespondenceFunction* GetMeshBasedGeneralEntropyGradientFunction() const {
     return m_CorrespondenceFunction.GetPointer();
   }
 
@@ -410,42 +409,42 @@ class Sampler {
 
   OptimizerType::Pointer m_Optimizer;
 
-  itk::SamplingFunction::Pointer m_GradientFunction;
-  itk::CurvatureSamplingFunction::Pointer m_CurvatureGradientFunction;
+  SamplingFunction::Pointer m_GradientFunction;
+  CurvatureSamplingFunction::Pointer m_CurvatureGradientFunction;
 
-  itk::ParticleModifiedCotangentEntropyGradientFunction<ImageType::PixelType, Dimension>::Pointer
+  ParticleModifiedCotangentEntropyGradientFunction<ImageType::PixelType, Dimension>::Pointer
       m_ModifiedCotangentGradientFunction;
-  itk::ParticleConstrainedModifiedCotangentEntropyGradientFunction<ImageType::PixelType, Dimension>::Pointer
+  ParticleConstrainedModifiedCotangentEntropyGradientFunction<ImageType::PixelType, Dimension>::Pointer
       m_ConstrainedModifiedCotangentGradientFunction;
 
-  itk::ParticleOmegaGradientFunction<ImageType::PixelType, Dimension>::Pointer m_OmegaGradientFunction;
+  ParticleOmegaGradientFunction<ImageType::PixelType, Dimension>::Pointer m_OmegaGradientFunction;
 
-  itk::ParticleContainerArrayAttribute<double, Dimension>::Pointer m_Sigma1Cache;
-  itk::ParticleContainerArrayAttribute<double, Dimension>::Pointer m_Sigma2Cache;
+  ParticleContainerArrayAttribute<double, Dimension>::Pointer m_Sigma1Cache;
+  ParticleContainerArrayAttribute<double, Dimension>::Pointer m_Sigma2Cache;
 
   MeanCurvatureCacheType::Pointer m_MeanCurvatureCache;
 
-  itk::ParticleSystem::Pointer m_ParticleSystem;
+  ParticleSystem::Pointer m_ParticleSystem;
 
   std::vector<ParticleDomain::Pointer> m_DomainList;
 
-  std::vector<itk::ParticleSurfaceNeighborhood<ImageType>::Pointer> m_NeighborhoodList;
+  std::vector<ParticleSurfaceNeighborhood<ImageType>::Pointer> m_NeighborhoodList;
 
   int m_pairwise_potential_type;
 
   shapeworks::CorrespondenceMode m_CorrespondenceMode;
 
-  itk::ParticleDualVectorFunction::Pointer m_LinkingFunction;
+  ParticleDualVectorFunction::Pointer m_LinkingFunction;
 
-  itk::ParticleEnsembleEntropyFunction::Pointer m_EnsembleEntropyFunction;
-  itk::ParticleEnsembleEntropyFunction::Pointer m_EnsembleRegressionEntropyFunction;
-  itk::ParticleEnsembleEntropyFunction::Pointer m_EnsembleMixedEffectsEntropyFunction;
-  itk::CorrespondenceFunction::Pointer m_CorrespondenceFunction;
+  ParticleEnsembleEntropyFunction::Pointer m_EnsembleEntropyFunction;
+  ParticleEnsembleEntropyFunction::Pointer m_EnsembleRegressionEntropyFunction;
+  ParticleEnsembleEntropyFunction::Pointer m_EnsembleMixedEffectsEntropyFunction;
+  CorrespondenceFunction::Pointer m_CorrespondenceFunction;
 
-  itk::LegacyShapeMatrix::Pointer m_LegacyShapeMatrix;
+  LegacyShapeMatrix::Pointer m_LegacyShapeMatrix;
 
-  itk::ParticleShapeLinearRegressionMatrixAttribute::Pointer m_LinearRegressionShapeMatrix;
-  itk::ParticleShapeMixedEffectsMatrixAttribute::Pointer m_MixedEffectsShapeMatrix;
+  ParticleShapeLinearRegressionMatrixAttribute::Pointer m_LinearRegressionShapeMatrix;
+  ParticleShapeMixedEffectsMatrixAttribute::Pointer m_MixedEffectsShapeMatrix;
 
   shapeworks::ShapeMatrix::Pointer m_GeneralShapeMatrix;
   shapeworks::ShapeGradientMatrix::Pointer m_GeneralShapeGradMatrix;

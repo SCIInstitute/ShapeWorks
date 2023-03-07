@@ -4,7 +4,7 @@
 #include "ParticleImageDomainWithGradients.h"
 #include "ParticleImplicitSurfaceDomain.h"
 #include "itkDataObject.h"
-#include "itkParticleAttribute.h"
+#include "Observer.h"
 #include "itkParticleContainer.h"
 #include "itkParticleSystem.h"
 #include "itkWeakPointer.h"
@@ -20,7 +20,7 @@ namespace shapeworks {
  *
  * Each column represents a single shape.
  */
-class ShapeGradientMatrix : public vnl_matrix<double>, public itk::ParticleAttribute {
+class ShapeGradientMatrix : public vnl_matrix<double>, public ParticleAttribute {
  public:
   /** Standard class typedefs */
   typedef double DataType;
@@ -30,7 +30,7 @@ class ShapeGradientMatrix : public vnl_matrix<double>, public itk::ParticleAttri
   typedef itk::SmartPointer<const Self> ConstPointer;
   typedef itk::WeakPointer<const Self> ConstWeakPointer;
 
-  typedef itk::ParticleSystem ParticleSystemType;
+  typedef ParticleSystem ParticleSystemType;
 
   itkNewMacro(Self);
   itkTypeMacro(ShapeGradientMatrix, ParticleAttribute);
@@ -79,7 +79,7 @@ class ShapeGradientMatrix : public vnl_matrix<double>, public itk::ParticleAttri
   void SetValues(const ParticleSystemType* ps, int idx, int d);
 
   virtual void DomainAddEventCallback(Object*, const itk::EventObject& e) {
-    const itk::ParticleDomainAddEvent& event = dynamic_cast<const itk::ParticleDomainAddEvent&>(e);
+    const ParticleDomainAddEvent& event = dynamic_cast<const ParticleDomainAddEvent&>(e);
     unsigned int d = event.GetDomainIndex();
 
     if (d % m_DomainsPerShape == 0) {
@@ -89,8 +89,8 @@ class ShapeGradientMatrix : public vnl_matrix<double>, public itk::ParticleAttri
 
   virtual void PositionAddEventCallback(Object* o, const itk::EventObject& e) {
     // update the size of matrix based on xyz, normals and number of attributes being used
-    const itk::ParticlePositionAddEvent& event = dynamic_cast<const itk::ParticlePositionAddEvent&>(e);
-    const itk::ParticleSystem* ps = dynamic_cast<const itk::ParticleSystem*>(o);
+    const ParticlePositionAddEvent& event = dynamic_cast<const ParticlePositionAddEvent&>(e);
+    const ParticleSystem* ps = dynamic_cast<const ParticleSystem*>(o);
     const int d = event.GetDomainIndex();
     const unsigned int idx = event.GetPositionIndex();
 
@@ -114,8 +114,8 @@ class ShapeGradientMatrix : public vnl_matrix<double>, public itk::ParticleAttri
 
   virtual void PositionSetEventCallback(Object* o, const itk::EventObject& e) {
     // update xyz, normals and number of attributes being used
-    const itk::ParticlePositionSetEvent& event = dynamic_cast<const itk::ParticlePositionSetEvent&>(e);
-    const itk::ParticleSystem* ps = dynamic_cast<const itk::ParticleSystem*>(o);
+    const ParticlePositionSetEvent& event = dynamic_cast<const ParticlePositionSetEvent&>(e);
+    const ParticleSystem* ps = dynamic_cast<const ParticleSystem*>(o);
     const int d = event.GetDomainIndex();
     const unsigned int idx = event.GetPositionIndex();
 

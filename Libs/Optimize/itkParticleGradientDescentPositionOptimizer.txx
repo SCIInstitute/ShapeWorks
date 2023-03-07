@@ -15,7 +15,7 @@ const int global_iteration = 1;
 
 #include <tbb/parallel_for.h>
 
-namespace itk
+namespace shapeworks
 {
   template <class TGradientNumericType, unsigned int VDimension>
   ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>

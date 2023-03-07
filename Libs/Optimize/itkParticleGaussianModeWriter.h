@@ -5,7 +5,7 @@
 #include <vector>
 #include <string>
 
-namespace itk
+namespace shapeworks
 {
 
 /**
@@ -13,13 +13,13 @@ namespace itk
  *
  */
 template <unsigned int VDimension>
-class ParticleGaussianModeWriter : public DataObject
+class ParticleGaussianModeWriter : public itk::DataObject
 {
 public:
  /** Standard class typedefs. */
   typedef ParticleGaussianModeWriter Self;
-  typedef SmartPointer<Self>  Pointer;
-  typedef SmartPointer<const Self>  ConstPointer;
+  typedef itk::SmartPointer<Self>  Pointer;
+  typedef itk::SmartPointer<const Self>  ConstPointer;
   typedef DataObject Superclass;
   itkTypeMacro( ParticleGaussianModeWriter, DataObject);
 

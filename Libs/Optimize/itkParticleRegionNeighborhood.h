@@ -3,7 +3,7 @@
 #include "itkParticleNeighborhood.h"
 #include "itkPowerOfTwoPointTree.h"
 
-namespace itk {
+namespace shapeworks {
 /** \class ParticleRegionNeighborhood
  *
  * ParticleRegionNeighborhood is a general purpose neighborhood object that
@@ -20,9 +20,9 @@ class ParticleRegionNeighborhood : public ParticleNeighborhood {
   /** Standard class typedefs */
   typedef ParticleRegionNeighborhood Self;
   typedef ParticleNeighborhood Superclass;
-  typedef SmartPointer<Self> Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
-  typedef WeakPointer<const Self> ConstWeakPointer;
+  typedef itk::SmartPointer<Self> Pointer;
+  typedef itk::SmartPointer<const Self> ConstPointer;
+  typedef itk::WeakPointer<const Self> ConstWeakPointer;
   using DomainType = shapeworks::ParticleDomain;
 
   /** Method for creation through the object factory. */
@@ -57,7 +57,7 @@ class ParticleRegionNeighborhood : public ParticleNeighborhood {
   itkSetMacro(TreeLevels, unsigned int);
   itkGetMacro(TreeLevels, unsigned int);
 
-  void PrintSelf(std::ostream& os, Indent indent) const {
+  void PrintSelf(std::ostream& os, itk::Indent indent) const {
     os << indent << "m_TreeLevels = " << m_TreeLevels << std::endl;
     m_Tree->PrintSelf(os, indent);
     Superclass::PrintSelf(os, indent);
@@ -116,5 +116,5 @@ class ParticleRegionNeighborhood : public ParticleNeighborhood {
   void operator=(const Self&);              // purposely not implemented
 };
 
-}  // end namespace itk
+}  // end namespace shapeworks
 

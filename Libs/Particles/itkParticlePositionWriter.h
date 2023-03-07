@@ -8,7 +8,7 @@
 #include "itkPoint.h"
 #include "itkWeakPointer.h"
 
-namespace itk {
+namespace shapeworks {
 /** \class ParticlePositionWriter
  *  This class writes a set of Points to disk.  Its input is a std::vector of points.
  *  The file format is simple an ascii list of VDimension-tuples stored one per
@@ -23,23 +23,23 @@ namespace itk {
  *
  * etc..
  */
-class ITK_EXPORT ParticlePositionWriter : public DataObject {
+class ParticlePositionWriter : public itk::DataObject {
  public:
   /** Standard class typedefs */
   typedef ParticlePositionWriter Self;
   typedef DataObject Superclass;
-  typedef SmartPointer<Self> Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
-  typedef WeakPointer<const Self> ConstWeakPointer;
+  typedef itk::SmartPointer<Self> Pointer;
+  typedef itk::SmartPointer<const Self> ConstPointer;
+  typedef itk::WeakPointer<const Self> ConstWeakPointer;
 
   /** The point type that this class reads. */
-  typedef Point<double, 3> PointType;
+  typedef itk::Point<double, 3> PointType;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(ParticlePositionWriter, DataObject);
+  itkTypeMacro(ParticlePositionWriter, itk::DataObject);
 
   /** Set the input vector.  The input is a reference to a std::vector of PointType. */
   void SetInput(const std::vector<PointType>& p) { m_Input = p; }
@@ -73,7 +73,7 @@ class ITK_EXPORT ParticlePositionWriter : public DataObject {
 
  protected:
   ParticlePositionWriter() {}
-  void PrintSelf(std::ostream& os, Indent indent) const {
+  void PrintSelf(std::ostream& os, itk::Indent indent) const {
     Superclass::PrintSelf(os, indent);
 
     os << indent << "ParticlePositionWriter: " << std::endl;

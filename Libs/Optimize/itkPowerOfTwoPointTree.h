@@ -8,7 +8,7 @@
 #include "itkPoint.h"
 #include <list>
 
-namespace itk
+namespace shapeworks
 {
 
 /** Compute pow(a,b)=c at compile time.  */
@@ -33,14 +33,14 @@ struct powstruct<a,0>
  * use as a binning structure for itkParticleNeighborhood classes.
  */
 template <unsigned int VDimension>
-class PowerOfTwoPointTreeNode : public LightObject
+class PowerOfTwoPointTreeNode : public itk::LightObject
 {
 public:
   /** Standard class typedefs. */
   typedef PowerOfTwoPointTreeNode   Self;
-  typedef SmartPointer<Self>  Pointer;
-  typedef SmartPointer<const Self>  ConstPointer;
-  typedef LightObject Superclass;
+  typedef itk::SmartPointer<Self>  Pointer;
+  typedef itk::SmartPointer<const Self>  ConstPointer;
+  typedef itk::LightObject Superclass;
   itkTypeMacro( PowerOfTwoPointTreeNode, LightObject);
 
   /** Method for creation through the object factory. */
@@ -51,7 +51,7 @@ public:
   itkStaticConstMacro(BranchesPerNode, int, (powstruct<2, VDimension>::c));
 
   /** Point type stored in the leaf nodes. */
-  typedef Point<double, VDimension> PointType;
+  typedef itk::Point<double, VDimension> PointType;
 
   /** List type for storing lists of points+indices. */
   typedef std::list<ParticlePointIndexPair<VDimension> > PointListType;
@@ -117,7 +117,7 @@ public:
   { this->GetBranch(b) = n; }
   
   /** Standard ITK PrintSelf method. */  
-  void PrintSelf(std::ostream& os, Indent indent) const;
+  void PrintSelf(std::ostream& os, itk::Indent indent) const;
 
   /** Get the list of elements which contain points and associated indices. */
   const PointListType &GetList() const
@@ -151,15 +151,15 @@ private:
  *  itkParticleNeighborhood classes.
  */
  template <unsigned int VDimension>
- class ITK_EXPORT PowerOfTwoPointTree : public DataObject
+ class ITK_EXPORT PowerOfTwoPointTree : public itk::DataObject
 {
 public:
   /** Standard class typedefs */
   typedef PowerOfTwoPointTree Self;
   typedef DataObject Superclass;
-  typedef SmartPointer<Self>  Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
-  typedef WeakPointer<const Self>  ConstWeakPointer;
+  typedef itk::SmartPointer<Self>  Pointer;
+  typedef itk::SmartPointer<const Self> ConstPointer;
+  typedef itk::WeakPointer<const Self>  ConstWeakPointer;
 
     /** Shorthand for the object pointed to by each node.   */
   typedef PowerOfTwoPointTreeNode<VDimension> NodeType;
@@ -246,7 +246,7 @@ public:
     return true;
   }
   
-  void PrintSelf(std::ostream& os, Indent indent) const;
+  void PrintSelf(std::ostream& os, itk::Indent indent) const;
 protected:
   PowerOfTwoPointTree()
   {
@@ -273,6 +273,6 @@ private:
   unsigned int m_Depth;
 };
 
-} // end namespace itk
+} // end namespace shapeworks
 
 #include "itkPowerOfTwoPointTree.txx"

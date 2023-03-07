@@ -1,7 +1,7 @@
 
 #include "itkParticleRegionNeighborhood.h"
 
-namespace itk {
+namespace shapeworks {
 
 void ParticleRegionNeighborhood::SetDomain(DomainType::Pointer d) {
   Superclass::SetDomain(d);
@@ -71,4 +71,4 @@ void ParticleRegionNeighborhood::RemovePosition(unsigned int idx, int) {
   pr.NodePointer->GetList().erase(pr.Iterator);
 }
 
-}  // namespace itk
+}  // namespace shapeworks

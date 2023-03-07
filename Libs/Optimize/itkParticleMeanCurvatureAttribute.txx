@@ -3,7 +3,7 @@
 #include "itkZeroCrossingImageFilter.h"
 #include "itkImageRegionConstIteratorWithIndex.h"
 
-namespace itk
+namespace shapeworks
 {
 
 template <class TNumericType, unsigned int VDimension>
@@ -21,4 +21,4 @@ ComputeCurvatureStatistics(const ParticleSystemType *system, unsigned int d)
   }
 }
 
-} // end namespace itk
+} // end namespace shapeworks

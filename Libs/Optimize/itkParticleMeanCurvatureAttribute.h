@@ -7,7 +7,7 @@
 #include "ParticleImageDomainWithCurvature.h"
 #include "itkParticleSystem.h"
 
-namespace itk
+namespace shapeworks
 {
 /** \class ParticleMeanCurvatureAttribute
  *  \brief
@@ -21,9 +21,9 @@ public:
   typedef TNumericType NumericType;
   typedef ParticleMeanCurvatureAttribute Self;
   typedef ParticleContainerArrayAttribute<TNumericType,VDimension> Superclass;
-  typedef SmartPointer<Self>  Pointer;
-  typedef SmartPointer<const Self>  ConstPointer;
-  typedef WeakPointer<const Self>  ConstWeakPointer;
+  typedef itk::SmartPointer<Self>  Pointer;
+  typedef itk::SmartPointer<const Self>  ConstPointer;
+  typedef itk::WeakPointer<const Self>  ConstWeakPointer;
   
   /** Numeric types. */
   typedef ParticleSystem ParticleSystemType;
@@ -44,7 +44,7 @@ public:
   unsigned int GetVerbosity()
   { return m_verbosity; }
 
-  virtual void PositionAddEventCallback(Object *o, const EventObject &e) 
+  virtual void PositionAddEventCallback(itk::Object *o, const itk::EventObject &e)
   {
     Superclass::PositionAddEventCallback(o, e);
     const ParticlePositionAddEvent &event = dynamic_cast<const ParticlePositionAddEvent &>(e);
@@ -52,14 +52,14 @@ public:
     this->ComputeMeanCurvature(ps, event.GetPositionIndex(), event.GetDomainIndex());
   }
 
-  virtual void PositionSetEventCallback(Object *o, const EventObject &e)
+  virtual void PositionSetEventCallback(itk::Object *o, const itk::EventObject &e)
   {
     const ParticlePositionSetEvent &event = dynamic_cast<const ParticlePositionSetEvent &>(e);
     const ParticleSystemType *ps= dynamic_cast<const ParticleSystemType *>(o);
     this->ComputeMeanCurvature(ps, event.GetPositionIndex(), event.GetDomainIndex());
   }
   
-  virtual void DomainAddEventCallback(Object *o, const EventObject &e)
+  virtual void DomainAddEventCallback(itk::Object *o, const itk::EventObject &e)
   {
     Superclass::DomainAddEventCallback(o, e);
     m_MeanCurvatureList.push_back(0.0);
@@ -98,7 +98,7 @@ protected:
   }
   virtual ~ParticleMeanCurvatureAttribute() {};
 
-  void PrintSelf(std::ostream& os, Indent indent) const
+  void PrintSelf(std::ostream& os, itk::Indent indent) const
   {  Superclass::PrintSelf(os,indent);  }
 
 private:

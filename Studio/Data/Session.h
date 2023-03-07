@@ -97,7 +97,7 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   //! Return the total number of particles for all domains, combined
   int get_num_particles();
 
-  ParticleSystem get_local_particle_system(int domain);
+  ParticleSystemEvaluation get_local_particle_system(int domain);
 
   void update_procrustes_transforms(std::vector<std::vector<std::vector<double>>> transforms);
 

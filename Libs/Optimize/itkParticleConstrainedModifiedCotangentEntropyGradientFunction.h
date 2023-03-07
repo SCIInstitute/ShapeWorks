@@ -13,7 +13,7 @@
 
 #define NBHD_SIGMA_FACTOR 1.3
 
-namespace itk {
+namespace shapeworks {
 
 /**
  * \class ParticleConstrainedModifiedCotangentEntropyGradientFunction
@@ -39,8 +39,8 @@ class ParticleConstrainedModifiedCotangentEntropyGradientFunction
  public:
   /** Standard class typedefs. */
   typedef ParticleConstrainedModifiedCotangentEntropyGradientFunction Self;
-  typedef SmartPointer<Self> Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
+  typedef itk::SmartPointer<Self> Pointer;
+  typedef itk::SmartPointer<const Self> ConstPointer;
   typedef SamplingFunction Superclass;
   itkTypeMacro(ParticleConstrainedModifiedCotangentEntropyGradientFunction, SamplingFunction);
 
@@ -192,6 +192,6 @@ class ParticleConstrainedModifiedCotangentEntropyGradientFunction
   float m_MaxMoveFactor;
 };
 
-}  // namespace itk
+}  // namespace shapeworks
 
 #include "itkParticleConstrainedModifiedCotangentEntropyGradientFunction.txx"

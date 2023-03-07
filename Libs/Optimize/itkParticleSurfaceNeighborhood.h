@@ -4,7 +4,7 @@
 #include "itkParticleRegionNeighborhood.h"
 #include "vnl/vnl_vector_fixed.h"
 
-namespace itk {
+namespace shapeworks {
 /** \class ParticleSurfaceNeighborhood
  *
  * ParticleSurfaceNeighborhood is a general purpose neighborhood object that
@@ -20,9 +20,9 @@ class ParticleSurfaceNeighborhood : public ParticleRegionNeighborhood {
   typedef TImage ImageType;
   typedef ParticleSurfaceNeighborhood Self;
   typedef ParticleRegionNeighborhood Superclass;
-  typedef SmartPointer<Self> Pointer;
-  typedef SmartPointer<const Self> ConstPointer;
-  typedef WeakPointer<const Self> ConstWeakPointer;
+  typedef itk::SmartPointer<Self> Pointer;
+  typedef itk::SmartPointer<const Self> ConstPointer;
+  typedef itk::WeakPointer<const Self> ConstWeakPointer;
   typedef typename ImageType::PixelType NumericType;
   typedef typename Superclass::PointTreeType PointTreeType;
 
@@ -60,7 +60,7 @@ class ParticleSurfaceNeighborhood : public ParticleRegionNeighborhood {
 
   bool IsForceEuclidean() const { return m_ForceEuclidean; }
 
-  void PrintSelf(std::ostream& os, Indent indent) const { Superclass::PrintSelf(os, indent); }
+  void PrintSelf(std::ostream& os, itk::Indent indent) const { Superclass::PrintSelf(os, indent); }
 
  protected:
   ParticleSurfaceNeighborhood() : m_FlatCutoff(0.30) {}
@@ -74,6 +74,6 @@ class ParticleSurfaceNeighborhood : public ParticleRegionNeighborhood {
   bool m_ForceEuclidean{false};
 };
 
-}  // end namespace itk
+}  // end namespace shapeworks
 
 #include "itkParticleSurfaceNeighborhood.txx"
