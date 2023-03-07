@@ -2,7 +2,7 @@
 
 #include "itkDataObject.h"
 #include "itkWeakPointer.h"
-#include "itkParticleContainer.h"
+#include "GenericContainer.h"
 #include "itkParticleContainerArrayAttribute.h"
 #include "ParticleImageDomainWithCurvature.h"
 #include "itkParticleSystem.h"

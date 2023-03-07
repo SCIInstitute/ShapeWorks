@@ -5,7 +5,7 @@
 #include "TriMesh.h"
 #include "itkDataObject.h"
 #include "Observer.h"
-#include "itkParticleContainer.h"
+#include "GenericContainer.h"
 #include "itkParticleSystem.h"
 #include "itkWeakPointer.h"
 #include "vnl/vnl_matrix.h"

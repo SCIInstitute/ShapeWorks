@@ -9,7 +9,7 @@
 #include "itkEventObject.h"
 #include "itkObjectFactory.h"
 #include "Observer.h"
-#include "itkParticleContainer.h"
+#include "GenericContainer.h"
 #include "ParticleDomain.h"
 #include "itkParticleEvents.h"
 #include "itkParticleNeighborhood.h"

@@ -4,7 +4,7 @@
 
 #include "itkDataObject.h"
 #include "Observer.h"
-#include "itkParticleContainer.h"
+#include "GenericContainer.h"
 #include "itkParticleEvents.h"
 #include "itkWeakPointer.h"
 

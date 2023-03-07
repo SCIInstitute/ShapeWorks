@@ -4,7 +4,7 @@
 
 #include "ParticleDomain.h"
 #include "itkDataObject.h"
-#include "itkParticleContainer.h"
+#include "GenericContainer.h"
 #include "itkParticlePointIndexPair.h"
 #include "itkPoint.h"
 #include "itkWeakPointer.h"
