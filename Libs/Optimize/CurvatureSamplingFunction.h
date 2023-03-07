@@ -19,7 +19,7 @@ namespace itk {
  * surface with respect to both position and extrinsic surface curvature.
  *
  */
-class CurvatureSamplingFunction : public ParticleEntropyGradientFunction {
+class CurvatureSamplingFunction : public SamplingFunction {
  public:
   constexpr static int VDimension = 3;
   typedef float
@@ -28,8 +28,8 @@ class CurvatureSamplingFunction : public ParticleEntropyGradientFunction {
   typedef CurvatureSamplingFunction Self;
   typedef SmartPointer<Self> Pointer;
   typedef SmartPointer<const Self> ConstPointer;
-  typedef ParticleEntropyGradientFunction Superclass;
-  itkTypeMacro(CurvatureSamplingFunction, ParticleEntropyGradientFunction);
+  typedef SamplingFunction Superclass;
+  itkTypeMacro(CurvatureSamplingFunction, SamplingFunction);
 
   /** Inherit some parent typedefs. */
   typedef Superclass::GradientNumericType GradientNumericType;

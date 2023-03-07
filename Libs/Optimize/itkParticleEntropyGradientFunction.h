@@ -58,18 +58,18 @@ namespace itk {
  * \f]
  *
  */
-class ParticleEntropyGradientFunction : public ParticleVectorFunction {
+class SamplingFunction : public ParticleVectorFunction {
  public:
   constexpr static int VDimension = 3;
   typedef float
       TGradientNumericType;  // This has always been used on float images, so the curvature cache is also float
 
   /** Standard class typedefs. */
-  typedef ParticleEntropyGradientFunction Self;
+  typedef SamplingFunction Self;
   typedef SmartPointer<Self> Pointer;
   typedef SmartPointer<const Self> ConstPointer;
   typedef ParticleVectorFunction Superclass;
-  itkTypeMacro(ParticleEntropyGradientFunction, ParticleVectorFunction);
+  itkTypeMacro(SamplingFunction, ParticleVectorFunction);
 
   /** Data type representing individual gradient components. */
   typedef TGradientNumericType GradientNumericType;
@@ -150,7 +150,7 @@ class ParticleEntropyGradientFunction : public ParticleVectorFunction {
   //  void ComputeNeighborho0d();
 
   virtual ParticleVectorFunction::Pointer Clone() {
-    ParticleEntropyGradientFunction::Pointer copy = ParticleEntropyGradientFunction::New();
+    SamplingFunction::Pointer copy = SamplingFunction::New();
 
     // from itkParticleVectorFunction
     copy->m_DomainNumber = this->m_DomainNumber;
@@ -167,10 +167,10 @@ class ParticleEntropyGradientFunction : public ParticleVectorFunction {
   }
 
  protected:
-  ParticleEntropyGradientFunction() : m_FlatCutoff(0.05), m_NeighborhoodToSigmaRatio(3.0) {}
-  virtual ~ParticleEntropyGradientFunction() {}
-  void operator=(const ParticleEntropyGradientFunction&);
-  ParticleEntropyGradientFunction(const ParticleEntropyGradientFunction&);
+  SamplingFunction() : m_FlatCutoff(0.05), m_NeighborhoodToSigmaRatio(3.0) {}
+  virtual ~SamplingFunction() {}
+  void operator=(const SamplingFunction&);
+  SamplingFunction(const SamplingFunction&);
 
   double m_MinimumNeighborhoodRadius;
   double m_MaximumNeighborhoodRadius;

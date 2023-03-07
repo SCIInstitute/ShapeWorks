@@ -8,7 +8,7 @@
 
 namespace itk {
 
-ParticleEntropyGradientFunction::TGradientNumericType ParticleEntropyGradientFunction::AngleCoefficient(
+SamplingFunction::TGradientNumericType SamplingFunction::AngleCoefficient(
     const GradientVectorType& p_i_normal, const GradientVectorType& p_j_normal) const {
   // get the cosine of the angle between the two particles' normals
   TGradientNumericType cosine =
@@ -21,7 +21,7 @@ ParticleEntropyGradientFunction::TGradientNumericType ParticleEntropyGradientFun
   return (cos((m_FlatCutoff - cosine) / (1.0 + m_FlatCutoff) * (3.14159265358979 / 2.0)));
 }
 
-void ParticleEntropyGradientFunction::ComputeAngularWeights(
+void SamplingFunction::ComputeAngularWeights(
     const PointType& pos, int idx, const typename ParticleSystemType::PointVectorType& neighborhood,
     const shapeworks::ParticleDomain* domain, std::vector<double>& weights) const {
   GradientVectorType posnormal = domain->SampleNormalAtPoint(pos, idx);
@@ -36,7 +36,7 @@ void ParticleEntropyGradientFunction::ComputeAngularWeights(
   }
 }
 
-double ParticleEntropyGradientFunction::EstimateSigma(unsigned int idx,
+double SamplingFunction::EstimateSigma(unsigned int idx,
                                                       const typename ParticleSystemType::PointVectorType& neighborhood,
                                                       const shapeworks::ParticleDomain* domain,
                                                       const std::vector<double>& weights, const PointType& pos,
@@ -110,7 +110,7 @@ double ParticleEntropyGradientFunction::EstimateSigma(unsigned int idx,
   return sigma;
 }
 
-ParticleEntropyGradientFunction::VectorType ParticleEntropyGradientFunction::Evaluate(unsigned int idx, unsigned int d,
+SamplingFunction::VectorType SamplingFunction::Evaluate(unsigned int idx, unsigned int d,
                                                                                       const ParticleSystemType* system,
                                                                                       double& maxdt) const {
   SW_LOG("base evaluate");

@@ -77,7 +77,7 @@ class Sampler {
   virtual ~Sampler(){};
 
   /** Returns a pointer to the gradient function used. */
-  itk::ParticleEntropyGradientFunction* GetGradientFunction() {
+  itk::SamplingFunction* GetGradientFunction() {
     return m_GradientFunction;
   }
 
@@ -410,7 +410,7 @@ class Sampler {
 
   OptimizerType::Pointer m_Optimizer;
 
-  itk::ParticleEntropyGradientFunction::Pointer m_GradientFunction;
+  itk::SamplingFunction::Pointer m_GradientFunction;
   itk::CurvatureSamplingFunction::Pointer m_CurvatureGradientFunction;
 
   itk::ParticleModifiedCotangentEntropyGradientFunction<ImageType::PixelType, Dimension>::Pointer

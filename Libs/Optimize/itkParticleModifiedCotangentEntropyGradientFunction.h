@@ -35,14 +35,14 @@ namespace itk {
  */
 template <class TGradientNumericType, unsigned int VDimension>
 class ParticleModifiedCotangentEntropyGradientFunction
-    : public ParticleEntropyGradientFunction {
+    : public SamplingFunction {
  public:
   /** Standard class typedefs. */
   typedef ParticleModifiedCotangentEntropyGradientFunction Self;
   typedef SmartPointer<Self> Pointer;
   typedef SmartPointer<const Self> ConstPointer;
-  typedef ParticleEntropyGradientFunction Superclass;
-  itkTypeMacro(ParticleModifiedCotangentEntropyGradientFunction, ParticleEntropyGradientFunction);
+  typedef SamplingFunction Superclass;
+  itkTypeMacro(ParticleModifiedCotangentEntropyGradientFunction, SamplingFunction);
 
   /** Inherit some parent typedefs. */
   typedef typename Superclass::GradientNumericType GradientNumericType;

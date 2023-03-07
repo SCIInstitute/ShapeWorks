@@ -13,7 +13,7 @@ namespace shapeworks {
 Sampler::Sampler() {
   m_ParticleSystem = itk::ParticleSystem::New();
 
-  m_GradientFunction = itk::ParticleEntropyGradientFunction::New();
+  m_GradientFunction = itk::SamplingFunction::New();
   m_CurvatureGradientFunction = itk::CurvatureSamplingFunction::New();
 
   m_ModifiedCotangentGradientFunction =
