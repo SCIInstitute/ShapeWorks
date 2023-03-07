@@ -5,7 +5,7 @@
 #include "itkCommand.h"
 #include "SamplingFunction.h"
 #include "MeanCurvatureContainer.h"
-#include "itkParticleSurfaceNeighborhood.h"
+#include "ParticleSurfaceNeighborhood.h"
 
 namespace shapeworks {
 

@@ -4,7 +4,7 @@
 #include "GenericContainerArray.h"
 #include "ParticleImageDomainWithCurvature.h"
 #include "itkDataObject.h"
-#include "itkParticleSystem.h"
+#include "ParticleSystem.h"
 #include "itkWeakPointer.h"
 
 namespace shapeworks {

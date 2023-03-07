@@ -6,7 +6,7 @@
 #include "itkDataObject.h"
 #include "Observer.h"
 #include "GenericContainer.h"
-#include "itkParticleSystem.h"
+#include "ParticleSystem.h"
 #include "itkWeakPointer.h"
 #include "vnl/vnl_matrix.h"
 #include <cmath>

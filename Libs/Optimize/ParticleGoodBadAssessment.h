@@ -1,7 +1,7 @@
 #pragma once
 
 #include "MeanCurvatureContainer.h"
-#include "itkParticleSystem.h"
+#include "ParticleSystem.h"
 
 namespace shapeworks {
 

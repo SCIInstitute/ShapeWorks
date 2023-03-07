@@ -23,7 +23,7 @@
 #include "OptimizationVisualizer.h"
 #include "ParticleProcrustesRegistration.h"
 #include "Sampler.h"
-#include "itkParticleSystem.h"
+#include "ParticleSystem.h"
 #include "VectorFunction.h"
 
 namespace shapeworks {

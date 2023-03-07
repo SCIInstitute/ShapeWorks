@@ -4,7 +4,7 @@
 #include <vector>
 
 #include "itkDataObject.h"
-#include "itkParticleShapeMatrixAttribute.h"
+#include "ParticleShapeMatrixAttribute.h"
 
 namespace shapeworks {
 

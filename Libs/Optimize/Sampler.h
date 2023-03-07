@@ -16,10 +16,10 @@
 #include "SamplingFunction.h"
 #include "GradientDescentOptimizer.h"
 #include "MeanCurvatureContainer.h"
-#include "itkParticleShapeLinearRegressionMatrixAttribute.h"
-#include "itkParticleShapeMixedEffectsMatrixAttribute.h"
-#include "itkParticleSurfaceNeighborhood.h"
-#include "itkParticleSystem.h"
+#include "ParticleShapeLinearRegressionMatrixAttribute.h"
+#include "ParticleShapeMixedEffectsMatrixAttribute.h"
+#include "ParticleSurfaceNeighborhood.h"
+#include "ParticleSystem.h"
 #include "vnl/vnl_matrix_fixed.h"
 #include <Logging.h>
 

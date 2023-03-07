@@ -4,7 +4,7 @@
 
 #include "VectorFunction.h"
 #include "LegacyCorrespondenceFunction.h"
-#include "itkParticleShapeMatrixAttribute.h"
+#include "ParticleShapeMatrixAttribute.h"
 
 namespace shapeworks {
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "itkParticleSystem.h"
+#include "ParticleSystem.h"
 #include "vnl/vnl_matrix.h"
 
 namespace shapeworks {

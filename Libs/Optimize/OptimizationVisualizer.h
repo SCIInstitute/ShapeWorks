@@ -13,7 +13,7 @@
 #include <vector>
 
 #include "TriMesh.h"
-#include "itkParticleSystem.h"
+#include "ParticleSystem.h"
 
 namespace shapeworks {
 class OptimizationVisualizer {
