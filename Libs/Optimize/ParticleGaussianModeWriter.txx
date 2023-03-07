@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include "ImageDomainWithGradients.h"
+#include "Libs/Optimize/Domain/ImageDomainWithGradients.h"
 #include "itkParticlePositionWriter.h"
 #include "vnl/algo/vnl_symmetric_eigensystem.h"
 

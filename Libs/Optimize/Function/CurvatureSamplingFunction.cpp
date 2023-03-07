@@ -1,10 +1,9 @@
 
 #include "CurvatureSamplingFunction.h"
 
-#include <Logging.h>
-
-#include "ContourDomain.h"
 #include "DomainType.h"
+#include "Libs/Common/Logging.h"
+#include "Libs/Optimize/Domain/ContourDomain.h"
 #include "vnl/vnl_matrix.h"
 #include "vnl/vnl_matrix_fixed.h"
 #include "vnl/vnl_vector_fixed.h"

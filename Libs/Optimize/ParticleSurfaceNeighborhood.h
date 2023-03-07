@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ImplicitSurfaceDomain.h"
+#include "Libs/Optimize/Domain/ImplicitSurfaceDomain.h"
 #include "ParticleRegionNeighborhood.h"
 #include "vnl/vnl_vector_fixed.h"
 

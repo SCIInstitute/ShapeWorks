@@ -3,8 +3,8 @@
 
 #include <Logging.h>
 
-#include "ContourDomain.h"
-#include "ImageDomain.h"
+#include "Libs/Optimize/Domain/ContourDomain.h"
+#include "Libs/Optimize/Domain/ImageDomain.h"
 #include "itkImageRegionIterator.h"
 #include "itkParticlePositionReader.h"
 #include "object_reader.h"

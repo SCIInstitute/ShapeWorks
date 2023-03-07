@@ -24,8 +24,8 @@
 // shapeworks
 #include <Project/Project.h>
 
-#include "ImageDomain.h"
-#include "ImplicitSurfaceDomain.h"
+#include "Libs/Optimize/Domain/ImageDomain.h"
+#include "Libs/Optimize/Domain/ImplicitSurfaceDomain.h"
 #include "Logging.h"
 #include "Optimize.h"
 #include "OptimizeParameterFile.h"

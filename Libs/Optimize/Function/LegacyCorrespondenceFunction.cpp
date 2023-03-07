@@ -2,11 +2,10 @@
 
 #include "LegacyCorrespondenceFunction.h"
 
-#include <Utils/Utils.h>
-
 #include <string>
 
-#include "ImageDomainWithGradients.h"
+#include "Libs/Optimize/Domain/ImageDomainWithGradients.h"
+#include "Libs/Utils/Utils.h"
 #include "ParticleGaussianModeWriter.h"
 #include "vnl/algo/vnl_symmetric_eigensystem.h"
 

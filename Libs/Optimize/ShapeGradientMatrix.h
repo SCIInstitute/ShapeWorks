@@ -1,9 +1,9 @@
 #pragma once
 
 #include "GenericContainer.h"
-#include "ImageDomainWithGradN.h"
-#include "ImageDomainWithGradients.h"
-#include "ImplicitSurfaceDomain.h"
+#include "Libs/Optimize/Domain/ImageDomainWithGradN.h"
+#include "Libs/Optimize/Domain/ImageDomainWithGradients.h"
+#include "Libs/Optimize/Domain/ImplicitSurfaceDomain.h"
 #include "Observer.h"
 #include "ParticleSystem.h"
 #include "itkDataObject.h"

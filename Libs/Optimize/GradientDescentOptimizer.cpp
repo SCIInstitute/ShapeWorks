@@ -15,7 +15,7 @@ const int global_iteration = 1;
 #include <string>
 #include <vector>
 
-#include "ImageDomainWithGradients.h"
+#include "Libs/Optimize/Domain/ImageDomainWithGradients.h"
 #include "MemoryUsage.h"
 
 namespace shapeworks {

@@ -3,8 +3,8 @@
 #include <cmath>
 
 #include "GenericContainer.h"
-#include "ImageDomainWithGradients.h"
-#include "ImplicitSurfaceDomain.h"
+#include "Libs/Optimize/Domain/ImageDomainWithGradients.h"
+#include "Libs/Optimize/Domain/ImplicitSurfaceDomain.h"
 #include "Observer.h"
 #include "ParticleSystem.h"
 #include "TriMesh.h"

@@ -4,15 +4,15 @@
 #include <random>
 #include <vector>
 
+#include "GenericContainer.h"
+#include "Libs/Optimize/Domain/ParticleDomain.h"
+#include "Observer.h"
+#include "ParticleEvents.h"
+#include "ParticleNeighborhood.h"
 #include "itkCommand.h"
 #include "itkDataObject.h"
 #include "itkEventObject.h"
 #include "itkObjectFactory.h"
-#include "Observer.h"
-#include "GenericContainer.h"
-#include "ParticleDomain.h"
-#include "ParticleEvents.h"
-#include "ParticleNeighborhood.h"
 #include "itkPoint.h"
 #include "itkWeakPointer.h"
 #include "vnl/vnl_inverse.h"

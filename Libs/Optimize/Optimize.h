@@ -19,12 +19,12 @@
 #include <Project/Project.h>
 
 #include "DomainType.h"
+#include "Libs/Optimize/Function/VectorFunction.h"
 #include "MeshWrapper.h"
 #include "OptimizationVisualizer.h"
 #include "ParticleProcrustesRegistration.h"
-#include "Sampler.h"
 #include "ParticleSystem.h"
-#include "VectorFunction.h"
+#include "Sampler.h"
 
 namespace shapeworks {
 

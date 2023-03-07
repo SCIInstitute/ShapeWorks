@@ -1,7 +1,7 @@
 #pragma once
 
-#include "ImageDomainWithCurvature.h"
-#include "ImageDomainWithGradients.h"
+#include "Libs/Optimize/Domain/ImageDomainWithCurvature.h"
+#include "Libs/Optimize/Domain/ImageDomainWithGradients.h"
 #include "MeanCurvatureContainer.h"
 #include "ParticleSurfaceNeighborhood.h"
 #include "SamplingFunction.h"

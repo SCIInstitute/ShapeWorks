@@ -2,9 +2,8 @@
 
 #include "SamplingFunction.h"
 
-#include <Logging.h>
-
-#include "ImageDomainWithGradients.h"
+#include "Libs/Common/Logging.h"
+#include "Libs/Optimize/Domain/ImageDomainWithGradients.h"
 
 namespace shapeworks {
 

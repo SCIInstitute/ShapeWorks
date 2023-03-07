@@ -1,8 +1,7 @@
 #pragma once
 
-#include <Mesh/meshFIM.h>
-
 #include "ImageDomainWithCurvature.h"
+#include "Libs/Mesh/meshFIM.h"
 #include "TriMesh.h"
 #include "TriMesh_algo.h"
 #include "vnl/vnl_cross.h"

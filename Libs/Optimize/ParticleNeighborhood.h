@@ -2,10 +2,10 @@
 
 #include <vector>
 
-#include "ParticleDomain.h"
-#include "itkDataObject.h"
 #include "GenericContainer.h"
+#include "Libs/Optimize/Domain/ParticleDomain.h"
 #include "ParticlePointIndexPair.h"
+#include "itkDataObject.h"
 #include "itkPoint.h"
 #include "itkWeakPointer.h"
 

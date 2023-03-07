@@ -4,9 +4,9 @@
 #include <limits>
 #include <vector>
 
-#include "ImageDomainWithGradients.h"
+#include "Libs/Optimize/Domain/ImageDomainWithGradients.h"
+#include "Libs/Optimize/Function/VectorFunction.h"
 #include "ParticleSystem.h"
-#include "VectorFunction.h"
 #include "itkObject.h"
 #include "itkObjectFactory.h"
 #include "itkWeakPointer.h"

@@ -2,8 +2,8 @@
 
 #include <vnl/vnl_vector_fixed.h>
 
-#include "ParticleDomain.h"
 #include "DomainType.h"
+#include "Libs/Optimize/Domain/ParticleDomain.h"
 
 namespace shapeworks
 {

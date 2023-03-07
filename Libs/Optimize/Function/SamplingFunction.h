@@ -3,7 +3,7 @@
 #include <vector>
 
 #include "GenericContainerArray.h"
-#include "ImageDomainWithGradients.h"
+#include "Libs/Optimize/Domain/ImageDomainWithGradients.h"
 #include "VectorFunction.h"
 
 namespace shapeworks {

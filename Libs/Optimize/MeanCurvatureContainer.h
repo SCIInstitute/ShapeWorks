@@ -2,7 +2,7 @@
 
 #include "GenericContainer.h"
 #include "GenericContainerArray.h"
-#include "ImageDomainWithCurvature.h"
+#include "Libs/Optimize/Domain/ImageDomainWithCurvature.h"
 #include "ParticleSystem.h"
 #include "itkDataObject.h"
 #include "itkWeakPointer.h"
