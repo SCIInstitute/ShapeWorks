@@ -9,25 +9,22 @@
 namespace shapeworks {
 
 /**
- * \class ParticleDualVectorFunction
+ * \class DualVectorFunction
  *
- * This class combines the results of evaluating 2 ParticleVector functions and
+ * This class combines the results of evaluating 2 VectorFunction and
  * presents the interface of a single function evaluation. Optionally, only the
  * first function can be used by calling SetLinkOff().
  *
  */
-class ParticleDualVectorFunction : public ParticleVectorFunction {
+class DualVectorFunction : public VectorFunction {
  public:
   constexpr static int VDimension = 3;
   /** Standard class typedefs. */
-  typedef ParticleDualVectorFunction Self;
+  typedef DualVectorFunction Self;
   typedef itk::SmartPointer<Self> Pointer;
   typedef itk::SmartPointer<const Self> ConstPointer;
-  typedef ParticleVectorFunction Superclass;
-  itkTypeMacro(ParticleDualVectorFunction, ParticleVectorFunction);
-
-  /** Type of particle system. */
-  typedef typename Superclass::ParticleSystemType ParticleSystemType;
+  typedef VectorFunction Superclass;
+  itkTypeMacro(DualVectorFunction, VectorFunction);
 
   /** Vector type. */
   typedef typename Superclass::VectorType VectorType;
@@ -42,7 +39,7 @@ class ParticleDualVectorFunction : public ParticleVectorFunction {
     argument is the index of the domain within that particle system.  The
     third argument is the index of the particle location within the given
     domain. */
-  virtual VectorType Evaluate(unsigned int idx, unsigned int d, const ParticleSystemType* system,
+  virtual VectorType Evaluate(unsigned int idx, unsigned int d, const ParticleSystem* system,
                               double& maxmove) const {
     double maxA, maxB, maxC;
     maxA = 0;
@@ -55,17 +52,17 @@ class ParticleDualVectorFunction : public ParticleVectorFunction {
     VectorType ansC;
     ansC.fill(0.0);
 
-    const_cast<ParticleDualVectorFunction*>(this)->m_Counter = m_Counter + 1.0;
+    const_cast<DualVectorFunction*>(this)->m_Counter = m_Counter + 1.0;
 
     // evaluate individual functions: A = surface energy, B = correspondence
     if (m_AOn == true) {
       ansA = m_FunctionA->Evaluate(idx, d, system, maxA);
-      const_cast<ParticleDualVectorFunction*>(this)->m_AverageGradMagA = m_AverageGradMagA + ansA.magnitude();
+      const_cast<DualVectorFunction*>(this)->m_AverageGradMagA = m_AverageGradMagA + ansA.magnitude();
     }
 
     if (m_BOn == true) {
       ansB = m_FunctionB->Evaluate(idx, d, system, maxB);
-      const_cast<ParticleDualVectorFunction*>(this)->m_AverageGradMagB = m_AverageGradMagB + ansB.magnitude();
+      const_cast<DualVectorFunction*>(this)->m_AverageGradMagB = m_AverageGradMagB + ansB.magnitude();
     }
 
     if (m_RelativeGradientScaling == 0.0) {
@@ -107,7 +104,7 @@ class ParticleDualVectorFunction : public ParticleVectorFunction {
     return ansA;
   }
 
-  virtual double EnergyA(unsigned int idx, unsigned int d, const ParticleSystemType* system) const {
+  virtual double EnergyA(unsigned int idx, unsigned int d, const ParticleSystem* system) const {
     m_FunctionA->BeforeEvaluate(idx, d, system);
     double ansA = 0.0;
     if (m_AOn == true) {
@@ -116,7 +113,7 @@ class ParticleDualVectorFunction : public ParticleVectorFunction {
     return ansA;
   }
 
-  virtual double EnergyB(unsigned int idx, unsigned int d, const ParticleSystemType* system) const {
+  virtual double EnergyB(unsigned int idx, unsigned int d, const ParticleSystem* system) const {
     m_FunctionB->BeforeEvaluate(idx, d, system);
     double ansB = 0.0;
     if (m_BOn == true) {
@@ -126,7 +123,7 @@ class ParticleDualVectorFunction : public ParticleVectorFunction {
     return ansB;
   }
 
-  virtual double Energy(unsigned int idx, unsigned int d, const ParticleSystemType* system) const {
+  virtual double Energy(unsigned int idx, unsigned int d, const ParticleSystem* system) const {
     double ansA = 0.0;
     double ansB = 0.0;
     double ansC = 0.0;
@@ -164,7 +161,7 @@ class ParticleDualVectorFunction : public ParticleVectorFunction {
     return 0.0;
   }
 
-  virtual VectorType Evaluate(unsigned int idx, unsigned int d, const ParticleSystemType* system, double& maxmove,
+  virtual VectorType Evaluate(unsigned int idx, unsigned int d, const ParticleSystem* system, double& maxmove,
                               double& energy) const {
     double maxA = 0.0;
     double maxB = 0.0;
@@ -175,21 +172,21 @@ class ParticleDualVectorFunction : public ParticleVectorFunction {
     VectorType ansB;
     ansB.fill(0.0);
 
-    const_cast<ParticleDualVectorFunction*>(this)->m_Counter = m_Counter + 1.0;
+    const_cast<DualVectorFunction*>(this)->m_Counter = m_Counter + 1.0;
 
     // evaluate individual functions: A = surface energy, B = correspondence
     if (m_AOn == true) {
       ansA = m_FunctionA->Evaluate(idx, d, system, maxA, energyA);
 
-      const_cast<ParticleDualVectorFunction*>(this)->m_AverageGradMagA = m_AverageGradMagA + ansA.magnitude();
-      const_cast<ParticleDualVectorFunction*>(this)->m_AverageEnergyA = m_AverageEnergyA + energyA;
+      const_cast<DualVectorFunction*>(this)->m_AverageGradMagA = m_AverageGradMagA + ansA.magnitude();
+      const_cast<DualVectorFunction*>(this)->m_AverageEnergyA = m_AverageEnergyA + energyA;
     }
 
     if (m_BOn == true) {
       ansB = m_FunctionB->Evaluate(idx, d, system, maxB, energyB);
 
-      const_cast<ParticleDualVectorFunction*>(this)->m_AverageGradMagB = m_AverageGradMagB + ansB.magnitude();
-      const_cast<ParticleDualVectorFunction*>(this)->m_AverageEnergyB = m_AverageEnergyB + energyB;
+      const_cast<DualVectorFunction*>(this)->m_AverageGradMagB = m_AverageGradMagB + ansB.magnitude();
+      const_cast<DualVectorFunction*>(this)->m_AverageEnergyB = m_AverageEnergyB + energyB;
     }
 
     if (m_RelativeEnergyScaling == 0.0) {
@@ -239,7 +236,7 @@ class ParticleDualVectorFunction : public ParticleVectorFunction {
     return ansA;
   }
 
-  virtual void BeforeEvaluate(unsigned int idx, unsigned int d, const ParticleSystemType* system) {
+  virtual void BeforeEvaluate(unsigned int idx, unsigned int d, const ParticleSystem* system) {
     if (m_AOn == true) {
       m_FunctionA->BeforeEvaluate(idx, d, system);
     }
@@ -273,7 +270,7 @@ class ParticleDualVectorFunction : public ParticleVectorFunction {
 
   /** Some subclasses may require a pointer to the particle system and its
     domain number.  These methods set/get those values. */
-  virtual void SetParticleSystem(ParticleSystemType* p) {
+  virtual void SetParticleSystem(ParticleSystem* p) {
     Superclass::SetParticleSystem(p);
     if (m_FunctionA.GetPointer() != 0) m_FunctionA->SetParticleSystem(p);
     if (m_FunctionB.GetPointer() != 0) m_FunctionB->SetParticleSystem(p);
@@ -285,17 +282,17 @@ class ParticleDualVectorFunction : public ParticleVectorFunction {
     if (m_FunctionB.GetPointer() != 0) m_FunctionB->SetDomainNumber(i);
   }
 
-  void SetFunctionA(ParticleVectorFunction* o) {
+  void SetFunctionA(VectorFunction* o) {
     m_FunctionA = o;
     m_FunctionA->SetDomainNumber(this->GetDomainNumber());
     m_FunctionA->SetParticleSystem(this->GetParticleSystem());
   }
 
-  ParticleVectorFunction* GetFunctionA() { return m_FunctionA.GetPointer(); }
+  VectorFunction* GetFunctionA() { return m_FunctionA.GetPointer(); }
 
-  ParticleVectorFunction* GetFunctionB() { return m_FunctionB.GetPointer(); }
+  VectorFunction* GetFunctionB() { return m_FunctionB.GetPointer(); }
 
-  void SetFunctionB(ParticleVectorFunction* o) {
+  void SetFunctionB(VectorFunction* o) {
     m_FunctionB = o;
     m_FunctionB->SetDomainNumber(this->GetDomainNumber());
     m_FunctionB->SetParticleSystem(this->GetParticleSystem());
@@ -345,8 +342,8 @@ class ParticleDualVectorFunction : public ParticleVectorFunction {
       return 0.0;
   }
 
-  virtual typename ParticleVectorFunction::Pointer Clone() {
-    typename ParticleDualVectorFunction::Pointer copy = ParticleDualVectorFunction::New();
+  virtual typename VectorFunction::Pointer Clone() {
+    typename DualVectorFunction::Pointer copy = DualVectorFunction::New();
     copy->m_AOn = this->m_AOn;
     copy->m_BOn = this->m_BOn;
 
@@ -367,16 +364,16 @@ class ParticleDualVectorFunction : public ParticleVectorFunction {
     copy->m_DomainNumber = this->m_DomainNumber;
     copy->m_ParticleSystem = this->m_ParticleSystem;
 
-    return (ParticleVectorFunction::Pointer)copy;
+    return (VectorFunction::Pointer)copy;
   }
 
  protected:
-  ParticleDualVectorFunction()
+  DualVectorFunction()
       : m_AOn(true), m_BOn(false), m_RelativeGradientScaling(1.0), m_RelativeEnergyScaling(1.0) {}
 
-  virtual ~ParticleDualVectorFunction() {}
-  void operator=(const ParticleDualVectorFunction&);
-  ParticleDualVectorFunction(const ParticleDualVectorFunction&);
+  virtual ~DualVectorFunction() {}
+  void operator=(const DualVectorFunction&);
+  DualVectorFunction(const DualVectorFunction&);
 
   bool m_AOn;
   bool m_BOn;
@@ -388,8 +385,8 @@ class ParticleDualVectorFunction : public ParticleVectorFunction {
   double m_AverageEnergyB;
   double m_Counter;
 
-  ParticleVectorFunction::Pointer m_FunctionA;
-  ParticleVectorFunction::Pointer m_FunctionB;
+  VectorFunction::Pointer m_FunctionA;
+  VectorFunction::Pointer m_FunctionB;
 };
 
 }  // namespace shapeworks

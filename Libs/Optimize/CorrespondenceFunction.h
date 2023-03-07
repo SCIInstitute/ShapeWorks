@@ -6,23 +6,21 @@
 
 #include "ShapeGradientMatrix.h"
 #include "ShapeMatrix.h"
-#include "itkParticleVectorFunction.h"
+#include "VectorFunction.h"
 
 namespace shapeworks {
 
 //! Correspondence term
-class CorrespondenceFunction : public ParticleVectorFunction {
+class CorrespondenceFunction : public VectorFunction {
  public:
   constexpr static int VDimension = 3;
   /** Standard class typedefs. */
   typedef CorrespondenceFunction Self;
   typedef itk::SmartPointer<Self> Pointer;
   typedef itk::SmartPointer<const Self> ConstPointer;
-  typedef ParticleVectorFunction Superclass;
-  itkTypeMacro(CorrespondenceFunction, ParticleVectorFunction)
+  typedef VectorFunction Superclass;
+  itkTypeMacro(CorrespondenceFunction, VectorFunction)
 
-  /** Type of particle system. */
-  typedef Superclass::ParticleSystemType ParticleSystemType;
 
   typedef shapeworks::ShapeMatrix ShapeDataType;
   typedef shapeworks::ShapeGradientMatrix ShapeGradientType;
@@ -31,7 +29,7 @@ class CorrespondenceFunction : public ParticleVectorFunction {
 
   /** Vector & Point types. */
   typedef typename Superclass::VectorType VectorType;
-  typedef typename ParticleSystemType::PointType PointType;
+  typedef typename ParticleSystem::PointType PointType;
   typedef vnl_vector<DataType> vnl_vector_type;
   typedef vnl_matrix<DataType> vnl_matrix_type;
 
@@ -56,14 +54,14 @@ class CorrespondenceFunction : public ParticleVectorFunction {
        third argument is the index of the particle location within the given
        domain. */
 
-  virtual VectorType Evaluate(unsigned int, unsigned int, const ParticleSystemType*, double&, double&) const;
+  virtual VectorType Evaluate(unsigned int, unsigned int, const ParticleSystem*, double&, double&) const;
 
-  virtual VectorType Evaluate(unsigned int a, unsigned int b, const ParticleSystemType* c, double& d) const {
+  virtual VectorType Evaluate(unsigned int a, unsigned int b, const ParticleSystem* c, double& d) const {
     double e;
     return this->Evaluate(a, b, c, d, e);
   }
 
-  virtual double Energy(unsigned int a, unsigned int b, const ParticleSystemType* c) const {
+  virtual double Energy(unsigned int a, unsigned int b, const ParticleSystem* c) const {
     double e, d;
     this->Evaluate(a, b, c, d, e);
     return e;
@@ -131,7 +129,7 @@ class CorrespondenceFunction : public ParticleVectorFunction {
     return flag;
   }
 
-  virtual ParticleVectorFunction::Pointer Clone() {
+  virtual VectorFunction::Pointer Clone() {
     auto copy = CorrespondenceFunction::New();
 
     // from itkParticleVectorFunction
@@ -159,7 +157,7 @@ class CorrespondenceFunction : public ParticleVectorFunction {
     copy->m_ShapeData = this->m_ShapeData;
     copy->m_ShapeGradient = this->m_ShapeGradient;
 
-    return (ParticleVectorFunction::Pointer)copy;
+    return (VectorFunction::Pointer)copy;
   }
 
  protected:
@@ -187,7 +185,7 @@ class CorrespondenceFunction : public ParticleVectorFunction {
   typename ShapeDataType::Pointer m_ShapeData;
   typename ShapeGradientType::Pointer m_ShapeGradient;
 
-  virtual void ComputeUpdates(const ParticleSystemType* c);
+  virtual void ComputeUpdates(const ParticleSystem* c);
   std::shared_ptr<vnl_matrix_type> m_PointsUpdate;
 
   double m_MinimumVariance;

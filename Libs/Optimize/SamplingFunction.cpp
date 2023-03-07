@@ -22,7 +22,7 @@ SamplingFunction::TGradientNumericType SamplingFunction::AngleCoefficient(
 }
 
 void SamplingFunction::ComputeAngularWeights(
-    const PointType& pos, int idx, const typename ParticleSystemType::PointVectorType& neighborhood,
+    const PointType& pos, int idx, const typename ParticleSystem::PointVectorType& neighborhood,
     const shapeworks::ParticleDomain* domain, std::vector<double>& weights) const {
   GradientVectorType posnormal = domain->SampleNormalAtPoint(pos, idx);
   weights.resize(neighborhood.size());
@@ -37,7 +37,7 @@ void SamplingFunction::ComputeAngularWeights(
 }
 
 double SamplingFunction::EstimateSigma(unsigned int idx,
-                                                      const typename ParticleSystemType::PointVectorType& neighborhood,
+                                                      const typename ParticleSystem::PointVectorType& neighborhood,
                                                       const shapeworks::ParticleDomain* domain,
                                                       const std::vector<double>& weights, const PointType& pos,
                                                       double initial_sigma, double precision, int& err) const {
@@ -111,7 +111,7 @@ double SamplingFunction::EstimateSigma(unsigned int idx,
 }
 
 SamplingFunction::VectorType SamplingFunction::Evaluate(unsigned int idx, unsigned int d,
-                                                                                      const ParticleSystemType* system,
+                                                                                      const ParticleSystem* system,
                                                                                       double& maxdt) const {
   SW_LOG("base evaluate");
   // Grab a pointer to the domain.  We need a Domain that has surface normal information.
@@ -139,7 +139,7 @@ SamplingFunction::VectorType SamplingFunction::Evaluate(unsigned int idx, unsign
   PointType pos = system->GetPosition(idx, d);
 
   // Get the neighborhood surrounding the point "pos".
-  ParticleSystemType::PointVectorType neighborhood = system->FindNeighborhoodPoints(pos, idx, neighborhood_radius, d);
+  ParticleSystem::PointVectorType neighborhood = system->FindNeighborhoodPoints(pos, idx, neighborhood_radius, d);
 
   // Compute the weights based on angle between the neighbors and the center.
   std::vector<double> weights;

@@ -313,9 +313,6 @@ bool OptimizeParameterFile::set_optimization_parameters(TiXmlHandle* docHandle, 
   elem = docHandle->FirstChild("adaptivity_strength").Element();
   if (elem) { optimize->SetAdaptivityStrength(atof(elem->GetText())); }
 
-  elem = docHandle->FirstChild("pairwise_potential_type").Element();
-  if (elem) { optimize->SetPairwisePotentialType(atoi(elem->GetText())); }
-
   elem = docHandle->FirstChild("timepts_per_subject").Element();
   if (elem) { optimize->SetTimePtsPerSubject(atoi(elem->GetText())); }
 
@@ -369,9 +366,6 @@ bool OptimizeParameterFile::set_optimization_parameters(TiXmlHandle* docHandle, 
 
   elem = docHandle->FirstChild("keep_checkpoints").Element();
   if (elem) { optimize->SetKeepCheckpoints(atoi(elem->GetText())); }
-
-  elem = docHandle->FirstChild("cotan_sigma_factor").Element();
-  if (elem) { optimize->SetCotanSigmaFactor(atof(elem->GetText())); }
 
   elem = docHandle->FirstChild("narrow_band").Element();
   if (elem) { optimize->SetNarrowBand(atof(elem->GetText())); }

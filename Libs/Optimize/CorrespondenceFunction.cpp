@@ -9,7 +9,7 @@
 
 namespace shapeworks {
 
-void CorrespondenceFunction::ComputeUpdates(const ParticleSystemType* c) {
+void CorrespondenceFunction::ComputeUpdates(const ParticleSystem* c) {
   num_dims = m_ShapeData->rows();
   num_samples = m_ShapeData->cols();
 
@@ -136,7 +136,7 @@ void CorrespondenceFunction::ComputeUpdates(const ParticleSystemType* c) {
 }
 
 CorrespondenceFunction::VectorType CorrespondenceFunction ::Evaluate(unsigned int idx, unsigned int d,
-                                                                     const ParticleSystemType* system, double& maxdt,
+                                                                     const ParticleSystem* system, double& maxdt,
                                                                      double& energy) const {
   int dom = d % m_DomainsPerShape;      // domain number within shape
   int sampNum = d / m_DomainsPerShape;  // shape number

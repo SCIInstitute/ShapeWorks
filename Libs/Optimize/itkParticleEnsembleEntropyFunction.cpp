@@ -122,7 +122,7 @@ void ParticleEnsembleEntropyFunction ::ComputeCovarianceMatrix() {
 }
 
 ParticleEnsembleEntropyFunction::VectorType ParticleEnsembleEntropyFunction ::Evaluate(unsigned int idx, unsigned int d,
-                                                                                       const ParticleSystemType* system,
+                                                                                       const ParticleSystem* system,
                                                                                        double& maxdt,
                                                                                        double& energy) const {
   // NOTE: This code requires that indices be contiguous, i.e. it won't work if

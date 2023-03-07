@@ -91,7 +91,7 @@ double CurvatureSamplingFunction::EstimateSigma(unsigned int idx, unsigned int d
   return sigma;
 }
 
-void CurvatureSamplingFunction::BeforeEvaluate(unsigned int idx, unsigned int d, const ParticleSystemType* system) {
+void CurvatureSamplingFunction::BeforeEvaluate(unsigned int idx, unsigned int d, const ParticleSystem* system) {
   m_MaxMoveFactor = 0.1;
 
   // Compute the neighborhood size and the optimal sigma.
@@ -172,7 +172,7 @@ void CurvatureSamplingFunction::BeforeEvaluate(unsigned int idx, unsigned int d,
 }
 
 CurvatureSamplingFunction::VectorType CurvatureSamplingFunction::Evaluate(unsigned int idx, unsigned int d,
-                                                                          const ParticleSystemType* system,
+                                                                          const ParticleSystem* system,
                                                                           double& maxmove, double& energy) const {
   const double epsilon = 1.0e-6;
 
@@ -247,7 +247,7 @@ CurvatureSamplingFunction::VectorType CurvatureSamplingFunction::Evaluate(unsign
 }
 void CurvatureSamplingFunction::UpdateNeighborhood(const CurvatureSamplingFunction::PointType& pos, int idx, int d,
                                                    double radius,
-                                                   const CurvatureSamplingFunction::ParticleSystemType* system) {
+                                                   const ParticleSystem* system) {
   const auto domains_per_shape = system->GetDomainsPerShape();
   const auto domain_base = d / domains_per_shape;
   const auto domain_sub = d % domains_per_shape;

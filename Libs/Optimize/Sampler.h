@@ -9,16 +9,13 @@
 #include "MeshWrapper.h"
 #include "ParticleImplicitSurfaceDomain.h"
 #include "TriMesh.h"
-#include "itkParticleConstrainedModifiedCotangentEntropyGradientFunction.h"
 #include "itkParticleContainerArrayAttribute.h"
 #include "CurvatureSamplingFunction.h"
-#include "itkParticleDualVectorFunction.h"
+#include "DualVectorFunction.h"
 #include "itkParticleEnsembleEntropyFunction.h"
 #include "SamplingFunction.h"
 #include "itkParticleGradientDescentPositionOptimizer.h"
 #include "itkParticleMeanCurvatureAttribute.h"
-#include "itkParticleModifiedCotangentEntropyGradientFunction.h"
-#include "itkParticleOmegaGradientFunction.h"
 #include "itkParticleShapeLinearRegressionMatrixAttribute.h"
 #include "itkParticleShapeMixedEffectsMatrixAttribute.h"
 #include "itkParticleSurfaceNeighborhood.h"
@@ -83,20 +80,6 @@ class Sampler {
 
   CurvatureSamplingFunction* GetCurvatureGradientFunction() {
     return m_CurvatureGradientFunction;
-  }
-
-  ParticleModifiedCotangentEntropyGradientFunction<ImageType::PixelType, Dimension>*
-  GetModifiedCotangentGradientFunction() {
-    return m_ModifiedCotangentGradientFunction;
-  }
-
-  ConstrainedModifiedCotangentSamplingFunction<ImageType::PixelType, Dimension>*
-  GetConstrainedModifiedCotangentGradientFunction() {
-    return m_ConstrainedModifiedCotangentGradientFunction;
-  }
-
-  ParticleOmegaGradientFunction<ImageType::PixelType, Dimension>* GetOmegaGradientFunction() {
-    return m_OmegaGradientFunction;
   }
 
   /** Return a pointer to the optimizer object. */
@@ -173,19 +156,9 @@ class Sampler {
   virtual void SetAdaptivityMode(int mode) {
     SW_LOG("SetAdaptivityMode: {}, pairwise_potential_type: {}", mode, m_pairwise_potential_type);
     if (mode == 0) {
-      if (this->m_pairwise_potential_type == 0) {
-        m_LinkingFunction->SetFunctionA(this->GetCurvatureGradientFunction());
-      } else if (this->m_pairwise_potential_type == 1) {
-        m_LinkingFunction->SetFunctionA(this->GetModifiedCotangentGradientFunction());
-      }
+      m_LinkingFunction->SetFunctionA(this->GetCurvatureGradientFunction());
     } else if (mode == 1) {
       m_LinkingFunction->SetFunctionA(this->GetGradientFunction());
-    } else if (mode == 3) {
-      if (this->m_pairwise_potential_type == 0) {
-        m_LinkingFunction->SetFunctionA(this->GetOmegaGradientFunction());
-      } else if (this->m_pairwise_potential_type == 1) {
-        m_LinkingFunction->SetFunctionA(this->GetConstrainedModifiedCotangentGradientFunction());
-      }
     }
 
     this->m_AdaptivityMode = mode;
@@ -270,7 +243,7 @@ class Sampler {
   ShapeMatrix* GetGeneralShapeMatrix() { return m_GeneralShapeMatrix.GetPointer(); }
   ShapeGradientMatrix* GetGeneralShapeGradientMatrix() { return m_GeneralShapeGradMatrix.GetPointer(); }
 
-  ParticleDualVectorFunction* GetLinkingFunction() { return m_LinkingFunction.GetPointer(); }
+  DualVectorFunction* GetLinkingFunction() { return m_LinkingFunction.GetPointer(); }
 
   ParticleEnsembleEntropyFunction* GetEnsembleEntropyFunction() { return m_EnsembleEntropyFunction.GetPointer(); }
 
@@ -286,7 +259,7 @@ class Sampler {
     return m_CorrespondenceFunction.GetPointer();
   }
 
-  const ParticleDualVectorFunction* GetLinkingFunction() const { return m_LinkingFunction.GetPointer(); }
+  const DualVectorFunction* GetLinkingFunction() const { return m_LinkingFunction.GetPointer(); }
 
   const ParticleEnsembleEntropyFunction* GetEnsembleEntropyFunction() const {
     return m_EnsembleEntropyFunction.GetPointer();
@@ -412,13 +385,6 @@ class Sampler {
   SamplingFunction::Pointer m_GradientFunction;
   CurvatureSamplingFunction::Pointer m_CurvatureGradientFunction;
 
-  ParticleModifiedCotangentEntropyGradientFunction<ImageType::PixelType, Dimension>::Pointer
-      m_ModifiedCotangentGradientFunction;
-  ConstrainedModifiedCotangentSamplingFunction<ImageType::PixelType, Dimension>::Pointer
-      m_ConstrainedModifiedCotangentGradientFunction;
-
-  ParticleOmegaGradientFunction<ImageType::PixelType, Dimension>::Pointer m_OmegaGradientFunction;
-
   ParticleContainerArrayAttribute<double, Dimension>::Pointer m_Sigma1Cache;
   ParticleContainerArrayAttribute<double, Dimension>::Pointer m_Sigma2Cache;
 
@@ -434,7 +400,7 @@ class Sampler {
 
   shapeworks::CorrespondenceMode m_CorrespondenceMode;
 
-  ParticleDualVectorFunction::Pointer m_LinkingFunction;
+  DualVectorFunction::Pointer m_LinkingFunction;
 
   ParticleEnsembleEntropyFunction::Pointer m_EnsembleEntropyFunction;
   ParticleEnsembleEntropyFunction::Pointer m_EnsembleRegressionEntropyFunction;

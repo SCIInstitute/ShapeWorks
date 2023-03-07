@@ -8,7 +8,7 @@
 #include "itkObject.h"
 #include "itkObjectFactory.h"
 #include "itkParticleSystem.h"
-#include "itkParticleVectorFunction.h"
+#include "VectorFunction.h"
 #include "itkWeakPointer.h"
 #include "vnl/vnl_vector_fixed.h"
 
@@ -51,7 +51,7 @@ class ParticleGradientDescentPositionOptimizer : public itk::Object {
   typedef ParticleSystem ParticleSystemType;
 
   /** Type of the gradient function. */
-  typedef ParticleVectorFunction GradientFunctionType;
+  typedef VectorFunction GradientFunctionType;
 
   /** Numerical vector type. */
   typedef typename GradientFunctionType::VectorType VectorType;

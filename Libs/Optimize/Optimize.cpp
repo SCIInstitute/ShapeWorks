@@ -433,18 +433,10 @@ void Optimize::InitializeSampler() {
   float nbhd_to_sigma = 3.0;  // 3.0 -> 1.0
   float flat_cutoff = 0.3;    // 0.3 -> 0.85
 
-  m_sampler->SetPairwisePotentialType(m_pairwise_potential_type);
-
   m_sampler->GetGradientFunction()->SetFlatCutoff(flat_cutoff);
   m_sampler->GetCurvatureGradientFunction()->SetFlatCutoff(flat_cutoff);
   m_sampler->GetGradientFunction()->SetNeighborhoodToSigmaRatio(nbhd_to_sigma);
   m_sampler->GetCurvatureGradientFunction()->SetNeighborhoodToSigmaRatio(nbhd_to_sigma);
-
-  m_sampler->GetModifiedCotangentGradientFunction()->SetFlatCutoff(flat_cutoff);
-  m_sampler->GetModifiedCotangentGradientFunction()->SetNeighborhoodToSigmaRatio(nbhd_to_sigma);
-
-  m_sampler->GetOmegaGradientFunction()->SetFlatCutoff(flat_cutoff);
-  m_sampler->GetOmegaGradientFunction()->SetNeighborhoodToSigmaRatio(nbhd_to_sigma);
 
   m_sampler->GetEnsembleEntropyFunction()->SetMinimumVariance(m_starting_regularization);
   m_sampler->GetEnsembleEntropyFunction()->SetRecomputeCovarianceInterval(1);
@@ -549,7 +541,6 @@ void Optimize::Initialize() {
   m_sampler->GetParticleSystem()->SynchronizePositions();
 
   m_sampler->GetCurvatureGradientFunction()->SetRho(0.0);
-  m_sampler->GetOmegaGradientFunction()->SetRho(0.0);
 
   m_sampler->SetCorrespondenceOn();
 
@@ -682,15 +673,6 @@ void Optimize::Initialize() {
     }
     m_str_energy += "pts_init";
 
-    if (this->m_pairwise_potential_type == 1) {
-      this->SetCotanSigma();
-
-      double minRad = 3.0 * this->GetMinNeighborhoodRadius();
-
-      m_sampler->GetModifiedCotangentGradientFunction()->SetMinimumNeighborhoodRadius(minRad);
-      m_sampler->GetConstrainedModifiedCotangentGradientFunction()->SetMinimumNeighborhoodRadius(minRad);
-    }
-
     m_sampler->GetOptimizer()->SetMaximumNumberOfIterations(m_iterations_per_split);
     m_sampler->GetOptimizer()->SetNumberOfIterations(0);
     if (adaptive_initialization &&
@@ -740,17 +722,10 @@ void Optimize::AddAdaptivity() {
     return;
   }
 
-  if (this->m_pairwise_potential_type == 1) {
-    this->SetCotanSigma();
-  }
-
   double minRad = 3.0 * this->GetMinNeighborhoodRadius();
 
-  m_sampler->GetModifiedCotangentGradientFunction()->SetMinimumNeighborhoodRadius(minRad);
-  m_sampler->GetConstrainedModifiedCotangentGradientFunction()->SetMinimumNeighborhoodRadius(minRad);
 
   m_sampler->GetCurvatureGradientFunction()->SetRho(m_adaptivity_strength);
-  m_sampler->GetOmegaGradientFunction()->SetRho(m_adaptivity_strength);
   m_sampler->GetLinkingFunction()->SetRelativeGradientScaling(m_initial_relative_weighting);
   m_sampler->GetLinkingFunction()->SetRelativeEnergyScaling(m_initial_relative_weighting);
 
@@ -779,18 +754,8 @@ void Optimize::RunOptimize() {
 
   m_optimizing = true;
   m_sampler->GetCurvatureGradientFunction()->SetRho(m_adaptivity_strength);
-  m_sampler->GetOmegaGradientFunction()->SetRho(m_adaptivity_strength);
   m_sampler->GetLinkingFunction()->SetRelativeGradientScaling(m_relative_weighting);
   m_sampler->GetLinkingFunction()->SetRelativeEnergyScaling(m_relative_weighting);
-
-  if (this->m_pairwise_potential_type == 1) {
-    this->SetCotanSigma();
-
-    double minRad = 3.0 * this->GetMinNeighborhoodRadius();
-
-    m_sampler->GetModifiedCotangentGradientFunction()->SetMinimumNeighborhoodRadius(minRad);
-    m_sampler->GetConstrainedModifiedCotangentGradientFunction()->SetMinimumNeighborhoodRadius(minRad);
-  }
 
   if (m_procrustes_interval != 0) {  // Initial registration
     m_procrustes->RunRegistration();
@@ -1007,18 +972,6 @@ void Optimize::ComputeEnergyAfterIteration() {
   }
 }
 
-//---------------------------------------------------------------------------
-void Optimize::SetCotanSigma() {
-  itk::ImageToVTKImageFilter<ImageType>::Pointer itk2vtkConnector;
-  m_sampler->GetModifiedCotangentGradientFunction()->ClearGlobalSigma();
-  for (unsigned int i = 0; i < m_sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
-    double area = m_sampler->GetParticleSystem()->GetDomain(i)->GetSurfaceArea();
-    double sigma =
-        m_cotan_sigma_factor * std::sqrt(area / (m_sampler->GetParticleSystem()->GetNumberOfParticles(i) * M_PI));
-    m_sampler->GetModifiedCotangentGradientFunction()->SetGlobalSigma(sigma);
-  }
-}
-
 // File writers and info display functions
 
 //---------------------------------------------------------------------------
@@ -1121,13 +1074,6 @@ void Optimize::PrintParamInfo() {
 
   if (m_adaptivity_strength > 0.0) {
     std::cout << "adaptivity_strength = " << m_adaptivity_strength << std::endl;
-  }
-
-  std::cout << "pairwise_potential_type = ";
-  if (m_pairwise_potential_type == 0) {
-    std::cout << "gaussian" << std::endl;
-  } else {
-    std::cout << "cotan" << std::endl;
   }
 
   std::cout << "m_optimization_iterations = " << m_optimization_iterations << std::endl;
@@ -1810,11 +1756,6 @@ void Optimize::UpdateProject() {
 }
 
 //---------------------------------------------------------------------------
-void Optimize::SetPairwisePotentialType(int pairwise_potential_type) {
-  this->m_pairwise_potential_type = pairwise_potential_type;
-}
-
-//---------------------------------------------------------------------------
 void Optimize::SetTimePtsPerSubject(int time_pts_per_subject) { this->m_timepts_per_subject = time_pts_per_subject; }
 
 //---------------------------------------------------------------------------
@@ -1888,9 +1829,6 @@ void Optimize::SetCheckpointingInterval(int checkpointing_interval) {
 
 //---------------------------------------------------------------------------
 void Optimize::SetKeepCheckpoints(int keep_checkpoints) { this->m_keep_checkpoints = keep_checkpoints; }
-
-//---------------------------------------------------------------------------
-void Optimize::SetCotanSigmaFactor(double cotan_sigma_factor) { this->m_cotan_sigma_factor = cotan_sigma_factor; }
 
 //---------------------------------------------------------------------------
 void Optimize::SetUseRegression(bool use_regression) { this->m_use_regression = use_regression; }

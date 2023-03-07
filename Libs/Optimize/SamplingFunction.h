@@ -3,8 +3,8 @@
 #include <vector>
 
 #include "ParticleImageDomainWithGradients.h"
+#include "VectorFunction.h"
 #include "itkParticleContainerArrayAttribute.h"
-#include "itkParticleVectorFunction.h"
 
 namespace shapeworks {
 
@@ -58,7 +58,7 @@ namespace shapeworks {
  * \f]
  *
  */
-class SamplingFunction : public ParticleVectorFunction {
+class SamplingFunction : public VectorFunction {
  public:
   constexpr static int VDimension = 3;
   typedef float
@@ -68,21 +68,18 @@ class SamplingFunction : public ParticleVectorFunction {
   typedef SamplingFunction Self;
   typedef itk::SmartPointer<Self> Pointer;
   typedef itk::SmartPointer<const Self> ConstPointer;
-  typedef ParticleVectorFunction Superclass;
-  itkTypeMacro(SamplingFunction, ParticleVectorFunction);
+  typedef VectorFunction Superclass;
+  itkTypeMacro(SamplingFunction, VectorFunction);
 
   /** Data type representing individual gradient components. */
   typedef TGradientNumericType GradientNumericType;
-
-  /** Type of particle system. */
-  typedef typename Superclass::ParticleSystemType ParticleSystemType;
 
   /** Cache type for the sigma values. */
   typedef ParticleContainerArrayAttribute<double, VDimension> SigmaCacheType;
 
   /** Vector & Point types. */
   typedef typename Superclass::VectorType VectorType;
-  typedef typename ParticleSystemType::PointType PointType;
+  typedef typename ParticleSystem::PointType PointType;
   typedef vnl_vector_fixed<TGradientNumericType, VDimension> GradientVectorType;
 
   /** Method for creation through the object factory. */
@@ -91,14 +88,14 @@ class SamplingFunction : public ParticleVectorFunction {
   /** Dimensionality of the domain of the particle system. */
   itkStaticConstMacro(Dimension, unsigned int, VDimension);
 
-  virtual VectorType Evaluate(unsigned int idx, unsigned int d, const ParticleSystemType* system, double& maxdt) const;
+  virtual VectorType Evaluate(unsigned int idx, unsigned int d, const ParticleSystem* system, double& maxdt) const;
 
-  virtual VectorType Evaluate(unsigned int idx, unsigned int d, const ParticleSystemType* system, double& maxdt,
+  virtual VectorType Evaluate(unsigned int idx, unsigned int d, const ParticleSystem* system, double& maxdt,
                               double& energy) const {
     itkExceptionMacro("This method not implemented");
     return VectorType();
   }
-  virtual double Energy(unsigned int, unsigned int, const ParticleSystemType*) const {
+  virtual double Energy(unsigned int, unsigned int, const ParticleSystem*) const {
     itkExceptionMacro("This method not implemented");
     return 0.0;
   }
@@ -107,7 +104,7 @@ class SamplingFunction : public ParticleVectorFunction {
 
   /** Estimate the best sigma for Parzen windowing in a given neighborhood.
       The best sigma is the sigma that maximizes probability at the given point  */
-  virtual double EstimateSigma(unsigned int idx, const typename ParticleSystemType::PointVectorType& neighborhood,
+  virtual double EstimateSigma(unsigned int idx, const typename ParticleSystem::PointVectorType& neighborhood,
                                const shapeworks::ParticleDomain* domain, const std::vector<double>& weights,
                                const PointType& pos, double initial_sigma, double precision, int& err) const;
 
@@ -144,12 +141,12 @@ class SamplingFunction : public ParticleVectorFunction {
   /** Compute a set of weights based on the difference in the normals of a
       central point and each of its neighbors.  Difference of > 90 degrees
       results in a weight of 0. */
-  void ComputeAngularWeights(const PointType&, int, const typename ParticleSystemType::PointVectorType&,
+  void ComputeAngularWeights(const PointType&, int, const typename ParticleSystem::PointVectorType&,
                              const shapeworks::ParticleDomain*, std::vector<double>&) const;
 
   //  void ComputeNeighborho0d();
 
-  virtual ParticleVectorFunction::Pointer Clone() {
+  virtual VectorFunction::Pointer Clone() {
     SamplingFunction::Pointer copy = SamplingFunction::New();
 
     // from itkParticleVectorFunction
@@ -163,7 +160,7 @@ class SamplingFunction : public ParticleVectorFunction {
     copy->m_NeighborhoodToSigmaRatio = this->m_NeighborhoodToSigmaRatio;
     copy->m_SpatialSigmaCache = this->m_SpatialSigmaCache;
 
-    return (typename ParticleVectorFunction::Pointer)copy;
+    return (typename VectorFunction::Pointer)copy;
   }
 
  protected:

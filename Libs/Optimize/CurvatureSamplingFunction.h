@@ -33,7 +33,6 @@ class CurvatureSamplingFunction : public SamplingFunction {
 
   /** Inherit some parent typedefs. */
   typedef Superclass::GradientNumericType GradientNumericType;
-  typedef Superclass::ParticleSystemType ParticleSystemType;
   typedef Superclass::VectorType VectorType;
   typedef Superclass::PointType PointType;
   typedef Superclass::GradientVectorType GradientVectorType;
@@ -48,16 +47,16 @@ class CurvatureSamplingFunction : public SamplingFunction {
   /** Dimensionality of the domain of the particle system. */
   itkStaticConstMacro(Dimension, unsigned int, VDimension);
 
-  inline virtual VectorType Evaluate(unsigned int a, unsigned int b, const ParticleSystemType* c, double& d) const {
+  inline virtual VectorType Evaluate(unsigned int a, unsigned int b, const ParticleSystem* c, double& d) const {
     double e;
     return this->Evaluate(a, b, c, d, e);
   }
 
-  virtual VectorType Evaluate(unsigned int, unsigned int, const ParticleSystemType*, double&, double&) const;
+  virtual VectorType Evaluate(unsigned int, unsigned int, const ParticleSystem*, double&, double&) const;
 
-  virtual void BeforeEvaluate(unsigned int, unsigned int, const ParticleSystemType*);
+  virtual void BeforeEvaluate(unsigned int, unsigned int, const ParticleSystem*);
 
-  inline virtual double Energy(unsigned int a, unsigned int b, const ParticleSystemType* c) const {
+  inline virtual double Energy(unsigned int a, unsigned int b, const ParticleSystem* c) const {
     double d, e;
     this->Evaluate(a, b, c, d, e);
     return e;
@@ -92,7 +91,7 @@ class CurvatureSamplingFunction : public SamplingFunction {
   void SetSharedBoundaryEnabled(bool enabled) { m_IsSharedBoundaryEnabled = enabled; }
   bool GetSharedBoundaryEnabled() const { return m_IsSharedBoundaryEnabled; }
 
-  virtual ParticleVectorFunction::Pointer Clone() {
+  virtual VectorFunction::Pointer Clone() {
     // todo Do we really need to clone all of this?
 
     CurvatureSamplingFunction::Pointer copy = CurvatureSamplingFunction::New();
@@ -116,7 +115,7 @@ class CurvatureSamplingFunction : public SamplingFunction {
     copy->m_DomainNumber = this->m_DomainNumber;
     copy->m_ParticleSystem = this->m_ParticleSystem;
 
-    return (ParticleVectorFunction::Pointer)copy;
+    return (VectorFunction::Pointer)copy;
   }
 
  protected:
@@ -145,7 +144,7 @@ class CurvatureSamplingFunction : public SamplingFunction {
         : pi_pair(pi_pair_), weight(weight_), distance(distance_), dom(dom_) {}
   };
   std::vector<CrossDomainNeighborhood> m_CurrentNeighborhood;
-  void UpdateNeighborhood(const PointType& pos, int idx, int d, double radius, const ParticleSystemType* system);
+  void UpdateNeighborhood(const PointType& pos, int idx, int d, double radius, const ParticleSystem* system);
 
   float m_MaxMoveFactor = 0;
 };

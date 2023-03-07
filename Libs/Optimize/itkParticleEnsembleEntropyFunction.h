@@ -2,9 +2,9 @@
 
 #include <vector>
 
+#include "VectorFunction.h"
 #include "itkParticleEnsembleEntropyFunction.h"
 #include "itkParticleShapeMatrixAttribute.h"
-#include "itkParticleVectorFunction.h"
 
 namespace shapeworks {
 
@@ -12,18 +12,15 @@ namespace shapeworks {
  * \class ParticleEnsembleEntropyFunction
  *
  */
-class ParticleEnsembleEntropyFunction : public ParticleVectorFunction {
+class ParticleEnsembleEntropyFunction : public VectorFunction {
  public:
   constexpr static unsigned int VDimension = 3;
   /** Standard class typedefs. */
   typedef ParticleEnsembleEntropyFunction Self;
   typedef itk::SmartPointer<Self> Pointer;
   typedef itk::SmartPointer<const Self> ConstPointer;
-  typedef ParticleVectorFunction Superclass;
-  itkTypeMacro(ParticleEnsembleEntropyFunction, ParticleVectorFunction);
-
-  /** Type of particle system. */
-  typedef typename Superclass::ParticleSystemType ParticleSystemType;
+  typedef VectorFunction Superclass;
+  itkTypeMacro(ParticleEnsembleEntropyFunction, VectorFunction);
 
   typedef LegacyShapeMatrix ShapeMatrixType;
 
@@ -31,7 +28,7 @@ class ParticleEnsembleEntropyFunction : public ParticleVectorFunction {
 
   /** Vector & Point types. */
   typedef typename Superclass::VectorType VectorType;
-  typedef typename ParticleSystemType::PointType PointType;
+  typedef typename ParticleSystem::PointType PointType;
   typedef vnl_vector<DataType> vnl_vector_type;
   typedef vnl_matrix<DataType> vnl_matrix_type;
 
@@ -45,13 +42,13 @@ class ParticleEnsembleEntropyFunction : public ParticleVectorFunction {
       argument is the index of the domain within that particle system.  The
       third argument is the index of the particle location within the given
       domain. */
-  virtual VectorType Evaluate(unsigned int, unsigned int, const ParticleSystemType*, double&, double&) const;
-  virtual VectorType Evaluate(unsigned int a, unsigned int b, const ParticleSystemType* c, double& d) const {
+  virtual VectorType Evaluate(unsigned int, unsigned int, const ParticleSystem*, double&, double&) const;
+  virtual VectorType Evaluate(unsigned int a, unsigned int b, const ParticleSystem* c, double& d) const {
     double e;
     return this->Evaluate(a, b, c, d, e);
   }
 
-  virtual double Energy(unsigned int a, unsigned int b, const ParticleSystemType* c) const {
+  virtual double Energy(unsigned int a, unsigned int b, const ParticleSystem* c) const {
     double e, d;
     this->Evaluate(a, b, c, d, e);
     return e;
@@ -112,9 +109,8 @@ class ParticleEnsembleEntropyFunction : public ParticleVectorFunction {
   void SetRecomputeCovarianceInterval(int i) { m_RecomputeCovarianceInterval = i; }
   int GetRecomputeCovarianceInterval() const { return m_RecomputeCovarianceInterval; }
 
-  virtual ParticleVectorFunction::Pointer Clone() {
-    ParticleEnsembleEntropyFunction::Pointer copy =
-        ParticleEnsembleEntropyFunction::New();
+  virtual VectorFunction::Pointer Clone() {
+    ParticleEnsembleEntropyFunction::Pointer copy = ParticleEnsembleEntropyFunction::New();
 
     copy->m_PointsUpdate = this->m_PointsUpdate;
     copy->m_MinimumVariance = this->m_MinimumVariance;
@@ -133,7 +129,7 @@ class ParticleEnsembleEntropyFunction : public ParticleVectorFunction {
     copy->m_points_mean = this->m_points_mean;
     copy->m_UseMeanEnergy = this->m_UseMeanEnergy;
 
-    return (ParticleVectorFunction::Pointer)copy;
+    return (VectorFunction::Pointer)copy;
   }
 
  protected:
@@ -171,4 +167,3 @@ class ParticleEnsembleEntropyFunction : public ParticleVectorFunction {
 };
 
 }  // namespace shapeworks
-

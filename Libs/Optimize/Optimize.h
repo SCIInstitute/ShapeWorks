@@ -24,7 +24,7 @@
 #include "ParticleProcrustesRegistration.h"
 #include "Sampler.h"
 #include "itkParticleSystem.h"
-#include "itkParticleVectorFunction.h"
+#include "VectorFunction.h"
 
 namespace shapeworks {
 
@@ -51,7 +51,7 @@ class MatrixContainer {
 class Optimize {
  public:
   using ImageType = itk::Image<float, 3>;
-  using VectorType = ParticleVectorFunction::VectorType;
+  using VectorType = VectorFunction::VectorType;
   using MatrixType = Eigen::MatrixXd;
 
   //! Constructor
@@ -164,8 +164,6 @@ class Optimize {
   }
   //! Set adaptivity strength (TODO: details)
   void SetAdaptivityStrength(double adaptivity_strength);
-  //! Set pairwise potential type (TODO: details)
-  void SetPairwisePotentialType(int pairwise_potential_type);
   //! Set the number of time points per subject (TODO: details)
   void SetTimePtsPerSubject(int time_pts_per_subject);
   //! Get the number of time points per subject (TODO: details)
@@ -204,8 +202,6 @@ class Optimize {
   void SetCheckpointingInterval(int checkpointing_interval);
   //! Set if checkpoints should be kept (0=disable, 1=enable)
   void SetKeepCheckpoints(int keep_checkpoints);
-  //! Set the cotan sigma factor (TODO: details)
-  void SetCotanSigmaFactor(double cotan_sigma_factor);
 
   //! Set if regression should be used (TODO: details)
   void SetUseRegression(bool use_regression);
@@ -393,7 +389,6 @@ class Optimize {
   int m_processing_mode = 3;
   int m_adaptivity_mode = 0;
   double m_adaptivity_strength = 0.0;
-  int m_pairwise_potential_type = 0;  // 0 - gaussian (Cates work), 1 - modified cotangent (Meyer),
 
   bool m_mesh_ffc_mode = 0;
 

@@ -16,19 +16,12 @@ Sampler::Sampler() {
   m_GradientFunction = SamplingFunction::New();
   m_CurvatureGradientFunction = CurvatureSamplingFunction::New();
 
-  m_ModifiedCotangentGradientFunction =
-      ParticleModifiedCotangentEntropyGradientFunction<ImageType::PixelType, Dimension>::New();
-  m_ConstrainedModifiedCotangentGradientFunction =
-      ConstrainedModifiedCotangentSamplingFunction<ImageType::PixelType, Dimension>::New();
-
-  m_OmegaGradientFunction = ParticleOmegaGradientFunction<ImageType::PixelType, Dimension>::New();
-
   m_Optimizer = OptimizerType::New();
 
   m_PointsFiles.push_back("");
   m_MeshFiles.push_back("");
 
-  m_LinkingFunction = ParticleDualVectorFunction::New();
+  m_LinkingFunction = DualVectorFunction::New();
   m_EnsembleEntropyFunction = ParticleEnsembleEntropyFunction::New();
   m_EnsembleRegressionEntropyFunction = ParticleEnsembleEntropyFunction::New();
   m_EnsembleMixedEffectsEntropyFunction = ParticleEnsembleEntropyFunction::New();
@@ -63,18 +56,12 @@ void Sampler::AllocateDataCaches() {
   m_GradientFunction->SetSpatialSigmaCache(m_Sigma1Cache);
   m_CurvatureGradientFunction->SetSpatialSigmaCache(m_Sigma1Cache);
 
-  m_ModifiedCotangentGradientFunction->SetSpatialSigmaCache(m_Sigma1Cache);
-  m_ConstrainedModifiedCotangentGradientFunction->SetSpatialSigmaCache(m_Sigma1Cache);
-
-  m_OmegaGradientFunction->SetSpatialSigmaCache(m_Sigma1Cache);
-
   m_Sigma2Cache = ParticleContainerArrayAttribute<double, Dimension>::New();
   m_ParticleSystem->RegisterAttribute(m_Sigma2Cache);
 
   m_MeanCurvatureCache = ParticleMeanCurvatureAttribute<ImageType::PixelType, Dimension>::New();
   m_MeanCurvatureCache->SetVerbosity(m_verbosity);
   m_CurvatureGradientFunction->SetMeanCurvatureCache(m_MeanCurvatureCache);
-  m_OmegaGradientFunction->SetMeanCurvatureCache(m_MeanCurvatureCache);
   m_ParticleSystem->RegisterAttribute(m_MeanCurvatureCache);
 }
 
@@ -228,21 +215,6 @@ void Sampler::InitializeOptimizationFunctions() {
     m_CurvatureGradientFunction->SetSharedBoundaryEnabled(true);
     m_CurvatureGradientFunction->SetSharedBoundaryWeight(this->m_SharedBoundaryWeight);
   }
-
-  m_ModifiedCotangentGradientFunction->SetMinimumNeighborhoodRadius(minimumNeighborhoodRadius);
-  m_ModifiedCotangentGradientFunction->SetMaximumNeighborhoodRadius(maxradius);
-  m_ModifiedCotangentGradientFunction->SetParticleSystem(this->GetParticleSystem());
-  m_ModifiedCotangentGradientFunction->SetDomainNumber(0);
-
-  m_ConstrainedModifiedCotangentGradientFunction->SetMinimumNeighborhoodRadius(minimumNeighborhoodRadius);
-  m_ConstrainedModifiedCotangentGradientFunction->SetMaximumNeighborhoodRadius(maxradius);
-  m_ConstrainedModifiedCotangentGradientFunction->SetParticleSystem(this->GetParticleSystem());
-  m_ConstrainedModifiedCotangentGradientFunction->SetDomainNumber(0);
-
-  m_OmegaGradientFunction->SetMinimumNeighborhoodRadius(minimumNeighborhoodRadius);
-  m_OmegaGradientFunction->SetMaximumNeighborhoodRadius(maxradius);
-  m_OmegaGradientFunction->SetParticleSystem(this->GetParticleSystem());
-  m_OmegaGradientFunction->SetDomainNumber(0);
 
   m_LinearRegressionShapeMatrix->Initialize();
   m_MixedEffectsShapeMatrix->Initialize();
