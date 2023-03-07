@@ -7,7 +7,7 @@
 #include <string>
 
 #include "ParticleImageDomainWithGradients.h"
-#include "itkParticleGaussianModeWriter.h"
+#include "ParticleGaussianModeWriter.h"
 #include "vnl/algo/vnl_symmetric_eigensystem.h"
 
 namespace shapeworks {

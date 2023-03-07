@@ -5,7 +5,7 @@
 #include "GenericContainer.h"
 #include "Observer.h"
 #include "itkDataObject.h"
-#include "itkParticleEvents.h"
+#include "ParticleEvents.h"
 #include "itkWeakPointer.h"
 
 namespace shapeworks {

@@ -18,8 +18,8 @@ const int global_iteration = 1;
 namespace shapeworks
 {
   template <class TGradientNumericType, unsigned int VDimension>
-  ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
-    ::ParticleGradientDescentPositionOptimizer()
+GradientDescentOptimizer<TGradientNumericType, VDimension>
+    ::GradientDescentOptimizer()
   {
     m_StopOptimization = false;
     m_NumberOfIterations = 0;
@@ -29,7 +29,7 @@ namespace shapeworks
   }
 
   template <class TGradientNumericType, unsigned int VDimension>
-  void ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>::ResetTimeStepVectors()
+  void GradientDescentOptimizer<TGradientNumericType, VDimension>::ResetTimeStepVectors()
   {
     // Make sure the time step vector is the right size
     while (m_TimeSteps.size() != m_ParticleSystem->GetNumberOfDomains())
@@ -54,7 +54,7 @@ namespace shapeworks
   }
 
   template <class TGradientNumericType, unsigned int VDimension>
-  void ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>
+  void GradientDescentOptimizer<TGradientNumericType, VDimension>
     ::StartAdaptiveGaussSeidelOptimization()
   {
     /// uncomment this to run single threaded
@@ -240,8 +240,7 @@ namespace shapeworks
   }
 
 template<class TGradientNumericType, unsigned int VDimension>
-void
-ParticleGradientDescentPositionOptimizer<TGradientNumericType, VDimension>::AugmentedLagrangianConstraints(
+void GradientDescentOptimizer<TGradientNumericType, VDimension>::AugmentedLagrangianConstraints(
   VectorType& gradient, const PointType& pt, const size_t& dom, const double& maximumUpdateAllowed)
 {
   // Step B 2: Augmented lagrangian constraint method

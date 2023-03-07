@@ -11,7 +11,7 @@
 #include "Observer.h"
 #include "GenericContainer.h"
 #include "ParticleDomain.h"
-#include "itkParticleEvents.h"
+#include "ParticleEvents.h"
 #include "itkParticleNeighborhood.h"
 #include "itkPoint.h"
 #include "itkWeakPointer.h"

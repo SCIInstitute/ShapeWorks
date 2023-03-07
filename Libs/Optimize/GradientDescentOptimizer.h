@@ -5,10 +5,10 @@
 #include <vector>
 
 #include "ParticleImageDomainWithGradients.h"
+#include "VectorFunction.h"
 #include "itkObject.h"
 #include "itkObjectFactory.h"
 #include "itkParticleSystem.h"
-#include "VectorFunction.h"
 #include "itkWeakPointer.h"
 #include "vnl/vnl_vector_fixed.h"
 
@@ -26,10 +26,10 @@ namespace shapeworks {
  *
  */
 template <class TGradientNumericType, unsigned int VDimension>
-class ParticleGradientDescentPositionOptimizer : public itk::Object {
+class GradientDescentOptimizer : public itk::Object {
  public:
   /** Standard class typedefs */
-  typedef ParticleGradientDescentPositionOptimizer Self;
+  typedef GradientDescentOptimizer Self;
   typedef itk::Object Superclass;
   typedef itk::SmartPointer<Self> Pointer;
   typedef itk::SmartPointer<const Self> ConstPointer;
@@ -114,11 +114,11 @@ class ParticleGradientDescentPositionOptimizer : public itk::Object {
   void SetInitializationStartScalingFactor(double si) { m_initialization_start_scaling_factor = si; }
 
  protected:
-  ParticleGradientDescentPositionOptimizer();
-  ParticleGradientDescentPositionOptimizer(const ParticleGradientDescentPositionOptimizer&);
-  const ParticleGradientDescentPositionOptimizer& operator=(const ParticleGradientDescentPositionOptimizer&);
+  GradientDescentOptimizer();
+  GradientDescentOptimizer(const GradientDescentOptimizer&);
+  const GradientDescentOptimizer& operator=(const GradientDescentOptimizer&);
   void PrintSelf(std::ostream& os, itk::Indent indent) const { Superclass::PrintSelf(os, indent); }
-  virtual ~ParticleGradientDescentPositionOptimizer(){};
+  virtual ~GradientDescentOptimizer(){};
 
  private:
   typename ParticleSystemType::Pointer m_ParticleSystem;
@@ -142,4 +142,4 @@ class ParticleGradientDescentPositionOptimizer : public itk::Object {
 
 }  // namespace shapeworks
 
-#include "itkParticleGradientDescentPositionOptimizer.txx"
+#include "GradientDescentOptimizer.txx"

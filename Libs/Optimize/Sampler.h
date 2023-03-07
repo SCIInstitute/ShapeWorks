@@ -14,7 +14,7 @@
 #include "DualVectorFunction.h"
 #include "LegacyCorrespondenceFunction.h"
 #include "SamplingFunction.h"
-#include "itkParticleGradientDescentPositionOptimizer.h"
+#include "GradientDescentOptimizer.h"
 #include "itkParticleMeanCurvatureAttribute.h"
 #include "itkParticleShapeLinearRegressionMatrixAttribute.h"
 #include "itkParticleShapeMixedEffectsMatrixAttribute.h"
@@ -47,7 +47,7 @@ class Sampler {
 
   using MeanCurvatureCacheType = ParticleMeanCurvatureAttribute<PixelType, Dimension>;
   using TransformType = vnl_matrix_fixed<double, Dimension + 1, Dimension + 1>;
-  using OptimizerType = ParticleGradientDescentPositionOptimizer<PixelType, Dimension>;
+  using OptimizerType = GradientDescentOptimizer<PixelType, Dimension>;
 
   /** Convenient typedef for storing cutting plane information */
   struct CuttingPlaneType {
