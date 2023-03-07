@@ -8,8 +8,11 @@
 #include "itkWeakPointer.h"
 
 namespace itk {
-/** \class ParticleContainerArrayAttribute
- *  \brief
+
+/*!
+ * @class ParticleContainerArrayAttribute
+ * @brief This class appears to be an array of ParticleContainers (e.g. std::vector) that implements the ParticleAttribute
+ * listener interface.  The array size tracks the number of domains in the system.
  */
 template <class T, unsigned int VDimension>
 class ITK_EXPORT ParticleContainerArrayAttribute : public std::vector<typename ParticleContainer<T>::Pointer>,
