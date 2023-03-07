@@ -9,7 +9,7 @@
 #include "MeshWrapper.h"
 #include "ParticleImplicitSurfaceDomain.h"
 #include "TriMesh.h"
-#include "itkParticleContainerArrayAttribute.h"
+#include "GenericContainerArray.h"
 #include "CurvatureSamplingFunction.h"
 #include "DualVectorFunction.h"
 #include "itkParticleEnsembleEntropyFunction.h"

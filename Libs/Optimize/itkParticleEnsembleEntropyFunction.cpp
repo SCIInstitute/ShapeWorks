@@ -56,19 +56,6 @@ void ParticleEnsembleEntropyFunction ::ComputeCovarianceMatrix() {
       points_minus_mean(j, i) = m_ShapeMatrix->operator()(j, i) - m_points_mean->get(j, 0);
     }
   }
-  //    std:cout << points_minus_mean.extract(num_dims, num_samples, 0, 0) << std::endl;
-
-#ifdef PARTICLE_DEBUG
-  std::cout << "Shape Matrix : " << std::endl;
-  std::cout << "total : " << _total << std::endl;
-  for (unsigned int j = 0; j < num_dims; j++) {
-    for (unsigned int i = 0; i < num_samples; i++) {
-      std::cout << points_minus_mean(j, i) << " ";
-    }
-    std::cout << "\n";
-  }
-  std::cout << "Done\n";
-#endif
 
   vnl_diag_matrix<double> W;
 

@@ -4,7 +4,7 @@
 
 #include "ParticleImageDomainWithGradients.h"
 #include "VectorFunction.h"
-#include "itkParticleContainerArrayAttribute.h"
+#include "GenericContainerArray.h"
 
 namespace shapeworks {
 
