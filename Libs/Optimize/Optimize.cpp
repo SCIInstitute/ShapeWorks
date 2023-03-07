@@ -24,13 +24,13 @@
 // shapeworks
 #include <Project/Project.h>
 
+#include "ImageDomain.h"
+#include "ImplicitSurfaceDomain.h"
 #include "Logging.h"
 #include "Optimize.h"
 #include "OptimizeParameterFile.h"
 #include "OptimizeParameters.h"
 #include "ParticleGoodBadAssessment.h"
-#include "ParticleImageDomain.h"
-#include "ParticleImplicitSurfaceDomain.h"
 #include "VtkMeshWrapper.h"
 #include "object_reader.h"
 #include "object_writer.h"
@@ -1367,8 +1367,8 @@ void Optimize::WritePointFilesWithFeatures(std::string iter_prefix) {
       }
 
       // Only run the following code if we are dealing with ImplicitSurfaceDomains
-      const ParticleImplicitSurfaceDomain<float>* domain =
-          dynamic_cast<const ParticleImplicitSurfaceDomain<float>*>(m_sampler->GetParticleSystem()->GetDomain(i));
+      const ImplicitSurfaceDomain<float>* domain =
+          dynamic_cast<const ImplicitSurfaceDomain<float>*>(m_sampler->GetParticleSystem()->GetDomain(i));
       if (domain && m_attributes_per_domain.size() > 0) {
         if (m_attributes_per_domain[i % m_domains_per_shape] > 0) {
           point pt;

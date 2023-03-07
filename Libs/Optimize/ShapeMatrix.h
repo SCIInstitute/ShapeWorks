@@ -1,15 +1,16 @@
 #pragma once
 
-#include "ParticleImageDomainWithGradients.h"
-#include "ParticleImplicitSurfaceDomain.h"
+#include <cmath>
+
+#include "GenericContainer.h"
+#include "ImageDomainWithGradients.h"
+#include "ImplicitSurfaceDomain.h"
+#include "Observer.h"
+#include "ParticleSystem.h"
 #include "TriMesh.h"
 #include "itkDataObject.h"
-#include "Observer.h"
-#include "GenericContainer.h"
-#include "ParticleSystem.h"
 #include "itkWeakPointer.h"
 #include "vnl/vnl_matrix.h"
-#include <cmath>
 namespace shapeworks {
 
 /** \class ShapeMatrix
@@ -140,8 +141,8 @@ class ShapeMatrix : public vnl_matrix<double>, public Observer {
       pt[1] = posLocal[1];
       pt[2] = posLocal[2];
       fVals.clear();
-      const shapeworks::ParticleImplicitSurfaceDomain<float>* domain =
-          static_cast<const shapeworks::ParticleImplicitSurfaceDomain<float>*>(ps->GetDomain(d));
+      const shapeworks::ImplicitSurfaceDomain<float>* domain =
+          static_cast<const shapeworks::ImplicitSurfaceDomain<float>*>(ps->GetDomain(d));
       meshFIM* ptr = domain->GetMesh();
       ptr->GetFeatureValues(pt, fVals);
       for (int aa = 0; aa < m_AttributesPerDomain[dom]; aa++) {

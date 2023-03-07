@@ -15,8 +15,8 @@ const int global_iteration = 1;
 #include <string>
 #include <vector>
 
+#include "ImageDomainWithGradients.h"
 #include "MemoryUsage.h"
-#include "ParticleImageDomainWithGradients.h"
 
 namespace shapeworks {
 GradientDescentOptimizer::GradientDescentOptimizer() {

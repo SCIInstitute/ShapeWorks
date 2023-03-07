@@ -2,9 +2,9 @@
 
 #include "GenericContainer.h"
 #include "GenericContainerArray.h"
-#include "ParticleImageDomainWithCurvature.h"
-#include "itkDataObject.h"
+#include "ImageDomainWithCurvature.h"
 #include "ParticleSystem.h"
+#include "itkDataObject.h"
 #include "itkWeakPointer.h"
 
 namespace shapeworks {

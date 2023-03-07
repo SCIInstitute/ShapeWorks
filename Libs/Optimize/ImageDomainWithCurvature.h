@@ -8,11 +8,11 @@
 =========================================================================*/
 #pragma once
 
-#include "ParticleImageDomainWithGradN.h"
-#include "itkImageRegionIteratorWithIndex.h"
-#include "itkImageRegionIterator.h"
-#include "itkDiscreteGaussianImageFilter.h"
+#include "ImageDomainWithGradN.h"
 #include "Logging.h"
+#include "itkDiscreteGaussianImageFilter.h"
+#include "itkImageRegionIterator.h"
+#include "itkImageRegionIteratorWithIndex.h"
 
 namespace shapeworks
 {
@@ -26,11 +26,11 @@ namespace shapeworks
  * \sa ParticleDomain
  */
 template <class T>
-class ParticleImageDomainWithCurvature : public ParticleImageDomainWithGradN<T>
+class ImageDomainWithCurvature : public ImageDomainWithGradN<T>
 {
 public:
   /** Standard class typedefs */
-  typedef ParticleImageDomainWithGradN<T> Superclass;
+  typedef ImageDomainWithGradN<T> Superclass;
 
   typedef typename Superclass::PointType PointType;  
   typedef typename Superclass::ImageType ImageType;
@@ -66,14 +66,14 @@ public:
   }
 
 protected:
-  ParticleImageDomainWithCurvature() {}
+ ImageDomainWithCurvature() {}
 
   void PrintSelf(std::ostream& os, itk::Indent indent) const
   {
     Superclass::PrintSelf(os, indent);
     os << indent << "VDB Active Voxels = " << m_VDBCurvature->activeVoxelCount() << std::endl;
   }
-  virtual ~ParticleImageDomainWithCurvature() {};
+  virtual ~ImageDomainWithCurvature() {};
 
 private:
   openvdb::FloatGrid::Ptr m_VDBCurvature;

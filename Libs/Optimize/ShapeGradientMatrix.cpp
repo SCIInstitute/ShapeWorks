@@ -58,14 +58,14 @@ void ShapeGradientMatrix::SetValues(const ParticleSystemType* ps, int idx, int d
                                               // normals
       shapeworks::ParticleDomain::GradNType grad_n = ps->GetDomain(d)->SampleGradNAtPoint(posLocal, idx);
 
-      shapeworks::ParticleImageDomainWithGradN<float>::VnlMatrixType mat1;
+      shapeworks::ImageDomainWithGradN<float>::VnlMatrixType mat1;
       mat1.set_identity();
       vnl_matrix<float> nrml(3, 1);
       nrml.fill(0.0);
       nrml(0, 0) = normal[0];
       nrml(1, 0) = normal[1];
       nrml(2, 0) = normal[2];
-      shapeworks::ParticleImageDomainWithGradN<float>::VnlMatrixType mat2 = nrml * nrml.transpose();
+      shapeworks::ImageDomainWithGradN<float>::VnlMatrixType mat2 = nrml * nrml.transpose();
 
       for (unsigned int x1 = 0; x1 < 3; x1++) {
         for (unsigned int x2 = 0; x2 < 3; x2++) {
@@ -75,7 +75,7 @@ void ShapeGradientMatrix::SetValues(const ParticleSystemType* ps, int idx, int d
       }
 
       // mat3 = H/|grad_f| * (I - n*n');
-      shapeworks::ParticleImageDomainWithGradN<float>::VnlMatrixType mat3 = grad_n * mat1;
+      shapeworks::ImageDomainWithGradN<float>::VnlMatrixType mat3 = grad_n * mat1;
       ParticleSystem::VnlMatrixType tmp;
       tmp.set_size(3, 3);
       tmp.fill(0.0);
@@ -115,8 +115,8 @@ void ShapeGradientMatrix::SetValues(const ParticleSystemType* ps, int idx, int d
       for (int aa = 0; aa < m_AttributesPerDomain[dom]; aa++) {
         point dc;
         dc.clear();
-        const shapeworks::ParticleImplicitSurfaceDomain<float>* domain =
-            static_cast<const shapeworks::ParticleImplicitSurfaceDomain<float>*>(ps->GetDomain(d));
+        const shapeworks::ImplicitSurfaceDomain<float>* domain =
+            static_cast<const shapeworks::ImplicitSurfaceDomain<float>*>(ps->GetDomain(d));
         meshFIM* ptr = domain->GetMesh();
         dc = ptr->GetFeatureDerivative(pt, aa);
         for (int vd = 0; vd < 3; vd++) {

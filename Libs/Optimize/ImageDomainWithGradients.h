@@ -1,18 +1,10 @@
-/*=========================================================================
-  Copyright (c) 2009 Scientific Computing and Imaging Institute.
-  See ShapeWorksLicense.txt for details.
-
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
-     PURPOSE.  See the above copyright notices for more information.
-=========================================================================*/
 #pragma once
 
+#include "ImageDomain.h"
+#include "itkFixedArray.h"
+#include "itkGradientImageFilter.h"
 #include "itkImage.h"
 #include "itkImageDuplicator.h"
-#include "ParticleImageDomain.h"
-#include "itkGradientImageFilter.h"
-#include "itkFixedArray.h"
 
 namespace shapeworks
 {
@@ -27,14 +19,14 @@ namespace shapeworks
  * \sa ParticleDomain
  */
 template <class T>
-class ParticleImageDomainWithGradients : public ParticleImageDomain<T>
+class ImageDomainWithGradients : public ImageDomain<T>
 {
 public:
-  using Pointer = std::shared_ptr<ParticleImageDomainWithGradients<T>>;
+  using Pointer = std::shared_ptr<ImageDomainWithGradients<T>>;
 
   /** Point type of the domain (not necessarily of the image). */
-  typedef typename ParticleImageDomain<T>::PointType PointType;
-  typedef typename ParticleImageDomain<T>::ImageType ImageType;
+  typedef typename ImageDomain<T>::PointType PointType;
+  typedef typename ImageDomain<T>::ImageType ImageType;
 
   typedef itk::FixedArray<T, DIMENSION> VectorType;
   typedef vnl_vector_fixed<T, DIMENSION> VnlVectorType;
@@ -42,7 +34,7 @@ public:
   /** Set/Get the itk::Image specifying the particle domain.  The set method
       modifies the parent class LowerBound and UpperBound. */
   void SetImage(ImageType *I, double narrow_band) {
-    ParticleImageDomain<T>::SetImage(I, narrow_band);
+    ImageDomain<T>::SetImage(I, narrow_band);
     m_VDBGradient = openvdb::tools::gradient(*this->GetVDBImage());
   }
 
@@ -71,17 +63,17 @@ public:
   /** Used when a domain is fixed. */
   void DeleteImages() override
   {
-    ParticleImageDomain<T>::DeleteImages();
+    ImageDomain<T>::DeleteImages();
     m_VDBGradient = 0;
   }
   
 protected:
-  ParticleImageDomainWithGradients() {}
-  virtual ~ParticleImageDomainWithGradients() {}
+ ImageDomainWithGradients() {}
+  virtual ~ImageDomainWithGradients() {}
 
   void PrintSelf(std::ostream& os, itk::Indent indent) const
   {
-    ParticleImageDomain<T>::PrintSelf(os, indent);
+    ImageDomain<T>::PrintSelf(os, indent);
     os << indent << "VDB Active Voxels = " << m_VDBGradient->activeVoxelCount() << std::endl;
   }
 

@@ -4,7 +4,7 @@
 #include <limits>
 #include <vector>
 
-#include "ParticleImageDomainWithGradients.h"
+#include "ImageDomainWithGradients.h"
 #include "ParticleSystem.h"
 #include "VectorFunction.h"
 #include "itkObject.h"
@@ -40,7 +40,7 @@ class GradientDescentOptimizer : public itk::Object {
   itkNewMacro(Self);
 
   /** Type of the domain. */
-  typedef shapeworks::ParticleImageDomainWithGradients<TGradientNumericType> DomainType;
+  typedef shapeworks::ImageDomainWithGradients<TGradientNumericType> DomainType;
 
   /** Run-time type information (and related methods). */
   itkTypeMacro(ParticleGradientDescentPositionOptimizer, Object);

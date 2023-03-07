@@ -1,12 +1,12 @@
 #pragma once
 
-#include "ParticleImageDomainWithGradN.h"
-#include "ParticleImageDomainWithGradients.h"
-#include "ParticleImplicitSurfaceDomain.h"
-#include "itkDataObject.h"
-#include "Observer.h"
 #include "GenericContainer.h"
+#include "ImageDomainWithGradN.h"
+#include "ImageDomainWithGradients.h"
+#include "ImplicitSurfaceDomain.h"
+#include "Observer.h"
 #include "ParticleSystem.h"
+#include "itkDataObject.h"
 #include "itkWeakPointer.h"
 #include "vnl/vnl_matrix.h"
 

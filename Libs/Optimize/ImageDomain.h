@@ -30,11 +30,11 @@ namespace shapeworks
  *  Sample(Point) method.
  */
 template <class T>
-class ParticleImageDomain : public ParticleRegionDomain
+class ImageDomain : public ParticleRegionDomain
 {
 public:
   /** Standard class typedefs */
-  using Pointer = std::shared_ptr<ParticleImageDomain>;
+  using Pointer = std::shared_ptr<ImageDomain>;
 
   /** Type of the ITK image used by this class. */
   using ImageType = itk::Image<T, DIMENSION>;
@@ -198,8 +198,8 @@ protected:
     return m_VDBImage;
   }
 
-  ParticleImageDomain() { }
-  virtual ~ParticleImageDomain() {};
+  ImageDomain() { }
+  virtual ~ImageDomain() {};
 
   void PrintSelf(std::ostream& os, itk::Indent indent) const
   {

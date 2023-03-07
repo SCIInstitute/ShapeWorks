@@ -1,20 +1,12 @@
-/*=========================================================================
-  Copyright (c) 2009 Scientific Computing and Imaging Institute.
-  See ShapeWorksLicense.txt for details.
-
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
-     PURPOSE.  See the above copyright notices for more information.
-=========================================================================*/
 #pragma once
 
-#include "ParticleImageDomainWithGradients.h"
-#include "itkImage.h"
-#include "itkGradientImageFilter.h"
-#include "itkFixedArray.h"
-#include "itkImageDuplicator.h"
-#include "itkDiscreteGaussianImageFilter.h"
+#include "ImageDomainWithGradients.h"
 #include "itkDerivativeImageFilter.h"
+#include "itkDiscreteGaussianImageFilter.h"
+#include "itkFixedArray.h"
+#include "itkGradientImageFilter.h"
+#include "itkImage.h"
+#include "itkImageDuplicator.h"
 #include "vnl/vnl_matrix_fixed.h"
 
 namespace shapeworks
@@ -29,12 +21,12 @@ namespace shapeworks
  * \sa ParticleDomain
  */
 template <class T>
-class ParticleImageDomainWithGradN : public ParticleImageDomainWithGradients<T>
+class ImageDomainWithGradN : public ImageDomainWithGradients<T>
 {
 public:
   /** Standard class typedefs */
-  typedef ParticleImageDomainWithGradients<T> Superclass;
-  using Pointer = std::shared_ptr<ParticleImageDomainWithGradN>;
+  typedef ImageDomainWithGradients<T> Superclass;
+  using Pointer = std::shared_ptr<ImageDomainWithGradN>;
 
     /** Point type of the domain (not necessarily of the image). */
   typedef typename Superclass::PointType PointType;
@@ -97,8 +89,8 @@ public:
   }
 
 protected:
-  ParticleImageDomainWithGradN() {}
-  virtual ~ParticleImageDomainWithGradN() {};
+ ImageDomainWithGradN() {}
+  virtual ~ImageDomainWithGradN() {};
 
   void PrintSelf(std::ostream& os, itk::Indent indent) const
   {

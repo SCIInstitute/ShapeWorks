@@ -4,7 +4,7 @@
 
 #include <Logging.h>
 
-#include "ParticleImageDomainWithGradients.h"
+#include "ImageDomainWithGradients.h"
 
 namespace shapeworks {
 

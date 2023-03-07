@@ -6,7 +6,7 @@
 
 #include <string>
 
-#include "ParticleImageDomainWithGradients.h"
+#include "ImageDomainWithGradients.h"
 #include "ParticleGaussianModeWriter.h"
 #include "vnl/algo/vnl_symmetric_eigensystem.h"
 

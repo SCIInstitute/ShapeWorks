@@ -1,27 +1,27 @@
 #pragma once
 
+#include <Logging.h>
 #include <Mesh/Mesh.h>
 
 #include "CorrespondenceFunction.h"
 #include "CorrespondenceMode.h"
+#include "CurvatureSamplingFunction.h"
 #include "DomainType.h"
+#include "DualVectorFunction.h"
+#include "GenericContainerArray.h"
+#include "GradientDescentOptimizer.h"
+#include "ImplicitSurfaceDomain.h"
+#include "LegacyCorrespondenceFunction.h"
+#include "MeanCurvatureContainer.h"
 #include "MeshDomain.h"
 #include "MeshWrapper.h"
-#include "ParticleImplicitSurfaceDomain.h"
-#include "TriMesh.h"
-#include "GenericContainerArray.h"
-#include "CurvatureSamplingFunction.h"
-#include "DualVectorFunction.h"
-#include "LegacyCorrespondenceFunction.h"
-#include "SamplingFunction.h"
-#include "GradientDescentOptimizer.h"
-#include "MeanCurvatureContainer.h"
 #include "ParticleShapeLinearRegressionMatrixAttribute.h"
 #include "ParticleShapeMixedEffectsMatrixAttribute.h"
 #include "ParticleSurfaceNeighborhood.h"
 #include "ParticleSystem.h"
+#include "SamplingFunction.h"
+#include "TriMesh.h"
 #include "vnl/vnl_matrix_fixed.h"
-#include <Logging.h>
 
 // Uncomment to visualize FFCs with scalar and vector fields
 // #define VIZFFC

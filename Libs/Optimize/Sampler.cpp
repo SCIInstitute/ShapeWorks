@@ -1,12 +1,13 @@
 
 #include "Sampler.h"
 
+#include <Logging.h>
+
 #include "ContourDomain.h"
+#include "ImageDomain.h"
 #include "itkImageRegionIterator.h"
-#include "ParticleImageDomain.h"
 #include "itkParticlePositionReader.h"
 #include "object_reader.h"
-#include <Logging.h>
 
 namespace shapeworks {
 
@@ -96,7 +97,7 @@ void Sampler::AllocateDomainsAndNeighborhoods() {
           }
         }
 
-      auto imageDomain = static_cast<ParticleImplicitSurfaceDomain<ImageType::PixelType>*>(domain.get());
+      auto imageDomain = static_cast<ImplicitSurfaceDomain<ImageType::PixelType>*>(domain.get());
 
 
       // Adding free-form constraints to constraint object
@@ -363,7 +364,7 @@ void Sampler::AddFreeFormConstraint(int domain, const FreeFormConstraint &ffc) {
 }
 
 void Sampler::AddImage(ImageType::Pointer image, double narrow_band, std::string name) {
-  auto domain = std::make_shared<ParticleImplicitSurfaceDomain<ImageType::PixelType>>();
+  auto domain = std::make_shared<ImplicitSurfaceDomain<ImageType::PixelType>>();
 
   m_NeighborhoodList.push_back(ParticleSurfaceNeighborhood<ImageType>::New());
 

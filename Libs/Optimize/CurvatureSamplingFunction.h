@@ -1,11 +1,11 @@
 #pragma once
 
-#include "ParticleImageDomainWithCurvature.h"
-#include "ParticleImageDomainWithGradients.h"
-#include "itkCommand.h"
-#include "SamplingFunction.h"
+#include "ImageDomainWithCurvature.h"
+#include "ImageDomainWithGradients.h"
 #include "MeanCurvatureContainer.h"
 #include "ParticleSurfaceNeighborhood.h"
+#include "SamplingFunction.h"
+#include "itkCommand.h"
 
 namespace shapeworks {
 
@@ -39,7 +39,7 @@ class CurvatureSamplingFunction : public SamplingFunction {
 
   typedef MeanCurvatureContainer<TGradientNumericType, VDimension> MeanCurvatureCacheType;
 
-  typedef shapeworks::ParticleImageDomainWithCurvature<TGradientNumericType>::VnlMatrixType VnlMatrixType;
+  typedef shapeworks::ImageDomainWithCurvature<TGradientNumericType>::VnlMatrixType VnlMatrixType;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);

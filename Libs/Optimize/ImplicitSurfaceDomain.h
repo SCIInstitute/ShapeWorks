@@ -1,9 +1,10 @@
 #pragma once
 
-#include "ParticleImageDomainWithCurvature.h"
+#include <Mesh/meshFIM.h>
+
+#include "ImageDomainWithCurvature.h"
 #include "TriMesh.h"
 #include "TriMesh_algo.h"
-#include <Mesh/meshFIM.h>
 #include "vnl/vnl_cross.h"
 #include "vnl/vnl_inverse.h"
 #include "vnl/vnl_math.h"
@@ -18,11 +19,11 @@ namespace shapeworks {
  *  as an image.
  */
 template <class T>
-class ParticleImplicitSurfaceDomain : public ParticleImageDomainWithCurvature<T> {
+class ImplicitSurfaceDomain : public ImageDomainWithCurvature<T> {
  public:
   /** Standard class typedefs */
-  typedef ParticleImageDomainWithCurvature<T> Superclass;
-  typedef std::shared_ptr<ParticleImplicitSurfaceDomain> Pointer;
+  typedef ImageDomainWithCurvature<T> Superclass;
+  typedef std::shared_ptr<ImplicitSurfaceDomain> Pointer;
 
   typedef typename Superclass::ImageType ImageType;
   typedef typename Superclass::PointType PointType;
@@ -165,12 +166,12 @@ class ParticleImplicitSurfaceDomain : public ParticleImageDomainWithCurvature<T>
     return p;
   }
 
-  ParticleImplicitSurfaceDomain() : m_Tolerance(1.0e-4) { m_mesh = NULL; }
+  ImplicitSurfaceDomain() : m_Tolerance(1.0e-4) { m_mesh = NULL; }
   void PrintSelf(std::ostream &os, itk::Indent indent) const {
     Superclass::PrintSelf(os, indent);
     os << indent << "m_Tolerance = " << m_Tolerance << std::endl;
   }
-  virtual ~ParticleImplicitSurfaceDomain(){};
+  virtual ~ImplicitSurfaceDomain(){};
 
  private:
   T m_Tolerance;

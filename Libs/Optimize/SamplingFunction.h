@@ -2,9 +2,9 @@
 
 #include <vector>
 
-#include "ParticleImageDomainWithGradients.h"
-#include "VectorFunction.h"
 #include "GenericContainerArray.h"
+#include "ImageDomainWithGradients.h"
+#include "VectorFunction.h"
 
 namespace shapeworks {
 

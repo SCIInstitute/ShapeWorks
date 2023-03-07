@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ParticleImplicitSurfaceDomain.h"
+#include "ImplicitSurfaceDomain.h"
 #include "ParticleRegionNeighborhood.h"
 #include "vnl/vnl_vector_fixed.h"
 
@@ -40,7 +40,7 @@ class ParticleSurfaceNeighborhood : public ParticleRegionNeighborhood {
   /** Inherited typedefs from parent class. */
   typedef typename Superclass::PointType PointType;
   typedef typename Superclass::PointContainerType PointContainerType;
-  typedef shapeworks::ParticleImplicitSurfaceDomain<typename TImage::PixelType> DomainType;
+  typedef shapeworks::ImplicitSurfaceDomain<typename TImage::PixelType> DomainType;
   typedef typename Superclass::PointVectorType PointVectorType;
 
   /** Compile a list of points that are within a specified radius of a given
