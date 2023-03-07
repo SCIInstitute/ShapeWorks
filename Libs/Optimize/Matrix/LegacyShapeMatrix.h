@@ -1,12 +1,13 @@
 #pragma once
 
-#include "itkDataObject.h"
+#include <cmath>
+
+#include "Libs/Optimize/Container/GenericContainer.h"
 #include "Observer.h"
-#include "GenericContainer.h"
 #include "ParticleSystem.h"
+#include "itkDataObject.h"
 #include "itkWeakPointer.h"
 #include "vnl/vnl_matrix.h"
-#include <cmath>
 
 namespace shapeworks {
 /** \class ParticleShapeMatrixAttribute

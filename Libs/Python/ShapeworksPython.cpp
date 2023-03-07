@@ -17,31 +17,31 @@ Eigen::MatrixXd optimize_get_particle_system(shapeworks::Optimize *opt)
 namespace py = pybind11;
 using namespace pybind11::literals;
 
-#include <bitset>
-#include <sstream>
-
 #include <itkImportImageFilter.h>
 #include <vtkDoubleArray.h>
 #include <vtkFloatArray.h>
 
-#include "Shapeworks.h"
-#include "ShapeworksUtils.h"
+#include <bitset>
+#include <sstream>
+
+#include "EigenUtils.h"
 #include "Image.h"
-#include "VectorImage.h"
 #include "ImageUtils.h"
 #include "Mesh.h"
 #include "MeshUtils.h"
 #include "MeshWarper.h"
 #include "Optimize.h"
-#include "ParticleSystem.h"
-#include "ShapeEvaluation.h"
+#include "Parameters.h"
 #include "ParticleShapeStatistics.h"
+#include "ParticleSystemEvaluation.h"
 #include "Project.h"
+#include "ReconstructSurface.h"
+#include "ShapeEvaluation.h"
+#include "Shapeworks.h"
+#include "ShapeworksUtils.h"
 #include "Subject.h"
 #include "Variant.h"
-#include "Parameters.h"
-#include "ReconstructSurface.h"
-#include "EigenUtils.h"
+#include "VectorImage.h"
 #include "pybind_utils.h"
 
 using namespace shapeworks;

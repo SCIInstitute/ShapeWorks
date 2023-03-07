@@ -3,8 +3,8 @@
 #include <string>
 #include <vector>
 
+#include "Libs/Optimize/Matrix/LegacyShapeMatrix.h"
 #include "itkDataObject.h"
-#include "ParticleShapeMatrixAttribute.h"
 
 namespace shapeworks {
 

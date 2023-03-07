@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Constraints.h"
 #include "DomainType.h"
+#include "Libs/Optimize/Constraints/Constraints.h"
 #include "itkDataObject.h"
 #include "itkPoint.h"
 #include "vnl/vnl_matrix_fixed.h"

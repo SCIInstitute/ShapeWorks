@@ -7,7 +7,7 @@
 #include <string>
 #include <vector>
 
-#include "ParticleSystem.h"
+#include "ParticleSystemEvaluation.h"
 #include "Shapeworks.h"
 #include "itkParticlePositionReader.h"
 #include "itkParticlePositionWriter.h"

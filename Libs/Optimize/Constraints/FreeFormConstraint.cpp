@@ -1,6 +1,5 @@
 #include "FreeFormConstraint.h"
 
-#include <Logging.h>
 #include <vtkClipPolyData.h>
 #include <vtkContourFilter.h>
 #include <vtkContourLoopExtraction.h>
@@ -9,6 +8,8 @@
 #include <vtkKdTreePointLocator.h>
 #include <vtkPointData.h>
 #include <vtkSelectPolyData.h>
+
+#include "Libs/Common/Logging.h"
 
 // libigl
 #include <igl/cotmatrix.h>

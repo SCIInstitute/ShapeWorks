@@ -4,11 +4,11 @@
 #include <random>
 #include <vector>
 
-#include "GenericContainer.h"
+#include "Libs/Optimize/Container/GenericContainer.h"
 #include "Libs/Optimize/Domain/ParticleDomain.h"
+#include "Libs/Optimize/Neighborhood/ParticleNeighborhood.h"
 #include "Observer.h"
 #include "ParticleEvents.h"
-#include "ParticleNeighborhood.h"
 #include "itkCommand.h"
 #include "itkDataObject.h"
 #include "itkEventObject.h"
@@ -89,7 +89,7 @@ class ParticleSystem : public itk::DataObject {
       observer of this itk::Object (AddObserver).  Relevant state information
       is passed to objects in particle events.
   */
-  void RegisterAttribute(Observer*);
+  void RegisterObserver(Observer* attr);
 
   /** Invokes the set event on all particle positions, resetting them to their
       current value.  This method may be called to synchronize positional

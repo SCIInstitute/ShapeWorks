@@ -4,7 +4,7 @@
 #include <string>
 
 #include "ParticleShapeStatistics.h"
-#include "ParticleSystem.h"
+#include "ParticleSystemEvaluation.h"
 
 namespace shapeworks {
 

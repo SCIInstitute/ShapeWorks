@@ -330,7 +330,7 @@ double ParticleSystem::ComputeMaxDistNearestNeighbors(size_t dom) {
   return maxDistNN;
 }
 
-void ParticleSystem::RegisterAttribute(Observer* attr) {
+void ParticleSystem::RegisterObserver(Observer* attr) {
   // Register any methods defined by the attribute as observers of this
   // ParticleSystem with appropriate events.
   if (attr->m_DefinedCallbacks.DomainAddEvent == true) {

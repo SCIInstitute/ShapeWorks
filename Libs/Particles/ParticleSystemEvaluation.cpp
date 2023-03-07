@@ -1,4 +1,5 @@
-#include "ParticleSystem.h"
+#include "ParticleSystemEvaluation.h"
+
 #include "ShapeEvaluation.h"
 #include "Shapeworks.h"
 

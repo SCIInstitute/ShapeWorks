@@ -1,9 +1,9 @@
 
 #include "CurvatureSamplingFunction.h"
 
-#include "DomainType.h"
 #include "Libs/Common/Logging.h"
 #include "Libs/Optimize/Domain/ContourDomain.h"
+#include "Libs/Optimize/Domain/DomainType.h"
 #include "vnl/vnl_matrix.h"
 #include "vnl/vnl_matrix_fixed.h"
 #include "vnl/vnl_vector_fixed.h"
@@ -63,14 +63,6 @@ double CurvatureSamplingFunction::EstimateSigma(unsigned int idx, unsigned int d
       return sigma;
     };  // results are not meaningful
 
-    // // First order convergence update.
-    // sigma = sqrt(( 1.0 / DIM ) * ( B / A));
-
-    // old math
-    //  sigma -= (sigma2 * VDimension * A * A - A  * B) / (((2.0 * sigma * VDimension) * A * A -
-    //                                          (1.0/(sigma2*sigma))*(A*C-B*B)) + epsilon);
-
-    // New math -- results are not obviously different?
     sigma -= (A * (B - A * sigma2 * M)) / ((-MM * A * A * sigma) - 3.0 * A * B * (1.0 / (sigma + epsilon)) -
                                            (A * C + B * B) * (1.0 / (sigma2 * sigma + epsilon)) + epsilon);
 
@@ -171,8 +163,8 @@ void CurvatureSamplingFunction::BeforeEvaluate(unsigned int idx, unsigned int d,
 }
 
 CurvatureSamplingFunction::VectorType CurvatureSamplingFunction::Evaluate(unsigned int idx, unsigned int d,
-                                                                          const ParticleSystem* system,
-                                                                          double& maxmove, double& energy) const {
+                                                                          const ParticleSystem* system, double& maxmove,
+                                                                          double& energy) const {
   const double epsilon = 1.0e-6;
 
   // Get the position for which we are computing the gradient.
@@ -245,8 +237,7 @@ CurvatureSamplingFunction::VectorType CurvatureSamplingFunction::Evaluate(unsign
   return gradE;
 }
 void CurvatureSamplingFunction::UpdateNeighborhood(const CurvatureSamplingFunction::PointType& pos, int idx, int d,
-                                                   double radius,
-                                                   const ParticleSystem* system) {
+                                                   double radius, const ParticleSystem* system) {
   const auto domains_per_shape = system->GetDomainsPerShape();
   const auto domain_base = d / domains_per_shape;
   const auto domain_sub = d % domains_per_shape;
@@ -307,11 +298,11 @@ void CurvatureSamplingFunction::UpdateNeighborhood(const CurvatureSamplingFuncti
   }
 }
 double CurvatureSamplingFunction::ComputeKappa(double mc, unsigned int d) const {
-  double maxmc =
-      m_MeanCurvatureCache->GetMeanCurvature(d) + 2.0 * m_MeanCurvatureCache->GetCurvatureStandardDeviation(d);
-  double minmc =
-      m_MeanCurvatureCache->GetMeanCurvature(d) - 2.0 * m_MeanCurvatureCache->GetCurvatureStandardDeviation(d);
-  return 1.0 + m_Rho * (mc - minmc) / (maxmc - minmc);
+  double mean = m_MeanCurvatureCache->GetMeanCurvature(d);
+  double std = m_MeanCurvatureCache->GetCurvatureStandardDeviation(d);
+  double max_mc = mean + 2.0 * std;
+  double min_mc = mean - 2.0 * std;
+  return 1.0 + m_Rho * (mc - min_mc) / (max_mc - min_mc);
 }
 
 }  // namespace shapeworks

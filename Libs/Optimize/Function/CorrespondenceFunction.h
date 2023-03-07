@@ -1,11 +1,11 @@
 #pragma once
 
+#include <cmath>
 #include <numeric>
 #include <vector>
-#include <cmath>
 
-#include "ShapeGradientMatrix.h"
-#include "ShapeMatrix.h"
+#include "Libs/Optimize/Matrix/ShapeGradientMatrix.h"
+#include "Libs/Optimize/Matrix/ShapeMatrix.h"
 #include "VectorFunction.h"
 
 namespace shapeworks {

@@ -10,17 +10,17 @@ namespace shapeworks {
  *
  *
  */
-class ParticleProcrustesRegistration {
+class ProcrustesRegistration {
  public:
-  using Pointer = std::shared_ptr<ParticleProcrustesRegistration>;
+  using Pointer = std::shared_ptr<ProcrustesRegistration>;
 
   // Particle system typedefs
   using ParticleSystemType = ParticleSystem;
   using PointType = ParticleSystemType::PointType;
 
-  void SetParticleSystem(ParticleSystemType *p) { m_ParticleSystem = p; }
-  ParticleSystemType *GetParticleSystem() const { return m_ParticleSystem; }
-  ParticleSystemType *GetParticleSystem() { return m_ParticleSystem; }
+  void SetParticleSystem(ParticleSystemType* p) { m_ParticleSystem = p; }
+  ParticleSystemType* GetParticleSystem() const { return m_ParticleSystem; }
+  ParticleSystemType* GetParticleSystem() { return m_ParticleSystem; }
 
   //! Performs a procrustes registration and modifies the transforms of the
   //! particle system accordingly.  Assumes m_ParticleSystem has been set to point to a valid object.
@@ -42,7 +42,7 @@ class ParticleProcrustesRegistration {
   int m_DomainsPerShape = 1;
   bool m_Scaling = true;
   bool m_RotationTranslation = true;
-  ParticleSystemType *m_ParticleSystem = nullptr;
+  ParticleSystemType* m_ParticleSystem = nullptr;
 };
 
 }  // namespace shapeworks

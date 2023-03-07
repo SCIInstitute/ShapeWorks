@@ -1,16 +1,15 @@
 #include "OptimizeParameterFile.h"
-#include "Optimize.h"
-#include "DomainType.h"
 
+#include <Mesh/MeshUtils.h>
+#include <Utils/StringUtils.h>
 #include <itkImageFileReader.h>
 #include <vtkPLYReader.h>
 
 #include "ExternalLibs/tinyxml/tinyxml.h"
-
-#include "MeshWrapper.h"
-#include "VtkMeshWrapper.h"
-#include <Utils/StringUtils.h>
-#include <Mesh/MeshUtils.h>
+#include "Libs/Optimize/Domain/DomainType.h"
+#include "Libs/Optimize/Domain/MeshWrapper.h"
+#include "Libs/Optimize/Domain/VtkMeshWrapper.h"
+#include "Optimize.h"
 
 namespace shapeworks {
 
@@ -1175,11 +1174,11 @@ bool OptimizeParameterFile::read_explanatory_variables(TiXmlHandle* doc_handle, 
     evars.push_back(etmp);
   }
 
-  dynamic_cast < ParticleShapeLinearRegressionMatrixAttribute* >
+  dynamic_cast <LinearRegressionShapeMatrix* >
   (optimize->GetSampler()->GetEnsembleRegressionEntropyFunction()->GetShapeMatrix())->SetExplanatory(
     evars);
 
-  dynamic_cast < ParticleShapeMixedEffectsMatrixAttribute* >
+  dynamic_cast <MixedEffectsShapeMatrix* >
   (optimize->GetSampler()->GetEnsembleMixedEffectsEntropyFunction()->GetShapeMatrix())->
     SetExplanatory(evars);
 

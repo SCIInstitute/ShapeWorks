@@ -1,13 +1,15 @@
 #pragma once
 
+#include "Libs/Optimize/Container/MeanCurvatureContainer.h"
 #include "Libs/Optimize/Domain/ImageDomainWithCurvature.h"
 #include "Libs/Optimize/Domain/ImageDomainWithGradients.h"
-#include "MeanCurvatureContainer.h"
-#include "ParticleSurfaceNeighborhood.h"
+#include "Libs/Optimize/Neighborhood/ParticleSurfaceNeighborhood.h"
 #include "SamplingFunction.h"
 #include "itkCommand.h"
 
 namespace shapeworks {
+
+/// Please note: This is the sampling function currently being used
 
 /**
  * \class CurvatureSamplingFunction

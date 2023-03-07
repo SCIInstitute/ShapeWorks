@@ -5,9 +5,9 @@
 
 #include "Libs/Optimize/Domain/ContourDomain.h"
 #include "Libs/Optimize/Domain/ImageDomain.h"
+#include "Libs/Optimize/Utils/ObjectReader.h"
 #include "itkImageRegionIterator.h"
 #include "itkParticlePositionReader.h"
-#include "object_reader.h"
 
 namespace shapeworks {
 
@@ -32,8 +32,8 @@ Sampler::Sampler() {
   m_GeneralShapeMatrix = ShapeMatrix::New();
   m_GeneralShapeGradMatrix = ShapeGradientMatrix::New();
 
-  m_LinearRegressionShapeMatrix = ParticleShapeLinearRegressionMatrixAttribute::New();
-  m_MixedEffectsShapeMatrix = ParticleShapeMixedEffectsMatrixAttribute::New();
+  m_LinearRegressionShapeMatrix = LinearRegressionShapeMatrix::New();
+  m_MixedEffectsShapeMatrix = MixedEffectsShapeMatrix::New();
 
   m_EnsembleEntropyFunction->SetShapeMatrix(m_LegacyShapeMatrix);
 
@@ -43,9 +43,9 @@ Sampler::Sampler() {
   m_CorrespondenceFunction->SetShapeData(m_GeneralShapeMatrix);
   m_CorrespondenceFunction->SetShapeGradient(m_GeneralShapeGradMatrix);
 
-  m_ParticleSystem->RegisterAttribute(m_LegacyShapeMatrix);
-  m_ParticleSystem->RegisterAttribute(m_LinearRegressionShapeMatrix);
-  m_ParticleSystem->RegisterAttribute(m_MixedEffectsShapeMatrix);
+  m_ParticleSystem->RegisterObserver(m_LegacyShapeMatrix);
+  m_ParticleSystem->RegisterObserver(m_LinearRegressionShapeMatrix);
+  m_ParticleSystem->RegisterObserver(m_MixedEffectsShapeMatrix);
 
   m_CorrespondenceMode = shapeworks::CorrespondenceMode::EnsembleEntropy;
 }
@@ -53,17 +53,17 @@ Sampler::Sampler() {
 void Sampler::AllocateDataCaches() {
   // Set up the various data caches that the optimization functions will use.
   m_Sigma1Cache = GenericContainerArray<double>::New();
-  m_ParticleSystem->RegisterAttribute(m_Sigma1Cache);
+  m_ParticleSystem->RegisterObserver(m_Sigma1Cache);
   m_GradientFunction->SetSpatialSigmaCache(m_Sigma1Cache);
   m_CurvatureGradientFunction->SetSpatialSigmaCache(m_Sigma1Cache);
 
   m_Sigma2Cache = GenericContainerArray<double>::New();
-  m_ParticleSystem->RegisterAttribute(m_Sigma2Cache);
+  m_ParticleSystem->RegisterObserver(m_Sigma2Cache);
 
   m_MeanCurvatureCache = MeanCurvatureContainer<ImageType::PixelType, Dimension>::New();
   m_MeanCurvatureCache->SetVerbosity(m_verbosity);
   m_CurvatureGradientFunction->SetMeanCurvatureCache(m_MeanCurvatureCache);
-  m_ParticleSystem->RegisterAttribute(m_MeanCurvatureCache);
+  m_ParticleSystem->RegisterObserver(m_MeanCurvatureCache);
 }
 
 void Sampler::AllocateDomainsAndNeighborhoods() {
@@ -255,7 +255,7 @@ void Sampler::Execute() {
 
 void Sampler::ReadTransforms() {
   if (m_TransformFile != "") {
-    object_reader<ParticleSystem::TransformType> reader;
+    ObjectReader<ParticleSystem::TransformType> reader;
     reader.SetFileName(m_TransformFile.c_str());
     reader.Update();
 
@@ -264,7 +264,7 @@ void Sampler::ReadTransforms() {
   }
 
   if (m_PrefixTransformFile != "") {
-    object_reader<ParticleSystem::TransformType> reader;
+    ObjectReader<ParticleSystem::TransformType> reader;
     reader.SetFileName(m_PrefixTransformFile.c_str());
     reader.Update();
 

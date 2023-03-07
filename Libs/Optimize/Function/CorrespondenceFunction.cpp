@@ -135,7 +135,7 @@ void CorrespondenceFunction::ComputeUpdates(const ParticleSystem* c) {
   }
 }
 
-CorrespondenceFunction::VectorType CorrespondenceFunction ::Evaluate(unsigned int idx, unsigned int d,
+CorrespondenceFunction::VectorType CorrespondenceFunction::Evaluate(unsigned int idx, unsigned int d,
                                                                      const ParticleSystem* system, double& maxdt,
                                                                      double& energy) const {
   int dom = d % m_DomainsPerShape;      // domain number within shape

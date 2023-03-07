@@ -4,7 +4,7 @@
 
 #include <vector>
 
-#include "Constraint.h"
+#include "Libs/Optimize/Constraints/Constraint.h"
 
 class vtkPlane;
 

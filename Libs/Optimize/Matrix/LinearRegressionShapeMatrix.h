@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ParticleShapeMatrixAttribute.h"
+#include "LegacyShapeMatrix.h"
 #include "ParticleSystem.h"
 #include "vnl/vnl_vector.h"
 
@@ -10,11 +10,11 @@ namespace shapeworks {
  *
  *
  */
-class ParticleShapeLinearRegressionMatrixAttribute : public LegacyShapeMatrix {
+class LinearRegressionShapeMatrix : public LegacyShapeMatrix {
  public:
   /** Standard class typedefs */
   typedef double DataType;
-  typedef ParticleShapeLinearRegressionMatrixAttribute Self;
+  typedef LinearRegressionShapeMatrix Self;
   typedef LegacyShapeMatrix Superclass;
   typedef itk::SmartPointer<Self> Pointer;
   typedef itk::SmartPointer<const Self> ConstPointer;
@@ -24,7 +24,7 @@ class ParticleShapeLinearRegressionMatrixAttribute : public LegacyShapeMatrix {
   itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(ParticleShapeLinearRegressionMatrixAttribute, LegacyShapeMatrix);
+  itkTypeMacro(LinearRegressionShapeMatrix, LegacyShapeMatrix);
 
   void UpdateMeanMatrix() {
     // for each sample
@@ -228,7 +228,7 @@ class ParticleShapeLinearRegressionMatrixAttribute : public LegacyShapeMatrix {
   int GetRegressionInterval() const { return m_RegressionInterval; }
 
  protected:
-  ParticleShapeLinearRegressionMatrixAttribute() {
+  LinearRegressionShapeMatrix() {
     this->m_DefinedCallbacks.DomainAddEvent = true;
     this->m_DefinedCallbacks.PositionAddEvent = true;
     this->m_DefinedCallbacks.PositionSetEvent = true;
@@ -236,12 +236,12 @@ class ParticleShapeLinearRegressionMatrixAttribute : public LegacyShapeMatrix {
     m_UpdateCounter = 0;
     m_RegressionInterval = 1;
   }
-  virtual ~ParticleShapeLinearRegressionMatrixAttribute(){};
+  virtual ~LinearRegressionShapeMatrix(){};
 
   void PrintSelf(std::ostream& os, itk::Indent indent) const { Superclass::PrintSelf(os, indent); }
 
  private:
-  ParticleShapeLinearRegressionMatrixAttribute(const Self&);  // purposely not implemented
+  LinearRegressionShapeMatrix(const Self&);  // purposely not implemented
   void operator=(const Self&);                                // purposely not implemented
 
   int m_UpdateCounter;

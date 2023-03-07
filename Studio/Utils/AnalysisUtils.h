@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Particles/ParticleSystem.h>
+#include <Particles/ParticleSystemEvaluation.h>
 
 namespace shapeworks {
 

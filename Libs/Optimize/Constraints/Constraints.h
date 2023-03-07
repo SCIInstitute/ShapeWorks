@@ -5,7 +5,7 @@
 #include "Constraint.h"
 #include "Eigen/Dense"
 #include "FreeFormConstraint.h"
-#include <Mesh/Mesh.h>
+#include "Libs/Mesh/Mesh.h"
 #include "PlaneConstraint.h"
 #include "SphereConstraint.h"
 #include "itkPoint.h"

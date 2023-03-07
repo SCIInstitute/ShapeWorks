@@ -8,10 +8,10 @@
 /** \class object_writer
  */
 template <class T>
-class object_writer {
+class ObjectWriter {
  public:
   /** Standard class typedefs */
-  typedef object_writer Self;
+  typedef ObjectWriter Self;
 
   typedef T ObjectType;
 
@@ -48,11 +48,11 @@ class object_writer {
     out.close();
   }
 
-  object_writer() {}
-  virtual ~object_writer(){};
+  ObjectWriter() {}
+  virtual ~ObjectWriter(){};
 
  private:
-  object_writer(const Self &);   // purposely not implemented
+  ObjectWriter(const Self &);   // purposely not implemented
   void operator=(const Self &);  // purposely not implemented
 
   std::vector<ObjectType> m_Input;

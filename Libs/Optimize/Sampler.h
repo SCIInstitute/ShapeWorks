@@ -4,21 +4,21 @@
 #include <Mesh/Mesh.h>
 
 #include "CorrespondenceMode.h"
-#include "DomainType.h"
-#include "GenericContainerArray.h"
 #include "GradientDescentOptimizer.h"
+#include "Libs/Optimize/Container/GenericContainerArray.h"
+#include "Libs/Optimize/Container/MeanCurvatureContainer.h"
+#include "Libs/Optimize/Domain/DomainType.h"
 #include "Libs/Optimize/Domain/ImplicitSurfaceDomain.h"
 #include "Libs/Optimize/Domain/MeshDomain.h"
+#include "Libs/Optimize/Domain/MeshWrapper.h"
 #include "Libs/Optimize/Function/CorrespondenceFunction.h"
 #include "Libs/Optimize/Function/CurvatureSamplingFunction.h"
 #include "Libs/Optimize/Function/DualVectorFunction.h"
 #include "Libs/Optimize/Function/LegacyCorrespondenceFunction.h"
 #include "Libs/Optimize/Function/SamplingFunction.h"
-#include "MeanCurvatureContainer.h"
-#include "MeshWrapper.h"
-#include "ParticleShapeLinearRegressionMatrixAttribute.h"
-#include "ParticleShapeMixedEffectsMatrixAttribute.h"
-#include "ParticleSurfaceNeighborhood.h"
+#include "Libs/Optimize/Matrix/LinearRegressionShapeMatrix.h"
+#include "Libs/Optimize/Matrix/MixedEffectsShapeMatrix.h"
+#include "Libs/Optimize/Neighborhood/ParticleSurfaceNeighborhood.h"
 #include "ParticleSystem.h"
 #include "TriMesh.h"
 #include "vnl/vnl_matrix_fixed.h"
@@ -202,8 +202,8 @@ class Sampler {
   }
 
   void RegisterGeneralShapeMatrices() {
-    this->m_ParticleSystem->RegisterAttribute(m_GeneralShapeMatrix);
-    this->m_ParticleSystem->RegisterAttribute(m_GeneralShapeGradMatrix);
+    this->m_ParticleSystem->RegisterObserver(m_GeneralShapeMatrix);
+    this->m_ParticleSystem->RegisterObserver(m_GeneralShapeGradMatrix);
   }
 
   void SetAttributeScales(const std::vector<double>& s) {
@@ -409,8 +409,8 @@ class Sampler {
 
   LegacyShapeMatrix::Pointer m_LegacyShapeMatrix;
 
-  ParticleShapeLinearRegressionMatrixAttribute::Pointer m_LinearRegressionShapeMatrix;
-  ParticleShapeMixedEffectsMatrixAttribute::Pointer m_MixedEffectsShapeMatrix;
+  LinearRegressionShapeMatrix::Pointer m_LinearRegressionShapeMatrix;
+  MixedEffectsShapeMatrix::Pointer m_MixedEffectsShapeMatrix;
 
   shapeworks::ShapeMatrix::Pointer m_GeneralShapeMatrix;
   shapeworks::ShapeGradientMatrix::Pointer m_GeneralShapeGradMatrix;

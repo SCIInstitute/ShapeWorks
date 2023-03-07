@@ -3,7 +3,7 @@
 #include "MeshUtils.h"
 #include "MeshWarper.h"
 #include "Image.h"
-#include "ParticleSystem.h"
+#include "ParticleSystemEvaluation.h"
 
 #include <igl/point_mesh_squared_distance.h>
 

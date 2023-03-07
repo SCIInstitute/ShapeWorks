@@ -10,10 +10,10 @@
  * is determined by the templating.
  */
 template <class T>
-class object_reader {
+class ObjectReader {
  public:
   /** Standard class typedefs */
-  typedef object_reader Self;
+  typedef ObjectReader Self;
   typedef T ObjectType;
 
   /** Get the output of the reader.  The output is a std::vector of TransformType. */
@@ -49,11 +49,11 @@ class object_reader {
     in.close();
   }
 
-  object_reader() {}
-  virtual ~object_reader(){};
+  ObjectReader() {}
+  virtual ~ObjectReader(){};
 
  private:
-  object_reader(const Self &);   // purposely not implemented
+  ObjectReader(const Self &);   // purposely not implemented
   void operator=(const Self &);  // purposely not implemented
 
   std::vector<ObjectType> m_Output;

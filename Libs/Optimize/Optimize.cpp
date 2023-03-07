@@ -26,14 +26,14 @@
 
 #include "Libs/Optimize/Domain/ImageDomain.h"
 #include "Libs/Optimize/Domain/ImplicitSurfaceDomain.h"
+#include "Libs/Optimize/Domain/VtkMeshWrapper.h"
+#include "Libs/Optimize/Utils/ObjectReader.h"
+#include "Libs/Optimize/Utils/ObjectWriter.h"
+#include "Libs/Optimize/Utils/ParticleGoodBadAssessment.h"
 #include "Logging.h"
 #include "Optimize.h"
 #include "OptimizeParameterFile.h"
 #include "OptimizeParameters.h"
-#include "ParticleGoodBadAssessment.h"
-#include "VtkMeshWrapper.h"
-#include "object_reader.h"
-#include "object_writer.h"
 
 // pybind
 #include <pybind11/embed.h>
@@ -233,7 +233,7 @@ int Optimize::SetParameters() {
   }
 
   // Set up the procrustes registration object.
-  this->m_procrustes = std::make_shared<ParticleProcrustesRegistration>();
+  this->m_procrustes = std::make_shared<ProcrustesRegistration>();
   this->m_procrustes->SetParticleSystem(this->m_sampler->GetParticleSystem());
   this->m_procrustes->SetDomainsPerShape(this->m_domains_per_shape);
   this->m_procrustes->SetScaling(this->m_procrustes_scaling);
@@ -409,7 +409,7 @@ void Optimize::SetAdaptivityStrength(double adaptivity_strength) { this->m_adapt
 
 //---------------------------------------------------------------------------
 void Optimize::ReadTransformFile() {
-  object_reader<ParticleSystem::TransformType> reader;
+  ObjectReader<ParticleSystem::TransformType> reader;
   reader.SetFileName(m_transform_file);
   reader.Update();
   for (unsigned int i = 0; i < m_sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
@@ -419,7 +419,7 @@ void Optimize::ReadTransformFile() {
 
 //---------------------------------------------------------------------------
 void Optimize::ReadPrefixTransformFile(const std::string& fn) {
-  object_reader<ParticleSystem::TransformType> reader;
+  ObjectReader<ParticleSystem::TransformType> reader;
   reader.SetFileName(fn.c_str());
   reader.Update();
   for (unsigned int i = 0; i < m_sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
@@ -1139,7 +1139,7 @@ void Optimize::WriteTransformFile(std::string iter_prefix) const {
 
   std::string str = "writing " + output_file + " ...";
   PrintStartMessage(str);
-  object_writer<ParticleSystem::TransformType> writer;
+  ObjectWriter<ParticleSystem::TransformType> writer;
   writer.SetFileName(output_file);
   writer.SetInput(tlist);
   writer.Update();
@@ -1527,7 +1527,7 @@ void Optimize::WriteParameters(std::string output_dir) {
   std::vector<double> intercept;
 
   if (m_use_mixed_effects == true) {
-    vnl_vector<double> slopevec = dynamic_cast<ParticleShapeMixedEffectsMatrixAttribute*>(
+    vnl_vector<double> slopevec = dynamic_cast<MixedEffectsShapeMatrix*>(
                                       m_sampler->GetEnsembleMixedEffectsEntropyFunction()->GetShapeMatrix())
                                       ->GetSlope();
 
@@ -1541,7 +1541,7 @@ void Optimize::WriteParameters(std::string output_dir) {
     }
     out.close();
 
-    vnl_vector<double> interceptvec = dynamic_cast<ParticleShapeMixedEffectsMatrixAttribute*>(
+    vnl_vector<double> interceptvec = dynamic_cast<MixedEffectsShapeMatrix*>(
                                           m_sampler->GetEnsembleMixedEffectsEntropyFunction()->GetShapeMatrix())
                                           ->GetIntercept();
 
@@ -1561,7 +1561,7 @@ void Optimize::WriteParameters(std::string output_dir) {
     std::cout << "writing " << slopename << std::endl;
     std::cout << "writing " << interceptname << std::endl;
 
-    vnl_matrix<double> sloperand_mat = dynamic_cast<ParticleShapeMixedEffectsMatrixAttribute*>(
+    vnl_matrix<double> sloperand_mat = dynamic_cast<MixedEffectsShapeMatrix*>(
                                            m_sampler->GetEnsembleMixedEffectsEntropyFunction()->GetShapeMatrix())
                                            ->GetSlopeRandom();
 
@@ -1574,7 +1574,7 @@ void Optimize::WriteParameters(std::string output_dir) {
     }
     out.close();
 
-    vnl_matrix<double> interceptrand_mat = dynamic_cast<ParticleShapeMixedEffectsMatrixAttribute*>(
+    vnl_matrix<double> interceptrand_mat = dynamic_cast<MixedEffectsShapeMatrix*>(
                                                m_sampler->GetEnsembleMixedEffectsEntropyFunction()->GetShapeMatrix())
                                                ->GetInterceptRandom();
 
@@ -1587,7 +1587,7 @@ void Optimize::WriteParameters(std::string output_dir) {
     }
     out.close();
   } else {
-    vnl_vector<double> slopevec = dynamic_cast<ParticleShapeLinearRegressionMatrixAttribute*>(
+    vnl_vector<double> slopevec = dynamic_cast<LinearRegressionShapeMatrix*>(
                                       m_sampler->GetEnsembleRegressionEntropyFunction()->GetShapeMatrix())
                                       ->GetSlope();
 
@@ -1602,7 +1602,7 @@ void Optimize::WriteParameters(std::string output_dir) {
     out.close();
 
     std::vector<double> intercept;
-    vnl_vector<double> interceptvec = dynamic_cast<ParticleShapeLinearRegressionMatrixAttribute*>(
+    vnl_vector<double> interceptvec = dynamic_cast<LinearRegressionShapeMatrix*>(
                                           m_sampler->GetEnsembleRegressionEntropyFunction()->GetShapeMatrix())
                                           ->GetIntercept();
 

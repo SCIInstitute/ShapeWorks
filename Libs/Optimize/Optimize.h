@@ -18,12 +18,12 @@
 // shapeworks
 #include <Project/Project.h>
 
-#include "DomainType.h"
+#include "Libs/Optimize/Domain/DomainType.h"
+#include "Libs/Optimize/Domain/MeshWrapper.h"
 #include "Libs/Optimize/Function/VectorFunction.h"
-#include "MeshWrapper.h"
-#include "OptimizationVisualizer.h"
-#include "ParticleProcrustesRegistration.h"
+#include "Libs/Optimize/Utils/OptimizationVisualizer.h"
 #include "ParticleSystem.h"
+#include "ProcrustesRegistration.h"
 #include "Sampler.h"
 
 namespace shapeworks {
@@ -355,7 +355,7 @@ class Optimize {
   std::string GetCheckpointDir();
 
   std::shared_ptr<Sampler> m_sampler;
-  ParticleProcrustesRegistration::Pointer m_procrustes;
+  ProcrustesRegistration::Pointer m_procrustes;
   std::shared_ptr<ParticleGoodBadAssessment> m_good_bad;
 
   unsigned int m_verbosity_level = 0;

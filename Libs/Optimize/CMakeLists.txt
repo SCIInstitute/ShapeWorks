@@ -1,4 +1,14 @@
-FILE(GLOB Optimize_sources *.cpp Domain/*.cpp Function/*.cpp)
+FILE(GLOB Optimize_sources
+  *.cpp
+  Constraints/*.cpp
+  Container/*.cpp
+  Domain/*.cpp
+  Function/*.cpp
+  Matrix/*.cpp
+  Neighborhood/*.cpp
+  Utils/*.cpp
+  )
+
 FILE(GLOB Optimize_headers *.h *.txx)
 
 set(SW_PYTHON_LIBS pybind11::embed)

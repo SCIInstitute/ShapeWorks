@@ -1,10 +1,11 @@
 #pragma once
 
+#include <string>
+
 #include "Image.h"
 #include "Mesh.h"
-#include "ParticleSystem.h"
+#include "ParticleSystemEvaluation.h"
 #include "Shapeworks.h"
-#include <string>
 
 namespace shapeworks {
 

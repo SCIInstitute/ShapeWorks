@@ -1,8 +1,8 @@
 #pragma once
 
+#include "ParticleSystemEvaluation.h"
 #include "itkLightObject.h"
 #include "itkObjectFactory.h"
-#include "ParticleSystem.h"
 #include "itkWeakPointer.h"
 #include "vnl/vnl_vector_fixed.h"
 

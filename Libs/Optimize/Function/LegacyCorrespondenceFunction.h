@@ -2,9 +2,9 @@
 
 #include <vector>
 
-#include "VectorFunction.h"
 #include "LegacyCorrespondenceFunction.h"
-#include "ParticleShapeMatrixAttribute.h"
+#include "Libs/Optimize/Matrix/LegacyShapeMatrix.h"
+#include "VectorFunction.h"
 
 namespace shapeworks {
 

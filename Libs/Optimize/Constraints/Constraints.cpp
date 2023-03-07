@@ -1,10 +1,11 @@
 #include "Constraints.h"
 
-#include <Logging.h>
 #include <vtkFloatArray.h>
 #include <vtkPointData.h>
 
 #include <nlohmann/json.hpp>
+
+#include "Libs/Common/Logging.h"
 using json = nlohmann::json;
 
 namespace shapeworks {

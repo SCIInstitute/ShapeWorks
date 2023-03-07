@@ -1,11 +1,11 @@
-#include "ParticleProcrustesRegistration.h"
+#include "ProcrustesRegistration.h"
 
 #include "Procrustes3D.h"
 
 namespace shapeworks {
 
-  //---------------------------------------------------------------------------
-void ParticleProcrustesRegistration::RunRegistration(int d) {
+//---------------------------------------------------------------------------
+void ProcrustesRegistration::RunRegistration(int d) {
   // DOES NOT Assume all domains have the same number of particles.
   const int totalDomains = m_ParticleSystem->GetNumberOfDomains();
   const int numPoints = m_ParticleSystem->GetNumberOfParticles(d);
@@ -52,7 +52,7 @@ void ParticleProcrustesRegistration::RunRegistration(int d) {
 }
 
 //---------------------------------------------------------------------------
-void ParticleProcrustesRegistration::RunRegistration() {
+void ProcrustesRegistration::RunRegistration() {
   for (int i = 0; i < m_DomainsPerShape; i++) {
     this->RunRegistration(i);
   }

@@ -1,14 +1,13 @@
-#include <vector>
 #include <string>
+#include <vector>
 
-#include "Testing.h"
-
-#include "ParticleSystem.h"
-#include "ShapeEvaluation.h"
-#include "ParticleShapeStatistics.h"
+#include "Libs/Optimize/Domain/VtkMeshWrapper.h"
 #include "ParticleNormalEvaluation.h"
+#include "ParticleShapeStatistics.h"
+#include "ParticleSystemEvaluation.h"
 #include "ReconstructSurface.h"
-#include <Optimize/VtkMeshWrapper.h>
+#include "ShapeEvaluation.h"
+#include "Testing.h"
 
 using namespace shapeworks;
 

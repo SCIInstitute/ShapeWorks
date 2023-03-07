@@ -5,8 +5,8 @@
 #include <string>
 
 #include "Libs/Optimize/Domain/ImageDomainWithGradients.h"
+#include "Libs/Optimize/Utils/ParticleGaussianModeWriter.h"
 #include "Libs/Utils/Utils.h"
-#include "ParticleGaussianModeWriter.h"
 #include "vnl/algo/vnl_symmetric_eigensystem.h"
 
 namespace shapeworks {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "MeanCurvatureContainer.h"
+#include "Libs/Optimize/Container/MeanCurvatureContainer.h"
 #include "ParticleSystem.h"
 
 namespace shapeworks {

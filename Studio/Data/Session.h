@@ -1,12 +1,12 @@
 #pragma once
 
-#include <StudioEnums.h>
-#include <MeshManager.h>
-#include <Data/Preferences.h>
 #include <Analyze/Particles.h>
-#include <Particles/ParticleSystem.h>
+#include <Data/Preferences.h>
+#include <MeshManager.h>
+#include <Particles/ParticleSystemEvaluation.h>
 #include <Project/Project.h>
 #include <Shapeworks.h>
+#include <StudioEnums.h>
 #include <Visualization/Viewer.h>
 #include <itkMatrixOffsetTransformBase.h>
 

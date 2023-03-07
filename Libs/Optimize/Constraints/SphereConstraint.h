@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Constraint.h"
-
 #include <iostream>
+
+#include "Libs/Optimize/Constraints/Constraint.h"
 
 namespace shapeworks {
 

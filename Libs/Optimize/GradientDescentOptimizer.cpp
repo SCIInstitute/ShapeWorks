@@ -16,7 +16,7 @@ const int global_iteration = 1;
 #include <vector>
 
 #include "Libs/Optimize/Domain/ImageDomainWithGradients.h"
-#include "MemoryUsage.h"
+#include "Libs/Optimize/Utils/MemoryUsage.h"
 
 namespace shapeworks {
 GradientDescentOptimizer::GradientDescentOptimizer() {
