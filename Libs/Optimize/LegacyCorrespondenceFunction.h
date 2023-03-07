@@ -3,24 +3,25 @@
 #include <vector>
 
 #include "VectorFunction.h"
-#include "itkParticleEnsembleEntropyFunction.h"
+#include "LegacyCorrespondenceFunction.h"
 #include "itkParticleShapeMatrixAttribute.h"
 
 namespace shapeworks {
 
 /**
- * \class ParticleEnsembleEntropyFunction
+ * \class LegacyCorrespondenceFunction (ParticleEnsembleEntropyFunction)
+ *
  *
  */
-class ParticleEnsembleEntropyFunction : public VectorFunction {
+class LegacyCorrespondenceFunction : public VectorFunction {
  public:
   constexpr static unsigned int VDimension = 3;
   /** Standard class typedefs. */
-  typedef ParticleEnsembleEntropyFunction Self;
+  typedef LegacyCorrespondenceFunction Self;
   typedef itk::SmartPointer<Self> Pointer;
   typedef itk::SmartPointer<const Self> ConstPointer;
   typedef VectorFunction Superclass;
-  itkTypeMacro(ParticleEnsembleEntropyFunction, VectorFunction);
+  itkTypeMacro(LegacyCorrespondenceFunction, VectorFunction);
 
   typedef LegacyShapeMatrix ShapeMatrixType;
 
@@ -110,7 +111,7 @@ class ParticleEnsembleEntropyFunction : public VectorFunction {
   int GetRecomputeCovarianceInterval() const { return m_RecomputeCovarianceInterval; }
 
   virtual VectorFunction::Pointer Clone() {
-    ParticleEnsembleEntropyFunction::Pointer copy = ParticleEnsembleEntropyFunction::New();
+    LegacyCorrespondenceFunction::Pointer copy = LegacyCorrespondenceFunction::New();
 
     copy->m_PointsUpdate = this->m_PointsUpdate;
     copy->m_MinimumVariance = this->m_MinimumVariance;
@@ -133,7 +134,7 @@ class ParticleEnsembleEntropyFunction : public VectorFunction {
   }
 
  protected:
-  ParticleEnsembleEntropyFunction() {
+  LegacyCorrespondenceFunction() {
     // m_MinimumVarianceBase = 1.0;//exp(log(1.0e-5)/10000.0);
     m_HoldMinimumVariance = true;
     m_MinimumVariance = 1.0e-5;
@@ -146,9 +147,9 @@ class ParticleEnsembleEntropyFunction : public VectorFunction {
     m_InverseCovMatrix = std::make_shared<vnl_matrix_type>(10, 10);
     m_points_mean = std::make_shared<vnl_matrix_type>(10, 10);
   }
-  virtual ~ParticleEnsembleEntropyFunction() {}
-  void operator=(const ParticleEnsembleEntropyFunction&);
-  ParticleEnsembleEntropyFunction(const ParticleEnsembleEntropyFunction&);
+  virtual ~LegacyCorrespondenceFunction() {}
+  void operator=(const LegacyCorrespondenceFunction&);
+  LegacyCorrespondenceFunction(const LegacyCorrespondenceFunction&);
   typename ShapeMatrixType::Pointer m_ShapeMatrix;
 
   virtual void ComputeCovarianceMatrix();

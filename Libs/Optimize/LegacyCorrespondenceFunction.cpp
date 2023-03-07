@@ -1,6 +1,6 @@
 
 
-#include "itkParticleEnsembleEntropyFunction.h"
+#include "LegacyCorrespondenceFunction.h"
 
 #include <Utils/Utils.h>
 
@@ -11,7 +11,7 @@
 #include "vnl/algo/vnl_symmetric_eigensystem.h"
 
 namespace shapeworks {
-void ParticleEnsembleEntropyFunction ::WriteModes(const std::string& prefix, int n) const {
+void LegacyCorrespondenceFunction ::WriteModes(const std::string& prefix, int n) const {
   typename ParticleGaussianModeWriter<VDimension>::Pointer writer = ParticleGaussianModeWriter<VDimension>::New();
   writer->SetShapeMatrix(m_ShapeMatrix);
   writer->SetFileName(prefix.c_str());
@@ -19,7 +19,7 @@ void ParticleEnsembleEntropyFunction ::WriteModes(const std::string& prefix, int
   writer->Update();
 }
 
-void ParticleEnsembleEntropyFunction ::ComputeCovarianceMatrix() {
+void LegacyCorrespondenceFunction ::ComputeCovarianceMatrix() {
   // NOTE: This code requires that indices be contiguous, i.e. it wont work if
   // you start deleting particles.
   const unsigned int num_samples = m_ShapeMatrix->cols();
@@ -108,7 +108,7 @@ void ParticleEnsembleEntropyFunction ::ComputeCovarianceMatrix() {
   if (m_UseMeanEnergy) m_MinimumEigenValue = m_CurrentEnergy / 2.0;
 }
 
-ParticleEnsembleEntropyFunction::VectorType ParticleEnsembleEntropyFunction ::Evaluate(unsigned int idx, unsigned int d,
+LegacyCorrespondenceFunction::VectorType LegacyCorrespondenceFunction ::Evaluate(unsigned int idx, unsigned int d,
                                                                                        const ParticleSystem* system,
                                                                                        double& maxdt,
                                                                                        double& energy) const {

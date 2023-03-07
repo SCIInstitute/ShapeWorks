@@ -12,7 +12,7 @@
 #include "GenericContainerArray.h"
 #include "CurvatureSamplingFunction.h"
 #include "DualVectorFunction.h"
-#include "itkParticleEnsembleEntropyFunction.h"
+#include "LegacyCorrespondenceFunction.h"
 #include "SamplingFunction.h"
 #include "itkParticleGradientDescentPositionOptimizer.h"
 #include "itkParticleMeanCurvatureAttribute.h"
@@ -245,13 +245,13 @@ class Sampler {
 
   DualVectorFunction* GetLinkingFunction() { return m_LinkingFunction.GetPointer(); }
 
-  ParticleEnsembleEntropyFunction* GetEnsembleEntropyFunction() { return m_EnsembleEntropyFunction.GetPointer(); }
+  LegacyCorrespondenceFunction* GetEnsembleEntropyFunction() { return m_EnsembleEntropyFunction.GetPointer(); }
 
-  ParticleEnsembleEntropyFunction* GetEnsembleRegressionEntropyFunction() {
+  LegacyCorrespondenceFunction* GetEnsembleRegressionEntropyFunction() {
     return m_EnsembleRegressionEntropyFunction.GetPointer();
   }
 
-  ParticleEnsembleEntropyFunction* GetEnsembleMixedEffectsEntropyFunction() {
+  LegacyCorrespondenceFunction* GetEnsembleMixedEffectsEntropyFunction() {
     return m_EnsembleMixedEffectsEntropyFunction.GetPointer();
   }
 
@@ -261,15 +261,15 @@ class Sampler {
 
   const DualVectorFunction* GetLinkingFunction() const { return m_LinkingFunction.GetPointer(); }
 
-  const ParticleEnsembleEntropyFunction* GetEnsembleEntropyFunction() const {
+  const LegacyCorrespondenceFunction* GetEnsembleEntropyFunction() const {
     return m_EnsembleEntropyFunction.GetPointer();
   }
 
-  const ParticleEnsembleEntropyFunction* GetEnsembleRegressionEntropyFunction() const {
+  const LegacyCorrespondenceFunction* GetEnsembleRegressionEntropyFunction() const {
     return m_EnsembleRegressionEntropyFunction.GetPointer();
   }
 
-  const ParticleEnsembleEntropyFunction* GetEnsembleMixedEffectsEntropyFunction() const {
+  const LegacyCorrespondenceFunction* GetEnsembleMixedEffectsEntropyFunction() const {
     return m_EnsembleMixedEffectsEntropyFunction.GetPointer();
   }
 
@@ -402,9 +402,9 @@ class Sampler {
 
   DualVectorFunction::Pointer m_LinkingFunction;
 
-  ParticleEnsembleEntropyFunction::Pointer m_EnsembleEntropyFunction;
-  ParticleEnsembleEntropyFunction::Pointer m_EnsembleRegressionEntropyFunction;
-  ParticleEnsembleEntropyFunction::Pointer m_EnsembleMixedEffectsEntropyFunction;
+  LegacyCorrespondenceFunction::Pointer m_EnsembleEntropyFunction;
+  LegacyCorrespondenceFunction::Pointer m_EnsembleRegressionEntropyFunction;
+  LegacyCorrespondenceFunction::Pointer m_EnsembleMixedEffectsEntropyFunction;
   CorrespondenceFunction::Pointer m_CorrespondenceFunction;
 
   LegacyShapeMatrix::Pointer m_LegacyShapeMatrix;

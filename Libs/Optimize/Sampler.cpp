@@ -22,9 +22,9 @@ Sampler::Sampler() {
   m_MeshFiles.push_back("");
 
   m_LinkingFunction = DualVectorFunction::New();
-  m_EnsembleEntropyFunction = ParticleEnsembleEntropyFunction::New();
-  m_EnsembleRegressionEntropyFunction = ParticleEnsembleEntropyFunction::New();
-  m_EnsembleMixedEffectsEntropyFunction = ParticleEnsembleEntropyFunction::New();
+  m_EnsembleEntropyFunction = LegacyCorrespondenceFunction::New();
+  m_EnsembleRegressionEntropyFunction = LegacyCorrespondenceFunction::New();
+  m_EnsembleMixedEffectsEntropyFunction = LegacyCorrespondenceFunction::New();
   m_CorrespondenceFunction = CorrespondenceFunction::New();
 
   m_LegacyShapeMatrix = LegacyShapeMatrix::New();
