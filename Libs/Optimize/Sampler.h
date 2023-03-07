@@ -15,7 +15,7 @@
 #include "LegacyCorrespondenceFunction.h"
 #include "SamplingFunction.h"
 #include "GradientDescentOptimizer.h"
-#include "itkParticleMeanCurvatureAttribute.h"
+#include "MeanCurvatureContainer.h"
 #include "itkParticleShapeLinearRegressionMatrixAttribute.h"
 #include "itkParticleShapeMixedEffectsMatrixAttribute.h"
 #include "itkParticleSurfaceNeighborhood.h"
@@ -45,7 +45,7 @@ class Sampler {
   using ImageType = itk::Image<PixelType, Dimension>;
   using PointType = ImageType::PointType;
 
-  using MeanCurvatureCacheType = ParticleMeanCurvatureAttribute<PixelType, Dimension>;
+  using MeanCurvatureCacheType = MeanCurvatureContainer<PixelType, Dimension>;
   using TransformType = vnl_matrix_fixed<double, Dimension + 1, Dimension + 1>;
   using OptimizerType = GradientDescentOptimizer<PixelType, Dimension>;
 

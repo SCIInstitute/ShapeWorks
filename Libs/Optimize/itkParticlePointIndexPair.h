@@ -4,7 +4,7 @@
 namespace shapeworks {
 /**
     Struct containing a Point and an index value associated with a point.  This
-    object is used mainly by itkParticleNeighborhood*/
+    object is used mainly by ParticleNeighborhoodr.h*/
 template <unsigned int VDimension>
 struct ParticlePointIndexPair {
   typedef itk::Point<double, VDimension> PointType;

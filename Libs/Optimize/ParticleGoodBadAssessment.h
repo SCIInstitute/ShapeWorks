@@ -1,6 +1,6 @@
 #pragma once
 
-#include "itkParticleMeanCurvatureAttribute.h"
+#include "MeanCurvatureContainer.h"
 #include "itkParticleSystem.h"
 
 namespace shapeworks {
@@ -8,7 +8,7 @@ namespace shapeworks {
 //! Performs good/bad points assessment and reports the bad positions of the particle system
 class ParticleGoodBadAssessment {
  public:
-  using MeanCurvatureCacheType = ParticleMeanCurvatureAttribute<float, 3>;
+  using MeanCurvatureCacheType = MeanCurvatureContainer<float, 3>;
 
   void set_domains_per_shape(int i) { domains_per_shape_ = i; }
 

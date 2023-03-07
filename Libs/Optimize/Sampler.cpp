@@ -59,7 +59,7 @@ void Sampler::AllocateDataCaches() {
   m_Sigma2Cache = GenericContainerArray<double>::New();
   m_ParticleSystem->RegisterAttribute(m_Sigma2Cache);
 
-  m_MeanCurvatureCache = ParticleMeanCurvatureAttribute<ImageType::PixelType, Dimension>::New();
+  m_MeanCurvatureCache = MeanCurvatureContainer<ImageType::PixelType, Dimension>::New();
   m_MeanCurvatureCache->SetVerbosity(m_verbosity);
   m_CurvatureGradientFunction->SetMeanCurvatureCache(m_MeanCurvatureCache);
   m_ParticleSystem->RegisterAttribute(m_MeanCurvatureCache);

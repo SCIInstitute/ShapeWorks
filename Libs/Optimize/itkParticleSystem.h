@@ -12,7 +12,7 @@
 #include "GenericContainer.h"
 #include "ParticleDomain.h"
 #include "ParticleEvents.h"
-#include "itkParticleNeighborhood.h"
+#include "ParticleNeighborhood.h"
 #include "itkPoint.h"
 #include "itkWeakPointer.h"
 #include "vnl/vnl_inverse.h"

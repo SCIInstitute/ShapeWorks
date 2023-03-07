@@ -4,7 +4,7 @@
 #include "ParticleImageDomainWithGradients.h"
 #include "itkCommand.h"
 #include "SamplingFunction.h"
-#include "itkParticleMeanCurvatureAttribute.h"
+#include "MeanCurvatureContainer.h"
 #include "itkParticleSurfaceNeighborhood.h"
 
 namespace shapeworks {
@@ -37,7 +37,7 @@ class CurvatureSamplingFunction : public SamplingFunction {
   typedef Superclass::PointType PointType;
   typedef Superclass::GradientVectorType GradientVectorType;
 
-  typedef ParticleMeanCurvatureAttribute<TGradientNumericType, VDimension> MeanCurvatureCacheType;
+  typedef MeanCurvatureContainer<TGradientNumericType, VDimension> MeanCurvatureCacheType;
 
   typedef shapeworks::ParticleImageDomainWithCurvature<TGradientNumericType>::VnlMatrixType VnlMatrixType;
 

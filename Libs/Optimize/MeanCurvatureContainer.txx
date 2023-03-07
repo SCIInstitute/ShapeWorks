@@ -7,8 +7,7 @@ namespace shapeworks
 {
 
 template <class TNumericType, unsigned int VDimension>
-void
-ParticleMeanCurvatureAttribute<TNumericType, VDimension>::
+void MeanCurvatureContainer<TNumericType, VDimension>::
 ComputeCurvatureStatistics(const ParticleSystemType *system, unsigned int d)
 {
   m_MeanCurvatureList[d] = system->GetDomain(d)->GetSurfaceMeanCurvature();

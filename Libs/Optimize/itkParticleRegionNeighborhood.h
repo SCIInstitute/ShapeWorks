@@ -1,6 +1,6 @@
 #pragma once
 
-#include "itkParticleNeighborhood.h"
+#include "ParticleNeighborhood.h"
 #include "itkPowerOfTwoPointTree.h"
 
 namespace shapeworks {

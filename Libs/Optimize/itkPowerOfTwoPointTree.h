@@ -30,7 +30,7 @@ struct powstruct<a,0>
  * bounding box, a set of child (branch) node pointers, and a linked list that
  * may be filled with Points and Indices (unsigned ints).  The single template
  * parameter is the dimensionality of the Points.  This class was designed for
- * use as a binning structure for itkParticleNeighborhood classes.
+ * use as a binning structure for ParticleNeighborhoodr.h classes.
  */
 template <unsigned int VDimension>
 class PowerOfTwoPointTreeNode : public itk::LightObject
@@ -148,7 +148,7 @@ private:
  *  quad-tree, and in 3D this is an octree, etc.  The tree is constructed by
  *  specifying a region and a tree depth, then calling ConstructTree().  This
  *  class was designed for use as a quad/octree binning structure for
- *  itkParticleNeighborhood classes.
+ *  ParticleNeighborhoodr.h classes.
  */
  template <unsigned int VDimension>
  class ITK_EXPORT PowerOfTwoPointTree : public itk::DataObject
