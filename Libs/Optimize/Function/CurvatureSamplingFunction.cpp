@@ -247,10 +247,10 @@ void CurvatureSamplingFunction::UpdateNeighborhood(const CurvatureSamplingFuncti
     const auto domain_t = domain_base * domains_per_shape + offset;
     const auto neighborhood_ = system->GetNeighborhood(domain_t).GetPointer();
     using ImageType = itk::Image<float, Dimension>;
-    auto neighborhood__ = dynamic_cast<const ParticleSurfaceNeighborhood<ImageType>*>(neighborhood_);
+    auto neighborhood__ = dynamic_cast<const ParticleSurfaceNeighborhood*>(neighborhood_);
 
     // unfortunately required because we need to mutate the cosine weighting state
-    auto neighborhood = const_cast<ParticleSurfaceNeighborhood<ImageType>*>(neighborhood__);
+    auto neighborhood = const_cast<ParticleSurfaceNeighborhood*>(neighborhood__);
 
     if (!m_IsSharedBoundaryEnabled && domain_t != d) {
       continue;
@@ -270,7 +270,7 @@ void CurvatureSamplingFunction::UpdateNeighborhood(const CurvatureSamplingFuncti
 
     std::vector<double> weights;
     std::vector<double> distances;
-    std::vector<ParticlePointIndexPair<3>> res;
+    std::vector<ParticlePointIndexPair> res;
     if (domain_t == d) {
       // same domain
       res = neighborhood->FindNeighborhoodPoints(pos, idx, weights, distances, radius);

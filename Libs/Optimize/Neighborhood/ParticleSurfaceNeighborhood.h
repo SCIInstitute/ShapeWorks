@@ -13,10 +13,11 @@ namespace shapeworks {
  * PowerOfTwoPointTree to cache point and index values so that
  * FindNeighborhoodPoints is somewhat optimized.
  */
-template <class TImage>
+
 class ParticleSurfaceNeighborhood : public ParticleRegionNeighborhood {
  public:
   /** Standard class typedefs */
+  typedef itk::Image<float, 3> TImage;
   typedef TImage ImageType;
   typedef ParticleSurfaceNeighborhood Self;
   typedef ParticleRegionNeighborhood Superclass;
@@ -75,5 +76,3 @@ class ParticleSurfaceNeighborhood : public ParticleRegionNeighborhood {
 };
 
 }  // end namespace shapeworks
-
-#include "ParticleSurfaceNeighborhood.txx"

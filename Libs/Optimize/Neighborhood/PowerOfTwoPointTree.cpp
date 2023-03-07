@@ -1,12 +1,11 @@
 
-#pragma once
+#include "PowerOfTwoPointTree.h"
 
 #include <cmath>
 
 namespace shapeworks {
 
-template <unsigned int VDimension>
-void PowerOfTwoPointTreeNode<VDimension>::PrintSelf(std::ostream& os, itk::Indent indent) const {
+void PowerOfTwoPointTreeNode::PrintSelf(std::ostream& os, itk::Indent indent) const {
   os << indent << "PowerOfTwoPointTreeNode: ";
   os << "m_LowerBound = " << m_LowerBound;
   os << "\tm_UpperBound = " << m_UpperBound;
@@ -22,8 +21,7 @@ void PowerOfTwoPointTreeNode<VDimension>::PrintSelf(std::ostream& os, itk::Inden
   }
 }
 
-template <unsigned int VDimension>
-bool PowerOfTwoPointTree<VDimension>::Overlap(const NodePointerType& node, const PointType& lowerbound,
+bool PowerOfTwoPointTree::Overlap(const NodePointerType& node, const PointType& lowerbound,
                                               const PointType& upperbound) const {
   // Check for overlap in all dimensions.  If any one dimension has no overlap,
   // these two regions do not overlap.
@@ -38,8 +36,7 @@ bool PowerOfTwoPointTree<VDimension>::Overlap(const NodePointerType& node, const
   return true;
 }
 
-template <unsigned int VDimension>
-typename PowerOfTwoPointTree<VDimension>::PointIteratorListType PowerOfTwoPointTree<VDimension>::FindPointsInRegion(
+typename PowerOfTwoPointTree::PointIteratorListType PowerOfTwoPointTree::FindPointsInRegion(
     const PointType& lowerbound, const PointType& upperbound) const {
   PointIteratorListType pointlist;
   NodePointerType it = this->m_Root;
@@ -55,8 +52,7 @@ typename PowerOfTwoPointTree<VDimension>::PointIteratorListType PowerOfTwoPointT
   return pointlist;
 }
 
-template <unsigned int VDimension>
-void PowerOfTwoPointTree<VDimension>::FindOneNodeInRegion(const NodePointerType& it, const PointType& lowerbound,
+void PowerOfTwoPointTree::FindOneNodeInRegion(const NodePointerType& it, const PointType& lowerbound,
                                                           const PointType& upperbound,
                                                           PointIteratorListType& pointlist) const {
   // If this node is a leaf node, then add to the list if there is overlap.
@@ -77,8 +73,7 @@ void PowerOfTwoPointTree<VDimension>::FindOneNodeInRegion(const NodePointerType&
   }
 }
 
-template <unsigned int VDimension>
-typename PowerOfTwoPointTree<VDimension>::PointListType::iterator PowerOfTwoPointTree<VDimension>::AddPoint(
+typename PowerOfTwoPointTree::PointListType::iterator PowerOfTwoPointTree::AddPoint(
     const PointType& point, unsigned int idx, NodePointerType& node) {
   NodePointerType it = this->m_Root;
 
@@ -96,11 +91,10 @@ typename PowerOfTwoPointTree<VDimension>::PointListType::iterator PowerOfTwoPoin
     }
   }
   node = it;
-  return it->InsertElement(ParticlePointIndexPair<VDimension>(point, idx));
+  return it->InsertElement(ParticlePointIndexPair(point, idx));
 }
 
-template <unsigned int VDimension>
-void PowerOfTwoPointTree<VDimension>::ConstructTree(const PointType& lowerbound, const PointType& upperbound,
+void PowerOfTwoPointTree::ConstructTree(const PointType& lowerbound, const PointType& upperbound,
                                                     unsigned int depth) {
   m_Depth = depth;
 
@@ -113,8 +107,7 @@ void PowerOfTwoPointTree<VDimension>::ConstructTree(const PointType& lowerbound,
   this->BranchNode(n, 1);
 }
 
-template <unsigned int VDimension>
-void PowerOfTwoPointTree<VDimension>::BranchNode(NodePointerType& parent, unsigned int level) {
+void PowerOfTwoPointTree::BranchNode(NodePointerType& parent, unsigned int level) {
   // Called from a leaf node.
   if (level > m_Depth) return;
 
@@ -151,8 +144,7 @@ void PowerOfTwoPointTree<VDimension>::BranchNode(NodePointerType& parent, unsign
   }
 }
 
-template <unsigned int VDimension>
-void PowerOfTwoPointTree<VDimension>::PrintSelf(std::ostream& os, itk::Indent indent) const {
+void PowerOfTwoPointTree::PrintSelf(std::ostream& os, itk::Indent indent) const {
   os << indent << "BranchesPerNode = " << BranchesPerNode << std::endl;
   os << indent << "m_Depth = " << m_Depth << std::endl;
   os << indent << "m_Root:  ";

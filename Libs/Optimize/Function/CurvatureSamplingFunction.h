@@ -137,12 +137,12 @@ class CurvatureSamplingFunction : public SamplingFunction {
   double m_CurrentSigma;
 
   struct CrossDomainNeighborhood {
-    ParticlePointIndexPair<3> pi_pair;
+    ParticlePointIndexPair pi_pair;
     double weight;
     double distance;
     int dom;
 
-    CrossDomainNeighborhood(const ParticlePointIndexPair<3>& pi_pair_, double weight_, double distance_, int dom_)
+    CrossDomainNeighborhood(const ParticlePointIndexPair& pi_pair_, double weight_, double distance_, int dom_)
         : pi_pair(pi_pair_), weight(weight_), distance(distance_), dom(dom_) {}
   };
   std::vector<CrossDomainNeighborhood> m_CurrentNeighborhood;

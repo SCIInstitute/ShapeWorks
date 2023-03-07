@@ -287,7 +287,7 @@ void Sampler::ReInitialize() {
 
 void Sampler::AddMesh(std::shared_ptr<shapeworks::MeshWrapper> mesh) {
   auto domain = std::make_shared<MeshDomain>();
-  m_NeighborhoodList.push_back(ParticleSurfaceNeighborhood<ImageType>::New());
+  m_NeighborhoodList.push_back(ParticleSurfaceNeighborhood::New());
   if (mesh) {
     this->m_Spacing = 1;
     domain->SetMesh(mesh);
@@ -299,7 +299,7 @@ void Sampler::AddMesh(std::shared_ptr<shapeworks::MeshWrapper> mesh) {
 
 void Sampler::AddContour(vtkSmartPointer<vtkPolyData> poly_data) {
   auto domain = std::make_shared<ContourDomain>();
-  m_NeighborhoodList.push_back(ParticleSurfaceNeighborhood<ImageType>::New());
+  m_NeighborhoodList.push_back(ParticleSurfaceNeighborhood::New());
   if (poly_data != nullptr) {
     this->m_Spacing = 1;
     domain->SetPolyLine(poly_data);
@@ -366,7 +366,7 @@ void Sampler::AddFreeFormConstraint(int domain, const FreeFormConstraint &ffc) {
 void Sampler::AddImage(ImageType::Pointer image, double narrow_band, std::string name) {
   auto domain = std::make_shared<ImplicitSurfaceDomain<ImageType::PixelType>>();
 
-  m_NeighborhoodList.push_back(ParticleSurfaceNeighborhood<ImageType>::New());
+  m_NeighborhoodList.push_back(ParticleSurfaceNeighborhood::New());
 
   if (image) {
     this->m_Spacing = image->GetSpacing()[0];

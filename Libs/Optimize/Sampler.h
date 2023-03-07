@@ -394,7 +394,7 @@ class Sampler {
 
   std::vector<ParticleDomain::Pointer> m_DomainList;
 
-  std::vector<ParticleSurfaceNeighborhood<ImageType>::Pointer> m_NeighborhoodList;
+  std::vector<ParticleSurfaceNeighborhood::Pointer> m_NeighborhoodList;
 
   int m_pairwise_potential_type;
 

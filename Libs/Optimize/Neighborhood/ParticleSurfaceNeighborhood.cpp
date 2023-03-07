@@ -1,11 +1,10 @@
-#pragma once
+
+#include "ParticleSurfaceNeighborhood.h"
 
 namespace shapeworks {
-template <class TImage>
-typename ParticleSurfaceNeighborhood<TImage>::PointVectorType
-ParticleSurfaceNeighborhood<TImage>::FindNeighborhoodPoints(const PointType &center, int idx,
-                                                            std::vector<double> &weights,
-                                                            std::vector<double> &distances, double radius) const {
+ParticleSurfaceNeighborhood::PointVectorType ParticleSurfaceNeighborhood::FindNeighborhoodPoints(
+    const PointType& center, int idx, std::vector<double>& weights, std::vector<double>& distances,
+    double radius) const {
   const auto domain = this->GetDomain();
 
   GradientVectorType posnormal;
@@ -33,8 +32,8 @@ ParticleSurfaceNeighborhood<TImage>::FindNeighborhoodPoints(const PointType &cen
 
   // Add any point whose distance from center is less than radius to the return list
   for (auto it = pointlist.begin(); it != pointlist.end(); it++) {
-    const auto &pt_b = (*it)->Point;
-    const auto &idx_b = (*it)->Index;
+    const auto& pt_b = (*it)->Point;
+    const auto& idx_b = (*it)->Index;
 
     // we are not a neighbor of ourself.
     if (idx_b == idx) {
@@ -44,16 +43,15 @@ ParticleSurfaceNeighborhood<TImage>::FindNeighborhoodPoints(const PointType &cen
     double distance;
     bool is_within_distance;
 
-    if(m_ForceEuclidean) {
+    if (m_ForceEuclidean) {
       distance = center.EuclideanDistanceTo(pt_b);
       is_within_distance = distance < radius;
     } else {
       is_within_distance = domain->IsWithinDistance(center, idx, pt_b, idx_b, radius, distance);
     }
 
-    if (is_within_distance)
-    {
-      ret.push_back( **it );
+    if (is_within_distance) {
+      ret.push_back(**it);
       distances.push_back(distance);
 
       // todo change the APIs so don't have to pass a std::vector<double> of 1s whenever weighting is disabled
@@ -78,10 +76,8 @@ ParticleSurfaceNeighborhood<TImage>::FindNeighborhoodPoints(const PointType &cen
   return ret;
 }
 
-template <class TImage>
-typename ParticleSurfaceNeighborhood<TImage>::PointVectorType
-ParticleSurfaceNeighborhood<TImage>::FindNeighborhoodPoints(const PointType &center, int idx,
-                                                            std::vector<double> &weights, double radius) const {
+ParticleSurfaceNeighborhood::PointVectorType ParticleSurfaceNeighborhood::FindNeighborhoodPoints(
+    const PointType& center, int idx, std::vector<double>& weights, double radius) const {
   std::vector<double> distances;
   return this->FindNeighborhoodPoints(center, idx, weights, distances, radius);
 }

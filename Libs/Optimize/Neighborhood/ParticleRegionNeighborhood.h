@@ -23,7 +23,7 @@ class ParticleRegionNeighborhood : public ParticleNeighborhood {
   typedef itk::SmartPointer<Self> Pointer;
   typedef itk::SmartPointer<const Self> ConstPointer;
   typedef itk::WeakPointer<const Self> ConstWeakPointer;
-  using DomainType = shapeworks::ParticleDomain;
+  using DomainType = ParticleDomain;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -41,7 +41,7 @@ class ParticleRegionNeighborhood : public ParticleNeighborhood {
   typedef typename Superclass::PointVectorType PointVectorType;
 
   /** PowerOfTwoTree type used to sort points according to location. */
-  typedef PowerOfTwoPointTree<VDimension> PointTreeType;
+  typedef PowerOfTwoPointTree PointTreeType;
 
   /** Compile a list of points that are within a specified radius of a given
       point.  This implementation uses a PowerOfTwoTree to sort points

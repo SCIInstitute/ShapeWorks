@@ -30,9 +30,9 @@ struct powstruct<a, 0> {
  * parameter is the dimensionality of the Points.  This class was designed for
  * use as a binning structure for ParticleNeighborhoodr.h classes.
  */
-template <unsigned int VDimension>
 class PowerOfTwoPointTreeNode : public itk::LightObject {
  public:
+  constexpr static unsigned int VDimension = 3;
   /** Standard class typedefs. */
   typedef PowerOfTwoPointTreeNode Self;
   typedef itk::SmartPointer<Self> Pointer;
@@ -51,7 +51,7 @@ class PowerOfTwoPointTreeNode : public itk::LightObject {
   typedef itk::Point<double, VDimension> PointType;
 
   /** List type for storing lists of points+indices. */
-  typedef std::list<ParticlePointIndexPair<VDimension> > PointListType;
+  typedef std::list<ParticlePointIndexPair> PointListType;
 
   /** Equivalence operator, ignores value type. */
   bool operator==(const PowerOfTwoPointTreeNode& o) const {
@@ -73,7 +73,7 @@ class PowerOfTwoPointTreeNode : public itk::LightObject {
   }
 
   /** Insert a PointIndexPair into the list associated with this node. */
-  typename PointListType::iterator InsertElement(const ParticlePointIndexPair<VDimension>& elem) {
+  typename PointListType::iterator InsertElement(const ParticlePointIndexPair& elem) {
     return m_List.insert(m_List.end(), elem);
   }
 
@@ -81,7 +81,9 @@ class PowerOfTwoPointTreeNode : public itk::LightObject {
       and false otherwise. */
   bool Contains(const PointType& p) const {
     for (unsigned int i = 0; i < VDimension; i++) {
-      if (p[i] < m_LowerBound[i] || p[i] > m_UpperBound[i]) return false;
+      if (p[i] < m_LowerBound[i] || p[i] > m_UpperBound[i]) {
+        return false;
+      }
     }
     return true;
   }
@@ -135,9 +137,11 @@ class PowerOfTwoPointTreeNode : public itk::LightObject {
  *  class was designed for use as a quad/octree binning structure for
  *  ParticleNeighborhoodr.h classes.
  */
-template <unsigned int VDimension>
-class ITK_EXPORT PowerOfTwoPointTree : public itk::DataObject {
+
+class PowerOfTwoPointTree : public itk::DataObject {
  public:
+  constexpr static unsigned int VDimension = 3;
+
   /** Standard class typedefs */
   typedef PowerOfTwoPointTree Self;
   typedef DataObject Superclass;
@@ -146,13 +150,13 @@ class ITK_EXPORT PowerOfTwoPointTree : public itk::DataObject {
   typedef itk::WeakPointer<const Self> ConstWeakPointer;
 
   /** Shorthand for the object pointed to by each node.   */
-  typedef PowerOfTwoPointTreeNode<VDimension> NodeType;
+  typedef PowerOfTwoPointTreeNode NodeType;
 
   /** The real node type, which is  a actually pointer  to what we are calling NodeTypes. */
   typedef typename NodeType::Pointer NodePointerType;
 
   /** Point type used by nodes for upper and lower bounds. */
-  typedef typename PowerOfTwoPointTreeNode<VDimension>::PointType PointType;
+  typedef typename PowerOfTwoPointTreeNode::PointType PointType;
 
   /** Types defined by the NodeType. */
   typedef typename NodeType::PointListType PointListType;
@@ -249,5 +253,3 @@ class ITK_EXPORT PowerOfTwoPointTree : public itk::DataObject {
 };
 
 }  // end namespace shapeworks
-
-#include "PowerOfTwoPointTree.txx"
