@@ -47,7 +47,7 @@ class Sampler {
 
   using MeanCurvatureCacheType = MeanCurvatureContainer<PixelType, Dimension>;
   using TransformType = vnl_matrix_fixed<double, Dimension + 1, Dimension + 1>;
-  using OptimizerType = GradientDescentOptimizer<PixelType, Dimension>;
+  using OptimizerType = GradientDescentOptimizer;
 
   /** Convenient typedef for storing cutting plane information */
   struct CuttingPlaneType {

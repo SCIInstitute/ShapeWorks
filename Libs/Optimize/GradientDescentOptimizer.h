@@ -5,10 +5,10 @@
 #include <vector>
 
 #include "ParticleImageDomainWithGradients.h"
+#include "ParticleSystem.h"
 #include "VectorFunction.h"
 #include "itkObject.h"
 #include "itkObjectFactory.h"
-#include "ParticleSystem.h"
 #include "itkWeakPointer.h"
 #include "vnl/vnl_vector_fixed.h"
 
@@ -25,9 +25,10 @@ namespace shapeworks {
  * computed).
  *
  */
-template <class TGradientNumericType, unsigned int VDimension>
 class GradientDescentOptimizer : public itk::Object {
  public:
+  using TGradientNumericType = float;
+  constexpr static unsigned int VDimension = 3;
   /** Standard class typedefs */
   typedef GradientDescentOptimizer Self;
   typedef itk::Object Superclass;
@@ -141,5 +142,3 @@ class GradientDescentOptimizer : public itk::Object {
 };
 
 }  // namespace shapeworks
-
-#include "GradientDescentOptimizer.txx"
