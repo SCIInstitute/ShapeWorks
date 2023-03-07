@@ -1,11 +1,3 @@
-/*=========================================================================
-  Copyright (c) 2009 Scientific Computing and Imaging Institute.
-  See ShapeWorksLicense.txt for details.
-
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
-     PURPOSE.  See the above copyright notices for more information.
-=========================================================================*/
 #pragma once
 
 #include "ImageDomainWithGradN.h"
@@ -14,8 +6,7 @@
 #include "itkImageRegionIterator.h"
 #include "itkImageRegionIteratorWithIndex.h"
 
-namespace shapeworks
-{
+namespace shapeworks {
 /** \class ParticleImageDomainWithCurvature
  *
  * An image domain that extends ParticleImageDomainWithGradN with curvature
@@ -26,28 +17,25 @@ namespace shapeworks
  * \sa ParticleDomain
  */
 template <class T>
-class ImageDomainWithCurvature : public ImageDomainWithGradN<T>
-{
-public:
+class ImageDomainWithCurvature : public ImageDomainWithGradN<T> {
+ public:
   /** Standard class typedefs */
   typedef ImageDomainWithGradN<T> Superclass;
 
-  typedef typename Superclass::PointType PointType;  
+  typedef typename Superclass::PointType PointType;
   typedef typename Superclass::ImageType ImageType;
   typedef typename Superclass::VnlMatrixType VnlMatrixType;
 
   /** Set/Get the itk::Image specifying the particle domain.  The set method
       modifies the parent class LowerBound and UpperBound. */
-  void SetImage(ImageType *I, double narrow_band)
-  {
+  void SetImage(ImageType* I, double narrow_band) {
     // Computes partial derivatives in parent class
     Superclass::SetImage(I, narrow_band);
     m_VDBCurvature = openvdb::tools::meanCurvature(*this->GetVDBImage());
     this->ComputeSurfaceStatistics(I);
   }
 
-  double GetCurvature(const PointType &p, int idx) const override
-  {
+  double GetCurvature(const PointType& p, int idx) const override {
     if (this->m_FixedDomain) {
       return 0;
     }
@@ -55,35 +43,27 @@ public:
     return openvdb::tools::BoxSampler::sample(m_VDBCurvature->tree(), coord);
   }
 
-  inline double GetSurfaceMeanCurvature() const override
-  {
-    return m_SurfaceMeanCurvature;
-  }
+  inline double GetSurfaceMeanCurvature() const override { return m_SurfaceMeanCurvature; }
 
-  inline double GetSurfaceStdDevCurvature() const override
-  {
-    return m_SurfaceStdDevCurvature;
-  }
+  inline double GetSurfaceStdDevCurvature() const override { return m_SurfaceStdDevCurvature; }
 
-protected:
- ImageDomainWithCurvature() {}
+ protected:
+  ImageDomainWithCurvature() {}
 
-  void PrintSelf(std::ostream& os, itk::Indent indent) const
-  {
+  void PrintSelf(std::ostream& os, itk::Indent indent) const {
     Superclass::PrintSelf(os, indent);
     os << indent << "VDB Active Voxels = " << m_VDBCurvature->activeVoxelCount() << std::endl;
   }
-  virtual ~ImageDomainWithCurvature() {};
+  virtual ~ImageDomainWithCurvature(){};
 
-private:
+ private:
   openvdb::FloatGrid::Ptr m_VDBCurvature;
 
   // Cache surface statistics
   double m_SurfaceMeanCurvature;
   double m_SurfaceStdDevCurvature;
 
-  void ComputeSurfaceStatistics(ImageType *I)
-  {
+  void ComputeSurfaceStatistics(ImageType* I) {
     // TODO: This computation is copied from itkParticleMeanCurvatureAttribute
     // Since the entire Image is not available after the initial load, its simplest
     // to calculate it now. But it should be a part of itkParticleMeanCurvatureAttribute
@@ -96,8 +76,7 @@ private:
     zc->SetInput(I);
     zc->Update();
 
-    itk::ImageRegionConstIteratorWithIndex<ImageType> it(zc->GetOutput(),
-                                                         zc->GetOutput()->GetRequestedRegion());
+    itk::ImageRegionConstIteratorWithIndex<ImageType> it(zc->GetOutput(), zc->GetOutput()->GetRequestedRegion());
     std::vector<double> datalist;
     m_SurfaceMeanCurvature = 0.0;
     m_SurfaceStdDevCurvature = 0.0;
@@ -106,7 +85,7 @@ private:
       if (it.Get() == 1.0) {
         // Find closest pixel location to surface.
         PointType pos;
-        //dynamic_cast<const DomainType
+        // dynamic_cast<const DomainType
         //*>(system->GetDomain(d))->GetImage()->TransformIndexToPhysicalPoint(it.GetIndex(), pos);
         I->TransformIndexToPhysicalPoint(it.GetIndex(), pos);
 
@@ -120,7 +99,7 @@ private:
         //      domain->SetConstraintsEnabled(c);
 
         // Compute curvature at point.
-//      std::cout << "pos : " << pos[0] << ' ' << pos[1] << ' ' << pos[2] << std::endl;
+        //      std::cout << "pos : " << pos[0] << ' ' << pos[1] << ' ' << pos[2] << std::endl;
         double mc = this->GetCurvature(pos, -1);
         m_SurfaceMeanCurvature += mc;
         datalist.push_back(mc);
@@ -135,7 +114,6 @@ private:
     }
     m_SurfaceStdDevCurvature = sqrt(m_SurfaceStdDevCurvature / (n - 1));
   }
-
 };
 
-} // end namespace shapeworks
+}  // end namespace shapeworks

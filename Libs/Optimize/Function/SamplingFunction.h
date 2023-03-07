@@ -8,8 +8,12 @@
 
 namespace shapeworks {
 
+
+/// Please note that CurvatureSamplingFunction is currently being used in all cases
+/// the curvature part is generally disabled though as the Rho value is always set to 0
+
 /**
- * \class ParticleEntropyGradientFunction
+ * \class SamplingFunction
  *
  * \brief This function returns an estimate of the gradient of the entropy of a
  * particle distribution with respect to change in position of a specific

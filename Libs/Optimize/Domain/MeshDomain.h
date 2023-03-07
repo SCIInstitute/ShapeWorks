@@ -3,7 +3,6 @@
 #include <itkObjectFactory.h>
 
 #include "MeshWrapper.h"
-#include "TriMeshWrapper.h"
 #include "ParticleDomain.h"
 
 namespace shapeworks {

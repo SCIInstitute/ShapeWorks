@@ -8,7 +8,6 @@
 #include "ExternalLibs/tinyxml/tinyxml.h"
 
 #include "MeshWrapper.h"
-#include "TriMeshWrapper.h"
 #include "VtkMeshWrapper.h"
 #include <Utils/StringUtils.h>
 #include <Mesh/MeshUtils.h>

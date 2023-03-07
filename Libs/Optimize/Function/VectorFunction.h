@@ -2,7 +2,7 @@
 
 #include "itkLightObject.h"
 #include "itkObjectFactory.h"
-#include "ParticleSystem.h"
+#include "Libs/Optimize/ParticleSystem.h"
 #include "itkWeakPointer.h"
 #include "vnl/vnl_vector_fixed.h"
 
