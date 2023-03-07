@@ -12,6 +12,7 @@
 #include "itkImageRegionIteratorWithIndex.h"
 #include "itkImageRegionIterator.h"
 #include "itkDiscreteGaussianImageFilter.h"
+#include "Logging.h"
 
 namespace shapeworks
 {

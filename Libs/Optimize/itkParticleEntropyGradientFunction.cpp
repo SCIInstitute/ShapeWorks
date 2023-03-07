@@ -2,13 +2,13 @@
 
 #include "itkParticleEntropyGradientFunction.h"
 
-#include "ParticleImageDomainWithGradients.h"
-
 #include <Logging.h>
+
+#include "ParticleImageDomainWithGradients.h"
 
 namespace itk {
 
-ParticleEntropyGradientFunction::TGradientNumericType ParticleEntropyGradientFunction ::AngleCoefficient(
+ParticleEntropyGradientFunction::TGradientNumericType ParticleEntropyGradientFunction::AngleCoefficient(
     const GradientVectorType& p_i_normal, const GradientVectorType& p_j_normal) const {
   // get the cosine of the angle between the two particles' normals
   TGradientNumericType cosine =
@@ -41,7 +41,6 @@ double ParticleEntropyGradientFunction::EstimateSigma(unsigned int idx,
                                                       const shapeworks::ParticleDomain* domain,
                                                       const std::vector<double>& weights, const PointType& pos,
                                                       double initial_sigma, double precision, int& err) const {
-
   SW_LOG("base estimate sigma");
 
   const double epsilon = 1.0e-5;
