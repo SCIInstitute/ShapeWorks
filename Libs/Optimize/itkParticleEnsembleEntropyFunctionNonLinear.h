@@ -123,11 +123,11 @@ public:
   void SetOptimizingValue(bool value)
   {
     this->m_ShapeMatrix->SetOptimizingValue(value);
-    m_optimizing_check = value;
+    m_optimizing_check_ = value;
   }
   bool GetOptimizingValue(bool value)
   {
-    return m_optimizing_check;
+    return m_optimizing_check_;
   }
   
   void SetMinimumVarianceDecay(double initial_value, double final_value, double time_period)
@@ -183,7 +183,7 @@ public:
     copy->m_InverseCovMatrix = this->m_InverseCovMatrix;
     copy->m_points_mean = this->m_points_mean;
     copy->m_UseMeanEnergy = this->m_UseMeanEnergy;
-    copy->m_optimizing_check = this->m_optimizing_check;
+    copy->m_optimizing_check_ = this->m_optimizing_check_;
     return (typename ParticleVectorFunction<VDimension>::Pointer)copy;
 
   }
@@ -202,7 +202,7 @@ protected:
     m_PointsUpdateBase = std::make_shared<vnl_matrix_type>(10, 10);
     m_InverseCovMatrix = std::make_shared<vnl_matrix_type>(10, 10);
     m_points_mean = std::make_shared<vnl_matrix_type>(10, 10);
-    m_optimizing_check = false;
+    m_optimizing_check_ = false;
   }
   virtual ~ParticleEnsembleEntropyFunctionNonLinear() {}
   void operator=(const ParticleEnsembleEntropyFunctionNonLinear &);
@@ -221,7 +221,7 @@ protected:
   int m_RecomputeCovarianceInterval;	
   int m_Counter;	
   bool m_UseMeanEnergy;	
-  bool m_optimizing_check;	
+  bool m_optimizing_check_;	
 
   std::shared_ptr<vnl_matrix_type> m_points_mean; // 3Nx3N - used for energy computation	
   std::shared_ptr<vnl_matrix_type> m_InverseCovMatrix; //3NxM - used for energy computation	

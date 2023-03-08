@@ -184,7 +184,7 @@ ParticleEnsembleEntropyFunctionNonLinear<VDimension>
     unsigned int dM = m_ShapeMatrix->rows();
     double log_det_jacobian_val = 0.0;
     double det_jacobian_val = 0.0;
-    try{
+    {try{
         torch::Tensor shape_vec_new_tensor = torch::from_blob(shape_vec_new.data_block(), {dM});
         std:: cout << "Gradient 1a" <<  std::endl;
         torch::Tensor jacobian_matrix = torch::zeros({dM, dM}, this->m_ShapeMatrix->GetDevice());
@@ -196,13 +196,13 @@ ParticleEnsembleEntropyFunctionNonLinear<VDimension>
         p_z_0 = p_z_0.view({1, dM});
         std:: cout << "Gradient 5a" <<  std::endl;
         det_jacobian_val = std::exp(log_det_jacobian_val);
-        std::cout << "det jacobian val is " << det_jacobian_val <<  "log det is " << log_det_jacobian_val<< std::endl;
+        std::cout << "det jacobian val is " << det_jacobian_val <<  " log det is " << log_det_jacobian_val<< std::endl;
         torch::Tensor p_z = ((det_jacobian_val * log_det_jacobian_val) * p_z_0).to(this->m_ShapeMatrix->GetDevice());
         std:: cout << "Gradient 6a" <<  std::endl;
         vnl_matrix cur_shape_grad = m_PointsUpdateBase->get_n_columns(d / DomainsPerShape, 1);
         torch::Tensor dH_dz0 = torch::from_blob(cur_shape_grad.data_block(), {1,dM}).to(this->m_ShapeMatrix->GetDevice());
         std:: cout << "Gradient 7a" <<  std::endl;
-        torch::Tensor dH_dz = torch::linalg_matmul(dH_dz0, jacobian_matrix) + (log_det_jacobian_val * p_z);
+        torch::Tensor dH_dz = torch::linalg_matmul(dH_dz0, jacobian_matrix) - p_z;
         std:: cout << "Gradient 7b" <<  std::endl;
         dH_dz = dH_dz.to(torch::TensorOptions(torch::kCPU).dtype(at::kDouble)); 
         std:: cout << "Gradient 8" <<  dH_dz.sizes() << std::endl;
@@ -217,8 +217,8 @@ ParticleEnsembleEntropyFunctionNonLinear<VDimension>
     catch (const c10::Error& e) {
         std::cout << "Errors in Libtorch operations while Gradient Set | " << e.what() << "\n";
         std::exit(EXIT_FAILURE);
-  }
-    c10::cuda::CUDACachingAllocator::emptyCache();
+  }}
+//    c10::cuda::CUDACachingAllocator::emptyCache();
 
     return system->TransformVector(gradE,
                                    system->GetInversePrefixTransform(d) *

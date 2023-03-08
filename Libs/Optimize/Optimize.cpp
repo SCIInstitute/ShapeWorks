@@ -85,13 +85,13 @@ Optimize::Optimize() {
 //---------------------------------------------------------------------------
 bool Optimize::Run() {
   // control number of threads
-  int num_threads = tbb::info::default_concurrency();
-  const char* num_threads_env = getenv("TBB_NUM_THREADS");
-  if (num_threads_env) {
-    num_threads = std::max(1, atoi(num_threads_env));
-  }
-  // int num_threads = 1;
-  // std:: cout << "Setting number of threads to "<< num_threads << std::endl;
+  // int num_threads = tbb::info::default_concurrency();
+  // const char* num_threads_env = getenv("TBB_NUM_THREADS");
+  // if (num_threads_env) {
+  //   num_threads = std::max(1, atoi(num_threads_env));
+  // }
+  int num_threads = 1;
+  std:: cout << "Setting number of threads to "<< num_threads << std::endl;
   
   std::cerr << "ShapeWorks: TBB using " << num_threads << " threads\n";
   tbb::global_control c(tbb::global_control::max_allowed_parallelism, num_threads);

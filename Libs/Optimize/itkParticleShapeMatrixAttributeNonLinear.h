@@ -149,7 +149,7 @@ public:
         std::cerr << "Error in LibTorch Operations in Particle Set Callback | " << e.what() << "\n";
          std::exit(EXIT_FAILURE);
       }
-      c10::cuda::CUDACachingAllocator::emptyCache();
+      // c10::cuda::CUDACachingAllocator::emptyCache();
     }
   }
   
@@ -183,22 +183,102 @@ public:
   
   virtual void BeforeIteration()
   {
-    std::cout << "Training Update counter value = " << m_UpdateCounter << std::endl;
-    m_UpdateCounter ++;
-    if (m_UpdateCounter >= m_NonLinearTrainingInterval)
-      {
-        m_UpdateCounter = 0;
-        if (this->m_inv_net->GetModelInitialized())
-        {
+    std::cout << "Before Iteration... \n Training Update counter value = " << m_UpdateCounter << std::endl;
+    
+    std::cout << "validation check" << std::endl;
+      int R = 3;
+      int C = 4;
+      torch::Tensor ten = torch::rand({R, C}).to(torch::kDouble);
+      std::cout << "Tensor double to vnl " << std::endl;
+      double* ten_data = ten.data_ptr<double>();
+      auto options = torch::TensorOptions().dtype(torch::kDouble);
 
-          vnl_matrix<T> tmp(*this); // copy existing  matrix
-          unsigned int dM = this->rows();
-          torch::Tensor sm;
-          try{ sm = torch::from_blob(tmp.data_block(), {dM,dM});} catch (const c10::Error& e){ std::cerr << "Errors in SM init | " << e.what() << "\n";  std::exit(EXIT_FAILURE); } 
-          this->m_inv_net->TrainModel(sm);
+      vnl_matrix<double> vm(ten_data, R, C);
+      std::cout << "Tensor: " << std::endl;
+      for (auto i = 0; i < R; i++){
+        for (auto j=0; j < C; ++j)
+        {
+          std::cout << ten[i][j].item<double>() << " ";
         }
-        c10::cuda::CUDACachingAllocator::emptyCache();
+        std::cout << "\n";
+      }  
+      std::cout << "vnl size = R C" << vm.rows() << ", " << vm.cols() << std::endl;
+      for (auto i = 0; i < R; i++){
+        for (auto j=0; j < C; ++j)
+        {
+          std::cout << vm.get(i, j) << " ";
+        }
+        std::cout << "\n";
       }
+      std::cout << "DONE!!!" << std::endl;
+    
+      std::cout << "vnl toooooo TENSORRR " << std::endl;
+      auto vmar = vm.data_array();
+      torch::Tensor ten2 = torch::from_blob(vmar, {R, C}, options).clone();
+      std::cout << "Tensor 2: " << std::endl;
+      for (auto i = 0; i < R; i++){
+        for (auto j=0; j < C; ++j)
+        {
+          std::cout << ten2[i][j].item<double>() << " ";
+        }
+        std::cout << "\n";
+      }  
+
+      std::cout << "vm block 2: " << std::endl;
+      for (auto i = 0; i < R; i++){
+        for (auto j=0; j < C; ++j)
+        {
+          std::cout << vmar[i][j] << " ";
+        }
+        std::cout << "\n";
+      }  
+
+
+          
+      std::cout << "vnl to tensor Transposeeee " << std::endl;
+      torch::Tensor ten3 = torch::from_blob(vm.data_block(), {C, R}, options).clone();
+      std::cout << "Tensor 3: " << std::endl;
+      for (auto i = 0; i < C; i++){
+        for (auto j=0; j < R; ++j)
+        {
+          std::cout << ten3[i][j].item<double>() << " ";
+        }
+        std::cout << "\n";
+      }  
+
+
+    m_UpdateCounter ++;
+    {
+    torch::Tensor sm;
+    vnl_matrix<T> tmp(*this); // copy existing  matrix
+    unsigned int dM = this->rows();
+    unsigned int N = this->cols();
+    std::cout << "dM(R) = " << dM << " N(C) = " << N << std::endl;
+    tmp = tmp.transpose();
+    std::cout << "After transpose dM(C) = " << tmp.cols() << " N(R) = " << tmp.rows() << std::endl;
+    
+    try{ auto x = torch::from_blob(tmp.data_array(), {N, dM});
+        std::cout << "casting to float" << std::endl;
+        sm = x.to(torch::kFloat);
+      } catch (const c10::Error& e){ std::cerr << "Errors in SM init | " << e.what() << "\n";  std::exit(EXIT_FAILURE); } 
+    for (auto x = 0; x < 7; ++x){
+      std::cout <<"See Log " << std::endl;
+    }
+
+    // torch::Tensor z0_particles = this->m_inv_net->ForwardPass(sm);
+    // auto z0_data =z0_particles.data_ptr<double>();
+    // m_BaseShapeMatrix->set(z0_data);
+    // std::cout << "Base Particles Updated" << std::endl;
+    // if (m_UpdateCounter >= m_NonLinearTrainingInterval)
+    //   {
+    //     m_UpdateCounter = 0;
+    //     if (this->m_inv_net->GetModelInitialized())
+    //     {
+    //       this->m_inv_net->TrainModel(sm);
+    //     }
+    //   }
+    }
+    // c10::cuda::CUDACachingAllocator::emptyCache();
   }
 
   void SetNonLinearTrainingInterval( int i)
@@ -216,7 +296,7 @@ public:
 
   void SetBaseDistParams( std::shared_ptr<vnl_matrix<double>>& vnl_mean, std::shared_ptr<vnl_matrix<double>>& vnl_cov)
   {
-    try
+    {try
     {
       unsigned int dM = vnl_cov->rows();
       torch::Tensor mean = torch::from_blob(vnl_mean->data_block(), {dM});
@@ -232,8 +312,8 @@ public:
       std::cerr << "Errors in Libtorch operations while updating base distribution params | " << e.what() << "\n";
        std::exit(EXIT_FAILURE);
     }
-    c10::cuda::CUDACachingAllocator::emptyCache();
-
+    }
+    // c10::cuda::CUDACachingAllocator::emptyCache();
   }
 
   void DoForwardPass(torch::Tensor& input_tensor, torch::Tensor& jacobian_matrix,  double& log_det_jacobian_val, torch::Tensor& p_z_0_val)

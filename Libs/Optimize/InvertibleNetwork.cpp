@@ -145,22 +145,22 @@ namespace InvertibleNet
     {
         try
         {
-            std::cout << "FwdPass 1 " << std::endl;
+            // std::cout << "FwdPass 1 " << std::endl;
             torch::NoGradGuard no_grad;
             this->m_module.eval();
             std::vector<torch::jit::IValue> inputs;
             inputs.push_back(input_tensor.to(this->m_device));
             auto outputs = this->m_module.forward(inputs).toTuple();
-            std::cout << "FwdPass 2 " << std::endl;
+            // std::cout << "FwdPass 2 " << std::endl;
             torch::Tensor z0_particles = outputs->elements()[0].toTensor();
-            std::cout << "FwdPass 3 " << std::endl;
+            // std::cout << "FwdPass 3 " << std::endl;
             z0_particles = z0_particles.to(torch::TensorOptions(torch::kCPU).dtype(at::kDouble)); 
-            std::cout << "FwdPass 4 " << std::endl;
+            // std::cout << "FwdPass 4 " << std::endl;
             return z0_particles;
         }
         catch (const c10::Error& e) {
-            std::cerr << "Error in Forward Pass during Particle Set | " << e.what(); 
-             std::exit(EXIT_FAILURE);
+            std::cerr << "Error in General Forward Pass | " << e.what(); 
+            std::exit(EXIT_FAILURE);
         }
     }
 
@@ -170,34 +170,38 @@ namespace InvertibleNet
         try
         {
             this->m_module.eval();
-            std::cout << "Forward Pass 1 " << std::endl;
+            // std::cout << "Forward Pass 1 " << std::endl;
             unsigned int dM = input_tensor.sizes()[0];
             torch::Tensor input_t = input_tensor.repeat({dM, 1}); // for jacobian
-            std::cout << "Forward Pass 1 " << std::endl;
+            // std::cout << "Forward Pass 1 " << std::endl;
             input_t.set_requires_grad(true);
-            std::cout << "Forward Pass 2 " << std::endl;
+            // std::cout << "Forward Pass 2 " << std::endl;
             std::vector<torch::jit::IValue> inputs;
             inputs.push_back(input_t.to(this->m_device));
             auto outputs = this->m_module.get_method("log_prob")(inputs).toTuple();
-            std::cout << "Forward Pass 3 " << std::endl;
+            // std::cout << "Forward Pass 3 " << std::endl;
 
             torch::Tensor z0_particles_tensor = outputs->elements()[0].toTensor();
             torch::Tensor ones = torch::ones({dM, dM}, this->m_device);
-            std::cout << "Forward Pass 4 " << std::endl;
+            // std::cout << "Forward Pass 4 " << std::endl;
             z0_particles_tensor.backward(ones);
-            std::cout << "Forward Pass 5 " << std::endl;
+            // std::cout << "Forward Pass 5 " << std::endl;
             jacobian_matrix = input_t.grad();
-            std::cout << "Forward Pass 6 " << std::endl;
+            // std::cout << "Forward Pass 6 " << std::endl;
 
             torch::Tensor log_det_jacobian_tensor = outputs->elements()[1].toTensor();
-            std::cout << "Forward Pass 7 " << std::endl;
+            // std::cout << "Forward Pass 7 " << std::endl;
             log_det_jacobian_tensor = log_det_jacobian_tensor.to(torch::TensorOptions(torch::kCPU).dtype(at::kDouble)); 
-            log_det_jacobian_val = log_det_jacobian_tensor.index({1}).sum().item<double>();
-            std::cout << "Forward Pass 8 " << std::endl;
+            std::cout << "Forward Pass 8 log_det_jacobian_tensor size =  " << log_det_jacobian_tensor.sizes() <<  std::endl;
+            log_det_jacobian_val = log_det_jacobian_tensor[0].item<double>();
 
-            auto all_probs = this->m_module.get_method("base_dist_log_prob")(inputs).toTensor();
-            p_z_0 = all_probs[0].view({1, dM});
-            std::cout << "Forward Pass 9 " << std::endl;
+            std::vector<torch::jit::IValue> inputs_p;
+            inputs_p.push_back(z0_particles_tensor[0].to(this->m_device));
+            auto all_probs = this->m_module.get_method("base_dist_log_prob")(inputs_p).toTensor();
+            p_z_0 = all_probs.view({1, dM});
+            p_z_0 = p_z_0.exp();
+            auto prob_is_nan = at::isnan(p_z_0).any().item<bool>();
+            std::cout << "Forward Pass and Nan Present " << prob_is_nan << std::endl;
 
         }
         catch (const c10::Error& e) {
