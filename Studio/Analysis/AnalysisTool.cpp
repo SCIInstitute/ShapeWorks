@@ -1080,6 +1080,11 @@ std::string AnalysisTool::get_display_feature_map() {
       group_pvalue_job_->get_group_pvalues().rows() > 0) {
     return "p_values";
   }
+  if (ui_->network_analysis_button->isChecked() && network_analysis_job_ &&
+      network_analysis_job_->get_tvalues().rows() > 0) {
+    return "t_values";
+  }
+
   return feature_map_;
 }
 
