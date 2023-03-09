@@ -29,7 +29,7 @@ def Run_Pipeline(args):
     the portal and the directory to save output from the use case in.
     This data is comprised of femur meshes and corresponding hip CT scans.
     """
-    dataset_name = "femur"
+    dataset_name =  "deep_ssm_femur"
     output_directory = os.getcwd() + "/Output/deep_ssm/"
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
@@ -39,7 +39,9 @@ def Run_Pipeline(args):
         os.environ['OMP_NUM_THREADS'] = "1"
     # If running a tiny_test, then download subset of the data
     if args.tiny_test:
-        sw.data.download_subset(args.use_case, dataset_name, output_directory)
+        dataset_name =  "deep_ssm_femur_tiny_test"
+        sw.download_and_unzip_dataset(dataset_name, output_directory)
+        dataset_name = "femur"
         mesh_files = sorted(glob.glob(output_directory +
                             dataset_name + "/meshes/*.ply"))[:5]
         image_files = sorted(glob.glob(output_directory +
@@ -47,7 +49,8 @@ def Run_Pipeline(args):
         plane_files = sorted(glob.glob(output_directory +
                             dataset_name + "/constraints/*.json"))[:5]
     else:
-        sw.data.download_and_unzip_dataset(dataset_name, output_directory)
+        sw.download_and_unzip_dataset(dataset_name, output_directory)
+        dataset_name = "femur"
         mesh_files = sorted(glob.glob(output_directory +
                             dataset_name + "/meshes/*.ply"))
         image_files = sorted(glob.glob(output_directory + 

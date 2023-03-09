@@ -34,15 +34,17 @@ def Run_Pipeline(args):
 
     # If running a tiny_test, then download subset of the data
     if args.tiny_test:
+        dataset_name = "left_atrium_tiny_test"
         args.use_single_scale = 1
-        sw.data.download_subset(args.use_case, dataset_name, output_directory)
-
+        # sw.data.download_subset(args.use_case, dataset_name, output_directory)
+        sw.download_and_unzip_dataset(dataset_name, output_directory)
+        dataset_name = "left_atrium"
         file_list = sorted(
             glob.glob(output_directory + dataset_name + "/segmentations/*.nrrd"))[:3]
 
     # Else download the entire dataset
     else:
-        sw.data.download_and_unzip_dataset(dataset_name, output_directory)
+        sw.download_and_unzip_dataset(dataset_name, output_directory)
         file_list = sorted(
             glob.glob(output_directory + dataset_name + "/segmentations/*.nrrd"))
 
@@ -154,14 +156,12 @@ def Run_Pipeline(args):
     http://sciinstitute.github.io/ShapeWorks/workflow/optimize.html
     """
 
-    # Make directory to save optimization output
-    point_dir = output_directory + 'shape_models/' + args.option_set
+    point_dir = output_directory + args.option_set
     if not os.path.exists(point_dir):
         os.makedirs(point_dir)
 
-
     # Create spreadsheet
-    project_location = output_directory + "shape_models/"
+    project_location = output_directory
     subjects = []
     number_domains = 1
     for i in range(len(shape_seg_list)):
@@ -213,7 +213,7 @@ def Run_Pipeline(args):
     for key in parameter_dictionary:
         parameters.set(key, sw.Variant([parameter_dictionary[key]]))
     project.set_parameters("optimize", parameters)
-    spreadsheet_file = output_directory + "shape_models/left_atrium_" + args.option_set + ".xlsx"
+    spreadsheet_file = output_directory + "left_atrium_" + args.option_set + ".swproj"
     project.save(spreadsheet_file)
 
     # Run optimization
