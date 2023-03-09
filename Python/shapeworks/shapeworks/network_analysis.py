@@ -243,14 +243,12 @@ class NetworkAnalysis:
         kdtree = scipy.spatial.KDTree(mesh_points)
         dist, pts_index = kdtree.query(mean_shape[particles, :])
 
-        print("got here3", file=sys.stderr)
 
         # In[6]:
 
         pts_index.mean()
 
         # In[7]:
-        print("got here4", file=sys.stderr)
 
         result_path = "results/"
         # variables for SPM
