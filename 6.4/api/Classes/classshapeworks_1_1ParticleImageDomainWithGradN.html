@@ -2862,8 +2862,8 @@
 </tbody>
 </table>
 <h2 id="detailed-description">Detailed Description</h2>
-<div class="highlight"><pre><span></span><code><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">T</span><span class="w"> </span><span class="o">&gt;</span><span class="w"></span>
-<span class="k">class</span><span class="w"> </span><span class="nc">shapeworks</span><span class="o">::</span><span class="n">ParticleImageDomainWithGradN</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">T</span><span class="w"> </span><span class="o">&gt;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">shapeworks</span><span class="o">::</span><span class="n">ParticleImageDomainWithGradN</span><span class="p">;</span>
 </code></pre></div>
 <p><strong>See</strong>: </p>
 <ul>
@@ -2874,65 +2874,65 @@
 <p>An image domain that extends <a href="classshapeworks_1_1ParticleImageDomainWithGradients.html">ParticleImageDomainWithGradients</a> with gradient of normals information.</p>
 <h2 id="public-types-documentation">Public Types Documentation</h2>
 <h3 id="typedef-superclass">typedef Superclass</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleImageDomainWithGradients</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ParticleImageDomainWithGradN</span><span class="o">&lt;</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Superclass</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleImageDomainWithGradients</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ParticleImageDomainWithGradN</span><span class="o">&lt;</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Superclass</span><span class="p">;</span>
 </code></pre></div>
 <p>Standard class typedefs </p>
 <h3 id="using-pointer">using Pointer</h3>
-<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ParticleImageDomainWithGradN</span><span class="o">&lt;</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ParticleImageDomainWithGradN</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ParticleImageDomainWithGradN</span><span class="o">&lt;</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ParticleImageDomainWithGradN</span><span class="o">&gt;</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="typedef-pointtype">typedef PointType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">PointType</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ParticleImageDomainWithGradN</span><span class="o">&lt;</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">PointType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">PointType</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ParticleImageDomainWithGradN</span><span class="o">&lt;</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">PointType</span><span class="p">;</span>
 </code></pre></div>
 <p>Point type of the domain (not necessarily of the image). </p>
 <h3 id="typedef-imagetype">typedef ImageType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">ImageType</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ParticleImageDomainWithGradN</span><span class="o">&lt;</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">ImageType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">ImageType</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ParticleImageDomainWithGradN</span><span class="o">&lt;</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">ImageType</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="typedef-gradntype">typedef GradNType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">GradNType</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ParticleImageDomainWithGradN</span><span class="o">&lt;</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">GradNType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">GradNType</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ParticleImageDomainWithGradN</span><span class="o">&lt;</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">GradNType</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="typedef-vnlmatrixtype">typedef VnlMatrixType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">GradNType</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ParticleImageDomainWithGradN</span><span class="o">&lt;</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">VnlMatrixType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">GradNType</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ParticleImageDomainWithGradN</span><span class="o">&lt;</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">VnlMatrixType</span><span class="p">;</span>
 </code></pre></div>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-setimage">function SetImage</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetImage</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">ImageType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">I</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">narrow_band</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetImage</span><span class="p">(</span>
+<span class="w">    </span><span class="n">ImageType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">I</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">narrow_band</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Set/Get the itk::Image specifying the particle domain. The set method modifies the parent class LowerBound and UpperBound. </p>
 <h3 id="function-samplegradnatpoint">function SampleGradNAtPoint</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">GradNType</span><span class="w"> </span><span class="n">SampleGradNAtPoint</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">p</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">GradNType</span><span class="w"> </span><span class="n">SampleGradNAtPoint</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">p</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span>
 </code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1ParticleDomain.html#function-samplegradnatpoint">shapeworks::ParticleDomain::SampleGradNAtPoint</a></p>
 <p>Sample the GradN at a point. This method performs no bounds checking. To check bounds, use IsInsideBuffer. SampleGradN returns a vnl matrix of size VDimension x VDimension. </p>
 <h3 id="function-deletepartialderivativeimages">function DeletePartialDerivativeImages</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">DeletePartialDerivativeImages</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">DeletePartialDerivativeImages</span><span class="p">()</span><span class="w"> </span><span class="k">override</span>
 </code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1ParticleDomain.html#function-deletepartialderivativeimages">shapeworks::ParticleDomain::DeletePartialDerivativeImages</a></p>
 <h3 id="function-deleteimages">function DeleteImages</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">DeleteImages</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">DeleteImages</span><span class="p">()</span><span class="w"> </span><span class="k">override</span>
 </code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1ParticleImageDomainWithGradients.html#function-deleteimages">shapeworks::ParticleImageDomainWithGradients::DeleteImages</a></p>
 <p>Used when a domain is fixed. </p>
 <h2 id="protected-functions-documentation">Protected Functions Documentation</h2>
 <h3 id="function-particleimagedomainwithgradn">function ParticleImageDomainWithGradN</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">ParticleImageDomainWithGradN</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">ParticleImageDomainWithGradN</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-particleimagedomainwithgradn_1">function ~ParticleImageDomainWithGradN</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">ParticleImageDomainWithGradN</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">ParticleImageDomainWithGradN</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-printself">function PrintSelf</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">PrintSelf</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">os</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">itk</span><span class="o">::</span><span class="n">Indent</span><span class="w"> </span><span class="n">indent</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">PrintSelf</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">os</span><span class="p">,</span>
+<span class="w">    </span><span class="n">itk</span><span class="o">::</span><span class="n">Indent</span><span class="w"> </span><span class="n">indent</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:15 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:22 +0000</p>
 
               
             </article>

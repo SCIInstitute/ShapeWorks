@@ -2918,278 +2918,278 @@
 </tbody>
 </table>
 <h2 id="detailed-description">Detailed Description</h2>
-<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">shapeworks</span><span class="o">::</span><span class="n">Visualizer</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">shapeworks</span><span class="o">::</span><span class="n">Visualizer</span><span class="p">;</span>
 </code></pre></div>
 <p>Controls display of objects in viewers. </p>
 <p>The <a href="classshapeworks_1_1Visualizer.html">Visualizer</a> class maintains state and control over viewer properties. Additionally, it performs all shape-based statistical functions. </p>
 <h2 id="public-slots-documentation">Public Slots Documentation</h2>
 <h3 id="slot-update_viewer_properties">slot update_viewer_properties</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_viewer_properties</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_viewer_properties</span><span class="p">()</span>
 </code></pre></div>
 <p>update viewer properties (e.g. glyph size, quality, etc) </p>
 <h3 id="slot-handle_feature_range_changed">slot handle_feature_range_changed</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_feature_range_changed</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_feature_range_changed</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="slot-handle_image_slice_settings_changed">slot handle_image_slice_settings_changed</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_image_slice_settings_changed</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_image_slice_settings_changed</span><span class="p">()</span>
 </code></pre></div>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-visualizer">function Visualizer</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Visualizer</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">Preferences</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">prefs</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">Visualizer</span><span class="p">(</span>
+<span class="w">    </span><span class="n">Preferences</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">prefs</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-visualizer_1">function ~Visualizer</h3>
-<div class="highlight"><pre><span></span><code><span class="o">~</span><span class="n">Visualizer</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="o">~</span><span class="n">Visualizer</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-set_lightbox">function set_lightbox</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_lightbox</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">LightboxHandle</span><span class="w"> </span><span class="n">lightbox</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_lightbox</span><span class="p">(</span>
+<span class="w">    </span><span class="n">LightboxHandle</span><span class="w"> </span><span class="n">lightbox</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>set the lightbox </p>
 <h3 id="function-set_session">function set_session</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_session</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">SessionHandle</span><span class="w"> </span><span class="n">session</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_session</span><span class="p">(</span>
+<span class="w">    </span><span class="n">SessionHandle</span><span class="w"> </span><span class="n">session</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>set the session </p>
 <h3 id="function-set_center">function set_center</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_center</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">center</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_center</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">center</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>turn automatic centering on/off </p>
 <h3 id="function-get_center">function get_center</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_center</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_center</span><span class="p">()</span>
 </code></pre></div>
 <p>get centering on/off </p>
 <h3 id="function-set_alignment_domain">function set_alignment_domain</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_alignment_domain</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_alignment_domain</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>set the alignment domain </p>
 <h3 id="function-get_alignment_domain">function get_alignment_domain</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_alignment_domain</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_alignment_domain</span><span class="p">()</span>
 </code></pre></div>
 <p>get the current alignment domain </p>
 <h3 id="function-set_show_glyphs">function set_show_glyphs</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_show_glyphs</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">show</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_show_glyphs</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">show</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>turn on/off glyph display </p>
 <h3 id="function-set_show_surface">function set_show_surface</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_show_surface</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">show</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_show_surface</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">show</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>turn on/off surface display </p>
 <h3 id="function-display_samples">function display_samples</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">display_samples</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">display_samples</span><span class="p">()</span>
 </code></pre></div>
 <p>update the display using the current settings </p>
 <h3 id="function-update_samples">function update_samples</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_samples</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_samples</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-update_landmarks">function update_landmarks</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_landmarks</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_landmarks</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-update_planes">function update_planes</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_planes</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_planes</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-update_ffc_mode">function update_ffc_mode</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_ffc_mode</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_ffc_mode</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-display_sample">function display_sample</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">display_sample</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">display_sample</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-display_shape">function display_shape</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">display_shape</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">ShapeHandle</span><span class="w"> </span><span class="n">shape</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">display_shape</span><span class="p">(</span>
+<span class="w">    </span><span class="n">ShapeHandle</span><span class="w"> </span><span class="n">shape</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-display_shapes">function display_shapes</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">display_shapes</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">ShapeList</span><span class="w"> </span><span class="n">shapes</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">display_shapes</span><span class="p">(</span>
+<span class="w">    </span><span class="n">ShapeList</span><span class="w"> </span><span class="n">shapes</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-set_selected_point_one">function set_selected_point_one</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_selected_point_one</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_selected_point_one</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">id</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-set_selected_point_two">function set_selected_point_two</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_selected_point_two</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_selected_point_two</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">id</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-set_mean">function set_mean</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_mean</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">mean</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_mean</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">mean</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-set_mean_shape">function set_mean_shape</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_mean_shape</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">ShapeHandle</span><span class="w"> </span><span class="n">mean_shape</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_mean_shape</span><span class="p">(</span>
+<span class="w">    </span><span class="n">ShapeHandle</span><span class="w"> </span><span class="n">mean_shape</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-get_mean_shape">function get_mean_shape</h3>
-<div class="highlight"><pre><span></span><code><span class="n">ShapeHandle</span><span class="w"> </span><span class="n">get_mean_shape</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">ShapeHandle</span><span class="w"> </span><span class="n">get_mean_shape</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-reset_camera">function reset_camera</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">reset_camera</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">reset_camera</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-update_lut">function update_lut</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_lut</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_lut</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-get_current_shape">function get_current_shape</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Particles</span><span class="w"> </span><span class="n">get_current_shape</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">Particles</span><span class="w"> </span><span class="n">get_current_shape</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-get_current_particle_scalars">function get_current_particle_scalars</h3>
-<div class="highlight"><pre><span></span><code><span class="n">vtkFloatArray</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">get_current_particle_scalars</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">vtkFloatArray</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">get_current_particle_scalars</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-get_current_particle_poly_data">function get_current_particle_poly_data</h3>
-<div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_current_particle_poly_data</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_current_particle_poly_data</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-handle_new_mesh">function handle_new_mesh</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_new_mesh</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_new_mesh</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-get_current_mesh">function get_current_mesh</h3>
-<div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_current_mesh</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">index</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_current_mesh</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">index</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-get_current_meshes_transformed">function get_current_meshes_transformed</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_current_meshes_transformed</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">index</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_current_meshes_transformed</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">index</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-get_feature_map">function get_feature_map</h3>
-<div class="highlight"><pre><span></span><code><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">get_feature_map</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">get_feature_map</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>Get the currently selected feature map. </p>
 <h3 id="function-set_uniform_feature_range">function set_uniform_feature_range</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_uniform_feature_range</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_uniform_feature_range</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Set if we are using a uniform feature range. </p>
 <h3 id="function-get_uniform_feature_range">function get_uniform_feature_range</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_uniform_feature_range</span><span class="p">(</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_uniform_feature_range</span><span class="p">(</span>
 <span class="w">    </span><span class="kt">void</span><span class="w"> </span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Return if we are using a uniform feature range. </p>
 <h3 id="function-set_feature_map">function set_feature_map</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_feature_map</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">feature_map</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_feature_map</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">feature_map</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Set the currently selected feature map. </p>
 <h3 id="function-clear_viewers">function clear_viewers</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">clear_viewers</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">clear_viewers</span><span class="p">()</span>
 </code></pre></div>
 <p>clear out the viewers </p>
 <h3 id="function-reset_feature_range">function reset_feature_range</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">reset_feature_range</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">reset_feature_range</span><span class="p">()</span>
 </code></pre></div>
 <p>Reset the feature range (e.g. for a new feature) </p>
 <h3 id="function-get_feature_range">function get_feature_range</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">get_feature_range</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">get_feature_range</span><span class="p">()</span>
 </code></pre></div>
 <p>Get the current feature range. </p>
 <h3 id="function-get_feature_raw_range">function get_feature_raw_range</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">get_feature_raw_range</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">get_feature_raw_range</span><span class="p">()</span>
 </code></pre></div>
 <p>Get the current raw feature range. </p>
 <h3 id="function-get_feature_range_valid">function get_feature_range_valid</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_feature_range_valid</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_feature_range_valid</span><span class="p">()</span>
 </code></pre></div>
 <p>Return if the feature range is valid or not. </p>
 <h3 id="function-update_feature_range">function update_feature_range</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_feature_range</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">range</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_feature_range</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">range</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Update the feature range with a given range. </p>
 <h3 id="function-update_feature_range_1">function update_feature_range</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_feature_range</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">min</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">max</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_feature_range</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">min</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">max</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Update the feature range with a given range. </p>
 <h3 id="function-get_transform">function get_transform</h3>
-<div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkTransform</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_transform</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Shape</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">shape</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">alignment_domain</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkTransform</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_transform</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Shape</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">shape</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">alignment_domain</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Request the transform for a given shape and domain. </p>
 <h3 id="function-get_transform_1">function get_transform</h3>
-<div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkTransform</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_transform</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Shape</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">shape</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">DisplayMode</span><span class="w"> </span><span class="n">display_mode</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">alignment_domain</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkTransform</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_transform</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Shape</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">shape</span><span class="p">,</span>
+<span class="w">    </span><span class="n">DisplayMode</span><span class="w"> </span><span class="n">display_mode</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">alignment_domain</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Request the transform for a given shape and domain and display mode. </p>
 <h3 id="function-set_opacities">function set_opacities</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_opacities</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">opacities</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_opacities</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">opacities</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Set domain opacities. </p>
 <h3 id="function-get_opacities">function get_opacities</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_opacities</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_opacities</span><span class="p">()</span>
 </code></pre></div>
 <p>Get domain opacities. </p>
 <h3 id="function-set_domain_particle_visibilities">function set_domain_particle_visibilities</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_domain_particle_visibilities</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">visibilities</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_domain_particle_visibilities</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">visibilities</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Set the per-domain particle visibilities. </p>
 <h3 id="function-get_domain_particle_visibilities">function get_domain_particle_visibilities</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_domain_particle_visibilities</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_domain_particle_visibilities</span><span class="p">()</span>
 </code></pre></div>
 <p>Get the per-domain particle visibilities. </p>
 <h3 id="function-get_current_glyph_size">function get_current_glyph_size</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">get_current_glyph_size</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">get_current_glyph_size</span><span class="p">()</span>
 </code></pre></div>
 <p>Get the current glyph size. </p>
 <h3 id="function-handle_ctrl_click">function handle_ctrl_click</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_ctrl_click</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">PickResult</span><span class="w"> </span><span class="n">result</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_ctrl_click</span><span class="p">(</span>
+<span class="w">    </span><span class="n">PickResult</span><span class="w"> </span><span class="n">result</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Handle ctrl click. </p>
 <h3 id="function-redraw">function redraw</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">redraw</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">redraw</span><span class="p">()</span>
 </code></pre></div>
 <p>Redraw renderers. </p>
 <h3 id="function-export_to_pixmap">function export_to_pixmap</h3>
-<div class="highlight"><pre><span></span><code><span class="n">QPixmap</span><span class="w"> </span><span class="n">export_to_pixmap</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">QSize</span><span class="w"> </span><span class="n">size</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">transparent_background</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">show_orientation_marker</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">show_color_scale</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ready</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">QPixmap</span><span class="w"> </span><span class="n">export_to_pixmap</span><span class="p">(</span>
+<span class="w">    </span><span class="n">QSize</span><span class="w"> </span><span class="n">size</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">transparent_background</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">show_orientation_marker</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">show_color_scale</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ready</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Export render window to pixmap. </p>
 <h3 id="function-get_render_size">function get_render_size</h3>
-<div class="highlight"><pre><span></span><code><span class="n">QSize</span><span class="w"> </span><span class="n">get_render_size</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">QSize</span><span class="w"> </span><span class="n">get_render_size</span><span class="p">()</span>
 </code></pre></div>
 <p>Return render window size. </p>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:15 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:22 +0000</p>
 
               
             </article>

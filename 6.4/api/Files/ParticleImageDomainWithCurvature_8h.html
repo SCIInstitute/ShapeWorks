@@ -2286,130 +2286,130 @@
 <span class="cm">     This software is distributed WITHOUT ANY WARRANTY; without even </span>
 <span class="cm">     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR </span>
 <span class="cm">     PURPOSE.  See the above copyright notices for more information.</span>
-<span class="cm">=========================================================================*/</span><span class="w"></span>
+<span class="cm">=========================================================================*/</span>
 <span class="cp">#pragma once</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ParticleImageDomainWithGradN.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkImageRegionIteratorWithIndex.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkImageRegionIterator.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkDiscreteGaussianImageFilter.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ParticleImageDomainWithGradN.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkImageRegionIteratorWithIndex.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkImageRegionIterator.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkDiscreteGaussianImageFilter.h&quot;</span>
 
-<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span><span class="w"></span>
-<span class="k">class</span><span class="w"> </span><span class="nc">ParticleImageDomainWithCurvature</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">ParticleImageDomainWithGradN</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="k">public</span><span class="o">:</span><span class="w"></span>
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleImageDomainWithGradN</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Superclass</span><span class="p">;</span><span class="w"></span>
+<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span>
+<span class="p">{</span>
+<span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ParticleImageDomainWithCurvature</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">ParticleImageDomainWithGradN</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleImageDomainWithGradN</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Superclass</span><span class="p">;</span>
 
 <span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">Superclass</span><span class="o">::</span><span class="n">PointType</span><span class="w"> </span><span class="n">PointType</span><span class="p">;</span><span class="w">  </span>
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">Superclass</span><span class="o">::</span><span class="n">ImageType</span><span class="w"> </span><span class="n">ImageType</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">Superclass</span><span class="o">::</span><span class="n">VnlMatrixType</span><span class="w"> </span><span class="n">VnlMatrixType</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">Superclass</span><span class="o">::</span><span class="n">ImageType</span><span class="w"> </span><span class="n">ImageType</span><span class="p">;</span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">Superclass</span><span class="o">::</span><span class="n">VnlMatrixType</span><span class="w"> </span><span class="n">VnlMatrixType</span><span class="p">;</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetImage</span><span class="p">(</span><span class="n">ImageType</span><span class="w"> </span><span class="o">*</span><span class="n">I</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">narrow_band</span><span class="p">)</span><span class="w"></span>
-<span class="w">  </span><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetImage</span><span class="p">(</span><span class="n">ImageType</span><span class="w"> </span><span class="o">*</span><span class="n">I</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">narrow_band</span><span class="p">)</span>
+<span class="w">  </span><span class="p">{</span>
 <span class="w">    </span><span class="c1">// Computes partial derivatives in parent class</span>
-<span class="w">    </span><span class="n">Superclass</span><span class="o">::</span><span class="n">SetImage</span><span class="p">(</span><span class="n">I</span><span class="p">,</span><span class="w"> </span><span class="n">narrow_band</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="n">m_VDBCurvature</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">openvdb</span><span class="o">::</span><span class="n">tools</span><span class="o">::</span><span class="n">meanCurvature</span><span class="p">(</span><span class="o">*</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">GetVDBImage</span><span class="p">());</span><span class="w"></span>
-<span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">ComputeSurfaceStatistics</span><span class="p">(</span><span class="n">I</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="n">Superclass</span><span class="o">::</span><span class="n">SetImage</span><span class="p">(</span><span class="n">I</span><span class="p">,</span><span class="w"> </span><span class="n">narrow_band</span><span class="p">);</span>
+<span class="w">    </span><span class="n">m_VDBCurvature</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">openvdb</span><span class="o">::</span><span class="n">tools</span><span class="o">::</span><span class="n">meanCurvature</span><span class="p">(</span><span class="o">*</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">GetVDBImage</span><span class="p">());</span>
+<span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">ComputeSurfaceStatistics</span><span class="p">(</span><span class="n">I</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
 
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">GetCurvature</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
-<span class="w">  </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_FixedDomain</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">coord</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">ToVDBCoord</span><span class="p">(</span><span class="n">p</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">openvdb</span><span class="o">::</span><span class="n">tools</span><span class="o">::</span><span class="n">BoxSampler</span><span class="o">::</span><span class="n">sample</span><span class="p">(</span><span class="n">m_VDBCurvature</span><span class="o">-&gt;</span><span class="n">tree</span><span class="p">(),</span><span class="w"> </span><span class="n">coord</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="p">}</span><span class="w"></span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">GetCurvature</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_FixedDomain</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="w"> </span><span class="n">coord</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">ToVDBCoord</span><span class="p">(</span><span class="n">p</span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">openvdb</span><span class="o">::</span><span class="n">tools</span><span class="o">::</span><span class="n">BoxSampler</span><span class="o">::</span><span class="n">sample</span><span class="p">(</span><span class="n">m_VDBCurvature</span><span class="o">-&gt;</span><span class="n">tree</span><span class="p">(),</span><span class="w"> </span><span class="n">coord</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
 
-<span class="w">  </span><span class="kr">inline</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="nf">GetSurfaceMeanCurvature</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
-<span class="w">  </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">m_SurfaceMeanCurvature</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="p">}</span><span class="w"></span>
+<span class="w">  </span><span class="kr">inline</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="nf">GetSurfaceMeanCurvature</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">m_SurfaceMeanCurvature</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
 
-<span class="w">  </span><span class="kr">inline</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="nf">GetSurfaceStdDevCurvature</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
-<span class="w">  </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">m_SurfaceStdDevCurvature</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="p">}</span><span class="w"></span>
+<span class="w">  </span><span class="kr">inline</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="nf">GetSurfaceStdDevCurvature</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">m_SurfaceStdDevCurvature</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
 
-<span class="k">protected</span><span class="o">:</span><span class="w"></span>
-<span class="w">  </span><span class="n">ParticleImageDomainWithCurvature</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
+<span class="k">protected</span><span class="o">:</span>
+<span class="w">  </span><span class="n">ParticleImageDomainWithCurvature</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">PrintSelf</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span><span class="w"> </span><span class="n">os</span><span class="p">,</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Indent</span><span class="w"> </span><span class="n">indent</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
-<span class="w">  </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">Superclass</span><span class="o">::</span><span class="n">PrintSelf</span><span class="p">(</span><span class="n">os</span><span class="p">,</span><span class="w"> </span><span class="n">indent</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="n">os</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">indent</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;VDB Active Voxels = &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">m_VDBCurvature</span><span class="o">-&gt;</span><span class="n">activeVoxelCount</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="p">}</span><span class="w"></span>
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">ParticleImageDomainWithCurvature</span><span class="p">()</span><span class="w"> </span><span class="p">{};</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">PrintSelf</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span><span class="w"> </span><span class="n">os</span><span class="p">,</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Indent</span><span class="w"> </span><span class="n">indent</span><span class="p">)</span><span class="w"> </span><span class="k">const</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="n">Superclass</span><span class="o">::</span><span class="n">PrintSelf</span><span class="p">(</span><span class="n">os</span><span class="p">,</span><span class="w"> </span><span class="n">indent</span><span class="p">);</span>
+<span class="w">    </span><span class="n">os</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">indent</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;VDB Active Voxels = &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">m_VDBCurvature</span><span class="o">-&gt;</span><span class="n">activeVoxelCount</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">ParticleImageDomainWithCurvature</span><span class="p">()</span><span class="w"> </span><span class="p">{};</span>
 
-<span class="k">private</span><span class="o">:</span><span class="w"></span>
-<span class="w">  </span><span class="n">openvdb</span><span class="o">::</span><span class="n">FloatGrid</span><span class="o">::</span><span class="n">Ptr</span><span class="w"> </span><span class="n">m_VDBCurvature</span><span class="p">;</span><span class="w"></span>
+<span class="k">private</span><span class="o">:</span>
+<span class="w">  </span><span class="n">openvdb</span><span class="o">::</span><span class="n">FloatGrid</span><span class="o">::</span><span class="n">Ptr</span><span class="w"> </span><span class="n">m_VDBCurvature</span><span class="p">;</span>
 
 <span class="w">  </span><span class="c1">// Cache surface statistics</span>
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">m_SurfaceMeanCurvature</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">m_SurfaceStdDevCurvature</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">m_SurfaceMeanCurvature</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">m_SurfaceStdDevCurvature</span><span class="p">;</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">ComputeSurfaceStatistics</span><span class="p">(</span><span class="n">ImageType</span><span class="w"> </span><span class="o">*</span><span class="n">I</span><span class="p">)</span><span class="w"></span>
-<span class="w">  </span><span class="p">{</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">ComputeSurfaceStatistics</span><span class="p">(</span><span class="n">ImageType</span><span class="w"> </span><span class="o">*</span><span class="n">I</span><span class="p">)</span>
+<span class="w">  </span><span class="p">{</span>
 <span class="w">    </span><span class="c1">// TODO: This computation is copied from itkParticleMeanCurvatureAttribute</span>
 <span class="w">    </span><span class="c1">// Since the entire Image is not available after the initial load, its simplest</span>
 <span class="w">    </span><span class="c1">// to calculate it now. But it should be a part of itkParticleMeanCurvatureAttribute</span>
 
 <span class="w">    </span><span class="c1">// Loop through a zero crossing image, project all the zero crossing points</span>
 <span class="w">    </span><span class="c1">// to the surface, and use those points to comput curvature stats.</span>
-<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ZeroCrossingImageFilter</span><span class="o">&lt;</span><span class="n">ImageType</span><span class="p">,</span><span class="w"> </span><span class="n">ImageType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ZeroCrossingImageFilterType</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="k">typename</span><span class="w"> </span><span class="nc">ZeroCrossingImageFilterType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">zc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ZeroCrossingImageFilterType</span><span class="o">::</span><span class="n">New</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ZeroCrossingImageFilter</span><span class="o">&lt;</span><span class="n">ImageType</span><span class="p">,</span><span class="w"> </span><span class="n">ImageType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ZeroCrossingImageFilterType</span><span class="p">;</span>
+<span class="w">    </span><span class="k">typename</span><span class="w"> </span><span class="nc">ZeroCrossingImageFilterType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">zc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ZeroCrossingImageFilterType</span><span class="o">::</span><span class="n">New</span><span class="p">();</span>
 
-<span class="w">    </span><span class="n">zc</span><span class="o">-&gt;</span><span class="n">SetInput</span><span class="p">(</span><span class="n">I</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="n">zc</span><span class="o">-&gt;</span><span class="n">Update</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="n">zc</span><span class="o">-&gt;</span><span class="n">SetInput</span><span class="p">(</span><span class="n">I</span><span class="p">);</span>
+<span class="w">    </span><span class="n">zc</span><span class="o">-&gt;</span><span class="n">Update</span><span class="p">();</span>
 
-<span class="w">    </span><span class="n">itk</span><span class="o">::</span><span class="n">ImageRegionConstIteratorWithIndex</span><span class="o">&lt;</span><span class="n">ImageType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">it</span><span class="p">(</span><span class="n">zc</span><span class="o">-&gt;</span><span class="n">GetOutput</span><span class="p">(),</span><span class="w"></span>
-<span class="w">                                                         </span><span class="n">zc</span><span class="o">-&gt;</span><span class="n">GetOutput</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">GetRequestedRegion</span><span class="p">());</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">datalist</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="n">m_SurfaceMeanCurvature</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="n">m_SurfaceStdDevCurvature</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="n">itk</span><span class="o">::</span><span class="n">ImageRegionConstIteratorWithIndex</span><span class="o">&lt;</span><span class="n">ImageType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">it</span><span class="p">(</span><span class="n">zc</span><span class="o">-&gt;</span><span class="n">GetOutput</span><span class="p">(),</span>
+<span class="w">                                                         </span><span class="n">zc</span><span class="o">-&gt;</span><span class="n">GetOutput</span><span class="p">()</span><span class="o">-&gt;</span><span class="n">GetRequestedRegion</span><span class="p">());</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">datalist</span><span class="p">;</span>
+<span class="w">    </span><span class="n">m_SurfaceMeanCurvature</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
+<span class="w">    </span><span class="n">m_SurfaceStdDevCurvature</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
 
-<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(;</span><span class="w"> </span><span class="o">!</span><span class="n">it</span><span class="p">.</span><span class="n">IsAtEnd</span><span class="p">();</span><span class="w"> </span><span class="o">++</span><span class="n">it</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">it</span><span class="p">.</span><span class="n">Get</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mf">1.0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(;</span><span class="w"> </span><span class="o">!</span><span class="n">it</span><span class="p">.</span><span class="n">IsAtEnd</span><span class="p">();</span><span class="w"> </span><span class="o">++</span><span class="n">it</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">it</span><span class="p">.</span><span class="n">Get</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mf">1.0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">        </span><span class="c1">// Find closest pixel location to surface.</span>
-<span class="w">        </span><span class="n">PointType</span><span class="w"> </span><span class="n">pos</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="n">PointType</span><span class="w"> </span><span class="n">pos</span><span class="p">;</span>
 <span class="w">        </span><span class="c1">//dynamic_cast&lt;const DomainType</span>
 <span class="w">        </span><span class="c1">//*&gt;(system-&gt;GetDomain(d))-&gt;GetImage()-&gt;TransformIndexToPhysicalPoint(it.GetIndex(), pos);</span>
-<span class="w">        </span><span class="n">I</span><span class="o">-&gt;</span><span class="n">TransformIndexToPhysicalPoint</span><span class="p">(</span><span class="n">it</span><span class="p">.</span><span class="n">GetIndex</span><span class="p">(),</span><span class="w"> </span><span class="n">pos</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="n">I</span><span class="o">-&gt;</span><span class="n">TransformIndexToPhysicalPoint</span><span class="p">(</span><span class="n">it</span><span class="p">.</span><span class="n">GetIndex</span><span class="p">(),</span><span class="w"> </span><span class="n">pos</span><span class="p">);</span>
 
 <span class="w">        </span><span class="c1">// Project point to surface.</span>
 <span class="w">        </span><span class="c1">// Make sure constraints are enabled</span>
 <span class="w">        </span><span class="c1">//      bool c = domain-&gt;GetConstraintsEnabled();</span>
 
 <span class="w">        </span><span class="c1">//      domain-&gt;EnableConstraints();</span>
-<span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">ApplyConstraints</span><span class="p">(</span><span class="n">pos</span><span class="p">);</span><span class="w"></span>
+<span class="w">        </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">ApplyConstraints</span><span class="p">(</span><span class="n">pos</span><span class="p">);</span>
 
 <span class="w">        </span><span class="c1">//      domain-&gt;SetConstraintsEnabled(c);</span>
 
 <span class="w">        </span><span class="c1">// Compute curvature at point.</span>
 <span class="c1">//      std::cout &lt;&lt; &quot;pos : &quot; &lt;&lt; pos[0] &lt;&lt; &#39; &#39; &lt;&lt; pos[1] &lt;&lt; &#39; &#39; &lt;&lt; pos[2] &lt;&lt; std::endl;</span>
-<span class="w">        </span><span class="kt">double</span><span class="w"> </span><span class="n">mc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">GetCurvature</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span><span class="w"> </span><span class="mi">-1</span><span class="p">);</span><span class="w"></span>
-<span class="w">        </span><span class="n">m_SurfaceMeanCurvature</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">mc</span><span class="p">;</span><span class="w"></span>
-<span class="w">        </span><span class="n">datalist</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">mc</span><span class="p">);</span><span class="w"></span>
-<span class="w">      </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">datalist</span><span class="p">.</span><span class="n">size</span><span class="p">());</span><span class="w"></span>
-<span class="w">    </span><span class="n">m_SurfaceMeanCurvature</span><span class="w"> </span><span class="o">/=</span><span class="w"> </span><span class="n">n</span><span class="p">;</span><span class="w"></span>
+<span class="w">        </span><span class="kt">double</span><span class="w"> </span><span class="n">mc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">GetCurvature</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span><span class="w"> </span><span class="mi">-1</span><span class="p">);</span>
+<span class="w">        </span><span class="n">m_SurfaceMeanCurvature</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">mc</span><span class="p">;</span>
+<span class="w">        </span><span class="n">datalist</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">mc</span><span class="p">);</span>
+<span class="w">      </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">static_cast</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="n">datalist</span><span class="p">.</span><span class="n">size</span><span class="p">());</span>
+<span class="w">    </span><span class="n">m_SurfaceMeanCurvature</span><span class="w"> </span><span class="o">/=</span><span class="w"> </span><span class="n">n</span><span class="p">;</span>
 
 <span class="w">    </span><span class="c1">// Compute std deviation using point list</span>
-<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">datalist</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">      </span><span class="n">m_SurfaceStdDevCurvature</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="p">(</span><span class="n">datalist</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">m_SurfaceMeanCurvature</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="n">datalist</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">m_SurfaceMeanCurvature</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="n">m_SurfaceStdDevCurvature</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sqrt</span><span class="p">(</span><span class="n">m_SurfaceStdDevCurvature</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="p">(</span><span class="n">n</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">));</span><span class="w"></span>
-<span class="w">  </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">datalist</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">m_SurfaceStdDevCurvature</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="p">(</span><span class="n">datalist</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">m_SurfaceMeanCurvature</span><span class="p">)</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">(</span><span class="n">datalist</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">m_SurfaceMeanCurvature</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="n">m_SurfaceStdDevCurvature</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sqrt</span><span class="p">(</span><span class="n">m_SurfaceStdDevCurvature</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="p">(</span><span class="n">n</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">));</span>
+<span class="w">  </span><span class="p">}</span>
 
-<span class="p">};</span><span class="w"></span>
+<span class="p">};</span>
 
 <span class="p">}</span><span class="w"> </span><span class="c1">// end namespace itk</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:16 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:23 +0000</p>
 
               
             </article>

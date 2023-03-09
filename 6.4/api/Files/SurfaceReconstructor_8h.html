@@ -2272,64 +2272,64 @@
 <h2 id="source-code">Source code</h2>
 <div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;string&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;string&gt;</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;itkPoint.h&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkPoints.h&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkPolyData.h&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Eigen/Core&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;itkPoint.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkPoints.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkPolyData.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Eigen/Core&gt;</span>
 
-<span class="k">class</span><span class="w"> </span><span class="nc">SurfaceReconstructorPrivate</span><span class="p">;</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SurfaceReconstructorPrivate</span><span class="p">;</span>
 
-<span class="k">class</span><span class="w"> </span><span class="nc">SurfaceReconstructor</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SurfaceReconstructor</span><span class="w"> </span><span class="p">{</span>
 
-<span class="w"> </span><span class="k">public</span><span class="o">:</span><span class="w"></span>
+<span class="w"> </span><span class="k">public</span><span class="o">:</span>
 
-<span class="w">  </span><span class="n">SurfaceReconstructor</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="o">~</span><span class="n">SurfaceReconstructor</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="n">SurfaceReconstructor</span><span class="p">();</span>
+<span class="w">  </span><span class="o">~</span><span class="n">SurfaceReconstructor</span><span class="p">();</span>
 
 <span class="w">  </span><span class="c1">//**********************************************//</span>
 <span class="w">  </span><span class="c1">//************Imported From Studio *************//</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">initializeReconstruction</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">local_pts</span><span class="p">,</span><span class="w"></span>
-<span class="w">                                </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">global_pts</span><span class="p">,</span><span class="w"></span>
-<span class="w">                                </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">distance_transforms</span><span class="p">,</span><span class="w"></span>
-<span class="w">                                </span><span class="kt">double</span><span class="w"> </span><span class="n">maxAngle</span><span class="p">,</span><span class="w"></span>
-<span class="w">                                </span><span class="kt">float</span><span class="w"> </span><span class="n">decimationPercent</span><span class="p">,</span><span class="w"></span>
-<span class="w">                                </span><span class="kt">int</span><span class="w"> </span><span class="n">numClusters</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">hasDenseMean</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">setMean</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPoints</span><span class="o">&gt;</span><span class="w"> </span><span class="n">sparseMean</span><span class="p">,</span><span class="w"></span>
-<span class="w">               </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">denseMean</span><span class="p">,</span><span class="w"></span>
-<span class="w">               </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">goodPoints</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">initializeReconstruction</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">local_pts</span><span class="p">,</span>
+<span class="w">                                </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">global_pts</span><span class="p">,</span>
+<span class="w">                                </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">distance_transforms</span><span class="p">,</span>
+<span class="w">                                </span><span class="kt">double</span><span class="w"> </span><span class="n">maxAngle</span><span class="p">,</span>
+<span class="w">                                </span><span class="kt">float</span><span class="w"> </span><span class="n">decimationPercent</span><span class="p">,</span>
+<span class="w">                                </span><span class="kt">int</span><span class="w"> </span><span class="n">numClusters</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">hasDenseMean</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">setMean</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPoints</span><span class="o">&gt;</span><span class="w"> </span><span class="n">sparseMean</span><span class="p">,</span>
+<span class="w">               </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">denseMean</span><span class="p">,</span>
+<span class="w">               </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">goodPoints</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">writeMeanInfo</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">baseName</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">readMeanInfo</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">dense</span><span class="p">,</span><span class="w"></span>
-<span class="w">                    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">sparse</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">goodPoints</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">resetReconstruct</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">writeMeanInfo</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">baseName</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">readMeanInfo</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">dense</span><span class="p">,</span>
+<span class="w">                    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">sparse</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">goodPoints</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">resetReconstruct</span><span class="p">();</span>
 <span class="w">  </span><span class="c1">//**********************************************//</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_number_of_clusters</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">num_clusters</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_normal_angle</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">angle</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_decimation_percent</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">decimation</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_number_of_clusters</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">num_clusters</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_normal_angle</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">angle</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_decimation_percent</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">decimation</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_surface_reconstruction_available</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_surface_reconstruction_available</span><span class="p">();</span>
 
-<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">build_mesh</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">shape</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">build_mesh</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">shape</span><span class="p">);</span>
 
-<span class="w"> </span><span class="k">private</span><span class="o">:</span><span class="w"></span>
+<span class="w"> </span><span class="k">private</span><span class="o">:</span>
 
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">SurfaceReconstructorPrivate</span><span class="o">&gt;</span><span class="w"> </span><span class="n">private_</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">SurfaceReconstructorPrivate</span><span class="o">&gt;</span><span class="w"> </span><span class="n">private_</span><span class="p">;</span>
 
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">surface_reconstruction_available_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">surface_reconstruction_available_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
 
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">num_clusters_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">decimation_percent_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.3f</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">normal_angle_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">45.0f</span><span class="p">;</span><span class="w"></span>
-<span class="p">};</span><span class="w"></span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">num_clusters_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">decimation_percent_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.3f</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">normal_angle_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">45.0f</span><span class="p">;</span>
+<span class="p">};</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:15 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:22 +0000</p>
 
               
             </article>

@@ -3034,99 +3034,99 @@
 </tbody>
 </table>
 <h2 id="detailed-description">Detailed Description</h2>
-<div class="highlight"><pre><span></span><code><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">T</span><span class="w"> </span><span class="o">&gt;</span><span class="w"></span>
-<span class="k">class</span><span class="w"> </span><span class="nc">shapeworks</span><span class="o">::</span><span class="n">ParticleImplicitSurfaceDomain</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">T</span><span class="w"> </span><span class="o">&gt;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">shapeworks</span><span class="o">::</span><span class="n">ParticleImplicitSurfaceDomain</span><span class="p">;</span>
 </code></pre></div>
 <p>A 3D cartesian domain that constrains points so that they always lie an implicit surface. The implicit surface is defined as the zero isosurface of the given image. <a href="classshapeworks_1_1Constraints.html">Constraints</a> are applied using a Newton-Raphson iteration, and this class assumes it has a distance transform as an image. </p>
 <h2 id="public-types-documentation">Public Types Documentation</h2>
 <h3 id="typedef-superclass">typedef Superclass</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleImageDomainWithCurvature</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ParticleImplicitSurfaceDomain</span><span class="o">&lt;</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Superclass</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleImageDomainWithCurvature</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ParticleImplicitSurfaceDomain</span><span class="o">&lt;</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Superclass</span><span class="p">;</span>
 </code></pre></div>
 <p>Standard class typedefs </p>
 <h3 id="typedef-pointer">typedef Pointer</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ParticleImplicitSurfaceDomain</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ParticleImplicitSurfaceDomain</span><span class="o">&lt;</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ParticleImplicitSurfaceDomain</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ParticleImplicitSurfaceDomain</span><span class="o">&lt;</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="typedef-imagetype">typedef ImageType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">ImageType</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ParticleImplicitSurfaceDomain</span><span class="o">&lt;</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">ImageType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">ImageType</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ParticleImplicitSurfaceDomain</span><span class="o">&lt;</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">ImageType</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="typedef-pointtype">typedef PointType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">PointType</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ParticleImplicitSurfaceDomain</span><span class="o">&lt;</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">PointType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">PointType</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ParticleImplicitSurfaceDomain</span><span class="o">&lt;</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">PointType</span><span class="p">;</span>
 </code></pre></div>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-settolerance">function SetTolerance</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetTolerance</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="n">_Tolerance</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetTolerance</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="n">_Tolerance</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Set/Get the precision of the projection operation. The resulting projection will be within the specified tolerance. </p>
 <h3 id="function-gettolerance">function GetTolerance</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="n">GetTolerance</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="n">GetTolerance</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-getdomaintype">function GetDomainType</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">DomainType</span><span class="w"> </span><span class="n">GetDomainType</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">DomainType</span><span class="w"> </span><span class="n">GetDomainType</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span>
 </code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1ParticleDomain.html#function-getdomaintype">shapeworks::ParticleDomain::GetDomainType</a></p>
 <h3 id="function-applyconstraints">function ApplyConstraints</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">ApplyConstraints</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">p</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">dbg</span><span class="w"> </span><span class="o">=</span><span class="nb">false</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">ApplyConstraints</span><span class="p">(</span>
+<span class="w">    </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">p</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">dbg</span><span class="w"> </span><span class="o">=</span><span class="nb">false</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span>
 </code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1ParticleDomain.html#function-applyconstraints">shapeworks::ParticleDomain::ApplyConstraints</a></p>
 <p>Apply any constraints to the given point location. This method constrains points to lie within the given domain and on a given implicit surface. If the point is not already on the surface, it is projected back to the surface using a Newton-Raphson iteration. IMPORTANT: This method returns the true/false value of its superclass, and does not indicate changes only due to projection. This is done for speed: we typically will only want to know if a point tried to move outside of the bounding box domain, since movement off the surface will be very common. Consider subclassing this method to add a check for significant differences in the input and output points. </p>
 <h3 id="function-updateparticleposition">function UpdateParticlePosition</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="n">UpdateParticlePosition</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">point</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">DIMENSION</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">update</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="n">UpdateParticlePosition</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">point</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span>
+<span class="w">    </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">DIMENSION</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">update</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span>
 </code></pre></div>
 <h3 id="function-setmesh">function SetMesh</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetMesh</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">TriMesh</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">mesh</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetMesh</span><span class="p">(</span>
+<span class="w">    </span><span class="n">TriMesh</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">mesh</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-setfeamesh">function SetFeaMesh</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetFeaMesh</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">feaFile</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetFeaMesh</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">feaFile</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-setfeagrad">function SetFeaGrad</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetFeaGrad</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">feaGradFile</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetFeaGrad</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">feaGradFile</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-setfids">function SetFids</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetFids</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">fidsFile</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetFids</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">fidsFile</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-getmesh">function GetMesh</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">meshFIM</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetMesh</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">meshFIM</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetMesh</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-getmesh_1">function GetMesh</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">meshFIM</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetMesh</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">meshFIM</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetMesh</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-getzerocrossingpoint">function GetZeroCrossingPoint</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="n">GetZeroCrossingPoint</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="n">GetZeroCrossingPoint</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span>
 </code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1ParticleDomain.html#function-getzerocrossingpoint">shapeworks::ParticleDomain::GetZeroCrossingPoint</a></p>
 <p>Get any valid point on the domain. This is used to place the first particle. </p>
 <h3 id="function-particleimplicitsurfacedomain">function ParticleImplicitSurfaceDomain</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">ParticleImplicitSurfaceDomain</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">ParticleImplicitSurfaceDomain</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-printself">function PrintSelf</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">PrintSelf</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">os</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">itk</span><span class="o">::</span><span class="n">Indent</span><span class="w"> </span><span class="n">indent</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">PrintSelf</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">os</span><span class="p">,</span>
+<span class="w">    </span><span class="n">itk</span><span class="o">::</span><span class="n">Indent</span><span class="w"> </span><span class="n">indent</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-particleimplicitsurfacedomain_1">function ~ParticleImplicitSurfaceDomain</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">ParticleImplicitSurfaceDomain</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">ParticleImplicitSurfaceDomain</span><span class="p">()</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:15 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:22 +0000</p>
 
               
             </article>

@@ -2261,37 +2261,37 @@
 <h2 id="source-code">Source code</h2>
 <div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
 
-<span class="k">class</span><span class="w"> </span><span class="nc">FEMesh</span><span class="p">;</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FEMesh</span><span class="p">;</span>
 
 <span class="c1">//-----------------------------------------------------------------------------</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">FEAutoMesher</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="k">public</span><span class="o">:</span><span class="w"></span>
-<span class="w">    </span><span class="n">FEAutoMesher</span><span class="p">();</span><span class="w"></span>
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">BuildMesh</span><span class="p">(</span><span class="n">FEMesh</span><span class="o">*</span><span class="w"> </span><span class="n">pm</span><span class="p">);</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FEAutoMesher</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="n">FEAutoMesher</span><span class="p">();</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">BuildMesh</span><span class="p">(</span><span class="n">FEMesh</span><span class="o">*</span><span class="w"> </span><span class="n">pm</span><span class="p">);</span>
 
-<span class="k">public</span><span class="o">:</span><span class="w"></span>
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">AutoPartitionSurface</span><span class="p">(</span><span class="n">FEMesh</span><span class="o">&amp;</span><span class="w"> </span><span class="n">m</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">AutoPartitionEdges</span><span class="p">(</span><span class="n">FEMesh</span><span class="o">&amp;</span><span class="w"> </span><span class="n">m</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">AutoPartitionNodes</span><span class="p">(</span><span class="n">FEMesh</span><span class="o">&amp;</span><span class="w"> </span><span class="n">m</span><span class="p">);</span><span class="w"></span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">AutoPartitionSurface</span><span class="p">(</span><span class="n">FEMesh</span><span class="o">&amp;</span><span class="w"> </span><span class="n">m</span><span class="p">);</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">AutoPartitionEdges</span><span class="p">(</span><span class="n">FEMesh</span><span class="o">&amp;</span><span class="w"> </span><span class="n">m</span><span class="p">);</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">AutoPartitionNodes</span><span class="p">(</span><span class="n">FEMesh</span><span class="o">&amp;</span><span class="w"> </span><span class="n">m</span><span class="p">);</span>
 
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">Repartition</span><span class="p">(</span><span class="n">FEMesh</span><span class="o">&amp;</span><span class="w"> </span><span class="n">m</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">Repartition</span><span class="p">(</span><span class="n">FEMesh</span><span class="o">&amp;</span><span class="w"> </span><span class="n">m</span><span class="p">);</span>
 
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetSmoothingAngle</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">w</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_wsmooth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">w</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="nf">GetSmoothingAngle</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_wsmooth</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetSmoothingAngle</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">w</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_wsmooth</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">w</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="nf">GetSmoothingAngle</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_wsmooth</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 
-<span class="k">protected</span><span class="o">:</span><span class="w"></span>
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">BuildFaces</span><span class="p">(</span><span class="n">FEMesh</span><span class="o">&amp;</span><span class="w"> </span><span class="n">m</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">BuildEdges</span><span class="p">(</span><span class="n">FEMesh</span><span class="o">&amp;</span><span class="w"> </span><span class="n">m</span><span class="p">);</span><span class="w"></span>
+<span class="k">protected</span><span class="o">:</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">BuildFaces</span><span class="p">(</span><span class="n">FEMesh</span><span class="o">&amp;</span><span class="w"> </span><span class="n">m</span><span class="p">);</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">BuildEdges</span><span class="p">(</span><span class="n">FEMesh</span><span class="o">&amp;</span><span class="w"> </span><span class="n">m</span><span class="p">);</span>
 
-<span class="k">protected</span><span class="o">:</span><span class="w"></span>
-<span class="w">    </span><span class="n">FEMesh</span><span class="o">*</span><span class="w">     </span><span class="n">m_pm</span><span class="p">;</span><span class="w"></span>
+<span class="k">protected</span><span class="o">:</span>
+<span class="w">    </span><span class="n">FEMesh</span><span class="o">*</span><span class="w">     </span><span class="n">m_pm</span><span class="p">;</span>
 
-<span class="w">    </span><span class="kt">double</span><span class="w">  </span><span class="n">m_wsmooth</span><span class="p">;</span><span class="w"></span>
-<span class="p">};</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w">  </span><span class="n">m_wsmooth</span><span class="p">;</span>
+<span class="p">};</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:15 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:23 +0000</p>
 
               
             </article>

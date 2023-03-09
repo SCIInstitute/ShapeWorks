@@ -2455,90 +2455,90 @@
 </tbody>
 </table>
 <h2 id="detailed-description">Detailed Description</h2>
-<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">shapeworks</span><span class="o">::</span><span class="n">StudioMesh</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">shapeworks</span><span class="o">::</span><span class="n">StudioMesh</span><span class="p">;</span>
 </code></pre></div>
 <p>Representation of a single mesh. </p>
 <p>The <a href="classshapeworks_1_1Mesh.html">Mesh</a> class represents a single mesh generated from an image file or set of particles. It is responsible for loading the image and generating a mesh from it.</p>
 <p>TODO: Merge this functionality with Libs/Mesh/Mesh class </p>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-studiomesh">function StudioMesh</h3>
-<div class="highlight"><pre><span></span><code><span class="n">StudioMesh</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">StudioMesh</span><span class="p">()</span>
 </code></pre></div>
 <p>Constructor. </p>
 <h3 id="function-studiomesh_1">function ~StudioMesh</h3>
-<div class="highlight"><pre><span></span><code><span class="o">~</span><span class="n">StudioMesh</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="o">~</span><span class="n">StudioMesh</span><span class="p">()</span>
 </code></pre></div>
 <p>Destructor. </p>
 <h3 id="function-get_poly_data">function get_poly_data</h3>
-<div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_poly_data</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_poly_data</span><span class="p">()</span>
 </code></pre></div>
 <p>Get the mesh polydata. </p>
 <h3 id="function-set_poly_data">function set_poly_data</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_poly_data</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">poly_data</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_poly_data</span><span class="p">(</span>
+<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">poly_data</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Set the poly data directly. </p>
 <h3 id="function-set_error_message">function set_error_message</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_error_message</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">error_message</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_error_message</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">error_message</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Set the error message. </p>
 <h3 id="function-get_error_message">function get_error_message</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">get_error_message</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">get_error_message</span><span class="p">()</span>
 </code></pre></div>
 <p>Return the error message. </p>
 <h3 id="function-apply_feature_map">function apply_feature_map</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">apply_feature_map</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">ImageType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">image</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">apply_feature_map</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ImageType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">image</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Apply a feature map. </p>
 <h3 id="function-apply_scalars">function apply_scalars</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">apply_scalars</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">MeshHandle</span><span class="w"> </span><span class="n">mesh</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">apply_scalars</span><span class="p">(</span>
+<span class="w">    </span><span class="n">MeshHandle</span><span class="w"> </span><span class="n">mesh</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Apply scalars from another mesh, with a transform. </p>
 <h3 id="function-interpolate_scalars_to_mesh">function interpolate_scalars_to_mesh</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">interpolate_scalars_to_mesh</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">positions</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXf</span><span class="w"> </span><span class="n">scalar_values</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">interpolate_scalars_to_mesh</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">,</span>
+<span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">positions</span><span class="p">,</span>
+<span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXf</span><span class="w"> </span><span class="n">scalar_values</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Interpolation scalars at positions to this mesh. </p>
 <h3 id="function-get_largest_dimension_size">function get_largest_dimension_size</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">get_largest_dimension_size</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">get_largest_dimension_size</span><span class="p">()</span>
 </code></pre></div>
 <p>Return the range of largest axis (e.g. 200 for an object that sits in 100x200x100) </p>
 <h3 id="function-get_or_create_array">function get_or_create_array</h3>
-<div class="highlight"><pre><span></span><code><span class="n">vtkFloatArray</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">get_or_create_array</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">default_value</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">vtkFloatArray</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">get_or_create_array</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">default_value</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Get or create and return an array with a given name. </p>
 <h3 id="function-paint_ffc">function paint_ffc</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">paint_ffc</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">world_pos</span><span class="p">[],</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">radius</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">inclusive</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">paint_ffc</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">world_pos</span><span class="p">[],</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">radius</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">inclusive</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Paint free form constraint. </p>
 <h3 id="function-has_ffc_paint">function has_ffc_paint</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">has_ffc_paint</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">has_ffc_paint</span><span class="p">()</span>
 </code></pre></div>
 <p>Does this mesh have free form constraint paint? </p>
 <h2 id="public-attributes-documentation">Public Attributes Documentation</h2>
 <h3 id="variable-ffc_paint">variable FFC_PAINT</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="k">const</span><span class="w"> </span><span class="n">FFC_PAINT</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;ffc_paint&quot;</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="k">const</span><span class="w"> </span><span class="n">FFC_PAINT</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;ffc_paint&quot;</span><span class="p">;</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:15 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:22 +0000</p>
 
               
             </article>

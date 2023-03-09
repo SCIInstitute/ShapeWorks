@@ -2923,166 +2923,166 @@
 </tbody>
 </table>
 <h2 id="detailed-description">Detailed Description</h2>
-<div class="highlight"><pre><span></span><code><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">TGradientNumericType</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
-<span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">VDimension</span><span class="o">&gt;</span><span class="w"></span>
-<span class="k">class</span><span class="w"> </span><span class="nc">itk</span><span class="o">::</span><span class="n">ParticleModifiedCotangentEntropyGradientFunction</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">TGradientNumericType</span><span class="w"> </span><span class="p">,</span>
+<span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">VDimension</span><span class="o">&gt;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">itk</span><span class="o">::</span><span class="n">ParticleModifiedCotangentEntropyGradientFunction</span><span class="p">;</span>
 </code></pre></div>
 <p>This function returns an estimate of the gradient of the entropy of a particle distribution with respect to change in position of a specific particle in that distribution. The change in normals associated with the position is also taken into account, providing an adaptive sampling of the surface with respect to both position and extrinsic surface curvature.</p>
 <p>This function depend on modified cotangent potential as defined in Meyer's thesis rather than Gaussian potential (Cates's thesis).</p>
 <p>Modified potential only depend on a global sigma based on target number of particles in the domain </p>
 <h2 id="public-types-documentation">Public Types Documentation</h2>
 <h3 id="typedef-self">typedef Self</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleModifiedCotangentEntropyGradientFunction</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleModifiedCotangentEntropyGradientFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TGradientNumericType</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Self</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleModifiedCotangentEntropyGradientFunction</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleModifiedCotangentEntropyGradientFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TGradientNumericType</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Self</span><span class="p">;</span>
 </code></pre></div>
 <p>Standard class typedefs. </p>
 <h3 id="typedef-pointer">typedef Pointer</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleModifiedCotangentEntropyGradientFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TGradientNumericType</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleModifiedCotangentEntropyGradientFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TGradientNumericType</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="typedef-constpointer">typedef ConstPointer</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleModifiedCotangentEntropyGradientFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TGradientNumericType</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">ConstPointer</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleModifiedCotangentEntropyGradientFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TGradientNumericType</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">ConstPointer</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="typedef-superclass">typedef Superclass</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleEntropyGradientFunction</span><span class="o">&lt;</span><span class="n">TGradientNumericType</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleModifiedCotangentEntropyGradientFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TGradientNumericType</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Superclass</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleEntropyGradientFunction</span><span class="o">&lt;</span><span class="n">TGradientNumericType</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleModifiedCotangentEntropyGradientFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TGradientNumericType</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Superclass</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="typedef-gradientnumerictype">typedef GradientNumericType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">GradientNumericType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleModifiedCotangentEntropyGradientFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TGradientNumericType</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">GradientNumericType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">GradientNumericType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleModifiedCotangentEntropyGradientFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TGradientNumericType</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">GradientNumericType</span><span class="p">;</span>
 </code></pre></div>
 <p>Inherit some parent typedefs. </p>
 <h3 id="typedef-particlesystemtype">typedef ParticleSystemType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">ParticleSystemType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleModifiedCotangentEntropyGradientFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TGradientNumericType</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">ParticleSystemType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">ParticleSystemType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleModifiedCotangentEntropyGradientFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TGradientNumericType</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">ParticleSystemType</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="typedef-vectortype">typedef VectorType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">VectorType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleModifiedCotangentEntropyGradientFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TGradientNumericType</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">VectorType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">VectorType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleModifiedCotangentEntropyGradientFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TGradientNumericType</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">VectorType</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="typedef-pointtype">typedef PointType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">PointType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleModifiedCotangentEntropyGradientFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TGradientNumericType</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">PointType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">PointType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleModifiedCotangentEntropyGradientFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TGradientNumericType</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">PointType</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="typedef-gradientvectortype">typedef GradientVectorType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">GradientVectorType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleModifiedCotangentEntropyGradientFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TGradientNumericType</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">GradientVectorType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">GradientVectorType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleModifiedCotangentEntropyGradientFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TGradientNumericType</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">GradientVectorType</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="typedef-vnlmatrixtype">typedef VnlMatrixType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ParticleImageDomainWithCurvature</span><span class="o">&lt;</span><span class="n">TGradientNumericType</span><span class="o">&gt;::</span><span class="n">VnlMatrixType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleModifiedCotangentEntropyGradientFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TGradientNumericType</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">VnlMatrixType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ParticleImageDomainWithCurvature</span><span class="o">&lt;</span><span class="n">TGradientNumericType</span><span class="o">&gt;::</span><span class="n">VnlMatrixType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleModifiedCotangentEntropyGradientFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TGradientNumericType</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">VnlMatrixType</span><span class="p">;</span>
 </code></pre></div>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-itktypemacro">function itkTypeMacro</h3>
-<div class="highlight"><pre><span></span><code><span class="n">itkTypeMacro</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">ParticleModifiedCotangentEntropyGradientFunction</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">itkTypeMacro</span><span class="p">(</span>
+<span class="w">    </span><span class="n">ParticleModifiedCotangentEntropyGradientFunction</span><span class="w"> </span><span class="p">,</span>
 <span class="w">    </span><span class="n">ParticleEntropyGradientFunction</span><span class="w"> </span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-itknewmacro">function itkNewMacro</h3>
-<div class="highlight"><pre><span></span><code><span class="n">itkNewMacro</span><span class="p">(</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">itkNewMacro</span><span class="p">(</span>
 <span class="w">    </span><span class="n">Self</span><span class="w"> </span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Method for creation through the object factory. </p>
 <h3 id="function-itkstaticconstmacro">function itkStaticConstMacro</h3>
-<div class="highlight"><pre><span></span><code><span class="n">itkStaticConstMacro</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">Dimension</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">itkStaticConstMacro</span><span class="p">(</span>
+<span class="w">    </span><span class="n">Dimension</span><span class="w"> </span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span>
 <span class="w">    </span><span class="n">VDimension</span><span class="w"> </span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Dimensionality of the domain of the particle system. </p>
 <h3 id="function-evaluate">function Evaluate</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">VectorType</span><span class="w"> </span><span class="n">Evaluate</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">b</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystemType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">c</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">d</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">VectorType</span><span class="w"> </span><span class="n">Evaluate</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">a</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">b</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystemType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">c</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">d</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classitk_1_1ParticleEntropyGradientFunction.html#function-evaluate">itk::ParticleEntropyGradientFunction::Evaluate</a></p>
 <p>The first argument is a pointer to the particle system. The second argument is the index of the domain within that particle system. The third argument is the index of the particle location within the given domain. </p>
 <h3 id="function-evaluate_1">function Evaluate</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">VectorType</span><span class="w"> </span><span class="n">Evaluate</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystemType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">VectorType</span><span class="w"> </span><span class="n">Evaluate</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystemType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="p">,</span>
 <span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classitk_1_1ParticleEntropyGradientFunction.html#function-evaluate">itk::ParticleEntropyGradientFunction::Evaluate</a></p>
 <h3 id="function-beforeevaluate">function BeforeEvaluate</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">BeforeEvaluate</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">BeforeEvaluate</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystemType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span>
 </code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classitk_1_1ParticleVectorFunction.html#function-beforeevaluate">itk::ParticleVectorFunction::BeforeEvaluate</a></p>
 <p>This method may be called to set up the state of the function object before a call to Evaluate. It is necessary in order to initialize certain constants and variables that may be used for calculating the Energy as well as the Gradients. Typically this is only necessary for the adaptive gradient descent algorithm. </p>
 <h3 id="function-energy">function Energy</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">Energy</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">b</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystemType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">c</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">Energy</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">a</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">b</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystemType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">c</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classitk_1_1ParticleEntropyGradientFunction.html#function-energy">itk::ParticleEntropyGradientFunction::Energy</a></p>
 <h3 id="function-afteriteration">function AfterIteration</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">AfterIteration</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">AfterIteration</span><span class="p">()</span>
 </code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classitk_1_1ParticleVectorFunction.html#function-afteriteration">itk::ParticleVectorFunction::AfterIteration</a></p>
 <p>This method is called by a solver after each iteration. Subclasses may or may not implement this method. </p>
 <h3 id="function-beforeiteration">function BeforeIteration</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">BeforeIteration</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">BeforeIteration</span><span class="p">()</span>
 </code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classitk_1_1ParticleVectorFunction.html#function-beforeiteration">itk::ParticleVectorFunction::BeforeIteration</a></p>
 <p>This method is called by a solver before each iteration. Subclasses may or may not implement this method. </p>
 <h3 id="function-computemodifiedcotangent">function ComputeModifiedCotangent</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">ComputeModifiedCotangent</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">rij</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">ComputeModifiedCotangent</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">rij</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-computemodifiedcotangentderivative">function ComputeModifiedCotangentDerivative</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">ComputeModifiedCotangentDerivative</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">rij</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">ComputeModifiedCotangentDerivative</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">rij</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-clearglobalsigma">function ClearGlobalSigma</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">ClearGlobalSigma</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">ClearGlobalSigma</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-setglobalsigma">function SetGlobalSigma</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetGlobalSigma</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">i</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetGlobalSigma</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">i</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-setglobalsigma_1">function SetGlobalSigma</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetGlobalSigma</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">i</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetGlobalSigma</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">i</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-clone">function Clone</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">ParticleVectorFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">Clone</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">ParticleVectorFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">Clone</span><span class="p">()</span>
 </code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classitk_1_1ParticleEntropyGradientFunction.html#function-clone">itk::ParticleEntropyGradientFunction::Clone</a></p>
 <h2 id="protected-functions-documentation">Protected Functions Documentation</h2>
 <h3 id="function-particlemodifiedcotangententropygradientfunction">function ParticleModifiedCotangentEntropyGradientFunction</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">ParticleModifiedCotangentEntropyGradientFunction</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">ParticleModifiedCotangentEntropyGradientFunction</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-particlemodifiedcotangententropygradientfunction_1">function ~ParticleModifiedCotangentEntropyGradientFunction</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">ParticleModifiedCotangentEntropyGradientFunction</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">ParticleModifiedCotangentEntropyGradientFunction</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-operator">function operator=</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleModifiedCotangentEntropyGradientFunction</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-particlemodifiedcotangententropygradientfunction_2">function ParticleModifiedCotangentEntropyGradientFunction</h3>
-<div class="highlight"><pre><span></span><code><span class="n">ParticleModifiedCotangentEntropyGradientFunction</span><span class="p">(</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">ParticleModifiedCotangentEntropyGradientFunction</span><span class="p">(</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleModifiedCotangentEntropyGradientFunction</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span>
 </code></pre></div>
 <h2 id="protected-attributes-documentation">Protected Attributes Documentation</h2>
 <h3 id="variable-m_globalsigma">variable m_GlobalSigma</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_GlobalSigma</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_GlobalSigma</span><span class="p">;</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:14 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:20 +0000</p>
 
               
             </article>

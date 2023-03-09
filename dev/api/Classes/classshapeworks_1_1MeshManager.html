@@ -2542,113 +2542,113 @@
 </tbody>
 </table>
 <h2 id="detailed-description">Detailed Description</h2>
-<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">shapeworks</span><span class="o">::</span><span class="n">MeshManager</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">shapeworks</span><span class="o">::</span><span class="n">MeshManager</span><span class="p">;</span>
 </code></pre></div>
 <p>Class to manage meshes. </p>
 <p>The <a href="classshapeworks_1_1MeshManager.html">MeshManager</a> handles all aspects of mesh generation and caching. It houses the cache and manages threads to work on mesh generation in the background. </p>
 <h2 id="public-slots-documentation">Public Slots Documentation</h2>
 <h3 id="slot-handle_thread_complete">slot handle_thread_complete</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_thread_complete</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">MeshWorkItem</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">item</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">MeshHandle</span><span class="w"> </span><span class="n">mesh</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_thread_complete</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">MeshWorkItem</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">item</span><span class="p">,</span>
+<span class="w">    </span><span class="n">MeshHandle</span><span class="w"> </span><span class="n">mesh</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="slot-handle_warper_progress">slot handle_warper_progress</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_warper_progress</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_warper_progress</span><span class="p">()</span>
 </code></pre></div>
 <h2 id="public-signals-documentation">Public Signals Documentation</h2>
 <h3 id="signal-new_mesh">signal new_mesh</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">new_mesh</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">new_mesh</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="signal-error_encountered">signal error_encountered</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">error_encountered</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">QString</span><span class="w"> </span><span class="n">message</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">error_encountered</span><span class="p">(</span>
+<span class="w">    </span><span class="n">QString</span><span class="w"> </span><span class="n">message</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="signal-progress">signal progress</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">progress</span><span class="p">(</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">progress</span><span class="p">(</span>
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="signal-status">signal status</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">status</span><span class="p">(</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">status</span><span class="p">(</span>
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span>
 </code></pre></div>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-meshmanager">function MeshManager</h3>
-<div class="highlight"><pre><span></span><code><span class="n">MeshManager</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">MeshManager</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-meshmanager_1">function ~MeshManager</h3>
-<div class="highlight"><pre><span></span><code><span class="o">~</span><span class="n">MeshManager</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="o">~</span><span class="n">MeshManager</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-set_cache_enabled">function set_cache_enabled</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_cache_enabled</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_cache_enabled</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Set if the cache should be enabled. </p>
 <h3 id="function-set_cache_memory_percent">function set_cache_memory_percent</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_cache_memory_percent</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">percent</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_cache_memory_percent</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">percent</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Set the memory cache size. </p>
 <h3 id="function-set_parallel_enabled">function set_parallel_enabled</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_parallel_enabled</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_parallel_enabled</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Set if parallel reconstruction should be enabled. </p>
 <h3 id="function-set_num_threads">function set_num_threads</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_num_threads</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">num_threads</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_num_threads</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">num_threads</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Set the number of threads for parallel reconstruction. </p>
 <h3 id="function-generate_mesh">function generate_mesh</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">generate_mesh</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">MeshWorkItem</span><span class="w"> </span><span class="n">item</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">generate_mesh</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">MeshWorkItem</span><span class="w"> </span><span class="n">item</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>generate and cache a mesh for this shape in a different thread </p>
 <h3 id="function-get_mesh">function get_mesh</h3>
-<div class="highlight"><pre><span></span><code><span class="n">MeshHandle</span><span class="w"> </span><span class="n">get_mesh</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">MeshWorkItem</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">item</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">wait</span><span class="w"> </span><span class="o">=</span><span class="nb">false</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">MeshHandle</span><span class="w"> </span><span class="n">get_mesh</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">MeshWorkItem</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">item</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">wait</span><span class="w"> </span><span class="o">=</span><span class="nb">false</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>get a mesh for a <a href="">MeshWorkItem</a></p>
 <h3 id="function-get_mesh_1">function get_mesh</h3>
-<div class="highlight"><pre><span></span><code><span class="n">MeshHandle</span><span class="w"> </span><span class="n">get_mesh</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">points</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">wait</span><span class="w"> </span><span class="o">=</span><span class="nb">false</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">MeshHandle</span><span class="w"> </span><span class="n">get_mesh</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">points</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">wait</span><span class="w"> </span><span class="o">=</span><span class="nb">false</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>get a mesh for a set of points </p>
 <h3 id="function-get_surface_reconstructor">function get_surface_reconstructor</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">SurfaceReconstructor</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_surface_reconstructor</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">SurfaceReconstructor</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_surface_reconstructor</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>return the surface reconstructor for a given domain </p>
 <h3 id="function-get_mesh_warper">function get_mesh_warper</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">MeshWarper</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_mesh_warper</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">MeshWarper</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_mesh_warper</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>return the mesh warper for a given domain </p>
 <h3 id="function-get_mesh_generator">function get_mesh_generator</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">MeshGenerator</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_mesh_generator</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">MeshGenerator</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_mesh_generator</span><span class="p">()</span>
 </code></pre></div>
 <p>return the mesh generator </p>
 <h3 id="function-clear_cache">function clear_cache</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">clear_cache</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">clear_cache</span><span class="p">()</span>
 </code></pre></div>
 <p>clear the cache </p>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:14 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:21 +0000</p>
 
               
             </article>

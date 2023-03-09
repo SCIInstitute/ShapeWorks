@@ -2281,109 +2281,109 @@
 <h2 id="source-code">Source code</h2>
 <div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/Preferences.h&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Groom/Groom.h&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Groom/GroomParameters.h&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/Telemetry.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/Preferences.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Groom/Groom.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Groom/GroomParameters.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/Telemetry.h&gt;</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QElapsedTimer&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QObject&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QProgressDialog&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QSharedPointer&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QWidget&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;string&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QElapsedTimer&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QObject&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QProgressDialog&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QSharedPointer&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QWidget&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;string&gt;</span>
 
-<span class="k">class</span><span class="w"> </span><span class="nc">Ui_GroomTool</span><span class="p">;</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Ui_GroomTool</span><span class="p">;</span>
 
-<span class="n">Q_DECLARE_METATYPE</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">)</span><span class="w"></span>
+<span class="n">Q_DECLARE_METATYPE</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">)</span>
 
-<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
 
-<span class="k">class</span><span class="w"> </span><span class="nc">Session</span><span class="p">;</span><span class="w"></span>
-<span class="k">class</span><span class="w"> </span><span class="nc">ShapeWorksStudioApp</span><span class="p">;</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Session</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ShapeWorksStudioApp</span><span class="p">;</span>
 
-<span class="k">class</span><span class="w"> </span><span class="nc">GroomTool</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">QWidget</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">  </span><span class="n">Q_OBJECT</span><span class="p">;</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">GroomTool</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">QWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">Q_OBJECT</span><span class="p">;</span>
 
-<span class="w"> </span><span class="k">public</span><span class="o">:</span><span class="w"></span>
-<span class="w">  </span><span class="n">GroomTool</span><span class="p">(</span><span class="n">Preferences</span><span class="o">&amp;</span><span class="w"> </span><span class="n">prefs</span><span class="p">,</span><span class="w"> </span><span class="n">Telemetry</span><span class="o">&amp;</span><span class="w"> </span><span class="n">telemetry</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="o">~</span><span class="n">GroomTool</span><span class="p">();</span><span class="w"></span>
+<span class="w"> </span><span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="n">GroomTool</span><span class="p">(</span><span class="n">Preferences</span><span class="o">&amp;</span><span class="w"> </span><span class="n">prefs</span><span class="p">,</span><span class="w"> </span><span class="n">Telemetry</span><span class="o">&amp;</span><span class="w"> </span><span class="n">telemetry</span><span class="p">);</span>
+<span class="w">  </span><span class="o">~</span><span class="n">GroomTool</span><span class="p">();</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_session</span><span class="p">(</span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Session</span><span class="o">&gt;</span><span class="w"> </span><span class="n">session</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_session</span><span class="p">(</span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Session</span><span class="o">&gt;</span><span class="w"> </span><span class="n">session</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">activate</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">activate</span><span class="p">();</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">load_params</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">store_params</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">load_params</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">store_params</span><span class="p">();</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">disable_actions</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">enable_actions</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">disable_actions</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">enable_actions</span><span class="p">();</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">shutdown_threads</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">shutdown_threads</span><span class="p">();</span>
 
-<span class="w"> </span><span class="nl">Q_SIGNALS</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">groom_start</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">groom_complete</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">progress</span><span class="p">(</span><span class="kt">int</span><span class="p">);</span><span class="w"></span>
+<span class="w"> </span><span class="nl">Q_SIGNALS</span><span class="p">:</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">groom_start</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">groom_complete</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">progress</span><span class="p">(</span><span class="kt">int</span><span class="p">);</span>
 
-<span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Q_SLOTS</span><span class="o">:</span><span class="w"></span>
+<span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Q_SLOTS</span><span class="o">:</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">on_antialias_checkbox_stateChanged</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">state</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_blur_checkbox_stateChanged</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">state</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_autopad_checkbox_stateChanged</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">state</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">skip_grooming_toggled</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_restore_defaults_clicked</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">on_antialias_checkbox_stateChanged</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">state</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_blur_checkbox_stateChanged</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">state</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_autopad_checkbox_stateChanged</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">state</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">skip_grooming_toggled</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_restore_defaults_clicked</span><span class="p">();</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_ui</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_ui</span><span class="p">();</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">domain_changed</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">domain_changed</span><span class="p">();</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">alignment_checkbox_changed</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">state</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">alignment_option_changed</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">index</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">alignment_checkbox_changed</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">state</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">alignment_option_changed</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">index</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">reflect_checkbox_changed</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">state</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">reflect_column_changed</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">index</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">reflect_choice_changed</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">index</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">reflect_axis_changed</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">index</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">reflect_checkbox_changed</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">state</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">reflect_column_changed</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">index</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">reflect_choice_changed</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">index</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">reflect_axis_changed</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">index</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_run_groom_button_clicked</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_run_groom_button_clicked</span><span class="p">();</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_thread_complete</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_progress</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">val</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_error</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">msg</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_thread_complete</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_progress</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">val</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_error</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">msg</span><span class="p">);</span>
 
-<span class="w"> </span><span class="k">private</span><span class="o">:</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">set_ui_from_params</span><span class="p">(</span><span class="n">GroomParameters</span><span class="w"> </span><span class="n">params</span><span class="p">);</span><span class="w"></span>
+<span class="w"> </span><span class="k">private</span><span class="o">:</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">set_ui_from_params</span><span class="p">(</span><span class="n">GroomParameters</span><span class="w"> </span><span class="n">params</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_page</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_domain_box</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">apply_to_all_domains_changed</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_page</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_domain_box</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">apply_to_all_domains_changed</span><span class="p">();</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_reflect_columns</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_reflect_choices</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_reflect_columns</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_reflect_choices</span><span class="p">();</span>
 
-<span class="w">  </span><span class="n">Preferences</span><span class="o">&amp;</span><span class="w"> </span><span class="n">preferences_</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="n">Telemetry</span><span class="o">&amp;</span><span class="w"> </span><span class="n">telemetry_</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">Preferences</span><span class="o">&amp;</span><span class="w"> </span><span class="n">preferences_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">Telemetry</span><span class="o">&amp;</span><span class="w"> </span><span class="n">telemetry_</span><span class="p">;</span>
 
-<span class="w">  </span><span class="n">QList</span><span class="o">&lt;</span><span class="n">QThread</span><span class="o">*&gt;</span><span class="w"> </span><span class="n">threads_</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">QList</span><span class="o">&lt;</span><span class="n">QThread</span><span class="o">*&gt;</span><span class="w"> </span><span class="n">threads_</span><span class="p">;</span>
 
-<span class="w">  </span><span class="n">Ui_GroomTool</span><span class="o">*</span><span class="w"> </span><span class="n">ui_</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Session</span><span class="o">&gt;</span><span class="w"> </span><span class="n">session_</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">Ui_GroomTool</span><span class="o">*</span><span class="w"> </span><span class="n">ui_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Session</span><span class="o">&gt;</span><span class="w"> </span><span class="n">session_</span><span class="p">;</span>
 
-<span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Groom</span><span class="o">&gt;</span><span class="w"> </span><span class="n">groom_</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Groom</span><span class="o">&gt;</span><span class="w"> </span><span class="n">groom_</span><span class="p">;</span>
 
-<span class="w">  </span><span class="n">QElapsedTimer</span><span class="w"> </span><span class="n">timer_</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">QElapsedTimer</span><span class="w"> </span><span class="n">timer_</span><span class="p">;</span>
 
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">groom_is_running_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">groom_is_running_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
 
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">current_domain_</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">current_domain_</span><span class="p">;</span>
 
-<span class="w">  </span><span class="n">QStringList</span><span class="w"> </span><span class="n">reflect_columns_</span><span class="p">;</span><span class="w"></span>
-<span class="p">};</span><span class="w"></span>
+<span class="w">  </span><span class="n">QStringList</span><span class="w"> </span><span class="n">reflect_columns_</span><span class="p">;</span>
+<span class="p">};</span>
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:16 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:23 +0000</p>
 
               
             </article>

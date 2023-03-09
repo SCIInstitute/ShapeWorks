@@ -2339,40 +2339,40 @@
 </table>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-fevtkexport">function FEVTKExport</h3>
-<div class="highlight"><pre><span></span><code><span class="n">FEVTKExport</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">FEVTKExport</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-fevtkexport_1">function ~FEVTKExport</h3>
-<div class="highlight"><pre><span></span><code><span class="o">~</span><span class="n">FEVTKExport</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="k">default</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="o">~</span><span class="n">FEVTKExport</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="k">default</span>
 </code></pre></div>
 <h3 id="function-export">function Export</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">Export</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">FEMesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">mesh</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">szfile</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">Export</span><span class="p">(</span>
+<span class="w">    </span><span class="n">FEMesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">mesh</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">szfile</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-exporttostring">function ExportToString</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">ExportToString</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">FEMesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">mesh</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">ExportToString</span><span class="p">(</span>
+<span class="w">    </span><span class="n">FEMesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">mesh</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-exporttostream">function ExportToStream</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">ExportToStream</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">FEMesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">mesh</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">out</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">ExportToStream</span><span class="p">(</span>
+<span class="w">    </span><span class="n">FEMesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">mesh</span><span class="p">,</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">out</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-setoptions">function SetOptions</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetOptions</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">VTKEXPORT</span><span class="w"> </span><span class="n">o</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetOptions</span><span class="p">(</span>
+<span class="w">    </span><span class="n">VTKEXPORT</span><span class="w"> </span><span class="n">o</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-exporttovtk">function ExportToVTK</h3>
-<div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">ExportToVTK</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">FEMesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">mesh</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">ExportToVTK</span><span class="p">(</span>
+<span class="w">    </span><span class="n">FEMesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">mesh</span>
+<span class="p">)</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:15 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:22 +0000</p>
 
               
             </article>

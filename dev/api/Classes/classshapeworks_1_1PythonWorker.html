@@ -2510,62 +2510,62 @@
 </table>
 <h2 id="public-slots-documentation">Public Slots Documentation</h2>
 <h3 id="slot-init">slot init</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">init</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">init</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="slot-start_job">slot start_job</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">start_job</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Job</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">job</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">start_job</span><span class="p">(</span>
+<span class="w">    </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Job</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">job</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="slot-finalize_python">slot finalize_python</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">finalize_python</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">finalize_python</span><span class="p">()</span>
 </code></pre></div>
 <h2 id="public-signals-documentation">Public Signals Documentation</h2>
 <h3 id="signal-result_ready">signal result_ready</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">result_ready</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">result_ready</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="signal-finished">signal finished</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">finished</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">finished</span><span class="p">()</span>
 </code></pre></div>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-pythonworker">function PythonWorker</h3>
-<div class="highlight"><pre><span></span><code><span class="n">PythonWorker</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">PythonWorker</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-pythonworker_1">function ~PythonWorker</h3>
-<div class="highlight"><pre><span></span><code><span class="o">~</span><span class="n">PythonWorker</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="o">~</span><span class="n">PythonWorker</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-set_vtk_output_window">function set_vtk_output_window</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_vtk_output_window</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">StudioVtkOutputWindow</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">output_window</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_vtk_output_window</span><span class="p">(</span>
+<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">StudioVtkOutputWindow</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">output_window</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-run_job">function run_job</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">run_job</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Job</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">job</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">run_job</span><span class="p">(</span>
+<span class="w">    </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Job</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">job</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-incoming_python_message">function incoming_python_message</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">incoming_python_message</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">message_string</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">incoming_python_message</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">message_string</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-incoming_python_progress">function incoming_python_progress</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">incoming_python_progress</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">incoming_python_progress</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">value</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-end_python">function end_python</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">end_python</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">end_python</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-abort_job">function abort_job</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">abort_job</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">abort_job</span><span class="p">()</span>
 </code></pre></div>
 <h2 id="public-attributes-documentation">Public Attributes Documentation</h2>
 <h3 id="variable-python_api_version">variable python_api_version</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">python_api_version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;6.4&quot;</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">python_api_version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;6.4&quot;</span><span class="p">;</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:15 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:22 +0000</p>
 
               
             </article>

@@ -2461,36 +2461,36 @@
 </table>
 <h2 id="public-slots-documentation">Public Slots Documentation</h2>
 <h3 id="slot-process">slot process</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">process</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">process</span><span class="p">()</span>
 </code></pre></div>
 <h2 id="public-signals-documentation">Public Signals Documentation</h2>
 <h3 id="signal-result_ready">signal result_ready</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">result_ready</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">result_ready</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="signal-failure">signal failure</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">failure</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">failure</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="signal-finished">signal finished</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">finished</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">finished</span><span class="p">()</span>
 </code></pre></div>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-shapeworksworker">function ShapeworksWorker</h3>
-<div class="highlight"><pre><span></span><code><span class="n">ShapeworksWorker</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">ThreadType</span><span class="w"> </span><span class="n">type</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Groom</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">groom</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Optimize</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">optimize</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">OptimizeParameters</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">optimize_parameters</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Session</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">session</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">maxAngle</span><span class="w"> </span><span class="o">=</span><span class="mf">45.</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">decimationPercent</span><span class="w"> </span><span class="o">=</span><span class="mf">0.3f</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">numClusters</span><span class="w"> </span><span class="o">=</span><span class="mi">5</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">ShapeworksWorker</span><span class="p">(</span>
+<span class="w">    </span><span class="n">ThreadType</span><span class="w"> </span><span class="n">type</span><span class="p">,</span>
+<span class="w">    </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Groom</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">groom</span><span class="p">,</span>
+<span class="w">    </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Optimize</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">optimize</span><span class="p">,</span>
+<span class="w">    </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">OptimizeParameters</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">optimize_parameters</span><span class="p">,</span>
+<span class="w">    </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Session</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">session</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">maxAngle</span><span class="w"> </span><span class="o">=</span><span class="mf">45.</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">decimationPercent</span><span class="w"> </span><span class="o">=</span><span class="mf">0.3f</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">numClusters</span><span class="w"> </span><span class="o">=</span><span class="mi">5</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-shapeworksworker_1">function ~ShapeworksWorker</h3>
-<div class="highlight"><pre><span></span><code><span class="o">~</span><span class="n">ShapeworksWorker</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="o">~</span><span class="n">ShapeworksWorker</span><span class="p">()</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:15 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:22 +0000</p>
 
               
             </article>

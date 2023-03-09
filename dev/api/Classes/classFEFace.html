@@ -2608,84 +2608,84 @@
 </table>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-feface">function FEFace</h3>
-<div class="highlight"><pre><span></span><code><span class="n">FEFace</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">FEFace</span><span class="p">()</span>
 </code></pre></div>
 <p>constructor </p>
 <h3 id="function-operator">function operator==</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">==</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">FEFace</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">f</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">==</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">FEFace</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">f</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>comparison operator </p>
 <h3 id="function-nodes">function Nodes</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">Nodes</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">Nodes</span><span class="p">()</span>
 </code></pre></div>
 <p>return number of nodes </p>
 <h3 id="function-edges">function Edges</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">Edges</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">Edges</span><span class="p">()</span>
 </code></pre></div>
 <p>return number of edges </p>
 <h3 id="function-getedgenodes">function GetEdgeNodes</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">GetEdgeNodes</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">n</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">GetEdgeNodes</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">n</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>get the edge node numbers </p>
 <h3 id="function-hasedge">function HasEdge</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">HasEdge</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n1</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n2</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">HasEdge</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n1</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n2</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>See if this face has an edge. </p>
 <h3 id="function-hasnode">function HasNode</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">HasNode</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">HasNode</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>See if this face has node with ID i. </p>
 <h3 id="function-findnode">function FindNode</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">FindNode</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">FindNode</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Fine the array index of node with ID i. </p>
 <h3 id="function-isexternal">function IsExternal</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">IsExternal</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">IsExternal</span><span class="p">()</span>
 </code></pre></div>
 <p>Is this face internal or external. </p>
 <h2 id="public-attributes-documentation">Public Attributes Documentation</h2>
 <h3 id="variable-n">variable n</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">;</span>
 </code></pre></div>
 <p>nodal ID's </p>
 <h3 id="variable-m_nodes">variable m_nodes</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">m_nodes</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">m_nodes</span><span class="p">;</span>
 </code></pre></div>
 <p>number of nodes </p>
 <h3 id="variable-m_nbr">variable m_nbr</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">m_nbr</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">m_nbr</span><span class="p">;</span>
 </code></pre></div>
 <p>neighbour faces </p>
 <h3 id="variable-m_fn">variable m_fn</h3>
-<div class="highlight"><pre><span></span><code><span class="n">vec3d</span><span class="w"> </span><span class="n">m_fn</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">vec3d</span><span class="w"> </span><span class="n">m_fn</span><span class="p">;</span>
 </code></pre></div>
 <p>face normal </p>
 <h3 id="variable-m_nn">variable m_nn</h3>
-<div class="highlight"><pre><span></span><code><span class="n">vec3d</span><span class="w"> </span><span class="n">m_nn</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">vec3d</span><span class="w"> </span><span class="n">m_nn</span><span class="p">;</span>
 </code></pre></div>
 <p>node normals </p>
 <h3 id="variable-m_sid">variable m_sid</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">m_sid</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">m_sid</span><span class="p">;</span>
 </code></pre></div>
 <p>smoothing ID </p>
 <h3 id="variable-m_elem">variable m_elem</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">m_elem</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">m_elem</span><span class="p">;</span>
 </code></pre></div>
 <p>the elements to which this face belongs </p>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:15 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:22 +0000</p>
 
               
             </article>

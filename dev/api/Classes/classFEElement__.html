@@ -2743,131 +2743,131 @@
 </table>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-feelement_">function FEElement_</h3>
-<div class="highlight"><pre><span></span><code><span class="n">FEElement_</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">FEElement_</span><span class="p">()</span>
 </code></pre></div>
 <p>constructor </p>
 <h3 id="function-is_equal">function is_equal</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">is_equal</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">FEElement_</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">e</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">is_equal</span><span class="p">(</span>
+<span class="w">    </span><span class="n">FEElement_</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">e</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-gettype">function GetType</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">GetType</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">GetType</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>return the element type </p>
 <h3 id="function-istype">function IsType</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">IsType</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">ntype</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">IsType</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">ntype</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>Is the element of this type. </p>
 <h3 id="function-nodes">function Nodes</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">Nodes</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">Nodes</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>number of nodes </p>
 <h3 id="function-faces">function Faces</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">Faces</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">Faces</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>Number of faces (shells have no faces) </p>
 <h3 id="function-edges">function Edges</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">Edges</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">Edges</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>Number of edges (solids have no edges) </p>
 <h3 id="function-getface">function GetFace</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">GetFace</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">n</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">GetFace</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">n</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Get only the nodes of face i (only solids have faces) </p>
 <h3 id="function-getface_1">function GetFace</h3>
-<div class="highlight"><pre><span></span><code><span class="n">FEFace</span><span class="w"> </span><span class="n">GetFace</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">FEFace</span><span class="w"> </span><span class="n">GetFace</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Get the face i (only solids have faces) </p>
 <h3 id="function-getshellface">function GetShellFace</h3>
-<div class="highlight"><pre><span></span><code><span class="n">FEFace</span><span class="w"> </span><span class="n">GetShellFace</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">FEFace</span><span class="w"> </span><span class="n">GetShellFace</span><span class="p">()</span>
 </code></pre></div>
 <p>Get the face of a shell. </p>
 <h3 id="function-getedge">function GetEdge</h3>
-<div class="highlight"><pre><span></span><code><span class="n">FEEdge</span><span class="w"> </span><span class="n">GetEdge</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">FEEdge</span><span class="w"> </span><span class="n">GetEdge</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Get the edge. </p>
 <h3 id="function-isexterior">function IsExterior</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">IsExterior</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">IsExterior</span><span class="p">()</span>
 </code></pre></div>
 <p>Is this an exterior element. </p>
 <h3 id="function-issolid">function IsSolid</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">IsSolid</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">IsSolid</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-isshell">function IsShell</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">IsShell</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">IsShell</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-isbeam">function IsBeam</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">IsBeam</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">IsBeam</span><span class="p">()</span>
 </code></pre></div>
 <h2 id="protected-functions-documentation">Protected Functions Documentation</h2>
 <h3 id="function-copy">function copy</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">copy</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">FEElement_</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">el</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">copy</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">FEElement_</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">el</span>
+<span class="p">)</span>
 </code></pre></div>
 <h2 id="public-attributes-documentation">Public Attributes Documentation</h2>
 <h3 id="variable-m_node">variable m_node</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">m_node</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">m_node</span><span class="p">;</span>
 </code></pre></div>
 <p>pointer to node data </p>
 <h3 id="variable-m_nbr">variable m_nbr</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">m_nbr</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">m_nbr</span><span class="p">;</span>
 </code></pre></div>
 <p>neighbour elements </p>
 <h3 id="variable-m_face">variable m_face</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">m_face</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">m_face</span><span class="p">;</span>
 </code></pre></div>
 <p>faces (-1 for interior faces) </p>
 <h3 id="variable-m_h">variable m_h</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">m_h</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">m_h</span><span class="p">;</span>
 </code></pre></div>
 <p>element thickness (only used by shells) </p>
 <h3 id="variable-m_fiber">variable m_fiber</h3>
-<div class="highlight"><pre><span></span><code><span class="n">vec3d</span><span class="w"> </span><span class="n">m_fiber</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">vec3d</span><span class="w"> </span><span class="n">m_fiber</span><span class="p">;</span>
 </code></pre></div>
 <p>fiber orientation </p>
 <p><strong>Todo</strong>: maybe I can add an element attribute section </p>
 <h3 id="variable-m_q">variable m_Q</h3>
-<div class="highlight"><pre><span></span><code><span class="n">mat3d</span><span class="w"> </span><span class="n">m_Q</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">mat3d</span><span class="w"> </span><span class="n">m_Q</span><span class="p">;</span>
 </code></pre></div>
 <p>local material orientation </p>
 <h3 id="variable-m_qactive">variable m_Qactive</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">m_Qactive</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">m_Qactive</span><span class="p">;</span>
 </code></pre></div>
 <p>active local material orientation </p>
 <h3 id="variable-m_a0">variable m_a0</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">m_a0</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">m_a0</span><span class="p">;</span>
 </code></pre></div>
 <p>cross-sectional area (only used by truss elements) </p>
 <h2 id="protected-attributes-documentation">Protected Attributes Documentation</h2>
 <h3 id="variable-m_ntype">variable m_ntype</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">m_ntype</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">m_ntype</span><span class="p">;</span>
 </code></pre></div>
 <p>type of element </p>
 <h3 id="variable-m_nodes">variable m_nodes</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">m_nodes</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">m_nodes</span><span class="p">;</span>
 </code></pre></div>
 <p>nr of nodes </p>
 <h3 id="variable-m_nfaces">variable m_nfaces</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">m_nfaces</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">m_nfaces</span><span class="p">;</span>
 </code></pre></div>
 <p>nr of faces ( 0 for shells) </p>
 <h3 id="variable-m_nedges">variable m_nedges</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">m_nedges</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">m_nedges</span><span class="p">;</span>
 </code></pre></div>
 <p>nr of edges ( 0 for solids) </p>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:15 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:22 +0000</p>
 
               
             </article>

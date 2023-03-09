@@ -2261,21 +2261,21 @@
 <h2 id="source-code">Source code</h2>
 <div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QSlider&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QSlider&gt;</span>
 
 <span class="c1">// adapted from:</span>
 <span class="c1">// https://stackoverflow.com/questions/69890284/qslider-in-qt-misbehaves-in-new-macos-monterey-v12-0-1-any-workaround/69890285#69890285</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">CustomSlider</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">QSlider</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w"> </span><span class="k">public</span><span class="o">:</span><span class="w"></span>
-<span class="w">  </span><span class="k">explicit</span><span class="w"> </span><span class="n">CustomSlider</span><span class="p">(</span><span class="n">Qt</span><span class="o">::</span><span class="n">Orientation</span><span class="w"> </span><span class="n">orientation</span><span class="p">,</span><span class="w"> </span><span class="n">QWidget</span><span class="o">*</span><span class="w"> </span><span class="n">parent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">nullptr</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">QSlider</span><span class="p">(</span><span class="n">orientation</span><span class="p">,</span><span class="w"> </span><span class="n">parent</span><span class="p">){};</span><span class="w"></span>
-<span class="w">  </span><span class="k">explicit</span><span class="w"> </span><span class="n">CustomSlider</span><span class="p">(</span><span class="n">QWidget</span><span class="o">*</span><span class="w"> </span><span class="n">parent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">nullptr</span><span class="p">);</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CustomSlider</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">QSlider</span><span class="w"> </span><span class="p">{</span>
+<span class="w"> </span><span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="k">explicit</span><span class="w"> </span><span class="n">CustomSlider</span><span class="p">(</span><span class="n">Qt</span><span class="o">::</span><span class="n">Orientation</span><span class="w"> </span><span class="n">orientation</span><span class="p">,</span><span class="w"> </span><span class="n">QWidget</span><span class="o">*</span><span class="w"> </span><span class="n">parent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">nullptr</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">QSlider</span><span class="p">(</span><span class="n">orientation</span><span class="p">,</span><span class="w"> </span><span class="n">parent</span><span class="p">){};</span>
+<span class="w">  </span><span class="k">explicit</span><span class="w"> </span><span class="n">CustomSlider</span><span class="p">(</span><span class="n">QWidget</span><span class="o">*</span><span class="w"> </span><span class="n">parent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">nullptr</span><span class="p">);</span>
 
-<span class="w"> </span><span class="k">protected</span><span class="o">:</span><span class="w"></span>
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">paintEvent</span><span class="p">(</span><span class="n">QPaintEvent</span><span class="o">*</span><span class="w"> </span><span class="n">ev</span><span class="p">);</span><span class="w"></span>
-<span class="p">};</span><span class="w"></span>
+<span class="w"> </span><span class="k">protected</span><span class="o">:</span>
+<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">paintEvent</span><span class="p">(</span><span class="n">QPaintEvent</span><span class="o">*</span><span class="w"> </span><span class="n">ev</span><span class="p">);</span>
+<span class="p">};</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:16 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:23 +0000</p>
 
               
             </article>

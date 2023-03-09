@@ -2477,34 +2477,34 @@
 </table>
 <h2 id="public-signals-documentation">Public Signals Documentation</h2>
 <h3 id="signal-report_progress">signal report_progress</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">report_progress</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ShapeEvaluationJob</span><span class="o">::</span><span class="n">JobType</span><span class="w"> </span><span class="n">job_type</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">progress</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">report_progress</span><span class="p">(</span>
+<span class="w">    </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ShapeEvaluationJob</span><span class="o">::</span><span class="n">JobType</span><span class="w"> </span><span class="n">job_type</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">progress</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="signal-result_ready">signal result_ready</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">result_ready</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ShapeEvaluationJob</span><span class="o">::</span><span class="n">JobType</span><span class="w"> </span><span class="n">job_type</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">data</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">result_ready</span><span class="p">(</span>
+<span class="w">    </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ShapeEvaluationJob</span><span class="o">::</span><span class="n">JobType</span><span class="w"> </span><span class="n">job_type</span><span class="p">,</span>
+<span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">data</span>
+<span class="p">)</span>
 </code></pre></div>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-shapeevaluationjob">function ShapeEvaluationJob</h3>
-<div class="highlight"><pre><span></span><code><span class="n">ShapeEvaluationJob</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">JobType</span><span class="w"> </span><span class="n">job_type</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">ParticleShapeStatistics</span><span class="w"> </span><span class="n">stats</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">ShapeEvaluationJob</span><span class="p">(</span>
+<span class="w">    </span><span class="n">JobType</span><span class="w"> </span><span class="n">job_type</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ParticleShapeStatistics</span><span class="w"> </span><span class="n">stats</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-run">function run</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">run</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">run</span><span class="p">()</span><span class="w"> </span><span class="k">override</span>
 </code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1Job.html#function-run">shapeworks::Job::run</a></p>
 <h3 id="function-name">function name</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="n">name</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="n">name</span><span class="p">()</span><span class="w"> </span><span class="k">override</span>
 </code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1Job.html#function-name">shapeworks::Job::name</a></p>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:15 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:22 +0000</p>
 
               
             </article>

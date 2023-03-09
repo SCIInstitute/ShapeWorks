@@ -2707,155 +2707,155 @@
 </tbody>
 </table>
 <h2 id="detailed-description">Detailed Description</h2>
-<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">shapeworks</span><span class="o">::</span><span class="n">Lightbox</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">shapeworks</span><span class="o">::</span><span class="n">Lightbox</span><span class="p">;</span>
 </code></pre></div>
 <p>Display multiple Viewers in a tiled display. </p>
 <p>The LightBox class displays multiple Viewers in a tiled display </p>
 <h2 id="public-slots-documentation">Public Slots Documentation</h2>
 <h3 id="slot-handle_timer_callback">slot handle_timer_callback</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_timer_callback</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_timer_callback</span><span class="p">()</span>
 </code></pre></div>
 <h2 id="public-signals-documentation">Public Signals Documentation</h2>
 <h3 id="signal-right_click">signal right_click</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">right_click</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">index</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">right_click</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">index</span>
+<span class="p">)</span>
 </code></pre></div>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-lightbox">function Lightbox</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Lightbox</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">Lightbox</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-lightbox_1">function ~Lightbox</h3>
-<div class="highlight"><pre><span></span><code><span class="o">~</span><span class="n">Lightbox</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="o">~</span><span class="n">Lightbox</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-set_shapes">function set_shapes</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_shapes</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">ShapeList</span><span class="w"> </span><span class="n">shapes</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_shapes</span><span class="p">(</span>
+<span class="w">    </span><span class="n">ShapeList</span><span class="w"> </span><span class="n">shapes</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-get_shapes">function get_shapes</h3>
-<div class="highlight"><pre><span></span><code><span class="n">ShapeList</span><span class="w"> </span><span class="n">get_shapes</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">ShapeList</span><span class="w"> </span><span class="n">get_shapes</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-set_interactor">function set_interactor</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_interactor</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">vtkRenderWindowInteractor</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">interactor</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_interactor</span><span class="p">(</span>
+<span class="w">    </span><span class="n">vtkRenderWindowInteractor</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">interactor</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-set_render_window">function set_render_window</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_render_window</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">vtkRenderWindow</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">render_window</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_render_window</span><span class="p">(</span>
+<span class="w">    </span><span class="n">vtkRenderWindow</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">render_window</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-set_tile_layout">function set_tile_layout</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_tile_layout</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">width</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">height</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_tile_layout</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">width</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">height</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-setup_renderers">function setup_renderers</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">setup_renderers</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">setup_renderers</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-get_num_rows">function get_num_rows</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_num_rows</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_num_rows</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-get_num_rows_visible">function get_num_rows_visible</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_num_rows_visible</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_num_rows_visible</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-set_start_row">function set_start_row</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_start_row</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">row</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_start_row</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">row</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-get_viewers">function get_viewers</h3>
-<div class="highlight"><pre><span></span><code><span class="n">ViewerList</span><span class="w"> </span><span class="n">get_viewers</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">ViewerList</span><span class="w"> </span><span class="n">get_viewers</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-redraw">function redraw</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">redraw</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">redraw</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-handle_pick">function handle_pick</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_pick</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">click_pos</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">one</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">ctrl</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_pick</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">click_pos</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">one</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">ctrl</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-handle_hover">function handle_hover</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_hover</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">click_pos</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_hover</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">click_pos</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-handle_key">function handle_key</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_key</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">click_pos</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">key</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_key</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">click_pos</span><span class="p">,</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">key</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-handle_right_click">function handle_right_click</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_right_click</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">click_pos</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">vtkRenderer</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">renderer</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_right_click</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">click_pos</span><span class="p">,</span>
+<span class="w">    </span><span class="n">vtkRenderer</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">renderer</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Handle a right click that did not involve any movement. </p>
 <h3 id="function-set_glyph_lut">function set_glyph_lut</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_glyph_lut</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkLookupTable</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">lut</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_glyph_lut</span><span class="p">(</span>
+<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkLookupTable</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">lut</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-set_session">function set_session</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_session</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Session</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">session</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_session</span><span class="p">(</span>
+<span class="w">    </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Session</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">session</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-set_visualizer">function set_visualizer</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_visualizer</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">Visualizer</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">visualizer</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_visualizer</span><span class="p">(</span>
+<span class="w">    </span><span class="n">Visualizer</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">visualizer</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-render_window_ready">function render_window_ready</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">render_window_ready</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">render_window_ready</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-clear_renderers">function clear_renderers</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">clear_renderers</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">clear_renderers</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-initpos">function initPos</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">array</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">initPos</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">array</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">initPos</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-handle_new_mesh">function handle_new_mesh</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_new_mesh</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_new_mesh</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-reset_camera">function reset_camera</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">reset_camera</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">reset_camera</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-reset_camera_clipping_range">function reset_camera_clipping_range</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">reset_camera_clipping_range</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">reset_camera_clipping_range</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-set_orientation_marker">function set_orientation_marker</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_orientation_marker</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">Preferences</span><span class="o">::</span><span class="n">OrientationMarkerType</span><span class="w"> </span><span class="n">type</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">Preferences</span><span class="o">::</span><span class="n">OrientationMarkerCorner</span><span class="w"> </span><span class="n">corner</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_orientation_marker</span><span class="p">(</span>
+<span class="w">    </span><span class="n">Preferences</span><span class="o">::</span><span class="n">OrientationMarkerType</span><span class="w"> </span><span class="n">type</span><span class="p">,</span>
+<span class="w">    </span><span class="n">Preferences</span><span class="o">::</span><span class="n">OrientationMarkerCorner</span><span class="w"> </span><span class="n">corner</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-set_orientation_marker_viewport">function set_orientation_marker_viewport</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_orientation_marker_viewport</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_orientation_marker_viewport</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-update_feature_range">function update_feature_range</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_feature_range</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_feature_range</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-update_interactor_style">function update_interactor_style</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_interactor_style</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_interactor_style</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-set_shared_window_and_level">function set_shared_window_and_level</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_shared_window_and_level</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">window</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">level</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_shared_window_and_level</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">window</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">level</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-get_render_window">function get_render_window</h3>
-<div class="highlight"><pre><span></span><code><span class="n">vtkRenderWindow</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">get_render_window</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">vtkRenderWindow</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">get_render_window</span><span class="p">()</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:14 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:21 +0000</p>
 
               
             </article>

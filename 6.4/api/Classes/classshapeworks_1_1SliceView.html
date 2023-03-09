@@ -2499,7 +2499,7 @@
 </tbody>
 </table>
 <h2 id="detailed-description">Detailed Description</h2>
-<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">shapeworks</span><span class="o">::</span><span class="n">SliceView</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">shapeworks</span><span class="o">::</span><span class="n">SliceView</span><span class="p">;</span>
 </code></pre></div>
 <p><a href="">SliceView</a>. </p>
 <p>Provide slice viewing to the <a href="classshapeworks_1_1Viewer.html">Viewer</a></p>
@@ -2528,79 +2528,79 @@
 </table>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-sliceview">function SliceView</h3>
-<div class="highlight"><pre><span></span><code><span class="n">SliceView</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">Viewer</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">viewer</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">SliceView</span><span class="p">(</span>
+<span class="w">    </span><span class="n">Viewer</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">viewer</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-set_volume">function set_volume</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_volume</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Image</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">volume</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_volume</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Image</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">volume</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-set_mesh">function set_mesh</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_mesh</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">poly_data</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_mesh</span><span class="p">(</span>
+<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">poly_data</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-set_orientation">function set_orientation</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_orientation</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">orientation</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_orientation</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">orientation</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-is_image_loaded">function is_image_loaded</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">is_image_loaded</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">is_image_loaded</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-update_renderer">function update_renderer</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_renderer</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_renderer</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-update_camera">function update_camera</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_camera</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_camera</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-handle_key">function handle_key</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Point</span><span class="w"> </span><span class="n">handle_key</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">key</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">Point</span><span class="w"> </span><span class="n">handle_key</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">key</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-change_slice">function change_slice</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">change_slice</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">SliceChange</span><span class="w"> </span><span class="n">change</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">change_slice</span><span class="p">(</span>
+<span class="w">    </span><span class="n">SliceChange</span><span class="w"> </span><span class="n">change</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-get_slice_position">function get_slice_position</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Point</span><span class="w"> </span><span class="n">get_slice_position</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">Point</span><span class="w"> </span><span class="n">get_slice_position</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-set_slice_position">function set_slice_position</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_slice_position</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">Point</span><span class="w"> </span><span class="n">point</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_slice_position</span><span class="p">(</span>
+<span class="w">    </span><span class="n">Point</span><span class="w"> </span><span class="n">point</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-set_window_and_level">function set_window_and_level</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_window_and_level</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">window</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">level</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_window_and_level</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">window</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">level</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-get_spacing">function get_spacing</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">get_spacing</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">get_spacing</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-get_orientation_index">function get_orientation_index</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_orientation_index</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_orientation_index</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-update_particles">function update_particles</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_particles</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_particles</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-get_viewer">function get_viewer</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Viewer</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">get_viewer</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">Viewer</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">get_viewer</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-should_point_show">function should_point_show</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">should_point_show</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">y</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">z</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">should_point_show</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">x</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">y</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">z</span>
+<span class="p">)</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:15 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:22 +0000</p>
 
               
             </article>

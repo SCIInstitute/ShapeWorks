@@ -34,18 +34,56 @@ When a use case is run, the dataset required for the use case is automatically d
 After registering a free account, you can log in from within the script. 
 Note: You are only required to enter your credentials the first time you run a use case. 
 
+### Uploading a Dataset
+
+Uploading a dataset requires the following parameters:
+
+1. dataset_name - The name of the dataset and the same name must be used while running the usecase.
+
+2. licence_filename - File location which contains licence information of the dataset
+
+3. ack_filename - File location which contains acknowledge information of the dataset
+
+4. description - Description of the dataset
+
+5. project_file - File location which contains the project file of dataset using by the usecase which needs to be uploaded. (must be in swproj extension)
+
+6. overwrite - This is a boolean variable which controls any existing dataset with same name should be deleted or not. if True is passed it will delete the existing dataset. The default value is True.
+
+<!-- --overwrite - which controls any existing dataset with same name should be deleted or not. if --overwrite is specified it will delete the existing dataset. -->
+
+For example refer the following command
+```
+$ import shapeworks as sw
+$ sw.upload_dataset(dataset_name, licence_filename, acknowledgement_filename, description, project_file, overwrite)
+```
+
+### Downloading a Dataset
+
+Downloading a Dataset requires the following parameters:
+
+1. datasetName - The name of the dataset which needs to be downloaded.
+
+2. outputDirectory - The location where the dataset should be downloaded.
+
+For example refer the following command
+```
+$ python portal.py [dataset name] [output directory]
+```
+
 ### Use Case Data
 
 When a use case runs, the appropriate zipped data downloads to `Examples/Python/Data/`. The data is then extracted to `Examples/Python/output/use_case_name/` where all the output from running the use case is also saved.
 
 The downloaded data includes the raw input data (segmentations, meshes, and/or images) as well as the expected output from both the final grooming step of the use case (i.e., distance transforms) and the optimized shape model (particle files and project excel sheets). 
 
-An "project.xlsx" file is included so that the resulting shape model can be visualized in Studio without running the use case.
+An "project.swproj" file is included so that the resulting shape model can be visualized in Studio without running the use case.
 For example, to view the shape model downloaded for the ellipsoid use case run:
 ```
 $ cd Examples/Python/Output/ellipsoid/ellipsoid_1mode/
 $ cp shape_model ../
-$ ShapeWorksStudio ellipsoid_multiscale.xlsx
+$ ShapeWorksStudio ellipsoid_multiscale.xlsx or
+$ ShapeWorksStudio ellipsoid_multiscale.swproj
 ```
 
 ### Use Cases Arguments
@@ -108,13 +146,13 @@ Note some use cases start with pre-aligned data that does not require grooming.
     Instead of passing groomed and aligned shapes to the optimizer, now, the use cases only perform the grooming steps that do not change the co-ordinates of the shape. For the grooming steps that alter the co-ordinates, the transformation matrices are calculated and sent to the optimizer to be applied(pre-multiplied) after optimization. See [How to Step Up Optimization?](../workflow/parameters.md#project-excel-file) page for details regarding setting up the project sheet.
 
 ### [Optimization](../workflow/optimize.md)
-Optimization involves automatically computing a dense set of corresponding landmark positions from the groomed shape representations (distance transforms or meshes). Optimization can be run with different parameters in ShapeWorksStudio or via the command line. In the use cases, optimization parameters are defined in the optimize sheet of the project.xlsx and optimization is run from the command line. 
+Optimization involves automatically computing a dense set of corresponding landmark positions from the groomed shape representations (distance transforms or meshes). Optimization can be run with different parameters in ShapeWorksStudio or via the command line. In the use cases, optimization parameters are defined in the optimize sheet of the project.xlsx or project.swproj and optimization is run from the command line. 
 
 For a full decription of parameters, please see: [optimization parameters](../workflow/parameters.md). 
 
 ### [Analysis of Results](../workflow/analyze.md)
-The resulting correspondence points from optimization can be viewed and analyzed in **ShapeWorks Studio**. This is a Qt and VTK-based graphical user interface (GUI), that allows visualizing the correspondence model for each shape sample where particle coloring is used to reflect correspondence among shapes. After optimization, the use cases create and open an `project.xlsx` file for viewing the results in Studio. Studio opens automatically when the use case finishes running. 
+The resulting correspondence points from optimization can be viewed and analyzed in **ShapeWorks Studio**. This is a Qt and VTK-based graphical user interface (GUI), that allows visualizing the correspondence model for each shape sample where particle coloring is used to reflect correspondence among shapes. After optimization, the use cases create and open an `project.xlsx` or `project.swproj` file for viewing the results in Studio. Studio opens automatically when the use case finishes running. 
 
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_scroll.mp4" autoplay muted loop controls style="width:100%"></p>
 
-This `project.xlsx` file can be reopened at any time after running the use case for subsequent analysis by calling `ShapeworksStudio project.xlsx`. For a full description of how to analyze results in Studio, see [Analyzing Results](../workflow/analyze.md).
+This `project.xlsx` or `project.swproj` file can be reopened at any time after running the use case for subsequent analysis by calling `ShapeworksStudio project.xlsx` or `ShapeworksStudio project.swproj`. For a full description of how to analyze results in Studio, see [Analyzing Results](../workflow/analyze.md).

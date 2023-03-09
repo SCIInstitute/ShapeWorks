@@ -2284,41 +2284,41 @@
 <h2 id="source-code">Source code</h2>
 <div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/Session.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/Session.h&gt;</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QWidget&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QWidget&gt;</span>
 
-<span class="k">namespace</span><span class="w"> </span><span class="nn">Ui</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="k">class</span><span class="w"> </span><span class="nc">CompareWidget</span><span class="p">;</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="k">namespace</span><span class="w"> </span><span class="nn">Ui</span><span class="w"> </span><span class="p">{</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CompareWidget</span><span class="p">;</span>
+<span class="p">}</span>
 
-<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
 
-<span class="k">class</span><span class="w"> </span><span class="nc">CompareWidget</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">QWidget</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">  </span><span class="n">Q_OBJECT</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CompareWidget</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">QWidget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">Q_OBJECT</span>
 
-<span class="w"> </span><span class="k">public</span><span class="o">:</span><span class="w"></span>
-<span class="w">  </span><span class="k">explicit</span><span class="w"> </span><span class="n">CompareWidget</span><span class="p">(</span><span class="n">QWidget</span><span class="w"> </span><span class="o">*</span><span class="n">parent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">nullptr</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="o">~</span><span class="n">CompareWidget</span><span class="p">();</span><span class="w"></span>
+<span class="w"> </span><span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="k">explicit</span><span class="w"> </span><span class="n">CompareWidget</span><span class="p">(</span><span class="n">QWidget</span><span class="w"> </span><span class="o">*</span><span class="n">parent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">nullptr</span><span class="p">);</span>
+<span class="w">  </span><span class="o">~</span><span class="n">CompareWidget</span><span class="p">();</span>
 
-<span class="w">  </span><span class="n">CompareSettings</span><span class="w"> </span><span class="nf">get_settings</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_available</span><span class="p">(</span><span class="n">DisplayMode</span><span class="w"> </span><span class="n">mode</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">available</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_mean_shape_available</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">available</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="n">CompareSettings</span><span class="w"> </span><span class="nf">get_settings</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_available</span><span class="p">(</span><span class="n">DisplayMode</span><span class="w"> </span><span class="n">mode</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">available</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_mean_shape_available</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">available</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">check_any_available</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">check_any_available</span><span class="p">();</span>
 
-<span class="w"> </span><span class="nl">Q_SIGNALS</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">settings_changed</span><span class="p">();</span><span class="w"></span>
+<span class="w"> </span><span class="nl">Q_SIGNALS</span><span class="p">:</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">settings_changed</span><span class="p">();</span>
 
-<span class="w"> </span><span class="k">private</span><span class="o">:</span><span class="w"></span>
-<span class="w">  </span><span class="n">Ui</span><span class="o">::</span><span class="n">CompareWidget</span><span class="w"> </span><span class="o">*</span><span class="n">ui_</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="n">CompareSettings</span><span class="w"> </span><span class="n">settings_</span><span class="p">;</span><span class="w"></span>
-<span class="p">};</span><span class="w"></span>
+<span class="w"> </span><span class="k">private</span><span class="o">:</span>
+<span class="w">  </span><span class="n">Ui</span><span class="o">::</span><span class="n">CompareWidget</span><span class="w"> </span><span class="o">*</span><span class="n">ui_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">CompareSettings</span><span class="w"> </span><span class="n">settings_</span><span class="p">;</span>
+<span class="p">};</span>
 
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:16 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:23 +0000</p>
 
               
             </article>

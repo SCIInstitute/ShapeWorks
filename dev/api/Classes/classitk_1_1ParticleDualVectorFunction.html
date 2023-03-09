@@ -3042,260 +3042,260 @@
 </tbody>
 </table>
 <h2 id="detailed-description">Detailed Description</h2>
-<div class="highlight"><pre><span></span><code><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">VDimension</span><span class="o">&gt;</span><span class="w"></span>
-<span class="k">class</span><span class="w"> </span><span class="nc">itk</span><span class="o">::</span><span class="n">ParticleDualVectorFunction</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">VDimension</span><span class="o">&gt;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">itk</span><span class="o">::</span><span class="n">ParticleDualVectorFunction</span><span class="p">;</span>
 </code></pre></div>
 <p>This class combines the results of evaluating 2 ParticleVector functions and presents the interface of a single function evaluation. Optionally, only the first function can be used by calling SetLinkOff(). </p>
 <h2 id="public-types-documentation">Public Types Documentation</h2>
 <h3 id="typedef-self">typedef Self</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleDualVectorFunction</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleDualVectorFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Self</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleDualVectorFunction</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleDualVectorFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Self</span><span class="p">;</span>
 </code></pre></div>
 <p>Standard class typedefs. </p>
 <h3 id="typedef-pointer">typedef Pointer</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleDualVectorFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleDualVectorFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="typedef-constpointer">typedef ConstPointer</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleDualVectorFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">ConstPointer</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleDualVectorFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">ConstPointer</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="typedef-superclass">typedef Superclass</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleVectorFunction</span><span class="o">&lt;</span><span class="n">VDimension</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleDualVectorFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Superclass</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleVectorFunction</span><span class="o">&lt;</span><span class="n">VDimension</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleDualVectorFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Superclass</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="typedef-particlesystemtype">typedef ParticleSystemType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">ParticleSystemType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleDualVectorFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">ParticleSystemType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">ParticleSystemType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleDualVectorFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">ParticleSystemType</span><span class="p">;</span>
 </code></pre></div>
 <p>Type of particle system. </p>
 <h3 id="typedef-vectortype">typedef VectorType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">VectorType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleDualVectorFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">VectorType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">VectorType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleDualVectorFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">VectorType</span><span class="p">;</span>
 </code></pre></div>
 <p>Vector type. </p>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-itktypemacro">function itkTypeMacro</h3>
-<div class="highlight"><pre><span></span><code><span class="n">itkTypeMacro</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">ParticleDualVectorFunction</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">itkTypeMacro</span><span class="p">(</span>
+<span class="w">    </span><span class="n">ParticleDualVectorFunction</span><span class="w"> </span><span class="p">,</span>
 <span class="w">    </span><span class="n">ParticleVectorFunction</span><span class="w"> </span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-itknewmacro">function itkNewMacro</h3>
-<div class="highlight"><pre><span></span><code><span class="n">itkNewMacro</span><span class="p">(</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">itkNewMacro</span><span class="p">(</span>
 <span class="w">    </span><span class="n">Self</span><span class="w"> </span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Method for creation through the object factory. </p>
 <h3 id="function-itkstaticconstmacro">function itkStaticConstMacro</h3>
-<div class="highlight"><pre><span></span><code><span class="n">itkStaticConstMacro</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">Dimension</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">itkStaticConstMacro</span><span class="p">(</span>
+<span class="w">    </span><span class="n">Dimension</span><span class="w"> </span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span>
 <span class="w">    </span><span class="n">VDimension</span><span class="w"> </span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Dimensionality of the domain of the particle system. </p>
 <h3 id="function-evaluate">function Evaluate</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">VectorType</span><span class="w"> </span><span class="n">Evaluate</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystemType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">system</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">maxmove</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">VectorType</span><span class="w"> </span><span class="n">Evaluate</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystemType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">system</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">maxmove</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classitk_1_1ParticleVectorFunction.html#function-evaluate">itk::ParticleVectorFunction::Evaluate</a></p>
 <p>The first argument is a pointer to the particle system. The second argument is the index of the domain within that particle system. The third argument is the index of the particle location within the given domain. </p>
 <h3 id="function-energya">function EnergyA</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">EnergyA</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystemType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">system</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">EnergyA</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystemType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">system</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-energyb">function EnergyB</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">EnergyB</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystemType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">system</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">EnergyB</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystemType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">system</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-energy">function Energy</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">Energy</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystemType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">system</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">Energy</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystemType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">system</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classitk_1_1ParticleVectorFunction.html#function-energy">itk::ParticleVectorFunction::Energy</a></p>
 <h3 id="function-evaluate_1">function Evaluate</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">VectorType</span><span class="w"> </span><span class="n">Evaluate</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystemType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">system</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">maxmove</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">energy</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">VectorType</span><span class="w"> </span><span class="n">Evaluate</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystemType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">system</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">maxmove</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">energy</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classitk_1_1ParticleVectorFunction.html#function-evaluate">itk::ParticleVectorFunction::Evaluate</a></p>
 <h3 id="function-beforeevaluate">function BeforeEvaluate</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">BeforeEvaluate</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">BeforeEvaluate</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystemType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span>
 </code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classitk_1_1ParticleVectorFunction.html#function-beforeevaluate">itk::ParticleVectorFunction::BeforeEvaluate</a></p>
 <p>This method may be called to set up the state of the function object before a call to Evaluate. It is necessary in order to initialize certain constants and variables that may be used for calculating the Energy as well as the Gradients. Typically this is only necessary for the adaptive gradient descent algorithm. </p>
 <h3 id="function-afteriteration">function AfterIteration</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">AfterIteration</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">AfterIteration</span><span class="p">()</span>
 </code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classitk_1_1ParticleVectorFunction.html#function-afteriteration">itk::ParticleVectorFunction::AfterIteration</a></p>
 <p>This method is called by a solver after each iteration. Subclasses may or may not implement this method. </p>
 <h3 id="function-beforeiteration">function BeforeIteration</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">BeforeIteration</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">BeforeIteration</span><span class="p">()</span>
 </code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classitk_1_1ParticleVectorFunction.html#function-beforeiteration">itk::ParticleVectorFunction::BeforeIteration</a></p>
 <p>This method is called by a solver before each iteration. Subclasses may or may not implement this method. </p>
 <h3 id="function-setparticlesystem">function SetParticleSystem</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetParticleSystem</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">ParticleSystemType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">p</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetParticleSystem</span><span class="p">(</span>
+<span class="w">    </span><span class="n">ParticleSystemType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">p</span>
+<span class="p">)</span>
 </code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classitk_1_1ParticleVectorFunction.html#function-setparticlesystem">itk::ParticleVectorFunction::SetParticleSystem</a></p>
 <p>Some subclasses may require a pointer to the particle system and its domain number. These methods set/get those values. </p>
 <h3 id="function-setdomainnumber">function SetDomainNumber</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetDomainNumber</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetDomainNumber</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span>
+<span class="p">)</span>
 </code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classitk_1_1ParticleVectorFunction.html#function-setdomainnumber">itk::ParticleVectorFunction::SetDomainNumber</a></p>
 <h3 id="function-setfunctiona">function SetFunctionA</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetFunctionA</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">ParticleVectorFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">o</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetFunctionA</span><span class="p">(</span>
+<span class="w">    </span><span class="n">ParticleVectorFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">o</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-getfunctiona">function GetFunctionA</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">ParticleVectorFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetFunctionA</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">ParticleVectorFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetFunctionA</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-getfunctionb">function GetFunctionB</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">ParticleVectorFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetFunctionB</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">ParticleVectorFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetFunctionB</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-setfunctionb">function SetFunctionB</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetFunctionB</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">ParticleVectorFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">o</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetFunctionB</span><span class="p">(</span>
+<span class="w">    </span><span class="n">ParticleVectorFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">o</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-setaon">function SetAOn</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetAOn</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetAOn</span><span class="p">()</span>
 </code></pre></div>
 <p>Turn each term on and off. </p>
 <h3 id="function-setaoff">function SetAOff</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetAOff</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetAOff</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-setaon_1">function SetAOn</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetAOn</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">s</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetAOn</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">s</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-getaon">function GetAOn</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">GetAOn</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">GetAOn</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-setbon">function SetBOn</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetBOn</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetBOn</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-setboff">function SetBOff</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetBOff</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetBOff</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-setbon_1">function SetBOn</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetBOn</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">s</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetBOn</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">s</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-getbon">function GetBOn</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">GetBOn</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">GetBOn</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-setrelativeenergyscaling">function SetRelativeEnergyScaling</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetRelativeEnergyScaling</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">r</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetRelativeEnergyScaling</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">r</span>
+<span class="p">)</span><span class="w"> </span><span class="k">override</span>
 </code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classitk_1_1ParticleVectorFunction.html#function-setrelativeenergyscaling">itk::ParticleVectorFunction::SetRelativeEnergyScaling</a></p>
 <p>The relative scaling scales the gradient B relative to A. By default this value is 1.0. </p>
 <h3 id="function-getrelativeenergyscaling">function GetRelativeEnergyScaling</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">GetRelativeEnergyScaling</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">GetRelativeEnergyScaling</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span>
 </code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classitk_1_1ParticleVectorFunction.html#function-getrelativeenergyscaling">itk::ParticleVectorFunction::GetRelativeEnergyScaling</a></p>
 <h3 id="function-setrelativegradientscaling">function SetRelativeGradientScaling</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetRelativeGradientScaling</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">r</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetRelativeGradientScaling</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">r</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-getrelativegradientscaling">function GetRelativeGradientScaling</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">GetRelativeGradientScaling</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">GetRelativeGradientScaling</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-getaveragegradmaga">function GetAverageGradMagA</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">GetAverageGradMagA</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">GetAverageGradMagA</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-getaveragegradmagb">function GetAverageGradMagB</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">GetAverageGradMagB</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">GetAverageGradMagB</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-getaverageenergya">function GetAverageEnergyA</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">GetAverageEnergyA</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">GetAverageEnergyA</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-getaverageenergyb">function GetAverageEnergyB</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">GetAverageEnergyB</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">GetAverageEnergyB</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-clone">function Clone</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">ParticleVectorFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">Clone</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">ParticleVectorFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">Clone</span><span class="p">()</span>
 </code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classitk_1_1ParticleVectorFunction.html#function-clone">itk::ParticleVectorFunction::Clone</a></p>
 <h2 id="protected-functions-documentation">Protected Functions Documentation</h2>
 <h3 id="function-particledualvectorfunction">function ParticleDualVectorFunction</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">ParticleDualVectorFunction</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">ParticleDualVectorFunction</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-particledualvectorfunction_1">function ~ParticleDualVectorFunction</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">ParticleDualVectorFunction</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">ParticleDualVectorFunction</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-operator">function operator=</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleDualVectorFunction</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-particledualvectorfunction_2">function ParticleDualVectorFunction</h3>
-<div class="highlight"><pre><span></span><code><span class="n">ParticleDualVectorFunction</span><span class="p">(</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">ParticleDualVectorFunction</span><span class="p">(</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleDualVectorFunction</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span>
 </code></pre></div>
 <h2 id="protected-attributes-documentation">Protected Attributes Documentation</h2>
 <h3 id="variable-m_aon">variable m_AOn</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">m_AOn</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">m_AOn</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="variable-m_bon">variable m_BOn</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">m_BOn</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">m_BOn</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="variable-m_relativegradientscaling">variable m_RelativeGradientScaling</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">m_RelativeGradientScaling</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">m_RelativeGradientScaling</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="variable-m_relativeenergyscaling">variable m_RelativeEnergyScaling</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">m_RelativeEnergyScaling</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">m_RelativeEnergyScaling</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="variable-m_averagegradmaga">variable m_AverageGradMagA</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">m_AverageGradMagA</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">m_AverageGradMagA</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="variable-m_averagegradmagb">variable m_AverageGradMagB</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">m_AverageGradMagB</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">m_AverageGradMagB</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="variable-m_averageenergya">variable m_AverageEnergyA</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">m_AverageEnergyA</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">m_AverageEnergyA</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="variable-m_averageenergyb">variable m_AverageEnergyB</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">m_AverageEnergyB</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">m_AverageEnergyB</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="variable-m_counter">variable m_Counter</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">m_Counter</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">m_Counter</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="variable-m_functiona">variable m_FunctionA</h3>
-<div class="highlight"><pre><span></span><code><span class="n">ParticleVectorFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_FunctionA</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">ParticleVectorFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_FunctionA</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="variable-m_functionb">variable m_FunctionB</h3>
-<div class="highlight"><pre><span></span><code><span class="n">ParticleVectorFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_FunctionB</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">ParticleVectorFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_FunctionB</span><span class="p">;</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:14 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:20 +0000</p>
 
               
             </article>

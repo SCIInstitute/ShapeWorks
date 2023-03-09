@@ -2285,312 +2285,312 @@
 <h2 id="source-code">Source code</h2>
 <div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;StudioEnums.h&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;MeshManager.h&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/Preferences.h&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Analyze/Particles.h&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Particles/ParticleSystem.h&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Project/Project.h&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Shapeworks.h&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Visualization/Viewer.h&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;itkMatrixOffsetTransformBase.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;StudioEnums.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;MeshManager.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/Preferences.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Analyze/Particles.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Particles/ParticleSystem.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Project/Project.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Shapeworks.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Visualization/Viewer.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;itkMatrixOffsetTransformBase.h&gt;</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QSharedPointer&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QVector&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QSharedPointer&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QVector&gt;</span>
 <span class="c1">//#include &lt;cstdlib&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;map&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;string&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;map&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;string&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span>
 
-<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
 
-<span class="k">class</span><span class="w"> </span><span class="nc">CompareSettings</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w"> </span><span class="k">public</span><span class="o">:</span><span class="w"></span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">compare_enabled_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">surface_distance_mode_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">original_checked_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">groomed_checked_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">reconstructed_checked_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">mean_shape_checked_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="kt">float</span><span class="w"> </span><span class="n">opacity_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="n">DisplayMode</span><span class="w"> </span><span class="nf">get_display_mode</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">original_checked_</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">DisplayMode</span><span class="o">::</span><span class="n">Original</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">groomed_checked_</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">DisplayMode</span><span class="o">::</span><span class="n">Groomed</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">DisplayMode</span><span class="o">::</span><span class="n">Reconstructed</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
-<span class="w">  </span><span class="p">}</span><span class="w"></span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_mean_shape_checked</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">mean_shape_checked_</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="p">}</span><span class="w"></span>
-<span class="p">};</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CompareSettings</span><span class="w"> </span><span class="p">{</span>
+<span class="w"> </span><span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">compare_enabled_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">surface_distance_mode_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">original_checked_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">groomed_checked_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">reconstructed_checked_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">mean_shape_checked_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">float</span><span class="w"> </span><span class="n">opacity_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1.0</span><span class="p">;</span>
+<span class="w">  </span><span class="n">DisplayMode</span><span class="w"> </span><span class="nf">get_display_mode</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">original_checked_</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">DisplayMode</span><span class="o">::</span><span class="n">Original</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">groomed_checked_</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">DisplayMode</span><span class="o">::</span><span class="n">Groomed</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="k">return</span><span class="w"> </span><span class="n">DisplayMode</span><span class="o">::</span><span class="n">Reconstructed</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_mean_shape_checked</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">mean_shape_checked_</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">};</span>
 
-<span class="k">class</span><span class="w"> </span><span class="nc">Shape</span><span class="p">;</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Shape</span><span class="p">;</span>
 
-<span class="k">class</span><span class="w"> </span><span class="nc">Session</span><span class="p">;</span><span class="w"></span>
-<span class="k">typedef</span><span class="w"> </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Session</span><span class="o">&gt;</span><span class="w"> </span><span class="n">SessionHandle</span><span class="p">;</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Session</span><span class="p">;</span>
+<span class="k">typedef</span><span class="w"> </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Session</span><span class="o">&gt;</span><span class="w"> </span><span class="n">SessionHandle</span><span class="p">;</span>
 
-<span class="k">using</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkTransform</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
+<span class="k">using</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkTransform</span><span class="o">&gt;</span><span class="p">;</span>
 
 
-<span class="k">class</span><span class="w"> </span><span class="nc">Session</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">QObject</span><span class="p">,</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">QEnableSharedFromThis</span><span class="o">&lt;</span><span class="n">Session</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">  </span><span class="n">Q_OBJECT</span><span class="p">;</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Session</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">QObject</span><span class="p">,</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">QEnableSharedFromThis</span><span class="o">&lt;</span><span class="n">Session</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">Q_OBJECT</span><span class="p">;</span>
 
-<span class="w"> </span><span class="k">public</span><span class="o">:</span><span class="w"></span>
-<span class="w">  </span><span class="n">Session</span><span class="p">(</span><span class="n">QWidget</span><span class="o">*</span><span class="w"> </span><span class="n">parent</span><span class="p">,</span><span class="w"> </span><span class="n">Preferences</span><span class="o">&amp;</span><span class="w"> </span><span class="n">prefs</span><span class="p">);</span><span class="w"></span>
+<span class="w"> </span><span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="n">Session</span><span class="p">(</span><span class="n">QWidget</span><span class="o">*</span><span class="w"> </span><span class="n">parent</span><span class="p">,</span><span class="w"> </span><span class="n">Preferences</span><span class="o">&amp;</span><span class="w"> </span><span class="n">prefs</span><span class="p">);</span>
 
-<span class="w">  </span><span class="o">~</span><span class="n">Session</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="o">~</span><span class="n">Session</span><span class="p">();</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_parent</span><span class="p">(</span><span class="n">QWidget</span><span class="o">*</span><span class="w"> </span><span class="n">parent</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_parent</span><span class="p">(</span><span class="n">QWidget</span><span class="o">*</span><span class="w"> </span><span class="n">parent</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">save_project</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">filename</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">save_project</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">filename</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">load_project</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">filename</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">load_project</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">filename</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">load_light_project</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">filename</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">load_light_project</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">filename</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">load_xl_project</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">filename</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">load_xl_project</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">filename</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_project_path</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">relative_path</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_project_path</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">relative_path</span><span class="p">);</span>
 
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Project</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_project</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Project</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_project</span><span class="p">();</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">load_original_files</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">filenames</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">load_original_files</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">filenames</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">load_groomed_files</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">file_names</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">iso</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">domains_per_shape</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">load_groomed_files</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">file_names</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">iso</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">domains_per_shape</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">load_point_files</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">local</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">world</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">domains_per_shape</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">load_point_files</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">local</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">world</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">domains_per_shape</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">update_particles</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Particles</span><span class="o">&gt;</span><span class="w"> </span><span class="n">particles</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">update_particles</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Particles</span><span class="o">&gt;</span><span class="w"> </span><span class="n">particles</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_num_particles</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_num_particles</span><span class="p">();</span>
 
-<span class="w">  </span><span class="n">ParticleSystem</span><span class="w"> </span><span class="nf">get_local_particle_system</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="n">ParticleSystem</span><span class="w"> </span><span class="nf">get_local_particle_system</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_procrustes_transforms</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">transforms</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_procrustes_transforms</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">transforms</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">is_light_project</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">is_light_project</span><span class="p">();</span>
 
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_groomed_present</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_groomed_present</span><span class="p">();</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">remove_shapes</span><span class="p">(</span><span class="n">QList</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">list</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">remove_shapes</span><span class="p">(</span><span class="n">QList</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">list</span><span class="p">);</span>
 
-<span class="w">  </span><span class="n">ShapeList</span><span class="w"> </span><span class="nf">get_shapes</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="n">ShapeList</span><span class="w"> </span><span class="nf">get_shapes</span><span class="p">();</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">calculate_reconstructed_samples</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">calculate_reconstructed_samples</span><span class="p">();</span>
 
-<span class="w">  </span><span class="n">QString</span><span class="w"> </span><span class="nf">get_filename</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="n">QString</span><span class="w"> </span><span class="nf">get_filename</span><span class="p">();</span>
 
-<span class="w">  </span><span class="n">QString</span><span class="w"> </span><span class="nf">get_display_name</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="n">QString</span><span class="w"> </span><span class="nf">get_display_name</span><span class="p">();</span>
 
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">original_present</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">groomed_present</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">particles_present</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">groups_available</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_num_shapes</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">original_present</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">groomed_present</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">particles_present</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">groups_available</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_num_shapes</span><span class="p">();</span>
 
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_domains_per_shape</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_domains_per_shape</span><span class="p">();</span>
 
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">get_default_feature_map</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">get_default_feature_map</span><span class="p">();</span>
 
-<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="nf">is_supported_file_format</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">filename</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="nf">is_supported_file_format</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">filename</span><span class="p">);</span>
 
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">MeshManager</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_mesh_manager</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">mesh_manager_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">MeshManager</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_mesh_manager</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">mesh_manager_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 
-<span class="w">  </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Parameters</span><span class="o">&amp;</span><span class="w"> </span><span class="n">parameters</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Parameters</span><span class="o">&amp;</span><span class="w"> </span><span class="n">parameters</span><span class="p">();</span>
 
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">DomainType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_groomed_domain_types</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">DomainType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_groomed_domain_types</span><span class="p">();</span>
 
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">update_auto_glyph_size</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">update_auto_glyph_size</span><span class="p">();</span>
 
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_auto_glyph_size</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_auto_glyph_size</span><span class="p">();</span>
 
-<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="nf">get_point</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">points</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="nf">get_point</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">points</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">clear_particles</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">clear_particles</span><span class="p">();</span>
 
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_feature_auto_scale</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_feature_auto_scale</span><span class="p">();</span>
 
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_feature_range_max</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_feature_range_min</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_feature_range</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">min</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">max</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_feature_range_min</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_feature_range_max</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_feature_range_max</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_feature_range_min</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_feature_range</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">min</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">max</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_feature_range_min</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_feature_range_max</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_ctrl_click</span><span class="p">(</span><span class="n">PickResult</span><span class="w"> </span><span class="n">result</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_ctrl_click</span><span class="p">(</span><span class="n">PickResult</span><span class="w"> </span><span class="n">result</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">trigger_landmarks_changed</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">trigger_planes_changed</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">trigger_ffc_changed</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">trigger_landmarks_changed</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">trigger_planes_changed</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">trigger_ffc_changed</span><span class="p">();</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_active_landmark_domain</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_active_landmark_domain</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_placing_landmark</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_placing_landmark</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_landmarks_active</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">active</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_landmarks_active</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_planes_active</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">active</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_planes_active</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_show_landmark_labels</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">show</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_show_landmark_labels</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_active_landmark_domain</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_active_landmark_domain</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_placing_landmark</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">id</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_placing_landmark</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_landmarks_active</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">active</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_landmarks_active</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_planes_active</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">active</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_planes_active</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_show_landmark_labels</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">show</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_show_landmark_labels</span><span class="p">();</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_show_planes</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">show</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_show_planes</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">should_show_planes</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_show_planes</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">show</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_show_planes</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">should_show_planes</span><span class="p">();</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_show_landmarks</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">show</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_show_landmarks</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_show_landmarks</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">show</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_show_landmarks</span><span class="p">();</span>
 
 <span class="w">  </span><span class="c1">// image volume</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">set_image_name</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">image_name</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">get_image_name</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">set_image_name</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">image_name</span><span class="p">);</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">get_image_name</span><span class="p">();</span>
 
 <span class="w">  </span><span class="c1">// image axis</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_image_axis</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">axis</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="n">Axis</span><span class="w"> </span><span class="nf">get_image_axis</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_image_axis</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">axis</span><span class="p">);</span>
+<span class="w">  </span><span class="n">Axis</span><span class="w"> </span><span class="nf">get_image_axis</span><span class="p">();</span>
 
 <span class="w">  </span><span class="c1">// image view 3d mode</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_image_3d_mode</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">mode</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_image_3d_mode</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_image_3d_mode</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">mode</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_image_3d_mode</span><span class="p">();</span>
 
 <span class="w">  </span><span class="c1">// image sync/share window width and level</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_image_share_window_and_level</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_image_share_window_and_level</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_image_share_window_and_level</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_image_share_window_and_level</span><span class="p">();</span>
 
 <span class="w">  </span><span class="c1">// image sync slice</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_image_sync_slice</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_image_sync_slice</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_image_sync_slice</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_image_sync_slice</span><span class="p">();</span>
 
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">has_constraints</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">has_constraints</span><span class="p">();</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_loading</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">loading</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">is_loading</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_loading</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">loading</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">is_loading</span><span class="p">();</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_tool_state</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">state</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">get_tool_state</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">is_analysis_mode</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_tool_state</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">state</span><span class="p">);</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">get_tool_state</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">is_analysis_mode</span><span class="p">();</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_ffc_paint_active</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_ffc_paint_active</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_ffc_paint_active</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_ffc_paint_active</span><span class="p">();</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_ffc_paint_mode_inclusive</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">inclusive</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_ffc_paint_mode_inclusive</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_ffc_paint_mode_inclusive</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">inclusive</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_ffc_paint_mode_inclusive</span><span class="p">();</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_ffc_paint_size</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">size</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_ffc_paint_size</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_ffc_paint_size</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">size</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_ffc_paint_size</span><span class="p">();</span>
 
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_show_good_bad_particles</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_show_good_bad_particles</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_show_good_bad_particles</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_show_good_bad_particles</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_show_difference_vectors</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_show_difference_vectors</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">should_difference_vectors_show</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_show_difference_vectors</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_show_difference_vectors</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">should_difference_vectors_show</span><span class="p">();</span>
 
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_good_bad_particles</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_good_bad_particles</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">good_bad</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_good_bad_particles</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_good_bad_particles</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">bool</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">good_bad</span><span class="p">);</span>
 
 <span class="w">  </span><span class="c1">// for setting difference to mean, etc</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_difference_particles</span><span class="p">(</span><span class="n">Particles</span><span class="w"> </span><span class="n">particles</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">difference_particles_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">particles</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
-<span class="w">  </span><span class="n">Particles</span><span class="w"> </span><span class="nf">get_difference_particles</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">difference_particles_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_difference_particles</span><span class="p">(</span><span class="n">Particles</span><span class="w"> </span><span class="n">particles</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">difference_particles_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">particles</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="n">Particles</span><span class="w"> </span><span class="nf">get_difference_particles</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">difference_particles_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_compare_settings</span><span class="p">(</span><span class="n">CompareSettings</span><span class="w"> </span><span class="n">settings</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="n">CompareSettings</span><span class="w"> </span><span class="nf">get_compare_settings</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_compare_settings</span><span class="p">(</span><span class="n">CompareSettings</span><span class="w"> </span><span class="n">settings</span><span class="p">);</span>
+<span class="w">  </span><span class="n">CompareSettings</span><span class="w"> </span><span class="nf">get_compare_settings</span><span class="p">();</span>
 
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">trigger_repaint</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">trigger_repaint</span><span class="p">();</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">trigger_reinsert_shapes</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">trigger_reinsert_shapes</span><span class="p">();</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_display_mode</span><span class="p">(</span><span class="n">DisplayMode</span><span class="w"> </span><span class="n">mode</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_display_mode</span><span class="p">(</span><span class="n">DisplayMode</span><span class="w"> </span><span class="n">mode</span><span class="p">);</span>
 
-<span class="w">  </span><span class="n">DisplayMode</span><span class="w"> </span><span class="nf">get_display_mode</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="n">DisplayMode</span><span class="w"> </span><span class="nf">get_display_mode</span><span class="p">();</span>
 
-<span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Q_SLOTS</span><span class="o">:</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">set_feature_auto_scale</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="p">);</span><span class="w"></span>
+<span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Q_SLOTS</span><span class="o">:</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">set_feature_auto_scale</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_landmark_drag_mode</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">mode</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_landmark_drag_mode</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_landmark_drag_mode</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">mode</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_landmark_drag_mode</span><span class="p">();</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_clear_cache</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_new_mesh</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_thread_complete</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_clear_cache</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_new_mesh</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_thread_complete</span><span class="p">();</span>
 
-<span class="w">  </span><span class="nl">Q_SIGNALS</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">data_changed</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">points_changed</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">landmarks_changed</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">planes_changed</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">ffc_changed</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_display</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">new_mesh</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">feature_range_changed</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_view_mode</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">image_slice_settings_changed</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">ffc_paint_mode_changed</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">repaint</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">reinsert_shapes</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="nl">Q_SIGNALS</span><span class="p">:</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">data_changed</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">points_changed</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">landmarks_changed</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">planes_changed</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">ffc_changed</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_display</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">new_mesh</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">feature_range_changed</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_view_mode</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">image_slice_settings_changed</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">ffc_paint_mode_changed</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">repaint</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">reinsert_shapes</span><span class="p">();</span>
 
-<span class="w"> </span><span class="k">public</span><span class="o">:</span><span class="w"></span>
+<span class="w"> </span><span class="k">public</span><span class="o">:</span>
 <span class="w">  </span><span class="c1">// constants</span>
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">DATA_C</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">GROOM_C</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">OPTIMIZE_C</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">ANALYSIS_C</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">DEEPSSM_C</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">DATA_C</span><span class="p">;</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">GROOM_C</span><span class="p">;</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">OPTIMIZE_C</span><span class="p">;</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">ANALYSIS_C</span><span class="p">;</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">DEEPSSM_C</span><span class="p">;</span>
 
-<span class="w"> </span><span class="k">private</span><span class="o">:</span><span class="w"></span>
+<span class="w"> </span><span class="k">private</span><span class="o">:</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">renumber_shapes</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">renumber_shapes</span><span class="p">();</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">new_landmark</span><span class="p">(</span><span class="n">PickResult</span><span class="w"> </span><span class="n">result</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">new_landmark</span><span class="p">(</span><span class="n">PickResult</span><span class="w"> </span><span class="n">result</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">new_plane_point</span><span class="p">(</span><span class="n">PickResult</span><span class="w"> </span><span class="n">result</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">new_plane_point</span><span class="p">(</span><span class="n">PickResult</span><span class="w"> </span><span class="n">result</span><span class="p">);</span>
 
-<span class="w">  </span><span class="n">QWidget</span><span class="o">*</span><span class="w"> </span><span class="n">parent_</span><span class="p">{</span><span class="k">nullptr</span><span class="p">};</span><span class="w"></span>
+<span class="w">  </span><span class="n">QWidget</span><span class="o">*</span><span class="w"> </span><span class="n">parent_</span><span class="p">{</span><span class="k">nullptr</span><span class="p">};</span>
 
-<span class="w">  </span><span class="n">Preferences</span><span class="o">&amp;</span><span class="w"> </span><span class="n">preferences_</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">Preferences</span><span class="o">&amp;</span><span class="w"> </span><span class="n">preferences_</span><span class="p">;</span>
 
-<span class="w">  </span><span class="n">QString</span><span class="w"> </span><span class="n">filename_</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">QString</span><span class="w"> </span><span class="n">filename_</span><span class="p">;</span>
 
-<span class="w">  </span><span class="n">ShapeList</span><span class="w"> </span><span class="n">shapes_</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">ShapeList</span><span class="w"> </span><span class="n">shapes_</span><span class="p">;</span>
 
-<span class="w">  </span><span class="n">Particles</span><span class="w"> </span><span class="n">difference_particles_</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">Particles</span><span class="w"> </span><span class="n">difference_particles_</span><span class="p">;</span>
 
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">MeshManager</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mesh_manager_</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">MeshManager</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mesh_manager_</span><span class="p">;</span>
 
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">groups_available_</span><span class="p">{</span><span class="nb">false</span><span class="p">};</span><span class="w"></span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_light_project_</span><span class="p">{</span><span class="nb">false</span><span class="p">};</span><span class="w"></span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">groups_available_</span><span class="p">{</span><span class="nb">false</span><span class="p">};</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_light_project_</span><span class="p">{</span><span class="nb">false</span><span class="p">};</span>
 
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">unsaved_particle_files_</span><span class="p">{</span><span class="nb">false</span><span class="p">};</span><span class="w"></span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">unsaved_particle_files_</span><span class="p">{</span><span class="nb">false</span><span class="p">};</span>
 
-<span class="w">  </span><span class="n">Parameters</span><span class="w"> </span><span class="n">params_</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">Parameters</span><span class="w"> </span><span class="n">params_</span><span class="p">;</span>
 
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="w"> </span><span class="n">project_</span><span class="p">{</span><span class="k">new</span><span class="w"> </span><span class="n">Project</span><span class="p">()};</span><span class="w"></span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="w"> </span><span class="n">project_</span><span class="p">{</span><span class="k">new</span><span class="w"> </span><span class="n">Project</span><span class="p">()};</span>
 
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">auto_glyph_size_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">auto_glyph_size_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span>
 
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">active_landmark_domain_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">placing_landmark_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">landmark_drag_mode_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">landmarks_active_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">planes_active_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">show_landmark_labels_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">show_difference_vectors_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">active_landmark_domain_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">placing_landmark_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">landmark_drag_mode_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">landmarks_active_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">planes_active_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">show_landmark_labels_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">show_difference_vectors_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
 
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">ffc_painting_active_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">ffc_painting_inclusive_mode_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">ffc_paint_size_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">50</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">ffc_painting_active_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">ffc_painting_inclusive_mode_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">ffc_paint_size_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">50</span><span class="p">;</span>
 
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_loading_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="n">CompareSettings</span><span class="w"> </span><span class="n">compare_settings_</span><span class="p">;</span><span class="w"></span>
-<span class="p">};</span><span class="w"></span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">is_loading_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">  </span><span class="n">CompareSettings</span><span class="w"> </span><span class="n">compare_settings_</span><span class="p">;</span>
+<span class="p">};</span>
 
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:16 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:23 +0000</p>
 
               
             </article>

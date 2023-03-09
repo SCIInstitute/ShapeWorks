@@ -2280,36 +2280,36 @@
 </table>
 <h2 id="functions-documentation">Functions Documentation</h2>
 <h3 id="function-connectpipelines">function ConnectPipelines</h3>
-<div class="highlight"><pre><span></span><code><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">ITK_Exporter</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
-<span class="k">typename</span><span class="w"> </span><span class="nc">VTK_Importer</span><span class="w"> </span><span class="o">&gt;</span><span class="w"></span>
-<span class="kt">void</span><span class="w"> </span><span class="n">ConnectPipelines</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">ITK_Exporter</span><span class="w"> </span><span class="n">exporter</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">VTK_Importer</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">importer</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">ITK_Exporter</span><span class="w"> </span><span class="p">,</span>
+<span class="k">typename</span><span class="w"> </span><span class="nc">VTK_Importer</span><span class="w"> </span><span class="o">&gt;</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">ConnectPipelines</span><span class="p">(</span>
+<span class="w">    </span><span class="n">ITK_Exporter</span><span class="w"> </span><span class="n">exporter</span><span class="p">,</span>
+<span class="w">    </span><span class="n">VTK_Importer</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">importer</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>This function will connect the given itk::VTKImageExport filter to the given vtkImageImport filter. </p>
 <h2 id="source-code">Source code</h2>
 <div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
 
-<span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">ITK_Exporter</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">VTK_Importer</span><span class="o">&gt;</span><span class="w"></span>
-<span class="kt">void</span><span class="w"> </span><span class="n">ConnectPipelines</span><span class="p">(</span><span class="n">ITK_Exporter</span><span class="w"> </span><span class="n">exporter</span><span class="p">,</span><span class="w"> </span><span class="n">VTK_Importer</span><span class="o">*</span><span class="w"> </span><span class="n">importer</span><span class="p">)</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">  </span><span class="n">importer</span><span class="o">-&gt;</span><span class="n">SetUpdateInformationCallback</span><span class="p">(</span><span class="n">exporter</span><span class="o">-&gt;</span><span class="n">GetUpdateInformationCallback</span><span class="p">());</span><span class="w"></span>
-<span class="w">  </span><span class="n">importer</span><span class="o">-&gt;</span><span class="n">SetPipelineModifiedCallback</span><span class="p">(</span><span class="n">exporter</span><span class="o">-&gt;</span><span class="n">GetPipelineModifiedCallback</span><span class="p">());</span><span class="w"></span>
-<span class="w">  </span><span class="n">importer</span><span class="o">-&gt;</span><span class="n">SetWholeExtentCallback</span><span class="p">(</span><span class="n">exporter</span><span class="o">-&gt;</span><span class="n">GetWholeExtentCallback</span><span class="p">());</span><span class="w"></span>
-<span class="w">  </span><span class="n">importer</span><span class="o">-&gt;</span><span class="n">SetSpacingCallback</span><span class="p">(</span><span class="n">exporter</span><span class="o">-&gt;</span><span class="n">GetSpacingCallback</span><span class="p">());</span><span class="w"></span>
-<span class="w">  </span><span class="n">importer</span><span class="o">-&gt;</span><span class="n">SetOriginCallback</span><span class="p">(</span><span class="n">exporter</span><span class="o">-&gt;</span><span class="n">GetOriginCallback</span><span class="p">());</span><span class="w"></span>
-<span class="w">  </span><span class="n">importer</span><span class="o">-&gt;</span><span class="n">SetScalarTypeCallback</span><span class="p">(</span><span class="n">exporter</span><span class="o">-&gt;</span><span class="n">GetScalarTypeCallback</span><span class="p">());</span><span class="w"></span>
-<span class="w">  </span><span class="n">importer</span><span class="o">-&gt;</span><span class="n">SetNumberOfComponentsCallback</span><span class="p">(</span><span class="n">exporter</span><span class="o">-&gt;</span><span class="n">GetNumberOfComponentsCallback</span><span class="p">());</span><span class="w"></span>
-<span class="w">  </span><span class="n">importer</span><span class="o">-&gt;</span><span class="n">SetPropagateUpdateExtentCallback</span><span class="p">(</span><span class="n">exporter</span><span class="o">-&gt;</span><span class="n">GetPropagateUpdateExtentCallback</span><span class="p">());</span><span class="w"></span>
-<span class="w">  </span><span class="n">importer</span><span class="o">-&gt;</span><span class="n">SetUpdateDataCallback</span><span class="p">(</span><span class="n">exporter</span><span class="o">-&gt;</span><span class="n">GetUpdateDataCallback</span><span class="p">());</span><span class="w"></span>
-<span class="w">  </span><span class="n">importer</span><span class="o">-&gt;</span><span class="n">SetDataExtentCallback</span><span class="p">(</span><span class="n">exporter</span><span class="o">-&gt;</span><span class="n">GetDataExtentCallback</span><span class="p">());</span><span class="w"></span>
-<span class="w">  </span><span class="n">importer</span><span class="o">-&gt;</span><span class="n">SetBufferPointerCallback</span><span class="p">(</span><span class="n">exporter</span><span class="o">-&gt;</span><span class="n">GetBufferPointerCallback</span><span class="p">());</span><span class="w"></span>
-<span class="w">  </span><span class="n">importer</span><span class="o">-&gt;</span><span class="n">SetCallbackUserData</span><span class="p">(</span><span class="n">exporter</span><span class="o">-&gt;</span><span class="n">GetCallbackUserData</span><span class="p">());</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">typename</span><span class="w"> </span><span class="nc">ITK_Exporter</span><span class="p">,</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">VTK_Importer</span><span class="o">&gt;</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">ConnectPipelines</span><span class="p">(</span><span class="n">ITK_Exporter</span><span class="w"> </span><span class="n">exporter</span><span class="p">,</span><span class="w"> </span><span class="n">VTK_Importer</span><span class="o">*</span><span class="w"> </span><span class="n">importer</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="n">importer</span><span class="o">-&gt;</span><span class="n">SetUpdateInformationCallback</span><span class="p">(</span><span class="n">exporter</span><span class="o">-&gt;</span><span class="n">GetUpdateInformationCallback</span><span class="p">());</span>
+<span class="w">  </span><span class="n">importer</span><span class="o">-&gt;</span><span class="n">SetPipelineModifiedCallback</span><span class="p">(</span><span class="n">exporter</span><span class="o">-&gt;</span><span class="n">GetPipelineModifiedCallback</span><span class="p">());</span>
+<span class="w">  </span><span class="n">importer</span><span class="o">-&gt;</span><span class="n">SetWholeExtentCallback</span><span class="p">(</span><span class="n">exporter</span><span class="o">-&gt;</span><span class="n">GetWholeExtentCallback</span><span class="p">());</span>
+<span class="w">  </span><span class="n">importer</span><span class="o">-&gt;</span><span class="n">SetSpacingCallback</span><span class="p">(</span><span class="n">exporter</span><span class="o">-&gt;</span><span class="n">GetSpacingCallback</span><span class="p">());</span>
+<span class="w">  </span><span class="n">importer</span><span class="o">-&gt;</span><span class="n">SetOriginCallback</span><span class="p">(</span><span class="n">exporter</span><span class="o">-&gt;</span><span class="n">GetOriginCallback</span><span class="p">());</span>
+<span class="w">  </span><span class="n">importer</span><span class="o">-&gt;</span><span class="n">SetScalarTypeCallback</span><span class="p">(</span><span class="n">exporter</span><span class="o">-&gt;</span><span class="n">GetScalarTypeCallback</span><span class="p">());</span>
+<span class="w">  </span><span class="n">importer</span><span class="o">-&gt;</span><span class="n">SetNumberOfComponentsCallback</span><span class="p">(</span><span class="n">exporter</span><span class="o">-&gt;</span><span class="n">GetNumberOfComponentsCallback</span><span class="p">());</span>
+<span class="w">  </span><span class="n">importer</span><span class="o">-&gt;</span><span class="n">SetPropagateUpdateExtentCallback</span><span class="p">(</span><span class="n">exporter</span><span class="o">-&gt;</span><span class="n">GetPropagateUpdateExtentCallback</span><span class="p">());</span>
+<span class="w">  </span><span class="n">importer</span><span class="o">-&gt;</span><span class="n">SetUpdateDataCallback</span><span class="p">(</span><span class="n">exporter</span><span class="o">-&gt;</span><span class="n">GetUpdateDataCallback</span><span class="p">());</span>
+<span class="w">  </span><span class="n">importer</span><span class="o">-&gt;</span><span class="n">SetDataExtentCallback</span><span class="p">(</span><span class="n">exporter</span><span class="o">-&gt;</span><span class="n">GetDataExtentCallback</span><span class="p">());</span>
+<span class="w">  </span><span class="n">importer</span><span class="o">-&gt;</span><span class="n">SetBufferPointerCallback</span><span class="p">(</span><span class="n">exporter</span><span class="o">-&gt;</span><span class="n">GetBufferPointerCallback</span><span class="p">());</span>
+<span class="w">  </span><span class="n">importer</span><span class="o">-&gt;</span><span class="n">SetCallbackUserData</span><span class="p">(</span><span class="n">exporter</span><span class="o">-&gt;</span><span class="n">GetCallbackUserData</span><span class="p">());</span>
+<span class="p">}</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:15 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:22 +0000</p>
 
               
             </article>

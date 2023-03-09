@@ -2486,89 +2486,89 @@
 </table>
 <h2 id="public-types-documentation">Public Types Documentation</h2>
 <h3 id="typedef-pointtype">typedef PointType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">MeshWrapper</span><span class="o">::</span><span class="n">PointType</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">TriMeshWrapper</span><span class="o">::</span><span class="n">PointType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">MeshWrapper</span><span class="o">::</span><span class="n">PointType</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">TriMeshWrapper</span><span class="o">::</span><span class="n">PointType</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="typedef-gradntype">typedef GradNType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">MeshWrapper</span><span class="o">::</span><span class="n">GradNType</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">TriMeshWrapper</span><span class="o">::</span><span class="n">GradNType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">MeshWrapper</span><span class="o">::</span><span class="n">GradNType</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">TriMeshWrapper</span><span class="o">::</span><span class="n">GradNType</span><span class="p">;</span>
 </code></pre></div>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-trimeshwrapper">function TriMeshWrapper</h3>
-<div class="highlight"><pre><span></span><code><span class="k">explicit</span><span class="w"> </span><span class="n">TriMeshWrapper</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">trimesh</span><span class="o">::</span><span class="n">TriMesh</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">mesh</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">explicit</span><span class="w"> </span><span class="n">TriMeshWrapper</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">trimesh</span><span class="o">::</span><span class="n">TriMesh</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">mesh</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-trimeshwrapper_1">function ~TriMeshWrapper</h3>
-<div class="highlight"><pre><span></span><code><span class="o">~</span><span class="n">TriMeshWrapper</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="k">default</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="o">~</span><span class="n">TriMeshWrapper</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="k">default</span>
 </code></pre></div>
 <h3 id="function-computedistance">function ComputeDistance</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">ComputeDistance</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pointa</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idx_a</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pointb</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idx_b</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">out_grad</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">ComputeDistance</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pointa</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idx_a</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pointb</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idx_b</span><span class="p">,</span>
+<span class="w">    </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">out_grad</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span>
 </code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1MeshWrapper.html#function-computedistance">shapeworks::MeshWrapper::ComputeDistance</a></p>
 <h3 id="function-geodesicwalk">function GeodesicWalk</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="n">GeodesicWalk</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">PointType</span><span class="w"> </span><span class="n">pointa</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">DIMENSION</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">vector</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="n">GeodesicWalk</span><span class="p">(</span>
+<span class="w">    </span><span class="n">PointType</span><span class="w"> </span><span class="n">pointa</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span>
+<span class="w">    </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">DIMENSION</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">vector</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span>
 </code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1MeshWrapper.html#function-geodesicwalk">shapeworks::MeshWrapper::GeodesicWalk</a></p>
 <h3 id="function-projectvectortosurfacetangent">function ProjectVectorToSurfaceTangent</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">DIMENSION</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">ProjectVectorToSurfaceTangent</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pointa</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">DIMENSION</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">vector</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">DIMENSION</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">ProjectVectorToSurfaceTangent</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pointa</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span>
+<span class="w">    </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">DIMENSION</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">vector</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span>
 </code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1MeshWrapper.html#function-projectvectortosurfacetangent">shapeworks::MeshWrapper::ProjectVectorToSurfaceTangent</a></p>
 <h3 id="function-samplenormalatpoint">function SampleNormalAtPoint</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">float</span><span class="p">,</span><span class="w"> </span><span class="n">DIMENSION</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">SampleNormalAtPoint</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">PointType</span><span class="w"> </span><span class="n">p</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">float</span><span class="p">,</span><span class="w"> </span><span class="n">DIMENSION</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">SampleNormalAtPoint</span><span class="p">(</span>
+<span class="w">    </span><span class="n">PointType</span><span class="w"> </span><span class="n">p</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span>
 </code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1MeshWrapper.html#function-samplenormalatpoint">shapeworks::MeshWrapper::SampleNormalAtPoint</a></p>
 <h3 id="function-samplegradnatpoint">function SampleGradNAtPoint</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">GradNType</span><span class="w"> </span><span class="n">SampleGradNAtPoint</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">PointType</span><span class="w"> </span><span class="n">p</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">GradNType</span><span class="w"> </span><span class="n">SampleGradNAtPoint</span><span class="p">(</span>
+<span class="w">    </span><span class="n">PointType</span><span class="w"> </span><span class="n">p</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span>
 </code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1MeshWrapper.html#function-samplegradnatpoint">shapeworks::MeshWrapper::SampleGradNAtPoint</a></p>
 <h3 id="function-snaptomesh">function SnapToMesh</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="n">SnapToMesh</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">PointType</span><span class="w"> </span><span class="n">pointa</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="n">SnapToMesh</span><span class="p">(</span>
+<span class="w">    </span><span class="n">PointType</span><span class="w"> </span><span class="n">pointa</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span>
 </code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1MeshWrapper.html#function-snaptomesh">shapeworks::MeshWrapper::SnapToMesh</a></p>
 <h3 id="function-getpointonmesh">function GetPointOnMesh</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="n">GetPointOnMesh</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="n">GetPointOnMesh</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span>
 </code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1MeshWrapper.html#function-getpointonmesh">shapeworks::MeshWrapper::GetPointOnMesh</a></p>
 <h3 id="function-getmeshlowerbound">function GetMeshLowerBound</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetMeshLowerBound</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetMeshLowerBound</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span>
 </code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1MeshWrapper.html#function-getmeshlowerbound">shapeworks::MeshWrapper::GetMeshLowerBound</a></p>
 <h3 id="function-getmeshupperbound">function GetMeshUpperBound</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetMeshUpperBound</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetMeshUpperBound</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span>
 </code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1MeshWrapper.html#function-getmeshupperbound">shapeworks::MeshWrapper::GetMeshUpperBound</a></p>
 <h3 id="function-isgeodesicsenabled">function IsGeodesicsEnabled</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">IsGeodesicsEnabled</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">IsGeodesicsEnabled</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span>
 </code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1MeshWrapper.html#function-isgeodesicsenabled">shapeworks::MeshWrapper::IsGeodesicsEnabled</a></p>
 <h3 id="function-getpolydata">function GetPolydata</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">GetPolydata</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">GetPolydata</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span>
 </code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1MeshWrapper.html#function-getpolydata">shapeworks::MeshWrapper::GetPolydata</a></p>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:15 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:22 +0000</p>
 
               
             </article>

@@ -2339,33 +2339,33 @@
 </table>
 <h2 id="public-types-documentation">Public Types Documentation</h2>
 <h3 id="using-tpstransform">using TPSTransform</h3>
-<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ImageUtils</span><span class="o">::</span><span class="n">TPSTransform</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">itk</span><span class="o">::</span><span class="n">ThinPlateSplineKernelTransform</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ImageUtils</span><span class="o">::</span><span class="n">TPSTransform</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">itk</span><span class="o">::</span><span class="n">ThinPlateSplineKernelTransform</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="p">;</span>
 </code></pre></div>
 <p>computes a thin plate spline (TSP) transform from the source to the target landmarks (in the given files) using every stride points </p>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-boundingbox">function boundingBox</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">PhysicalRegion</span><span class="w"> </span><span class="n">boundingBox</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">filenames</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">Image</span><span class="o">::</span><span class="n">PixelType</span><span class="w"> </span><span class="n">isoValue</span><span class="w"> </span><span class="o">=</span><span class="mf">1.0</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">PhysicalRegion</span><span class="w"> </span><span class="n">boundingBox</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">filenames</span><span class="p">,</span>
+<span class="w">    </span><span class="n">Image</span><span class="o">::</span><span class="n">PixelType</span><span class="w"> </span><span class="n">isoValue</span><span class="w"> </span><span class="o">=</span><span class="mf">1.0</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>calculate bounding box for images using the region of data &lt;= the given isoValue </p>
 <h3 id="function-boundingbox_1">function boundingBox</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">PhysicalRegion</span><span class="w"> </span><span class="n">boundingBox</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">reference_wrapper</span><span class="o">&lt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Image</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">images</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">Image</span><span class="o">::</span><span class="n">PixelType</span><span class="w"> </span><span class="n">isoValue</span><span class="w"> </span><span class="o">=</span><span class="mf">1.0</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">PhysicalRegion</span><span class="w"> </span><span class="n">boundingBox</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">reference_wrapper</span><span class="o">&lt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Image</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">images</span><span class="p">,</span>
+<span class="w">    </span><span class="n">Image</span><span class="o">::</span><span class="n">PixelType</span><span class="w"> </span><span class="n">isoValue</span><span class="w"> </span><span class="o">=</span><span class="mf">1.0</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>calculate bounding box for shapework images using the region of data &lt;= the given isoValue </p>
 <h3 id="function-createwarptransform">function createWarpTransform</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">TPSTransform</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">createWarpTransform</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">source_landmarks_file</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">target_landmarks_file</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">stride</span><span class="w"> </span><span class="o">=</span><span class="mi">1</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">TPSTransform</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">createWarpTransform</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">source_landmarks_file</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">target_landmarks_file</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">stride</span><span class="w"> </span><span class="o">=</span><span class="mi">1</span>
+<span class="p">)</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:14 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:21 +0000</p>
 
               
             </article>

@@ -2673,158 +2673,158 @@
 </tbody>
 </table>
 <h2 id="detailed-description">Detailed Description</h2>
-<div class="highlight"><pre><span></span><code><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">VDimension</span><span class="o">&gt;</span><span class="w"></span>
-<span class="k">class</span><span class="w"> </span><span class="nc">itk</span><span class="o">::</span><span class="n">ParticleVectorFunction</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">VDimension</span><span class="o">&gt;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">itk</span><span class="o">::</span><span class="n">ParticleVectorFunction</span><span class="p">;</span>
 </code></pre></div>
 <p>This is the base class defining the API for a function that takes a particle system, domain, and location index as arguments and returns a vector-valued result. </p>
 <h2 id="public-types-documentation">Public Types Documentation</h2>
 <h3 id="typedef-self">typedef Self</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleVectorFunction</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleVectorFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Self</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleVectorFunction</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleVectorFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Self</span><span class="p">;</span>
 </code></pre></div>
 <p>Standard class typedefs. </p>
 <h3 id="typedef-pointer">typedef Pointer</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleVectorFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleVectorFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="typedef-constpointer">typedef ConstPointer</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleVectorFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">ConstPointer</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleVectorFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">ConstPointer</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="typedef-superclass">typedef Superclass</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">LightObject</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleVectorFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Superclass</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">LightObject</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleVectorFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Superclass</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="typedef-particlesystemtype">typedef ParticleSystemType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleVectorFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">ParticleSystemType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleVectorFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">ParticleSystemType</span><span class="p">;</span>
 </code></pre></div>
 <p>Type of particle system. </p>
 <h3 id="typedef-vectortype">typedef VectorType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleVectorFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">VectorType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleVectorFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">VectorType</span><span class="p">;</span>
 </code></pre></div>
 <p>Type of vectors. </p>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-itktypemacro">function itkTypeMacro</h3>
-<div class="highlight"><pre><span></span><code><span class="n">itkTypeMacro</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">ParticleVectorFunction</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">itkTypeMacro</span><span class="p">(</span>
+<span class="w">    </span><span class="n">ParticleVectorFunction</span><span class="w"> </span><span class="p">,</span>
 <span class="w">    </span><span class="n">LightObject</span><span class="w"> </span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-itkstaticconstmacro">function itkStaticConstMacro</h3>
-<div class="highlight"><pre><span></span><code><span class="n">itkStaticConstMacro</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">Dimension</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">itkStaticConstMacro</span><span class="p">(</span>
+<span class="w">    </span><span class="n">Dimension</span><span class="w"> </span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span>
 <span class="w">    </span><span class="n">VDimension</span><span class="w"> </span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Method for object allocation through the factory. Dimensionality of the domain of the particle system. </p>
 <h3 id="function-evaluate">function Evaluate</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">VectorType</span><span class="w"> </span><span class="n">Evaluate</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystemType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">maxtimestep</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">VectorType</span><span class="w"> </span><span class="n">Evaluate</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystemType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">maxtimestep</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
 </code></pre></div>
 <p><strong>Reimplemented by</strong>: <a href="classitk_1_1ParticleEnsembleEntropyFunction.html#function-evaluate">itk::ParticleEnsembleEntropyFunction::Evaluate</a>, <a href="classitk_1_1ParticleMeshBasedGeneralEntropyGradientFunction.html#function-evaluate">itk::ParticleMeshBasedGeneralEntropyGradientFunction::Evaluate</a>, <a href="classitk_1_1ParticleModifiedCotangentEntropyGradientFunction.html#function-evaluate">itk::ParticleModifiedCotangentEntropyGradientFunction::Evaluate</a>, <a href="classitk_1_1ParticleOmegaGradientFunction.html#function-evaluate">itk::ParticleOmegaGradientFunction::Evaluate</a>, <a href="classitk_1_1ParticleDualVectorFunction.html#function-evaluate">itk::ParticleDualVectorFunction::Evaluate</a>, <a href="classitk_1_1ParticleEntropyGradientFunction.html#function-evaluate">itk::ParticleEntropyGradientFunction::Evaluate</a></p>
 <p>The first argument is a pointer to the particle system. The second argument is the index of the domain within that particle system. The third argument is the index of the particle location within the given domain. </p>
 <h3 id="function-evaluate_1">function Evaluate</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">VectorType</span><span class="w"> </span><span class="n">Evaluate</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystemType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">maxtimestep</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">energy</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">VectorType</span><span class="w"> </span><span class="n">Evaluate</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystemType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">maxtimestep</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">energy</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
 </code></pre></div>
 <p><strong>Reimplemented by</strong>: <a href="classitk_1_1ParticleDualVectorFunction.html#function-evaluate">itk::ParticleDualVectorFunction::Evaluate</a>, <a href="classitk_1_1ParticleEnsembleEntropyFunction.html#function-evaluate">itk::ParticleEnsembleEntropyFunction::Evaluate</a>, <a href="classitk_1_1ParticleEntropyGradientFunction.html#function-evaluate">itk::ParticleEntropyGradientFunction::Evaluate</a>, <a href="classitk_1_1ParticleMeshBasedGeneralEntropyGradientFunction.html#function-evaluate">itk::ParticleMeshBasedGeneralEntropyGradientFunction::Evaluate</a>, <a href="classitk_1_1ParticleModifiedCotangentEntropyGradientFunction.html#function-evaluate">itk::ParticleModifiedCotangentEntropyGradientFunction::Evaluate</a>, <a href="classitk_1_1ParticleOmegaGradientFunction.html#function-evaluate">itk::ParticleOmegaGradientFunction::Evaluate</a></p>
 <h3 id="function-energy">function Energy</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">Energy</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">Energy</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystemType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
 </code></pre></div>
 <p><strong>Reimplemented by</strong>: <a href="classitk_1_1ParticleEnsembleEntropyFunction.html#function-energy">itk::ParticleEnsembleEntropyFunction::Energy</a>, <a href="classitk_1_1ParticleMeshBasedGeneralEntropyGradientFunction.html#function-energy">itk::ParticleMeshBasedGeneralEntropyGradientFunction::Energy</a>, <a href="classitk_1_1ParticleModifiedCotangentEntropyGradientFunction.html#function-energy">itk::ParticleModifiedCotangentEntropyGradientFunction::Energy</a>, <a href="classitk_1_1ParticleOmegaGradientFunction.html#function-energy">itk::ParticleOmegaGradientFunction::Energy</a>, <a href="classitk_1_1ParticleDualVectorFunction.html#function-energy">itk::ParticleDualVectorFunction::Energy</a>, <a href="classitk_1_1ParticleEntropyGradientFunction.html#function-energy">itk::ParticleEntropyGradientFunction::Energy</a></p>
 <h3 id="function-resetbuffers">function ResetBuffers</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">ResetBuffers</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">ResetBuffers</span><span class="p">()</span>
 </code></pre></div>
 <p><strong>Reimplemented by</strong>: <a href="classitk_1_1ParticleEntropyGradientFunction.html#function-resetbuffers">itk::ParticleEntropyGradientFunction::ResetBuffers</a></p>
 <p>May be called by the solver class. </p>
 <h3 id="function-afteriteration">function AfterIteration</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">AfterIteration</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">AfterIteration</span><span class="p">()</span>
 </code></pre></div>
 <p><strong>Reimplemented by</strong>: <a href="classitk_1_1ParticleConstrainedModifiedCotangentEntropyGradientFunction.html#function-afteriteration">itk::ParticleConstrainedModifiedCotangentEntropyGradientFunction::AfterIteration</a>, <a href="classitk_1_1ParticleCurvatureEntropyGradientFunction.html#function-afteriteration">itk::ParticleCurvatureEntropyGradientFunction::AfterIteration</a>, <a href="classitk_1_1ParticleCurvatureEntropyGradientFunction.html#function-afteriteration">itk::ParticleCurvatureEntropyGradientFunction::AfterIteration</a>, <a href="classitk_1_1ParticleDualVectorFunction.html#function-afteriteration">itk::ParticleDualVectorFunction::AfterIteration</a>, <a href="classitk_1_1ParticleEnsembleEntropyFunction.html#function-afteriteration">itk::ParticleEnsembleEntropyFunction::AfterIteration</a>, <a href="classitk_1_1ParticleMeshBasedGeneralEntropyGradientFunction.html#function-afteriteration">itk::ParticleMeshBasedGeneralEntropyGradientFunction::AfterIteration</a>, <a href="classitk_1_1ParticleModifiedCotangentEntropyGradientFunction.html#function-afteriteration">itk::ParticleModifiedCotangentEntropyGradientFunction::AfterIteration</a>, <a href="classitk_1_1ParticleOmegaGradientFunction.html#function-afteriteration">itk::ParticleOmegaGradientFunction::AfterIteration</a></p>
 <p>This method is called by a solver after each iteration. Subclasses may or may not implement this method. </p>
 <h3 id="function-beforeiteration">function BeforeIteration</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">BeforeIteration</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">BeforeIteration</span><span class="p">()</span>
 </code></pre></div>
 <p><strong>Reimplemented by</strong>: <a href="classitk_1_1ParticleConstrainedModifiedCotangentEntropyGradientFunction.html#function-beforeiteration">itk::ParticleConstrainedModifiedCotangentEntropyGradientFunction::BeforeIteration</a>, <a href="classitk_1_1ParticleCurvatureEntropyGradientFunction.html#function-beforeiteration">itk::ParticleCurvatureEntropyGradientFunction::BeforeIteration</a>, <a href="classitk_1_1ParticleCurvatureEntropyGradientFunction.html#function-beforeiteration">itk::ParticleCurvatureEntropyGradientFunction::BeforeIteration</a>, <a href="classitk_1_1ParticleDualVectorFunction.html#function-beforeiteration">itk::ParticleDualVectorFunction::BeforeIteration</a>, <a href="classitk_1_1ParticleEnsembleEntropyFunction.html#function-beforeiteration">itk::ParticleEnsembleEntropyFunction::BeforeIteration</a>, <a href="classitk_1_1ParticleMeshBasedGeneralEntropyGradientFunction.html#function-beforeiteration">itk::ParticleMeshBasedGeneralEntropyGradientFunction::BeforeIteration</a>, <a href="classitk_1_1ParticleModifiedCotangentEntropyGradientFunction.html#function-beforeiteration">itk::ParticleModifiedCotangentEntropyGradientFunction::BeforeIteration</a>, <a href="classitk_1_1ParticleOmegaGradientFunction.html#function-beforeiteration">itk::ParticleOmegaGradientFunction::BeforeIteration</a></p>
 <p>This method is called by a solver before each iteration. Subclasses may or may not implement this method. </p>
 <h3 id="function-beforeevaluate">function BeforeEvaluate</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">BeforeEvaluate</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">BeforeEvaluate</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystemType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span>
 </code></pre></div>
 <p><strong>Reimplemented by</strong>: <a href="classitk_1_1ParticleDualVectorFunction.html#function-beforeevaluate">itk::ParticleDualVectorFunction::BeforeEvaluate</a>, <a href="classitk_1_1ParticleModifiedCotangentEntropyGradientFunction.html#function-beforeevaluate">itk::ParticleModifiedCotangentEntropyGradientFunction::BeforeEvaluate</a>, <a href="classitk_1_1ParticleOmegaGradientFunction.html#function-beforeevaluate">itk::ParticleOmegaGradientFunction::BeforeEvaluate</a></p>
 <p>This method may be called to set up the state of the function object before a call to Evaluate. It is necessary in order to initialize certain constants and variables that may be used for calculating the Energy as well as the Gradients. Typically this is only necessary for the adaptive gradient descent algorithm. </p>
 <h3 id="function-setparticlesystem">function SetParticleSystem</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetParticleSystem</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">ParticleSystemType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">p</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetParticleSystem</span><span class="p">(</span>
+<span class="w">    </span><span class="n">ParticleSystemType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">p</span>
+<span class="p">)</span>
 </code></pre></div>
 <p><strong>Reimplemented by</strong>: <a href="classitk_1_1ParticleDualVectorFunction.html#function-setparticlesystem">itk::ParticleDualVectorFunction::SetParticleSystem</a></p>
 <p>Some subclasses may require a pointer to the particle system and its domain number. These methods set/get those values. </p>
 <h3 id="function-getparticlesystem">function GetParticleSystem</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">ParticleSystemType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetParticleSystem</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">ParticleSystemType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetParticleSystem</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-setdomainnumber">function SetDomainNumber</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetDomainNumber</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetDomainNumber</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span>
+<span class="p">)</span>
 </code></pre></div>
 <p><strong>Reimplemented by</strong>: <a href="classitk_1_1ParticleDualVectorFunction.html#function-setdomainnumber">itk::ParticleDualVectorFunction::SetDomainNumber</a></p>
 <h3 id="function-getdomainnumber">function GetDomainNumber</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">GetDomainNumber</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">GetDomainNumber</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-clone">function Clone</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">ParticleVectorFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">Clone</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">ParticleVectorFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">Clone</span><span class="p">()</span>
 </code></pre></div>
 <p><strong>Reimplemented by</strong>: <a href="classitk_1_1ParticleConstrainedModifiedCotangentEntropyGradientFunction.html#function-clone">itk::ParticleConstrainedModifiedCotangentEntropyGradientFunction::Clone</a>, <a href="classitk_1_1ParticleCurvatureEntropyGradientFunction.html#function-clone">itk::ParticleCurvatureEntropyGradientFunction::Clone</a>, <a href="classitk_1_1ParticleDualVectorFunction.html#function-clone">itk::ParticleDualVectorFunction::Clone</a>, <a href="classitk_1_1ParticleEnsembleEntropyFunction.html#function-clone">itk::ParticleEnsembleEntropyFunction::Clone</a>, <a href="classitk_1_1ParticleEntropyGradientFunction.html#function-clone">itk::ParticleEntropyGradientFunction::Clone</a>, <a href="classitk_1_1ParticleMeshBasedGeneralEntropyGradientFunction.html#function-clone">itk::ParticleMeshBasedGeneralEntropyGradientFunction::Clone</a>, <a href="classitk_1_1ParticleModifiedCotangentEntropyGradientFunction.html#function-clone">itk::ParticleModifiedCotangentEntropyGradientFunction::Clone</a>, <a href="classitk_1_1ParticleOmegaGradientFunction.html#function-clone">itk::ParticleOmegaGradientFunction::Clone</a></p>
 <h3 id="function-getrelativeenergyscaling">function GetRelativeEnergyScaling</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">GetRelativeEnergyScaling</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">GetRelativeEnergyScaling</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p><strong>Reimplemented by</strong>: <a href="classitk_1_1ParticleDualVectorFunction.html#function-getrelativeenergyscaling">itk::ParticleDualVectorFunction::GetRelativeEnergyScaling</a></p>
 <h3 id="function-setrelativeenergyscaling">function SetRelativeEnergyScaling</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetRelativeEnergyScaling</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">r</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetRelativeEnergyScaling</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">r</span>
+<span class="p">)</span>
 </code></pre></div>
 <p><strong>Reimplemented by</strong>: <a href="classitk_1_1ParticleDualVectorFunction.html#function-setrelativeenergyscaling">itk::ParticleDualVectorFunction::SetRelativeEnergyScaling</a></p>
 <h2 id="protected-functions-documentation">Protected Functions Documentation</h2>
 <h3 id="function-particlevectorfunction">function ParticleVectorFunction</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">ParticleVectorFunction</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">ParticleVectorFunction</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-particlevectorfunction_1">function ~ParticleVectorFunction</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">ParticleVectorFunction</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">ParticleVectorFunction</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-operator">function operator=</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleVectorFunction</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-particlevectorfunction_2">function ParticleVectorFunction</h3>
-<div class="highlight"><pre><span></span><code><span class="n">ParticleVectorFunction</span><span class="p">(</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">ParticleVectorFunction</span><span class="p">(</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleVectorFunction</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span>
 </code></pre></div>
 <h2 id="protected-attributes-documentation">Protected Attributes Documentation</h2>
 <h3 id="variable-m_particlesystem">variable m_ParticleSystem</h3>
-<div class="highlight"><pre><span></span><code><span class="n">ParticleSystemType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">m_ParticleSystem</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">ParticleSystemType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">m_ParticleSystem</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="variable-m_domainnumber">variable m_DomainNumber</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">m_DomainNumber</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">m_DomainNumber</span><span class="p">;</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:14 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:21 +0000</p>
 
               
             </article>

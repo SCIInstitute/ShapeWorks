@@ -2540,91 +2540,91 @@
 </tbody>
 </table>
 <h2 id="detailed-description">Detailed Description</h2>
-<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">shapeworks</span><span class="o">::</span><span class="n">ProjectReader</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">shapeworks</span><span class="o">::</span><span class="n">ProjectReader</span><span class="p">;</span>
 </code></pre></div>
 <p>Base class for <a href="classshapeworks_1_1Project.html">Project</a> readers. </p>
 <p>This class serves as an abstract base class for project readers </p>
 <h2 id="public-types-documentation">Public Types Documentation</h2>
 <h3 id="using-stringmaplist">using StringMapList</h3>
-<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ProjectReader</span><span class="o">::</span><span class="n">StringMapList</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">project</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">StringMapList</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ProjectReader</span><span class="o">::</span><span class="n">StringMapList</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">project</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">StringMapList</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="using-stringmap">using StringMap</h3>
-<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ProjectReader</span><span class="o">::</span><span class="n">StringMap</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">project</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">StringMap</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ProjectReader</span><span class="o">::</span><span class="n">StringMap</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">project</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">StringMap</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="using-stringlist">using StringList</h3>
-<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ProjectReader</span><span class="o">::</span><span class="n">StringList</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">project</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">StringList</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ProjectReader</span><span class="o">::</span><span class="n">StringList</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">project</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">StringList</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="using-stringmultimap">using StringMultiMap</h3>
-<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ProjectReader</span><span class="o">::</span><span class="n">StringMultiMap</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">project</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">StringMultiMap</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ProjectReader</span><span class="o">::</span><span class="n">StringMultiMap</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">project</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">StringMultiMap</span><span class="p">;</span>
 </code></pre></div>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-projectreader">function ProjectReader</h3>
-<div class="highlight"><pre><span></span><code><span class="n">ProjectReader</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">Project</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">project</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">ProjectReader</span><span class="p">(</span>
+<span class="w">    </span><span class="n">Project</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">project</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Constructor. </p>
 <h3 id="function-projectreader_1">function ~ProjectReader</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">ProjectReader</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="k">default</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">ProjectReader</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="k">default</span>
 </code></pre></div>
 <p>Destructor. </p>
 <h3 id="function-read_project">function read_project</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">read_project</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">filename</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">read_project</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">filename</span>
+<span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
 </code></pre></div>
 <p>Read a project from a file. </p>
 <p><strong>Reimplemented by</strong>: <a href="classshapeworks_1_1ExcelProjectReader.html#function-read-project">shapeworks::ExcelProjectReader::read_project</a>, <a href="classshapeworks_1_1JsonProjectReader.html#function-read-project">shapeworks::JsonProjectReader::read_project</a></p>
 <h3 id="function-get_parameters">function get_parameters</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">StringMap</span><span class="w"> </span><span class="n">get_parameters</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">StringMap</span><span class="w"> </span><span class="n">get_parameters</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span>
+<span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
 </code></pre></div>
 <p><strong>Reimplemented by</strong>: <a href="classshapeworks_1_1ExcelProjectReader.html#function-get-parameters">shapeworks::ExcelProjectReader::get_parameters</a>, <a href="classshapeworks_1_1JsonProjectReader.html#function-get-parameters">shapeworks::JsonProjectReader::get_parameters</a></p>
 <h3 id="function-get_multi_parameters">function get_multi_parameters</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">StringMultiMap</span><span class="w"> </span><span class="n">get_multi_parameters</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">StringMultiMap</span><span class="w"> </span><span class="n">get_multi_parameters</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span>
+<span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
 </code></pre></div>
 <p><strong>Reimplemented by</strong>: <a href="classshapeworks_1_1ExcelProjectReader.html#function-get-multi-parameters">shapeworks::ExcelProjectReader::get_multi_parameters</a>, <a href="classshapeworks_1_1JsonProjectReader.html#function-get-multi-parameters">shapeworks::JsonProjectReader::get_multi_parameters</a></p>
 <h2 id="protected-functions-documentation">Protected Functions Documentation</h2>
 <h3 id="function-load_subjects">function load_subjects</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">load_subjects</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">StringMapList</span><span class="w"> </span><span class="n">list</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">load_subjects</span><span class="p">(</span>
+<span class="w">    </span><span class="n">StringMapList</span><span class="w"> </span><span class="n">list</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Load subjects from string map list. </p>
 <h3 id="function-load_parameters">function load_parameters</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">load_parameters</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">load_parameters</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-load_parameter">function load_parameter</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">load_parameter</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">StringMap</span><span class="w"> </span><span class="n">map</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">load_parameter</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">,</span>
+<span class="w">    </span><span class="n">StringMap</span><span class="w"> </span><span class="n">map</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-load_landmark_definitions">function load_landmark_definitions</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">load_landmark_definitions</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">StringMapList</span><span class="w"> </span><span class="n">list</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">load_landmark_definitions</span><span class="p">(</span>
+<span class="w">    </span><span class="n">StringMapList</span><span class="w"> </span><span class="n">list</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-contains">function contains</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">contains</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">StringMap</span><span class="w"> </span><span class="n">map</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">key</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">contains</span><span class="p">(</span>
+<span class="w">    </span><span class="n">StringMap</span><span class="w"> </span><span class="n">map</span><span class="p">,</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">key</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-get_keys">function get_keys</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">StringList</span><span class="w"> </span><span class="n">get_keys</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">StringMap</span><span class="w"> </span><span class="n">map</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">StringList</span><span class="w"> </span><span class="n">get_keys</span><span class="p">(</span>
+<span class="w">    </span><span class="n">StringMap</span><span class="w"> </span><span class="n">map</span>
+<span class="p">)</span>
 </code></pre></div>
 <h2 id="protected-attributes-documentation">Protected Attributes Documentation</h2>
 <h3 id="variable-project_">variable project_</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Project</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">project_</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">Project</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">project_</span><span class="p">;</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:15 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:22 +0000</p>
 
               
             </article>

@@ -2652,150 +2652,150 @@
 </tbody>
 </table>
 <h2 id="detailed-description">Detailed Description</h2>
-<div class="highlight"><pre><span></span><code><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">VDimension</span><span class="o">&gt;</span><span class="w"></span>
-<span class="k">class</span><span class="w"> </span><span class="nc">itk</span><span class="o">::</span><span class="n">PowerOfTwoPointTreeNode</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">VDimension</span><span class="o">&gt;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">itk</span><span class="o">::</span><span class="n">PowerOfTwoPointTreeNode</span><span class="p">;</span>
 </code></pre></div>
 <p>A node object for use in the <a href="classitk_1_1PowerOfTwoPointTree.html">PowerOfTwoPointTree</a>. This class contains a bounding box, a set of child (branch) node pointers, and a linked list that may be filled with Points and Indices (unsigned ints). The single template parameter is the dimensionality of the Points. This class was designed for use as a binning structure for itkParticleNeighborhood classes. </p>
 <h2 id="public-types-documentation">Public Types Documentation</h2>
 <h3 id="typedef-self">typedef Self</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">PowerOfTwoPointTreeNode</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">PowerOfTwoPointTreeNode</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Self</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">PowerOfTwoPointTreeNode</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">PowerOfTwoPointTreeNode</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Self</span><span class="p">;</span>
 </code></pre></div>
 <p>Standard class typedefs. </p>
 <h3 id="typedef-pointer">typedef Pointer</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">PowerOfTwoPointTreeNode</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">PowerOfTwoPointTreeNode</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="typedef-constpointer">typedef ConstPointer</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">PowerOfTwoPointTreeNode</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">ConstPointer</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">PowerOfTwoPointTreeNode</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">ConstPointer</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="typedef-superclass">typedef Superclass</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">LightObject</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">PowerOfTwoPointTreeNode</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Superclass</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">LightObject</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">PowerOfTwoPointTreeNode</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Superclass</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="typedef-pointtype">typedef PointType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Point</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">PowerOfTwoPointTreeNode</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">PointType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Point</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">PowerOfTwoPointTreeNode</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">PointType</span><span class="p">;</span>
 </code></pre></div>
 <p>Point type stored in the leaf nodes. </p>
 <h3 id="typedef-pointlisttype">typedef PointListType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">list</span><span class="o">&lt;</span><span class="n">ParticlePointIndexPair</span><span class="o">&lt;</span><span class="n">VDimension</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">PowerOfTwoPointTreeNode</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">PointListType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">list</span><span class="o">&lt;</span><span class="n">ParticlePointIndexPair</span><span class="o">&lt;</span><span class="n">VDimension</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">PowerOfTwoPointTreeNode</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">PointListType</span><span class="p">;</span>
 </code></pre></div>
 <p>List type for storing lists of points+indices. </p>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-itktypemacro">function itkTypeMacro</h3>
-<div class="highlight"><pre><span></span><code><span class="n">itkTypeMacro</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">PowerOfTwoPointTreeNode</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">itkTypeMacro</span><span class="p">(</span>
+<span class="w">    </span><span class="n">PowerOfTwoPointTreeNode</span><span class="w"> </span><span class="p">,</span>
 <span class="w">    </span><span class="n">LightObject</span><span class="w"> </span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-itknewmacro">function itkNewMacro</h3>
-<div class="highlight"><pre><span></span><code><span class="n">itkNewMacro</span><span class="p">(</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">itkNewMacro</span><span class="p">(</span>
 <span class="w">    </span><span class="n">Self</span><span class="w"> </span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Method for creation through the object factory. </p>
 <h3 id="function-itkstaticconstmacro">function itkStaticConstMacro</h3>
-<div class="highlight"><pre><span></span><code><span class="n">itkStaticConstMacro</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">BranchesPerNode</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">itkStaticConstMacro</span><span class="p">(</span>
+<span class="w">    </span><span class="n">BranchesPerNode</span><span class="w"> </span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span>
 <span class="w">    </span><span class="p">(</span><span class="n">powstruct</span><span class="o">&lt;</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">c</span><span class="p">)</span><span class="w"> </span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span>
 </code></pre></div>
 <p>The number of branches at each node of the tree, which is 2^VDimension, e.g. 4 in 2D, 8 in 3D, etc. </p>
 <h3 id="function-operator">function operator==</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">==</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PowerOfTwoPointTreeNode</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">o</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">==</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PowerOfTwoPointTreeNode</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">o</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>Equivalence operator, ignores value type. </p>
 <h3 id="function-isleaf">function IsLeaf</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">IsLeaf</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">IsLeaf</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>Returns true if this is a leaf node (has no branches) and false otherwise. The assumption is that a non-leaf node cannot have any empty branches. Each level of the tree must contain BranchesPerNode divisions. This assumption speeds up certain types of processing. </p>
 <h3 id="function-insertelement">function InsertElement</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">PointListType</span><span class="o">::</span><span class="n">iterator</span><span class="w"> </span><span class="n">InsertElement</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticlePointIndexPair</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">elem</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">PointListType</span><span class="o">::</span><span class="n">iterator</span><span class="w"> </span><span class="n">InsertElement</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticlePointIndexPair</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">elem</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Insert a PointIndexPair into the list associated with this node. </p>
 <h3 id="function-contains">function Contains</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">Contains</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">p</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">Contains</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">p</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>Returns true if the bounding box in this node contains the given point and false otherwise. </p>
 <h3 id="function-setlowerbound">function SetLowerBound</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetLowerBound</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">p</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetLowerBound</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">p</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Set/Get the lower and upper bounds of the region described by this node. </p>
 <h3 id="function-getlowerbound">function GetLowerBound</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetLowerBound</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetLowerBound</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-setupperbound">function SetUpperBound</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetUpperBound</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">p</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetUpperBound</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">p</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-getupperbound">function GetUpperBound</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetUpperBound</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetUpperBound</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-getbranches">function GetBranches</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Self</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetBranches</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Self</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetBranches</span><span class="p">()</span>
 </code></pre></div>
 <p>Return the data structure holding branch (child) nodes. </p>
 <h3 id="function-getbranches_1">function GetBranches</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetBranches</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetBranches</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-getbranch">function GetBranch</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Self</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetBranch</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Self</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetBranch</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Return a specific branch </p>
 <h3 id="function-getbranch_1">function GetBranch</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetBranch</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetBranch</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-setbranch">function SetBranch</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetBranch</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">b</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="k">typename</span><span class="w"> </span><span class="nc">Self</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">n</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetBranch</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">b</span><span class="p">,</span>
+<span class="w">    </span><span class="k">typename</span><span class="w"> </span><span class="nc">Self</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">n</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Set the node for a specific branch of this node. </p>
 <h3 id="function-printself">function PrintSelf</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">PrintSelf</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">os</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">Indent</span><span class="w"> </span><span class="n">indent</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">PrintSelf</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">os</span><span class="p">,</span>
+<span class="w">    </span><span class="n">Indent</span><span class="w"> </span><span class="n">indent</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>Standard ITK PrintSelf method. </p>
 <h3 id="function-getlist">function GetList</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">PointListType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetList</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">PointListType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetList</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>Get the list of elements which contain points and associated indices. </p>
 <h3 id="function-getlist_1">function GetList</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">PointListType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetList</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">PointListType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetList</span><span class="p">()</span>
 </code></pre></div>
 <h2 id="protected-functions-documentation">Protected Functions Documentation</h2>
 <h3 id="function-poweroftwopointtreenode">function PowerOfTwoPointTreeNode</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">PowerOfTwoPointTreeNode</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">PowerOfTwoPointTreeNode</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-poweroftwopointtreenode_1">function ~PowerOfTwoPointTreeNode</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="o">~</span><span class="n">PowerOfTwoPointTreeNode</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="o">~</span><span class="n">PowerOfTwoPointTreeNode</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-poweroftwopointtreenode_2">function PowerOfTwoPointTreeNode</h3>
-<div class="highlight"><pre><span></span><code><span class="n">PowerOfTwoPointTreeNode</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PowerOfTwoPointTreeNode</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">o</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">PowerOfTwoPointTreeNode</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PowerOfTwoPointTreeNode</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">o</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-operator_1">function operator=</h3>
-<div class="highlight"><pre><span></span><code><span class="k">const</span><span class="w"> </span><span class="n">PowerOfTwoPointTreeNode</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PowerOfTwoPointTreeNode</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">o</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">const</span><span class="w"> </span><span class="n">PowerOfTwoPointTreeNode</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PowerOfTwoPointTreeNode</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">o</span>
+<span class="p">)</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:14 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:21 +0000</p>
 
               
             </article>

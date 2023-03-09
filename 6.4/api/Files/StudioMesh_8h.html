@@ -2333,77 +2333,77 @@
 </table>
 <h2 id="types-documentation">Types Documentation</h2>
 <h3 id="using-pixeltype">using PixelType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">PixelType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="kt">float</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">PixelType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="kt">float</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="using-imagetype">using ImageType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">ImageType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">itk</span><span class="o">::</span><span class="n">Image</span><span class="o">&lt;</span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">ImageType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">itk</span><span class="o">::</span><span class="n">Image</span><span class="o">&lt;</span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="p">;</span>
 </code></pre></div>
 <h2 id="source-code">Source code</h2>
 <div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;itkImage.h&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vnl/vnl_vector.h&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkPolyData.h&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkSmartPointer.h&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkTransform.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;itkImage.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vnl/vnl_vector.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkPolyData.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkSmartPointer.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkTransform.h&gt;</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Eigen/Dense&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Eigen/Sparse&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Eigen/Dense&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Eigen/Sparse&gt;</span>
 
-<span class="k">using</span><span class="w"> </span><span class="n">PixelType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">float</span><span class="p">;</span><span class="w"></span>
-<span class="k">using</span><span class="w"> </span><span class="n">ImageType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Image</span><span class="o">&lt;</span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
-<span class="k">class</span><span class="w"> </span><span class="nc">vtkFloatArray</span><span class="p">;</span><span class="w"></span>
-<span class="k">class</span><span class="w"> </span><span class="nc">vtkStaticPointLocator</span><span class="p">;</span><span class="w"></span>
+<span class="k">using</span><span class="w"> </span><span class="n">PixelType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">float</span><span class="p">;</span>
+<span class="k">using</span><span class="w"> </span><span class="n">ImageType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Image</span><span class="o">&lt;</span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">vtkFloatArray</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">vtkStaticPointLocator</span><span class="p">;</span>
 
-<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
 
-<span class="k">class</span><span class="w"> </span><span class="nc">StudioMesh</span><span class="p">;</span><span class="w"></span>
-<span class="k">using</span><span class="w"> </span><span class="n">MeshHandle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">StudioMesh</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
-<span class="k">using</span><span class="w"> </span><span class="n">MeshList</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">MeshHandle</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">StudioMesh</span><span class="p">;</span>
+<span class="k">using</span><span class="w"> </span><span class="n">MeshHandle</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">StudioMesh</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="k">using</span><span class="w"> </span><span class="n">MeshList</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">MeshHandle</span><span class="o">&gt;</span><span class="p">;</span>
 
 
-<span class="k">class</span><span class="w"> </span><span class="nc">StudioMesh</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w"> </span><span class="k">public</span><span class="o">:</span><span class="w"></span>
-<span class="w">  </span><span class="n">StudioMesh</span><span class="p">();</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">StudioMesh</span><span class="w"> </span><span class="p">{</span>
+<span class="w"> </span><span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="n">StudioMesh</span><span class="p">();</span>
 
-<span class="w">  </span><span class="o">~</span><span class="n">StudioMesh</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="o">~</span><span class="n">StudioMesh</span><span class="p">();</span>
 
-<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_poly_data</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_poly_data</span><span class="p">();</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_poly_data</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">poly_data</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_poly_data</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">poly_data</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_error_message</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">error_message</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_error_message</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">error_message</span><span class="p">);</span>
 
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">get_error_message</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">get_error_message</span><span class="p">();</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">apply_feature_map</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">ImageType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">image</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">apply_feature_map</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">ImageType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">image</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">apply_scalars</span><span class="p">(</span><span class="n">MeshHandle</span><span class="w"> </span><span class="n">mesh</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">apply_scalars</span><span class="p">(</span><span class="n">MeshHandle</span><span class="w"> </span><span class="n">mesh</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">interpolate_scalars_to_mesh</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">positions</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXf</span><span class="w"> </span><span class="n">scalar_values</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">interpolate_scalars_to_mesh</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">positions</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXf</span><span class="w"> </span><span class="n">scalar_values</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_largest_dimension_size</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_largest_dimension_size</span><span class="p">();</span>
 
-<span class="w">  </span><span class="n">vtkFloatArray</span><span class="o">*</span><span class="w"> </span><span class="nf">get_or_create_array</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">default_value</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="n">vtkFloatArray</span><span class="o">*</span><span class="w"> </span><span class="nf">get_or_create_array</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">default_value</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">paint_ffc</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">world_pos</span><span class="p">[],</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">radius</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">inclusive</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">paint_ffc</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">world_pos</span><span class="p">[],</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">radius</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">inclusive</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">has_ffc_paint</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">has_ffc_paint</span><span class="p">();</span>
 
-<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">FFC_PAINT</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;ffc_paint&quot;</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">FFC_PAINT</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;ffc_paint&quot;</span><span class="p">;</span>
 
-<span class="w"> </span><span class="k">private</span><span class="o">:</span><span class="w"></span>
-<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">poly_data_</span><span class="p">;</span><span class="w"></span>
+<span class="w"> </span><span class="k">private</span><span class="o">:</span>
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">poly_data_</span><span class="p">;</span>
 
-<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkStaticPointLocator</span><span class="o">&gt;</span><span class="w"> </span><span class="n">locator_</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkStaticPointLocator</span><span class="o">&gt;</span><span class="w"> </span><span class="n">locator_</span><span class="p">;</span>
 
 <span class="w">  </span><span class="c1">// error message if the polydata didn&#39;t load</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">error_message_</span><span class="p">;</span><span class="w"></span>
-<span class="p">};</span><span class="w"></span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">error_message_</span><span class="p">;</span>
+<span class="p">};</span>
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:15 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:22 +0000</p>
 
               
             </article>

@@ -3486,553 +3486,553 @@
 </tbody>
 </table>
 <h2 id="detailed-description">Detailed Description</h2>
-<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="p">;</span>
 </code></pre></div>
 <p>A facade class managing interactions with a particle system. </p>
 <p>A particle system consists of a set of particle locations and domains in which those locations are defined. For example, a particle system may simply be a set of points in 3D Euclidean space that are constrained to a specified bounding box. A more complex example is a set of 3D points constrained to a given surface. The itkParticleSystem class is also designed to manage multiple sets of points across multiple domains. For example, one may create a system of dozens of point sets that are each defined in different spaces. The itkParticleSystem class can also maintain a set of transformations associated with each domain that map that particular domain into another coordinate frame, for example, a common coordinate frame. </p>
 <h2 id="public-types-documentation">Public Types Documentation</h2>
 <h3 id="typedef-self">typedef Self</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">::</span><span class="n">Self</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">::</span><span class="n">Self</span><span class="p">;</span>
 </code></pre></div>
 <p>Standard class typedefs </p>
 <h3 id="typedef-superclass">typedef Superclass</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">DataObject</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">::</span><span class="n">Superclass</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">DataObject</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">::</span><span class="n">Superclass</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="typedef-pointer">typedef Pointer</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">::</span><span class="n">Pointer</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">::</span><span class="n">Pointer</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="typedef-constpointer">typedef ConstPointer</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">::</span><span class="n">ConstPointer</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">::</span><span class="n">ConstPointer</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="typedef-constweakpointer">typedef ConstWeakPointer</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">WeakPointer</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">::</span><span class="n">ConstWeakPointer</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">WeakPointer</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">::</span><span class="n">ConstWeakPointer</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="using-domaintype">using DomainType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">::</span><span class="n">DomainType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ParticleDomain</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">::</span><span class="n">DomainType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ParticleDomain</span><span class="p">;</span>
 </code></pre></div>
 <p>Define the base domain type. </p>
 <h3 id="typedef-pointtype">typedef PointType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Point</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">::</span><span class="n">PointType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Point</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">::</span><span class="n">PointType</span><span class="p">;</span>
 </code></pre></div>
 <p>Point type used to store particle locations. </p>
 <h3 id="typedef-neighborhoodtype">typedef NeighborhoodType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleNeighborhood</span><span class="o">&lt;</span><span class="n">VDimension</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">::</span><span class="n">NeighborhoodType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleNeighborhood</span><span class="o">&lt;</span><span class="n">VDimension</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">::</span><span class="n">NeighborhoodType</span><span class="p">;</span>
 </code></pre></div>
 <p>Class used to compute neighborhoods of points. One is associated with each domain. </p>
 <h3 id="typedef-pointcontainertype">typedef PointContainerType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleContainer</span><span class="o">&lt;</span><span class="n">PointType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">::</span><span class="n">PointContainerType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleContainer</span><span class="o">&lt;</span><span class="n">PointType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">::</span><span class="n">PointContainerType</span><span class="p">;</span>
 </code></pre></div>
 <p>Point container type. One is associated with each domain. </p>
 <h3 id="typedef-pointvectortype">typedef PointVectorType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">NeighborhoodType</span><span class="o">::</span><span class="n">PointVectorType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">::</span><span class="n">PointVectorType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">NeighborhoodType</span><span class="o">::</span><span class="n">PointVectorType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">::</span><span class="n">PointVectorType</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="typedef-transformtype">typedef TransformType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">vnl_matrix_fixed</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">::</span><span class="n">TransformType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">vnl_matrix_fixed</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">::</span><span class="n">TransformType</span><span class="p">;</span>
 </code></pre></div>
 <p>Defines a transform class type. One is associated with each domain. Transforms are affine for simplicity. This could be extended by using the itk::Transform base type so that a variety of transform types may be used. </p>
 <h3 id="typedef-vectortype">typedef VectorType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">::</span><span class="n">VectorType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">::</span><span class="n">VectorType</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="typedef-vnlmatrixtype">typedef VnlMatrixType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">vnl_matrix</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">::</span><span class="n">VnlMatrixType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">vnl_matrix</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">::</span><span class="n">VnlMatrixType</span><span class="p">;</span>
 </code></pre></div>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-itknewmacro">function itkNewMacro</h3>
-<div class="highlight"><pre><span></span><code><span class="n">itkNewMacro</span><span class="p">(</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">itkNewMacro</span><span class="p">(</span>
 <span class="w">    </span><span class="n">Self</span><span class="w"> </span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Method for creation through the object factory. </p>
 <h3 id="function-itktypemacro">function itkTypeMacro</h3>
-<div class="highlight"><pre><span></span><code><span class="n">itkTypeMacro</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">ParticleSystem</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">itkTypeMacro</span><span class="p">(</span>
+<span class="w">    </span><span class="n">ParticleSystem</span><span class="w"> </span><span class="p">,</span>
 <span class="w">    </span><span class="n">DataObject</span><span class="w"> </span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Run-time type information (and related methods). </p>
 <h3 id="function-itkstaticconstmacro">function itkStaticConstMacro</h3>
-<div class="highlight"><pre><span></span><code><span class="n">itkStaticConstMacro</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">Dimension</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">itkStaticConstMacro</span><span class="p">(</span>
+<span class="w">    </span><span class="n">Dimension</span><span class="w"> </span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span>
 <span class="w">    </span><span class="n">VDimension</span><span class="w"> </span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Dimensionality of the domain of the particle system. </p>
 <h3 id="function-registerattribute">function RegisterAttribute</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">RegisterAttribute</span><span class="p">(</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">RegisterAttribute</span><span class="p">(</span>
 <span class="w">    </span><span class="n">ParticleAttribute</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Register an attribute object with this particle system. This action adds the attribute object as an observer for the particle system so that it will receive published updates. For example, a gradient attribute object may need to know when particle positions have changed so that it can update its internal state appropriately (e.g. precompute a gradient that corresponds to the new particle position). Internally, this method manages registering the appropriate itk::Command and itk::Object as an observer of this itk::Object (AddObserver). Relevant state information is passed to objects in particle events. </p>
 <h3 id="function-synchronizepositions">function SynchronizePositions</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SynchronizePositions</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SynchronizePositions</span><span class="p">()</span>
 </code></pre></div>
 <p>Invokes the set event on all particle positions, resetting them to their current value. This method may be called to synchronize positional information among various observers which may have gone out of sync. </p>
 <h3 id="function-getnumberofparticles">function GetNumberOfParticles</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">GetNumberOfParticles</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">GetNumberOfParticles</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>Returns the number of particles in domain k. </p>
 <h3 id="function-addposition">function AddPosition</h3>
-<div class="highlight"><pre><span></span><code><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">AddPosition</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">threadId</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">AddPosition</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">threadId</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Add/Set/Remove a single particle position. The actual position added or set will be returned. If, for example, the domain imposes any constraints on this location (e.g. out-of-bounds, projection onto a surface), then the method returns the location after constraints are applied. Both the Add and Set methods require a domain index. If unspecified, the domain index is zero. The Set method requires a specific particle index. If the given index does not exist, an exception is thrown. Set is intended to be used for moving particles. The SetTransformedPosition sets the position using a Point transformed by the m_Transform associated with the given domain. </p>
 <h3 id="function-setposition">function SetPosition</h3>
-<div class="highlight"><pre><span></span><code><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">SetPosition</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">k</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">threadId</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">SetPosition</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">k</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">threadId</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-removeposition">function RemovePosition</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">RemovePosition</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">k</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">threadId</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">RemovePosition</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">k</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">threadId</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-getposition">function GetPosition</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetPosition</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">k</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetPosition</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">k</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Return a position with index k from domain d. Note the order in which the 2 integers must be specified! The domain number is specified second and the position index within the domain is specified first. Note that the domain index may be omitted if the particle system only contains a single domain. GetTransformedPosition returns the position premultiplied by the transform matrix for the given domain. </p>
 <h3 id="function-getposition_1">function GetPosition</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetPosition</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">k</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetPosition</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">k</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-gettransformedposition">function GetTransformedPosition</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="n">GetTransformedPosition</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">k</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="n">GetTransformedPosition</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">k</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-getprefixtransformedposition">function GetPrefixTransformedPosition</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="n">GetPrefixTransformedPosition</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">k</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="n">GetPrefixTransformedPosition</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">k</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-splitallparticles">function SplitAllParticles</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SplitAllParticles</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">epsilon</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">threadId</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SplitAllParticles</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">epsilon</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">threadId</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Doubles the number of particles of the system by splitting each particle into 2 particles. Each new particle position is added to the system at a random epsilon distance on the surface from the original particle. The new particles are added using the AddPosition method, so all appropriate callbacks are invoked. </p>
 <h3 id="function-splitparticle">function SplitParticle</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SplitParticle</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">epsilon</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">threadId</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SplitParticle</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">epsilon</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">threadId</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-advancedallparticlesplitting">function AdvancedAllParticleSplitting</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">AdvancedAllParticleSplitting</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">epsilon</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">domains_per_shape</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">dom_to_process</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">AdvancedAllParticleSplitting</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">epsilon</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">domains_per_shape</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">dom_to_process</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-printparticlesystem">function PrintParticleSystem</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">PrintParticleSystem</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">PrintParticleSystem</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-setneighborhood">function SetNeighborhood</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetNeighborhood</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">NeighborhoodType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">threadId</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetNeighborhood</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span>
+<span class="w">    </span><span class="n">NeighborhoodType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">threadId</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Set/Get the neighborhood object associated with domain k. </p>
 <h3 id="function-setneighborhood_1">function SetNeighborhood</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetNeighborhood</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">NeighborhoodType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">threadId</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetNeighborhood</span><span class="p">(</span>
+<span class="w">    </span><span class="n">NeighborhoodType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">n</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">threadId</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-getneighborhood">function GetNeighborhood</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">NeighborhoodType</span><span class="o">::</span><span class="n">ConstPointer</span><span class="w"> </span><span class="n">GetNeighborhood</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">k</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">NeighborhoodType</span><span class="o">::</span><span class="n">ConstPointer</span><span class="w"> </span><span class="n">GetNeighborhood</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">k</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-findneighborhoodpoints">function FindNeighborhoodPoints</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">PointVectorType</span><span class="w"> </span><span class="n">FindNeighborhoodPoints</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">p</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">r</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">PointVectorType</span><span class="w"> </span><span class="n">FindNeighborhoodPoints</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">p</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">r</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>Return the neighborhood of points with radius r around point p in domain k. This is just a convenience method to avoid exposing the underlying Neighborhood objects. FindTransformedNeighborhoodPoints returns the list with all points transformed by the transform associated with the given domain. </p>
 <h3 id="function-findneighborhoodpoints_1">function FindNeighborhoodPoints</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">PointVectorType</span><span class="w"> </span><span class="n">FindNeighborhoodPoints</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">p</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">w</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">distances</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">r</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">PointVectorType</span><span class="w"> </span><span class="n">FindNeighborhoodPoints</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">p</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">w</span><span class="p">,</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">distances</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">r</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-findneighborhoodpoints_2">function FindNeighborhoodPoints</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">PointVectorType</span><span class="w"> </span><span class="n">FindNeighborhoodPoints</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">p</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">w</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">r</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">PointVectorType</span><span class="w"> </span><span class="n">FindNeighborhoodPoints</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">p</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">w</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">r</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-findneighborhoodpoints_3">function FindNeighborhoodPoints</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">PointVectorType</span><span class="w"> </span><span class="n">FindNeighborhoodPoints</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">r</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">PointVectorType</span><span class="w"> </span><span class="n">FindNeighborhoodPoints</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">r</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-findneighborhoodpoints_4">function FindNeighborhoodPoints</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">PointVectorType</span><span class="w"> </span><span class="n">FindNeighborhoodPoints</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">w</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">distances</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">r</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">PointVectorType</span><span class="w"> </span><span class="n">FindNeighborhoodPoints</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">w</span><span class="p">,</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">distances</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">r</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-findneighborhoodpoints_5">function FindNeighborhoodPoints</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">PointVectorType</span><span class="w"> </span><span class="n">FindNeighborhoodPoints</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">w</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">r</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">PointVectorType</span><span class="w"> </span><span class="n">FindNeighborhoodPoints</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">w</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">r</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-adddomain">function AddDomain</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">AddDomain</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">DomainType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">input</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">threadId</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">AddDomain</span><span class="p">(</span>
+<span class="w">    </span><span class="n">DomainType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">input</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">threadId</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Add a domain to the particle system. This method also allocates space for a list of positions that are contained within the domain, and a default neighborhood calculator. The final, optional argument indicates the calling thread id. </p>
 <h3 id="function-getdomainsbegin">function GetDomainsBegin</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">DomainType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">const_iterator</span><span class="w"> </span><span class="n">GetDomainsBegin</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">DomainType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">const_iterator</span><span class="w"> </span><span class="n">GetDomainsBegin</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>Return an iterator that points to the first element of the list of the domains. </p>
 <h3 id="function-getdomainsend">function GetDomainsEnd</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">DomainType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">const_iterator</span><span class="w"> </span><span class="n">GetDomainsEnd</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">DomainType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">const_iterator</span><span class="w"> </span><span class="n">GetDomainsEnd</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>Return an iterator that points one position past the last element of the list of the domains. </p>
 <h3 id="function-getdomain">function GetDomain</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">DomainType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetDomain</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">DomainType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetDomain</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Return the i'th domain object. </p>
 <h3 id="function-getdomain_1">function GetDomain</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">DomainType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetDomain</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">DomainType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetDomain</span><span class="p">()</span>
 </code></pre></div>
 <p>API for the single domain case. </p>
 <h3 id="function-getdomain_2">function GetDomain</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">DomainType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetDomain</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">DomainType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetDomain</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>Return the i'th domain object. </p>
 <h3 id="function-getdomain_3">function GetDomain</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">DomainType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetDomain</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">DomainType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetDomain</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>API for the single domain case. </p>
 <h3 id="function-getnumberofdomains">function GetNumberOfDomains</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">GetNumberOfDomains</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">GetNumberOfDomains</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>Returns the number of domains contained in the particle system. </p>
 <h3 id="function-settransform">function SetTransform</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetTransform</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">threadId</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetTransform</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">threadId</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Set the transform associated with domain i. This method will also compute and set the corresponding inverse transform if possible. If the inverse transform cannot be computed, the exception is quietly handled by this method and an identity transform is set in its place. The calling program is responsible for knowing when an inverse transform cannot be computed. </p>
 <h3 id="function-settransform_1">function SetTransform</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetTransform</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">p</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">threadId</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetTransform</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">p</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">threadId</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-setprefixtransform">function SetPrefixTransform</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetPrefixTransform</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">threadId</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetPrefixTransform</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">threadId</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-setprefixtransform_1">function SetPrefixTransform</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetPrefixTransform</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">p</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">threadId</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetPrefixTransform</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">p</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">threadId</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-gettransformsbegin">function GetTransformsBegin</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">const_iterator</span><span class="w"> </span><span class="n">GetTransformsBegin</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">const_iterator</span><span class="w"> </span><span class="n">GetTransformsBegin</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>Return an iterator that points to the first element of the list of the transforms. </p>
 <h3 id="function-gettransformsend">function GetTransformsEnd</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">const_iterator</span><span class="w"> </span><span class="n">GetTransformsEnd</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">const_iterator</span><span class="w"> </span><span class="n">GetTransformsEnd</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>Return an iterator that points one position past the last element of the list of the transforms. </p>
 <h3 id="function-gettransform">function GetTransform</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetTransform</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetTransform</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>Return the i'th transform object. </p>
 <h3 id="function-gettransform_1">function GetTransform</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetTransform</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetTransform</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>API for the single transform case. </p>
 <h3 id="function-gettransform_2">function GetTransform</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="n">GetTransform</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="n">GetTransform</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Return the i'th transform object. </p>
 <h3 id="function-gettransform_3">function GetTransform</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="n">GetTransform</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="n">GetTransform</span><span class="p">()</span>
 </code></pre></div>
 <p>API for the single transform case. </p>
 <h3 id="function-getprefixtransform">function GetPrefixTransform</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetPrefixTransform</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetPrefixTransform</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>Return the i'th transform object. </p>
 <h3 id="function-getprefixtransform_1">function GetPrefixTransform</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetPrefixTransform</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetPrefixTransform</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>API for the single transform case. </p>
 <h3 id="function-getprefixtransform_2">function GetPrefixTransform</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="n">GetPrefixTransform</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="n">GetPrefixTransform</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Return the i'th transform object. </p>
 <h3 id="function-getprefixtransform_3">function GetPrefixTransform</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="n">GetPrefixTransform</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="n">GetPrefixTransform</span><span class="p">()</span>
 </code></pre></div>
 <p>API for the single transform case. </p>
 <h3 id="function-getinversetransformsbegin">function GetInverseTransformsBegin</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">const_iterator</span><span class="w"> </span><span class="n">GetInverseTransformsBegin</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">const_iterator</span><span class="w"> </span><span class="n">GetInverseTransformsBegin</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>Return an iterator that points to the first element of the list of the inverse transforms. </p>
 <h3 id="function-getinversetransformsend">function GetInverseTransformsEnd</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">const_iterator</span><span class="w"> </span><span class="n">GetInverseTransformsEnd</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">const_iterator</span><span class="w"> </span><span class="n">GetInverseTransformsEnd</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>Return an iterator that points one position past the last element of the list of the transforms. </p>
 <h3 id="function-getinversetransform">function GetInverseTransform</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetInverseTransform</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetInverseTransform</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>Return the i'th transform object. </p>
 <h3 id="function-getinversetransform_1">function GetInverseTransform</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetInverseTransform</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetInverseTransform</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>API for the single transform case. </p>
 <h3 id="function-getinverseprefixtransform">function GetInversePrefixTransform</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetInversePrefixTransform</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetInversePrefixTransform</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>Return the i'th transform object. </p>
 <h3 id="function-getinverseprefixtransform_1">function GetInversePrefixTransform</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetInversePrefixTransform</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetInversePrefixTransform</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>API for the single transform case. </p>
 <h3 id="function-getpositions">function GetPositions</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">PointContainerType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetPositions</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">PointContainerType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetPositions</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>Return the array of particle positions. </p>
 <h3 id="function-getpositions_1">function GetPositions</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">PointContainerType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetPositions</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">PointContainerType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetPositions</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-addpositionlist">function AddPositionList</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">AddPositionList</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">threadId</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">AddPositionList</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">threadId</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Adds a list of points to the specified domain. The arguments are the std::vector of points and the domain number. </p>
 <h3 id="function-transformpoint">function TransformPoint</h3>
-<div class="highlight"><pre><span></span><code><span class="n">PointType</span><span class="w"> </span><span class="n">TransformPoint</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">PointType</span><span class="w"> </span><span class="n">TransformPoint</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="p">,</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>Transforms a point using the given transform. NOTE: Scaling is not currently implemented. (This method may be converted to virtual and overridden if tranform type is generalized.) </p>
 <h3 id="function-transformvector">function TransformVector</h3>
-<div class="highlight"><pre><span></span><code><span class="n">VectorType</span><span class="w"> </span><span class="n">TransformVector</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">VectorType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">VectorType</span><span class="w"> </span><span class="n">TransformVector</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">VectorType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="p">,</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>Transforms a vector using the given transform. Only the rotational part of the transform is applied. NOTE: Scaling is not currently supported. </p>
 <h3 id="function-transformnormalderivative">function TransformNormalDerivative</h3>
-<div class="highlight"><pre><span></span><code><span class="n">VnlMatrixType</span><span class="w"> </span><span class="n">TransformNormalDerivative</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">VnlMatrixType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">VnlMatrixType</span><span class="w"> </span><span class="n">TransformNormalDerivative</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">VnlMatrixType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="p">,</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>Transforms the derivative of normals to new space. </p>
 <h3 id="function-inverttransform">function InvertTransform</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="n">InvertTransform</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">T</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="n">InvertTransform</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">T</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>Returns the inverse of a transformation matrix. </p>
 <h3 id="function-flagdomain">function FlagDomain</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">FlagDomain</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">FlagDomain</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Flag/Unflag a domain. Flagging a domain has different meanings according to the application using this particle system. </p>
 <h3 id="function-unflagdomain">function UnflagDomain</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">UnflagDomain</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">UnflagDomain</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-getdomainflag">function GetDomainFlag</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">GetDomainFlag</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">GetDomainFlag</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-getdomainflags">function GetDomainFlags</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetDomainFlags</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetDomainFlags</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-setdomainflags">function SetDomainFlags</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetDomainFlags</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetDomainFlags</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-resetdomainflags">function ResetDomainFlags</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">ResetDomainFlags</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">ResetDomainFlags</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-setfixedparticleflag">function SetFixedParticleFlag</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetFixedParticleFlag</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetFixedParticleFlag</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>The following methods provide functionality for specifying particle indices that are fixed landmarks. SetPosition() calls to these particle indices will silently fail. For simplicity, only one list of indices is maintained for all dimensions. If particle index n is flagged, for example, then particle index n in all domains is fixed. </p>
 <h3 id="function-resetfixedparticleflag">function ResetFixedParticleFlag</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">ResetFixedParticleFlag</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">ResetFixedParticleFlag</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-getfixedparticleflag">function GetFixedParticleFlag</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">GetFixedParticleFlag</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">GetFixedParticleFlag</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">d</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-resetfixedparticleflags">function ResetFixedParticleFlags</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">ResetFixedParticleFlags</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">ResetFixedParticleFlags</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-setdomainspershape">function SetDomainsPerShape</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetDomainsPerShape</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">num</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetDomainsPerShape</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">num</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-getdomainspershape">function GetDomainsPerShape</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">GetDomainsPerShape</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">GetDomainsPerShape</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-setnumberofdomains">function SetNumberOfDomains</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetNumberOfDomains</span><span class="p">(</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetNumberOfDomains</span><span class="p">(</span>
 <span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Set the number of domains. This method modifies the size of the m_Domains, m_Positions, and m_Transform lists. </p>
 <h3 id="function-computemaxdistnearestneighbors">function ComputeMaxDistNearestNeighbors</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">ComputeMaxDistNearestNeighbors</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">dom</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">ComputeMaxDistNearestNeighbors</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">dom</span>
+<span class="p">)</span>
 </code></pre></div>
 <h2 id="protected-functions-documentation">Protected Functions Documentation</h2>
 <h3 id="function-particlesystem">function ParticleSystem</h3>
-<div class="highlight"><pre><span></span><code><span class="n">ParticleSystem</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">ParticleSystem</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-printself">function PrintSelf</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">PrintSelf</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">os</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">Indent</span><span class="w"> </span><span class="n">indent</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">PrintSelf</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">os</span><span class="p">,</span>
+<span class="w">    </span><span class="n">Indent</span><span class="w"> </span><span class="n">indent</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-particlesystem_1">function ~ParticleSystem</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">ParticleSystem</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">ParticleSystem</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-getdomainsbegin_1">function GetDomainsBegin</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">DomainType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">iterator</span><span class="w"> </span><span class="n">GetDomainsBegin</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">DomainType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">iterator</span><span class="w"> </span><span class="n">GetDomainsBegin</span><span class="p">()</span>
 </code></pre></div>
 <p>Return an iterator that points to the first element of the list of the domains. </p>
 <h3 id="function-getdomainsend_1">function GetDomainsEnd</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">DomainType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">iterator</span><span class="w"> </span><span class="n">GetDomainsEnd</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">DomainType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">iterator</span><span class="w"> </span><span class="n">GetDomainsEnd</span><span class="p">()</span>
 </code></pre></div>
 <p>Return an iterator that points one position past the last element of the list of the domains. </p>
 <h3 id="function-gettransformsbegin_1">function GetTransformsBegin</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">iterator</span><span class="w"> </span><span class="n">GetTransformsBegin</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">iterator</span><span class="w"> </span><span class="n">GetTransformsBegin</span><span class="p">()</span>
 </code></pre></div>
 <p>Return an iterator that points to the first element of the list of the transforms. </p>
 <h3 id="function-gettransformsend_1">function GetTransformsEnd</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">iterator</span><span class="w"> </span><span class="n">GetTransformsEnd</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">iterator</span><span class="w"> </span><span class="n">GetTransformsEnd</span><span class="p">()</span>
 </code></pre></div>
 <p>Return an iterator that points one position past the last element of the list of the transforms. </p>
 <h3 id="function-getinversetransformsbegin_1">function GetInverseTransformsBegin</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">iterator</span><span class="w"> </span><span class="n">GetInverseTransformsBegin</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">iterator</span><span class="w"> </span><span class="n">GetInverseTransformsBegin</span><span class="p">()</span>
 </code></pre></div>
 <p>Return an iterator that points to the first element of the list of the inverse transforms. </p>
 <h3 id="function-getinversetransformsend_1">function GetInverseTransformsEnd</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">iterator</span><span class="w"> </span><span class="n">GetInverseTransformsEnd</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">iterator</span><span class="w"> </span><span class="n">GetInverseTransformsEnd</span><span class="p">()</span>
 </code></pre></div>
 <p>Return an iterator that points one position past the last element of the list of the transforms. </p>
 <h3 id="function-getinversetransform_2">function GetInverseTransform</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetInverseTransform</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetInverseTransform</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Return the i'th transform object. </p>
 <h3 id="function-getinversetransform_3">function GetInverseTransform</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetInverseTransform</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetInverseTransform</span><span class="p">()</span>
 </code></pre></div>
 <p>API for the single transform case. </p>
 <h3 id="function-getinverseprefixtransform_2">function GetInversePrefixTransform</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetInversePrefixTransform</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetInversePrefixTransform</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Return the i'th transform object. </p>
 <h3 id="function-getinverseprefixtransform_3">function GetInversePrefixTransform</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetInversePrefixTransform</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">TransformType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetInversePrefixTransform</span><span class="p">()</span>
 </code></pre></div>
 <p>API for the single transform case. </p>
 <h2 id="public-attributes-documentation">Public Attributes Documentation</h2>
 <h3 id="variable-vdimension">variable VDimension</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:14 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:20 +0000</p>
 
               
             </article>

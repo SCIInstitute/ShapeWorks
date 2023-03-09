@@ -2284,46 +2284,46 @@
 <h2 id="source-code">Source code</h2>
 <div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/Preferences.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/Preferences.h&gt;</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QDialog&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QNetworkAccessManager&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QDialog&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QNetworkAccessManager&gt;</span>
 
-<span class="k">namespace</span><span class="w"> </span><span class="nn">Ui</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="k">class</span><span class="w"> </span><span class="nc">UpdateChecker</span><span class="p">;</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="k">namespace</span><span class="w"> </span><span class="nn">Ui</span><span class="w"> </span><span class="p">{</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">UpdateChecker</span><span class="p">;</span>
+<span class="p">}</span>
 
-<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
 
 
-<span class="k">class</span><span class="w"> </span><span class="nc">UpdateChecker</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">QDialog</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">  </span><span class="n">Q_OBJECT</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">UpdateChecker</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">QDialog</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">Q_OBJECT</span>
 
-<span class="w"> </span><span class="k">public</span><span class="o">:</span><span class="w"></span>
-<span class="w">  </span><span class="k">explicit</span><span class="w"> </span><span class="n">UpdateChecker</span><span class="p">(</span><span class="n">Preferences</span><span class="o">&amp;</span><span class="w"> </span><span class="n">prefs</span><span class="p">,</span><span class="w"> </span><span class="n">QWidget</span><span class="o">*</span><span class="w"> </span><span class="n">parent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">nullptr</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="o">~</span><span class="n">UpdateChecker</span><span class="p">();</span><span class="w"></span>
+<span class="w"> </span><span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="k">explicit</span><span class="w"> </span><span class="n">UpdateChecker</span><span class="p">(</span><span class="n">Preferences</span><span class="o">&amp;</span><span class="w"> </span><span class="n">prefs</span><span class="p">,</span><span class="w"> </span><span class="n">QWidget</span><span class="o">*</span><span class="w"> </span><span class="n">parent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">nullptr</span><span class="p">);</span>
+<span class="w">  </span><span class="o">~</span><span class="n">UpdateChecker</span><span class="p">();</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">run_auto_update_check</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">run_manual_update_check</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">run_auto_update_check</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">run_manual_update_check</span><span class="p">();</span>
 
-<span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Q_SLOTS</span><span class="o">:</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">handleNetworkReply</span><span class="p">(</span><span class="n">QNetworkReply</span><span class="o">*</span><span class="w"> </span><span class="n">reply</span><span class="p">);</span><span class="w"></span>
+<span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Q_SLOTS</span><span class="o">:</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">handleNetworkReply</span><span class="p">(</span><span class="n">QNetworkReply</span><span class="o">*</span><span class="w"> </span><span class="n">reply</span><span class="p">);</span>
 
-<span class="w"> </span><span class="k">private</span><span class="o">:</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">run_update_check</span><span class="p">();</span><span class="w"></span>
+<span class="w"> </span><span class="k">private</span><span class="o">:</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">run_update_check</span><span class="p">();</span>
 
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">manual_trigger_</span><span class="p">{</span><span class="nb">false</span><span class="p">};</span><span class="w"></span>
-<span class="w">  </span><span class="n">QNetworkAccessManager</span><span class="w"> </span><span class="n">network_</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">manual_trigger_</span><span class="p">{</span><span class="nb">false</span><span class="p">};</span>
+<span class="w">  </span><span class="n">QNetworkAccessManager</span><span class="w"> </span><span class="n">network_</span><span class="p">;</span>
 
-<span class="w">  </span><span class="n">Ui</span><span class="o">::</span><span class="n">UpdateChecker</span><span class="o">*</span><span class="w"> </span><span class="n">ui_</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">Ui</span><span class="o">::</span><span class="n">UpdateChecker</span><span class="o">*</span><span class="w"> </span><span class="n">ui_</span><span class="p">;</span>
 
-<span class="w">  </span><span class="n">Preferences</span><span class="o">&amp;</span><span class="w"> </span><span class="n">prefs_</span><span class="p">;</span><span class="w"></span>
-<span class="p">};</span><span class="w"></span>
+<span class="w">  </span><span class="n">Preferences</span><span class="o">&amp;</span><span class="w"> </span><span class="n">prefs_</span><span class="p">;</span>
+<span class="p">};</span>
 
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:16 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:23 +0000</p>
 
               
             </article>

@@ -2438,67 +2438,67 @@
 </table>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-physicalregion">function PhysicalRegion</h3>
-<div class="highlight"><pre><span></span><code><span class="n">PhysicalRegion</span><span class="p">(</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">PhysicalRegion</span><span class="p">(</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PhysicalRegion</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span>
-<span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="k">default</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="k">default</span>
 </code></pre></div>
 <h3 id="function-physicalregion_1">function PhysicalRegion</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">PhysicalRegion</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Point</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">_min</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Point</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">_max</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">PhysicalRegion</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Point</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">_min</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Point</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">_max</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-physicalregion_2">function PhysicalRegion</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">PhysicalRegion</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">PhysicalRegion</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-operator">function operator==</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">==</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PhysicalRegion</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">==</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PhysicalRegion</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-valid">function valid</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">valid</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">valid</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>verified min/max do not create an inverted or an empty region </p>
 <h3 id="function-origin">function origin</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Point</span><span class="w"> </span><span class="n">origin</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Point</span><span class="w"> </span><span class="n">origin</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-size">function size</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Point</span><span class="w"> </span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Point</span><span class="w"> </span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-shrink">function shrink</h3>
-<div class="highlight"><pre><span></span><code><span class="n">PhysicalRegion</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">shrink</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PhysicalRegion</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">PhysicalRegion</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">shrink</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PhysicalRegion</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>shrink this region down to the smallest portions of both </p>
 <h3 id="function-expand">function expand</h3>
-<div class="highlight"><pre><span></span><code><span class="n">PhysicalRegion</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">expand</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PhysicalRegion</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">PhysicalRegion</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">expand</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PhysicalRegion</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>expand this region to include the largest portions of both </p>
 <h3 id="function-expand_1">function expand</h3>
-<div class="highlight"><pre><span></span><code><span class="n">PhysicalRegion</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">expand</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Point</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pt</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">PhysicalRegion</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">expand</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Point</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pt</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>expand this region to include this point </p>
 <h3 id="function-pad">function pad</h3>
-<div class="highlight"><pre><span></span><code><span class="n">PhysicalRegion</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pad</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">padding</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">PhysicalRegion</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pad</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">padding</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>uniformly grows or shrinks the region by the specified amount </p>
 <h2 id="public-attributes-documentation">Public Attributes Documentation</h2>
 <h3 id="variable-min">variable min</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Point</span><span class="w"> </span><span class="n">min</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">Point</span><span class="w"> </span><span class="n">min</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="variable-max">variable max</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Point</span><span class="w"> </span><span class="n">max</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">Point</span><span class="w"> </span><span class="n">max</span><span class="p">;</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:15 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:22 +0000</p>
 
               
             </article>

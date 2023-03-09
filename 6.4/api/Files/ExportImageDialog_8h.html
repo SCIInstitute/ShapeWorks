@@ -2282,52 +2282,52 @@
 <div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
 
 <span class="c1">// qt</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QDialog&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QTimer&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QDialog&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QTimer&gt;</span>
 
 <span class="c1">// studio</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/Preferences.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/Preferences.h&gt;</span>
 
-<span class="k">class</span><span class="w"> </span><span class="nc">Ui_ExportImageDialog</span><span class="p">;</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Ui_ExportImageDialog</span><span class="p">;</span>
 
-<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
 
-<span class="k">class</span><span class="w"> </span><span class="nc">Visualizer</span><span class="p">;</span><span class="w"></span>
-<span class="k">class</span><span class="w"> </span><span class="nc">AnalysisTool</span><span class="p">;</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Visualizer</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">AnalysisTool</span><span class="p">;</span>
 
-<span class="k">class</span><span class="w"> </span><span class="nc">ExportImageDialog</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">QDialog</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">  </span><span class="n">Q_OBJECT</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ExportImageDialog</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">QDialog</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">Q_OBJECT</span>
 
-<span class="w"> </span><span class="k">public</span><span class="o">:</span><span class="w"></span>
-<span class="w">  </span><span class="n">ExportImageDialog</span><span class="p">(</span><span class="n">QWidget</span><span class="o">*</span><span class="w"> </span><span class="n">parent</span><span class="p">,</span><span class="w"> </span><span class="n">Preferences</span><span class="o">&amp;</span><span class="w"> </span><span class="n">prefs</span><span class="p">,</span><span class="w"> </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">AnalysisTool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">analysis_tool</span><span class="p">,</span><span class="w"></span>
-<span class="w">                    </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Visualizer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">visualizer</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">pca_mode</span><span class="p">);</span><span class="w"></span>
+<span class="w"> </span><span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="n">ExportImageDialog</span><span class="p">(</span><span class="n">QWidget</span><span class="o">*</span><span class="w"> </span><span class="n">parent</span><span class="p">,</span><span class="w"> </span><span class="n">Preferences</span><span class="o">&amp;</span><span class="w"> </span><span class="n">prefs</span><span class="p">,</span><span class="w"> </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">AnalysisTool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">analysis_tool</span><span class="p">,</span>
+<span class="w">                    </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Visualizer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">visualizer</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">pca_mode</span><span class="p">);</span>
 
-<span class="w"> </span><span class="k">private</span><span class="w"> </span><span class="n">Q_SLOTS</span><span class="o">:</span><span class="w"></span>
+<span class="w"> </span><span class="k">private</span><span class="w"> </span><span class="n">Q_SLOTS</span><span class="o">:</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">export_clicked</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">export_clicked</span><span class="p">();</span>
 
-<span class="w"> </span><span class="nl">Q_SIGNALS</span><span class="p">:</span><span class="w"></span>
+<span class="w"> </span><span class="nl">Q_SIGNALS</span><span class="p">:</span>
 
-<span class="w"> </span><span class="k">private</span><span class="o">:</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">update_preview</span><span class="p">();</span><span class="w"></span>
+<span class="w"> </span><span class="k">private</span><span class="o">:</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">update_preview</span><span class="p">();</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">drawRotatedText</span><span class="p">(</span><span class="n">QPainter</span><span class="o">&amp;</span><span class="w"> </span><span class="n">painter</span><span class="p">,</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="n">text</span><span class="p">,</span><span class="w"> </span><span class="n">QPointF</span><span class="w"> </span><span class="n">point</span><span class="p">,</span><span class="w"> </span><span class="n">qreal</span><span class="w"> </span><span class="n">angle</span><span class="p">,</span><span class="w"> </span><span class="n">QRect</span><span class="w"> </span><span class="n">rect</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">drawRotatedText</span><span class="p">(</span><span class="n">QPainter</span><span class="o">&amp;</span><span class="w"> </span><span class="n">painter</span><span class="p">,</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="n">text</span><span class="p">,</span><span class="w"> </span><span class="n">QPointF</span><span class="w"> </span><span class="n">point</span><span class="p">,</span><span class="w"> </span><span class="n">qreal</span><span class="w"> </span><span class="n">angle</span><span class="p">,</span><span class="w"> </span><span class="n">QRect</span><span class="w"> </span><span class="n">rect</span><span class="p">);</span>
 
-<span class="w">  </span><span class="n">QVector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_modes</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">string</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="n">QVector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_modes</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">string</span><span class="p">);</span>
 
-<span class="w">  </span><span class="n">Ui_ExportImageDialog</span><span class="o">*</span><span class="w"> </span><span class="n">ui_</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Visualizer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">visualizer_</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="n">Preferences</span><span class="o">&amp;</span><span class="w"> </span><span class="n">prefs_</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="n">QPixmap</span><span class="w"> </span><span class="n">pixmap_</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">pca_mode_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="n">QTimer</span><span class="w"> </span><span class="n">update_preview_timer_</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">AnalysisTool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">analysis_tool_</span><span class="p">;</span><span class="w"></span>
-<span class="p">};</span><span class="w"></span>
+<span class="w">  </span><span class="n">Ui_ExportImageDialog</span><span class="o">*</span><span class="w"> </span><span class="n">ui_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Visualizer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">visualizer_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">Preferences</span><span class="o">&amp;</span><span class="w"> </span><span class="n">prefs_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">QPixmap</span><span class="w"> </span><span class="n">pixmap_</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">pca_mode_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">  </span><span class="n">QTimer</span><span class="w"> </span><span class="n">update_preview_timer_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">AnalysisTool</span><span class="o">&gt;</span><span class="w"> </span><span class="n">analysis_tool_</span><span class="p">;</span>
+<span class="p">};</span>
 
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:16 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:23 +0000</p>
 
               
             </article>

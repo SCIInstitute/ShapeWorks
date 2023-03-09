@@ -2404,68 +2404,68 @@
 </table>
 <h2 id="public-signals-documentation">Public Signals Documentation</h2>
 <h3 id="signal-button_clicked">signal button_clicked</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">button_clicked</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">row</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">button_clicked</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">row</span>
+<span class="p">)</span>
 </code></pre></div>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-landmarkitemdelegate">function LandmarkItemDelegate</h3>
-<div class="highlight"><pre><span></span><code><span class="n">LandmarkItemDelegate</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">QObject</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">parent</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">LandmarkItemDelegate</span><span class="p">(</span>
+<span class="w">    </span><span class="n">QObject</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">parent</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-paint">function paint</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">paint</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">QPainter</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">painter</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">QStyleOptionViewItem</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">option</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">QModelIndex</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">index</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">paint</span><span class="p">(</span>
+<span class="w">    </span><span class="n">QPainter</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">painter</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">QStyleOptionViewItem</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">option</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">QModelIndex</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">index</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span>
 </code></pre></div>
 <h3 id="function-createeditor">function createEditor</h3>
-<div class="highlight"><pre><span></span><code><span class="n">QWidget</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">createEditor</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">QWidget</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">parent</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">QStyleOptionViewItem</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">option</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">QModelIndex</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">index</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">QWidget</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">createEditor</span><span class="p">(</span>
+<span class="w">    </span><span class="n">QWidget</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">parent</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">QStyleOptionViewItem</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">option</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">QModelIndex</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">index</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span>
 </code></pre></div>
 <h3 id="function-seteditordata">function setEditorData</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">setEditorData</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">QWidget</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">editor</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">QModelIndex</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">index</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">setEditorData</span><span class="p">(</span>
+<span class="w">    </span><span class="n">QWidget</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">editor</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">QModelIndex</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">index</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span>
 </code></pre></div>
 <h3 id="function-setmodeldata">function setModelData</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">setModelData</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">QWidget</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">editor</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">QAbstractItemModel</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">model</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">QModelIndex</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">index</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">setModelData</span><span class="p">(</span>
+<span class="w">    </span><span class="n">QWidget</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">editor</span><span class="p">,</span>
+<span class="w">    </span><span class="n">QAbstractItemModel</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">model</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">QModelIndex</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">index</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span>
 </code></pre></div>
 <h3 id="function-sizehint">function sizeHint</h3>
-<div class="highlight"><pre><span></span><code><span class="n">QSize</span><span class="w"> </span><span class="n">sizeHint</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">QStyleOptionViewItem</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">option</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">QModelIndex</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">index</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">QSize</span><span class="w"> </span><span class="n">sizeHint</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">QStyleOptionViewItem</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">option</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">QModelIndex</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">index</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span>
 </code></pre></div>
 <h3 id="function-updateeditorgeometry">function updateEditorGeometry</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">updateEditorGeometry</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">QWidget</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">editor</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">QStyleOptionViewItem</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">option</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">QModelIndex</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">index</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">updateEditorGeometry</span><span class="p">(</span>
+<span class="w">    </span><span class="n">QWidget</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">editor</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">QStyleOptionViewItem</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">option</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">QModelIndex</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">index</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span>
 </code></pre></div>
 <h3 id="function-set_button_text">function set_button_text</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_button_text</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">button_text</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_button_text</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">button_text</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-set_model">function set_model</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_model</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">LandmarkTableModel</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">model</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_model</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">LandmarkTableModel</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">model</span>
+<span class="p">)</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:14 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:21 +0000</p>
 
               
             </article>

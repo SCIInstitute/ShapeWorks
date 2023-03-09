@@ -2281,77 +2281,77 @@
 <h2 id="source-code">Source code</h2>
 <div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkParticleShapeMatrixAttribute.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkDataObject.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;string&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkParticleShapeMatrixAttribute.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkDataObject.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;string&gt;</span>
 
-<span class="k">namespace</span><span class="w"> </span><span class="nn">itk</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
+<span class="k">namespace</span><span class="w"> </span><span class="nn">itk</span>
+<span class="p">{</span>
 
-<span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">VDimension</span><span class="o">&gt;</span><span class="w"></span>
-<span class="k">class</span><span class="w"> </span><span class="nc">ParticleGaussianModeWriter</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">DataObject</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="k">public</span><span class="o">:</span><span class="w"></span>
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleGaussianModeWriter</span><span class="w"> </span><span class="n">Self</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">&gt;</span><span class="w">  </span><span class="n">Pointer</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&gt;</span><span class="w">  </span><span class="n">ConstPointer</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">DataObject</span><span class="w"> </span><span class="n">Superclass</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="n">itkTypeMacro</span><span class="p">(</span><span class="w"> </span><span class="n">ParticleGaussianModeWriter</span><span class="p">,</span><span class="w"> </span><span class="n">DataObject</span><span class="p">);</span><span class="w"></span>
+<span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">VDimension</span><span class="o">&gt;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ParticleGaussianModeWriter</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">DataObject</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleGaussianModeWriter</span><span class="w"> </span><span class="n">Self</span><span class="p">;</span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">&gt;</span><span class="w">  </span><span class="n">Pointer</span><span class="p">;</span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&gt;</span><span class="w">  </span><span class="n">ConstPointer</span><span class="p">;</span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">DataObject</span><span class="w"> </span><span class="n">Superclass</span><span class="p">;</span>
+<span class="w">  </span><span class="n">itkTypeMacro</span><span class="p">(</span><span class="w"> </span><span class="n">ParticleGaussianModeWriter</span><span class="p">,</span><span class="w"> </span><span class="n">DataObject</span><span class="p">);</span>
 
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="w"> </span><span class="n">ParticleSystemType</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleShapeMatrixAttribute</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ShapeMatrixType</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">ShapeMatrixType</span><span class="o">::</span><span class="n">DataType</span><span class="w"> </span><span class="n">DataType</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="w"> </span><span class="n">ParticleSystemType</span><span class="p">;</span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleShapeMatrixAttribute</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ShapeMatrixType</span><span class="p">;</span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">ShapeMatrixType</span><span class="o">::</span><span class="n">DataType</span><span class="w"> </span><span class="n">DataType</span><span class="p">;</span>
 
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">ParticleSystemType</span><span class="o">::</span><span class="n">PointType</span><span class="w"> </span><span class="n">PointType</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="n">DataType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">vnl_vector_type</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">vnl_matrix</span><span class="o">&lt;</span><span class="n">DataType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">vnl_matrix_type</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">ParticleSystemType</span><span class="o">::</span><span class="n">PointType</span><span class="w"> </span><span class="n">PointType</span><span class="p">;</span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="n">DataType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">vnl_vector_type</span><span class="p">;</span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">vnl_matrix</span><span class="o">&lt;</span><span class="n">DataType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">vnl_matrix_type</span><span class="p">;</span>
 
-<span class="w">  </span><span class="n">itkNewMacro</span><span class="p">(</span><span class="n">Self</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="n">itkNewMacro</span><span class="p">(</span><span class="n">Self</span><span class="p">);</span>
 
-<span class="w">  </span><span class="n">itkStaticConstMacro</span><span class="p">(</span><span class="n">Dimension</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="n">itkStaticConstMacro</span><span class="p">(</span><span class="n">Dimension</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">Update</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">Update</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
 
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">GetNumberOfModes</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
-<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_NumberOfModes</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetNumberOfModes</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"></span>
-<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="n">m_NumberOfModes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">b</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">GetNumberOfModes</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_NumberOfModes</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetNumberOfModes</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">b</span><span class="p">)</span>
+<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="n">m_NumberOfModes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">b</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetShapeMatrix</span><span class="p">(</span><span class="w"> </span><span class="n">ShapeMatrixType</span><span class="w"> </span><span class="o">*</span><span class="n">s</span><span class="p">)</span><span class="w"></span>
-<span class="w">  </span><span class="p">{</span><span class="w">    </span><span class="n">m_ShapeMatrix</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">;</span><span class="w">  </span><span class="p">}</span><span class="w"></span>
-<span class="w">  </span><span class="n">ShapeMatrixType</span><span class="w"> </span><span class="o">*</span><span class="nf">GetShapeMatrix</span><span class="p">()</span><span class="w"></span>
-<span class="w">  </span><span class="p">{</span><span class="w">   </span><span class="k">return</span><span class="w">  </span><span class="n">m_ShapeMatrix</span><span class="p">.</span><span class="n">GetPointer</span><span class="p">();</span><span class="w">  </span><span class="p">}</span><span class="w"></span>
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">ShapeMatrixType</span><span class="w"> </span><span class="o">*</span><span class="nf">GetShapeMatrix</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
-<span class="w">  </span><span class="p">{</span><span class="w">   </span><span class="k">return</span><span class="w">  </span><span class="n">m_ShapeMatrix</span><span class="p">.</span><span class="n">GetPointer</span><span class="p">();</span><span class="w">  </span><span class="p">}</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetShapeMatrix</span><span class="p">(</span><span class="w"> </span><span class="n">ShapeMatrixType</span><span class="w"> </span><span class="o">*</span><span class="n">s</span><span class="p">)</span>
+<span class="w">  </span><span class="p">{</span><span class="w">    </span><span class="n">m_ShapeMatrix</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">;</span><span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="n">ShapeMatrixType</span><span class="w"> </span><span class="o">*</span><span class="nf">GetShapeMatrix</span><span class="p">()</span>
+<span class="w">  </span><span class="p">{</span><span class="w">   </span><span class="k">return</span><span class="w">  </span><span class="n">m_ShapeMatrix</span><span class="p">.</span><span class="n">GetPointer</span><span class="p">();</span><span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">ShapeMatrixType</span><span class="w"> </span><span class="o">*</span><span class="nf">GetShapeMatrix</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+<span class="w">  </span><span class="p">{</span><span class="w">   </span><span class="k">return</span><span class="w">  </span><span class="n">m_ShapeMatrix</span><span class="p">.</span><span class="n">GetPointer</span><span class="p">();</span><span class="w">  </span><span class="p">}</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetFileName</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="n">s</span><span class="p">)</span><span class="w"></span>
-<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="n">m_FileName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetFileName</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">s</span><span class="p">)</span><span class="w"></span>
-<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="n">m_FileName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="nf">GetFileName</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
-<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_FileName</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetFileName</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="n">s</span><span class="p">)</span>
+<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="n">m_FileName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetFileName</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">s</span><span class="p">)</span>
+<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="n">m_FileName</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="nf">GetFileName</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_FileName</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 
-<span class="k">protected</span><span class="o">:</span><span class="w"></span>
-<span class="w">  </span><span class="n">ParticleGaussianModeWriter</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">m_NumberOfModes</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">  </span><span class="p">}</span><span class="w"></span>
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">ParticleGaussianModeWriter</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">ParticleGaussianModeWriter</span><span class="w"> </span><span class="o">&amp;</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="n">ParticleGaussianModeWriter</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">ParticleGaussianModeWriter</span><span class="w"> </span><span class="o">&amp;</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="k">typename</span><span class="w"> </span><span class="nc">ShapeMatrixType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_ShapeMatrix</span><span class="p">;</span><span class="w"></span>
+<span class="k">protected</span><span class="o">:</span>
+<span class="w">  </span><span class="n">ParticleGaussianModeWriter</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">m_NumberOfModes</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">ParticleGaussianModeWriter</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">ParticleGaussianModeWriter</span><span class="w"> </span><span class="o">&amp;</span><span class="p">);</span>
+<span class="w">  </span><span class="n">ParticleGaussianModeWriter</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">ParticleGaussianModeWriter</span><span class="w"> </span><span class="o">&amp;</span><span class="p">);</span>
+<span class="w">  </span><span class="k">typename</span><span class="w"> </span><span class="nc">ShapeMatrixType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_ShapeMatrix</span><span class="p">;</span>
 
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">m_NumberOfModes</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">m_FileName</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">m_NumberOfModes</span><span class="p">;</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">m_FileName</span><span class="p">;</span>
 
-<span class="p">};</span><span class="w"></span>
+<span class="p">};</span>
 
 
 <span class="p">}</span><span class="w"> </span><span class="c1">//end namespace</span>
 
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkParticleGaussianModeWriter.txx&quot;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkParticleGaussianModeWriter.txx&quot;</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:16 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:23 +0000</p>
 
               
             </article>

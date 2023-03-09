@@ -2280,41 +2280,41 @@
 </table>
 <h2 id="source-code">Source code</h2>
 <div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QObject&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QElapsedTimer&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QObject&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QElapsedTimer&gt;</span>
 
-<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
 
-<span class="k">class</span><span class="w"> </span><span class="nc">Job</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">QObject</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">  </span><span class="n">Q_OBJECT</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Job</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">QObject</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">Q_OBJECT</span>
 
-<span class="k">public</span><span class="o">:</span><span class="w"></span>
+<span class="k">public</span><span class="o">:</span>
 
-<span class="w">  </span><span class="n">Job</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">Job</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="n">Job</span><span class="p">();</span>
+<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">Job</span><span class="p">();</span>
 
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">run</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">run</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="nf">name</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="nf">name</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="nf">get_completion_message</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="nf">get_completion_message</span><span class="p">();</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">start_timer</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="n">qint64</span><span class="w"> </span><span class="nf">timer_elapsed</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">start_timer</span><span class="p">();</span>
+<span class="w">  </span><span class="n">qint64</span><span class="w"> </span><span class="nf">timer_elapsed</span><span class="p">();</span>
 
-<span class="k">public</span><span class="w"> </span><span class="n">Q_SLOTS</span><span class="o">:</span><span class="w"></span>
+<span class="k">public</span><span class="w"> </span><span class="n">Q_SLOTS</span><span class="o">:</span>
 
-<span class="nl">Q_SIGNALS</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">progress</span><span class="p">(</span><span class="kt">double</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">finished</span><span class="p">();</span><span class="w"></span>
+<span class="nl">Q_SIGNALS</span><span class="p">:</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">progress</span><span class="p">(</span><span class="kt">double</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">finished</span><span class="p">();</span>
 
-<span class="k">private</span><span class="o">:</span><span class="w"></span>
-<span class="w">  </span><span class="n">QElapsedTimer</span><span class="w"> </span><span class="n">timer_</span><span class="p">;</span><span class="w"></span>
-<span class="p">};</span><span class="w"></span>
-<span class="p">}</span><span class="w"></span>
+<span class="k">private</span><span class="o">:</span>
+<span class="w">  </span><span class="n">QElapsedTimer</span><span class="w"> </span><span class="n">timer_</span><span class="p">;</span>
+<span class="p">};</span>
+<span class="p">}</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:16 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:23 +0000</p>
 
               
             </article>

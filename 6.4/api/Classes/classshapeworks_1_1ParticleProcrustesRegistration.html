@@ -2447,63 +2447,63 @@
 </table>
 <h2 id="public-types-documentation">Public Types Documentation</h2>
 <h3 id="using-pointer">using Pointer</h3>
-<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ParticleProcrustesRegistration</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ParticleProcrustesRegistration</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ParticleProcrustesRegistration</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ParticleProcrustesRegistration</span><span class="o">&gt;</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="using-particlesystemtype">using ParticleSystemType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ParticleProcrustesRegistration</span><span class="o">::</span><span class="n">ParticleSystemType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ParticleProcrustesRegistration</span><span class="o">::</span><span class="n">ParticleSystemType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="using-pointtype">using PointType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ParticleProcrustesRegistration</span><span class="o">::</span><span class="n">PointType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">ParticleSystemType</span><span class="o">::</span><span class="n">PointType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ParticleProcrustesRegistration</span><span class="o">::</span><span class="n">PointType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">ParticleSystemType</span><span class="o">::</span><span class="n">PointType</span><span class="p">;</span>
 </code></pre></div>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-setparticlesystem">function SetParticleSystem</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetParticleSystem</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">ParticleSystemType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">p</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetParticleSystem</span><span class="p">(</span>
+<span class="w">    </span><span class="n">ParticleSystemType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">p</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-getparticlesystem">function GetParticleSystem</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">ParticleSystemType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetParticleSystem</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">ParticleSystemType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetParticleSystem</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-getparticlesystem_1">function GetParticleSystem</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">ParticleSystemType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetParticleSystem</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">ParticleSystemType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetParticleSystem</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-runregistration">function RunRegistration</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">RunRegistration</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">RunRegistration</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Performs a procrustes registration and modifies the transforms of the particle system accordingly. Assumes m_ParticleSystem has been set to point to a valid object. </p>
 <h3 id="function-runregistration_1">function RunRegistration</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">RunRegistration</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">RunRegistration</span><span class="p">()</span>
 </code></pre></div>
 <p>Run registration on all domains. </p>
 <h3 id="function-setdomainspershape">function SetDomainsPerShape</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetDomainsPerShape</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetDomainsPerShape</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Set/Get the number of Domains in each shape. Procrustes will be performed separately for each domain. </p>
 <h3 id="function-getdomainspershape">function GetDomainsPerShape</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">GetDomainsPerShape</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">GetDomainsPerShape</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-getscaling">function GetScaling</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">GetScaling</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">GetScaling</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-setscaling">function SetScaling</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetScaling</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">scaling</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetScaling</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">scaling</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-getrotationtranslation">function GetRotationTranslation</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">GetRotationTranslation</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">GetRotationTranslation</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-setrotationtranslation">function SetRotationTranslation</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetRotationTranslation</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">rotationTranslation</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetRotationTranslation</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">rotationTranslation</span>
+<span class="p">)</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:15 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:22 +0000</p>
 
               
             </article>

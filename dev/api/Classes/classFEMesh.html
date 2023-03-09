@@ -3284,378 +3284,378 @@
 </table>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-femesh">function FEMesh</h3>
-<div class="highlight"><pre><span></span><code><span class="n">FEMesh</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">FEMesh</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-femesh_1">function FEMesh</h3>
-<div class="highlight"><pre><span></span><code><span class="n">FEMesh</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">FEMesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">m</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">FEMesh</span><span class="p">(</span>
+<span class="w">    </span><span class="n">FEMesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">m</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-femesh_2">function ~FEMesh</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">FEMesh</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">FEMesh</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-create">function Create</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">Create</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">nodes</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">elems</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">faces</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">edges</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">Create</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">nodes</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">elems</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">faces</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">edges</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>allocate space for mesh </p>
 <p><strong>Reimplements</strong>: <a href="classFECoreMesh.html#function-create">FECoreMesh::Create</a></p>
 <h3 id="function-shallowcopy">function ShallowCopy</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">ShallowCopy</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">FEMesh</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">pm</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">ShallowCopy</span><span class="p">(</span>
+<span class="w">    </span><span class="n">FEMesh</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">pm</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-clear">function Clear</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">Clear</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">Clear</span><span class="p">()</span>
 </code></pre></div>
 <p>&mdash; C L E A N U P &mdash;</p>
 <h3 id="function-deleteedges">function DeleteEdges</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">DeleteEdges</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">DeleteEdges</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-elements">function Elements</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">Elements</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">Elements</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>return number of elements </p>
 <p><strong>Reimplements</strong>: <a href="classFECoreMesh.html#function-elements">FECoreMesh::Elements</a></p>
 <h3 id="function-element">function Element</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">FEElement</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">Element</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">FEElement</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">Element</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>return element </p>
 <h3 id="function-elementref">function ElementRef</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">FEElement_</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ElementRef</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">FEElement_</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ElementRef</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>return reference to element </p>
 <p><strong>Reimplements</strong>: <a href="classFECoreMesh.html#function-elementref">FECoreMesh::ElementRef</a></p>
 <h3 id="function-elementptr">function ElementPtr</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">FEElement</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">ElementPtr</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">FEElement</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">ElementPtr</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>return pointer to element </p>
 <p><strong>Reimplements</strong>: <a href="classFECoreMesh.html#function-elementptr">FECoreMesh::ElementPtr</a></p>
 <h3 id="function-findface">function FindFace</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">FindFace</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">FEElement</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">pe</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">FEFace</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">f</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">FEFace</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">fe</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">FindFace</span><span class="p">(</span>
+<span class="w">    </span><span class="n">FEElement</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">pe</span><span class="p">,</span>
+<span class="w">    </span><span class="n">FEFace</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">f</span><span class="p">,</span>
+<span class="w">    </span><span class="n">FEFace</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">fe</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-findnodesfrompart">function FindNodesFromPart</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">FindNodesFromPart</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">gid</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">node</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">FindNodesFromPart</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">gid</span><span class="p">,</span>
+<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">node</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-nodearray">function NodeArray</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">FENode</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">NodeArray</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">FENode</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">NodeArray</span><span class="p">()</span>
 </code></pre></div>
 <p><strong>Todo</strong>: Maybe I should delete these </p>
 <p>Get the node array </p>
 <h3 id="function-facearray">function FaceArray</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">FEFace</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">FaceArray</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">FEFace</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">FaceArray</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-elementarray">function ElementArray</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">FEElement</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ElementArray</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">FEElement</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ElementArray</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-getelementvalue">function GetElementValue</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">GetElementValue</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">GetElementValue</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-setelementvalue">function SetElementValue</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetElementValue</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">v</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetElementValue</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">v</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-updatevaluerange">function UpdateValueRange</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">UpdateValueRange</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">UpdateValueRange</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-getvaluerange">function GetValueRange</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">GetValueRange</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">vmin</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">vmax</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">GetValueRange</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">vmin</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">vmax</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-projecttosurface">function ProjectToSurface</h3>
-<div class="highlight"><pre><span></span><code><span class="n">vec3d</span><span class="w"> </span><span class="n">ProjectToSurface</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">vec3d</span><span class="w"> </span><span class="n">r</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">vec3d</span><span class="w"> </span><span class="n">t</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">vec3d</span><span class="w"> </span><span class="n">ProjectToSurface</span><span class="p">(</span>
+<span class="w">    </span><span class="n">vec3d</span><span class="w"> </span><span class="n">r</span><span class="p">,</span>
+<span class="w">    </span><span class="n">vec3d</span><span class="w"> </span><span class="n">t</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-projecttoface">function ProjectToFace</h3>
-<div class="highlight"><pre><span></span><code><span class="n">vec3d</span><span class="w"> </span><span class="n">ProjectToFace</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">vec3d</span><span class="w"> </span><span class="n">p</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">FEFace</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">f</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">r</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">s</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">vec3d</span><span class="w"> </span><span class="n">ProjectToFace</span><span class="p">(</span>
+<span class="w">    </span><span class="n">vec3d</span><span class="w"> </span><span class="n">p</span><span class="p">,</span>
+<span class="w">    </span><span class="n">FEFace</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">f</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">r</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">s</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-projecttoedge">function ProjectToEdge</h3>
-<div class="highlight"><pre><span></span><code><span class="n">vec3d</span><span class="w"> </span><span class="n">ProjectToEdge</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">vec3d</span><span class="w"> </span><span class="n">e1</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">vec3d</span><span class="w"> </span><span class="n">e2</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">vec3d</span><span class="w"> </span><span class="n">p</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">r</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">vec3d</span><span class="w"> </span><span class="n">ProjectToEdge</span><span class="p">(</span>
+<span class="w">    </span><span class="n">vec3d</span><span class="w"> </span><span class="n">e1</span><span class="p">,</span>
+<span class="w">    </span><span class="n">vec3d</span><span class="w"> </span><span class="n">e2</span><span class="p">,</span>
+<span class="w">    </span><span class="n">vec3d</span><span class="w"> </span><span class="n">p</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">r</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-findintersection">function FindIntersection</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">FindIntersection</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">FEFace</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">f</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">vec3d</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">vec3d</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">vec3d</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">q</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">g</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">FindIntersection</span><span class="p">(</span>
+<span class="w">    </span><span class="n">FEFace</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">f</span><span class="p">,</span>
+<span class="w">    </span><span class="n">vec3d</span><span class="w"> </span><span class="n">x</span><span class="p">,</span>
+<span class="w">    </span><span class="n">vec3d</span><span class="w"> </span><span class="n">n</span><span class="p">,</span>
+<span class="w">    </span><span class="n">vec3d</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">q</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">g</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-update">function Update</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">Update</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">Update</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-updateelementneighbors">function UpdateElementNeighbors</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">UpdateElementNeighbors</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">UpdateElementNeighbors</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-updatefaces">function UpdateFaces</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">UpdateFaces</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">UpdateFaces</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-updateedges">function UpdateEdges</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">UpdateEdges</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">UpdateEdges</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-updatenodes">function UpdateNodes</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">UpdateNodes</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">UpdateNodes</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-autosmooth">function AutoSmooth</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">AutoSmooth</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">w</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">AutoSmooth</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">w</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-updatenormals">function UpdateNormals</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">UpdateNormals</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">UpdateNormals</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-partitionselection">function PartitionSelection</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">PartitionSelection</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">PartitionSelection</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-removeisolatednodes">function RemoveIsolatedNodes</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">RemoveIsolatedNodes</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">RemoveIsolatedNodes</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-addnode">function AddNode</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">AddNode</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">FENode</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">n</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">AddNode</span><span class="p">(</span>
+<span class="w">    </span><span class="n">FENode</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">n</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-detachselectedmesh">function DetachSelectedMesh</h3>
-<div class="highlight"><pre><span></span><code><span class="n">FEMesh</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">DetachSelectedMesh</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">FEMesh</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">DetachSelectedMesh</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-detachselectedpart">function DetachSelectedPart</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">DetachSelectedPart</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">DetachSelectedPart</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-extractselectedfaces">function ExtractSelectedFaces</h3>
-<div class="highlight"><pre><span></span><code><span class="n">FEMesh</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">ExtractSelectedFaces</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">FEMesh</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">ExtractSelectedFaces</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-deletetaggedelements">function DeleteTaggedElements</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">DeleteTaggedElements</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">tag</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">DeleteTaggedElements</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">tag</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-deletetaggedfaces">function DeleteTaggedFaces</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">DeleteTaggedFaces</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">tag</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">DeleteTaggedFaces</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">tag</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-deletetaggededges">function DeleteTaggedEdges</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">DeleteTaggedEdges</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">tag</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">DeleteTaggedEdges</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">tag</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-findduplicatefaces">function FindDuplicateFaces</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">FindDuplicateFaces</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">l</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">FindDuplicateFaces</span><span class="p">(</span>
+<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">l</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-findduplicateedges">function FindDuplicateEdges</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">FindDuplicateEdges</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">l</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">FindDuplicateEdges</span><span class="p">(</span>
+<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">l</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-deleteselectedelements">function DeleteSelectedElements</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">DeleteSelectedElements</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">DeleteSelectedElements</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-deleteselectedfaces">function DeleteSelectedFaces</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">DeleteSelectedFaces</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">DeleteSelectedFaces</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-deleteselectednodes">function DeleteSelectedNodes</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">DeleteSelectedNodes</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">DeleteSelectedNodes</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-inverttaggedelements">function InvertTaggedElements</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">InvertTaggedElements</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">ntag</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">InvertTaggedElements</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">ntag</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-invertselectedelements">function InvertSelectedElements</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">InvertSelectedElements</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">InvertSelectedElements</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-shelljacobian">function ShellJacobian</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">ShellJacobian</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">FEElement</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">el</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">ShellJacobian</span><span class="p">(</span>
+<span class="w">    </span><span class="n">FEElement</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">el</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-removeduplicateelements">function RemoveDuplicateElements</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">RemoveDuplicateElements</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">RemoveDuplicateElements</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-fixinvertedelements">function FixinvertedElements</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">FixinvertedElements</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">FixinvertedElements</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-fixreferencesurface">function FixReferenceSurface</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">FixReferenceSurface</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">FixReferenceSurface</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-interpolateshellthickness">function InterpolateShellThickness</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">InterpolateShellThickness</span><span class="p">(</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">InterpolateShellThickness</span><span class="p">(</span>
 <span class="w">    </span><span class="kt">double</span><span class="w"> </span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-removenonmanifoldelements">function RemoveNonManifoldElements</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">RemoveNonManifoldElements</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">RemoveNonManifoldElements</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-fixelementwinding">function FixElementWinding</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">FixElementWinding</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">FixElementWinding</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-fixelementwinding2">function FixElementWinding2</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">FixElementWinding2</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">FixElementWinding2</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-tagallelements">function TagAllElements</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">TagAllElements</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">ntag</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">TagAllElements</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">ntag</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-datafields">function DataFields</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">DataFields</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">DataFields</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-adddatafield">function AddDataField</h3>
-<div class="highlight"><pre><span></span><code><span class="n">FEElementData</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">AddDataField</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">szname</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="o">=</span><span class="mf">0.0</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">FEElementData</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">AddDataField</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">szname</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="o">=</span><span class="mf">0.0</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-getdatafield">function GetDataField</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">FEElementData</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetDataField</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">FEElementData</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetDataField</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-shortestedge">function ShortestEdge</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">ShortestEdge</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">ShortestEdge</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-buildnodeelementtable">function BuildNodeElementTable</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">BuildNodeElementTable</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">NET</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">BuildNodeElementTable</span><span class="p">(</span>
+<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">NET</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-buildnodefacetable">function BuildNodeFaceTable</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">BuildNodeFaceTable</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">NFT</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">BuildNodeFaceTable</span><span class="p">(</span>
+<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">NFT</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-buildnodeedgetable">function BuildNodeEdgeTable</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">BuildNodeEdgeTable</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">NET</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">BuildNodeEdgeTable</span><span class="p">(</span>
+<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">NET</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-buildedgetable">function BuildEdgeTable</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">BuildEdgeTable</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">pair</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ET</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">BuildEdgeTable</span><span class="p">(</span>
+<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">pair</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ET</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-buildnodenodetable">function BuildNodeNodeTable</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">BuildNodeNodeTable</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">set</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">NNT</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">BuildNodeNodeTable</span><span class="p">(</span>
+<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">set</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">NNT</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-buildsurfacenodenodetable">function BuildSurfaceNodeNodeTable</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">BuildSurfaceNodeNodeTable</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">set</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">NNT</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">BuildSurfaceNodeNodeTable</span><span class="p">(</span>
+<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">set</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">NNT</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-buildelementedgetable">function BuildElementEdgeTable</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">BuildElementEdgeTable</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">EET</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">pair</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ET</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">BuildElementEdgeTable</span><span class="p">(</span>
+<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">EET</span><span class="p">,</span>
+<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">pair</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ET</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-buildfacetable">function BuildFaceTable</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">BuildFaceTable</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">FEFace</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">FT</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">BuildFaceTable</span><span class="p">(</span>
+<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">FEFace</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">FT</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-buildelementfacetable">function BuildElementFaceTable</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">BuildElementFaceTable</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">EFT</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">FEFace</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">FT</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">BuildElementFaceTable</span><span class="p">(</span>
+<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">EFT</span><span class="p">,</span>
+<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">FEFace</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">FT</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-buildfaceedgetable">function BuildFaceEdgeTable</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">BuildFaceEdgeTable</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">FET</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">pair</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ET</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">BuildFaceEdgeTable</span><span class="p">(</span>
+<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">FET</span><span class="p">,</span>
+<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">pair</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ET</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-buildfacefacetable">function BuildFaceFaceTable</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">BuildFaceFaceTable</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">FFT</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">FEFace</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">FT</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">BuildFaceFaceTable</span><span class="p">(</span>
+<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">FFT</span><span class="p">,</span>
+<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">FEFace</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">FT</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-buildedgeedgetable">function BuildEdgeEdgeTable</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">BuildEdgeEdgeTable</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">EET</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">pair</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ET</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">BuildEdgeEdgeTable</span><span class="p">(</span>
+<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">EET</span><span class="p">,</span>
+<span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">pair</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ET</span>
+<span class="p">)</span>
 </code></pre></div>
 <h2 id="protected-functions-documentation">Protected Functions Documentation</h2>
 <h3 id="function-intersecttri">function IntersectTri</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">IntersectTri</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">vec3d</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">y</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">vec3d</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">vec3d</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">vec3d</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">q</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">g</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">IntersectTri</span><span class="p">(</span>
+<span class="w">    </span><span class="n">vec3d</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">y</span><span class="p">,</span>
+<span class="w">    </span><span class="n">vec3d</span><span class="w"> </span><span class="n">x</span><span class="p">,</span>
+<span class="w">    </span><span class="n">vec3d</span><span class="w"> </span><span class="n">n</span><span class="p">,</span>
+<span class="w">    </span><span class="n">vec3d</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">q</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">g</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-intersectquad">function IntersectQuad</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">IntersectQuad</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">vec3d</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">y</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">vec3d</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">vec3d</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">vec3d</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">q</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">g</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">IntersectQuad</span><span class="p">(</span>
+<span class="w">    </span><span class="n">vec3d</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">y</span><span class="p">,</span>
+<span class="w">    </span><span class="n">vec3d</span><span class="w"> </span><span class="n">x</span><span class="p">,</span>
+<span class="w">    </span><span class="n">vec3d</span><span class="w"> </span><span class="n">n</span><span class="p">,</span>
+<span class="w">    </span><span class="n">vec3d</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">q</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">g</span>
+<span class="p">)</span>
 </code></pre></div>
 <h2 id="protected-attributes-documentation">Protected Attributes Documentation</h2>
 <h3 id="variable-m_elem">variable m_Elem</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">FEElement</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_Elem</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">FEElement</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_Elem</span><span class="p">;</span>
 </code></pre></div>
 <p>FE elements. </p>
 <h3 id="variable-m_data">variable m_data</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_data</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_data</span><span class="p">;</span>
 </code></pre></div>
 <p>element values </p>
 <h3 id="variable-m_min">variable m_min</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">m_min</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">m_min</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="variable-m_max">variable m_max</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">m_max</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">m_max</span><span class="p">;</span>
 </code></pre></div>
 <p>value range of element data </p>
 <h3 id="variable-m_map">variable m_map</h3>
-<div class="highlight"><pre><span></span><code><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">FEElementData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_map</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">FEElementData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_map</span><span class="p">;</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:15 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:22 +0000</p>
 
               
             </article>

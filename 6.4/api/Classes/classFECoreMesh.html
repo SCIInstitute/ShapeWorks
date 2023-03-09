@@ -2511,107 +2511,107 @@
 </tbody>
 </table>
 <h2 id="detailed-description">Detailed Description</h2>
-<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">FECoreMesh</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">FECoreMesh</span><span class="p">;</span>
 </code></pre></div>
 <p>This class defines a simple mesh structure that provides basic container services for storing mesh data. </p>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-fecoremesh">function FECoreMesh</h3>
-<div class="highlight"><pre><span></span><code><span class="n">FECoreMesh</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">FECoreMesh</span><span class="p">()</span>
 </code></pre></div>
 <p>constructor </p>
 <h3 id="function-fecoremesh_1">function ~FECoreMesh</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">FECoreMesh</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">FECoreMesh</span><span class="p">()</span>
 </code></pre></div>
 <p>destructor </p>
 <h3 id="function-create">function Create</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">Create</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">nodes</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">elems</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">faces</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">edges</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">Create</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">nodes</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">elems</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">faces</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">edges</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
+<span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
 </code></pre></div>
 <p>allocate space for mesh </p>
 <p><strong>Reimplemented by</strong>: <a href="classFEMesh.html#function-create">FEMesh::Create</a></p>
 <h3 id="function-istype">function IsType</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">IsType</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">ntype</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">IsType</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">ntype</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>check the type of the mesh </p>
 <h3 id="function-elements">function Elements</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">Elements</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">Elements</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
 </code></pre></div>
 <p>total number of elements </p>
 <p><strong>Reimplemented by</strong>: <a href="classFEMesh.html#function-elements">FEMesh::Elements</a></p>
 <h3 id="function-elementref">function ElementRef</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">FEElement_</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ElementRef</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">FEElement_</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ElementRef</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span>
+<span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
 </code></pre></div>
 <p>return reference to element </p>
 <p><strong>Reimplemented by</strong>: <a href="classFEMesh.html#function-elementref">FEMesh::ElementRef</a></p>
 <h3 id="function-elementptr">function ElementPtr</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">FEElement</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">ElementPtr</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">FEElement</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">ElementPtr</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
+<span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
 </code></pre></div>
 <p>return pointer to element </p>
 <p><strong>Reimplemented by</strong>: <a href="classFEMesh.html#function-elementptr">FEMesh::ElementPtr</a></p>
 <h3 id="function-nodes">function Nodes</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">Nodes</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">Nodes</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-edges">function Edges</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">Edges</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">Edges</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-faces">function Faces</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">Faces</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">Faces</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-node">function Node</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">FENode</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">Node</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">FENode</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">Node</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-edge">function Edge</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">FEEdge</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">Edge</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">FEEdge</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">Edge</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-face">function Face</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">FEFace</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">Face</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">FEFace</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">Face</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-nodeptr">function NodePtr</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">FENode</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">NodePtr</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">FENode</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">NodePtr</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-edgeptr">function EdgePtr</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">FEEdge</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">EdgePtr</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">FEEdge</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">EdgePtr</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-faceptr">function FacePtr</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">FEFace</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">FacePtr</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">FEFace</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">FacePtr</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
+<span class="p">)</span>
 </code></pre></div>
 <h2 id="protected-attributes-documentation">Protected Attributes Documentation</h2>
 <h3 id="variable-m_node">variable m_Node</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">FENode</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_Node</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">FENode</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_Node</span><span class="p">;</span>
 </code></pre></div>
 <p>FE nodes. </p>
 <h3 id="variable-m_edge">variable m_Edge</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">FEEdge</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_Edge</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">FEEdge</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_Edge</span><span class="p">;</span>
 </code></pre></div>
 <p>FE edges. </p>
 <h3 id="variable-m_face">variable m_Face</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">FEFace</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_Face</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">FEFace</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_Face</span><span class="p">;</span>
 </code></pre></div>
 <p>FE faces. </p>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:15 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:22 +0000</p>
 
               
             </article>

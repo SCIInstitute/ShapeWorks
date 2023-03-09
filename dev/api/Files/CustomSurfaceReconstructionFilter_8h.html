@@ -2272,7 +2272,7 @@
 <span class="cm">     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR</span>
 <span class="cm">     PURPOSE.  See the above copyright notice for more information.</span>
 
-<span class="cm">=========================================================================*/</span><span class="w"></span>
+<span class="cm">=========================================================================*/</span>
 <span class="c1">// .NAME CustomSurfaceReconstructionFilter - reconstructs a surface from unorganized points</span>
 <span class="c1">// .SECTION Description</span>
 <span class="c1">// CustomSurfaceReconstructionFilter takes a list of points assumed to lie on</span>
@@ -2286,17 +2286,17 @@
 <span class="cp">#ifndef __CustomSurfaceReconstructionFilter_h</span>
 <span class="cp">#define __CustomSurfaceReconstructionFilter_h</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;vtkImageAlgorithm.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;vtkImageAlgorithm.h&quot;</span>
 
-<span class="k">class</span><span class="w"> </span><span class="nc">CustomSurfaceReconstructionFilter</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">vtkImageAlgorithm</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="k">public</span><span class="o">:</span><span class="w"></span>
-<span class="w">  </span><span class="n">vtkTypeMacro</span><span class="p">(</span><span class="n">CustomSurfaceReconstructionFilter</span><span class="p">,</span><span class="n">vtkImageAlgorithm</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">PrintSelf</span><span class="p">(</span><span class="n">ostream</span><span class="o">&amp;</span><span class="w"> </span><span class="n">os</span><span class="p">,</span><span class="w"> </span><span class="n">vtkIndent</span><span class="w"> </span><span class="n">indent</span><span class="p">);</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CustomSurfaceReconstructionFilter</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">vtkImageAlgorithm</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="n">vtkTypeMacro</span><span class="p">(</span><span class="n">CustomSurfaceReconstructionFilter</span><span class="p">,</span><span class="n">vtkImageAlgorithm</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">PrintSelf</span><span class="p">(</span><span class="n">ostream</span><span class="o">&amp;</span><span class="w"> </span><span class="n">os</span><span class="p">,</span><span class="w"> </span><span class="n">vtkIndent</span><span class="w"> </span><span class="n">indent</span><span class="p">);</span>
 
 <span class="w">  </span><span class="c1">// Description:</span>
 <span class="w">  </span><span class="c1">// Construct with NeighborhoodSize=20.</span>
-<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">CustomSurfaceReconstructionFilter</span><span class="o">*</span><span class="w"> </span><span class="nf">New</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">CustomSurfaceReconstructionFilter</span><span class="o">*</span><span class="w"> </span><span class="nf">New</span><span class="p">();</span>
 
 <span class="w">  </span><span class="c1">// Description: </span>
 <span class="w">  </span><span class="c1">// Specify the number of neighbors each point has, used for estimating the</span>
@@ -2305,40 +2305,40 @@
 <span class="w">  </span><span class="c1">// points is uneven. Values as low as 10 may yield adequate results for</span>
 <span class="w">  </span><span class="c1">// some surfaces. Higher values cause the algorithm to take longer. Higher</span>
 <span class="w">  </span><span class="c1">// values will cause errors on sharp boundaries.</span>
-<span class="w">  </span><span class="n">vtkGetMacro</span><span class="p">(</span><span class="n">NeighborhoodSize</span><span class="p">,</span><span class="kt">int</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="n">vtkSetMacro</span><span class="p">(</span><span class="n">NeighborhoodSize</span><span class="p">,</span><span class="kt">int</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="n">vtkGetMacro</span><span class="p">(</span><span class="n">NeighborhoodSize</span><span class="p">,</span><span class="kt">int</span><span class="p">);</span>
+<span class="w">  </span><span class="n">vtkSetMacro</span><span class="p">(</span><span class="n">NeighborhoodSize</span><span class="p">,</span><span class="kt">int</span><span class="p">);</span>
 
 <span class="w">  </span><span class="c1">// Description: </span>
 <span class="w">  </span><span class="c1">// Specify the spacing of the 3D sampling grid. If not set, a</span>
 <span class="w">  </span><span class="c1">// reasonable guess will be made.</span>
-<span class="w">  </span><span class="n">vtkGetMacro</span><span class="p">(</span><span class="n">SampleSpacing</span><span class="p">,</span><span class="kt">double</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="n">vtkSetMacro</span><span class="p">(</span><span class="n">SampleSpacing</span><span class="p">,</span><span class="kt">double</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="n">vtkGetMacro</span><span class="p">(</span><span class="n">SampleSpacing</span><span class="p">,</span><span class="kt">double</span><span class="p">);</span>
+<span class="w">  </span><span class="n">vtkSetMacro</span><span class="p">(</span><span class="n">SampleSpacing</span><span class="p">,</span><span class="kt">double</span><span class="p">);</span>
 
-<span class="k">protected</span><span class="o">:</span><span class="w"></span>
-<span class="w">  </span><span class="n">CustomSurfaceReconstructionFilter</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="o">~</span><span class="n">CustomSurfaceReconstructionFilter</span><span class="p">()</span><span class="w"> </span><span class="p">{};</span><span class="w"></span>
+<span class="k">protected</span><span class="o">:</span>
+<span class="w">  </span><span class="n">CustomSurfaceReconstructionFilter</span><span class="p">();</span>
+<span class="w">  </span><span class="o">~</span><span class="n">CustomSurfaceReconstructionFilter</span><span class="p">()</span><span class="w"> </span><span class="p">{};</span>
 
 <span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">RequestInformation</span><span class="w"> </span><span class="p">(</span><span class="n">vtkInformation</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span>
 <span class="w">                                  </span><span class="n">vtkInformationVector</span><span class="w"> </span><span class="o">**</span><span class="p">,</span><span class="w"> </span>
-<span class="w">                                  </span><span class="n">vtkInformationVector</span><span class="w"> </span><span class="o">*</span><span class="p">);</span><span class="w"></span>
+<span class="w">                                  </span><span class="n">vtkInformationVector</span><span class="w"> </span><span class="o">*</span><span class="p">);</span>
 <span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">RequestData</span><span class="w"> </span><span class="p">(</span><span class="n">vtkInformation</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span>
 <span class="w">                           </span><span class="n">vtkInformationVector</span><span class="w"> </span><span class="o">**</span><span class="p">,</span><span class="w"> </span>
-<span class="w">                           </span><span class="n">vtkInformationVector</span><span class="w"> </span><span class="o">*</span><span class="p">);</span><span class="w"></span>
+<span class="w">                           </span><span class="n">vtkInformationVector</span><span class="w"> </span><span class="o">*</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">NeighborhoodSize</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">SampleSpacing</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">NeighborhoodSize</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">SampleSpacing</span><span class="p">;</span>
 
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">FillInputPortInformation</span><span class="p">(</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">vtkInformation</span><span class="o">*</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">FillInputPortInformation</span><span class="p">(</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">vtkInformation</span><span class="o">*</span><span class="p">);</span>
 
-<span class="k">private</span><span class="o">:</span><span class="w"></span>
+<span class="k">private</span><span class="o">:</span>
 <span class="w">  </span><span class="n">CustomSurfaceReconstructionFilter</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">CustomSurfaceReconstructionFilter</span><span class="o">&amp;</span><span class="p">);</span><span class="w">  </span><span class="c1">// Not implemented.</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">CustomSurfaceReconstructionFilter</span><span class="o">&amp;</span><span class="p">);</span><span class="w">  </span><span class="c1">// Not implemented.</span>
-<span class="p">};</span><span class="w"></span>
+<span class="p">};</span>
 
 <span class="cp">#endif</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:15 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:22 +0000</p>
 
               
             </article>

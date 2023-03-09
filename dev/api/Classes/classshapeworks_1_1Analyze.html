@@ -2446,93 +2446,93 @@
 </tbody>
 </table>
 <h2 id="detailed-description">Detailed Description</h2>
-<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">shapeworks</span><span class="o">::</span><span class="n">Analyze</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">shapeworks</span><span class="o">::</span><span class="n">Analyze</span><span class="p">;</span>
 </code></pre></div>
 <p>High level analyze API. </p>
 <p>The <a href="classshapeworks_1_1Analyze.html">Analyze</a> class operates on a <a href="classshapeworks_1_1Project.html">Project</a>. </p>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-analyze">function Analyze</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Analyze</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">ProjectHandle</span><span class="w"> </span><span class="n">project</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">Analyze</span><span class="p">(</span>
+<span class="w">    </span><span class="n">ProjectHandle</span><span class="w"> </span><span class="n">project</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-run_offline_analysis">function run_offline_analysis</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">run_offline_analysis</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">outfile</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">run_offline_analysis</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">outfile</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Run offline analysis, saving results to outfile. </p>
 <h3 id="function-get_shapes">function get_shapes</h3>
-<div class="highlight"><pre><span></span><code><span class="n">ShapeList</span><span class="w"> </span><span class="n">get_shapes</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">ShapeList</span><span class="w"> </span><span class="n">get_shapes</span><span class="p">()</span>
 </code></pre></div>
 <p>Return the list of shapes. </p>
 <h3 id="function-get_num_subjects">function get_num_subjects</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_num_subjects</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_num_subjects</span><span class="p">()</span>
 </code></pre></div>
 <p>Return the number of subjects. </p>
 <h3 id="function-get_num_modes">function get_num_modes</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_num_modes</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_num_modes</span><span class="p">()</span>
 </code></pre></div>
 <p>Return the number of modes. </p>
 <h3 id="function-get_num_particles">function get_num_particles</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_num_particles</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_num_particles</span><span class="p">()</span>
 </code></pre></div>
 <p>Return the number of particles. </p>
 <h3 id="function-get_mean_shape_points">function get_mean_shape_points</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Particles</span><span class="w"> </span><span class="n">get_mean_shape_points</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">Particles</span><span class="w"> </span><span class="n">get_mean_shape_points</span><span class="p">()</span>
 </code></pre></div>
 <p>Return the mean shape. </p>
 <h3 id="function-get_mean_shape">function get_mean_shape</h3>
-<div class="highlight"><pre><span></span><code><span class="n">ShapeHandle</span><span class="w"> </span><span class="n">get_mean_shape</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">ShapeHandle</span><span class="w"> </span><span class="n">get_mean_shape</span><span class="p">()</span>
 </code></pre></div>
 <p>Return the mean shape. </p>
 <h3 id="function-get_group_shape_particles">function get_group_shape_particles</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Particles</span><span class="w"> </span><span class="n">get_group_shape_particles</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">ratio</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">Particles</span><span class="w"> </span><span class="n">get_group_shape_particles</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">ratio</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-get_group_shape">function get_group_shape</h3>
-<div class="highlight"><pre><span></span><code><span class="n">ShapeHandle</span><span class="w"> </span><span class="n">get_group_shape</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">ratio</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">ShapeHandle</span><span class="w"> </span><span class="n">get_group_shape</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">ratio</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-get_shape_points">function get_shape_points</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Particles</span><span class="w"> </span><span class="n">get_shape_points</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">mode</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">Particles</span><span class="w"> </span><span class="n">get_shape_points</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">mode</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">value</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Return the particles for a given mode and value. </p>
 <h3 id="function-get_mode_shape">function get_mode_shape</h3>
-<div class="highlight"><pre><span></span><code><span class="n">ShapeHandle</span><span class="w"> </span><span class="n">get_mode_shape</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">mode</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">ShapeHandle</span><span class="w"> </span><span class="n">get_mode_shape</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">mode</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">value</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Return the shape for a given mode and value. </p>
 <h3 id="function-groups_active">function groups_active</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">groups_active</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">groups_active</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-create_shape_from_points">function create_shape_from_points</h3>
-<div class="highlight"><pre><span></span><code><span class="n">ShapeHandle</span><span class="w"> </span><span class="n">create_shape_from_points</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">Particles</span><span class="w"> </span><span class="n">points</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">ShapeHandle</span><span class="w"> </span><span class="n">create_shape_from_points</span><span class="p">(</span>
+<span class="w">    </span><span class="n">Particles</span><span class="w"> </span><span class="n">points</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-get_subject_features">function get_subject_features</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXf</span><span class="w"> </span><span class="n">get_subject_features</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">subject</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">feature_name</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXf</span><span class="w"> </span><span class="n">get_subject_features</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">subject</span><span class="p">,</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">feature_name</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-set_group_selection">function set_group_selection</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_group_selection</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">group_name</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">group1</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">group2</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_group_selection</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">group_name</span><span class="p">,</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">group1</span><span class="p">,</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">group2</span>
+<span class="p">)</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:14 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:21 +0000</p>
 
               
             </article>

@@ -2319,34 +2319,34 @@
 </table>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-ask_multiple_domains_as_single">function ask_multiple_domains_as_single</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">ask_multiple_domains_as_single</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">QWidget</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">parent</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Project</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">project</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">ask_multiple_domains_as_single</span><span class="p">(</span>
+<span class="w">    </span><span class="n">QWidget</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">parent</span><span class="p">,</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Project</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">project</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-to_string_list">function to_string_list</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">QStringList</span><span class="w"> </span><span class="n">to_string_list</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">vector</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">QStringList</span><span class="w"> </span><span class="n">to_string_list</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">vector</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>convert a vector of std::string to QStringList </p>
 <h3 id="function-vtk_image_to_qimage">function vtk_image_to_qimage</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">QImage</span><span class="w"> </span><span class="n">vtk_image_to_qimage</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkImageData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">image_data</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">QImage</span><span class="w"> </span><span class="n">vtk_image_to_qimage</span><span class="p">(</span>
+<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkImageData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">image_data</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>convert vtkImageData to QImage </p>
 <h3 id="function-reverse_poly_data">function reverse_poly_data</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">reverse_poly_data</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">poly_data</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">reverse_poly_data</span><span class="p">(</span>
+<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">poly_data</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>reverse a poly data </p>
 <h3 id="function-get_platform_string">function get_platform_string</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="n">get_platform_string</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="n">get_platform_string</span><span class="p">()</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:15 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:22 +0000</p>
 
               
             </article>

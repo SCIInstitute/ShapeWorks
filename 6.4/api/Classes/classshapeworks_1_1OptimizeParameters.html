@@ -2952,264 +2952,264 @@
 </tbody>
 </table>
 <h2 id="detailed-description">Detailed Description</h2>
-<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">shapeworks</span><span class="o">::</span><span class="n">OptimizeParameters</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">shapeworks</span><span class="o">::</span><span class="n">OptimizeParameters</span><span class="p">;</span>
 </code></pre></div>
 <p>This class encapsulated processing of Optimization parameters </p>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-optimizeparameters">function OptimizeParameters</h3>
-<div class="highlight"><pre><span></span><code><span class="k">explicit</span><span class="w"> </span><span class="n">OptimizeParameters</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">ProjectHandle</span><span class="w"> </span><span class="n">project</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">explicit</span><span class="w"> </span><span class="n">OptimizeParameters</span><span class="p">(</span>
+<span class="w">    </span><span class="n">ProjectHandle</span><span class="w"> </span><span class="n">project</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-save_to_project">function save_to_project</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">save_to_project</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">save_to_project</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-get_optimize_output_prefix">function get_optimize_output_prefix</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">get_optimize_output_prefix</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">get_optimize_output_prefix</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-set_optimize_output_prefix">function set_optimize_output_prefix</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_optimize_output_prefix</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">prefix</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_optimize_output_prefix</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">prefix</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-get_number_of_particles">function get_number_of_particles</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_number_of_particles</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_number_of_particles</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-set_number_of_particles">function set_number_of_particles</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_number_of_particles</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">number_of_particles</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_number_of_particles</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">number_of_particles</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-get_initial_relative_weighting">function get_initial_relative_weighting</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">get_initial_relative_weighting</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">get_initial_relative_weighting</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-set_initial_relative_weighting">function set_initial_relative_weighting</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_initial_relative_weighting</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_initial_relative_weighting</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">value</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-get_relative_weighting">function get_relative_weighting</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">get_relative_weighting</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">get_relative_weighting</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-set_relative_weighting">function set_relative_weighting</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_relative_weighting</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_relative_weighting</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">value</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-get_starting_regularization">function get_starting_regularization</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">get_starting_regularization</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">get_starting_regularization</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-set_starting_regularization">function set_starting_regularization</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_starting_regularization</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_starting_regularization</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">value</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-get_ending_regularization">function get_ending_regularization</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">get_ending_regularization</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">get_ending_regularization</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-set_ending_regularization">function set_ending_regularization</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_ending_regularization</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_ending_regularization</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">value</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-get_iterations_per_split">function get_iterations_per_split</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_iterations_per_split</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_iterations_per_split</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-set_iterations_per_split">function set_iterations_per_split</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_iterations_per_split</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">value</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_iterations_per_split</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">value</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-get_optimization_iterations">function get_optimization_iterations</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_optimization_iterations</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_optimization_iterations</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-set_optimization_iterations">function set_optimization_iterations</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_optimization_iterations</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">value</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_optimization_iterations</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">value</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-get_use_geodesic_distance">function get_use_geodesic_distance</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_use_geodesic_distance</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_use_geodesic_distance</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-set_use_geodesic_distance">function set_use_geodesic_distance</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_use_geodesic_distance</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_use_geodesic_distance</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-get_geodesic_cache_multiplier">function get_geodesic_cache_multiplier</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_geodesic_cache_multiplier</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_geodesic_cache_multiplier</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-set_geodesic_cache_multiplier">function set_geodesic_cache_multiplier</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_geodesic_cache_multiplier</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">value</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_geodesic_cache_multiplier</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">value</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-get_use_normals">function get_use_normals</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_use_normals</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_use_normals</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-set_use_normals">function set_use_normals</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_use_normals</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">use_normals</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_use_normals</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">use_normals</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-get_normals_strength">function get_normals_strength</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">get_normals_strength</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">get_normals_strength</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-set_normals_strength">function set_normals_strength</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_normals_strength</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_normals_strength</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">value</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-get_use_procrustes">function get_use_procrustes</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_use_procrustes</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_use_procrustes</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-set_use_procrustes">function set_use_procrustes</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_use_procrustes</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_use_procrustes</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-get_use_procrustes_scaling">function get_use_procrustes_scaling</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_use_procrustes_scaling</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_use_procrustes_scaling</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-set_use_procrustes_scaling">function set_use_procrustes_scaling</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_use_procrustes_scaling</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_use_procrustes_scaling</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-get_use_procrustes_rotation_translation">function get_use_procrustes_rotation_translation</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_use_procrustes_rotation_translation</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_use_procrustes_rotation_translation</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-set_use_procrustes_rotation_translation">function set_use_procrustes_rotation_translation</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_use_procrustes_rotation_translation</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_use_procrustes_rotation_translation</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-get_procrustes_interval">function get_procrustes_interval</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_procrustes_interval</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_procrustes_interval</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-set_procrustes_interval">function set_procrustes_interval</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_procrustes_interval</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">value</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_procrustes_interval</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">value</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-get_use_multiscale">function get_use_multiscale</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_use_multiscale</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_use_multiscale</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-set_use_multiscale">function set_use_multiscale</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_use_multiscale</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_use_multiscale</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-get_multiscale_particles">function get_multiscale_particles</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_multiscale_particles</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_multiscale_particles</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-set_multiscale_particles">function set_multiscale_particles</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_multiscale_particles</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">value</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_multiscale_particles</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">value</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-get_narrow_band">function get_narrow_band</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">get_narrow_band</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">get_narrow_band</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-set_narrow_band">function set_narrow_band</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_narrow_band</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_narrow_band</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">value</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-get_verbosity">function get_verbosity</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_verbosity</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_verbosity</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-set_verbosity">function set_verbosity</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_verbosity</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">value</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_verbosity</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">value</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-get_mesh_ffc_mode">function get_mesh_ffc_mode</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_mesh_ffc_mode</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_mesh_ffc_mode</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-set_mesh_ffc_mode">function set_mesh_ffc_mode</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_mesh_ffc_mode</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_mesh_ffc_mode</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-get_use_landmarks">function get_use_landmarks</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_use_landmarks</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_use_landmarks</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-set_use_landmarks">function set_use_landmarks</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_use_landmarks</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_use_landmarks</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-get_use_fixed_subjects">function get_use_fixed_subjects</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_use_fixed_subjects</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_use_fixed_subjects</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-set_use_fixed_subjects">function set_use_fixed_subjects</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_use_fixed_subjects</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_use_fixed_subjects</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-get_fixed_subjects_column">function get_fixed_subjects_column</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">get_fixed_subjects_column</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">get_fixed_subjects_column</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-set_fixed_subject_column">function set_fixed_subject_column</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_fixed_subject_column</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">column</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_fixed_subject_column</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">column</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-get_fixed_subjects_choice">function get_fixed_subjects_choice</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">get_fixed_subjects_choice</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">get_fixed_subjects_choice</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-set_fixed_subjects_choice">function set_fixed_subjects_choice</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_fixed_subjects_choice</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">choice</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_fixed_subjects_choice</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">choice</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-set_abort_load">function set_abort_load</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_abort_load</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_abort_load</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-set_load_callback">function set_load_callback</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_load_callback</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">void</span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">f</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_load_callback</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">void</span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">f</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-set_up_optimize">function set_up_optimize</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">set_up_optimize</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">Optimize</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">optimize</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">set_up_optimize</span><span class="p">(</span>
+<span class="w">    </span><span class="n">Optimize</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">optimize</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-is_subject_fixed">function is_subject_fixed</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">is_subject_fixed</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Subject</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">subject</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">is_subject_fixed</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Subject</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">subject</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-get_checkpoint_interval">function get_checkpoint_interval</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_checkpoint_interval</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_checkpoint_interval</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-set_checkpoint_interval">function set_checkpoint_interval</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_checkpoint_interval</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">iterations</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_checkpoint_interval</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">iterations</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-get_save_init_splits">function get_save_init_splits</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_save_init_splits</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_save_init_splits</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-set_save_init_splits">function set_save_init_splits</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_save_init_splits</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_save_init_splits</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-get_keep_checkpoints">function get_keep_checkpoints</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_keep_checkpoints</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_keep_checkpoints</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-set_keep_checkpoints">function set_keep_checkpoints</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_keep_checkpoints</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_keep_checkpoints</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span>
+<span class="p">)</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:14 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:21 +0000</p>
 
               
             </article>

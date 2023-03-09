@@ -2668,112 +2668,112 @@
 </tbody>
 </table>
 <h3 id="typedef-voxelindextype">typedef VoxelIndexType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">meshFIM</span><span class="o">::</span><span class="n">VoxelIndexType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">meshFIM</span><span class="o">::</span><span class="n">VoxelIndexType</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="typedef-index">typedef index</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">meshFIM</span><span class="o">::</span><span class="n">index</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">meshFIM</span><span class="o">::</span><span class="n">index</span><span class="p">;</span>
 </code></pre></div>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-computedistancetolandmarksgiventriangleinfo">function ComputeDistanceToLandmarksGivenTriangleInfo</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">ComputeDistanceToLandmarksGivenTriangleInfo</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">TriMesh</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">mesh</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">infilename</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">outfilename</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">ComputeDistanceToLandmarksGivenTriangleInfo</span><span class="p">(</span>
+<span class="w">    </span><span class="n">TriMesh</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">mesh</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">infilename</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">outfilename</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-computefim">function computeFIM</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">computeFIM</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">TriMesh</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">mesh</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">vertT_filename</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">computeFIM</span><span class="p">(</span>
+<span class="w">    </span><span class="n">TriMesh</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">mesh</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">vertT_filename</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-getfeaturevalues">function GetFeatureValues</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">GetFeatureValues</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">point</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">vals</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">GetFeatureValues</span><span class="p">(</span>
+<span class="w">    </span><span class="n">point</span><span class="w"> </span><span class="n">x</span><span class="p">,</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">vals</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-readfaceindexmap">function ReadFaceIndexMap</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">ReadFaceIndexMap</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">infilename</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">ReadFaceIndexMap</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">infilename</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-readfeaturefromfile">function ReadFeatureFromFile</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">ReadFeatureFromFile</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">infilename</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">ReadFeatureFromFile</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">infilename</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-readfeaturegradientfromfile">function ReadFeatureGradientFromFile</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">ReadFeatureGradientFromFile</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">infilename</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">ReadFeatureGradientFromFile</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">infilename</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-getfeaturederivative">function GetFeatureDerivative</h3>
-<div class="highlight"><pre><span></span><code><span class="n">point</span><span class="w"> </span><span class="n">GetFeatureDerivative</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">point</span><span class="w"> </span><span class="n">p</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">fIndex</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">point</span><span class="w"> </span><span class="n">GetFeatureDerivative</span><span class="p">(</span>
+<span class="w">    </span><span class="n">point</span><span class="w"> </span><span class="n">p</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">fIndex</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-need_abs_curvatures">function need_abs_curvatures</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">need_abs_curvatures</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">need_abs_curvatures</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-need_edge_lengths">function need_edge_lengths</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">need_edge_lengths</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">need_edge_lengths</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-need_speed">function need_speed</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">need_speed</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">need_speed</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-need_oneringfaces">function need_oneringfaces</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">need_oneringfaces</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">need_oneringfaces</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-need_kdtree">function need_kdtree</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">need_kdtree</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">need_kdtree</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-setmesh">function SetMesh</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetMesh</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">TriMesh</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">mesh</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetMesh</span><span class="p">(</span>
+<span class="w">    </span><span class="n">TriMesh</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">mesh</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-setstopdistance">function SetStopDistance</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetStopDistance</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">d</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetStopDistance</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">d</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-setspeedtype">function setSpeedType</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">setSpeedType</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">st</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">setSpeedType</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">st</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-meshfim">function meshFIM</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">meshFIM</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">meshFIM</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-meshfim_1">function ~meshFIM</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="o">~</span><span class="n">meshFIM</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="o">~</span><span class="n">meshFIM</span><span class="p">()</span>
 </code></pre></div>
 <h2 id="public-attributes-documentation">Public Attributes Documentation</h2>
 <h3 id="variable-m_meshptr">variable m_meshPtr</h3>
-<div class="highlight"><pre><span></span><code><span class="n">TriMesh</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">m_meshPtr</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">TriMesh</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">m_meshPtr</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="variable-numcomputation">variable NumComputation</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">NumComputation</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">NumComputation</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="variable-imageorigin">variable imageOrigin</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">float</span><span class="w"> </span><span class="n">imageOrigin</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">float</span><span class="w"> </span><span class="n">imageOrigin</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="variable-imagespacing">variable imageSpacing</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">float</span><span class="w"> </span><span class="n">imageSpacing</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">float</span><span class="w"> </span><span class="n">imageSpacing</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="variable-imagesize">variable imageSize</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">imageSize</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">imageSize</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="variable-imageindex">variable imageIndex</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">imageIndex</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">imageIndex</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="variable-colors">variable colors</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Color</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">colors</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Color</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">colors</span><span class="p">;</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:15 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:22 +0000</p>
 
               
             </article>

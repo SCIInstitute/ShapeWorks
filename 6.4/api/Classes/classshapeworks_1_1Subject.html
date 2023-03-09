@@ -2675,177 +2675,177 @@
 </tbody>
 </table>
 <h2 id="detailed-description">Detailed Description</h2>
-<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">shapeworks</span><span class="o">::</span><span class="n">Subject</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">shapeworks</span><span class="o">::</span><span class="n">Subject</span><span class="p">;</span>
 </code></pre></div>
 <p>Representation of a single subject. </p>
 <p>The <a href="classshapeworks_1_1Subject.html">Subject</a> class encapsulates one "sample" in the shapeworks system (e.g. one row in a spreadsheet project) A <a href="classshapeworks_1_1Subject.html">Subject</a> may have multiple segmentations/domains associated with it. </p>
 <h2 id="public-types-documentation">Public Types Documentation</h2>
 <h3 id="using-stringmap">using StringMap</h3>
-<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Subject</span><span class="o">::</span><span class="n">StringMap</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">project</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">StringMap</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Subject</span><span class="o">::</span><span class="n">StringMap</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">project</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">StringMap</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="using-stringlist">using StringList</h3>
-<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Subject</span><span class="o">::</span><span class="n">StringList</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">project</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">StringList</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Subject</span><span class="o">::</span><span class="n">StringList</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">project</span><span class="o">::</span><span class="n">types</span><span class="o">::</span><span class="n">StringList</span><span class="p">;</span>
 </code></pre></div>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-subject">function Subject</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Subject</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">Subject</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-subject_1">function ~Subject</h3>
-<div class="highlight"><pre><span></span><code><span class="o">~</span><span class="n">Subject</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="o">~</span><span class="n">Subject</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-set_original_filenames">function set_original_filenames</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_original_filenames</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">StringList</span><span class="w"> </span><span class="n">filenames</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_original_filenames</span><span class="p">(</span>
+<span class="w">    </span><span class="n">StringList</span><span class="w"> </span><span class="n">filenames</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Set original filenames (one per domain) </p>
 <h3 id="function-get_original_filenames">function get_original_filenames</h3>
-<div class="highlight"><pre><span></span><code><span class="n">StringList</span><span class="w"> </span><span class="n">get_original_filenames</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">StringList</span><span class="w"> </span><span class="n">get_original_filenames</span><span class="p">()</span>
 </code></pre></div>
 <p>Get original filenames. </p>
 <h3 id="function-set_groomed_filenames">function set_groomed_filenames</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_groomed_filenames</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">StringList</span><span class="w"> </span><span class="n">filenames</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_groomed_filenames</span><span class="p">(</span>
+<span class="w">    </span><span class="n">StringList</span><span class="w"> </span><span class="n">filenames</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Set groomed filenames. </p>
 <h3 id="function-get_groomed_filenames">function get_groomed_filenames</h3>
-<div class="highlight"><pre><span></span><code><span class="n">StringList</span><span class="w"> </span><span class="n">get_groomed_filenames</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">StringList</span><span class="w"> </span><span class="n">get_groomed_filenames</span><span class="p">()</span>
 </code></pre></div>
 <p>Get groomed filenames. </p>
 <h3 id="function-set_local_particle_filenames">function set_local_particle_filenames</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_local_particle_filenames</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">StringList</span><span class="w"> </span><span class="n">filenames</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_local_particle_filenames</span><span class="p">(</span>
+<span class="w">    </span><span class="n">StringList</span><span class="w"> </span><span class="n">filenames</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Set local particle filenames (one per domain) </p>
 <h3 id="function-get_local_particle_filenames">function get_local_particle_filenames</h3>
-<div class="highlight"><pre><span></span><code><span class="n">StringList</span><span class="w"> </span><span class="n">get_local_particle_filenames</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">StringList</span><span class="w"> </span><span class="n">get_local_particle_filenames</span><span class="p">()</span>
 </code></pre></div>
 <p>Get local particle filenames. </p>
 <h3 id="function-set_world_particle_filenames">function set_world_particle_filenames</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_world_particle_filenames</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">StringList</span><span class="w"> </span><span class="n">filenames</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_world_particle_filenames</span><span class="p">(</span>
+<span class="w">    </span><span class="n">StringList</span><span class="w"> </span><span class="n">filenames</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Set the world particle filenames. </p>
 <h3 id="function-get_world_particle_filenames">function get_world_particle_filenames</h3>
-<div class="highlight"><pre><span></span><code><span class="n">StringList</span><span class="w"> </span><span class="n">get_world_particle_filenames</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">StringList</span><span class="w"> </span><span class="n">get_world_particle_filenames</span><span class="p">()</span>
 </code></pre></div>
 <p>Get the world particle filenames. </p>
 <h3 id="function-set_landmarks_filenames">function set_landmarks_filenames</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_landmarks_filenames</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">StringList</span><span class="w"> </span><span class="n">filenames</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_landmarks_filenames</span><span class="p">(</span>
+<span class="w">    </span><span class="n">StringList</span><span class="w"> </span><span class="n">filenames</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Get the landmarks filenames (one per domain) </p>
 <h3 id="function-get_landmarks_filenames">function get_landmarks_filenames</h3>
-<div class="highlight"><pre><span></span><code><span class="n">StringList</span><span class="w"> </span><span class="n">get_landmarks_filenames</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">StringList</span><span class="w"> </span><span class="n">get_landmarks_filenames</span><span class="p">()</span>
 </code></pre></div>
 <p>Set the landmarks filenames. </p>
 <h3 id="function-set_constraints_filenames">function set_constraints_filenames</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_constraints_filenames</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">StringList</span><span class="w"> </span><span class="n">filenames</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_constraints_filenames</span><span class="p">(</span>
+<span class="w">    </span><span class="n">StringList</span><span class="w"> </span><span class="n">filenames</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Get the constraints filenames (one per domain) </p>
 <h3 id="function-get_constraints_filenames">function get_constraints_filenames</h3>
-<div class="highlight"><pre><span></span><code><span class="n">StringList</span><span class="w"> </span><span class="n">get_constraints_filenames</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">StringList</span><span class="w"> </span><span class="n">get_constraints_filenames</span><span class="p">()</span>
 </code></pre></div>
 <p>Set the constratins filenames. </p>
 <h3 id="function-set_number_of_domains">function set_number_of_domains</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_number_of_domains</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">number_of_domains</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_number_of_domains</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">number_of_domains</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Set the number of domains. </p>
 <h3 id="function-get_number_of_domains">function get_number_of_domains</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_number_of_domains</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_number_of_domains</span><span class="p">()</span>
 </code></pre></div>
 <p>Get the number of domains. </p>
 <h3 id="function-get_feature_filenames">function get_feature_filenames</h3>
-<div class="highlight"><pre><span></span><code><span class="n">StringMap</span><span class="w"> </span><span class="n">get_feature_filenames</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">StringMap</span><span class="w"> </span><span class="n">get_feature_filenames</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>Get the feature map filenames. </p>
 <h3 id="function-set_feature_filenames">function set_feature_filenames</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_feature_filenames</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">StringMap</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">feature_filenames</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_feature_filenames</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">StringMap</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">feature_filenames</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Set the feature map filenames. </p>
 <h3 id="function-get_groomed_transforms">function get_groomed_transforms</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_groomed_transforms</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_groomed_transforms</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>Get the groomed transforms (one vector per domain) </p>
 <h3 id="function-set_groomed_transforms">function set_groomed_transforms</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_groomed_transforms</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">transforms</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_groomed_transforms</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">transforms</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Set the groomed transforms (one vector per domain) </p>
 <h3 id="function-set_groomed_transform">function set_groomed_transform</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_groomed_transform</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">transform</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_groomed_transform</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">,</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">transform</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Set the i-th groomed transform. </p>
 <h3 id="function-get_procrustes_transforms">function get_procrustes_transforms</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_procrustes_transforms</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_procrustes_transforms</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>Get the procrustes transforms (one vector per domain) </p>
 <h3 id="function-set_procrustes_transforms">function set_procrustes_transforms</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_procrustes_transforms</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">transforms</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_procrustes_transforms</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">transforms</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Set the procrustes transforms (one vector per domain) </p>
 <h3 id="function-get_group_values">function get_group_values</h3>
-<div class="highlight"><pre><span></span><code><span class="n">StringMap</span><span class="w"> </span><span class="n">get_group_values</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">StringMap</span><span class="w"> </span><span class="n">get_group_values</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>Get the group values. </p>
 <h3 id="function-get_group_value">function get_group_value</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">get_group_value</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">group_name</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">get_group_value</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">group_name</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Get a specific group value. </p>
 <h3 id="function-set_group_values">function set_group_values</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_group_values</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">StringMap</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">group_values</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_group_values</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">StringMap</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">group_values</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Set the group values. </p>
 <h3 id="function-get_extra_values">function get_extra_values</h3>
-<div class="highlight"><pre><span></span><code><span class="n">StringMap</span><span class="w"> </span><span class="n">get_extra_values</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">StringMap</span><span class="w"> </span><span class="n">get_extra_values</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>Get extra values (extra columns we don't interpret) </p>
 <h3 id="function-set_extra_values">function set_extra_values</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_extra_values</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">StringMap</span><span class="w"> </span><span class="n">extra_values</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_extra_values</span><span class="p">(</span>
+<span class="w">    </span><span class="n">StringMap</span><span class="w"> </span><span class="n">extra_values</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-get_table_values">function get_table_values</h3>
-<div class="highlight"><pre><span></span><code><span class="n">StringMap</span><span class="w"> </span><span class="n">get_table_values</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">StringMap</span><span class="w"> </span><span class="n">get_table_values</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>Get all table values. </p>
 <h3 id="function-set_table_values">function set_table_values</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_table_values</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">StringMap</span><span class="w"> </span><span class="n">table_values</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_table_values</span><span class="p">(</span>
+<span class="w">    </span><span class="n">StringMap</span><span class="w"> </span><span class="n">table_values</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-get_display_name">function get_display_name</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">get_display_name</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">get_display_name</span><span class="p">()</span>
 </code></pre></div>
 <p>Get the display name. </p>
 <h3 id="function-set_display_name">function set_display_name</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_display_name</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">display_name</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_display_name</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">display_name</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Set the display name. </p>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:15 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:22 +0000</p>
 
               
             </article>

@@ -2392,41 +2392,41 @@
 </table>
 <h2 id="public-types-documentation">Public Types Documentation</h2>
 <h3 id="using-worklist">using WorkList</h3>
-<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">MeshWorkQueue</span><span class="o">::</span><span class="n">WorkList</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">list</span><span class="o">&lt;</span><span class="n">MeshWorkItem</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">MeshWorkQueue</span><span class="o">::</span><span class="n">WorkList</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">list</span><span class="o">&lt;</span><span class="n">MeshWorkItem</span><span class="o">&gt;</span><span class="p">;</span>
 </code></pre></div>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-meshworkqueue">function MeshWorkQueue</h3>
-<div class="highlight"><pre><span></span><code><span class="n">MeshWorkQueue</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">MeshWorkQueue</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-meshworkqueue_1">function ~MeshWorkQueue</h3>
-<div class="highlight"><pre><span></span><code><span class="o">~</span><span class="n">MeshWorkQueue</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="o">~</span><span class="n">MeshWorkQueue</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-push">function push</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">push</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">MeshWorkItem</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">item</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">push</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">MeshWorkItem</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">item</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-get_next_work_item">function get_next_work_item</h3>
-<div class="highlight"><pre><span></span><code><span class="n">MeshWorkItem</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">get_next_work_item</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">MeshWorkItem</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">get_next_work_item</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-is_inside">function is_inside</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">is_inside</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">MeshWorkItem</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">item</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">is_inside</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">MeshWorkItem</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">item</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-remove">function remove</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">remove</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">MeshWorkItem</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">item</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">remove</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">MeshWorkItem</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">item</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-is_empty">function is_empty</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">is_empty</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">is_empty</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-size">function size</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">size</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">size</span><span class="p">()</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:14 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:21 +0000</p>
 
               
             </article>

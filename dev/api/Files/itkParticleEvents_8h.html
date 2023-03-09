@@ -2285,89 +2285,89 @@
 <h2 id="source-code">Source code</h2>
 <div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkEventObject.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkEventObject.h&quot;</span>
 
-<span class="k">namespace</span><span class="w"> </span><span class="nn">itk</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="k">class</span><span class="w"> </span><span class="nc">ITK_EXPORT</span><span class="w"> </span><span class="n">ParticleEvent</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">EventObject</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="k">public</span><span class="o">:</span><span class="w"></span>
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleEvent</span><span class="w"> </span><span class="n">Self</span><span class="p">;</span><span class="w"></span>
+<span class="k">namespace</span><span class="w"> </span><span class="nn">itk</span>
+<span class="p">{</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ITK_EXPORT</span><span class="w"> </span><span class="n">ParticleEvent</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">EventObject</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleEvent</span><span class="w"> </span><span class="n">Self</span><span class="p">;</span>
 
-<span class="w">  </span><span class="n">ParticleEvent</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">m_ThreadID</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">ParticleEvent</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
+<span class="w">  </span><span class="n">ParticleEvent</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">m_ThreadID</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">ParticleEvent</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
 
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">GetThreadID</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
-<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_ThreadID</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">SetThreadID</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="w"></span>
-<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="n">m_ThreadID</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">GetThreadID</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_ThreadID</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">SetThreadID</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">)</span>
+<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="n">m_ThreadID</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 
-<span class="w">  </span><span class="n">ParticleEvent</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">ParticleEvent</span><span class="w"> </span><span class="o">&amp;</span><span class="n">v</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">EventObject</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="w"></span>
-<span class="w">  </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">m_ThreadID</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">v</span><span class="p">.</span><span class="n">m_ThreadID</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="p">}</span><span class="w"></span>
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleEvent</span><span class="w"> </span><span class="o">&amp;</span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">ParticleEvent</span><span class="w"> </span><span class="o">&amp;</span><span class="n">v</span><span class="p">)</span><span class="w"></span>
-<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="n">m_ThreadID</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">v</span><span class="p">.</span><span class="n">m_ThreadID</span><span class="p">;</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="o">*</span><span class="k">this</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">  </span><span class="n">ParticleEvent</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">ParticleEvent</span><span class="w"> </span><span class="o">&amp;</span><span class="n">v</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">EventObject</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="n">m_ThreadID</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">v</span><span class="p">.</span><span class="n">m_ThreadID</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleEvent</span><span class="w"> </span><span class="o">&amp;</span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">ParticleEvent</span><span class="w"> </span><span class="o">&amp;</span><span class="n">v</span><span class="p">)</span>
+<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="n">m_ThreadID</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">v</span><span class="p">.</span><span class="n">m_ThreadID</span><span class="p">;</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="o">*</span><span class="k">this</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 
 <span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetEventName</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="s">&quot;ParticleEvent&quot;</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"> </span>
 
 <span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">CheckEvent</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="o">::</span><span class="n">itk</span><span class="o">::</span><span class="n">EventObject</span><span class="o">*</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w">   </span>
-<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">dynamic_cast</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">e</span><span class="p">);</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">dynamic_cast</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">e</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
 
 <span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="o">::</span><span class="n">itk</span><span class="o">::</span><span class="n">EventObject</span><span class="o">*</span><span class="w"> </span><span class="n">MakeObject</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w">  </span>
 <span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Self</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w">  </span>
 
-<span class="k">private</span><span class="o">:</span><span class="w"></span>
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">m_ThreadID</span><span class="p">;</span><span class="w"></span>
-<span class="p">};</span><span class="w"></span>
+<span class="k">private</span><span class="o">:</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">m_ThreadID</span><span class="p">;</span>
+<span class="p">};</span>
 
-<span class="k">class</span><span class="w"> </span><span class="nc">ITK_EXPORT</span><span class="w"> </span><span class="n">ParticleEventWithIndex</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">ParticleEvent</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="k">public</span><span class="o">:</span><span class="w"></span>
-<span class="w">  </span><span class="n">ParticleEventWithIndex</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
-<span class="w">  </span><span class="o">~</span><span class="n">ParticleEventWithIndex</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ITK_EXPORT</span><span class="w"> </span><span class="n">ParticleEventWithIndex</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">ParticleEvent</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="n">ParticleEventWithIndex</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">  </span><span class="o">~</span><span class="n">ParticleEventWithIndex</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
 
-<span class="w">  </span><span class="n">ParticleEventWithIndex</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">ParticleEventWithIndex</span><span class="w"> </span><span class="o">&amp;</span><span class="n">v</span><span class="p">)</span><span class="w"></span>
-<span class="w">  </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">m_PositionIndex</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">v</span><span class="p">.</span><span class="n">m_PositionIndex</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="n">m_DomainIndex</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">v</span><span class="p">.</span><span class="n">m_DomainIndex</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="p">}</span><span class="w"></span>
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleEventWithIndex</span><span class="w"> </span><span class="o">&amp;</span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">ParticleEventWithIndex</span><span class="w"> </span><span class="o">&amp;</span><span class="n">v</span><span class="p">)</span><span class="w"></span>
-<span class="w">  </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">ParticleEvent</span><span class="o">::</span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="n">v</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="n">m_PositionIndex</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">v</span><span class="p">.</span><span class="n">m_PositionIndex</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="n">m_DomainIndex</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">v</span><span class="p">.</span><span class="n">m_DomainIndex</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="o">*</span><span class="k">this</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="p">}</span><span class="w"></span>
+<span class="w">  </span><span class="n">ParticleEventWithIndex</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">ParticleEventWithIndex</span><span class="w"> </span><span class="o">&amp;</span><span class="n">v</span><span class="p">)</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="n">m_PositionIndex</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">v</span><span class="p">.</span><span class="n">m_PositionIndex</span><span class="p">;</span>
+<span class="w">    </span><span class="n">m_DomainIndex</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">v</span><span class="p">.</span><span class="n">m_DomainIndex</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleEventWithIndex</span><span class="w"> </span><span class="o">&amp;</span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">ParticleEventWithIndex</span><span class="w"> </span><span class="o">&amp;</span><span class="n">v</span><span class="p">)</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="n">ParticleEvent</span><span class="o">::</span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="n">v</span><span class="p">);</span>
+<span class="w">    </span><span class="n">m_PositionIndex</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">v</span><span class="p">.</span><span class="n">m_PositionIndex</span><span class="p">;</span>
+<span class="w">    </span><span class="n">m_DomainIndex</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">v</span><span class="p">.</span><span class="n">m_DomainIndex</span><span class="p">;</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="o">*</span><span class="k">this</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
 
-<span class="w">  </span><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetPositionIndex</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="w"></span>
-<span class="w">  </span><span class="p">{</span><span class="w">    </span><span class="n">m_PositionIndex</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i</span><span class="p">;</span><span class="w">  </span><span class="p">}</span><span class="w"></span>
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">GetPositionIndex</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
-<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_PositionIndex</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">  </span><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetPositionIndex</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">)</span>
+<span class="w">  </span><span class="p">{</span><span class="w">    </span><span class="n">m_PositionIndex</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i</span><span class="p">;</span><span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">GetPositionIndex</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_PositionIndex</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 
-<span class="w">  </span><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetDomainIndex</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="w"></span>
-<span class="w">  </span><span class="p">{</span><span class="w">    </span><span class="n">m_DomainIndex</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i</span><span class="p">;</span><span class="w">  </span><span class="p">}</span><span class="w"></span>
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">GetDomainIndex</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
-<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_DomainIndex</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">  </span><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetDomainIndex</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">)</span>
+<span class="w">  </span><span class="p">{</span><span class="w">    </span><span class="n">m_DomainIndex</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i</span><span class="p">;</span><span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">GetDomainIndex</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_DomainIndex</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 
-<span class="k">private</span><span class="o">:</span><span class="w"></span>
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">m_PositionIndex</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">m_DomainIndex</span><span class="p">;</span><span class="w"></span>
+<span class="k">private</span><span class="o">:</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">m_PositionIndex</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">m_DomainIndex</span><span class="p">;</span>
 
-<span class="p">};</span><span class="w"></span>
+<span class="p">};</span>
 
-<span class="n">itkEventMacro</span><span class="p">(</span><span class="w"> </span><span class="n">ParticleDomainAddEvent</span><span class="p">,</span><span class="w"> </span><span class="n">ParticleEventWithIndex</span><span class="w"> </span><span class="p">);</span><span class="w"></span>
-<span class="n">itkEventMacro</span><span class="p">(</span><span class="w"> </span><span class="n">ParticleTransformSetEvent</span><span class="p">,</span><span class="w"> </span><span class="n">ParticleEventWithIndex</span><span class="w"> </span><span class="p">);</span><span class="w"></span>
-<span class="n">itkEventMacro</span><span class="p">(</span><span class="w"> </span><span class="n">ParticlePrefixTransformSetEvent</span><span class="p">,</span><span class="w"> </span><span class="n">ParticleEventWithIndex</span><span class="w"> </span><span class="p">);</span><span class="w"></span>
-<span class="n">itkEventMacro</span><span class="p">(</span><span class="w"> </span><span class="n">ParticleNeighborhoodSetEvent</span><span class="p">,</span><span class="w"> </span><span class="n">ParticleEventWithIndex</span><span class="w"> </span><span class="p">);</span><span class="w"></span>
-<span class="n">itkEventMacro</span><span class="p">(</span><span class="w"> </span><span class="n">ParticlePositionSetEvent</span><span class="p">,</span><span class="w"> </span><span class="n">ParticleEventWithIndex</span><span class="w"> </span><span class="p">);</span><span class="w"></span>
-<span class="n">itkEventMacro</span><span class="p">(</span><span class="w"> </span><span class="n">ParticlePositionAddEvent</span><span class="p">,</span><span class="w"> </span><span class="n">ParticleEventWithIndex</span><span class="w"> </span><span class="p">);</span><span class="w"></span>
-<span class="n">itkEventMacro</span><span class="p">(</span><span class="w"> </span><span class="n">ParticlePositionRemoveEvent</span><span class="p">,</span><span class="w"> </span><span class="n">ParticleEventWithIndex</span><span class="w"> </span><span class="p">);</span><span class="w"></span>
+<span class="n">itkEventMacro</span><span class="p">(</span><span class="w"> </span><span class="n">ParticleDomainAddEvent</span><span class="p">,</span><span class="w"> </span><span class="n">ParticleEventWithIndex</span><span class="w"> </span><span class="p">);</span>
+<span class="n">itkEventMacro</span><span class="p">(</span><span class="w"> </span><span class="n">ParticleTransformSetEvent</span><span class="p">,</span><span class="w"> </span><span class="n">ParticleEventWithIndex</span><span class="w"> </span><span class="p">);</span>
+<span class="n">itkEventMacro</span><span class="p">(</span><span class="w"> </span><span class="n">ParticlePrefixTransformSetEvent</span><span class="p">,</span><span class="w"> </span><span class="n">ParticleEventWithIndex</span><span class="w"> </span><span class="p">);</span>
+<span class="n">itkEventMacro</span><span class="p">(</span><span class="w"> </span><span class="n">ParticleNeighborhoodSetEvent</span><span class="p">,</span><span class="w"> </span><span class="n">ParticleEventWithIndex</span><span class="w"> </span><span class="p">);</span>
+<span class="n">itkEventMacro</span><span class="p">(</span><span class="w"> </span><span class="n">ParticlePositionSetEvent</span><span class="p">,</span><span class="w"> </span><span class="n">ParticleEventWithIndex</span><span class="w"> </span><span class="p">);</span>
+<span class="n">itkEventMacro</span><span class="p">(</span><span class="w"> </span><span class="n">ParticlePositionAddEvent</span><span class="p">,</span><span class="w"> </span><span class="n">ParticleEventWithIndex</span><span class="w"> </span><span class="p">);</span>
+<span class="n">itkEventMacro</span><span class="p">(</span><span class="w"> </span><span class="n">ParticlePositionRemoveEvent</span><span class="p">,</span><span class="w"> </span><span class="n">ParticleEventWithIndex</span><span class="w"> </span><span class="p">);</span>
 
 <span class="p">}</span><span class="w"> </span><span class="c1">// end namespace itk</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:16 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:23 +0000</p>
 
               
             </article>

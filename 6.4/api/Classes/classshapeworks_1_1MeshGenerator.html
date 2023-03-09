@@ -2425,59 +2425,59 @@
 </table>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-meshgenerator">function MeshGenerator</h3>
-<div class="highlight"><pre><span></span><code><span class="n">MeshGenerator</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">MeshGenerator</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-meshgenerator_1">function ~MeshGenerator</h3>
-<div class="highlight"><pre><span></span><code><span class="o">~</span><span class="n">MeshGenerator</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="o">~</span><span class="n">MeshGenerator</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-build_mesh">function build_mesh</h3>
-<div class="highlight"><pre><span></span><code><span class="n">MeshHandle</span><span class="w"> </span><span class="n">build_mesh</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">MeshWorkItem</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">item</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">MeshHandle</span><span class="w"> </span><span class="n">build_mesh</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">MeshWorkItem</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">item</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-build_mesh_from_points">function build_mesh_from_points</h3>
-<div class="highlight"><pre><span></span><code><span class="n">MeshHandle</span><span class="w"> </span><span class="n">build_mesh_from_points</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">shape</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">MeshHandle</span><span class="w"> </span><span class="n">build_mesh_from_points</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">shape</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-build_mesh_from_image">function build_mesh_from_image</h3>
-<div class="highlight"><pre><span></span><code><span class="n">MeshHandle</span><span class="w"> </span><span class="n">build_mesh_from_image</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">ImageType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">image</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">iso_value</span><span class="w"> </span><span class="o">=</span><span class="mf">0.0001</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">MeshHandle</span><span class="w"> </span><span class="n">build_mesh_from_image</span><span class="p">(</span>
+<span class="w">    </span><span class="n">ImageType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">image</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">iso_value</span><span class="w"> </span><span class="o">=</span><span class="mf">0.0001</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-build_mesh_from_file">function build_mesh_from_file</h3>
-<div class="highlight"><pre><span></span><code><span class="n">MeshHandle</span><span class="w"> </span><span class="n">build_mesh_from_file</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">filename</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">iso_value</span><span class="w"> </span><span class="o">=</span><span class="mf">0.0001</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">MeshHandle</span><span class="w"> </span><span class="n">build_mesh_from_file</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">filename</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">iso_value</span><span class="w"> </span><span class="o">=</span><span class="mf">0.0001</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-set_mesh_reconstructors">function set_mesh_reconstructors</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_mesh_reconstructors</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">MeshReconstructors</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">reconstructors</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_mesh_reconstructors</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">MeshReconstructors</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">reconstructors</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-set_reconstruction_method">function set_reconstruction_method</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_reconstruction_method</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">method</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_reconstruction_method</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">method</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-get_reconstruction_method">function get_reconstruction_method</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">get_reconstruction_method</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">get_reconstruction_method</span><span class="p">()</span>
 </code></pre></div>
 <h2 id="public-attributes-documentation">Public Attributes Documentation</h2>
 <h3 id="variable-reconstruction_legacy_c">variable RECONSTRUCTION_LEGACY_C</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">RECONSTRUCTION_LEGACY_C</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">RECONSTRUCTION_LEGACY_C</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="variable-reconstruction_distance_transform_c">variable RECONSTRUCTION_DISTANCE_TRANSFORM_C</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">RECONSTRUCTION_DISTANCE_TRANSFORM_C</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">RECONSTRUCTION_DISTANCE_TRANSFORM_C</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="variable-reconstruction_mesh_warper_c">variable RECONSTRUCTION_MESH_WARPER_C</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">RECONSTRUCTION_MESH_WARPER_C</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">RECONSTRUCTION_MESH_WARPER_C</span><span class="p">;</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:14 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:21 +0000</p>
 
               
             </article>

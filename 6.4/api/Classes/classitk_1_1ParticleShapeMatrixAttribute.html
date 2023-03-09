@@ -2710,124 +2710,124 @@
 </tbody>
 </table>
 <h2 id="detailed-description">Detailed Description</h2>
-<div class="highlight"><pre><span></span><code><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">T</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
-<span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">VDimension</span><span class="o">&gt;</span><span class="w"></span>
-<span class="k">class</span><span class="w"> </span><span class="nc">itk</span><span class="o">::</span><span class="n">ParticleShapeMatrixAttribute</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">T</span><span class="w"> </span><span class="p">,</span>
+<span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">VDimension</span><span class="o">&gt;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">itk</span><span class="o">::</span><span class="n">ParticleShapeMatrixAttribute</span><span class="p">;</span>
 </code></pre></div>
 <p>Each column describes a shape. A shape may be composed of m_DomainsPerShape domains (default 1). ALL DOMAINS ARE <em>NOT</em> ASSUMED TO HAVE THE SAME NUMBER OF PARTICLES! </p>
 <p>Each column represents a single shape. </p>
 <h2 id="public-types-documentation">Public Types Documentation</h2>
 <h3 id="typedef-datatype">typedef DataType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleShapeMatrixAttribute</span><span class="o">&lt;</span><span class="w"> </span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">DataType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleShapeMatrixAttribute</span><span class="o">&lt;</span><span class="w"> </span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">DataType</span><span class="p">;</span>
 </code></pre></div>
 <p>Standard class typedefs </p>
 <h3 id="typedef-self">typedef Self</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleShapeMatrixAttribute</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleShapeMatrixAttribute</span><span class="o">&lt;</span><span class="w"> </span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Self</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleShapeMatrixAttribute</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleShapeMatrixAttribute</span><span class="o">&lt;</span><span class="w"> </span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Self</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="typedef-superclass">typedef Superclass</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleAttribute</span><span class="o">&lt;</span><span class="n">VDimension</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleShapeMatrixAttribute</span><span class="o">&lt;</span><span class="w"> </span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Superclass</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleAttribute</span><span class="o">&lt;</span><span class="n">VDimension</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleShapeMatrixAttribute</span><span class="o">&lt;</span><span class="w"> </span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Superclass</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="typedef-pointer">typedef Pointer</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleShapeMatrixAttribute</span><span class="o">&lt;</span><span class="w"> </span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleShapeMatrixAttribute</span><span class="o">&lt;</span><span class="w"> </span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="typedef-constpointer">typedef ConstPointer</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleShapeMatrixAttribute</span><span class="o">&lt;</span><span class="w"> </span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">ConstPointer</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleShapeMatrixAttribute</span><span class="o">&lt;</span><span class="w"> </span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">ConstPointer</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="typedef-constweakpointer">typedef ConstWeakPointer</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">WeakPointer</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleShapeMatrixAttribute</span><span class="o">&lt;</span><span class="w"> </span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">ConstWeakPointer</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">WeakPointer</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleShapeMatrixAttribute</span><span class="o">&lt;</span><span class="w"> </span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">ConstWeakPointer</span><span class="p">;</span>
 </code></pre></div>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-itknewmacro">function itkNewMacro</h3>
-<div class="highlight"><pre><span></span><code><span class="n">itkNewMacro</span><span class="p">(</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">itkNewMacro</span><span class="p">(</span>
 <span class="w">    </span><span class="n">Self</span><span class="w"> </span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Method for creation through the object factory. Run-time type information (and related methods). </p>
 <h3 id="function-domainaddeventcallback">function DomainAddEventCallback</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">ParticleAttribute</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">DomainAddEventCallback</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">Object</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">EventObject</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">e</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">ParticleAttribute</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">DomainAddEventCallback</span><span class="p">(</span>
+<span class="w">    </span><span class="n">Object</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">EventObject</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">e</span>
+<span class="p">)</span>
 </code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classitk_1_1ParticleAttribute.html#function-domainaddeventcallback">itk::ParticleAttribute::DomainAddEventCallback</a></p>
 <p><strong>Reimplemented by</strong>: <a href="classitk_1_1ParticleShapeLinearRegressionMatrixAttribute.html#function-domainaddeventcallback">itk::ParticleShapeLinearRegressionMatrixAttribute::DomainAddEventCallback</a>, <a href="classitk_1_1ParticleShapeMixedEffectsMatrixAttribute.html#function-domainaddeventcallback">itk::ParticleShapeMixedEffectsMatrixAttribute::DomainAddEventCallback</a></p>
 <p>Callbacks that may be defined by a subclass. If a subclass defines one of these callback methods, the corresponding flag in m_DefinedCallbacks should be set to true so that the <a href="classitk_1_1ParticleSystem.html">ParticleSystem</a> will know to register the appropriate event with this method. </p>
 <h3 id="function-resizematrix">function ResizeMatrix</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">ResizeMatrix</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">rs</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">cs</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">ResizeMatrix</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">rs</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">cs</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-positionaddeventcallback">function PositionAddEventCallback</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">PositionAddEventCallback</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">Object</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">o</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">EventObject</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">e</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">PositionAddEventCallback</span><span class="p">(</span>
+<span class="w">    </span><span class="n">Object</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">o</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">EventObject</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">e</span>
+<span class="p">)</span>
 </code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classitk_1_1ParticleAttribute.html#function-positionaddeventcallback">itk::ParticleAttribute::PositionAddEventCallback</a></p>
 <p><strong>Reimplemented by</strong>: <a href="classitk_1_1ParticleShapeLinearRegressionMatrixAttribute.html#function-positionaddeventcallback">itk::ParticleShapeLinearRegressionMatrixAttribute::PositionAddEventCallback</a>, <a href="classitk_1_1ParticleShapeMixedEffectsMatrixAttribute.html#function-positionaddeventcallback">itk::ParticleShapeMixedEffectsMatrixAttribute::PositionAddEventCallback</a></p>
 <h3 id="function-positionseteventcallback">function PositionSetEventCallback</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">PositionSetEventCallback</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">Object</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">o</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">EventObject</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">e</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">PositionSetEventCallback</span><span class="p">(</span>
+<span class="w">    </span><span class="n">Object</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">o</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">EventObject</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">e</span>
+<span class="p">)</span>
 </code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classitk_1_1ParticleAttribute.html#function-positionseteventcallback">itk::ParticleAttribute::PositionSetEventCallback</a></p>
 <p><strong>Reimplemented by</strong>: <a href="classitk_1_1ParticleShapeLinearRegressionMatrixAttribute.html#function-positionseteventcallback">itk::ParticleShapeLinearRegressionMatrixAttribute::PositionSetEventCallback</a>, <a href="classitk_1_1ParticleShapeMixedEffectsMatrixAttribute.html#function-positionseteventcallback">itk::ParticleShapeMixedEffectsMatrixAttribute::PositionSetEventCallback</a></p>
 <h3 id="function-positionremoveeventcallback">function PositionRemoveEventCallback</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">PositionRemoveEventCallback</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">Object</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">PositionRemoveEventCallback</span><span class="p">(</span>
+<span class="w">    </span><span class="n">Object</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="p">,</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">EventObject</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span>
 </code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classitk_1_1ParticleAttribute.html#function-positionremoveeventcallback">itk::ParticleAttribute::PositionRemoveEventCallback</a></p>
 <p><strong>Reimplemented by</strong>: <a href="classitk_1_1ParticleShapeLinearRegressionMatrixAttribute.html#function-positionremoveeventcallback">itk::ParticleShapeLinearRegressionMatrixAttribute::PositionRemoveEventCallback</a>, <a href="classitk_1_1ParticleShapeMixedEffectsMatrixAttribute.html#function-positionremoveeventcallback">itk::ParticleShapeMixedEffectsMatrixAttribute::PositionRemoveEventCallback</a></p>
 <h3 id="function-printmatrix">function PrintMatrix</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">PrintMatrix</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">PrintMatrix</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-checkfornans">function CheckForNans</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">CheckForNans</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">CheckForNans</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-setdomainspershape">function SetDomainsPerShape</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetDomainsPerShape</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetDomainsPerShape</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Set/Get the number of domains per shape. This can only be safely done before shapes are initialized with points! </p>
 <h3 id="function-getdomainspershape">function GetDomainsPerShape</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">GetDomainsPerShape</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">GetDomainsPerShape</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-beforeiteration">function BeforeIteration</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">BeforeIteration</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">BeforeIteration</span><span class="p">()</span>
 </code></pre></div>
 <p><strong>Reimplemented by</strong>: <a href="classitk_1_1ParticleShapeLinearRegressionMatrixAttribute.html#function-beforeiteration">itk::ParticleShapeLinearRegressionMatrixAttribute::BeforeIteration</a>, <a href="classitk_1_1ParticleShapeMixedEffectsMatrixAttribute.html#function-beforeiteration">itk::ParticleShapeMixedEffectsMatrixAttribute::BeforeIteration</a></p>
 <h3 id="function-afteriteration">function AfterIteration</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">AfterIteration</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">AfterIteration</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-setmatrix">function SetMatrix</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetMatrix</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_matrix</span><span class="o">&lt;</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">m</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetMatrix</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_matrix</span><span class="o">&lt;</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">m</span>
+<span class="p">)</span>
 </code></pre></div>
 <h2 id="protected-functions-documentation">Protected Functions Documentation</h2>
 <h3 id="function-particleshapematrixattribute">function ParticleShapeMatrixAttribute</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">ParticleShapeMatrixAttribute</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">ParticleShapeMatrixAttribute</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-particleshapematrixattribute_1">function ~ParticleShapeMatrixAttribute</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">ParticleShapeMatrixAttribute</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">ParticleShapeMatrixAttribute</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-printself">function PrintSelf</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">PrintSelf</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">os</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">Indent</span><span class="w"> </span><span class="n">indent</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">PrintSelf</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">os</span><span class="p">,</span>
+<span class="w">    </span><span class="n">Indent</span><span class="w"> </span><span class="n">indent</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h2 id="protected-attributes-documentation">Protected Attributes Documentation</h2>
 <h3 id="variable-m_domainspershape">variable m_DomainsPerShape</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">m_DomainsPerShape</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">m_DomainsPerShape</span><span class="p">;</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:14 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:20 +0000</p>
 
               
             </article>

@@ -2792,102 +2792,102 @@
 </tbody>
 </table>
 <h2 id="detailed-description">Detailed Description</h2>
-<div class="highlight"><pre><span></span><code><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">T</span><span class="w"> </span><span class="o">&gt;</span><span class="w"></span>
-<span class="k">class</span><span class="w"> </span><span class="nc">shapeworks</span><span class="o">::</span><span class="n">ParticleImageDomain</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">T</span><span class="w"> </span><span class="o">&gt;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">shapeworks</span><span class="o">::</span><span class="n">ParticleImageDomain</span><span class="p">;</span>
 </code></pre></div>
 <p>A bounding-box region domain that sets its bounding box according to the origin, spacing, and RequestedRegion of a specified itk::Image. This Domain object may be sampled for interpolated image values using the Sample(Point) method. </p>
 <h2 id="public-types-documentation">Public Types Documentation</h2>
 <h3 id="using-pointer">using Pointer</h3>
-<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ParticleImageDomain</span><span class="o">&lt;</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ParticleImageDomain</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ParticleImageDomain</span><span class="o">&lt;</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ParticleImageDomain</span><span class="o">&gt;</span><span class="p">;</span>
 </code></pre></div>
 <p>Standard class typedefs </p>
 <h3 id="using-imagetype">using ImageType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ParticleImageDomain</span><span class="o">&lt;</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">ImageType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">itk</span><span class="o">::</span><span class="n">Image</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">DIMENSION</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ParticleImageDomain</span><span class="o">&lt;</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">ImageType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">itk</span><span class="o">::</span><span class="n">Image</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">DIMENSION</span><span class="o">&gt;</span><span class="p">;</span>
 </code></pre></div>
 <p>Type of the ITK image used by this class. </p>
 <h3 id="using-pointtype">using PointType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ParticleImageDomain</span><span class="o">&lt;</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">PointType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">ParticleRegionDomain</span><span class="o">::</span><span class="n">PointType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ParticleImageDomain</span><span class="o">&lt;</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">PointType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">ParticleRegionDomain</span><span class="o">::</span><span class="n">PointType</span><span class="p">;</span>
 </code></pre></div>
 <p>Point type of the domain (not the image). </p>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-setimage">function SetImage</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetImage</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">ImageType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">I</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">narrow_band</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetImage</span><span class="p">(</span>
+<span class="w">    </span><span class="n">ImageType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">I</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">narrow_band</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Set/Get the itk::Image specifying the particle domain. The set method modifies the parent class LowerBound and UpperBound. </p>
 <h3 id="function-getsurfacearea">function GetSurfaceArea</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">GetSurfaceArea</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">GetSurfaceArea</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span>
 </code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1ParticleDomain.html#function-getsurfacearea">shapeworks::ParticleDomain::GetSurfaceArea</a></p>
 <p>Use for neighborhood radius. </p>
 <h3 id="function-getorigin">function GetOrigin</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="n">GetOrigin</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="n">GetOrigin</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-getsize">function GetSize</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">ImageType</span><span class="o">::</span><span class="n">SizeType</span><span class="w"> </span><span class="n">GetSize</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">ImageType</span><span class="o">::</span><span class="n">SizeType</span><span class="w"> </span><span class="n">GetSize</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-getspacing">function GetSpacing</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">ImageType</span><span class="o">::</span><span class="n">SpacingType</span><span class="w"> </span><span class="n">GetSpacing</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">ImageType</span><span class="o">::</span><span class="n">SpacingType</span><span class="w"> </span><span class="n">GetSpacing</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-getindex">function GetIndex</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">ImageType</span><span class="o">::</span><span class="n">RegionType</span><span class="o">::</span><span class="n">IndexType</span><span class="w"> </span><span class="n">GetIndex</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">ImageType</span><span class="o">::</span><span class="n">RegionType</span><span class="o">::</span><span class="n">IndexType</span><span class="w"> </span><span class="n">GetIndex</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-getvalidlocationnear">function GetValidLocationNear</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="n">GetValidLocationNear</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">PointType</span><span class="w"> </span><span class="n">p</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="n">GetValidLocationNear</span><span class="p">(</span>
+<span class="w">    </span><span class="n">PointType</span><span class="w"> </span><span class="n">p</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span>
 </code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1ParticleDomain.html#function-getvalidlocationnear">shapeworks::ParticleDomain::GetValidLocationNear</a></p>
 <p>GetValidLocation returns a PointType location on the surface. Used for placing the first particle. </p>
 <h3 id="function-sample">function Sample</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="n">Sample</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">p</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="n">Sample</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">p</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>Sample the image at a point. This method performs bounds checking. </p>
 <h3 id="function-getmaxdiameter">function GetMaxDiameter</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">GetMaxDiameter</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">GetMaxDiameter</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span>
 </code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1ParticleDomain.html#function-getmaxdiameter">shapeworks::ParticleDomain::GetMaxDiameter</a></p>
 <p>GetMaxDiameter returns the maximum diameter of the domain and is used for computing sigma </p>
 <h3 id="function-deleteimages">function DeleteImages</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">DeleteImages</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">DeleteImages</span><span class="p">()</span><span class="w"> </span><span class="k">override</span>
 </code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1ParticleDomain.html#function-deleteimages">shapeworks::ParticleDomain::DeleteImages</a></p>
 <p><strong>Reimplemented by</strong>: <a href="classshapeworks_1_1ParticleImageDomainWithGradients.html#function-deleteimages">shapeworks::ParticleImageDomainWithGradients::DeleteImages</a>, <a href="classshapeworks_1_1ParticleImageDomainWithGradN.html#function-deleteimages">shapeworks::ParticleImageDomainWithGradN::DeleteImages</a></p>
 <p>Used when a domain is fixed. </p>
 <h3 id="function-updatezerocrossingpoint">function UpdateZeroCrossingPoint</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">UpdateZeroCrossingPoint</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">UpdateZeroCrossingPoint</span><span class="p">()</span><span class="w"> </span><span class="k">override</span>
 </code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1ParticleDomain.html#function-updatezerocrossingpoint">shapeworks::ParticleDomain::UpdateZeroCrossingPoint</a></p>
 <h2 id="protected-functions-documentation">Protected Functions Documentation</h2>
 <h3 id="function-getvdbimage">function GetVDBImage</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">openvdb</span><span class="o">::</span><span class="n">FloatGrid</span><span class="o">::</span><span class="n">Ptr</span><span class="w"> </span><span class="n">GetVDBImage</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">openvdb</span><span class="o">::</span><span class="n">FloatGrid</span><span class="o">::</span><span class="n">Ptr</span><span class="w"> </span><span class="n">GetVDBImage</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-particleimagedomain">function ParticleImageDomain</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">ParticleImageDomain</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">ParticleImageDomain</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-particleimagedomain_1">function ~ParticleImageDomain</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">ParticleImageDomain</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">ParticleImageDomain</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-printself">function PrintSelf</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">PrintSelf</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">os</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">itk</span><span class="o">::</span><span class="n">Indent</span><span class="w"> </span><span class="n">indent</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">PrintSelf</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">os</span><span class="p">,</span>
+<span class="w">    </span><span class="n">itk</span><span class="o">::</span><span class="n">Indent</span><span class="w"> </span><span class="n">indent</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-transform">function transform</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">openvdb</span><span class="o">::</span><span class="n">math</span><span class="o">::</span><span class="n">Transform</span><span class="o">::</span><span class="n">Ptr</span><span class="w"> </span><span class="n">transform</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">openvdb</span><span class="o">::</span><span class="n">math</span><span class="o">::</span><span class="n">Transform</span><span class="o">::</span><span class="n">Ptr</span><span class="w"> </span><span class="n">transform</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-tovdbcoord">function ToVDBCoord</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">openvdb</span><span class="o">::</span><span class="n">Vec3R</span><span class="w"> </span><span class="n">ToVDBCoord</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">p</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">openvdb</span><span class="o">::</span><span class="n">Vec3R</span><span class="w"> </span><span class="n">ToVDBCoord</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">p</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:15 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:21 +0000</p>
 
               
             </article>

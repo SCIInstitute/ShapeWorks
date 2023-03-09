@@ -2280,28 +2280,28 @@
 </table>
 <h2 id="source-code">Source code</h2>
 <div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;FEMesh.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Intersect.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;string&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;memory&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;FEMesh.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Intersect.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;string&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;memory&gt;</span>
 
-<span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">std</span><span class="p">;</span><span class="w"></span>
+<span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">std</span><span class="p">;</span>
 
-<span class="k">class</span><span class="w"> </span><span class="nc">FEAreaCoverage</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">  </span><span class="k">class</span><span class="w"> </span><span class="nc">Surface</span><span class="w"></span>
-<span class="w">  </span><span class="p">{</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FEAreaCoverage</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="k">class</span><span class="w"> </span><span class="nc">Surface</span>
+<span class="w">  </span><span class="p">{</span>
 
-<span class="w">  </span><span class="k">public</span><span class="o">:</span><span class="w"></span>
-<span class="w">    </span><span class="n">Surface</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">Faces</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">m_face</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">  </span><span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="n">Surface</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">Faces</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">m_face</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
 
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">Create</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">FEMesh</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">Create</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">FEMesh</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m</span><span class="p">);</span>
 
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">Nodes</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">m_node</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">Nodes</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">m_node</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
 
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">FEMesh</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_mesh</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">FEMesh</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_mesh</span><span class="p">;</span>
 <span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w">   </span><span class="n">m_face</span><span class="p">;</span><span class="w">                     </span><span class="c1">// face list</span>
 <span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w">   </span><span class="n">m_node</span><span class="p">;</span><span class="w">                     </span><span class="c1">// node list</span>
 <span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vec3d</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_pos</span><span class="p">;</span><span class="w">                      </span><span class="c1">// node positions</span>
@@ -2310,50 +2310,50 @@
 <span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vec3d</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_fnorm</span><span class="p">;</span><span class="w">                    </span><span class="c1">// face normals</span>
 
 <span class="w">    </span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">m_NLT</span><span class="p">;</span><span class="w">                </span><span class="c1">// node-facet look-up table</span>
-<span class="w">  </span><span class="p">};</span><span class="w"></span>
+<span class="w">  </span><span class="p">};</span>
 
-<span class="k">public</span><span class="o">:</span><span class="w"></span>
-<span class="w">  </span><span class="n">FEAreaCoverage</span><span class="p">();</span><span class="w"></span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="n">FEAreaCoverage</span><span class="p">();</span>
 
 <span class="w">  </span><span class="c1">// assign selections</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetSelection1</span><span class="p">(</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_surf1</span><span class="p">.</span><span class="n">m_face</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetSelection2</span><span class="p">(</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_surf2</span><span class="p">.</span><span class="n">m_face</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetSelection1</span><span class="p">(</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_surf1</span><span class="p">.</span><span class="n">m_face</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetSelection2</span><span class="p">(</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">s</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_surf2</span><span class="p">.</span><span class="n">m_face</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 
 <span class="w">  </span><span class="c1">// apply the map</span>
 <span class="w">  </span><span class="c1">// returns one value per node</span>
-<span class="w">  </span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Apply</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">FEMesh</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mesh1</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">FEMesh</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mesh2</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">Apply</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">FEMesh</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mesh1</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">FEMesh</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mesh2</span><span class="p">);</span>
 
 <span class="w">  </span><span class="c1">// get/set back intersection flag</span>
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">AllowBackIntersection</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">b</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="nf">AllowBackIntersection</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">AllowBackIntersection</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">b</span><span class="p">);</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="nf">AllowBackIntersection</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
 
 <span class="w">  </span><span class="c1">// set/get the angle threshold (w between 0 and 1)</span>
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetAngleThreshold</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">w</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="nf">GetAngleThreshold</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetAngleThreshold</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">w</span><span class="p">);</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="nf">GetAngleThreshold</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
 
 <span class="w">  </span><span class="c1">// set/get back-intersection search radius (0 ignores the search radius)</span>
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetBackSearchRadius</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">R</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="nf">GetBackSearchRadius</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetBackSearchRadius</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">R</span><span class="p">);</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="nf">GetBackSearchRadius</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
 
-<span class="k">protected</span><span class="o">:</span><span class="w"></span>
+<span class="k">protected</span><span class="o">:</span>
 <span class="w">  </span><span class="c1">// build node normal list</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">UpdateSurface</span><span class="p">(</span><span class="n">FEAreaCoverage</span><span class="o">::</span><span class="n">Surface</span><span class="o">&amp;</span><span class="w"> </span><span class="n">s</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">UpdateSurface</span><span class="p">(</span><span class="n">FEAreaCoverage</span><span class="o">::</span><span class="n">Surface</span><span class="o">&amp;</span><span class="w"> </span><span class="n">s</span><span class="p">);</span>
 
 <span class="w">  </span><span class="c1">// see if a ray intersects with a surface</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">intersect</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">vec3d</span><span class="o">&amp;</span><span class="w"> </span><span class="n">r</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">vec3d</span><span class="o">&amp;</span><span class="w"> </span><span class="n">N</span><span class="p">,</span><span class="w"> </span><span class="n">FEAreaCoverage</span><span class="o">::</span><span class="n">Surface</span><span class="o">&amp;</span><span class="w"> </span><span class="n">surf</span><span class="p">,</span><span class="w"> </span><span class="n">Intersection</span><span class="o">&amp;</span><span class="w"> </span><span class="n">q</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">faceIntersect</span><span class="p">(</span><span class="n">FEAreaCoverage</span><span class="o">::</span><span class="n">Surface</span><span class="o">&amp;</span><span class="w"> </span><span class="n">surf</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Ray</span><span class="o">&amp;</span><span class="w"> </span><span class="n">ray</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">nface</span><span class="p">,</span><span class="w"> </span><span class="n">Intersection</span><span class="o">&amp;</span><span class="w"> </span><span class="n">q</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">intersect</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">vec3d</span><span class="o">&amp;</span><span class="w"> </span><span class="n">r</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">vec3d</span><span class="o">&amp;</span><span class="w"> </span><span class="n">N</span><span class="p">,</span><span class="w"> </span><span class="n">FEAreaCoverage</span><span class="o">::</span><span class="n">Surface</span><span class="o">&amp;</span><span class="w"> </span><span class="n">surf</span><span class="p">,</span><span class="w"> </span><span class="n">Intersection</span><span class="o">&amp;</span><span class="w"> </span><span class="n">q</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">faceIntersect</span><span class="p">(</span><span class="n">FEAreaCoverage</span><span class="o">::</span><span class="n">Surface</span><span class="o">&amp;</span><span class="w"> </span><span class="n">surf</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Ray</span><span class="o">&amp;</span><span class="w"> </span><span class="n">ray</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">nface</span><span class="p">,</span><span class="w"> </span><span class="n">Intersection</span><span class="o">&amp;</span><span class="w"> </span><span class="n">q</span><span class="p">);</span>
 
-<span class="k">protected</span><span class="o">:</span><span class="w"></span>
-<span class="w">  </span><span class="n">Surface</span><span class="w"> </span><span class="n">m_surf1</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="n">Surface</span><span class="w"> </span><span class="n">m_surf2</span><span class="p">;</span><span class="w"></span>
+<span class="k">protected</span><span class="o">:</span>
+<span class="w">  </span><span class="n">Surface</span><span class="w"> </span><span class="n">m_surf1</span><span class="p">;</span>
+<span class="w">  </span><span class="n">Surface</span><span class="w"> </span><span class="n">m_surf2</span><span class="p">;</span>
 
 <span class="w">    </span><span class="kt">bool</span><span class="w">          </span><span class="n">m_ballowBackIntersections</span><span class="p">;</span><span class="w">    </span><span class="c1">// include back intersections</span>
 <span class="w">  </span><span class="kt">double</span><span class="w">        </span><span class="n">m_angleThreshold</span><span class="p">;</span><span class="w">                 </span><span class="c1">// angular threshold (between 0 and 1)</span>
 <span class="w">    </span><span class="kt">double</span><span class="w">      </span><span class="n">m_backSearchRadius</span><span class="p">;</span><span class="w">             </span><span class="c1">// search radius for back intersections (set to 0 to ignore)</span>
-<span class="p">};</span><span class="w"></span>
+<span class="p">};</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:15 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:23 +0000</p>
 
               
             </article>

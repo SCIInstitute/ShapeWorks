@@ -1238,6 +1238,20 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#uploading-a-dataset" class="md-nav__link">
+    Uploading a Dataset
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#downloading-a-dataset" class="md-nav__link">
+    Downloading a Dataset
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#use-case-data" class="md-nav__link">
     Use Case Data
   </a>
@@ -2371,6 +2385,20 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#uploading-a-dataset" class="md-nav__link">
+    Uploading a Dataset
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#downloading-a-dataset" class="md-nav__link">
+    Downloading a Dataset
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#use-case-data" class="md-nav__link">
     Use Case Data
   </a>
@@ -2511,14 +2539,56 @@ $ python RunUseCase.py [use case name]
 </div>
 <p>After registering a free account, you can log in from within the script. 
 Note: You are only required to enter your credentials the first time you run a use case. </p>
+<h3 id="uploading-a-dataset">Uploading a Dataset</h3>
+<p>Uploading a dataset requires the following parameters:</p>
+<ol>
+<li>
+<p>dataset_name - The name of the dataset and the same name must be used while running the usecase.</p>
+</li>
+<li>
+<p>licence_filename - File location which contains licence information of the dataset</p>
+</li>
+<li>
+<p>ack_filename - File location which contains acknowledge information of the dataset</p>
+</li>
+<li>
+<p>description - Description of the dataset</p>
+</li>
+<li>
+<p>project_file - File location which contains the project file of dataset using by the usecase which needs to be uploaded. (must be in swproj extension)</p>
+</li>
+<li>
+<p>overwrite - This is a boolean variable which controls any existing dataset with same name should be deleted or not. if True is passed it will delete the existing dataset. The default value is True.</p>
+</li>
+</ol>
+<!-- --overwrite - which controls any existing dataset with same name should be deleted or not. if --overwrite is specified it will delete the existing dataset. -->
+
+<p>For example refer the following command
+<div class="highlight"><pre><span></span><code>$ import shapeworks as sw
+$ sw.upload_dataset(dataset_name, licence_filename, acknowledgement_filename, description, project_file, overwrite)
+</code></pre></div></p>
+<h3 id="downloading-a-dataset">Downloading a Dataset</h3>
+<p>Downloading a Dataset requires the following parameters:</p>
+<ol>
+<li>
+<p>datasetName - The name of the dataset which needs to be downloaded.</p>
+</li>
+<li>
+<p>outputDirectory - The location where the dataset should be downloaded.</p>
+</li>
+</ol>
+<p>For example refer the following command
+<div class="highlight"><pre><span></span><code>$ python portal.py [dataset name] [output directory]
+</code></pre></div></p>
 <h3 id="use-case-data">Use Case Data</h3>
 <p>When a use case runs, the appropriate zipped data downloads to <code>Examples/Python/Data/</code>. The data is then extracted to <code>Examples/Python/output/use_case_name/</code> where all the output from running the use case is also saved.</p>
 <p>The downloaded data includes the raw input data (segmentations, meshes, and/or images) as well as the expected output from both the final grooming step of the use case (i.e., distance transforms) and the optimized shape model (particle files and project excel sheets). </p>
-<p>An "project.xlsx" file is included so that the resulting shape model can be visualized in Studio without running the use case.
+<p>An "project.swproj" file is included so that the resulting shape model can be visualized in Studio without running the use case.
 For example, to view the shape model downloaded for the ellipsoid use case run:
 <div class="highlight"><pre><span></span><code>$ cd Examples/Python/Output/ellipsoid/ellipsoid_1mode/
 $ cp shape_model ../
-$ ShapeWorksStudio ellipsoid_multiscale.xlsx
+$ ShapeWorksStudio ellipsoid_multiscale.xlsx or
+$ ShapeWorksStudio ellipsoid_multiscale.swproj
 </code></pre></div></p>
 <h3 id="use-cases-arguments">Use Cases Arguments</h3>
 <p>When calling <code>RunUseCase.py</code>, various optional arguments can be used. 
@@ -2563,13 +2633,13 @@ A description of each optional argument and how to use it is provided below.</p>
 <p>Instead of passing groomed and aligned shapes to the optimizer, now, the use cases only perform the grooming steps that do not change the co-ordinates of the shape. For the grooming steps that alter the co-ordinates, the transformation matrices are calculated and sent to the optimizer to be applied(pre-multiplied) after optimization. See <a href="../workflow/parameters.html#project-excel-file">How to Step Up Optimization?</a> page for details regarding setting up the project sheet.</p>
 </div>
 <h3 id="optimization"><a href="../workflow/optimize.html">Optimization</a></h3>
-<p>Optimization involves automatically computing a dense set of corresponding landmark positions from the groomed shape representations (distance transforms or meshes). Optimization can be run with different parameters in ShapeWorksStudio or via the command line. In the use cases, optimization parameters are defined in the optimize sheet of the project.xlsx and optimization is run from the command line. </p>
+<p>Optimization involves automatically computing a dense set of corresponding landmark positions from the groomed shape representations (distance transforms or meshes). Optimization can be run with different parameters in ShapeWorksStudio or via the command line. In the use cases, optimization parameters are defined in the optimize sheet of the project.xlsx or project.swproj and optimization is run from the command line. </p>
 <p>For a full decription of parameters, please see: <a href="../workflow/parameters.html">optimization parameters</a>. </p>
 <h3 id="analysis-of-results"><a href="../workflow/analyze.html">Analysis of Results</a></h3>
-<p>The resulting correspondence points from optimization can be viewed and analyzed in <strong>ShapeWorks Studio</strong>. This is a Qt and VTK-based graphical user interface (GUI), that allows visualizing the correspondence model for each shape sample where particle coloring is used to reflect correspondence among shapes. After optimization, the use cases create and open an <code>project.xlsx</code> file for viewing the results in Studio. Studio opens automatically when the use case finishes running. </p>
+<p>The resulting correspondence points from optimization can be viewed and analyzed in <strong>ShapeWorks Studio</strong>. This is a Qt and VTK-based graphical user interface (GUI), that allows visualizing the correspondence model for each shape sample where particle coloring is used to reflect correspondence among shapes. After optimization, the use cases create and open an <code>project.xlsx</code> or <code>project.swproj</code> file for viewing the results in Studio. Studio opens automatically when the use case finishes running. </p>
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_scroll.mp4" autoplay muted loop controls style="width:100%"></p>
 
-<p>This <code>project.xlsx</code> file can be reopened at any time after running the use case for subsequent analysis by calling <code>ShapeworksStudio project.xlsx</code>. For a full description of how to analyze results in Studio, see <a href="../workflow/analyze.html">Analyzing Results</a>.</p>
+<p>This <code>project.xlsx</code> or <code>project.swproj</code> file can be reopened at any time after running the use case for subsequent analysis by calling <code>ShapeworksStudio project.xlsx</code> or <code>ShapeworksStudio project.swproj</code>. For a full description of how to analyze results in Studio, see <a href="../workflow/analyze.html">Analyzing Results</a>.</p>
 
               
             </article>

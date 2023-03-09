@@ -2495,7 +2495,7 @@
 <p>The <code>DocumentationUtils</code> package in <code>Python</code> has APIs for auto-documenting command-line tools and <em>to-come-soon</em> python APIs. We use the <code>docs</code> folder to save the generated documentation.</p>
 <p>To generate documentation for the <code>shapeworks</code> commands, first be sure to run <code>install_shapeworks.sh</code> as described in <a href="build.html">How to Build ShapeWorks from Source?</a> to install <code>DocumentationUtils</code>.</p>
 <p>Then, make sure that the <code>shapeworks</code> command is in your path (<code>set PATH=/path/to/shapeworks:$PATH</code>), then use Python to run the following command:</p>
-<div class="highlight"><pre><span></span><code>$ python Python/RunShapeWorksAutoDoc.py --md_filename docs/tools/ShapeWorksCommands.md
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>python<span class="w"> </span>Python/RunShapeWorksAutoDoc.py<span class="w"> </span>--md_filename<span class="w"> </span>docs/tools/ShapeWorksCommands.md
 </code></pre></div>
 <p><strong>Parameters</strong>:    </p>
 <ul>
@@ -2504,7 +2504,7 @@
 <h2 id="auto-generating-c-doxygen-api-documentation">Auto-generating C++ Doxygen API Documentation</h2>
 <p>To generate C++ Doxygen API output into mkdocs, configure ShapeWorks with BUILD_DOCUMENTATION=ON.</p>
 <p>After building, run (from the root source directory):</p>
-<div class="highlight"><pre><span></span><code>$ ./Support/build_docs.sh <span class="si">${</span><span class="nv">BUILD_DIR</span><span class="si">}</span>/Documentation/Doxygen/xml
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>./Support/build_docs.sh<span class="w"> </span><span class="si">${</span><span class="nv">BUILD_DIR</span><span class="si">}</span>/Documentation/Doxygen/xml
 </code></pre></div>
 <h2 id="see-also">See Also</h2>
 <ul>

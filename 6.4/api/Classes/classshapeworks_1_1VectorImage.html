@@ -2394,41 +2394,41 @@
 </table>
 <h2 id="public-types-documentation">Public Types Documentation</h2>
 <h3 id="using-gradientimagefilter">using GradientImageFilter</h3>
-<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">VectorImage</span><span class="o">::</span><span class="n">GradientImageFilter</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">itk</span><span class="o">::</span><span class="n">GradientImageFilter</span><span class="o">&lt;</span><span class="n">Image</span><span class="o">::</span><span class="n">ImageType</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">VectorImage</span><span class="o">::</span><span class="n">GradientImageFilter</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">itk</span><span class="o">::</span><span class="n">GradientImageFilter</span><span class="o">&lt;</span><span class="n">Image</span><span class="o">::</span><span class="n">ImageType</span><span class="o">&gt;</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="using-imagetype">using ImageType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">VectorImage</span><span class="o">::</span><span class="n">ImageType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">itk</span><span class="o">::</span><span class="n">Image</span><span class="o">&lt;</span><span class="n">Covariant</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">VectorImage</span><span class="o">::</span><span class="n">ImageType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">itk</span><span class="o">::</span><span class="n">Image</span><span class="o">&lt;</span><span class="n">Covariant</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="using-gradientinterpolatortype">using GradientInterpolatorType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">VectorImage</span><span class="o">::</span><span class="n">GradientInterpolatorType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">itk</span><span class="o">::</span><span class="n">VectorLinearInterpolateImageFunction</span><span class="o">&lt;</span><span class="n">ImageType</span><span class="p">,</span><span class="w"> </span><span class="n">Image</span><span class="o">::</span><span class="n">PixelType</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">VectorImage</span><span class="o">::</span><span class="n">GradientInterpolatorType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">itk</span><span class="o">::</span><span class="n">VectorLinearInterpolateImageFunction</span><span class="o">&lt;</span><span class="n">ImageType</span><span class="p">,</span><span class="w"> </span><span class="n">Image</span><span class="o">::</span><span class="n">PixelType</span><span class="o">&gt;</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="using-imageiterator">using ImageIterator</h3>
-<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">VectorImage</span><span class="o">::</span><span class="n">ImageIterator</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">itk</span><span class="o">::</span><span class="n">ImageRegionIterator</span><span class="o">&lt;</span><span class="n">ImageType</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">VectorImage</span><span class="o">::</span><span class="n">ImageIterator</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">itk</span><span class="o">::</span><span class="n">ImageRegionIterator</span><span class="o">&lt;</span><span class="n">ImageType</span><span class="o">&gt;</span><span class="p">;</span>
 </code></pre></div>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-vectorimage">function VectorImage</h3>
-<div class="highlight"><pre><span></span><code><span class="n">VectorImage</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">dt_img</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">VectorImage</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">dt_img</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Creates a gradient vector image of image (presumably a distance transform) </p>
 <h3 id="function-vectorimage_1">function VectorImage</h3>
-<div class="highlight"><pre><span></span><code><span class="n">VectorImage</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="k">delete</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">VectorImage</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="k">delete</span>
 </code></pre></div>
 <h3 id="function-vectorimage_2">function ~VectorImage</h3>
-<div class="highlight"><pre><span></span><code><span class="o">~</span><span class="n">VectorImage</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="k">default</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="o">~</span><span class="n">VectorImage</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="k">default</span>
 </code></pre></div>
 <h3 id="function-evaluate">function evaluate</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Vector</span><span class="w"> </span><span class="n">evaluate</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">Point</span><span class="w"> </span><span class="n">p</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">Vector</span><span class="w"> </span><span class="n">evaluate</span><span class="p">(</span>
+<span class="w">    </span><span class="n">Point</span><span class="w"> </span><span class="n">p</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Returns a Vector (which can be normalized using <code>v.Normalize()</code>). </p>
 <h3 id="function-iterator">function iterator</h3>
-<div class="highlight"><pre><span></span><code><span class="n">ImageIterator</span><span class="w"> </span><span class="n">iterator</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">ImageIterator</span><span class="w"> </span><span class="n">iterator</span><span class="p">()</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:15 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:22 +0000</p>
 
               
             </article>

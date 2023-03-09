@@ -2392,42 +2392,42 @@
 </table>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-fenodenodelist">function FENodeNodeList</h3>
-<div class="highlight"><pre><span></span><code><span class="n">FENodeNodeList</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">FEMesh</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">pm</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">FENodeNodeList</span><span class="p">(</span>
+<span class="w">    </span><span class="n">FEMesh</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">pm</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-fenodenodelist_1">function ~FENodeNodeList</h3>
-<div class="highlight"><pre><span></span><code><span class="o">~</span><span class="n">FENodeNodeList</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="o">~</span><span class="n">FENodeNodeList</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-build">function Build</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">Build</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">Build</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-valence">function Valence</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">Valence</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">Valence</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-node">function Node</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">Node</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">j</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">Node</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">j</span>
+<span class="p">)</span>
 </code></pre></div>
 <h2 id="protected-attributes-documentation">Protected Attributes Documentation</h2>
 <h3 id="variable-m_pm">variable m_pm</h3>
-<div class="highlight"><pre><span></span><code><span class="n">FEMesh</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">m_pm</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">FEMesh</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">m_pm</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="variable-m_val">variable m_val</h3>
-<div class="highlight"><pre><span></span><code><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_val</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_val</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="variable-m_off">variable m_off</h3>
-<div class="highlight"><pre><span></span><code><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_off</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_off</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="variable-m_node">variable m_node</h3>
-<div class="highlight"><pre><span></span><code><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_node</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_node</span><span class="p">;</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:15 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:22 +0000</p>
 
               
             </article>

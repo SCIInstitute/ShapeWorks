@@ -2281,132 +2281,132 @@
 <h2 id="source-code">Source code</h2>
 <div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkObject.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkObjectFactory.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkObject.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkWeakPointer.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkParticleSystem.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;vnl/vnl_vector_fixed.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkParticleVectorFunction.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ParticleImageDomainWithGradients.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;algorithm&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;limits&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkObject.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkObjectFactory.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkObject.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkWeakPointer.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkParticleSystem.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;vnl/vnl_vector_fixed.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkParticleVectorFunction.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ParticleImageDomainWithGradients.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;algorithm&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;limits&gt;</span>
 
-<span class="k">namespace</span><span class="w"> </span><span class="nn">itk</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
+<span class="k">namespace</span><span class="w"> </span><span class="nn">itk</span>
+<span class="p">{</span>
 
-<span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">TGradientNumericType</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">VDimension</span><span class="o">&gt;</span><span class="w"></span>
-<span class="k">class</span><span class="w"> </span><span class="nc">ParticleGradientDescentPositionOptimizer</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Object</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="k">public</span><span class="o">:</span><span class="w"></span>
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleGradientDescentPositionOptimizer</span><span class="w"> </span><span class="n">Self</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">Object</span><span class="w"> </span><span class="n">Superclass</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">&gt;</span><span class="w">  </span><span class="n">Pointer</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&gt;</span><span class="w">  </span><span class="n">ConstPointer</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">WeakPointer</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&gt;</span><span class="w">  </span><span class="n">ConstWeakPointer</span><span class="p">;</span><span class="w"></span>
+<span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">TGradientNumericType</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">VDimension</span><span class="o">&gt;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ParticleGradientDescentPositionOptimizer</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Object</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleGradientDescentPositionOptimizer</span><span class="w"> </span><span class="n">Self</span><span class="p">;</span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">Object</span><span class="w"> </span><span class="n">Superclass</span><span class="p">;</span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">&gt;</span><span class="w">  </span><span class="n">Pointer</span><span class="p">;</span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&gt;</span><span class="w">  </span><span class="n">ConstPointer</span><span class="p">;</span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">WeakPointer</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&gt;</span><span class="w">  </span><span class="n">ConstWeakPointer</span><span class="p">;</span>
 
-<span class="w">  </span><span class="n">itkNewMacro</span><span class="p">(</span><span class="n">Self</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="n">itkNewMacro</span><span class="p">(</span><span class="n">Self</span><span class="p">);</span>
 
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ParticleImageDomainWithGradients</span><span class="o">&lt;</span><span class="n">TGradientNumericType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">DomainType</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">ParticleImageDomainWithGradients</span><span class="o">&lt;</span><span class="n">TGradientNumericType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">DomainType</span><span class="p">;</span>
 
-<span class="w">  </span><span class="n">itkTypeMacro</span><span class="p">(</span><span class="n">ParticleGradientDescentPositionOptimizer</span><span class="p">,</span><span class="w"> </span><span class="n">Object</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="n">itkTypeMacro</span><span class="p">(</span><span class="n">ParticleGradientDescentPositionOptimizer</span><span class="p">,</span><span class="w"> </span><span class="n">Object</span><span class="p">);</span>
 
-<span class="w">  </span><span class="n">itkStaticConstMacro</span><span class="p">(</span><span class="n">Dimension</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="n">itkStaticConstMacro</span><span class="p">(</span><span class="n">Dimension</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">VDimension</span><span class="p">);</span>
 
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="w"> </span><span class="n">ParticleSystemType</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="w"> </span><span class="n">ParticleSystemType</span><span class="p">;</span>
 
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleVectorFunction</span><span class="o">&lt;</span><span class="n">VDimension</span><span class="o">&gt;</span><span class="w"> </span><span class="n">GradientFunctionType</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleVectorFunction</span><span class="o">&lt;</span><span class="n">VDimension</span><span class="o">&gt;</span><span class="w"> </span><span class="n">GradientFunctionType</span><span class="p">;</span>
 
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">GradientFunctionType</span><span class="o">::</span><span class="n">VectorType</span><span class="w"> </span><span class="n">VectorType</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">GradientFunctionType</span><span class="o">::</span><span class="n">VectorType</span><span class="w"> </span><span class="n">VectorType</span><span class="p">;</span>
 
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">ParticleSystemType</span><span class="o">::</span><span class="n">PointType</span><span class="w"> </span><span class="n">PointType</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">ParticleSystemType</span><span class="o">::</span><span class="n">PointType</span><span class="w"> </span><span class="n">PointType</span><span class="p">;</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">StartOptimization</span><span class="p">()</span><span class="w"></span>
-<span class="w">  </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">StartAdaptiveGaussSeidelOptimization</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="p">}</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">StartAdaptiveGaussSeidelOptimization</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">StartOptimization</span><span class="p">()</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">StartAdaptiveGaussSeidelOptimization</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">StartAdaptiveGaussSeidelOptimization</span><span class="p">();</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">AugmentedLagrangianConstraints</span><span class="p">(</span><span class="n">VectorType</span><span class="o">&amp;</span><span class="w"> </span><span class="n">gradient</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="o">&amp;</span><span class="w"> </span><span class="n">pt</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">size_t</span><span class="o">&amp;</span><span class="w"> </span><span class="n">dom</span><span class="p">,</span><span class="w"></span>
-<span class="w">                                      </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="o">&amp;</span><span class="w"> </span><span class="n">maximumUpdateAllowed</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">AugmentedLagrangianConstraints</span><span class="p">(</span><span class="n">VectorType</span><span class="o">&amp;</span><span class="w"> </span><span class="n">gradient</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">PointType</span><span class="o">&amp;</span><span class="w"> </span><span class="n">pt</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">size_t</span><span class="o">&amp;</span><span class="w"> </span><span class="n">dom</span><span class="p">,</span>
+<span class="w">                                      </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="o">&amp;</span><span class="w"> </span><span class="n">maximumUpdateAllowed</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">StopOptimization</span><span class="p">()</span><span class="w"></span>
-<span class="w">  </span><span class="p">{</span><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_StopOptimization</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w">  </span><span class="p">}</span><span class="w"></span>
+<span class="w">  </span><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">StopOptimization</span><span class="p">()</span>
+<span class="w">  </span><span class="p">{</span><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_StopOptimization</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w">  </span><span class="p">}</span>
 
-<span class="w">  </span><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">AbortProcessing</span><span class="p">()</span><span class="w"></span>
-<span class="w">  </span><span class="p">{</span><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_StopOptimization</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w"></span>
-<span class="w">       </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_AbortProcessing</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w">  </span><span class="p">}</span><span class="w"></span>
+<span class="w">  </span><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">AbortProcessing</span><span class="p">()</span>
+<span class="w">  </span><span class="p">{</span><span class="w">    </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_StopOptimization</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
+<span class="w">       </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_AbortProcessing</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w">  </span><span class="p">}</span>
 
-<span class="w">  </span><span class="n">itkGetMacro</span><span class="p">(</span><span class="n">NumberOfIterations</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="n">itkSetMacro</span><span class="p">(</span><span class="n">NumberOfIterations</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="n">itkGetMacro</span><span class="p">(</span><span class="n">NumberOfIterations</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="p">);</span>
+<span class="w">  </span><span class="n">itkSetMacro</span><span class="p">(</span><span class="n">NumberOfIterations</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetVerbosity</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">val</span><span class="p">)</span><span class="w"></span>
-<span class="w">  </span><span class="p">{</span><span class="w"></span>
-<span class="w">      </span><span class="n">m_verbosity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">val</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="p">}</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetVerbosity</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">val</span><span class="p">)</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">      </span><span class="n">m_verbosity</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">val</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
 
-<span class="w">  </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">GetVerbosity</span><span class="p">()</span><span class="w"></span>
-<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_verbosity</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">  </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">GetVerbosity</span><span class="p">()</span>
+<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_verbosity</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 
-<span class="w">  </span><span class="n">itkGetMacro</span><span class="p">(</span><span class="n">TimeStep</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="n">itkSetMacro</span><span class="p">(</span><span class="n">TimeStep</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="n">itkGetMacro</span><span class="p">(</span><span class="n">TimeStep</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="p">);</span>
+<span class="w">  </span><span class="n">itkSetMacro</span><span class="p">(</span><span class="n">TimeStep</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="p">);</span>
 
-<span class="w">  </span><span class="n">itkGetMacro</span><span class="p">(</span><span class="n">MaximumNumberOfIterations</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="n">itkSetMacro</span><span class="p">(</span><span class="n">MaximumNumberOfIterations</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="n">itkGetMacro</span><span class="p">(</span><span class="n">MaximumNumberOfIterations</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="p">);</span>
+<span class="w">  </span><span class="n">itkSetMacro</span><span class="p">(</span><span class="n">MaximumNumberOfIterations</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="p">);</span>
 
-<span class="w">  </span><span class="n">itkGetMacro</span><span class="p">(</span><span class="n">Tolerance</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="n">itkSetMacro</span><span class="p">(</span><span class="n">Tolerance</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="n">itkGetMacro</span><span class="p">(</span><span class="n">Tolerance</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="p">);</span>
+<span class="w">  </span><span class="n">itkSetMacro</span><span class="p">(</span><span class="n">Tolerance</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="p">);</span>
 
-<span class="w">  </span><span class="n">itkGetObjectMacro</span><span class="p">(</span><span class="n">ParticleSystem</span><span class="p">,</span><span class="w"> </span><span class="n">ParticleSystemType</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="n">itkSetObjectMacro</span><span class="p">(</span><span class="n">ParticleSystem</span><span class="p">,</span><span class="w"> </span><span class="n">ParticleSystemType</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="n">itkGetObjectMacro</span><span class="p">(</span><span class="n">ParticleSystem</span><span class="p">,</span><span class="w"> </span><span class="n">ParticleSystemType</span><span class="p">);</span>
+<span class="w">  </span><span class="n">itkSetObjectMacro</span><span class="p">(</span><span class="n">ParticleSystem</span><span class="p">,</span><span class="w"> </span><span class="n">ParticleSystemType</span><span class="p">);</span>
 
-<span class="w">  </span><span class="n">itkGetObjectMacro</span><span class="p">(</span><span class="n">GradientFunction</span><span class="p">,</span><span class="w"> </span><span class="n">GradientFunctionType</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="n">itkSetObjectMacro</span><span class="p">(</span><span class="n">GradientFunction</span><span class="p">,</span><span class="w"> </span><span class="n">GradientFunctionType</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="n">itkGetObjectMacro</span><span class="p">(</span><span class="n">GradientFunction</span><span class="p">,</span><span class="w"> </span><span class="n">GradientFunctionType</span><span class="p">);</span>
+<span class="w">  </span><span class="n">itkSetObjectMacro</span><span class="p">(</span><span class="n">GradientFunction</span><span class="p">,</span><span class="w"> </span><span class="n">GradientFunctionType</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetInitializationMode</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">b</span><span class="p">){</span><span class="n">m_initialization_mode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">b</span><span class="p">;}</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetInitializationMode</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">b</span><span class="p">){</span><span class="n">m_initialization_mode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">b</span><span class="p">;}</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetCheckIterations</span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">si</span><span class="p">){</span><span class="n">m_check_iterations</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">si</span><span class="p">;}</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetCheckIterations</span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">si</span><span class="p">){</span><span class="n">m_check_iterations</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">si</span><span class="p">;}</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetInitializationStartScalingFactor</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">si</span><span class="p">){</span><span class="n">m_initialization_start_scaling_factor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">si</span><span class="p">;}</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetInitializationStartScalingFactor</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">si</span><span class="p">){</span><span class="n">m_initialization_start_scaling_factor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">si</span><span class="p">;}</span>
 
-<span class="k">protected</span><span class="o">:</span><span class="w"></span>
-<span class="w">  </span><span class="n">ParticleGradientDescentPositionOptimizer</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="n">ParticleGradientDescentPositionOptimizer</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">ParticleGradientDescentPositionOptimizer</span><span class="w"> </span><span class="o">&amp;</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleGradientDescentPositionOptimizer</span><span class="w"> </span><span class="o">&amp;</span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">ParticleGradientDescentPositionOptimizer</span><span class="w"> </span><span class="o">&amp;</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">PrintSelf</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span><span class="w"> </span><span class="n">os</span><span class="p">,</span><span class="w"> </span><span class="n">Indent</span><span class="w"> </span><span class="n">indent</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
-<span class="w">  </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">Superclass</span><span class="o">::</span><span class="n">PrintSelf</span><span class="p">(</span><span class="n">os</span><span class="p">,</span><span class="w"> </span><span class="n">indent</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="p">}</span><span class="w"></span>
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">ParticleGradientDescentPositionOptimizer</span><span class="p">()</span><span class="w"> </span><span class="p">{};</span><span class="w"></span>
+<span class="k">protected</span><span class="o">:</span>
+<span class="w">  </span><span class="n">ParticleGradientDescentPositionOptimizer</span><span class="p">();</span>
+<span class="w">  </span><span class="n">ParticleGradientDescentPositionOptimizer</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">ParticleGradientDescentPositionOptimizer</span><span class="w"> </span><span class="o">&amp;</span><span class="p">);</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleGradientDescentPositionOptimizer</span><span class="w"> </span><span class="o">&amp;</span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">ParticleGradientDescentPositionOptimizer</span><span class="w"> </span><span class="o">&amp;</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">PrintSelf</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span><span class="w"> </span><span class="n">os</span><span class="p">,</span><span class="w"> </span><span class="n">Indent</span><span class="w"> </span><span class="n">indent</span><span class="p">)</span><span class="w"> </span><span class="k">const</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="n">Superclass</span><span class="o">::</span><span class="n">PrintSelf</span><span class="p">(</span><span class="n">os</span><span class="p">,</span><span class="w"> </span><span class="n">indent</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">ParticleGradientDescentPositionOptimizer</span><span class="p">()</span><span class="w"> </span><span class="p">{};</span>
 
-<span class="k">private</span><span class="o">:</span><span class="w"></span>
-<span class="w">  </span><span class="k">typename</span><span class="w"> </span><span class="nc">ParticleSystemType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_ParticleSystem</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="k">typename</span><span class="w"> </span><span class="nc">GradientFunctionType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_GradientFunction</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_StopOptimization</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_AbortProcessing</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">m_NumberOfIterations</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">m_MaximumNumberOfIterations</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">m_Tolerance</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">m_TimeStep</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_TimeSteps</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">m_verbosity</span><span class="p">;</span><span class="w"></span>
+<span class="k">private</span><span class="o">:</span>
+<span class="w">  </span><span class="k">typename</span><span class="w"> </span><span class="nc">ParticleSystemType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_ParticleSystem</span><span class="p">;</span>
+<span class="w">  </span><span class="k">typename</span><span class="w"> </span><span class="nc">GradientFunctionType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_GradientFunction</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_StopOptimization</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_AbortProcessing</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">m_NumberOfIterations</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">m_MaximumNumberOfIterations</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">m_Tolerance</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">m_TimeStep</span><span class="p">;</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_TimeSteps</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">m_verbosity</span><span class="p">;</span>
 
 <span class="w">  </span><span class="c1">// Adaptive Initialization variables</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_initialization_mode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="kt">size_t</span><span class="w"> </span><span class="n">m_check_iterations</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">50</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">m_initialization_start_scaling_factor</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_initialization_mode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">size_t</span><span class="w"> </span><span class="n">m_check_iterations</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">50</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">m_initialization_start_scaling_factor</span><span class="p">;</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">ResetTimeStepVectors</span><span class="p">();</span><span class="w"></span>
-<span class="p">};</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">ResetTimeStepVectors</span><span class="p">();</span>
+<span class="p">};</span>
 
 
 <span class="p">}</span><span class="w"> </span><span class="c1">// end namespace</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkParticleGradientDescentPositionOptimizer.txx&quot;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkParticleGradientDescentPositionOptimizer.txx&quot;</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:16 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:23 +0000</p>
 
               
             </article>

@@ -2549,8 +2549,8 @@
 <span class="cp">#pragma once</span>
 <span class="cp">#endif </span><span class="c1">// _MSC_VER &gt; 1000</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;assert.h&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;math3d.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;assert.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;math3d.h&quot;</span>
 
 <span class="c1">//-----------------------------------------------------------------------------</span>
 <span class="c1">// FE State Flags</span>
@@ -2561,44 +2561,44 @@
 <span class="c1">// The FEItem class is the base class for all FEMesh items. It stores the </span>
 <span class="c1">// common attributes such as the state flags and the group ID.</span>
 <span class="c1">//</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">FEItem</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="k">public</span><span class="o">:</span><span class="w"></span>
-<span class="w">    </span><span class="n">FEItem</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FE_VISIBLE</span><span class="p">;</span><span class="w"> </span><span class="n">m_gid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FEItem</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="n">FEItem</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FE_VISIBLE</span><span class="p">;</span><span class="w"> </span><span class="n">m_gid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">IsVisible</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="p">((</span><span class="n">m_state</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">FE_VISIBLE</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">IsSelected</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="p">((</span><span class="n">m_state</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">FE_SELECTED</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">IsVisible</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="p">((</span><span class="n">m_state</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">FE_VISIBLE</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">IsSelected</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="p">((</span><span class="n">m_state</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">FE_SELECTED</span><span class="p">)</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
 
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">Select</span><span class="p">()</span><span class="w">   </span><span class="p">{</span><span class="w"> </span><span class="n">m_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m_state</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">FE_SELECTED</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">UnSelect</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m_state</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="o">~</span><span class="n">FE_SELECTED</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">Show</span><span class="w">  </span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m_state</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">FE_VISIBLE</span><span class="p">;</span><span class="w">  </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">Hide</span><span class="w">  </span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w">  </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">Select</span><span class="p">()</span><span class="w">   </span><span class="p">{</span><span class="w"> </span><span class="n">m_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m_state</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">FE_SELECTED</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">UnSelect</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m_state</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="o">~</span><span class="n">FE_SELECTED</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">Show</span><span class="w">  </span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">m_state</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">FE_VISIBLE</span><span class="p">;</span><span class="w">  </span><span class="p">}</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">Hide</span><span class="w">  </span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w">  </span><span class="p">}</span>
 
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">GetFEState</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_state</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">SetFEState</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">GetFEState</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_state</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">SetFEState</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">state</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">state</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 
-<span class="k">public</span><span class="o">:</span><span class="w"></span>
+<span class="k">public</span><span class="o">:</span>
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">m_ntag</span><span class="p">;</span><span class="w"> </span><span class="c1">// tag of item</span>
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">m_gid</span><span class="p">;</span><span class="w">  </span><span class="c1">// group id</span>
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">m_nid</span><span class="p">;</span><span class="w">  </span><span class="c1">// item id (used e.g. in export).</span>
 <span class="w">    </span><span class="c1">//double    m_ndata;        //scalar data associated with a node</span>
-<span class="k">private</span><span class="o">:</span><span class="w"></span>
+<span class="k">private</span><span class="o">:</span>
 <span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">m_state</span><span class="p">;</span><span class="w">   </span><span class="c1">// the state flag of the mesh(-item)</span>
-<span class="p">};</span><span class="w"></span>
+<span class="p">};</span>
 
 <span class="c1">//-----------------------------------------------------------------------------</span>
 <span class="c1">// The FENode class stores the nodal data.</span>
 <span class="c1">//</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">FENode</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">FEItem</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="k">public</span><span class="o">:</span><span class="w"></span>
-<span class="w">    </span><span class="n">FENode</span><span class="p">(){</span><span class="w"> </span><span class="n">m_bext</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FENode</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">FEItem</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="n">FENode</span><span class="p">(){</span><span class="w"> </span><span class="n">m_bext</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 
-<span class="k">public</span><span class="o">:</span><span class="w"></span>
+<span class="k">public</span><span class="o">:</span>
 <span class="w">    </span><span class="n">vec3d</span><span class="w">   </span><span class="n">r</span><span class="p">;</span><span class="w">              </span><span class="c1">// nodal position</span>
 <span class="w">    </span><span class="kt">bool</span><span class="w">    </span><span class="n">m_bext</span><span class="p">;</span><span class="w">         </span><span class="c1">// exterior node or not?</span>
-<span class="w">    </span><span class="kt">double</span><span class="w">  </span><span class="n">m_ndata</span><span class="p">;</span><span class="w"></span>
-<span class="p">};</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w">  </span><span class="n">m_ndata</span><span class="p">;</span>
+<span class="p">};</span>
 
 <span class="c1">//-----------------------------------------------------------------------------</span>
 <span class="c1">// The FEEdge class stores the edge data.</span>
@@ -2610,25 +2610,25 @@
 <span class="c1">//   1         3          2</span>
 <span class="c1">//   +---------o----------+</span>
 <span class="c1">//</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">FEEdge</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">FEItem</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="k">public</span><span class="o">:</span><span class="w"></span>
-<span class="w">    </span><span class="k">enum</span><span class="w"> </span><span class="p">{</span><span class="n">MAX_NODES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">};</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FEEdge</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">FEItem</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="k">enum</span><span class="w"> </span><span class="p">{</span><span class="n">MAX_NODES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">};</span>
 
-<span class="k">public</span><span class="o">:</span><span class="w"></span>
-<span class="w">    </span><span class="n">FEEdge</span><span class="p">();</span><span class="w"></span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="n">FEEdge</span><span class="p">();</span>
 
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">FEEdge</span><span class="o">&amp;</span><span class="w"> </span><span class="n">e</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">FEEdge</span><span class="o">&amp;</span><span class="w"> </span><span class="n">e</span><span class="p">);</span>
 
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">Nodes</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">n</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">-1</span><span class="o">?</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mi">3</span><span class="p">);</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">Nodes</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">n</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">-1</span><span class="o">?</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mi">3</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
 
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">FindNode</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">node</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">FindNode</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">node</span><span class="p">);</span>
 
-<span class="k">public</span><span class="o">:</span><span class="w"></span>
+<span class="k">public</span><span class="o">:</span>
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">[</span><span class="n">MAX_NODES</span><span class="p">];</span><span class="w">   </span>
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">m_elem</span><span class="p">;</span><span class="w">         </span>
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">m_nbr</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span><span class="w">       </span>
-<span class="p">};</span><span class="w"></span>
+<span class="p">};</span>
 
 <span class="c1">//-----------------------------------------------------------------------------</span>
 <span class="c1">// FEFace class stores face data. </span>
@@ -2648,31 +2648,31 @@
 <span class="c1">//   +-------o-------+      +--o--+</span>
 <span class="c1">//   1       5       2      1  4  2</span>
 <span class="c1">//</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">FEFace</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">FEItem</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="k">public</span><span class="o">:</span><span class="w"></span>
-<span class="w">    </span><span class="k">enum</span><span class="w"> </span><span class="p">{</span><span class="n">MAX_NODES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">9</span><span class="p">};</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FEFace</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">FEItem</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="k">enum</span><span class="w"> </span><span class="p">{</span><span class="n">MAX_NODES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">9</span><span class="p">};</span>
 
-<span class="k">public</span><span class="o">:</span><span class="w"></span>
-<span class="w">    </span><span class="n">FEFace</span><span class="p">();</span><span class="w"></span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="n">FEFace</span><span class="p">();</span>
 
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">FEFace</span><span class="o">&amp;</span><span class="w"> </span><span class="n">f</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">FEFace</span><span class="o">&amp;</span><span class="w"> </span><span class="n">f</span><span class="p">);</span>
 
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">Nodes</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_nodes</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">Nodes</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_nodes</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">Edges</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">Edges</span><span class="p">();</span>
 
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">GetEdgeNodes</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="o">*</span><span class="w"> </span><span class="n">n</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">GetEdgeNodes</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="o">*</span><span class="w"> </span><span class="n">n</span><span class="p">);</span>
 
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="nf">HasEdge</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">n1</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">n2</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="nf">HasEdge</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">n1</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">n2</span><span class="p">);</span>
 
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="nf">HasNode</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="nf">HasNode</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">);</span>
 
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">FindNode</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">FindNode</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">);</span>
 
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="nf">IsExternal</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">m_elem</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">-1</span><span class="p">);</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="nf">IsExternal</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">m_elem</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">-1</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
 
-<span class="k">public</span><span class="o">:</span><span class="w"></span>
+<span class="k">public</span><span class="o">:</span>
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">[</span><span class="n">MAX_NODES</span><span class="p">];</span><span class="w">   </span>
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">m_nodes</span><span class="p">;</span><span class="w">        </span>
 
@@ -2683,7 +2683,7 @@
 <span class="w">    </span><span class="kt">int</span><span class="w">     </span><span class="n">m_sid</span><span class="p">;</span><span class="w">              </span>
 
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">m_elem</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span><span class="w">  </span>
-<span class="p">};</span><span class="w"></span>
+<span class="p">};</span>
 
 <span class="c1">//-----------------------------------------------------------------------------</span>
 <span class="c1">// element types</span>
@@ -2707,109 +2707,109 @@
 <span class="c1">//-----------------------------------------------------------------------------</span>
 <span class="c1">// The FEElement_ class defines the data interface to the element data. </span>
 <span class="c1">// Specialized element classes are then defined by deriving from this base class.</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">FEElement_</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">FEItem</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="k">public</span><span class="o">:</span><span class="w"></span>
-<span class="w">    </span><span class="n">FEElement_</span><span class="p">();</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FEElement_</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">FEItem</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="n">FEElement_</span><span class="p">();</span>
 
 <span class="w">    </span><span class="c1">// comparison operator</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="nf">is_equal</span><span class="p">(</span><span class="n">FEElement_</span><span class="o">&amp;</span><span class="w"> </span><span class="n">e</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="nf">is_equal</span><span class="p">(</span><span class="n">FEElement_</span><span class="o">&amp;</span><span class="w"> </span><span class="n">e</span><span class="p">);</span>
 
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">GetType</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_ntype</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">GetType</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_ntype</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="nf">IsType</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">ntype</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_ntype</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ntype</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="nf">IsType</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">ntype</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_ntype</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ntype</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">Nodes</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_nodes</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">Nodes</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_nodes</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">Faces</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_nfaces</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">Faces</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_nfaces</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">Edges</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_nedges</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">Edges</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_nedges</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">GetFace</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="o">*</span><span class="w"> </span><span class="n">n</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="nf">GetFace</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="o">*</span><span class="w"> </span><span class="n">n</span><span class="p">);</span>
 
-<span class="w">    </span><span class="n">FEFace</span><span class="w"> </span><span class="nf">GetFace</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">FEFace</span><span class="w"> </span><span class="nf">GetFace</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">);</span>
 
-<span class="w">    </span><span class="n">FEFace</span><span class="w"> </span><span class="nf">GetShellFace</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="n">FEFace</span><span class="w"> </span><span class="nf">GetShellFace</span><span class="p">();</span>
 
-<span class="w">    </span><span class="n">FEEdge</span><span class="w"> </span><span class="nf">GetEdge</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">FEEdge</span><span class="w"> </span><span class="nf">GetEdge</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">);</span>
 
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="nf">IsExterior</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="nf">IsExterior</span><span class="p">();</span>
 
-<span class="k">protected</span><span class="o">:</span><span class="w"></span>
+<span class="k">protected</span><span class="o">:</span>
 <span class="w">    </span><span class="c1">// help class for copy-ing element data</span>
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">copy</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">FEElement_</span><span class="o">&amp;</span><span class="w"> </span><span class="n">el</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">copy</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">FEElement_</span><span class="o">&amp;</span><span class="w"> </span><span class="n">el</span><span class="p">);</span>
 
-<span class="k">public</span><span class="o">:</span><span class="w"></span>
+<span class="k">public</span><span class="o">:</span>
 <span class="w">    </span><span class="c1">// Check the element class</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">IsSolid</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">m_ntype</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">FE_HEX8</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="p">(</span><span class="n">m_ntype</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">FE_HEX20</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="p">(</span><span class="n">m_ntype</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">FE_HEX27</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="p">(</span><span class="n">m_ntype</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">FE_PENTA6</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="p">(</span><span class="n">m_ntype</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">FE_TET4</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="p">(</span><span class="n">m_ntype</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">FE_TET10</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="p">(</span><span class="n">m_ntype</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">FE_TET15</span><span class="p">);</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">IsShell</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">m_ntype</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">FE_TRI3</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="p">(</span><span class="n">m_ntype</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">FE_QUAD4</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="p">(</span><span class="n">m_ntype</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">FE_TRI6</span><span class="p">);</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">IsBeam</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">m_ntype</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">FE_BEAM2</span><span class="p">);</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">IsSolid</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">m_ntype</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">FE_HEX8</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="p">(</span><span class="n">m_ntype</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">FE_HEX20</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="p">(</span><span class="n">m_ntype</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">FE_HEX27</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="p">(</span><span class="n">m_ntype</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">FE_PENTA6</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="p">(</span><span class="n">m_ntype</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">FE_TET4</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="p">(</span><span class="n">m_ntype</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">FE_TET10</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="p">(</span><span class="n">m_ntype</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">FE_TET15</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">IsShell</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">m_ntype</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">FE_TRI3</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="p">(</span><span class="n">m_ntype</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">FE_QUAD4</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="p">(</span><span class="n">m_ntype</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">FE_TRI6</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">IsBeam</span><span class="w"> </span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">m_ntype</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">FE_BEAM2</span><span class="p">);</span><span class="w"> </span><span class="p">}</span>
 
-<span class="k">public</span><span class="o">:</span><span class="w"></span>
+<span class="k">public</span><span class="o">:</span>
 <span class="w">    </span><span class="kt">int</span><span class="o">*</span><span class="w">        </span><span class="n">m_node</span><span class="p">;</span><span class="w">     </span>
 <span class="w">    </span><span class="kt">int</span><span class="o">*</span><span class="w">        </span><span class="n">m_nbr</span><span class="p">;</span><span class="w">      </span>
 <span class="w">    </span><span class="kt">int</span><span class="o">*</span><span class="w">        </span><span class="n">m_face</span><span class="p">;</span><span class="w">     </span>
 <span class="w">    </span><span class="kt">double</span><span class="o">*</span><span class="w">     </span><span class="n">m_h</span><span class="p">;</span><span class="w">        </span>
 
-<span class="k">public</span><span class="o">:</span><span class="w"></span>
+<span class="k">public</span><span class="o">:</span>
 <span class="w">    </span><span class="n">vec3d</span><span class="w">   </span><span class="n">m_fiber</span><span class="p">;</span><span class="w">    </span>
 <span class="w">    </span><span class="n">mat3d</span><span class="w">   </span><span class="n">m_Q</span><span class="p">;</span><span class="w">        </span>
 <span class="w">    </span><span class="kt">bool</span><span class="w">    </span><span class="n">m_Qactive</span><span class="p">;</span><span class="w">  </span>
 <span class="w">    </span><span class="kt">double</span><span class="w">  </span><span class="n">m_a0</span><span class="p">;</span><span class="w">       </span>
 
-<span class="k">protected</span><span class="o">:</span><span class="w"></span>
+<span class="k">protected</span><span class="o">:</span>
 <span class="w">    </span><span class="kt">int</span><span class="w">     </span><span class="n">m_ntype</span><span class="p">;</span><span class="w">    </span>
 <span class="w">    </span><span class="kt">int</span><span class="w">     </span><span class="n">m_nodes</span><span class="p">;</span><span class="w">    </span>
 <span class="w">    </span><span class="kt">int</span><span class="w">     </span><span class="n">m_nfaces</span><span class="p">;</span><span class="w">   </span>
 <span class="w">    </span><span class="kt">int</span><span class="w">     </span><span class="n">m_nedges</span><span class="p">;</span><span class="w">   </span>
-<span class="p">};</span><span class="w"></span>
+<span class="p">};</span>
 
 <span class="c1">//-----------------------------------------------------------------------------</span>
 <span class="c1">// Class for 3-node triangular elements</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">FETri3</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">FEElement_</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="k">public</span><span class="o">:</span><span class="w"></span>
-<span class="w">    </span><span class="n">FETri3</span><span class="p">();</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FETri3</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">FEElement_</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="n">FETri3</span><span class="p">();</span>
 
-<span class="w">    </span><span class="n">FETri3</span><span class="p">(</span><span class="n">FETri3</span><span class="o">&amp;</span><span class="w"> </span><span class="n">el</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">FETri3</span><span class="p">(</span><span class="n">FETri3</span><span class="o">&amp;</span><span class="w"> </span><span class="n">el</span><span class="p">);</span>
 
-<span class="w">    </span><span class="n">FETri3</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">FETri3</span><span class="o">&amp;</span><span class="w"> </span><span class="n">el</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">FETri3</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">FETri3</span><span class="o">&amp;</span><span class="w"> </span><span class="n">el</span><span class="p">);</span>
 
-<span class="k">private</span><span class="o">:</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w">     </span><span class="n">_node</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w">     </span><span class="n">_nbr</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w">     </span><span class="n">_face</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w">  </span><span class="n">_h</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span><span class="w"></span>
-<span class="p">};</span><span class="w"></span>
+<span class="k">private</span><span class="o">:</span>
+<span class="w">    </span><span class="kt">int</span><span class="w">     </span><span class="n">_node</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span>
+<span class="w">    </span><span class="kt">int</span><span class="w">     </span><span class="n">_nbr</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span>
+<span class="w">    </span><span class="kt">int</span><span class="w">     </span><span class="n">_face</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+<span class="w">    </span><span class="kt">double</span><span class="w">  </span><span class="n">_h</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span>
+<span class="p">};</span>
 
 <span class="c1">//-----------------------------------------------------------------------------</span>
 <span class="c1">// The FEElement class can be used to represent a general purpose element. </span>
 <span class="c1">// This class can represent an element of all different types. </span>
-<span class="k">class</span><span class="w"> </span><span class="nc">FEElement</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">FEElement_</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="k">public</span><span class="o">:</span><span class="w"></span>
-<span class="w">    </span><span class="k">enum</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">MAX_NODES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">27</span><span class="w"> </span><span class="p">};</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FEElement</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">FEElement_</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="k">enum</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">MAX_NODES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">27</span><span class="w"> </span><span class="p">};</span>
 
-<span class="k">public</span><span class="o">:</span><span class="w"></span>
-<span class="w">    </span><span class="n">FEElement</span><span class="p">();</span><span class="w"></span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="n">FEElement</span><span class="p">();</span>
 
-<span class="w">    </span><span class="n">FEElement</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">FEElement</span><span class="o">&amp;</span><span class="w"> </span><span class="n">el</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">FEElement</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">FEElement</span><span class="o">&amp;</span><span class="w"> </span><span class="n">el</span><span class="p">);</span>
 
-<span class="w">    </span><span class="n">FEElement</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">FEElement</span><span class="o">&amp;</span><span class="w"> </span><span class="n">el</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">FEElement</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">FEElement</span><span class="o">&amp;</span><span class="w"> </span><span class="n">el</span><span class="p">);</span>
 
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetType</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">ntype</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetType</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">ntype</span><span class="p">);</span>
 
-<span class="k">private</span><span class="o">:</span><span class="w"></span>
+<span class="k">private</span><span class="o">:</span>
 <span class="w">    </span><span class="kt">int</span><span class="w">     </span><span class="n">_node</span><span class="p">[</span><span class="n">MAX_NODES</span><span class="p">];</span><span class="w">   </span>
 <span class="w">    </span><span class="kt">int</span><span class="w">     </span><span class="n">_nbr</span><span class="p">[</span><span class="mi">6</span><span class="p">];</span><span class="w">            </span>
 <span class="w">    </span><span class="kt">int</span><span class="w">     </span><span class="n">_face</span><span class="p">[</span><span class="mi">6</span><span class="p">];</span><span class="w">           </span>
 <span class="w">    </span><span class="kt">double</span><span class="w">  </span><span class="n">_h</span><span class="p">[</span><span class="mi">9</span><span class="p">];</span><span class="w">              </span>
-<span class="p">};</span><span class="w"></span>
+<span class="p">};</span>
 
 <span class="cp">#endif </span><span class="c1">// !defined(AFX_FEELEMENT_H__4A869671_045F_4EDD_AC13_25C849922373__INCLUDED_)</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:15 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:23 +0000</p>
 
               
             </article>

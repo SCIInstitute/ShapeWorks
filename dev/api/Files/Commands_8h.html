@@ -2259,110 +2259,110 @@
 <h2 id="source-code">Source code</h2>
 <div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Command.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Command.h&quot;</span>
 
-<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
 
 <span class="c1">// Image Commands</span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">ReadImage</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">WriteImage</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">ImageInfo</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">Antialias</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">ResampleImage</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">ResizeImage</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">RecenterImage</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">PadImage</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">TranslateImage</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">ScaleImage</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">Rotate</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">ExtractLabel</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">CloseHoles</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">Binarize</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">ComputeDT</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">CurvatureFilter</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">GradientFilter</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">SigmoidFilter</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">TPLevelSetFilter</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">TopologyPreservingFilter</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">IntensityFilter</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">Blur</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">BoundingBoxImage</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">ImageBounds</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">CropImage</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">ICPRigid</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">ClipImage</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">ReflectImage</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">SetOrigin</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">SetSpacing</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">WarpImage</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">CompareImage</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">NegateImage</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">AddImage</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">SubtractImage</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">MultiplyImage</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">DivideImage</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">ImageToMesh</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">SetRegion</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">Isolate</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span><span class="w"></span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">ReadImage</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">WriteImage</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">ImageInfo</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">Antialias</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">ResampleImage</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">ResizeImage</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">RecenterImage</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">PadImage</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">TranslateImage</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">ScaleImage</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">Rotate</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">ExtractLabel</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">CloseHoles</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">Binarize</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">ComputeDT</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">CurvatureFilter</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">GradientFilter</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">SigmoidFilter</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">TPLevelSetFilter</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">TopologyPreservingFilter</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">IntensityFilter</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">Blur</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">BoundingBoxImage</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">ImageBounds</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">CropImage</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">ICPRigid</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">ClipImage</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">ReflectImage</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">SetOrigin</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">SetSpacing</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">WarpImage</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">CompareImage</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">NegateImage</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">AddImage</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">SubtractImage</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">MultiplyImage</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">DivideImage</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">ImageToMesh</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">SetRegion</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">Isolate</span><span class="p">,</span><span class="w"> </span><span class="n">ImageCommand</span><span class="p">);</span>
 
 <span class="c1">// Particle System Commands</span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">ReadParticleSystem</span><span class="p">,</span><span class="w"> </span><span class="n">ParticleSystemCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">Compactness</span><span class="p">,</span><span class="w"> </span><span class="n">ParticleSystemCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">Generalization</span><span class="p">,</span><span class="w"> </span><span class="n">ParticleSystemCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">Specificity</span><span class="p">,</span><span class="w"> </span><span class="n">ParticleSystemCommand</span><span class="p">);</span><span class="w"></span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">ReadParticleSystem</span><span class="p">,</span><span class="w"> </span><span class="n">ParticleSystemCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">Compactness</span><span class="p">,</span><span class="w"> </span><span class="n">ParticleSystemCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">Generalization</span><span class="p">,</span><span class="w"> </span><span class="n">ParticleSystemCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">Specificity</span><span class="p">,</span><span class="w"> </span><span class="n">ParticleSystemCommand</span><span class="p">);</span>
 
 <span class="c1">// Mesh Commands</span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">ReadMesh</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">WriteMesh</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">MeshInfo</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">Coverage</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">Smooth</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">SmoothSinc</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">Remesh</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">RemeshPercent</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">InvertNormals</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">ReflectMesh</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">TransformMesh</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">FillHoles</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">ProbeVolume</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">ClipMesh</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">TranslateMesh</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">ScaleMesh</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">BoundingBoxMesh</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">MeshBounds</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">Distance</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">ComputeNormals</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">SetField</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">GetField</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">SetFieldValue</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">GetFieldValue</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">FieldRange</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">FieldMean</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">FieldStd</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">FieldNames</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">FixElement</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">ClipClosedSurface</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">ClosestPoint</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">GeodesicDistance</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">GeodesicDistanceToLandmark</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">MeanNormals</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">Curvature</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">MeshToImage</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">MeshToDT</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">CompareMesh</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">WarpMesh</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span><span class="w"></span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">ReadMesh</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">WriteMesh</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">MeshInfo</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">Coverage</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">Smooth</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">SmoothSinc</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">Remesh</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">RemeshPercent</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">InvertNormals</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">ReflectMesh</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">TransformMesh</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">FillHoles</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">ProbeVolume</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">ClipMesh</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">TranslateMesh</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">ScaleMesh</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">BoundingBoxMesh</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">MeshBounds</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">Distance</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">ComputeNormals</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">SetField</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">GetField</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">SetFieldValue</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">GetFieldValue</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">FieldRange</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">FieldMean</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">FieldStd</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">FieldNames</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">FixElement</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">ClipClosedSurface</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">ClosestPoint</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">GeodesicDistance</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">GeodesicDistanceToLandmark</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">MeanNormals</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">Curvature</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">MeshToImage</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">MeshToDT</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">CompareMesh</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">WarpMesh</span><span class="p">,</span><span class="w"> </span><span class="n">MeshCommand</span><span class="p">);</span>
 
 <span class="c1">// Misc Commands</span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">Seed</span><span class="p">,</span><span class="w"> </span><span class="n">ShapeworksCommand</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">OptimizeCommand</span><span class="p">,</span><span class="w"> </span><span class="n">OptimizeCommandGroup</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">GroomCommand</span><span class="p">,</span><span class="w"> </span><span class="n">GroomCommandGroup</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">AnalyzeCommand</span><span class="p">,</span><span class="w"> </span><span class="n">AnalyzeCommandGroup</span><span class="p">);</span><span class="w"></span>
-<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">ConvertProjectCommand</span><span class="p">,</span><span class="w"> </span><span class="n">ProjectCommandGroup</span><span class="p">);</span><span class="w"></span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">Seed</span><span class="p">,</span><span class="w"> </span><span class="n">ShapeworksCommand</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">OptimizeCommand</span><span class="p">,</span><span class="w"> </span><span class="n">OptimizeCommandGroup</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">GroomCommand</span><span class="p">,</span><span class="w"> </span><span class="n">GroomCommandGroup</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">AnalyzeCommand</span><span class="p">,</span><span class="w"> </span><span class="n">AnalyzeCommandGroup</span><span class="p">);</span>
+<span class="n">COMMAND_DECLARE</span><span class="p">(</span><span class="n">ConvertProjectCommand</span><span class="p">,</span><span class="w"> </span><span class="n">ProjectCommandGroup</span><span class="p">);</span>
 
 <span class="p">}</span><span class="w"> </span><span class="c1">// shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:15 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:22 +0000</p>
 
               
             </article>

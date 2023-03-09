@@ -2431,48 +2431,48 @@
 </tbody>
 </table>
 <h2 id="detailed-description">Detailed Description</h2>
-<div class="highlight"><pre><span></span><code><span class="k">struct</span><span class="w"> </span><span class="nc">itk</span><span class="o">::</span><span class="n">ParticleRegionNeighborhood</span><span class="o">::</span><span class="n">IteratorNodePair</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">struct</span><span class="w"> </span><span class="nc">itk</span><span class="o">::</span><span class="n">ParticleRegionNeighborhood</span><span class="o">::</span><span class="n">IteratorNodePair</span><span class="p">;</span>
 </code></pre></div>
 <p>Map for direct reference of PointIndexPairs and Tree nodes from the PointTree. This is used for fast removal or modification of point values. </p>
 <h2 id="public-types-documentation">Public Types Documentation</h2>
 <h3 id="typedef-nodepointertype">typedef NodePointerType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">PointTreeType</span><span class="o">::</span><span class="n">NodePointerType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleRegionNeighborhood</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">IteratorNodePair</span><span class="o">::</span><span class="n">NodePointerType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">PointTreeType</span><span class="o">::</span><span class="n">NodePointerType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleRegionNeighborhood</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">IteratorNodePair</span><span class="o">::</span><span class="n">NodePointerType</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="typedef-iteratortype">typedef IteratorType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">PointTreeType</span><span class="o">::</span><span class="n">PointListType</span><span class="o">::</span><span class="n">iterator</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleRegionNeighborhood</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">IteratorNodePair</span><span class="o">::</span><span class="n">IteratorType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">PointTreeType</span><span class="o">::</span><span class="n">PointListType</span><span class="o">::</span><span class="n">iterator</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleRegionNeighborhood</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">IteratorNodePair</span><span class="o">::</span><span class="n">IteratorType</span><span class="p">;</span>
 </code></pre></div>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-iteratornodepair">function IteratorNodePair</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">IteratorNodePair</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">IteratorNodePair</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-iteratornodepair_1">function ~IteratorNodePair</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="o">~</span><span class="n">IteratorNodePair</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="o">~</span><span class="n">IteratorNodePair</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-iteratornodepair_2">function IteratorNodePair</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">IteratorNodePair</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">IteratorType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">p</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">NodePointerType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">n</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">IteratorNodePair</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">IteratorType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">p</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">NodePointerType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">n</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-iteratornodepair_3">function IteratorNodePair</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">IteratorNodePair</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">IteratorNodePair</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">o</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">IteratorNodePair</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">IteratorNodePair</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">o</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-operator">function operator=</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">IteratorNodePair</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">IteratorNodePair</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">o</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">IteratorNodePair</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">IteratorNodePair</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">o</span>
+<span class="p">)</span>
 </code></pre></div>
 <h2 id="public-attributes-documentation">Public Attributes Documentation</h2>
 <h3 id="variable-iterator">variable Iterator</h3>
-<div class="highlight"><pre><span></span><code><span class="n">IteratorType</span><span class="w"> </span><span class="n">Iterator</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">IteratorType</span><span class="w"> </span><span class="n">Iterator</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="variable-nodepointer">variable NodePointer</h3>
-<div class="highlight"><pre><span></span><code><span class="n">NodePointerType</span><span class="w"> </span><span class="n">NodePointer</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">NodePointerType</span><span class="w"> </span><span class="n">NodePointer</span><span class="p">;</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:14 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:20 +0000</p>
 
               
             </article>

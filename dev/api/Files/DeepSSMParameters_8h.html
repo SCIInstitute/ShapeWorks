@@ -2281,90 +2281,90 @@
 <h2 id="source-code">Source code</h2>
 <div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Project/Project.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Project/Project.h&gt;</span>
 
-<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
 
-<span class="k">class</span><span class="w"> </span><span class="nc">DeepSSMParameters</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DeepSSMParameters</span><span class="w"> </span><span class="p">{</span>
 
-<span class="w">  </span><span class="k">enum</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">SamplerTypeOption</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">gaussian</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">gaussian_mixture</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">kde</span><span class="w"></span>
-<span class="w">  </span><span class="p">};</span><span class="w"></span>
+<span class="w">  </span><span class="k">enum</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">SamplerTypeOption</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">gaussian</span><span class="p">,</span>
+<span class="w">    </span><span class="n">gaussian_mixture</span><span class="p">,</span>
+<span class="w">    </span><span class="n">kde</span>
+<span class="w">  </span><span class="p">};</span>
 
-<span class="k">public</span><span class="o">:</span><span class="w"></span>
+<span class="k">public</span><span class="o">:</span>
 
-<span class="w">  </span><span class="k">explicit</span><span class="w"> </span><span class="n">DeepSSMParameters</span><span class="p">(</span><span class="n">ProjectHandle</span><span class="w"> </span><span class="n">project</span><span class="p">);</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">save_to_project</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="k">explicit</span><span class="w"> </span><span class="n">DeepSSMParameters</span><span class="p">(</span><span class="n">ProjectHandle</span><span class="w"> </span><span class="n">project</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">save_to_project</span><span class="p">();</span>
 
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_aug_num_samples</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_aug_num_samples</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">num_samples</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_aug_num_samples</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_aug_num_samples</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">num_samples</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_aug_num_dims</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_aug_num_dims</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">num_dims</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_aug_num_dims</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_aug_num_dims</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">num_dims</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_training_num_dims</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_training_num_dims</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">num_dims</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_training_num_dims</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_training_num_dims</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">num_dims</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_aug_percent_variability</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_aug_percent_variability</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">percent_variability</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_aug_percent_variability</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_aug_percent_variability</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">percent_variability</span><span class="p">);</span>
 
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">get_aug_sampler_type</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_aug_sampler_type</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">sampler_type</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">get_aug_sampler_type</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_aug_sampler_type</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">sampler_type</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_training_epochs</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_training_epochs</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">epochs</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_training_epochs</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_training_epochs</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">epochs</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_training_learning_rate</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_training_learning_rate</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">rate</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_training_learning_rate</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_training_learning_rate</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">rate</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_training_decay_learning_rate</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_training_decay_learning_rate</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">decay</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_training_decay_learning_rate</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_training_decay_learning_rate</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">decay</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_training_fine_tuning</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_training_fine_tuning</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">fine_tuning</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_training_fine_tuning</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_training_fine_tuning</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">fine_tuning</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_training_fine_tuning_epochs</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_training_fine_tuning_epochs</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">epochs</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_training_fine_tuning_epochs</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_training_fine_tuning_epochs</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">epochs</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_training_fine_tuning_learning_rate</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_training_fine_tuning_learning_rate</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">rate</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_training_fine_tuning_learning_rate</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_training_fine_tuning_learning_rate</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">rate</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_training_batch_size</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_training_batch_size</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">batch_size</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_training_batch_size</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_training_batch_size</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">batch_size</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_training_split</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_training_split</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_training_split</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_training_split</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_validation_split</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_validation_split</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_validation_split</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_validation_split</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_testing_split</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_testing_split</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">get_testing_split</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_testing_split</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">value</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">restore_split_defaults</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">restore_augmentation_defaults</span><span class="p">();</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">restore_training_defaults</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">restore_split_defaults</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">restore_augmentation_defaults</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">restore_training_defaults</span><span class="p">();</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">restore_defaults</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">restore_defaults</span><span class="p">();</span>
 
 <span class="w">  </span><span class="c1">// constants</span>
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">DEEPSSM_SAMPLER_GAUSSIAN_C</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">DEEPSSM_SAMPLER_MIXTURE_C</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">DEEPSSM_SAMPLER_KDE_C</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">DEEPSSM_SAMPLER_GAUSSIAN_C</span><span class="p">;</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">DEEPSSM_SAMPLER_MIXTURE_C</span><span class="p">;</span>
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">DEEPSSM_SAMPLER_KDE_C</span><span class="p">;</span>
 
-<span class="k">private</span><span class="o">:</span><span class="w"></span>
+<span class="k">private</span><span class="o">:</span>
 
-<span class="w">  </span><span class="n">Parameters</span><span class="w"> </span><span class="n">params_</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="n">ProjectHandle</span><span class="w"> </span><span class="n">project_</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">Parameters</span><span class="w"> </span><span class="n">params_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">ProjectHandle</span><span class="w"> </span><span class="n">project_</span><span class="p">;</span>
 
-<span class="p">};</span><span class="w"></span>
+<span class="p">};</span>
 
-<span class="p">}</span><span class="w"></span>
+<span class="p">}</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:16 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:23 +0000</p>
 
               
             </article>

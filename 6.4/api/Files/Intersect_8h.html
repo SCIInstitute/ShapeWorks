@@ -2336,77 +2336,77 @@
 </table>
 <h2 id="functions-documentation">Functions Documentation</h2>
 <h3 id="function-intersecttriangle">function IntersectTriangle</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">IntersectTriangle</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Ray</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ray</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Triangle</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">tri</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">Intersection</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">q</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">evalNormal</span><span class="w"> </span><span class="o">=</span><span class="nb">true</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">IntersectTriangle</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Ray</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ray</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Triangle</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">tri</span><span class="p">,</span>
+<span class="w">    </span><span class="n">Intersection</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">q</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">evalNormal</span><span class="w"> </span><span class="o">=</span><span class="nb">true</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-intersectquad">function IntersectQuad</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">IntersectQuad</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Ray</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ray</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Quad</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">quad</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">Intersection</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">q</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">IntersectQuad</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Ray</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ray</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Quad</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">quad</span><span class="p">,</span>
+<span class="w">    </span><span class="n">Intersection</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">q</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-fastintersectquad">function FastIntersectQuad</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">FastIntersectQuad</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Ray</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ray</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Quad</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">quad</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">Intersection</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">q</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">FastIntersectQuad</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Ray</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ray</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Quad</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">quad</span><span class="p">,</span>
+<span class="w">    </span><span class="n">Intersection</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">q</span>
+<span class="p">)</span>
 </code></pre></div>
 <h2 id="source-code">Source code</h2>
 <div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;math3d.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;math3d.h&quot;</span>
 
 <span class="c1">// tools for finding intersections</span>
-<span class="k">struct</span><span class="w"> </span><span class="nc">Ray</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
+<span class="k">struct</span><span class="w"> </span><span class="nc">Ray</span>
+<span class="p">{</span>
 <span class="w">    </span><span class="n">vec3d</span><span class="w">   </span><span class="n">origin</span><span class="p">;</span><span class="w">         </span><span class="c1">// origin of ray</span>
 <span class="w">    </span><span class="n">vec3d</span><span class="w">   </span><span class="n">direction</span><span class="p">;</span><span class="w">      </span><span class="c1">// direction of ray (must be unit vector!)</span>
-<span class="p">};</span><span class="w"></span>
+<span class="p">};</span>
 
 <span class="c1">//-----------------------------------------------------------------------------</span>
-<span class="k">struct</span><span class="w"> </span><span class="nc">Intersection</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
+<span class="k">struct</span><span class="w"> </span><span class="nc">Intersection</span>
+<span class="p">{</span>
 <span class="w">    </span><span class="n">vec3d</span><span class="w">   </span><span class="n">point</span><span class="p">;</span><span class="w">          </span><span class="c1">// point of intersection</span>
 <span class="w">    </span><span class="kt">float</span><span class="w">   </span><span class="n">r</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span><span class="w">           </span><span class="c1">// natural coordinates</span>
 <span class="w">    </span><span class="kt">int</span><span class="w">     </span><span class="n">m_index</span><span class="p">;</span><span class="w">        </span><span class="c1">// index of item that was intersected (context dependent)</span>
 <span class="w">    </span><span class="kt">int</span><span class="w">     </span><span class="n">m_faceIndex</span><span class="p">;</span><span class="w">    </span><span class="c1">// index of face that was intersected (context dependent)</span>
-<span class="p">};</span><span class="w"></span>
+<span class="p">};</span>
 
 <span class="c1">//-----------------------------------------------------------------------------</span>
-<span class="k">struct</span><span class="w"> </span><span class="nc">Triangle</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">vec3d</span><span class="w">   </span><span class="n">r0</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="n">vec3d</span><span class="w">   </span><span class="n">r1</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="n">vec3d</span><span class="w">   </span><span class="n">r2</span><span class="p">;</span><span class="w"></span>
+<span class="k">struct</span><span class="w"> </span><span class="nc">Triangle</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">vec3d</span><span class="w">   </span><span class="n">r0</span><span class="p">;</span>
+<span class="w">    </span><span class="n">vec3d</span><span class="w">   </span><span class="n">r1</span><span class="p">;</span>
+<span class="w">    </span><span class="n">vec3d</span><span class="w">   </span><span class="n">r2</span><span class="p">;</span>
 <span class="w">    </span><span class="n">vec3d</span><span class="w">   </span><span class="n">fn</span><span class="p">;</span><span class="w"> </span><span class="c1">// face normal</span>
-<span class="p">};</span><span class="w"></span>
+<span class="p">};</span>
 
 <span class="c1">//-----------------------------------------------------------------------------</span>
-<span class="k">struct</span><span class="w"> </span><span class="nc">Quad</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">vec3d</span><span class="w">   </span><span class="n">r0</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="n">vec3d</span><span class="w">   </span><span class="n">r1</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="n">vec3d</span><span class="w">   </span><span class="n">r2</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="n">vec3d</span><span class="w">   </span><span class="n">r3</span><span class="p">;</span><span class="w"></span>
-<span class="p">};</span><span class="w"></span>
+<span class="k">struct</span><span class="w"> </span><span class="nc">Quad</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">vec3d</span><span class="w">   </span><span class="n">r0</span><span class="p">;</span>
+<span class="w">    </span><span class="n">vec3d</span><span class="w">   </span><span class="n">r1</span><span class="p">;</span>
+<span class="w">    </span><span class="n">vec3d</span><span class="w">   </span><span class="n">r2</span><span class="p">;</span>
+<span class="w">    </span><span class="n">vec3d</span><span class="w">   </span><span class="n">r3</span><span class="p">;</span>
+<span class="p">};</span>
 
 <span class="c1">//-----------------------------------------------------------------------------</span>
 <span class="c1">// Find intersection of a ray with a triangle</span>
 <span class="c1">// To evaluate the normal automatically, set evalNormal to true. Otherwise, the normal in Triangle is used</span>
-<span class="kt">bool</span><span class="w"> </span><span class="nf">IntersectTriangle</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Ray</span><span class="o">&amp;</span><span class="w"> </span><span class="n">ray</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Triangle</span><span class="o">&amp;</span><span class="w"> </span><span class="n">tri</span><span class="p">,</span><span class="w"> </span><span class="n">Intersection</span><span class="o">&amp;</span><span class="w"> </span><span class="n">q</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">evalNormal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">);</span><span class="w"></span>
+<span class="kt">bool</span><span class="w"> </span><span class="nf">IntersectTriangle</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Ray</span><span class="o">&amp;</span><span class="w"> </span><span class="n">ray</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Triangle</span><span class="o">&amp;</span><span class="w"> </span><span class="n">tri</span><span class="p">,</span><span class="w"> </span><span class="n">Intersection</span><span class="o">&amp;</span><span class="w"> </span><span class="n">q</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">evalNormal</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">);</span>
 
 <span class="c1">//-----------------------------------------------------------------------------</span>
 <span class="c1">// Find intersection of a ray with a quad</span>
-<span class="kt">bool</span><span class="w"> </span><span class="nf">IntersectQuad</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Ray</span><span class="o">&amp;</span><span class="w"> </span><span class="n">ray</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Quad</span><span class="o">&amp;</span><span class="w"> </span><span class="n">quad</span><span class="p">,</span><span class="w"> </span><span class="n">Intersection</span><span class="o">&amp;</span><span class="w"> </span><span class="n">q</span><span class="p">);</span><span class="w"></span>
-<span class="kt">bool</span><span class="w"> </span><span class="nf">FastIntersectQuad</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Ray</span><span class="o">&amp;</span><span class="w"> </span><span class="n">ray</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Quad</span><span class="o">&amp;</span><span class="w"> </span><span class="n">quad</span><span class="p">,</span><span class="w"> </span><span class="n">Intersection</span><span class="o">&amp;</span><span class="w"> </span><span class="n">q</span><span class="p">);</span><span class="w"></span>
+<span class="kt">bool</span><span class="w"> </span><span class="nf">IntersectQuad</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Ray</span><span class="o">&amp;</span><span class="w"> </span><span class="n">ray</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Quad</span><span class="o">&amp;</span><span class="w"> </span><span class="n">quad</span><span class="p">,</span><span class="w"> </span><span class="n">Intersection</span><span class="o">&amp;</span><span class="w"> </span><span class="n">q</span><span class="p">);</span>
+<span class="kt">bool</span><span class="w"> </span><span class="nf">FastIntersectQuad</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Ray</span><span class="o">&amp;</span><span class="w"> </span><span class="n">ray</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Quad</span><span class="o">&amp;</span><span class="w"> </span><span class="n">quad</span><span class="p">,</span><span class="w"> </span><span class="n">Intersection</span><span class="o">&amp;</span><span class="w"> </span><span class="n">q</span><span class="p">);</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:16 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:23 +0000</p>
 
               
             </article>

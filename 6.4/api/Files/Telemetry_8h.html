@@ -2281,44 +2281,44 @@
 <h2 id="source-code">Source code</h2>
 <div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/Preferences.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/Preferences.h&gt;</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QNetworkAccessManager&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QNetworkAccessManager&gt;</span>
 
 
-<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
 
-<span class="k">class</span><span class="w"> </span><span class="nc">Telemetry</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">QObject</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">  </span><span class="n">Q_OBJECT</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Telemetry</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">QObject</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">Q_OBJECT</span>
 
-<span class="w"> </span><span class="k">public</span><span class="o">:</span><span class="w"></span>
-<span class="w">  </span><span class="n">Telemetry</span><span class="p">(</span><span class="n">Preferences</span><span class="o">&amp;</span><span class="w"> </span><span class="n">prefs</span><span class="p">);</span><span class="w"></span>
+<span class="w"> </span><span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="n">Telemetry</span><span class="p">(</span><span class="n">Preferences</span><span class="o">&amp;</span><span class="w"> </span><span class="n">prefs</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">record_event</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">QString</span><span class="o">&amp;</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">QVariantMap</span><span class="o">&amp;</span><span class="w"> </span><span class="n">params</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">record_event</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">QString</span><span class="o">&amp;</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">QVariantMap</span><span class="o">&amp;</span><span class="w"> </span><span class="n">params</span><span class="p">);</span>
 
-<span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Q_SLOTS</span><span class="o">:</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">handle_network_reply</span><span class="p">(</span><span class="n">QNetworkReply</span><span class="o">*</span><span class="w"> </span><span class="n">reply</span><span class="p">);</span><span class="w"></span>
+<span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Q_SLOTS</span><span class="o">:</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">handle_network_reply</span><span class="p">(</span><span class="n">QNetworkReply</span><span class="o">*</span><span class="w"> </span><span class="n">reply</span><span class="p">);</span>
 
-<span class="w"> </span><span class="k">private</span><span class="o">:</span><span class="w"></span>
-<span class="w">  </span><span class="n">QString</span><span class="w"> </span><span class="n">create_event</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">QString</span><span class="o">&amp;</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">QVariantMap</span><span class="o">&amp;</span><span class="w"> </span><span class="n">params</span><span class="p">);</span><span class="w"></span>
+<span class="w"> </span><span class="k">private</span><span class="o">:</span>
+<span class="w">  </span><span class="n">QString</span><span class="w"> </span><span class="n">create_event</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">QString</span><span class="o">&amp;</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">QVariantMap</span><span class="o">&amp;</span><span class="w"> </span><span class="n">params</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">send_event</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">QString</span><span class="o">&amp;</span><span class="w"> </span><span class="n">event</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">send_event</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">QString</span><span class="o">&amp;</span><span class="w"> </span><span class="n">event</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">store_event</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">QString</span><span class="o">&amp;</span><span class="w"> </span><span class="n">event</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">store_event</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">QString</span><span class="o">&amp;</span><span class="w"> </span><span class="n">event</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
 
-<span class="w">  </span><span class="n">QNetworkAccessManager</span><span class="w"> </span><span class="n">network_</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">QNetworkAccessManager</span><span class="w"> </span><span class="n">network_</span><span class="p">;</span>
 
-<span class="w">  </span><span class="n">QString</span><span class="w"> </span><span class="n">active_event_</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">QString</span><span class="w"> </span><span class="n">active_event_</span><span class="p">;</span>
 
-<span class="w">  </span><span class="n">Preferences</span><span class="o">&amp;</span><span class="w"> </span><span class="n">prefs_</span><span class="p">;</span><span class="w"></span>
-<span class="p">};</span><span class="w"></span>
+<span class="w">  </span><span class="n">Preferences</span><span class="o">&amp;</span><span class="w"> </span><span class="n">prefs_</span><span class="p">;</span>
+<span class="p">};</span>
 
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:16 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:23 +0000</p>
 
               
             </article>

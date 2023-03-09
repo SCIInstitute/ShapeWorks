@@ -2260,36 +2260,36 @@
 </table>
 <h2 id="source-code">Source code</h2>
 <div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;FEMesh.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;FEMesh.h&quot;</span>
 
 <span class="c1">//-----------------------------------------------------------------------------</span>
 <span class="c1">// This modifier implements a list of tools to fixing meshes</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">FEFixMesh</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="k">public</span><span class="o">:</span><span class="w"></span>
-<span class="w">    </span><span class="n">FEFixMesh</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_ntask</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="p">}</span><span class="w"></span>
-<span class="w">    </span><span class="n">FEMesh</span><span class="o">*</span><span class="w"> </span><span class="n">Apply</span><span class="p">(</span><span class="n">FEMesh</span><span class="o">*</span><span class="w"> </span><span class="n">pm</span><span class="p">);</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">FEFixMesh</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="n">FEFixMesh</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">m_ntask</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="n">FEMesh</span><span class="o">*</span><span class="w"> </span><span class="n">Apply</span><span class="p">(</span><span class="n">FEMesh</span><span class="o">*</span><span class="w"> </span><span class="n">pm</span><span class="p">);</span>
 
 <span class="w">    </span><span class="c1">// set the task to do</span>
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetTask</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetTask</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="p">);</span>
 <span class="w">    </span><span class="c1">//set max thickness in case 6</span>
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetThickness</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">m</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetThickness</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">m</span><span class="p">);</span>
 
-<span class="k">public</span><span class="o">:</span><span class="w"></span>
-<span class="w">    </span><span class="n">FEMesh</span><span class="o">*</span><span class="w"> </span><span class="n">RemoveDuplicateElements</span><span class="w">  </span><span class="p">(</span><span class="n">FEMesh</span><span class="o">*</span><span class="w"> </span><span class="n">pm</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="n">FEMesh</span><span class="o">*</span><span class="w"> </span><span class="nf">RemoveNonManifoldElements</span><span class="p">(</span><span class="n">FEMesh</span><span class="o">*</span><span class="w"> </span><span class="n">pm</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="n">FEMesh</span><span class="o">*</span><span class="w"> </span><span class="nf">FixElementWinding</span><span class="w">        </span><span class="p">(</span><span class="n">FEMesh</span><span class="o">*</span><span class="w"> </span><span class="n">pm</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="n">FEMesh</span><span class="o">*</span><span class="w"> </span><span class="nf">FillAllHoles</span><span class="w">             </span><span class="p">(</span><span class="n">FEMesh</span><span class="o">*</span><span class="w"> </span><span class="n">pm</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="n">FEMesh</span><span class="o">*</span><span class="w"> </span><span class="nf">FixinvertedElements</span><span class="w">      </span><span class="p">(</span><span class="n">FEMesh</span><span class="o">*</span><span class="w"> </span><span class="n">pm</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="n">FEMesh</span><span class="o">*</span><span class="w"> </span><span class="nf">FixReferenceSurface</span><span class="w">      </span><span class="p">(</span><span class="n">FEMesh</span><span class="o">*</span><span class="w"> </span><span class="n">pm</span><span class="p">);</span><span class="w"></span>
-<span class="w">    </span><span class="n">FEMesh</span><span class="o">*</span><span class="w"> </span><span class="nf">InterpolateShellThickness</span><span class="p">(</span><span class="n">FEMesh</span><span class="o">*</span><span class="w"> </span><span class="n">pm</span><span class="p">);</span><span class="w"></span>
-<span class="k">private</span><span class="o">:</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">m_ntask</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">m_limitThickness</span><span class="p">;</span><span class="w"></span>
-<span class="p">};</span><span class="w"></span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="n">FEMesh</span><span class="o">*</span><span class="w"> </span><span class="n">RemoveDuplicateElements</span><span class="w">  </span><span class="p">(</span><span class="n">FEMesh</span><span class="o">*</span><span class="w"> </span><span class="n">pm</span><span class="p">);</span>
+<span class="w">    </span><span class="n">FEMesh</span><span class="o">*</span><span class="w"> </span><span class="nf">RemoveNonManifoldElements</span><span class="p">(</span><span class="n">FEMesh</span><span class="o">*</span><span class="w"> </span><span class="n">pm</span><span class="p">);</span>
+<span class="w">    </span><span class="n">FEMesh</span><span class="o">*</span><span class="w"> </span><span class="nf">FixElementWinding</span><span class="w">        </span><span class="p">(</span><span class="n">FEMesh</span><span class="o">*</span><span class="w"> </span><span class="n">pm</span><span class="p">);</span>
+<span class="w">    </span><span class="n">FEMesh</span><span class="o">*</span><span class="w"> </span><span class="nf">FillAllHoles</span><span class="w">             </span><span class="p">(</span><span class="n">FEMesh</span><span class="o">*</span><span class="w"> </span><span class="n">pm</span><span class="p">);</span>
+<span class="w">    </span><span class="n">FEMesh</span><span class="o">*</span><span class="w"> </span><span class="nf">FixinvertedElements</span><span class="w">      </span><span class="p">(</span><span class="n">FEMesh</span><span class="o">*</span><span class="w"> </span><span class="n">pm</span><span class="p">);</span>
+<span class="w">    </span><span class="n">FEMesh</span><span class="o">*</span><span class="w"> </span><span class="nf">FixReferenceSurface</span><span class="w">      </span><span class="p">(</span><span class="n">FEMesh</span><span class="o">*</span><span class="w"> </span><span class="n">pm</span><span class="p">);</span>
+<span class="w">    </span><span class="n">FEMesh</span><span class="o">*</span><span class="w"> </span><span class="nf">InterpolateShellThickness</span><span class="p">(</span><span class="n">FEMesh</span><span class="o">*</span><span class="w"> </span><span class="n">pm</span><span class="p">);</span>
+<span class="k">private</span><span class="o">:</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">m_ntask</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">m_limitThickness</span><span class="p">;</span>
+<span class="p">};</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:15 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:23 +0000</p>
 
               
             </article>

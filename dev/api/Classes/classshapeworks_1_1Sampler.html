@@ -3732,481 +3732,481 @@
 </table>
 <h2 id="public-types-documentation">Public Types Documentation</h2>
 <h3 id="using-pixeltype">using PixelType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Sampler</span><span class="o">::</span><span class="n">PixelType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="kt">float</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Sampler</span><span class="o">::</span><span class="n">PixelType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="kt">float</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="using-imagetype">using ImageType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Sampler</span><span class="o">::</span><span class="n">ImageType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">itk</span><span class="o">::</span><span class="n">Image</span><span class="o">&lt;</span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Sampler</span><span class="o">::</span><span class="n">ImageType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">itk</span><span class="o">::</span><span class="n">Image</span><span class="o">&lt;</span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="o">&gt;</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="using-pointtype">using PointType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Sampler</span><span class="o">::</span><span class="n">PointType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">ImageType</span><span class="o">::</span><span class="n">PointType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Sampler</span><span class="o">::</span><span class="n">PointType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">ImageType</span><span class="o">::</span><span class="n">PointType</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="using-meancurvaturecachetype">using MeanCurvatureCacheType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Sampler</span><span class="o">::</span><span class="n">MeanCurvatureCacheType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleMeanCurvatureAttribute</span><span class="o">&lt;</span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Sampler</span><span class="o">::</span><span class="n">MeanCurvatureCacheType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleMeanCurvatureAttribute</span><span class="o">&lt;</span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="o">&gt;</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="using-transformtype">using TransformType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Sampler</span><span class="o">::</span><span class="n">TransformType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">vnl_matrix_fixed</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Sampler</span><span class="o">::</span><span class="n">TransformType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">vnl_matrix_fixed</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="o">&gt;</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="using-optimizertype">using OptimizerType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Sampler</span><span class="o">::</span><span class="n">OptimizerType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleGradientDescentPositionOptimizer</span><span class="o">&lt;</span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="o">&gt;</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Sampler</span><span class="o">::</span><span class="n">OptimizerType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleGradientDescentPositionOptimizer</span><span class="o">&lt;</span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="o">&gt;</span><span class="p">;</span>
 </code></pre></div>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-itkgetobjectmacro">function itkGetObjectMacro</h3>
-<div class="highlight"><pre><span></span><code><span class="n">itkGetObjectMacro</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">ParticleSystem</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">itkGetObjectMacro</span><span class="p">(</span>
+<span class="w">    </span><span class="n">ParticleSystem</span><span class="w"> </span><span class="p">,</span>
 <span class="w">    </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="w"> </span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Returns the particle system used in the surface sampling. </p>
 <h3 id="function-itkgetconstobjectmacro">function itkGetConstObjectMacro</h3>
-<div class="highlight"><pre><span></span><code><span class="n">itkGetConstObjectMacro</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">ParticleSystem</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">itkGetConstObjectMacro</span><span class="p">(</span>
+<span class="w">    </span><span class="n">ParticleSystem</span><span class="w"> </span><span class="p">,</span>
 <span class="w">    </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="w"> </span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-sampler">function Sampler</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Sampler</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">Sampler</span><span class="p">()</span>
 </code></pre></div>
 <p>Constructor. </p>
 <h3 id="function-sampler_1">function ~Sampler</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">Sampler</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">Sampler</span><span class="p">()</span>
 </code></pre></div>
 <p>Destructor. </p>
 <h3 id="function-getgradientfunction">function GetGradientFunction</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleEntropyGradientFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">ImageType</span><span class="o">::</span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetGradientFunction</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleEntropyGradientFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">ImageType</span><span class="o">::</span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetGradientFunction</span><span class="p">()</span>
 </code></pre></div>
 <p>Returns a pointer to the gradient function used. </p>
 <h3 id="function-getcurvaturegradientfunction">function GetCurvatureGradientFunction</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleCurvatureEntropyGradientFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">ImageType</span><span class="o">::</span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetCurvatureGradientFunction</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleCurvatureEntropyGradientFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">ImageType</span><span class="o">::</span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetCurvatureGradientFunction</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-getmodifiedcotangentgradientfunction">function GetModifiedCotangentGradientFunction</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleModifiedCotangentEntropyGradientFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">ImageType</span><span class="o">::</span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetModifiedCotangentGradientFunction</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleModifiedCotangentEntropyGradientFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">ImageType</span><span class="o">::</span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetModifiedCotangentGradientFunction</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-getconstrainedmodifiedcotangentgradientfunction">function GetConstrainedModifiedCotangentGradientFunction</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleConstrainedModifiedCotangentEntropyGradientFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">ImageType</span><span class="o">::</span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetConstrainedModifiedCotangentGradientFunction</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleConstrainedModifiedCotangentEntropyGradientFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">ImageType</span><span class="o">::</span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetConstrainedModifiedCotangentGradientFunction</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-getomegagradientfunction">function GetOmegaGradientFunction</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleOmegaGradientFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">ImageType</span><span class="o">::</span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetOmegaGradientFunction</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleOmegaGradientFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">ImageType</span><span class="o">::</span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetOmegaGradientFunction</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-itkgetobjectmacro_1">function itkGetObjectMacro</h3>
-<div class="highlight"><pre><span></span><code><span class="n">itkGetObjectMacro</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">Optimizer</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">itkGetObjectMacro</span><span class="p">(</span>
+<span class="w">    </span><span class="n">Optimizer</span><span class="w"> </span><span class="p">,</span>
 <span class="w">    </span><span class="n">OptimizerType</span><span class="w"> </span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Return a pointer to the optimizer object. </p>
 <h3 id="function-itkgetconstobjectmacro_1">function itkGetConstObjectMacro</h3>
-<div class="highlight"><pre><span></span><code><span class="n">itkGetConstObjectMacro</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">Optimizer</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">itkGetConstObjectMacro</span><span class="p">(</span>
+<span class="w">    </span><span class="n">Optimizer</span><span class="w"> </span><span class="p">,</span>
 <span class="w">    </span><span class="n">OptimizerType</span><span class="w"> </span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-setpointsfile">function SetPointsFile</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetPointsFile</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">s</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetPointsFile</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">s</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Optionally provide a filename for an initial point set. </p>
 <h3 id="function-setpointsfile_1">function SetPointsFile</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetPointsFile</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">s</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetPointsFile</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">s</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-setmeshfile">function SetMeshFile</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetMeshFile</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">s</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetMeshFile</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">s</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Optionally provide a filename for a mesh with geodesic distances. </p>
 <h3 id="function-setmeshfile_1">function SetMeshFile</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetMeshFile</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">s</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetMeshFile</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">s</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-setmeshfiles">function SetMeshFiles</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetMeshFiles</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">s</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetMeshFiles</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">s</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-addimage">function AddImage</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">AddImage</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">ImageType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">image</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">narrow_band</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">AddImage</span><span class="p">(</span>
+<span class="w">    </span><span class="n">ImageType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">image</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">narrow_band</span><span class="p">,</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="s">&quot;&quot;</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-applyconstraintstozerocrossing">function ApplyConstraintsToZeroCrossing</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">ApplyConstraintsToZeroCrossing</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">ApplyConstraintsToZeroCrossing</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-addmesh">function AddMesh</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">AddMesh</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">MeshWrapper</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">mesh</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">AddMesh</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">MeshWrapper</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">mesh</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-addcontour">function AddContour</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">AddContour</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">poly_data</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">AddContour</span><span class="p">(</span>
+<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">poly_data</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-setfidsfiles">function SetFidsFiles</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetFidsFiles</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">s</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetFidsFiles</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">s</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-setfeafiles">function SetFeaFiles</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetFeaFiles</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">s</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetFeaFiles</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">s</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-setfeagradfiles">function SetFeaGradFiles</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetFeaGradFiles</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">s</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetFeaGradFiles</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">s</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-setdomainspershape">function SetDomainsPerShape</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetDomainsPerShape</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetDomainsPerShape</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-setcuttingplane">function SetCuttingPlane</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetCuttingPlane</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">va</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">vb</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">vc</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetCuttingPlane</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">va</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">vb</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">vc</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Optionally supply a cutting plane that will be set as a particle optimization constraint in the image domains. </p>
 <h3 id="function-addfreeformconstraint">function AddFreeFormConstraint</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">AddFreeFormConstraint</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">FreeFormConstraint</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ffc</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">AddFreeFormConstraint</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">FreeFormConstraint</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ffc</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-transformcuttingplanes">function TransformCuttingPlanes</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">TransformCuttingPlanes</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">TransformCuttingPlanes</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Transform a cutting plane based on procrustes transformation </p>
 <h3 id="function-addsphere">function AddSphere</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">AddSphere</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">c</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">r</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">AddSphere</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">,</span>
+<span class="w">    </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">c</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">r</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Optionally add spheres that may be used as constraints to the domain. </p>
 <h3 id="function-setadaptivitymode">function SetAdaptivityMode</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetAdaptivityMode</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">mode</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetAdaptivityMode</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">mode</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>This method sets the optimization function for the sampling. mode 0 = isotropic adaptivity mode 1 = no adaptivity </p>
 <h3 id="function-getadaptivitymode">function GetAdaptivityMode</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">GetAdaptivityMode</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">GetAdaptivityMode</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-setcorrespondenceon">function SetCorrespondenceOn</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetCorrespondenceOn</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetCorrespondenceOn</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-setcorrespondenceoff">function SetCorrespondenceOff</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetCorrespondenceOff</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetCorrespondenceOff</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-setsamplingon">function SetSamplingOn</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetSamplingOn</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetSamplingOn</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-setsamplingoff">function SetSamplingOff</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetSamplingOff</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetSamplingOff</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-getcorrespondenceon">function GetCorrespondenceOn</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">GetCorrespondenceOn</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">GetCorrespondenceOn</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-getsamplingon">function GetSamplingOn</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">GetSamplingOn</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">GetSamplingOn</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-setcorrespondencemode">function SetCorrespondenceMode</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetCorrespondenceMode</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">CorrespondenceMode</span><span class="w"> </span><span class="n">mode</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetCorrespondenceMode</span><span class="p">(</span>
+<span class="w">    </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">CorrespondenceMode</span><span class="w"> </span><span class="n">mode</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>This method sets the optimization function for correspondences between surfaces (domains). </p>
 <h3 id="function-registergeneralshapematrices">function RegisterGeneralShapeMatrices</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">RegisterGeneralShapeMatrices</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">RegisterGeneralShapeMatrices</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-setattributescales">function SetAttributeScales</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetAttributeScales</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">s</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetAttributeScales</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">s</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-setxyz">function SetXYZ</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetXYZ</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">flag</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetXYZ</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">flag</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-setnormals">function SetNormals</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetNormals</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">flag</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetNormals</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">flag</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-setattributesperdomain">function SetAttributesPerDomain</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetAttributesPerDomain</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">s</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetAttributesPerDomain</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">s</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-getshapematrix">function GetShapeMatrix</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleShapeMatrixAttribute</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetShapeMatrix</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleShapeMatrixAttribute</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetShapeMatrix</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-getgeneralshapematrix">function GetGeneralShapeMatrix</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleGeneralShapeMatrix</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetGeneralShapeMatrix</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleGeneralShapeMatrix</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetGeneralShapeMatrix</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-getgeneralshapegradientmatrix">function GetGeneralShapeGradientMatrix</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleGeneralShapeGradientMatrix</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetGeneralShapeGradientMatrix</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleGeneralShapeGradientMatrix</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetGeneralShapeGradientMatrix</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-getlinkingfunction">function GetLinkingFunction</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleDualVectorFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetLinkingFunction</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleDualVectorFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetLinkingFunction</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-getensembleentropyfunction">function GetEnsembleEntropyFunction</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleEnsembleEntropyFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetEnsembleEntropyFunction</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleEnsembleEntropyFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetEnsembleEntropyFunction</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-getensembleregressionentropyfunction">function GetEnsembleRegressionEntropyFunction</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleEnsembleEntropyFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetEnsembleRegressionEntropyFunction</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleEnsembleEntropyFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetEnsembleRegressionEntropyFunction</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-getensemblemixedeffectsentropyfunction">function GetEnsembleMixedEffectsEntropyFunction</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleEnsembleEntropyFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetEnsembleMixedEffectsEntropyFunction</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleEnsembleEntropyFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetEnsembleMixedEffectsEntropyFunction</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-getmeshbasedgeneralentropygradientfunction">function GetMeshBasedGeneralEntropyGradientFunction</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleMeshBasedGeneralEntropyGradientFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetMeshBasedGeneralEntropyGradientFunction</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleMeshBasedGeneralEntropyGradientFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetMeshBasedGeneralEntropyGradientFunction</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-getlinkingfunction_1">function GetLinkingFunction</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleDualVectorFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetLinkingFunction</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleDualVectorFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetLinkingFunction</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-getensembleentropyfunction_1">function GetEnsembleEntropyFunction</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleEnsembleEntropyFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetEnsembleEntropyFunction</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleEnsembleEntropyFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetEnsembleEntropyFunction</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-getensembleregressionentropyfunction_1">function GetEnsembleRegressionEntropyFunction</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleEnsembleEntropyFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetEnsembleRegressionEntropyFunction</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleEnsembleEntropyFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetEnsembleRegressionEntropyFunction</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-getensemblemixedeffectsentropyfunction_1">function GetEnsembleMixedEffectsEntropyFunction</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleEnsembleEntropyFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetEnsembleMixedEffectsEntropyFunction</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleEnsembleEntropyFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetEnsembleMixedEffectsEntropyFunction</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-getmeshbasedgeneralentropygradientfunction_1">function GetMeshBasedGeneralEntropyGradientFunction</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleMeshBasedGeneralEntropyGradientFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetMeshBasedGeneralEntropyGradientFunction</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleMeshBasedGeneralEntropyGradientFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetMeshBasedGeneralEntropyGradientFunction</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-settimeptsperindividual">function SetTimeptsPerIndividual</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetTimeptsPerIndividual</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetTimeptsPerIndividual</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">n</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-getcorrespondencemode">function GetCorrespondenceMode</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">CorrespondenceMode</span><span class="w"> </span><span class="n">GetCorrespondenceMode</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">CorrespondenceMode</span><span class="w"> </span><span class="n">GetCorrespondenceMode</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-settransformfile">function SetTransformFile</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetTransformFile</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">s</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetTransformFile</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">s</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-settransformfile_1">function SetTransformFile</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetTransformFile</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">s</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetTransformFile</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">s</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-setprefixtransformfile">function SetPrefixTransformFile</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetPrefixTransformFile</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">s</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetPrefixTransformFile</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">s</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-setprefixtransformfile_1">function SetPrefixTransformFile</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetPrefixTransformFile</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">s</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetPrefixTransformFile</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">s</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-setpairwisepotentialtype">function SetPairwisePotentialType</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetPairwisePotentialType</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">pairwise_potential_type</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetPairwisePotentialType</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">pairwise_potential_type</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-getpairwisepotentialtype">function GetPairwisePotentialType</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">GetPairwisePotentialType</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">GetPairwisePotentialType</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-setverbosity">function SetVerbosity</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetVerbosity</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">val</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetVerbosity</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">val</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-getverbosity">function GetVerbosity</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">GetVerbosity</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">GetVerbosity</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-getmeancurvaturecache">function GetMeanCurvatureCache</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">MeanCurvatureCacheType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetMeanCurvatureCache</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">MeanCurvatureCacheType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GetMeanCurvatureCache</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-setsharedboundaryenabled">function SetSharedBoundaryEnabled</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetSharedBoundaryEnabled</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetSharedBoundaryEnabled</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-setsharedboundaryweight">function SetSharedBoundaryWeight</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetSharedBoundaryWeight</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">weight</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetSharedBoundaryWeight</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">weight</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-readtransforms">function ReadTransforms</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">ReadTransforms</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">ReadTransforms</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-readpointsfiles">function ReadPointsFiles</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">ReadPointsFiles</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">ReadPointsFiles</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-allocatedatacaches">function AllocateDataCaches</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">AllocateDataCaches</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">AllocateDataCaches</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-allocatedomainsandneighborhoods">function AllocateDomainsAndNeighborhoods</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">AllocateDomainsAndNeighborhoods</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">AllocateDomainsAndNeighborhoods</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-initializeoptimizationfunctions">function InitializeOptimizationFunctions</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">InitializeOptimizationFunctions</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">InitializeOptimizationFunctions</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-initialize">function Initialize</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">Initialize</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">Initialize</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-reinitialize">function ReInitialize</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">ReInitialize</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">ReInitialize</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-execute">function Execute</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">Execute</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">Execute</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-computecuttingplanes">function ComputeCuttingPlanes</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">pair</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">ComputeCuttingPlanes</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">pair</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">ComputeCuttingPlanes</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-computeplanenormal">function ComputePlaneNormal</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">ComputePlaneNormal</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">b</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">c</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">ComputePlaneNormal</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">a</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">b</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">c</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-getffcs">function GetFFCs</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">FreeFormConstraint</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">GetFFCs</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">FreeFormConstraint</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">GetFFCs</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-setmeshffcmode">function SetMeshFFCMode</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetMeshFFCMode</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">mesh_ffc_mode</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetMeshFFCMode</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">mesh_ffc_mode</span>
+<span class="p">)</span>
 </code></pre></div>
 <h2 id="protected-functions-documentation">Protected Functions Documentation</h2>
 <h3 id="function-generatedata">function GenerateData</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">GenerateData</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">GenerateData</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-getinitialized">function GetInitialized</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">GetInitialized</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">GetInitialized</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-setinitialized">function SetInitialized</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetInitialized</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetInitialized</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-getinitializing">function GetInitializing</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">GetInitializing</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">GetInitializing</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-setinitializing">function SetInitializing</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetInitializing</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetInitializing</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-initialize_ffcs">function initialize_ffcs</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">initialize_ffcs</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">dom</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">initialize_ffcs</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">dom</span>
+<span class="p">)</span>
 </code></pre></div>
 <h2 id="public-attributes-documentation">Public Attributes Documentation</h2>
 <h3 id="variable-dimension">variable Dimension</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
 </code></pre></div>
 <h2 id="protected-attributes-documentation">Protected Attributes Documentation</h2>
 <h3 id="variable-m_initialized">variable m_Initialized</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">m_Initialized</span><span class="w"> </span><span class="p">{</span><span class="nb">false</span><span class="p">};</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">m_Initialized</span><span class="w"> </span><span class="p">{</span><span class="nb">false</span><span class="p">};</span>
 </code></pre></div>
 <h3 id="variable-m_adaptivitymode">variable m_AdaptivityMode</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">m_AdaptivityMode</span><span class="w"> </span><span class="p">{</span><span class="mi">0</span><span class="p">};</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">m_AdaptivityMode</span><span class="w"> </span><span class="p">{</span><span class="mi">0</span><span class="p">};</span>
 </code></pre></div>
 <h3 id="variable-m_initializing">variable m_Initializing</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">m_Initializing</span><span class="w"> </span><span class="p">{</span><span class="nb">false</span><span class="p">};</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">m_Initializing</span><span class="w"> </span><span class="p">{</span><span class="nb">false</span><span class="p">};</span>
 </code></pre></div>
 <h3 id="variable-m_optimizer">variable m_Optimizer</h3>
-<div class="highlight"><pre><span></span><code><span class="n">OptimizerType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_Optimizer</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">OptimizerType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_Optimizer</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="variable-m_gradientfunction">variable m_GradientFunction</h3>
-<div class="highlight"><pre><span></span><code><span class="n">itk</span><span class="o">::</span><span class="n">ParticleEntropyGradientFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">ImageType</span><span class="o">::</span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_GradientFunction</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">itk</span><span class="o">::</span><span class="n">ParticleEntropyGradientFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">ImageType</span><span class="o">::</span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_GradientFunction</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="variable-m_curvaturegradientfunction">variable m_CurvatureGradientFunction</h3>
-<div class="highlight"><pre><span></span><code><span class="n">itk</span><span class="o">::</span><span class="n">ParticleCurvatureEntropyGradientFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">ImageType</span><span class="o">::</span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_CurvatureGradientFunction</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">itk</span><span class="o">::</span><span class="n">ParticleCurvatureEntropyGradientFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">ImageType</span><span class="o">::</span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_CurvatureGradientFunction</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="variable-m_modifiedcotangentgradientfunction">variable m_ModifiedCotangentGradientFunction</h3>
-<div class="highlight"><pre><span></span><code><span class="n">itk</span><span class="o">::</span><span class="n">ParticleModifiedCotangentEntropyGradientFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">ImageType</span><span class="o">::</span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_ModifiedCotangentGradientFunction</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">itk</span><span class="o">::</span><span class="n">ParticleModifiedCotangentEntropyGradientFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">ImageType</span><span class="o">::</span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_ModifiedCotangentGradientFunction</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="variable-m_constrainedmodifiedcotangentgradientfunction">variable m_ConstrainedModifiedCotangentGradientFunction</h3>
-<div class="highlight"><pre><span></span><code><span class="n">itk</span><span class="o">::</span><span class="n">ParticleConstrainedModifiedCotangentEntropyGradientFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">ImageType</span><span class="o">::</span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_ConstrainedModifiedCotangentGradientFunction</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">itk</span><span class="o">::</span><span class="n">ParticleConstrainedModifiedCotangentEntropyGradientFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">ImageType</span><span class="o">::</span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_ConstrainedModifiedCotangentGradientFunction</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="variable-m_omegagradientfunction">variable m_OmegaGradientFunction</h3>
-<div class="highlight"><pre><span></span><code><span class="n">itk</span><span class="o">::</span><span class="n">ParticleOmegaGradientFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">ImageType</span><span class="o">::</span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_OmegaGradientFunction</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">itk</span><span class="o">::</span><span class="n">ParticleOmegaGradientFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">ImageType</span><span class="o">::</span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_OmegaGradientFunction</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="variable-m_sigma1cache">variable m_Sigma1Cache</h3>
-<div class="highlight"><pre><span></span><code><span class="n">itk</span><span class="o">::</span><span class="n">ParticleContainerArrayAttribute</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_Sigma1Cache</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">itk</span><span class="o">::</span><span class="n">ParticleContainerArrayAttribute</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_Sigma1Cache</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="variable-m_sigma2cache">variable m_Sigma2Cache</h3>
-<div class="highlight"><pre><span></span><code><span class="n">itk</span><span class="o">::</span><span class="n">ParticleContainerArrayAttribute</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_Sigma2Cache</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">itk</span><span class="o">::</span><span class="n">ParticleContainerArrayAttribute</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_Sigma2Cache</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="variable-m_meancurvaturecache">variable m_MeanCurvatureCache</h3>
-<div class="highlight"><pre><span></span><code><span class="n">MeanCurvatureCacheType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_MeanCurvatureCache</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">MeanCurvatureCacheType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_MeanCurvatureCache</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="variable-m_particlesystem">variable m_ParticleSystem</h3>
-<div class="highlight"><pre><span></span><code><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_ParticleSystem</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_ParticleSystem</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="variable-m_domainlist">variable m_DomainList</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">ParticleDomain</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_DomainList</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">ParticleDomain</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_DomainList</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="variable-m_neighborhoodlist">variable m_NeighborhoodList</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSurfaceNeighborhood</span><span class="o">&lt;</span><span class="w"> </span><span class="n">ImageType</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_NeighborhoodList</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSurfaceNeighborhood</span><span class="o">&lt;</span><span class="w"> </span><span class="n">ImageType</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_NeighborhoodList</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="variable-m_pairwise_potential_type">variable m_pairwise_potential_type</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">m_pairwise_potential_type</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">m_pairwise_potential_type</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="variable-m_correspondencemode">variable m_CorrespondenceMode</h3>
-<div class="highlight"><pre><span></span><code><span class="n">shapeworks</span><span class="o">::</span><span class="n">CorrespondenceMode</span><span class="w"> </span><span class="n">m_CorrespondenceMode</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">shapeworks</span><span class="o">::</span><span class="n">CorrespondenceMode</span><span class="w"> </span><span class="n">m_CorrespondenceMode</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="variable-m_linkingfunction">variable m_LinkingFunction</h3>
-<div class="highlight"><pre><span></span><code><span class="n">itk</span><span class="o">::</span><span class="n">ParticleDualVectorFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_LinkingFunction</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">itk</span><span class="o">::</span><span class="n">ParticleDualVectorFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_LinkingFunction</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="variable-m_ensembleentropyfunction">variable m_EnsembleEntropyFunction</h3>
-<div class="highlight"><pre><span></span><code><span class="n">itk</span><span class="o">::</span><span class="n">ParticleEnsembleEntropyFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_EnsembleEntropyFunction</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">itk</span><span class="o">::</span><span class="n">ParticleEnsembleEntropyFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_EnsembleEntropyFunction</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="variable-m_ensembleregressionentropyfunction">variable m_EnsembleRegressionEntropyFunction</h3>
-<div class="highlight"><pre><span></span><code><span class="n">itk</span><span class="o">::</span><span class="n">ParticleEnsembleEntropyFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_EnsembleRegressionEntropyFunction</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">itk</span><span class="o">::</span><span class="n">ParticleEnsembleEntropyFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_EnsembleRegressionEntropyFunction</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="variable-m_ensemblemixedeffectsentropyfunction">variable m_EnsembleMixedEffectsEntropyFunction</h3>
-<div class="highlight"><pre><span></span><code><span class="n">itk</span><span class="o">::</span><span class="n">ParticleEnsembleEntropyFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_EnsembleMixedEffectsEntropyFunction</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">itk</span><span class="o">::</span><span class="n">ParticleEnsembleEntropyFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_EnsembleMixedEffectsEntropyFunction</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="variable-m_shapematrix">variable m_ShapeMatrix</h3>
-<div class="highlight"><pre><span></span><code><span class="n">itk</span><span class="o">::</span><span class="n">ParticleShapeMatrixAttribute</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_ShapeMatrix</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">itk</span><span class="o">::</span><span class="n">ParticleShapeMatrixAttribute</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_ShapeMatrix</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="variable-m_linearregressionshapematrix">variable m_LinearRegressionShapeMatrix</h3>
-<div class="highlight"><pre><span></span><code><span class="n">itk</span><span class="o">::</span><span class="n">ParticleShapeLinearRegressionMatrixAttribute</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_LinearRegressionShapeMatrix</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">itk</span><span class="o">::</span><span class="n">ParticleShapeLinearRegressionMatrixAttribute</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_LinearRegressionShapeMatrix</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="variable-m_mixedeffectsshapematrix">variable m_MixedEffectsShapeMatrix</h3>
-<div class="highlight"><pre><span></span><code><span class="n">itk</span><span class="o">::</span><span class="n">ParticleShapeMixedEffectsMatrixAttribute</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_MixedEffectsShapeMatrix</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">itk</span><span class="o">::</span><span class="n">ParticleShapeMixedEffectsMatrixAttribute</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_MixedEffectsShapeMatrix</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="variable-m_generalshapematrix">variable m_GeneralShapeMatrix</h3>
-<div class="highlight"><pre><span></span><code><span class="n">itk</span><span class="o">::</span><span class="n">ParticleGeneralShapeMatrix</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_GeneralShapeMatrix</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">itk</span><span class="o">::</span><span class="n">ParticleGeneralShapeMatrix</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_GeneralShapeMatrix</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="variable-m_generalshapegradmatrix">variable m_GeneralShapeGradMatrix</h3>
-<div class="highlight"><pre><span></span><code><span class="n">itk</span><span class="o">::</span><span class="n">ParticleGeneralShapeGradientMatrix</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_GeneralShapeGradMatrix</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">itk</span><span class="o">::</span><span class="n">ParticleGeneralShapeGradientMatrix</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_GeneralShapeGradMatrix</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="variable-m_meshbasedgeneralentropygradientfunction">variable m_MeshBasedGeneralEntropyGradientFunction</h3>
-<div class="highlight"><pre><span></span><code><span class="n">itk</span><span class="o">::</span><span class="n">ParticleMeshBasedGeneralEntropyGradientFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_MeshBasedGeneralEntropyGradientFunction</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">itk</span><span class="o">::</span><span class="n">ParticleMeshBasedGeneralEntropyGradientFunction</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Dimension</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_MeshBasedGeneralEntropyGradientFunction</span><span class="p">;</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:15 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:22 +0000</p>
 
               
             </article>

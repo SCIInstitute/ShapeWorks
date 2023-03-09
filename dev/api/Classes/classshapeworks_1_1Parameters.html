@@ -2466,82 +2466,82 @@
 </tbody>
 </table>
 <h2 id="detailed-description">Detailed Description</h2>
-<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">shapeworks</span><span class="o">::</span><span class="n">Parameters</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">shapeworks</span><span class="o">::</span><span class="n">Parameters</span><span class="p">;</span>
 </code></pre></div>
 <p>Parameter settings. </p>
 <p>Store key/variant combinations Used to store parameters for various tools </p>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-parameters">function Parameters</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Parameters</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">Parameters</span><span class="p">()</span>
 </code></pre></div>
 <p>default constructor </p>
 <h3 id="function-parameters_1">function Parameters</h3>
-<div class="highlight"><pre><span></span><code><span class="k">explicit</span><span class="w"> </span><span class="n">Parameters</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">StringMap</span><span class="w"> </span><span class="n">map</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">explicit</span><span class="w"> </span><span class="n">Parameters</span><span class="p">(</span>
+<span class="w">    </span><span class="n">StringMap</span><span class="w"> </span><span class="n">map</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>construct from map </p>
 <h3 id="function-get">function get</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Variant</span><span class="w"> </span><span class="n">get</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">key</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">Variant</span><span class="w"> </span><span class="n">default_value</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">Variant</span><span class="w"> </span><span class="n">get</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">key</span><span class="p">,</span>
+<span class="w">    </span><span class="n">Variant</span><span class="w"> </span><span class="n">default_value</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>get a parameter based on a key, return default if it doesn't exist </p>
 <h3 id="function-key_exists">function key_exists</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">key_exists</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">key</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">key_exists</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">key</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>return if a key exists or not </p>
 <h3 id="function-set">function set</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">key</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">Variant</span><span class="w"> </span><span class="n">value</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">key</span><span class="p">,</span>
+<span class="w">    </span><span class="n">Variant</span><span class="w"> </span><span class="n">value</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>set a parameter based on a key </p>
 <h3 id="function-remove_entry">function remove_entry</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">remove_entry</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">key</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">remove_entry</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">key</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>remove an entry </p>
 <h3 id="function-set_map">function set_map</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_map</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">StringMap</span><span class="w"> </span><span class="n">map</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_map</span><span class="p">(</span>
+<span class="w">    </span><span class="n">StringMap</span><span class="w"> </span><span class="n">map</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>set underlying map </p>
 <h3 id="function-get_map">function get_map</h3>
-<div class="highlight"><pre><span></span><code><span class="n">StringMap</span><span class="w"> </span><span class="n">get_map</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">StringMap</span><span class="w"> </span><span class="n">get_map</span><span class="p">()</span>
 </code></pre></div>
 <p>get underlying map </p>
 <h3 id="function-reset_parameters">function reset_parameters</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">reset_parameters</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">reset_parameters</span><span class="p">()</span>
 </code></pre></div>
 <p>reset parameters to blank </p>
 <h2 id="public-attributes-documentation">Public Attributes Documentation</h2>
 <h3 id="variable-analysis_params">variable ANALYSIS_PARAMS</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">ANALYSIS_PARAMS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;analysis&quot;</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">ANALYSIS_PARAMS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;analysis&quot;</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="variable-groom_params">variable GROOM_PARAMS</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GROOM_PARAMS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;groom&quot;</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">GROOM_PARAMS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;groom&quot;</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="variable-optimize_params">variable OPTIMIZE_PARAMS</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">OPTIMIZE_PARAMS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;optimize&quot;</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">OPTIMIZE_PARAMS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;optimize&quot;</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="variable-studio_params">variable STUDIO_PARAMS</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">STUDIO_PARAMS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;studio&quot;</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">STUDIO_PARAMS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;studio&quot;</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="variable-project_params">variable PROJECT_PARAMS</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">PROJECT_PARAMS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;project&quot;</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">PROJECT_PARAMS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;project&quot;</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="variable-deepssm_params">variable DEEPSSM_PARAMS</h3>
-<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">DEEPSSM_PARAMS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;deepssm&quot;</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">DEEPSSM_PARAMS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;deepssm&quot;</span><span class="p">;</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:15 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:21 +0000</p>
 
               
             </article>

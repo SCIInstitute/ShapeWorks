@@ -2294,236 +2294,236 @@
 <span class="cm">     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR</span>
 <span class="cm">     PURPOSE.  See the above copyright notices for more information.</span>
 
-<span class="cm">=========================================================================*/</span><span class="w"></span>
+<span class="cm">=========================================================================*/</span>
 <span class="cp">#ifndef __itkSparseKernelTransform_h</span>
 <span class="cp">#define __itkSparseKernelTransform_h</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;itkTransform.h&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;itkPoint.h&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;itkVector.h&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;itkMatrix.h&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;itkPointSet.h&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;deque&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;math.h&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vnl/vnl_matrix_fixed.h&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vnl/vnl_matrix.h&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vnl/vnl_vector.h&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vnl/vnl_vector_fixed.h&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vnl/algo/vnl_svd.h&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vnl/vnl_sample.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;itkTransform.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;itkPoint.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;itkVector.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;itkMatrix.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;itkPointSet.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;deque&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;math.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vnl/vnl_matrix_fixed.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vnl/vnl_matrix.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vnl/vnl_vector.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vnl/vnl_vector_fixed.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vnl/algo/vnl_svd.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vnl/vnl_sample.h&gt;</span>
 
 <span class="c1">//#define EIGEN_USE_MKL_ALL</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Eigen/Dense&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Eigen/Sparse&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdint.h&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;iostream&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Eigen/Dense&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Eigen/Sparse&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdint.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;iostream&gt;</span>
 
 
-<span class="k">namespace</span><span class="w"> </span><span class="nn">itk</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
+<span class="k">namespace</span><span class="w"> </span><span class="nn">itk</span>
+<span class="p">{</span>
 
 <span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="c1">// probably only float and double make sense here</span>
 <span class="w">          </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">NDimensions</span><span class="o">&gt;</span><span class="w">   </span><span class="c1">// Number of dimensions</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">ITK_EXPORT</span><span class="w"> </span><span class="n">SparseKernelTransform</span><span class="w"> </span><span class="o">:</span><span class="w"></span>
-<span class="w">        </span><span class="k">public</span><span class="w"> </span><span class="n">Transform</span><span class="o">&lt;</span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="p">,</span><span class="n">NDimensions</span><span class="o">&gt;</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="k">public</span><span class="o">:</span><span class="w"></span>
-<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">SparseKernelTransform</span><span class="w"> </span><span class="n">Self</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">Transform</span><span class="o">&lt;</span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;</span><span class="w">   </span><span class="n">Superclass</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">&gt;</span><span class="w">        </span><span class="n">Pointer</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&gt;</span><span class="w">  </span><span class="n">ConstPointer</span><span class="p">;</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ITK_EXPORT</span><span class="w"> </span><span class="n">SparseKernelTransform</span><span class="w"> </span><span class="o">:</span>
+<span class="w">        </span><span class="k">public</span><span class="w"> </span><span class="n">Transform</span><span class="o">&lt;</span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="p">,</span><span class="n">NDimensions</span><span class="o">&gt;</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">SparseKernelTransform</span><span class="w"> </span><span class="n">Self</span><span class="p">;</span>
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">Transform</span><span class="o">&lt;</span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;</span><span class="w">   </span><span class="n">Superclass</span><span class="p">;</span>
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">&gt;</span><span class="w">        </span><span class="n">Pointer</span><span class="p">;</span>
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&gt;</span><span class="w">  </span><span class="n">ConstPointer</span><span class="p">;</span>
 
-<span class="w">    </span><span class="n">itkTypeMacro</span><span class="p">(</span><span class="w"> </span><span class="n">SparseKernelTransform</span><span class="p">,</span><span class="w"> </span><span class="n">Transform</span><span class="w"> </span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">itkTypeMacro</span><span class="p">(</span><span class="w"> </span><span class="n">SparseKernelTransform</span><span class="p">,</span><span class="w"> </span><span class="n">Transform</span><span class="w"> </span><span class="p">);</span>
 
-<span class="w">    </span><span class="n">itkNewMacro</span><span class="p">(</span><span class="w"> </span><span class="n">Self</span><span class="w"> </span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">itkNewMacro</span><span class="p">(</span><span class="w"> </span><span class="n">Self</span><span class="w"> </span><span class="p">);</span>
 
-<span class="w">    </span><span class="n">itkStaticConstMacro</span><span class="p">(</span><span class="n">SpaceDimension</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">itkStaticConstMacro</span><span class="p">(</span><span class="n">SpaceDimension</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="p">);</span>
 
-<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">Superclass</span><span class="o">::</span><span class="n">ScalarType</span><span class="w">  </span><span class="n">ScalarType</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">Superclass</span><span class="o">::</span><span class="n">ScalarType</span><span class="w">  </span><span class="n">ScalarType</span><span class="p">;</span>
 
-<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">Superclass</span><span class="o">::</span><span class="n">ParametersType</span><span class="w">  </span><span class="n">ParametersType</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">Superclass</span><span class="o">::</span><span class="n">ParametersType</span><span class="w">  </span><span class="n">ParametersType</span><span class="p">;</span>
 
-<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">Superclass</span><span class="o">::</span><span class="n">JacobianType</span><span class="w">  </span><span class="n">JacobianType</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">Superclass</span><span class="o">::</span><span class="n">JacobianType</span><span class="w">  </span><span class="n">JacobianType</span><span class="p">;</span>
 
-<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">Superclass</span><span class="o">::</span><span class="n">InputPointType</span><span class="w">   </span><span class="n">InputPointType</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">Superclass</span><span class="o">::</span><span class="n">OutputPointType</span><span class="w">  </span><span class="n">OutputPointType</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">Superclass</span><span class="o">::</span><span class="n">InputPointType</span><span class="w">   </span><span class="n">InputPointType</span><span class="p">;</span>
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">Superclass</span><span class="o">::</span><span class="n">OutputPointType</span><span class="w">  </span><span class="n">OutputPointType</span><span class="p">;</span>
 
-<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">Superclass</span><span class="o">::</span><span class="n">InputVectorType</span><span class="w">   </span><span class="n">InputVectorType</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">Superclass</span><span class="o">::</span><span class="n">OutputVectorType</span><span class="w">  </span><span class="n">OutputVectorType</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">Superclass</span><span class="o">::</span><span class="n">InputVectorType</span><span class="w">   </span><span class="n">InputVectorType</span><span class="p">;</span>
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">Superclass</span><span class="o">::</span><span class="n">OutputVectorType</span><span class="w">  </span><span class="n">OutputVectorType</span><span class="p">;</span>
 
-<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">DefaultStaticMeshTraits</span><span class="o">&lt;</span><span class="n">TScalarType</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">NDimensions</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">NDimensions</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">TScalarType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">PointSetTraitsType</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">PointSet</span><span class="o">&lt;</span><span class="n">InputPointType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="p">,</span><span class="w"> </span><span class="n">PointSetTraitsType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">PointSetType</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">PointSetType</span><span class="o">::</span><span class="n">Pointer</span><span class="w">                        </span><span class="n">PointSetPointer</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">PointSetType</span><span class="o">::</span><span class="n">PointsContainer</span><span class="w">                </span><span class="n">PointsContainer</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">PointSetType</span><span class="o">::</span><span class="n">PointsContainerIterator</span><span class="w">        </span><span class="n">PointsIterator</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">PointSetType</span><span class="o">::</span><span class="n">PointsContainerConstIterator</span><span class="w">   </span><span class="n">PointsConstIterator</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">DefaultStaticMeshTraits</span><span class="o">&lt;</span><span class="n">TScalarType</span><span class="p">,</span>
+<span class="w">    </span><span class="n">NDimensions</span><span class="p">,</span>
+<span class="w">    </span><span class="n">NDimensions</span><span class="p">,</span>
+<span class="w">    </span><span class="n">TScalarType</span><span class="p">,</span>
+<span class="w">    </span><span class="n">TScalarType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">PointSetTraitsType</span><span class="p">;</span>
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">PointSet</span><span class="o">&lt;</span><span class="n">InputPointType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="p">,</span><span class="w"> </span><span class="n">PointSetTraitsType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">PointSetType</span><span class="p">;</span>
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">PointSetType</span><span class="o">::</span><span class="n">Pointer</span><span class="w">                        </span><span class="n">PointSetPointer</span><span class="p">;</span>
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">PointSetType</span><span class="o">::</span><span class="n">PointsContainer</span><span class="w">                </span><span class="n">PointsContainer</span><span class="p">;</span>
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">PointSetType</span><span class="o">::</span><span class="n">PointsContainerIterator</span><span class="w">        </span><span class="n">PointsIterator</span><span class="p">;</span>
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">PointSetType</span><span class="o">::</span><span class="n">PointsContainerConstIterator</span><span class="w">   </span><span class="n">PointsConstIterator</span><span class="p">;</span>
 
-<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">VectorContainer</span><span class="o">&lt;</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">long</span><span class="p">,</span><span class="n">InputVectorType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">VectorSetType</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">VectorSetType</span><span class="o">::</span><span class="n">Pointer</span><span class="w">        </span><span class="n">VectorSetPointer</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">VectorContainer</span><span class="o">&lt;</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">long</span><span class="p">,</span><span class="n">InputVectorType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">VectorSetType</span><span class="p">;</span>
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">VectorSetType</span><span class="o">::</span><span class="n">Pointer</span><span class="w">        </span><span class="n">VectorSetPointer</span><span class="p">;</span>
 
-<span class="w">    </span><span class="n">itkGetObjectMacro</span><span class="p">(</span><span class="w"> </span><span class="n">SourceLandmarks</span><span class="p">,</span><span class="w"> </span><span class="n">PointSetType</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">itkGetObjectMacro</span><span class="p">(</span><span class="w"> </span><span class="n">SourceLandmarks</span><span class="p">,</span><span class="w"> </span><span class="n">PointSetType</span><span class="p">);</span>
 
-<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetSourceLandmarks</span><span class="p">(</span><span class="n">PointSetType</span><span class="w"> </span><span class="o">*</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetSourceLandmarks</span><span class="p">(</span><span class="n">PointSetType</span><span class="w"> </span><span class="o">*</span><span class="p">);</span>
 
-<span class="w">    </span><span class="n">itkGetObjectMacro</span><span class="p">(</span><span class="w"> </span><span class="n">TargetLandmarks</span><span class="p">,</span><span class="w"> </span><span class="n">PointSetType</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">itkGetObjectMacro</span><span class="p">(</span><span class="w"> </span><span class="n">TargetLandmarks</span><span class="p">,</span><span class="w"> </span><span class="n">PointSetType</span><span class="p">);</span>
 
-<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetTargetLandmarks</span><span class="p">(</span><span class="n">PointSetType</span><span class="w"> </span><span class="o">*</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetTargetLandmarks</span><span class="p">(</span><span class="n">PointSetType</span><span class="w"> </span><span class="o">*</span><span class="p">);</span>
 
-<span class="w">    </span><span class="n">itkGetObjectMacro</span><span class="p">(</span><span class="w"> </span><span class="n">Displacements</span><span class="p">,</span><span class="w"> </span><span class="n">VectorSetType</span><span class="w"> </span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">itkGetObjectMacro</span><span class="p">(</span><span class="w"> </span><span class="n">Displacements</span><span class="p">,</span><span class="w"> </span><span class="n">VectorSetType</span><span class="w"> </span><span class="p">);</span>
 
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">ComputeWMatrix</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">ComputeWMatrix</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
 
 <span class="w">    </span><span class="c1">//void ComputeLInverse() const;</span>
 
-<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="n">OutputPointType</span><span class="w"> </span><span class="nf">TransformPoint</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">InputPointType</span><span class="o">&amp;</span><span class="w"> </span><span class="n">thisPoint</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="n">OutputPointType</span><span class="w"> </span><span class="nf">TransformPoint</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">InputPointType</span><span class="o">&amp;</span><span class="w"> </span><span class="n">thisPoint</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
 
-<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Matrix</span><span class="o">&lt;</span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="o">&gt;</span><span class="w"> </span><span class="n">IMatrixType</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Matrix</span><span class="o">&lt;</span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="o">&gt;</span><span class="w"> </span><span class="n">IMatrixType</span><span class="p">;</span>
 <span class="w">    </span><span class="c1">//typedef vnl_matrix_fixed&lt;TScalarType, NDimensions, NDimensions&gt; IMatrixType;</span>
 
 
 <span class="w">    </span><span class="c1">//virtual const JacobianType &amp; GetJacobian(const InputPointType  &amp;point ) const;</span>
 
-<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetIdentity</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetIdentity</span><span class="p">();</span>
 
-<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetParameters</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">ParametersType</span><span class="w"> </span><span class="o">&amp;</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetParameters</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">ParametersType</span><span class="w"> </span><span class="o">&amp;</span><span class="p">);</span>
 
-<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetFixedParameters</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">ParametersType</span><span class="w"> </span><span class="o">&amp;</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetFixedParameters</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">ParametersType</span><span class="w"> </span><span class="o">&amp;</span><span class="p">);</span>
 
-<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">UpdateParameters</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">UpdateParameters</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
 
-<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">ParametersType</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">GetParameters</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">ParametersType</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">GetParameters</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
 
-<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">ParametersType</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">GetFixedParameters</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">ComputeJacobianWithRespectToParameters</span><span class="p">(</span><span class="w"></span>
-<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">InputPointType</span><span class="w">  </span><span class="o">&amp;</span><span class="n">in</span><span class="p">,</span><span class="w"> </span><span class="n">JacobianType</span><span class="w"> </span><span class="o">&amp;</span><span class="n">jacobian</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">ParametersType</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">GetFixedParameters</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">ComputeJacobianWithRespectToParameters</span><span class="p">(</span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">InputPointType</span><span class="w">  </span><span class="o">&amp;</span><span class="n">in</span><span class="p">,</span><span class="w"> </span><span class="n">JacobianType</span><span class="w"> </span><span class="o">&amp;</span><span class="n">jacobian</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
 
-<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetStiffness</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">stiffness</span><span class="p">)</span><span class="w"></span>
-<span class="w">    </span><span class="p">{</span><span class="n">m_Stiffness</span><span class="o">=</span><span class="p">(</span><span class="n">stiffness</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)</span><span class="o">?</span><span class="n">stiffness</span><span class="o">:</span><span class="mf">0.0</span><span class="p">;</span><span class="w"></span>
-<span class="w">        </span><span class="n">m_LMatrixComputed</span><span class="o">=</span><span class="nb">false</span><span class="p">;</span><span class="w"></span>
-<span class="w">        </span><span class="n">m_LInverseComputed</span><span class="o">=</span><span class="nb">false</span><span class="p">;</span><span class="w"></span>
-<span class="w">        </span><span class="n">m_WMatrixComputed</span><span class="o">=</span><span class="nb">false</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="p">}</span><span class="w"></span>
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetStiffness</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">stiffness</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span><span class="n">m_Stiffness</span><span class="o">=</span><span class="p">(</span><span class="n">stiffness</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)</span><span class="o">?</span><span class="n">stiffness</span><span class="o">:</span><span class="mf">0.0</span><span class="p">;</span>
+<span class="w">        </span><span class="n">m_LMatrixComputed</span><span class="o">=</span><span class="nb">false</span><span class="p">;</span>
+<span class="w">        </span><span class="n">m_LInverseComputed</span><span class="o">=</span><span class="nb">false</span><span class="p">;</span>
+<span class="w">        </span><span class="n">m_WMatrixComputed</span><span class="o">=</span><span class="nb">false</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
 <span class="w">    </span><span class="c1">//itkSetClampMacro(Stiffness, double, 0.0, NumericTraits&lt;double&gt;::max());</span>
 <span class="w">    </span><span class="c1">// Cant use the macro because the matrices must be recomputed</span>
-<span class="w">    </span><span class="n">itkGetMacro</span><span class="p">(</span><span class="n">Stiffness</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">itkGetMacro</span><span class="p">(</span><span class="n">Stiffness</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="p">);</span>
 
 
-<span class="k">protected</span><span class="o">:</span><span class="w"></span>
-<span class="w">    </span><span class="n">SparseKernelTransform</span><span class="p">();</span><span class="w"></span>
-<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">SparseKernelTransform</span><span class="p">();</span><span class="w"></span>
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">PrintSelf</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span><span class="w"> </span><span class="n">os</span><span class="p">,</span><span class="w"> </span><span class="n">Indent</span><span class="w"> </span><span class="n">indent</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span><span class="w"></span>
+<span class="k">protected</span><span class="o">:</span>
+<span class="w">    </span><span class="n">SparseKernelTransform</span><span class="p">();</span>
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">SparseKernelTransform</span><span class="p">();</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">PrintSelf</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span><span class="w"> </span><span class="n">os</span><span class="p">,</span><span class="w"> </span><span class="n">Indent</span><span class="w"> </span><span class="n">indent</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
 
-<span class="k">public</span><span class="o">:</span><span class="w"></span>
-<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Triplet</span><span class="o">&lt;</span><span class="n">TScalarType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">TripletType</span><span class="p">;</span><span class="w"></span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Triplet</span><span class="o">&lt;</span><span class="n">TScalarType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">TripletType</span><span class="p">;</span>
 
-<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Matrix</span><span class="o">&lt;</span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="o">&gt;</span><span class="w"> </span><span class="n">GMatrixType</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Matrix</span><span class="o">&lt;</span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="o">&gt;</span><span class="w"> </span><span class="n">GMatrixType</span><span class="p">;</span>
 <span class="w">    </span><span class="c1">//typedef vnl_matrix_fixed&lt;TScalarType, NDimensions, NDimensions&gt; GMatrixType;</span>
 
-<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">SparseMatrix</span><span class="o">&lt;</span><span class="n">TScalarType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">LMatrixType</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">SparseMatrix</span><span class="o">&lt;</span><span class="n">TScalarType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">LMatrixType</span><span class="p">;</span>
 <span class="w">    </span><span class="c1">//typedef vnl_matrix&lt;TScalarType&gt; LMatrixType;</span>
 
-<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">SparseMatrix</span><span class="o">&lt;</span><span class="n">TScalarType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">KMatrixType</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">SparseMatrix</span><span class="o">&lt;</span><span class="n">TScalarType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">KMatrixType</span><span class="p">;</span>
 <span class="w">    </span><span class="c1">//typedef vnl_matrix&lt;TScalarType&gt; KMatrixType;</span>
 
-<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">SparseMatrix</span><span class="o">&lt;</span><span class="n">TScalarType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">PMatrixType</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">SparseMatrix</span><span class="o">&lt;</span><span class="n">TScalarType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">PMatrixType</span><span class="p">;</span>
 <span class="w">    </span><span class="c1">//typedef Eigen::Matrix&lt;TScalarType, Eigen::Dynamic, NDimensions*(NDimensions+1)&gt; PMatrixType;</span>
 <span class="w">    </span><span class="c1">//typedef vnl_matrix&lt;TScalarType&gt; PMatrixType;</span>
 
-<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Matrix</span><span class="o">&lt;</span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Dynamic</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Dynamic</span><span class="o">&gt;</span><span class="w"> </span><span class="n">YMatrixType</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Matrix</span><span class="o">&lt;</span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Dynamic</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Dynamic</span><span class="o">&gt;</span><span class="w"> </span><span class="n">YMatrixType</span><span class="p">;</span>
 <span class="w">    </span><span class="c1">//typedef vnl_matrix&lt;TScalarType&gt; YMatrixType;</span>
 
-<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Matrix</span><span class="o">&lt;</span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Dynamic</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Dynamic</span><span class="o">&gt;</span><span class="w"> </span><span class="n">WMatrixType</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Matrix</span><span class="o">&lt;</span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Dynamic</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Dynamic</span><span class="o">&gt;</span><span class="w"> </span><span class="n">WMatrixType</span><span class="p">;</span>
 <span class="w">    </span><span class="c1">//typedef vnl_matrix&lt;TScalarType&gt; WMatrixType;</span>
 
-<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Matrix</span><span class="o">&lt;</span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Dynamic</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Dynamic</span><span class="o">&gt;</span><span class="w"> </span><span class="n">DMatrixType</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Matrix</span><span class="o">&lt;</span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Dynamic</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Dynamic</span><span class="o">&gt;</span><span class="w"> </span><span class="n">DMatrixType</span><span class="p">;</span>
 <span class="w">    </span><span class="c1">//typedef vnl_matrix&lt;TScalarType&gt; DMatrixType;</span>
 
-<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Matrix</span><span class="o">&lt;</span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="o">&gt;</span><span class="w"> </span><span class="n">AMatrixType</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Matrix</span><span class="o">&lt;</span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="o">&gt;</span><span class="w"> </span><span class="n">AMatrixType</span><span class="p">;</span>
 <span class="w">    </span><span class="c1">//typedef vnl_matrix_fixed&lt;TScalarType,NDimensions,NDimensions&gt; AMatrixType;</span>
 
 <span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Matrix</span><span class="o">&lt;</span><span class="n">TScalarType</span><span class="p">,</span><span class="n">NDimensions</span><span class="p">,</span><span class="mi">1</span><span class="o">&gt;</span><span class="w"> </span><span class="n">BMatrixType</span><span class="p">;</span><span class="w"> </span><span class="c1">// column vector</span>
 <span class="w">    </span><span class="c1">//typedef vnl_vector_fixed&lt;TScalarType,NDimensions&gt; BMatrixType;</span>
 
-<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Matrix</span><span class="o">&lt;</span><span class="n">TScalarType</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">NDimensions</span><span class="o">&gt;</span><span class="w"> </span><span class="n">RowMatrixType</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Matrix</span><span class="o">&lt;</span><span class="n">TScalarType</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">NDimensions</span><span class="o">&gt;</span><span class="w"> </span><span class="n">RowMatrixType</span><span class="p">;</span>
 <span class="w">    </span><span class="c1">//typedef vnl_matrix_fixed&lt;TScalarType, 1, NDimensions&gt; RowMatrixType;</span>
 
-<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Matrix</span><span class="o">&lt;</span><span class="n">TScalarType</span><span class="p">,</span><span class="n">NDimensions</span><span class="p">,</span><span class="mi">1</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ColumnMatrixType</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">typedef</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Matrix</span><span class="o">&lt;</span><span class="n">TScalarType</span><span class="p">,</span><span class="n">NDimensions</span><span class="p">,</span><span class="mi">1</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ColumnMatrixType</span><span class="p">;</span>
 <span class="w">    </span><span class="c1">//typedef vnl_matrix_fixed&lt;TScalarType, NDimensions, 1&gt; ColumnMatrixType;</span>
 
-<span class="w">    </span><span class="n">PointSetPointer</span><span class="w"> </span><span class="n">m_SourceLandmarks</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="n">PointSetPointer</span><span class="w"> </span><span class="n">m_SourceLandmarks</span><span class="p">;</span>
 
-<span class="w">    </span><span class="n">PointSetPointer</span><span class="w"> </span><span class="n">m_TargetLandmarks</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="n">PointSetPointer</span><span class="w"> </span><span class="n">m_TargetLandmarks</span><span class="p">;</span>
 
-<span class="k">protected</span><span class="o">:</span><span class="w"></span>
-<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">GMatrixType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ComputeG</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">InputVectorType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">landmarkVector</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span><span class="w"></span>
+<span class="k">protected</span><span class="o">:</span>
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">GMatrixType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ComputeG</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">InputVectorType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">landmarkVector</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
 
-<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">GMatrixType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="nf">ComputeReflexiveG</span><span class="p">(</span><span class="n">PointsIterator</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span><span class="w"></span>
-
-
-<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">ComputeDeformationContribution</span><span class="p">(</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">InputPointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">inputPoint</span><span class="p">,</span><span class="w"></span>
-<span class="w">                                                 </span><span class="n">OutputPointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span><span class="w"></span>
-
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">ComputeK</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span><span class="w"></span>
-
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">ComputeL</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">GMatrixType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="nf">ComputeReflexiveG</span><span class="p">(</span><span class="n">PointsIterator</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
 
 
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">ComputeP</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">ComputeDeformationContribution</span><span class="p">(</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">InputPointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">inputPoint</span><span class="p">,</span>
+<span class="w">                                                 </span><span class="n">OutputPointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
 
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">ComputeY</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">ComputeK</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
 
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">ComputeD</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">ComputeL</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
 
-<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">ReorganizeW</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span><span class="w"></span>
 
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">m_Stiffness</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">ComputeP</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
 
-<span class="w">    </span><span class="n">VectorSetPointer</span><span class="w"> </span><span class="n">m_Displacements</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">ComputeY</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
 
-<span class="w">    </span><span class="k">mutable</span><span class="w"> </span><span class="n">LMatrixType</span><span class="w"> </span><span class="n">m_LMatrix</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">ComputeD</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
 
-<span class="w">    </span><span class="k">mutable</span><span class="w"> </span><span class="n">LMatrixType</span><span class="w"> </span><span class="n">m_LMatrixInverse</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">ReorganizeW</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
 
-<span class="w">    </span><span class="k">mutable</span><span class="w"> </span><span class="n">KMatrixType</span><span class="w"> </span><span class="n">m_KMatrix</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">m_Stiffness</span><span class="p">;</span>
 
-<span class="w">    </span><span class="k">mutable</span><span class="w"> </span><span class="n">PMatrixType</span><span class="w"> </span><span class="n">m_PMatrix</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="n">VectorSetPointer</span><span class="w"> </span><span class="n">m_Displacements</span><span class="p">;</span>
 
-<span class="w">    </span><span class="k">mutable</span><span class="w"> </span><span class="n">YMatrixType</span><span class="w"> </span><span class="n">m_YMatrix</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">mutable</span><span class="w"> </span><span class="n">LMatrixType</span><span class="w"> </span><span class="n">m_LMatrix</span><span class="p">;</span>
 
-<span class="w">    </span><span class="k">mutable</span><span class="w"> </span><span class="n">WMatrixType</span><span class="w"> </span><span class="n">m_WMatrix</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">mutable</span><span class="w"> </span><span class="n">LMatrixType</span><span class="w"> </span><span class="n">m_LMatrixInverse</span><span class="p">;</span>
 
-<span class="w">    </span><span class="k">mutable</span><span class="w"> </span><span class="n">DMatrixType</span><span class="w"> </span><span class="n">m_DMatrix</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">mutable</span><span class="w"> </span><span class="n">KMatrixType</span><span class="w"> </span><span class="n">m_KMatrix</span><span class="p">;</span>
 
-<span class="w">    </span><span class="k">mutable</span><span class="w"> </span><span class="n">AMatrixType</span><span class="w"> </span><span class="n">m_AMatrix</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">mutable</span><span class="w"> </span><span class="n">PMatrixType</span><span class="w"> </span><span class="n">m_PMatrix</span><span class="p">;</span>
 
-<span class="w">    </span><span class="k">mutable</span><span class="w"> </span><span class="n">BMatrixType</span><span class="w"> </span><span class="n">m_BVector</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">mutable</span><span class="w"> </span><span class="n">YMatrixType</span><span class="w"> </span><span class="n">m_YMatrix</span><span class="p">;</span>
 
-<span class="w">    </span><span class="k">mutable</span><span class="w"> </span><span class="n">GMatrixType</span><span class="w"> </span><span class="n">m_GMatrix</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">mutable</span><span class="w"> </span><span class="n">WMatrixType</span><span class="w"> </span><span class="n">m_WMatrix</span><span class="p">;</span>
 
-<span class="w">    </span><span class="k">mutable</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_WMatrixComputed</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="k">mutable</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_LMatrixComputed</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="k">mutable</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_LInverseComputed</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">mutable</span><span class="w"> </span><span class="n">DMatrixType</span><span class="w"> </span><span class="n">m_DMatrix</span><span class="p">;</span>
 
-<span class="w">    </span><span class="n">IMatrixType</span><span class="w"> </span><span class="n">m_I</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="k">mutable</span><span class="w"> </span><span class="n">AMatrixType</span><span class="w"> </span><span class="n">m_AMatrix</span><span class="p">;</span>
 
-<span class="k">private</span><span class="o">:</span><span class="w"></span>
+<span class="w">    </span><span class="k">mutable</span><span class="w"> </span><span class="n">BMatrixType</span><span class="w"> </span><span class="n">m_BVector</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">mutable</span><span class="w"> </span><span class="n">GMatrixType</span><span class="w"> </span><span class="n">m_GMatrix</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">mutable</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_WMatrixComputed</span><span class="p">;</span>
+<span class="w">    </span><span class="k">mutable</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_LMatrixComputed</span><span class="p">;</span>
+<span class="w">    </span><span class="k">mutable</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_LInverseComputed</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">IMatrixType</span><span class="w"> </span><span class="n">m_I</span><span class="p">;</span>
+
+<span class="k">private</span><span class="o">:</span>
 <span class="w">    </span><span class="n">SparseKernelTransform</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&amp;</span><span class="p">);</span><span class="w"> </span><span class="c1">//purposely not implemented</span>
 <span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&amp;</span><span class="p">);</span><span class="w"> </span><span class="c1">//purposely not implemented</span>
 
-<span class="p">};</span><span class="w"></span>
+<span class="p">};</span>
 
 <span class="p">}</span><span class="w"> </span><span class="c1">// end namespace itk</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkSparseKernelTransform.cpp&quot;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkSparseKernelTransform.cpp&quot;</span>
 
 <span class="cp">#endif </span><span class="c1">// __itkSparseKernelTransform_h</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:15 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:22 +0000</p>
 
               
             </article>

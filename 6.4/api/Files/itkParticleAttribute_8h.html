@@ -2285,54 +2285,54 @@
 <h2 id="source-code">Source code</h2>
 <div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkDataObject.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkPoint.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkWeakPointer.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkCommand.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkParticleEvents.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkDataObject.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkPoint.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkWeakPointer.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkCommand.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkParticleEvents.h&quot;</span>
 
-<span class="k">namespace</span><span class="w"> </span><span class="nn">itk</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
+<span class="k">namespace</span><span class="w"> </span><span class="nn">itk</span>
+<span class="p">{</span>
 
 <span class="c1">//class ParticleSystem;</span>
 
-<span class="k">template</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">VDimension</span><span class="o">&gt;</span><span class="w"></span>
-<span class="k">class</span><span class="w"> </span><span class="nc">ITK_EXPORT</span><span class="w"> </span><span class="n">ParticleAttribute</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">DataObject</span><span class="w"></span>
-<span class="p">{</span><span class="w"></span>
-<span class="k">public</span><span class="o">:</span><span class="w"></span>
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleAttribute</span><span class="w"> </span><span class="n">Self</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">DataObject</span><span class="w"> </span><span class="n">Superclass</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">&gt;</span><span class="w">  </span><span class="n">Pointer</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&gt;</span><span class="w">  </span><span class="n">ConstPointer</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">WeakPointer</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&gt;</span><span class="w">  </span><span class="n">ConstWeakPointer</span><span class="p">;</span><span class="w"></span>
+<span class="k">template</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">VDimension</span><span class="o">&gt;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ITK_EXPORT</span><span class="w"> </span><span class="n">ParticleAttribute</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">DataObject</span>
+<span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">ParticleAttribute</span><span class="w"> </span><span class="n">Self</span><span class="p">;</span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">DataObject</span><span class="w"> </span><span class="n">Superclass</span><span class="p">;</span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="n">Self</span><span class="o">&gt;</span><span class="w">  </span><span class="n">Pointer</span><span class="p">;</span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&gt;</span><span class="w">  </span><span class="n">ConstPointer</span><span class="p">;</span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">WeakPointer</span><span class="o">&lt;</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&gt;</span><span class="w">  </span><span class="n">ConstWeakPointer</span><span class="p">;</span>
 
-<span class="w">  </span><span class="n">itkNewMacro</span><span class="p">(</span><span class="n">Self</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="n">itkNewMacro</span><span class="p">(</span><span class="n">Self</span><span class="p">);</span>
 
-<span class="w">  </span><span class="n">itkTypeMacro</span><span class="p">(</span><span class="n">ParticleAttribute</span><span class="p">,</span><span class="w"> </span><span class="n">DataObject</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="n">itkTypeMacro</span><span class="p">(</span><span class="n">ParticleAttribute</span><span class="p">,</span><span class="w"> </span><span class="n">DataObject</span><span class="p">);</span>
 
-<span class="w">  </span><span class="k">struct</span><span class="w"> </span><span class="nc">DefinedCallbacksStruct</span><span class="w"></span>
-<span class="w">  </span><span class="p">{</span><span class="w"></span>
-<span class="w">    </span><span class="n">DefinedCallbacksStruct</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">Event</span><span class="p">(</span><span class="nb">false</span><span class="p">),</span><span class="w"></span>
-<span class="w">                               </span><span class="n">EventWithIndex</span><span class="p">(</span><span class="nb">false</span><span class="p">),</span><span class="w"></span>
-<span class="w">                               </span><span class="n">DomainAddEvent</span><span class="p">(</span><span class="nb">false</span><span class="p">),</span><span class="w"></span>
-<span class="w">                               </span><span class="n">TransformSetEvent</span><span class="p">(</span><span class="nb">false</span><span class="p">),</span><span class="w"></span>
-<span class="w">                               </span><span class="n">PrefixTransformSetEvent</span><span class="p">(</span><span class="nb">false</span><span class="p">),</span><span class="w"></span>
-<span class="w">                               </span><span class="n">NeighborhoodSetEvent</span><span class="p">(</span><span class="nb">false</span><span class="p">),</span><span class="w"></span>
-<span class="w">                               </span><span class="n">PositionSetEvent</span><span class="p">(</span><span class="nb">false</span><span class="p">),</span><span class="w"></span>
-<span class="w">                               </span><span class="n">PositionAddEvent</span><span class="p">(</span><span class="nb">false</span><span class="p">),</span><span class="w"></span>
-<span class="w">                               </span><span class="n">PositionRemoveEvent</span><span class="p">(</span><span class="nb">false</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">Event</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">EventWithIndex</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">DomainAddEvent</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">TransformSetEvent</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">PrefixTransformSetEvent</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">NeighborhoodSetEvent</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">PositionSetEvent</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">PositionAddEvent</span><span class="p">;</span><span class="w"></span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">PositionRemoveEvent</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="p">};</span><span class="w"></span>
+<span class="w">  </span><span class="k">struct</span><span class="w"> </span><span class="nc">DefinedCallbacksStruct</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="n">DefinedCallbacksStruct</span><span class="p">()</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">Event</span><span class="p">(</span><span class="nb">false</span><span class="p">),</span>
+<span class="w">                               </span><span class="n">EventWithIndex</span><span class="p">(</span><span class="nb">false</span><span class="p">),</span>
+<span class="w">                               </span><span class="n">DomainAddEvent</span><span class="p">(</span><span class="nb">false</span><span class="p">),</span>
+<span class="w">                               </span><span class="n">TransformSetEvent</span><span class="p">(</span><span class="nb">false</span><span class="p">),</span>
+<span class="w">                               </span><span class="n">PrefixTransformSetEvent</span><span class="p">(</span><span class="nb">false</span><span class="p">),</span>
+<span class="w">                               </span><span class="n">NeighborhoodSetEvent</span><span class="p">(</span><span class="nb">false</span><span class="p">),</span>
+<span class="w">                               </span><span class="n">PositionSetEvent</span><span class="p">(</span><span class="nb">false</span><span class="p">),</span>
+<span class="w">                               </span><span class="n">PositionAddEvent</span><span class="p">(</span><span class="nb">false</span><span class="p">),</span>
+<span class="w">                               </span><span class="n">PositionRemoveEvent</span><span class="p">(</span><span class="nb">false</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">Event</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">EventWithIndex</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">DomainAddEvent</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">TransformSetEvent</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">PrefixTransformSetEvent</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">NeighborhoodSetEvent</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">PositionSetEvent</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">PositionAddEvent</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">PositionRemoveEvent</span><span class="p">;</span>
+<span class="w">  </span><span class="p">};</span>
 
-<span class="w">  </span><span class="n">DefinedCallbacksStruct</span><span class="w">  </span><span class="n">m_DefinedCallbacks</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">DefinedCallbacksStruct</span><span class="w">  </span><span class="n">m_DefinedCallbacks</span><span class="p">;</span>
 
 <span class="c1">//   virtual void EventCallback(ParticleSystem&lt;VDimension&gt; *, const ParticleEvent &amp;) {}</span>
 <span class="c1">//   virtual void EventWithIndexCallback(ParticleSystem&lt;VDimension&gt; *, const ParticleEventWithIndex &amp;) {}</span>
@@ -2345,32 +2345,32 @@
 <span class="c1">//   virtual void PositionRemoveEventCallback(ParticleSystem&lt;VDimension&gt; *,</span>
 <span class="c1">//   const ParticlePositionRemoveEvent &amp;) {}</span>
 
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">EventCallback</span><span class="p">(</span><span class="n">Object</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EventObject</span><span class="w"> </span><span class="o">&amp;</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">EventWithIndexCallback</span><span class="p">(</span><span class="n">Object</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EventObject</span><span class="w"> </span><span class="o">&amp;</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">DomainAddEventCallback</span><span class="p">(</span><span class="n">Object</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EventObject</span><span class="w"> </span><span class="o">&amp;</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">TransformSetEventCallback</span><span class="p">(</span><span class="n">Object</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EventObject</span><span class="w"> </span><span class="o">&amp;</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">PrefixTransformSetEventCallback</span><span class="p">(</span><span class="n">Object</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EventObject</span><span class="w"> </span><span class="o">&amp;</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">NeighborhoodSetEventCallback</span><span class="p">(</span><span class="n">Object</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EventObject</span><span class="w"> </span><span class="o">&amp;</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">PositionSetEventCallback</span><span class="p">(</span><span class="n">Object</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EventObject</span><span class="w"> </span><span class="o">&amp;</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">PositionAddEventCallback</span><span class="p">(</span><span class="n">Object</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EventObject</span><span class="w"> </span><span class="o">&amp;</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">PositionRemoveEventCallback</span><span class="p">(</span><span class="n">Object</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EventObject</span><span class="w"> </span><span class="o">&amp;</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
+<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">EventCallback</span><span class="p">(</span><span class="n">Object</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EventObject</span><span class="w"> </span><span class="o">&amp;</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">EventWithIndexCallback</span><span class="p">(</span><span class="n">Object</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EventObject</span><span class="w"> </span><span class="o">&amp;</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">DomainAddEventCallback</span><span class="p">(</span><span class="n">Object</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EventObject</span><span class="w"> </span><span class="o">&amp;</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">TransformSetEventCallback</span><span class="p">(</span><span class="n">Object</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EventObject</span><span class="w"> </span><span class="o">&amp;</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">PrefixTransformSetEventCallback</span><span class="p">(</span><span class="n">Object</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EventObject</span><span class="w"> </span><span class="o">&amp;</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">NeighborhoodSetEventCallback</span><span class="p">(</span><span class="n">Object</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EventObject</span><span class="w"> </span><span class="o">&amp;</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">PositionSetEventCallback</span><span class="p">(</span><span class="n">Object</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EventObject</span><span class="w"> </span><span class="o">&amp;</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">PositionAddEventCallback</span><span class="p">(</span><span class="n">Object</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EventObject</span><span class="w"> </span><span class="o">&amp;</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">PositionRemoveEventCallback</span><span class="p">(</span><span class="n">Object</span><span class="w"> </span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">EventObject</span><span class="w"> </span><span class="o">&amp;</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
 
-<span class="k">protected</span><span class="o">:</span><span class="w"></span>
-<span class="w">  </span><span class="n">ParticleAttribute</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span><span class="w"></span>
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">ParticleAttribute</span><span class="p">()</span><span class="w"> </span><span class="p">{};</span><span class="w"></span>
+<span class="k">protected</span><span class="o">:</span>
+<span class="w">  </span><span class="n">ParticleAttribute</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
+<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">ParticleAttribute</span><span class="p">()</span><span class="w"> </span><span class="p">{};</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">PrintSelf</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span><span class="w"> </span><span class="n">os</span><span class="p">,</span><span class="w"> </span><span class="n">Indent</span><span class="w"> </span><span class="n">indent</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
-<span class="w">  </span><span class="p">{</span><span class="w">  </span><span class="n">Superclass</span><span class="o">::</span><span class="n">PrintSelf</span><span class="p">(</span><span class="n">os</span><span class="p">,</span><span class="n">indent</span><span class="p">);</span><span class="w">  </span><span class="p">}</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">PrintSelf</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span><span class="w"> </span><span class="n">os</span><span class="p">,</span><span class="w"> </span><span class="n">Indent</span><span class="w"> </span><span class="n">indent</span><span class="p">)</span><span class="w"> </span><span class="k">const</span>
+<span class="w">  </span><span class="p">{</span><span class="w">  </span><span class="n">Superclass</span><span class="o">::</span><span class="n">PrintSelf</span><span class="p">(</span><span class="n">os</span><span class="p">,</span><span class="n">indent</span><span class="p">);</span><span class="w">  </span><span class="p">}</span>
 
-<span class="k">private</span><span class="o">:</span><span class="w"></span>
+<span class="k">private</span><span class="o">:</span>
 <span class="w">  </span><span class="n">ParticleAttribute</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&amp;</span><span class="p">);</span><span class="w"> </span><span class="c1">//purposely not implemented</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="k">operator</span><span class="o">=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="o">&amp;</span><span class="p">);</span><span class="w"> </span><span class="c1">//purposely not implemented</span>
-<span class="p">};</span><span class="w"></span>
+<span class="p">};</span>
 
 <span class="p">}</span><span class="w"> </span><span class="c1">// end namespace itk</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:16 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:23 +0000</p>
 
               
             </article>

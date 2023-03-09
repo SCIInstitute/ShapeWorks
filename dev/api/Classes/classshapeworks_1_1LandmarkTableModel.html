@@ -2525,127 +2525,127 @@
 </table>
 <h2 id="public-slots-documentation">Public Slots Documentation</h2>
 <h3 id="slot-new_landmark">slot new_landmark</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">new_landmark</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">new_landmark</span><span class="p">()</span>
 </code></pre></div>
 <p>create a new landmark </p>
 <h3 id="slot-handle_click">slot handle_click</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_click</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">QModelIndex</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">index</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_click</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">QModelIndex</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">index</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Handler for when table cells are clicked. </p>
 <h3 id="slot-handle_double_click">slot handle_double_click</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_double_click</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">QModelIndex</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">index</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_double_click</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">QModelIndex</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">index</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Handler for when table cells are double clicked. </p>
 <h3 id="slot-handle_header_click">slot handle_header_click</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_header_click</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">index</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_header_click</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">index</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Handle header click. </p>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-landmarktablemodel">function LandmarkTableModel</h3>
-<div class="highlight"><pre><span></span><code><span class="n">LandmarkTableModel</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">QObject</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">parent</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">LandmarkTableModel</span><span class="p">(</span>
+<span class="w">    </span><span class="n">QObject</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">parent</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Constructor. </p>
 <h3 id="function-landmarktablemodel_1">function ~LandmarkTableModel</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">LandmarkTableModel</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">LandmarkTableModel</span><span class="p">()</span>
 </code></pre></div>
 <p>Destructor. </p>
 <h3 id="function-set_session">function set_session</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_session</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Session</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">session</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_session</span><span class="p">(</span>
+<span class="w">    </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Session</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">session</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Attach to a session. </p>
 <h3 id="function-store_landmarks">function store_landmarks</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">store_landmarks</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">store_landmarks</span><span class="p">()</span>
 </code></pre></div>
 <p>Store landmarks back to project. </p>
 <h3 id="function-set_active_domain">function set_active_domain</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_active_domain</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_active_domain</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Set the currently active domain. </p>
 <h3 id="function-update_table">function update_table</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_table</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_table</span><span class="p">()</span>
 </code></pre></div>
 <p>Update the table of landmarks from the project. </p>
 <h3 id="function-update_cells">function update_cells</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_cells</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_cells</span><span class="p">()</span>
 </code></pre></div>
 <p>Update table cells. </p>
 <h3 id="function-remove_rows">function remove_rows</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">remove_rows</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">rows</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">remove_rows</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">rows</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Remove landmarks with specified row indices. </p>
 <h3 id="function-toggle_visible">function toggle_visible</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">toggle_visible</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">toggle_visible</span><span class="p">()</span>
 </code></pre></div>
 <p>Toggle tri-state button for visibility in horizontal header. </p>
 <h3 id="function-set_placing_landmark">function set_placing_landmark</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_placing_landmark</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">row</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_placing_landmark</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">row</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Set the currently placing landmark. </p>
 <h3 id="function-delete_landmarks">function delete_landmarks</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">delete_landmarks</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">QModelIndexList</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">list</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">delete_landmarks</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">QModelIndexList</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">list</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>delete the selected landmarks </p>
 <h3 id="function-rowcount">function rowCount</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">rowCount</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">QModelIndex</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">index</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">rowCount</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">QModelIndex</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">index</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span>
 </code></pre></div>
 <p>QAbstractTableModel::rowCount implementation. </p>
 <h3 id="function-columncount">function columnCount</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">columnCount</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">QModelIndex</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">index</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">columnCount</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">QModelIndex</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">index</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span>
 </code></pre></div>
 <p>QAbstractTableModel::columnCount implementation. </p>
 <h3 id="function-data">function data</h3>
-<div class="highlight"><pre><span></span><code><span class="n">QVariant</span><span class="w"> </span><span class="n">data</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">QModelIndex</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">index</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">role</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">QVariant</span><span class="w"> </span><span class="n">data</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">QModelIndex</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">index</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">role</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span>
 </code></pre></div>
 <p>QAbstractTableModel::data implementation. </p>
 <h3 id="function-setdata">function setData</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">setData</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">QModelIndex</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">index</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">QVariant</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">value</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">role</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">setData</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">QModelIndex</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">index</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">QVariant</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">value</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">role</span>
+<span class="p">)</span><span class="w"> </span><span class="k">override</span>
 </code></pre></div>
 <p>QAbstractTableModel::setData implementation. </p>
 <h3 id="function-headerdata">function headerData</h3>
-<div class="highlight"><pre><span></span><code><span class="n">QVariant</span><span class="w"> </span><span class="n">headerData</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">section</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">Qt</span><span class="o">::</span><span class="n">Orientation</span><span class="w"> </span><span class="n">orientation</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">role</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">QVariant</span><span class="w"> </span><span class="n">headerData</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">section</span><span class="p">,</span>
+<span class="w">    </span><span class="n">Qt</span><span class="o">::</span><span class="n">Orientation</span><span class="w"> </span><span class="n">orientation</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">role</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span>
 </code></pre></div>
 <p>QAbstractTableModel::headerData implementation. </p>
 <h3 id="function-flags">function flags</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Qt</span><span class="o">::</span><span class="n">ItemFlags</span><span class="w"> </span><span class="n">flags</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">QModelIndex</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">index</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">Qt</span><span class="o">::</span><span class="n">ItemFlags</span><span class="w"> </span><span class="n">flags</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">QModelIndex</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">index</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span>
 </code></pre></div>
 <p>QAbstractTableModel::flags implementation. </p>
 <hr />
-<p>Updated on 2023-03-03 at 23:21:14 +0000</p>
+<p>Updated on 2023-03-09 at 18:03:21 +0000</p>
 
               
             </article>
