@@ -15,7 +15,11 @@ env:
   SW_CLOUD_LOGIN: ${{ secrets.CLOUD_LOGIN }}
   CACHE_HOST: ${{ secrets.SSH_HOST }}
 #  LD_LIBRARY_PATH: /opt/conda/envs/shapeworks/lib
-    
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
 
