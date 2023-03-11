@@ -16,6 +16,10 @@ env:
   CACHE_HOST: ${{ secrets.SSH_HOST }}
   GA_MEASUREMENT_ID: ${{ secrets.GA_MEASUREMENT_ID }}
   GA_API_SECRET: ${{ secrets.GA_API_SECRET }}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
   
 jobs:
   build:
