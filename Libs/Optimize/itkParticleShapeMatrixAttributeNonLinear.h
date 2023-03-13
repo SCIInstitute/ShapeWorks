@@ -124,13 +124,12 @@ public:
         torch::Tensor z = torch::from_blob(shape_vec_new.data_block(), {1,dM}, ten_options);
         z.to(torch::kFloat);
         auto l_dim = this->m_inv_net->GetLatentDimensions();
-        torch::Tensor u = torch.zeros({1, l_dim});
+        torch::Tensor u = torch::zeros({1, l_dim});
         this->m_inv_net->ForwardPass(z, u);
-        unsigned int l_dim = u.sizes()[1]; // 1 X L
         for (unsigned int i = 0; i < l_dim; i++)
         {
-          double z0_value = u[0][l].item<double>();
-          this->m_BaseShapeMatrix->put(l, d / this->m_DomainsPerShape, z0_value);
+          double z0_value = u[0][i].item<double>();
+          this->m_BaseShapeMatrix->put(i, d / this->m_DomainsPerShape, z0_value);
         }
       }
       catch (const c10::Error& e) {
@@ -184,10 +183,10 @@ public:
         auto x = torch::from_blob(tmp.data_array(), {N, dM}, ten_options);
         sm = x.to(torch::kFloat); // make model compatible float
         auto l_dim = this->m_inv_net->GetLatentDimensions();
-        torch::Tensor u = torch.zeros({N, l_dim});
+        torch::Tensor u = torch::zeros({N, l_dim});
         // Forward pass
         this->m_inv_net->ForwardPass(sm, u);
-        u = u.transpose();
+        u = u.transpose(0, 1);
         double* u_data_ptr = u.data_ptr<double>();
         m_BaseShapeMatrix->set_size(l_dim, N);
         m_BaseShapeMatrix->clear();
@@ -216,10 +215,10 @@ public:
   }
 
 
-  void RunForwardPassWithJacbian(double& log_prob_u, double& log_det_g, double& log_det_j, torch::Tensor& input_tensor, torch::tensor& jacobian_matrix)
+  void RunForwardPassWithJacbian(double& log_prob_u, double& log_det_g, double& log_det_j, torch::Tensor& input_tensor, torch::Tensor& jacobian_matrix)
   {
     // Forward pass to be called from entropy function
-    this->m_inv_net->ForwardPassGrad(input_tensor, jacobian_matrix, log_prob_u, log_det_g, log_det_j);
+    this->m_inv_net->RunForwardPassWithJacobian(log_prob_u, log_det_g, log_det_j, input_tensor, jacobian_matrix);
   }
 
   torch::Device GetDevice()

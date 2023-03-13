@@ -87,7 +87,7 @@ class Model
 
         void LoadParams(const std::string filepath);
         void ForwardPass(torch::Tensor& input_tensor, torch::Tensor& output_tensor); // for position set
-        void ForwardPassGrad(torch::Tensor& input_tensor, torch::Tensor& jacobian_matrix, double& log_prob_u, double& log_det_g, double& log_det_j); // for gradient update
+        void RunForwardPassWithJacobian(double& log_prob_u, double& log_det_g, double& log_det_j, torch::Tensor& input_tensor, torch::Tensor& jacobian_matrix); // for gradient update
 
     private:
         torch::jit::script::Module m_module;

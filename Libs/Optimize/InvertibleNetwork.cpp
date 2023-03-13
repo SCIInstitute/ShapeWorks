@@ -162,7 +162,7 @@ namespace InvertibleNet
     }
 
     //-----------------------------------------------------------------------------
-    void Model::ForwardPassGrad(torch::Tensor& input_tensor, torch::Tensor& jacobian_matrix, double& log_prob_u,  double& log_det_g, double& log_det_j)
+    void Model::RunForwardPassWithJacobian(double& log_prob_u, double& log_det_g, double& log_det_j, torch::Tensor& input_tensor, torch::Tensor& jacobian_matrix) // for gradient update
     {
         // Forward Pass for gradient updates
         try
