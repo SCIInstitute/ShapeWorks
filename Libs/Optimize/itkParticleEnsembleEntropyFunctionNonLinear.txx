@@ -147,7 +147,7 @@ ParticleEnsembleEntropyFunctionNonLinear<VDimension>
 ::Evaluate(unsigned int idx, unsigned int d, const ParticleSystemType * system,
            double &maxdt, double &energy) const
 {
-    std::cout << "****** Start Evaluate Non Linear 0" << std::endl;
+    MSG("Evaluate Non-Linear 0");
     const unsigned int DomainsPerShape = m_ShapeMatrix->GetDomainsPerShape();
 
     // maxdt  = m_MinimumEigenValue;
@@ -191,10 +191,11 @@ ParticleEnsembleEntropyFunctionNonLinear<VDimension>
         shape_vec_new_tensor = shape_vec_new_tensor.to(torch::kFloat);
 
         torch::Tensor jacobian_matrix = torch::zeros({1, L, dM});
-        this->m_ShapeMatrix->DoForwardPass(shape_vec_new_tensor, jacobian_matrix, log_prob_u, log_det_g, log_det_j);
+        this->m_ShapeMatrix->RunForwardPassWithJacbian(log_prob_u, log_det_g, log_det_j, shape_vec_new_tensor, jacobian_matrix);
         jacobian_matrix = jacobian_matrix.view({L, dM}).to(torch::kFloat);
         MSG("Forward Pass Done");
         auto det_g = std::exp(log_det_g); auto det_j = std::exp(log_det_j); auto p_u = std::exp(log_prob_u);
+        
         DEBUG(det_g); DEBUG(det_j); DEBUG(p_u);
 
         vnl_matrix cur_shape_grad = m_PointsUpdateBase->get_n_columns(d / DomainsPerShape, 1);
@@ -213,9 +214,10 @@ ParticleEnsembleEntropyFunctionNonLinear<VDimension>
     catch (const c10::Error& e) {
         std::cout << "Errors in Libtorch operations while Gradient Set | " << e.what() << "\n";
         std::exit(EXIT_FAILURE);
-  }}
-//    c10::cuda::CUDACachingAllocator::emptyCache();
-
+  }
+  }
+   c10::cuda::CUDACachingAllocator::emptyCache();
+    MSG("Evaluate Non-Linear 1");
     return system->TransformVector(gradE,
                                    system->GetInversePrefixTransform(d) *
                                    system->GetInverseTransform(d));

@@ -216,11 +216,10 @@ public:
   }
 
 
-  void DoForwardPass(torch::Tensor& input_tensor, torch::tensor& jacobian_matrix, double& log_prob_u, double& log_det_g, double& log_det_j)
+  void RunForwardPassWithJacbian(double& log_prob_u, double& log_det_g, double& log_det_j, torch::Tensor& input_tensor, torch::tensor& jacobian_matrix)
   {
     // Forward pass to be called from entropy function
     this->m_inv_net->ForwardPassGrad(input_tensor, jacobian_matrix, log_prob_u, log_det_g, log_det_j);
-    
   }
 
   torch::Device GetDevice()
