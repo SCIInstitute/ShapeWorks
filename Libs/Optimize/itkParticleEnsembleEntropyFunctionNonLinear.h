@@ -97,7 +97,7 @@ public:
     if (m_Counter == 0)
       {
       this->ComputeCovarianceMatrix();
-      this->m_ShapeMatrix->SetBaseDistParams(this->m_points_mean, this->m_InverseCovMatrix);
+      // this->m_ShapeMatrix->SetBaseDistParams(this->m_points_mean, this->m_InverseCovMatrix);
       }
   }
 
