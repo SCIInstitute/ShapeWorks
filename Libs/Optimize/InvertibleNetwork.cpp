@@ -20,6 +20,7 @@ namespace InvertibleNet
             if(j.contains("n_epochs")) this->m_n_epochs = j.at("n_epochs").get<nlohmann::json::number_integer_t>();
             if(j.contains("batch_size")) this->m_batch_size = j.at("batch_size").get<nlohmann::json::number_integer_t>();
             if(j.contains("device_id")) this->m_device_id = j.at("device_id").get<nlohmann::json::number_integer_t>();
+            if(j.contains("latent_dimension")) this->m_latent_dimension = j.at("latent_dimension").get<nlohmann::json::number_integer_t>();
             if(j.contains("seed")) this->m_seed_val = j.at("seed").get<nlohmann::json::number_integer_t>();
             if(j.contains("optimizer"))
             {
@@ -141,22 +142,18 @@ namespace InvertibleNet
     }
 
     //-----------------------------------------------------------------------------
-    torch::Tensor Model::ForwardPass(torch::Tensor& input_tensor)
+    void Model::ForwardPass(torch::Tensor& input_tensor, torch::Tensor& out_tensor)
     {
+        // Forward Pass for latent space initialization
         try
         {
-            // std::cout << "FwdPass 1 " << std::endl;
             torch::NoGradGuard no_grad;
             this->m_module.eval();
             std::vector<torch::jit::IValue> inputs;
-            inputs.push_back(input_tensor.to(this->m_device));
-            auto outputs = this->m_module.forward(inputs).toTuple();
-            // std::cout << "FwdPass 2 " << std::endl;
-            torch::Tensor z0_particles = outputs->elements()[0].toTensor();
-            // std::cout << "FwdPass 3 " << std::endl;
-            z0_particles = z0_particles.to(torch::TensorOptions(torch::kCPU).dtype(at::kDouble)); 
-            // std::cout << "FwdPass 4 " << std::endl;
-            return z0_particles;
+            inputs.push_back(input_tensor.to(this->m_device)); // 1 X dM
+            auto outputs = this->m_module.get_method("forward_for_cpp_no_jacobian")(inputs).toTuple();
+            out_tensor = outputs->elements()[0].toTensor().to(torch::TensorOptions(torch::kCPU).dtype(at::kDouble)); // 1 X L
+            MSG("Forward Pass done");
         }
         catch (const c10::Error& e) {
             std::cerr << "Error in General Forward Pass | " << e.what(); 
@@ -165,44 +162,31 @@ namespace InvertibleNet
     }
 
     //-----------------------------------------------------------------------------
-    void Model::ForwardPass(torch::Tensor& input_tensor, torch::Tensor& jacobian_matrix, double& log_det_jacobian_val, torch::Tensor& p_z_0)
+    void Model::ForwardPassGrad(torch::Tensor& input_tensor, torch::Tensor& jacobian_matrix, double& log_prob_u,  double& log_det_g, double& log_det_j)
     {
+        // Forward Pass for gradient updates
         try
         {
             this->m_module.eval();
-            // std::cout << "Forward Pass 1 " << std::endl;
-            unsigned int dM = input_tensor.sizes()[0];
-            torch::Tensor input_t = input_tensor.repeat({dM, 1}); // for jacobian
-            // std::cout << "Forward Pass 1 " << std::endl;
-            input_t.set_requires_grad(true);
-            // std::cout << "Forward Pass 2 " << std::endl;
-            std::vector<torch::jit::IValue> inputs;
-            inputs.push_back(input_t.to(this->m_device));
-            auto outputs = this->m_module.get_method("log_prob")(inputs).toTuple();
-            // std::cout << "Forward Pass 3 " << std::endl;
+            std::vector<torch::jit::IValue> inputs; // 1 X dM
+            inputs.push_back(input_tensor.to(this->m_device));
+            auto outputs = this->m_module.get_method("forward_for_cpp")(inputs).toTuple();
+            MSG("Forward Pass Done!!!");
+            auto log_prob_u_ten = outputs->elements()[1].toTensor();
+            log_prob_u_ten = log_prob_u_ten.to(torch::TensorOptions(torch::kCPU).dtype(at::kDouble)); 
+            log_prob_u = log_prob_u_ten.item<double>();
 
-            torch::Tensor z0_particles_tensor = outputs->elements()[0].toTensor();
-            torch::Tensor ones = torch::ones({dM, dM}, this->m_device);
-            // std::cout << "Forward Pass 4 " << std::endl;
-            z0_particles_tensor.backward(ones);
-            // std::cout << "Forward Pass 5 " << std::endl;
-            jacobian_matrix = input_t.grad();
-            // std::cout << "Forward Pass 6 " << std::endl;
+            auto log_det_g_ten = outputs->elements()[2].toTensor();
+            log_det_g_ten = log_det_g_ten.to(torch::TensorOptions(torch::kCPU).dtype(at::kDouble)); 
+            log_det_g = log_det_g_ten.item<double>();
 
-            torch::Tensor log_det_jacobian_tensor = outputs->elements()[1].toTensor();
-            // std::cout << "Forward Pass 7 " << std::endl;
-            log_det_jacobian_tensor = log_det_jacobian_tensor.to(torch::TensorOptions(torch::kCPU).dtype(at::kDouble)); 
-            std::cout << "Forward Pass 8 log_det_jacobian_tensor size =  " << log_det_jacobian_tensor.sizes() <<  std::endl;
-            log_det_jacobian_val = log_det_jacobian_tensor[0].item<double>();
+            auto log_det_j_ten = outputs->elements()[3].toTensor();
+            log_det_j_ten = log_det_j_ten.to(torch::TensorOptions(torch::kCPU).dtype(at::kDouble)); 
+            log_det_j = log_det_j_ten.item<double>();
 
-            std::vector<torch::jit::IValue> inputs_p;
-            inputs_p.push_back(z0_particles_tensor[0].to(this->m_device));
-            auto all_probs = this->m_module.get_method("base_dist_log_prob")(inputs_p).toTensor();
-            p_z_0 = all_probs.view({1, dM});
-            p_z_0 = p_z_0.exp();
-            auto prob_is_nan = at::isnan(p_z_0).any().item<bool>();
-            std::cout << "Forward Pass and Nan Present " << prob_is_nan << std::endl;
+            jacobian_matrix = outputs->elements()[3].toTensor().to(torch::TensorOptions(torch::kCPU).dtype(at::kDouble));
 
+            MSG("Values Set | "); DEBUG(log_prob_u); DEBUG(log_det_g); DEBUG(log_det_j); 
         }
         catch (const c10::Error& e) {
             std::cout << "Error in Forward Pass during Energy/Gradient Computations | " << e.what();

@@ -7,6 +7,9 @@
 #include <torch/script.h>
 #include <c10/cuda/CUDACachingAllocator.h>
 
+#define MESSAGE(x) do { std::cerr << x; } while (0)
+#define DEBUG(x) do { std::cerr << #x << ": " << x << std::endl; } while (0)
+
 namespace itk
 {
 

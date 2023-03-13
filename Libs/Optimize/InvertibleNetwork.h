@@ -4,7 +4,8 @@
 #include <nlohmann/json.hpp>
 #include "vnl/vnl_matrix.h"
 #include "vnl/vnl_vector.h"
-
+#define MSG(x) do { std::cerr << x << std::endl; } while (0)
+#define DEBUG(x) do { std::cerr << #x << ": " << x << std::endl; } while (0)
 
 namespace InvertibleNet
 {
@@ -64,10 +65,16 @@ class Model
             return this->m_device;
         };
 
+        int GetLatentDimensions()
+        {
+            return this->m_latent_dimension;
+        };
+
         void SetBaseDistMean(const torch::Tensor x)
         {
             this->m_base_dist_mean = x;
         };
+
         void SetBaseDistVar(const torch::Tensor x)
         {
             this->m_base_dist_var = x;
@@ -77,9 +84,10 @@ class Model
         {
             return this->m_module_exists;
         };
+
         void LoadParams(const std::string filepath);
-        torch::Tensor ForwardPass(torch::Tensor& input_tensor);
-        void ForwardPass(torch::Tensor& input_tensor, torch::Tensor& jacobian_matrix, double& log_det_jacobian_val,torch::Tensor& p_z_0_val);
+        void ForwardPass(torch::Tensor& input_tensor,torch::Tensor& output_tensor); // for position set
+        void ForwardPassGrad(torch::Tensor& input_tensor, torch::Tensor& jacobian_matrix, double& log_prob_u, double& log_det_g, double& log_det_j); // for gradient update
 
     private:
         torch::jit::script::Module m_module;
@@ -96,6 +104,8 @@ class Model
         int m_n_epochs;
         int m_device_id;
         int m_batch_size;
+
+        int m_latent_dimension;
         unsigned int m_log_interval;
         InvertibleNet::OptimizerType m_optimizer;
 };

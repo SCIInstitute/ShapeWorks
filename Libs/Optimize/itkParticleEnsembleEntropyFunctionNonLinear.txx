@@ -29,8 +29,8 @@ ParticleEnsembleEntropyFunctionNonLinear<VDimension>
 
     // Do computations in Z0 space assuming Gaussian Distrubution
     auto base_shape_matrix = m_ShapeMatrix->GetBaseShapeMatrix();
-    const unsigned int num_samples = base_shape_matrix->cols();
-    const unsigned int num_dims    = base_shape_matrix->rows();
+    const unsigned int num_samples = base_shape_matrix->cols(); // N
+    const unsigned int num_dims    = base_shape_matrix->rows(); // L
 
 
     // Do we need to resize the covariance matrix?
@@ -177,42 +177,38 @@ ParticleEnsembleEntropyFunctionNonLinear<VDimension>
 
     tmp *= Xi;
 
-    energy = tmp(0,0); // Z0 Energy
-
     // Get New gradient updates
     vnl_matrix<double> shape_vec_new = base_shape_matrix->get_n_columns(d/DomainsPerShape, 1); // shape: dM X 1
     unsigned int dM = m_ShapeMatrix->rows();
-    double log_det_jacobian_val = 0.0;
-    double det_jacobian_val = 0.0;
-    {try{
-        torch::Tensor shape_vec_new_tensor = torch::from_blob(shape_vec_new.data_block(), {dM});
-        std:: cout << "Gradient 1a" <<  std::endl;
-        torch::Tensor jacobian_matrix = torch::zeros({dM, dM}, this->m_ShapeMatrix->GetDevice());
-        std:: cout << "Gradient 2a" <<  std::endl;
-        torch::Tensor p_z_0 = torch::zeros({1, dM}, this->m_ShapeMatrix->GetDevice());
-        std:: cout << "Gradient 3a" <<  std::endl;
-        this->m_ShapeMatrix->DoForwardPass(shape_vec_new_tensor, jacobian_matrix, log_det_jacobian_val, p_z_0);
-        std:: cout << "Gradient 4a" <<  std::endl;
-        p_z_0 = p_z_0.view({1, dM});
-        std:: cout << "Gradient 5a" <<  std::endl;
-        det_jacobian_val = std::exp(log_det_jacobian_val);
-        std::cout << "det jacobian val is " << det_jacobian_val <<  " log det is " << log_det_jacobian_val<< std::endl;
-        torch::Tensor p_z = ((det_jacobian_val * log_det_jacobian_val) * p_z_0).to(this->m_ShapeMatrix->GetDevice());
-        std:: cout << "Gradient 6a" <<  std::endl;
+    unsigned int L = base_shape_matrix->rows();
+    double log_det_g = 0.0;
+    double log_det_j = 0.0;
+    double log_prob_u = 0.0;
+    {
+    try{
+        auto ten_options = torch::TensorOptions().dtype(torch::kDouble);
+        torch::Tensor shape_vec_new_tensor = torch::from_blob(shape_vec_new.data_block(), {1, dM}, ten_options);
+        shape_vec_new_tensor = shape_vec_new_tensor.to(torch::kFloat);
+
+        torch::Tensor jacobian_matrix = torch::zeros({1, L, dM});
+        this->m_ShapeMatrix->DoForwardPass(shape_vec_new_tensor, jacobian_matrix, log_prob_u, log_det_g, log_det_j);
+        jacobian_matrix = jacobian_matrix.view({L, dM}).to(torch::kFloat);
+        MSG("Forward Pass Done");
+        auto det_g = std::exp(log_det_g); auto det_j = std::exp(log_det_j); auto p_u = std::exp(log_prob_u);
+        DEBUG(det_g); DEBUG(det_j); DEBUG(p_u);
+
         vnl_matrix cur_shape_grad = m_PointsUpdateBase->get_n_columns(d / DomainsPerShape, 1);
-        torch::Tensor dH_dz0 = torch::from_blob(cur_shape_grad.data_block(), {1,dM}).to(this->m_ShapeMatrix->GetDevice());
-        std:: cout << "Gradient 7a" <<  std::endl;
-        torch::Tensor dH_dz = torch::linalg_matmul(dH_dz0, jacobian_matrix) - p_z;
-        std:: cout << "Gradient 7b" <<  std::endl;
-        dH_dz = dH_dz.to(torch::TensorOptions(torch::kCPU).dtype(at::kDouble)); 
-        std:: cout << "Gradient 8" <<  dH_dz.sizes() << std::endl;
+        torch::Tensor dH_u = torch::from_blob(cur_shape_grad.data_block(), {1, L}, ten_options);
+        torch::Tensor term1 = torch::linalg_matmul(dH_u, jacobian_matrix); // 1 X dM
+        auto term2 = ((p_u)/(std::sqrt(det_g) * det_j)) * (log_det_j - (0.5 * log_det_g));
+
         for (unsigned int i = 0; i< VDimension; i++)
         {
-            gradE[i] = dH_dz[0][k+i].item<double>();
+            gradE[i] = term1[0][k+i].item<double>() + term2;
         }
-        // maxdt  = (m_MinimumEigenValue * det_jacobian_val) - (p_z_val * log_det_jacobian_val);
         maxdt  = gradE.magnitude();
         // TODO: Look alternate strategies
+        energy = -(log_prob_u + log_det_g + log_det_j);
     }
     catch (const c10::Error& e) {
         std::cout << "Errors in Libtorch operations while Gradient Set | " << e.what() << "\n";

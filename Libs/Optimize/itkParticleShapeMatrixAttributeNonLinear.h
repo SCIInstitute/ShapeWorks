@@ -8,6 +8,9 @@
 #include "vnl/algo/vnl_symmetric_eigensystem.h"
 #include <c10/cuda/CUDACachingAllocator.h>
 
+#define MSG(x) do { std::cerr << x << std::endl; } while (0)
+#define DEBUG(x) do { std::cerr << #x << ": " << x << std::endl; } while (0)
+
 namespace itk
 {
 /** \class ParticleShapeMatrixAttributeNonLinear
@@ -38,22 +41,6 @@ public:
     return this->m_BaseShapeMatrix;
   }
 
-  virtual void ResizeBaseShapeMatrix(int rs, int cs)
-  {
-    vnl_matrix<T> tmp(*m_BaseShapeMatrix); // copy existing  matrix 
-    // Create new column (shape)
-    m_BaseShapeMatrix->set_size(rs, cs);
-    m_BaseShapeMatrix->fill(0.0);
-    // Copy old data into new matrix.
-    for (unsigned int c = 0; c < tmp.cols(); c++)
-      {
-      for (unsigned int r = 0; r < tmp.rows(); r++)
-        {
-        m_BaseShapeMatrix->put(r,c,  tmp(r,c));
-        }
-      } 
-  }
-
   /** Callbacks that may be defined by a subclass.  If a subclass defines one
       of these callback methods, the corresponding flag in m_DefinedCallbacks
       should be set to true so that the ParticleSystem will know to register
@@ -67,7 +54,6 @@ public:
     if ( d % this->m_DomainsPerShape  == 0 )
       {
       this->ResizeMatrix(this->rows(), this->cols()+1);
-      this->ResizeBaseShapeMatrix(this->rows(), this->cols()+1);                  
       }    
   }
   
@@ -89,9 +75,7 @@ public:
         > this->rows())
       {
       this->ResizeMatrix(PointsPerDomain * VDimension * this->m_DomainsPerShape,
-                         this->cols());
-      this->ResizeBaseShapeMatrix(PointsPerDomain * VDimension * this->m_DomainsPerShape,
-                             this->cols());                   
+                         this->cols());            
       }
     
     // CANNOT ADD POSITION INFO UNTIL ALL POINTS PER DOMAIN IS KNOWN
@@ -133,21 +117,25 @@ public:
     {
       vnl_matrix<double> shape_vec_new = this->get_n_columns(d/this->m_DomainsPerShape, 1); // shape: dM X 1
       unsigned int dM = this->rows();
-      std::cout << "Setting Z0 New " << dM << "shape vec size " << shape_vec_new.rows() << shape_vec_new.cols() << std::endl;
+      MSG("Position Update, Setting Base");
       try
       {
-        torch::Tensor shape_vec_new_tensor = torch::from_blob(shape_vec_new.data_block(), {1,dM});
-        std::cout << "Tensor input size " << shape_vec_new_tensor.sizes() << std::endl;
-        torch::Tensor z0_particles = this->m_inv_net->ForwardPass(shape_vec_new_tensor);
-        for (unsigned int i = 0; i < VDimension; i++)
+        auto ten_options = torch::TensorOptions().dtype(torch::kDouble);
+        torch::Tensor z = torch::from_blob(shape_vec_new.data_block(), {1,dM}, ten_options);
+        z.to(torch::kFloat);
+        auto l_dim = this->m_inv_net->GetLatentDimensions();
+        torch::Tensor u = torch.zeros({1, l_dim});
+        this->m_inv_net->ForwardPass(z, u);
+        unsigned int l_dim = u.sizes()[1]; // 1 X L
+        for (unsigned int i = 0; i < l_dim; i++)
         {
-          double z0_value = z0_particles[0][i+k].item<double>();
-          this->m_BaseShapeMatrix->put(i+k, d / this->m_DomainsPerShape, z0_value);
+          double z0_value = u[0][l].item<double>();
+          this->m_BaseShapeMatrix->put(l, d / this->m_DomainsPerShape, z0_value);
         }
       }
       catch (const c10::Error& e) {
         std::cerr << "Error in LibTorch Operations in Particle Set Callback | " << e.what() << "\n";
-         std::exit(EXIT_FAILURE);
+        std::exit(EXIT_FAILURE);
       }
       // c10::cuda::CUDACachingAllocator::emptyCache();
     }
@@ -183,100 +171,33 @@ public:
   
   virtual void BeforeIteration()
   {
-    std::cout << "Before Iteration... \n Training Update counter value = " << m_UpdateCounter << std::endl;
-    
-    std::cout << "validation check" << std::endl;
-      int R = 3;
-      int C = 4;
-      torch::Tensor ten = torch::rand({R, C}).to(torch::kDouble);
-      std::cout << "Tensor double to vnl " << std::endl;
-      double* ten_data = ten.data_ptr<double>();
-      auto options = torch::TensorOptions().dtype(torch::kDouble);
-
-      vnl_matrix<double> vm(ten_data, R, C);
-      std::cout << "Tensor: " << std::endl;
-      for (auto i = 0; i < R; i++){
-        for (auto j=0; j < C; ++j)
-        {
-          std::cout << ten[i][j].item<double>() << " ";
-        }
-        std::cout << "\n";
-      }  
-      std::cout << "vnl size = R C" << vm.rows() << ", " << vm.cols() << std::endl;
-      for (auto i = 0; i < R; i++){
-        for (auto j=0; j < C; ++j)
-        {
-          std::cout << vm.get(i, j) << " ";
-        }
-        std::cout << "\n";
-      }
-      std::cout << "DONE!!!" << std::endl;
-    
-      std::cout << "vnl toooooo TENSORRR " << std::endl;
-      auto vmar = vm.data_array();
-      torch::Tensor ten2 = torch::from_blob(vmar, {R, C}, options).clone();
-      std::cout << "Tensor 2: " << std::endl;
-      for (auto i = 0; i < R; i++){
-        for (auto j=0; j < C; ++j)
-        {
-          std::cout << ten2[i][j].item<double>() << " ";
-        }
-        std::cout << "\n";
-      }  
-
-      std::cout << "vm block 2: " << std::endl;
-      for (auto i = 0; i < R; i++){
-        for (auto j=0; j < C; ++j)
-        {
-          std::cout << vmar[i][j] << " ";
-        }
-        std::cout << "\n";
-      }  
-
-
-          
-      std::cout << "vnl to tensor Transposeeee " << std::endl;
-      torch::Tensor ten3 = torch::from_blob(vm.data_block(), {C, R}, options).clone();
-      std::cout << "Tensor 3: " << std::endl;
-      for (auto i = 0; i < C; i++){
-        for (auto j=0; j < R; ++j)
-        {
-          std::cout << ten3[i][j].item<double>() << " ";
-        }
-        std::cout << "\n";
-      }  
-
-
+    MSG("Before Iteration | Init. Latent Space"); DEBUG(m_UpdateCounter);
     m_UpdateCounter ++;
     {
-    torch::Tensor sm;
-    vnl_matrix<T> tmp(*this); // copy existing  matrix
-    unsigned int dM = this->rows();
-    unsigned int N = this->cols();
-    std::cout << "dM(R) = " << dM << " N(C) = " << N << std::endl;
-    tmp = tmp.transpose();
-    std::cout << "After transpose dM(C) = " << tmp.cols() << " N(R) = " << tmp.rows() << std::endl;
-    
-    try{ auto x = torch::from_blob(tmp.data_array(), {N, dM});
-        std::cout << "casting to float" << std::endl;
-        sm = x.to(torch::kFloat);
-      } catch (const c10::Error& e){ std::cerr << "Errors in SM init | " << e.what() << "\n";  std::exit(EXIT_FAILURE); } 
-    for (auto x = 0; x < 7; ++x){
-      std::cout <<"See Log " << std::endl;
-    }
-
-    // torch::Tensor z0_particles = this->m_inv_net->ForwardPass(sm);
-    // auto z0_data =z0_particles.data_ptr<double>();
-    // m_BaseShapeMatrix->set(z0_data);
-    // std::cout << "Base Particles Updated" << std::endl;
-    // if (m_UpdateCounter >= m_NonLinearTrainingInterval)
-    //   {
-    //     m_UpdateCounter = 0;
-    //     if (this->m_inv_net->GetModelInitialized())
-    //     {
-    //       this->m_inv_net->TrainModel(sm);
-    //     }
-    //   }
+      torch::Tensor sm;
+      vnl_matrix<T> tmp(*this); // copy existing  matrix
+      unsigned int dM = this->rows();
+      unsigned int N = this->cols();
+      tmp = tmp.transpose(); // N X dM
+      try{
+        auto ten_options = torch::TensorOptions().dtype(torch::kDouble);
+        auto x = torch::from_blob(tmp.data_array(), {N, dM}, ten_options);
+        sm = x.to(torch::kFloat); // make model compatible float
+        auto l_dim = this->m_inv_net->GetLatentDimensions();
+        torch::Tensor u = torch.zeros({N, l_dim});
+        // Forward pass
+        this->m_inv_net->ForwardPass(sm, u);
+        u = u.transpose();
+        double* u_data_ptr = u.data_ptr<double>();
+        m_BaseShapeMatrix->set_size(l_dim, N);
+        m_BaseShapeMatrix->clear();
+        m_BaseShapeMatrix->set(u_data_ptr);
+        MSG("Latent Space initialized");
+        } 
+        catch (const c10::Error& e){ 
+          std::cerr << "Errors in Shape Matrix initialization in Before Iteration | " << e.what() << "\n";
+          std::exit(EXIT_FAILURE); 
+        }
     }
     // c10::cuda::CUDACachingAllocator::emptyCache();
   }
@@ -294,32 +215,12 @@ public:
     }
   }
 
-  void SetBaseDistParams( std::shared_ptr<vnl_matrix<double>>& vnl_mean, std::shared_ptr<vnl_matrix<double>>& vnl_cov)
-  {
-    {try
-    {
-      unsigned int dM = vnl_cov->rows();
-      torch::Tensor mean = torch::from_blob(vnl_mean->data_block(), {dM});
-      // Run  Eigen spectrum on covariance matrix
-      vnl_matrix<T> tmp(*vnl_cov); // copy existing  matrix
-      vnl_svd <double> svd_inv(tmp);
-      vnl_diag_matrix<double> invLambda = svd_inv.W();
-      torch::Tensor cov = torch::from_blob(invLambda.data_block(), {dM});
-      this->m_inv_net->SetBaseDistMean(mean);
-      this->m_inv_net->SetBaseDistVar(cov);
-    }
-    catch (const c10::Error& e) {
-      std::cerr << "Errors in Libtorch operations while updating base distribution params | " << e.what() << "\n";
-       std::exit(EXIT_FAILURE);
-    }
-    }
-    // c10::cuda::CUDACachingAllocator::emptyCache();
-  }
 
-  void DoForwardPass(torch::Tensor& input_tensor, torch::Tensor& jacobian_matrix,  double& log_det_jacobian_val, torch::Tensor& p_z_0_val)
+  void DoForwardPass(torch::Tensor& input_tensor, torch::tensor& jacobian_matrix, double& log_prob_u, double& log_det_g, double& log_det_j)
   {
-    // Forward pass for graident updates
-    this->m_inv_net->ForwardPass(input_tensor, jacobian_matrix, log_det_jacobian_val, p_z_0_val);
+    // Forward pass to be called from entropy function
+    this->m_inv_net->ForwardPassGrad(input_tensor, jacobian_matrix, log_prob_u, log_det_g, log_det_j);
+    
   }
 
   torch::Device GetDevice()
