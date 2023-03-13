@@ -151,7 +151,7 @@ namespace InvertibleNet
             this->m_module.eval();
             std::vector<torch::jit::IValue> inputs;
             inputs.push_back(input_tensor.to(this->m_device)); // 1 X dM
-            auto outputs = this->m_module.get_method("forward_for_cpp_no_jacobian")(inputs).toTuple();
+            auto outputs = this->m_module.get_method("forward_for_cpp")(inputs).toTuple();
             out_tensor = outputs->elements()[0].toTensor().to(torch::TensorOptions(torch::kCPU).dtype(at::kDouble)); // 1 X L
             MSG("Forward Pass done");
         }
@@ -186,7 +186,7 @@ namespace InvertibleNet
 
             jacobian_matrix = outputs->elements()[3].toTensor().to(torch::TensorOptions(torch::kCPU).dtype(at::kDouble));
 
-            MSG("Values Set | "); DEBUG(log_prob_u); DEBUG(log_det_g); DEBUG(log_det_j); 
+            MSG("Log Values | "); DEBUG(log_prob_u); DEBUG(log_det_g); DEBUG(log_det_j); 
         }
         catch (const c10::Error& e) {
             std::cout << "Error in Forward Pass during Energy/Gradient Computations | " << e.what();

@@ -160,25 +160,26 @@ ParticleEnsembleEntropyFunctionNonLinear<VDimension>
     k += idx*VDimension;
 
     auto base_shape_matrix = m_ShapeMatrix->GetBaseShapeMatrix();
-    vnl_matrix_type Xi(3,1,0.0);
-    Xi(0,0) = base_shape_matrix->operator()(k  , d/DomainsPerShape) - m_points_mean->get(k, 0);
-    Xi(1,0) = base_shape_matrix->operator()(k+1, d/DomainsPerShape) - m_points_mean->get(k+1, 0);
-    Xi(2,0) = base_shape_matrix->operator()(k+2, d/DomainsPerShape) - m_points_mean->get(k+2, 0);
+
+    // vnl_matrix_type Xi(3,1,0.0);
+    // Xi(0,0) = base_shape_matrix->operator()(k  , d/DomainsPerShape) - m_points_mean->get(k, 0);
+    // Xi(1,0) = base_shape_matrix->operator()(k+1, d/DomainsPerShape) - m_points_mean->get(k+1, 0);
+    // Xi(2,0) = base_shape_matrix->operator()(k+2, d/DomainsPerShape) - m_points_mean->get(k+2, 0);
 
 
-    vnl_matrix_type tmp1(3, 3, 0.0);
+    // // vnl_matrix_type tmp1(3, 3, 0.0);
 
-    if (this->m_UseMeanEnergy)
-        tmp1.set_identity();
-    else
-        tmp1 = m_InverseCovMatrix->extract(3,3,k,k);
+    // if (this->m_UseMeanEnergy)
+    //     tmp1.set_identity();
+    // else
+    //     tmp1 = m_InverseCovMatrix->extract(3,3,k,k);
 
-    vnl_matrix_type tmp = Xi.transpose()*tmp1;
+    // vnl_matrix_type tmp = Xi.transpose()*tmp1;
 
-    tmp *= Xi;
+    // tmp *= Xi;
 
     // Get New gradient updates
-    vnl_matrix<double> shape_vec_new = base_shape_matrix->get_n_columns(d/DomainsPerShape, 1); // shape: dM X 1
+    vnl_matrix_type shape_vec_new = base_shape_matrix->get_n_columns(d/DomainsPerShape, 1); // shape: dM X 1
     unsigned int dM = m_ShapeMatrix->rows();
     unsigned int L = base_shape_matrix->rows();
     double log_det_g = 0.0;
@@ -187,25 +188,28 @@ ParticleEnsembleEntropyFunctionNonLinear<VDimension>
     {
     try{
         auto ten_options = torch::TensorOptions().dtype(torch::kDouble);
-        torch::Tensor shape_vec_new_tensor = torch::from_blob(shape_vec_new.data_block(), {1, dM}, ten_options);
+        auto vmar = shape_vec_new.data_array();
+        torch::Tensor shape_vec_new_tensor = torch::from_blob(shape_vec_new.data_block(), {1, dM}, ten_options).clone();
         shape_vec_new_tensor = shape_vec_new_tensor.to(torch::kFloat);
 
         torch::Tensor jacobian_matrix = torch::zeros({1, L, dM});
         this->m_ShapeMatrix->RunForwardPassWithJacbian(log_prob_u, log_det_g, log_det_j, shape_vec_new_tensor, jacobian_matrix);
-        jacobian_matrix = jacobian_matrix.view({L, dM}).to(torch::kFloat);
+        jacobian_matrix = jacobian_matrix.view({L, dM});
         MSG("Forward Pass Done");
+
         auto det_g = std::exp(log_det_g); auto det_j = std::exp(log_det_j); auto p_u = std::exp(log_prob_u);
-        
         DEBUG(det_g); DEBUG(det_j); DEBUG(p_u);
 
-        vnl_matrix cur_shape_grad = m_PointsUpdateBase->get_n_columns(d / DomainsPerShape, 1);
-        torch::Tensor dH_u = torch::from_blob(cur_shape_grad.data_block(), {1, L}, ten_options);
-        torch::Tensor term1 = torch::linalg_matmul(dH_u, jacobian_matrix); // 1 X dM
+        vnl_matrix_type dH_du = m_PointsUpdateBase->get_n_columns(d / DomainsPerShape, 1); // L X 1
+        dH_du = dH_du.transpose(); // 1 X L
+        double* jac_data_ptr  = jacobian_matrix.data_ptr<double>(); // L X dM
+        vnl_matrix_type jac_vnl(jac_data_ptr, L, dM); 
+        auto term1 = dH_du * jac_vnl; // 1 X dM
         auto term2 = ((p_u)/(std::sqrt(det_g) * det_j)) * (log_det_j - (0.5 * log_det_g));
 
         for (unsigned int i = 0; i< VDimension; i++)
         {
-            gradE[i] = term1[0][k+i].item<double>() + term2;
+            gradE[i] = term1.get(0, k+i) + term2;
         }
         maxdt  = gradE.magnitude();
         // TODO: Look alternate strategies

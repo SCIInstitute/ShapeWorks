@@ -121,7 +121,8 @@ public:
       try
       {
         auto ten_options = torch::TensorOptions().dtype(torch::kDouble);
-        torch::Tensor z = torch::from_blob(shape_vec_new.data_block(), {1,dM}, ten_options);
+        auto vmar = shape_vec_new.data_array();
+        torch::Tensor z = torch::from_blob(shape_vec_new.data_block(), {1,dM}, ten_options).clone();
         z.to(torch::kFloat);
         auto l_dim = this->m_inv_net->GetLatentDimensions();
         torch::Tensor u = torch::zeros({1, l_dim});
@@ -174,22 +175,24 @@ public:
     m_UpdateCounter ++;
     {
       torch::Tensor sm;
-      vnl_matrix<T> tmp(*this); // copy existing  matrix
+      vnl_matrix<double> tmp(*this); // copy existing  matrix --> dM X N
       unsigned int dM = this->rows();
       unsigned int N = this->cols();
       tmp = tmp.transpose(); // N X dM
       try{
         auto ten_options = torch::TensorOptions().dtype(torch::kDouble);
-        auto x = torch::from_blob(tmp.data_array(), {N, dM}, ten_options);
+        auto vmar = tmp.data_array();
+        auto x = torch::from_blob(tmp.data_block(), {N, dM}, ten_options).clone();
         sm = x.to(torch::kFloat); // make model compatible float
         auto l_dim = this->m_inv_net->GetLatentDimensions();
         torch::Tensor u = torch::zeros({N, l_dim});
         // Forward pass
-        this->m_inv_net->ForwardPass(sm, u);
-        u = u.transpose(0, 1);
+        this->m_inv_net->ForwardPass(sm, u); // u: N X L
+        u = u.transpose(0, 1); // L X N
         double* u_data_ptr = u.data_ptr<double>();
         m_BaseShapeMatrix->set_size(l_dim, N);
         m_BaseShapeMatrix->clear();
+        m_BaseShapeMatrix->fill(0.0);
         m_BaseShapeMatrix->set(u_data_ptr);
         MSG("Latent Space initialized");
         } 
