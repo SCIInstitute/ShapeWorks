@@ -5,6 +5,7 @@ on:
     branches:
       - master
       - release_v*
+      - 2017-windows-python
     tags:
     - '*'
   pull_request:
