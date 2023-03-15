@@ -38,7 +38,10 @@ call pip install itk-elastix==0.13.0
 call pip install SimpleITK==2.1.1.2
 call pip install bokeh==2.4.3
 call pip install seaborn==0.11.2
-call pip install scikit-learn==1.1.1 
+call pip install scikit-learn==1.1.1
+call pip install pyvista==0.34.1
+
+call pip install swcc==1.0.3
 
 call pip install Python/DatasetUtilsPackage.tar.gz
 call pip install Python/DocumentationUtilsPackage.tar.gz
