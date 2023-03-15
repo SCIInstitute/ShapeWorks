@@ -45,10 +45,10 @@ rm -rf Post
 
 # Build python packages
 for package in DataAugmentationUtilsPackage DatasetUtilsPackage DeepSSMUtilsPackage DocumentationUtilsPackage ShapeCohortGenPackage shapeworks ; do
-    python Python/${package}/setup.py sdist --formats=zip
+    cd Python
+    tar czvf ${package}.tar.gz $package
+    cd ..
 done
-mv dist/* Python
-
 
 # Remove tests, they won't work for users anyway
 rm bin/*Tests.exe

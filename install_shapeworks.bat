@@ -40,11 +40,11 @@ call pip install bokeh==2.4.3
 call pip install seaborn==0.11.2
 call pip install scikit-learn==1.1.1 
 
-call pip install Python/DatasetUtilsPackage-1.0.zip
-call pip install Python/DocumentationUtilsPackage-1.0.zip
-call pip install Python/DataAugmentationUtilsPackage-1.0.zip
-call pip install Python/DeepSSMUtilsPackage-1.0.zip
-call pip install Python/ShapeCohortGenPackage-1.0.zip
+call pip install Python/DatasetUtilsPackage.tar.gz
+call pip install Python/DocumentationUtilsPackage.tar.gz
+call pip install Python/DataAugmentationUtilsPackage.tar.gz
+call pip install Python/DeepSSMUtilsPackage.tar.gz
+call pip install Python/ShapeCohortGenPackage.tar.gz
 
 REM install the shapeworks python module and conda [de]activate scripts
 call .\Installation\install_python_module.bat
