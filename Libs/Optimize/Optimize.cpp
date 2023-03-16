@@ -2204,7 +2204,9 @@ void Optimize::ComputeTotalIterations() {
 void Optimize::UpdateProgress() {
   auto now = std::chrono::system_clock::now();
 
-  if ((now - m_last_update_time) > std::chrono::milliseconds(100)) {
+  bool final = current_particle_iterations_ == total_particle_iterations_;
+
+  if (final || (now - m_last_update_time) > std::chrono::milliseconds(100)) {
     m_last_update_time = now;
     std::chrono::duration<double> elapsed_seconds =
         std::chrono::duration_cast<std::chrono::seconds>(now - m_start_time);
