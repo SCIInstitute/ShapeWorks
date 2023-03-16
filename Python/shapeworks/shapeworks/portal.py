@@ -101,15 +101,20 @@ def generate_download_flag(outputDirectory, folder):
     #if output/dataset + subfolders exits 
 
     dataset = Dataset.from_name(folder)
+    if dataset == None:
+        print(f"Error: Unable to locate dataset {folder} on data portal")
+        raise Exception(f"Dataset {folder} not found on data portal")
     if os.path.exists(outputDirectory):
         # if the folder is empty or has less than 3 files then download
         file_count = count_existing_files(outputDirectory)
+        print(f"file_count = {file_count}")
+        print(f"dataset = {dataset}")
         if file_count < 6 and dataset:
             download_flag = True
         elif file_count == 6 and dataset and not("tiny_test" in folder):
             download_flag = True
         else:
-            print("Data available in " + outputDirectory + "  is sufficient, no new data will be downloaded")
+            print("Data available in " + outputDirectory + " is sufficient, no new data will be downloaded")
     #if the subfolder folder does not exists then download
     else:
         download_flag = True        
