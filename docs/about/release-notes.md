@@ -1,6 +1,66 @@
 # Release Notes
 
 
+
+	• Studio
+		○ Fix #1976, domain type switching bug #1981 
+		○ Multi-level analysis?
+		○ Studio: feature to overlay/compare mean shape
+			§ https://github.com/SCIInstitute/ShapeWorks/pull/1950
+		○ Per domain particle display and alternate color support (#1935)
+		○ Fixes:
+			§ #1946
+			§ #1947
+			§ #1944
+			§ #1755
+			§ #1923 (#1928)
+			§ #1387
+			§ #1915
+			§ #1914
+			§ #1848
+			§ #1830
+			§ #1860
+			§ #1862
+			§ #1853
+			§ #1849 - logging library
+			§ #1845
+			§ #1837 - JSON (swproj)
+			§ #1764 - color map support (Is this in 6.3.0?)
+		○ Studio file associations (#1921)
+		○ Ability to scale arrows (#1897)
+		○ #1893 (save_init_splits, checkpointin)
+		○ Shapeworks as a 3rd party library (#1889)
+		
+			
+		
+		
+		
+	
+	• Offline analysis?
+	• FFC changes (donut working)
+	• Data Portal migration
+
+
+
+## ShapeWorks 6.4.0 - 2023-03-??
+### What is new?
+  * **ShapeWorks Back-end**
+  * **ShapeWorks Front-end**
+  * ShapeWorks Studio can now automatically check for updates and prompt the user to download them
+  * Improved progress bar in ShapeWorks Studio that shows time remaining
+  * **User's Support**
+### Fixes
+  * Fix Studio python problem causing crash on group differences (#1781)
+  * Fix Studio slow/hanging on certain free form constraints (#1817, #1801)
+  * Fix crashes on certain projects (#1800, #1815)
+  * Fix Stud
+
+## ShapeWorks 6.3.2 - 2022-10-04
+### Fixes
+
+  * Fix install_shapeworks.sh on Linux (#1883)
+
+
 ## ShapeWorks 6.3.1 - 2022-07-22
 
 ### Fixes
