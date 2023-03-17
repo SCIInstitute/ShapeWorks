@@ -32,14 +32,15 @@ void NetworkAnalysisJob::run() {
   // py::object compute = network_analysis.attr("run");
   // Eigen::MatrixXd pvalues = compute(group_1_data, group_2_data, 100).cast<Eigen::MatrixXd>();
 
-  Eigen::MatrixXd tvalues = network_analysis.attr("particle_fvalues_size").cast<Eigen::MatrixXd>();
+  Eigen::MatrixXd network_values = network_analysis.attr("particle_network_values").cast<Eigen::MatrixXd>();
+  Eigen::MatrixXd spm_values = network_analysis.attr("particle_spm_values").cast<Eigen::MatrixXd>();
 
   // self.particle_fvalues_size = particle_fvalues_size
   // self.particle_fvalues_1d = particle_fvalues_1d
 
-  tvalues_.resize(tvalues.rows());
-  for (int i = 0; i < tvalues.rows(); i++) {
-    tvalues_(i) = tvalues(i, 0);
+  tvalues_.resize(network_values.rows());
+  for (int i = 0; i < network_values.rows(); i++) {
+    tvalues_(i) = network_values(i, 0);
   }
 }
 

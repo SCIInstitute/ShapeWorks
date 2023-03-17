@@ -690,6 +690,9 @@ void AnalysisTool::load_settings() {
   ui_->numClusters->setValue(params.get("reconstruction_clusters", 3));
   ui_->meshDecimation->setValue(params.get("reconstruction_decimation", 0.30));
   ui_->maxAngle->setValue(params.get("reconstruction_max_angle", 60));
+  ui_->network_iterations->setText(QString::fromStdString(params.get("network_iterations", 10000)));
+  ui_->network_pvalue_of_interest->setText(QString::fromStdString(params.get("network_pvalue_of_interest", 0.05)));
+  ui_->network_pvalue_threshold->setText(QString::fromStdString(params.get("network_pvalue_threshold", 0.05)));
 
   update_group_boxes();
 
@@ -702,6 +705,10 @@ void AnalysisTool::store_settings() {
   params.set("reconstruction_clusters", ui_->numClusters->value());
   params.set("reconstruction_decimation", ui_->meshDecimation->value());
   params.set("reconstruction_max_angle", ui_->maxAngle->value());
+  params.set("network_iterations", ui_->network_iterations->text().toStdString());
+  params.set("network_pvalue_of_interest", ui_->network_pvalue_of_interest->text().toStdString());
+  params.set("network_pvalue_threshold", ui_->network_pvalue_threshold->text().toStdString());
+        
   session_->get_project()->set_parameters(Parameters::ANALYSIS_PARAMS, params);
 }
 

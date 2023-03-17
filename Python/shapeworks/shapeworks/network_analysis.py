@@ -34,6 +34,9 @@ class NetworkAnalysis:
         self.flag_run_permutations = True
         self.flag_run_cluster = True
         self.flag_run_1dspm = True
+        self.pvalue_of_interest = 0.05
+        self.pvalue_threshold = 0.05
+        self.num_iterations = 10000
 
     def set_run_1dspm(self, run_1dspm):
         self.flag_run_1dspm = run_1dspm
@@ -53,6 +56,15 @@ class NetworkAnalysis:
 
     def set_model_type(self, model_type):
         self.flag_model = model_type
+
+    def set_pvalue_of_interest(self, pvalue_of_interest):
+        self.pvalue_of_interest = pvalue_of_interest
+
+    def set_pvalue_threshold(self, pvalue_threshold):
+        self.pvalue_threshold = pvalue_threshold
+
+    def set_num_iterations(self, num_iterations):
+        self.num_iterations = num_iterations
 
     def compute_mean_shape(self):
         sw_message("Computing mean shape")
@@ -258,12 +270,17 @@ class NetworkAnalysis:
         poi = 0.05  # p-value of interest
         pthresh = [0.05]  # ,0.025,0.01,0.005,0.001
 
+
+        n_iter = self.num_iterations
+        poi = self.pvalue_of_interest
+        pthresh = [self.pvalue_threshold]  # ,0.025,0.01,0.005,0.001
+
+
         subjects = project.get_subjects()
         # number of categories for analysis
         ng = len(np.unique(group))
         na = len(activities)
         ns = len(subjects)
-        print("got here5", file=sys.stderr)
 
         if os.path.exists(result_path) is not True:
             os.mkdir(result_path)
@@ -839,8 +856,8 @@ class NetworkAnalysis:
         elif flag_analysis == 'ttest':
             particle_fvalues_size[particles.astype(int), :, :] = fvalues_size[:, :, :, pthresh.index(poi)]
             particle_fvalues_1d[particles.astype(int), :, :] = tradzsig.reshape(len(particles), timepoints, len(fdesc))
-            self.particle_fvalues_size = particle_fvalues_size[:,0,0]
-            self.particle_fvalues_1d = particle_fvalues_1d[:,0,0]
+            self.particle_network_values = particle_fvalues_size[:,0,0]
+            self.particle_spm_values = particle_fvalues_1d[:,0,0]
             for analysis in ['1D', 'network']:
                 for comparison in fdesc:
                     if analysis == '1D':

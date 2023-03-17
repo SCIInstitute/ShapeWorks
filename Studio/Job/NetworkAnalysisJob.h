@@ -14,11 +14,13 @@ class NetworkAnalysisJob : public Job {
   QString name() override;
 
   Eigen::VectorXf get_tvalues();
+  Eigen::VectorXf get_spm_values();
 
  private:
   std::shared_ptr<Project> project_;
   ParticleShapeStatistics stats_;
   Eigen::VectorXf tvalues_;
+  Eigen::VectorXf spm_values_;
   std::string target_group_;
   std::string target_feature_;
 };
