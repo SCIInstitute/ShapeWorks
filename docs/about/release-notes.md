@@ -6,7 +6,7 @@
     * New shapeworks 'analyze' command for offline analysis of shape models
     * Improved free form constraints that now support doubly connected areas (e.g. donut-like)
     * Data Portal migrated to new ShapeWorks Cloud and swcc (ShapeWorks Cloud Client) tool
-    * ShapeWorks can now be used as a 3rd party library ([details here](http://sciinstitute.github.io/ShapeWorks/6.4/dev/shapeworks-library.html))
+    * ShapeWorks can now be used as a 3rd party library ([details here](../dev/shapeworks-library.md))
     * Added support for 'save_init_splits' and 'checkpointing_interval' parameters in the project spreadsheet formats
     * Added new JSON based file format for storing ShapeWorks projects (swproj)
     * Added a unified logging library for ShapeWorks (spdlog)
@@ -16,19 +16,20 @@
     * Improved progress bar in ShapeWorks Studio that shows time remaining
     * Added ability to scale difference arrows in ShapeWorks Studio
     * Added file association support for swproj file extension on Windows and Mac
-    * New multi-level analysis feature in ShapeWorks Studio ([details here](http://sciinstitute.github.io/ShapeWorks/6.4/studio/studio-analyze.html#multi-level-pca))
+    * New multi-level analysis feature in ShapeWorks Studio ([details here](../studio/studio-analyze.md#multi-level-pca))
     * Added ability to hide/show particles per domain
-    * Added feature to compare origina vs groomed vs reconstructed shapes
+    * Added feature to compare original vs groomed vs reconstructed shapes
     * Added feature to show the difference to the mean for any given mesh (subjects or generated PCA mode positions)
   * **User's Support**
     * Hip Use Case: The use case uses the hip joint to demonstrate the capability of ShapeWorks 
       to capture inter-domain correlations and interactions directly on triangular surface meshes. 
       The use case showcases calculating the alignment options available for multiple organ anatomies.
-      ([details here](http://sciinstitute.github.io/ShapeWorks/6.4/use-cases/mesh-based/hip.html))
+      ([details here](../use-cases/mesh-based/hip.md))
     * Added options to the incremental use case when run in --interactive mode, including sorting method, 
       initial model size, and incremental batch size. The sorting method determines how the shapes are sorted 
       to be added incrementally. There are three options: random, median, distribution.
-    * [Python API documentation](http://sciinstitute.github.io/ShapeWorks/6.4/python/python-api.html) has been added to the ShapeWorks documentation site
+      ([detauls here](../use-cases/multistep/incremental_supershapes.md))
+    * [Python API documentation](../python/python-api.md) has been added to the ShapeWorks documentation site
 
 
 ### Fixes
