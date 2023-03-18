@@ -18,8 +18,6 @@
     * Added file association support for swproj file extension on Windows and Mac
     * New multi-level analysis feature in Studio ([details here](../studio/studio-analyze.md#multi-level-pca))
     * Added ability to hide/show particles per domain
-    * Added feature to compare original vs groomed vs reconstructed shapes
-    * Added feature to show the difference to the mean for any given mesh (subjects or generated PCA mode positions)
   * **User's Support**
     * Hip Use Case: The use case uses the hip joint to demonstrate the capability of ShapeWorks 
       to capture inter-domain correlations and interactions directly on triangular surface meshes. 
