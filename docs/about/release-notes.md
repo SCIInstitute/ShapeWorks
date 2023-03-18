@@ -12,11 +12,11 @@
     * Added a unified logging library for ShapeWorks (spdlog)
     * Uniform numerical computation of specificity across platforms
   * **ShapeWorks Front-end**
-    * ShapeWorks Studio can now automatically check for updates and prompt the user to download them
-    * Improved progress bar in ShapeWorks Studio that shows time remaining
-    * Added ability to scale difference arrows in ShapeWorks Studio
+    * Studio can now automatically check for updates and prompt the user to download them
+    * Improved progress bar in Studio is more representative and also estimates time remaining
+    * Added ability to arbitrarily scale difference arrows in Studio
     * Added file association support for swproj file extension on Windows and Mac
-    * New multi-level analysis feature in ShapeWorks Studio ([details here](../studio/studio-analyze.md#multi-level-pca))
+    * New multi-level analysis feature in Studio ([details here](../studio/studio-analyze.md#multi-level-pca))
     * Added ability to hide/show particles per domain
     * Added feature to compare original vs groomed vs reconstructed shapes
     * Added feature to show the difference to the mean for any given mesh (subjects or generated PCA mode positions)
@@ -30,7 +30,6 @@
       to be added incrementally. There are three options: random, median, distribution.
       ([detauls here](../use-cases/multistep/incremental_supershapes.md))
     * [Python API documentation](../python/python-api.md) has been added to the ShapeWorks documentation site
-
 
 ### Fixes
   * Fix Studio python problem causing crash on group differences (#1781)
