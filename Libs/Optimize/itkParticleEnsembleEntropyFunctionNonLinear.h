@@ -12,6 +12,7 @@
 
 namespace itk
 {
+  using Tensor = torch::Tensor;
 
 /**
  * \class ParticleEnsembleEntropyFunctionNonLinear
@@ -81,13 +82,6 @@ public:
   const ShapeMatrixType *GetShapeMatrix() const
   {   return  m_ShapeMatrix.GetPointer();  }
 
-  std::shared_ptr<vnl_matrix<double>> GetBaseSpaceInverseCovarianceMatrix(){
-    return this->m_InverseCovMatrix;
-  }
-
-  std::shared_ptr<vnl_matrix<double>> GetBaseSpaceMean(){
-    return this->m_points_mean;
-  }
 
   /** Called before each iteration of a solver. */
   virtual void BeforeIteration()
@@ -96,8 +90,7 @@ public:
 
     if (m_Counter == 0)
       {
-      this->ComputeCovarianceMatrix();
-      // this->m_ShapeMatrix->SetBaseDistParams(this->m_points_mean, this->m_InverseCovMatrix);
+      this->ComputeGradientUpdates();
       }
   }
 
@@ -173,6 +166,9 @@ public:
 
     copy->m_MinimumVariance = this->m_MinimumVariance;
     copy->m_MinimumEigenValue = this->m_MinimumEigenValue;
+
+    copy->m_MaxMove = this->m_MaxMove;
+
     copy->m_CurrentEnergy = this->m_CurrentEnergy;
     copy->m_HoldMinimumVariance = this->m_HoldMinimumVariance;
     copy->m_MinimumVarianceDecayConstant = this->m_MinimumVarianceDecayConstant;
@@ -182,6 +178,11 @@ public:
     copy->m_DomainNumber = this->m_DomainNumber;
     copy->m_ParticleSystem = this->m_ParticleSystem;
     copy->m_ShapeMatrix = this->m_ShapeMatrix;
+    copy->m_BaseShapeMatrix = this->m_BaseShapeMatrix;
+    copy->m_GradientUpdatesNet = this->m_GradientUpdatesNet;
+    copy->m_log_det_g_ar = this->m_log_det_g_ar;
+    copy->m_log_det_j_ar = this->m_log_det_j_ar;
+    copy->m_log_prob_u_ar = this->m_log_prob_u_ar;
 
     copy->m_InverseCovMatrix = this->m_InverseCovMatrix;
     copy->m_points_mean = this->m_points_mean;
@@ -198,6 +199,7 @@ protected:
     m_HoldMinimumVariance = true;
     m_MinimumVariance = 1.0e-5;
     m_MinimumEigenValue = 0.0;
+    m_MaxMove = 0.0;
     m_MinimumVarianceDecayConstant = 1.0;//log(2.0) / 50000.0;
     m_RecomputeCovarianceInterval = 1;
     m_Counter = 0;
@@ -205,6 +207,12 @@ protected:
     m_PointsUpdateBase = std::make_shared<vnl_matrix_type>(10, 10);
     m_InverseCovMatrix = std::make_shared<vnl_matrix_type>(10, 10);
     m_points_mean = std::make_shared<vnl_matrix_type>(10, 10);
+
+    m_BaseShapeMatrix = std::make_shared<vnl_matrix_type>(10, 10);
+    m_GradientUpdatesNet = std::make_shared<vnl_matrix_type>(10, 10);
+    m_log_det_g_ar = std::make_shared<std::vector<double>>(10);
+    m_log_det_j_ar = std::make_shared<std::vector<double>>(10);
+    m_log_prob_u_ar = std::make_shared<std::vector<double>>(10);
     m_optimizing_check_ = false;
   }
   virtual ~ParticleEnsembleEntropyFunctionNonLinear() {}
@@ -212,11 +220,15 @@ protected:
   ParticleEnsembleEntropyFunctionNonLinear(const ParticleEnsembleEntropyFunctionNonLinear &);
   typename ShapeMatrixType::Pointer m_ShapeMatrix;
 
-  virtual void ComputeCovarianceMatrix();
+  virtual void ComputeBaseSpaceGradientUpdates();
+  virtual void ComputeGradientUpdates();
+
   std::shared_ptr<vnl_matrix_type> m_PointsUpdateBase; // dH/dz0
 
   double m_MinimumVariance;
   double m_MinimumEigenValue;
+  double m_MaxMove;
+
   double m_CurrentEnergy;
   bool m_HoldMinimumVariance;
   double m_MinimumVarianceDecay;
@@ -228,6 +240,13 @@ protected:
 
   std::shared_ptr<vnl_matrix_type> m_points_mean; // 3Nx3N - used for energy computation	
   std::shared_ptr<vnl_matrix_type> m_InverseCovMatrix; //3NxM - used for energy computation	
+
+  std::shared_ptr<vnl_matrix_type> m_BaseShapeMatrix;
+  std::shared_ptr<vnl_matrix_type> m_GradientUpdatesNet;
+
+  std::shared_ptr<std::vector<double>> m_log_det_g_ar;
+  std::shared_ptr<std::vector<double>> m_log_det_j_ar;
+  std::shared_ptr<std::vector<double>> m_log_prob_u_ar;
 
 };
 

@@ -13,6 +13,8 @@
 
 namespace itk
 {
+  using Tensor = torch::Tensor;
+
 /** \class ParticleShapeMatrixAttributeNonLinear
  *
  *
@@ -37,9 +39,6 @@ public:
   /** Run-time type information (and related methods). */
   itkTypeMacro(ParticleShapeMatrixAttributeNonLinear, ParticleShapeMatrixAttribute);
   
-  std::shared_ptr<vnl_matrix<double>> GetBaseShapeMatrix(){
-    return this->m_BaseShapeMatrix;
-  }
 
   /** Callbacks that may be defined by a subclass.  If a subclass defines one
       of these callback methods, the corresponding flag in m_DefinedCallbacks
@@ -92,7 +91,6 @@ public:
   
   virtual void PositionSetEventCallback(Object *o, const EventObject &e) 
   {
-      // std::cout << "Before Position Set Callback 0" <<  std::endl;
     const itk::ParticlePositionSetEvent &event
       = dynamic_cast <const itk::ParticlePositionSetEvent &>(e);
   
@@ -112,33 +110,6 @@ public:
       {
       this->operator()(i+k, d / this->m_DomainsPerShape) = pos[i];
       }
-    
-    if (this->m_optimizing_check && this->m_inv_net->GetModelInitialized())
-    {
-      vnl_matrix<double> shape_vec_new = this->get_n_columns(d/this->m_DomainsPerShape, 1); // shape: dM X 1
-      unsigned int dM = this->rows();
-      MSG("Position Update, Setting Base");
-      try
-      {
-        auto ten_options = torch::TensorOptions().dtype(torch::kDouble);
-        auto vmar = shape_vec_new.data_array();
-        torch::Tensor z = torch::from_blob(shape_vec_new.data_block(), {1,dM}, ten_options).clone();
-        z.to(torch::kFloat);
-        auto l_dim = this->m_inv_net->GetLatentDimensions();
-        torch::Tensor u = torch::zeros({1, l_dim});
-        this->m_inv_net->ForwardPass(z, u);
-        for (unsigned int i = 0; i < l_dim; i++)
-        {
-          double z0_value = u[0][i].item<double>();
-          this->m_BaseShapeMatrix->put(i, d / this->m_DomainsPerShape, z0_value);
-        }
-      }
-      catch (const c10::Error& e) {
-        std::cerr << "Error in LibTorch Operations in Particle Set Callback | " << e.what() << "\n";
-        std::exit(EXIT_FAILURE);
-      }
-      // c10::cuda::CUDACachingAllocator::emptyCache();
-    }
   }
   
   virtual void PositionRemoveEventCallback(Object *, const EventObject &) 
@@ -166,42 +137,13 @@ public:
 
   void Initialize()
   {
-    m_BaseShapeMatrix->fill(0.0);
+   //pass
   }
   
   virtual void BeforeIteration()
   {
-    MSG("Before Iteration | Init. Latent Space"); DEBUG(m_UpdateCounter);
     m_UpdateCounter ++;
-    {
-      torch::Tensor sm;
-      vnl_matrix<double> tmp(*this); // copy existing  matrix --> dM X N
-      unsigned int dM = this->rows();
-      unsigned int N = this->cols();
-      tmp = tmp.transpose(); // N X dM
-      try{
-        auto ten_options = torch::TensorOptions().dtype(torch::kDouble);
-        auto vmar = tmp.data_array();
-        auto x = torch::from_blob(tmp.data_block(), {N, dM}, ten_options).clone();
-        sm = x.to(torch::kFloat); // make model compatible float
-        auto l_dim = this->m_inv_net->GetLatentDimensions();
-        torch::Tensor u = torch::zeros({N, l_dim});
-        // Forward pass
-        this->m_inv_net->ForwardPass(sm, u); // u: N X L
-        u = u.transpose(0, 1); // L X N
-        double* u_data_ptr = u.data_ptr<double>();
-        m_BaseShapeMatrix->set_size(l_dim, N);
-        m_BaseShapeMatrix->clear();
-        m_BaseShapeMatrix->fill(0.0);
-        m_BaseShapeMatrix->set(u_data_ptr);
-        MSG("Latent Space initialized");
-        } 
-        catch (const c10::Error& e){ 
-          std::cerr << "Errors in Shape Matrix initialization in Before Iteration | " << e.what() << "\n";
-          std::exit(EXIT_FAILURE); 
-        }
-    }
-    // c10::cuda::CUDACachingAllocator::emptyCache();
+    //pass
   }
 
   void SetNonLinearTrainingInterval( int i)
@@ -217,17 +159,27 @@ public:
     }
   }
 
-
-  void RunForwardPassWithJacbian(double& log_prob_u, double& log_det_g, double& log_det_j, torch::Tensor& input_tensor, torch::Tensor& jacobian_matrix)
+  void ForwardPass(Tensor& input_tensor, Tensor& output_tensor, Tensor& jacobian_matrix, double& log_prob_u, double& log_det_g, double& log_det_j)
   {
-    // Forward pass to be called from entropy function
-    this->m_inv_net->RunForwardPassWithJacobian(log_prob_u, log_det_g, log_det_j, input_tensor, jacobian_matrix);
-  }
+    this->m_inv_net->ForwardPass(input_tensor, output_tensor, 
+                                                    jacobian_matrix, log_prob_u, 
+                                                    log_det_g, log_det_j);
+  };
+
+  void ComputeEnergy(Tensor& input_tensor, double& energy_in_data_space)
+  {
+    this->m_inv_net->ComputeEnergy(input_tensor, energy_in_data_space);
+  };
 
   torch::Device GetDevice()
   {
-    this->m_inv_net->GetDevice();
+    return this->m_inv_net->GetDevice();
   };
+
+  int GetLatentDimensions()
+  {
+    return this->m_inv_net->GetLatentDimensions();
+  }
 
 protected:
   ParticleShapeMatrixAttributeNonLinear() 
@@ -239,7 +191,6 @@ protected:
     
     m_UpdateCounter = 0;
     m_NonLinearTrainingInterval = 10;
-    m_BaseShapeMatrix = std::make_shared<vnl_matrix<double>>();
     m_inv_net = std::make_shared<InvertibleNet::Model>();
     m_optimizing_check = false;
   }
@@ -256,7 +207,6 @@ private:
   int m_UpdateCounter;
   int m_NonLinearTrainingInterval;
   bool m_optimizing_check = true;
-  std::shared_ptr<vnl_matrix<double>> m_BaseShapeMatrix;
   InvertibleNet::Model::Pointer m_inv_net;
 };
 

@@ -24,13 +24,99 @@ ParticleEnsembleEntropyFunctionNonLinear<VDimension>
 template <unsigned int VDimension>
 void
 ParticleEnsembleEntropyFunctionNonLinear<VDimension>
-::ComputeCovarianceMatrix()
+::ComputeGradientUpdates()
+{
+    {
+    // 1. Forward Pass and get latent space representation, jacobians
+    // All tensors in CPU and double precision here
+    unsigned int dM = m_ShapeMatrix->rows();
+    int M = (int)(dM / 3);
+    unsigned int N = m_ShapeMatrix->cols();
+    unsigned int L = m_ShapeMatrix->GetLatentDimensions();
+    m_BaseShapeMatrix->clear();
+    m_BaseShapeMatrix->set_size(L, N);
+    m_BaseShapeMatrix->fill(0.0);
+    m_GradientUpdatesNet->clear();
+    m_GradientUpdatesNet->set_size(dM, N);
+    m_GradientUpdatesNet->fill(0.0);
+
+    m_log_det_g_ar->clear(); m_log_det_g_ar->resize(N);
+    m_log_det_j_ar->clear(); m_log_det_j_ar->resize(N);
+    m_log_prob_u_ar->clear(); m_log_prob_u_ar->resize(N);
+
+    Tensor jacobian_matrix_all = torch::zeros({N, L, dM}, torch::TensorOptions(torch::kCPU).dtype(torch::kDouble));
+
+    try{        
+        // N forward passes with jacobian computation
+        for (int n = 0; n < N; ++n)
+        {
+            double log_det_g = 0.0; double log_det_j = 0.0; double log_prob_u = 0.0;
+            auto input_vec = m_ShapeMatrix->get_n_columns(n, 1);
+            Tensor jacobian_matrix;
+            Tensor output_tensor; // returned in Double CPU
+            auto vmar = input_vec.data_array();
+            Tensor input_tensor = torch::from_blob(input_vec.data_block(), {1, dM}, torch::TensorOptions(torch::kCPU).dtype(torch::kDouble)).clone();
+            this->m_ShapeMatrix->ForwardPass(input_tensor, output_tensor, 
+                                                    jacobian_matrix, log_prob_u, 
+                                                    log_det_g, log_det_j);
+            jacobian_matrix_all.index_put_({n, "..."}, jacobian_matrix);
+            MSG("Forward Pass Done");
+            double* output_data_ptr = output_tensor.data_ptr<double>();
+            vnl_matrix_type output_vec(output_data_ptr, L, 1);
+            m_BaseShapeMatrix->set_columns(n, output_vec);
+            m_log_det_g_ar->insert(m_log_det_g_ar->begin() + n, log_det_g);
+            m_log_det_j_ar->insert(m_log_det_j_ar->begin() + n, log_det_j);
+            m_log_prob_u_ar->insert(m_log_prob_u_ar->begin() + n, log_prob_u);
+        }
+    }
+    catch (const c10::Error& e) {
+        std::cout << "Errors in Libtorch operations during Gradient Computations - part 1 | " << e.what() << "\n";
+        std::exit(EXIT_FAILURE);
+    }
+
+    // 2. Do regular gradient computations in latent space assuming Gaussian Distrubution
+    this->ComputeBaseSpaceGradientUpdates();
+    
+    // 3. Compute Final Gradient Updates in Data space (Z)
+    try
+    {
+        vnl_matrix_type tmp(*m_PointsUpdateBase);
+        tmp = tmp.inplace_transpose(); // N X L
+        auto vmar2 = tmp.data_array();
+        Tensor dH_dU = torch::from_blob(tmp.data_block(), {N, L}, torch::TensorOptions(torch::kCPU).dtype(torch::kDouble)).clone();
+        dH_dU = dH_dU.view({N, 1, L});
+
+        dH_dU.to(this->m_ShapeMatrix->GetDevice());
+        jacobian_matrix_all.to(this->m_ShapeMatrix->GetDevice());
+
+        // N X 1 X L \times N X  X dM ===> N X 1 x dM
+        Tensor dH_dZ = torch::bmm(dH_dU, jacobian_matrix_all); // N X 1 X dM
+        dH_dZ = dH_dZ.view({N, dM}).to(torch::kCPU);
+        dH_dZ = dH_dZ.transpose(0, 1); // dM X N
+        double* grad_data_ptr = dH_dZ.data_ptr<double>();
+        m_GradientUpdatesNet->set(grad_data_ptr);
+
+        dH_dZ = dH_dZ.view({M, -1, N});
+        auto norms = torch::norm(dH_dZ, 2, {1});
+        m_MaxMove = torch::max(norms).item<double>();
+    }
+    catch (const c10::Error& e) {
+        std::cout << "Errors in Libtorch operations during Gradient Computations - part 2 | " << e.what() << "\n";
+        std::exit(EXIT_FAILURE);
+    }
+    } c10::cuda::CUDACachingAllocator::emptyCache();
+
+}
+
+template <unsigned int VDimension>
+void
+ParticleEnsembleEntropyFunctionNonLinear<VDimension>
+::ComputeBaseSpaceGradientUpdates()
 {
 
     // Do computations in Z0 space assuming Gaussian Distrubution
-    auto base_shape_matrix = m_ShapeMatrix->GetBaseShapeMatrix();
-    const unsigned int num_samples = base_shape_matrix->cols(); // N
-    const unsigned int num_dims    = base_shape_matrix->rows(); // L
+    const unsigned int num_samples = m_BaseShapeMatrix->cols(); // N
+    const unsigned int num_dims    = m_BaseShapeMatrix->rows(); // L
 
 
     // Do we need to resize the covariance matrix?
@@ -56,7 +142,7 @@ ParticleEnsembleEntropyFunctionNonLinear<VDimension>
         double total = 0.0;
         for (unsigned int i = 0; i < num_samples; i++)
         {
-            total += base_shape_matrix->operator()(j, i);
+            total += m_BaseShapeMatrix->operator()(j, i);
         }
         m_points_mean->put(j,0, total/(double)num_samples);
         _total += total;
@@ -67,7 +153,7 @@ ParticleEnsembleEntropyFunctionNonLinear<VDimension>
     {
         for (unsigned int i = 0; i < num_samples; i++)
         {
-            points_minus_mean(j, i) = base_shape_matrix->operator()(j, i) - m_points_mean->get(j,0);
+            points_minus_mean(j, i) = m_BaseShapeMatrix->operator()(j, i) - m_points_mean->get(j,0);
         }
     }
 //    std:cout << points_minus_mean.extract(num_dims, num_samples, 0, 0) << std::endl;
@@ -147,81 +233,45 @@ ParticleEnsembleEntropyFunctionNonLinear<VDimension>
 ::Evaluate(unsigned int idx, unsigned int d, const ParticleSystemType * system,
            double &maxdt, double &energy) const
 {
-    MSG("Evaluate Non-Linear 0");
     const unsigned int DomainsPerShape = m_ShapeMatrix->GetDomainsPerShape();
 
-    // maxdt  = m_MinimumEigenValue;
+    maxdt  = m_MaxMove; // maximum gradient update possible
 
     VectorType gradE;
     unsigned int k = 0;
     int dom = d % DomainsPerShape;
     for (int i = 0; i < dom; i++)
         k += system->GetNumberOfParticles(i) * VDimension;
-    k += idx*VDimension;qq
+    k += idx*VDimension;
 
-    auto base_shape_matrix = m_ShapeMatrix->GetBaseShapeMatrix();
-
-    // vnl_matrix_type Xi(3,1,0.0);
-    // Xi(0,0) = base_shape_matrix->operator()(k  , d/DomainsPerShape) - m_points_mean->get(k, 0);q
-    // Xi(1,0) = base_shape_matrix->operator()(k+1, d/DomainsPerShape) - m_points_mean->get(k+1, 0);
-    // Xi(2,0) = base_shape_matrix->operator()(k+2, d/DomainsPerShape) - m_points_mean->get(k+2, 0);
-
-
-    // // vnl_matrix_type tmp1(3, 3, 0.0);
-
-    // if (this->m_UseMeanEnergy)
-    //     tmp1.set_identity();
-    // else
-    //     tmp1 = m_InverseCovMatrix->extract(3,3,k,k);
-
-    // vnl_matrix_type tmp = Xi.transpose()*tmp1;
-
-    // tmp *= Xi;
-
-    // Get New gradient updates
-    vnl_matrix_type shape_vec_new = base_shape_matrix->get_n_columns(d/DomainsPerShape, 1); // shape: dM X 1
-    unsigned int dM = m_ShapeMatrix->rows();
-    unsigned int L = base_shape_matrix->rows();
-    double log_det_g = 0.0;
-    double log_det_j = 0.0;
-    double log_prob_u = 0.0;
-    {
-    try{
-        auto ten_options = torch::TensorOptions().dtype(torch::kDouble);
-        auto vmar = shape_vec_new.data_array();
-        torch::Tensor shape_vec_new_tensor = torch::from_blob(shape_vec_new.data_block(), {1, dM}, ten_options).clone();
-        shape_vec_new_tensor = shape_vec_new_tensor.to(torch::kFloat);
-
-        torch::Tensor jacobian_matrix = torch::zeros({1, L, dM});
-        this->m_ShapeMatrix->RunForwardPassWithJacbian(log_prob_u, log_det_g, log_det_j, shape_vec_new_tensor, jacobian_matrix);
-        jacobian_matrix = jacobian_matrix.view({L, dM});
-        MSG("Forward Pass Done");
-
-        auto det_g = std::exp(log_det_g); auto det_j = std::exp(log_det_j); auto p_u = std::exp(log_prob_u);
-        DEBUG(det_g); DEBUG(det_j); DEBUG(p_u);
-
-        vnl_matrix_type dH_du = m_PointsUpdateBase->get_n_columns(d / DomainsPerShape, 1); // L X 1
-        dH_du = dH_du.transpose(); // 1 X L
-        double* jac_data_ptr  = jacobian_matrix.data_ptr<double>(); // L X dM
-        vnl_matrix_type jac_vnl(jac_data_ptr, L, dM); 
-        auto term1 = dH_du * jac_vnl; // 1 X dM
-        auto term2 = ((p_u)/(std::sqrt(det_g) * det_j)) * (log_det_j - (0.5 * log_det_g));
-
-        for (unsigned int i = 0; i< VDimension; i++)
-        {
-            gradE[i] = term1.get(0, k+i) + term2;
-        }
-        maxdt  = gradE.magnitude();
-        // TODO: Look alternate strategies
-        energy = -(log_prob_u + log_det_g + log_det_j);
+    //TODO: consider mean energy strategies later
+    double energy_in_data_space = 0.0;
+    int subject_id = d/DomainsPerShape;
+    {try{
+        auto input_vec = m_ShapeMatrix->get_n_columns(subject_id, 1);
+        auto vmar = input_vec.data_array();
+        int dM = m_ShapeMatrix->rows();
+        auto vmarr = input_vec.data_array();
+        torch:: Tensor input_tensor = torch::from_blob(input_vec.data_block(), {1, dM}, torch::TensorOptions(torch::kCPU).dtype(torch::kDouble)).clone();
+        this->m_ShapeMatrix->ComputeEnergy(input_tensor, energy_in_data_space);
     }
     catch (const c10::Error& e) {
-        std::cout << "Errors in Libtorch operations while Gradient Set | " << e.what() << "\n";
+        std::cout << "Errors in Libtorch operations during Evaluate | " << e.what() << "\n";
         std::exit(EXIT_FAILURE);
-  }
-  }
-   c10::cuda::CUDACachingAllocator::emptyCache();
-    MSG("Evaluate Non-Linear 1");
+    }} c10::cuda::CUDACachingAllocator::emptyCache();
+
+    energy = energy_in_data_space;
+    double det_g = std::exp(m_log_det_g_ar->at(subject_id));
+    double det_j = std::exp(m_log_det_j_ar->at(subject_id));
+    double p_u = std::exp(m_log_prob_u_ar->at(subject_id));
+    double term2 = ((p_u)/(std::sqrt(det_g) * det_j)) * (m_log_det_j_ar->at(subject_id) - (0.5 * m_log_det_g_ar->at(subject_id)));
+
+    for (unsigned int i = 0; i< VDimension; i++)
+    {
+        gradE[i] = m_GradientUpdatesNet->get(k + i, d / DomainsPerShape) + term2;
+    }
+
+
     return system->TransformVector(gradE,
                                    system->GetInversePrefixTransform(d) *
                                    system->GetInverseTransform(d));

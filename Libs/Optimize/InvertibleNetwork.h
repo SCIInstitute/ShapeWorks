@@ -11,6 +11,7 @@
 
 namespace InvertibleNet
 {
+    using Tensor = torch::Tensor;
 
 enum class OptimizerType : int {
     SGD = 0,
@@ -46,8 +47,6 @@ class Model
         Model()
         {
             m_module_exists = false;
-            m_base_dist_mean = torch::rand({10});
-            m_base_dist_var = torch::rand({10, 10});
             m_n_epochs = 10;
             m_save_model_path = "";
             m_model_path = "";
@@ -60,8 +59,6 @@ class Model
         }
         virtual ~Model(){};
 
-        int TrainModel(torch::Tensor& shape_matrix);
-
         torch::Device GetDevice()
         {
             return this->m_device;
@@ -72,15 +69,7 @@ class Model
             return this->m_latent_dimension;
         };
 
-        void SetBaseDistMean(const torch::Tensor x)
-        {
-            this->m_base_dist_mean = x;
-        };
 
-        void SetBaseDistVar(const torch::Tensor x)
-        {
-            this->m_base_dist_var = x;
-        };
         int InitializeModel();
         bool GetModelInitialized()
         {
@@ -88,14 +77,12 @@ class Model
         };
 
         void LoadParams(const std::string filepath);
-        void ForwardPass(torch::Tensor& input_tensor, torch::Tensor& output_tensor); // for position set
-        void RunForwardPassWithJacobian(double& log_prob_u, double& log_det_g, double& log_det_j, torch::Tensor& input_tensor, torch::Tensor& jacobian_matrix); // for gradient update
-        void ComputeJacobian(torch::Tensor& inputs, torch::Tensor& output, torch::Tensor& jacobian_matrix);
+        void ForwardPass(Tensor& input_tensor, Tensor& output_tensor, Tensor& jacobian_matrix, double& log_prob_u, double& log_det_g, double& log_det_j);
+        void ComputeEnergy(Tensor& input_tensor, double& energy_in_data_space);
+        void ComputeJacobian(Tensor& inputs, Tensor& output, Tensor& jacobian_matrix);
     private:
         torch::jit::script::Module m_module;
         bool m_module_exists;
-        torch::Tensor m_base_dist_mean;
-        torch::Tensor m_base_dist_var;
         torch::Device m_device = torch::kCPU;
 
         // hyper-params

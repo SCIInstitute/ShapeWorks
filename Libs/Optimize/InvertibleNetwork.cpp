@@ -40,74 +40,8 @@ namespace InvertibleNet
             throw std::runtime_error("Unabled to parse json param file " + filename + " : " + e.what());
              std::exit(EXIT_FAILURE);
         }
-        std::cout << "Inv Net Model Params Loaded from JSON file " << this->m_model_path << " device " << this->m_device_id << std::endl;
+        std::cout << "Inv Net Model Params Loaded from JSON file " << this->m_model_path << " device " << this->m_device_id << "latent dims = " << this->m_latent_dimension << std::endl;
         this->InitializeModel();
-    }
-
-    //-----------------------------------------------------------------------------
-    int Model::TrainModel(torch::Tensor& shape_matrix)
-    {
-        try
-        {
-            this->m_module.train();
-            std::vector<at::Tensor> parameters;
-            for (const auto& params : this->m_module.parameters()) {
-                parameters.push_back(params);
-            }
-            torch::optim::SGD optimizer (parameters, /*lr=*/0.1);
-            if (this->m_optimizer == InvertibleNet::OptimizerType::SGD)
-            {
-                torch::optim::SGD optimizer(parameters, /*lr=*/this->m_learning_rate);
-            }
-            else if (this->m_optimizer == InvertibleNet::OptimizerType::Adam)
-            {
-                torch::optim::Adam optimizer(parameters, torch::optim::AdamOptions(this->m_learning_rate /*learning rate*/));
-            }
-
-            std::cout << "Optim::Optimizer  " << parameters.size() <<  std::endl;
-
-            auto custom_dataset = InvertibleNet::CustomDataset(shape_matrix).map(torch::data::transforms::Stack<>());
-            auto data_loader = torch::data::make_data_loader<torch::data::samplers::RandomSampler>(std::move(custom_dataset), this->m_batch_size);
-            std::cout << "Dataloader initalized" << std::endl;
-            
-            std::vector<torch::jit::IValue> new_mean;
-            new_mean.push_back(this->m_base_dist_mean.to(this->m_device));
-            auto mean_ = this->m_module.get_method("set_base_dist_mean")(new_mean).toTensor();
-
-            std::vector<torch::jit::IValue> new_cov;
-            new_cov.push_back(this->m_base_dist_mean.to(this->m_device));
-            auto cov_ = this->m_module.get_method("set_base_dist_var")(new_cov).toTensor();
-
-            std::cout << "********* Training the Invertible Network **********" <<  std::endl;
-            float batch_index = 0;
-            for(unsigned int i = 0; i < this->m_n_epochs; ++i) {
-                for(auto& batch: *data_loader) {
-                    auto data = batch.data;
-                    // Should be of length: batch_size
-                    data = data.to(torch::kF32);
-                    std::vector<torch::jit::IValue> input;
-                    input.push_back(data.to(this->m_device));
-                    optimizer.zero_grad();
-                    // auto output = this->m_module.forward(input).toTuple();
-                    auto outputs = this->m_module.get_method("log_prob")(input).toTuple();
-                    auto loss = -((outputs->elements()[0].toTensor()).mean(0));
-                    loss.backward();
-                    optimizer.step();                
-                    batch_index += 1;
-                    if (i % this->m_log_interval == 0)
-                    {
-                        std::cout << "Epoch: " << i  << ", " << "Loss: " << loss.item<double>() << std::endl;
-                    }
-                }
-                this->m_module.save(this->m_save_model_path + "/model_libtorch.pt");
-            }
-        }  
-        catch (const c10::Error& e) {
-            std::cerr << "Error while training the model in SW | " << e.what(); 
-            std::exit(EXIT_FAILURE);
-            return -1;
-        }
-       
     }
 
     //-----------------------------------------------------------------------------
@@ -116,17 +50,14 @@ namespace InvertibleNet
         try {
             if (this->m_device_id >= 0)
             {
-                this->m_device = torch::Device(torch::kCUDA, 0);
+                this->m_device = torch::Device(torch::kCUDA, m_device_id);
             }
             else{
                 this->m_device = torch::Device(torch::kCPU);
             }
-            // std::cout << " Initializing 1 " << std::endl;
             const std::string fn = this->m_model_path;
             torch::jit::script::Module m = torch::jit::load(fn, this->m_device);
-            // std::cout << " Initializing 2 " << std::endl;
             this->m_module = m;
-            // std::cout << " Initializing 3 " << std::endl;
             // this->m_module.to(this->m_device);
             this->m_module_exists = true;
             torch::manual_seed(this->m_seed_val);
@@ -134,57 +65,65 @@ namespace InvertibleNet
             std::cout << " Torchscript Module loaded succesfully." << std::endl;
         }
         catch (const c10::Error& e) {
-            std::cerr << "Error loading the pre-trained model in SW | " << e.what(); 
+            std::cerr << "Error loading the Trained Network in SW | " << e.what(); 
             std::exit(EXIT_FAILURE);
             return -1;
         }
         return 0;
     }
 
+
     //-----------------------------------------------------------------------------
-    void Model::ForwardPass(torch::Tensor& input_tensor, torch::Tensor& out_tensor)
+    void Model::ComputeEnergy(Tensor& input_tensor, double& energy_in_data_space)
     {
-        // Forward Pass for latent space initialization
         try
         {
             torch::NoGradGuard no_grad;
             this->m_module.eval();
+            input_tensor.to(torch::kFloat);
             std::vector<torch::jit::IValue> inputs;
             inputs.push_back(input_tensor.to(this->m_device)); // 1 X dM
-            auto outputs = this->m_module.get_method("forward_for_cpp")(inputs).toTuple();
-            out_tensor = outputs->elements()[0].toTensor().to(torch::TensorOptions(torch::kCPU).dtype(at::kDouble)); // 1 X L
-            MSG("Forward Pass done");
+            auto outputs = this->m_module.get_method("forward_pass_complete")(inputs).toTuple();
+            auto out_tensor = outputs->elements()[4].toTensor().to(torch::TensorOptions(torch::kCPU).dtype(at::kDouble));
+            energy_in_data_space = out_tensor.item<double>();
+            MSG("Forward Pass for Computing Energy done !!! ");
         }
         catch (const c10::Error& e) {
-            std::cerr << "Error in General Forward Pass | " << e.what(); 
+            std::cerr << "Error in Libtorch Operations for Compute Energy | " << e.what(); 
             std::exit(EXIT_FAILURE);
         }
     }
 
     //-----------------------------------------------------------------------------
-    void Model::RunForwardPassWithJacobian(double& log_prob_u, double& log_det_g, double& log_det_j, torch::Tensor& input_tensor, torch::Tensor& jacobian_matrix) // for gradient update
+    void Model::ForwardPass(Tensor& input_tensor, Tensor& output_tensor, Tensor& jacobian_matrix, double& log_prob_u, double& log_det_g, double& log_det_j)
     {
-        // Forward Pass for gradient updates
         try
         {
             this->m_module.eval();
             std::vector<torch::jit::IValue> inputs; // 1 X dM
+            input_tensor.requires_grad_(true);
+            input_tensor.to(torch::kFloat);
             inputs.push_back(input_tensor.to(this->m_device));
-            auto outputs = this->m_module.get_method("forward_for_cpp")(inputs).toTuple();
-            MSG("Forward Pass Done!!!");
+
+            auto outputs = this->m_module.get_method("forward_pass_complete")(inputs).toTuple();
+            MSG("Forward Pass for Grad Updates Done!!!");
+            output_tensor = outputs->elements()[0].toTensor(); // 1 X L // GPU
+
             auto log_prob_u_ten = outputs->elements()[1].toTensor();
-            log_prob_u_ten = log_prob_u_ten.to(torch::TensorOptions(torch::kCPU).dtype(at::kDouble)); 
+            log_prob_u_ten = log_prob_u_ten.to(torch::TensorOptions(torch::kCPU).dtype(torch::kDouble)); 
             log_prob_u = log_prob_u_ten.item<double>();
 
             auto log_det_g_ten = outputs->elements()[2].toTensor();
-            log_det_g_ten = log_det_g_ten.to(torch::TensorOptions(torch::kCPU).dtype(at::kDouble)); 
+            log_det_g_ten = log_det_g_ten.to(torch::TensorOptions(torch::kCPU).dtype(torch::kDouble)); 
             log_det_g = log_det_g_ten.item<double>();
 
             auto log_det_j_ten = outputs->elements()[3].toTensor();
-            log_det_j_ten = log_det_j_ten.to(torch::TensorOptions(torch::kCPU).dtype(at::kDouble)); 
+            log_det_j_ten = log_det_j_ten.to(torch::TensorOptions(torch::kCPU).dtype(torch::kDouble)); 
             log_det_j = log_det_j_ten.item<double>();
 
-            jacobian_matrix = outputs->elements()[3].toTensor().to(torch::TensorOptions(torch::kCPU).dtype(at::kDouble));
+            this->ComputeJacobian(input_tensor, output_tensor, jacobian_matrix);
+            output_tensor.to(torch::TensorOptions(torch::kCPU).dtype(torch::kDouble));
+            jacobian_matrix.to(torch::TensorOptions(torch::kCPU).dtype(torch::kDouble));
 
             MSG("Log Values | "); DEBUG(log_prob_u); DEBUG(log_det_g); DEBUG(log_det_j); 
         }
@@ -194,7 +133,7 @@ namespace InvertibleNet
         }
     }
 
-    void Model::ComputeJacobian(torch::Tensor& input, torch::Tensor& output, torch::Tensor& jacobian_matrix)
+    void Model::ComputeJacobian(Tensor& input, Tensor& output, Tensor& jacobian_matrix)
     {
         // inputs: 1 X dM
         // outputs: 1 X L
@@ -202,9 +141,9 @@ namespace InvertibleNet
         try{
             auto latent_dims = output.sizes()[1];
             auto data_dims = input.sizes()[1];
-            input = input.reshape({data_dims}); output = output.reshape({latent_dims});
+            input = input.view({data_dims}); output = output.view({latent_dims});
 
-            auto grad_output = torch::ones({1});
+            auto grad_output = torch::ones({1}).to(this->m_device);
             
             std::vector<torch::Tensor> outs;
             std::vector<torch::Tensor> inputs;
@@ -212,24 +151,24 @@ namespace InvertibleNet
 
             for (auto l = 0; l < latent_dims; ++l)
             {
-                outs.push_back(output.index({torch::indexing::Slice(i, i+1)}));
+                outs.push_back(output.index({torch::indexing::Slice(l, l+1)}));
                 inputs.push_back(input);
                 grad_outputs.push_back(grad_output);
             }
 
-            jacobian_matrix = torch::zeros({latent_dims, data_dims});
+            jacobian_matrix = torch::zeros({latent_dims, data_dims}).to(this->m_device);
             
             for (auto l = 0; l < latent_dims; ++l)
             {
-                auto gradient = torch::autograd::grad(/*outputs*/ {outs[i]}, /*inputs*/ {inputs[i]},
-                                                    /*grad_outputs*/ {grad_outputs[i]}, /*retain_graph*/ true,
+                auto gradient = torch::autograd::grad(/*outputs*/ {outs[l]}, /*inputs*/ {inputs[l]},
+                                                    /*grad_outputs*/ {grad_outputs[l]}, /*retain_graph*/ true,
                                                     /*create_graph*/ true, /*allow_unused*/ false);
 
-                jacobian_matrix.index_put_(torch::indexing::Slice(i, None), gradient[0]);
+                jacobian_matrix.index_put_({torch::indexing::Slice(l, torch::indexing::None)}, gradient[0]);
             }
         }  
         catch (const c10::Error& e) {
-            MSG("Error in Jacobian computation | ") MSG(e.what());
+            std::cout << "Error in Jacobian Computations | " << e.what();
             std::exit(EXIT_FAILURE);
         }
 
