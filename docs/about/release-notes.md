@@ -1,59 +1,42 @@
 # Release Notes
 
-
-
-	• Studio
-		○ Fix #1976, domain type switching bug #1981 
-		○ Multi-level analysis?
-		○ Studio: feature to overlay/compare mean shape
-			§ https://github.com/SCIInstitute/ShapeWorks/pull/1950
-		○ Per domain particle display and alternate color support (#1935)
-		○ Fixes:
-			§ #1946
-			§ #1947
-			§ #1944
-			§ #1755
-			§ #1923 (#1928)
-			§ #1387
-			§ #1915
-			§ #1914
-			§ #1848
-			§ #1830
-			§ #1860
-			§ #1862
-			§ #1853
-			§ #1849 - logging library
-			§ #1845
-			§ #1837 - JSON (swproj)
-			§ #1764 - color map support (Is this in 6.3.0?)
-		○ Studio file associations (#1921)
-		○ Ability to scale arrows (#1897)
-		○ #1893 (save_init_splits, checkpointin)
-		○ Shapeworks as a 3rd party library (#1889)
-		
-			
-		
-		
-		
-	
-	• Offline analysis?
-	• FFC changes (donut working)
-	• Data Portal migration
-
-
-
 ## ShapeWorks 6.4.0 - 2023-03-??
 ### What is new?
   * **ShapeWorks Back-end**
+    * New shapeworks 'analyze' command for offline analysis of shape models
+    * Improved free form constraints that now support doubly connected areas (e.g. donut-like)
+    * Data Portal migrated to new ShapeWorks Cloud and swcc (ShapeWorks Cloud Client) tool
+    * ShapeWorks can now be used as a 3rd party library ([details here](http://sciinstitute.github.io/ShapeWorks/6.4/dev/shapeworks-library.html))
+    * Added support for 'save_init_splits' and 'checkpointing_interval' parameters in the project spreadsheet formats
+    * Added new JSON based file format for storing ShapeWorks projects (swproj)
+    * Added a unified logging library for ShapeWorks (spdlog)
+    * Uniform numerical computation of specificity across platforms
   * **ShapeWorks Front-end**
-  * ShapeWorks Studio can now automatically check for updates and prompt the user to download them
-  * Improved progress bar in ShapeWorks Studio that shows time remaining
+    * ShapeWorks Studio can now automatically check for updates and prompt the user to download them
+    * Improved progress bar in ShapeWorks Studio that shows time remaining
+    * Added ability to scale difference arrows in ShapeWorks Studio
+    * Added file association support for swproj file extension on Windows and Mac
+    * New multi-level analysis feature in ShapeWorks Studio ([details here](http://sciinstitute.github.io/ShapeWorks/6.4/studio/studio-analyze.html#multi-level-pca))
+    * Added ability to hide/show particles per domain
+    * Added feature to compare origina vs groomed vs reconstructed shapes
+    * Added feature to show the difference to the mean for any given mesh (subjects or generated PCA mode positions)
   * **User's Support**
+    * Hip Use Case: The use case uses the hip joint to demonstrate the capability of ShapeWorks 
+      to capture inter-domain correlations and interactions directly on triangular surface meshes. 
+      The use case showcases calculating the alignment options available for multiple organ anatomies.
+      ([details here](http://sciinstitute.github.io/ShapeWorks/6.4/use-cases/mesh-based/hip.html))
+    * Added options to the incremental use case when run in --interactive mode, including sorting method, 
+      initial model size, and incremental batch size. The sorting method determines how the shapes are sorted 
+      to be added incrementally. There are three options: random, median, distribution.
+    * [Python API documentation](http://sciinstitute.github.io/ShapeWorks/6.4/python/python-api.html) has been added to the ShapeWorks documentation site
+
+
 ### Fixes
   * Fix Studio python problem causing crash on group differences (#1781)
   * Fix Studio slow/hanging on certain free form constraints (#1817, #1801)
   * Fix crashes on certain projects (#1800, #1815)
-  * Fix Stud
+  * Fix procrustes with multi-domain models (#1755)
+  * Fixed crashes in groom due to multi-threading (#1944)
 
 ## ShapeWorks 6.3.2 - 2022-10-04
 ### Fixes
