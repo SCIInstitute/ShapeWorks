@@ -194,4 +194,45 @@ namespace InvertibleNet
         }
     }
 
+    void Model::ComputeJacobian(torch::Tensor& input, torch::Tensor& output, torch::Tensor& jacobian_matrix)
+    {
+        // inputs: 1 X dM
+        // outputs: 1 X L
+        // jacobian : L X dM
+        try{
+            auto latent_dims = output.sizes()[1];
+            auto data_dims = input.sizes()[1];
+            input = input.reshape({data_dims}); output = output.reshape({latent_dims});
+
+            auto grad_output = torch::ones({1});
+            
+            std::vector<torch::Tensor> outs;
+            std::vector<torch::Tensor> inputs;
+            std::vector<torch::Tensor> grad_outputs;
+
+            for (auto l = 0; l < latent_dims; ++l)
+            {
+                outs.push_back(output.index({torch::indexing::Slice(i, i+1)}));
+                inputs.push_back(input);
+                grad_outputs.push_back(grad_output);
+            }
+
+            jacobian_matrix = torch::zeros({latent_dims, data_dims});
+            
+            for (auto l = 0; l < latent_dims; ++l)
+            {
+                auto gradient = torch::autograd::grad(/*outputs*/ {outs[i]}, /*inputs*/ {inputs[i]},
+                                                    /*grad_outputs*/ {grad_outputs[i]}, /*retain_graph*/ true,
+                                                    /*create_graph*/ true, /*allow_unused*/ false);
+
+                jacobian_matrix.index_put_(torch::indexing::Slice(i, None), gradient[0]);
+            }
+        }  
+        catch (const c10::Error& e) {
+            MSG("Error in Jacobian computation | ") MSG(e.what());
+            std::exit(EXIT_FAILURE);
+        }
+
+    }
+        
 }

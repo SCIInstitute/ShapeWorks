@@ -157,12 +157,12 @@ ParticleEnsembleEntropyFunctionNonLinear<VDimension>
     int dom = d % DomainsPerShape;
     for (int i = 0; i < dom; i++)
         k += system->GetNumberOfParticles(i) * VDimension;
-    k += idx*VDimension;
+    k += idx*VDimension;qq
 
     auto base_shape_matrix = m_ShapeMatrix->GetBaseShapeMatrix();
 
     // vnl_matrix_type Xi(3,1,0.0);
-    // Xi(0,0) = base_shape_matrix->operator()(k  , d/DomainsPerShape) - m_points_mean->get(k, 0);
+    // Xi(0,0) = base_shape_matrix->operator()(k  , d/DomainsPerShape) - m_points_mean->get(k, 0);q
     // Xi(1,0) = base_shape_matrix->operator()(k+1, d/DomainsPerShape) - m_points_mean->get(k+1, 0);
     // Xi(2,0) = base_shape_matrix->operator()(k+2, d/DomainsPerShape) - m_points_mean->get(k+2, 0);
 
