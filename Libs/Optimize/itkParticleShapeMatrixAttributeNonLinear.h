@@ -159,7 +159,7 @@ public:
     }
   }
 
-  void ForwardPass(Tensor& input_tensor, Tensor& output_tensor, Tensor& jacobian_matrix, double& log_prob_u, double& log_det_g, double& log_det_j)
+  void ForwardPass(Tensor& input_tensor, Tensor& output_tensor, Tensor& jacobian_matrix, std::vector <double>& log_prob_u, std::vector<double>& log_det_g, std::vector <double>& log_det_j)
   {
     this->m_inv_net->ForwardPass(input_tensor, output_tensor, 
                                                     jacobian_matrix, log_prob_u, 
@@ -179,7 +179,12 @@ public:
   int GetLatentDimensions()
   {
     return this->m_inv_net->GetLatentDimensions();
-  }
+  };
+
+  int GetBatchSize()
+  {
+    return this->m_inv_net->GetBatchSize();
+  };
 
 protected:
   ParticleShapeMatrixAttributeNonLinear() 

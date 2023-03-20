@@ -76,10 +76,16 @@ class Model
             return this->m_module_exists;
         };
 
+        int GetBatchSize()
+        {
+            return this->m_batch_size;
+        };
+
         void LoadParams(const std::string filepath);
-        void ForwardPass(Tensor& input_tensor, Tensor& output_tensor, Tensor& jacobian_matrix, double& log_prob_u, double& log_det_g, double& log_det_j);
+        void ForwardPass(Tensor& input_tensor, Tensor& output_tensor, Tensor& jacobian_matrix,  std::vector <double>& log_prob_u, std::vector<double>& log_det_g, std::vector <double>& log_det_j);
         void ComputeEnergy(Tensor& input_tensor, double& energy_in_data_space);
         void ComputeJacobian(Tensor& inputs, Tensor& output, Tensor& jacobian_matrix);
+        void ComputeJacobianNew(Tensor& inputs, Tensor& output, Tensor& jacobian_matrix, int data_dims, int latent_dims);
     private:
         torch::jit::script::Module m_module;
         bool m_module_exists;

@@ -26,13 +26,16 @@ void
 ParticleEnsembleEntropyFunctionNonLinear<VDimension>
 ::ComputeGradientUpdates()
 {
+    auto start = std::chrono::system_clock::now();
     {
     // 1. Forward Pass and get latent space representation, jacobians
     // All tensors in CPU and double precision here
+    MSG("Before Iterations in ComputeGrads | COMPUTING Gradient Updates...");
     unsigned int dM = m_ShapeMatrix->rows();
     int M = (int)(dM / 3);
     unsigned int N = m_ShapeMatrix->cols();
     unsigned int L = m_ShapeMatrix->GetLatentDimensions();
+    int B  = m_ShapeMatrix->GetBatchSize();
     m_BaseShapeMatrix->clear();
     m_BaseShapeMatrix->set_size(L, N);
     m_BaseShapeMatrix->fill(0.0);
@@ -47,26 +50,35 @@ ParticleEnsembleEntropyFunctionNonLinear<VDimension>
     Tensor jacobian_matrix_all = torch::zeros({N, L, dM}, torch::TensorOptions(torch::kCPU).dtype(torch::kDouble));
 
     try{        
-        // N forward passes with jacobian computation
-        for (int n = 0; n < N; ++n)
+        // B forward passes with jacobian computation
+        int n = 0;
+        while (n < N)
         {
-            double log_det_g = 0.0; double log_det_j = 0.0; double log_prob_u = 0.0;
-            auto input_vec = m_ShapeMatrix->get_n_columns(n, 1);
+            unsigned int block_size = ((n+B) < N) ? B : (N-n);
+            std::vector<double> log_det_g(block_size, 0.0); 
+            std::vector<double> log_det_j(block_size, 0.0); 
+            std::vector<double> log_prob_u(block_size, 0.0); 
+
+            auto input_vec = m_ShapeMatrix->get_n_columns(n, block_size); // B vectors
+            input_vec = input_vec.inplace_transpose(); // B X dM
             Tensor jacobian_matrix;
             Tensor output_tensor; // returned in Double CPU
             auto vmar = input_vec.data_array();
-            Tensor input_tensor = torch::from_blob(input_vec.data_block(), {1, dM}, torch::TensorOptions(torch::kCPU).dtype(torch::kDouble)).clone();
+            Tensor input_tensor = torch::from_blob(input_vec.data_block(), {block_size, dM}, torch::TensorOptions(torch::kCPU).dtype(torch::kDouble)).clone();
             this->m_ShapeMatrix->ForwardPass(input_tensor, output_tensor, 
                                                     jacobian_matrix, log_prob_u, 
                                                     log_det_g, log_det_j);
-            jacobian_matrix_all.index_put_({n, "..."}, jacobian_matrix);
+            jacobian_matrix_all.index_put_({torch::indexing::Slice(n, n+block_size), "..."}, jacobian_matrix);
             MSG("Forward Pass Done");
             double* output_data_ptr = output_tensor.data_ptr<double>();
-            vnl_matrix_type output_vec(output_data_ptr, L, 1);
+            vnl_matrix_type output_vec(output_data_ptr, block_size, L);
+            output_vec = output_vec.inplace_transpose();
             m_BaseShapeMatrix->set_columns(n, output_vec);
-            m_log_det_g_ar->insert(m_log_det_g_ar->begin() + n, log_det_g);
-            m_log_det_j_ar->insert(m_log_det_j_ar->begin() + n, log_det_j);
-            m_log_prob_u_ar->insert(m_log_prob_u_ar->begin() + n, log_prob_u);
+            m_log_det_g_ar->insert(m_log_det_g_ar->begin() + n, log_det_g.begin(), log_det_g.end());
+            m_log_det_j_ar->insert(m_log_det_j_ar->begin() + n, log_det_j.begin(), log_det_j.end());
+            m_log_prob_u_ar->insert(m_log_prob_u_ar->begin() + n, log_prob_u.begin(), log_prob_u.end());
+
+            n += block_size;
         }
     }
     catch (const c10::Error& e) {
@@ -89,7 +101,7 @@ ParticleEnsembleEntropyFunctionNonLinear<VDimension>
         dH_dU.to(this->m_ShapeMatrix->GetDevice());
         jacobian_matrix_all.to(this->m_ShapeMatrix->GetDevice());
 
-        // N X 1 X L \times N X  X dM ===> N X 1 x dM
+        // N X 1 X L \times N X L X dM ===> N X 1 x dM
         Tensor dH_dZ = torch::bmm(dH_dU, jacobian_matrix_all); // N X 1 X dM
         dH_dZ = dH_dZ.view({N, dM}).to(torch::kCPU);
         dH_dZ = dH_dZ.transpose(0, 1); // dM X N
@@ -105,6 +117,8 @@ ParticleEnsembleEntropyFunctionNonLinear<VDimension>
         std::exit(EXIT_FAILURE);
     }
     } c10::cuda::CUDACachingAllocator::emptyCache();
+    auto end = std::chrono::system_clock::now();
+    std::cout << "Net Gradient Computation Execution Time: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << "ms" << std::endl;
 
 }
 
@@ -247,6 +261,8 @@ ParticleEnsembleEntropyFunctionNonLinear<VDimension>
     //TODO: consider mean energy strategies later
     double energy_in_data_space = 0.0;
     int subject_id = d/DomainsPerShape;
+
+    auto start = std::chrono::system_clock::now();
     {try{
         auto input_vec = m_ShapeMatrix->get_n_columns(subject_id, 1);
         auto vmar = input_vec.data_array();
@@ -259,6 +275,8 @@ ParticleEnsembleEntropyFunctionNonLinear<VDimension>
         std::cout << "Errors in Libtorch operations during Evaluate | " << e.what() << "\n";
         std::exit(EXIT_FAILURE);
     }} c10::cuda::CUDACachingAllocator::emptyCache();
+    auto end = std::chrono::system_clock::now();
+    std::cout <<  "Energy Computation Execution Time: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << "ms" << std::endl;   
 
     energy = energy_in_data_space;
     double det_g = std::exp(m_log_det_g_ar->at(subject_id));
