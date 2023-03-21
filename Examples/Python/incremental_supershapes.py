@@ -60,7 +60,7 @@ def Run_Pipeline(args):
     if args.tiny_test:
         args.use_single_scale = 1
         dataset_name = "incremental_supershapes_tiny_test"
-        sw.download_and_unzip_dataset(dataset_name, output_directory)
+        sw.download_dataset(dataset_name, output_directory)
         dataset_name = "supershapes3D"
         mesh_files = sorted(glob.glob(output_directory +
                             dataset_name + "/meshes/*.ply"))[:3]
@@ -68,7 +68,7 @@ def Run_Pipeline(args):
         incremental_batch_size = 1
     # else download the entire dataset
     else:
-        sw.download_and_unzip_dataset(dataset_name, output_directory)
+        sw.download_dataset(dataset_name, output_directory)
         dataset_name = "supershapes3D"
         mesh_files = sorted(glob.glob(output_directory +
                             dataset_name + "/meshes/*.ply"))

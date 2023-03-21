@@ -22,7 +22,7 @@ def Run_Pipeline(args):
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
     # See the generate_supershapes() function in this file for how the data is generated
-    sw.download_and_unzip_dataset(dataset_name, output_directory)
+    sw.download_dataset(dataset_name, output_directory)
     dataset_name = "supershapes2D_1mode"
     contour_files = sorted(glob.glob(output_directory + dataset_name + "/contours/*.vtp"))
     

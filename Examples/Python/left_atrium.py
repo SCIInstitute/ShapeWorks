@@ -36,15 +36,14 @@ def Run_Pipeline(args):
     if args.tiny_test:
         dataset_name = "left_atrium_tiny_test"
         args.use_single_scale = 1
-        # sw.data.download_subset(args.use_case, dataset_name, output_directory)
-        sw.download_and_unzip_dataset(dataset_name, output_directory)
+        sw.download_dataset(dataset_name, output_directory)
         dataset_name = "left_atrium"
         file_list = sorted(
             glob.glob(output_directory + dataset_name + "/segmentations/*.nrrd"))[:3]
 
     # Else download the entire dataset
     else:
-        sw.download_and_unzip_dataset(dataset_name, output_directory)
+        sw.download_dataset(dataset_name, output_directory)
         file_list = sorted(
             glob.glob(output_directory + dataset_name + "/segmentations/*.nrrd"))
 

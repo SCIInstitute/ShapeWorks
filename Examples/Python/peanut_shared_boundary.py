@@ -30,14 +30,14 @@ def Run_Pipeline(args):
     if args.tiny_test:
         dataset_name = "peanut_shared_boundary_tiny_test"
         args.use_single_scale = 1
-        sw.download_and_unzip_dataset(dataset_name, output_directory)
+        sw.download_dataset(dataset_name, output_directory)
         dataset_name = "peanut"
         mesh_files = sorted(glob.glob(output_directory +
                             dataset_name + "/meshes/*.stl"))[:2]
     # Else download the entire dataset
     else:
         dataset_name = "peanut_shared_boundary"
-        sw.download_and_unzip_dataset(dataset_name, output_directory)
+        sw.download_dataset(dataset_name, output_directory)
         dataset_name = "peanut"
         mesh_files = sorted(glob.glob(output_directory +
                                      dataset_name + "/meshes/*.stl"))
