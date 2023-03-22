@@ -227,10 +227,7 @@ void ParticleSystem::AdvancedAllParticleSplitting(double epsilon, unsigned int d
                                                   unsigned int dom_to_process) {
   size_t num_doms = this->GetNumberOfDomains();
 
-  for (size_t domain = 0; domain < num_doms; domain++) {
-    this->GetDomain(domain)->GetConstraints()->InitializeLagrangianParameters(0, 0, 0);
-  }
-
+  // Populate a list with all particles
   std::vector<std::vector<PointType> > lists;
 
   for (size_t domain = dom_to_process; domain < num_doms; domain += domains_per_shape) {
@@ -242,7 +239,18 @@ void ParticleSystem::AdvancedAllParticleSplitting(double epsilon, unsigned int d
     lists.push_back(list);
   }
 
+  // Only runs if domains were successfully retrieved
   if (lists.size() > 0) {
+
+    // Initialize augmentend lagrangian variables (mus and possibly lambdas)
+    for (size_t domain = dom_to_process; domain < num_doms; domain += domains_per_shape) {
+      size_t num_particles = lists[0].size();
+      std::vector<double> zeros(num_particles*2, 0.0);
+      this->GetDomain(domain)->GetConstraints()->InitializeLagrangianParameters(0, zeros);
+    }
+
+    // For each shape, split particle i in all shapes in direction random and -random to obtain split particles
+    // Check if new particles violate constraint (disabled)
     for (size_t i = 0; i < lists[0].size(); i++) {
       // While the random vector updated violates plane constraints
       // Breaks when it doesn't violate for any domain

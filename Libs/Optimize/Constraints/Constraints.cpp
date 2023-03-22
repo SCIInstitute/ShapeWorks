@@ -463,7 +463,7 @@ void Constraints::printAll() {
   }
 }
 
-std::string Constraints::violationReport(const Point3& pos) {
+std::string Constraints::violationReport(const Point3& pos, size_t index) {
   Eigen::Vector3d pt;
   pt(0) = pos[0];
   pt(1) = pos[1];
@@ -473,18 +473,18 @@ std::string Constraints::violationReport(const Point3& pos) {
     if (planeConstraints_[i].constraintEval(pt) > 0)
       stream << "CuttingPlane " << i << "/" << planeConstraints_.size() << ": "
              << planeConstraints_[i].constraintEval(pt) << " gradient(c=1) "
-             << planeConstraints_[i].lagragianGradient(pt, 1).transpose() << std::endl;
+             << planeConstraints_[i].lagragianGradient(pt, 1, index).transpose() << std::endl;
   }
   for (size_t i = 0; i < sphereConstraints_.size(); i++) {
     if (sphereConstraints_[i].constraintEval(pt) > 0)
       stream << "Sphere " << i << "/" << planeConstraints_.size() << ": " << sphereConstraints_[i].constraintEval(pt)
-             << " gradient(c=1) " << sphereConstraints_[i].lagragianGradient(pt, pt, 1).transpose() << std::endl;
+             << " gradient(c=1) " << sphereConstraints_[i].lagragianGradient(pt, pt, 1, index).transpose() << std::endl;
   }
   if (freeFormConstraint_.getMesh()) {
     if (freeFormConstraint_.constraintEval(pt) > 0)
       stream << "FreeForm "
              << ": " << freeFormConstraint_.constraintEval(pt) << " gradient(c=1) "
-             << freeFormConstraint_.lagragianGradient(pt, 1).transpose() << std::endl;
+             << freeFormConstraint_.lagragianGradient(pt, 1, index).transpose() << std::endl;
   }
   return stream.str();
 }
@@ -537,7 +537,7 @@ vnl_vector_fixed<double, 3> Constraints::constraintsGradient(const Point3& pos) 
 }
 
 vnl_vector_fixed<double, 3> Constraints::constraintsLagrangianGradient(const Point3& pos, const Point3& prepos,
-                                                                       double C) {
+                                                                       double C, size_t index) {
   Eigen::Vector3d pt;
   pt(0) = pos[0];
   pt(1) = pos[1];
@@ -552,13 +552,13 @@ vnl_vector_fixed<double, 3> Constraints::constraintsLagrangianGradient(const Poi
     // if(planeConsts[i].ConstraintEval(pt)>0) stream << "CuttingPlane " << i << "/" << planeConsts.size() << ": "
     // << planeConsts[i].LagragianGradient(pt, C).transpose() << " ::: " << planeConsts[i].ConstraintEval(pt) <<
     // std::endl;
-    grad += planeConstraints_[i].lagragianGradient(pt, C);
+    grad += planeConstraints_[i].lagragianGradient(pt, C, index);
   }
   for (size_t i = 0; i < sphereConstraints_.size(); i++) {
-    grad += sphereConstraints_[i].lagragianGradient(prept, pt, C);
+    grad += sphereConstraints_[i].lagragianGradient(prept, pt, C, index);
   }
   if (freeFormConstraint_.readyForOptimize()) {
-    grad += freeFormConstraint_.lagragianGradient(pt, C);
+    grad += freeFormConstraint_.lagragianGradient(pt, C, index);
   }
   vnl_vector_fixed<double, 3> gradE;
   for (size_t i = 0; i < 3; i++) {
@@ -570,21 +570,18 @@ vnl_vector_fixed<double, 3> Constraints::constraintsLagrangianGradient(const Poi
 }
 
 //-----------------------------------------------------------------------------
-void Constraints::InitializeLagrangianParameters(double lambda, double mu, double z) {
+void Constraints::InitializeLagrangianParameters(double lambda, std::vector<double> mus) {
   for (size_t i = 0; i < planeConstraints_.size(); i++) {
     planeConstraints_[i].setLambda(lambda);
-    planeConstraints_[i].setMu(mu);
-    planeConstraints_[i].setZ(z);
+    planeConstraints_[i].setMus(mus);
   }
   for (size_t i = 0; i < sphereConstraints_.size(); i++) {
     sphereConstraints_[i].setLambda(lambda);
-    sphereConstraints_[i].setMu(mu);
-    sphereConstraints_[i].setZ(z);
+    sphereConstraints_[i].setMus(mus);
   }
   if (freeFormConstraint_.readyForOptimize()) {
     freeFormConstraint_.setLambda(lambda);
-    freeFormConstraint_.setMu(mu);
-    freeFormConstraint_.setZ(z);
+    freeFormConstraint_.setMus(mus);
   }
 }
 
@@ -606,20 +603,20 @@ void Constraints::UpdateZs(const Point3& pos, double C) {
 }
 
 //-----------------------------------------------------------------------------
-void Constraints::UpdateMus(const Point3& pos, double C) {
+void Constraints::UpdateMus(const Point3& pos, double C, size_t index) {
   Eigen::Vector3d pt;
   pt(0) = pos[0];
   pt(1) = pos[1];
   pt(2) = pos[2];
   for (size_t i = 0; i < planeConstraints_.size(); i++) {
-    planeConstraints_[i].updateMu(pt, C);
+    planeConstraints_[i].updateMu(pt, C, index);
   }
   for (size_t i = 0; i < sphereConstraints_.size(); i++) {
-    sphereConstraints_[i].updateMu(pt, C);
+    sphereConstraints_[i].updateMu(pt, C, index);
   }
 
   if (freeFormConstraint_.readyForOptimize()) {
-    freeFormConstraint_.updateMu(pt, C);
+    freeFormConstraint_.updateMu(pt, C, index);
   }
 }
 

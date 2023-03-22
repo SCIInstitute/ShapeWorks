@@ -102,7 +102,7 @@ double SphereConstraint::constraintEvalSphere(const Eigen::Vector3d &pt, const E
 }
 
 Eigen::Vector3d SphereConstraint::lagragianGradient(const Eigen::Vector3d &pt, const Eigen::Vector3d &updpt,
-                                                    double C) const {
+                                                    double C, size_t index) const {
   // Augmented lagrangian inequality equation: f(x) = mu*(g(x)+z^2) + C/2|g(x)+z^2|^2
   // f'(x) = mu*g'(x) + C*y' where by substitution
   // y = √(u^2) where by substitution
@@ -125,7 +125,7 @@ Eigen::Vector3d SphereConstraint::lagragianGradient(const Eigen::Vector3d &pt, c
     */
   Eigen::Vector3d constraint_grad = constraintGradientSphere(pt, updpt);
   double eval = constraintEvalSphere(pt, updpt);
-  double maxterm = mu_ + C * eval;
+  double maxterm = mus_[index] + C * eval;
   if (maxterm < 0) {
     return Eigen::Vector3d(0, 0, 0);
   } else {

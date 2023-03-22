@@ -18,8 +18,8 @@ class Constraint {
   // For augmented lagrangian
   void setZ(double inz) { z_ = inz; }
   double getZ() { return z_; }
-  void setMu(double inmu) { mu_ = inmu; }
-  double getMu() { return mu_; }
+  void setMus(std::vector<double> inmu) { mus_ = inmu; }
+  std::vector<double> getMus() { return mus_; }
   void setLambda(double inLambda) { lambda_ = inLambda; }
   double getLambda() { return lambda_; }
 
@@ -28,15 +28,15 @@ class Constraint {
 
   void updateZ(const Eigen::Vector3d &pt, double C);
 
-  void updateMu(const Eigen::Vector3d &pt, double C);
+  void updateMu(const Eigen::Vector3d &pt, double C, size_t index);
 
-  Eigen::Vector3d lagragianGradient(const Eigen::Vector3d &pt, double C) const;
+  Eigen::Vector3d lagragianGradient(const Eigen::Vector3d &pt, double C, size_t index) const;
 
  protected:
   int sgn(double val) { return (double(0) < val) - (val < double(0)); }
 
   // For augmented lagrangian
-  double mu_;
+  std::vector<double> mus_;
   double z_;
   double lambda_;
 };
