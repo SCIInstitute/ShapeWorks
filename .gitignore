@@ -35,6 +35,7 @@
 .DS_*
 .directory
 .idea/
+.vscode/
 
 # PYC files
 *.pyc

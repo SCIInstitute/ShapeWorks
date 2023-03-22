@@ -451,6 +451,7 @@ bool Analyze::compute_stats() {
   }
 
   stats_.ImportPoints(points, group_ids);
+  std::cout << "Inside Libs/Analyze !!!!!!!!!!!!!!!!!!!! " << std::endl;
   stats_.ComputeModes();
 
   stats_ready_ = true;

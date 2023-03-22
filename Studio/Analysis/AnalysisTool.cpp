@@ -412,18 +412,18 @@ bool AnalysisTool::compute_stats() {
     if (groups_enabled) {
       auto value = shape->get_subject()->get_group_value(group_set);
       if (value == left_group) {
-        points.push_back(shape->get_global_correspondence_points());
+        points.push_back(shape->get_local_correspondence_points());
         group_ids.push_back(1);
         group1_list_.push_back(shape);
       } else if (value == right_group) {
-        points.push_back(shape->get_global_correspondence_points());
+        points.push_back(shape->get_local_correspondence_points());
         group_ids.push_back(2);
         group2_list_.push_back(shape);
       } else {
         // we don't include it
       }
     } else {
-      points.push_back(shape->get_global_correspondence_points());
+      points.push_back(shape->get_local_correspondence_points());
       group_ids.push_back(1);
     }
     if (!flag_get_num_part) {
@@ -454,7 +454,7 @@ bool AnalysisTool::compute_stats() {
   // MCA needs to know number of particles per domain/object
   stats_.SetNumberOfParticlesArray(number_of_particles_ar);
   if (dps > 1) {
-    stats_.ComputeMultiLevelAnalysisStatistics(points, dps);
+    stats_.ComputeMultiLevelAnalysisStatistics(dps);
   }
   stats_.ComputeModes();
   if (dps > 1) {
@@ -467,10 +467,11 @@ bool AnalysisTool::compute_stats() {
   }
 
   stats_ready_ = true;
-  std::vector<double> vals;
-  for (int i = stats_.Eigenvalues().size() - 1; i > 0; i--) {
-    vals.push_back(stats_.Eigenvalues()[i]);
-  }
+  // Unused/ Redundant
+  // std::vector<double> vals;
+  // for (int i = stats_.Eigenvalues().size() - 1; i > 0; i--) {
+  //   vals.push_back(stats_.Eigenvalues()[i]);
+  // }
   ////  Uncomment this to write out long format sample data
   /*
   if (groups_enabled) {

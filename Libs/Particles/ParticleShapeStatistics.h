@@ -40,7 +40,7 @@ class ParticleShapeStatistics {
   int ImportPoints(std::vector<Eigen::VectorXd> points, std::vector<int> group_ids);
 
   //! Loads a set of point files and pre-computes statistics for multi-level analysis
-  void ComputeMultiLevelAnalysisStatistics(std::vector<Eigen::VectorXd> points, unsigned int dps);
+  void ComputeMultiLevelAnalysisStatistics(unsigned int dps);
 
   //! Compute shape variations for MLCA
   int ComputeShapeDevModesForMca();
