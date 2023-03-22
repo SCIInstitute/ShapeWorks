@@ -79,7 +79,7 @@ namespace InvertibleNet
         {
             torch::NoGradGuard no_grad;
             // this->m_module.eval();
-            input_tensor.to(torch::kFloat);
+            // input_tensor.to(torch::kFloat);
             std::vector<torch::jit::IValue> inputs;
             inputs.push_back(input_tensor.to(this->m_device)); // 1 X dM
             auto outputs = this->m_module.get_method("forward_pass_complete")(inputs).toTuple();
@@ -100,7 +100,7 @@ namespace InvertibleNet
         {
             // this->m_module.eval();
             std::vector<torch::jit::IValue> inputs; // B X dM
-            input_tensor.to(torch::kFloat);
+            // input_tensor.to(torch::kFloat);
             input_tensor.requires_grad_(true);
 
             inputs.push_back(input_tensor.to(this->m_device));
@@ -128,10 +128,10 @@ namespace InvertibleNet
             auto data_dims = input_tensor.sizes()[1];
             auto latent_dims = output_tensor.sizes()[1];
             this->ComputeJacobianNew(input_tensor, output_tensor, jacobian_matrix, data_dims, latent_dims);
-            output_tensor.to(torch::TensorOptions(torch::kCPU).dtype(torch::kDouble));
-            jacobian_matrix.to(torch::TensorOptions(torch::kCPU).dtype(torch::kDouble));
+            output_tensor = output_tensor.to(torch::TensorOptions(torch::kCPU).dtype(torch::kDouble));
+            jacobian_matrix = jacobian_matrix.to(torch::TensorOptions(torch::kCPU).dtype(torch::kDouble));
 
-            MSG("Log Values | "); DEBUG(log_prob_u); DEBUG(log_det_g); DEBUG(log_det_j); 
+            // MSG("Log Values | "); DEBUG(log_prob_u); DEBUG(log_det_g); DEBUG(log_det_j); 
         }
         catch (const c10::Error& e) {
             std::cout << "Error in Forward Pass during Energy/Gradient Computations | " << e.what();
@@ -158,7 +158,9 @@ namespace InvertibleNet
             jacobian_matrix[l] = inputs.grad();
         }
         jacobian_matrix = jacobian_matrix.transpose(0, 1);
-        // std::cout << "final jac shape " << jacobian_matrix.sizes() << std::endl;
+        std::cout << "final jac shape " << jacobian_matrix.sizes() << std::endl;
+        // jacobian_matrix = jacobian_matrix.view({latent_dims, data_dims});
+        // std::cout << "final jac shape after reshape" << jacobian_matrix.sizes() << std::endl;
         }
         catch (const c10::Error& e) {
             std::cout << "Error in Jacobian Computations | " << e.what();

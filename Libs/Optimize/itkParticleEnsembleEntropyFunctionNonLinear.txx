@@ -30,7 +30,7 @@ ParticleEnsembleEntropyFunctionNonLinear<VDimension>
     {
     // 1. Forward Pass and get latent space representation, jacobians
     // All tensors in CPU and double precision here
-    MSG("Before Iterations in ComputeGrads | COMPUTING Gradient Updates...");
+    MSG("Hi! Before Iterations in FINAL CPP COMPUTE GRADS | COMPUTING Gradient Updates...");
     unsigned int dM = m_ShapeMatrix->rows();
     int M = (int)(dM / 3);
     unsigned int N = m_ShapeMatrix->cols();
@@ -48,13 +48,16 @@ ParticleEnsembleEntropyFunctionNonLinear<VDimension>
     m_log_prob_u_ar->clear(); m_log_prob_u_ar->resize(N);
 
     Tensor jacobian_matrix_all = torch::zeros({N, L, dM}, torch::TensorOptions(torch::kCPU).dtype(torch::kDouble));
+    std::cout << "AAA" << std::endl;
 
     try{        
         // B forward passes with jacobian computation
         int n = 0;
+        DEBUG(n); DEBUG(N);
         while (n < N)
         {
             unsigned int block_size = ((n+B) < N) ? B : (N-n);
+            std::cout << "n = " << n << "and BS = " << block_size << std::endl;
             std::vector<double> log_det_g(block_size, 0.0); 
             std::vector<double> log_det_j(block_size, 0.0); 
             std::vector<double> log_prob_u(block_size, 0.0); 
@@ -68,17 +71,26 @@ ParticleEnsembleEntropyFunctionNonLinear<VDimension>
             this->m_ShapeMatrix->ForwardPass(input_tensor, output_tensor, 
                                                     jacobian_matrix, log_prob_u, 
                                                     log_det_g, log_det_j);
+            std::cout << "CJ 1 | bs = " << block_size << std::endl;
             jacobian_matrix_all.index_put_({torch::indexing::Slice(n, n+block_size), "..."}, jacobian_matrix);
-            MSG("Forward Pass Done");
+            std::cout << "Forward Pass Done | output size " << output_tensor.sizes() << std::endl;
             double* output_data_ptr = output_tensor.data_ptr<double>();
-            vnl_matrix_type output_vec(output_data_ptr, block_size, L);
+            std::cout << "CJ 2" << std::endl;
+            vnl_matrix<double> output_vec;
+            output_vec.set_size(block_size, L);
+            std::cout << "CJ 2.1" << std::endl;
+            output_vec.set(output_data_ptr);
+            std::cout << "CJ 3" << std::endl;
             output_vec = output_vec.inplace_transpose();
+            std::cout << "CJ 4" << std::endl;
             m_BaseShapeMatrix->set_columns(n, output_vec);
+            std::cout << "CJ 5" << std::endl;
             m_log_det_g_ar->insert(m_log_det_g_ar->begin() + n, log_det_g.begin(), log_det_g.end());
             m_log_det_j_ar->insert(m_log_det_j_ar->begin() + n, log_det_j.begin(), log_det_j.end());
             m_log_prob_u_ar->insert(m_log_prob_u_ar->begin() + n, log_prob_u.begin(), log_prob_u.end());
-
+            std::cout << "CJ 6" << std::endl;
             n += block_size;
+            std::cout << "CJ loop end | n = " << n << std::endl; 
         }
     }
     catch (const c10::Error& e) {
@@ -87,6 +99,7 @@ ParticleEnsembleEntropyFunctionNonLinear<VDimension>
     }
 
     // 2. Do regular gradient computations in latent space assuming Gaussian Distrubution
+    std::cout << "COMPUTING SW grads" << std::endl;
     this->ComputeBaseSpaceGradientUpdates();
     
     // 3. Compute Final Gradient Updates in Data space (Z)
@@ -98,8 +111,9 @@ ParticleEnsembleEntropyFunctionNonLinear<VDimension>
         Tensor dH_dU = torch::from_blob(tmp.data_block(), {N, L}, torch::TensorOptions(torch::kCPU).dtype(torch::kDouble)).clone();
         dH_dU = dH_dU.view({N, 1, L});
 
-        dH_dU.to(this->m_ShapeMatrix->GetDevice());
-        jacobian_matrix_all.to(this->m_ShapeMatrix->GetDevice());
+        dH_dU = dH_dU.to(torch::Device(torch::kCUDA, 0));
+        std::cout << " dH_dU is in  " << std::endl;
+        jacobian_matrix_all = jacobian_matrix_all.to(torch::Device(torch::kCUDA, 0));
 
         // N X 1 X L \times N X L X dM ===> N X 1 x dM
         Tensor dH_dZ = torch::bmm(dH_dU, jacobian_matrix_all); // N X 1 X dM
