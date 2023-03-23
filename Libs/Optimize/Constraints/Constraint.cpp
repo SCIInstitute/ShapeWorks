@@ -54,11 +54,12 @@ void Constraint::updateZ(const Eigen::Vector3d &pt, double C) {
 }
 
 void Constraint::updateMu(const Eigen::Vector3d &pt, double C, size_t index) {
-  double eval = mus_[index] + C * constraintEval(pt);
-  if (eval > 0) {
+  double eval = constraintEval(pt);
+  double maxterm = mus_[index] + C * eval;
+  if (maxterm > 0) {
     mus_[index] = 0;
   } else {
-    mus_[index] = eval;
+    mus_[index] = maxterm;
   }
   // std::cout << "mu: " << mu << std::endl;
 }
