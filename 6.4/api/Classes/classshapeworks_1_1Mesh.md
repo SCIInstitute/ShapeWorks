@@ -49,6 +49,7 @@ title: shapeworks::Mesh
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[reflect](../Classes/classshapeworks_1_1Mesh.md#function-reflect)**(const [Axis](../Namespaces/namespaceshapeworks.md#enum-axis) & axis, const Vector3 & origin =[makeVector](../Namespaces/namespaceshapeworks.md#function-makevector)({0.0, 0.0, 0.0}))<br>reflect meshes with respect to a specified center and specific axis  |
 | [MeshTransform](../Namespaces/namespaceshapeworks.md#using-meshtransform) | **[createTransform](../Classes/classshapeworks_1_1Mesh.md#function-createtransform)**(const [Mesh](../Classes/classshapeworks_1_1Mesh.md) & target, AlignmentType align =Similarity, unsigned iterations =10) |
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[applyTransform](../Classes/classshapeworks_1_1Mesh.md#function-applytransform)**(const [MeshTransform](../Namespaces/namespaceshapeworks.md#using-meshtransform) transform)<br>applies the given transformation to the mesh  |
+| [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[rotate](../Classes/classshapeworks_1_1Mesh.md#function-rotate)**(const double angle, const [Axis](../Namespaces/namespaceshapeworks.md#enum-axis) axis)<br>applies the given rotation to the given axis  |
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[fillHoles](../Classes/classshapeworks_1_1Mesh.md#function-fillholes)**()<br>finds holes in a mesh and closes them  |
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[clean](../Classes/classshapeworks_1_1Mesh.md#function-clean)**()<br>clean mesh  |
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[probeVolume](../Classes/classshapeworks_1_1Mesh.md#function-probevolume)**(const [Image](../Classes/classshapeworks_1_1Image.md) & image)<br>samples image data values at point locations specified by image  |
@@ -372,6 +373,17 @@ Mesh & applyTransform(
 ```
 
 applies the given transformation to the mesh 
+
+### function rotate
+
+```cpp
+Mesh & rotate(
+    const double angle,
+    const Axis axis
+)
+```
+
+applies the given rotation to the given axis 
 
 ### function fillHoles
 
@@ -841,4 +853,4 @@ friend struct SharedCommandData(
 
 -------------------------------
 
-Updated on 2023-03-11 at 18:11:03 +0000
+Updated on 2023-03-23 at 00:31:56 +0000

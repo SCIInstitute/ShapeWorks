@@ -2332,7 +2332,7 @@ This use case reads the correspondence model of the ellipsoid segmentation image
 <span class="n">nSpecificity</span> <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">ShapeEvaluation</span><span class="o">.</span><span class="n">ComputeSpecificity</span><span class="p">(</span><span class="n">particleSystem</span><span class="o">=</span><span class="n">particle_data</span><span class="p">,</span> <span class="n">nModes</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="n">saveTo</span><span class="o">=</span><span class="n">save_dir</span><span class="p">)</span>
 </code></pre></div>
 <p>To access the metrics for all the modes of variations:</p>
-<p><div class="highlight"><pre><span></span><code><span class="c1"># Get compactness of all the modes</span>
+<div class="highlight"><pre><span></span><code><span class="c1"># Get compactness of all the modes</span>
 <span class="n">allCompactness</span> <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">ShapeEvaluation</span><span class="o">.</span><span class="n">ComputeFullCompactness</span><span class="p">(</span><span class="n">particleSystem</span><span class="o">=</span><span class="n">particle_data</span><span class="p">)</span>
 
 <span class="c1">#Get generalization values for all modes</span>
@@ -2341,7 +2341,8 @@ This use case reads the correspondence model of the ellipsoid segmentation image
 <span class="c1">#Get specificity values for all modes</span>
 <span class="n">allSpecificity</span> <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">ShapeEvaluation</span><span class="o">.</span><span class="n">ComputeFullSpecificity</span><span class="p">(</span><span class="n">particleSystem</span><span class="o">=</span><span class="n">particle_data</span><span class="p">)</span>
 </code></pre></div>
-Generalization value of the 3rd mode -  0.09600121582319728</p>
+<p>Details about the evaluation functions can be found <a href="http://sciinstitute.github.io/ShapeWorks/latest/api/Classes/classshapeworks_1_1ShapeEvaluation.html#function-shapeevaluation">in the API Reference</a></p>
+<p>Generalization value of the 3rd mode -  0.09600121582319728</p>
 <p>Generalization Best Reconstruction<img alt="Generalization Best Reconstruction" src="https://sci.utah.edu/~shapeworks/doc-resources/pngs/generalization_best_recon.png" />
 Generalization Worst Reconstruction<img alt="Generalization Worst Reconstruction" src="https://sci.utah.edu/~shapeworks/doc-resources/pngs/generalization_worst_recon.png" /></p>
 <p>Specificity value of the 3rd mode -  0.21431799055403217</p>

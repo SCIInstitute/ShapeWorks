@@ -2339,13 +2339,14 @@ shapeworks readparticlesystem --name *.particles -- generalization --nmodes 1
 shapeworks readparticlesystem --name *.particles -- specificity    --nmodes 1
 </code></pre></div>
 <h2 id="shapeworks-python-tools">ShapeWorks Python tools</h2>
-<div class="highlight"><pre><span></span><code><span class="c1"># Read the particle files from a pre-trained shape model</span>
+<p><div class="highlight"><pre><span></span><code><span class="c1"># Read the particle files from a pre-trained shape model</span>
 <span class="n">particle_data</span> <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">ParticleSystem</span><span class="p">(</span><span class="o">&lt;</span><span class="nb">list</span> <span class="n">of</span> <span class="n">local</span> <span class="n">point</span> <span class="n">files</span><span class="o">&gt;</span><span class="p">)</span>
 <span class="c1">#evaluation tools</span>
 <span class="n">shapeworks</span><span class="o">.</span><span class="n">ShapeEvaluation</span><span class="o">.</span><span class="n">ComputeCompactness</span><span class="p">(</span><span class="n">particleSystem</span><span class="o">=</span><span class="n">particle_data</span><span class="p">,</span> <span class="n">nModes</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">saveTo</span><span class="o">=</span><span class="s2">&quot;scree.txt&quot;</span><span class="p">)</span>
 <span class="n">shapeworks</span><span class="o">.</span><span class="n">ShapeEvaluation</span><span class="o">.</span><span class="n">ComputeGeneralization</span><span class="p">(</span><span class="n">particleSystem</span><span class="o">=</span><span class="n">particle_data</span><span class="p">,</span> <span class="n">nModes</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">saveTo</span><span class="o">=</span><span class="n">save_dir</span><span class="p">)</span>
 <span class="n">shapeworks</span><span class="o">.</span><span class="n">ShapeEvaluation</span><span class="o">.</span><span class="n">ComputeSpecificity</span><span class="p">(</span><span class="n">particleSystem</span><span class="o">=</span><span class="n">particle_data</span><span class="p">,</span> <span class="n">nModes</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">saveTo</span><span class="o">=</span><span class="n">save_dir</span><span class="p">)</span>
 </code></pre></div>
+Details about the evaluation functions can be found <a href="http://sciinstitute.github.io/ShapeWorks/latest/api/Classes/classshapeworks_1_1ShapeEvaluation.html#function-shapeevaluation">in the API Reference</a></p>
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/eval_ShellDemo.mp4" autoplay muted loop controls style="width:100%"></p>
 
 <h2 id="model-evaluation-in-studio">Model Evaluation in Studio</h2>
