@@ -55,7 +55,7 @@ void Constraint::updateZ(const Eigen::Vector3d &pt, double C) {
 
 void Constraint::updateMu(const Eigen::Vector3d &pt, double C, size_t index) {
   double eval = mus_[index] + C * constraintEval(pt);
-  if (eval < 0) {
+  if (eval > 0) {
     mus_[index] = 0;
   } else {
     mus_[index] = eval;
