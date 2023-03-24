@@ -93,6 +93,9 @@ class Mesh {
   /// applies the given transformation to the mesh
   Mesh& applyTransform(const MeshTransform transform);
 
+  /// applies the given rotation to the given axis 
+  Mesh& rotate(const double angle, const Axis axis);
+
   /// finds holes in a mesh and closes them
   Mesh& fillHoles();
 

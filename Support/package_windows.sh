@@ -43,13 +43,12 @@ cp -r $BUILD/bin/Release bin
 rm bin/*Tests.pdb bin/Recon*.pdb bin/Mesh*.pdb
 rm -rf Post
 
-# Run auto-documentation
-cd $ROOT
-PATH=$BUILD/bin/Release/bin:$PATH
-
-# add $PATH to $PYTHONPATH
-PYTHONPATH=$PYTHONPATH:$PATH
-
+# Build python packages
+for package in DataAugmentationUtilsPackage DatasetUtilsPackage DeepSSMUtilsPackage DocumentationUtilsPackage ShapeCohortGenPackage shapeworks ; do
+    cd Python
+    tar czvf ${package}.tar.gz $package
+    cd ..
+done
 
 # Remove tests, they won't work for users anyway
 rm bin/*Tests.exe

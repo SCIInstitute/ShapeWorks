@@ -388,6 +388,19 @@ Mesh& Mesh::applyTransform(const MeshTransform transform) {
   return *this;
 }
 
+Mesh& Mesh::rotate(const double angle, const Axis axis){
+  
+  Vector rotation(makeVector({0, 0, 0}));
+  rotation[axis] = 1;
+  auto com = center();
+
+  MeshTransform transform = MeshTransform::New();
+  transform->Translate(com[0], com[1], com[2]);
+  transform->RotateWXYZ(angle,rotation[0], rotation[1], rotation[2]);
+  transform->Translate(-com[0], -com[1], -com[2]);
+  return applyTransform(transform);
+}
+
 Mesh& Mesh::fillHoles() {
   auto filter = vtkSmartPointer<vtkFillHolesFilter>::New();
   filter->SetInputData(this->poly_data_);
