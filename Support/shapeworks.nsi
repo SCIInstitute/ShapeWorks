@@ -75,7 +75,6 @@ Section "ShapeWorks (required)"
   File /r "bin"
   File /r "Examples"
   File /r /x Studio /x Lib "Python"
-  File /r "Documentation"
   File /r "Installation"
 
   ${registerExtension} "$INSTDIR\bin\ShapeWorksStudio.exe" ".swproj" "ShapeWorks Project"

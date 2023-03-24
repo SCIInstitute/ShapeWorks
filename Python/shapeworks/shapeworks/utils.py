@@ -300,7 +300,7 @@ def check_results(args, project_spreadsheet):
 
 def check_results_pattern(args, project_spreadsheet, pattern):
     # If tiny test or verify, check results and exit
-    particle_dir = project_spreadsheet.replace(".xlsx", "_particles/")
+    particle_dir = project_spreadsheet.replace(".xlsx", "_particles/").replace(".swproj", "_particles/")
     world_point_files = []
     for file in sorted(os.listdir(particle_dir)):
         if pattern in file:

@@ -1,4 +1,3 @@
-
 import os
 import glob
 import math
@@ -8,40 +7,43 @@ import numpy as np
 import shapeworks as sw
 import ShapeCohortGen
 
+
 def Run_Pipeline(args):
 
     # Set options
     if args.interactive:
         # Select sorting type
-        sorting_type = input("\nPlease enter method of sorting to use. Options:{random, median, distribution} Default: median \nSorting type: ")
-        if sorting_type not in ['random','median','distribution']:
+        sorting_type = input(
+            "\nPlease enter method of sorting to use. Options:{random, median, distribution} Default: median \nSorting type: ")
+        if sorting_type not in ['random', 'median', 'distribution']:
             sorting_type = 'median'
         print("Using", sorting_type, "sorting.")
 
         # Set initial model size
-        initial_model_size_input = input("\nPlease enter the number of shapes to use in the initial model. Options:{2, 3, ..., 50} Default: 10 \nInitial shapes: ")
+        initial_model_size_input = input(
+            "\nPlease enter the number of shapes to use in the initial model. Options:{2, 3, ..., 50} Default: 10 \nInitial shapes: ")
         try:
             initial_model_size = int(initial_model_size_input)
             if initial_model_size < 2 or initial_model_size > 50:
-                initial_model_size=10
+                initial_model_size = 10
         except:
-            initial_model_size=10
+            initial_model_size = 10
         print("Using", initial_model_size, "initial shapes.")
 
         # Set batch size
-        incremental_batch_size_input = input("\nPlease enter the number of shapes in a batch to incrementally add. Options:{1, 2, ...} Default: 5 \nIncremental batch size: ")
+        incremental_batch_size_input = input(
+            "\nPlease enter the number of shapes in a batch to incrementally add. Options:{1, 2, ...} Default: 5 \nIncremental batch size: ")
         try:
             incremental_batch_size = int(incremental_batch_size_input)
             if incremental_batch_size < 1 or incremental_batch_size > (50-initial_model_size):
-                incremental_batch_size = 5  
+                incremental_batch_size = 5
         except:
-            incremental_batch_size=5
+            incremental_batch_size = 5
         print("Using an incremental batch size of", incremental_batch_size, ".")
     else:
         sorting_type = 'median'
-        initial_model_size=10
-        incremental_batch_size=5
-
+        initial_model_size = 10
+        incremental_batch_size = 5
 
     print("\nStep 1. Extract Data")
     """
@@ -50,32 +52,37 @@ def Run_Pipeline(args):
     We define dataset_name which determines which dataset to download from 
     the portal and the directory to save output from the use case in. 
     """
-    dataset_name = "supershapes3D"
+    dataset_name = "incremental_supershapes"
     output_directory = "Output/incremental_supershapes/"
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
     # If running a tiny_test, then download subset of the data
     if args.tiny_test:
         args.use_single_scale = 1
-        sw.data.download_subset(args.use_case, dataset_name, output_directory)
+        dataset_name = "incremental_supershapes_tiny_test"
+        sw.download_and_unzip_dataset(dataset_name, output_directory)
+        dataset_name = "supershapes3D"
         mesh_files = sorted(glob.glob(output_directory +
                             dataset_name + "/meshes/*.ply"))[:3]
         initial_model_size = 1
-        incremental_batch_size =1
+        incremental_batch_size = 1
     # else download the entire dataset
     else:
-        sw.data.download_and_unzip_dataset(dataset_name, output_directory)
+        sw.download_and_unzip_dataset(dataset_name, output_directory)
+        dataset_name = "supershapes3D"
         mesh_files = sorted(glob.glob(output_directory +
                             dataset_name + "/meshes/*.ply"))
 
         # Select data if using subsample
         if args.use_subsample:
-            inputMeshes =[sw.Mesh(filename) for filename in mesh_files]
-            sample_idx = sw.data.sample_meshes(inputMeshes, int(args.num_subsample))
+            inputMeshes = [sw.Mesh(filename) for filename in mesh_files]
+            sample_idx = sw.data.sample_meshes(
+                inputMeshes, int(args.num_subsample))
             mesh_files = [mesh_files[i] for i in sample_idx]
 
     """
     Step 2: Sort meshes into batches
+    We sort meshes using the specified sorting method.
     We sort meshes using the specified sorting method.
     """
     print("\nStep 2: Sort meshes into batches")
@@ -90,31 +97,36 @@ def Run_Pipeline(args):
             meshes.append(sw.Mesh(mesh_file))
         # Get distance matrix
         print("Finding surface-to-surface distances for sorting...")
-        distances = np.zeros((len(meshes),len(meshes)))
+        distances = np.zeros((len(meshes), len(meshes)))
         for i in range(len(meshes)):
             for j in range(len(meshes)):
                 if i != j:
                     distances[i][j] = np.mean(meshes[i].distance(meshes[j])[0])
-        median_index = np.argmin(np.sum(distances,axis=0) + np.sum(distances,axis=1))
+        median_index = np.argmin(
+            np.sum(distances, axis=0) + np.sum(distances, axis=1))
         # Sort
-        if sorting_type=="median":
+        if sorting_type == "median":
             print("Sorting using median.")
-            sorted_indices = np.argsort(distances[median_index] + distances[:,median_index])
-        elif sorting_type=="distribution":
+            sorted_indices = np.argsort(
+                distances[median_index] + distances[:, median_index])
+        elif sorting_type == "distribution":
             print("Sorting using distribution.")
             sorted_indices = [median_index]
             while len(sorted_indices) < len(mesh_files):
-                dists = np.sum(distances[sorted_indices],axis=0) + np.sum(distances[:,sorted_indices],axis=1)
-                next_ind = [i for i in np.argsort(dists) if i not in sorted_indices][0]
+                dists = np.sum(distances[sorted_indices], axis=0) + \
+                    np.sum(distances[:, sorted_indices], axis=1)
+                next_ind = [i for i in np.argsort(
+                    dists) if i not in sorted_indices][0]
                 sorted_indices.append(next_ind)
         else:
             print("Error: Sorting type unrecognized.")
     sorted_mesh_files = np.array(mesh_files)[sorted_indices]
-    
+
     # Make batches
     initial_shapes = sorted_mesh_files[:initial_model_size]
     remaining = range(initial_model_size, len(mesh_files))
-    incremental_batches = [sorted_mesh_files[i:i + incremental_batch_size] for i in range(initial_model_size, len(sorted_mesh_files), incremental_batch_size)]
+    incremental_batches = [sorted_mesh_files[i:i + incremental_batch_size]
+                           for i in range(initial_model_size, len(sorted_mesh_files), incremental_batch_size)]
     batches = [initial_shapes]+incremental_batches
 
     """
@@ -124,21 +136,23 @@ def Run_Pipeline(args):
     to: http://sciinstitute.github.io/ShapeWorks/workflow/optimize.html
     """
     print("\nStep 3: Optimize particles on initial shapes.")
+    print("\nStep 3: Optimize particles on initial shapes.")
     # Create project spreadsheet
-    project_location = output_directory + "shape_models/"
+    project_location = output_directory + "/"
     if not os.path.exists(project_location):
         os.makedirs(project_location)
     # Remove particle dir if it already exists
     shape_model_dir = project_location + 'incremental_supershapes_particles/'
     if os.path.exists(shape_model_dir):
-    	shutil.rmtree(shape_model_dir)
+        shutil.rmtree(shape_model_dir)
     # Set subjects
     subjects = []
     number_domains = 1
     for i in range(len(batches[0])):
         subject = sw.Subject()
         subject.set_number_of_domains(number_domains)
-        rel_mesh_file = sw.utils.get_relative_paths([os.getcwd() + "/" + batches[0][i]], project_location)
+        rel_mesh_file = sw.utils.get_relative_paths(
+            [os.getcwd() + "/" + batches[0][i]], project_location)
         subject.set_original_filenames(rel_mesh_file)
         subject.set_groomed_filenames(rel_mesh_file)
         subjects.append(subject)
@@ -180,13 +194,19 @@ def Run_Pipeline(args):
     for key in parameter_dictionary:
         parameters.set(key, sw.Variant([parameter_dictionary[key]]))
     project.set_parameters("optimize", parameters)
-    spreadsheet_file = output_directory + "shape_models/incremental_supershapes.xlsx"
+    spreadsheet_file = output_directory + "/incremental_supershapes.swproj"
     project.save(spreadsheet_file)
 
     # Run optimization
-    optimize_cmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
+    optimize_cmd = ('shapeworks optimize --progress --name ' + spreadsheet_file).split()
     print(optimize_cmd)
     subprocess.check_call(optimize_cmd)
+
+    # Analyze initial model
+    if args.interactive:
+        print("\nOpening studio to display initial model. \nClose studio to continue running the use case.\n")
+        analyze_cmd = ('ShapeWorksStudio ' + spreadsheet_file).split()
+        subprocess.check_call(analyze_cmd)
 
     # Analyze initial model
     if args.interactive:
@@ -201,10 +221,12 @@ def Run_Pipeline(args):
     """
     print("\nStep 4: Incremental optimization")
 
-    # Update parameters for incremental optimization 
+    # Update parameters for incremental optimization
     parameter_dictionary["use_landmarks"] = 1 				# For particle initialization
-    parameter_dictionary["iterations_per_split"] = 0 		# No initialization iterations
-    parameter_dictionary["optimization_iterations"] = 100 	# Fewer optimization iterations
+    # No initialization iterations
+    parameter_dictionary["iterations_per_split"] = 0
+    # Fewer optimization iterations
+    parameter_dictionary["optimization_iterations"] = 100
     parameter_dictionary["multiscale"] = 0 					# Single scale
     if args.tiny_test:
         parameter_dictionary["number_of_particles"] = 8
@@ -214,7 +236,8 @@ def Run_Pipeline(args):
 
     # Run optimization on each batch
     for batch_index in range(1, len(batches)):
-        print("Running incremental optimization " + str(batch_index) + " out of " + str(len(batches)-1))
+        print("Running incremental optimization " +
+              str(batch_index) + " out of " + str(len(batches)-1))
         # Update meanshape
         sw.utils.findMeanShape(shape_model_dir)
         mean_shape_path = shape_model_dir + '/meanshape_local.particles'
@@ -225,21 +248,27 @@ def Run_Pipeline(args):
             for j in range(len(batches[i])):
                 subject = sw.Subject()
                 subject.set_number_of_domains(1)
-                rel_mesh_file = sw.utils.get_relative_paths([os.getcwd() + "/" + batches[i][j]], project_location)
+                rel_mesh_file = sw.utils.get_relative_paths(
+                    [os.getcwd() + "/" + batches[i][j]], project_location)
                 subject.set_original_filenames(rel_mesh_file)
                 subject.set_groomed_filenames(rel_mesh_file)
-                particle_file = shape_model_dir + os.path.basename(rel_mesh_file[0]).replace(".ply", "_local.particles")
-                rel_particle_file = sw.utils.get_relative_paths([os.getcwd() + "/" + particle_file],  project_location)
+                particle_file = shape_model_dir + \
+                    os.path.basename(rel_mesh_file[0]).replace(
+                        ".ply", "_local.particles")
+                rel_particle_file = sw.utils.get_relative_paths(
+                    [os.getcwd() + "/" + particle_file],  project_location)
                 subject.set_landmarks_filenames(rel_particle_file)
                 subjects.append(subject)
         # Add new shapes in current batch - intialize with meanshape
         for j in range(len(batches[batch_index])):
             subject = sw.Subject()
             subject.set_number_of_domains(1)
-            rel_mesh_file = sw.utils.get_relative_paths([os.getcwd() + "/" + batches[batch_index][j]], project_location)
+            rel_mesh_file = sw.utils.get_relative_paths(
+                [os.getcwd() + "/" + batches[batch_index][j]], project_location)
             subject.set_original_filenames(rel_mesh_file)
             subject.set_groomed_filenames(rel_mesh_file)
-            rel_particle_file = sw.utils.get_relative_paths([os.getcwd() + "/" + mean_shape_path],  project_location)
+            rel_particle_file = sw.utils.get_relative_paths(
+                [os.getcwd() + "/" + mean_shape_path],  project_location)
             subject.set_landmarks_filenames(rel_particle_file)
             subjects.append(subject)
         # Set project
@@ -251,16 +280,17 @@ def Run_Pipeline(args):
         for key in parameter_dictionary:
             parameters.set(key, sw.Variant([parameter_dictionary[key]]))
         project.set_parameters("optimize", parameters)
-        spreadsheet_file = output_directory + "shape_models/incremental_supershapes.xlsx"
+        spreadsheet_file = output_directory + "/incremental_supershapes.swproj"
         project.save(spreadsheet_file)
 
         # Run optimization
-        optimize_cmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
+        optimize_cmd = ('shapeworks optimize --progress --name ' +
+                        spreadsheet_file).split()
         subprocess.check_call(optimize_cmd)
 
     # If tiny test or verify, check results and exit
     sw.utils.check_results(args, spreadsheet_file)
-    
+
     """
     Step 5: ANALYZE - open in studio
     For more information about the analysis step, see:
@@ -274,10 +304,13 @@ def Run_Pipeline(args):
 """
 The dataset used in this use case was generated using the following function
 """
+
+
 def generate_data(num_samples=50):
     out_dir = "Output/incremental_supershapes/supershapes3D/"
     ss_generator = ShapeCohortGen.SupershapesCohortGenerator(out_dir)
-    meshFiles = ss_generator.generate(num_samples, randomize_center=False, randomize_rotation=False, m=-1)
+    meshFiles = ss_generator.generate(
+        num_samples, randomize_center=False, randomize_rotation=False, m=-1)
 
 
 # generate_data()

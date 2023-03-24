@@ -1003,6 +1003,14 @@ PYBIND11_MODULE(shapeworks_py, m)
        "applies the given transformation to the mesh",
        "transform"_a, "imageTransform"_a=false)
 
+
+  .def("rotate",
+       [](Mesh& mesh, const double angle, const Axis axis) -> decltype(auto){
+          return mesh.rotate(angle, axis);
+       },
+       "rotate using axis by angle (in degrees)",
+       "angle"_a, "axis"_a)
+
   .def("fillHoles",
        &Mesh::fillHoles,
        "finds holes in a mesh and closes them")
