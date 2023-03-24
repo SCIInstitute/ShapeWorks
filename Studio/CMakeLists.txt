@@ -140,12 +140,10 @@ SET(STUDIO_OPTIMIZE_MOC_HDRS
 
 SET(STUDIO_ANALYSIS_SRCS
   Analysis/AnalysisTool.cpp
-  Analysis/NetworkAnalysisWidget.cpp
   Analysis/ShapeEvaluationJob.cpp
   )
 SET(STUDIO_ANALYSIS_MOC_HDRS
   Analysis/AnalysisTool.h
-  Analysis/NetworkAnalysisWidget.h
   Analysis/ShapeEvaluationJob.h
   )
 
