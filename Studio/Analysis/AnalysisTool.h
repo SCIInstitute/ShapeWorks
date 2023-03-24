@@ -21,8 +21,6 @@ class JKQTPlotter;
 
 namespace shapeworks {
 
-class NetworkAnalysisWidget;
-
 class Session;
 class Lightbox;
 class ShapeWorksStudioApp;
@@ -266,7 +264,5 @@ class AnalysisTool : public QWidget {
   bool block_group_change_ = false;
 
   AlignmentType current_alignment_{AlignmentType::Local};
-
-  NetworkAnalysisWidget* network_analysis_widget_{nullptr};
 };
 }  // namespace shapeworks
