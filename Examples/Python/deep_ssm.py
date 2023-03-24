@@ -249,7 +249,7 @@ def Run_Pipeline(args):
     project.save(spreadsheet_file)
 
     # Run optimization
-    optimizeCmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
+    optimizeCmd = ('shapeworks optimize --progress --name ' + spreadsheet_file).split()
     subprocess.check_call(optimizeCmd)
 
     print("To analyze train shape model, call:")
@@ -533,7 +533,7 @@ def Run_Pipeline(args):
     project.save(spreadsheet_file)
 
     # Run optimization
-    optimize_cmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
+    optimize_cmd = ('shapeworks optimize --progress --name ' + spreadsheet_file).split()
     subprocess.check_call(optimize_cmd)
 
     print("To analyze validation shape model, call:")

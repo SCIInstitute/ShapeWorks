@@ -225,7 +225,7 @@ def Run_Pipeline(args):
     project.save(spreadsheet_file)
 
     # Run optimization
-    optimizeCmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
+    optimizeCmd = ('shapeworks optimize --progress --name ' + spreadsheet_file).split()
     subprocess.check_call(optimizeCmd)
 
     # If tiny test or verify, check results and exit

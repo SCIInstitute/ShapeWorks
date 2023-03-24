@@ -207,7 +207,7 @@ def Run_Pipeline(args):
         parameter_dictionary["multiscale"] = 1
         parameter_dictionary["multiscale_particles"] = 128
     
-    print('Generating project sheet')
+    print('Generating project file')
     # Add param dictionary to spreadsheet
     for key in parameter_dictionary:
         parameters.set(key, sw.Variant([parameter_dictionary[key]]))
@@ -216,7 +216,8 @@ def Run_Pipeline(args):
     project.save(spreadsheet_file)
 
     # Run optimization
-    optimize_cmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
+    print('Running optimization')
+    optimize_cmd = ('shapeworks optimize --progress --name ' + spreadsheet_file).split()
     subprocess.check_call(optimize_cmd)
 
     # If tiny test or verify, check results and exit

@@ -48,6 +48,9 @@ allGeneralization = sw.ShapeEvaluation.ComputeFullGeneralization(particleSystem=
 #Get specificity values for all modes
 allSpecificity = sw.ShapeEvaluation.ComputeFullSpecificity(particleSystem=particle_data)
 ```
+
+Details about the evaluation functions can be found [in the API Reference](http://sciinstitute.github.io/ShapeWorks/latest/api/Classes/classshapeworks_1_1ShapeEvaluation.html#function-shapeevaluation)
+
 Generalization value of the 3rd mode -  0.09600121582319728
 
 Generalization Best Reconstruction![Generalization Best Reconstruction](https://sci.utah.edu/~shapeworks/doc-resources/pngs/generalization_best_recon.png)
