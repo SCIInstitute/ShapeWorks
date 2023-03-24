@@ -1,4 +1,5 @@
 #include "Constraint.h"
+#include <iostream>
 namespace shapeworks {
 
 void Constraint::updateZ(const Eigen::Vector3d &pt, double C) {
@@ -54,7 +55,7 @@ void Constraint::updateZ(const Eigen::Vector3d &pt, double C) {
 }
 
 void Constraint::updateMu(const Eigen::Vector3d &pt, double C, size_t index) {
-  double eval = constraintEval(pt);
+  double eval = -constraintEval(pt);
   double maxterm = mus_[index] + C * eval;
   if (maxterm > 0) {
     mus_[index] = 0;
@@ -86,12 +87,13 @@ Eigen::Vector3d Constraint::lagragianGradient(const Eigen::Vector3d &pt, double 
   return first_term+second_term;
   */
   Eigen::Vector3d constraint_grad = constraintGradient(pt);
-  double eval = constraintEval(pt);
+  double eval = -constraintEval(pt);
   double maxterm = mus_[index] + C * eval;
-  if (maxterm < 0) {
+  //if(eval < 0) std::cout << "i " << index << " pt " << pt.transpose() << " mu " << mus_[index] << " eval " << eval << std::endl; // If eval > 0, not violated
+  if (maxterm > 0) {
     return Eigen::Vector3d(0, 0, 0);
   } else {
-    return maxterm * constraint_grad;
+    return -maxterm * constraint_grad;
   }
 }
 
