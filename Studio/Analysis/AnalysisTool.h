@@ -172,13 +172,15 @@ class AnalysisTool : public QWidget {
   void handle_eval_particle_normals_complete(std::vector<bool> good_bad);
 
   void handle_group_pvalues_complete();
-  void handle_network_analysis_complete();
   void handle_alignment_changed(int new_alignment);
 
   void run_good_bad_particles();
 
   void handle_lda_progress(double progress);
   void handle_lda_complete();
+
+  void handle_network_analysis_progress(int progress);
+  void handle_network_analysis_complete();
 
   void show_difference_to_mean_clicked();
 

@@ -27,6 +27,10 @@ void NetworkAnalysisJob::run() {
   py::object network_analysis = network_analysis_class(project_);
   network_analysis.attr("set_target_group")(target_group_);
   network_analysis.attr("set_target_feature")(target_feature_);
+  network_analysis.attr("set_pvalue_of_interest")(pvalue_of_interest_);
+  network_analysis.attr("set_pvalue_threshold")(pvalue_threshold_);
+  network_analysis.attr("set_num_iterations")(num_iterations_);
+
   py::object res = network_analysis.attr("run")();
 
   // py::object compute = network_analysis.attr("run");
@@ -42,11 +46,30 @@ void NetworkAnalysisJob::run() {
   for (int i = 0; i < network_values.rows(); i++) {
     tvalues_(i) = network_values(i, 0);
   }
+
+  spm_values_.resize(spm_values.rows());
+  for (int i = 0; i < spm_values.rows(); i++) {
+    spm_values_(i) = spm_values(i, 0);
+  }
 }
 
 //---------------------------------------------------------------------------
 QString NetworkAnalysisJob::name() { return "Network Analysis"; }
-//---------------------------------------------------------------------------
 
+//---------------------------------------------------------------------------
 Eigen::VectorXf NetworkAnalysisJob::get_tvalues() { return tvalues_; }
+
+//---------------------------------------------------------------------------
+Eigen::VectorXf NetworkAnalysisJob::get_spm_values() { return spm_values_; }
+
+//---------------------------------------------------------------------------
+void NetworkAnalysisJob::set_pvalue_of_interest(double pvalue_of_interest) { pvalue_of_interest_ = pvalue_of_interest; }
+
+//---------------------------------------------------------------------------
+void NetworkAnalysisJob::set_pvalue_threshold(double pvalue_threshold) { pvalue_threshold_ = pvalue_threshold; }
+
+//---------------------------------------------------------------------------
+void NetworkAnalysisJob::set_num_iterations(int num_iterations) { num_iterations_ = num_iterations; }
+
+//---------------------------------------------------------------------------
 }  // namespace shapeworks

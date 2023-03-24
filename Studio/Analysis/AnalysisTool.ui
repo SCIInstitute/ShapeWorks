@@ -764,7 +764,7 @@ QWidget#particles_panel {
                     </widget>
                    </item>
                    <item row="7" column="0" colspan="3">
-                    <widget class="QGroupBox" name="groupBox">
+                    <widget class="QGroupBox" name="network_analysis_box">
                      <property name="title">
                       <string>Network Analysis</string>
                      </property>
@@ -772,6 +772,34 @@ QWidget#particles_panel {
                       <bool>false</bool>
                      </property>
                      <layout class="QGridLayout" name="gridLayout_15">
+                      <item row="2" column="1">
+                       <widget class="QLineEdit" name="network_pvalue_threshold">
+                        <property name="alignment">
+                         <set>Qt::AlignCenter</set>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="1" column="0">
+                       <widget class="QLabel" name="label_14">
+                        <property name="text">
+                         <string>P-value of Interest</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="1" column="1">
+                       <widget class="QLineEdit" name="network_pvalue_of_interest">
+                        <property name="alignment">
+                         <set>Qt::AlignCenter</set>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="4" column="0">
+                       <widget class="QCheckBox" name="network_analysis_display">
+                        <property name="text">
+                         <string>Display</string>
+                        </property>
+                       </widget>
+                      </item>
                       <item row="0" column="0">
                        <widget class="QLabel" name="label_6">
                         <property name="text">
@@ -786,38 +814,11 @@ QWidget#particles_panel {
                         </property>
                        </widget>
                       </item>
-                      <item row="2" column="0">
-                       <widget class="QLabel" name="label_15">
+                      <item row="3" column="0">
+                       <widget class="QLabel" name="label_16">
                         <property name="text">
-                         <string>P-value Threshold</string>
+                         <string>Iterations</string>
                         </property>
-                       </widget>
-                      </item>
-                      <item row="1" column="1">
-                       <widget class="QLineEdit" name="network_pvalue_of_interest">
-                        <property name="alignment">
-                         <set>Qt::AlignCenter</set>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="4" column="1">
-                       <widget class="QWidget" name="network_display_option_widget" native="true">
-                        <layout class="QGridLayout" name="gridLayout_22">
-                         <item row="0" column="0">
-                          <widget class="QRadioButton" name="radioButton">
-                           <property name="text">
-                            <string>Network Analysis</string>
-                           </property>
-                          </widget>
-                         </item>
-                         <item row="1" column="0">
-                          <widget class="QRadioButton" name="radioButton_2">
-                           <property name="text">
-                            <string>SPM1D</string>
-                           </property>
-                          </widget>
-                         </item>
-                        </layout>
                        </widget>
                       </item>
                       <item row="5" column="0" colspan="2">
@@ -832,18 +833,34 @@ QWidget#particles_panel {
                          <string>Run</string>
                         </property>
                         <property name="checkable">
-                         <bool>true</bool>
+                         <bool>false</bool>
                         </property>
                         <property name="autoExclusive">
                          <bool>false</bool>
                         </property>
                        </widget>
                       </item>
-                      <item row="3" column="0">
-                       <widget class="QLabel" name="label_16">
-                        <property name="text">
-                         <string>Iterations</string>
-                        </property>
+                      <item row="4" column="1">
+                       <widget class="QWidget" name="network_display_option_widget" native="true">
+                        <layout class="QGridLayout" name="gridLayout_22">
+                         <item row="0" column="0">
+                          <widget class="QRadioButton" name="network_analysis_option">
+                           <property name="text">
+                            <string>Network Analysis</string>
+                           </property>
+                           <property name="checked">
+                            <bool>true</bool>
+                           </property>
+                          </widget>
+                         </item>
+                         <item row="1" column="0">
+                          <widget class="QRadioButton" name="network_spm1d_option">
+                           <property name="text">
+                            <string>SPM1D</string>
+                           </property>
+                          </widget>
+                         </item>
+                        </layout>
                        </widget>
                       </item>
                       <item row="3" column="1">
@@ -853,25 +870,30 @@ QWidget#particles_panel {
                         </property>
                        </widget>
                       </item>
-                      <item row="4" column="0">
-                       <widget class="QLabel" name="label_7">
+                      <item row="2" column="0">
+                       <widget class="QLabel" name="label_15">
                         <property name="text">
-                         <string>Display</string>
+                         <string>P-value Threshold</string>
                         </property>
                        </widget>
                       </item>
-                      <item row="2" column="1">
-                       <widget class="QLineEdit" name="network_pvalue_threshold">
-                        <property name="alignment">
-                         <set>Qt::AlignCenter</set>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="1" column="0">
-                       <widget class="QLabel" name="label_14">
-                        <property name="text">
-                         <string>P-value of Interest</string>
-                        </property>
+                      <item row="6" column="0" colspan="2">
+                       <widget class="QWidget" name="network_progress_widget" native="true">
+                        <layout class="QGridLayout" name="gridLayout_23">
+                         <item row="2" column="0">
+                          <widget class="QProgressBar" name="network_progress">
+                           <property name="sizePolicy">
+                            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                             <horstretch>0</horstretch>
+                             <verstretch>0</verstretch>
+                            </sizepolicy>
+                           </property>
+                           <property name="value">
+                            <number>0</number>
+                           </property>
+                          </widget>
+                         </item>
+                        </layout>
                        </widget>
                       </item>
                      </layout>
@@ -2082,7 +2104,7 @@ Reference Domain</string>
           </widget>
          </item>
          <item row="2" column="2">
-          <widget class="QRadioButton" name="distance_transfom_radio_button">
+          <widget class="QRadioButton" name="distance_transform_radio_button">
            <property name="toolTip">
             <string>Surface reconstruction based on distance transforms and particles.</string>
            </property>
