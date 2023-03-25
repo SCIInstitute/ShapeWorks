@@ -10,5 +10,4 @@ from .utils import num_subplots, postive_factors, save_images, get_file_with_ext
 from .data import get_file_list, sample_images, sample_meshes
 from .stats import compute_pvalues_for_group_difference,lda
 from .network_analysis import NetworkAnalysis
-from .network_analysis_figures import NetworkAnalysisFigures
 from .portal import download_and_unzip_dataset, download_subset

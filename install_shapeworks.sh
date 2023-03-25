@@ -190,8 +190,8 @@ function install_conda() {
   # for network analysis
   if ! pip install open3d==0.16.0;                      then return 1; fi
   if ! pip install spm1d==0.4.2;                        then return 1; fi
-  if ! pip install vedo==2022.4.1;                      then return 1; fi
-  if ! pip install opencv-python==4.6.0.66;             then return 1; fi
+#  if ! pip install vedo==2022.4.1;                      then return 1; fi
+#  if ! pip install opencv-python==4.6.0.66;             then return 1; fi
   
   if ! pip install Python/DatasetUtilsPackage;          then return 1; fi # install the local GirderConnector code as a package
   if ! pip install Python/DocumentationUtilsPackage;    then return 1; fi # install shapeworks auto-documentation as a package
