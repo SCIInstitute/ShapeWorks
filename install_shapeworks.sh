@@ -46,7 +46,7 @@ done
 
 CONDAENV=shapeworks
 if [[ "${#POSITIONAL_ARGS[@]}" -eq 1 ]]; then
-   CONDAENV=${POSITIONAL_ARGS[0]}
+   CONDAENV=${POSITIONAL_ARGS[1]}
 fi
 
 echo "Creating new conda environment for ShapeWorks called \"$CONDAENV\"..."
@@ -178,7 +178,7 @@ function install_conda() {
   if ! pip install statsmodels==0.13.2;                 then return 1; fi
   if ! pip install shapely==1.8.2;                      then return 1; fi
   if ! pip install matplotlib==3.5.2;                   then return 1; fi
-  if ! pip install itk==5.2.1.post1;                    then return 1; fi
+  if ! pip install itk==5.3.0;                          then return 1; fi
   if ! pip install itkwidgets==0.32.1;                  then return 1; fi
   if ! pip install itk-elastix==0.16.0;                 then return 1; fi
   if ! pip install SimpleITK==2.1.1.2;                  then return 1; fi
@@ -186,6 +186,13 @@ function install_conda() {
   if ! pip install seaborn==0.11.2;                     then return 1; fi
   if ! pip install swcc==1.0.3;                         then return 1; fi
   if ! pip install scikit-learn==1.1.1;                 then return 1; fi
+
+  # for network analysis
+  if ! pip install open3d==0.16.0;                      then return 1; fi
+  if ! pip install spm1d==0.4.2;                        then return 1; fi
+  if ! pip install vedo==2022.4.1;                      then return 1; fi
+  if ! pip install opencv-python==4.6.0.66;             then return 1; fi
+  
   if ! pip install Python/DatasetUtilsPackage;          then return 1; fi # install the local GirderConnector code as a package
   if ! pip install Python/DocumentationUtilsPackage;    then return 1; fi # install shapeworks auto-documentation as a package
   if ! pip install Python/DataAugmentationUtilsPackage; then return 1; fi # install data augmentation code as a package
