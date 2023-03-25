@@ -60,7 +60,7 @@ void Constraint::updateMu(const Eigen::Vector3d &pt, double C, size_t index) {
   if (maxterm > 0) {
     mus_[index] = 0;
   } else {
-    mus_[index] = maxterm;
+    mus_[index] = 0;//maxterm; // Uncomment to activate augmented lagrangian implementation.
   }
   // std::cout << "mu: " << mu << std::endl;
 }
