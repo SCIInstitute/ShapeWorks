@@ -1,11 +1,11 @@
 # Based on old ubuntu to create more compatible binaries
 
-# To build (e.g. for ShapeWorks 6.4):
-#    docker build --progress=plain -t akenmorris/ubuntu-build-box-sw64 .
+# To build (e.g. for ShapeWorks 6.5):
+#    docker build --progress=plain -t akenmorris/ubuntu-build-box-sw65 .
 # To publish:
-#    docker push akenmorris/ubuntu-build-box-sw64
+#    docker push akenmorris/ubuntu-build-box-sw65
 
-FROM ubuntu:xenial-20210429 AS env
+FROM ubuntu:bionic-20230308 AS env
 MAINTAINER akenmorris@gmail.com
 
 # Set environment variables
@@ -14,10 +14,6 @@ ENV LDFLAGS=-L/opt/conda/lib
 
 # Update
 RUN apt-get update -y && apt-get upgrade -y && apt-get dist-upgrade -y && apt-get install build-essential software-properties-common -y && add-apt-repository ppa:ubuntu-toolchain-r/test -y && apt-get update -y
-
-# Install GCC 9
-RUN apt-get install gcc-9 g++-9 -y
-RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 60 --slave /usr/bin/g++ g++ /usr/bin/g++-9 && update-alternatives --config gcc
 
 # Install git and git-lfs
 RUN add-apt-repository ppa:git-core/ppa
