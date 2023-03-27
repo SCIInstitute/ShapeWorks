@@ -25,14 +25,14 @@ def Run_Pipeline(args):
     if args.tiny_test:
         dataset_name = "ellipsoid_mesh_tiny_test"
         args.use_single_scale = 1
-        sw.download_and_unzip_dataset(dataset_name, output_directory)
+        sw.download_dataset(dataset_name, output_directory)
         dataset_name = "ellipsoid_1mode"
         mesh_files = sorted(glob.glob(output_directory +
                             dataset_name + "/meshes/*.vtk"))[:3]
     # else download the entire dataset
     else:
         dataset_name = "ellipsoid_mesh"
-        sw.download_and_unzip_dataset(dataset_name, output_directory)
+        sw.download_dataset(dataset_name, output_directory)
         dataset_name = "ellipsoid_1mode"
         mesh_files = sorted(glob.glob(output_directory +
                             dataset_name + "/meshes/*.vtk"))

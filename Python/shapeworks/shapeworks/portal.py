@@ -119,34 +119,7 @@ def generate_download_flag(outputDirectory, folder):
     else:
         download_flag = True        
     return download_flag
-            
-def download_subset(use_case,datasetName,outputDirectory):
-    username,password = login()
-    print('Downloading subset')
-    print(outputDirectory)
-    with swcc_session()  as session:
-        token = session.login(username, password)
-        session = swcc_session(token=token).__enter__()
-        dataset = Dataset.from_name(datasetName)
-        outputDirectory_1 = outputDirectory + "/" + datasetName 
-        if(use_case in ["ellipsoid","ellipsoid_cut","left_atrium"]):
-            if(generate_download_flag(outputDirectory_1+"/","segmentations")):
-                for segmentation, image in islice(zip(dataset.segmentations, dataset.images), 3):
-                    seg_dir = outputDirectory_1+ "/segmentations"
-                    segmentation.file.download(seg_dir)
-        elif(use_case in ["femur_cut","left_atrium"]):
-            if(generate_download_flag(outputDirectory_1+"/","images")):
-                for image in islice(dataset.images, 3):
-                    image_dir = outputDirectory_1+ "/images"
-                    image.file.download(image_dir)
-        elif(use_case in ["ellipsoid_mesh","femur_cut","lumps","thin_cavity_bean"]):
-            print(outputDirectory_1 +"/meshes/")
-            if(generate_download_flag(outputDirectory_1+"/","meshes")):
-                for mesh in islice(dataset.images, 3):
-                    print(mesh)
-                    mesh_dir = outputDirectory_1+ "/meshes"
-                    print(mesh_dir)
-                    mesh.file.download(mesh_dir)
+
 
 class dircmp(filecmp.dircmp):
     def phase3(self):
@@ -166,7 +139,7 @@ def is_same(dir1, dir2):
             return False
     return True
 
-def download_and_unzip_dataset(datasetName, outputDirectory):
+def download_dataset(datasetName, outputDirectory):
     username,password = login()
     #api as a context manager
     with swcc_session()  as session:

@@ -27,7 +27,7 @@ def Run_Pipeline(args):
     output_directory = "Output/ellipsoid_fd/"
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
-    sw.portal.download_and_unzip_dataset(dataset_name, output_directory)
+    sw.portal.download_dataset(dataset_name, output_directory)
     dataset_name = "ellipsoid_1mode_aligned"
     file_list_segs = sorted(glob.glob(output_directory + dataset_name + "/segmentations/fd_*.nrrd"))
     file_list_dts = sorted(glob.glob(output_directory + dataset_name + "/groomed/distance_transforms/*.nrrd"))
