@@ -28,7 +28,7 @@ def Run_Pipeline(args):
     if args.tiny_test:
         dataset_name = "ellipsoid_cut_tiny_test"
         args.use_single_scale = 1
-        sw.download_and_unzip_dataset(dataset_name, output_directory)
+        sw.download_dataset(dataset_name, output_directory)
         dataset_name = "ellipsoid_1mode_aligned"
         file_list = sorted(glob.glob(output_directory +
                                      dataset_name + "/segmentations/*.nrrd"))[:3]
@@ -37,7 +37,7 @@ def Run_Pipeline(args):
     # Else download the entire dataset
     else:
         dataset_name = "ellipsoid_cut"
-        sw.download_and_unzip_dataset(dataset_name, output_directory)
+        sw.download_dataset(dataset_name, output_directory)
         dataset_name = "ellipsoid_1mode_aligned"
         file_list = sorted(glob.glob(output_directory +
                                      dataset_name + "/segmentations/*.nrrd"))
