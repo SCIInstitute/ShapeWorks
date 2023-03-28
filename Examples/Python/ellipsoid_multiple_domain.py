@@ -32,14 +32,14 @@ def Run_Pipeline(args):
     # If running a tiny_test, then download subset of the data
     if args.tiny_test:
         dataset_name = "ellipsoid_multiple_domain_tiny_test"
-        sw.download_and_unzip_dataset(dataset_name, output_directory)
+        sw.download_dataset(dataset_name, output_directory)
         dataset_name = "ellipsoid_joint_rotation"
         file_list = sorted(glob.glob(output_directory +
                                      dataset_name + "/segmentations/*.nrrd"))[:6]
     # Else download the entire dataset
     else:
         dataset_name = "ellipsoid_multiple_domain"
-        sw.download_and_unzip_dataset(dataset_name, output_directory)
+        sw.download_dataset(dataset_name, output_directory)
         dataset_name = "ellipsoid_joint_rotation"
         file_list = sorted(glob.glob(output_directory +
                                      dataset_name + "/segmentations/*.nrrd"))

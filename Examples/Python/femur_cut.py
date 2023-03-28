@@ -30,7 +30,7 @@ def Run_Pipeline(args):
     if args.tiny_test:
         dataset_name = "femur_cut_tiny_test"
         args.use_single_scale = True
-        sw.download_and_unzip_dataset(dataset_name, output_directory)
+        sw.download_dataset(dataset_name, output_directory)
         dataset_name = "femur"
         mesh_files = sorted(glob.glob(output_directory +
                             dataset_name + "/meshes/*.ply"))[:3]
@@ -39,7 +39,7 @@ def Run_Pipeline(args):
     # else download the entire dataset
     else:
         dataset_name = "femur_cut"
-        sw.download_and_unzip_dataset(dataset_name, output_directory)
+        sw.download_dataset(dataset_name, output_directory)
         dataset_name = "femur"
         mesh_files = sorted(glob.glob(output_directory +
                             dataset_name + "/meshes/*.ply"))

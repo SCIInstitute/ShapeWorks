@@ -32,14 +32,14 @@ def Run_Pipeline(args):
     if args.tiny_test:
         dataset_name = "ellipsoid_tiny_test"
         args.use_single_scale = 1
-        sw.download_and_unzip_dataset(dataset_name, output_directory)
+        sw.download_dataset(dataset_name, output_directory)
         dataset_name = "ellipsoid_1mode"
         file_list = sorted(glob.glob(output_directory +
                                      dataset_name + "/segmentations/*.nrrd"))[:3]
     # Else download the entire dataset
     else:
         dataset_name = "ellipsoid"
-        sw.download_and_unzip_dataset(dataset_name, output_directory)
+        sw.download_dataset(dataset_name, output_directory)
         dataset_name = "ellipsoid_1mode"
         file_list = sorted(glob.glob(output_directory +
                                      dataset_name + "/segmentations/*.nrrd"))
@@ -113,7 +113,7 @@ def Run_Pipeline(args):
     Now we can loop over all of the segmentations again to find the rigid
     alignment transform and compute a distance transform
     """
-    rigid_transforms = [] # Save rigid transorm matrices
+    rigid_transforms = [] # Save rigid transform matrices
     for shape_seg, shape_name in zip(shape_seg_list, shape_names):
         print('Finding alignment transform from ' + shape_name + ' to ' + ref_name)
         # Get rigid transform
