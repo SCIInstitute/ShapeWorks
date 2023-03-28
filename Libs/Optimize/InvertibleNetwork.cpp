@@ -85,7 +85,7 @@ namespace InvertibleNet
             auto outputs = this->m_module.get_method("forward_pass_complete")(inputs).toTuple();
             auto out_tensor = outputs->elements()[4].toTensor().to(torch::TensorOptions(torch::kCPU).dtype(at::kDouble));
             energy_in_data_space = out_tensor.item<double>();
-            MSG("Forward Pass for Computing Energy done !!! ");
+            // MSG("Forward Pass for Computing Energy done !!! ");
         }
         catch (const c10::Error& e) {
             std::cerr << "Error in Libtorch Operations for Compute Energy | " << e.what(); 

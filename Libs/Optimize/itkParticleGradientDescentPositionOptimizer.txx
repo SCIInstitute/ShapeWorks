@@ -178,11 +178,13 @@ namespace itk
 
                 if (newenergy < energy) // good move, increase timestep for next time
                 {
+                  std::cout << "good move " << std::endl;
                   m_TimeSteps[dom][k] *= factor;
                   if (gradmag > maxchange) maxchange = gradmag;
                   break;
                 } else {// bad move, reset point position and back off on timestep
                   if (m_TimeSteps[dom][k] > minimumTimeStep) {
+                    std::cout << "bad move" << std::endl;
                     domain->ApplyConstraints(pt, k);
                     m_ParticleSystem->SetPosition(pt, k, dom);
                     domain->InvalidateParticlePosition(k);
@@ -192,6 +194,7 @@ namespace itk
                   {
                     if (gradmag > maxchange) maxchange = gradmag;
                     break;
+                    std::cout << "keep move " << std::endl;
                   }
                 }
               } // end while(true)

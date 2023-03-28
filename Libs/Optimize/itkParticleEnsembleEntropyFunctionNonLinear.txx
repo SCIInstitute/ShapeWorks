@@ -71,7 +71,7 @@ ParticleEnsembleEntropyFunctionNonLinear<VDimension>
             this->m_ShapeMatrix->ForwardPass(input_tensor, output_tensor, 
                                                     jacobian_matrix, log_prob_u, 
                                                     log_det_g, log_det_j);
-            std::cout << "CJ 1 | bs = " << block_size << std::endl;
+            std::cout << "Compute Jacobian(CJ) 1 | bs = " << block_size << std::endl;
             jacobian_matrix_all.index_put_({torch::indexing::Slice(n, n+block_size), "..."}, jacobian_matrix);
             std::cout << "Forward Pass Done | output size " << output_tensor.sizes() << std::endl;
             double* output_data_ptr = output_tensor.data_ptr<double>();
@@ -101,6 +101,7 @@ ParticleEnsembleEntropyFunctionNonLinear<VDimension>
     // 2. Do regular gradient computations in latent space assuming Gaussian Distrubution
     std::cout << "COMPUTING SW grads" << std::endl;
     this->ComputeBaseSpaceGradientUpdates();
+    std::cout << "COMPUTING SW grads done" << std::endl;
     
     // 3. Compute Final Gradient Updates in Data space (Z)
     try
@@ -109,22 +110,19 @@ ParticleEnsembleEntropyFunctionNonLinear<VDimension>
         tmp = tmp.inplace_transpose(); // N X L
         auto vmar2 = tmp.data_array();
         Tensor dH_dU = torch::from_blob(tmp.data_block(), {N, L}, torch::TensorOptions(torch::kCPU).dtype(torch::kDouble)).clone();
-        dH_dU = dH_dU.view({N, 1, L});
-
-        dH_dU = dH_dU.to(torch::Device(torch::kCUDA, 0));
-        std::cout << " dH_dU is in  " << std::endl;
-        jacobian_matrix_all = jacobian_matrix_all.to(torch::Device(torch::kCUDA, 0));
-
+        dH_dU = dH_dU.view({N, 1, L}).to(torch::TensorOptions(torch::kCUDA, 0).dtype(torch::kDouble));
+        jacobian_matrix_all = jacobian_matrix_all.to(torch::TensorOptions(torch::kCUDA, 0).dtype(torch::kDouble));
         // N X 1 X L \times N X L X dM ===> N X 1 x dM
         Tensor dH_dZ = torch::bmm(dH_dU, jacobian_matrix_all); // N X 1 X dM
-        dH_dZ = dH_dZ.view({N, dM}).to(torch::kCPU);
+        std::cout << " bmm done  " << std::endl;
+        dH_dZ = dH_dZ.view({N, dM}).to(torch::TensorOptions(torch::kCPU).dtype(torch::kDouble));
         dH_dZ = dH_dZ.transpose(0, 1); // dM X N
         double* grad_data_ptr = dH_dZ.data_ptr<double>();
         m_GradientUpdatesNet->set(grad_data_ptr);
-
         dH_dZ = dH_dZ.view({M, -1, N});
         auto norms = torch::norm(dH_dZ, 2, {1});
         m_MaxMove = torch::max(norms).item<double>();
+        std::cout << "max move is  " << m_MaxMove << std::endl;
     }
     catch (const c10::Error& e) {
         std::cout << "Errors in Libtorch operations during Gradient Computations - part 2 | " << e.what() << "\n";
@@ -133,7 +131,6 @@ ParticleEnsembleEntropyFunctionNonLinear<VDimension>
     } c10::cuda::CUDACachingAllocator::emptyCache();
     auto end = std::chrono::system_clock::now();
     std::cout << "Net Gradient Computation Execution Time: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << "ms" << std::endl;
-
 }
 
 template <unsigned int VDimension>
@@ -290,7 +287,7 @@ ParticleEnsembleEntropyFunctionNonLinear<VDimension>
         std::exit(EXIT_FAILURE);
     }} c10::cuda::CUDACachingAllocator::emptyCache();
     auto end = std::chrono::system_clock::now();
-    std::cout <<  "Energy Computation Execution Time: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << "ms" << std::endl;   
+    //std::cout <<  "Energy Computation Execution Time: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << "ms" << std::endl;
 
     energy = energy_in_data_space;
     double det_g = std::exp(m_log_det_g_ar->at(subject_id));
