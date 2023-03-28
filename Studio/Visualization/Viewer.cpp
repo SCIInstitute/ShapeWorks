@@ -714,8 +714,30 @@ void Viewer::display_shape(std::shared_ptr<Shape> shape) {
         }
 
         Mesh m2(compare_poly_data);
-        auto field = m.distance(m2)[0];
-        m.setField("distance", field, Mesh::Point);
+        std::cout << "Computing Symmetric distance" << std::endl;
+        // remesh target mesh to ensure symmetry between number of points
+        int num_pts = m.numPoints();
+        m2.remesh(num_pts, 1.0);
+        auto d1 = m.distance(m2)[0];
+        auto d2 = m2.distance(m)[0];
+
+        int n_rows = d1->GetNumberOfTuples();
+        int n_components = d1->GetNumberOfComponents();
+        // symmetric distance field
+        auto sym_dist_field = vtkDoubleArray::New();
+        double mean_dist[n_rows][3];
+        for(int i = 0; i < n_rows; ++i)
+        {
+          double* v1 = d1->GetTuple(i);
+          double* v2 = d2->GetTuple(i);
+          for (int j = 0; j < 3; ++j){
+            mean_dist[i][j] = (v1[j] + v2[j])/2;
+          }
+        }
+        sym_dist_field->SetArray(static_cast<double*>(mean_dist), nrows * ncomponents, 1);
+        sym_dist_field->SetNumberOfComponents(ncomponents);
+        // auto field = m.distance(m2)[0];
+        m.setField("distance", sym_dist_field, Mesh::Point);
       }
 
       if (feature_map != "" && poly_data) {
