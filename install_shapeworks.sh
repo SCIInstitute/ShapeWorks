@@ -261,6 +261,8 @@ if install_conda; then
   echo "Pip installed packages:"
   pip list
 
+  conda clean -t -y
+  
   echo "$CONDAENV environment successfully created/updated!"
   
   conda activate $CONDAENV
