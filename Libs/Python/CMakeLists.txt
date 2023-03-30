@@ -8,6 +8,7 @@ if(LINUX)
 endif(LINUX)
 
 target_link_libraries(shapeworks_py PUBLIC
+  ${VTK_LIBRARIES}
   Common
   Image
   Mesh
