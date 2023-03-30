@@ -188,7 +188,11 @@ function install_conda() {
   if ! pip install scikit-learn==1.1.1;                 then return 1; fi
 
   # for network analysis
-  if ! pip install open3d==0.16.0;                      then return 1; fi
+  if [[ "$(uname)" == "Linux" ]]; then
+      if ! pip install open3d-cpu==0.17.0;              then return 1; fi
+  else
+      if ! pip install open3d==0.17.0;                  then return 1; fi
+  fi
   if ! pip install spm1d==0.4.2;                        then return 1; fi
 #  if ! pip install vedo==2022.4.1;                      then return 1; fi
 #  if ! pip install opencv-python==4.6.0.66;             then return 1; fi
