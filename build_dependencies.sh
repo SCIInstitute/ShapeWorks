@@ -37,7 +37,7 @@ ACVD_VER="012917d300f1dde8552981e5a30031a23937625f" # This library isn't using t
 WIN_CFLAGS="-FS /Zi /MD /O2 /Ob3 /Zm250 /DNDEBUG /EHsc"  # windows release compilation flags
 #WIN_LFLAGS="-LTCG /DEBUG" # windows release compilation flags
 WIN_LFLAGS="-DEBUG" # windows release compilation flags
-FLAGS="-g" # turn on symbols for all builds
+#FLAGS="-g" # turn on symbols for all builds
 
 usage()
 {

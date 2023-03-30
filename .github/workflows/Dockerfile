@@ -39,4 +39,4 @@ RUN curl -L -o $HOME/linuxdeployqt.AppImage https://github.com/probonopd/linuxde
 RUN ln -s /root/squashfs-root/usr/bin/linuxdeployqt /usr/bin
 
 # Set compression for ccache
-RUN mkdir /root/.ccache && echo "compression = true" > /root/.ccache/ccache.conf
+RUN mkdir /root/.ccache && echo "max_size = 500M\ncompression = true" > /root/.ccache/ccache.conf
