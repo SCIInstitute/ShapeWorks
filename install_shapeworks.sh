@@ -112,7 +112,6 @@ function install_conda() {
     echo "Developer packages enabled"
 
     CONDA_PACKAGES+=(cmake=3.23.2 \
-		     gtest=1.11.0 \
 		     gmock=1.11.0 \
 		     doxygen=1.9.2 \
 		     graphviz=4.0.0 \
