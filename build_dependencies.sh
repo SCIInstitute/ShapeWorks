@@ -208,7 +208,8 @@ build_xlnt()
       cmake --build . --config ${BUILD_TYPE} --parallel || exit 1
       cmake --build . --config ${BUILD_TYPE} --target install
   else
-      cmake -DCMAKE_CXX_FLAGS="-fPIC $FLAGS" -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DSTATIC=ON -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DCMAKE_DEBUG_POSTFIX="" ..
+      cmake -DCMAKE_CXX_FLAGS="$FLAGS" -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DSTATIC=ON -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DCMAKE_DEBUG_POSTFIX="" -DCMAKE_POSITION_INDEPENDENT_CODE=ON
+ ..
       make -j${NUM_PROCS} install || exit 1
   fi
 
