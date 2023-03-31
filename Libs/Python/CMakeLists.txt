@@ -8,15 +8,13 @@ if(LINUX)
 endif(LINUX)
 
 target_link_libraries(shapeworks_py PUBLIC
-  ${VTK_LIBRARIES}
+  Analyze
   Common
   Image
   Mesh
   Optimize
   Project
   Particles
-  Project
-  Analyze
   ${ITK_LIBRARIES}
   Eigen3::Eigen
   ${DTAG_EXTRA_FLAGS}
