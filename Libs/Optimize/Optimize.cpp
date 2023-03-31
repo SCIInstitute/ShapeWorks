@@ -185,7 +185,9 @@ bool Optimize::Run() {
 
   if (this->m_python_filename != "") {
     this->iteration_callback_ = nullptr;
-    py::finalize_interpreter();
+    // Disable finalize_interpreter as it is crashing with Open3D
+    // I am not sure why yet.
+    //py::finalize_interpreter();
   }
 
   UpdateProject();
