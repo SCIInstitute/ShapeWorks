@@ -11,14 +11,14 @@ find_path(XLNT_INCLUDE_DIR
 
 if(APPLE)
   find_library(XLNT_LIBRARY 
-    libxlnt.dylib
+    libxlnt.a
     HINTS /usr/local/lib
     HINTS ${XLNT_DIR}/build/source
     HINTS ${XLNT_DIR}/lib
     )
 elseif(UNIX)
   find_library(XLNT_LIBRARY 
-    libxlnt.so
+    libxlnt.a
     HINTS /usr/local/lib
     HINTS ${XLNT_DIR}/build/source
     HINTS ${XLNT_DIR}/lib
