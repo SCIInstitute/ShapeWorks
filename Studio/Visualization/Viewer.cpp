@@ -734,8 +734,9 @@ void Viewer::display_shape(std::shared_ptr<Shape> shape) {
             mean_dist[i][j] = (v1[j] + v2[j])/2;
           }
         }
-        sym_dist_field->SetArray(static_cast<double*>(mean_dist), nrows * ncomponents, 1);
-        sym_dist_field->SetNumberOfComponents(ncomponents);
+        double* field_data_ptr = (double*)mean_dist;
+        sym_dist_field->SetArray(field_data_ptr, n_rows * n_components, 1);
+        sym_dist_field->SetNumberOfComponents(n_components);
         // auto field = m.distance(m2)[0];
         m.setField("distance", sym_dist_field, Mesh::Point);
       }
