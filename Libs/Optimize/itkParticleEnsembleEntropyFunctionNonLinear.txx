@@ -290,14 +290,14 @@ ParticleEnsembleEntropyFunctionNonLinear<VDimension>
     //std::cout <<  "Energy Computation Execution Time: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << "ms" << std::endl;
 
     energy = energy_in_data_space;
-    double det_g = std::exp(m_log_det_g_ar->at(subject_id));
-    double det_j = std::exp(m_log_det_j_ar->at(subject_id));
-    double p_u = std::exp(m_log_prob_u_ar->at(subject_id));
-    double term2 = ((p_u)/(std::sqrt(det_g) * det_j)) * (m_log_det_j_ar->at(subject_id) - (0.5 * m_log_det_g_ar->at(subject_id)));
+    // double det_g = std::exp(m_log_det_g_ar->at(subject_id));
+    // double det_j = std::exp(m_log_det_j_ar->at(subject_id));
+    // double p_u = std::exp(m_log_prob_u_ar->at(subject_id));
+    // double term2 = ((p_u)/(std::sqrt(det_g) * det_j)) * (m_log_det_j_ar->at(subject_id) - (0.5 * m_log_det_g_ar->at(subject_id)));
 
     for (unsigned int i = 0; i< VDimension; i++)
     {
-        gradE[i] = m_GradientUpdatesNet->get(k + i, d / DomainsPerShape) + term2;
+        gradE[i] = m_GradientUpdatesNet->get(k + i, d / DomainsPerShape);
     }
 
 
