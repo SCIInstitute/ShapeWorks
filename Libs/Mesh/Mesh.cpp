@@ -57,6 +57,7 @@
 #include <vtkWindowedSincPolyDataFilter.h>
 #include <vtkXMLPolyDataReader.h>
 #include <vtkXMLPolyDataWriter.h>
+#include <vtkSelectEnclosedPoints.h>
 
 #include "FEFixMesh.h"
 #include "Image.h"
@@ -835,6 +836,23 @@ Image Mesh::toDistanceTransform(PhysicalRegion region, const Point3 spacing, con
   using IteratorType = itk::ImageRegionIterator<Image::ImageType>;
   IteratorType it(itkimg, itkimg->GetLargestPossibleRegion());
 
+  // add all points
+  auto points = vtkSmartPointer<vtkPoints>::New();
+  for (it.GoToBegin(); !it.IsAtEnd(); ++it) {
+    Image::ImageType::PointType p;
+    itkimg->TransformIndexToPhysicalPoint(it.GetIndex(), p);
+    points->InsertNextPoint(p[0], p[1], p[2]);
+  }
+
+  auto points_poly = vtkSmartPointer<vtkPolyData>::New();
+  points_poly->SetPoints(points);
+
+  auto enclosed = vtkSmartPointer<vtkSelectEnclosedPoints>::New();
+  enclosed->SetInputData(points_poly);
+  enclosed->SetSurfaceData(this->poly_data_);
+  enclosed->Update();
+
+  int id=0;
   for (it.GoToBegin(); !it.IsAtEnd(); ++it) {
     Image::ImageType::PointType p;
     itkimg->TransformIndexToPhysicalPoint(it.GetIndex(), p);
@@ -843,6 +861,10 @@ Image Mesh::toDistanceTransform(PhysicalRegion region, const Point3 spacing, con
     double distance = 0.0;
     vtkIdType face_id = 0;
     closestPoint(p, outside, distance, face_id);
+
+    points->InsertNextPoint(p[0], p[1], p[2]);
+
+    outside = !enclosed->IsInside(id++);
 
     // NOTE: distance is positive inside, negative outside
     it.Set(outside ? -distance : distance);
