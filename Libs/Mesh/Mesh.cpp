@@ -617,7 +617,7 @@ void Mesh::updateCellLocator() const {
   }
 }
 
-Point3 Mesh::closestPoint(const Point3 point, bool& outside, double& distance, vtkIdType& face_id) const {
+Point3 Mesh::closestPoint(const Point3 point, double& distance, vtkIdType& face_id) const {
   this->updateCellLocator();
 
   double dist2;
@@ -629,19 +629,6 @@ Point3 Mesh::closestPoint(const Point3 point, bool& outside, double& distance, v
 
   // distance from point to closest point
   distance = sqrt(dist2);
-
-  // compute face normal: (p2-p1) x (p0-p1)
-  double pt0[3], pt1[3], pt2[3];
-  cell->GetPoints()->GetPoint(0, pt0);
-  cell->GetPoints()->GetPoint(1, pt1);
-  cell->GetPoints()->GetPoint(2, pt2);
-  vtkVector3d v0(pt2[0] - pt1[0], pt2[1] - pt1[1], pt2[2] - pt1[2]);
-  vtkVector3d v1(pt0[0] - pt1[0], pt0[1] - pt1[1], pt0[2] - pt1[2]);
-  auto norm = v0.Cross(v1);
-
-  // use dot product to determine whether point is outside mesh
-  vtkVector3d pvec(point[0] - closestPoint[0], point[1] - closestPoint[1], point[2] - closestPoint[2]);
-  outside = pvec.Dot(norm) > 0.0;
 
   return closestPoint;
 }
@@ -857,14 +844,13 @@ Image Mesh::toDistanceTransform(PhysicalRegion region, const Point3 spacing, con
     Image::ImageType::PointType p;
     itkimg->TransformIndexToPhysicalPoint(it.GetIndex(), p);
 
-    bool outside = false;
     double distance = 0.0;
     vtkIdType face_id = 0;
-    closestPoint(p, outside, distance, face_id);
+    closestPoint(p, distance, face_id);
 
     points->InsertNextPoint(p[0], p[1], p[2]);
 
-    outside = !enclosed->IsInside(id++);
+    bool outside = !enclosed->IsInside(id++);
 
     // NOTE: distance is positive inside, negative outside
     it.Set(outside ? -distance : distance);
