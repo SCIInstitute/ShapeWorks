@@ -108,7 +108,7 @@ def generate_download_flag(outputDirectory, folder):
         # if the folder is empty or has less than 3 files then download
         file_count = count_existing_files(outputDirectory)
         print(f"file_count = {file_count}")
-        print(f"dataset = {dataset}")
+        #print(f"dataset = {dataset}")
         if file_count < 6 and dataset:
             download_flag = True
         elif file_count == 6 and dataset and not("tiny_test" in folder):
