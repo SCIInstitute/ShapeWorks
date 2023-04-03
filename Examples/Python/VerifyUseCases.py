@@ -51,18 +51,15 @@ async def run_command(args):
         *args, stdout=asyncio.subprocess.PIPE
     )
 
-    await asyncio.wait(
-        [
-            read_stream(
-                proc.stdout,
-                lambda x: sys.stdout.write(x.decode("UTF8")),
-            ),
-            read_stream(
-                proc.stderr,
-                lambda x: sys.stdout.write(x.decode("UTF8")),
-            ),
-        ]
+    loop = asyncio.get_event_loop()
+    task1 = loop.create_task(
+        read_stream(proc.stdout, lambda x: sys.stdout.write(x.decode("UTF8")))
     )
+    task2 = loop.create_task(
+        read_stream(proc.stderr, lambda x: sys.stdout.write(x.decode("UTF8")))
+    )
+
+    await asyncio.wait({task1, task2})
 
     await proc.wait()
     success = (proc.returncode == 0)
