@@ -10,7 +10,7 @@ def Run_Pipeline(args):
         os.makedirs(output_directory)
 
     dataset_name = 'femur_pvalues'
-    sw.download_and_unzip_dataset(dataset_name, output_directory)
+    sw.download_dataset(dataset_name, output_directory)
     swproj_file = f'{output_directory}/femur_pvalues.swproj'
     csvfile = convert_swproj_to_csv(swproj_file)
     data = pd.read_csv(csvfile)

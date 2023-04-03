@@ -9,4 +9,4 @@ pca_loadings_violinplot,plot_mode_line,visualize_reconstruction,lda_plot
 from .utils import num_subplots, postive_factors, save_images, get_file_with_ext, find_reference_image_index, find_reference_mesh_index
 from .data import get_file_list, sample_images, sample_meshes
 from .stats import compute_pvalues_for_group_difference,lda
-from .portal import download_and_unzip_dataset, download_subset
+from .portal import download_dataset
