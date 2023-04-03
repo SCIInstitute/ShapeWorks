@@ -2,6 +2,7 @@
 
 #include <vnl/vnl_math.h>
 #include <vnl/vnl_vector.h>
+#include <vector>
 
 #include <Eigen/Core>
 
