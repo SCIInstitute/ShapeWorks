@@ -43,48 +43,12 @@ cp -r $BUILD/bin/Release bin
 rm bin/*Tests.pdb bin/Recon*.pdb bin/Mesh*.pdb
 rm -rf Post
 
-# Run auto-documentation
-cd $ROOT
-PATH=$BUILD/bin/Release/bin:$PATH
-
-# add $PATH to $PYTHONPATH
-PYTHONPATH=$PYTHONPATH:$PATH
-
-# check that 'shapeworks -h' is working
-shapeworks -h
-if [ $? -eq 0 ]; then
-    echo "shapeworks -h is working"
-else
-    echo "shapeworks -h is not working"
-    exit 1
-fi
-python Python/RunShapeWorksAutoDoc.py --md_filename docs/tools/ShapeWorksCommands.md
-pip list
-export PYTHONPATH
-
-echo "PYTHONPATH before = $PYTHONPATH"
-
-# on windows, the PYTHONPATH should use semicolons
-if [[ $OSTYPE == "msys" ]]; then
-    PYTHONPATH=${PYTHONPATH//:/;}
-    PYTHONPATH=${PYTHONPATH//;\/d\//;D:/}
-    PYTHONPATH=${PYTHONPATH//;\/c\//;C:/}
-    PYTHONPATH=${PYTHONPATH//\/d\/a/D:/a}
-fi
-
-
-echo "PATH = $PATH"
-echo "PYTHONPATH after = $PYTHONPATH"
-echo "See if we can import shapeworks_py..."
-
-echo "import os; print(os.environ)" | python
-
-echo "import shapeworks; import shapeworks_py ; print(dir(shapeworks_py))" | python
-
-echo "running mkdocs build"
-mkdocs build
-mv site Documentation
-cp -a Documentation bin/
+# Build python packages
+for package in DataAugmentationUtilsPackage DatasetUtilsPackage DeepSSMUtilsPackage DocumentationUtilsPackage ShapeCohortGenPackage shapeworks ; do
+    cd Python
+    tar czvf ${package}.tar.gz $package
+    cd ..
+done
 
 # Remove tests, they won't work for users anyway
 rm bin/*Tests.exe

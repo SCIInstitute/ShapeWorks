@@ -28,24 +28,25 @@ def Run_Pipeline(args):
 	We define dataset_name which determines which dataset to download from 
 	the portal and the directory to save output from the use case in. 
 	""" 
-	
-	dataset_name = "hip"
+
 	output_directory = "Output/hip_multiple_domain/"
 	if not os.path.exists(output_directory):
 		os.makedirs(output_directory)
 
-	
 	# If running a tiny_test, then download subset of the data
 	if args.tiny_test:
-		sw.data.download_subset(
-			args.use_case, dataset_name, output_directory)
+		dataset_name="hip_multiple_domain_tiny_test"
+		sw.download_dataset(dataset_name, output_directory)
+		dataset_name = "hip"
 		mesh_files = sorted(glob.glob(output_directory +
 									 dataset_name + "/meshes/*.vtk"))[:6]
 		plane_files = sorted(glob.glob(output_directory +
 							dataset_name + "/constraints/*.json"))[:6]
 	# Else download the entire dataset
 	else:
-		sw.data.download_and_unzip_dataset(dataset_name, output_directory)
+		dataset_name = "hip_multiple_domain"
+		sw.download_dataset(dataset_name, output_directory)
+		dataset_name = "hip"
 		mesh_files = sorted(glob.glob(output_directory +
 									 dataset_name + "/meshes/*.vtk"))
 		plane_files = sorted(glob.glob(output_directory +
@@ -180,7 +181,7 @@ def Run_Pipeline(args):
 	http://sciinstitute.github.io/ShapeWorks/workflow/optimize.html
 	"""
 	# Create project spreadsheet
-	project_location = output_directory + "shape_models/"
+	project_location = output_directory
 	if not os.path.exists(project_location):
 		os.makedirs(project_location)
 	# Set subjects
@@ -242,12 +243,12 @@ def Run_Pipeline(args):
 	parameters.set("number_of_particles" ,sw.Variant(num_particles))
 	project.set_parameters("optimize", parameters)
 
-	spreadsheet_file = output_directory + "shape_models/hip_multiple_domain_" + args.option_set + ".xlsx"
+	spreadsheet_file = output_directory + "hip_multiple_domain_" + args.option_set + ".swproj"
 	project.save(spreadsheet_file)
 	
 
 	# Run optimization
-	optimize_cmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
+	optimize_cmd = ('shapeworks optimize --progress --name ' + spreadsheet_file).split()
 	subprocess.check_call(optimize_cmd)
 
 	# # If tiny test or verify, check results and exit
