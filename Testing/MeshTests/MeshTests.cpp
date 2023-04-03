@@ -3,7 +3,7 @@
 #include "MeshUtils.h"
 #include "MeshWarper.h"
 #include "Image.h"
-#include "ParticleSystem.h"
+#include "ParticleSystemEvaluation.h"
 
 #include <igl/point_mesh_squared_distance.h>
 
@@ -773,7 +773,7 @@ TEST(MeshTests, warpTest1)
   std::vector<std::string> paths;
   paths.push_back(staticPath);
   paths.push_back(movingPath);
-  ParticleSystem particlesystem(paths);
+  ParticleSystemEvaluation particlesystem(paths);
   Eigen::MatrixXd allPts = particlesystem.Particles();
   Eigen::MatrixXd staticPoints = allPts.col(0);
   Eigen::MatrixXd movingPoints = allPts.col(1);
@@ -802,7 +802,7 @@ TEST(MeshTests, warpTest2)
   std::vector<std::string> paths;
   paths.push_back(staticPath);
   paths.push_back(movingPath);
-  ParticleSystem particlesystem(paths);
+  ParticleSystemEvaluation particlesystem(paths);
   Eigen::MatrixXd allPts = particlesystem.Particles();
   Eigen::MatrixXd staticPoints = allPts.col(0);
   Eigen::MatrixXd movingPoints = allPts.col(1);
@@ -833,7 +833,7 @@ TEST(MeshTests, warpTest3)
   std::vector<std::string> paths;
   paths.push_back(staticPath);
   paths.push_back(movingPath);
-  ParticleSystem particlesystem(paths);
+  ParticleSystemEvaluation particlesystem(paths);
   Eigen::MatrixXd allPts = particlesystem.Particles();
   Eigen::MatrixXd staticPoints = allPts.col(0);
   Eigen::MatrixXd movingPoints = allPts.col(1);

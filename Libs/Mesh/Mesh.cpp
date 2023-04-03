@@ -60,7 +60,7 @@
 
 #include "FEFixMesh.h"
 #include "Image.h"
-#include <Optimize/VtkMeshWrapper.h>
+#include "Libs/Optimize/Domain/VtkMeshWrapper.h"
 #include "MeshUtils.h"
 #include "PreviewMeshQC/FEAreaCoverage.h"
 #include "PreviewMeshQC/FEVTKExport.h"
