@@ -17,7 +17,7 @@ Performs good/bad points assessment and reports the bad positions of the particl
 
 |                | Name           |
 | -------------- | -------------- |
-| using [itk::ParticleMeanCurvatureAttribute](../Classes/classitk_1_1ParticleMeanCurvatureAttribute.md)< float, 3 > | **[MeanCurvatureCacheType](../Classes/classshapeworks_1_1ParticleGoodBadAssessment.md#using-meancurvaturecachetype)**  |
+| using [MeanCurvatureContainer](../Classes/classshapeworks_1_1MeanCurvatureContainer.md)< float, 3 > | **[MeanCurvatureCacheType](../Classes/classshapeworks_1_1ParticleGoodBadAssessment.md#using-meancurvaturecachetype)**  |
 
 ## Public Functions
 
@@ -25,14 +25,14 @@ Performs good/bad points assessment and reports the bad positions of the particl
 | -------------- | -------------- |
 | void | **[set_domains_per_shape](../Classes/classshapeworks_1_1ParticleGoodBadAssessment.md#function-set-domains-per-shape)**(int i) |
 | void | **[set_criterion_angle](../Classes/classshapeworks_1_1ParticleGoodBadAssessment.md#function-set-criterion-angle)**(double a) |
-| std::vector< std::vector< int > > | **[run_assessment](../Classes/classshapeworks_1_1ParticleGoodBadAssessment.md#function-run-assessment)**(const [itk::ParticleSystem](../Classes/classitk_1_1ParticleSystem.md) * ps, [MeanCurvatureCacheType](../Classes/classitk_1_1ParticleMeanCurvatureAttribute.md) * mean_curvature_cache) |
+| std::vector< std::vector< int > > | **[run_assessment](../Classes/classshapeworks_1_1ParticleGoodBadAssessment.md#function-run-assessment)**(const [ParticleSystem](../Classes/classshapeworks_1_1ParticleSystem.md) * ps, [MeanCurvatureCacheType](../Classes/classshapeworks_1_1MeanCurvatureContainer.md) * mean_curvature_cache) |
 
 ## Public Types Documentation
 
 ### using MeanCurvatureCacheType
 
 ```cpp
-using shapeworks::ParticleGoodBadAssessment::MeanCurvatureCacheType =  itk::ParticleMeanCurvatureAttribute<float, 3>;
+using shapeworks::ParticleGoodBadAssessment::MeanCurvatureCacheType =  MeanCurvatureContainer<float, 3>;
 ```
 
 
@@ -60,7 +60,7 @@ inline void set_criterion_angle(
 
 ```cpp
 std::vector< std::vector< int > > run_assessment(
-    const itk::ParticleSystem * ps,
+    const ParticleSystem * ps,
     MeanCurvatureCacheType * mean_curvature_cache
 )
 ```
@@ -68,4 +68,4 @@ std::vector< std::vector< int > > run_assessment(
 
 -------------------------------
 
-Updated on 2023-03-27 at 17:59:06 +0000
+Updated on 2023-04-03 at 19:48:10 +0000

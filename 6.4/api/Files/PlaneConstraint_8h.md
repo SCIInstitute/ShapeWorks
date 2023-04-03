@@ -1,9 +1,9 @@
 ---
-title: Libs/Optimize/PlaneConstraint.h
+title: Libs/Optimize/Constraints/PlaneConstraint.h
 
 ---
 
-# Libs/Optimize/PlaneConstraint.h
+# Libs/Optimize/Constraints/PlaneConstraint.h
 
 
 
@@ -31,7 +31,7 @@ title: Libs/Optimize/PlaneConstraint.h
 
 #include <vector>
 
-#include "Constraint.h"
+#include "Libs/Optimize/Constraints/Constraint.h"
 
 class vtkPlane;
 
@@ -78,4 +78,4 @@ class PlaneConstraint : public Constraint {
 
 -------------------------------
 
-Updated on 2023-03-27 at 17:59:08 +0000
+Updated on 2023-04-03 at 19:48:11 +0000

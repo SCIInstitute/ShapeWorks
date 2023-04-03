@@ -1,9 +1,9 @@
 ---
-title: Libs/Optimize/VtkMeshWrapper.h
+title: Libs/Optimize/Domain/VtkMeshWrapper.h
 
 ---
 
-# Libs/Optimize/VtkMeshWrapper.h
+# Libs/Optimize/Domain/VtkMeshWrapper.h
 
 
 
@@ -27,17 +27,18 @@ title: Libs/Optimize/VtkMeshWrapper.h
 ```cpp
 #pragma once
 
-#include "MeshWrapper.h"
-#include "MeshGeoEntry.h"
+#include <geometrycentral/surface/heat_method_distance.h>
+#include <geometrycentral/surface/meshio.h>
+#include <geometrycentral/surface/surface_mesh.h>
+#include <vtkPolyData.h>
+#include <vtkSmartPointer.h>
 
 #include <unordered_map>
 #include <unordered_set>
-#include <robin_hood.h>
-#include <vtkPolyData.h>
-#include <vtkSmartPointer.h>
-#include <geometrycentral/surface/surface_mesh.h>
-#include <geometrycentral/surface/meshio.h>
-#include <geometrycentral/surface/heat_method_distance.h>
+
+#include "ExternalLibs/robin_hood/robin_hood.h"
+#include "MeshGeoEntry.h"
+#include "MeshWrapper.h"
 
 class vtkCellLocator;
 
@@ -214,4 +215,4 @@ private:
 
 -------------------------------
 
-Updated on 2023-03-27 at 17:59:08 +0000
+Updated on 2023-04-03 at 19:48:11 +0000

@@ -27,7 +27,7 @@ title: Studio/Utils/AnalysisUtils.h
 ```cpp
 #pragma once
 
-#include <Particles/ParticleSystem.h>
+#include <Particles/ParticleSystemEvaluation.h>
 
 namespace shapeworks {
 
@@ -36,7 +36,7 @@ namespace shapeworks {
   class AnalysisUtils {
   public:
 
-    static ParticleSystem get_local_particle_system(Session* session, int domain);
+    static ParticleSystemEvaluation get_local_particle_system(Session* session, int domain);
 
 
   };
@@ -47,4 +47,4 @@ namespace shapeworks {
 
 -------------------------------
 
-Updated on 2023-03-27 at 17:59:08 +0000
+Updated on 2023-04-03 at 19:48:12 +0000

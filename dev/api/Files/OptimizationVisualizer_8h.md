@@ -1,9 +1,9 @@
 ---
-title: Libs/Optimize/OptimizationVisualizer.h
+title: Libs/Optimize/Utils/OptimizationVisualizer.h
 
 ---
 
-# Libs/Optimize/OptimizationVisualizer.h
+# Libs/Optimize/Utils/OptimizationVisualizer.h
 
 
 
@@ -27,77 +27,71 @@ title: Libs/Optimize/OptimizationVisualizer.h
 ```cpp
 #pragma once
 
-#include <vector>
-#include <string>
-
-#include "TriMesh.h"
-
+#include <vtkActor.h>
+#include <vtkCellArray.h>
+#include <vtkPoints.h>
 #include <vtkPolyData.h>
 #include <vtkPolyDataMapper.h>
-#include <vtkActor.h>
-#include <vtkRenderer.h>
 #include <vtkRenderWindow.h>
-#include <vtkPoints.h>
+#include <vtkRenderer.h>
 #include <vtkSphereSource.h>
-#include <vtkCellArray.h>
 
-#include "itkParticleSystem.h"
+#include <string>
+#include <vector>
 
-namespace shapeworks
-{
-  class OptimizationVisualizer
-  {
-  public:
+#include "TriMesh.h"
+#include "ParticleSystem.h"
 
-    void AddMesh(vtkPolyData *mesh, std::shared_ptr<trimesh::TriMesh> tmesh);
-    void IterationCallback(itk::ParticleSystem * particleSystem);
+namespace shapeworks {
+class OptimizationVisualizer {
+ public:
+  void AddMesh(vtkPolyData* mesh, std::shared_ptr<trimesh::TriMesh> tmesh);
+  void IterationCallback(ParticleSystem* particleSystem);
 
-    void SetWireFrame(bool enabled);
-    void SetSaveScreenshots(bool enabled, std::string path);
+  void SetWireFrame(bool enabled);
+  void SetSaveScreenshots(bool enabled, std::string path);
 
-    OptimizationVisualizer() { }
-    ~OptimizationVisualizer() {}
+  OptimizationVisualizer() {}
+  ~OptimizationVisualizer() {}
 
-  private:
+ private:
+  void initialize();
 
-    void initialize();
+  std::string screenshotDirectory;
+  bool saveScreenshots = false;
+  bool wireFrame = false;
+  bool colorNormals = false;
+  bool initialized = false;
 
-    std::string screenshotDirectory;
-    bool saveScreenshots = false;
-    bool wireFrame = false;
-    bool colorNormals = false;
-    bool initialized = false;
+  double* focalPoint;
+  int iteration = 0;
+  double radius;
 
-    double *focalPoint;
-    int iteration = 0;
-    double radius;
+  std::vector<vtkSmartPointer<vtkPolyData>> meshes;
+  std::vector<std::shared_ptr<trimesh::TriMesh>> tmeshes;
 
-    std::vector<vtkSmartPointer<vtkPolyData>> meshes;
-    std::vector<std::shared_ptr<trimesh::TriMesh>> tmeshes;
+  vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+  vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();
+  vtkSmartPointer<vtkRenderer> mainRenderer = vtkSmartPointer<vtkRenderer>::New();
+  vtkSmartPointer<vtkRenderWindow> renderWindow = vtkSmartPointer<vtkRenderWindow>::New();
+  vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
+  vtkSmartPointer<vtkPolyData> polydata = vtkSmartPointer<vtkPolyData>::New();
+  vtkSmartPointer<vtkSphereSource> cubeSource = vtkSmartPointer<vtkSphereSource>::New();
 
-    vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-    vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();
-    vtkSmartPointer<vtkRenderer> mainRenderer = vtkSmartPointer<vtkRenderer>::New();
-    vtkSmartPointer<vtkRenderWindow> renderWindow = vtkSmartPointer<vtkRenderWindow>::New();
-    vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
-    vtkSmartPointer<vtkPolyData> polydata = vtkSmartPointer<vtkPolyData>::New();
-    vtkSmartPointer<vtkSphereSource> cubeSource = vtkSmartPointer<vtkSphereSource>::New();
+  vtkSmartPointer<vtkPolyDataMapper> lineMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+  vtkSmartPointer<vtkActor> lineActor = vtkSmartPointer<vtkActor>::New();
+  vtkSmartPointer<vtkCellArray> lines = vtkSmartPointer<vtkCellArray>::New();
 
-    vtkSmartPointer<vtkPolyDataMapper> lineMapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-    vtkSmartPointer<vtkActor> lineActor = vtkSmartPointer<vtkActor>::New();
-    vtkSmartPointer<vtkCellArray> lines = vtkSmartPointer<vtkCellArray>::New();
+  std::vector<vtkSmartPointer<vtkRenderer>> sampleRenderers;
+  std::vector<vtkSmartPointer<vtkPolyDataMapper>> sampleMappers;
+  std::vector<vtkSmartPointer<vtkPoints>> samplePoints;
+  std::vector<vtkSmartPointer<vtkPolyData>> samplePolyData;
+};
 
-    std::vector<vtkSmartPointer<vtkRenderer>> sampleRenderers;
-    std::vector<vtkSmartPointer<vtkPolyDataMapper>> sampleMappers;
-    std::vector<vtkSmartPointer<vtkPoints>> samplePoints;
-    std::vector<vtkSmartPointer<vtkPolyData>> samplePolyData;
-
-  };
-
-}
+}  // namespace shapeworks
 ```
 
 
 -------------------------------
 
-Updated on 2023-03-27 at 17:59:08 +0000
+Updated on 2023-04-03 at 19:48:11 +0000

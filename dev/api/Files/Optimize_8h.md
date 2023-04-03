@@ -46,13 +46,13 @@ title: Libs/Optimize/Optimize.h
 // shapeworks
 #include <Project/Project.h>
 
-#include "DomainType.h"
-#include "MeshWrapper.h"
-#include "OptimizationVisualizer.h"
-#include "ParticleProcrustesRegistration.h"
+#include "Libs/Optimize/Domain/DomainType.h"
+#include "Libs/Optimize/Domain/MeshWrapper.h"
+#include "Libs/Optimize/Function/VectorFunction.h"
+#include "Libs/Optimize/Utils/OptimizationVisualizer.h"
+#include "ParticleSystem.h"
+#include "ProcrustesRegistration.h"
 #include "Sampler.h"
-#include "itkParticleSystem.h"
-#include "itkParticleVectorFunction.h"
 
 namespace shapeworks {
 
@@ -67,7 +67,7 @@ class MatrixContainer {
 class Optimize {
  public:
   using ImageType = itk::Image<float, 3>;
-  using VectorType = itk::ParticleVectorFunction<3>::VectorType;
+  using VectorType = VectorFunction::VectorType;
   using MatrixType = Eigen::MatrixXd;
 
   Optimize();
@@ -143,7 +143,6 @@ class Optimize {
     m_sampler->SetMeshFFCMode(mesh_ffc_mode);
   }
   void SetAdaptivityStrength(double adaptivity_strength);
-  void SetPairwisePotentialType(int pairwise_potential_type);
   void SetTimePtsPerSubject(int time_pts_per_subject);
   int GetTimePtsPerSubject();
   void SetOptimizationIterations(int optimization_iterations);
@@ -163,7 +162,6 @@ class Optimize {
   void SetSaveInitSplits(bool save_init_splits);
   void SetCheckpointingInterval(int checkpointing_interval);
   void SetKeepCheckpoints(int keep_checkpoints);
-  void SetCotanSigmaFactor(double cotan_sigma_factor);
 
   void SetUseRegression(bool use_regression);
   void SetUseMixedEffects(bool use_mixed_effects);
@@ -284,7 +282,7 @@ class Optimize {
   std::string GetCheckpointDir();
 
   std::shared_ptr<Sampler> m_sampler;
-  ParticleProcrustesRegistration::Pointer m_procrustes;
+  ProcrustesRegistration::Pointer m_procrustes;
   std::shared_ptr<ParticleGoodBadAssessment> m_good_bad;
 
   unsigned int m_verbosity_level = 0;
@@ -318,7 +316,6 @@ class Optimize {
   int m_processing_mode = 3;
   int m_adaptivity_mode = 0;
   double m_adaptivity_strength = 0.0;
-  int m_pairwise_potential_type = 0;  // 0 - gaussian (Cates work), 1 - modified cotangent (Meyer),
 
   bool m_mesh_ffc_mode = 0;
 
@@ -401,4 +398,4 @@ class Optimize {
 
 -------------------------------
 
-Updated on 2023-03-27 at 17:59:08 +0000
+Updated on 2023-04-03 at 19:48:11 +0000

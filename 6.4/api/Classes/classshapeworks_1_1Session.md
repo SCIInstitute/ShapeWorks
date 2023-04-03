@@ -62,7 +62,7 @@ Inherits from QObject, QEnableSharedFromThis< Session >
 | bool | **[load_point_files](../Classes/classshapeworks_1_1Session.md#function-load-point-files)**(std::vector< std::string > local, std::vector< std::string > world, int domains_per_shape) |
 | bool | **[update_particles](../Classes/classshapeworks_1_1Session.md#function-update-particles)**(std::vector< [Particles](../Classes/classshapeworks_1_1Particles.md) > particles) |
 | int | **[get_num_particles](../Classes/classshapeworks_1_1Session.md#function-get-num-particles)**()<br>Return the total number of particles for all domains, combined.  |
-| [ParticleSystem](../Classes/classshapeworks_1_1ParticleSystem.md) | **[get_local_particle_system](../Classes/classshapeworks_1_1Session.md#function-get-local-particle-system)**(int domain) |
+| [ParticleSystemEvaluation](../Classes/classshapeworks_1_1ParticleSystemEvaluation.md) | **[get_local_particle_system](../Classes/classshapeworks_1_1Session.md#function-get-local-particle-system)**(int domain) |
 | void | **[update_procrustes_transforms](../Classes/classshapeworks_1_1Session.md#function-update-procrustes-transforms)**(std::vector< std::vector< std::vector< double > > > transforms) |
 | bool | **[is_light_project](../Classes/classshapeworks_1_1Session.md#function-is-light-project)**() |
 | bool | **[get_groomed_present](../Classes/classshapeworks_1_1Session.md#function-get-groomed-present)**() |
@@ -451,7 +451,7 @@ Return the total number of particles for all domains, combined.
 ### function get_local_particle_system
 
 ```cpp
-ParticleSystem get_local_particle_system(
+ParticleSystemEvaluation get_local_particle_system(
     int domain
 )
 ```
@@ -1162,4 +1162,4 @@ static const std::string DEEPSSM_C;
 
 -------------------------------
 
-Updated on 2023-03-27 at 17:59:07 +0000
+Updated on 2023-04-03 at 19:48:11 +0000

@@ -1,9 +1,9 @@
 ---
-title: Libs/Optimize/Constraints.h
+title: Libs/Optimize/Constraints/Constraints.h
 
 ---
 
-# Libs/Optimize/Constraints.h
+# Libs/Optimize/Constraints/Constraints.h
 
 
 
@@ -32,7 +32,7 @@ title: Libs/Optimize/Constraints.h
 #include "Constraint.h"
 #include "Eigen/Dense"
 #include "FreeFormConstraint.h"
-#include <Mesh/Mesh.h>
+#include "Libs/Mesh/Mesh.h"
 #include "PlaneConstraint.h"
 #include "SphereConstraint.h"
 #include "itkPoint.h"
@@ -137,4 +137,4 @@ class Constraints {
 
 -------------------------------
 
-Updated on 2023-03-27 at 17:59:08 +0000
+Updated on 2023-04-03 at 19:48:11 +0000

@@ -2575,13 +2575,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-setpairwisepotentialtype" class="md-nav__link">
-    function SetPairwisePotentialType
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#function-settimeptspersubject" class="md-nav__link">
     function SetTimePtsPerSubject
   </a>
@@ -2710,13 +2703,6 @@
           <li class="md-nav__item">
   <a href="#function-setkeepcheckpoints" class="md-nav__link">
     function SetKeepCheckpoints
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-setcotansigmafactor" class="md-nav__link">
-    function SetCotanSigmaFactor
   </a>
   
 </li>
@@ -3476,13 +3462,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#variable-m_pairwise_potential_type" class="md-nav__link">
-    variable m_pairwise_potential_type
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#variable-m_mesh_ffc_mode" class="md-nav__link">
     variable m_mesh_ffc_mode
   </a>
@@ -3929,7 +3908,7 @@
 <td><strong><a href="classshapeworks_1_1Optimize.html#using-imagetype">ImageType</a></strong></td>
 </tr>
 <tr>
-<td>using <a href="classitk_1_1ParticleVectorFunction.html">itk::ParticleVectorFunction</a>&lt; 3 &gt;::VectorType</td>
+<td>using <a href="classshapeworks_1_1VectorFunction.html#typedef-vectortype">VectorFunction::VectorType</a></td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#using-vectortype">VectorType</a></strong></td>
 </tr>
 <tr>
@@ -4113,10 +4092,6 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#function-setpairwisepotentialtype">SetPairwisePotentialType</a></strong>(int pairwise_potential_type)<br>Set pairwise potential type (TODO: details)</td>
-</tr>
-<tr>
-<td>void</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#function-settimeptspersubject">SetTimePtsPerSubject</a></strong>(int time_pts_per_subject)<br>Set the number of time points per subject (TODO: details)</td>
 </tr>
 <tr>
@@ -4190,10 +4165,6 @@
 <tr>
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#function-setkeepcheckpoints">SetKeepCheckpoints</a></strong>(int keep_checkpoints)<br>Set if checkpoints should be kept (0=disable, 1=enable)</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#function-setcotansigmafactor">SetCotanSigmaFactor</a></strong>(double cotan_sigma_factor)<br>Set the cotan sigma factor (TODO: details)</td>
 </tr>
 <tr>
 <td>void</td>
@@ -4522,7 +4493,7 @@
 <td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-sampler">m_sampler</a></strong></td>
 </tr>
 <tr>
-<td>ParticleProcrustesRegistration::Pointer</td>
+<td>ProcrustesRegistration::Pointer</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-procrustes">m_procrustes</a></strong></td>
 </tr>
 <tr>
@@ -4632,10 +4603,6 @@
 <tr>
 <td>double</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-adaptivity-strength">m_adaptivity_strength</a></strong></td>
-</tr>
-<tr>
-<td>int</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-pairwise-potential-type">m_pairwise_potential_type</a></strong></td>
 </tr>
 <tr>
 <td>bool</td>
@@ -4882,7 +4849,7 @@
 <div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Optimize</span><span class="o">::</span><span class="n">ImageType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">itk</span><span class="o">::</span><span class="n">Image</span><span class="o">&lt;</span><span class="kt">float</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="using-vectortype">using VectorType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Optimize</span><span class="o">::</span><span class="n">VectorType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleVectorFunction</span><span class="o">&lt;</span><span class="mi">3</span><span class="o">&gt;::</span><span class="n">VectorType</span><span class="p">;</span>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Optimize</span><span class="o">::</span><span class="n">VectorType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">VectorFunction</span><span class="o">::</span><span class="n">VectorType</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="using-matrixtype">using MatrixType</h3>
 <div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Optimize</span><span class="o">::</span><span class="n">MatrixType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="p">;</span>
@@ -5105,12 +5072,6 @@
 <span class="p">)</span>
 </code></pre></div>
 <p>Set adaptivity strength (TODO: details) </p>
-<h3 id="function-setpairwisepotentialtype">function SetPairwisePotentialType</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetPairwisePotentialType</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">pairwise_potential_type</span>
-<span class="p">)</span>
-</code></pre></div>
-<p>Set pairwise potential type (TODO: details) </p>
 <h3 id="function-settimeptspersubject">function SetTimePtsPerSubject</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetTimePtsPerSubject</span><span class="p">(</span>
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">time_pts_per_subject</span>
@@ -5223,12 +5184,6 @@
 <span class="p">)</span>
 </code></pre></div>
 <p>Set if checkpoints should be kept (0=disable, 1=enable) </p>
-<h3 id="function-setcotansigmafactor">function SetCotanSigmaFactor</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetCotanSigmaFactor</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">cotan_sigma_factor</span>
-<span class="p">)</span>
-</code></pre></div>
-<p>Set the cotan sigma factor (TODO: details) </p>
 <h3 id="function-setuseregression">function SetUseRegression</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetUseRegression</span><span class="p">(</span>
 <span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">use_regression</span>
@@ -5584,7 +5539,7 @@
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Sampler</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_sampler</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="variable-m_procrustes">variable m_procrustes</h3>
-<div class="highlight"><pre><span></span><code><span class="n">ParticleProcrustesRegistration</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_procrustes</span><span class="p">;</span>
+<div class="highlight"><pre><span></span><code><span class="n">ProcrustesRegistration</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_procrustes</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="variable-m_good_bad">variable m_good_bad</h3>
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">ParticleGoodBadAssessment</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_good_bad</span><span class="p">;</span>
@@ -5666,9 +5621,6 @@
 </code></pre></div>
 <h3 id="variable-m_adaptivity_strength">variable m_adaptivity_strength</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">m_adaptivity_strength</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
-</code></pre></div>
-<h3 id="variable-m_pairwise_potential_type">variable m_pairwise_potential_type</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">m_pairwise_potential_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="variable-m_mesh_ffc_mode">variable m_mesh_ffc_mode</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">m_mesh_ffc_mode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
@@ -5845,7 +5797,7 @@
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">m_remaining_time_message</span><span class="p">;</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-03-27 at 17:59:06 +0000</p>
+<p>Updated on 2023-04-03 at 19:48:10 +0000</p>
 
               
             </article>

@@ -19,7 +19,7 @@ Inherited by [shapeworks::QOptimize](../Classes/classshapeworks_1_1QOptimize.md)
 |                | Name           |
 | -------------- | -------------- |
 | using itk::Image< float, 3 > | **[ImageType](../Classes/classshapeworks_1_1Optimize.md#using-imagetype)**  |
-| using [itk::ParticleVectorFunction](../Classes/classitk_1_1ParticleVectorFunction.md)< 3 >::VectorType | **[VectorType](../Classes/classshapeworks_1_1Optimize.md#using-vectortype)**  |
+| using [VectorFunction::VectorType](../Classes/classshapeworks_1_1VectorFunction.md#typedef-vectortype) | **[VectorType](../Classes/classshapeworks_1_1Optimize.md#using-vectortype)**  |
 | using Eigen::MatrixXd | **[MatrixType](../Classes/classshapeworks_1_1Optimize.md#using-matrixtype)**  |
 
 ## Public Functions
@@ -67,7 +67,6 @@ Inherited by [shapeworks::QOptimize](../Classes/classshapeworks_1_1QOptimize.md)
 | void | **[SetAdaptivityMode](../Classes/classshapeworks_1_1Optimize.md#function-setadaptivitymode)**(int adaptivity_mode)<br>Set adaptivity mode (TODO: details)  |
 | void | **[SetMeshFFCMode](../Classes/classshapeworks_1_1Optimize.md#function-setmeshffcmode)**(int mesh_ffc_mode)<br>Set [Mesh](../Classes/classshapeworks_1_1Mesh.md) FFC Mode false/0 = mesh clipping mode, true/1 = mesh augmented lagrangian mode.  |
 | void | **[SetAdaptivityStrength](../Classes/classshapeworks_1_1Optimize.md#function-setadaptivitystrength)**(double adaptivity_strength)<br>Set adaptivity strength (TODO: details)  |
-| void | **[SetPairwisePotentialType](../Classes/classshapeworks_1_1Optimize.md#function-setpairwisepotentialtype)**(int pairwise_potential_type)<br>Set pairwise potential type (TODO: details)  |
 | void | **[SetTimePtsPerSubject](../Classes/classshapeworks_1_1Optimize.md#function-settimeptspersubject)**(int time_pts_per_subject)<br>Set the number of time points per subject (TODO: details)  |
 | int | **[GetTimePtsPerSubject](../Classes/classshapeworks_1_1Optimize.md#function-gettimeptspersubject)**()<br>Get the number of time points per subject (TODO: details)  |
 | void | **[SetOptimizationIterations](../Classes/classshapeworks_1_1Optimize.md#function-setoptimizationiterations)**(int optimization_iterations)<br>Set the number of optimization iterations.  |
@@ -87,7 +86,6 @@ Inherited by [shapeworks::QOptimize](../Classes/classshapeworks_1_1QOptimize.md)
 | void | **[SetSaveInitSplits](../Classes/classshapeworks_1_1Optimize.md#function-setsaveinitsplits)**(bool save_init_splits)<br>Set if initialization splits should be saved or not.  |
 | void | **[SetCheckpointingInterval](../Classes/classshapeworks_1_1Optimize.md#function-setcheckpointinginterval)**(int checkpointing_interval)<br>Set the checkpointing interval.  |
 | void | **[SetKeepCheckpoints](../Classes/classshapeworks_1_1Optimize.md#function-setkeepcheckpoints)**(int keep_checkpoints)<br>Set if checkpoints should be kept (0=disable, 1=enable)  |
-| void | **[SetCotanSigmaFactor](../Classes/classshapeworks_1_1Optimize.md#function-setcotansigmafactor)**(double cotan_sigma_factor)<br>Set the cotan sigma factor (TODO: details)  |
 | void | **[SetUseRegression](../Classes/classshapeworks_1_1Optimize.md#function-setuseregression)**(bool use_regression)<br>Set if regression should be used (TODO: details)  |
 | void | **[SetUseMixedEffects](../Classes/classshapeworks_1_1Optimize.md#function-setusemixedeffects)**(bool use_mixed_effects)<br>Set if mixed effects should be used (TODO: details)  |
 | void | **[SetNormalAngle](../Classes/classshapeworks_1_1Optimize.md#function-setnormalangle)**(double normal_angle)<br>For good/bad analysis, set the normal angle to use (TODO: details)  |
@@ -174,7 +172,7 @@ Inherited by [shapeworks::QOptimize](../Classes/classshapeworks_1_1QOptimize.md)
 |                | Name           |
 | -------------- | -------------- |
 | std::shared_ptr< [Sampler](../Classes/classshapeworks_1_1Sampler.md) > | **[m_sampler](../Classes/classshapeworks_1_1Optimize.md#variable-m-sampler)**  |
-| ParticleProcrustesRegistration::Pointer | **[m_procrustes](../Classes/classshapeworks_1_1Optimize.md#variable-m-procrustes)**  |
+| ProcrustesRegistration::Pointer | **[m_procrustes](../Classes/classshapeworks_1_1Optimize.md#variable-m-procrustes)**  |
 | std::shared_ptr< [ParticleGoodBadAssessment](../Classes/classshapeworks_1_1ParticleGoodBadAssessment.md) > | **[m_good_bad](../Classes/classshapeworks_1_1Optimize.md#variable-m-good-bad)**  |
 | unsigned int | **[m_verbosity_level](../Classes/classshapeworks_1_1Optimize.md#variable-m-verbosity-level)**  |
 | std::vector< std::vector< itk::Point< double > > > | **[m_local_points](../Classes/classshapeworks_1_1Optimize.md#variable-m-local-points)**  |
@@ -202,7 +200,6 @@ Inherited by [shapeworks::QOptimize](../Classes/classshapeworks_1_1QOptimize.md)
 | int | **[m_processing_mode](../Classes/classshapeworks_1_1Optimize.md#variable-m-processing-mode)**  |
 | int | **[m_adaptivity_mode](../Classes/classshapeworks_1_1Optimize.md#variable-m-adaptivity-mode)**  |
 | double | **[m_adaptivity_strength](../Classes/classshapeworks_1_1Optimize.md#variable-m-adaptivity-strength)**  |
-| int | **[m_pairwise_potential_type](../Classes/classshapeworks_1_1Optimize.md#variable-m-pairwise-potential-type)**  |
 | bool | **[m_mesh_ffc_mode](../Classes/classshapeworks_1_1Optimize.md#variable-m-mesh-ffc-mode)**  |
 | unsigned int | **[m_timepts_per_subject](../Classes/classshapeworks_1_1Optimize.md#variable-m-timepts-per-subject)**  |
 | int | **[m_optimization_iterations](../Classes/classshapeworks_1_1Optimize.md#variable-m-optimization-iterations)**  |
@@ -288,7 +285,7 @@ using shapeworks::Optimize::ImageType =  itk::Image<float, 3>;
 ### using VectorType
 
 ```cpp
-using shapeworks::Optimize::VectorType =  itk::ParticleVectorFunction<3>::VectorType;
+using shapeworks::Optimize::VectorType =  VectorFunction::VectorType;
 ```
 
 
@@ -686,16 +683,6 @@ void SetAdaptivityStrength(
 
 Set adaptivity strength (TODO: details) 
 
-### function SetPairwisePotentialType
-
-```cpp
-void SetPairwisePotentialType(
-    int pairwise_potential_type
-)
-```
-
-Set pairwise potential type (TODO: details) 
-
 ### function SetTimePtsPerSubject
 
 ```cpp
@@ -883,16 +870,6 @@ void SetKeepCheckpoints(
 ```
 
 Set if checkpoints should be kept (0=disable, 1=enable) 
-
-### function SetCotanSigmaFactor
-
-```cpp
-void SetCotanSigmaFactor(
-    double cotan_sigma_factor
-)
-```
-
-Set the cotan sigma factor (TODO: details) 
 
 ### function SetUseRegression
 
@@ -1567,7 +1544,7 @@ std::shared_ptr< Sampler > m_sampler;
 ### variable m_procrustes
 
 ```cpp
-ParticleProcrustesRegistration::Pointer m_procrustes;
+ProcrustesRegistration::Pointer m_procrustes;
 ```
 
 
@@ -1757,13 +1734,6 @@ int m_adaptivity_mode = 0;
 
 ```cpp
 double m_adaptivity_strength = 0.0;
-```
-
-
-### variable m_pairwise_potential_type
-
-```cpp
-int m_pairwise_potential_type = 0;
 ```
 
 
@@ -2175,4 +2145,4 @@ std::string m_remaining_time_message;
 
 -------------------------------
 
-Updated on 2023-03-27 at 17:59:06 +0000
+Updated on 2023-04-03 at 19:48:10 +0000

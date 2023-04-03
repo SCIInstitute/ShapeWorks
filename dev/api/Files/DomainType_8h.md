@@ -1,9 +1,9 @@
 ---
-title: Libs/Optimize/DomainType.h
+title: Libs/Optimize/Domain/DomainType.h
 
 ---
 
-# Libs/Optimize/DomainType.h
+# Libs/Optimize/Domain/DomainType.h
 
 
 
@@ -50,4 +50,4 @@ namespace shapeworks {
 
 -------------------------------
 
-Updated on 2023-03-27 at 17:59:08 +0000
+Updated on 2023-04-03 at 19:48:11 +0000

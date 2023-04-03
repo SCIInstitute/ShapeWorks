@@ -16,8 +16,10 @@ class ParticleEvent:: Parent;
 ```
 
 
-all Particle events. Carries thread id information. 
+all Particle events.
+
+Event that carries Position index and a Domain index information. This is used, for example to indicate which position has changed in the particle system on InvokeEvent. 
 
 -------------------------------
 
-Updated on 2023-03-27 at 17:59:07 +0000
+Updated on 2023-04-03 at 19:48:11 +0000

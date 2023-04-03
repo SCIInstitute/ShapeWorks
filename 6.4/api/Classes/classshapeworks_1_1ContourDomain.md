@@ -271,7 +271,7 @@ inline virtual double GetCurvature(
 **Reimplements**: [shapeworks::ParticleDomain::GetCurvature](../Classes/classshapeworks_1_1ParticleDomain.md#function-getcurvature)
 
 
-Used in ParticleMeanCurvatureAttribute 
+Used in [ParticleMeanCurvatureAttribute](../Classes/classParticleMeanCurvatureAttribute.md)
 
 
 ### function GetSurfaceMeanCurvature
@@ -284,7 +284,7 @@ inline virtual double GetSurfaceMeanCurvature() const override
 **Reimplements**: [shapeworks::ParticleDomain::GetSurfaceMeanCurvature](../Classes/classshapeworks_1_1ParticleDomain.md#function-getsurfacemeancurvature)
 
 
-Used in ParticleMeanCurvatureAttribute 
+Used in [ParticleMeanCurvatureAttribute](../Classes/classParticleMeanCurvatureAttribute.md)
 
 
 ### function GetSurfaceStdDevCurvature
@@ -297,7 +297,7 @@ inline virtual double GetSurfaceStdDevCurvature() const override
 **Reimplements**: [shapeworks::ParticleDomain::GetSurfaceStdDevCurvature](../Classes/classshapeworks_1_1ParticleDomain.md#function-getsurfacestddevcurvature)
 
 
-Used in ParticleMeanCurvatureAttribute 
+Used in [ParticleMeanCurvatureAttribute](../Classes/classParticleMeanCurvatureAttribute.md)
 
 
 ### function Distance
@@ -347,7 +347,7 @@ inline virtual const PointType & GetLowerBound() const override
 **Reimplements**: [shapeworks::ParticleDomain::GetLowerBound](../Classes/classshapeworks_1_1ParticleDomain.md#function-getlowerbound)
 
 
-Gets the minimum x, y, z values of the bounding box for the domain. This is used for setting up the PowerOfTwoPointTree. 
+Gets the minimum x, y, z values of the bounding box for the domain. This is used for setting up the [PowerOfTwoPointTree](../Classes/classshapeworks_1_1PowerOfTwoPointTree.md). 
 
 
 ### function GetUpperBound
@@ -360,7 +360,7 @@ inline virtual const PointType & GetUpperBound() const override
 **Reimplements**: [shapeworks::ParticleDomain::GetUpperBound](../Classes/classshapeworks_1_1ParticleDomain.md#function-getupperbound)
 
 
-Gets the maximum x, y, z values of the bounding box for the domain. This is used for setting up the PowerOfTwoPointTree. 
+Gets the maximum x, y, z values of the bounding box for the domain. This is used for setting up the [PowerOfTwoPointTree](../Classes/classshapeworks_1_1PowerOfTwoPointTree.md). 
 
 
 ### function GetZeroCrossingPoint
@@ -438,4 +438,4 @@ virtual PointType GetPositionAfterSplit(
 
 -------------------------------
 
-Updated on 2023-03-27 at 17:59:06 +0000
+Updated on 2023-04-03 at 19:48:10 +0000

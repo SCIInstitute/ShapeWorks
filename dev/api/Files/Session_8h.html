@@ -2285,13 +2285,13 @@
 <h2 id="source-code">Source code</h2>
 <div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;StudioEnums.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;MeshManager.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/Preferences.h&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Analyze/Particles.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Particles/ParticleSystem.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/Preferences.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;MeshManager.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Particles/ParticleSystemEvaluation.h&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Project/Project.h&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Shapeworks.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;StudioEnums.h&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Visualization/Viewer.h&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;itkMatrixOffsetTransformBase.h&gt;</span>
 
@@ -2367,7 +2367,7 @@
 
 <span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_num_particles</span><span class="p">();</span>
 
-<span class="w">  </span><span class="n">ParticleSystem</span><span class="w"> </span><span class="nf">get_local_particle_system</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">);</span>
+<span class="w">  </span><span class="n">ParticleSystemEvaluation</span><span class="w"> </span><span class="nf">get_local_particle_system</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">);</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_procrustes_transforms</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">transforms</span><span class="p">);</span>
 
@@ -2590,7 +2590,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-03-27 at 17:59:08 +0000</p>
+<p>Updated on 2023-04-03 at 19:48:12 +0000</p>
 
               
             </article>

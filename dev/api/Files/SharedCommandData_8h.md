@@ -27,11 +27,12 @@ title: Applications/shapeworks/SharedCommandData.h
 ```cpp
 #pragma once
 
+#include <string>
+
 #include "Image.h"
 #include "Mesh.h"
-#include "ParticleSystem.h"
+#include "ParticleSystemEvaluation.h"
 #include "Shapeworks.h"
-#include <string>
 
 namespace shapeworks {
 
@@ -40,7 +41,7 @@ struct SharedCommandData
   Image image;
   std::unique_ptr<Mesh> mesh;
   PhysicalRegion region;
-  ParticleSystem particleSystem;
+  ParticleSystemEvaluation particleSystem;
   Field field;
 
   bool validImage() const { return image.itk_image_ != nullptr; }
@@ -55,4 +56,4 @@ struct SharedCommandData
 
 -------------------------------
 
-Updated on 2023-03-27 at 17:59:07 +0000
+Updated on 2023-04-03 at 19:48:11 +0000

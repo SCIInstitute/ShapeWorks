@@ -1,9 +1,9 @@
 ---
-title: Libs/Optimize/SphereConstraint.h
+title: Libs/Optimize/Constraints/SphereConstraint.h
 
 ---
 
-# Libs/Optimize/SphereConstraint.h
+# Libs/Optimize/Constraints/SphereConstraint.h
 
 
 
@@ -27,9 +27,9 @@ title: Libs/Optimize/SphereConstraint.h
 ```cpp
 #pragma once
 
-#include "Constraint.h"
-
 #include <iostream>
+
+#include "Libs/Optimize/Constraints/Constraint.h"
 
 namespace shapeworks {
 
@@ -72,4 +72,4 @@ class SphereConstraint : public Constraint {
 
 -------------------------------
 
-Updated on 2023-03-27 at 17:59:08 +0000
+Updated on 2023-04-03 at 19:48:11 +0000

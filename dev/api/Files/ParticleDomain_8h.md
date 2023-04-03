@@ -1,9 +1,9 @@
 ---
-title: Libs/Optimize/ParticleDomain.h
+title: Libs/Optimize/Domain/ParticleDomain.h
 
 ---
 
-# Libs/Optimize/ParticleDomain.h
+# Libs/Optimize/Domain/ParticleDomain.h
 
 
 
@@ -27,8 +27,8 @@ title: Libs/Optimize/ParticleDomain.h
 ```cpp
 #pragma once
 
-#include "Constraints.h"
 #include "DomainType.h"
+#include "Libs/Optimize/Constraints/Constraints.h"
 #include "itkDataObject.h"
 #include "itkPoint.h"
 #include "vnl/vnl_matrix_fixed.h"
@@ -139,4 +139,4 @@ class ParticleDomain {
 
 -------------------------------
 
-Updated on 2023-03-27 at 17:59:08 +0000
+Updated on 2023-04-03 at 19:48:11 +0000

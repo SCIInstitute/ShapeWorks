@@ -30,16 +30,22 @@ User usage reporting (telemetry)  [More...](#detailed-description)
 | class | **[shapeworks::Constraint](../Classes/classshapeworks_1_1Constraint.md)**  |
 | class | **[shapeworks::Constraints](../Classes/classshapeworks_1_1Constraints.md)**  |
 | class | **[shapeworks::ContourDomain](../Classes/classshapeworks_1_1ContourDomain.md)**  |
+| class | **[shapeworks::CorrespondenceFunction](../Classes/classshapeworks_1_1CorrespondenceFunction.md)** <br>Correspondence term.  |
+| class | **[shapeworks::CurvatureSamplingFunction](../Classes/classshapeworks_1_1CurvatureSamplingFunction.md)** <br>Please note: This is the sampling function currently being used.  |
 | class | **[shapeworks::DataTool](../Classes/classshapeworks_1_1DataTool.md)**  |
 | class | **[shapeworks::DeepSSMJob](../Classes/classshapeworks_1_1DeepSSMJob.md)** <br>Qt Wrapper for DeepSSM.  |
 | class | **[shapeworks::DeepSSMParameters](../Classes/classshapeworks_1_1DeepSSMParameters.md)**  |
 | class | **[shapeworks::DeepSSMTool](../Classes/classshapeworks_1_1DeepSSMTool.md)**  |
+| class | **[shapeworks::DualVectorFunction](../Classes/classshapeworks_1_1DualVectorFunction.md)**  |
 | class | **[shapeworks::ExcelProjectReader](../Classes/classshapeworks_1_1ExcelProjectReader.md)** <br>Excel file format reader for [Project]().  |
 | class | **[shapeworks::ExcelProjectWriter](../Classes/classshapeworks_1_1ExcelProjectWriter.md)** <br>Excel file format writer for [Project]().  |
 | class | **[shapeworks::Executable](../Classes/classshapeworks_1_1Executable.md)**  |
 | class | **[shapeworks::ExportImageDialog](../Classes/classshapeworks_1_1ExportImageDialog.md)**  |
 | class | **[shapeworks::ExportUtils](../Classes/classshapeworks_1_1ExportUtils.md)** <br>Export utilities for Studio.  |
 | class | **[shapeworks::FreeFormConstraint](../Classes/classshapeworks_1_1FreeFormConstraint.md)** <br>[FreeFormConstraint]().  |
+| class | **[shapeworks::GenericContainer](../Classes/classshapeworks_1_1GenericContainer.md)** <br>This class seems to be only a wrapper around std::vector implementing ITK DataObject (for smart pointer?)  |
+| class | **[shapeworks::GenericContainerArray](../Classes/classshapeworks_1_1GenericContainerArray.md)** <br>This class appears to be an array of GenericContainers (e.g. std::vector) that implements the [Observer]() interface. The array size tracks the number of domains in the system. E.g. one per domain.  |
+| class | **[shapeworks::GradientDescentOptimizer](../Classes/classshapeworks_1_1GradientDescentOptimizer.md)**  |
 | class | **[shapeworks::Groom](../Classes/classshapeworks_1_1Groom.md)** <br>High level groom API.  |
 | class | **[shapeworks::GroomCommandGroup](../Classes/classshapeworks_1_1GroomCommandGroup.md)**  |
 | class | **[shapeworks::GroomParameters](../Classes/classshapeworks_1_1GroomParameters.md)**  |
@@ -47,8 +53,13 @@ User usage reporting (telemetry)  [More...](#detailed-description)
 | class | **[shapeworks::GroupPvalueJob](../Classes/classshapeworks_1_1GroupPvalueJob.md)**  |
 | class | **[shapeworks::Image](../Classes/classshapeworks_1_1Image.md)**  |
 | class | **[shapeworks::ImageCommand](../Classes/classshapeworks_1_1ImageCommand.md)**  |
+| class | **[shapeworks::ImageDomain](../Classes/classshapeworks_1_1ImageDomain.md)**  |
+| class | **[shapeworks::ImageDomainWithCurvature](../Classes/classshapeworks_1_1ImageDomainWithCurvature.md)**  |
+| class | **[shapeworks::ImageDomainWithGradients](../Classes/classshapeworks_1_1ImageDomainWithGradients.md)**  |
+| class | **[shapeworks::ImageDomainWithGradN](../Classes/classshapeworks_1_1ImageDomainWithGradN.md)**  |
 | class | **[shapeworks::ImageLabel](../Classes/classshapeworks_1_1ImageLabel.md)** <br>An extention of QLabel especially for scaled images.  |
 | class | **[shapeworks::ImageUtils](../Classes/classshapeworks_1_1ImageUtils.md)** <br>Helper functions for image.  |
+| class | **[shapeworks::ImplicitSurfaceDomain](../Classes/classshapeworks_1_1ImplicitSurfaceDomain.md)**  |
 | class | **[shapeworks::IndexRegion](../Classes/classshapeworks_1_1IndexRegion.md)** <br>Indices into a 3d region of memory (can be negative, e.g., for the purpose of padding an image)  |
 | class | **[shapeworks::Job](../Classes/classshapeworks_1_1Job.md)**  |
 | class | **[shapeworks::JsonProjectReader](../Classes/classshapeworks_1_1JsonProjectReader.md)** <br>JSON file format reader for [Project]().  |
@@ -58,10 +69,14 @@ User usage reporting (telemetry)  [More...](#detailed-description)
 | class | **[shapeworks::LandmarkItemDelegate](../Classes/classshapeworks_1_1LandmarkItemDelegate.md)**  |
 | class | **[shapeworks::LandmarkTableModel](../Classes/classshapeworks_1_1LandmarkTableModel.md)**  |
 | class | **[shapeworks::LandmarkWidget](../Classes/classshapeworks_1_1LandmarkWidget.md)** <br>[LandmarkWidget]().  |
+| class | **[shapeworks::LegacyCorrespondenceFunction](../Classes/classshapeworks_1_1LegacyCorrespondenceFunction.md)**  |
+| class | **[shapeworks::LegacyShapeMatrix](../Classes/classshapeworks_1_1LegacyShapeMatrix.md)**  |
 | class | **[shapeworks::Lightbox](../Classes/classshapeworks_1_1Lightbox.md)** <br>Display multiple Viewers in a tiled display.  |
+| class | **[shapeworks::LinearRegressionShapeMatrix](../Classes/classshapeworks_1_1LinearRegressionShapeMatrix.md)**  |
 | class | **[shapeworks::Logging](../Classes/classshapeworks_1_1Logging.md)** <br>ShapeWorks [Logging]() Library.  |
 | class | **[shapeworks::LogWindow](../Classes/classshapeworks_1_1LogWindow.md)** <br>Log Window.  |
 | class | **[shapeworks::MatrixContainer](../Classes/classshapeworks_1_1MatrixContainer.md)**  |
+| class | **[shapeworks::MeanCurvatureContainer](../Classes/classshapeworks_1_1MeanCurvatureContainer.md)**  |
 | class | **[shapeworks::Mesh](../Classes/classshapeworks_1_1Mesh.md)**  |
 | class | **[shapeworks::MeshCache](../Classes/classshapeworks_1_1MeshCache.md)** <br>Thread safe cache for meshes index by shape.  |
 | class | **[shapeworks::MeshCommand](../Classes/classshapeworks_1_1MeshCommand.md)**  |
@@ -79,7 +94,9 @@ User usage reporting (telemetry)  [More...](#detailed-description)
 | class | **[shapeworks::MeshWorkItem](../Classes/classshapeworks_1_1MeshWorkItem.md)** <br>Provides concurrent access to a list of shapes to work needing reconstruction.  |
 | class | **[shapeworks::MeshWorkQueue](../Classes/classshapeworks_1_1MeshWorkQueue.md)**  |
 | class | **[shapeworks::MeshWrapper](../Classes/classshapeworks_1_1MeshWrapper.md)**  |
+| class | **[shapeworks::MixedEffectsShapeMatrix](../Classes/classshapeworks_1_1MixedEffectsShapeMatrix.md)**  |
 | struct | **[shapeworks::MultiVariateNormalRandom](../Classes/structshapeworks_1_1MultiVariateNormalRandom.md)**  |
+| class | **[shapeworks::Observer](../Classes/classshapeworks_1_1Observer.md)** <br>This class is an observer interface for classes to monitor for changes to the optimizer (observer pattern)  |
 | class | **[shapeworks::OptimizationVisualizer](../Classes/classshapeworks_1_1OptimizationVisualizer.md)**  |
 | class | **[shapeworks::Optimize](../Classes/classshapeworks_1_1Optimize.md)**  |
 | class | **[shapeworks::OptimizeCommandGroup](../Classes/classshapeworks_1_1OptimizeCommandGroup.md)**  |
@@ -90,25 +107,33 @@ User usage reporting (telemetry)  [More...](#detailed-description)
 | class | **[shapeworks::Parameters](../Classes/classshapeworks_1_1Parameters.md)** <br>Parameter settings.  |
 | class | **[shapeworks::ParticleColors](../Classes/classshapeworks_1_1ParticleColors.md)** <br>Supplies particle colors.  |
 | class | **[shapeworks::ParticleDomain](../Classes/classshapeworks_1_1ParticleDomain.md)**  |
+| class | **[shapeworks::ParticleEvent](../Classes/classshapeworks_1_1ParticleEvent.md)**  |
+| class | **[shapeworks::ParticleGaussianModeWriter](../Classes/classshapeworks_1_1ParticleGaussianModeWriter.md)**  |
 | class | **[shapeworks::ParticleGoodBadAssessment](../Classes/classshapeworks_1_1ParticleGoodBadAssessment.md)** <br>Performs good/bad points assessment and reports the bad positions of the particle system.  |
-| class | **[shapeworks::ParticleImageDomain](../Classes/classshapeworks_1_1ParticleImageDomain.md)**  |
-| class | **[shapeworks::ParticleImageDomainWithCurvature](../Classes/classshapeworks_1_1ParticleImageDomainWithCurvature.md)**  |
-| class | **[shapeworks::ParticleImageDomainWithGradients](../Classes/classshapeworks_1_1ParticleImageDomainWithGradients.md)**  |
-| class | **[shapeworks::ParticleImageDomainWithGradN](../Classes/classshapeworks_1_1ParticleImageDomainWithGradN.md)**  |
-| class | **[shapeworks::ParticleImplicitSurfaceDomain](../Classes/classshapeworks_1_1ParticleImplicitSurfaceDomain.md)**  |
+| class | **[shapeworks::ParticleNeighborhood](../Classes/classshapeworks_1_1ParticleNeighborhood.md)**  |
 | class | **[shapeworks::ParticleNormalEvaluation](../Classes/classshapeworks_1_1ParticleNormalEvaluation.md)**  |
 | class | **[shapeworks::ParticleNormalEvaluationJob](../Classes/classshapeworks_1_1ParticleNormalEvaluationJob.md)**  |
-| class | **[shapeworks::ParticleProcrustesRegistration](../Classes/classshapeworks_1_1ParticleProcrustesRegistration.md)**  |
+| struct | **[shapeworks::ParticlePointIndexPair](../Classes/structshapeworks_1_1ParticlePointIndexPair.md)**  |
+| class | **[shapeworks::ParticlePositionReader](../Classes/classshapeworks_1_1ParticlePositionReader.md)**  |
+| class | **[shapeworks::ParticlePositionWriter](../Classes/classshapeworks_1_1ParticlePositionWriter.md)**  |
 | class | **[shapeworks::ParticleRegionDomain](../Classes/classshapeworks_1_1ParticleRegionDomain.md)**  |
+| class | **[shapeworks::ParticleRegionNeighborhood](../Classes/classshapeworks_1_1ParticleRegionNeighborhood.md)**  |
 | class | **[shapeworks::Particles](../Classes/classshapeworks_1_1Particles.md)** <br>Representation of correspondence points for a shape including multiple domains.  |
 | class | **[shapeworks::ParticleShapeStatistics](../Classes/classshapeworks_1_1ParticleShapeStatistics.md)**  |
-| class | **[shapeworks::ParticleSystem](../Classes/classshapeworks_1_1ParticleSystem.md)**  |
+| class | **[shapeworks::ParticleSurfaceNeighborhood](../Classes/classshapeworks_1_1ParticleSurfaceNeighborhood.md)**  |
+| class | **[shapeworks::ParticleSystem](../Classes/classshapeworks_1_1ParticleSystem.md)** <br>A facade class managing interactions with a particle system.  |
 | class | **[shapeworks::ParticleSystemCommand](../Classes/classshapeworks_1_1ParticleSystemCommand.md)**  |
+| class | **[shapeworks::ParticleSystemEvaluation](../Classes/classshapeworks_1_1ParticleSystemEvaluation.md)**  |
 | class | **[shapeworks::PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md)** <br>physical bounds of a 3d region of space  |
 | class | **[shapeworks::PickResult](../Classes/classshapeworks_1_1PickResult.md)**  |
 | class | **[shapeworks::PlaneConstraint](../Classes/classshapeworks_1_1PlaneConstraint.md)** <br>[PlaneConstraint]().  |
 | class | **[shapeworks::PlaneWidget](../Classes/classshapeworks_1_1PlaneWidget.md)** <br>[PlaneWidget]().  |
+| class | **[shapeworks::PowerOfTwoPointTree](../Classes/classshapeworks_1_1PowerOfTwoPointTree.md)**  |
+| class | **[shapeworks::PowerOfTwoPointTreeNode](../Classes/classshapeworks_1_1PowerOfTwoPointTreeNode.md)**  |
+| struct | **[shapeworks::powstruct](../Classes/structshapeworks_1_1powstruct.md)**  |
+| struct | **[shapeworks::powstruct< a, 0 >](../Classes/structshapeworks_1_1powstruct_3_01a_00_010_01_4.md)**  |
 | class | **[shapeworks::PreferencesWindow](../Classes/classshapeworks_1_1PreferencesWindow.md)** <br>Qt UI dialog to control preferences.  |
+| class | **[shapeworks::ProcrustesRegistration](../Classes/classshapeworks_1_1ProcrustesRegistration.md)**  |
 | class | **[shapeworks::Project](../Classes/classshapeworks_1_1Project.md)** <br>Representation of a project.  |
 | class | **[shapeworks::ProjectCommandGroup](../Classes/classshapeworks_1_1ProjectCommandGroup.md)**  |
 | class | **[shapeworks::ProjectReader](../Classes/classshapeworks_1_1ProjectReader.md)** <br>Base class for [Project](../Classes/classshapeworks_1_1Project.md) readers.  |
@@ -119,10 +144,13 @@ User usage reporting (telemetry)  [More...](#detailed-description)
 | struct | **[shapeworks::Reconstruction](../Classes/structshapeworks_1_1Reconstruction.md)**  |
 | class | **[shapeworks::ReconstructSurface](../Classes/classshapeworks_1_1ReconstructSurface.md)**  |
 | class | **[shapeworks::Sampler](../Classes/classshapeworks_1_1Sampler.md)**  |
+| class | **[shapeworks::SamplingFunction](../Classes/classshapeworks_1_1SamplingFunction.md)** <br>This function returns an estimate of the gradient of the entropy of a particle distribution with respect to change in position of a specific particle in that distribution.  |
 | class | **[shapeworks::Session](../Classes/classshapeworks_1_1Session.md)** <br>Representation of a session.  |
 | class | **[shapeworks::Shape](../Classes/classshapeworks_1_1Shape.md)** <br>Representation of a single shape/patient/subject.  |
 | class | **[shapeworks::ShapeEvaluation](../Classes/classshapeworks_1_1ShapeEvaluation.md)**  |
 | class | **[shapeworks::ShapeEvaluationJob](../Classes/classshapeworks_1_1ShapeEvaluationJob.md)**  |
+| class | **[shapeworks::ShapeGradientMatrix](../Classes/classshapeworks_1_1ShapeGradientMatrix.md)** <br>Each column describes a shape. A shape may be composed of m_DomainsPerShape domains (default 1). ALL DOMAINS ARE _NOT_ ASSUMED TO HAVE THE SAME NUMBER OF PARTICLES!  |
+| class | **[shapeworks::ShapeMatrix](../Classes/classshapeworks_1_1ShapeMatrix.md)** <br>Each column describes a shape. A shape may be composed of m_DomainsPerShape domains (default 1). ALL DOMAINS ARE _NOT_ ASSUMED TO HAVE THE SAME NUMBER OF PARTICLES!  |
 | class | **[shapeworks::shapeworks_exception](../Classes/classshapeworks_1_1shapeworks__exception.md)**  |
 | class | **[shapeworks::ShapeworksCommand](../Classes/classshapeworks_1_1ShapeworksCommand.md)**  |
 | class | **[shapeworks::ShapeWorksStudioApp](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md)** <br>Main ShapeWorksStudio window.  |
@@ -144,9 +172,9 @@ User usage reporting (telemetry)  [More...](#detailed-description)
 | class | **[shapeworks::Style](../Classes/classshapeworks_1_1Style.md)**  |
 | class | **[shapeworks::Subject](../Classes/classshapeworks_1_1Subject.md)** <br>Representation of a single subject.  |
 | class | **[shapeworks::Telemetry](../Classes/classshapeworks_1_1Telemetry.md)**  |
-| class | **[shapeworks::TriMeshWrapper](../Classes/classshapeworks_1_1TriMeshWrapper.md)**  |
 | class | **[shapeworks::UpdateChecker](../Classes/classshapeworks_1_1UpdateChecker.md)** <br>Update Checker.  |
 | class | **[shapeworks::Variant](../Classes/classshapeworks_1_1Variant.md)** <br>[Variant]() class to represent multiple types.  |
+| class | **[shapeworks::VectorFunction](../Classes/classshapeworks_1_1VectorFunction.md)**  |
 | class | **[shapeworks::VectorImage](../Classes/classshapeworks_1_1VectorImage.md)** <br>Gradient (vector) image.  |
 | class | **[shapeworks::Viewer](../Classes/classshapeworks_1_1Viewer.md)** <br>3D [Viewer]() |
 | class | **[shapeworks::Visualizer](../Classes/classshapeworks_1_1Visualizer.md)** <br>Controls display of objects in viewers.  |
@@ -355,6 +383,13 @@ User usage reporting (telemetry)  [More...](#detailed-description)
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[operator*=](../Namespaces/namespaceshapeworks.md#function-operator*=)**([Image](../Classes/classshapeworks_1_1Image.md) & img, const double x) |
 | [Image](../Classes/classshapeworks_1_1Image.md) & | **[operator/=](../Namespaces/namespaceshapeworks.md#function-operator/=)**([Image](../Classes/classshapeworks_1_1Image.md) & img, const double x) |
 | std::ostream & | **[operator<<](../Namespaces/namespaceshapeworks.md#function-operator<<)**(std::ostream & os, const [Mesh](../Classes/classshapeworks_1_1Mesh.md) & mesh)<br>stream insertion operators for [Mesh]() |
+| | **[itkEventMacro](../Namespaces/namespaceshapeworks.md#function-itkeventmacro)**(ParticleDomainAddEvent , [ParticleEvent](../Classes/classshapeworks_1_1ParticleEvent.md) ) |
+| | **[itkEventMacro](../Namespaces/namespaceshapeworks.md#function-itkeventmacro)**(ParticleTransformSetEvent , [ParticleEvent](../Classes/classshapeworks_1_1ParticleEvent.md) ) |
+| | **[itkEventMacro](../Namespaces/namespaceshapeworks.md#function-itkeventmacro)**(ParticlePrefixTransformSetEvent , [ParticleEvent](../Classes/classshapeworks_1_1ParticleEvent.md) ) |
+| | **[itkEventMacro](../Namespaces/namespaceshapeworks.md#function-itkeventmacro)**(ParticleNeighborhoodSetEvent , [ParticleEvent](../Classes/classshapeworks_1_1ParticleEvent.md) ) |
+| | **[itkEventMacro](../Namespaces/namespaceshapeworks.md#function-itkeventmacro)**(ParticlePositionSetEvent , [ParticleEvent](../Classes/classshapeworks_1_1ParticleEvent.md) ) |
+| | **[itkEventMacro](../Namespaces/namespaceshapeworks.md#function-itkeventmacro)**(ParticlePositionAddEvent , [ParticleEvent](../Classes/classshapeworks_1_1ParticleEvent.md) ) |
+| | **[itkEventMacro](../Namespaces/namespaceshapeworks.md#function-itkeventmacro)**(ParticlePositionRemoveEvent , [ParticleEvent](../Classes/classshapeworks_1_1ParticleEvent.md) ) |
 | void | **[SaveReconstructions](../Namespaces/namespaceshapeworks.md#function-savereconstructions)**(std::vector< [Reconstruction](../Classes/structshapeworks_1_1Reconstruction.md) > & reconstructions, const std::vector< std::string > & srcPaths, const std::string & saveTo) |
 | template <typename T \> <br>std::string | **[variant_to_string](../Namespaces/namespaceshapeworks.md#function-variant-to-string)**(T begin, T end) |
 | void | **[printNumpyArrayInfo](../Namespaces/namespaceshapeworks.md#function-printnumpyarrayinfo)**(const py::array & np_array)<br>print buffer info for the given array (dims, format, strides, etc)  |
@@ -2244,6 +2279,76 @@ std::ostream & operator<<(
 
 stream insertion operators for [Mesh]()
 
+### function itkEventMacro
+
+```cpp
+itkEventMacro(
+    ParticleDomainAddEvent ,
+    ParticleEvent 
+)
+```
+
+
+### function itkEventMacro
+
+```cpp
+itkEventMacro(
+    ParticleTransformSetEvent ,
+    ParticleEvent 
+)
+```
+
+
+### function itkEventMacro
+
+```cpp
+itkEventMacro(
+    ParticlePrefixTransformSetEvent ,
+    ParticleEvent 
+)
+```
+
+
+### function itkEventMacro
+
+```cpp
+itkEventMacro(
+    ParticleNeighborhoodSetEvent ,
+    ParticleEvent 
+)
+```
+
+
+### function itkEventMacro
+
+```cpp
+itkEventMacro(
+    ParticlePositionSetEvent ,
+    ParticleEvent 
+)
+```
+
+
+### function itkEventMacro
+
+```cpp
+itkEventMacro(
+    ParticlePositionAddEvent ,
+    ParticleEvent 
+)
+```
+
+
+### function itkEventMacro
+
+```cpp
+itkEventMacro(
+    ParticlePositionRemoveEvent ,
+    ParticleEvent 
+)
+```
+
+
 ### function SaveReconstructions
 
 ```cpp
@@ -2461,4 +2566,4 @@ pi that doesn't depend on deprecated or non-std lib defines
 
 -------------------------------
 
-Updated on 2023-03-27 at 17:59:06 +0000
+Updated on 2023-04-03 at 19:48:10 +0000

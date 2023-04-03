@@ -22,39 +22,6 @@ title: itk
 | class | **[itk::CompactlySupportedRBFSparseKernelTransform](../Classes/classitk_1_1CompactlySupportedRBFSparseKernelTransform.md)**  |
 | class | **[itk::KernelTransform2](../Classes/classitk_1_1KernelTransform2.md)**  |
 | class | **[itk::MultiplyByConstantImageFilter](../Classes/classitk_1_1MultiplyByConstantImageFilter.md)** <br>Multiply input pixels by a constant.  |
-| class | **[itk::ParticleAttribute](../Classes/classitk_1_1ParticleAttribute.md)**  |
-| class | **[itk::ParticleConstrainedModifiedCotangentEntropyGradientFunction](../Classes/classitk_1_1ParticleConstrainedModifiedCotangentEntropyGradientFunction.md)**  |
-| class | **[itk::ParticleContainer](../Classes/classitk_1_1ParticleContainer.md)**  |
-| class | **[itk::ParticleContainerArrayAttribute](../Classes/classitk_1_1ParticleContainerArrayAttribute.md)**  |
-| class | **[itk::ParticleCurvatureEntropyGradientFunction](../Classes/classitk_1_1ParticleCurvatureEntropyGradientFunction.md)**  |
-| class | **[itk::ParticleDualVectorFunction](../Classes/classitk_1_1ParticleDualVectorFunction.md)**  |
-| class | **[itk::ParticleEnsembleEntropyFunction](../Classes/classitk_1_1ParticleEnsembleEntropyFunction.md)**  |
-| class | **[itk::ParticleEntropyGradientFunction](../Classes/classitk_1_1ParticleEntropyGradientFunction.md)** <br>This function returns an estimate of the gradient of the entropy of a particle distribution with respect to change in position of a specific particle in that distribution.  |
-| class | **[itk::ParticleEvent](../Classes/classitk_1_1ParticleEvent.md)**  |
-| class | **[itk::ParticleEventWithIndex](../Classes/classitk_1_1ParticleEventWithIndex.md)**  |
-| class | **[itk::ParticleGaussianModeWriter](../Classes/classitk_1_1ParticleGaussianModeWriter.md)**  |
-| class | **[itk::ParticleGeneralShapeGradientMatrix](../Classes/classitk_1_1ParticleGeneralShapeGradientMatrix.md)** <br>Each column describes a shape. A shape may be composed of m_DomainsPerShape domains (default 1). ALL DOMAINS ARE _NOT_ ASSUMED TO HAVE THE SAME NUMBER OF PARTICLES!  |
-| class | **[itk::ParticleGeneralShapeMatrix](../Classes/classitk_1_1ParticleGeneralShapeMatrix.md)** <br>Each column describes a shape. A shape may be composed of m_DomainsPerShape domains (default 1). ALL DOMAINS ARE _NOT_ ASSUMED TO HAVE THE SAME NUMBER OF PARTICLES!  |
-| class | **[itk::ParticleGradientDescentPositionOptimizer](../Classes/classitk_1_1ParticleGradientDescentPositionOptimizer.md)**  |
-| class | **[itk::ParticleMeanCurvatureAttribute](../Classes/classitk_1_1ParticleMeanCurvatureAttribute.md)**  |
-| class | **[itk::ParticleMeshBasedGeneralEntropyGradientFunction](../Classes/classitk_1_1ParticleMeshBasedGeneralEntropyGradientFunction.md)**  |
-| class | **[itk::ParticleModifiedCotangentEntropyGradientFunction](../Classes/classitk_1_1ParticleModifiedCotangentEntropyGradientFunction.md)**  |
-| class | **[itk::ParticleNeighborhood](../Classes/classitk_1_1ParticleNeighborhood.md)**  |
-| class | **[itk::ParticleOmegaGradientFunction](../Classes/classitk_1_1ParticleOmegaGradientFunction.md)**  |
-| struct | **[itk::ParticlePointIndexPair](../Classes/structitk_1_1ParticlePointIndexPair.md)**  |
-| class | **[itk::ParticlePositionReader](../Classes/classitk_1_1ParticlePositionReader.md)**  |
-| class | **[itk::ParticlePositionWriter](../Classes/classitk_1_1ParticlePositionWriter.md)**  |
-| class | **[itk::ParticleRegionNeighborhood](../Classes/classitk_1_1ParticleRegionNeighborhood.md)**  |
-| class | **[itk::ParticleShapeLinearRegressionMatrixAttribute](../Classes/classitk_1_1ParticleShapeLinearRegressionMatrixAttribute.md)**  |
-| class | **[itk::ParticleShapeMatrixAttribute](../Classes/classitk_1_1ParticleShapeMatrixAttribute.md)** <br>Each column describes a shape. A shape may be composed of m_DomainsPerShape domains (default 1). ALL DOMAINS ARE _NOT_ ASSUMED TO HAVE THE SAME NUMBER OF PARTICLES!  |
-| class | **[itk::ParticleShapeMixedEffectsMatrixAttribute](../Classes/classitk_1_1ParticleShapeMixedEffectsMatrixAttribute.md)**  |
-| class | **[itk::ParticleSurfaceNeighborhood](../Classes/classitk_1_1ParticleSurfaceNeighborhood.md)**  |
-| class | **[itk::ParticleSystem](../Classes/classitk_1_1ParticleSystem.md)** <br>A facade class managing interactions with a particle system.  |
-| class | **[itk::ParticleVectorFunction](../Classes/classitk_1_1ParticleVectorFunction.md)**  |
-| class | **[itk::PowerOfTwoPointTree](../Classes/classitk_1_1PowerOfTwoPointTree.md)**  |
-| class | **[itk::PowerOfTwoPointTreeNode](../Classes/classitk_1_1PowerOfTwoPointTreeNode.md)**  |
-| struct | **[itk::powstruct](../Classes/structitk_1_1powstruct.md)**  |
-| struct | **[itk::powstruct< a, 0 >](../Classes/structitk_1_1powstruct_3_01a_00_010_01_4.md)**  |
 | class | **[itk::SparseKernelTransform](../Classes/classitk_1_1SparseKernelTransform.md)**  |
 | class | **[itk::ThinPlateSplineKernelTransform2](../Classes/classitk_1_1ThinPlateSplineKernelTransform2.md)**  |
 | class | **[itk::TPGACLevelSetImageFilter](../Classes/classitk_1_1TPGACLevelSetImageFilter.md)**  |
@@ -67,13 +34,6 @@ title: itk
 | void | **[label6Neighbours](../Namespaces/namespaceitk.md#function-label6neighbours)**(int * nbh, int * nbhlabels, int * nbhv, int curlabel, int idx) |
 | void | **[label26Neighbours](../Namespaces/namespaceitk.md#function-label26neighbours)**(int * nbh, int * nbhlabels, int * nbhv, int curlabel, int idx) |
 | int | **[connectedComponents](../Namespaces/namespaceitk.md#function-connectedcomponents)**(int * nbh, int * nbhLabels, void(*)(int *, int *, int *, int, int) labelNeighboursFunc) |
-| | **[itkEventMacro](../Namespaces/namespaceitk.md#function-itkeventmacro)**(ParticleDomainAddEvent , [ParticleEventWithIndex](../Classes/classitk_1_1ParticleEventWithIndex.md) ) |
-| | **[itkEventMacro](../Namespaces/namespaceitk.md#function-itkeventmacro)**(ParticleTransformSetEvent , [ParticleEventWithIndex](../Classes/classitk_1_1ParticleEventWithIndex.md) ) |
-| | **[itkEventMacro](../Namespaces/namespaceitk.md#function-itkeventmacro)**(ParticlePrefixTransformSetEvent , [ParticleEventWithIndex](../Classes/classitk_1_1ParticleEventWithIndex.md) ) |
-| | **[itkEventMacro](../Namespaces/namespaceitk.md#function-itkeventmacro)**(ParticleNeighborhoodSetEvent , [ParticleEventWithIndex](../Classes/classitk_1_1ParticleEventWithIndex.md) ) |
-| | **[itkEventMacro](../Namespaces/namespaceitk.md#function-itkeventmacro)**(ParticlePositionSetEvent , [ParticleEventWithIndex](../Classes/classitk_1_1ParticleEventWithIndex.md) ) |
-| | **[itkEventMacro](../Namespaces/namespaceitk.md#function-itkeventmacro)**(ParticlePositionAddEvent , [ParticleEventWithIndex](../Classes/classitk_1_1ParticleEventWithIndex.md) ) |
-| | **[itkEventMacro](../Namespaces/namespaceitk.md#function-itkeventmacro)**(ParticlePositionRemoveEvent , [ParticleEventWithIndex](../Classes/classitk_1_1ParticleEventWithIndex.md) ) |
 
 ## Attributes
 
@@ -142,76 +102,6 @@ static inline int connectedComponents(
     int * nbh,
     int * nbhLabels,
     void(*)(int *, int *, int *, int, int) labelNeighboursFunc
-)
-```
-
-
-### function itkEventMacro
-
-```cpp
-itkEventMacro(
-    ParticleDomainAddEvent ,
-    ParticleEventWithIndex 
-)
-```
-
-
-### function itkEventMacro
-
-```cpp
-itkEventMacro(
-    ParticleTransformSetEvent ,
-    ParticleEventWithIndex 
-)
-```
-
-
-### function itkEventMacro
-
-```cpp
-itkEventMacro(
-    ParticlePrefixTransformSetEvent ,
-    ParticleEventWithIndex 
-)
-```
-
-
-### function itkEventMacro
-
-```cpp
-itkEventMacro(
-    ParticleNeighborhoodSetEvent ,
-    ParticleEventWithIndex 
-)
-```
-
-
-### function itkEventMacro
-
-```cpp
-itkEventMacro(
-    ParticlePositionSetEvent ,
-    ParticleEventWithIndex 
-)
-```
-
-
-### function itkEventMacro
-
-```cpp
-itkEventMacro(
-    ParticlePositionAddEvent ,
-    ParticleEventWithIndex 
-)
-```
-
-
-### function itkEventMacro
-
-```cpp
-itkEventMacro(
-    ParticlePositionRemoveEvent ,
-    ParticleEventWithIndex 
 )
 ```
 
@@ -294,4 +184,4 @@ static int nbh26Table = {
 
 -------------------------------
 
-Updated on 2023-03-27 at 17:59:05 +0000
+Updated on 2023-04-03 at 19:48:09 +0000

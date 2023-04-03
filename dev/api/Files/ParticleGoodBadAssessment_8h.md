@@ -1,9 +1,9 @@
 ---
-title: Libs/Optimize/ParticleGoodBadAssessment.h
+title: Libs/Optimize/Utils/ParticleGoodBadAssessment.h
 
 ---
 
-# Libs/Optimize/ParticleGoodBadAssessment.h
+# Libs/Optimize/Utils/ParticleGoodBadAssessment.h
 
 
 
@@ -27,24 +27,24 @@ title: Libs/Optimize/ParticleGoodBadAssessment.h
 ```cpp
 #pragma once
 
-#include "itkParticleMeanCurvatureAttribute.h"
-#include "itkParticleSystem.h"
+#include "Libs/Optimize/Container/MeanCurvatureContainer.h"
+#include "ParticleSystem.h"
 
 namespace shapeworks {
 
 class ParticleGoodBadAssessment {
  public:
-  using MeanCurvatureCacheType = itk::ParticleMeanCurvatureAttribute<float, 3>;
+  using MeanCurvatureCacheType = MeanCurvatureContainer<float, 3>;
 
   void set_domains_per_shape(int i) { domains_per_shape_ = i; }
 
   void set_criterion_angle(double a) { criterion_angle_ = a; }
 
-  std::vector<std::vector<int>> run_assessment(const itk::ParticleSystem* ps,
+  std::vector<std::vector<int>> run_assessment(const ParticleSystem* ps,
                                                MeanCurvatureCacheType* mean_curvature_cache);
 
  private:
-  vnl_matrix<double> compute_particles_normals(int d, const itk::ParticleSystem* ps);
+  vnl_matrix<double> compute_particles_normals(int d, const ParticleSystem* ps);
   int domains_per_shape_ = 1;
   double criterion_angle_ = 90.0;
 };
@@ -55,4 +55,4 @@ class ParticleGoodBadAssessment {
 
 -------------------------------
 
-Updated on 2023-03-27 at 17:59:08 +0000
+Updated on 2023-04-03 at 19:48:11 +0000

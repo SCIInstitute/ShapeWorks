@@ -1,9 +1,9 @@
 ---
-title: Libs/Optimize/MemoryUsage.h
+title: Libs/Optimize/Utils/MemoryUsage.h
 
 ---
 
-# Libs/Optimize/MemoryUsage.h
+# Libs/Optimize/Utils/MemoryUsage.h
 
 
 
@@ -43,4 +43,4 @@ void process_mem_usage(double& vm_usage, double& resident_set);
 
 -------------------------------
 
-Updated on 2023-03-27 at 17:59:08 +0000
+Updated on 2023-04-03 at 19:48:11 +0000

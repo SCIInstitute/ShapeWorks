@@ -20,7 +20,7 @@ title: shapeworks::ParticleShapeStatistics
 | | **[ParticleShapeStatistics](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-particleshapestatistics)**(std::shared_ptr< [Project](../Classes/classshapeworks_1_1Project.md) > project) |
 | | **[~ParticleShapeStatistics](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-~particleshapestatistics)**() |
 | int | **[DoPCA](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-dopca)**(std::vector< std::vector< Point > > global_pts, int domainsPerShape =1) |
-| int | **[DoPCA](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-dopca)**([ParticleSystem](../Classes/classshapeworks_1_1ParticleSystem.md) particleSystem, int domainsPerShape =1) |
+| int | **[DoPCA](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-dopca)**([ParticleSystemEvaluation](../Classes/classshapeworks_1_1ParticleSystemEvaluation.md) particleSystem, int domainsPerShape =1) |
 | | **[itkStaticConstMacro](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-itkstaticconstmacro)**(Dimension , unsigned int , VDimension )<br>Dimensionality of the domain of the particle system.  |
 | int | **[ImportPoints](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-importpoints)**(std::vector< Eigen::VectorXd > points, std::vector< int > group_ids)<br>Loads a set of point files and pre-computes some statistics.  |
 | void | **[ComputeMultiLevelAnalysisStatistics](../Classes/classshapeworks_1_1ParticleShapeStatistics.md#function-computemultilevelanalysisstatistics)**(std::vector< Eigen::VectorXd > points, unsigned int dps)<br>Loads a set of point files and pre-computes statistics for multi-level analysis.  |
@@ -125,7 +125,7 @@ int DoPCA(
 
 ```cpp
 int DoPCA(
-    ParticleSystem particleSystem,
+    ParticleSystemEvaluation particleSystem,
     int domainsPerShape =1
 )
 ```
@@ -558,4 +558,4 @@ static constexpr static int VDimension = 3;
 
 -------------------------------
 
-Updated on 2023-03-27 at 17:59:07 +0000
+Updated on 2023-04-03 at 19:48:10 +0000

@@ -44,7 +44,20 @@ title: Classes
 * **struct [Intersection](../Classes/structIntersection.md)** 
 * **class [LegacyMeshGenerator](../Classes/classLegacyMeshGenerator.md)** 
 * **class [MeshSettings](../Classes/classMeshSettings.md)** <br>Settings for creating a mesh. 
+* **class [ObjectReader](../Classes/classObjectReader.md)** 
+* **class [ObjectWriter](../Classes/classObjectWriter.md)** 
 * **class [ParticleEvent:: Parent](../Classes/classParticleEvent_1_1_01Parent.md)** 
+* **class [ParticleGradientDescentPositionOptimizer](../Classes/classParticleGradientDescentPositionOptimizer.md)** 
+* **class [ParticleImageDomain](../Classes/classParticleImageDomain.md)** 
+* **class [ParticleImageDomainWithCurvature](../Classes/classParticleImageDomainWithCurvature.md)** 
+* **class [ParticleImageDomainWithGradN](../Classes/classParticleImageDomainWithGradN.md)** 
+* **class [ParticleImageDomainWithGradients](../Classes/classParticleImageDomainWithGradients.md)** 
+* **class [ParticleImplicitSurfaceDomain](../Classes/classParticleImplicitSurfaceDomain.md)** 
+* **class [ParticleMeanCurvatureAttribute](../Classes/classParticleMeanCurvatureAttribute.md)** 
+* **class [ParticleProcrustesRegistration](../Classes/classParticleProcrustesRegistration.md)** 
+* **class [ParticleShapeLinearRegressionMatrixAttribute](../Classes/classParticleShapeLinearRegressionMatrixAttribute.md)** 
+* **class [ParticleShapeMatrixAttribute](../Classes/classParticleShapeMatrixAttribute.md)** <br>Each column describes a shape. A shape may be composed of m_DomainsPerShape domains (default 1). ALL DOMAINS ARE _NOT_ ASSUMED TO HAVE THE SAME NUMBER OF PARTICLES! 
+* **class [ParticleShapeMixedEffectsMatrixAttribute](../Classes/classParticleShapeMixedEffectsMatrixAttribute.md)** 
 * **class [Preferences](../Classes/classPreferences.md)** <br>Application preferences. 
 * **class [Procrustes3D](../Classes/classProcrustes3D.md)** 
 * **struct [Quad](../Classes/structQuad.md)** 
@@ -68,45 +81,9 @@ title: Classes
         * **class [MultiplyByConstant](../Classes/classitk_1_1Functor_1_1MultiplyByConstant.md)** 
     * **class [KernelTransform2](../Classes/classitk_1_1KernelTransform2.md)** 
     * **class [MultiplyByConstantImageFilter](../Classes/classitk_1_1MultiplyByConstantImageFilter.md)** <br>Multiply input pixels by a constant. 
-    * **class [ParticleAttribute](../Classes/classitk_1_1ParticleAttribute.md)** 
-        * **struct [DefinedCallbacksStruct](../Classes/structitk_1_1ParticleAttribute_1_1DefinedCallbacksStruct.md)** 
-    * **class [ParticleConstrainedModifiedCotangentEntropyGradientFunction](../Classes/classitk_1_1ParticleConstrainedModifiedCotangentEntropyGradientFunction.md)** 
-    * **class [ParticleContainer](../Classes/classitk_1_1ParticleContainer.md)** 
-    * **class [ParticleContainerArrayAttribute](../Classes/classitk_1_1ParticleContainerArrayAttribute.md)** 
-    * **class [ParticleCurvatureEntropyGradientFunction](../Classes/classitk_1_1ParticleCurvatureEntropyGradientFunction.md)** 
-        * **struct [CrossDomainNeighborhood](../Classes/structitk_1_1ParticleCurvatureEntropyGradientFunction_1_1CrossDomainNeighborhood.md)** 
-    * **class [ParticleDualVectorFunction](../Classes/classitk_1_1ParticleDualVectorFunction.md)** 
-    * **class [ParticleEnsembleEntropyFunction](../Classes/classitk_1_1ParticleEnsembleEntropyFunction.md)** 
-    * **class [ParticleEntropyGradientFunction](../Classes/classitk_1_1ParticleEntropyGradientFunction.md)** <br>This function returns an estimate of the gradient of the entropy of a particle distribution with respect to change in position of a specific particle in that distribution. 
-    * **class [ParticleEvent](../Classes/classitk_1_1ParticleEvent.md)** 
-    * **class [ParticleEventWithIndex](../Classes/classitk_1_1ParticleEventWithIndex.md)** 
-    * **class [ParticleGaussianModeWriter](../Classes/classitk_1_1ParticleGaussianModeWriter.md)** 
-    * **class [ParticleGeneralShapeGradientMatrix](../Classes/classitk_1_1ParticleGeneralShapeGradientMatrix.md)** <br>Each column describes a shape. A shape may be composed of m_DomainsPerShape domains (default 1). ALL DOMAINS ARE _NOT_ ASSUMED TO HAVE THE SAME NUMBER OF PARTICLES! 
-    * **class [ParticleGeneralShapeMatrix](../Classes/classitk_1_1ParticleGeneralShapeMatrix.md)** <br>Each column describes a shape. A shape may be composed of m_DomainsPerShape domains (default 1). ALL DOMAINS ARE _NOT_ ASSUMED TO HAVE THE SAME NUMBER OF PARTICLES! 
-    * **class [ParticleGradientDescentPositionOptimizer](../Classes/classitk_1_1ParticleGradientDescentPositionOptimizer.md)** 
-    * **class [ParticleMeanCurvatureAttribute](../Classes/classitk_1_1ParticleMeanCurvatureAttribute.md)** 
-    * **class [ParticleMeshBasedGeneralEntropyGradientFunction](../Classes/classitk_1_1ParticleMeshBasedGeneralEntropyGradientFunction.md)** 
-    * **class [ParticleModifiedCotangentEntropyGradientFunction](../Classes/classitk_1_1ParticleModifiedCotangentEntropyGradientFunction.md)** 
-    * **class [ParticleNeighborhood](../Classes/classitk_1_1ParticleNeighborhood.md)** 
-    * **class [ParticleOmegaGradientFunction](../Classes/classitk_1_1ParticleOmegaGradientFunction.md)** 
-    * **struct [ParticlePointIndexPair](../Classes/structitk_1_1ParticlePointIndexPair.md)** 
-    * **class [ParticlePositionReader](../Classes/classitk_1_1ParticlePositionReader.md)** 
-    * **class [ParticlePositionWriter](../Classes/classitk_1_1ParticlePositionWriter.md)** 
-    * **class [ParticleRegionNeighborhood](../Classes/classitk_1_1ParticleRegionNeighborhood.md)** 
-        * **struct [IteratorNodePair](../Classes/structitk_1_1ParticleRegionNeighborhood_1_1IteratorNodePair.md)** 
-    * **class [ParticleShapeLinearRegressionMatrixAttribute](../Classes/classitk_1_1ParticleShapeLinearRegressionMatrixAttribute.md)** 
-    * **class [ParticleShapeMatrixAttribute](../Classes/classitk_1_1ParticleShapeMatrixAttribute.md)** <br>Each column describes a shape. A shape may be composed of m_DomainsPerShape domains (default 1). ALL DOMAINS ARE _NOT_ ASSUMED TO HAVE THE SAME NUMBER OF PARTICLES! 
-    * **class [ParticleShapeMixedEffectsMatrixAttribute](../Classes/classitk_1_1ParticleShapeMixedEffectsMatrixAttribute.md)** 
-    * **class [ParticleSurfaceNeighborhood](../Classes/classitk_1_1ParticleSurfaceNeighborhood.md)** 
-    * **class [ParticleSystem](../Classes/classitk_1_1ParticleSystem.md)** <br>A facade class managing interactions with a particle system. 
-    * **class [ParticleVectorFunction](../Classes/classitk_1_1ParticleVectorFunction.md)** 
-    * **class [PowerOfTwoPointTree](../Classes/classitk_1_1PowerOfTwoPointTree.md)** 
-    * **class [PowerOfTwoPointTreeNode](../Classes/classitk_1_1PowerOfTwoPointTreeNode.md)** 
     * **class [SparseKernelTransform](../Classes/classitk_1_1SparseKernelTransform.md)** 
     * **class [TPGACLevelSetImageFilter](../Classes/classitk_1_1TPGACLevelSetImageFilter.md)** 
     * **class [ThinPlateSplineKernelTransform2](../Classes/classitk_1_1ThinPlateSplineKernelTransform2.md)** 
-    * **struct [powstruct](../Classes/structitk_1_1powstruct.md)** 
-    * **struct [powstruct< a, 0 >](../Classes/structitk_1_1powstruct_3_01a_00_010_01_4.md)** 
 * **class [mat3d](../Classes/classmat3d.md)** 
 * **class [matrix](../Classes/classmatrix.md)** 
 * **class [meshFIM](../Classes/classmeshFIM.md)** 
@@ -126,16 +103,23 @@ title: Classes
     * **class [Constraint](../Classes/classshapeworks_1_1Constraint.md)** 
     * **class [Constraints](../Classes/classshapeworks_1_1Constraints.md)** 
     * **class [ContourDomain](../Classes/classshapeworks_1_1ContourDomain.md)** 
+    * **class [CorrespondenceFunction](../Classes/classshapeworks_1_1CorrespondenceFunction.md)** <br>Correspondence term. 
+    * **class [CurvatureSamplingFunction](../Classes/classshapeworks_1_1CurvatureSamplingFunction.md)** <br>Please note: This is the sampling function currently being used. 
+        * **struct [CrossDomainNeighborhood](../Classes/structshapeworks_1_1CurvatureSamplingFunction_1_1CrossDomainNeighborhood.md)** 
     * **class [DataTool](../Classes/classshapeworks_1_1DataTool.md)** 
     * **class [DeepSSMJob](../Classes/classshapeworks_1_1DeepSSMJob.md)** <br>Qt Wrapper for DeepSSM. 
     * **class [DeepSSMParameters](../Classes/classshapeworks_1_1DeepSSMParameters.md)** 
     * **class [DeepSSMTool](../Classes/classshapeworks_1_1DeepSSMTool.md)** 
+    * **class [DualVectorFunction](../Classes/classshapeworks_1_1DualVectorFunction.md)** 
     * **class [ExcelProjectReader](../Classes/classshapeworks_1_1ExcelProjectReader.md)** <br>Excel file format reader for [Project](). 
     * **class [ExcelProjectWriter](../Classes/classshapeworks_1_1ExcelProjectWriter.md)** <br>Excel file format writer for [Project](). 
     * **class [Executable](../Classes/classshapeworks_1_1Executable.md)** 
     * **class [ExportImageDialog](../Classes/classshapeworks_1_1ExportImageDialog.md)** 
     * **class [ExportUtils](../Classes/classshapeworks_1_1ExportUtils.md)** <br>Export utilities for Studio. 
     * **class [FreeFormConstraint](../Classes/classshapeworks_1_1FreeFormConstraint.md)** <br>[FreeFormConstraint](). 
+    * **class [GenericContainer](../Classes/classshapeworks_1_1GenericContainer.md)** <br>This class seems to be only a wrapper around std::vector implementing ITK DataObject (for smart pointer?) 
+    * **class [GenericContainerArray](../Classes/classshapeworks_1_1GenericContainerArray.md)** <br>This class appears to be an array of GenericContainers (e.g. std::vector) that implements the [Observer]() interface. The array size tracks the number of domains in the system. E.g. one per domain. 
+    * **class [GradientDescentOptimizer](../Classes/classshapeworks_1_1GradientDescentOptimizer.md)** 
     * **class [Groom](../Classes/classshapeworks_1_1Groom.md)** <br>High level groom API. 
     * **class [GroomCommandGroup](../Classes/classshapeworks_1_1GroomCommandGroup.md)** 
     * **class [GroomParameters](../Classes/classshapeworks_1_1GroomParameters.md)** 
@@ -143,8 +127,13 @@ title: Classes
     * **class [GroupPvalueJob](../Classes/classshapeworks_1_1GroupPvalueJob.md)** 
     * **class [Image](../Classes/classshapeworks_1_1Image.md)** 
     * **class [ImageCommand](../Classes/classshapeworks_1_1ImageCommand.md)** 
+    * **class [ImageDomain](../Classes/classshapeworks_1_1ImageDomain.md)** 
+    * **class [ImageDomainWithCurvature](../Classes/classshapeworks_1_1ImageDomainWithCurvature.md)** 
+    * **class [ImageDomainWithGradN](../Classes/classshapeworks_1_1ImageDomainWithGradN.md)** 
+    * **class [ImageDomainWithGradients](../Classes/classshapeworks_1_1ImageDomainWithGradients.md)** 
     * **class [ImageLabel](../Classes/classshapeworks_1_1ImageLabel.md)** <br>An extention of QLabel especially for scaled images. 
     * **class [ImageUtils](../Classes/classshapeworks_1_1ImageUtils.md)** <br>Helper functions for image. 
+    * **class [ImplicitSurfaceDomain](../Classes/classshapeworks_1_1ImplicitSurfaceDomain.md)** 
     * **class [IndexRegion](../Classes/classshapeworks_1_1IndexRegion.md)** <br>Indices into a 3d region of memory (can be negative, e.g., for the purpose of padding an image) 
     * **class [Job](../Classes/classshapeworks_1_1Job.md)** 
     * **class [JsonProjectReader](../Classes/classshapeworks_1_1JsonProjectReader.md)** <br>JSON file format reader for [Project](). 
@@ -154,10 +143,14 @@ title: Classes
     * **class [LandmarkItemDelegate](../Classes/classshapeworks_1_1LandmarkItemDelegate.md)** 
     * **class [LandmarkTableModel](../Classes/classshapeworks_1_1LandmarkTableModel.md)** 
     * **class [LandmarkWidget](../Classes/classshapeworks_1_1LandmarkWidget.md)** <br>[LandmarkWidget](). 
+    * **class [LegacyCorrespondenceFunction](../Classes/classshapeworks_1_1LegacyCorrespondenceFunction.md)** 
+    * **class [LegacyShapeMatrix](../Classes/classshapeworks_1_1LegacyShapeMatrix.md)** 
     * **class [Lightbox](../Classes/classshapeworks_1_1Lightbox.md)** <br>Display multiple Viewers in a tiled display. 
+    * **class [LinearRegressionShapeMatrix](../Classes/classshapeworks_1_1LinearRegressionShapeMatrix.md)** 
     * **class [LogWindow](../Classes/classshapeworks_1_1LogWindow.md)** <br>Log Window. 
     * **class [Logging](../Classes/classshapeworks_1_1Logging.md)** <br>ShapeWorks [Logging]() Library. 
     * **class [MatrixContainer](../Classes/classshapeworks_1_1MatrixContainer.md)** 
+    * **class [MeanCurvatureContainer](../Classes/classshapeworks_1_1MeanCurvatureContainer.md)** 
     * **class [Mesh](../Classes/classshapeworks_1_1Mesh.md)** 
     * **class [MeshCache](../Classes/classshapeworks_1_1MeshCache.md)** <br>Thread safe cache for meshes index by shape. 
     * **class [MeshCommand](../Classes/classshapeworks_1_1MeshCommand.md)** 
@@ -175,7 +168,10 @@ title: Classes
     * **class [MeshWorkQueue](../Classes/classshapeworks_1_1MeshWorkQueue.md)** 
     * **class [MeshWorker](../Classes/classshapeworks_1_1MeshWorker.md)** 
     * **class [MeshWrapper](../Classes/classshapeworks_1_1MeshWrapper.md)** 
+    * **class [MixedEffectsShapeMatrix](../Classes/classshapeworks_1_1MixedEffectsShapeMatrix.md)** 
     * **struct [MultiVariateNormalRandom](../Classes/structshapeworks_1_1MultiVariateNormalRandom.md)** 
+    * **class [Observer](../Classes/classshapeworks_1_1Observer.md)** <br>This class is an observer interface for classes to monitor for changes to the optimizer (observer pattern) 
+        * **struct [DefinedCallbacksStruct](../Classes/structshapeworks_1_1Observer_1_1DefinedCallbacksStruct.md)** 
     * **class [OptimizationVisualizer](../Classes/classshapeworks_1_1OptimizationVisualizer.md)** 
     * **class [Optimize](../Classes/classshapeworks_1_1Optimize.md)** 
     * **class [OptimizeCommandGroup](../Classes/classshapeworks_1_1OptimizeCommandGroup.md)** 
@@ -186,25 +182,32 @@ title: Classes
     * **class [Parameters](../Classes/classshapeworks_1_1Parameters.md)** <br>Parameter settings. 
     * **class [ParticleColors](../Classes/classshapeworks_1_1ParticleColors.md)** <br>Supplies particle colors. 
     * **class [ParticleDomain](../Classes/classshapeworks_1_1ParticleDomain.md)** 
+    * **class [ParticleEvent](../Classes/classshapeworks_1_1ParticleEvent.md)** 
+    * **class [ParticleGaussianModeWriter](../Classes/classshapeworks_1_1ParticleGaussianModeWriter.md)** 
     * **class [ParticleGoodBadAssessment](../Classes/classshapeworks_1_1ParticleGoodBadAssessment.md)** <br>Performs good/bad points assessment and reports the bad positions of the particle system. 
-    * **class [ParticleImageDomain](../Classes/classshapeworks_1_1ParticleImageDomain.md)** 
-    * **class [ParticleImageDomainWithCurvature](../Classes/classshapeworks_1_1ParticleImageDomainWithCurvature.md)** 
-    * **class [ParticleImageDomainWithGradN](../Classes/classshapeworks_1_1ParticleImageDomainWithGradN.md)** 
-    * **class [ParticleImageDomainWithGradients](../Classes/classshapeworks_1_1ParticleImageDomainWithGradients.md)** 
-    * **class [ParticleImplicitSurfaceDomain](../Classes/classshapeworks_1_1ParticleImplicitSurfaceDomain.md)** 
+    * **class [ParticleNeighborhood](../Classes/classshapeworks_1_1ParticleNeighborhood.md)** 
     * **class [ParticleNormalEvaluation](../Classes/classshapeworks_1_1ParticleNormalEvaluation.md)** 
     * **class [ParticleNormalEvaluationJob](../Classes/classshapeworks_1_1ParticleNormalEvaluationJob.md)** 
-    * **class [ParticleProcrustesRegistration](../Classes/classshapeworks_1_1ParticleProcrustesRegistration.md)** 
+    * **struct [ParticlePointIndexPair](../Classes/structshapeworks_1_1ParticlePointIndexPair.md)** 
+    * **class [ParticlePositionReader](../Classes/classshapeworks_1_1ParticlePositionReader.md)** 
+    * **class [ParticlePositionWriter](../Classes/classshapeworks_1_1ParticlePositionWriter.md)** 
     * **class [ParticleRegionDomain](../Classes/classshapeworks_1_1ParticleRegionDomain.md)** 
+    * **class [ParticleRegionNeighborhood](../Classes/classshapeworks_1_1ParticleRegionNeighborhood.md)** 
+        * **struct [IteratorNodePair](../Classes/structshapeworks_1_1ParticleRegionNeighborhood_1_1IteratorNodePair.md)** 
     * **class [ParticleShapeStatistics](../Classes/classshapeworks_1_1ParticleShapeStatistics.md)** 
-    * **class [ParticleSystem](../Classes/classshapeworks_1_1ParticleSystem.md)** 
+    * **class [ParticleSurfaceNeighborhood](../Classes/classshapeworks_1_1ParticleSurfaceNeighborhood.md)** 
+    * **class [ParticleSystem](../Classes/classshapeworks_1_1ParticleSystem.md)** <br>A facade class managing interactions with a particle system. 
     * **class [ParticleSystemCommand](../Classes/classshapeworks_1_1ParticleSystemCommand.md)** 
+    * **class [ParticleSystemEvaluation](../Classes/classshapeworks_1_1ParticleSystemEvaluation.md)** 
     * **class [Particles](../Classes/classshapeworks_1_1Particles.md)** <br>Representation of correspondence points for a shape including multiple domains. 
     * **class [PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md)** <br>physical bounds of a 3d region of space 
     * **class [PickResult](../Classes/classshapeworks_1_1PickResult.md)** 
     * **class [PlaneConstraint](../Classes/classshapeworks_1_1PlaneConstraint.md)** <br>[PlaneConstraint](). 
     * **class [PlaneWidget](../Classes/classshapeworks_1_1PlaneWidget.md)** <br>[PlaneWidget](). 
+    * **class [PowerOfTwoPointTree](../Classes/classshapeworks_1_1PowerOfTwoPointTree.md)** 
+    * **class [PowerOfTwoPointTreeNode](../Classes/classshapeworks_1_1PowerOfTwoPointTreeNode.md)** 
     * **class [PreferencesWindow](../Classes/classshapeworks_1_1PreferencesWindow.md)** <br>Qt UI dialog to control preferences. 
+    * **class [ProcrustesRegistration](../Classes/classshapeworks_1_1ProcrustesRegistration.md)** 
     * **class [Project](../Classes/classshapeworks_1_1Project.md)** <br>Representation of a project. 
     * **class [ProjectCommandGroup](../Classes/classshapeworks_1_1ProjectCommandGroup.md)** 
     * **class [ProjectReader](../Classes/classshapeworks_1_1ProjectReader.md)** <br>Base class for [Project](../Classes/classshapeworks_1_1Project.md) readers. 
@@ -217,11 +220,14 @@ title: Classes
     * **class [Sampler](../Classes/classshapeworks_1_1Sampler.md)** 
         * **struct [CuttingPlaneType](../Classes/structshapeworks_1_1Sampler_1_1CuttingPlaneType.md)** 
         * **struct [SphereType](../Classes/structshapeworks_1_1Sampler_1_1SphereType.md)** 
+    * **class [SamplingFunction](../Classes/classshapeworks_1_1SamplingFunction.md)** <br>This function returns an estimate of the gradient of the entropy of a particle distribution with respect to change in position of a specific particle in that distribution. 
     * **class [Session](../Classes/classshapeworks_1_1Session.md)** <br>Representation of a session. 
     * **class [Shape](../Classes/classshapeworks_1_1Shape.md)** <br>Representation of a single shape/patient/subject. 
         * **class [Point](../Classes/classshapeworks_1_1Shape_1_1Point.md)** <br>TODO: replace this wherever it is used. 
     * **class [ShapeEvaluation](../Classes/classshapeworks_1_1ShapeEvaluation.md)** 
     * **class [ShapeEvaluationJob](../Classes/classshapeworks_1_1ShapeEvaluationJob.md)** 
+    * **class [ShapeGradientMatrix](../Classes/classshapeworks_1_1ShapeGradientMatrix.md)** <br>Each column describes a shape. A shape may be composed of m_DomainsPerShape domains (default 1). ALL DOMAINS ARE _NOT_ ASSUMED TO HAVE THE SAME NUMBER OF PARTICLES! 
+    * **class [ShapeMatrix](../Classes/classshapeworks_1_1ShapeMatrix.md)** <br>Each column describes a shape. A shape may be composed of m_DomainsPerShape domains (default 1). ALL DOMAINS ARE _NOT_ ASSUMED TO HAVE THE SAME NUMBER OF PARTICLES! 
     * **class [ShapeWorksStudioApp](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md)** <br>Main ShapeWorksStudio window. 
     * **class [ShapeworksCommand](../Classes/classshapeworks_1_1ShapeworksCommand.md)** 
     * **class [ShapeworksUtils](../Classes/classshapeworks_1_1ShapeworksUtils.md)** 
@@ -242,15 +248,17 @@ title: Classes
     * **class [Style](../Classes/classshapeworks_1_1Style.md)** 
     * **class [Subject](../Classes/classshapeworks_1_1Subject.md)** <br>Representation of a single subject. 
     * **class [Telemetry](../Classes/classshapeworks_1_1Telemetry.md)** 
-    * **class [TriMeshWrapper](../Classes/classshapeworks_1_1TriMeshWrapper.md)** 
     * **class [UpdateChecker](../Classes/classshapeworks_1_1UpdateChecker.md)** <br>Update Checker. 
     * **class [Variant](../Classes/classshapeworks_1_1Variant.md)** <br>[Variant]() class to represent multiple types. 
+    * **class [VectorFunction](../Classes/classshapeworks_1_1VectorFunction.md)** 
     * **class [VectorImage](../Classes/classshapeworks_1_1VectorImage.md)** <br>Gradient (vector) image. 
     * **class [Viewer](../Classes/classshapeworks_1_1Viewer.md)** <br>3D [Viewer]()
     * **class [Visualizer](../Classes/classshapeworks_1_1Visualizer.md)** <br>Controls display of objects in viewers. 
     * **class [VtkMeshWrapper](../Classes/classshapeworks_1_1VtkMeshWrapper.md)** 
     * **class [WheelEventForwarder](../Classes/classshapeworks_1_1WheelEventForwarder.md)** 
     * **class [Worker](../Classes/classshapeworks_1_1Worker.md)** 
+    * **struct [powstruct](../Classes/structshapeworks_1_1powstruct.md)** 
+    * **struct [powstruct< a, 0 >](../Classes/structshapeworks_1_1powstruct_3_01a_00_010_01_4.md)** 
     * **namespace [project](../Namespaces/namespaceshapeworks_1_1project.md)** 
         * **namespace [prefixes](../Namespaces/namespaceshapeworks_1_1project_1_1prefixes.md)** 
         * **namespace [types](../Namespaces/namespaceshapeworks_1_1project_1_1types.md)** 
@@ -266,4 +274,4 @@ title: Classes
 
 -------------------------------
 
-Updated on 2023-03-27 at 17:59:08 +0000
+Updated on 2023-04-03 at 19:48:12 +0000

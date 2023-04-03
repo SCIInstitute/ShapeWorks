@@ -1,9 +1,9 @@
 ---
-title: Libs/Optimize/MeshDomain.h
+title: Libs/Optimize/Domain/MeshDomain.h
 
 ---
 
-# Libs/Optimize/MeshDomain.h
+# Libs/Optimize/Domain/MeshDomain.h
 
 
 
@@ -30,7 +30,6 @@ title: Libs/Optimize/MeshDomain.h
 #include <itkObjectFactory.h>
 
 #include "MeshWrapper.h"
-#include "TriMeshWrapper.h"
 #include "ParticleDomain.h"
 
 namespace shapeworks {
@@ -144,4 +143,4 @@ class MeshDomain : public ParticleDomain {
 
 -------------------------------
 
-Updated on 2023-03-27 at 17:59:08 +0000
+Updated on 2023-04-03 at 19:48:11 +0000

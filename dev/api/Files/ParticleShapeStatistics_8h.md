@@ -34,7 +34,7 @@ title: Libs/Particles/ParticleShapeStatistics.h
 #include <string>
 #include <vector>
 
-#include "ParticleSystem.h"
+#include "ParticleSystemEvaluation.h"
 #include "Shapeworks.h"
 #include "itkParticlePositionReader.h"
 #include "itkParticlePositionWriter.h"
@@ -53,7 +53,7 @@ class ParticleShapeStatistics {
 
   int DoPCA(std::vector<std::vector<Point>> global_pts, int domainsPerShape = 1);
 
-  int DoPCA(ParticleSystem particleSystem, int domainsPerShape = 1);
+  int DoPCA(ParticleSystemEvaluation particleSystem, int domainsPerShape = 1);
 
   itkStaticConstMacro(Dimension, unsigned int, VDimension);
 
@@ -197,4 +197,4 @@ class ParticleShapeStatistics {
 
 -------------------------------
 
-Updated on 2023-03-27 at 17:59:08 +0000
+Updated on 2023-04-03 at 19:48:11 +0000

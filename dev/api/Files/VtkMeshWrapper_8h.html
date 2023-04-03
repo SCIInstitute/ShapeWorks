@@ -19,7 +19,7 @@
     
     
       
-        <title>Libs/Optimize/VtkMeshWrapper.h - ShapeWorks</title>
+        <title>Libs/Optimize/Domain/VtkMeshWrapper.h - ShapeWorks</title>
       
     
     
@@ -84,7 +84,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#libsoptimizevtkmeshwrapperh" class="md-skip">
+        <a href="#libsoptimizedomainvtkmeshwrapperh" class="md-skip">
           Skip to content
         </a>
       
@@ -122,7 +122,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Libs/Optimize/VtkMeshWrapper.h
+              Libs/Optimize/Domain/VtkMeshWrapper.h
             
           </span>
         </div>
@@ -2249,7 +2249,7 @@
 
 
 
-<h1 id="libsoptimizevtkmeshwrapperh">Libs/Optimize/VtkMeshWrapper.h</h1>
+<h1 id="libsoptimizedomainvtkmeshwrapperh">Libs/Optimize/Domain/VtkMeshWrapper.h</h1>
 <h2 id="namespaces">Namespaces</h2>
 <table>
 <thead>
@@ -2281,17 +2281,18 @@
 <h2 id="source-code">Source code</h2>
 <div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;MeshWrapper.h&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;MeshGeoEntry.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;geometrycentral/surface/heat_method_distance.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;geometrycentral/surface/meshio.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;geometrycentral/surface/surface_mesh.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkPolyData.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkSmartPointer.h&gt;</span>
 
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;unordered_map&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;unordered_set&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;robin_hood.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkPolyData.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkSmartPointer.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;geometrycentral/surface/surface_mesh.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;geometrycentral/surface/meshio.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;geometrycentral/surface/heat_method_distance.h&gt;</span>
+
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ExternalLibs/robin_hood/robin_hood.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;MeshGeoEntry.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;MeshWrapper.h&quot;</span>
 
 <span class="k">class</span><span class="w"> </span><span class="nc">vtkCellLocator</span><span class="p">;</span>
 
@@ -2465,7 +2466,7 @@
 <span class="p">}</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-03-27 at 17:59:08 +0000</p>
+<p>Updated on 2023-04-03 at 19:48:11 +0000</p>
 
               
             </article>

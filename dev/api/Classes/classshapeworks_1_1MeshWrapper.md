@@ -9,7 +9,7 @@ title: shapeworks::MeshWrapper
 
 
 
-Inherited by [shapeworks::TriMeshWrapper](../Classes/classshapeworks_1_1TriMeshWrapper.md), [shapeworks::VtkMeshWrapper](../Classes/classshapeworks_1_1VtkMeshWrapper.md)
+Inherited by [shapeworks::VtkMeshWrapper](../Classes/classshapeworks_1_1VtkMeshWrapper.md)
 
 ## Public Types
 
@@ -67,9 +67,6 @@ virtual double ComputeDistance(
 ```
 
 
-**Reimplemented by**: [shapeworks::TriMeshWrapper::ComputeDistance](../Classes/classshapeworks_1_1TriMeshWrapper.md#function-computedistance)
-
-
 ### function IsWithinDistance
 
 ```cpp
@@ -98,7 +95,7 @@ virtual PointType GeodesicWalk(
 ```
 
 
-**Reimplemented by**: [shapeworks::VtkMeshWrapper::GeodesicWalk](../Classes/classshapeworks_1_1VtkMeshWrapper.md#function-geodesicwalk), [shapeworks::TriMeshWrapper::GeodesicWalk](../Classes/classshapeworks_1_1TriMeshWrapper.md#function-geodesicwalk)
+**Reimplemented by**: [shapeworks::VtkMeshWrapper::GeodesicWalk](../Classes/classshapeworks_1_1VtkMeshWrapper.md#function-geodesicwalk)
 
 
 ### function GetPointOnMesh
@@ -108,7 +105,7 @@ virtual PointType GetPointOnMesh() const =0
 ```
 
 
-**Reimplemented by**: [shapeworks::TriMeshWrapper::GetPointOnMesh](../Classes/classshapeworks_1_1TriMeshWrapper.md#function-getpointonmesh), [shapeworks::VtkMeshWrapper::GetPointOnMesh](../Classes/classshapeworks_1_1VtkMeshWrapper.md#function-getpointonmesh)
+**Reimplemented by**: [shapeworks::VtkMeshWrapper::GetPointOnMesh](../Classes/classshapeworks_1_1VtkMeshWrapper.md#function-getpointonmesh)
 
 
 ### function GetMeshLowerBound
@@ -118,7 +115,7 @@ virtual const PointType & GetMeshLowerBound() const =0
 ```
 
 
-**Reimplemented by**: [shapeworks::TriMeshWrapper::GetMeshLowerBound](../Classes/classshapeworks_1_1TriMeshWrapper.md#function-getmeshlowerbound), [shapeworks::VtkMeshWrapper::GetMeshLowerBound](../Classes/classshapeworks_1_1VtkMeshWrapper.md#function-getmeshlowerbound)
+**Reimplemented by**: [shapeworks::VtkMeshWrapper::GetMeshLowerBound](../Classes/classshapeworks_1_1VtkMeshWrapper.md#function-getmeshlowerbound)
 
 
 ### function GetMeshUpperBound
@@ -128,7 +125,7 @@ virtual const PointType & GetMeshUpperBound() const =0
 ```
 
 
-**Reimplemented by**: [shapeworks::TriMeshWrapper::GetMeshUpperBound](../Classes/classshapeworks_1_1TriMeshWrapper.md#function-getmeshupperbound), [shapeworks::VtkMeshWrapper::GetMeshUpperBound](../Classes/classshapeworks_1_1VtkMeshWrapper.md#function-getmeshupperbound)
+**Reimplemented by**: [shapeworks::VtkMeshWrapper::GetMeshUpperBound](../Classes/classshapeworks_1_1VtkMeshWrapper.md#function-getmeshupperbound)
 
 
 ### function ProjectVectorToSurfaceTangent
@@ -142,7 +139,7 @@ virtual vnl_vector_fixed< double, DIMENSION > ProjectVectorToSurfaceTangent(
 ```
 
 
-**Reimplemented by**: [shapeworks::VtkMeshWrapper::ProjectVectorToSurfaceTangent](../Classes/classshapeworks_1_1VtkMeshWrapper.md#function-projectvectortosurfacetangent), [shapeworks::TriMeshWrapper::ProjectVectorToSurfaceTangent](../Classes/classshapeworks_1_1TriMeshWrapper.md#function-projectvectortosurfacetangent)
+**Reimplemented by**: [shapeworks::VtkMeshWrapper::ProjectVectorToSurfaceTangent](../Classes/classshapeworks_1_1VtkMeshWrapper.md#function-projectvectortosurfacetangent)
 
 
 ### function SampleNormalAtPoint
@@ -155,7 +152,7 @@ virtual vnl_vector_fixed< float, DIMENSION > SampleNormalAtPoint(
 ```
 
 
-**Reimplemented by**: [shapeworks::TriMeshWrapper::SampleNormalAtPoint](../Classes/classshapeworks_1_1TriMeshWrapper.md#function-samplenormalatpoint), [shapeworks::VtkMeshWrapper::SampleNormalAtPoint](../Classes/classshapeworks_1_1VtkMeshWrapper.md#function-samplenormalatpoint)
+**Reimplemented by**: [shapeworks::VtkMeshWrapper::SampleNormalAtPoint](../Classes/classshapeworks_1_1VtkMeshWrapper.md#function-samplenormalatpoint)
 
 
 ### function SampleGradNAtPoint
@@ -168,7 +165,7 @@ virtual GradNType SampleGradNAtPoint(
 ```
 
 
-**Reimplemented by**: [shapeworks::TriMeshWrapper::SampleGradNAtPoint](../Classes/classshapeworks_1_1TriMeshWrapper.md#function-samplegradnatpoint), [shapeworks::VtkMeshWrapper::SampleGradNAtPoint](../Classes/classshapeworks_1_1VtkMeshWrapper.md#function-samplegradnatpoint)
+**Reimplemented by**: [shapeworks::VtkMeshWrapper::SampleGradNAtPoint](../Classes/classshapeworks_1_1VtkMeshWrapper.md#function-samplegradnatpoint)
 
 
 ### function SnapToMesh
@@ -181,7 +178,7 @@ virtual PointType SnapToMesh(
 ```
 
 
-**Reimplemented by**: [shapeworks::TriMeshWrapper::SnapToMesh](../Classes/classshapeworks_1_1TriMeshWrapper.md#function-snaptomesh), [shapeworks::VtkMeshWrapper::SnapToMesh](../Classes/classshapeworks_1_1VtkMeshWrapper.md#function-snaptomesh)
+**Reimplemented by**: [shapeworks::VtkMeshWrapper::SnapToMesh](../Classes/classshapeworks_1_1VtkMeshWrapper.md#function-snaptomesh)
 
 
 ### function InvalidateParticle
@@ -203,7 +200,7 @@ virtual bool IsGeodesicsEnabled() const =0
 ```
 
 
-**Reimplemented by**: [shapeworks::TriMeshWrapper::IsGeodesicsEnabled](../Classes/classshapeworks_1_1TriMeshWrapper.md#function-isgeodesicsenabled), [shapeworks::VtkMeshWrapper::IsGeodesicsEnabled](../Classes/classshapeworks_1_1VtkMeshWrapper.md#function-isgeodesicsenabled)
+**Reimplemented by**: [shapeworks::VtkMeshWrapper::IsGeodesicsEnabled](../Classes/classshapeworks_1_1VtkMeshWrapper.md#function-isgeodesicsenabled)
 
 
 ### function GetPolydata
@@ -213,9 +210,9 @@ virtual vtkSmartPointer< vtkPolyData > GetPolydata() const =0
 ```
 
 
-**Reimplemented by**: [shapeworks::TriMeshWrapper::GetPolydata](../Classes/classshapeworks_1_1TriMeshWrapper.md#function-getpolydata), [shapeworks::VtkMeshWrapper::GetPolydata](../Classes/classshapeworks_1_1VtkMeshWrapper.md#function-getpolydata)
+**Reimplemented by**: [shapeworks::VtkMeshWrapper::GetPolydata](../Classes/classshapeworks_1_1VtkMeshWrapper.md#function-getpolydata)
 
 
 -------------------------------
 
-Updated on 2023-03-27 at 17:59:06 +0000
+Updated on 2023-04-03 at 19:48:10 +0000

@@ -1,9 +1,9 @@
 ---
-title: Libs/Optimize/MeshWrapper.h
+title: Libs/Optimize/Domain/MeshWrapper.h
 
 ---
 
-# Libs/Optimize/MeshWrapper.h
+# Libs/Optimize/Domain/MeshWrapper.h
 
 
 
@@ -29,8 +29,8 @@ title: Libs/Optimize/MeshWrapper.h
 
 #include <vnl/vnl_vector_fixed.h>
 
-#include "ParticleDomain.h"
-#include "DomainType.h"
+#include "Libs/Optimize/Domain/DomainType.h"
+#include "Libs/Optimize/Domain/ParticleDomain.h"
 
 namespace shapeworks
 {
@@ -81,4 +81,4 @@ public:
 
 -------------------------------
 
-Updated on 2023-03-27 at 17:59:08 +0000
+Updated on 2023-04-03 at 19:48:11 +0000

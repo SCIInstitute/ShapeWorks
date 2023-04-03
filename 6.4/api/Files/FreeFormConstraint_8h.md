@@ -1,9 +1,9 @@
 ---
-title: Libs/Optimize/FreeFormConstraint.h
+title: Libs/Optimize/Constraints/FreeFormConstraint.h
 
 ---
 
-# Libs/Optimize/FreeFormConstraint.h
+# Libs/Optimize/Constraints/FreeFormConstraint.h
 
 
 
@@ -27,9 +27,8 @@ title: Libs/Optimize/FreeFormConstraint.h
 ```cpp
 #pragma once
 
-#include <Mesh/Mesh.h>
-
 #include "Constraint.h"
+#include "Libs/Mesh/Mesh.h"
 
 class vtkFloatArray;
 
@@ -113,4 +112,4 @@ class FreeFormConstraint : public Constraint {
 
 -------------------------------
 
-Updated on 2023-03-27 at 17:59:08 +0000
+Updated on 2023-04-03 at 19:48:11 +0000
