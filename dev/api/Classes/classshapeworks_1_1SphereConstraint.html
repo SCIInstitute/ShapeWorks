@@ -2385,7 +2385,7 @@
 </tr>
 <tr>
 <td>Eigen::Vector3d</td>
-<td><strong><a href="classshapeworks_1_1SphereConstraint.html#function-lagragiangradient">lagragianGradient</a></strong>(const Eigen::Vector3d &amp; pt, const Eigen::Vector3d &amp; updpt, double C) const</td>
+<td><strong><a href="classshapeworks_1_1SphereConstraint.html#function-lagragiangradient">lagragianGradient</a></strong>(const Eigen::Vector3d &amp; pt, const Eigen::Vector3d &amp; updpt, double C, size_t index) const</td>
 </tr>
 </tbody>
 </table>
@@ -2409,11 +2409,11 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Constraint.html#function-setmu">setMu</a></strong>(double inmu)</td>
+<td><strong><a href="classshapeworks_1_1Constraint.html#function-setmus">setMus</a></strong>(std::vector&lt; double &gt; inmu)</td>
 </tr>
 <tr>
-<td>double</td>
-<td><strong><a href="classshapeworks_1_1Constraint.html#function-getmu">getMu</a></strong>()</td>
+<td>std::vector&lt; double &gt;</td>
+<td><strong><a href="classshapeworks_1_1Constraint.html#function-getmus">getMus</a></strong>()</td>
 </tr>
 <tr>
 <td>void</td>
@@ -2429,7 +2429,7 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Constraint.html#function-updatemu">updateMu</a></strong>(const Eigen::Vector3d &amp; pt, double C)</td>
+<td><strong><a href="classshapeworks_1_1Constraint.html#function-updatemu">updateMu</a></strong>(const Eigen::Vector3d &amp; pt, double C, size_t index)</td>
 </tr>
 </tbody>
 </table>
@@ -2458,8 +2458,8 @@
 </thead>
 <tbody>
 <tr>
-<td>double</td>
-<td><strong><a href="classshapeworks_1_1Constraint.html#variable-mu-">mu_</a></strong></td>
+<td>std::vector&lt; double &gt;</td>
+<td><strong><a href="classshapeworks_1_1Constraint.html#variable-mus-">mus_</a></strong></td>
 </tr>
 <tr>
 <td>double</td>
@@ -2526,11 +2526,12 @@
 <div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">lagragianGradient</span><span class="p">(</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pt</span><span class="p">,</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">updpt</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">C</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">C</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">index</span>
 <span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-04-03 at 19:48:11 +0000</p>
+<p>Updated on 2023-04-05 at 02:08:59 +0000</p>
 
               
             </article>

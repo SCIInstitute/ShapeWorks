@@ -2550,11 +2550,11 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Constraint.html#function-setmu">setMu</a></strong>(double inmu)</td>
+<td><strong><a href="classshapeworks_1_1Constraint.html#function-setmus">setMus</a></strong>(std::vector&lt; double &gt; inmu)</td>
 </tr>
 <tr>
-<td>double</td>
-<td><strong><a href="classshapeworks_1_1Constraint.html#function-getmu">getMu</a></strong>()</td>
+<td>std::vector&lt; double &gt;</td>
+<td><strong><a href="classshapeworks_1_1Constraint.html#function-getmus">getMus</a></strong>()</td>
 </tr>
 <tr>
 <td>void</td>
@@ -2570,11 +2570,11 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Constraint.html#function-updatemu">updateMu</a></strong>(const Eigen::Vector3d &amp; pt, double C)</td>
+<td><strong><a href="classshapeworks_1_1Constraint.html#function-updatemu">updateMu</a></strong>(const Eigen::Vector3d &amp; pt, double C, size_t index)</td>
 </tr>
 <tr>
 <td>Eigen::Vector3d</td>
-<td><strong><a href="classshapeworks_1_1Constraint.html#function-lagragiangradient">lagragianGradient</a></strong>(const Eigen::Vector3d &amp; pt, double C) const</td>
+<td><strong><a href="classshapeworks_1_1Constraint.html#function-lagragiangradient">lagragianGradient</a></strong>(const Eigen::Vector3d &amp; pt, double C, size_t index) const</td>
 </tr>
 </tbody>
 </table>
@@ -2603,8 +2603,8 @@
 </thead>
 <tbody>
 <tr>
-<td>double</td>
-<td><strong><a href="classshapeworks_1_1Constraint.html#variable-mu-">mu_</a></strong></td>
+<td>std::vector&lt; double &gt;</td>
+<td><strong><a href="classshapeworks_1_1Constraint.html#variable-mus-">mus_</a></strong></td>
 </tr>
 <tr>
 <td>double</td>
@@ -2737,7 +2737,7 @@
 </code></pre></div>
 <p>Convert legacy FFC to new format. </p>
 <hr />
-<p>Updated on 2023-04-03 at 19:48:10 +0000</p>
+<p>Updated on 2023-04-05 at 02:08:58 +0000</p>
 
               
             </article>

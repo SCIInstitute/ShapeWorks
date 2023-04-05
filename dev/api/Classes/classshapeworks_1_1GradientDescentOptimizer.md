@@ -36,7 +36,7 @@ Inherits from itk::Object
 | | **[itkStaticConstMacro](../Classes/classshapeworks_1_1GradientDescentOptimizer.md#function-itkstaticconstmacro)**(Dimension , unsigned int , VDimension ) |
 | void | **[StartOptimization](../Classes/classshapeworks_1_1GradientDescentOptimizer.md#function-startoptimization)**() |
 | void | **[StartAdaptiveGaussSeidelOptimization](../Classes/classshapeworks_1_1GradientDescentOptimizer.md#function-startadaptivegaussseideloptimization)**() |
-| void | **[AugmentedLagrangianConstraints](../Classes/classshapeworks_1_1GradientDescentOptimizer.md#function-augmentedlagrangianconstraints)**([VectorType](../Classes/classshapeworks_1_1GradientDescentOptimizer.md#typedef-vectortype) & gradient, const [PointType](../Classes/classshapeworks_1_1GradientDescentOptimizer.md#typedef-pointtype) & pt, const size_t & dom, const double & maximumUpdateAllowed) |
+| void | **[AugmentedLagrangianConstraints](../Classes/classshapeworks_1_1GradientDescentOptimizer.md#function-augmentedlagrangianconstraints)**([VectorType](../Classes/classshapeworks_1_1GradientDescentOptimizer.md#typedef-vectortype) & gradient, const [PointType](../Classes/classshapeworks_1_1GradientDescentOptimizer.md#typedef-pointtype) & pt, const size_t & dom, const double & maximumUpdateAllowed, size_t index) |
 | void | **[StopOptimization](../Classes/classshapeworks_1_1GradientDescentOptimizer.md#function-stopoptimization)**() |
 | void | **[AbortProcessing](../Classes/classshapeworks_1_1GradientDescentOptimizer.md#function-abortprocessing)**() |
 | | **[itkGetMacro](../Classes/classshapeworks_1_1GradientDescentOptimizer.md#function-itkgetmacro)**(NumberOfIterations , unsigned int ) |
@@ -235,7 +235,8 @@ void AugmentedLagrangianConstraints(
     VectorType & gradient,
     const PointType & pt,
     const size_t & dom,
-    const double & maximumUpdateAllowed
+    const double & maximumUpdateAllowed,
+    size_t index
 )
 ```
 
@@ -496,4 +497,4 @@ static constexpr static unsigned int VDimension = 3;
 
 -------------------------------
 
-Updated on 2023-04-03 at 19:48:10 +0000
+Updated on 2023-04-05 at 02:08:58 +0000

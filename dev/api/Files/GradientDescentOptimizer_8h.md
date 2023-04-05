@@ -71,7 +71,7 @@ class GradientDescentOptimizer : public itk::Object {
   void StartAdaptiveGaussSeidelOptimization();
 
   void AugmentedLagrangianConstraints(VectorType& gradient, const PointType& pt, const size_t& dom,
-                                      const double& maximumUpdateAllowed);
+                                      const double& maximumUpdateAllowed, size_t index);
 
   inline void StopOptimization() { this->m_StopOptimization = true; }
 
@@ -141,4 +141,4 @@ class GradientDescentOptimizer : public itk::Object {
 
 -------------------------------
 
-Updated on 2023-04-03 at 19:48:11 +0000
+Updated on 2023-04-05 at 02:08:59 +0000

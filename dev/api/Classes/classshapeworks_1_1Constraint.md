@@ -20,15 +20,15 @@ Inherited by [shapeworks::FreeFormConstraint](../Classes/classshapeworks_1_1Free
 | virtual void | **[print](../Classes/classshapeworks_1_1Constraint.md#function-print)**() const =0 |
 | void | **[setZ](../Classes/classshapeworks_1_1Constraint.md#function-setz)**(double inz) |
 | double | **[getZ](../Classes/classshapeworks_1_1Constraint.md#function-getz)**() |
-| void | **[setMu](../Classes/classshapeworks_1_1Constraint.md#function-setmu)**(double inmu) |
-| double | **[getMu](../Classes/classshapeworks_1_1Constraint.md#function-getmu)**() |
+| void | **[setMus](../Classes/classshapeworks_1_1Constraint.md#function-setmus)**(std::vector< double > inmu) |
+| std::vector< double > | **[getMus](../Classes/classshapeworks_1_1Constraint.md#function-getmus)**() |
 | void | **[setLambda](../Classes/classshapeworks_1_1Constraint.md#function-setlambda)**(double inLambda) |
 | double | **[getLambda](../Classes/classshapeworks_1_1Constraint.md#function-getlambda)**() |
 | virtual Eigen::Vector3d | **[constraintGradient](../Classes/classshapeworks_1_1Constraint.md#function-constraintgradient)**(const Eigen::Vector3d & pt) const =0 |
 | virtual double | **[constraintEval](../Classes/classshapeworks_1_1Constraint.md#function-constrainteval)**(const Eigen::Vector3d & pt) const =0 |
 | void | **[updateZ](../Classes/classshapeworks_1_1Constraint.md#function-updatez)**(const Eigen::Vector3d & pt, double C) |
-| void | **[updateMu](../Classes/classshapeworks_1_1Constraint.md#function-updatemu)**(const Eigen::Vector3d & pt, double C) |
-| Eigen::Vector3d | **[lagragianGradient](../Classes/classshapeworks_1_1Constraint.md#function-lagragiangradient)**(const Eigen::Vector3d & pt, double C) const |
+| void | **[updateMu](../Classes/classshapeworks_1_1Constraint.md#function-updatemu)**(const Eigen::Vector3d & pt, double C, size_t index) |
+| Eigen::Vector3d | **[lagragianGradient](../Classes/classshapeworks_1_1Constraint.md#function-lagragiangradient)**(const Eigen::Vector3d & pt, double C, size_t index) const |
 
 ## Protected Functions
 
@@ -40,7 +40,7 @@ Inherited by [shapeworks::FreeFormConstraint](../Classes/classshapeworks_1_1Free
 
 |                | Name           |
 | -------------- | -------------- |
-| double | **[mu_](../Classes/classshapeworks_1_1Constraint.md#variable-mu-)**  |
+| std::vector< double > | **[mus_](../Classes/classshapeworks_1_1Constraint.md#variable-mus-)**  |
 | double | **[z_](../Classes/classshapeworks_1_1Constraint.md#variable-z-)**  |
 | double | **[lambda_](../Classes/classshapeworks_1_1Constraint.md#variable-lambda-)**  |
 
@@ -93,19 +93,19 @@ inline double getZ()
 ```
 
 
-### function setMu
+### function setMus
 
 ```cpp
-inline void setMu(
-    double inmu
+inline void setMus(
+    std::vector< double > inmu
 )
 ```
 
 
-### function getMu
+### function getMus
 
 ```cpp
-inline double getMu()
+inline std::vector< double > getMus()
 ```
 
 
@@ -164,7 +164,8 @@ void updateZ(
 ```cpp
 void updateMu(
     const Eigen::Vector3d & pt,
-    double C
+    double C,
+    size_t index
 )
 ```
 
@@ -174,7 +175,8 @@ void updateMu(
 ```cpp
 Eigen::Vector3d lagragianGradient(
     const Eigen::Vector3d & pt,
-    double C
+    double C,
+    size_t index
 ) const
 ```
 
@@ -192,10 +194,10 @@ inline int sgn(
 
 ## Protected Attributes Documentation
 
-### variable mu_
+### variable mus_
 
 ```cpp
-double mu_;
+std::vector< double > mus_;
 ```
 
 
@@ -215,4 +217,4 @@ double lambda_;
 
 -------------------------------
 
-Updated on 2023-04-03 at 19:48:10 +0000
+Updated on 2023-04-05 at 02:08:58 +0000

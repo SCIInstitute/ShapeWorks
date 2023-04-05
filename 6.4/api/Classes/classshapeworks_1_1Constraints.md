@@ -39,13 +39,13 @@ title: shapeworks::Constraints
 | bool | **[isAnyViolated](../Classes/classshapeworks_1_1Constraints.md#function-isanyviolated)**(const Point3 & pos) |
 | std::vector< int > | **[planesViolated](../Classes/classshapeworks_1_1Constraints.md#function-planesviolated)**(Eigen::Vector3d pt) |
 | void | **[printAll](../Classes/classshapeworks_1_1Constraints.md#function-printall)**() |
-| std::string | **[violationReport](../Classes/classshapeworks_1_1Constraints.md#function-violationreport)**(const Point3 & pos) |
+| std::string | **[violationReport](../Classes/classshapeworks_1_1Constraints.md#function-violationreport)**(const Point3 & pos, size_t index) |
 | std::vector< std::vector< double > > | **[violationReportData](../Classes/classshapeworks_1_1Constraints.md#function-violationreportdata)**(const Point3 & pos) |
 | vnl_vector_fixed< double, 3 > | **[constraintsGradient](../Classes/classshapeworks_1_1Constraints.md#function-constraintsgradient)**(const Point3 & pos) const |
-| vnl_vector_fixed< double, 3 > | **[constraintsLagrangianGradient](../Classes/classshapeworks_1_1Constraints.md#function-constraintslagrangiangradient)**(const Point3 & pos, const Point3 & prepos, double C) |
-| void | **[InitializeLagrangianParameters](../Classes/classshapeworks_1_1Constraints.md#function-initializelagrangianparameters)**(double lambda, double mu, double z) |
+| vnl_vector_fixed< double, 3 > | **[constraintsLagrangianGradient](../Classes/classshapeworks_1_1Constraints.md#function-constraintslagrangiangradient)**(const Point3 & pos, const Point3 & prepos, double C, size_t index) |
+| void | **[InitializeLagrangianParameters](../Classes/classshapeworks_1_1Constraints.md#function-initializelagrangianparameters)**(double lambda, std::vector< double > mus) |
 | void | **[UpdateZs](../Classes/classshapeworks_1_1Constraints.md#function-updatezs)**(const Point3 & pos, double C) |
-| void | **[UpdateMus](../Classes/classshapeworks_1_1Constraints.md#function-updatemus)**(const Point3 & pos, double C) |
+| void | **[UpdateMus](../Classes/classshapeworks_1_1Constraints.md#function-updatemus)**(const Point3 & pos, double C, size_t index) |
 | bool | **[GetActive](../Classes/classshapeworks_1_1Constraints.md#function-getactive)**() |
 | void | **[SetActive](../Classes/classshapeworks_1_1Constraints.md#function-setactive)**(bool ac) |
 | void | **[read](../Classes/classshapeworks_1_1Constraints.md#function-read)**(std::string filename) |
@@ -241,7 +241,8 @@ void printAll()
 
 ```cpp
 std::string violationReport(
-    const Point3 & pos
+    const Point3 & pos,
+    size_t index
 )
 ```
 
@@ -270,7 +271,8 @@ vnl_vector_fixed< double, 3 > constraintsGradient(
 vnl_vector_fixed< double, 3 > constraintsLagrangianGradient(
     const Point3 & pos,
     const Point3 & prepos,
-    double C
+    double C,
+    size_t index
 )
 ```
 
@@ -280,8 +282,7 @@ vnl_vector_fixed< double, 3 > constraintsLagrangianGradient(
 ```cpp
 void InitializeLagrangianParameters(
     double lambda,
-    double mu,
-    double z
+    std::vector< double > mus
 )
 ```
 
@@ -301,7 +302,8 @@ void UpdateZs(
 ```cpp
 void UpdateMus(
     const Point3 & pos,
-    double C
+    double C,
+    size_t index
 )
 ```
 
@@ -365,4 +367,4 @@ void clipMesh(
 
 -------------------------------
 
-Updated on 2023-04-03 at 19:48:10 +0000
+Updated on 2023-04-05 at 02:08:58 +0000

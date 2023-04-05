@@ -59,7 +59,7 @@ class SphereConstraint : public Constraint {
 
   double constraintEvalSphere(const Eigen::Vector3d &pt, const Eigen::Vector3d &updpt) const;
 
-  Eigen::Vector3d lagragianGradient(const Eigen::Vector3d &pt, const Eigen::Vector3d &updpt, double C) const;
+  Eigen::Vector3d lagragianGradient(const Eigen::Vector3d &pt, const Eigen::Vector3d &updpt, double C, size_t index) const;
 
  private:
   double radius_;
@@ -72,4 +72,4 @@ class SphereConstraint : public Constraint {
 
 -------------------------------
 
-Updated on 2023-04-03 at 19:48:11 +0000
+Updated on 2023-04-05 at 02:08:59 +0000

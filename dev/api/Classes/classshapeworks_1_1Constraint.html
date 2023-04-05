@@ -2275,15 +2275,15 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-setmu" class="md-nav__link">
-    function setMu
+  <a href="#function-setmus" class="md-nav__link">
+    function setMus
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-getmu" class="md-nav__link">
-    function getMu
+  <a href="#function-getmus" class="md-nav__link">
+    function getMus
   </a>
   
 </li>
@@ -2371,8 +2371,8 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#variable-mu_" class="md-nav__link">
-    variable mu_
+  <a href="#variable-mus_" class="md-nav__link">
+    variable mus_
   </a>
   
 </li>
@@ -2447,11 +2447,11 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Constraint.html#function-setmu">setMu</a></strong>(double inmu)</td>
+<td><strong><a href="classshapeworks_1_1Constraint.html#function-setmus">setMus</a></strong>(std::vector&lt; double &gt; inmu)</td>
 </tr>
 <tr>
-<td>double</td>
-<td><strong><a href="classshapeworks_1_1Constraint.html#function-getmu">getMu</a></strong>()</td>
+<td>std::vector&lt; double &gt;</td>
+<td><strong><a href="classshapeworks_1_1Constraint.html#function-getmus">getMus</a></strong>()</td>
 </tr>
 <tr>
 <td>void</td>
@@ -2475,11 +2475,11 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Constraint.html#function-updatemu">updateMu</a></strong>(const Eigen::Vector3d &amp; pt, double C)</td>
+<td><strong><a href="classshapeworks_1_1Constraint.html#function-updatemu">updateMu</a></strong>(const Eigen::Vector3d &amp; pt, double C, size_t index)</td>
 </tr>
 <tr>
 <td>Eigen::Vector3d</td>
-<td><strong><a href="classshapeworks_1_1Constraint.html#function-lagragiangradient">lagragianGradient</a></strong>(const Eigen::Vector3d &amp; pt, double C) const</td>
+<td><strong><a href="classshapeworks_1_1Constraint.html#function-lagragiangradient">lagragianGradient</a></strong>(const Eigen::Vector3d &amp; pt, double C, size_t index) const</td>
 </tr>
 </tbody>
 </table>
@@ -2508,8 +2508,8 @@
 </thead>
 <tbody>
 <tr>
-<td>double</td>
-<td><strong><a href="classshapeworks_1_1Constraint.html#variable-mu-">mu_</a></strong></td>
+<td>std::vector&lt; double &gt;</td>
+<td><strong><a href="classshapeworks_1_1Constraint.html#variable-mus-">mus_</a></strong></td>
 </tr>
 <tr>
 <td>double</td>
@@ -2545,13 +2545,13 @@
 <h3 id="function-getz">function getZ</h3>
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">getZ</span><span class="p">()</span>
 </code></pre></div>
-<h3 id="function-setmu">function setMu</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">setMu</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">inmu</span>
+<h3 id="function-setmus">function setMus</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">setMus</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">inmu</span>
 <span class="p">)</span>
 </code></pre></div>
-<h3 id="function-getmu">function getMu</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">getMu</span><span class="p">()</span>
+<h3 id="function-getmus">function getMus</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">getMus</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-setlambda">function setLambda</h3>
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">setLambda</span><span class="p">(</span>
@@ -2582,13 +2582,15 @@
 <h3 id="function-updatemu">function updateMu</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">updateMu</span><span class="p">(</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pt</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">C</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">C</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">index</span>
 <span class="p">)</span>
 </code></pre></div>
 <h3 id="function-lagragiangradient">function lagragianGradient</h3>
 <div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">lagragianGradient</span><span class="p">(</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pt</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">C</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">C</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">index</span>
 <span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h2 id="protected-functions-documentation">Protected Functions Documentation</h2>
@@ -2598,8 +2600,8 @@
 <span class="p">)</span>
 </code></pre></div>
 <h2 id="protected-attributes-documentation">Protected Attributes Documentation</h2>
-<h3 id="variable-mu_">variable mu_</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">mu_</span><span class="p">;</span>
+<h3 id="variable-mus_">variable mus_</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">mus_</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="variable-z_">variable z_</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">z_</span><span class="p">;</span>
@@ -2608,7 +2610,7 @@
 <div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">lambda_</span><span class="p">;</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-04-03 at 19:48:10 +0000</p>
+<p>Updated on 2023-04-05 at 02:08:58 +0000</p>
 
               
             </article>
