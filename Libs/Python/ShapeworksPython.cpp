@@ -901,6 +901,7 @@ PYBIND11_MODULE(shapeworks_py, m)
   py::enum_<Mesh::DistanceMethod>(mesh, "DistanceMethod")
   .value("PointToPoint", Mesh::DistanceMethod::PointToPoint)
   .value("PointToCell", Mesh::DistanceMethod::PointToCell)
+  .value("SymmetricPointToCell", Mesh::DistanceMethod::SymmetricPointToCell)
   .export_values();
   ;
 
