@@ -714,7 +714,9 @@ void Viewer::display_shape(std::shared_ptr<Shape> shape) {
         }
 
         Mesh m2(compare_poly_data);
-        auto field = m.distance(m2)[0];
+        auto field = m.distance(m2, Mesh::DistanceMethod::SymmetricPointToCell)[0];
+        // TODO: disable debug
+        std::cout << "Debug Mode | Computing distance with SymmetricPointToCell method in Studio Viewer " << std::endl;
         m.setField("distance", field, Mesh::Point);
       }
 
