@@ -145,7 +145,7 @@ void GradientDescentOptimizer::StartAdaptiveGaussSeidelOptimization() {
                   // Step B Constrain the gradient so that the resulting position will not violate any domain
                   // constraints
                   if (m_ParticleSystem->GetDomain(dom)->GetConstraints()->GetActive()) {
-                    AugmentedLagrangianConstraints(gradient, pt, dom, maximumUpdateAllowed);
+                    AugmentedLagrangianConstraints(gradient, pt, dom, maximumUpdateAllowed, k);
                   }
 
                   gradmag = gradient.magnitude();
@@ -229,7 +229,7 @@ void GradientDescentOptimizer::StartAdaptiveGaussSeidelOptimization() {
 }
 
 void GradientDescentOptimizer::AugmentedLagrangianConstraints(VectorType& gradient, const PointType& pt,
-                                                              const size_t& dom, const double& maximumUpdateAllowed) {
+                                                              const size_t& dom, const double& maximumUpdateAllowed, size_t index) {
   // Step B 2: Augmented lagrangian constraint method
   double gradmag = gradient.magnitude();
 
@@ -247,7 +247,7 @@ void GradientDescentOptimizer::AugmentedLagrangianConstraints(VectorType& gradie
   double multiplier = 2;
   m_ParticleSystem->GetDomain(dom)->GetConstraints()->UpdateZs(upd_pt, c);
   VectorType constraint_energy =
-      m_ParticleSystem->GetDomain(dom)->GetConstraints()->constraintsLagrangianGradient(upd_pt, pt, c);
+      m_ParticleSystem->GetDomain(dom)->GetConstraints()->constraintsLagrangianGradient(upd_pt, pt, c, index);
   if (constraint_energy.magnitude() > multiplier * gradmag) {
     constraint_energy *= multiplier * gradmag / constraint_energy.magnitude();
   }
@@ -255,7 +255,7 @@ void GradientDescentOptimizer::AugmentedLagrangianConstraints(VectorType& gradie
   for (size_t n = 0; n < VDimension; n++) {
     gradient[n] += constraint_energy[n];
   }
-  m_ParticleSystem->GetDomain(dom)->GetConstraints()->UpdateMus(upd_pt, c);
+  m_ParticleSystem->GetDomain(dom)->GetConstraints()->UpdateMus(upd_pt, c, index);
 }
 
 }  // namespace shapeworks

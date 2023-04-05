@@ -57,7 +57,7 @@ class Constraints {
 
   void printAll();
 
-  std::string violationReport(const Point3 &pos);
+  std::string violationReport(const Point3 &pos, size_t index);
 
   std::vector<std::vector<double>> violationReportData(const Point3 &pos);
 
@@ -68,14 +68,14 @@ class Constraints {
   vnl_vector_fixed<double, 3> constraintsGradient(const Point3 &pos) const;
 
   // Lagragian gradient computation
-  vnl_vector_fixed<double, 3> constraintsLagrangianGradient(const Point3 &pos, const Point3 &prepos, double C);
+  vnl_vector_fixed<double, 3> constraintsLagrangianGradient(const Point3 &pos, const Point3 &prepos, double C, size_t index);
 
   // Parameters lambda, mu and z initialization
-  void InitializeLagrangianParameters(double lambda, double mu, double z);
+  void InitializeLagrangianParameters(double lambda, std::vector<double> mus);
 
   void UpdateZs(const Point3 &pos, double C);
 
-  void UpdateMus(const Point3 &pos, double C);
+  void UpdateMus(const Point3 &pos, double C, size_t index);
 
   bool GetActive() { return active_; }
   void SetActive(bool ac) { active_ = ac; }

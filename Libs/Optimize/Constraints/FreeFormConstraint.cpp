@@ -262,7 +262,7 @@ void FreeFormConstraint::computeGradientFields(std::shared_ptr<Mesh> mesh) {
   mesh->setField("value", values, Mesh::Point);
 
   mesh->getVTKMesh()->GetPointData()->SetActiveScalars("value");
-  std::vector<Eigen::Matrix3d> face_grad = setGradientFieldForFFCs(mesh, absvalues, V, F);
+  std::vector<Eigen::Matrix3d> face_grad = setGradientFieldForFFCs(mesh, values, V, F);
 }
 
 //-----------------------------------------------------------------------------

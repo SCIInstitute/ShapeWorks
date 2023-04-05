@@ -1,4 +1,5 @@
 #include "Constraint.h"
+#include <iostream>
 namespace shapeworks {
 
 void Constraint::updateZ(const Eigen::Vector3d &pt, double C) {
@@ -53,17 +54,18 @@ void Constraint::updateZ(const Eigen::Vector3d &pt, double C) {
   // std::cout << "z: " << z << std::endl;
 }
 
-void Constraint::updateMu(const Eigen::Vector3d &pt, double C) {
-  double eval = mu_ + C * constraintEval(pt);
-  if (eval < 0) {
-    mu_ = 0;
+void Constraint::updateMu(const Eigen::Vector3d &pt, double C, size_t index) {
+  double eval = -constraintEval(pt);
+  double maxterm = mus_[index] + C * eval;
+  if (maxterm > 0) {
+    mus_[index] = 0;
   } else {
-    mu_ = eval;
+    mus_[index] = 0;//maxterm; // Uncomment to activate augmented lagrangian implementation.
   }
   // std::cout << "mu: " << mu << std::endl;
 }
 
-Eigen::Vector3d Constraint::lagragianGradient(const Eigen::Vector3d &pt, double C) const {
+Eigen::Vector3d Constraint::lagragianGradient(const Eigen::Vector3d &pt, double C, size_t index) const {
   // Augmented lagrangian inequality equation: f(x) = mu*(g(x)+z^2) + C/2|g(x)+z^2|^2
   // f'(x) = mu*g'(x) + C*y' where by substitution
   // y = √(u^2) where by substitution
@@ -85,12 +87,13 @@ Eigen::Vector3d Constraint::lagragianGradient(const Eigen::Vector3d &pt, double 
   return first_term+second_term;
   */
   Eigen::Vector3d constraint_grad = constraintGradient(pt);
-  double eval = constraintEval(pt);
-  double maxterm = mu_ + C * eval;
-  if (maxterm < 0) {
+  double eval = -constraintEval(pt);
+  double maxterm = mus_[index] + C * eval;
+  //if(eval < 0) std::cout << "i " << index << " pt " << pt.transpose() << " mu " << mus_[index] << " eval " << eval << std::endl; // If eval > 0, not violated
+  if (maxterm > 0) {
     return Eigen::Vector3d(0, 0, 0);
   } else {
-    return maxterm * constraint_grad;
+    return -maxterm * constraint_grad;
   }
 }
 
