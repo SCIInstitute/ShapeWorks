@@ -13,6 +13,14 @@ Values displayed:
 
 `Eigenvalue` - This shows the eigenvalue of the currently selected mode.  This is a unitless measure of how much variance is explained by this mode.  The modes are sorted in decreasing order of eigenvalue, corresponding to the most variance explained first.
 
+## Group Difference
+
+The Group Difference mode allows for group comparison to quantify and visualize population-level differences. Each `group_<value>` column from the project can be selected and the differences between any two values (i.e., group identifiers) in the groups can be displayed by selecting the group values in the left and right dropdown boxes. A group difference display showing vectors and a colormap of distance can be shown using the "Diff -->" button.
+
+The animate option allows for an automatic adjustment of the slider to display real-time changes between the group pairing selected. Upon selecting the animate option, the comparison vectors and colormap for each shape in the group comparison will be calculated. This will only occur the first time that the option is selected for a given group value pairing.
+
+![Group Difference tab](../img/cloud/group_difference_tab.png){: width="400"}
+
 ## Charts
 
 The analysis charts provide visualizations of the shape evaulation data. For more information about shape evaluation, see [Shape Model Evaluation](../new/ssm-eval.md). You can zoom into a chart with the mouse scroll wheel and click and drag to pan.
