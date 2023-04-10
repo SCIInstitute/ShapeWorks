@@ -105,9 +105,6 @@ void MeshWarper::add_particle_vertices(Eigen::MatrixXd& vertices) {
   bool not_all_done = true;
   float count = 0;
 
-  std::cerr << "At start of add_particle_vertices:";
-  Mesh(reference_mesh_).detectTriangular();
-
   if (!Mesh(reference_mesh_).detectTriangular()) {
     throw std::runtime_error("Mesh is not fully triangular");
   }
@@ -115,11 +112,7 @@ void MeshWarper::add_particle_vertices(Eigen::MatrixXd& vertices) {
   // Iteratively process the mesh: Find all new vertices that can be added without conflicting
   // with each other.  If multiple particles (new vertices) land on the same triangle, the we will need
   // multiple passes since we will have to make the changes and rebuild the locator.
-  int phase = 0;
   while (not_all_done) {
-
-    std::cerr << "phase " << phase++ << ": ";
-    Mesh(reference_mesh_).detectTriangular();
 
     not_all_done = false;
 
@@ -390,8 +383,6 @@ vtkSmartPointer<vtkPolyData> MeshWarper::prep_mesh(vtkSmartPointer<vtkPolyData> 
   auto recreate = MeshWarper::recreate_mesh(fixed.getVTKMesh());
 
   return MeshWarper::clean_mesh(recreate);
-
-  // return fixed.getVTKMesh();
 }
 
 //---------------------------------------------------------------------------
@@ -443,19 +434,7 @@ bool MeshWarper::generate_warp() {
     this->needs_warp_ = false;
     return true;
   }
-  // clean mesh
-  // Mesh(incoming_reference_mesh_).write("/tmp/incoming_reference.stl");
-  // Mesh(incoming_reference_mesh_).write("/tmp/incoming_reference.vtk");
-  std::cerr << "Before prep:\n";
-  Mesh(incoming_reference_mesh_).detectNonManifold();
-  Mesh(incoming_reference_mesh_).detectTriangular();
   this->reference_mesh_ = MeshWarper::prep_mesh(this->incoming_reference_mesh_);
-  // Mesh(reference_mesh_).write("/tmp/incoming_reference_after_clean.stl");
-  // Mesh(reference_mesh_).write("/tmp/incoming_reference_after_clean.vtk");
-
-  std::cerr << "After prep:\n";
-  Mesh(reference_mesh_).detectNonManifold();
-  Mesh(reference_mesh_).detectTriangular();
 
   // prep points
   this->vertices_ = this->reference_particles_;
@@ -474,15 +453,6 @@ bool MeshWarper::generate_warp() {
   Mesh referenceMesh(reference_mesh_);
   Eigen::MatrixXd vertices = referenceMesh.points();
   this->faces_ = referenceMesh.faces();
-
-  // generate the warp
-  std::cerr << "After add:\n";
-  Mesh(reference_mesh_).detectNonManifold();
-  Mesh(reference_mesh_).detectTriangular();
-
-  // Mesh(incoming_reference_mesh_).write("/tmp/incoming.vtk");
-  //Mesh(reference_mesh_).write("/tmp/input_to_igl.vtk");
-  //Mesh(reference_mesh_).write("/tmp/input_to_igl.stl");
 
   // perform warp
   if (!MeshWarper::generate_warp_matrix(vertices, this->faces_, this->vertices_, this->warp_)) {

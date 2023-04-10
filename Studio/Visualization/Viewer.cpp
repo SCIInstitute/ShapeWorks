@@ -660,7 +660,6 @@ void Viewer::display_shape(std::shared_ptr<Shape> shape) {
 
       auto poly_data = mesh->get_poly_data();
 
-      vtkSmartPointer<vtkPolyData> poly_data = mesh->get_poly_data();
       if (!poly_data) {
         continue;
       }

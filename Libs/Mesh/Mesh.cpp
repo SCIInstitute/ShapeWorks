@@ -7,7 +7,6 @@
 #include <string>
 #include <vector>
 
-
 // libigl
 #include <igl/cotmatrix.h>
 #include <igl/exact_geodesic.h>
@@ -18,6 +17,7 @@
 #include <igl/principal_curvature.h>
 
 // vtk
+#include <Optimize/VtkMeshWrapper.h>
 #include <vtkAppendPolyData.h>
 #include <vtkButterflySubdivisionFilter.h>
 #include <vtkCellData.h>
@@ -62,7 +62,7 @@
 
 #include "FEFixMesh.h"
 #include "Image.h"
-#include <Optimize/VtkMeshWrapper.h>
+#include "Logging.h"
 #include "MeshUtils.h"
 #include "PreviewMeshQC/FEAreaCoverage.h"
 #include "PreviewMeshQC/FEVTKExport.h"
@@ -311,13 +311,13 @@ Mesh& Mesh::smoothSinc(int iterations, double passband) {
 Mesh& Mesh::remesh(int numVertices, double adaptivity) {
   // ACVD is very noisy to std::cout, even with console output set to zero
   // setting the failbit on std::cout will silence this until it's cleared below
-//  std::cout.setstate(std::ios_base::failbit);
+  //  std::cout.setstate(std::ios_base::failbit);
   auto surf = vtkSmartPointer<vtkSurface>::New();
   auto remesh = vtkSmartPointer<vtkQIsotropicDiscreteRemeshing>::New();
   surf->CreateFromPolyData(this->poly_data_);
   surf->GetCellData()->Initialize();
   surf->GetPointData()->Initialize();
-  //surf->DisplayMeshProperties();
+  // surf->DisplayMeshProperties();
   int subsamplingThreshold = 10;  // subsampling threshold
 
   numVertices = std::max<int>(numVertices, 1);
@@ -333,7 +333,7 @@ Mesh& Mesh::remesh(int numVertices, double adaptivity) {
   remesh->SetNumberOfClusters(numVertices);
   remesh->Remesh();
   // Restore std::cout
-//  std::cout.clear();
+  //  std::cout.clear();
 
   this->poly_data_ = remesh->GetOutput();
 
@@ -390,23 +390,22 @@ Mesh& Mesh::applyTransform(const MeshTransform transform) {
   return *this;
 }
 
-Mesh& Mesh::rotate(const double angle, const Axis axis){
-  
+Mesh& Mesh::rotate(const double angle, const Axis axis) {
   Vector rotation(makeVector({0, 0, 0}));
   rotation[axis] = 1;
   auto com = center();
 
   MeshTransform transform = MeshTransform::New();
   transform->Translate(com[0], com[1], com[2]);
-  transform->RotateWXYZ(angle,rotation[0], rotation[1], rotation[2]);
+  transform->RotateWXYZ(angle, rotation[0], rotation[1], rotation[2]);
   transform->Translate(-com[0], -com[1], -com[2]);
   return applyTransform(transform);
 }
 
-Mesh& Mesh::fillHoles() {
+Mesh& Mesh::fillHoles(double hole_size) {
   auto filter = vtkSmartPointer<vtkFillHolesFilter>::New();
   filter->SetInputData(this->poly_data_);
-  filter->SetHoleSize(1000.0);
+  filter->SetHoleSize(hole_size);
   filter->Update();
   this->poly_data_ = filter->GetOutput();
 
@@ -422,7 +421,7 @@ Mesh& Mesh::fillHoles() {
   return *this;
 }
 
-Mesh &Mesh::clean() {
+Mesh& Mesh::clean() {
   auto clean = vtkSmartPointer<vtkCleanPolyData>::New();
   clean->ConvertPolysToLinesOff();
   clean->ConvertLinesToPointsOff();
@@ -508,7 +507,7 @@ Mesh& Mesh::fixNonManifold() {
   int count = 0;
 
   while (count < 10) {
-    std::cerr << "attempt to fix non-manifold\n";
+    SW_DEBUG("Checking if mesh is non-manifold");
     auto features = vtkSmartPointer<vtkFeatureEdges>::New();
     features->SetInputData(this->poly_data_);
     features->BoundaryEdgesOff();
@@ -518,12 +517,14 @@ Mesh& Mesh::fixNonManifold() {
     features->Update();
 
     vtkSmartPointer<vtkPolyData> nonmanifold = features->GetOutput();
-    std::cerr << "Number of non-manifold points: " << nonmanifold->GetNumberOfPoints() << "\n";
-    std::cerr << "Number of non-manifold cells: " << nonmanifold->GetNumberOfCells() << "\n";
+    SW_DEBUG("Number of non-manifold points: {}", nonmanifold->GetNumberOfPoints());
+    SW_DEBUG("Number of non-manifold cells: {}", nonmanifold->GetNumberOfCells());
 
     if (nonmanifold->GetNumberOfPoints() == 0 && nonmanifold->GetNumberOfCells() == 0) {
       return *this;
     }
+
+    SW_DEBUG("Attempting to fix non-manifold mesh");
 
     std::vector<int> remove;
     for (int j = 0; j < poly_data_->GetNumberOfPoints(); j++) {
@@ -537,11 +538,13 @@ Mesh& Mesh::fixNonManifold() {
         }
       }
     }
-    std::cerr << "Removing " << remove.size() << " non-manifold vertices\n";
+    SW_DEBUG("Removing {} non-manifold vertices", remove.size());
+
 
     vtkSmartPointer<vtkPolyData> new_poly_data = vtkSmartPointer<vtkPolyData>::New();
     vtkSmartPointer<vtkPoints> vtk_pts = vtkSmartPointer<vtkPoints>::New();
     vtkSmartPointer<vtkCellArray> vtk_triangles = vtkSmartPointer<vtkCellArray>::New();
+    double max_area = 0;
     for (int i = 0; i < poly_data_->GetNumberOfCells(); i++) {
       vtkSmartPointer<vtkIdList> list = vtkIdList::New();
       poly_data_->GetCellPoints(i, list);
@@ -555,13 +558,26 @@ Mesh& Mesh::fixNonManifold() {
         }
       }
       if (match) {
+        // update max_area
+        double p0[3];
+        double p1[3];
+        double p2[3];
+        poly_data_->GetPoint(list->GetId(0), p0);
+        poly_data_->GetPoint(list->GetId(1), p1);
+        poly_data_->GetPoint(list->GetId(2), p2);
+        double area = vtkTriangle::TriangleArea(p0, p1, p2);
+        if (area > max_area) {
+          max_area = area;
+        }
+
         poly_data_->DeleteCell(i);
       }
     }
 
     poly_data_->RemoveDeletedCells();
 
-    fillHoles();
+    /// just disabled this one
+    fillHoles(max_area * 2.0);
 
     features = vtkSmartPointer<vtkFeatureEdges>::New();
     features->SetInputData(poly_data_);
@@ -570,10 +586,10 @@ Mesh& Mesh::fixNonManifold() {
     features->FeatureEdgesOff();
     features->Update();
     nonmanifold = features->GetOutput();
-    std::cerr << "After: number of non-manifold points: " << nonmanifold->GetNumberOfPoints() << "\n";
-    std::cerr << "After: number of non-manifold cells: " << nonmanifold->GetNumberOfCells() << "\n";
+    SW_DEBUG("After: number of non-manifold points: {}",nonmanifold->GetNumberOfPoints());
+    SW_DEBUG("After: number of non-manifold cells: {}",nonmanifold->GetNumberOfCells());
 
-    std::cerr << "Before triangle filter:\n";
+    SW_DEBUG("Before triangle filter: ");
     detectNonManifold();
 
     vtkSmartPointer<vtkTriangleFilter> triangle_filter = vtkSmartPointer<vtkTriangleFilter>::New();
@@ -581,10 +597,10 @@ Mesh& Mesh::fixNonManifold() {
     triangle_filter->Update();
     poly_data_ = triangle_filter->GetOutput();
 
-    std::cerr << "After triangle filter: ";
+    SW_DEBUG("After triangle filter: ");
     detectTriangular();
 
-    std::cerr << "Before connect filter:\n";
+    SW_DEBUG("Before connect filter: ");
     detectNonManifold();
 
     auto connectivityFilter = vtkSmartPointer<vtkPolyDataConnectivityFilter>::New();
@@ -593,12 +609,10 @@ Mesh& Mesh::fixNonManifold() {
     connectivityFilter->Update();
     this->poly_data_ = connectivityFilter->GetOutput();
 
-    // fillHoles();
-
-    std::cerr << "done with fixing:\n";
+    SW_DEBUG("done with fixing: ");
     detectNonManifold();
 
-    std::cerr << "At end of fix non-manifold: ";
+    SW_DEBUG("At end of fix non-manifold: ");
     detectTriangular();
     this->invalidateLocators();
   }
@@ -616,8 +630,8 @@ bool Mesh::detectNonManifold() {
   features->Update();
 
   vtkSmartPointer<vtkPolyData> nonmanifold = features->GetOutput();
-  std::cerr << "Detect Number of non-manifold points: " << nonmanifold->GetNumberOfPoints() << "\n";
-  std::cerr << "Detect Number of non-manifold cells: " << nonmanifold->GetNumberOfCells() << "\n";
+  SW_DEBUG("Detected Number of non-manifold points: {}", nonmanifold->GetNumberOfPoints());
+  SW_DEBUG("Detected Number of non-manifold cells: {}", nonmanifold->GetNumberOfCells());
   if (nonmanifold->GetNumberOfPoints() != 0 || nonmanifold->GetNumberOfCells() != 0) {
     return true;
   }
@@ -628,11 +642,11 @@ bool Mesh::detectTriangular() {
   for (vtkIdType i = 0; i < poly_data_->GetNumberOfCells(); i++) {
     vtkCell* cell = poly_data_->GetCell(i);
     if (cell->GetNumberOfPoints() != 3) {
-      std::cerr << "Warning: non-triangular cell found (id = " << i << ", n = " << cell->GetNumberOfPoints() << ")\n";
+      SW_WARN("Warning: non-triangular cell found (id = {}, n = {})", i, cell->GetNumberOfPoints());
       return false;
     }
   }
-  std::cerr << "Mesh is fully triangular\n";
+  SW_DEBUG("Mesh is fully triangular");
   return true;
 }
 
@@ -1442,7 +1456,6 @@ vtkSmartPointer<vtkPolyData> Mesh::clipByField(const std::string& name, double v
   return poly_data;
 }
 
-
 Eigen::Vector3d Mesh::computeBarycentricCoordinates(const Eigen::Vector3d& pt, int face) const {
   double closest[3];
   int sub_id;
@@ -1521,7 +1534,6 @@ vtkSmartPointer<vtkPoints> Mesh::getIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi&
 
   return points;
 }
-
 
 Mesh& Mesh::operator+=(const Mesh& otherMesh) {
   // Append the two meshes

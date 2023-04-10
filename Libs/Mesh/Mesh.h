@@ -97,7 +97,7 @@ class Mesh {
   Mesh& rotate(const double angle, const Axis axis);
 
   /// finds holes in a mesh and closes them
-  Mesh& fillHoles();
+  Mesh& fillHoles(double hole_size = 1000.0);
 
   /// clean mesh
   Mesh& clean();

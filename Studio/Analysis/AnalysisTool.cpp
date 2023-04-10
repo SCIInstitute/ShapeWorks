@@ -542,6 +542,12 @@ Particles AnalysisTool::get_shape_points(int mode, double value) {
 
   unsigned int m = stats_.Eigenvectors().cols() - (mode + 1);
 
+  m = std::clamp<unsigned int>(m, 0, stats_.Eigenvectors().cols() - 1);
+
+  SW_DEBUG("Eigenvector rows: {}", stats_.Eigenvectors().rows());
+  SW_DEBUG("Eigenvector cols: {}", stats_.Eigenvectors().cols());
+  SW_DEBUG("m = {}", m);
+
   Eigen::VectorXd e = stats_.Eigenvectors().col(m);
 
   double lambda = sqrt(stats_.Eigenvalues()[m]);
@@ -783,9 +789,7 @@ void AnalysisTool::on_group_slider_valueChanged() {
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::on_pcaModeSpinBox_valueChanged(int i) {
-  Q_EMIT pca_update();
-}
+void AnalysisTool::on_pcaModeSpinBox_valueChanged(int i) { Q_EMIT pca_update(); }
 
 //---------------------------------------------------------------------------
 void AnalysisTool::handle_pca_animate_state_changed() {
@@ -1285,9 +1289,9 @@ void AnalysisTool::initialize_mesh_warper() {
       Mesh mesh(poly_data);
       median_shape->get_constraints(i).clipMesh(mesh);
 
-      //std::cerr << "domain: " << i << "\n";
+      // std::cerr << "domain: " << i << "\n";
       session_->get_mesh_manager()->get_mesh_warper(i)->set_reference_mesh(mesh.getVTKMesh(), points);
-      //session_->get_mesh_manager()->get_mesh_warper(i)->generate_warp();
+      // session_->get_mesh_manager()->get_mesh_warper(i)->generate_warp();
     }
   }
 }
