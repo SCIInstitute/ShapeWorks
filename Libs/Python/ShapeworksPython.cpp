@@ -1,6 +1,6 @@
 #include <Eigen/Eigen>
 
-#include <Libs/Optimize/Optimize.h>
+#include <Optimize/Optimize.h>
 
 Eigen::MatrixXd optimize_get_particle_system(shapeworks::Optimize *opt)
 {
@@ -1001,6 +1001,14 @@ PYBIND11_MODULE(shapeworks_py, m)
        "applies the given transformation to the mesh",
        "transform"_a, "imageTransform"_a=false)
 
+
+  .def("rotate",
+       [](Mesh& mesh, const double angle, const Axis axis) -> decltype(auto){
+          return mesh.rotate(angle, axis);
+       },
+       "rotate using axis by angle (in degrees)",
+       "angle"_a, "axis"_a)
+
   .def("fillHoles",
        &Mesh::fillHoles,
        "finds holes in a mesh and closes them")
@@ -1292,6 +1300,12 @@ PYBIND11_MODULE(shapeworks_py, m)
       },
       "Return the map of landmarks to vertices.")
 
+  .def("getGoodParticlesIndices",
+      [](MeshWarper &w) -> decltype(auto) {
+        return w.get_good_particle_indices();
+      },
+      "Return the indexes of good particles.")
+
   .def("buildMesh",
       [](MeshWarper &w, const Eigen::MatrixXd &particles) -> decltype(auto) {
           return Mesh(w.build_mesh(particles));
@@ -1403,26 +1417,32 @@ PYBIND11_MODULE(shapeworks_py, m)
 
   .def_static("ComputeCompactness",
               &ShapeEvaluation::ComputeCompactness,
+              "Computes the compactness measure for a particle system",
               "particleSystem"_a, "nModes"_a, "saveTo"_a="")
 
   .def_static("ComputeGeneralization",
               &ShapeEvaluation::ComputeGeneralization,
+              "Computes the generalization measure for a particle system",
               "particleSystem"_a, "nModes"_a, "saveTo"_a="")
 
   .def_static("ComputeSpecificity",
               &ShapeEvaluation::ComputeSpecificity,
+              "Computes the specificity measure for a particle system",
               "particleSystem"_a, "nModes"_a, "saveTo"_a="")
 
   .def_static("ComputeFullCompactness",
               &ShapeEvaluation::ComputeFullCompactness,
+              "Computes the compactness measure for a particle system, all modes",
               "particleSystem"_a,"progress_callback"_a=nullptr)
 
   .def_static("ComputeFullGeneralization",
               &ShapeEvaluation::ComputeFullGeneralization,
+              "Computes the generalization measure for a particle system, all modes",
               "particleSystem"_a,"progress_callback"_a=nullptr)
 
   .def_static("ComputeFullSpecificity",
               &ShapeEvaluation::ComputeFullSpecificity,
+              "Computes the specificity measure for a particle system, all modes",
               "particleSystem"_a,"progress_callback"_a=nullptr)
   ;
 
@@ -1710,7 +1730,13 @@ PYBIND11_MODULE(shapeworks_py, m)
       "Return the domain names (e.g. femur, pelvis, etc)")
 
   .def("get_subjects",
-      &Project::get_subjects,
+      [](Project &project) -> decltype(auto) {
+        std::vector<Subject> py_subjects;
+        for (auto s :project.get_subjects()) {
+          py_subjects.push_back(*s);
+        }
+        return py_subjects;
+      },
       "Return the list of Subjects")
 
   .def("get_originals_present",
@@ -1751,7 +1777,7 @@ PYBIND11_MODULE(shapeworks_py, m)
       "name"_a)
 
   .def("store_subjects",
-      &Project::store_subjects)
+      &Project::update_subjects)
 
   .def("get_supported_version",
       &Project::get_supported_version)
@@ -1839,15 +1865,6 @@ PYBIND11_MODULE(shapeworks_py, m)
       &Subject::get_number_of_domains,
       "Get the number of domains")
 
-  .def("set_image_filenames",
-      &Subject::set_image_filenames,
-      "Set image filenames",
-      "filenames"_a)
-
-  .def("get_image_filenames",
-      &Subject::get_image_filenames,
-      "Get image filenames")
-
   .def("get_feature_filenames",
       &Subject::get_feature_filenames,
       "Get the feature map filenames")
@@ -1877,7 +1894,7 @@ PYBIND11_MODULE(shapeworks_py, m)
 
   .def("get_group_values",
       &Subject::get_group_values,
-      "Get the group values")
+      "Get the group values map")
 
   .def("get_group_value",
       &Subject::get_group_value,
@@ -1885,8 +1902,15 @@ PYBIND11_MODULE(shapeworks_py, m)
       "group_name"_a)
 
   .def("set_group_values",
-      &Subject::set_group_values,
-      "Set a specific group value"
+       [](Subject& subject, std::map<std::string,std::string> map) -> decltype(auto) {
+         project::types::StringMap m;
+
+         for (auto& [k, v] : map) {
+           m[k] = v;
+         }
+         subject.set_group_values(m);
+       },
+      "Set group values map"
       "group_values"_a)
 
   .def("get_extra_values",
@@ -1894,7 +1918,14 @@ PYBIND11_MODULE(shapeworks_py, m)
       "Get extra values (extra columns we don't interpret)")
 
   .def("set_extra_values",
-      &Subject::set_extra_values,
+       [](Subject& subject, std::map<std::string,std::string> map) -> decltype(auto) {
+         project::types::StringMap m;
+
+         for (auto& [k, v] : map) {
+           m[k] = v;
+         }
+         subject.set_extra_values(m);
+       },
       "Set extra values",
       "extra_values"_a)
 

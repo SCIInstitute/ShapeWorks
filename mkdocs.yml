@@ -74,6 +74,7 @@ nav:
       - 'Lumps: Shape Model directly from Mesh':                     'use-cases/mesh-based/lumps.md'
       - 'Thin Cavity Bean: Shape Model with Geodesic Distances':     'use-cases/mesh-based/thin-cavity-bean.md'
       - 'Shape Model for Multiple Domains directly from Mesh':       'use-cases/mesh-based/ellipsoid-multiple-domain-mesh.md'
+      - 'Hip: Multiple Domains Alignment':                           'use-cases/mesh-based/hip.md'
    - Contour Based Use Cases:
       - 'Supershapes:Shape Model for Contour Domains':               'use-cases/contour-based/supershapes-contour.md'
    - Constraints Based Use Cases:
@@ -94,6 +95,7 @@ nav:
    - 'Right Ventricle: Highly Variable Shapes':                      'use-cases/right-ventricle.md'
 
 - For Developers:
+   - 'Onboarding':                           'dev/onboarding.md'
    - 'How to Build ShapeWorks from Source?': 'dev/build.md'
    - 'How to Contribute to ShapeWorks?':     'dev/contribute.md'
    - 'How to Add ShapeWorks Commands?':      'dev/commands.md'
@@ -108,7 +110,10 @@ nav:
    - 'Getting Started with Markdown':        'dev/markdown.md'
    - 'Adding to PATH Environment Variable':  'dev/paths.md'
 
-- API Reference:
+- Python API Reference: 'python/python-api.md'
+     
+- C++ API Reference:
+   - ShapeWorks as a Library: 'dev/shapeworks-library.md'
    - Groups:     'api/Modules/index_groups.md'
    - Namespaces: 'api/Namespaces/index_namespaces.md'
    - Classes:    'api/Classes/index_classes.md'
@@ -144,7 +149,6 @@ theme:
 
 markdown_extensions:
    - attr_list
-   - fontawesome_markdown
    - pymdownx.tasklist
    - mdx_math
    - admonition
@@ -163,6 +167,19 @@ extra_javascript:
 
 plugins:
   - search
+  - mkdocstrings:
+      handlers:
+        python:
+          selection:
+            docstring_style: google
+            docstring_options:
+              ignore_init_summary: yes
+          setup_commands:
+            - "import sys"
+            - "print(sys.path)"
+            - "import shapeworks"
+          rendering:
+            merge_init_into_class: yes
   - mkdocs-jupyter:
       execute: False
       include_source: True

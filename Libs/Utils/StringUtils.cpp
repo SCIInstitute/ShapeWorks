@@ -5,6 +5,9 @@
 #include <cstdlib>
 #include <cstring>
 
+#include <boost/filesystem.hpp>
+#include <boost/algorithm/string/case_conv.hpp>
+
 namespace {
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
 struct MatchPathSeparator {
@@ -64,4 +67,20 @@ std::vector<std::string> StringUtils::getFileNamesFromPaths(const std::vector<st
   }
   return filenames;
 }
+
+//---------------------------------------------------------------------------
+std::string StringUtils::getLowerExtension(const std::string &filename) {
+  return boost::algorithm::to_lower_copy(boost::filesystem::extension(filename));
+}
+
+//---------------------------------------------------------------------------
+std::string StringUtils::replace_string(std::string str, const std::string& search, const std::string& replace) {
+  size_t pos = 0;
+  while ((pos = str.find(search, pos)) != std::string::npos) {
+    str.replace(pos, search.length(), replace);
+    pos += replace.length();
+  }
+  return str;
+}
+
 }  // namespace shapeworks

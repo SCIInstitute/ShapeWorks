@@ -36,9 +36,9 @@ target_link_libraries(Testing
 set_target_properties(Testing PROPERTIES PUBLIC_HEADER
   "${Testing_headers}")
 install(TARGETS Testing
-  ARCHIVE DESTINATION lib
-  RUNTIME DESTINATION lib
-  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  RUNTIME DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
   PUBLIC_HEADER DESTINATION include
   )
 
@@ -49,6 +49,7 @@ add_subdirectory(GroomTests)
 add_subdirectory(OptimizeTests)
 add_subdirectory(PythonTests)
 add_subdirectory(ParticlesTests)
+add_subdirectory(ProjectTests)
 add_subdirectory(UseCaseTests)
 add_subdirectory(shapeworksTests)
 add_subdirectory(UtilsTests)

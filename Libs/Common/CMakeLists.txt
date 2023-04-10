@@ -4,12 +4,14 @@ set(Common_sources
   ShapeworksUtils.cpp
   Region.cpp
   Exception.cpp
+  Logging.cpp
   )
 set(Common_headers
   Shapeworks.h
   ShapeworksUtils.h
   Region.h
   Exception.h
+  Logging.h
   )
 add_library(Common STATIC
   ${Common_sources}
@@ -20,14 +22,16 @@ target_include_directories(Common PUBLIC
 target_link_libraries(Common
   ${ITK_LIBRARIES}
   ${VTK_LIBRARIES}
+  spdlog::spdlog
+  ${Boost_LIBRARIES}
   )
 
 # Install
 set_target_properties(Common PROPERTIES PUBLIC_HEADER
   "${Common_headers}")
-install(TARGETS Common
-  ARCHIVE DESTINATION lib
-  RUNTIME DESTINATION lib
-  LIBRARY DESTINATION lib
+install(TARGETS Common EXPORT ShapeWorksTargets
+  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  RUNTIME DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
   PUBLIC_HEADER DESTINATION include
   )

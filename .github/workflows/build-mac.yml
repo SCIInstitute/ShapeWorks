@@ -12,9 +12,15 @@ on:
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: Release
-  SW_PORTAL_LOGIN: ${{ secrets.PORTAL_LOGIN }}
+  SW_CLOUD_LOGIN: ${{ secrets.CLOUD_LOGIN }}
   CACHE_HOST: ${{ secrets.SSH_HOST }}
-  
+  GA_MEASUREMENT_ID: ${{ secrets.GA_MEASUREMENT_ID }}
+  GA_API_SECRET: ${{ secrets.GA_API_SECRET }}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
 
@@ -33,15 +39,15 @@ jobs:
         sudo chown -R $UID $CONDA
         conda init zsh
         source ~/.zshrc
-        brew install ccache md5sha1sum pigz gnu-tar
+        brew install ccache pigz gnu-tar coreutils
 
-    - name: Acquire 10.13 SDK
+    - name: Acquire 10.15 SDK
       run: |
-        curl -L -o $HOME/MacOSX10.13.sdk.tar.xz https://github.com/phracker/MacOSX-SDKs/releases/download/11.3/MacOSX10.13.sdk.tar.xz
-        cd $HOME && tar -xJf MacOSX10.13.sdk.tar.xz
+        curl -L -o $HOME/MacOSX10.15.sdk.tar.xz https://github.com/phracker/MacOSX-SDKs/releases/download/11.3/MacOSX10.15.sdk.tar.xz
+        cd $HOME && tar -xJf MacOSX10.15.sdk.tar.xz
         
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         lfs: true
 
@@ -56,26 +62,13 @@ jobs:
       shell: bash -l {0}
       run: .github/workflows/gha_conda.sh
 
-    - name: Cache Qt
-      id: cache-qt
-      uses: actions/cache@v1
-      with:
-        path: ../Qt
-        key: QtCache-mac
-
-    - name: Install Qt
-      uses: jurplel/install-qt-action@v2.13.0
-      with:
-        version: "5.9.9"
-        cached: ${{ steps.cache-qt.outputs.cache-hit }}
-
     - name: Build Dependencies
       shell: bash -l {0}
       run: .github/workflows/gha_deps.sh
 
     - name: cmake
       shell: bash -l {0}
-      run: conda activate shapeworks && mkdir build && cd build && cmake -DCMAKE_CXX_FLAGS=-g -DCMAKE_PREFIX_PATH=$HOME/install -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DPython3_ROOT_DIR:FILEPATH=${CONDA_PREFIX} -DUSE_OPENMP=OFF -DBuild_PythonAPI=ON -DBuild_Studio=ON -DBuild_View2=ON -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/shapeworks-install -DCMAKE_OSX_SYSROOT="$HOME/MacOSX10.13.sdk" -DCMAKE_OSX_DEPLOYMENT_TARGET="10.13" -DBUILD_DOCUMENTATION=ON ..
+      run: conda activate shapeworks && mkdir build && cd build && cmake -DCMAKE_LIBTOOL=/usr/bin/libtool -DCMAKE_CXX_FLAGS=-g -DCMAKE_PREFIX_PATH=$HOME/install -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DPython3_ROOT_DIR:FILEPATH=${CONDA_PREFIX} -DUSE_OPENMP=OFF -DBuild_Studio=ON -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/shapeworks-install -DCMAKE_OSX_SYSROOT="$HOME/MacOSX10.15.sdk" -DCMAKE_OSX_DEPLOYMENT_TARGET="10.15" -DBUILD_DOCUMENTATION=ON -DGA_MEASUREMENT_ID=$GA_MEASUREMENT_ID -DGA_API_SECRET=$GA_API_SECRET ..
 
     - name: make
       shell: bash -l {0}
@@ -89,7 +82,7 @@ jobs:
       shell: bash -l {0}
       env:
         PR_NUMBER: ${{ github.event.number }}
-      run: conda activate shapeworks && ./Support/package.sh tag ${GITHUB_WORKSPACE}/shapeworks-install $HOME/install
+      run: conda activate shapeworks && source ./devenv.sh ./build/bin && ./Support/package.sh tag ${GITHUB_WORKSPACE}/shapeworks-install $HOME/install
 
     - name: make test
       shell: bash -l {0}
@@ -116,7 +109,7 @@ jobs:
     - name: Deploy Docs
       if: github.ref == 'refs/heads/master'
       shell: bash -l {0}
-      run: conda activate shapeworks && pwd && ls && ./Support/deploy_docs.sh ${GITHUB_WORKSPACE}/build
+      run: conda activate shapeworks && source ./devenv.sh ./build/bin && ./Support/deploy_docs.sh ${GITHUB_WORKSPACE}/build
       env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -127,5 +120,5 @@ jobs:
 
     - name: Copy artifact
       shell: bash -l {0}
-      run: .github/workflows/copy_artifact.sh artifact-${{github.sha}}-mac ${{runner.workspace}}/ShapeWorks/artifacts
+      run: cd ${{runner.workspace}}/ShapeWorks && ${GITHUB_WORKSPACE}/.github/workflows/copy_artifact.sh artifact-${{github.sha}}-mac artifacts
       

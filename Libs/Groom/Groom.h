@@ -1,10 +1,8 @@
 #pragma once
 
-#include <GroomParameters.h>
-#include <Libs/Image/Image.h>
-#include <Libs/Project/Project.h>
-#include <tbb/atomic.h>
-#include <tbb/mutex.h>
+#include "GroomParameters.h"
+#include <Image/Image.h>
+#include <Project/Project.h>
 
 namespace shapeworks {
 
@@ -19,10 +17,7 @@ class Groom {
   Groom(ProjectHandle project);
 
   //! Run the grooming
-  virtual bool run();
-
-  //! Set if grooming steps should be skipped
-  void set_skip_grooming(bool skip);
+  bool run();
 
   //! Set abort as soon as possible
   void abort();
@@ -38,12 +33,10 @@ class Groom {
                                                                   vtkSmartPointer<vtkPoints> target);
 
  protected:
-  //! call to be overridden by subclasses
-  virtual void update_progress(){};
 
-  tbb::atomic<float> progress_ = 0;
-  tbb::atomic<int> total_ops_ = 0;
-  tbb::atomic<int> progress_counter_ = 0;
+  std::atomic<float> progress_ = 0;
+  std::atomic<int> total_ops_ = 0;
+  std::atomic<int> progress_counter_ = 0;
 
  private:
   //! Return the number of operations that will be performed
@@ -65,7 +58,7 @@ class Groom {
   //! Run the contour based pipeline on a single subject
   bool contour_pipeline(std::shared_ptr<Subject> subject, size_t domain);
 
-  //! Return the output filename for a given intpu tfile
+  //! Return the output filename for a given input file
   std::string get_output_filename(std::string input, DomainType domain_type);
 
   bool run_alignment();
@@ -96,10 +89,10 @@ class Groom {
 
   ProjectHandle project_;
 
-  bool skip_grooming_ = false;
-
   bool abort_ = false;
 
-  tbb::mutex mutex_;
+  std::mutex mutex_;
+
+  std::set<std::string> used_names_;
 };
 }  // namespace shapeworks

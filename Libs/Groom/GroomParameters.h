@@ -1,24 +1,21 @@
 #pragma once
 
-#include <Libs/Project/Project.h>
+#include <Project/Project.h>
 
 namespace shapeworks {
 
+/**
+ * \class GroomParameters
+ * \ingroup Group-Groom
+ *
+ * This class encapsulated processing of Groom parameters
+ */
 class GroomParameters {
+  enum class MeshSmoothingOption { laplacian, sinc };
 
-  enum class MeshSmoothingOption {
-    laplacian,
-    sinc
-  };
+  enum class AlignmentOption { none, center, icp };
 
-  enum class AlignmentOption {
-    none,
-    center,
-    icp
-  };
-
-public:
-
+ public:
   explicit GroomParameters(ProjectHandle project, std::string domain_name = "");
   void set_domain_name(std::string domain_name);
   void save_to_project();
@@ -93,7 +90,6 @@ public:
   bool get_convert_to_mesh();
   void set_convert_to_mesh(bool value);
 
-
   // reflection
   bool get_reflect();
   void set_reflect(bool reflect);
@@ -129,6 +125,8 @@ public:
   double get_remesh_gradation();
   void set_remesh_gradation(double gradation);
 
+  bool get_skip_grooming();
+  void set_skip_grooming(bool skip);
 
   void restore_defaults();
 
@@ -140,10 +138,9 @@ public:
   const static std::string GROOM_ALIGNMENT_ICP_C;
   const static std::string GROOM_ALIGNMENT_LANDMARK_C;
 
-private:
-
+ private:
   Parameters params_;
   ProjectHandle project_;
   std::string domain_name_;
 };
-}
+}  // namespace shapeworks

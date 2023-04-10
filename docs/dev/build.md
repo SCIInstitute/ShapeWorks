@@ -9,20 +9,17 @@ If you encounter problems, have questions, or need help, please contact `<shapew
 
 ### Linux
 * CMake 3.11 (provided by conda below if not already installed)
-* GCC 7.5.0
-* Qt 5.9.8 (optional for GUI components)
+* GCC 9.0.0
 
 ### Mac
 * CMake 3.11 (provided by conda below if not already installed)
 * Clang 10.0.0
-* Qt 5.9.8 (optional for GUI components)
 
 ### Windows
 <!--See **[BUILD_Windows.md](BUILD_Windows.md)**-->
 
 * CMake 3.11 (provided by conda below if not already installed)
 * MSVC 2019
-* Qt 5.9.8 (optional for GUI components)
 
 
 ## Clone source
@@ -58,13 +55,6 @@ $ git lfs checkout
     Each time you build or use [ShapeWorks from the command line](../tools/ShapeWorksCommands.md), you must first activate its environment using the `conda activate shapeworks` command on the terminal.
 
 
-#### Qt5  
-Download and install the latest version of [Qt5](https://download.qt.io/archive/qt/), selecting the LGPL (free) license (at least version 5.10 required).  
-
-After installing Qt5, add the directory containing `qmake.exe` to your PATH. See [Adding to PATH Environment Variable](paths.md) for help with this.  
-
-Example qmake directory Linux: `/opt/Qt5.14.0/5.14.0/gcc_64/bin`  
-
 #### VXL, VTK, ITK, Eigen and OpenVDB
 These dependencies can be installed using the `build_dependencies.sh` script.  
 
@@ -81,6 +71,14 @@ Use `$ ./build_dependencies.sh --help` for more details on the available options
     
     Make sure you added Qt to your path as explained in the Qt5 installation step.  
 
+!!! note 
+    **OpenSUSE Users: If you get an error** that looks like this:  
+    ```
+    Could NOT find OpenGL (missing: OPENGL_opengl_LIBRARY OPENGL_glx_LIBRARY OPENGL_INCLUDE_DIR)
+    ```
+    
+    Make sure the following are installed: Mesa-devel, freeglut-devel, libX11-devel  
+
 !!! important
     If you decide to build ITK yourself and you would like to use the ShapeWorks GUI applications, __ITK must be built with VTK__.  
 
@@ -96,19 +94,13 @@ Download and install [[Anaconda]](https://www.anaconda.com/).
 !!! important
     It is recommended **not** to add Anaconda to your PATH and **not** to register Anaconda as your default Python.  
 
-Using the *Anaconda Prompt*, run `install_shapeworks.bat [environment name]`  
+Using an *MSYS2 Prompt* (e.g. git-bash), run `source install_shapeworks.sh [environment name]`  
 **Note:** By default this creates an environment named **shapeworks**, but you can specify a different name and it's okay to have multiple environments.  
 
 
-#### Qt5  
-Download and install the latest version of [Qt5](https://download.qt.io/archive/qt/), selecting the LGPL (free) license (at least version 5.10 required).   
-   
-After installing Qt5, add the directory containing `qmake.exe` to your PATH. See [Adding to PATH Environment Variable](paths.md) for help with this.  
 
-Example qmake directory: `D:\Qt\5.14.0\winrt_x64_msvc2017\bin`  
-
-#### VXL, VTK, ITK, Eigen and OpenVDB
-These dependencies can be installed using the `build_dependencies.sh` script. Use an msys shell (e.g., git bash) to do this on Windows.  
+#### VTK, ITK, Eigen, XLNT, jkqtplotter, libIGL, geometry central, ACVD, and OpenVDB
+These dependencies can be installed using the `build_dependencies.sh` script. Use an msys2 shell (e.g., git bash) to do this on Windows.  
 
 Use `$ ./build_dependencies.sh --help` for more details on the available build_dependencies options.  
 
@@ -134,7 +126,7 @@ There is a CMake GUI to see and change any of the options:
 
 #### Options
 If you used the `build_dependencies.sh` script above, the prefix for all dependencies is the same.
-Otherwise, the specific paths to VTK, VXL, ITK, and Eigen3 are all required.
+Otherwise, the specific paths to all the dependencies are all required.
 
 Required (if you used build_dependencies.sh):  
 ```
@@ -143,23 +135,22 @@ Required (if you used build_dependencies.sh):
 
 Required (otherwise):  
 ```
-  -DVXL_DIR=<vxl cmake path>           (contains VXLConfig.cmake)
   -DVTK_DIR=<vtk cmake path>           (contains VTKConfig.cmake)
   -DITK_DIR=<itk cmake path>           (contains ITKConfig.cmake)
   -DEigen3_DIR=<eigen3 cmake path>     (contains Eigen3Config.cmake)
   -DOpenVDB_DIR=<openvdb cmake path>   (contains FindOpenVDB.cmake)
+  ... and so on for each dependency ...
 ```
 
 Optional:
 ```
   -G<generator>                       default: Unix Makefiles (ex: -GXCode or -G"Visual Studio 16 2019" -Ax64)  
   -DBuild_Studio=[OFF|ON]             default: OFF
-  -DBuild_View2=[OFF|ON]              default: OFF
-  -DBuild_Post=[OFF|ON]               default: OFF
   -DCMAKE_INSTALL_PREFIX=<path>       default: ./install
   -DCMAKE_BUILD_TYPE=[Debug|Release]  default: Release (only required is default generator is used)
 ```
-:fa-info-circle: See **Examples** below for common values of the variables.
+
+See **Examples** below for common values of the variables.
 
 #### Building
 - **Makefiles:** 
@@ -181,7 +172,7 @@ $ source devenv.sh [build_directory]
 $ ./build_dependencies.sh
 mkdir build
 cd build
-cmake -DCMAKE_PREFIX_PATH="${PWD}/../dependencies/install" -DBuild_Post:BOOL=ON -DBuild_View2:BOOL=ON -DBuild_Studio:BOOL=ON -DUSE_OPENMP=OFF -Wno-dev -Wno-deprecated -GXcode ..
+cmake -DCMAKE_PREFIX_PATH="${PWD}/../dependencies/install" -DBuild_Studio:BOOL=ON -Wno-dev -Wno-deprecated -GXcode ..
 open ShapeWorks.xcodeproj
 ```
 
@@ -197,24 +188,23 @@ An example that builds dependencies separately then generates a Visual Studio pr
 > ./build_dependencies.sh --build-dir=../dependencies --install-dir=../dependencies
 > mkdir build
 > cd build
-> cmake -G"Visual Studio 16 2019" -Ax64 -DVXL_DIR=../dependencies/vxl/build -DCMAKE_PREFIX_PATH=../dependencies -DBuild_Post:BOOL=ON -DBuild_View2:BOOL=ON -DBuild_Studio:BOOL=ON ..
+> cmake -G"Visual Studio 16 2019" -Ax64 -DVXL_DIR=../dependencies/vxl/build -DCMAKE_PREFIX_PATH=../dependencies -DBuild_Studio:BOOL=ON ..
 ```
 
 #### Options
 Required:  
 ```
   -DCMAKE_PREFIX_PATH=<qt cmake path>  (This is different from qmake path in the Install Qt5 step
-  -DVXL_DIR=<vxl cmake path>           (contains VXLConfig.cmake)
   -DVTK_DIR=<vtk cmake path>           (contains VTKConfig.cmake)
   -DITK_DIR=<itk cmake path>           (contains ITKConfig.cmake)
   -DEigen3_DIR=<eigen cmake path>      (contains Eigen3Config.cmake)
   -DOpenVDB_DIR=<openvdb cmake path>   (contains FindOpenVDB.cmake)
+  ... and so on for each dependency ...
 ```
 Optional:
 ```
-  -D Build_Studio=[OFF|ON]             default: OFF
-  -D Build_View2=[OFF|ON]              default: OFF
-  -D Build_Post=[OFF|ON]               default: ON
+  -D Build_Studio=[OFF|ON]             default: ON
+  -D BUILD_TESTS=[OFF|ON]              default: ON
   -D CMAKE_INSTALL_PREFIX=<path>       default: ./install
   -D CMAKE_BUILD_TYPE=[Debug|Release]  
 ```

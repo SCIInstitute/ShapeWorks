@@ -15,29 +15,32 @@ import numpy as np
 import shapeworks as sw
 
 def Run_Pipeline(args):
-    print("\nStep 1. Extract Data\n")
+    print("\nStep 1. Acquire Data\n")
     """
-    Step 1: EXTRACT DATA
+    Step 1: ACQUIRE DATA
     We define dataset_name which determines which dataset to download from
     the portal and the directory to save output from the use case in.
     This data is comprised of femur meshes and corresponding hip CT scans.
     """
-    dataset_name = "femur"
     output_directory = "Output/femur_cut/"
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
 
     # If running a tiny_test, then download subset of the data
     if args.tiny_test:
+        dataset_name = "femur_cut_tiny_test"
         args.use_single_scale = True
-        sw.data.download_subset(args.use_case, dataset_name, output_directory) 
+        sw.download_dataset(dataset_name, output_directory)
+        dataset_name = "femur"
         mesh_files = sorted(glob.glob(output_directory +
                             dataset_name + "/meshes/*.ply"))[:3]
         plane_files = sorted(glob.glob(output_directory +
                             dataset_name + "/constraints/*.json"))[:3]
     # else download the entire dataset
     else:
-        sw.data.download_and_unzip_dataset(dataset_name, output_directory)
+        dataset_name = "femur_cut"
+        sw.download_dataset(dataset_name, output_directory)
+        dataset_name = "femur"
         mesh_files = sorted(glob.glob(output_directory +
                             dataset_name + "/meshes/*.ply"))
         plane_files = sorted(glob.glob(output_directory +
@@ -163,7 +166,7 @@ def Run_Pipeline(args):
     """
 
     # Create project spreadsheet
-    project_location = output_directory + "shape_models/"
+    project_location = output_directory
     if not os.path.exists(project_location):
         os.makedirs(project_location)
     # Set subjects
@@ -190,25 +193,20 @@ def Run_Pipeline(args):
     parameter_dictionary = {
         "number_of_particles" : 512,
         "use_normals": 0,
-        "normal_weight": 10.0,
+        "normals_strength": 10.0,
         "checkpointing_interval" : 200,
         "keep_checkpoints" : 0,
         "iterations_per_split" : 1000,
         "optimization_iterations" : 500,
         "starting_regularization" : 100,
         "ending_regularization" : 0.1,
-        "recompute_regularization_interval" : 2,
-        "domains_per_shape" : 1,
         "relative_weighting" : 10,
         "initial_relative_weighting" : 0.1,
         "procrustes" : 1,
         "procrustes_interval" : 1,
         "procrustes_scaling" : 1,
         "save_init_splits" : 1,
-        "debug_projection" : 0,
         "verbosity" : 0,
-        "use_statistics_in_init" : 0,
-        "adaptivity_mode": 0
     } 
     # If running a tiny test, reduce some parameters
     if args.tiny_test:
@@ -218,17 +216,16 @@ def Run_Pipeline(args):
     # Run multiscale optimization unless single scale is specified
     if not args.use_single_scale:
         parameter_dictionary["multiscale"] = 1
-        parameter_dictionary["use_shape_statistics_after"] = 64
+        parameter_dictionary["multiscale_particles"] = 64
 
     for key in parameter_dictionary:
         parameters.set(key,sw.Variant([parameter_dictionary[key]]))
-    parameters.set("domain_type",sw.Variant('mesh'))
     project.set_parameters("optimize",parameters)
-    spreadsheet_file = output_directory + "shape_models/femur_cut_" + args.option_set+ ".xlsx"
+    spreadsheet_file = output_directory + "femur_cut_" + args.option_set+ ".swproj"
     project.save(spreadsheet_file)
 
     # Run optimization
-    optimizeCmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
+    optimizeCmd = ('shapeworks optimize --progress --name ' + spreadsheet_file).split()
     subprocess.check_call(optimizeCmd)
 
     # If tiny test or verify, check results and exit

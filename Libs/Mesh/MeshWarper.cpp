@@ -1,5 +1,5 @@
-#include <Libs/Mesh/Mesh.h>
-#include <Libs/Mesh/MeshWarper.h>
+#include <Mesh/Mesh.h>
+#include <Mesh/MeshWarper.h>
 #include <igl/biharmonic_coordinates.h>
 #include <igl/point_mesh_squared_distance.h>
 #include <igl/remove_unreferenced.h>
@@ -11,15 +11,14 @@
 #include <vtkPolyDataConnectivityFilter.h>
 #include <vtkTriangleFilter.h>
 
-#include <set>
+#include <Logging.h>
 
-// tbb
-#include <tbb/mutex.h>
+#include <set>
 
 namespace shapeworks {
 
 // for concurrent access
-static tbb::mutex mutex;
+static std::mutex mutex;
 
 //---------------------------------------------------------------------------
 vtkSmartPointer<vtkPolyData> MeshWarper::build_mesh(const Eigen::MatrixXd& particles) {
@@ -31,6 +30,13 @@ vtkSmartPointer<vtkPolyData> MeshWarper::build_mesh(const Eigen::MatrixXd& parti
     return nullptr;
   }
 
+  if (particles.size() != reference_particles_.size()) {
+    // This may be a stale mesh warper
+    // don't return nullptr or the user will get an error
+    auto blank = vtkSmartPointer<vtkPolyData>::New();
+    return blank;
+  }
+
   auto points = this->remove_bad_particles(particles);
 
   vtkSmartPointer<vtkPolyData> poly_data = MeshWarper::warp_mesh(points);
@@ -39,7 +45,7 @@ vtkSmartPointer<vtkPolyData> MeshWarper::build_mesh(const Eigen::MatrixXd& parti
     double* p = poly_data->GetPoint(i);
     if (std::isnan(p[0]) || std::isnan(p[1]) || std::isnan(p[2])) {
       this->warp_available_ = false;  // failed
-      std::cerr << "Reconstruction Failed\n";
+      SW_ERROR("Reconstruction failed. NaN detected in mesh.");
       return nullptr;
     }
   }
@@ -82,7 +88,7 @@ bool MeshWarper::get_warp_available() { return this->warp_available_; }
 
 //---------------------------------------------------------------------------
 bool MeshWarper::check_warp_ready() {
-  tbb::mutex::scoped_lock lock(mutex);
+  std::scoped_lock lock(mutex);
 
   if (!this->needs_warp_) {
     // warp already done
@@ -469,6 +475,7 @@ bool MeshWarper::generate_warp() {
   Eigen::MatrixXd vertices = referenceMesh.points();
   this->faces_ = referenceMesh.faces();
 
+  // generate the warp
   std::cerr << "After add:\n";
   Mesh(reference_mesh_).detectNonManifold();
   Mesh(reference_mesh_).detectTriangular();
@@ -512,7 +519,7 @@ bool MeshWarper::generate_warp_matrix(Eigen::MatrixXd TV, Eigen::MatrixXi TF, co
   // faster and looks OK
   const int k = 2;
   if (!igl::biharmonic_coordinates(TV, TF, S, k, W)) {
-    std::cerr << "igl:biharmonic_coordinates failed\n";
+    SW_ERROR("Mesh Warp Error: igl:biharmonic_coordinates failed");
     return false;
   }
   // Throw away interior tet-vertices, keep weights and indices of boundary
@@ -533,8 +540,8 @@ bool MeshWarper::find_landmarks_vertices_on_ref_mesh() {
   for (int i = 0; i < this->landmarks_points_.rows(); i++) {
     double p[3]{this->landmarks_points_(i, 0), this->landmarks_points_(i, 1), this->landmarks_points_(i, 2)};
     int id = tree->FindClosestPoint(p);
-    landmarks_map_.insert({id, i});
-    // std::cout << "Vertex id: " << id << " Landmark id: " << i <<  std::endl;
+    landmarks_map_.insert({i, id});
+    //  std::cout << "Landmark id: " << i << " Vertex id: " << id << std::endl;
   }
   return true;
 }
@@ -570,9 +577,10 @@ Eigen::MatrixXd MeshWarper::extract_landmarks(vtkSmartPointer<vtkPolyData> warpe
 
   vtkSmartPointer<vtkDataArray> data_array = warped_mesh->GetPoints()->GetData();
 
-  for (auto ids : landmarks_map_) {
-    auto id_landmark = ids.second;
-    auto id_vertice = ids.first;
+    for (auto ids : landmarks_map_)
+    {
+        auto id_landmark = ids.first;
+        auto id_vertice = ids.second;
 
     landmarks(id_landmark, 0) = data_array->GetComponent(id_vertice, 0);
     landmarks(id_landmark, 1) = data_array->GetComponent(id_vertice, 1);

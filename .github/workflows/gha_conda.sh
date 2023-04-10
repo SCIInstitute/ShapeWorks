@@ -13,7 +13,7 @@ else
     cd ${GITHUB_WORKSPACE}
 
     # run install
-    source ./install_shapeworks.sh
+    source ./install_shapeworks.sh --developer
     conda clean -p -t
 
     echo "Create and store cache"

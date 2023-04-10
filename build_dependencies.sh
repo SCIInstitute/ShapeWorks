@@ -3,29 +3,40 @@
 #set -v   #verbose execution for debugging
 #set -x   #tracing execution for debugging (echos all commands from script)
 
+# check to make sure `source` was not used
+(return 0 2>/dev/null) && sourced=1 || sourced=0
+if [[ "$sourced" == "1" ]]; then
+  echo "ERROR: do not use \"source\" when executing this script"
+  return
+fi
+
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+
 # defaults
 BUILD_CLEAN=0
+CLEAN_AFTER=0
 NUM_PROCS=8
 BUILD_GUI=1
 BUILD_STUDIO=0
 BUILD_SHAPEWORKS=1
 BUILD_TYPE="Release"
 BUILD_LOG="build_dependencies.log"
-VTK_VER="v8.2.0"
-VTK_VER_STR="8.2"
+VTK_VER="v9.1.0"
+VTK_VER_STR="9.1"
 ITK_VER="v5.2.1"
 ITK_VER_STR="5.2"
-EIGEN_VER="3.3.7"
-QT_MIN_VER="5.9.8"  # NOTE: 5.x is required, but this restriction is a clever way to ensure the anaconda version of Qt (5.9.6 or 5.9.7) isn't used since it won't work on most systems.
-XLNT_VER="v1.5.0"
-JKQTPLOTTER_VER="v2019.11.3-high_dpi"
-OpenVDB_VER="v7.0.0"
+QT_MIN_VER="5.15.4"
+XLNT_VER="538f80794c7d736afc0a452d21313606cc5538fc"
+JKQTPLOTTER_VER="v2022.11.30-refix-rpath"
+OpenVDB_VER="v9.1.0"
 libigl_VER="v2.3.0"
 geometry_central_VER="8b20898f6c7be1eab827a9f720c8fd45e58ae63c" # This library isn't using tagged versions
-ACVD_VER="8880802204ce0ccd3944dcfa62ba687203a75fa5" # This library isn't using tagged version
+ACVD_VER="012917d300f1dde8552981e5a30031a23937625f" # This library isn't using tagged version
 
-WIN_CFLAGS="-FS /Zi /GL /MD /O2 /Ob3 /DNDEBUG /EHsc"  # windows release compilation flags
-WIN_LFLAGS="-LTCG /DEBUG" # windows release compilation flags
+#WIN_CFLAGS="-FS /Zi /GL /MD /O2 /Ob3 /Zm250 /DNDEBUG /EHsc"  # windows release compilation flags
+WIN_CFLAGS="-FS /Zi /MD /O2 /Ob3 /Zm250 /DNDEBUG /EHsc"  # windows release compilation flags
+#WIN_LFLAGS="-LTCG /DEBUG" # windows release compilation flags
+WIN_LFLAGS="-DEBUG" # windows release compilation flags
 FLAGS="-g" # turn on symbols for all builds
 
 usage()
@@ -33,10 +44,9 @@ usage()
   echo "usage: ./build_dependencies.sh [[-n=<num-procs>] [-i=<install_path>] [-b=<build_path>] [--clean] [--no-gui] | [-h | --help]]"
   echo ""
   echo "If using Anaconda to install prerequisites please first run:"
-  echo "source ./conda_installs.sh"
+  echo "source ./install_shapeworks.sh"
   echo ""
-  echo "For GUI applications, please make sure at least version $QT_MIN_VER of Qt5 is installed and that its qmake is in the path."
-  echo "Download Qt5 from: https://download.qt.io/archive/qt/"
+  echo "For GUI applications, please make sure the ShapeWorks conda env bin dir is at the head of the path."
   echo ""
   echo "Arguments:"
   echo "  -h,--help               : Show this screen."
@@ -50,6 +60,7 @@ usage()
   echo "                          : By default uses a subdirectory of the current directory called 'dependencies/install'."
   echo "  -n,--num-procs=<num>    : Number of processors to use for parallel builds (default is 8)."
   echo "  --build-type=<type>     : Build type (Debug, Release, RelWithDebInfo, MinSizeRel), default is Release"
+  echo "  --clean-after           : Clean build folders after build to save disk space"
   echo ""
   echo "Example: ./build_dependencies.sh --num-procs=8 --install-dir=/path/to/desired/installation"
   echo "Build results are saved in ${BUILD_LOG}."
@@ -82,6 +93,8 @@ parse_command_line()
       --no-gui )              BUILD_GUI=0
                               ;;
       --clean )               BUILD_CLEAN=1
+                              ;;
+      --clean-after )         CLEAN_AFTER=1
                               ;;
       -h | --help )           usage
                               exit
@@ -125,19 +138,23 @@ build_vtk()
   cd vtk
   git checkout -f tags/${VTK_VER}
 
+  patch -p1 < ${SCRIPT_DIR}/Support/vtk-9.1.patch
+  cat Rendering/OpenGL2/vtkCocoaRenderWindow.mm
+  
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
   mkdir -p build && cd build
   if [[ $OSTYPE == "msys" ]]; then
-      cmake -DCMAKE_CXX_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_C_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_SHARED_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_EXE_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DVTK_Group_Qt:BOOL=${BUILD_GUI} -DVTK_QT_VERSION=5 -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DVTK_PYTHON_VERSION=3 -DVTK_GROUP_ENABLE_Qt=YES -Wno-dev ..
+      cmake -DCMAKE_CXX_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_C_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_SHARED_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_EXE_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DVTK_Group_Qt:BOOL=${BUILD_GUI} -DVTK_QT_VERSION=5 -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DVTK_PYTHON_VERSION=3 -DVTK_GROUP_ENABLE_Qt=YES -DVTK_MODULE_ENABLE_VTK_GUISupportQtQuick:STRING=DONT_WANT -DBUILD_EXAMPLES:BOOL=OFF -Wno-dev ..
       cmake --build . --config ${BUILD_TYPE} --parallel || exit 1
       cmake --build . --config ${BUILD_TYPE} --target install
       VTK_DIR="${INSTALL_DIR}/lib/cmake/vtk-${VTK_VER_STR}"
       VTK_DIR=$(echo $VTK_DIR | sed s/\\\\/\\//g)
   else
-      cmake -DCMAKE_CXX_FLAGS="$FLAGS" -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DVTK_Group_Qt:BOOL=${BUILD_GUI} -DVTK_QT_VERSION=5 -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DVTK_PYTHON_VERSION=3 -DVTK_GROUP_ENABLE_Qt=YES -Wno-dev ..
+      cmake -DCMAKE_CXX_FLAGS="$FLAGS" -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=OFF -DBUILD_TESTING:BOOL=OFF -DVTK_Group_Qt:BOOL=${BUILD_GUI} -DVTK_QT_VERSION=5 -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DVTK_PYTHON_VERSION=3 -DVTK_GROUP_ENABLE_Qt=YES -DVTK_MODULE_ENABLE_VTK_GUISupportQtQuick:STRING=DONT_WANT -DBUILD_EXAMPLES:BOOL=OFF ${VTK_EXTRA_OPTIONS} -DVTK_MODULE_USE_EXTERNAL_VTK_pugixml=ON -Wno-dev ..
       make -j${NUM_PROCS} install || exit 1
       VTK_DIR=${INSTALL_DIR}/lib/cmake/vtk-${VTK_VER_STR}
   fi
+  if [[ $CLEAN_AFTER = 1 ]]; then make clean; fi
 }
 
 build_itk()
@@ -158,35 +175,12 @@ build_itk()
       cmake --build . --config ${BUILD_TYPE} --parallel || exit 1
       cmake --build . --config ${BUILD_TYPE} --target install
   else
-      cmake -DCMAKE_CXX_FLAGS="$FLAGS" -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DBUILD_EXAMPLES:BOOL=OFF -DModule_ITKVtkGlue:BOOL=ON -DModule_ITKDeprecated:BOOL=ON -DITK_USE_SYSTEM_EIGEN=on -DEigen3_DIR=${EIGEN_DIR} -DVTK_DIR=${VTK_DIR} -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -Wno-dev ..
+      cmake -DCMAKE_CXX_FLAGS="$FLAGS" -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=ON -DBUILD_TESTING:BOOL=OFF -DBUILD_EXAMPLES:BOOL=OFF -DModule_ITKVtkGlue:BOOL=ON -DModule_ITKDeprecated:BOOL=ON -DITK_USE_SYSTEM_EIGEN=on -DEigen3_DIR=${EIGEN_DIR} -DVTK_DIR="${VTK_DIR}" -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -Wno-dev ..
       make -j${NUM_PROCS} install || exit 1
   fi
 
   ITK_DIR=${INSTALL_DIR}/lib/cmake/ITK-${ITK_VER_STR}
-}
-
-build_eigen()
-{
-  echo ""
-  echo "## Building Eigen..."
-  cd ${BUILD_DIR}
-  git clone https://gitlab.com/libeigen/eigen.git
-  cd eigen
-  git checkout -f tags/${EIGEN_VER}
-
-  if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
-  mkdir -p build && cd build
-
-  if [[ $OSTYPE == "msys" ]]; then
-      cmake -DCMAKE_CXX_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_C_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_SHARED_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_EXE_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_SHARED_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" ..
-      cmake --build . --config ${BUILD_TYPE} --parallel || exit 1
-      cmake --build . --config ${BUILD_TYPE} --target install
-      EIGEN_DIR=$(echo ${INSTALL_DIR}\\share\\eigen3\\cmake | sed -e 's/\\/\\\\/g')
-  else
-      cmake -DCMAKE_CXX_FLAGS="$FLAGS" -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DCMAKE_BUILD_TYPE=${BUILD_TYPE} ..
-      make -j${NUM_PROCS} install || exit 1
-      EIGEN_DIR=${INSTALL_DIR}/share/eigen3/cmake
-  fi
+  if [[ $CLEAN_AFTER = 1 ]]; then make clean; fi
 }
 
 build_xlnt()
@@ -196,7 +190,9 @@ build_xlnt()
   cd ${BUILD_DIR}
   git clone https://github.com/tfussell/xlnt.git
   cd xlnt
-  git checkout -f tags/${XLNT_VER}
+  git checkout -f ${XLNT_VER}
+  git submodule init
+  git submodule update
 
   # move conflicting file out of the way so it builds on osx
   mv third-party/libstudxml/version third-party/libstudxml/version.bak
@@ -220,6 +216,7 @@ build_xlnt()
   mv third-party/libstudxml/version.bak third-party/libstudxml/version
 
   XLNT_DIR=${INSTALL_DIR}
+  if [[ $CLEAN_AFTER = 1 ]]; then make clean; fi
 }
 
 build_jkqtplotter()
@@ -246,6 +243,7 @@ build_jkqtplotter()
   fi
 
   JKQTPLOTTER_DIR=${INSTALL_DIR}
+  if [[ $CLEAN_AFTER = 1 ]]; then make clean; fi
 }
 
 build_openvdb()
@@ -263,18 +261,19 @@ build_openvdb()
   CONCURRENT_FLAG="-DCONCURRENT_MALLOC=None"
       
   if [[ $OSTYPE == "msys" ]]; then
-
-
-      
-      cmake -DCMAKE_CXX_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_C_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_SHARED_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_EXE_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_SHARED_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DUSE_BLOSC=OFF -DCMAKE_PREFIX_PATH=${CONDA_PREFIX} -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} ..
-      cmake --build . --config ${BUILD_TYPE} --parallel || exit 1
+      cmake -DCMAKE_CXX_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_C_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_SHARED_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_EXE_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_SHARED_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DUSE_BLOSC=OFF -DCMAKE_PREFIX_PATH=${CONDA_PREFIX} -DOPENVDB_CORE_STATIC=OFF -DUSE_EXPLICIT_INSTANTIATION=OFF -DOPENVDB_BUILD_BINARIES=OFF -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} ..
+      cmake --build . --config ${BUILD_TYPE} || exit 1
       cmake --build . --config ${BUILD_TYPE} --target install
+  elif [[ "$OSTYPE" == "linux"* ]]; then
+      cmake -DCMAKE_CXX_FLAGS="$FLAGS" -DUSE_BLOSC=OFF ${CONCURRENT_FLAG} -DCMAKE_PREFIX_PATH=${CONDA_PREFIX} -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DCMAKE_INSTALL_LIBDIR=lib -DOPENVDB_CORE_STATIC=OFF -DUSE_EXPLICIT_INSTANTIATION=OFF -DOPENVDB_BUILD_BINARIES=OFF -DCMAKE_BUILD_TYPE=${BUILD_TYPE} ..
+      make -j${NUM_PROCS} install || exit 1
   else
-      cmake -DCMAKE_CXX_FLAGS="$FLAGS" -DUSE_BLOSC=OFF ${CONCURRENT_FLAG} -DCMAKE_PREFIX_PATH=${CONDA_PREFIX} -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=${BUILD_TYPE} ..
+      cmake -DCMAKE_CXX_FLAGS="$FLAGS" -DUSE_BLOSC=OFF ${CONCURRENT_FLAG} -DCMAKE_PREFIX_PATH=${CONDA_PREFIX} -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DCMAKE_INSTALL_LIBDIR=lib -DOPENVDB_CORE_STATIC=OFF -DOPENVDB_BUILD_BINARIES=OFF -DCMAKE_BUILD_TYPE=${BUILD_TYPE} ..
       make -j${NUM_PROCS} install || exit 1
   fi
 
   OpenVDB_DIR=${INSTALL_DIR}/lib/cmake/OpenVDB/
+  if [[ $CLEAN_AFTER = 1 ]]; then make clean; fi
 }
 
 build_igl()
@@ -293,11 +292,32 @@ build_geometry_central()
 {
   echo " "
   echo "## Building Geometry central..."
-  cd ${INSTALL_DIR}
+  cd ${BUILD_DIR}
   git clone --recursive https://github.com/nmwsharp/geometry-central.git
   cd geometry-central
   git checkout -f ${geometry_central_VER}
+  mkdir build
+  
+  if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
+  mkdir -p build && cd build
 
+  if [[ $OSTYPE == "msys" ]]; then
+      cmake -DCMAKE_CXX_FLAGS="-FS" -DCMAKE_C_FLAGS="-FS" -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" ..
+      cmake --build . --config ${BUILD_TYPE} --parallel || exit 1
+      # no make install, so we do this manually
+      cd ..
+      cp -a include/geometrycentral ${INSTALL_DIR}/include
+      cp build/src/Release/geometry-central.lib ${INSTALL_DIR}/lib
+  else
+      cmake -DCMAKE_CXX_FLAGS="-fPIC $FLAGS" -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DCMAKE_BUILD_TYPE=${BUILD_TYPE} ..
+      make -j${NUM_PROCS}
+      # no make install, so we do this manually
+      cd ..
+      cp -a include/geometrycentral ${INSTALL_DIR}/include
+      cp build/src/*geom* ${INSTALL_DIR}/lib
+  fi
+
+  
   GEOMETRY_CENTRAL_DIR=${INSTALL_DIR}/geometry-central
 }
 
@@ -310,19 +330,26 @@ build_acvd()
   cd acvd
   git checkout -f ${ACVD_VER}
 
+  # silence a bunch of output
+  sed -i'.original' -e 's/cout/if(0)cout/' Common/vtkCurvatureMeasure.cxx
+  sed -i'.original' -e 's/cout/if(0)cout/' DiscreteRemeshing/vtkDiscreteRemeshing.h
+  sed -i'.original' -e 's/cout/if(0)cout/' DiscreteRemeshing/vtkQEMetricForClustering.h
+  sed -i'.original' -e 's/cout/if(0)cout/' Common/vtkUniformClustering.h
+
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
   mkdir -p build && cd build
 
   if [[ $OSTYPE == "msys" ]]; then
-      cmake -DCMAKE_CXX_FLAGS="-FS" -DCMAKE_C_FLAGS="-FS" -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" -DVTK_DIR="${VTK_DIR}" ..
+      cmake -DCMAKE_CXX_FLAGS="-FS" -DCMAKE_C_FLAGS="-FS" -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" -DVTK_DIR="${VTK_DIR}" -DBUILD_EXAMPLES:BOOL=OFF ..
       cmake --build . --config ${BUILD_TYPE} --parallel || exit 1
       cmake --build . --config ${BUILD_TYPE} --target install
   else
-      cmake -DCMAKE_CXX_FLAGS="$FLAGS" -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DVTK_DIR="${VTK_DIR}" ..
+      cmake -DCMAKE_CXX_FLAGS="$FLAGS" -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DVTK_DIR="${VTK_DIR}" -DBUILD_EXAMPLES:BOOL=OFF ..
       make -j${NUM_PROCS} install || exit 1
   fi
 
   ACVD_DIR=${INSTALL_DIR}
+  if [[ $CLEAN_AFTER = 1 ]]; then make clean; fi
 }
 
 show_shapeworks_build()
@@ -341,13 +368,7 @@ show_shapeworks_build()
     FINDQT="-DQt5_DIR=`qmake -query QT_INSTALL_PREFIX`"
   fi
 
-  _VXL_DIR=""
-  if [[ $OSTYPE == "msys" ]]; then
-      # since VXL built in INSTALL_DIR on Windows, need to tell CMake where to find it
-      _VXL_DIR="-DVXL_DIR=${VXL_DIR}"
-  fi
-
-  echo "cmake -DCMAKE_CXX_FLAGS="$FLAGS" -DCMAKE_PREFIX_PATH=${INSTALL_DIR} ${_VXL_DIR} ${OPENMP_FLAG} -DBuild_Studio=${BUILD_GUI} ${FIND_QT} -Wno-dev -Wno-deprecated -DCMAKE_BUILD_TYPE=${BUILD_TYPE} ${SRC}"
+  echo "cmake -DCMAKE_CXX_FLAGS="$FLAGS" -DCMAKE_PREFIX_PATH=${INSTALL_DIR} ${OPENMP_FLAG} -DBuild_Studio=${BUILD_GUI} ${FIND_QT} -Wno-dev -Wno-deprecated -DCMAKE_BUILD_TYPE=${BUILD_TYPE} ${SRC}"
 }
 
 # determine if we can build using the specified or discovered version of Qt
@@ -372,8 +393,7 @@ verify_qt()
 
     # inform user
     if [[ $QT_VERSION_OK = 0 ]]; then
-      echo '## For GUI applications, please make sure at least version $QT_MIN_VER of Qt5 is installed and that its qmake is in the path.' >&2
-      echo '## Download Qt5 from: https://download.qt.io/archive/qt/' >&2
+	echo "For GUI applications, please make sure the ShapeWorks conda env bin dir is at the head of the path." >&2
       exit 1
     fi
   fi
@@ -394,10 +414,6 @@ build_all()
 
   if [[ -z $VTK_DIR ]]; then
     build_vtk
-  fi
-
-  if [[ -z $EIGEN_DIR ]]; then
-    build_eigen
   fi
 
   if [[ -z $ITK_DIR ]]; then
@@ -429,7 +445,6 @@ build_all()
   # echo dependency directories for easy reference in case the user is independently building ShapeWorks
   echo ""
   echo "Dependency paths:"
-  echo "  VXL_DIR: ${VXL_DIR}"
   echo "  VTK_DIR: ${VTK_DIR}"
   echo "  ITK_DIR: ${ITK_DIR}"
   echo "  EIGEN_DIR: ${EIGEN_DIR}"
@@ -473,4 +488,3 @@ echo "BUILD_TYPE: ${BUILD_TYPE}"
 (time build_all 2>&1) 2>&1 | tee ${BUILD_LOG}
 RC=( "${PIPESTATUS[@]}" )
 exit ${RC[0]}
-

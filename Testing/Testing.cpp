@@ -62,7 +62,6 @@ std::string TestUtils::get_output_dir(std::string test_name) {
 //-----------------------------------------------------------------------------
 void TestUtils::prep_temp(std::string test_folder, std::string test_name) {
   auto temp_dir = get_output_dir(test_name);
-
   recursive_copy(test_folder, temp_dir);
   boost::filesystem::current_path(temp_dir);
 }

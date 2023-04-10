@@ -5,9 +5,11 @@
 
 * [Project excel file](parameters.md#project-excel-file)
 
-The project excel file format is continuously under development where new features are added. The XML will be depreciated soon, and users are encouraged to use the project excel file.  
+* [Project JSON file (swproj)](parameters.md#project-json-file)
 
-### XML Parameter File
+The project excel/json file formats are the current standard project file format. The older XML format is deprecated and will not have newer features added to it.  Users are encouraged to use the project excel/json file.  
+
+### XML Parameter File (deprecated)
 	
 Here is the list of the parameters to be included in the `<parameters.xml>` file.
 
@@ -26,7 +28,6 @@ Here is the list of the parameters to be included in the `<parameters.xml>` file
 * `<use_shape_statistics_after>`: (default: -1) (e.g., 32 or 64) The number of particles after which to use shape space entropy (i.e., the covariance structure) in the initialization and optimization steps. Use -1 if you want shape statistics only used when the number of particles reaches the desired `<number_of_particles>`. Hence, all initialization and optimization steps will use mean energy till the `<number_of_particles>` is reached.
 * `<starting_regularization>`: (default: 1000) Sets the starting regularization value (usually high value).
 * `<ending_regularization>`: (default: 1.0) Sets the ending regularization value (usually small value less than 1).
-* `<recompute_regularization_interval>`: (default: 1) Skip interval (i.e., number of iterations) to exponentially decay the regularization value.
 * `<initial_relative_weighting>`: (default: 0.05) The relative weight of the correspondence term in the initialization steps to make sure that optimization steps start with evenly spaced particle distributions that cover the entire surfaces (usually in the order of ~0.1 or 0.01).
 * `<relative_weighting>`: (default: 1) The relative weight of the correspondence term in the optimization steps.
 * `<procrustes_scaling>`: (default: 1) A flag to enable factoring out scaling in the shape space when performing the Procrustes alignment.
@@ -42,23 +43,19 @@ Here is the list of the parameters to be included in the `<parameters.xml>` file
 ### Parameter Dictionary in Python
 Prior to `ShapeWorks 6.3`, all the ![use cases](../getting-started/examples.md)In `Examples/Python/<use-case-name.py>`,we used XML files to run optimization. A python code - `Examples/Python/OptimizeUtils.py` was used to convert a list of parameter dictionary in python to an XML file. 
 
-Below is a list of the currently exposed algorithmic parameters. All the keys of this parameter dictionary correspond to the [XML tags](#xml-parameter-file), except for `"normal_weight"` that sets the `<attribute_scales>` of the surface normal vector.
+Below is a list of the currently exposed algorithmic parameters. All the keys of this parameter dictionary correspond to the [XML tags](#xml-parameter-file), except for `"normals_strength"` that sets the `<attribute_scales>` of the surface normal vector.
 
 ```python
 {
 	"number_of_particles": 1024,
-	"use_shape_statistics_after": 32, 
 	"use_normals": 0, 
-	"normal_weight": 0.0, 
+	"normals_strength": 0.0, 
 	"checkpointing_interval" : 10000, 
 	"keep_checkpoints" : 0, 
 	"iterations_per_split" : 4000, 
 	"optimization_iterations" : 500, 
 	"starting_regularization" : 10, 
 	"ending_regularization" : 1, 
-	"recompute_regularization_interval" : 2,
-	"domains_per_shape" : 1,
-	"domain_type" : 'mesh',
 	"relative_weighting" : 10,
 	"initial_relative_weighting" : 1,
 	"procrustes_interval" : 1,
@@ -96,6 +93,42 @@ After completing the grooming and optimization steps, this worksheet will look l
 ![ShapeWorks Studio FeatureMap Example Complete](../img/studio/studio_feature_map_example_complete.png)
 
 There will also be new worksheets with parameters from those tools and other studio settings.
+
+## Project JSON File
+
+ShapeWorks also supports a JSON version of the Excel project file for easier interoperability with other tools as well as text editor support.
+
+The format is very similar to that of the Excel spreadsheet with JSON objects for each sheet and for the data sheet, one object per subject with key/values the same as spreasheet columns.
+
+For example:
+
+```
+{
+    "data": [
+        {
+            "name": "",
+            "shape_femur": "195916_R_FM_align.nrrd",
+            "shape_pelvis": "195916_R_PV_align.ply",
+            "groomed_femur": "groomed/195916_R_FM_align_DT.nrrd",
+            "groomed_pelvis": "groomed/195916_R_PV_align_groomed.vtk",
+        },
+        {
+            "name": "",
+            "shape_femur": "187609_R_FM_align.nrrd",
+            "shape_pelvis": "187609_R_PV_align.ply",
+            "groomed_femur": "groomed/187609_R_FM_align_DT.nrrd",
+            "groomed_pelvis": "groomed/187609_R_PV_align_groomed.vtk",
+        },
+	...
+	"optimize": {
+        "ending_regularization": "1.000000",
+        "geodesic_cache_multiplier": "0",
+        "initial_relative_weighting": "0.050000",
+        "iterations_per_split": "1000",
+        "multiscale": "false",
+        "multiscale_particles": "32",
+	...
+```		
 
 ### Python API for Generation Project Sheet
 The `Project` class of `ShapeWorks` lets you create the project excel sheet. It comprises various functions to add the input shape names, groomed file names, optimization parameters, transform matrices, etc. A details description of the C++ class and its functions can be found [here](http://sciinstitute.github.io/ShapeWorks/6.3/api/Classes/classshapeworks_1_1Project.html#detailed-description). The C++ functions also have a python interface, the use of which is demonstrated in the use cases. 
@@ -179,7 +212,7 @@ If there are multiple domains, the subjects will contain list of string of filen
     parameter_dictionary = {
 	"number_of_particles" : 512,
 	"use_normals": 0,
-	"normal_weight": 10.0,
+	"normals_strength": 10.0,
 	"checkpointing_interval" : 200,
 	"keep_checkpoints" : 0,
 	"iterations_per_split" : 1000,

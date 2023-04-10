@@ -36,31 +36,23 @@ ROOT=`pwd`
 
 BUILD="/c/build"
 CONDA_LOC="/c/Miniconda3/envs/shapeworks"
-cp ${CONDA_LOC}/python*.dll ${CONDA_LOC}/Library/bin/zlib.dll ${CONDA_LOC}/Library/bin/tbb.dll ${CONDA_LOC}/Library/bin/half.dll ${CONDA_LOC}/Library/bin/boost_filesystem.dll $BUILD/bin/Release
+cp ${CONDA_LOC}/python*.dll ${CONDA_LOC}/Library/bin/zlib.dll ${CONDA_LOC}/Library/bin/tbb12.dll ${CONDA_LOC}/Library/bin/zstd.dll ${CONDA_LOC}/Library/bin/libpng16.dll ${CONDA_LOC}/Library/bin/half.dll ${CONDA_LOC}/Library/bin/boost_filesystem.dll ${CONDA_LOC}/Library/bin/spdlog.dll $BUILD/bin/Release
 
 
 cp -r $BUILD/bin/Release bin
 rm bin/*Tests.pdb bin/Recon*.pdb bin/Mesh*.pdb
 rm -rf Post
 
-# Run auto-documentation
-cd $ROOT
-PATH=$BUILD/bin/Release:bin:$PATH
-# check that 'shapeworks -h' is working
-shapeworks -h
-if [ $? -eq 0 ]; then
-    echo "shapeworks -h is working"
-else
-    echo "shapeworks -h is not working"
-    exit 1
-fi
-python Python/RunShapeWorksAutoDoc.py --md_filename docs/tools/ShapeWorksCommands.md
-mkdocs build
-mv site Documentation
-cp -a Documentation bin/
+# Build python packages
+for package in DataAugmentationUtilsPackage DatasetUtilsPackage DeepSSMUtilsPackage DocumentationUtilsPackage ShapeCohortGenPackage shapeworks ; do
+    cd Python
+    tar czvf ${package}.tar.gz $package
+    cd ..
+done
 
 # Remove tests, they won't work for users anyway
 rm bin/*Tests.exe
+rm -rf docs
 
 windeployqt "bin/ShapeWorksStudio.exe"
 ../NSISPortable/App/NSIS/makensis.exe -V4 shapeworks.nsi 
