@@ -59,8 +59,8 @@ num_particles = [256,256]
 Once the python code runs the optimization, the files are saved in the `Output` folder after which ShapeWorks Studio is launched from the python code to analyze the model. 
 Here is the optimized shape.
 
-Modes of variation of the hip joint with global alignment![Modes of variation of the hip joint with global alignment](https://sci.utah.edu/~shapeworks/doc-resources/gifs/hip_global.gif){ width=50% }
+Modes of variation of the hip joint with global alignment![Modes of variation of the hip joint with global alignment](https://sci.utah.edu/~shapeworks/doc-resources/gifs/hip_md_global.gif){ width=50% }
 
-Modes of variation of the hip joint by aligning w.r.t the femur![Modes of variation of the hip joint by aligning w.r.t the femur](https://sci.utah.edu/~shapeworks/doc-resources/gifs/hip_domain1.gif){ width=50% }
+Modes of variation of the hip joint by aligning w.r.t the femur![Modes of variation of the hip joint by aligning w.r.t the femur](https://sci.utah.edu/~shapeworks/doc-resources/gifs/hip_md_domain1.gif){ width=50% }
 
-Modes of variation of the hip joint by aligning w.r.t the pelvis![Modes of variation of the hip joint by aligning w.r.t the pelvis](https://sci.utah.edu/~shapeworks/doc-resources/gifs/hip_domain2.gif){ width=50% }
+Modes of variation of the hip joint by aligning w.r.t the pelvis![Modes of variation of the hip joint by aligning w.r.t the pelvis](https://sci.utah.edu/~shapeworks/doc-resources/gifs/hip_md_domain2.gif){ width=50% }
