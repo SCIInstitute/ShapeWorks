@@ -541,12 +541,7 @@ Particles AnalysisTool::get_shape_points(int mode, double value) {
   }
 
   unsigned int m = stats_.Eigenvectors().cols() - (mode + 1);
-
   m = std::clamp<unsigned int>(m, 0, stats_.Eigenvectors().cols() - 1);
-
-  SW_DEBUG("Eigenvector rows: {}", stats_.Eigenvectors().rows());
-  SW_DEBUG("Eigenvector cols: {}", stats_.Eigenvectors().cols());
-  SW_DEBUG("m = {}", m);
 
   Eigen::VectorXd e = stats_.Eigenvectors().col(m);
 

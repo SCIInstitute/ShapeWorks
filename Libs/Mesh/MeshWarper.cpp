@@ -414,11 +414,13 @@ vtkSmartPointer<vtkPolyData> MeshWarper::recreate_mesh(vtkSmartPointer<vtkPolyDa
     vtkCell* cell = mesh->GetCell(i);
 
     if (cell->GetCellType() != VTK_EMPTY_CELL) {  // VTK_EMPTY_CELL means it was deleted
-      vtkIdType pts[cell->GetNumberOfPoints()];
+      // create an array of vtkIdType
+      vtkIdType *pts = new vtkIdType[cell->GetNumberOfPoints()];
       for (vtkIdType j = 0; j < cell->GetNumberOfPoints(); j++) {
         pts[j] = cell->GetPointId(j);
       }
       polys->InsertNextCell(cell->GetNumberOfPoints(), pts);
+      delete[] pts;
     }
   }
 

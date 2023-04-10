@@ -507,7 +507,6 @@ Mesh& Mesh::fixNonManifold() {
   int count = 0;
 
   while (count < 10) {
-    SW_DEBUG("Checking if mesh is non-manifold");
     auto features = vtkSmartPointer<vtkFeatureEdges>::New();
     features->SetInputData(this->poly_data_);
     features->BoundaryEdgesOff();
@@ -517,13 +516,12 @@ Mesh& Mesh::fixNonManifold() {
     features->Update();
 
     vtkSmartPointer<vtkPolyData> nonmanifold = features->GetOutput();
-    SW_DEBUG("Number of non-manifold points: {}", nonmanifold->GetNumberOfPoints());
-    SW_DEBUG("Number of non-manifold cells: {}", nonmanifold->GetNumberOfCells());
-
     if (nonmanifold->GetNumberOfPoints() == 0 && nonmanifold->GetNumberOfCells() == 0) {
       return *this;
     }
 
+    SW_DEBUG("Number of non-manifold points: {}", nonmanifold->GetNumberOfPoints());
+    SW_DEBUG("Number of non-manifold cells: {}", nonmanifold->GetNumberOfCells());
     SW_DEBUG("Attempting to fix non-manifold mesh");
 
     std::vector<int> remove;
@@ -540,10 +538,9 @@ Mesh& Mesh::fixNonManifold() {
     }
     SW_DEBUG("Removing {} non-manifold vertices", remove.size());
 
-
-    vtkSmartPointer<vtkPolyData> new_poly_data = vtkSmartPointer<vtkPolyData>::New();
-    vtkSmartPointer<vtkPoints> vtk_pts = vtkSmartPointer<vtkPoints>::New();
-    vtkSmartPointer<vtkCellArray> vtk_triangles = vtkSmartPointer<vtkCellArray>::New();
+    auto new_poly_data = vtkSmartPointer<vtkPolyData>::New();
+    auto vtk_pts = vtkSmartPointer<vtkPoints>::New();
+    auto vtk_triangles = vtkSmartPointer<vtkCellArray>::New();
     double max_area = 0;
     for (int i = 0; i < poly_data_->GetNumberOfCells(); i++) {
       vtkSmartPointer<vtkIdList> list = vtkIdList::New();
@@ -576,44 +573,24 @@ Mesh& Mesh::fixNonManifold() {
 
     poly_data_->RemoveDeletedCells();
 
-    /// just disabled this one
     fillHoles(max_area * 2.0);
-
-    features = vtkSmartPointer<vtkFeatureEdges>::New();
-    features->SetInputData(poly_data_);
-    features->NonManifoldEdgesOn();
-    features->BoundaryEdgesOff();
-    features->FeatureEdgesOff();
-    features->Update();
-    nonmanifold = features->GetOutput();
-    SW_DEBUG("After: number of non-manifold points: {}",nonmanifold->GetNumberOfPoints());
-    SW_DEBUG("After: number of non-manifold cells: {}",nonmanifold->GetNumberOfCells());
-
-    SW_DEBUG("Before triangle filter: ");
-    detectNonManifold();
 
     vtkSmartPointer<vtkTriangleFilter> triangle_filter = vtkSmartPointer<vtkTriangleFilter>::New();
     triangle_filter->SetInputData(poly_data_);
     triangle_filter->Update();
     poly_data_ = triangle_filter->GetOutput();
 
-    SW_DEBUG("After triangle filter: ");
-    detectTriangular();
-
-    SW_DEBUG("Before connect filter: ");
-    detectNonManifold();
-
     auto connectivityFilter = vtkSmartPointer<vtkPolyDataConnectivityFilter>::New();
     connectivityFilter->SetExtractionModeToLargestRegion();
     connectivityFilter->SetInputData(poly_data_);
     connectivityFilter->Update();
-    this->poly_data_ = connectivityFilter->GetOutput();
+    poly_data_ = connectivityFilter->GetOutput();
 
-    SW_DEBUG("done with fixing: ");
-    detectNonManifold();
+    // SW_DEBUG("done with fixing: ");
+    // detectNonManifold();
 
-    SW_DEBUG("At end of fix non-manifold: ");
-    detectTriangular();
+    // SW_DEBUG("At end of fix non-manifold: ");
+    // detectTriangular();
     this->invalidateLocators();
   }
 
@@ -630,8 +607,8 @@ bool Mesh::detectNonManifold() {
   features->Update();
 
   vtkSmartPointer<vtkPolyData> nonmanifold = features->GetOutput();
-  SW_DEBUG("Detected Number of non-manifold points: {}", nonmanifold->GetNumberOfPoints());
-  SW_DEBUG("Detected Number of non-manifold cells: {}", nonmanifold->GetNumberOfCells());
+  // SW_DEBUG("Detected Number of non-manifold points: {}", nonmanifold->GetNumberOfPoints());
+  // SW_DEBUG("Detected Number of non-manifold cells: {}", nonmanifold->GetNumberOfCells());
   if (nonmanifold->GetNumberOfPoints() != 0 || nonmanifold->GetNumberOfCells() != 0) {
     return true;
   }
@@ -646,7 +623,6 @@ bool Mesh::detectTriangular() {
       return false;
     }
   }
-  SW_DEBUG("Mesh is fully triangular");
   return true;
 }
 
