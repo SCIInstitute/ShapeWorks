@@ -215,16 +215,19 @@ def Run_Pipeline(args):
 	parameter_dictionary = {
 		"checkpointing_interval" : 200,
 		"keep_checkpoints" : 0,
-		"iterations_per_split" : 3000,
-		"optimization_iterations" : 5000,
-		"starting_regularization" :1000,
+		"iterations_per_split" : 2500,
+		"optimization_iterations" : 200,
+		"starting_regularization" : 1000,
 		"ending_regularization" : 10,
-		"relative_weighting" : 10, 
-		"initial_relative_weighting" : 0.1,
+		"relative_weighting" : 3, 
+		"initial_relative_weighting" : 0.05,
 		"save_init_splits" : 0,
 		"verbosity" : 0,
 		"use_normals": 1,
-		"normals_strength": 10.0
+		"normals_strength": 5.0,
+                "procrustes" : 1,
+                "procrustes_scaling" : 1,
+                "procrustes_rotation_translation" : 1
 	  }
 	num_particles = [256,256]
 
