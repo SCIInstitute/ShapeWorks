@@ -3,7 +3,7 @@
 #include <Image/ImageUtils.h>
 #include "Shapeworks.h"
 
-class vtkCellLocator;
+class vtkStaticCellLocator;
 class vtkKdTreePointLocator;
 
 namespace shapeworks {
@@ -271,8 +271,7 @@ class Mesh {
   void invalidateLocators() const;
 
   /// Cell locator for functions that query for cells repeatedly
-  // TODO: use vtkStaticCellLocator when vtk is upgraded to version 9
-  mutable vtkSmartPointer<vtkCellLocator> cellLocator;
+  mutable vtkSmartPointer<vtkStaticCellLocator> cellLocator;
   void updateCellLocator() const;
 
   /// Point locator for functions that query for points repeatedly

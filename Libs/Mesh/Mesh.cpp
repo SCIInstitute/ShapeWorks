@@ -2,26 +2,24 @@
 
 // std
 #include <math.h>
+#include <tbb/parallel_for.h>
 
 #include <algorithm>
 #include <string>
 #include <vector>
 
-
 // libigl
 #include <igl/cotmatrix.h>
 #include <igl/exact_geodesic.h>
 #include <igl/gaussian_curvature.h>
-#include <igl/grad.h>
 #include <igl/invert_diag.h>
 #include <igl/massmatrix.h>
 #include <igl/principal_curvature.h>
 
 // vtk
+#include <Optimize/VtkMeshWrapper.h>
 #include <vtkAppendPolyData.h>
 #include <vtkButterflySubdivisionFilter.h>
-#include <vtkCellData.h>
-#include <vtkCellLocator.h>
 #include <vtkCenterOfMass.h>
 #include <vtkCleanPolyData.h>
 #include <vtkClipClosedSurface.h>
@@ -31,7 +29,6 @@
 #include <vtkGenericCell.h>
 #include <vtkImageData.h>
 #include <vtkImageStencil.h>
-#include <vtkIncrementalOctreePointLocator.h>
 #include <vtkIncrementalPointLocator.h>
 #include <vtkKdTreePointLocator.h>
 #include <vtkLoopSubdivisionFilter.h>
@@ -41,8 +38,6 @@
 #include <vtkPLYReader.h>
 #include <vtkPLYWriter.h>
 #include <vtkPlaneCollection.h>
-#include <vtkPointData.h>
-#include <vtkPointLocator.h>
 #include <vtkPolyDataNormals.h>
 #include <vtkPolyDataReader.h>
 #include <vtkPolyDataToImageStencil.h>
@@ -51,17 +46,16 @@
 #include <vtkReverseSense.h>
 #include <vtkSTLReader.h>
 #include <vtkSTLWriter.h>
+#include <vtkSelectEnclosedPoints.h>
 #include <vtkSmoothPolyDataFilter.h>
+#include <vtkStaticCellLocator.h>
 #include <vtkTransformPolyDataFilter.h>
-#include <vtkVector.h>
 #include <vtkWindowedSincPolyDataFilter.h>
 #include <vtkXMLPolyDataReader.h>
 #include <vtkXMLPolyDataWriter.h>
-#include <vtkSelectEnclosedPoints.h>
 
 #include "FEFixMesh.h"
 #include "Image.h"
-#include <Optimize/VtkMeshWrapper.h>
 #include "MeshUtils.h"
 #include "PreviewMeshQC/FEAreaCoverage.h"
 #include "PreviewMeshQC/FEVTKExport.h"
@@ -310,13 +304,13 @@ Mesh& Mesh::smoothSinc(int iterations, double passband) {
 Mesh& Mesh::remesh(int numVertices, double adaptivity) {
   // ACVD is very noisy to std::cout, even with console output set to zero
   // setting the failbit on std::cout will silence this until it's cleared below
-//  std::cout.setstate(std::ios_base::failbit);
+  //  std::cout.setstate(std::ios_base::failbit);
   auto surf = vtkSmartPointer<vtkSurface>::New();
   auto remesh = vtkSmartPointer<vtkQIsotropicDiscreteRemeshing>::New();
   surf->CreateFromPolyData(this->poly_data_);
   surf->GetCellData()->Initialize();
   surf->GetPointData()->Initialize();
-  //surf->DisplayMeshProperties();
+  // surf->DisplayMeshProperties();
   int subsamplingThreshold = 10;  // subsampling threshold
 
   numVertices = std::max<int>(numVertices, 1);
@@ -332,7 +326,7 @@ Mesh& Mesh::remesh(int numVertices, double adaptivity) {
   remesh->SetNumberOfClusters(numVertices);
   remesh->Remesh();
   // Restore std::cout
-//  std::cout.clear();
+  //  std::cout.clear();
 
   this->poly_data_ = remesh->GetOutput();
 
@@ -389,15 +383,14 @@ Mesh& Mesh::applyTransform(const MeshTransform transform) {
   return *this;
 }
 
-Mesh& Mesh::rotate(const double angle, const Axis axis){
-  
+Mesh& Mesh::rotate(const double angle, const Axis axis) {
   Vector rotation(makeVector({0, 0, 0}));
   rotation[axis] = 1;
   auto com = center();
 
   MeshTransform transform = MeshTransform::New();
   transform->Translate(com[0], com[1], com[2]);
-  transform->RotateWXYZ(angle,rotation[0], rotation[1], rotation[2]);
+  transform->RotateWXYZ(angle, rotation[0], rotation[1], rotation[2]);
   transform->Translate(-com[0], -com[1], -com[2]);
   return applyTransform(transform);
 }
@@ -421,7 +414,7 @@ Mesh& Mesh::fillHoles() {
   return *this;
 }
 
-Mesh &Mesh::clean() {
+Mesh& Mesh::clean() {
   auto clean = vtkSmartPointer<vtkCleanPolyData>::New();
   clean->ConvertPolysToLinesOff();
   clean->ConvertLinesToPointsOff();
@@ -539,7 +532,7 @@ std::vector<Field> Mesh::distance(const Mesh& target, const DistanceMethod metho
 
     case PointToCell: {
       // build cell locator for target mesh
-      auto targetCellLocator = vtkSmartPointer<vtkCellLocator>::New();
+      auto targetCellLocator = vtkSmartPointer<vtkStaticCellLocator>::New();
       targetCellLocator->SetDataSet(target.poly_data_);
       targetCellLocator->BuildLocator();
 
@@ -611,7 +604,7 @@ void Mesh::updatePointLocator() const {
 
 void Mesh::updateCellLocator() const {
   if (!this->cellLocator) {
-    this->cellLocator = vtkSmartPointer<vtkCellLocator>::New();
+    this->cellLocator = vtkSmartPointer<vtkStaticCellLocator>::New();
     this->cellLocator->SetDataSet(this->poly_data_);
     this->cellLocator->BuildLocator();
   }
@@ -823,12 +816,15 @@ Image Mesh::toDistanceTransform(PhysicalRegion region, const Point3 spacing, con
   using IteratorType = itk::ImageRegionIterator<Image::ImageType>;
   IteratorType it(itkimg, itkimg->GetLargestPossibleRegion());
 
+  std::vector<Image::ImageType::IndexType> indices;
+
   // add all points
   auto points = vtkSmartPointer<vtkPoints>::New();
   for (it.GoToBegin(); !it.IsAtEnd(); ++it) {
     Image::ImageType::PointType p;
     itkimg->TransformIndexToPhysicalPoint(it.GetIndex(), p);
     points->InsertNextPoint(p[0], p[1], p[2]);
+    indices.push_back(it.GetIndex());
   }
 
   auto points_poly = vtkSmartPointer<vtkPolyData>::New();
@@ -839,22 +835,21 @@ Image Mesh::toDistanceTransform(PhysicalRegion region, const Point3 spacing, con
   enclosed->SetSurfaceData(this->poly_data_);
   enclosed->Update();
 
-  int id=0;
-  for (it.GoToBegin(); !it.IsAtEnd(); ++it) {
-    Image::ImageType::PointType p;
-    itkimg->TransformIndexToPhysicalPoint(it.GetIndex(), p);
+  tbb::parallel_for(tbb::blocked_range<size_t>(0, indices.size()), [&](const tbb::blocked_range<size_t>& r) {
+    for (size_t i = r.begin(); i != r.end(); ++i) {
+      Image::ImageType::PointType p;
+      itkimg->TransformIndexToPhysicalPoint(indices[i], p);
 
-    double distance = 0.0;
-    vtkIdType face_id = 0;
-    closestPoint(p, distance, face_id);
+      double distance = 0.0;
+      vtkIdType face_id = 0;
+      closestPoint(p, distance, face_id);
 
-    points->InsertNextPoint(p[0], p[1], p[2]);
+      bool outside = !enclosed->IsInside(i);
 
-    bool outside = !enclosed->IsInside(id++);
-
-    // NOTE: distance is positive inside, negative outside
-    it.Set(outside ? -distance : distance);
-  }
+      // NOTE: distance is positive inside, negative outside
+      itkimg->SetPixel(indices[i], outside ? -distance : distance);
+    }
+  });
 
   return img;
 }
@@ -1316,7 +1311,6 @@ vtkSmartPointer<vtkPolyData> Mesh::clipByField(const std::string& name, double v
   return poly_data;
 }
 
-
 Eigen::Vector3d Mesh::computeBarycentricCoordinates(const Eigen::Vector3d& pt, int face) const {
   double closest[3];
   int sub_id;
@@ -1395,7 +1389,6 @@ vtkSmartPointer<vtkPoints> Mesh::getIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi&
 
   return points;
 }
-
 
 Mesh& Mesh::operator+=(const Mesh& otherMesh) {
   // Append the two meshes
