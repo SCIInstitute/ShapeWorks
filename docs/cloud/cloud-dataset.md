@@ -2,7 +2,7 @@
 
 ![ShapeWorks Cloud Dataset List](../img/cloud/datasets.png)
 
-The dataset list displays the uploaded datasets. Each dataset contains [projects](cloud-project.md), which are where you interact with the data.
+The dataset list displays the uploaded datasets. Each dataset contains [projects](cloud-project.md), which are where you interact with the data. A dataset can contain [meshes](../dev/datasets.md#meshes) and [segmentations](../dev/datasets.md#segmentations).
 
 ## Create Subset
 

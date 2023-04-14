@@ -5,7 +5,7 @@ In ShapeWorks Cloud, you can access datasets, create projects, as well view and 
 
 ## Login Screen
 
-To access and use ShapeWorks Cloud, you must first create an account.
+To access and use ShapeWorks Cloud, you must first create an account. To login to ShapeWorks Cloud, navigate to [www.shapeworks-cloud.org/](https://www.shapeworks-cloud.org/){target=_blank}.
 
 ![ShapeWorks Cloud Login Form](../img/cloud/sign_in.png){: width="500" }
 
@@ -27,7 +27,7 @@ See [ShapeWorks Cloud Project](cloud-project.md) for more information.
 
 ## Data Module
 
-The data module contains the project's anatomies and subjects and their associated data.
+The data module contains the project's anatomies/domains and subjects and their associated data.
 
 ![ShapeWorks Cloud Data Module](../img/cloud/data_module.png){: width="400"}
 
