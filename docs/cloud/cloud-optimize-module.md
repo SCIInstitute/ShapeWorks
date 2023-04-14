@@ -1,5 +1,7 @@
 # ShapeWorks Cloud Optimize Module
 
+**Note**: This documentation version could be outdated. [Click here](http://sciinstitute.github.io/ShapeWorks/dev/cloud/cloud-optimize-module.html) to get the most up-to-date version.
+
 The optimize module provides options for particle-based optimization. The optimization particles can be viewed on the shapes in the [Shape Viewer](cloud-shape-viewer.md).
 
 ![ShapeWorks Cloud Optimize Module](../img/cloud/optimize_module.png){: width="400"}

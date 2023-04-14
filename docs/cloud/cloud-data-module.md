@@ -1,5 +1,7 @@
 # ShapeWorks Cloud Data Module
 
+**Note**: This documentation version could be outdated. [Click here](http://sciinstitute.github.io/ShapeWorks/dev/cloud/cloud-data-module.html) to get the most up-to-date version.
+
 The ShapeWorks Cloud data module contains the project's [anatomies](#anatomies) and [subjects](#subjects), including the associated data.
 
 ![ShapeWorks Cloud Data Module](../img/cloud/data_module.png){: width="400"}

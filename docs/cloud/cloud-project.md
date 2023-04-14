@@ -1,5 +1,7 @@
 # ShapeWorks Cloud Project
 
+**Note**: This documentation version could be outdated. [Click here](http://sciinstitute.github.io/ShapeWorks/dev/cloud/cloud-project.html) to get the most up-to-date version.
+
 ![ShapeWorks Cloud Projects](../img/cloud/project_list.png){: width="600"}
 
 Within the project list, you can select or delete a project as well as create a new project.

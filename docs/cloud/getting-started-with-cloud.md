@@ -1,7 +1,9 @@
 # Getting Stared with ShapeWorks Cloud
 
+**Note**: This documentation version could be outdated. [Click here](http://sciinstitute.github.io/ShapeWorks/dev/cloud/getting-started-with-cloud.html) to get the most up-to-date version.
+
 ShapeWorks Cloud provides an All-in-one browser interface to the ShapeWorks toolkit.
-In ShapeWorks Cloud, you can access datasets, create projects, as well view and interact with, groom, optimize, and analyize your data.
+In ShapeWorks Cloud, you can access datasets, create projects, as well view and interact with, groom, optimize, and analyze your data.
 
 ## Login Screen
 

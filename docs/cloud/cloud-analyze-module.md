@@ -1,5 +1,7 @@
 # ShapeWorks Cloud Analyze Module
 
+**Note**: This documentation version could be outdated. [Click here](http://sciinstitute.github.io/ShapeWorks/dev/cloud/cloud-analyze-module.html) to get the most up-to-date version.
+
 The analyze module can be viewed after a successful optimization job. There are three panels in the analyze module, [View PCA](#view-pca), [Charts](#charts), [Shape Viewer](#shape-viewer).
 
 ![ShapeWorks Cloud Analyze Module](../img/cloud/analyze_module.png){: width="400"}
