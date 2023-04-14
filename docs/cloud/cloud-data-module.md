@@ -6,7 +6,7 @@ The ShapeWorks Cloud data module contains the project's [anatomies](#anatomies) 
 
 ## Anatomies
 
-Anatomies can be selected or deselected to allow you to choose what is viewed in the [Shape Viewer](cloud-shape-viewer.md).
+Anatomies can be selected or deselected to allow you to choose what is viewed in the [Shape Viewer](cloud-shape-viewer.md). For more information on how multiple anatomies are implemented in ShapeWorks Studio, navigate [here](../studio/multiple-domains.md).
 
 ![Multiple Anatomies in a Project](../img/cloud/multiple_anatomies.png){: width="400"}
 

@@ -2,7 +2,7 @@
 
 ![ShapeWorks Cloud Groom Module](../img/cloud/groom_module.png){: width="400"}
 
-The groom module provides option for mesh grooming and alighnment. The groomed object is able to be viewed in the [Shape Viewer](cloud-shape-viewer.md). You also have the option of skipping grooming if your data is already prepped.
+The groom module provides option for mesh grooming and alighnment. The groomed object is able to be viewed in the [Shape Viewer](cloud-shape-viewer.md). You also have the option of skipping grooming if your data is already prepped. For more information on how to groom your data, navigate [here](http://sciinstitute.github.io/ShapeWorks/latest/workflow/groom.html){target=_blank}.
 
 To groom the data, click the "Groom" option. If you wish to re-groom data, simply click "Regroom".
 
