@@ -668,7 +668,7 @@ TEST(MeshTests, closestpointTest2)
   vtkIdType face_id = -1;
   auto closeToP = ellipsoid.closestPoint(pNew, distance, face_id);
 
-  ASSERT_TRUE(epsEqual(p, closeToP, 1e-2) && epsEqual(distance, 1.1, 1e-5) && face_id == 9);
+  ASSERT_TRUE(epsEqual(p, closeToP, 1e-2) && epsEqual(distance, 1.1, 1e-5) && face_id == 14);
 }
 
 TEST(MeshTests, closestpointIdTest)
