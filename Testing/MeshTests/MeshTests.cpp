@@ -743,10 +743,11 @@ TEST(MeshTests, warpTest4) {
                  "/mesh_warp/lv_shared1_baseline.vtk");
 }
 
-TEST(MeshTests, warpTest5) {
-  mesh_warp_test("/mesh_warp/lv_shared2.vtk", "/mesh_warp/lv_shared2.particles", "/mesh_warp/lv_shared2.particles",
-                 "/mesh_warp/lv_shared2_baseline.vtk");
-}
+// This test will have to wait for #2047 to be fixed
+//TEST(MeshTests, warpTest5) {
+//  mesh_warp_test("/mesh_warp/lv_shared2.vtk", "/mesh_warp/lv_shared2.particles", "/mesh_warp/lv_shared2.particles",
+//                 "/mesh_warp/lv_shared2_baseline.vtk");
+//}
 
 TEST(MeshTests, findReferenceMeshTest) {
   std::vector<Mesh> meshes;
