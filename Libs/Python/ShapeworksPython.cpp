@@ -1011,7 +1011,8 @@ PYBIND11_MODULE(shapeworks_py, m)
 
   .def("fillHoles",
        &Mesh::fillHoles,
-       "finds holes in a mesh and closes them")
+       "finds holes in a mesh and closes them",
+       "hole_size"_a=1000)
 
   .def("probeVolume",
        &Mesh::probeVolume,

@@ -97,7 +97,7 @@ class Mesh {
   Mesh& rotate(const double angle, const Axis axis);
 
   /// finds holes in a mesh and closes them
-  Mesh& fillHoles();
+  Mesh& fillHoles(double hole_size = 1000.0);
 
   /// clean mesh
   Mesh& clean();
@@ -119,6 +119,15 @@ class Mesh {
 
   /// fix element winding of mesh
   Mesh& fixElement();
+
+  /// Attempt to fix non-manifold edges
+  Mesh& fixNonManifold();
+
+  /// Detect if mesh contain non-manifold edges
+  bool detectNonManifold();
+
+  /// Detect if mesh is triangular;
+  bool detectTriangular();
 
   /// Computes distance from each vertex to closest cell or point in target
   /// mesh, specified as PointToCell (default) or PointToPoint. Returns Fields
