@@ -1,5 +1,7 @@
 # ShapeWorks Cloud Shape Viewer
 
+**Note**: This documentation version could be outdated. [Click here](http://sciinstitute.github.io/ShapeWorks/dev/cloud/cloud-shape-viewer.html) to get the most up-to-date version.
+
 ![ShapeWorks Cloud Shape Viewer](../img/cloud/model_display.png){: width="600"}
 
 The Shape Viewer displays the subjects selected in the [data module](cloud-data-module.md). The Shape Viewer contains options to select layers, select an axis system, set the dataset thumbnail, reset view, and if the [analyze module](cloud-analyze-module.md) is active, the difference from mean.

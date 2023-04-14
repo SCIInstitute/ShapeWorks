@@ -1,5 +1,7 @@
 # ShapeWorks Cloud Client (SWCC)
 
+**Note**: This documentation version could be outdated. [Click here](http://sciinstitute.github.io/ShapeWorks/dev/cloud/swcc.html) to get the most up-to-date version.
+
 The ShapeWorks Cloud Client (SWCC) is a Python module that acts as an interface for sending requests to an active ShapeWorks Cloud server. The average use cases for this module include downloading data for custom analysis, uploading new datasets, and creating new projects.
 
 Currently, this python module is the only way to upload datasets to ShapeWorks Cloud, since this action should only be performed by trusted and informed users.
@@ -82,9 +84,10 @@ The Project and Dataset classes inherit from a class called `APIModel`. The foll
 7. OptimizedParticles
 8. Landmarks
 9. Constraints
-10. CachedAnalysisModePCA
-11. CachedAnalysisMode
-12. CachedAnalysis
+10. CachedAnalysisGroup
+11. CachedAnalysisModePCA
+12. CachedAnalysisMode
+13. CachedAnalysis
 
 Each of these classes has the following methods:
 
