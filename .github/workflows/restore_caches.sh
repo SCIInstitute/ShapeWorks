@@ -38,4 +38,12 @@ if [ -f /tmp/${DEP_FILE} ] ; then
     rm /tmp/$DEP_FILE
 fi
 
+# Restore tiny test data downloads
+scp runner@${CACHE_HOST}:github/tiny_test_cache.tar.gz /tmp || true
+if [ -f /tmp/tiny_test_cache.tar.gz ] ; then
+    cd Examples/Python
+    tar -xzvf /tmp/tiny_test_cache.tar.gz
+    rm /tmp/tiny_test_cache.tar.gz
+fi
+
 echo "caches restored"
