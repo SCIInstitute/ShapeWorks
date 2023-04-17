@@ -506,8 +506,6 @@ TEST(MeshTests, coverageTest) {
 }
 
 TEST(MeshTests, distanceTest1) {
-  vtkSMPTools::SetBackend("Sequential");
-
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
   Mesh pelvis(std::string(TEST_DATA_DIR) + "/pelvis.vtk");
   auto f2p_distances = femur.distance(pelvis, Mesh::DistanceMethod::PointToPoint);
@@ -524,8 +522,6 @@ TEST(MeshTests, distanceTest1) {
 }
 
 TEST(MeshTests, distanceTest2) {
-  vtkSMPTools::SetBackend("Sequential");
-
   Mesh femur1(std::string(TEST_DATA_DIR) + "/m03_L_femur.ply");
   Mesh femur2(std::string(TEST_DATA_DIR) + "/m04_L_femur.ply");
   auto fwd_distances = femur1.distance(femur2, Mesh::DistanceMethod::PointToCell);
