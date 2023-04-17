@@ -4,7 +4,7 @@
 #include "MeshWarper.h"
 #include "Image.h"
 #include "ParticleSystem.h"
-
+#include "vtkSMPTools.h"
 #include <igl/point_mesh_squared_distance.h>
 
 using namespace shapeworks;
@@ -560,6 +560,8 @@ TEST(MeshTests, coverageTest)
 
 TEST(MeshTests, distanceTest1)
 {
+  vtkSMPTools::SetBackend("Sequential");
+
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
   Mesh pelvis(std::string(TEST_DATA_DIR) + "/pelvis.vtk");
   auto f2p_distances = femur.distance(pelvis, Mesh::DistanceMethod::PointToPoint);
@@ -577,6 +579,8 @@ TEST(MeshTests, distanceTest1)
 
 TEST(MeshTests, distanceTest2)
 {
+  vtkSMPTools::SetBackend("Sequential");
+
   Mesh femur1(std::string(TEST_DATA_DIR) + "/m03_L_femur.ply");
   Mesh femur2(std::string(TEST_DATA_DIR) + "/m04_L_femur.ply");
   auto fwd_distances = femur1.distance(femur2, Mesh::DistanceMethod::PointToCell);
@@ -585,6 +589,9 @@ TEST(MeshTests, distanceTest2)
   femur2.setField("distance", rev_distances[0], Mesh::Point);
   femur1.setField("closestCells", fwd_distances[1], Mesh::Point);
   femur2.setField("closestCells", rev_distances[1], Mesh::Point);
+
+  femur1.write("/tmp/meshdistance_cell_fwd.vtk");
+  femur2.write("/tmp/meshdistance_cell_rev.vtk");
 
   Mesh fwd(std::string(TEST_DATA_DIR) + "/meshdistance_cell_fwd.vtk");
   Mesh rev(std::string(TEST_DATA_DIR) + "/meshdistance_cell_rev.vtk");
