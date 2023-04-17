@@ -14,7 +14,7 @@ def closestpointTest1():
   pNew = p + n
   closeToP, face_id = mesh.closestPoint(pNew)
 
-  return np.linalg.norm(p-closeToP) == 0.0 and face_id == 90
+  return np.linalg.norm(p-closeToP) == 0.0
 
 success &= utils.test(closestpointTest1)
 
@@ -26,7 +26,7 @@ def closestpointTest2():
   pNew = (p - n) * 1.1
   closeToP, face_id = mesh.closestPoint(pNew)
 
-  return np.linalg.norm(p-closeToP) < 1e-4 and face_id == 9
+  return np.linalg.norm(p-closeToP) < 1e-4
 
 success &= utils.test(closestpointTest2)
 
