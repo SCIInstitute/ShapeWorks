@@ -5,6 +5,7 @@
 #include "MeshUtils.h"
 #include "MeshWarper.h"
 #include "ParticleSystem.h"
+#include "Testing.h"
 
 #include <igl/point_mesh_squared_distance.h>
 
