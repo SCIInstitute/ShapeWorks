@@ -89,6 +89,9 @@ def download_dataset(datasetName, outputDirectory):
     check_file = "Output/" + datasetName + ".downloaded"
     if (os.path.exists(check_file)):
         print(f"Dataset {datasetName} already downloaded ({check_file} exists)")
+        # check if env var SW_PORTAL_DOWNLOAD_ONLY is set to 1
+        if 'SW_PORTAL_DOWNLOAD_ONLY' in os.environ and os.environ['SW_PORTAL_DOWNLOAD_ONLY'] == '1':
+            quit()
         return
     username, password = login()
     # api as a context manager
@@ -106,3 +109,6 @@ def download_dataset(datasetName, outputDirectory):
     # Mark as completed
     Path(check_file).touch()
     print(f"Dataset {datasetName} downloaded to {outputDirectory}")
+    
+    if 'SW_PORTAL_DOWNLOAD_ONLY' in os.environ:
+        quit()

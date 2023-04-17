@@ -51,6 +51,9 @@ jobs:
     - name: Get tags
       run: git fetch --unshallow origin +refs/tags/*:refs/tags/*
 
+    - name: Grab tiny test cache files
+      run: cd Examples/Python ; wget http://www.sci.utah.edu/~shapeworks/tiny_test_cache.tar.gz ; tar -xzvf tiny_test_cache.tar.gz ; rm tiny_test_cache.tar.gz
+      
     - name: Restore Caches
       shell: bash -l {0}
       run: .github/workflows/restore_caches.sh
