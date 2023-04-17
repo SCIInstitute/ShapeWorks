@@ -6,6 +6,8 @@ echo "#############################"
 
 set +e
 
+BASE=`pwd`
+
 . $GITHUB_WORKSPACE/.github/workflows/common.sh
 
 # based on root folder
@@ -41,7 +43,7 @@ fi
 # Restore tiny test data downloads
 scp runner@${CACHE_HOST}:github/tiny_test_cache.tar.gz /tmp || true
 if [ -f /tmp/tiny_test_cache.tar.gz ] ; then
-    cd Examples/Python
+    cd $BASE/Examples/Python
     tar -xzvf /tmp/tiny_test_cache.tar.gz
     rm /tmp/tiny_test_cache.tar.gz
 fi
