@@ -590,9 +590,6 @@ TEST(MeshTests, distanceTest2)
   femur1.setField("closestCells", fwd_distances[1], Mesh::Point);
   femur2.setField("closestCells", rev_distances[1], Mesh::Point);
 
-  femur1.write("/tmp/meshdistance_cell_fwd.vtk");
-  femur2.write("/tmp/meshdistance_cell_rev.vtk");
-
   Mesh fwd(std::string(TEST_DATA_DIR) + "/meshdistance_cell_fwd.vtk");
   Mesh rev(std::string(TEST_DATA_DIR) + "/meshdistance_cell_rev.vtk");
   ASSERT_TRUE(femur1 == fwd);
