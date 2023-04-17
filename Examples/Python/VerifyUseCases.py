@@ -37,7 +37,7 @@ sys.stdout = Logger()
 async def read_stream(stream, callback):
     try:
         while True:
-            line = await stream.readline()
+            line = await stream.read(80)
             if line:
                 callback(line)
             else:
@@ -48,21 +48,18 @@ async def read_stream(stream, callback):
 
 async def run_command(args):
     proc = await asyncio.subprocess.create_subprocess_exec(
-        *args, stdout=asyncio.subprocess.PIPE
+        *args, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE, limit=2**25,
     )
 
-    await asyncio.wait(
-        [
-            read_stream(
-                proc.stdout,
-                lambda x: sys.stdout.write(x.decode("UTF8")),
-            ),
-            read_stream(
-                proc.stderr,
-                lambda x: sys.stdout.write(x.decode("UTF8")),
-            ),
-        ]
+    loop = asyncio.get_event_loop()
+    task1 = loop.create_task(
+        read_stream(proc.stdout, lambda x: sys.stdout.write(x.decode("UTF8")))
     )
+    task2 = loop.create_task(
+        read_stream(proc.stderr, lambda x: sys.stdout.write(x.decode("UTF8")))
+    )
+
+    await asyncio.wait({task1, task2})
 
     await proc.wait()
     success = (proc.returncode == 0)
