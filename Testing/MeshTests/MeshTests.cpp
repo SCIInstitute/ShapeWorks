@@ -587,8 +587,6 @@ TEST(MeshTests, distanceTest2)
   auto rev_distances = femur2.distance(femur1, Mesh::DistanceMethod::PointToCell);
   femur1.setField("distance", fwd_distances[0], Mesh::Point);
   femur2.setField("distance", rev_distances[0], Mesh::Point);
-  femur1.setField("closestCells", fwd_distances[1], Mesh::Point);
-  femur2.setField("closestCells", rev_distances[1], Mesh::Point);
 
   Mesh fwd(std::string(TEST_DATA_DIR) + "/meshdistance_cell_fwd.vtk");
   Mesh rev(std::string(TEST_DATA_DIR) + "/meshdistance_cell_rev.vtk");
