@@ -1,6 +1,6 @@
 # Release Notes
 
-## ShapeWorks 6.4.0 - 2023-03-??
+## ShapeWorks 6.4.0 - 2023-04-??
 ### What is new?
   * **ShapeWorks Back-end**
     * New shapeworks 'analyze' command for offline analysis of shape models
@@ -26,7 +26,7 @@
     * Added options to the incremental use case when run in --interactive mode, including sorting method, 
       initial model size, and incremental batch size. The sorting method determines how the shapes are sorted 
       to be added incrementally. There are three options: random, median, distribution.
-      ([detauls here](../use-cases/multistep/incremental_supershapes.md))
+      ([details here](../use-cases/multistep/incremental_supershapes.md))
     * [Python API documentation](../python/python-api.md) has been added to the ShapeWorks documentation site
 
 ### Fixes
