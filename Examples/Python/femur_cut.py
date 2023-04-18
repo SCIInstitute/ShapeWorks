@@ -15,9 +15,9 @@ import numpy as np
 import shapeworks as sw
 
 def Run_Pipeline(args):
-    print("\nStep 1. Extract Data\n")
+    print("\nStep 1. Acquire Data\n")
     """
-    Step 1: EXTRACT DATA
+    Step 1: ACQUIRE DATA
     We define dataset_name which determines which dataset to download from
     the portal and the directory to save output from the use case in.
     This data is comprised of femur meshes and corresponding hip CT scans.
@@ -30,7 +30,7 @@ def Run_Pipeline(args):
     if args.tiny_test:
         dataset_name = "femur_cut_tiny_test"
         args.use_single_scale = True
-        sw.download_and_unzip_dataset(dataset_name, output_directory)
+        sw.download_dataset(dataset_name, output_directory)
         dataset_name = "femur"
         mesh_files = sorted(glob.glob(output_directory +
                             dataset_name + "/meshes/*.ply"))[:3]
@@ -39,7 +39,7 @@ def Run_Pipeline(args):
     # else download the entire dataset
     else:
         dataset_name = "femur_cut"
-        sw.download_and_unzip_dataset(dataset_name, output_directory)
+        sw.download_dataset(dataset_name, output_directory)
         dataset_name = "femur"
         mesh_files = sorted(glob.glob(output_directory +
                             dataset_name + "/meshes/*.ply"))
@@ -225,7 +225,7 @@ def Run_Pipeline(args):
     project.save(spreadsheet_file)
 
     # Run optimization
-    optimizeCmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
+    optimizeCmd = ('shapeworks optimize --progress --name ' + spreadsheet_file).split()
     subprocess.check_call(optimizeCmd)
 
     # If tiny test or verify, check results and exit

@@ -21,9 +21,9 @@ def calculate_transforms(shapes, reference_shape):
 	return transforms
 
 def Run_Pipeline(args):
-	print("\nStep 1. Extract Data\n")
+	print("\nStep 1. Acquire Data\n")
 	"""
-	Step 1: EXTRACT DATA
+	Step 1: ACQUIRE DATA
 
 	We define dataset_name which determines which dataset to download from 
 	the portal and the directory to save output from the use case in. 
@@ -36,7 +36,7 @@ def Run_Pipeline(args):
 	# If running a tiny_test, then download subset of the data
 	if args.tiny_test:
 		dataset_name="hip_multiple_domain_tiny_test"
-		sw.download_and_unzip_dataset(dataset_name, output_directory)
+		sw.download_dataset(dataset_name, output_directory)
 		dataset_name = "hip"
 		mesh_files = sorted(glob.glob(output_directory +
 									 dataset_name + "/meshes/*.vtk"))[:6]
@@ -45,7 +45,7 @@ def Run_Pipeline(args):
 	# Else download the entire dataset
 	else:
 		dataset_name = "hip_multiple_domain"
-		sw.download_and_unzip_dataset(dataset_name, output_directory)
+		sw.download_dataset(dataset_name, output_directory)
 		dataset_name = "hip"
 		mesh_files = sorted(glob.glob(output_directory +
 									 dataset_name + "/meshes/*.vtk"))
@@ -215,16 +215,19 @@ def Run_Pipeline(args):
 	parameter_dictionary = {
 		"checkpointing_interval" : 200,
 		"keep_checkpoints" : 0,
-		"iterations_per_split" : 3000,
-		"optimization_iterations" : 5000,
-		"starting_regularization" :1000,
+		"iterations_per_split" : 2500,
+		"optimization_iterations" : 200,
+		"starting_regularization" : 1000,
 		"ending_regularization" : 10,
-		"relative_weighting" : 10, 
-		"initial_relative_weighting" : 0.1,
+		"relative_weighting" : 3, 
+		"initial_relative_weighting" : 0.05,
 		"save_init_splits" : 0,
 		"verbosity" : 0,
 		"use_normals": 1,
-		"normals_strength": 10.0
+		"normals_strength": 5.0,
+                "procrustes" : 1,
+                "procrustes_scaling" : 1,
+                "procrustes_rotation_translation" : 1
 	  }
 	num_particles = [256,256]
 
@@ -248,7 +251,7 @@ def Run_Pipeline(args):
 	
 
 	# Run optimization
-	optimize_cmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
+	optimize_cmd = ('shapeworks optimize --progress --name ' + spreadsheet_file).split()
 	subprocess.check_call(optimize_cmd)
 
 	# # If tiny test or verify, check results and exit

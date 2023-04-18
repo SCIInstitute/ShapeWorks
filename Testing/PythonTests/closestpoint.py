@@ -12,9 +12,9 @@ def closestpointTest1():
   n = mesh.getField("Normals", Mesh.Point)[42]
   p = mesh.getPoint(42)
   pNew = p + n
-  closeToP, outside, face_id = mesh.closestPoint(pNew)
+  closeToP, face_id = mesh.closestPoint(pNew)
 
-  return np.linalg.norm(p-closeToP) == 0.0 and outside == True and face_id == 90
+  return np.linalg.norm(p-closeToP) == 0.0
 
 success &= utils.test(closestpointTest1)
 
@@ -24,9 +24,9 @@ def closestpointTest2():
   n = mesh.getField("Normals", Mesh.Point)[42]
   p = mesh.getPoint(42)
   pNew = (p - n) * 1.1
-  closeToP, outside, face_id = mesh.closestPoint(pNew)
+  closeToP, face_id = mesh.closestPoint(pNew)
 
-  return np.linalg.norm(p-closeToP) < 1e-4 and outside == False and face_id == 9
+  return np.linalg.norm(p-closeToP) < 1e-4
 
 success &= utils.test(closestpointTest2)
 

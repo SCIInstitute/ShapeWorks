@@ -1001,9 +1001,18 @@ PYBIND11_MODULE(shapeworks_py, m)
        "applies the given transformation to the mesh",
        "transform"_a, "imageTransform"_a=false)
 
+
+  .def("rotate",
+       [](Mesh& mesh, const double angle, const Axis axis) -> decltype(auto){
+          return mesh.rotate(angle, axis);
+       },
+       "rotate using axis by angle (in degrees)",
+       "angle"_a, "axis"_a)
+
   .def("fillHoles",
        &Mesh::fillHoles,
-       "finds holes in a mesh and closes them")
+       "finds holes in a mesh and closes them",
+       "hole_size"_a=1000)
 
   .def("probeVolume",
        &Mesh::probeVolume,
@@ -1071,11 +1080,10 @@ PYBIND11_MODULE(shapeworks_py, m)
 
   .def("closestPoint",
        [](Mesh &mesh, std::vector<double> p) -> decltype(auto) {
-         bool outside = false;
          double distance;
          vtkIdType face_id = -1;
-         auto pt = mesh.closestPoint(Point({p[0], p[1], p[2]}), outside, distance, face_id);
-         return py::make_tuple(py::array(3, pt.GetDataPointer()), outside, face_id);
+         auto pt = mesh.closestPoint(Point({p[0], p[1], p[2]}), distance, face_id);
+         return py::make_tuple(py::array(3, pt.GetDataPointer()), face_id);
        },
        "returns closest point to given point on mesh",
        "point"_a)

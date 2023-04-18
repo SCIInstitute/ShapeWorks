@@ -11,7 +11,7 @@ call conda config --add channels anaconda
 call conda config --add channels conda-forge
 
 REM install shapeworks deps
-call conda create --yes --name %CONDAENV% python=3.9.13 openblas=0.3.20 'vtk=9.1.0=qt*' scikit-learn=1.1.1 pip=22.1.2
+call conda create --yes --name %CONDAENV% python=3.9.13 'vtk=9.1.0=qt*' pip=22.1.2
 call conda activate %CONDAENV%
 
 REM reactivate shapeworks environment
@@ -38,12 +38,16 @@ call pip install itk-elastix==0.13.0
 call pip install SimpleITK==2.1.1.2
 call pip install bokeh==2.4.3
 call pip install seaborn==0.11.2
+call pip install scikit-learn==1.1.1
+call pip install pyvista==0.34.1
 
-call pip install Python/DatasetUtilsPackage
-call pip install Python/DocumentationUtilsPackage
-call pip install Python/DataAugmentationUtilsPackage
-call pip install Python/DeepSSMUtilsPackage
-call pip install Python/ShapeCohortGenPackage
+call pip install swcc==1.0.3
+
+call pip install Python/DatasetUtilsPackage.tar.gz
+call pip install Python/DocumentationUtilsPackage.tar.gz
+call pip install Python/DataAugmentationUtilsPackage.tar.gz
+call pip install Python/DeepSSMUtilsPackage.tar.gz
+call pip install Python/ShapeCohortGenPackage.tar.gz
 
 REM install the shapeworks python module and conda [de]activate scripts
 call .\Installation\install_python_module.bat

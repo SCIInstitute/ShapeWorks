@@ -1,16 +1,17 @@
-#include "Testing.h"
+#include <igl/point_mesh_squared_distance.h>
+
+#include "Image.h"
 #include "Mesh.h"
 #include "MeshUtils.h"
 #include "MeshWarper.h"
-#include "Image.h"
 #include "ParticleSystem.h"
+#include "Testing.h"
 
 #include <igl/point_mesh_squared_distance.h>
 
 using namespace shapeworks;
 
-TEST(MeshTests, meshLocators)
-{
+TEST(MeshTests, meshLocators) {
   Mesh mesh1(std::string(TEST_DATA_DIR) + "/butterfly.vtk");
   Mesh mesh2(std::string(TEST_DATA_DIR) + "/smoothsinc.vtk");
   Point center_1 = mesh1.center();
@@ -22,14 +23,13 @@ TEST(MeshTests, meshLocators)
   ASSERT_TRUE(center_id_1 != center_id_2 &&  // ensure next test doesn't succeed by coincidene
               center_point_1 != center_point_2);
 
-  mesh2 = mesh1; // mesh2 should no longer use cached locators from mesh1
-  ASSERT_TRUE(mesh2.center() != center_2); // function doesn't update any locators, so uses cached
-  ASSERT_TRUE(mesh2.getPoint(center_id_1) == center_point_1); // doesn't update locators
-  ASSERT_TRUE(mesh2.closestPointId(center_1) == center_id_1); // updates point locater, so noop
+  mesh2 = mesh1;                                               // mesh2 should no longer use cached locators from mesh1
+  ASSERT_TRUE(mesh2.center() != center_2);                     // function doesn't update any locators, so uses cached
+  ASSERT_TRUE(mesh2.getPoint(center_id_1) == center_point_1);  // doesn't update locators
+  ASSERT_TRUE(mesh2.closestPointId(center_1) == center_id_1);  // updates point locater, so noop
 }
 
-TEST(MeshTests, writeTest1)
-{
+TEST(MeshTests, writeTest1) {
   Mesh ellipsoid(std::string(TEST_DATA_DIR) + "/ellipsoid_01.vtk");
   ellipsoid.write(std::string(TEST_DATA_DIR) + "/ellipsoidBinary.vtk", true);
 
@@ -38,8 +38,7 @@ TEST(MeshTests, writeTest1)
   ASSERT_TRUE(ellipsoid == ellipsoidBinary);
 }
 
-TEST(MeshTests, writeTest2)
-{
+TEST(MeshTests, writeTest2) {
   Mesh ellipsoid(std::string(TEST_DATA_DIR) + "/ellipsoid_0.ply");
   ellipsoid.write(std::string(TEST_DATA_DIR) + "/ellipsoidBinary.ply", true);
 
@@ -48,18 +47,17 @@ TEST(MeshTests, writeTest2)
   ASSERT_TRUE(ellipsoid == ellipsoidBinary);
 }
 
-TEST(MeshTests, subdivisionTest1)
-{
+TEST(MeshTests, subdivisionTest1) {
   Mesh femur(std::string(TEST_DATA_DIR) + "/m03.vtk");
-  femur.applySubdivisionFilter();;
+  femur.applySubdivisionFilter();
+  ;
 
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/butterfly.vtk");
 
   ASSERT_TRUE(femur == ground_truth);
 }
 
-TEST(MeshTests, subdivisionTest2)
-{
+TEST(MeshTests, subdivisionTest2) {
   Mesh femur(std::string(TEST_DATA_DIR) + "/m03.vtk");
   femur.applySubdivisionFilter(Mesh::SubdivisionType::Loop);
 
@@ -68,8 +66,7 @@ TEST(MeshTests, subdivisionTest2)
   ASSERT_TRUE(femur == ground_truth);
 }
 
-TEST(MeshTests, geodesicTest1)
-{
+TEST(MeshTests, geodesicTest1) {
   Mesh ellipsoid(std::string(TEST_DATA_DIR) + "/ellipsoid_0.ply");
   const int p1 = 10;
   const int p2 = 200;
@@ -83,8 +80,7 @@ TEST(MeshTests, geodesicTest1)
   ASSERT_TRUE(std::abs(geodesic_dist - 6.577) < 1e-4);
 }
 
-TEST(MeshTests, geodesicTest2)
-{
+TEST(MeshTests, geodesicTest2) {
   Mesh femur(std::string(TEST_DATA_DIR) + "/m03.vtk");
   auto distField = femur.geodesicDistance(femur.getPoint(200));
   femur.setField("GeodesicDistanceToLandmark", distField, Mesh::Point);
@@ -94,8 +90,7 @@ TEST(MeshTests, geodesicTest2)
   ASSERT_TRUE(femur.compareField(ground_truth, "GeodesicDistanceToLandmark"));
 }
 
-TEST(MeshTests, geodesicTest3)
-{
+TEST(MeshTests, geodesicTest3) {
   Mesh ellipsoid(std::string(TEST_DATA_DIR) + "/ellipsoid_01.vtk");
 
   std::vector<Point3> curve;
@@ -111,8 +106,7 @@ TEST(MeshTests, geodesicTest3)
   ASSERT_TRUE(ellipsoid.compareField(ground_truth, "GeodesicDistanceToCurve"));
 }
 
-TEST(MeshTests, curvatureTest1)
-{
+TEST(MeshTests, curvatureTest1) {
   Mesh mesh(std::string(TEST_DATA_DIR) + std::string("/ellipsoid_0.ply"));
   auto curv = mesh.curvature(Mesh::CurvatureType::Mean);
   mesh.setField("MeanCurvature", curv, Mesh::Point);
@@ -122,8 +116,7 @@ TEST(MeshTests, curvatureTest1)
   ASSERT_TRUE(mesh.compareField(ground_truth, "MeanCurvature", "MeanCurvature", 1e-14));
 }
 
-TEST(MeshTests, curvatureTest2)
-{
+TEST(MeshTests, curvatureTest2) {
   Mesh mesh(std::string(TEST_DATA_DIR) + std::string("/ellipsoid_0.ply"));
   auto curv = mesh.curvature();
   mesh.setField("PrincipalCurvature", curv, Mesh::Point);
@@ -133,8 +126,7 @@ TEST(MeshTests, curvatureTest2)
   ASSERT_TRUE(mesh.compareField(ground_truth, "PrincipalCurvature", "PrincipalCurvature", 1e-14));
 }
 
-TEST(MeshTests, curvatureTest3)
-{
+TEST(MeshTests, curvatureTest3) {
   Mesh mesh(std::string(TEST_DATA_DIR) + std::string("/ellipsoid_0.ply"));
   auto curv = mesh.curvature(Mesh::CurvatureType::Gaussian);
   mesh.setField("GaussianCurvature", curv, Mesh::Point);
@@ -144,8 +136,7 @@ TEST(MeshTests, curvatureTest3)
   ASSERT_TRUE(mesh.compareField(ground_truth, "GaussianCurvature", "GaussianCurvature", 1e-14));
 }
 
-TEST(MeshTests, curvatureTest4)
-{
+TEST(MeshTests, curvatureTest4) {
   Mesh mesh(std::string(TEST_DATA_DIR) + std::string("/m03.vtk"));
   auto curv = mesh.curvature(Mesh::CurvatureType::Mean);
   mesh.setField("MeanCurvature", curv, Mesh::Point);
@@ -155,8 +146,7 @@ TEST(MeshTests, curvatureTest4)
   ASSERT_TRUE(mesh.compareField(ground_truth, "MeanCurvature", "MeanCurvature", 1e-14));
 }
 
-TEST(MeshTests, curvatureTest5)
-{
+TEST(MeshTests, curvatureTest5) {
   Mesh mesh(std::string(TEST_DATA_DIR) + std::string("/m03.vtk"));
   auto curv = mesh.curvature();
   mesh.setField("PrincipalCurvature", curv, Mesh::Point);
@@ -166,8 +156,7 @@ TEST(MeshTests, curvatureTest5)
   ASSERT_TRUE(mesh.compareField(ground_truth, "PrincipalCurvature", "PrincipalCurvature", 1e-14));
 }
 
-TEST(MeshTests, curvatureTest6)
-{
+TEST(MeshTests, curvatureTest6) {
   Mesh mesh(std::string(TEST_DATA_DIR) + std::string("/m03.vtk"));
   auto curv = mesh.curvature(Mesh::CurvatureType::Gaussian);
   mesh.setField("GaussianCurvature", curv, Mesh::Point);
@@ -177,8 +166,7 @@ TEST(MeshTests, curvatureTest6)
   ASSERT_TRUE(mesh.compareField(ground_truth, "GaussianCurvature", "GaussianCurvature", 1e-14));
 }
 
-TEST(MeshTests, computemeannormalsTest1)
-{
+TEST(MeshTests, computemeannormalsTest1) {
   std::vector<std::reference_wrapper<const Mesh>> meshes;
   Mesh mesh1(std::string(TEST_DATA_DIR) + std::string("/m03_normals.vtk"));
   meshes.push_back(mesh1);
@@ -193,8 +181,7 @@ TEST(MeshTests, computemeannormalsTest1)
   ASSERT_TRUE(mesh.compareField(ground_truth, "MeanNormals"));
 }
 
-TEST(MeshTests, computemeannormalsTest2)
-{
+TEST(MeshTests, computemeannormalsTest2) {
   std::vector<std::string> filenames;
   filenames.push_back(std::string(TEST_DATA_DIR) + std::string("/m03.vtk"));
   filenames.push_back(std::string(TEST_DATA_DIR) + std::string("/m04.vtk"));
@@ -207,8 +194,7 @@ TEST(MeshTests, computemeannormalsTest2)
   ASSERT_TRUE(mesh.compareField(ground_truth, "MeanNormals"));
 }
 
-TEST(MeshTests, generateNormalsTest)
-{
+TEST(MeshTests, generateNormalsTest) {
   std::vector<std::reference_wrapper<Mesh>> meshes;
   Mesh mesh1(std::string(TEST_DATA_DIR) + std::string("/m03.vtk"));
   meshes.push_back(mesh1);
@@ -222,11 +208,10 @@ TEST(MeshTests, generateNormalsTest)
   ASSERT_TRUE(mesh1.compareField(ground_truth1, "Normals") && mesh2.compareField(ground_truth2, "Normals"));
 }
 
-TEST(MeshTests, readFailTest)
-{
+TEST(MeshTests, readFailTest) {
   try {
     Mesh mesh(std::string(TEST_DATA_DIR) + "/foo.vtk");
-  } catch(...) {
+  } catch (...) {
     ASSERT_TRUE(true);
     return;
   }
@@ -234,32 +219,28 @@ TEST(MeshTests, readFailTest)
   ASSERT_TRUE(false);
 }
 
-TEST(MeshTests, fixelementTest)
-{
+TEST(MeshTests, fixelementTest) {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
   femur.fixElement();
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/fixElement.vtk");
   ASSERT_TRUE(femur == ground_truth);
 }
 
-TEST(MeshTests, remeshTest1)
-{
+TEST(MeshTests, remeshTest1) {
   Mesh ellipsoid(std::string(TEST_DATA_DIR) + "/ellipsoid_0.ply");
   ellipsoid.remesh(3000, 1.0);
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/remesh1.vtk");
   ASSERT_TRUE(ellipsoid == ground_truth);
 }
 
-TEST(MeshTests, remeshTest2)
-{
+TEST(MeshTests, remeshTest2) {
   Mesh ellipsoid(std::string(TEST_DATA_DIR) + "/ellipsoid_01.vtk");
   ellipsoid.remesh(1000, 2.0);
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/remesh2.vtk");
   ASSERT_TRUE(ellipsoid == ground_truth);
 }
 
-TEST(MeshTests, remeshPercentTest1)
-{
+TEST(MeshTests, remeshPercentTest1) {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
   femur.remeshPercent(0.25, 1.0);
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/remeshPercent1.vtk");
@@ -267,8 +248,7 @@ TEST(MeshTests, remeshPercentTest1)
   ASSERT_TRUE(femur == ground_truth);
 }
 
-TEST(MeshTests, remeshPercentTest2)
-{
+TEST(MeshTests, remeshPercentTest2) {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
   femur.remeshPercent(0.10, 0.5);
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/remeshPercent2.vtk");
@@ -276,8 +256,7 @@ TEST(MeshTests, remeshPercentTest2)
   ASSERT_TRUE(femur == ground_truth);
 }
 
-TEST(MeshTests, smoothTest1)
-{
+TEST(MeshTests, smoothTest1) {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
   femur.smooth(10, 0.01);
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/smooth1.vtk");
@@ -285,8 +264,7 @@ TEST(MeshTests, smoothTest1)
   ASSERT_TRUE(femur == ground_truth);
 }
 
-TEST(MeshTests, smoothTest2)
-{
+TEST(MeshTests, smoothTest2) {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
   femur.smooth();
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/smooth2.vtk");
@@ -294,17 +272,15 @@ TEST(MeshTests, smoothTest2)
   ASSERT_TRUE(femur == ground_truth);
 }
 
-TEST(MeshTests, smoothSincTest)
-{
+TEST(MeshTests, smoothSincTest) {
   Mesh femur(std::string(TEST_DATA_DIR) + "/la-bin.vtk");
-  femur.smoothSinc(10,0.05);
+  femur.smoothSinc(10, 0.05);
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/smoothsinc.vtk");
 
   ASSERT_TRUE(femur == ground_truth);
 }
 
-TEST(MeshTests, invertNormalsTest)
-{
+TEST(MeshTests, invertNormalsTest) {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
   femur.invertNormals();
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/invertnormals.vtk");
@@ -312,8 +288,7 @@ TEST(MeshTests, invertNormalsTest)
   ASSERT_TRUE(femur == ground_truth);
 }
 
-TEST(MeshTests, reflectTest1)
-{
+TEST(MeshTests, reflectTest1) {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
   femur.reflect(Axis::X);
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/reflect1.vtk");
@@ -321,8 +296,7 @@ TEST(MeshTests, reflectTest1)
   ASSERT_TRUE(femur == ground_truth);
 }
 
-TEST(MeshTests, reflectTest2)
-{
+TEST(MeshTests, reflectTest2) {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
   femur.reflect(Axis::Y);
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/reflect2.vtk");
@@ -330,8 +304,7 @@ TEST(MeshTests, reflectTest2)
   ASSERT_TRUE(femur == ground_truth);
 }
 
-TEST(MeshTests, fillHolesTest)
-{
+TEST(MeshTests, fillHolesTest) {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
   femur.fillHoles();
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/fillholes.vtk");
@@ -339,8 +312,7 @@ TEST(MeshTests, fillHolesTest)
   ASSERT_TRUE(femur == ground_truth);
 }
 
-TEST(MeshTests, probeVolumeTest)
-{
+TEST(MeshTests, probeVolumeTest) {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
   femur.probeVolume(std::string(TEST_DATA_DIR) + "/femurVtkDT.nrrd");
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/probe.vtk");
@@ -348,74 +320,66 @@ TEST(MeshTests, probeVolumeTest)
   ASSERT_TRUE(femur == ground_truth);
 }
 
-TEST(MeshTests, clipTest1)
-{
+TEST(MeshTests, clipTest1) {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
-  femur.clip(makePlane(Point3({-91.0, 0.0, 1230.0}),
-                       makeVector({0.0, 0.0, 1.0}))); // clip upper half of mesh from center
+  femur.clip(
+      makePlane(Point3({-91.0, 0.0, 1230.0}), makeVector({0.0, 0.0, 1.0})));  // clip upper half of mesh from center
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/clip1.vtk");
 
   ASSERT_TRUE(femur == ground_truth);
 }
 
-TEST(MeshTests, clipTest2)
-{
+TEST(MeshTests, clipTest2) {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
-  femur.clip(makePlane(Point3({-91.0, 0.0, 1230.0}),
-                       makeVector({0.0, 0.0, -1.0}))); // clip lower half of mesh from center
+  femur.clip(
+      makePlane(Point3({-91.0, 0.0, 1230.0}), makeVector({0.0, 0.0, -1.0})));  // clip lower half of mesh from center
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/clip2.vtk");
 
   ASSERT_TRUE(femur == ground_truth);
 }
 
-TEST(MeshTests, clipTest3)
-{
+TEST(MeshTests, clipTest3) {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
-  femur.clip(makePlane(Point3({-60.0, 10.0, 1235.0}),
-                       makeVector({-5.0, 3.14159, 1.0}))); // clip arbitrary mesh from an edge
+  femur.clip(
+      makePlane(Point3({-60.0, 10.0, 1235.0}), makeVector({-5.0, 3.14159, 1.0})));  // clip arbitrary mesh from an edge
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/clip3.vtk");
 
   ASSERT_TRUE(femur == ground_truth);
 }
 
-TEST(MeshTests, translateTest1)
-{
+TEST(MeshTests, translateTest1) {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
-  femur.translate(makeVector({1.0,1.0,1.0}));
+  femur.translate(makeVector({1.0, 1.0, 1.0}));
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/translate1.vtk");
 
   ASSERT_TRUE(femur == ground_truth);
 }
 
-TEST(MeshTests, translateTest2)
-{
+TEST(MeshTests, translateTest2) {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
-  femur.translate(makeVector({-10.0,-10.0,-10.0}));
+  femur.translate(makeVector({-10.0, -10.0, -10.0}));
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/translate2.vtk");
 
   ASSERT_TRUE(femur == ground_truth);
 }
 
-TEST(MeshTests, translateTest3)
-{
+TEST(MeshTests, translateTest3) {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
-  femur.translate(makeVector({0,0,1.0}));
+  femur.translate(makeVector({0, 0, 1.0}));
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/translate3.vtk");
 
   ASSERT_TRUE(femur == ground_truth);
 }
 
-TEST(MeshTests, scaleTest1)
-{
+TEST(MeshTests, scaleTest1) {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
-  femur.scale(makeVector({1.0,1.0,1.0}));
+  femur.scale(makeVector({1.0, 1.0, 1.0}));
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/scale1.vtk");
 
   ASSERT_TRUE(femur == ground_truth);
 }
 
-TEST(MeshTests, scaleTest2)
-{
+TEST(MeshTests, scaleTest2) {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
   femur.scale(makeVector({-1.0, 1.5, 1.0}));
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/scale2.vtk");
@@ -423,8 +387,7 @@ TEST(MeshTests, scaleTest2)
   ASSERT_TRUE(femur == ground_truth);
 }
 
-TEST(MeshTests, clipClosedSurfaceTest1)
-{
+TEST(MeshTests, clipClosedSurfaceTest1) {
   Point p({10.0, 0.0, 10.0});
   Vector n(makeVector({0, 850, 0}));
 
@@ -435,24 +398,21 @@ TEST(MeshTests, clipClosedSurfaceTest1)
   ASSERT_TRUE(femur == ground_truth);
 }
 
-TEST(MeshTests, centerTest)
-{
+TEST(MeshTests, centerTest) {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.ply");
   Point3 center(femur.center());
 
   ASSERT_TRUE(epsEqual(center, Point3({90.7541, -160.557, -673.572}), 1e-3));
 }
 
-TEST(MeshTests, centerofmassTest)
-{
+TEST(MeshTests, centerofmassTest) {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.ply");
   Point3 com(femur.centerOfMass());
 
   ASSERT_TRUE(epsEqual(com, Point3({92.6201, -157.662, -666.611}), 1e-3));
 }
 
-TEST(MeshTests, toImageTest1)
-{
+TEST(MeshTests, toImageTest1) {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.ply");
   Image image = femur.toImage();
   Image ground_truth(std::string(TEST_DATA_DIR) + "/femurImage.nrrd");
@@ -460,8 +420,7 @@ TEST(MeshTests, toImageTest1)
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(MeshTests, toImageTest2)
-{
+TEST(MeshTests, toImageTest2) {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.ply");
 
   // pass the region (should be identical)
@@ -471,8 +430,7 @@ TEST(MeshTests, toImageTest2)
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(MeshTests, toImageTest3)
-{
+TEST(MeshTests, toImageTest3) {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.ply");
 
   // pad the region
@@ -483,8 +441,7 @@ TEST(MeshTests, toImageTest3)
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(MeshTests, toImageTest4)
-{
+TEST(MeshTests, toImageTest4) {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.ply");
   auto bbox = femur.boundingBox();
   Image image = femur.toImage(bbox.pad(1.5), Point({0.5, 1.5, 12.5}));
@@ -493,16 +450,11 @@ TEST(MeshTests, toImageTest4)
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(MeshTests, boundingBoxTest1)
-{
+TEST(MeshTests, boundingBoxTest1) {
   std::string meshes_location = std::string(TEST_DATA_DIR) + std::string("/");
-  std::vector<std::string> meshes = {
-    meshes_location + "m03_L_femur.ply",
-    meshes_location + "m04_L_femur.ply",
-    meshes_location + "femur.ply",
-    meshes_location + "ellipsoid_0.ply",
-    meshes_location + "femur.vtk"
-  };
+  std::vector<std::string> meshes = {meshes_location + "m03_L_femur.ply", meshes_location + "m04_L_femur.ply",
+                                     meshes_location + "femur.ply", meshes_location + "ellipsoid_0.ply",
+                                     meshes_location + "femur.vtk"};
 
   auto region = MeshUtils::boundingBox(meshes);
   Point min({-112.139, -192.471, -1217.76});
@@ -511,16 +463,14 @@ TEST(MeshTests, boundingBoxTest1)
   ASSERT_TRUE(epsEqual(region.min, min, 1e-2) && epsEqual(region.max, max, 1e-2));
 }
 
-TEST(MeshTests, boundingBoxTest2)
-{
+TEST(MeshTests, boundingBoxTest2) {
   Mesh mesh1(std::string(TEST_DATA_DIR) + std::string("/m03_L_femur.ply"));
   Mesh mesh2(std::string(TEST_DATA_DIR) + std::string("/m04_L_femur.ply"));
-  Mesh mesh3(std::string(TEST_DATA_DIR) + std::string("/femur.ply"      ));
+  Mesh mesh3(std::string(TEST_DATA_DIR) + std::string("/femur.ply"));
   Mesh mesh4(std::string(TEST_DATA_DIR) + std::string("/ellipsoid_0.ply"));
-  Mesh mesh5(std::string(TEST_DATA_DIR) + std::string("/femur.vtk"      ));
+  Mesh mesh5(std::string(TEST_DATA_DIR) + std::string("/femur.vtk"));
 
-  std::vector<std::reference_wrapper<const Mesh>> meshes
-  {mesh1, mesh2, mesh3, mesh4, mesh5};
+  std::vector<std::reference_wrapper<const Mesh>> meshes{mesh1, mesh2, mesh3, mesh4, mesh5};
 
   auto region = MeshUtils::boundingBox(meshes);
   Point min({-112.139, -192.471, -1217.76});
@@ -529,8 +479,7 @@ TEST(MeshTests, boundingBoxTest2)
   ASSERT_TRUE(epsEqual(region.min, min, 1e-2) && epsEqual(region.max, max, 1e-2));
 }
 
-TEST(MeshTests, antialiasTest3)
-{
+TEST(MeshTests, antialiasTest3) {
   Mesh mesh(std::string(TEST_DATA_DIR) + "/femur.ply");
   Image aa1(mesh.toImage(mesh.boundingBox().pad(3.0)));
   aa1.antialias(50, 0.0);
@@ -539,8 +488,7 @@ TEST(MeshTests, antialiasTest3)
   ASSERT_TRUE(aa1 == ground_truth);
 }
 
-TEST(MeshTests, toDistanceTransformTest1)
-{
+TEST(MeshTests, toDistanceTransformTest1) {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur_remesh.ply");
   Image image = femur.toDistanceTransform(PhysicalRegion(), Point3({5., 5., 5.}));
   Image ground_truth(std::string(TEST_DATA_DIR) + "/femur_remesh_dt.nrrd");
@@ -548,8 +496,7 @@ TEST(MeshTests, toDistanceTransformTest1)
   ASSERT_TRUE(image == ground_truth);
 }
 
-TEST(MeshTests, coverageTest)
-{
+TEST(MeshTests, coverageTest) {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
   Mesh pelvis(std::string(TEST_DATA_DIR) + "/pelvis.vtk");
   pelvis.coverage(femur);
@@ -558,8 +505,7 @@ TEST(MeshTests, coverageTest)
   ASSERT_TRUE(pelvis == baseline);
 }
 
-TEST(MeshTests, distanceTest1)
-{
+TEST(MeshTests, distanceTest1) {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
   Mesh pelvis(std::string(TEST_DATA_DIR) + "/pelvis.vtk");
   auto f2p_distances = femur.distance(pelvis, Mesh::DistanceMethod::PointToPoint);
@@ -575,16 +521,13 @@ TEST(MeshTests, distanceTest1)
   ASSERT_TRUE(pelvis == p2f);
 }
 
-TEST(MeshTests, distanceTest2)
-{
+TEST(MeshTests, distanceTest2) {
   Mesh femur1(std::string(TEST_DATA_DIR) + "/m03_L_femur.ply");
   Mesh femur2(std::string(TEST_DATA_DIR) + "/m04_L_femur.ply");
   auto fwd_distances = femur1.distance(femur2, Mesh::DistanceMethod::PointToCell);
   auto rev_distances = femur2.distance(femur1, Mesh::DistanceMethod::PointToCell);
   femur1.setField("distance", fwd_distances[0], Mesh::Point);
   femur2.setField("distance", rev_distances[0], Mesh::Point);
-  femur1.setField("closestCells", fwd_distances[1], Mesh::Point);
-  femur2.setField("closestCells", rev_distances[1], Mesh::Point);
 
   Mesh fwd(std::string(TEST_DATA_DIR) + "/meshdistance_cell_fwd.vtk");
   Mesh rev(std::string(TEST_DATA_DIR) + "/meshdistance_cell_rev.vtk");
@@ -592,36 +535,33 @@ TEST(MeshTests, distanceTest2)
   ASSERT_TRUE(femur2 == rev);
 }
 
-TEST(MeshTests, pointsTest)
-{
+TEST(MeshTests, pointsTest) {
   Mesh ellipsoid(std::string(TEST_DATA_DIR) + "/simple_ellipsoid.ply");
   auto verts = ellipsoid.points();
   Point3 p0({verts.row(0)[0], verts.row(0)[1], verts.row(0)[2]});
-  Point3 g0({1.12801208e+01,  1.84252377e+01,  2.66504917e+01});
-  Point3 pn({verts.row(verts.rows()-1)[0], verts.row(verts.rows()-1)[1], verts.row(verts.rows()-1)[2]});
-  Point3 gn({3.35370102e+01,  1.25301433e+00,  3.71165695e+01});
+  Point3 g0({1.12801208e+01, 1.84252377e+01, 2.66504917e+01});
+  Point3 pn({verts.row(verts.rows() - 1)[0], verts.row(verts.rows() - 1)[1], verts.row(verts.rows() - 1)[2]});
+  Point3 gn({3.35370102e+01, 1.25301433e+00, 3.71165695e+01});
 
   ASSERT_TRUE(verts.rows() == 14 && verts.cols() == 3);
   ASSERT_TRUE(epsEqual(p0, g0, 1e-6));
   ASSERT_TRUE(epsEqual(pn, gn, 1e-6));
 }
 
-TEST(MeshTests, facesTest)
-{
+TEST(MeshTests, facesTest) {
   Mesh ellipsoid(std::string(TEST_DATA_DIR) + "/simple_ellipsoid.ply");
   auto faces = ellipsoid.faces();
   IPoint3 f0({faces.row(0)[0], faces.row(0)[1], faces.row(0)[2]});
-  IPoint3 g0({7,8,4});
-  IPoint3 fn({faces.row(faces.rows()-1)[0], faces.row(faces.rows()-1)[1], faces.row(faces.rows()-1)[2]});
-  IPoint3 gn({7,6,8});
+  IPoint3 g0({7, 8, 4});
+  IPoint3 fn({faces.row(faces.rows() - 1)[0], faces.row(faces.rows() - 1)[1], faces.row(faces.rows() - 1)[2]});
+  IPoint3 gn({7, 6, 8});
 
   ASSERT_TRUE(faces.rows() == 24 && faces.cols() == 3);
   ASSERT_TRUE(f0 == g0);
   ASSERT_TRUE(fn == gn);
 }
 
-TEST(MeshTests, getPointTest)
-{
+TEST(MeshTests, getPointTest) {
   Mesh ellipsoid(std::string(TEST_DATA_DIR) + "/simple_ellipsoid.ply");
   auto p = ellipsoid.getPoint(7);
   auto closeToP = Point3({44.7543, 2.43769, 12.953});
@@ -629,17 +569,15 @@ TEST(MeshTests, getPointTest)
   ASSERT_TRUE(epsEqual(p, closeToP, 1e-4));
 }
 
-TEST(MeshTests, getFaceTest)
-{
+TEST(MeshTests, getFaceTest) {
   Mesh ellipsoid(std::string(TEST_DATA_DIR) + "/simple_ellipsoid.ply");
   auto f = ellipsoid.getFace(12);
-  auto face = IPoint3({9,12,1});
+  auto face = IPoint3({9, 12, 1});
 
   ASSERT_TRUE(f == face);
 }
 
-TEST(MeshTests, closestpointTest1)
-{
+TEST(MeshTests, closestpointTest1) {
   Mesh ellipsoid(std::string(TEST_DATA_DIR) + "/ellipsoid_0.ply");
   ellipsoid.computeNormals();
   auto normals = ellipsoid.getField("Normals", Mesh::Point);
@@ -647,16 +585,14 @@ TEST(MeshTests, closestpointTest1)
   auto v = makeVector({n[0], n[1], n[2]});
   auto p = ellipsoid.getPoint(42);
   auto pNew = p + v;
-  bool outside = false;
   double distance;
   vtkIdType face_id = -1;
-  auto closeToP = ellipsoid.closestPoint(pNew, outside, distance, face_id);
+  auto closeToP = ellipsoid.closestPoint(pNew, distance, face_id);
 
-  ASSERT_TRUE(epsEqual(p, closeToP, 1e-2) && outside == true && epsEqual(distance, 1.0, 1e-5) && face_id == 90);
+  ASSERT_TRUE(epsEqual(p, closeToP, 1e-2) && epsEqual(distance, 1.0, 1e-5));
 }
 
-TEST(MeshTests, closestpointTest2)
-{
+TEST(MeshTests, closestpointTest2) {
   Mesh ellipsoid(std::string(TEST_DATA_DIR) + "/sphere_highres.ply");
   ellipsoid.computeNormals();
   auto normals = ellipsoid.getField("Normals", Mesh::Point);
@@ -664,16 +600,15 @@ TEST(MeshTests, closestpointTest2)
   auto v = makeVector({n[0], n[1], n[2]});
   auto p = ellipsoid.getPoint(42);
   auto pNew = p - v * 1.1;
-  bool outside = false;
+
   double distance;
   vtkIdType face_id = -1;
-  auto closeToP = ellipsoid.closestPoint(pNew, outside, distance, face_id);
+  auto closeToP = ellipsoid.closestPoint(pNew, distance, face_id);
 
-  ASSERT_TRUE(epsEqual(p, closeToP, 1e-2) && outside == false && epsEqual(distance, 1.1, 1e-5) && face_id == 9);
+  ASSERT_TRUE(epsEqual(p, closeToP, 1e-2) && epsEqual(distance, 1.1, 1e-5));
 }
 
-TEST(MeshTests, closestpointIdTest)
-{
+TEST(MeshTests, closestpointIdTest) {
   Mesh ellipsoid(std::string(TEST_DATA_DIR) + "/ellipsoid_0.ply");
   auto p = ellipsoid.getPoint(50);
   auto id = ellipsoid.closestPointId(p);
@@ -681,48 +616,44 @@ TEST(MeshTests, closestpointIdTest)
   ASSERT_TRUE(id == 50);
 }
 
-TEST(MeshTests, fieldTest1)
-{
+TEST(MeshTests, fieldTest1) {
   Mesh dist(std::string(TEST_DATA_DIR) + "/meshdistance2.vtk");
   double a = dist.getFieldValue("distance", 0);
   double b = dist.getFieldValue("distance", 1000);
-  double c = dist.getFieldValue("distance", dist.numPoints()-1);
+  double c = dist.getFieldValue("distance", dist.numPoints() - 1);
 
   ASSERT_TRUE(std::abs(a - 0.375761) < 1e-4);
   ASSERT_TRUE(std::abs(b - 2.18114) < 1e-4);
   ASSERT_TRUE(std::abs(c - 6.915) < 1e-4);
 }
 
-TEST(MeshTests, fieldTest2)
-{
+TEST(MeshTests, fieldTest2) {
   Mesh mesh(std::string(TEST_DATA_DIR) + "/la-bin.vtk");
   double a = mesh.getFieldValue("scalars", 0);
   double b = mesh.getFieldValue("scalars", 1000);
   double c = mesh.getFieldValue("Normals", 4231);
   double d = mesh.getFieldValue("Normals", 5634);
 
-  ASSERT_TRUE(a==1);
-  ASSERT_TRUE(b==1);
+  ASSERT_TRUE(a == 1);
+  ASSERT_TRUE(b == 1);
   ASSERT_TRUE(std::abs(c - 0.57735) < 1e-4);
-  ASSERT_TRUE(d==0);
+  ASSERT_TRUE(d == 0);
 }
 
-TEST(MeshTests, fieldTest3)
-{
+TEST(MeshTests, fieldTest3) {
   Mesh mesh(std::string(TEST_DATA_DIR) + "/la-bin.vtk");
   std::vector<double> scalarRange = range(mesh.getField("scalars", Mesh::Point));
   std::vector<double> normalsRange = range(mesh.getField("Normals", Mesh::Point));
 
-  ASSERT_TRUE(scalarRange[0]==1);
-  ASSERT_TRUE(scalarRange[1]==1);
-  ASSERT_TRUE(normalsRange[0]==-1);
-  ASSERT_TRUE(normalsRange[1]==1);
+  ASSERT_TRUE(scalarRange[0] == 1);
+  ASSERT_TRUE(scalarRange[1] == 1);
+  ASSERT_TRUE(normalsRange[0] == -1);
+  ASSERT_TRUE(normalsRange[1] == 1);
 }
 
-//TODO: add tests for independent fields and fields on cells once #935 complete
+// TODO: add tests for independent fields and fields on cells once #935 complete
 
-TEST(MeshTests, icpTestRigid)
-{
+TEST(MeshTests, icpTestRigid) {
   Mesh source(std::string(TEST_DATA_DIR) + "/m03_L_femur.ply");
   Mesh target(std::string(TEST_DATA_DIR) + "/m04_L_femur.ply");
   shapeworks::MeshTransform transform = source.createTransform(target, Mesh::Rigid);
@@ -732,8 +663,7 @@ TEST(MeshTests, icpTestRigid)
   ASSERT_TRUE(source == ground_truth);
 }
 
-TEST(MeshTests, icpTestSimilarity)
-{
+TEST(MeshTests, icpTestSimilarity) {
   Mesh source(std::string(TEST_DATA_DIR) + "/m03_L_femur.ply");
   Mesh target(std::string(TEST_DATA_DIR) + "/m04_L_femur.ply");
   shapeworks::MeshTransform transform = source.createTransform(target);
@@ -743,8 +673,7 @@ TEST(MeshTests, icpTestSimilarity)
   ASSERT_TRUE(source == ground_truth);
 }
 
-TEST(MeshTests, icpTestAffine)
-{
+TEST(MeshTests, icpTestAffine) {
   Mesh source(std::string(TEST_DATA_DIR) + "/m03_L_femur.ply");
   Mesh target(std::string(TEST_DATA_DIR) + "/m04_L_femur.ply");
   shapeworks::MeshTransform transform = source.createTransform(target, Mesh::Affine);
@@ -754,8 +683,7 @@ TEST(MeshTests, icpTestAffine)
   ASSERT_TRUE(source == ground_truth);
 }
 
-TEST(MeshTests, computeNormalsTest)
-{
+TEST(MeshTests, computeNormalsTest) {
   Mesh femur(std::string(TEST_DATA_DIR) + "/femur.vtk");
   femur.computeNormals();
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/normals.vtk");
@@ -763,73 +691,13 @@ TEST(MeshTests, computeNormalsTest)
   ASSERT_TRUE(femur == ground_truth);
 }
 
-TEST(MeshTests, warpTest1)
-{
-  Mesh ellipsoid( std::string(TEST_DATA_DIR) + "/ellipsoid_0.ply");
-  Mesh ellipsoid_warped( std::string(TEST_DATA_DIR) + "/ellipsoid_warped.ply");
+void mesh_warp_test(std::string ref_mesh, std::string ref_particles, std::string target_particles,
+                    std::string baseline_mesh) {
+  Mesh reference(std::string(TEST_DATA_DIR) + ref_mesh);
+  Mesh baseline(std::string(TEST_DATA_DIR) + baseline_mesh);
 
-  std::string staticPath = std::string(TEST_DATA_DIR) + "/ellipsoid_0.particles";
-  std::string movingPath = std::string(TEST_DATA_DIR) + "/ellipsoid_1.particles";
-  std::vector<std::string> paths;
-  paths.push_back(staticPath);
-  paths.push_back(movingPath);
-  ParticleSystem particlesystem(paths);
-  Eigen::MatrixXd allPts = particlesystem.Particles();
-  Eigen::MatrixXd staticPoints = allPts.col(0);
-  Eigen::MatrixXd movingPoints = allPts.col(1);
-
-  int numParticles = staticPoints.rows() / 3;
-  staticPoints.resize(3, numParticles);
-  staticPoints.transposeInPlace();
-  movingPoints.resize(3, numParticles);
-  movingPoints.transposeInPlace();
-
-  MeshWarper warper;
-  warper.set_reference_mesh(ellipsoid.getVTKMesh(), staticPoints);
-  ASSERT_TRUE(warper.get_warp_available());
-
-  Mesh output = warper.build_mesh(movingPoints);
-  ASSERT_TRUE(output == ellipsoid_warped);
-}
-
-TEST(MeshTests, warpTest2)
-{
-  Mesh ellipsoid( std::string(TEST_DATA_DIR) + "/mesh_warp/mesh_warp2.vtk");
-  Mesh ellipsoid_warped( std::string(TEST_DATA_DIR) + "/mesh_warp/mesh_warp2_baseline.vtk");
-
-  std::string staticPath = std::string(TEST_DATA_DIR) + "/mesh_warp/mesh_warp2.particles";
-  std::string movingPath = std::string(TEST_DATA_DIR) + "/mesh_warp/mesh_warp2.particles";
-  std::vector<std::string> paths;
-  paths.push_back(staticPath);
-  paths.push_back(movingPath);
-  ParticleSystem particlesystem(paths);
-  Eigen::MatrixXd allPts = particlesystem.Particles();
-  Eigen::MatrixXd staticPoints = allPts.col(0);
-  Eigen::MatrixXd movingPoints = allPts.col(1);
-
-  int numParticles = staticPoints.rows() / 3;
-  staticPoints.resize(3, numParticles);
-  staticPoints.transposeInPlace();
-  movingPoints.resize(3, numParticles);
-  movingPoints.transposeInPlace();
-
-  MeshWarper warper;
-  warper.set_reference_mesh(ellipsoid.getVTKMesh(), staticPoints);
-  ASSERT_TRUE(warper.get_warp_available());
-
-  Mesh output = warper.build_mesh(movingPoints);
-  ASSERT_TRUE(output == ellipsoid_warped);
-}
-
-TEST(MeshTests, warpTest3)
-{
-  // the output here is terrible because the particles are bad, but this test case is included
-  // because it demonstrated a crash in the mesh warping code
-  Mesh reference( std::string(TEST_DATA_DIR) + "/mesh_warp/mesh_warp3.ply");
-  Mesh baseline( std::string(TEST_DATA_DIR) + "/mesh_warp/mesh_warp3_baseline.vtk");
-
-  std::string staticPath = std::string(TEST_DATA_DIR) + "/mesh_warp/mesh_warp3.particles";
-  std::string movingPath = std::string(TEST_DATA_DIR) + "/mesh_warp/mesh_warp3b.particles";
+  std::string staticPath = std::string(TEST_DATA_DIR) + ref_particles;
+  std::string movingPath = std::string(TEST_DATA_DIR) + target_particles;
   std::vector<std::string> paths;
   paths.push_back(staticPath);
   paths.push_back(movingPath);
@@ -849,11 +717,38 @@ TEST(MeshTests, warpTest3)
   ASSERT_TRUE(warper.get_warp_available());
 
   Mesh output = warper.build_mesh(movingPoints);
+  output.write("/tmp/baseline.vtk");
   ASSERT_TRUE(output == baseline);
 }
 
-TEST(MeshTests, findReferenceMeshTest)
-{
+TEST(MeshTests, warpTest1) {
+  mesh_warp_test("/ellipsoid_0.ply", "/ellipsoid_0.particles", "/ellipsoid_1.particles", "/ellipsoid_warped.ply");
+}
+
+TEST(MeshTests, warpTest2) {
+  mesh_warp_test("/mesh_warp/mesh_warp2.vtk", "/mesh_warp/mesh_warp2.particles", "/mesh_warp/mesh_warp2.particles",
+                 "/mesh_warp/mesh_warp2_baseline.vtk");
+}
+
+TEST(MeshTests, warpTest3) {
+  // the output here is terrible because the particles are bad, but this test case is included
+  // because it demonstrated a crash in the mesh warping code
+  mesh_warp_test("/mesh_warp/mesh_warp3.ply", "/mesh_warp/mesh_warp3.particles", "/mesh_warp/mesh_warp3b.particles",
+                 "/mesh_warp/mesh_warp3_baseline.vtk");
+}
+
+TEST(MeshTests, warpTest4) {
+  mesh_warp_test("/mesh_warp/lv_shared1.vtk", "/mesh_warp/lv_shared1.particles", "/mesh_warp/lv_shared1.particles",
+                 "/mesh_warp/lv_shared1_baseline.vtk");
+}
+
+// This test will have to wait for #2047 to be fixed
+//TEST(MeshTests, warpTest5) {
+//  mesh_warp_test("/mesh_warp/lv_shared2.vtk", "/mesh_warp/lv_shared2.particles", "/mesh_warp/lv_shared2.particles",
+//                 "/mesh_warp/lv_shared2_baseline.vtk");
+//}
+
+TEST(MeshTests, findReferenceMeshTest) {
   std::vector<Mesh> meshes;
   meshes.push_back(Mesh(std::string(TEST_DATA_DIR) + "/m03_L_femur.ply"));
   meshes.push_back(Mesh(std::string(TEST_DATA_DIR) + "/m04_L_femur.ply"));
@@ -862,8 +757,7 @@ TEST(MeshTests, findReferenceMeshTest)
   ASSERT_EQ(ref, 2);
 }
 
-TEST(MeshTests, addMesh)
-{
+TEST(MeshTests, addMesh) {
   Mesh mesh1(std::string(TEST_DATA_DIR) + "/sphere_00.ply");
   Mesh mesh2(std::string(TEST_DATA_DIR) + "/sphere_00_translated.ply");
   mesh1 += mesh2;
@@ -872,16 +766,14 @@ TEST(MeshTests, addMesh)
   ASSERT_TRUE(mesh1 == baseline);
 }
 
-TEST(MeshTests, constructFromMatrixes)
-{
+TEST(MeshTests, constructFromMatrixes) {
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/femur.vtk");
   ground_truth.computeNormals();
   Mesh construct(ground_truth.points(), ground_truth.faces());
   ASSERT_TRUE(construct == ground_truth);
 }
 
-TEST(MeshTests, sharedBoundaryExtractor)
-{
+TEST(MeshTests, sharedBoundaryExtractor) {
   Mesh left(std::string(TEST_DATA_DIR) + "/shared_boundary/00_l.vtk");
   Mesh right(std::string(TEST_DATA_DIR) + "/shared_boundary/00_r.vtk");
   double tol = 0.001;
@@ -897,11 +789,9 @@ TEST(MeshTests, sharedBoundaryExtractor)
   ASSERT_TRUE(ground_truth_left == output_l);
   ASSERT_TRUE(ground_truth_right == output_r);
   ASSERT_TRUE(ground_truth_shared == output_s);
-
 }
 
-TEST(MeshTests, boundaryLoopExtractor)
-{
+TEST(MeshTests, boundaryLoopExtractor) {
   Mesh ground_truth(std::string(TEST_DATA_DIR) + "/shared_boundary/00_out_c.vtp");
   Mesh mesh(std::string(TEST_DATA_DIR) + "/shared_boundary/00_out_s.vtk");
   Mesh loop = MeshUtils::boundaryLoopExtractor(mesh);

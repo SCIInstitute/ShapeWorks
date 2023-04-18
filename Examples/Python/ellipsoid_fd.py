@@ -16,9 +16,9 @@ import subprocess
 import shapeworks as sw
 
 def Run_Pipeline(args):
-    print("\nStep 1. Extract Data\n")
+    print("\nStep 1. Acquire Data\n")
     """
-    Step 1: EXTRACT DATA
+    Step 1: ACQUIRE DATA
 
     We define dataset_name which determines which dataset to download from 
     the portal and the directory to save output from the use case in. 
@@ -27,7 +27,7 @@ def Run_Pipeline(args):
     output_directory = "Output/ellipsoid_fd/"
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
-    sw.portal.download_and_unzip_dataset(dataset_name, output_directory)
+    sw.portal.download_dataset(dataset_name, output_directory)
     dataset_name = "ellipsoid_1mode_aligned"
     file_list_segs = sorted(glob.glob(output_directory + dataset_name + "/segmentations/fd_*.nrrd"))
     file_list_dts = sorted(glob.glob(output_directory + dataset_name + "/groomed/distance_transforms/*.nrrd"))
@@ -185,7 +185,7 @@ def Run_Pipeline(args):
     project.save(spreadsheet_file)
 
     # Run optimization
-    optimize_cmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
+    optimize_cmd = ('shapeworks optimize --progress --name ' + spreadsheet_file).split()
     subprocess.check_call(optimize_cmd)
 
     # If tiny test or verify, check results and exit

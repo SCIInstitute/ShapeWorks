@@ -16,13 +16,13 @@ def Run_Pipeline(args):
     Download supershapes data. Refer to `generate_supershapes` in this file to see the generation
     process
     """
-    print("\nStep 1. Extract Data\n")
+    print("\nStep 1. Acquire Data\n")
     dataset_name = "supershapes_1mode"
     output_directory = "Output/supershapes_1mode_contour/"
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
     # See the generate_supershapes() function in this file for how the data is generated
-    sw.download_and_unzip_dataset(dataset_name, output_directory)
+    sw.download_dataset(dataset_name, output_directory)
     dataset_name = "supershapes2D_1mode"
     contour_files = sorted(glob.glob(output_directory + dataset_name + "/contours/*.vtp"))
     
@@ -99,7 +99,7 @@ def Run_Pipeline(args):
     project.save(spreadsheet_file)
 
     # Run optimization
-    optimize_cmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
+    optimize_cmd = ('shapeworks optimize --progress --name ' + spreadsheet_file).split()
     subprocess.check_call(optimize_cmd)
 
     # If tiny test or verify, check results and exit
