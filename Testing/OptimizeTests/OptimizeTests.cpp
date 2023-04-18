@@ -7,11 +7,11 @@
 
 #include <cstdio>
 
+#include "Libs/Optimize/Domain/VtkMeshWrapper.h"
 #include "Optimize.h"
 #include "OptimizeParameterFile.h"
 #include "ParticleShapeStatistics.h"
 #include "Testing.h"
-#include "VtkMeshWrapper.h"
 
 using namespace shapeworks;
 
