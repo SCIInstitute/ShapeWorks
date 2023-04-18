@@ -11,6 +11,7 @@
     * Added new JSON based file format for storing ShapeWorks projects (swproj)
     * Added a unified logging library for ShapeWorks (spdlog)
     * Uniform numerical computation of specificity across platforms
+    * Updated dependencies.  Python now at 3.9, PyTorch 1.11.0, VTK 9.1, ITK 5.2.1
   * **ShapeWorks Front-end**
     * Studio can now automatically check for updates and prompt the user to download them
     * Improved progress bar in Studio is more representative and also estimates time remaining
