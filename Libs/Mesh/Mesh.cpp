@@ -2,17 +2,16 @@
 
 // std
 #include <math.h>
+#include <tbb/parallel_for.h>
 
 #include <algorithm>
 #include <string>
 #include <vector>
 
-
 // libigl
 #include <igl/cotmatrix.h>
 #include <igl/exact_geodesic.h>
 #include <igl/gaussian_curvature.h>
-#include <igl/grad.h>
 #include <igl/invert_diag.h>
 #include <igl/massmatrix.h>
 #include <igl/principal_curvature.h>
@@ -20,18 +19,16 @@
 // vtk
 #include <vtkAppendPolyData.h>
 #include <vtkButterflySubdivisionFilter.h>
-#include <vtkCellData.h>
-#include <vtkCellLocator.h>
 #include <vtkCenterOfMass.h>
 #include <vtkCleanPolyData.h>
 #include <vtkClipClosedSurface.h>
 #include <vtkClipPolyData.h>
 #include <vtkDoubleArray.h>
+#include <vtkFeatureEdges.h>
 #include <vtkFillHolesFilter.h>
 #include <vtkGenericCell.h>
 #include <vtkImageData.h>
 #include <vtkImageStencil.h>
-#include <vtkIncrementalOctreePointLocator.h>
 #include <vtkIncrementalPointLocator.h>
 #include <vtkKdTreePointLocator.h>
 #include <vtkLoopSubdivisionFilter.h>
@@ -43,6 +40,7 @@
 #include <vtkPlaneCollection.h>
 #include <vtkPointData.h>
 #include <vtkPointLocator.h>
+#include <vtkPolyDataConnectivityFilter.h>
 #include <vtkPolyDataNormals.h>
 #include <vtkPolyDataReader.h>
 #include <vtkPolyDataToImageStencil.h>
@@ -51,9 +49,10 @@
 #include <vtkReverseSense.h>
 #include <vtkSTLReader.h>
 #include <vtkSTLWriter.h>
+#include <vtkSelectEnclosedPoints.h>
 #include <vtkSmoothPolyDataFilter.h>
+#include <vtkStaticCellLocator.h>
 #include <vtkTransformPolyDataFilter.h>
-#include <vtkVector.h>
 #include <vtkWindowedSincPolyDataFilter.h>
 #include <vtkXMLPolyDataReader.h>
 #include <vtkXMLPolyDataWriter.h>
@@ -61,6 +60,7 @@
 #include "FEFixMesh.h"
 #include "Image.h"
 #include "Libs/Optimize/Domain/VtkMeshWrapper.h"
+#include "Logging.h"
 #include "MeshUtils.h"
 #include "PreviewMeshQC/FEAreaCoverage.h"
 #include "PreviewMeshQC/FEVTKExport.h"
@@ -309,13 +309,13 @@ Mesh& Mesh::smoothSinc(int iterations, double passband) {
 Mesh& Mesh::remesh(int numVertices, double adaptivity) {
   // ACVD is very noisy to std::cout, even with console output set to zero
   // setting the failbit on std::cout will silence this until it's cleared below
-//  std::cout.setstate(std::ios_base::failbit);
+  //  std::cout.setstate(std::ios_base::failbit);
   auto surf = vtkSmartPointer<vtkSurface>::New();
   auto remesh = vtkSmartPointer<vtkQIsotropicDiscreteRemeshing>::New();
   surf->CreateFromPolyData(this->poly_data_);
   surf->GetCellData()->Initialize();
   surf->GetPointData()->Initialize();
-  //surf->DisplayMeshProperties();
+  // surf->DisplayMeshProperties();
   int subsamplingThreshold = 10;  // subsampling threshold
 
   numVertices = std::max<int>(numVertices, 1);
@@ -331,7 +331,7 @@ Mesh& Mesh::remesh(int numVertices, double adaptivity) {
   remesh->SetNumberOfClusters(numVertices);
   remesh->Remesh();
   // Restore std::cout
-//  std::cout.clear();
+  //  std::cout.clear();
 
   this->poly_data_ = remesh->GetOutput();
 
@@ -388,23 +388,22 @@ Mesh& Mesh::applyTransform(const MeshTransform transform) {
   return *this;
 }
 
-Mesh& Mesh::rotate(const double angle, const Axis axis){
-  
+Mesh& Mesh::rotate(const double angle, const Axis axis) {
   Vector rotation(makeVector({0, 0, 0}));
   rotation[axis] = 1;
   auto com = center();
 
   MeshTransform transform = MeshTransform::New();
   transform->Translate(com[0], com[1], com[2]);
-  transform->RotateWXYZ(angle,rotation[0], rotation[1], rotation[2]);
+  transform->RotateWXYZ(angle, rotation[0], rotation[1], rotation[2]);
   transform->Translate(-com[0], -com[1], -com[2]);
   return applyTransform(transform);
 }
 
-Mesh& Mesh::fillHoles() {
+Mesh& Mesh::fillHoles(double hole_size) {
   auto filter = vtkSmartPointer<vtkFillHolesFilter>::New();
   filter->SetInputData(this->poly_data_);
-  filter->SetHoleSize(1000.0);
+  filter->SetHoleSize(hole_size);
   filter->Update();
   this->poly_data_ = filter->GetOutput();
 
@@ -420,7 +419,7 @@ Mesh& Mesh::fillHoles() {
   return *this;
 }
 
-Mesh &Mesh::clean() {
+Mesh& Mesh::clean() {
   auto clean = vtkSmartPointer<vtkCleanPolyData>::New();
   clean->ConvertPolysToLinesOff();
   clean->ConvertLinesToPointsOff();
@@ -502,6 +501,129 @@ Mesh& Mesh::fixElement() {
   return *this;
 }
 
+Mesh& Mesh::fixNonManifold() {
+  int count = 0;
+
+  while (count < 10) {
+    auto features = vtkSmartPointer<vtkFeatureEdges>::New();
+    features->SetInputData(this->poly_data_);
+    features->BoundaryEdgesOff();
+    features->FeatureEdgesOff();
+    features->NonManifoldEdgesOn();
+    features->ManifoldEdgesOff();
+    features->Update();
+
+    vtkSmartPointer<vtkPolyData> nonmanifold = features->GetOutput();
+    if (nonmanifold->GetNumberOfPoints() == 0 && nonmanifold->GetNumberOfCells() == 0) {
+      return *this;
+    }
+
+    SW_DEBUG("Number of non-manifold points: {}", nonmanifold->GetNumberOfPoints());
+    SW_DEBUG("Number of non-manifold cells: {}", nonmanifold->GetNumberOfCells());
+    SW_DEBUG("Attempting to fix non-manifold mesh");
+
+    std::vector<int> remove;
+    for (int j = 0; j < poly_data_->GetNumberOfPoints(); j++) {
+      double p2[3];
+      poly_data_->GetPoint(j, p2);
+      for (int i = 0; i < nonmanifold->GetNumberOfPoints(); i++) {
+        double p[3];
+        nonmanifold->GetPoint(i, p);
+        if (p[0] == p2[0] && p[1] == p2[1] && p[2] == p2[2]) {
+          remove.push_back(j);
+        }
+      }
+    }
+    SW_DEBUG("Removing {} non-manifold vertices", remove.size());
+
+    auto new_poly_data = vtkSmartPointer<vtkPolyData>::New();
+    auto vtk_pts = vtkSmartPointer<vtkPoints>::New();
+    auto vtk_triangles = vtkSmartPointer<vtkCellArray>::New();
+    double max_area = 0;
+    for (int i = 0; i < poly_data_->GetNumberOfCells(); i++) {
+      vtkSmartPointer<vtkIdList> list = vtkIdList::New();
+      poly_data_->GetCellPoints(i, list);
+      bool match = false;
+      for (int j = 0; j < list->GetNumberOfIds(); j++) {
+        int id = list->GetId(j);
+        for (unsigned int k = 0; k < remove.size(); k++) {
+          if (id == remove[k]) {
+            match = true;
+          }
+        }
+      }
+      if (match) {
+        // update max_area
+        double p0[3];
+        double p1[3];
+        double p2[3];
+        poly_data_->GetPoint(list->GetId(0), p0);
+        poly_data_->GetPoint(list->GetId(1), p1);
+        poly_data_->GetPoint(list->GetId(2), p2);
+        double area = vtkTriangle::TriangleArea(p0, p1, p2);
+        if (area > max_area) {
+          max_area = area;
+        }
+
+        poly_data_->DeleteCell(i);
+      }
+    }
+
+    poly_data_->RemoveDeletedCells();
+
+    fillHoles(max_area * 2.0);
+
+    vtkSmartPointer<vtkTriangleFilter> triangle_filter = vtkSmartPointer<vtkTriangleFilter>::New();
+    triangle_filter->SetInputData(poly_data_);
+    triangle_filter->Update();
+    poly_data_ = triangle_filter->GetOutput();
+
+    auto connectivityFilter = vtkSmartPointer<vtkPolyDataConnectivityFilter>::New();
+    connectivityFilter->SetExtractionModeToLargestRegion();
+    connectivityFilter->SetInputData(poly_data_);
+    connectivityFilter->Update();
+    poly_data_ = connectivityFilter->GetOutput();
+
+    // SW_DEBUG("done with fixing: ");
+    // detectNonManifold();
+
+    // SW_DEBUG("At end of fix non-manifold: ");
+    // detectTriangular();
+    this->invalidateLocators();
+  }
+
+  return *this;
+}
+
+bool Mesh::detectNonManifold() {
+  auto features = vtkSmartPointer<vtkFeatureEdges>::New();
+  features->SetInputData(this->poly_data_);
+  features->BoundaryEdgesOff();
+  features->FeatureEdgesOff();
+  features->NonManifoldEdgesOn();
+  features->ManifoldEdgesOff();
+  features->Update();
+
+  vtkSmartPointer<vtkPolyData> nonmanifold = features->GetOutput();
+  // SW_DEBUG("Detected Number of non-manifold points: {}", nonmanifold->GetNumberOfPoints());
+  // SW_DEBUG("Detected Number of non-manifold cells: {}", nonmanifold->GetNumberOfCells());
+  if (nonmanifold->GetNumberOfPoints() != 0 || nonmanifold->GetNumberOfCells() != 0) {
+    return true;
+  }
+  return false;
+}
+
+bool Mesh::detectTriangular() {
+  for (vtkIdType i = 0; i < poly_data_->GetNumberOfCells(); i++) {
+    vtkCell* cell = poly_data_->GetCell(i);
+    if (cell->GetNumberOfPoints() != 3) {
+      SW_WARN("Warning: non-triangular cell found (id = {}, n = {})", i, cell->GetNumberOfPoints());
+      return false;
+    }
+  }
+  return true;
+}
+
 std::vector<Field> Mesh::distance(const Mesh& target, const DistanceMethod method) const {
   if (target.numPoints() == 0 || numPoints() == 0) {
     throw std::invalid_argument("meshes must have points");
@@ -538,7 +660,7 @@ std::vector<Field> Mesh::distance(const Mesh& target, const DistanceMethod metho
 
     case PointToCell: {
       // build cell locator for target mesh
-      auto targetCellLocator = vtkSmartPointer<vtkCellLocator>::New();
+      auto targetCellLocator = vtkSmartPointer<vtkStaticCellLocator>::New();
       targetCellLocator->SetDataSet(target.poly_data_);
       targetCellLocator->BuildLocator();
 
@@ -610,13 +732,13 @@ void Mesh::updatePointLocator() const {
 
 void Mesh::updateCellLocator() const {
   if (!this->cellLocator) {
-    this->cellLocator = vtkSmartPointer<vtkCellLocator>::New();
+    this->cellLocator = vtkSmartPointer<vtkStaticCellLocator>::New();
     this->cellLocator->SetDataSet(this->poly_data_);
     this->cellLocator->BuildLocator();
   }
 }
 
-Point3 Mesh::closestPoint(const Point3 point, bool& outside, double& distance, vtkIdType& face_id) const {
+Point3 Mesh::closestPoint(const Point3 point, double& distance, vtkIdType& face_id) const {
   this->updateCellLocator();
 
   double dist2;
@@ -628,19 +750,6 @@ Point3 Mesh::closestPoint(const Point3 point, bool& outside, double& distance, v
 
   // distance from point to closest point
   distance = sqrt(dist2);
-
-  // compute face normal: (p2-p1) x (p0-p1)
-  double pt0[3], pt1[3], pt2[3];
-  cell->GetPoints()->GetPoint(0, pt0);
-  cell->GetPoints()->GetPoint(1, pt1);
-  cell->GetPoints()->GetPoint(2, pt2);
-  vtkVector3d v0(pt2[0] - pt1[0], pt2[1] - pt1[1], pt2[2] - pt1[2]);
-  vtkVector3d v1(pt0[0] - pt1[0], pt0[1] - pt1[1], pt0[2] - pt1[2]);
-  auto norm = v0.Cross(v1);
-
-  // use dot product to determine whether point is outside mesh
-  vtkVector3d pvec(point[0] - closestPoint[0], point[1] - closestPoint[1], point[2] - closestPoint[2]);
-  outside = pvec.Dot(norm) > 0.0;
 
   return closestPoint;
 }
@@ -835,18 +944,40 @@ Image Mesh::toDistanceTransform(PhysicalRegion region, const Point3 spacing, con
   using IteratorType = itk::ImageRegionIterator<Image::ImageType>;
   IteratorType it(itkimg, itkimg->GetLargestPossibleRegion());
 
+  std::vector<Image::ImageType::IndexType> indices;
+
+  // add all points
+  auto points = vtkSmartPointer<vtkPoints>::New();
   for (it.GoToBegin(); !it.IsAtEnd(); ++it) {
     Image::ImageType::PointType p;
     itkimg->TransformIndexToPhysicalPoint(it.GetIndex(), p);
-
-    bool outside = false;
-    double distance = 0.0;
-    vtkIdType face_id = 0;
-    closestPoint(p, outside, distance, face_id);
-
-    // NOTE: distance is positive inside, negative outside
-    it.Set(outside ? -distance : distance);
+    points->InsertNextPoint(p[0], p[1], p[2]);
+    indices.push_back(it.GetIndex());
   }
+
+  auto points_poly = vtkSmartPointer<vtkPolyData>::New();
+  points_poly->SetPoints(points);
+
+  auto enclosed = vtkSmartPointer<vtkSelectEnclosedPoints>::New();
+  enclosed->SetInputData(points_poly);
+  enclosed->SetSurfaceData(this->poly_data_);
+  enclosed->Update();
+
+  tbb::parallel_for(tbb::blocked_range<size_t>(0, indices.size()), [&](const tbb::blocked_range<size_t>& r) {
+    for (size_t i = r.begin(); i != r.end(); ++i) {
+      Image::ImageType::PointType p;
+      itkimg->TransformIndexToPhysicalPoint(indices[i], p);
+
+      double distance = 0.0;
+      vtkIdType face_id = 0;
+      closestPoint(p, distance, face_id);
+
+      bool outside = !enclosed->IsInside(i);
+
+      // NOTE: distance is positive inside, negative outside
+      itkimg->SetPixel(indices[i], outside ? -distance : distance);
+    }
+  });
 
   return img;
 }
@@ -1308,7 +1439,6 @@ vtkSmartPointer<vtkPolyData> Mesh::clipByField(const std::string& name, double v
   return poly_data;
 }
 
-
 Eigen::Vector3d Mesh::computeBarycentricCoordinates(const Eigen::Vector3d& pt, int face) const {
   double closest[3];
   int sub_id;
@@ -1387,7 +1517,6 @@ vtkSmartPointer<vtkPoints> Mesh::getIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi&
 
   return points;
 }
-
 
 Mesh& Mesh::operator+=(const Mesh& otherMesh) {
   // Append the two meshes

@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 3.20)
 SET(SHAPEWORKS_MAJOR_VERSION 6 CACHE INTERNAL "Major version number" FORCE)
 SET(SHAPEWORKS_MINOR_VERSION 4 CACHE INTERNAL "Minor version number" FORCE)
 SET(SHAPEWORKS_PATCH_VERSION 0 CACHE INTERNAL "Patch version number" FORCE)
-SET(SHAPEWORKS_VERSION_STRING "6.4.0-dev")
+SET(SHAPEWORKS_VERSION_STRING "6.4.0-RC4")
 SET(SHAPEWORKS_VERSION "${SHAPEWORKS_MAJOR_VERSION}.${SHAPEWORKS_MINOR_VERSION}.${SHAPEWORKS_PATCH_VERSION}")
 
 # First, check that files were checked out properly using git-lfs
@@ -46,6 +46,13 @@ set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/install" CACHE STRING "Ins
 include(DefaultBuildType)
 
 project(ShapeWorks)
+
+
+### vtk
+find_package(VTK 9.1.0)
+if (NOT VTK_FOUND)
+  message(FATAL_ERROR "VTK is required, but could not be found! Make sure path to VTKConfig.cmake is included in CMAKE_PREFIX_PATH")
+endif()
 
 # OpenVDB only provides a module file (FindOpenVDB.cmake), so we use OpenVDB_DIR to find it
 if (NOT DEFINED OpenVDB_DIR OR "${OpenVDB_DIR}" STREQUAL "OpenVDB_DIR-NOTFOUND")
@@ -130,13 +137,6 @@ if (SHAPEWORKS_GUI)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
   endif()
 endif()
-
-### vtk
-find_package(VTK 9.1.0)
-if (NOT VTK_FOUND)
-  message(FATAL_ERROR "VTK is required, but could not be found! Make sure path to VTKConfig.cmake is included in CMAKE_PREFIX_PATH")
-endif()
-#include(${VTK_USE_FILE})
 
 ### Eigen
 find_package (Eigen3 3.3 REQUIRED NO_MODULE)

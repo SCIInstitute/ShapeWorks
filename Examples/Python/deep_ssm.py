@@ -22,9 +22,9 @@ random.seed(4)
 
 def Run_Pipeline(args):
     ######################################################################################
-    print("\nStep 1. Extract Data")
+    print("\nStep 1. Acquire Data")
     """
-    Step 1: EXTRACT DATA
+    Step 1: ACQUIRE DATA
     We define dataset_name which determines which dataset to download from
     the portal and the directory to save output from the use case in.
     This data is comprised of femur meshes and corresponding hip CT scans.

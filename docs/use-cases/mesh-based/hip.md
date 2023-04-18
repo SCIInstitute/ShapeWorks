@@ -31,25 +31,26 @@ Meshes obtained after grooming w.r.t the whole joint: ![Meshes obtained after gr
 [--tiny_test](../use-cases.md#-tiny_test)
 
 ## Optimization Parameters
-The python code for the use case calls the `optimize` command of ShapeWorks which reads the project sheet with the shape filenames and optimization parameter values. See [Project excel file](../../workflow/parameters.md#project-excel-file) for details regarding creating the project sheet.
+The python code for the use case calls the `optimize` command of ShapeWorks which reads the project sheet with the shape filenames and optimization parameter values. See [Optimization parameters](../../workflow/parameters.md) for details regarding creating the project sheet.
 Below are the default optimization parameters for this use case.
 
 ```python
 {
 		"checkpointing_interval" : 200,
 		"keep_checkpoints" : 0,
-		"iterations_per_split" : 3000,
-		"optimization_iterations" : 5000,
-		"starting_regularization" :1000,
+		"iterations_per_split" : 2500,
+		"optimization_iterations" : 200,
+		"starting_regularization" : 1000,
 		"ending_regularization" : 10,
-		"recompute_regularization_interval" : 1,
-		"domains_per_shape" : 2,
-		"relative_weighting" : 10, 
-		"initial_relative_weighting" : 0.1,
+		"relative_weighting" : 3,
+		"initial_relative_weighting" : 0.05,
 		"save_init_splits" : 0,
 		"verbosity" : 0,
 		"use_normals": 1,
-		"normals_strength": 15.0
+		"normals_strength": 5.0,
+		"procrustes" : 1,
+		"procrustes_scaling" : 1,
+		"procrustes_rotation_translation" : 1
 }
 num_particles = [256,256]
 ```
@@ -58,8 +59,8 @@ num_particles = [256,256]
 Once the python code runs the optimization, the files are saved in the `Output` folder after which ShapeWorks Studio is launched from the python code to analyze the model. 
 Here is the optimized shape.
 
-Modes of variation of the hip joint with global alignment![Modes of variation of the hip joint with global alignment](https://sci.utah.edu/~shapeworks/doc-resources/gifs/hip_global.gif){ width=50% }
+Modes of variation of the hip joint with global alignment![Modes of variation of the hip joint with global alignment](https://sci.utah.edu/~shapeworks/doc-resources/gifs/hip_md_global.gif){ width=50% }
 
-Modes of variation of the hip joint by aligning w.r.t the femur![Modes of variation of the hip joint by aligning w.r.t the femur](https://sci.utah.edu/~shapeworks/doc-resources/gifs/hip_domain1.gif){ width=50% }
+Modes of variation of the hip joint by aligning w.r.t the femur![Modes of variation of the hip joint by aligning w.r.t the femur](https://sci.utah.edu/~shapeworks/doc-resources/gifs/hip_md_domain1.gif){ width=50% }
 
-Modes of variation of the hip joint by aligning w.r.t the pelvis![Modes of variation of the hip joint by aligning w.r.t the pelvis](https://sci.utah.edu/~shapeworks/doc-resources/gifs/hip_domain2.gif){ width=50% }
+Modes of variation of the hip joint by aligning w.r.t the pelvis![Modes of variation of the hip joint by aligning w.r.t the pelvis](https://sci.utah.edu/~shapeworks/doc-resources/gifs/hip_md_domain2.gif){ width=50% }
