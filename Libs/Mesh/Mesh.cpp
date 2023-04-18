@@ -2,6 +2,7 @@
 
 // std
 #include <math.h>
+#include <tbb/parallel_for.h>
 
 #include <algorithm>
 #include <string>
@@ -11,7 +12,6 @@
 #include <igl/cotmatrix.h>
 #include <igl/exact_geodesic.h>
 #include <igl/gaussian_curvature.h>
-#include <igl/grad.h>
 #include <igl/invert_diag.h>
 #include <igl/massmatrix.h>
 #include <igl/principal_curvature.h>
@@ -20,8 +20,6 @@
 #include <Optimize/VtkMeshWrapper.h>
 #include <vtkAppendPolyData.h>
 #include <vtkButterflySubdivisionFilter.h>
-#include <vtkCellData.h>
-#include <vtkCellLocator.h>
 #include <vtkCenterOfMass.h>
 #include <vtkCleanPolyData.h>
 #include <vtkClipClosedSurface.h>
@@ -32,7 +30,6 @@
 #include <vtkGenericCell.h>
 #include <vtkImageData.h>
 #include <vtkImageStencil.h>
-#include <vtkIncrementalOctreePointLocator.h>
 #include <vtkIncrementalPointLocator.h>
 #include <vtkKdTreePointLocator.h>
 #include <vtkLoopSubdivisionFilter.h>
@@ -53,9 +50,10 @@
 #include <vtkReverseSense.h>
 #include <vtkSTLReader.h>
 #include <vtkSTLWriter.h>
+#include <vtkSelectEnclosedPoints.h>
 #include <vtkSmoothPolyDataFilter.h>
+#include <vtkStaticCellLocator.h>
 #include <vtkTransformPolyDataFilter.h>
-#include <vtkVector.h>
 #include <vtkWindowedSincPolyDataFilter.h>
 #include <vtkXMLPolyDataReader.h>
 #include <vtkXMLPolyDataWriter.h>
@@ -662,7 +660,7 @@ std::vector<Field> Mesh::distance(const Mesh& target, const DistanceMethod metho
 
     case PointToCell: {
       // build cell locator for target mesh
-      auto targetCellLocator = vtkSmartPointer<vtkCellLocator>::New();
+      auto targetCellLocator = vtkSmartPointer<vtkStaticCellLocator>::New();
       targetCellLocator->SetDataSet(target.poly_data_);
       targetCellLocator->BuildLocator();
 
@@ -734,13 +732,13 @@ void Mesh::updatePointLocator() const {
 
 void Mesh::updateCellLocator() const {
   if (!this->cellLocator) {
-    this->cellLocator = vtkSmartPointer<vtkCellLocator>::New();
+    this->cellLocator = vtkSmartPointer<vtkStaticCellLocator>::New();
     this->cellLocator->SetDataSet(this->poly_data_);
     this->cellLocator->BuildLocator();
   }
 }
 
-Point3 Mesh::closestPoint(const Point3 point, bool& outside, double& distance, vtkIdType& face_id) const {
+Point3 Mesh::closestPoint(const Point3 point, double& distance, vtkIdType& face_id) const {
   this->updateCellLocator();
 
   double dist2;
@@ -752,19 +750,6 @@ Point3 Mesh::closestPoint(const Point3 point, bool& outside, double& distance, v
 
   // distance from point to closest point
   distance = sqrt(dist2);
-
-  // compute face normal: (p2-p1) x (p0-p1)
-  double pt0[3], pt1[3], pt2[3];
-  cell->GetPoints()->GetPoint(0, pt0);
-  cell->GetPoints()->GetPoint(1, pt1);
-  cell->GetPoints()->GetPoint(2, pt2);
-  vtkVector3d v0(pt2[0] - pt1[0], pt2[1] - pt1[1], pt2[2] - pt1[2]);
-  vtkVector3d v1(pt0[0] - pt1[0], pt0[1] - pt1[1], pt0[2] - pt1[2]);
-  auto norm = v0.Cross(v1);
-
-  // use dot product to determine whether point is outside mesh
-  vtkVector3d pvec(point[0] - closestPoint[0], point[1] - closestPoint[1], point[2] - closestPoint[2]);
-  outside = pvec.Dot(norm) > 0.0;
 
   return closestPoint;
 }
@@ -959,18 +944,40 @@ Image Mesh::toDistanceTransform(PhysicalRegion region, const Point3 spacing, con
   using IteratorType = itk::ImageRegionIterator<Image::ImageType>;
   IteratorType it(itkimg, itkimg->GetLargestPossibleRegion());
 
+  std::vector<Image::ImageType::IndexType> indices;
+
+  // add all points
+  auto points = vtkSmartPointer<vtkPoints>::New();
   for (it.GoToBegin(); !it.IsAtEnd(); ++it) {
     Image::ImageType::PointType p;
     itkimg->TransformIndexToPhysicalPoint(it.GetIndex(), p);
-
-    bool outside = false;
-    double distance = 0.0;
-    vtkIdType face_id = 0;
-    closestPoint(p, outside, distance, face_id);
-
-    // NOTE: distance is positive inside, negative outside
-    it.Set(outside ? -distance : distance);
+    points->InsertNextPoint(p[0], p[1], p[2]);
+    indices.push_back(it.GetIndex());
   }
+
+  auto points_poly = vtkSmartPointer<vtkPolyData>::New();
+  points_poly->SetPoints(points);
+
+  auto enclosed = vtkSmartPointer<vtkSelectEnclosedPoints>::New();
+  enclosed->SetInputData(points_poly);
+  enclosed->SetSurfaceData(this->poly_data_);
+  enclosed->Update();
+
+  tbb::parallel_for(tbb::blocked_range<size_t>(0, indices.size()), [&](const tbb::blocked_range<size_t>& r) {
+    for (size_t i = r.begin(); i != r.end(); ++i) {
+      Image::ImageType::PointType p;
+      itkimg->TransformIndexToPhysicalPoint(indices[i], p);
+
+      double distance = 0.0;
+      vtkIdType face_id = 0;
+      closestPoint(p, distance, face_id);
+
+      bool outside = !enclosed->IsInside(i);
+
+      // NOTE: distance is positive inside, negative outside
+      itkimg->SetPixel(indices[i], outside ? -distance : distance);
+    }
+  });
 
   return img;
 }

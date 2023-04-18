@@ -1080,11 +1080,10 @@ PYBIND11_MODULE(shapeworks_py, m)
 
   .def("closestPoint",
        [](Mesh &mesh, std::vector<double> p) -> decltype(auto) {
-         bool outside = false;
          double distance;
          vtkIdType face_id = -1;
-         auto pt = mesh.closestPoint(Point({p[0], p[1], p[2]}), outside, distance, face_id);
-         return py::make_tuple(py::array(3, pt.GetDataPointer()), outside, face_id);
+         auto pt = mesh.closestPoint(Point({p[0], p[1], p[2]}), distance, face_id);
+         return py::make_tuple(py::array(3, pt.GetDataPointer()), face_id);
        },
        "returns closest point to given point on mesh",
        "point"_a)

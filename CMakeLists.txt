@@ -47,6 +47,13 @@ include(DefaultBuildType)
 
 project(ShapeWorks)
 
+
+### vtk
+find_package(VTK 9.1.0)
+if (NOT VTK_FOUND)
+  message(FATAL_ERROR "VTK is required, but could not be found! Make sure path to VTKConfig.cmake is included in CMAKE_PREFIX_PATH")
+endif()
+
 # OpenVDB only provides a module file (FindOpenVDB.cmake), so we use OpenVDB_DIR to find it
 if (NOT DEFINED OpenVDB_DIR OR "${OpenVDB_DIR}" STREQUAL "OpenVDB_DIR-NOTFOUND")
   set(OpenVDB_DIR ${CMAKE_PREFIX_PATH}/lib/cmake/OpenVDB)
@@ -130,13 +137,6 @@ if (SHAPEWORKS_GUI)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
   endif()
 endif()
-
-### vtk
-find_package(VTK 9.1.0)
-if (NOT VTK_FOUND)
-  message(FATAL_ERROR "VTK is required, but could not be found! Make sure path to VTKConfig.cmake is included in CMAKE_PREFIX_PATH")
-endif()
-#include(${VTK_USE_FILE})
 
 ### Eigen
 find_package (Eigen3 3.3 REQUIRED NO_MODULE)

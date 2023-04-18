@@ -7,6 +7,8 @@
 #include "ParticleSystem.h"
 #include "Testing.h"
 
+#include <igl/point_mesh_squared_distance.h>
+
 using namespace shapeworks;
 
 TEST(MeshTests, meshLocators) {
@@ -526,8 +528,6 @@ TEST(MeshTests, distanceTest2) {
   auto rev_distances = femur2.distance(femur1, Mesh::DistanceMethod::PointToCell);
   femur1.setField("distance", fwd_distances[0], Mesh::Point);
   femur2.setField("distance", rev_distances[0], Mesh::Point);
-  femur1.setField("closestCells", fwd_distances[1], Mesh::Point);
-  femur2.setField("closestCells", rev_distances[1], Mesh::Point);
 
   Mesh fwd(std::string(TEST_DATA_DIR) + "/meshdistance_cell_fwd.vtk");
   Mesh rev(std::string(TEST_DATA_DIR) + "/meshdistance_cell_rev.vtk");
@@ -585,12 +585,11 @@ TEST(MeshTests, closestpointTest1) {
   auto v = makeVector({n[0], n[1], n[2]});
   auto p = ellipsoid.getPoint(42);
   auto pNew = p + v;
-  bool outside = false;
   double distance;
   vtkIdType face_id = -1;
-  auto closeToP = ellipsoid.closestPoint(pNew, outside, distance, face_id);
+  auto closeToP = ellipsoid.closestPoint(pNew, distance, face_id);
 
-  ASSERT_TRUE(epsEqual(p, closeToP, 1e-2) && outside == true && epsEqual(distance, 1.0, 1e-5) && face_id == 90);
+  ASSERT_TRUE(epsEqual(p, closeToP, 1e-2) && epsEqual(distance, 1.0, 1e-5));
 }
 
 TEST(MeshTests, closestpointTest2) {
@@ -601,12 +600,12 @@ TEST(MeshTests, closestpointTest2) {
   auto v = makeVector({n[0], n[1], n[2]});
   auto p = ellipsoid.getPoint(42);
   auto pNew = p - v * 1.1;
-  bool outside = false;
+
   double distance;
   vtkIdType face_id = -1;
-  auto closeToP = ellipsoid.closestPoint(pNew, outside, distance, face_id);
+  auto closeToP = ellipsoid.closestPoint(pNew, distance, face_id);
 
-  ASSERT_TRUE(epsEqual(p, closeToP, 1e-2) && outside == false && epsEqual(distance, 1.1, 1e-5) && face_id == 9);
+  ASSERT_TRUE(epsEqual(p, closeToP, 1e-2) && epsEqual(distance, 1.1, 1e-5));
 }
 
 TEST(MeshTests, closestpointIdTest) {

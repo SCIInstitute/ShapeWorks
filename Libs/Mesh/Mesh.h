@@ -3,7 +3,7 @@
 #include <Image/ImageUtils.h>
 #include "Shapeworks.h"
 
-class vtkCellLocator;
+class vtkStaticCellLocator;
 class vtkKdTreePointLocator;
 
 namespace shapeworks {
@@ -142,10 +142,9 @@ class Mesh {
 
   /// Returns closest point on this mesh to the given point in space.
   /// In addition, returns by reference:
-  /// - whether the point in space is outside the mesh or not
   /// - the distance of the point in space from this mesh
   /// - the face_id containing the closest point
-  Point3 closestPoint(const Point3 point, bool& outside, double& distance, vtkIdType& face_id) const;
+  Point3 closestPoint(const Point3 point, double& distance, vtkIdType& face_id) const;
 
   /// returns closest point id in this mesh to the given point in space
   int closestPointId(const Point3 point) const;
@@ -281,8 +280,7 @@ class Mesh {
   void invalidateLocators() const;
 
   /// Cell locator for functions that query for cells repeatedly
-  // TODO: use vtkStaticCellLocator when vtk is upgraded to version 9
-  mutable vtkSmartPointer<vtkCellLocator> cellLocator;
+  mutable vtkSmartPointer<vtkStaticCellLocator> cellLocator;
   void updateCellLocator() const;
 
   /// Point locator for functions that query for points repeatedly
