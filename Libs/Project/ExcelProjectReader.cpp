@@ -34,12 +34,19 @@ class ExcelProjectReader::Container {
 
     for (int i = ws.lowest_row(); i < ws.highest_row(); i++) {
       StringMap map;
+      bool empty = true;
       for (int h = 0; h < headers.length(); h++) {
         std::string header = headers[h].to_string();
         std::string value = rows[i][h].to_string();
         map[header] = value;
+        if (value != "") {
+          empty = false;
+        }
       }
-      list.push_back(map);
+
+      if (!empty) { // ignore blank lines (#2046)
+        list.push_back(map);
+      }
     }
 
     return list;
