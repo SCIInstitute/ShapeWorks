@@ -2363,32 +2363,33 @@ Meshes obtained after grooming w.r.t the whole joint: <img alt="Meshes obtained 
 <a href="../use-cases.html#-use_single_scale">--use_single_scale</a>
 <a href="../use-cases.html#-tiny_test">--tiny_test</a></p>
 <h2 id="optimization-parameters">Optimization Parameters</h2>
-<p>The python code for the use case calls the <code>optimize</code> command of ShapeWorks which reads the project sheet with the shape filenames and optimization parameter values. See <a href="../../workflow/parameters.html#project-excel-file">Project excel file</a> for details regarding creating the project sheet.
+<p>The python code for the use case calls the <code>optimize</code> command of ShapeWorks which reads the project sheet with the shape filenames and optimization parameter values. See <a href="../../workflow/parameters.html">Optimization parameters</a> for details regarding creating the project sheet.
 Below are the default optimization parameters for this use case.</p>
 <div class="highlight"><pre><span></span><code><span class="p">{</span>
         <span class="s2">&quot;checkpointing_interval&quot;</span> <span class="p">:</span> <span class="mi">200</span><span class="p">,</span>
         <span class="s2">&quot;keep_checkpoints&quot;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-        <span class="s2">&quot;iterations_per_split&quot;</span> <span class="p">:</span> <span class="mi">3000</span><span class="p">,</span>
-        <span class="s2">&quot;optimization_iterations&quot;</span> <span class="p">:</span> <span class="mi">5000</span><span class="p">,</span>
-        <span class="s2">&quot;starting_regularization&quot;</span> <span class="p">:</span><span class="mi">1000</span><span class="p">,</span>
+        <span class="s2">&quot;iterations_per_split&quot;</span> <span class="p">:</span> <span class="mi">2500</span><span class="p">,</span>
+        <span class="s2">&quot;optimization_iterations&quot;</span> <span class="p">:</span> <span class="mi">200</span><span class="p">,</span>
+        <span class="s2">&quot;starting_regularization&quot;</span> <span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>
         <span class="s2">&quot;ending_regularization&quot;</span> <span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
-        <span class="s2">&quot;recompute_regularization_interval&quot;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-        <span class="s2">&quot;domains_per_shape&quot;</span> <span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
-        <span class="s2">&quot;relative_weighting&quot;</span> <span class="p">:</span> <span class="mi">10</span><span class="p">,</span> 
-        <span class="s2">&quot;initial_relative_weighting&quot;</span> <span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span>
+        <span class="s2">&quot;relative_weighting&quot;</span> <span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+        <span class="s2">&quot;initial_relative_weighting&quot;</span> <span class="p">:</span> <span class="mf">0.05</span><span class="p">,</span>
         <span class="s2">&quot;save_init_splits&quot;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
         <span class="s2">&quot;verbosity&quot;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
         <span class="s2">&quot;use_normals&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-        <span class="s2">&quot;normals_strength&quot;</span><span class="p">:</span> <span class="mf">15.0</span>
+        <span class="s2">&quot;normals_strength&quot;</span><span class="p">:</span> <span class="mf">5.0</span><span class="p">,</span>
+        <span class="s2">&quot;procrustes&quot;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">&quot;procrustes_scaling&quot;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">&quot;procrustes_rotation_translation&quot;</span> <span class="p">:</span> <span class="mi">1</span>
 <span class="p">}</span>
 <span class="n">num_particles</span> <span class="o">=</span> <span class="p">[</span><span class="mi">256</span><span class="p">,</span><span class="mi">256</span><span class="p">]</span>
 </code></pre></div>
 <h2 id="analyzing-shape-model">Analyzing Shape Model</h2>
 <p>Once the python code runs the optimization, the files are saved in the <code>Output</code> folder after which ShapeWorks Studio is launched from the python code to analyze the model. 
 Here is the optimized shape.</p>
-<p>Modes of variation of the hip joint with global alignment<img alt="Modes of variation of the hip joint with global alignment" src="https://sci.utah.edu/~shapeworks/doc-resources/gifs/hip_global.gif" width="50%" /></p>
-<p>Modes of variation of the hip joint by aligning w.r.t the femur<img alt="Modes of variation of the hip joint by aligning w.r.t the femur" src="https://sci.utah.edu/~shapeworks/doc-resources/gifs/hip_domain1.gif" width="50%" /></p>
-<p>Modes of variation of the hip joint by aligning w.r.t the pelvis<img alt="Modes of variation of the hip joint by aligning w.r.t the pelvis" src="https://sci.utah.edu/~shapeworks/doc-resources/gifs/hip_domain2.gif" width="50%" /></p>
+<p>Modes of variation of the hip joint with global alignment<img alt="Modes of variation of the hip joint with global alignment" src="https://sci.utah.edu/~shapeworks/doc-resources/gifs/hip_md_global.gif" width="50%" /></p>
+<p>Modes of variation of the hip joint by aligning w.r.t the femur<img alt="Modes of variation of the hip joint by aligning w.r.t the femur" src="https://sci.utah.edu/~shapeworks/doc-resources/gifs/hip_md_domain1.gif" width="50%" /></p>
+<p>Modes of variation of the hip joint by aligning w.r.t the pelvis<img alt="Modes of variation of the hip joint by aligning w.r.t the pelvis" src="https://sci.utah.edu/~shapeworks/doc-resources/gifs/hip_md_domain2.gif" width="50%" /></p>
 
               
             </article>

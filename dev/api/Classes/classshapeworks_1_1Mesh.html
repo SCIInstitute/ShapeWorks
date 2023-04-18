@@ -2505,6 +2505,27 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-fixnonmanifold" class="md-nav__link">
+    function fixNonManifold
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-detectnonmanifold" class="md-nav__link">
+    function detectNonManifold
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-detecttriangular" class="md-nav__link">
+    function detectTriangular
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-distance" class="md-nav__link">
     function distance
   </a>
@@ -2940,7 +2961,7 @@
 </tr>
 <tr>
 <td><a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp;</td>
-<td><strong><a href="classshapeworks_1_1Mesh.html#function-fillholes">fillHoles</a></strong>()<br>finds holes in a mesh and closes them</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-fillholes">fillHoles</a></strong>(double hole_size =1000.0)<br>finds holes in a mesh and closes them</td>
 </tr>
 <tr>
 <td><a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp;</td>
@@ -2971,6 +2992,18 @@
 <td><strong><a href="classshapeworks_1_1Mesh.html#function-fixelement">fixElement</a></strong>()<br>fix element winding of mesh</td>
 </tr>
 <tr>
+<td><a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-fixnonmanifold">fixNonManifold</a></strong>()<br>Attempt to fix non-manifold edges.</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-detectnonmanifold">detectNonManifold</a></strong>()<br>Detect if mesh contain non-manifold edges.</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-detecttriangular">detectTriangular</a></strong>()<br>Detect if mesh is triangular;.</td>
+</tr>
+<tr>
 <td>std::vector&lt; Field &gt;</td>
 <td><strong><a href="classshapeworks_1_1Mesh.html#function-distance">distance</a></strong>(const <a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp; target, const DistanceMethod method =PointToCell) const</td>
 </tr>
@@ -2984,7 +3017,7 @@
 </tr>
 <tr>
 <td>Point3</td>
-<td><strong><a href="classshapeworks_1_1Mesh.html#function-closestpoint">closestPoint</a></strong>(const Point3 point, bool &amp; outside, double &amp; distance, vtkIdType &amp; face_id) const</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-closestpoint">closestPoint</a></strong>(const Point3 point, double &amp; distance, vtkIdType &amp; face_id) const</td>
 </tr>
 <tr>
 <td>int</td>
@@ -3390,7 +3423,9 @@
 </code></pre></div>
 <p>applies the given rotation to the given axis </p>
 <h3 id="function-fillholes">function fillHoles</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">fillHoles</span><span class="p">()</span>
+<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">fillHoles</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">hole_size</span><span class="w"> </span><span class="o">=</span><span class="mf">1000.0</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>finds holes in a mesh and closes them </p>
 <h3 id="function-clean">function clean</h3>
@@ -3429,6 +3464,18 @@
 <div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">fixElement</span><span class="p">()</span>
 </code></pre></div>
 <p>fix element winding of mesh </p>
+<h3 id="function-fixnonmanifold">function fixNonManifold</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">fixNonManifold</span><span class="p">()</span>
+</code></pre></div>
+<p>Attempt to fix non-manifold edges. </p>
+<h3 id="function-detectnonmanifold">function detectNonManifold</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">detectNonManifold</span><span class="p">()</span>
+</code></pre></div>
+<p>Detect if mesh contain non-manifold edges. </p>
+<h3 id="function-detecttriangular">function detectTriangular</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">detectTriangular</span><span class="p">()</span>
+</code></pre></div>
+<p>Detect if mesh is triangular;. </p>
 <h3 id="function-distance">function distance</h3>
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Field</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">distance</span><span class="p">(</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">target</span><span class="p">,</span>
@@ -3449,14 +3496,12 @@
 <h3 id="function-closestpoint">function closestPoint</h3>
 <div class="highlight"><pre><span></span><code><span class="n">Point3</span><span class="w"> </span><span class="n">closestPoint</span><span class="p">(</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="n">point</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">outside</span><span class="p">,</span>
 <span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">distance</span><span class="p">,</span>
 <span class="w">    </span><span class="n">vtkIdType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">face_id</span>
 <span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>Returns closest point on this mesh to the given point in space. In addition, returns by reference:</p>
 <ul>
-<li>whether the point in space is outside the mesh or not</li>
 <li>the distance of the point in space from this mesh</li>
 <li>the face_id containing the closest point </li>
 </ul>
@@ -3668,7 +3713,7 @@
 <span class="p">);</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-04-05 at 02:08:59 +0000</p>
+<p>Updated on 2023-04-18 at 16:27:16 +0000</p>
 
               
             </article>

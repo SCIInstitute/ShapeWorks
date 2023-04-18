@@ -50,7 +50,7 @@ title: shapeworks::Mesh
 | [MeshTransform](../Namespaces/namespaceshapeworks.md#using-meshtransform) | **[createTransform](../Classes/classshapeworks_1_1Mesh.md#function-createtransform)**(const [Mesh](../Classes/classshapeworks_1_1Mesh.md) & target, AlignmentType align =Similarity, unsigned iterations =10) |
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[applyTransform](../Classes/classshapeworks_1_1Mesh.md#function-applytransform)**(const [MeshTransform](../Namespaces/namespaceshapeworks.md#using-meshtransform) transform)<br>applies the given transformation to the mesh  |
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[rotate](../Classes/classshapeworks_1_1Mesh.md#function-rotate)**(const double angle, const [Axis](../Namespaces/namespaceshapeworks.md#enum-axis) axis)<br>applies the given rotation to the given axis  |
-| [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[fillHoles](../Classes/classshapeworks_1_1Mesh.md#function-fillholes)**()<br>finds holes in a mesh and closes them  |
+| [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[fillHoles](../Classes/classshapeworks_1_1Mesh.md#function-fillholes)**(double hole_size =1000.0)<br>finds holes in a mesh and closes them  |
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[clean](../Classes/classshapeworks_1_1Mesh.md#function-clean)**()<br>clean mesh  |
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[probeVolume](../Classes/classshapeworks_1_1Mesh.md#function-probevolume)**(const [Image](../Classes/classshapeworks_1_1Image.md) & image)<br>samples image data values at point locations specified by image  |
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[clip](../Classes/classshapeworks_1_1Mesh.md#function-clip)**(const Plane plane)<br>clips a mesh using a cutting plane  |
@@ -58,10 +58,13 @@ title: shapeworks::Mesh
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[scale](../Classes/classshapeworks_1_1Mesh.md#function-scale)**(const Vector3 & v)<br>helper to scale mesh  |
 | [PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md) | **[boundingBox](../Classes/classshapeworks_1_1Mesh.md#function-boundingbox)**() const<br>computes bounding box of current mesh  |
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[fixElement](../Classes/classshapeworks_1_1Mesh.md#function-fixelement)**()<br>fix element winding of mesh  |
+| [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[fixNonManifold](../Classes/classshapeworks_1_1Mesh.md#function-fixnonmanifold)**()<br>Attempt to fix non-manifold edges.  |
+| bool | **[detectNonManifold](../Classes/classshapeworks_1_1Mesh.md#function-detectnonmanifold)**()<br>Detect if mesh contain non-manifold edges.  |
+| bool | **[detectTriangular](../Classes/classshapeworks_1_1Mesh.md#function-detecttriangular)**()<br>Detect if mesh is triangular;.  |
 | std::vector< Field > | **[distance](../Classes/classshapeworks_1_1Mesh.md#function-distance)**(const [Mesh](../Classes/classshapeworks_1_1Mesh.md) & target, const DistanceMethod method =PointToCell) const |
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[clipClosedSurface](../Classes/classshapeworks_1_1Mesh.md#function-clipclosedsurface)**(const Plane plane)<br>clips a mesh using a cutting plane resulting in a closed surface  |
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[computeNormals](../Classes/classshapeworks_1_1Mesh.md#function-computenormals)**()<br>computes and adds oriented point and cell normals  |
-| Point3 | **[closestPoint](../Classes/classshapeworks_1_1Mesh.md#function-closestpoint)**(const Point3 point, bool & outside, double & distance, vtkIdType & face_id) const |
+| Point3 | **[closestPoint](../Classes/classshapeworks_1_1Mesh.md#function-closestpoint)**(const Point3 point, double & distance, vtkIdType & face_id) const |
 | int | **[closestPointId](../Classes/classshapeworks_1_1Mesh.md#function-closestpointid)**(const Point3 point) const<br>returns closest point id in this mesh to the given point in space  |
 | double | **[geodesicDistance](../Classes/classshapeworks_1_1Mesh.md#function-geodesicdistance)**(int source, int target) const<br>computes geodesic distance between two vertices (specified by their indices) on mesh  |
 | Field | **[geodesicDistance](../Classes/classshapeworks_1_1Mesh.md#function-geodesicdistance)**(const Point3 landmark) const<br>computes geodesic distance between a point (landmark) and each vertex on mesh  |
@@ -388,7 +391,9 @@ applies the given rotation to the given axis
 ### function fillHoles
 
 ```cpp
-Mesh & fillHoles()
+Mesh & fillHoles(
+    double hole_size =1000.0
+)
 ```
 
 finds holes in a mesh and closes them 
@@ -457,6 +462,30 @@ Mesh & fixElement()
 
 fix element winding of mesh 
 
+### function fixNonManifold
+
+```cpp
+Mesh & fixNonManifold()
+```
+
+Attempt to fix non-manifold edges. 
+
+### function detectNonManifold
+
+```cpp
+bool detectNonManifold()
+```
+
+Detect if mesh contain non-manifold edges. 
+
+### function detectTriangular
+
+```cpp
+bool detectTriangular()
+```
+
+Detect if mesh is triangular;. 
+
 ### function distance
 
 ```cpp
@@ -493,7 +522,6 @@ computes and adds oriented point and cell normals
 ```cpp
 Point3 closestPoint(
     const Point3 point,
-    bool & outside,
     double & distance,
     vtkIdType & face_id
 ) const
@@ -502,7 +530,6 @@ Point3 closestPoint(
 
 Returns closest point on this mesh to the given point in space. In addition, returns by reference:
 
-* whether the point in space is outside the mesh or not
 * the distance of the point in space from this mesh
 * the face_id containing the closest point 
 
@@ -853,4 +880,4 @@ friend struct SharedCommandData(
 
 -------------------------------
 
-Updated on 2023-04-05 at 02:08:59 +0000
+Updated on 2023-04-18 at 16:27:16 +0000

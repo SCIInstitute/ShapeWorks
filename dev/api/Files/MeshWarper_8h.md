@@ -91,7 +91,7 @@ class MeshWarper {
 
   static vtkSmartPointer<vtkPolyData> clean_mesh(vtkSmartPointer<vtkPolyData> mesh);
 
-  vtkSmartPointer<vtkPolyData> recreate_mesh(vtkSmartPointer<vtkPolyData> mesh);
+  static vtkSmartPointer<vtkPolyData> recreate_mesh(vtkSmartPointer<vtkPolyData> mesh);
 
   bool generate_warp_matrix(Eigen::MatrixXd TV, Eigen::MatrixXi TF, const Eigen::MatrixXd& Vref, Eigen::MatrixXd& W);
 
@@ -123,4 +123,4 @@ class MeshWarper {
 
 -------------------------------
 
-Updated on 2023-04-05 at 02:08:59 +0000
+Updated on 2023-04-18 at 16:27:16 +0000

@@ -31,7 +31,7 @@ title: Libs/Mesh/Mesh.h
 #include <Image/ImageUtils.h>
 #include "Shapeworks.h"
 
-class vtkCellLocator;
+class vtkStaticCellLocator;
 class vtkKdTreePointLocator;
 
 namespace shapeworks {
@@ -103,7 +103,7 @@ class Mesh {
 
   Mesh& rotate(const double angle, const Axis axis);
 
-  Mesh& fillHoles();
+  Mesh& fillHoles(double hole_size = 1000.0);
 
   Mesh& clean();
 
@@ -119,13 +119,19 @@ class Mesh {
 
   Mesh& fixElement();
 
+  Mesh& fixNonManifold();
+
+  bool detectNonManifold();
+
+  bool detectTriangular();
+
   std::vector<Field> distance(const Mesh& target, const DistanceMethod method = PointToCell) const;
 
   Mesh& clipClosedSurface(const Plane plane);
 
   Mesh& computeNormals();
 
-  Point3 closestPoint(const Point3 point, bool& outside, double& distance, vtkIdType& face_id) const;
+  Point3 closestPoint(const Point3 point, double& distance, vtkIdType& face_id) const;
 
   int closestPointId(const Point3 point) const;
 
@@ -223,8 +229,7 @@ class Mesh {
 
   void invalidateLocators() const;
 
-  // TODO: use vtkStaticCellLocator when vtk is upgraded to version 9
-  mutable vtkSmartPointer<vtkCellLocator> cellLocator;
+  mutable vtkSmartPointer<vtkStaticCellLocator> cellLocator;
   void updateCellLocator() const;
 
   mutable vtkSmartPointer<vtkKdTreePointLocator> pointLocator;
@@ -249,4 +254,4 @@ class MeshReader {
 
 -------------------------------
 
-Updated on 2023-04-05 at 02:08:59 +0000
+Updated on 2023-04-18 at 16:27:16 +0000
