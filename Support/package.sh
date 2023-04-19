@@ -101,11 +101,11 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     # remove static libs
     rm ShapeWorksStudio.app/Contents/Frameworks/*.a
     
-    # Fix transitive loaded libs
-    for i in ShapeWorksStudio.app/Contents/Frameworks/*.dylib ; do
-	install_name_tool -change ${BASE_LIB}/libitkgdcmopenjp2-5.2.1.dylib @rpath/libitkgdcmopenjp2-5.2.1.dylib $i
-    done
-    install_name_tool -id @rpath/libitkgdcmopenjp2-5.2.1.dylib ShapeWorksStudio.app/Contents/Frameworks/libitkgdcmopenjp2-5.2.1.dylib
+    # # Fix transitive loaded libs
+    # for i in ShapeWorksStudio.app/Contents/Frameworks/*.dylib ; do
+    # 	install_name_tool -change ${BASE_LIB}/libitkgdcmopenjp2-5.2.1.dylib @rpath/libitkgdcmopenjp2-5.2.1.dylib $i
+    # done
+    # install_name_tool -id @rpath/libitkgdcmopenjp2-5.2.1.dylib ShapeWorksStudio.app/Contents/Frameworks/libitkgdcmopenjp2-5.2.1.dylib
 
     cd ..
 else
