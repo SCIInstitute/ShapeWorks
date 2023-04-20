@@ -34,6 +34,8 @@ The PCA tab of the View panel shows reconstructed shapes (surface meshes) along 
 
 ![ShapeWorks Studio Analysis View Panel PCA Display](../img/studio/studio_analyze_view_pca.png)
 
+### Multi-Level PCA
+
 The PCA tab of the View panel shows options to select modes of variation in different subspaces when a multiple domain shape model is loaded:
 ![ShapeWorks Studio Analysis View Panel PCA Display for Multiple-Domain Shape Model](../img/studio/studio_analyze_view_pca_multiple_domain.png)
 
