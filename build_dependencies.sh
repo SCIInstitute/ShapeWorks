@@ -31,7 +31,7 @@ JKQTPLOTTER_VER="v2022.11.30-refix-rpath"
 OpenVDB_VER="v9.1.0"
 libigl_VER="v2.3.0"
 geometry_central_VER="8b20898f6c7be1eab827a9f720c8fd45e58ae63c" # This library isn't using tagged versions
-ACVD_VER="012917d300f1dde8552981e5a30031a23937625f" # This library isn't using tagged version
+ACVD_VER="3cf3643851cdf261abbcb9a74e4df01d59154e23" # This library isn't using tagged version
 
 #WIN_CFLAGS="-FS /Zi /GL /MD /O2 /Ob3 /Zm250 /DNDEBUG /EHsc"  # windows release compilation flags
 WIN_CFLAGS="-FS /Zi /MD /O2 /Ob3 /Zm250 /DNDEBUG /EHsc"  # windows release compilation flags
@@ -327,7 +327,8 @@ build_acvd()
   echo ""
   echo "## Building ACVD..."
   cd ${BUILD_DIR}
-  git clone https://github.com/valette/ACVD.git acvd
+  #git clone https://github.com/valette/ACVD.git acvd
+  git clone https://github.com/akenmorris/ACVD.git acvd
   cd acvd
   git checkout -f ${ACVD_VER}
 
