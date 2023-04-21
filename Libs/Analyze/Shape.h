@@ -14,7 +14,7 @@
 
 // shapeworks
 #include <Analyze/Particles.h>
-#include <Optimize/Constraints.h>
+#include <Libs/Optimize/Constraints/Constraints.h>
 #include <Project/Subject.h>
 
 namespace shapeworks {

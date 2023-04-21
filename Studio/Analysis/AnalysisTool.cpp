@@ -568,6 +568,7 @@ Particles AnalysisTool::get_shape_points(int mode, double value) {
   }
 
   unsigned int m = stats_.Eigenvectors().cols() - (mode + 1);
+  m = std::clamp<unsigned int>(m, 0, stats_.Eigenvectors().cols() - 1);
 
   Eigen::VectorXd e = stats_.Eigenvectors().col(m);
 
@@ -1349,7 +1350,9 @@ void AnalysisTool::initialize_mesh_warper() {
       Mesh mesh(poly_data);
       median_shape->get_constraints(i).clipMesh(mesh);
 
+      // std::cerr << "domain: " << i << "\n";
       session_->get_mesh_manager()->get_mesh_warper(i)->set_reference_mesh(mesh.getVTKMesh(), points);
+      // session_->get_mesh_manager()->get_mesh_warper(i)->generate_warp();
     }
   }
 }

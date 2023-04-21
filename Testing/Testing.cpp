@@ -12,8 +12,10 @@ void setupenv(const std::string& testDirectory) {
   std::string data(TEST_DATA_DIR);
 #ifdef _WIN32
   _putenv_s("DATA", data.c_str());
+  _putenv_s("VTK_SMP_BACKEND_IN_USE", "Sequential");
 #else
   setenv("DATA", data.c_str(), true);
+  setenv("VTK_SMP_BACKEND_IN_USE", "Sequential", true);
 #endif
 }
 

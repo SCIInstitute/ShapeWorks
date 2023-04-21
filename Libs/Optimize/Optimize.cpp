@@ -24,16 +24,16 @@
 // shapeworks
 #include <Project/Project.h>
 
+#include "Libs/Optimize/Domain/ImageDomain.h"
+#include "Libs/Optimize/Domain/ImplicitSurfaceDomain.h"
+#include "Libs/Optimize/Domain/VtkMeshWrapper.h"
+#include "Libs/Optimize/Utils/ObjectReader.h"
+#include "Libs/Optimize/Utils/ObjectWriter.h"
+#include "Libs/Optimize/Utils/ParticleGoodBadAssessment.h"
 #include "Logging.h"
 #include "Optimize.h"
 #include "OptimizeParameterFile.h"
 #include "OptimizeParameters.h"
-#include "ParticleGoodBadAssessment.h"
-#include "ParticleImageDomain.h"
-#include "ParticleImplicitSurfaceDomain.h"
-#include "VtkMeshWrapper.h"
-#include "object_reader.h"
-#include "object_writer.h"
 
 // pybind
 #include <pybind11/embed.h>
@@ -235,7 +235,7 @@ int Optimize::SetParameters() {
   }
 
   // Set up the procrustes registration object.
-  this->m_procrustes = std::make_shared<ParticleProcrustesRegistration>();
+  this->m_procrustes = std::make_shared<ProcrustesRegistration>();
   this->m_procrustes->SetParticleSystem(this->m_sampler->GetParticleSystem());
   this->m_procrustes->SetDomainsPerShape(this->m_domains_per_shape);
   this->m_procrustes->SetScaling(this->m_procrustes_scaling);
@@ -411,7 +411,7 @@ void Optimize::SetAdaptivityStrength(double adaptivity_strength) { this->m_adapt
 
 //---------------------------------------------------------------------------
 void Optimize::ReadTransformFile() {
-  object_reader<itk::ParticleSystem::TransformType> reader;
+  ObjectReader<ParticleSystem::TransformType> reader;
   reader.SetFileName(m_transform_file);
   reader.Update();
   for (unsigned int i = 0; i < m_sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
@@ -421,7 +421,7 @@ void Optimize::ReadTransformFile() {
 
 //---------------------------------------------------------------------------
 void Optimize::ReadPrefixTransformFile(const std::string& fn) {
-  object_reader<itk::ParticleSystem::TransformType> reader;
+  ObjectReader<ParticleSystem::TransformType> reader;
   reader.SetFileName(fn.c_str());
   reader.Update();
   for (unsigned int i = 0; i < m_sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
@@ -435,18 +435,10 @@ void Optimize::InitializeSampler() {
   float nbhd_to_sigma = 3.0;  // 3.0 -> 1.0
   float flat_cutoff = 0.3;    // 0.3 -> 0.85
 
-  m_sampler->SetPairwisePotentialType(m_pairwise_potential_type);
-
   m_sampler->GetGradientFunction()->SetFlatCutoff(flat_cutoff);
   m_sampler->GetCurvatureGradientFunction()->SetFlatCutoff(flat_cutoff);
   m_sampler->GetGradientFunction()->SetNeighborhoodToSigmaRatio(nbhd_to_sigma);
   m_sampler->GetCurvatureGradientFunction()->SetNeighborhoodToSigmaRatio(nbhd_to_sigma);
-
-  m_sampler->GetModifiedCotangentGradientFunction()->SetFlatCutoff(flat_cutoff);
-  m_sampler->GetModifiedCotangentGradientFunction()->SetNeighborhoodToSigmaRatio(nbhd_to_sigma);
-
-  m_sampler->GetOmegaGradientFunction()->SetFlatCutoff(flat_cutoff);
-  m_sampler->GetOmegaGradientFunction()->SetNeighborhoodToSigmaRatio(nbhd_to_sigma);
 
   m_sampler->GetEnsembleEntropyFunction()->SetMinimumVariance(m_starting_regularization);
   m_sampler->GetEnsembleEntropyFunction()->SetRecomputeCovarianceInterval(1);
@@ -512,7 +504,7 @@ double Optimize::GetMinNeighborhoodRadius() {
 
 //---------------------------------------------------------------------------
 void Optimize::AddSinglePoint() {
-  typedef itk::ParticleSystem ParticleSystemType;
+  typedef ParticleSystem ParticleSystemType;
   typedef ParticleSystemType::PointType PointType;
 
   PointType firstPointPosition = m_sampler->GetParticleSystem()->GetDomain(0)->GetZeroCrossingPoint();
@@ -551,7 +543,6 @@ void Optimize::Initialize() {
   m_sampler->GetParticleSystem()->SynchronizePositions();
 
   m_sampler->GetCurvatureGradientFunction()->SetRho(0.0);
-  m_sampler->GetOmegaGradientFunction()->SetRho(0.0);
 
   m_sampler->SetCorrespondenceOn();
 
@@ -684,15 +675,6 @@ void Optimize::Initialize() {
     }
     m_str_energy += "pts_init";
 
-    if (this->m_pairwise_potential_type == 1) {
-      this->SetCotanSigma();
-
-      double minRad = 3.0 * this->GetMinNeighborhoodRadius();
-
-      m_sampler->GetModifiedCotangentGradientFunction()->SetMinimumNeighborhoodRadius(minRad);
-      m_sampler->GetConstrainedModifiedCotangentGradientFunction()->SetMinimumNeighborhoodRadius(minRad);
-    }
-
     m_sampler->GetOptimizer()->SetMaximumNumberOfIterations(m_iterations_per_split);
     m_sampler->GetOptimizer()->SetNumberOfIterations(0);
     if (adaptive_initialization &&
@@ -742,17 +724,10 @@ void Optimize::AddAdaptivity() {
     return;
   }
 
-  if (this->m_pairwise_potential_type == 1) {
-    this->SetCotanSigma();
-  }
-
   double minRad = 3.0 * this->GetMinNeighborhoodRadius();
 
-  m_sampler->GetModifiedCotangentGradientFunction()->SetMinimumNeighborhoodRadius(minRad);
-  m_sampler->GetConstrainedModifiedCotangentGradientFunction()->SetMinimumNeighborhoodRadius(minRad);
 
   m_sampler->GetCurvatureGradientFunction()->SetRho(m_adaptivity_strength);
-  m_sampler->GetOmegaGradientFunction()->SetRho(m_adaptivity_strength);
   m_sampler->GetLinkingFunction()->SetRelativeGradientScaling(m_initial_relative_weighting);
   m_sampler->GetLinkingFunction()->SetRelativeEnergyScaling(m_initial_relative_weighting);
 
@@ -781,18 +756,8 @@ void Optimize::RunOptimize() {
 
   m_optimizing = true;
   m_sampler->GetCurvatureGradientFunction()->SetRho(m_adaptivity_strength);
-  m_sampler->GetOmegaGradientFunction()->SetRho(m_adaptivity_strength);
   m_sampler->GetLinkingFunction()->SetRelativeGradientScaling(m_relative_weighting);
   m_sampler->GetLinkingFunction()->SetRelativeEnergyScaling(m_relative_weighting);
-
-  if (this->m_pairwise_potential_type == 1) {
-    this->SetCotanSigma();
-
-    double minRad = 3.0 * this->GetMinNeighborhoodRadius();
-
-    m_sampler->GetModifiedCotangentGradientFunction()->SetMinimumNeighborhoodRadius(minRad);
-    m_sampler->GetConstrainedModifiedCotangentGradientFunction()->SetMinimumNeighborhoodRadius(minRad);
-  }
 
   if (m_procrustes_interval != 0) {  // Initial registration
     m_procrustes->RunRegistration();
@@ -1009,18 +974,6 @@ void Optimize::ComputeEnergyAfterIteration() {
   }
 }
 
-//---------------------------------------------------------------------------
-void Optimize::SetCotanSigma() {
-  itk::ImageToVTKImageFilter<ImageType>::Pointer itk2vtkConnector;
-  m_sampler->GetModifiedCotangentGradientFunction()->ClearGlobalSigma();
-  for (unsigned int i = 0; i < m_sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
-    double area = m_sampler->GetParticleSystem()->GetDomain(i)->GetSurfaceArea();
-    double sigma =
-        m_cotan_sigma_factor * std::sqrt(area / (m_sampler->GetParticleSystem()->GetNumberOfParticles(i) * M_PI));
-    m_sampler->GetModifiedCotangentGradientFunction()->SetGlobalSigma(sigma);
-  }
-}
-
 // File writers and info display functions
 
 //---------------------------------------------------------------------------
@@ -1125,13 +1078,6 @@ void Optimize::PrintParamInfo() {
     std::cout << "adaptivity_strength = " << m_adaptivity_strength << std::endl;
   }
 
-  std::cout << "pairwise_potential_type = ";
-  if (m_pairwise_potential_type == 0) {
-    std::cout << "gaussian" << std::endl;
-  } else {
-    std::cout << "cotan" << std::endl;
-  }
-
   std::cout << "m_optimization_iterations = " << m_optimization_iterations << std::endl;
   std::cout << "m_optimization_iterations_completed = " << m_optimization_iterations_completed << std::endl;
   std::cout << "m_iterations_per_split = " << m_iterations_per_split << std::endl;
@@ -1187,7 +1133,7 @@ void Optimize::WriteTransformFile(std::string iter_prefix) const {
 
   std::string output_file = iter_prefix;
 
-  std::vector<itk::ParticleSystem::TransformType> tlist;
+  std::vector<ParticleSystem::TransformType> tlist;
 
   for (unsigned int i = 0; i < m_sampler->GetParticleSystem()->GetNumberOfDomains(); i++) {
     tlist.push_back(m_sampler->GetParticleSystem()->GetTransform(i));
@@ -1195,7 +1141,7 @@ void Optimize::WriteTransformFile(std::string iter_prefix) const {
 
   std::string str = "writing " + output_file + " ...";
   PrintStartMessage(str);
-  object_writer<itk::ParticleSystem::TransformType> writer;
+  ObjectWriter<ParticleSystem::TransformType> writer;
   writer.SetFileName(output_file);
   writer.SetInput(tlist);
   writer.Update();
@@ -1423,8 +1369,8 @@ void Optimize::WritePointFilesWithFeatures(std::string iter_prefix) {
       }
 
       // Only run the following code if we are dealing with ImplicitSurfaceDomains
-      const ParticleImplicitSurfaceDomain<float>* domain =
-          dynamic_cast<const ParticleImplicitSurfaceDomain<float>*>(m_sampler->GetParticleSystem()->GetDomain(i));
+      const ImplicitSurfaceDomain<float>* domain =
+          dynamic_cast<const ImplicitSurfaceDomain<float>*>(m_sampler->GetParticleSystem()->GetDomain(i));
       if (domain && m_attributes_per_domain.size() > 0) {
         if (m_attributes_per_domain[i % m_domains_per_shape] > 0) {
           point pt;
@@ -1583,7 +1529,7 @@ void Optimize::WriteParameters(std::string output_dir) {
   std::vector<double> intercept;
 
   if (m_use_mixed_effects == true) {
-    vnl_vector<double> slopevec = dynamic_cast<itk::ParticleShapeMixedEffectsMatrixAttribute<double, 3>*>(
+    vnl_vector<double> slopevec = dynamic_cast<MixedEffectsShapeMatrix*>(
                                       m_sampler->GetEnsembleMixedEffectsEntropyFunction()->GetShapeMatrix())
                                       ->GetSlope();
 
@@ -1597,7 +1543,7 @@ void Optimize::WriteParameters(std::string output_dir) {
     }
     out.close();
 
-    vnl_vector<double> interceptvec = dynamic_cast<itk::ParticleShapeMixedEffectsMatrixAttribute<double, 3>*>(
+    vnl_vector<double> interceptvec = dynamic_cast<MixedEffectsShapeMatrix*>(
                                           m_sampler->GetEnsembleMixedEffectsEntropyFunction()->GetShapeMatrix())
                                           ->GetIntercept();
 
@@ -1617,7 +1563,7 @@ void Optimize::WriteParameters(std::string output_dir) {
     std::cout << "writing " << slopename << std::endl;
     std::cout << "writing " << interceptname << std::endl;
 
-    vnl_matrix<double> sloperand_mat = dynamic_cast<itk::ParticleShapeMixedEffectsMatrixAttribute<double, 3>*>(
+    vnl_matrix<double> sloperand_mat = dynamic_cast<MixedEffectsShapeMatrix*>(
                                            m_sampler->GetEnsembleMixedEffectsEntropyFunction()->GetShapeMatrix())
                                            ->GetSlopeRandom();
 
@@ -1630,7 +1576,7 @@ void Optimize::WriteParameters(std::string output_dir) {
     }
     out.close();
 
-    vnl_matrix<double> interceptrand_mat = dynamic_cast<itk::ParticleShapeMixedEffectsMatrixAttribute<double, 3>*>(
+    vnl_matrix<double> interceptrand_mat = dynamic_cast<MixedEffectsShapeMatrix*>(
                                                m_sampler->GetEnsembleMixedEffectsEntropyFunction()->GetShapeMatrix())
                                                ->GetInterceptRandom();
 
@@ -1643,7 +1589,7 @@ void Optimize::WriteParameters(std::string output_dir) {
     }
     out.close();
   } else {
-    vnl_vector<double> slopevec = dynamic_cast<itk::ParticleShapeLinearRegressionMatrixAttribute<double, 3>*>(
+    vnl_vector<double> slopevec = dynamic_cast<LinearRegressionShapeMatrix*>(
                                       m_sampler->GetEnsembleRegressionEntropyFunction()->GetShapeMatrix())
                                       ->GetSlope();
 
@@ -1658,7 +1604,7 @@ void Optimize::WriteParameters(std::string output_dir) {
     out.close();
 
     std::vector<double> intercept;
-    vnl_vector<double> interceptvec = dynamic_cast<itk::ParticleShapeLinearRegressionMatrixAttribute<double, 3>*>(
+    vnl_vector<double> interceptvec = dynamic_cast<LinearRegressionShapeMatrix*>(
                                           m_sampler->GetEnsembleRegressionEntropyFunction()->GetShapeMatrix())
                                           ->GetIntercept();
 
@@ -1812,11 +1758,6 @@ void Optimize::UpdateProject() {
 }
 
 //---------------------------------------------------------------------------
-void Optimize::SetPairwisePotentialType(int pairwise_potential_type) {
-  this->m_pairwise_potential_type = pairwise_potential_type;
-}
-
-//---------------------------------------------------------------------------
 void Optimize::SetTimePtsPerSubject(int time_pts_per_subject) { this->m_timepts_per_subject = time_pts_per_subject; }
 
 //---------------------------------------------------------------------------
@@ -1890,9 +1831,6 @@ void Optimize::SetCheckpointingInterval(int checkpointing_interval) {
 
 //---------------------------------------------------------------------------
 void Optimize::SetKeepCheckpoints(int keep_checkpoints) { this->m_keep_checkpoints = keep_checkpoints; }
-
-//---------------------------------------------------------------------------
-void Optimize::SetCotanSigmaFactor(double cotan_sigma_factor) { this->m_cotan_sigma_factor = cotan_sigma_factor; }
 
 //---------------------------------------------------------------------------
 void Optimize::SetUseRegression(bool use_regression) { this->m_use_regression = use_regression; }
@@ -2140,14 +2078,14 @@ vnl_vector_fixed<double, 3> Optimize::TransformPoint(int domain, vnl_vector_fixe
     return input;
   }
 
-  itk::ParticleSystem::PointType pa;
+  ParticleSystem::PointType pa;
 
   pa[0] = input[0];
   pa[1] = input[1];
   pa[2] = input[2];
 
-  itk::ParticleSystem::TransformType T = GetSampler()->GetParticleSystem()->GetTransform(domain);
-  itk::ParticleSystem::TransformType prefT = GetSampler()->GetParticleSystem()->GetPrefixTransform(domain);
+  ParticleSystem::TransformType T = GetSampler()->GetParticleSystem()->GetTransform(domain);
+  ParticleSystem::TransformType prefT = GetSampler()->GetParticleSystem()->GetPrefixTransform(domain);
   pa = GetSampler()->GetParticleSystem()->TransformPoint(pa, T * prefT);
 
   vnl_vector_fixed<double, 3> output;

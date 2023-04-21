@@ -16,12 +16,12 @@ import subprocess
 
 def Run_Pipeline(args):
     """
-    Step 1: EXTRACT DATA
+    Step 1: ACQUIRE DATA
 
     We define dataset_name which determines which dataset to download from 
     the portal and the directory to save output from the use case in. 
     """
-    print("\nStep 1. Extract Data\n")
+    print("\nStep 1. Acquire Data\n")
     output_directory = "Output/peanut_shared_boundary/"
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)

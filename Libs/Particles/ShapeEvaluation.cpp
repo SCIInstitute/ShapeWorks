@@ -1,23 +1,23 @@
 #include "ShapeEvaluation.h"
-#include "EvaluationUtil.h"
 
-#include <iostream>
 #include <Eigen/Core>
 #include <Eigen/SVD>
+#include <iostream>
+
+#include "EvaluationUtil.h"
 
 typedef Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> RowMajorMatrix;
 
 namespace shapeworks {
 
-  //---------------------------------------------------------------------------
-double ShapeEvaluation::ComputeCompactness(const ParticleSystem &particleSystem, const int nModes,
-                                                       const std::string &saveTo)
-{
-  const int N = particleSystem.N();
-  if (nModes > N-1){
+//---------------------------------------------------------------------------
+double ShapeEvaluation::ComputeCompactness(const ParticleSystemEvaluation& ParticleSystemEvaluation, const int nModes,
+                                           const std::string& saveTo) {
+  const int N = ParticleSystemEvaluation.N();
+  if (nModes > N - 1) {
     throw std::invalid_argument("Invalid mode of variation specified");
   }
-  Eigen::VectorXd cumsum = ShapeEvaluation::ComputeFullCompactness(particleSystem);
+  Eigen::VectorXd cumsum = ShapeEvaluation::ComputeFullCompactness(ParticleSystemEvaluation);
 
   if (!saveTo.empty()) {
     std::ofstream of(saveTo);
@@ -29,16 +29,16 @@ double ShapeEvaluation::ComputeCompactness(const ParticleSystem &particleSystem,
 }
 
 //---------------------------------------------------------------------------
-Eigen::VectorXd ShapeEvaluation::ComputeFullCompactness(const ParticleSystem &particleSystem, std::function<void(float)> progress_callback)
-{
-  const int N = particleSystem.N();
-  const int D = particleSystem.D();
-  const int num_modes = N-1; // the number of modes is one less than the number of samples
+Eigen::VectorXd ShapeEvaluation::ComputeFullCompactness(const ParticleSystemEvaluation& ParticleSystemEvaluation,
+                                                        std::function<void(float)> progress_callback) {
+  const int N = ParticleSystemEvaluation.N();
+  const int D = ParticleSystemEvaluation.D();
+  const int num_modes = N - 1;  // the number of modes is one less than the number of samples
 
   if (num_modes < 1) {
     return Eigen::VectorXd();
   }
-  Eigen::MatrixXd Y = particleSystem.Particles();
+  Eigen::MatrixXd Y = ParticleSystemEvaluation.Particles();
   const Eigen::VectorXd mu = Y.rowwise().mean();
   Y.colwise() -= mu;
 
@@ -52,21 +52,20 @@ Eigen::VectorXd ShapeEvaluation::ComputeFullCompactness(const ParticleSystem &pa
     if (progress_callback) {
       progress_callback(static_cast<float>(i) / static_cast<float>(N));
     }
-    cumsum(i) = cumsum(i-1) + S(i);
+    cumsum(i) = cumsum(i - 1) + S(i);
   }
   cumsum /= S.sum();
   return cumsum;
 }
 
 //---------------------------------------------------------------------------
-double ShapeEvaluation::ComputeGeneralization(const ParticleSystem &particleSystem, const int nModes,
-                                                          const std::string &saveTo)
-{
-  const int N = particleSystem.N();
-  const int D = particleSystem.D();
-  const Eigen::MatrixXd &P = particleSystem.Particles();
+double ShapeEvaluation::ComputeGeneralization(const ParticleSystemEvaluation& ParticleSystemEvaluation,
+                                              const int nModes, const std::string& saveTo) {
+  const int N = ParticleSystemEvaluation.N();
+  const int D = ParticleSystemEvaluation.D();
+  const Eigen::MatrixXd& P = ParticleSystemEvaluation.Particles();
 
-  if (nModes > N-1){
+  if (nModes > N - 1) {
     throw std::invalid_argument("Invalid mode of variation specified");
   }
   // Keep track of the reconstructions so we can visualize them later
@@ -74,7 +73,6 @@ double ShapeEvaluation::ComputeGeneralization(const ParticleSystem &particleSyst
 
   double totalDist = 0.0;
   for (int leave = 0; leave < N; leave++) {
-
     Eigen::MatrixXd Y(D, N - 1);
     Y.leftCols(leave) = P.leftCols(leave);
     Y.rightCols(N - leave - 1) = P.rightCols(N - leave - 1);
@@ -101,25 +99,25 @@ double ShapeEvaluation::ComputeGeneralization(const ParticleSystem &particleSyst
   // Save the reconstructions if needed. Generates XML files that can be opened in
   // ShapeWorksView2
   if (!saveTo.empty()) {
-    SaveReconstructions(reconstructions, particleSystem.Paths(), saveTo);
+    SaveReconstructions(reconstructions, ParticleSystemEvaluation.Paths(), saveTo);
   }
 
   return generalization;
 }
 
-Eigen::VectorXd ShapeEvaluation::ComputeFullGeneralization(const ParticleSystem &particleSystem, std::function<void(float)> progress_callback)
-{
-  const int N = particleSystem.N();
-  const int D = particleSystem.D();
-  const Eigen::MatrixXd &P = particleSystem.Particles();
+Eigen::VectorXd ShapeEvaluation::ComputeFullGeneralization(const ParticleSystemEvaluation& ParticleSystemEvaluation,
+                                                           std::function<void(float)> progress_callback) {
+  const int N = ParticleSystemEvaluation.N();
+  const int D = ParticleSystemEvaluation.D();
+  const Eigen::MatrixXd& P = ParticleSystemEvaluation.Particles();
 
   if (N <= 1) {
     return Eigen::VectorXd();
   }
 
-  Eigen::VectorXd generalizations(N-1);
+  Eigen::VectorXd generalizations(N - 1);
 
-  Eigen::VectorXd totalDists = Eigen::VectorXd::Zero(N-1);
+  Eigen::VectorXd totalDists = Eigen::VectorXd::Zero(N - 1);
 
   for (int leave = 0; leave < N; leave++) {
     if (progress_callback) {
@@ -136,7 +134,6 @@ Eigen::VectorXd ShapeEvaluation::ComputeFullGeneralization(const ParticleSystem 
     Eigen::JacobiSVD<Eigen::MatrixXd> svd(Y, Eigen::ComputeFullU);
 
     for (int mode = 1; mode < N; mode++) {
-
       const auto epsi = svd.matrixU().block(0, 0, D, mode);
       const auto betas = epsi.transpose() * (Ytest - mu);
       const Eigen::VectorXd rec = epsi * betas + mu;
@@ -145,7 +142,7 @@ Eigen::VectorXd ShapeEvaluation::ComputeFullGeneralization(const ParticleSystem 
       const Eigen::Map<const RowMajorMatrix> Ytest_reshaped(Ytest.data(), numParticles, VDimension);
       const Eigen::Map<const RowMajorMatrix> rec_reshaped(rec.data(), numParticles, VDimension);
       const double dist = (rec_reshaped - Ytest_reshaped).rowwise().norm().sum() / numParticles;
-      totalDists(mode-1) += dist;
+      totalDists(mode - 1) += dist;
     }
   }
 
@@ -155,14 +152,12 @@ Eigen::VectorXd ShapeEvaluation::ComputeFullGeneralization(const ParticleSystem 
 }
 
 //---------------------------------------------------------------------------
-double ShapeEvaluation::ComputeSpecificity(const ParticleSystem &particleSystem, const int nModes,
-                                                       const std::string &saveTo)
-{
+double ShapeEvaluation::ComputeSpecificity(const ParticleSystemEvaluation& ParticleSystemEvaluation, const int nModes,
+                                           const std::string& saveTo) {
+  const int N = ParticleSystemEvaluation.N();
+  const int D = ParticleSystemEvaluation.D();
 
-  const int N = particleSystem.N();
-  const int D = particleSystem.D();
-
-  if (nModes > N-1){
+  if (nModes > N - 1) {
     throw std::invalid_argument("Invalid mode of variation specified");
   }
   const int nSamples = 1000;
@@ -175,7 +170,7 @@ double ShapeEvaluation::ComputeSpecificity(const ParticleSystem &particleSystem,
   Eigen::MatrixXd spec_store(nModes, 4);
 
   // PCA calculations
-  const Eigen::MatrixXd &ptsModels = particleSystem.Particles();
+  const Eigen::MatrixXd& ptsModels = ParticleSystemEvaluation.Particles();
   const Eigen::VectorXd mu = ptsModels.rowwise().mean();
   Eigen::MatrixXd Y = ptsModels;
 
@@ -201,7 +196,6 @@ double ShapeEvaluation::ComputeSpecificity(const ParticleSystem &particleSystem,
     Eigen::VectorXd distanceToClosestTrainingSample(nSamples);
 
     for (int i = 0; i < nSamples; i++) {
-
       Eigen::VectorXd pts_m = samplingPoints.col(i);
       Eigen::MatrixXd ptsDistance_vec = ptsModels.colwise() - pts_m;
       Eigen::MatrixXd ptsDistance(Eigen::MatrixXd::Constant(1, nTrain, 0.0));
@@ -217,9 +211,9 @@ double ShapeEvaluation::ComputeSpecificity(const ParticleSystem &particleSystem,
 
       Eigen::Map<const RowMajorMatrix> pts_m_reshaped(pts_m.data(), numParticles, VDimension);
       reconstructions.push_back(Reconstruction{
-              distanceToClosestTrainingSample(i),
-              (int) closestIdx,
-              pts_m_reshaped,
+          distanceToClosestTrainingSample(i),
+          (int)closestIdx,
+          pts_m_reshaped,
       });
     }
 
@@ -227,7 +221,7 @@ double ShapeEvaluation::ComputeSpecificity(const ParticleSystem &particleSystem,
   }
 
   if (!saveTo.empty()) {
-    SaveReconstructions(reconstructions, particleSystem.Paths(), saveTo);
+    SaveReconstructions(reconstructions, ParticleSystemEvaluation.Paths(), saveTo);
   }
 
   const int numParticles = D / VDimension;
@@ -237,16 +231,16 @@ double ShapeEvaluation::ComputeSpecificity(const ParticleSystem &particleSystem,
 }
 
 //---------------------------------------------------------------------------
-Eigen::VectorXd ShapeEvaluation::ComputeFullSpecificity(const ParticleSystem &particleSystem, std::function<void(float)> progress_callback)
-{
-  const int N = particleSystem.N();
-  const int D = particleSystem.D();
+Eigen::VectorXd ShapeEvaluation::ComputeFullSpecificity(const ParticleSystemEvaluation& ParticleSystemEvaluation,
+                                                        std::function<void(float)> progress_callback) {
+  const int N = ParticleSystemEvaluation.N();
+  const int D = ParticleSystemEvaluation.D();
   const int numParticles = D / VDimension;
 
-  Eigen::VectorXd specificities(N-1);
+  Eigen::VectorXd specificities(N - 1);
 
   // PCA calculations
-  const Eigen::MatrixXd &ptsModels = particleSystem.Particles();
+  const Eigen::MatrixXd& ptsModels = ParticleSystemEvaluation.Particles();
   const int nTrain = ptsModels.cols();
 
   const Eigen::VectorXd mu = ptsModels.rowwise().mean();
@@ -255,7 +249,7 @@ Eigen::VectorXd ShapeEvaluation::ComputeFullSpecificity(const ParticleSystem &pa
   Eigen::JacobiSVD<Eigen::MatrixXd> svd(Y, Eigen::ComputeFullU);
   const auto allEigenValues = svd.singularValues();
 
-  for (int nModes=1;nModes<N;nModes++) {
+  for (int nModes = 1; nModes < N; nModes++) {
     if (progress_callback) {
       progress_callback(static_cast<float>(nModes) / static_cast<float>(N));
     }
@@ -267,7 +261,6 @@ Eigen::VectorXd ShapeEvaluation::ComputeFullSpecificity(const ParticleSystem &pa
     const auto eigenValues = allEigenValues.head(nModes);
     const auto epsi = svd.matrixU().block(0, 0, D, nModes);
 
-
     Eigen::MatrixXd samplingBetas(nModes, nSamples);
     MultiVariateNormalRandom sampling{eigenValues.asDiagonal()};
     for (int i = 0; i < nSamples; i++) {
@@ -278,7 +271,6 @@ Eigen::VectorXd ShapeEvaluation::ComputeFullSpecificity(const ParticleSystem &pa
     Eigen::VectorXd distanceToClosestTrainingSample(nSamples);
 
     for (int i = 0; i < nSamples; i++) {
-
       Eigen::VectorXd pts_m = samplingPoints.col(i);
       Eigen::MatrixXd ptsDistance_vec = ptsModels.colwise() - pts_m;
       Eigen::MatrixXd ptsDistance(Eigen::MatrixXd::Constant(1, nTrain, 0.0));
@@ -295,10 +287,9 @@ Eigen::VectorXd ShapeEvaluation::ComputeFullSpecificity(const ParticleSystem &pa
 
     double meanSpecificity = distanceToClosestTrainingSample.mean();
     const double specificity = meanSpecificity / numParticles;
-    specificities(nModes-1) = specificity;
+    specificities(nModes - 1) = specificity;
   }
   return specificities;
 }
 
-} // shapeworks
-
+}  // namespace shapeworks

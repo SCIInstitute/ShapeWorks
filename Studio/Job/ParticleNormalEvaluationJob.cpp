@@ -25,7 +25,7 @@ void ParticleNormalEvaluationJob::run() {
   float count = 0;
 
   for (int domain = 0; domain < num_domains; domain++) {
-    ParticleSystem particles = session_->get_local_particle_system(domain);
+    ParticleSystemEvaluation particles = session_->get_local_particle_system(domain);
 
     std::vector<std::shared_ptr<VtkMeshWrapper>> meshes;
     for (auto& shape : session_->get_shapes()) {
