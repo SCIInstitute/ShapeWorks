@@ -15,9 +15,6 @@ from shapeworks.utils import sw_progress
 from shapeworks.utils import sw_check_abort
 
 import os, sys
-from tqdm import tqdm
-sys.path.append('/Users/amorris/sci/shapeworks/bin/bin')
-
 
 import shapeworks as sw
 np.random.seed(0)
@@ -119,7 +116,7 @@ class NetworkAnalysis:
                 (num_pts, timepoints, num_subjects, len(activities)));  # particles,time,subjects,activity
 
             activity = 0
-            for s in tqdm(range(num_subjects)):
+            for s in range(num_subjects):
                 features = analyze.get_subject_features(s, self.target_feature)
                 # reshape into a matrix
                 features = features.reshape(-1, 1)
