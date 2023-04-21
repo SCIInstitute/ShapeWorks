@@ -40,6 +40,8 @@ call pip install bokeh==2.4.3
 call pip install seaborn==0.11.2
 call pip install scikit-learn==1.1.1
 call pip install pyvista==0.34.1
+call pip install open3d==0.17.0
+call pip install spm1d==0.4.2
 
 call pip install swcc==1.0.3
 
