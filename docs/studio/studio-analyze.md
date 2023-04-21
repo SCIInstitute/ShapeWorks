@@ -18,6 +18,21 @@ Additionally an LDA chart is generated for group differences:
 
 ![ShapeWorks Studio LDA Chart](../img/studio/studio_lda.png){: width="300" }
 
+### Network Analysis
+
+![ShapeWorks Studio Network Analysis](../img/studio/studio_network_analysis.png){: width="200" }
+
+The correspondence network tool provides an alternative to the use of statistical parametric mapping (SPM) in statistical analysis of surface-based group differences. This technique uses the relative size of the network of connected correspondence particles to identify significant differences amongst groups, as originally described by Forman and colleagues (Forman SD, et al. Magnetic Resonance in Medicine33:636-647, 1995). Our publication on the specifics of this method and example applications is in review and will be referenced here when available.
+
+| Option              | Description                                                                                                                                                      |
+|---------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Feature Map         | Choose which feature to operate on.                                                                                                                              |
+| P-value of Interest | The cluster p-value defines the p-value used to identify significant clusters for the group. Traditional statistics would assume a p-value of 0.05.              |
+| P-value Threshold   | The initial p-value used to threshold particles as an initial step to the evaluation of cluster size. Only modify from 0.05 for adjusted statistical assumptions. |
+| Display             | Choose to display Network Analysis output or SPM1D                                                                                                               |
+
+
+
 ### Samples
 
 The Samples tab of the view panel allows you to view all of the samples in your cohort, view a single sample by index, or view the median sample.
