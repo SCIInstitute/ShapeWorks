@@ -772,68 +772,7 @@ QWidget#particles_panel {
                       <bool>false</bool>
                      </property>
                      <layout class="QGridLayout" name="gridLayout_15">
-                      <item row="2" column="1">
-                       <widget class="QLineEdit" name="network_pvalue_threshold">
-                        <property name="toolTip">
-                         <string>0.05 is the standard value.</string>
-                        </property>
-                        <property name="alignment">
-                         <set>Qt::AlignCenter</set>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="1" column="0">
-                       <widget class="QLabel" name="label_14">
-                        <property name="toolTip">
-                         <string>0.05 is the standard value.</string>
-                        </property>
-                        <property name="text">
-                         <string>P-value of Interest</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="1" column="1">
-                       <widget class="QLineEdit" name="network_pvalue_of_interest">
-                        <property name="toolTip">
-                         <string>0.05 is the standard value.</string>
-                        </property>
-                        <property name="alignment">
-                         <set>Qt::AlignCenter</set>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="4" column="0">
-                       <widget class="QCheckBox" name="network_analysis_display">
-                        <property name="text">
-                         <string>Display</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="0" column="0">
-                       <widget class="QLabel" name="label_6">
-                        <property name="text">
-                         <string>Feature Map</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="0" column="1">
-                       <widget class="QComboBox" name="network_feature">
-                        <property name="toolTip">
-                         <string>Select group set</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="3" column="0">
-                       <widget class="QLabel" name="label_16">
-                        <property name="toolTip">
-                         <string>10,000 is the standard value for a larger sample size, however a large value will increase computation time.</string>
-                        </property>
-                        <property name="text">
-                         <string>Iterations</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="5" column="0" colspan="2">
+                      <item row="6" column="0" colspan="2">
                        <widget class="QPushButton" name="network_analysis_button">
                         <property name="enabled">
                          <bool>true</bool>
@@ -853,6 +792,26 @@ QWidget#particles_panel {
                        </widget>
                       </item>
                       <item row="4" column="1">
+                       <widget class="QLineEdit" name="network_iterations">
+                        <property name="toolTip">
+                         <string>10,000 is the standard value for a larger sample size, however a large value will increase computation time.</string>
+                        </property>
+                        <property name="alignment">
+                         <set>Qt::AlignCenter</set>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="4" column="0">
+                       <widget class="QLabel" name="label_16">
+                        <property name="toolTip">
+                         <string>10,000 is the standard value for a larger sample size, however a large value will increase computation time.</string>
+                        </property>
+                        <property name="text">
+                         <string>Permutations</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="5" column="1">
                        <widget class="QWidget" name="network_display_option_widget" native="true">
                         <layout class="QGridLayout" name="gridLayout_22">
                          <item row="0" column="0">
@@ -875,27 +834,48 @@ QWidget#particles_panel {
                         </layout>
                        </widget>
                       </item>
-                      <item row="3" column="1">
-                       <widget class="QLineEdit" name="network_iterations">
+                      <item row="0" column="1">
+                       <widget class="QComboBox" name="network_feature">
                         <property name="toolTip">
-                         <string>10,000 is the standard value for a larger sample size, however a large value will increase computation time.</string>
+                         <string>Select group set</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="0" column="0">
+                       <widget class="QLabel" name="label_6">
+                        <property name="text">
+                         <string>Feature Map</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="2" column="0">
+                       <widget class="QLabel" name="label_14">
+                        <property name="toolTip">
+                         <string>0.05 is the standard value.</string>
+                        </property>
+                        <property name="text">
+                         <string>Cluster P-value</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="2" column="1">
+                       <widget class="QLineEdit" name="network_pvalue_of_interest">
+                        <property name="toolTip">
+                         <string>0.05 is the standard value.</string>
                         </property>
                         <property name="alignment">
                          <set>Qt::AlignCenter</set>
                         </property>
                        </widget>
                       </item>
-                      <item row="2" column="0">
-                       <widget class="QLabel" name="label_15">
-                        <property name="toolTip">
-                         <string>0.05 is the standard value.</string>
-                        </property>
+                      <item row="5" column="0">
+                       <widget class="QCheckBox" name="network_analysis_display">
                         <property name="text">
-                         <string>P-value Threshold</string>
+                         <string>Display</string>
                         </property>
                        </widget>
                       </item>
-                      <item row="6" column="0" colspan="2">
+                      <item row="7" column="0" colspan="2">
                        <widget class="QWidget" name="network_progress_widget" native="true">
                         <layout class="QGridLayout" name="gridLayout_23">
                          <item row="2" column="0">
@@ -912,6 +892,26 @@ QWidget#particles_panel {
                           </widget>
                          </item>
                         </layout>
+                       </widget>
+                      </item>
+                      <item row="1" column="1">
+                       <widget class="QLineEdit" name="network_pvalue_threshold">
+                        <property name="toolTip">
+                         <string>0.05 is the standard value.</string>
+                        </property>
+                        <property name="alignment">
+                         <set>Qt::AlignCenter</set>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="1" column="0">
+                       <widget class="QLabel" name="label_15">
+                        <property name="toolTip">
+                         <string>0.05 is the standard value.</string>
+                        </property>
+                        <property name="text">
+                         <string>P-value Threshold</string>
+                        </property>
                        </widget>
                       </item>
                      </layout>
