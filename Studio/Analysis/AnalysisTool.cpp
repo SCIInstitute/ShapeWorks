@@ -773,7 +773,7 @@ void AnalysisTool::on_pcaSlider_valueChanged() {
 //---------------------------------------------------------------------------
 void AnalysisTool::on_group_slider_valueChanged() {
   // this will make the slider handle redraw making the UI appear more responsive
-  // QCoreApplication::processEvents();
+  QCoreApplication::processEvents();
 
   ui_->group1_button->setChecked(false);
   ui_->group2_button->setChecked(false);

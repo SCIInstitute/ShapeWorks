@@ -41,7 +41,7 @@ call pip install seaborn==0.11.2
 call pip install scikit-learn==1.1.1
 call pip install pyvista==0.34.1
 
-call pip install swcc==1.0.3
+call pip install swcc==1.0.5
 
 call pip install Python/DatasetUtilsPackage.tar.gz
 call pip install Python/DocumentationUtilsPackage.tar.gz
