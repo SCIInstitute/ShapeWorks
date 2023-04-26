@@ -2,7 +2,7 @@
 # Installs conda environment for building ShapeWorks
 #
 
-SW_MAJOR_VERSION=6.4
+SW_MAJOR_VERSION=6.5
 
 echo ""
 echo "Note: this script only supports bash and zsh shells "
