@@ -43,7 +43,7 @@ call pip install pyvista==0.34.1
 call pip install open3d==0.17.0
 call pip install spm1d==0.4.2
 
-call pip install swcc==1.0.3
+call pip install swcc==1.0.5
 
 call pip install Python/DatasetUtilsPackage.tar.gz
 call pip install Python/DocumentationUtilsPackage.tar.gz

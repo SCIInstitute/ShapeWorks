@@ -246,11 +246,11 @@ void Viewer::display_vector_field() {
   /////////////////////////////////////////////////////////////////////////////////
 
   // Dot product difference vectors with the surface normals.
-  vtkSmartPointer<vtkFloatArray> magnitudes = vtkSmartPointer<vtkFloatArray>::New();
+  auto magnitudes = vtkSmartPointer<vtkFloatArray>::New();
   magnitudes->SetName("magnitudes");
   magnitudes->SetNumberOfComponents(1);
 
-  vtkSmartPointer<vtkFloatArray> vectors = vtkSmartPointer<vtkFloatArray>::New();
+  auto vectors = vtkSmartPointer<vtkFloatArray>::New();
   vectors->SetName("vectors");
   vectors->SetNumberOfComponents(3);
 
@@ -904,7 +904,6 @@ void Viewer::update_points() {
     scalars->Reset();
 
     int point_index = 0;
-    unsigned int idx = 0;
     for (int d = 0; d < correspondence_points.size(); d++) {
       int num_points_this_domain = correspondence_points[d].size() / 3;
 

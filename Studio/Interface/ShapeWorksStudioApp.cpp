@@ -1266,7 +1266,6 @@ void ShapeWorksStudioApp::handle_glyph_changed() {
 
   glyph_quality_label_->setText(QString::number(preferences_.get_glyph_quality()));
   glyph_size_label_->setText(QString::number(preferences_.get_glyph_size()));
-  // update_display(true);
 
   std::vector<bool> domains_to_display;
   for (auto& checkbox : domain_particle_checkboxes_) {
@@ -1275,6 +1274,9 @@ void ShapeWorksStudioApp::handle_glyph_changed() {
   visualizer_->set_domain_particle_visibilities(domains_to_display);
 
   visualizer_->update_viewer_properties();
+
+  // ideally we should only call this for some changes since it is slower
+  update_display(true);
 }
 
 //---------------------------------------------------------------------------
@@ -1317,23 +1319,6 @@ void ShapeWorksStudioApp::update_display(bool force) {
   block_update_ = true;
 
   visualizer_->set_center(ui_->center_checkbox->isChecked());
-
-  bool reconstruct_ready = true;
-
-  for (int i = 0; i < session_->get_domains_per_shape(); i++) {
-    if (!session_->get_mesh_manager()->get_surface_reconstructor(i)->hasDenseMean()) {
-      reconstruct_ready = false;
-    }
-  }
-
-  if (!session_->groomed_present() && session_->particles_present()) {
-    // legacy will be used
-    reconstruct_ready = true;
-  }
-
-  if (session_->particles_present()) {
-    reconstruct_ready = true;
-  }
 
   std::string mode = AnalysisTool::MODE_ALL_SAMPLES_C;
 

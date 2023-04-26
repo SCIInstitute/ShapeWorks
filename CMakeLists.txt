@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 3.20)
 SET(SHAPEWORKS_MAJOR_VERSION 6 CACHE INTERNAL "Major version number" FORCE)
 SET(SHAPEWORKS_MINOR_VERSION 4 CACHE INTERNAL "Minor version number" FORCE)
 SET(SHAPEWORKS_PATCH_VERSION 0 CACHE INTERNAL "Patch version number" FORCE)
-SET(SHAPEWORKS_VERSION_STRING "6.4.0-RC4")
+SET(SHAPEWORKS_VERSION_STRING "6.4.0-RC7")
 SET(SHAPEWORKS_VERSION "${SHAPEWORKS_MAJOR_VERSION}.${SHAPEWORKS_MINOR_VERSION}.${SHAPEWORKS_PATCH_VERSION}")
 
 # First, check that files were checked out properly using git-lfs
@@ -76,7 +76,7 @@ endif()
 if(LINUX)
   # We need RPATH rather than RUNPATH since RUNPATH
   # though recommended, is not used for transitive dependencies
-  SET(CMAKE_EXE_LINKER_FLAGS "-Wl,--disable-new-dtags")
+  SET(CMAKE_EXE_LINKER_FLAGS "-Wl,--disable-new-dtags ${CMAKE_EXE_LINKER_FLAGS}")
   SET(CMAKE_SHARED_LINKER_FLAGS "-Wl,--disable-new-dtags")
 endif(LINUX)
 
