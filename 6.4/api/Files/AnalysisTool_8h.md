@@ -52,6 +52,7 @@ class Session;
 class Lightbox;
 class ShapeWorksStudioApp;
 class GroupPvalueJob;
+class NetworkAnalysisJob;
 class StatsGroupLDAJob;
 
 class AnalysisTool : public QWidget {
@@ -63,11 +64,7 @@ class AnalysisTool : public QWidget {
     Local = -1,
   };
 
-  enum McaMode {
-    Vanilla,
-    Within,
-    Between
-  };
+  enum McaMode { Vanilla, Within, Between };
 
   using PointType = itk::Point<double, 3>;
 
@@ -79,6 +76,7 @@ class AnalysisTool : public QWidget {
   QSharedPointer<Session> get_session();
 
   void set_app(ShapeWorksStudioApp* app);
+  ShapeWorksStudioApp* get_app() { return app_; }
 
   void set_active(bool active);
 
@@ -185,6 +183,7 @@ class AnalysisTool : public QWidget {
   void initialize_mesh_warper();
 
   void group_p_values_clicked();
+  void network_analysis_clicked();
 
   void handle_eval_thread_complete(ShapeEvaluationJob::JobType job_type, Eigen::VectorXd data);
   void handle_eval_thread_progress(ShapeEvaluationJob::JobType job_type, float progress);
@@ -198,6 +197,9 @@ class AnalysisTool : public QWidget {
 
   void handle_lda_progress(double progress);
   void handle_lda_complete();
+
+  void handle_network_analysis_progress(int progress);
+  void handle_network_analysis_complete();
 
   void show_difference_to_mean_clicked();
 
@@ -265,6 +267,7 @@ class AnalysisTool : public QWidget {
   ShapeList group1_list_;
   ShapeList group2_list_;
 
+
   std::string feature_map_;
 
   std::vector<std::string> current_group_names_;
@@ -274,6 +277,8 @@ class AnalysisTool : public QWidget {
 
   QSharedPointer<GroupPvalueJob> group_pvalue_job_;
   QSharedPointer<StatsGroupLDAJob> group_lda_job_;
+  QSharedPointer<NetworkAnalysisJob> network_analysis_job_;
+
   bool group_lda_job_running_ = false;
   bool block_group_change_ = false;
 
@@ -285,4 +290,4 @@ class AnalysisTool : public QWidget {
 
 -------------------------------
 
-Updated on 2023-04-26 at 08:24:05 +0000
+Updated on 2023-04-26 at 22:53:00 +0000

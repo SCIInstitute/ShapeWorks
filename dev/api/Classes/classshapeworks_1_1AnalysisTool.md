@@ -50,6 +50,7 @@ Inherits from QWidget
 | void | **[reconstruction_method_changed](../Classes/classshapeworks_1_1AnalysisTool.md#slot-reconstruction-method-changed)**() |
 | void | **[initialize_mesh_warper](../Classes/classshapeworks_1_1AnalysisTool.md#slot-initialize-mesh-warper)**() |
 | void | **[group_p_values_clicked](../Classes/classshapeworks_1_1AnalysisTool.md#slot-group-p-values-clicked)**() |
+| void | **[network_analysis_clicked](../Classes/classshapeworks_1_1AnalysisTool.md#slot-network-analysis-clicked)**() |
 | void | **[handle_eval_thread_complete](../Classes/classshapeworks_1_1AnalysisTool.md#slot-handle-eval-thread-complete)**(ShapeEvaluationJob::JobType job_type, Eigen::VectorXd data) |
 | void | **[handle_eval_thread_progress](../Classes/classshapeworks_1_1AnalysisTool.md#slot-handle-eval-thread-progress)**(ShapeEvaluationJob::JobType job_type, float progress) |
 | void | **[handle_eval_particle_normals_progress](../Classes/classshapeworks_1_1AnalysisTool.md#slot-handle-eval-particle-normals-progress)**(float progress) |
@@ -59,6 +60,8 @@ Inherits from QWidget
 | void | **[run_good_bad_particles](../Classes/classshapeworks_1_1AnalysisTool.md#slot-run-good-bad-particles)**() |
 | void | **[handle_lda_progress](../Classes/classshapeworks_1_1AnalysisTool.md#slot-handle-lda-progress)**(double progress) |
 | void | **[handle_lda_complete](../Classes/classshapeworks_1_1AnalysisTool.md#slot-handle-lda-complete)**() |
+| void | **[handle_network_analysis_progress](../Classes/classshapeworks_1_1AnalysisTool.md#slot-handle-network-analysis-progress)**(int progress) |
+| void | **[handle_network_analysis_complete](../Classes/classshapeworks_1_1AnalysisTool.md#slot-handle-network-analysis-complete)**() |
 | void | **[show_difference_to_mean_clicked](../Classes/classshapeworks_1_1AnalysisTool.md#slot-show-difference-to-mean-clicked)**() |
 
 ## Public Signals
@@ -79,6 +82,7 @@ Inherits from QWidget
 | void | **[set_session](../Classes/classshapeworks_1_1AnalysisTool.md#function-set-session)**(QSharedPointer< [Session](../Classes/classshapeworks_1_1Session.md) > session)<br>set the pointer to the session  |
 | QSharedPointer< [Session](../Classes/classshapeworks_1_1Session.md) > | **[get_session](../Classes/classshapeworks_1_1AnalysisTool.md#function-get-session)**()<br>Return the session.  |
 | void | **[set_app](../Classes/classshapeworks_1_1AnalysisTool.md#function-set-app)**([ShapeWorksStudioApp](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md) * app)<br>set the pointer to the application  |
+| [ShapeWorksStudioApp](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md) * | **[get_app](../Classes/classshapeworks_1_1AnalysisTool.md#function-get-app)**() |
 | void | **[set_active](../Classes/classshapeworks_1_1AnalysisTool.md#function-set-active)**(bool active)<br>Set if this tool is active.  |
 | bool | **[get_active](../Classes/classshapeworks_1_1AnalysisTool.md#function-get-active)**()<br>Return if this tool is active.  |
 | bool | **[get_group_difference_mode](../Classes/classshapeworks_1_1AnalysisTool.md#function-get-group-difference-mode)**() |
@@ -348,6 +352,13 @@ void group_p_values_clicked()
 ```
 
 
+### slot network_analysis_clicked
+
+```cpp
+void network_analysis_clicked()
+```
+
+
 ### slot handle_eval_thread_complete
 
 ```cpp
@@ -422,6 +433,22 @@ void handle_lda_progress(
 
 ```cpp
 void handle_lda_complete()
+```
+
+
+### slot handle_network_analysis_progress
+
+```cpp
+void handle_network_analysis_progress(
+    int progress
+)
+```
+
+
+### slot handle_network_analysis_complete
+
+```cpp
+void handle_network_analysis_complete()
 ```
 
 
@@ -509,6 +536,13 @@ void set_app(
 ```
 
 set the pointer to the application 
+
+### function get_app
+
+```cpp
+inline ShapeWorksStudioApp * get_app()
+```
+
 
 ### function set_active
 
@@ -786,4 +820,4 @@ static const std::string MODE_REGRESSION_C;
 
 -------------------------------
 
-Updated on 2023-04-26 at 08:24:03 +0000
+Updated on 2023-04-26 at 22:52:57 +0000

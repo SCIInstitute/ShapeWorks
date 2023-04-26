@@ -751,6 +751,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Classes/classshapeworks_1_1NetworkAnalysisJob.html</loc>
+         <lastmod>2023-04-26</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Classes/classshapeworks_1_1Observer.html</loc>
          <lastmod>2023-04-26</lastmod>
          <changefreq>daily</changefreq>
@@ -1766,6 +1771,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/NetworkAnalysisJob_8h.html</loc>
+         <lastmod>2023-04-26</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/ObjectReader_8h.html</loc>
          <lastmod>2023-04-26</lastmod>
          <changefreq>daily</changefreq>
@@ -1942,6 +1952,11 @@
     </url>
     <url>
          <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/Project_8h.html</loc>
+         <lastmod>2023-04-26</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/PythonAnalyze_8h.html</loc>
          <lastmod>2023-04-26</lastmod>
          <changefreq>daily</changefreq>
     </url>

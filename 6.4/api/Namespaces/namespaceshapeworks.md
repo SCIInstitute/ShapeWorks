@@ -96,6 +96,7 @@ User usage reporting (telemetry)  [More...](#detailed-description)
 | class | **[shapeworks::MeshWrapper](../Classes/classshapeworks_1_1MeshWrapper.md)**  |
 | class | **[shapeworks::MixedEffectsShapeMatrix](../Classes/classshapeworks_1_1MixedEffectsShapeMatrix.md)**  |
 | struct | **[shapeworks::MultiVariateNormalRandom](../Classes/structshapeworks_1_1MultiVariateNormalRandom.md)**  |
+| class | **[shapeworks::NetworkAnalysisJob](../Classes/classshapeworks_1_1NetworkAnalysisJob.md)**  |
 | class | **[shapeworks::Observer](../Classes/classshapeworks_1_1Observer.md)** <br>This class is an observer interface for classes to monitor for changes to the optimizer (observer pattern)  |
 | class | **[shapeworks::OptimizationVisualizer](../Classes/classshapeworks_1_1OptimizationVisualizer.md)**  |
 | class | **[shapeworks::Optimize](../Classes/classshapeworks_1_1Optimize.md)**  |
@@ -2566,4 +2567,4 @@ pi that doesn't depend on deprecated or non-std lib defines
 
 -------------------------------
 
-Updated on 2023-04-26 at 08:24:03 +0000
+Updated on 2023-04-26 at 22:52:57 +0000

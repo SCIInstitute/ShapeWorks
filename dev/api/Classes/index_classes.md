@@ -170,6 +170,7 @@ title: Classes
     * **class [MeshWrapper](../Classes/classshapeworks_1_1MeshWrapper.md)** 
     * **class [MixedEffectsShapeMatrix](../Classes/classshapeworks_1_1MixedEffectsShapeMatrix.md)** 
     * **struct [MultiVariateNormalRandom](../Classes/structshapeworks_1_1MultiVariateNormalRandom.md)** 
+    * **class [NetworkAnalysisJob](../Classes/classshapeworks_1_1NetworkAnalysisJob.md)** 
     * **class [Observer](../Classes/classshapeworks_1_1Observer.md)** <br>This class is an observer interface for classes to monitor for changes to the optimizer (observer pattern) 
         * **struct [DefinedCallbacksStruct](../Classes/structshapeworks_1_1Observer_1_1DefinedCallbacksStruct.md)** 
     * **class [OptimizationVisualizer](../Classes/classshapeworks_1_1OptimizationVisualizer.md)** 
@@ -274,4 +275,4 @@ title: Classes
 
 -------------------------------
 
-Updated on 2023-04-26 at 08:24:05 +0000
+Updated on 2023-04-26 at 22:53:00 +0000

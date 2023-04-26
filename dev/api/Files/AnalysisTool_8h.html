@@ -2466,6 +2466,7 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">Lightbox</span><span class="p">;</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">ShapeWorksStudioApp</span><span class="p">;</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">GroupPvalueJob</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">NetworkAnalysisJob</span><span class="p">;</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">StatsGroupLDAJob</span><span class="p">;</span>
 
 <span class="k">class</span><span class="w"> </span><span class="nc">AnalysisTool</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">QWidget</span><span class="w"> </span><span class="p">{</span>
@@ -2477,11 +2478,7 @@
 <span class="w">    </span><span class="n">Local</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">,</span>
 <span class="w">  </span><span class="p">};</span>
 
-<span class="w">  </span><span class="k">enum</span><span class="w"> </span><span class="nc">McaMode</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">Vanilla</span><span class="p">,</span>
-<span class="w">    </span><span class="n">Within</span><span class="p">,</span>
-<span class="w">    </span><span class="n">Between</span>
-<span class="w">  </span><span class="p">};</span>
+<span class="w">  </span><span class="k">enum</span><span class="w"> </span><span class="nc">McaMode</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">Vanilla</span><span class="p">,</span><span class="w"> </span><span class="n">Within</span><span class="p">,</span><span class="w"> </span><span class="n">Between</span><span class="w"> </span><span class="p">};</span>
 
 <span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="p">;</span>
 
@@ -2493,6 +2490,7 @@
 <span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Session</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_session</span><span class="p">();</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_app</span><span class="p">(</span><span class="n">ShapeWorksStudioApp</span><span class="o">*</span><span class="w"> </span><span class="n">app</span><span class="p">);</span>
+<span class="w">  </span><span class="n">ShapeWorksStudioApp</span><span class="o">*</span><span class="w"> </span><span class="nf">get_app</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">app_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_active</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">active</span><span class="p">);</span>
 
@@ -2599,6 +2597,7 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">initialize_mesh_warper</span><span class="p">();</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">group_p_values_clicked</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">network_analysis_clicked</span><span class="p">();</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_eval_thread_complete</span><span class="p">(</span><span class="n">ShapeEvaluationJob</span><span class="o">::</span><span class="n">JobType</span><span class="w"> </span><span class="n">job_type</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">data</span><span class="p">);</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_eval_thread_progress</span><span class="p">(</span><span class="n">ShapeEvaluationJob</span><span class="o">::</span><span class="n">JobType</span><span class="w"> </span><span class="n">job_type</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">progress</span><span class="p">);</span>
@@ -2612,6 +2611,9 @@
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_lda_progress</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">progress</span><span class="p">);</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_lda_complete</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_network_analysis_progress</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">progress</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_network_analysis_complete</span><span class="p">();</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">show_difference_to_mean_clicked</span><span class="p">();</span>
 
@@ -2679,6 +2681,7 @@
 <span class="w">  </span><span class="n">ShapeList</span><span class="w"> </span><span class="n">group1_list_</span><span class="p">;</span>
 <span class="w">  </span><span class="n">ShapeList</span><span class="w"> </span><span class="n">group2_list_</span><span class="p">;</span>
 
+
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">feature_map_</span><span class="p">;</span>
 
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">current_group_names_</span><span class="p">;</span>
@@ -2688,6 +2691,8 @@
 
 <span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">GroupPvalueJob</span><span class="o">&gt;</span><span class="w"> </span><span class="n">group_pvalue_job_</span><span class="p">;</span>
 <span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">StatsGroupLDAJob</span><span class="o">&gt;</span><span class="w"> </span><span class="n">group_lda_job_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">NetworkAnalysisJob</span><span class="o">&gt;</span><span class="w"> </span><span class="n">network_analysis_job_</span><span class="p">;</span>
+
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">group_lda_job_running_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">block_group_change_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
 
@@ -2696,7 +2701,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-04-26 at 08:24:05 +0000</p>
+<p>Updated on 2023-04-26 at 22:53:00 +0000</p>
 
               
             </article>

@@ -878,6 +878,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#network-analysis" class="md-nav__link">
+    Network Analysis
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#samples" class="md-nav__link">
     Samples
   </a>
@@ -2491,6 +2498,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#network-analysis" class="md-nav__link">
+    Network Analysis
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#samples" class="md-nav__link">
     Samples
   </a>
@@ -2572,6 +2586,39 @@
 <p><img alt="ShapeWorks Studio Analysis View Panel Group Display" src="../img/studio/studio_analyze_view_group.png" /></p>
 <p>Additionally an LDA chart is generated for group differences:</p>
 <p><img alt="ShapeWorks Studio LDA Chart" src="../img/studio/studio_lda.png" width="300" /></p>
+<h3 id="network-analysis">Network Analysis</h3>
+<p><img alt="ShapeWorks Studio Network Analysis" src="../img/studio/studio_network_analysis.png" width="200" /></p>
+<p>The Network Analysis tool provides a method to statistically analyze data captured in feature maps. Two implementations have been included: Network Analysis and SPM1D. Statistical parametric mapping (SPM, https://www.fil.ion.ucl.ac.uk/spm/) was introduced for the analysis of brain imaging data and has since been used in statistical analysis of surface-based group differences. The SPM1D option uses this technique without consideration of the connectivity and spatial relationship of the input data. The Network Analysis method uses the relative size of the network of connected correspondence particles to identify significant differences amongst groups, as originally described by Forman and colleagues (Forman SD, et al. Magnetic Resonance in Medicine33:636-647, 1995). Our publication on the specifics of this method and example applications is in review and will be referenced here when available.</p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Feature Map</td>
+<td>Choose which feature to operate on.</td>
+</tr>
+<tr>
+<td>P-value Threshold</td>
+<td>The initial p-value used to threshold particles as an initial step to the evaluation of cluster size. Only modify from 0.05 for adjusted statistical assumptions.</td>
+</tr>
+<tr>
+<td>Cluster P-value</td>
+<td>The cluster p-value defines the p-value used to identify significant clusters for the group. Traditional statistics would assume a p-value of 0.05.</td>
+</tr>
+<tr>
+<td>Permutations</td>
+<td>This is the number of permutations used in the analysis. The maximum value is driven by the sample size, however 10,000 is generally considered acceptably large.</td>
+</tr>
+<tr>
+<td>Display</td>
+<td>Choose to display Network Analysis output or SPM1D</td>
+</tr>
+</tbody>
+</table>
 <h3 id="samples">Samples</h3>
 <p>The Samples tab of the view panel allows you to view all of the samples in your cohort, view a single sample by index, or view the median sample.</p>
 <p><img alt="ShapeWorks Studio Analysis View Panel Sample Display" src="../img/studio/studio_analyze_view_samples.png" /></p>
