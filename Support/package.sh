@@ -55,7 +55,6 @@ cp install_shapeworks.sh package/${VERSION}
 cp docs/about/release-notes.md package/${VERSION}
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
-    cp -a $INSTALL_DEP_DIR/lib/* "package/${VERSION}/bin/ShapeWorksStudio.app/Contents/Frameworks"
     cp docs/users/Mac_README.txt package/${VERSION}/README.txt
     if [ $? -ne 0 ]; then
 	echo "Failed to copy Mac package README"
@@ -76,7 +75,6 @@ rm -rf include share v3p plugins libigl
 if [[ "$OSTYPE" == "darwin"* ]]; then
     # Mac OSX
     cd bin
-    macdeployqt ShapeWorksStudio.app -no-strip -verbose=3
     install_name_tool -add_rpath @executable_path/../Frameworks ShapeWorksStudio.app/Contents/MacOS/ShapeWorksStudio || echo ok
     QT_LIB_LOCATION="@executable_path/ShapeWorksStudio.app/Contents/Frameworks"
     QT_LOADER_LIB_LOCATION="@loader_path/ShapeWorksStudio.app/Contents/Frameworks"
