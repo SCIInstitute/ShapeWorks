@@ -12,7 +12,7 @@
 #include "Libs/Optimize/Domain/MeshDomain.h"
 #include "Libs/Optimize/Domain/MeshWrapper.h"
 #include "Libs/Optimize/Function/CorrespondenceFunction.h"
-#include "Libs/Optimize/Function/SpatiotemporalSSM/DisentangledCorrespondenceFunction.h"
+#include "Libs/Optimize/Function/DisentangledCorrespondenceFunction.h"
 #include "Libs/Optimize/Function/CurvatureSamplingFunction.h"
 #include "Libs/Optimize/Function/DualVectorFunction.h"
 #include "Libs/Optimize/Function/LegacyCorrespondenceFunction.h"
@@ -200,7 +200,7 @@ class Sampler {
     } else if (mode == shapeworks::CorrespondenceMode::DisentagledEnsembleEntropy) {
       m_LinkingFunction->SetFunctionB(m_DisentangledEnsembleEntropyFunction);
       m_DisentangledEnsembleEntropyFunction->UseEntropy();
-    } else if (mode == shapeworks::CorrespondenceMode::DisentagledEnsembleMeanEnergy) {
+    } else if (mode == shapeworks::CorrespondenceMode::DisentangledEnsembleMeanEnergy) {
       m_LinkingFunction->SetFunctionB(m_DisentangledEnsembleEntropyFunction);
       m_DisentangledEnsembleEntropyFunction->UseMeanEnergy();
     }
@@ -253,6 +253,8 @@ class Sampler {
   DualVectorFunction* GetLinkingFunction() { return m_LinkingFunction.GetPointer(); }
 
   LegacyCorrespondenceFunction* GetEnsembleEntropyFunction() { return m_EnsembleEntropyFunction.GetPointer(); }
+
+  DisentangledCorrespondenceFunction* GetDisentangledEnsembleEntropyFunction() { return m_DisentangledEnsembleEntropyFunction.GetPointer(); }
 
   LegacyCorrespondenceFunction* GetEnsembleRegressionEntropyFunction() {
     return m_EnsembleRegressionEntropyFunction.GetPointer();

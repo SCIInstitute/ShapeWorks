@@ -24,7 +24,7 @@ Sampler::Sampler() {
 
   m_LinkingFunction = DualVectorFunction::New();
   m_EnsembleEntropyFunction = LegacyCorrespondenceFunction::New();
-  m_DisentangledEnsembleEntropyFunction = LegacyCorrespondenceFunction::New();
+  m_DisentangledEnsembleEntropyFunction = DisentangledCorrespondenceFunction::New();
   m_EnsembleRegressionEntropyFunction = LegacyCorrespondenceFunction::New();
   m_EnsembleMixedEffectsEntropyFunction = LegacyCorrespondenceFunction::New();
   m_CorrespondenceFunction = CorrespondenceFunction::New();

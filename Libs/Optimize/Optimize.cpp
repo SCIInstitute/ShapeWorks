@@ -1861,7 +1861,7 @@ void Optimize::SetUseMixedEffects(bool use_mixed_effects) { this->m_use_mixed_ef
 void Optimize::SetUseDisentangledSpatiotemporalSSM(bool use_disentangled_ssm) { this->m_use_disentangled_ssm = use_disentangled_ssm; }
 
 //---------------------------------------------------------------------------
-bool Optimize::GetUseDisentangledSpatiotemporalSSM(bool use_disentangled_ssm) { return this->m_use_disentangled_ssm; }
+bool Optimize::GetUseDisentangledSpatiotemporalSSM() { return this->m_use_disentangled_ssm; }
 
 
 //---------------------------------------------------------------------------

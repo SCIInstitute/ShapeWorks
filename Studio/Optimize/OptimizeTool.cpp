@@ -58,7 +58,7 @@ OptimizeTool::OptimizeTool(Preferences& prefs, Telemetry& telemetry) : preferenc
       "This value should only be changed if an error occurs "
       "during optimization suggesting that it should be increased.  "
       "It has no effect on the optimization");
-  ui_->use_disentangled_ssm->setToolTip("Use disentangled Optimization technique to build spatiotemporal SSM.")
+  ui_->use_disentangled_ssm->setToolTip("Use disentangled Optimization technique to build spatiotemporal SSM.");
 
   QIntValidator* above_zero = new QIntValidator(1, std::numeric_limits<int>::max(), this);
   QIntValidator* zero_and_up = new QIntValidator(0, std::numeric_limits<int>::max(), this);

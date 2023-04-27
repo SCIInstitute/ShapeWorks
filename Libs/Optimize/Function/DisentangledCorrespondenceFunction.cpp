@@ -1,9 +1,5 @@
-
-
 #include "DisentangledCorrespondenceFunction.h"
-
 #include <string>
-
 #include "Libs/Optimize/Domain/ImageDomainWithGradients.h"
 #include "Libs/Optimize/Utils/ParticleGaussianModeWriter.h"
 #include "Libs/Utils/Utils.h"
@@ -20,7 +16,6 @@ void DisentangledCorrespondenceFunction ::WriteModes(const std::string& prefix, 
 }
 
 void DisentangledCorrespondenceFunction::ComputeCovarianceMatrices() {
-
   const unsigned int num_N = m_ShapeMatrix->cols(); // Total Number of subjects
   const unsigned int num_T = m_ShapeMatrix->GetDomainsPerShape(); // Total Number of Time points
   const unsigned int num_dims    = m_ShapeMatrix->rows() / num_T; // (dM X T) / T = dM
@@ -30,18 +25,13 @@ void DisentangledCorrespondenceFunction::ComputeCovarianceMatrices() {
   {
     // Iterate t = 1....T
     for (size_t time_inst = r.begin(); time_inst < r.end(); ++time_inst) {
-      auto num_dims = num_particles_ar.at(time_inst) * VDimension;
       // Build objective matrix Z
       vnl_matrix_type z;
       z.clear();
       z.set_size(num_dims, num_N);
       z.fill(0.0);
-      unsigned int dim_start = 0; // starting row index of the shape matrix for current time instance
-      for (auto t = 0; t < time_inst; ++t)
-      {
-        dim_start += (num_particles_ar.at(t) * VDimension);
-      }
-      z = m_ShapeMatrix->extract(num_dims, num_N, dim_start, 0);
+      unsigned int row_idx_start = time_inst * num_dims;
+      z = m_ShapeMatrix->extract(num_dims, num_N, row_idx_start, 0);
 
       // Resize Gradient Updates matrix for current time instance
       if (m_Time_PointsUpdate->at(time_inst).rows() != num_dims || m_Time_PointsUpdate->at(time_inst).cols() != num_N)
@@ -51,12 +41,12 @@ void DisentangledCorrespondenceFunction::ComputeCovarianceMatrices() {
       }
 
       // Compute mean and mean centred objective matrix for current time instance t_i
-      vnl_matrix_type points_minus_mean_t_i;
-      points_minus_mean_t_i.clear();
-      points_minus_mean_t_i.set_size(num_dims, num_N);
-      points_minus_mean_t_i.fill(0.0);
-      vnl_matrix_type inv_cov_t_i;
-      inv_cov_t_i.clear();
+      vnl_matrix_type points_minus_mean_t;
+      points_minus_mean_t.clear();
+      points_minus_mean_t.set_size(num_dims, num_N);
+      points_minus_mean_t.fill(0.0);
+      vnl_matrix_type inv_cov_t;
+      inv_cov_t.clear();
 
       m_points_mean_time_cohort->at(time_inst).clear();
       m_points_mean_time_cohort->at(time_inst).set_size(num_dims, 1);
@@ -75,55 +65,55 @@ void DisentangledCorrespondenceFunction::ComputeCovarianceMatrices() {
       {
         for (unsigned int i = 0; i < num_N; i++)
         {
-          points_minus_mean_t_i(j, i) = z(j, i) - m_points_mean_time_cohort->at(time_inst).get(j,0);
+          points_minus_mean_t(j, i) = z(j, i) - m_points_mean_time_cohort->at(time_inst).get(j,0);
         }
       }
 
-      vnl_diag_matrix<double> W_t_i;
-      vnl_matrix_type gramMat_t_i(num_N, num_N, 0.0); // gram matrix = Y^T X Y
-      vnl_matrix_type pinvMat_t_i(num_N, num_N, 0.0); // inverse of gram Matrix
+      vnl_diag_matrix<double> W_t;
+      vnl_matrix_type gramMat_t(num_N, num_N, 0.0); // gram matrix = Y^T X Y
+      vnl_matrix_type pinvMat_t(num_N, num_N, 0.0); // inverse of gram Matrix
 
       if (this->m_UseMeanEnergy)
       {
-        pinvMat_ti.set_identity();
+        pinvMat_t.set_identity();
         m_InverseCovMatrices_time_cohort->at(time_inst).clear();
       }
       else
       {
-        gramMat_t_i = points_minus_mean_ti.transpose()* points_minus_mean_t_i;
-        vnl_svd <double> svd(gramMat_t_i);
+        gramMat_t = points_minus_mean_t.transpose()* points_minus_mean_t;
+        vnl_svd <double> svd(gramMat_t);
         vnl_matrix_type UG = svd.U();
-        W_t_i = svd.W();
-        vnl_diag_matrix<double> invLambda_t_i = svd.W();
-        invLambda_t_i.set_diagonal(invLambda_ti.get_diagonal()/(double)(num_N-1) + m_MinimumVariance);
-        invLambda_t_i.invert_in_place();
+        W_t = svd.W();
+        vnl_diag_matrix<double> invLambda_t = svd.W();
+        invLambda_t.set_diagonal(invLambda_t.get_diagonal()/(double)(num_N-1) + m_MinimumVariance);
+        invLambda_t.invert_in_place();
 
-        pinvMat_t_i = (UG * invLambda_t_i) * UG.transpose();
-        vnl_matrix_type projMat_t_i = points_minus_mean_t_i * UG;
-        const auto lhs = projMat_t_i * invLambda_t_i;
-        const auto rhs = invLambda_t_i * projMat_t_i.transpose();
-        inv_cov_t_i.set_size(num_dims, num_dims);
-        Utils::multiply_into(inv_cov_t_i, lhs, rhs);
+        pinvMat_t = (UG * invLambda_t) * UG.transpose();
+        vnl_matrix_type projMat_t = points_minus_mean_t * UG;
+        const auto lhs = projMat_t * invLambda_t;
+        const auto rhs = invLambda_t * projMat_t.transpose();
+        inv_cov_t.set_size(num_dims, num_dims);
+        Utils::multiply_into(inv_cov_t, lhs, rhs);
       }
       // Update Gradient points update infor
-      m_Time_PointsUpdate->at(time_inst).update(points_minus_mean_t_i * pinvMat_t_i);
-      double currentEnergy_t_i = 0.0;
-      if (m_UseMeanEnergy) currentEnergy_t_i = points_minus_mean_ti.frobenius_norm();
+      m_Time_PointsUpdate->at(time_inst).update(points_minus_mean_t * pinvMat_t);
+      double currentEnergy_t = 0.0;
+      if (m_UseMeanEnergy) currentEnergy_t = points_minus_mean_t.frobenius_norm();
       else
       {
-        m_MinimumEigenValue_time_cohort[time_inst] = W_ti(0)*W_ti(0) + m_MinimumVariance;
+        m_MinimumEigenValue_time_cohort[time_inst] = W_t(0)*W_t(0) + m_MinimumVariance;
         for (unsigned int i = 0; i < num_N; i++)
         {
-          double val_i = W_ti(i)*W_ti(i) + m_MinimumVariance;
+          double val_i = W_t(i)*W_t(i) + m_MinimumVariance;
           if ( val_i < m_MinimumEigenValue_time_cohort[time_inst])
             m_MinimumEigenValue_time_cohort[time_inst] = val_i;
-          currentEnergy_t_i += log(val_i);
+          currentEnergy_t += log(val_i);
         }
       }
-      currentEnergy_t_i /= 2.0;
-      if (m_UseMeanEnergy) m_MinimumEigenValue_time_cohort[time_inst] = currentEnergy_t_i / 2.0;
+      currentEnergy_t /= 2.0;
+      if (m_UseMeanEnergy) m_MinimumEigenValue_time_cohort[time_inst] = currentEnergy_t / 2.0;
       // Update Inv Covariance Matrix
-      m_InverseCovMatrices_time_cohort->at(time_inst) = inv_cov_t_i;
+      m_InverseCovMatrices_time_cohort->at(time_inst) = inv_cov_t;
     }
   });
 
@@ -132,7 +122,6 @@ void DisentangledCorrespondenceFunction::ComputeCovarianceMatrices() {
   {
     // Iterate n = 1....N
     for (size_t sub = r.begin(); sub < r.end(); ++sub) {
-      auto num_dims = num_particles_ar.at(time_inst) * VDimension;
       // Build objective matrix Z
       vnl_matrix_type z;
       z.clear();
@@ -147,7 +136,7 @@ void DisentangledCorrespondenceFunction::ComputeCovarianceMatrices() {
       // Resize Gradient Updates matrix for current time instance
       if (m_Shape_PointsUpdate->at(sub).rows() != num_dims || m_Shape_PointsUpdate->at(sub).cols() != num_T)
       {
-        m_Shape_PointsUpdate->at(sub).set_size(num_dims, num_N);
+        m_Shape_PointsUpdate->at(sub).set_size(num_dims, num_T);
         m_Shape_PointsUpdate->at(sub).fill(0.0);
       }
 
@@ -165,18 +154,18 @@ void DisentangledCorrespondenceFunction::ComputeCovarianceMatrices() {
       for (unsigned int j = 0; j < num_dims; ++j)
       {
         double sum_across_col = 0.0;
-        for (unsigned int i = 0; i < num_N; ++i)
+        for (unsigned int i = 0; i < num_T; ++i)
         {
           sum_across_col += z(j, i);
         }
-        m_points_mean_shape_cohort->at(sub).put(j,0, sum_across_col/(double)num_N);
+        m_points_mean_shape_cohort->at(sub).put(j,0, sum_across_col/(double)num_T);
       }
 
       for (unsigned int j = 0; j < num_dims; j++)
       {
         for (unsigned int i = 0; i < num_T; i++)
         {
-          points_minus_mean_t_i(j, i) = z(j, i) - m_points_mean_shape_cohort->at(sub).get(j,0);
+          points_minus_mean_n(j, i) = z(j, i) - m_points_mean_shape_cohort->at(sub).get(j,0);
         }
       }
 
@@ -191,7 +180,7 @@ void DisentangledCorrespondenceFunction::ComputeCovarianceMatrices() {
       }
       else
       {
-        gramMat_t_i = points_minus_mean_n.transpose()* points_minus_mean_n;
+        gramMat_n = points_minus_mean_n.transpose() * points_minus_mean_n;
         vnl_svd <double> svd(gramMat_n);
         vnl_matrix_type UG = svd.U();
         W_n = svd.W();
@@ -213,11 +202,11 @@ void DisentangledCorrespondenceFunction::ComputeCovarianceMatrices() {
       if (m_UseMeanEnergy) currentEnergy_n = points_minus_mean_n.frobenius_norm();
       else
       {
-        m_MinimumEigenValue_shape_cohort[sub] = W_ti(0)*W_ti(0) + m_MinimumVariance;
-        for (unsigned int i = 0; i < num_N; i++)
+        m_MinimumEigenValue_shape_cohort[sub] = W_n(0)*W_n(0) + m_MinimumVariance;
+        for (unsigned int i = 0; i < num_T; i++)
         {
-          double val_i = W_ti(i)*W_ti(i) + m_MinimumVariance;
-          if ( val_i < m_MinimumEigenValue_shape_cohort[sub])
+          double val_i = W_n(i) * W_n(i) + m_MinimumVariance;
+          if (val_i < m_MinimumEigenValue_shape_cohort[sub])
             m_MinimumEigenValue_shape_cohort[sub] = val_i;
           currentEnergy_n += log(val_i);
         }
