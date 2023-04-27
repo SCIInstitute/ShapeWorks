@@ -77,7 +77,8 @@ OptimizeParameters::OptimizeParameters(ProjectHandle project) {
                                          Keys::fixed_subjects_choice,
                                          Keys::checkpointing_interval,
                                          Keys::save_init_splits,
-                                         Keys::keep_checkpoints
+                                         Keys::keep_checkpoints,
+                                         Keys::use_disentangled_ssm
 
   };
 
