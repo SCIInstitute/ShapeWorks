@@ -98,8 +98,6 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
         cp ${CONDA_PREFIX}/lib/${clib}* ShapeWorksStudio.app/Contents/Frameworks
     done
 
-    # remove static libs
-    rm lib/*.a
 
     # # Fix transitive loaded libs
     # for i in ShapeWorksStudio.app/Contents/Frameworks/*.dylib ; do
@@ -108,6 +106,11 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     # install_name_tool -id @rpath/libitkgdcmopenjp2-5.2.1.dylib ShapeWorksStudio.app/Contents/Frameworks/libitkgdcmopenjp2-5.2.1.dylib
 
     cd ..
+
+    # remove static libs
+    pwd
+    rm lib/*.a
+
 else
     # Copy libraries from anaconda
     conda_libs="libboost_iostreams libboost_filesystem libbz2 liblzma liblz4 libtbb libHalf libpython libz libspd"
