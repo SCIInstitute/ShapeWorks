@@ -443,6 +443,10 @@ void Optimize::InitializeSampler() {
   m_sampler->GetEnsembleEntropyFunction()->SetMinimumVariance(m_starting_regularization);
   m_sampler->GetEnsembleEntropyFunction()->SetRecomputeCovarianceInterval(1);
   m_sampler->GetEnsembleEntropyFunction()->SetHoldMinimumVariance(false);
+  
+  m_sampler->GetDisentangledEnsembleEntropyFunction()->SetMinimumVariance(m_starting_regularization);
+  m_sampler->GetDisentangledEnsembleEntropyFunction()->SetRecomputeCovarianceInterval(1);
+  m_sampler->GetDisentangledEnsembleEntropyFunction()->SetHoldMinimumVariance(false);
 
   m_sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetMinimumVariance(m_starting_regularization);
   m_sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetRecomputeCovarianceInterval(1);
@@ -464,6 +468,7 @@ void Optimize::InitializeSampler() {
 
   m_sampler->SetAdaptivityMode(m_adaptivity_mode);
   m_sampler->GetEnsembleEntropyFunction()->SetRecomputeCovarianceInterval(m_recompute_regularization_interval);
+  m_sampler->GetDisentangledEnsembleEntropyFunction()->SetRecomputeCovarianceInterval(m_recompute_regularization_interval);
   m_sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetRecomputeCovarianceInterval(
       m_recompute_regularization_interval);
   m_sampler->GetEnsembleRegressionEntropyFunction()->SetRecomputeCovarianceInterval(
@@ -555,6 +560,9 @@ void Optimize::Initialize() {
 
     m_sampler->GetEnsembleEntropyFunction()->SetMinimumVarianceDecay(m_starting_regularization, m_ending_regularization,
                                                                      m_iterations_per_split);
+
+    m_sampler->GetDisentangledEnsembleEntropyFunction()->SetMinimumVarianceDecay(m_starting_regularization, m_ending_regularization,
+                                                                     m_iterations_per_split);                                                                     
 
     m_sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetMinimumVarianceDecay(
         m_starting_regularization, m_ending_regularization, m_iterations_per_split);
@@ -776,6 +784,10 @@ void Optimize::RunOptimize() {
       m_starting_regularization, m_ending_regularization,
       m_optimization_iterations - m_optimization_iterations_completed);
 
+  m_sampler->GetDisentangledEnsembleEntropyFunction()->SetMinimumVarianceDecay(
+      m_starting_regularization, m_ending_regularization,
+      m_optimization_iterations - m_optimization_iterations_completed);
+
   m_sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetMinimumVarianceDecay(
       m_starting_regularization, m_ending_regularization,
       m_optimization_iterations - m_optimization_iterations_completed);
@@ -793,7 +805,14 @@ void Optimize::RunOptimize() {
 
   m_sampler->SetCorrespondenceOn();
 
-  if ((m_attributes_per_domain.size() > 0 &&
+  if (m_use_disentangled_ssm)
+  {
+    if (m_starting_regularization == m_ending_regularization) 
+       m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::DisentangledEnsembleMeanEnergy);
+    else
+       m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::DisentagledEnsembleEntropy);
+  }
+  else if ((m_attributes_per_domain.size() > 0 &&
        *std::max_element(m_attributes_per_domain.begin(), m_attributes_per_domain.end()) > 0) ||
       m_mesh_based_attributes) {
     m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::MeshBasedGeneralEntropy);
@@ -1837,6 +1856,13 @@ void Optimize::SetUseRegression(bool use_regression) { this->m_use_regression = 
 
 //---------------------------------------------------------------------------
 void Optimize::SetUseMixedEffects(bool use_mixed_effects) { this->m_use_mixed_effects = use_mixed_effects; }
+
+//---------------------------------------------------------------------------
+void Optimize::SetUseDisentangledSpatiotemporalSSM(bool use_disentangled_ssm) { this->m_use_disentangled_ssm = use_disentangled_ssm; }
+
+//---------------------------------------------------------------------------
+bool Optimize::GetUseDisentangledSpatiotemporalSSM(bool use_disentangled_ssm) { return this->m_use_disentangled_ssm; }
+
 
 //---------------------------------------------------------------------------
 void Optimize::SetNormalAngle(double normal_angle) { this->m_normal_angle = normal_angle; }

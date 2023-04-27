@@ -208,6 +208,11 @@ class Optimize {
   //! Set if mixed effects should be used (TODO: details)
   void SetUseMixedEffects(bool use_mixed_effects);
 
+  //! Set if optimization should be done using disentangled spatiotemporal SSM method 
+  void SetUseDisentangledSpatiotemporalSSM(bool use_disentangled_ssm_4d);
+  //! Returns true if optimization is to be done using disentangled spatiotemporal SSM method 
+  bool GetUseDisentangledSpatiotemporalSSM();
+
   //! For good/bad analysis, set the normal angle to use (TODO: details)
   void SetNormalAngle(double normal_angle);
   //! Set if good/bad analysis should be done (TODO: details)
@@ -368,6 +373,7 @@ class Optimize {
   bool m_optimizing = false;
   bool m_use_regression = false;
   bool m_use_mixed_effects = false;
+  bool m_use_disentangled_ssm = false;
 
   // IO Parameters
   unsigned int m_domains_per_shape = 1;
