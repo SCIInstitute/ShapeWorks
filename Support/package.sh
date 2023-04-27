@@ -96,8 +96,6 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     for clib in $conda_libs; do
         cp ${CONDA_PREFIX}/lib/${clib}* ShapeWorksStudio.app/Contents/Frameworks
     done
-    # remove static libs
-    rm ShapeWorksStudio.app/Contents/Frameworks/*.a
     
     # # Fix transitive loaded libs
     # for i in ShapeWorksStudio.app/Contents/Frameworks/*.dylib ; do
