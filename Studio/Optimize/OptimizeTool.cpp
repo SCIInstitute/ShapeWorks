@@ -255,6 +255,7 @@ void OptimizeTool::load_params() {
   ui_->use_geodesic_distance->setChecked(params.get_use_geodesic_distance());
   ui_->use_normals->setChecked(params.get_use_normals()[0]);
   ui_->normals_strength->setText(QString::number(params.get_normals_strength()));
+  ui_->use_disentangled_ssm->setChecked(params.get_use_disentangled_ssm());
 
   ui_->procrustes->setChecked(params.get_use_procrustes());
   ui_->procrustes_scaling->setChecked(params.get_use_procrustes_scaling());
