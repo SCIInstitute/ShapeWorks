@@ -97,7 +97,10 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     for clib in $conda_libs; do
         cp ${CONDA_PREFIX}/lib/${clib}* ShapeWorksStudio.app/Contents/Frameworks
     done
-    
+
+    # remove static libs
+    rm lib/*.a
+
     # # Fix transitive loaded libs
     # for i in ShapeWorksStudio.app/Contents/Frameworks/*.dylib ; do
     # 	install_name_tool -change ${BASE_LIB}/libitkgdcmopenjp2-5.2.1.dylib @rpath/libitkgdcmopenjp2-5.2.1.dylib $i
