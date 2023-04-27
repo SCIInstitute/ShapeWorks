@@ -43,6 +43,7 @@ const std::string fixed_subjects_choice = "fixed_subjects_choice";
 const std::string checkpointing_interval = "checkpointing_interval";
 const std::string save_init_splits = "save_init_splits";
 const std::string keep_checkpoints = "keep_checkpoints";
+const std::string use_disentangled_ssm = "use_disentangled_ssm";
 }  // namespace Keys
 
 //---------------------------------------------------------------------------
@@ -170,6 +171,12 @@ bool OptimizeParameters::get_use_procrustes() { return params_.get(Keys::procrus
 
 //---------------------------------------------------------------------------
 void OptimizeParameters::set_use_procrustes(bool value) { params_.set(Keys::procrustes, value); }
+
+//---------------------------------------------------------------------------
+bool OptimizeParameters::get_use_disentangled_ssm() { return params_.get(Keys::use_disentangled_ssm, false); }
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_use_disentangled_ssm(bool value) { params_.set(Keys::use_disentangled_ssm, value); }
 
 //---------------------------------------------------------------------------
 bool OptimizeParameters::get_use_procrustes_scaling() { return params_.get(Keys::procrustes_scaling, false); }
@@ -330,6 +337,7 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
   optimize->SetNarrowBand(get_narrow_band());
   optimize->SetOutputDir(get_output_prefix());
   optimize->SetMeshFFCMode(get_mesh_ffc_mode());
+  optimize->SetUseDisentangledSpatiotemporalSSM(get_use_disentangled_ssm());
 
   // TODO Remove this once Studio has controls for shared boundary
   optimize->SetSharedBoundaryEnabled(true);
