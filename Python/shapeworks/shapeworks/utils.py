@@ -297,7 +297,7 @@ def check_results(args, project_spreadsheet):
         if not os.path.exists("Data/Verification"):
             print("Unzipping verification data")
             # unzip using python
-            with zipfile.ZipFile("Data/verification.zip", 'r') as zip_ref:
+            with zipfile.ZipFile("Data/Verification.zip", 'r') as zip_ref:
                 zip_ref.extractall("Data/")
 
         print("Verifying shape model")
