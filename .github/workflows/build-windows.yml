@@ -110,6 +110,10 @@ jobs:
       working-directory: ${{runner.workspace}}
       shell: bash -l {0}
       run: df -h
+
+    - name: Download test data
+      shell: bash -l {0}
+      run: .github/workflows/download_test_data.sh
       
     - name: Test
       working-directory: "C:/build"
