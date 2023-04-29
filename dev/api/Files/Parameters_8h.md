@@ -59,22 +59,19 @@ class Parameters {
 
   void set_map(StringMap map);
 
-  StringMap get_map();
+  StringMap get_map() const;
 
   void reset_parameters();
 
  private:
   StringMap map_;
 
-  //  std::vector< std::pair<const std::string, std::string> >  container_;
-  // std::pair<const std::string, std::string>  container_;
-  //const std::string joke_;
-  tsl::ordered_map<std::string,std::string> mappy_;
 };
+
 }  // namespace shapeworks
 ```
 
 
 -------------------------------
 
-Updated on 2023-04-29 at 04:54:50 +0000
+Updated on 2023-04-29 at 18:09:09 +0000

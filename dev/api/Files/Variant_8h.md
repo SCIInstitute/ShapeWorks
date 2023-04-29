@@ -60,17 +60,17 @@ class Variant {
   Variant(std::vector<int> v) : str_(variant_to_string(v.begin(), v.end())), valid_(true) {}
   Variant(std::vector<bool> v) : str_(variant_to_string(v.begin(), v.end())), valid_(true) {}
 
-  operator std::string();
-  operator bool();
-  operator int();
-  operator unsigned int();
-  operator long();
-  operator unsigned long();
-  operator float();
-  operator double();
-  operator std::vector<double>();
-  operator std::vector<int>();
-  operator std::vector<bool>();
+  operator std::string() const;
+  operator bool() const;
+  operator int() const;
+  operator unsigned int() const;
+  operator long() const;
+  operator unsigned long() const;
+  operator float() const;
+  operator double() const;
+  operator std::vector<double>() const;
+  operator std::vector<int>() const;
+  operator std::vector<bool>() const;
 
  private:
   std::string str_;
@@ -82,4 +82,4 @@ class Variant {
 
 -------------------------------
 
-Updated on 2023-04-29 at 04:54:50 +0000
+Updated on 2023-04-29 at 18:09:09 +0000

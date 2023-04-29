@@ -24,7 +24,7 @@ Parameter settings.  [More...](#detailed-description)
 | void | **[set](../Classes/classshapeworks_1_1Parameters.md#function-set)**(std::string key, [Variant](../Classes/classshapeworks_1_1Variant.md) value)<br>set a parameter based on a key  |
 | void | **[remove_entry](../Classes/classshapeworks_1_1Parameters.md#function-remove-entry)**(std::string key)<br>remove an entry  |
 | void | **[set_map](../Classes/classshapeworks_1_1Parameters.md#function-set-map)**(StringMap map)<br>set underlying map  |
-| StringMap | **[get_map](../Classes/classshapeworks_1_1Parameters.md#function-get-map)**()<br>get underlying map  |
+| StringMap | **[get_map](../Classes/classshapeworks_1_1Parameters.md#function-get-map)**() const<br>get underlying map  |
 | void | **[reset_parameters](../Classes/classshapeworks_1_1Parameters.md#function-reset-parameters)**()<br>reset parameters to blank  |
 
 ## Public Attributes
@@ -123,7 +123,7 @@ set underlying map
 ### function get_map
 
 ```cpp
-StringMap get_map()
+StringMap get_map() const
 ```
 
 get underlying map 
@@ -182,4 +182,4 @@ static constexpr const char * DEEPSSM_PARAMS = "deepssm";
 
 -------------------------------
 
-Updated on 2023-04-29 at 04:54:49 +0000
+Updated on 2023-04-29 at 18:09:08 +0000

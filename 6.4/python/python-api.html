@@ -3723,15 +3723,15 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#shapeworks_py.Parameters.get" class="md-nav__link">
-    get()
+  <a href="#shapeworks_py.Parameters.as_map" class="md-nav__link">
+    as_map()
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#shapeworks_py.Parameters.get_map" class="md-nav__link">
-    get_map()
+  <a href="#shapeworks_py.Parameters.get" class="md-nav__link">
+    get()
   </a>
   
 </li>
@@ -3760,13 +3760,6 @@
           <li class="md-nav__item">
   <a href="#shapeworks_py.Parameters.set" class="md-nav__link">
     set()
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#shapeworks_py.Parameters.set_map" class="md-nav__link">
-    set_map()
   </a>
   
 </li>
@@ -4710,6 +4703,19 @@
   <a href="#shapeworks_py.Variant" class="md-nav__link">
     Variant
   </a>
+  
+    <nav class="md-nav" aria-label="Variant">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#shapeworks_py.Variant.as_str" class="md-nav__link">
+    as_str()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -6564,15 +6570,15 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#shapeworks_py.Parameters.get" class="md-nav__link">
-    get()
+  <a href="#shapeworks_py.Parameters.as_map" class="md-nav__link">
+    as_map()
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#shapeworks_py.Parameters.get_map" class="md-nav__link">
-    get_map()
+  <a href="#shapeworks_py.Parameters.get" class="md-nav__link">
+    get()
   </a>
   
 </li>
@@ -6601,13 +6607,6 @@
           <li class="md-nav__item">
   <a href="#shapeworks_py.Parameters.set" class="md-nav__link">
     set()
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#shapeworks_py.Parameters.set_map" class="md-nav__link">
-    set_map()
   </a>
   
 </li>
@@ -7551,6 +7550,19 @@
   <a href="#shapeworks_py.Variant" class="md-nav__link">
     Variant
   </a>
+  
+    <nav class="md-nav" aria-label="Variant">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#shapeworks_py.Variant.as_str" class="md-nav__link">
+    as_str()
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -12683,6 +12695,29 @@ Overloaded function.</p>
 
 
 
+<h3 id="shapeworks_py.Parameters.as_map" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">as_map</span><span class="p">()</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-method descriptor"><code>method descriptor</code></small>
+  </span>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>as_map(self: shapeworks_py.Parameters) -&gt; Dict[str, str]</p>
+<p>get underlying map</p>
+
+  </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+
 <h3 id="shapeworks_py.Parameters.get" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">get</span><span class="p">()</span></code>
   
@@ -12697,29 +12732,6 @@ Overloaded function.</p>
   
       <p>get(self: shapeworks_py.Parameters, key: str, Variant: shapeworks::Variant) -&gt; shapeworks::Variant</p>
 <p>get a parameter based on a key, return default if it doesn't exist</p>
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-function">
-
-
-
-<h3 id="shapeworks_py.Parameters.get_map" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">get_map</span><span class="p">()</span></code>
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-method descriptor"><code>method descriptor</code></small>
-  </span>
-
-</h3>
-
-
-  <div class="doc doc-contents ">
-  
-      <p>get_map(self: shapeworks_py.Parameters) -&gt; tsl::ordered_map<std::__1::basic_string\<char, std::__1::char_traits\<char>, std::__1::allocator\<char> >, std::__1::basic_string\<char, std::__1::char_traits\<char>, std::__1::allocator\<char> >, std::__1::hash\<std::__1::basic_string\<char, std::__1::char_traits\<char>, std::__1::allocator\<char> > >, std::__1::equal_to\<std::__1::basic_string\<char, std::__1::char_traits\<char>, std::__1::allocator\<char> > >, std::__1::allocator\<std::__1::pair\<std::__1::basic_string\<char, std::__1::char_traits\<char>, std::__1::allocator\<char> >, std::__1::basic_string\<char, std::__1::char_traits\<char>, std::__1::allocator\<char> > > >, std::__1::deque\<std::__1::pair\<std::__1::basic_string\<char, std::__1::char_traits\<char>, std::__1::allocator\<char> >, std::__1::basic_string\<char, std::__1::char_traits\<char>, std::__1::allocator\<char> > >, std::__1::allocator\<std::__1::pair\<std::__1::basic_string\<char, std::__1::char_traits\<char>, std::__1::allocator\<char> >, std::__1::basic_string\<char, std::__1::char_traits\<char>, std::__1::allocator\<char> > > > >, unsigned int></p>
-<p>get underlying map</p>
 
   </div>
 
@@ -12812,29 +12824,6 @@ Overloaded function.</p>
   
       <p>set(self: shapeworks_py.Parameters, key: str, Variant: shapeworks::Variant) -&gt; None</p>
 <p>set a parameter based on a key</p>
-
-  </div>
-
-</div>
-
-<div class="doc doc-object doc-function">
-
-
-
-<h3 id="shapeworks_py.Parameters.set_map" class="doc doc-heading">
-<code class="highlight language-python"><span class="n">set_map</span><span class="p">()</span></code>
-  
-  <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-method descriptor"><code>method descriptor</code></small>
-  </span>
-
-</h3>
-
-
-  <div class="doc doc-contents ">
-  
-      <p>set_map(self: shapeworks_py.Parameters, map: tsl::ordered_map<std::__1::basic_string\<char, std::__1::char_traits\<char>, std::__1::allocator\<char> >, std::__1::basic_string\<char, std::__1::char_traits\<char>, std::__1::allocator\<char> >, std::__1::hash\<std::__1::basic_string\<char, std::__1::char_traits\<char>, std::__1::allocator\<char> > >, std::__1::equal_to\<std::__1::basic_string\<char, std::__1::char_traits\<char>, std::__1::allocator\<char> > >, std::__1::allocator\<std::__1::pair\<std::__1::basic_string\<char, std::__1::char_traits\<char>, std::__1::allocator\<char> >, std::__1::basic_string\<char, std::__1::char_traits\<char>, std::__1::allocator\<char> > > >, std::__1::deque\<std::__1::pair\<std::__1::basic_string\<char, std::__1::char_traits\<char>, std::__1::allocator\<char> >, std::__1::basic_string\<char, std::__1::char_traits\<char>, std::__1::allocator\<char> > >, std::__1::allocator\<std::__1::pair\<std::__1::basic_string\<char, std::__1::char_traits\<char>, std::__1::allocator\<char> >, std::__1::basic_string\<char, std::__1::char_traits\<char>, std::__1::allocator\<char> > > > >, unsigned int>) -&gt; None</p>
-<p>set underlying map</p>
 
   </div>
 
@@ -15896,6 +15885,29 @@ Overloaded function.</p>
 
 
 
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="shapeworks_py.Variant.as_str" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">as_str</span><span class="p">()</span></code>
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-method descriptor"><code>method descriptor</code></small>
+  </span>
+
+</h3>
+
+
+  <div class="doc doc-contents ">
+  
+      <p>as_str(self: shapeworks_py.Variant) -&gt; str</p>
+<p>Return the variant string content</p>
+
+  </div>
+
+</div>
+
 
 
   </div>
@@ -16112,7 +16124,7 @@ Overloaded function.</p>
 
   <div class="doc doc-contents ">
   
-      <p>seed(seed: int = 1682744120897938) -&gt; None</p>
+      <p>seed(seed: int = 1682791785523815) -&gt; None</p>
 <p>sets the seed for random number generation (internal use)</p>
 
   </div>
