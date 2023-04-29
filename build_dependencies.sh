@@ -16,7 +16,6 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 BUILD_CLEAN=0
 CLEAN_AFTER=0
 NUM_PROCS=8
-BUILD_GUI=1
 BUILD_STUDIO=0
 BUILD_SHAPEWORKS=1
 BUILD_TYPE="Release"
@@ -42,19 +41,17 @@ FLAGS=""
 
 usage()
 {
-  echo "usage: ./build_dependencies.sh [[-n=<num-procs>] [-i=<install_path>] [-b=<build_path>] [--clean] [--no-gui] | [-h | --help]]"
+  echo "usage: ./build_dependencies.sh [[-n=<num-procs>] [-i=<install_path>] [-b=<build_path>] [--clean] | [-h | --help]]"
   echo ""
   echo "If using Anaconda to install prerequisites please first run:"
   echo "source ./install_shapeworks.sh"
   echo ""
-  echo "For GUI applications, please make sure the ShapeWorks conda env bin dir is at the head of the path."
+  echo "Please make sure the ShapeWorks conda environment is activated."
   echo ""
   echo "Arguments:"
   echo "  -h,--help               : Show this screen."
   echo "  --clean                 : Remove all build directories and clone implicit dependencies."
   echo "                          : (note that user-specified paths such as --itk-dir=<path> will not be deleted)."
-  echo "  --no-gui                : Do not build the dependencies with GUI support, which require Qt."
-  echo "                          : The GUI is built by default if qmake >= $QT_MIN_VER is found in the path."
   echo "  -b,--build-dir=<path>   : Build directory for dependencies."
   echo "                          : By default uses a subdirectory of the current directory called 'dependencies/build'."
   echo "  -i,--install-dir=<path> : Install directory for dependencies."
@@ -91,8 +88,6 @@ parse_command_line()
                               ;;
       --build-type=*)         BUILD_TYPE="${1#*=}"
 			      ;;
-      --no-gui )              BUILD_GUI=0
-                              ;;
       --clean )               BUILD_CLEAN=1
                               ;;
       --clean-after )         CLEAN_AFTER=1
@@ -145,13 +140,13 @@ build_vtk()
   if [[ $BUILD_CLEAN = 1 ]]; then rm -rf build; fi
   mkdir -p build && cd build
   if [[ $OSTYPE == "msys" ]]; then
-      cmake -DCMAKE_CXX_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_C_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_SHARED_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_EXE_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" -DBUILD_SHARED_LIBS:BOOL=OFF -DBUILD_TESTING:BOOL=OFF -DVTK_Group_Qt:BOOL=${BUILD_GUI} -DVTK_QT_VERSION=5 -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DVTK_PYTHON_VERSION=3 -DVTK_GROUP_ENABLE_Qt=YES -DVTK_MODULE_ENABLE_VTK_GUISupportQtQuick:STRING=DONT_WANT -DVTK_MODULE_ENABLE_VTK_hdf5=NO -DBUILD_EXAMPLES:BOOL=OFF -DVTK_SMP_ENABLE_TBB=ON -DVTK_SMP_IMPLEMENTATION_TYPE=TBB -Wno-dev ..
+      cmake -DCMAKE_CXX_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_C_FLAGS_RELEASE="$WIN_CFLAGS" -DCMAKE_SHARED_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_EXE_LINKER_FLAGS_RELEASE="$WIN_LFLAGS" -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" -DBUILD_SHARED_LIBS:BOOL=OFF -DBUILD_TESTING:BOOL=OFF -DVTK_Group_Qt:BOOL=ON -DVTK_QT_VERSION=5 -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DVTK_PYTHON_VERSION=3 -DVTK_GROUP_ENABLE_Qt=YES -DVTK_MODULE_ENABLE_VTK_GUISupportQtQuick:STRING=DONT_WANT -DVTK_MODULE_ENABLE_VTK_hdf5=NO -DBUILD_EXAMPLES:BOOL=OFF -DVTK_SMP_ENABLE_TBB=ON -DVTK_SMP_IMPLEMENTATION_TYPE=TBB -Wno-dev ..
       cmake --build . --config ${BUILD_TYPE} --parallel || exit 1
       cmake --build . --config ${BUILD_TYPE} --target install
       VTK_DIR="${INSTALL_DIR}/lib/cmake/vtk-${VTK_VER_STR}"
       VTK_DIR=$(echo $VTK_DIR | sed s/\\\\/\\//g)
   else
-      cmake -DCMAKE_CXX_FLAGS="$FLAGS" -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=OFF -DBUILD_TESTING:BOOL=OFF -DVTK_Group_Qt:BOOL=${BUILD_GUI} -DVTK_QT_VERSION=5 -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DVTK_PYTHON_VERSION=3 -DVTK_GROUP_ENABLE_Qt=YES -DVTK_MODULE_ENABLE_VTK_GUISupportQtQuick:STRING=DONT_WANT -DBUILD_EXAMPLES:BOOL=OFF ${VTK_EXTRA_OPTIONS} -DVTK_MODULE_USE_EXTERNAL_VTK_pugixml=ON -DVTK_SMP_ENABLE_TBB=ON -DVTK_SMP_IMPLEMENTATION_TYPE=TBB -Wno-dev ..
+      cmake -DCMAKE_CXX_FLAGS="$FLAGS" -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} -DBUILD_SHARED_LIBS:BOOL=OFF -DBUILD_TESTING:BOOL=OFF -DVTK_Group_Qt:BOOL=ON -DVTK_QT_VERSION=5 -DCMAKE_INSTALL_LIBDIR=lib -DCMAKE_BUILD_TYPE=${BUILD_TYPE} -DVTK_PYTHON_VERSION=3 -DVTK_GROUP_ENABLE_Qt=YES -DVTK_MODULE_ENABLE_VTK_GUISupportQtQuick:STRING=DONT_WANT -DBUILD_EXAMPLES:BOOL=OFF ${VTK_EXTRA_OPTIONS} -DVTK_MODULE_USE_EXTERNAL_VTK_pugixml=ON -DVTK_SMP_ENABLE_TBB=ON -DVTK_SMP_IMPLEMENTATION_TYPE=TBB -Wno-dev ..
       make -j${NUM_PROCS} install || exit 1
       VTK_DIR=${INSTALL_DIR}/lib/cmake/vtk-${VTK_VER_STR}
   fi
@@ -365,39 +360,33 @@ show_shapeworks_build()
     OPENMP_FLAG="-DUSE_OPENMP=OFF"
   fi
 
-  FINDQT=""
-  if [[ ${BUILD_GUI} -eq 1 ]]; then
-    FINDQT="-DQt5_DIR=`qmake -query QT_INSTALL_PREFIX`"
-  fi
+  FINDQT="-DQt5_DIR=`qmake -query QT_INSTALL_PREFIX`"
 
-  echo "cmake -DCMAKE_CXX_FLAGS="$FLAGS" -DCMAKE_PREFIX_PATH=${INSTALL_DIR} ${OPENMP_FLAG} -DBuild_Studio=${BUILD_GUI} ${FIND_QT} -Wno-dev -Wno-deprecated -DCMAKE_BUILD_TYPE=${BUILD_TYPE} ${SRC}"
+  echo "cmake -DCMAKE_CXX_FLAGS="$FLAGS" -DCMAKE_PREFIX_PATH=${INSTALL_DIR} ${OPENMP_FLAG} ${FIND_QT} -Wno-dev -Wno-deprecated -DCMAKE_BUILD_TYPE=${BUILD_TYPE} ${SRC}"
 }
 
 # determine if we can build using the specified or discovered version of Qt
 verify_qt()
 {
-  # If BUILD_GUI is true, verify that a sufficient version of Qt is installed using the qmake that's in the path.
-  # If not, inform the user of where to go to download and install Qt.
+  # Verify that a sufficient version of Qt is installed using the qmake that's in the path.
 
-  if [[ $BUILD_GUI = 1 ]]; then
-    if [[ `which qmake` ]]; then
-      QMAKE=`which qmake`
-    fi
+  if [[ `which qmake` ]]; then
+    QMAKE=`which qmake`
+  fi
 
-    # verify version
-    if [[ -f ${QMAKE} ]]; then
-      QT_VERSION=`${QMAKE} -v | grep "Using Qt version" | cut -d" " -f4`
-      at_least_required_version "Qt" "${QT_VERSION}" "${QT_MIN_VER}"
-      QT_VERSION_OK=$?
-    else
-      QT_VERSION_OK=0
-    fi
+  # verify version
+  if [[ -f ${QMAKE} ]]; then
+    QT_VERSION=`${QMAKE} -v | grep "Using Qt version" | cut -d" " -f4`
+    at_least_required_version "Qt" "${QT_VERSION}" "${QT_MIN_VER}"
+    QT_VERSION_OK=$?
+  else
+    QT_VERSION_OK=0
+  fi
 
-    # inform user
-    if [[ $QT_VERSION_OK = 0 ]]; then
-	echo "For GUI applications, please make sure the ShapeWorks conda env bin dir is at the head of the path." >&2
-      exit 1
-    fi
+  # inform user
+  if [[ $QT_VERSION_OK = 0 ]]; then
+    echo "Please make sure the ShapeWorks conda environment bin dir is at the head of the path." >&2
+    exit 1
   fi
 }
 
@@ -435,9 +424,7 @@ build_all()
   fi
 
   if [[ -z $JKQTPLOTTER_DIR ]]; then
-    if [[ $BUILD_GUI = 1 ]]; then
-      build_jkqtplotter
-    fi
+    build_jkqtplotter
   fi
 
   if [[ -z $ACVD_DIR ]]; then
@@ -482,7 +469,6 @@ fi
 echo "INSTALL_DIR: ${INSTALL_DIR}"
 echo "BUILD_DIR: ${BUILD_DIR}"
 echo "NUM_PROCS: ${NUM_PROCS}"
-echo "BUILD_GUI: ${BUILD_GUI}"
 echo "BUILD_CLEAN: ${BUILD_CLEAN}"
 echo "BUILD_TYPE: ${BUILD_TYPE}"
 

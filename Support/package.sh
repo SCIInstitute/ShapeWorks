@@ -55,7 +55,7 @@ cp install_shapeworks.sh package/${VERSION}
 cp docs/about/release-notes.md package/${VERSION}
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
-    cp -a $INSTALL_DEP_DIR/lib/* "package/${VERSION}/bin/ShapeWorksStudio.app/Contents/Frameworks"
+    cp -a $INSTALL_DEP_DIR/lib/*.dylib "package/${VERSION}/bin/ShapeWorksStudio.app/Contents/Frameworks"
     cp docs/users/Mac_README.txt package/${VERSION}/README.txt
     if [ $? -ne 0 ]; then
 	echo "Failed to copy Mac package README"
@@ -76,7 +76,6 @@ rm -rf include share v3p plugins libigl
 if [[ "$OSTYPE" == "darwin"* ]]; then
     # Mac OSX
     cd bin
-
     install_name_tool -add_rpath @executable_path/../Frameworks ShapeWorksStudio.app/Contents/MacOS/ShapeWorksStudio || echo ok
     QT_LIB_LOCATION="@executable_path/ShapeWorksStudio.app/Contents/Frameworks"
     QT_LOADER_LIB_LOCATION="@loader_path/ShapeWorksStudio.app/Contents/Frameworks"
@@ -98,9 +97,8 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     for clib in $conda_libs; do
         cp ${CONDA_PREFIX}/lib/${clib}* ShapeWorksStudio.app/Contents/Frameworks
     done
-    # remove static libs
-    rm ShapeWorksStudio.app/Contents/Frameworks/*.a
-    
+
+
     # # Fix transitive loaded libs
     # for i in ShapeWorksStudio.app/Contents/Frameworks/*.dylib ; do
     # 	install_name_tool -change ${BASE_LIB}/libitkgdcmopenjp2-5.2.1.dylib @rpath/libitkgdcmopenjp2-5.2.1.dylib $i
@@ -108,6 +106,11 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
     # install_name_tool -id @rpath/libitkgdcmopenjp2-5.2.1.dylib ShapeWorksStudio.app/Contents/Frameworks/libitkgdcmopenjp2-5.2.1.dylib
 
     cd ..
+
+    # remove static libs
+    pwd
+    rm lib/*.a
+
 else
     # Copy libraries from anaconda
     conda_libs="libboost_iostreams libboost_filesystem libbz2 liblzma liblz4 libtbb libHalf libpython libz libspd"
