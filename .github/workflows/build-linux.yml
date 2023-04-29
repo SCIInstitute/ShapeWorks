@@ -63,10 +63,6 @@ jobs:
       shell: bash -l {0}
       run: .github/workflows/gha_conda.sh
 
-    - name: Clear pip cache
-      shell: bash -l {0}
-      run: conda activate shapeworks && pip cache info && pip cache purge
-      
     - name: try import vtk
       shell: bash -l {0}
       run: conda activate shapeworks && python -c "import vtk"
