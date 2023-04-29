@@ -46,7 +46,7 @@ done
 
 CONDAENV=shapeworks
 if [[ "${#POSITIONAL_ARGS[@]}" -eq 1 ]]; then
-   CONDAENV=${POSITIONAL_ARGS[0]}
+   CONDAENV=${POSITIONAL_ARGS[@]:0:1}
 fi
 
 echo "Creating new conda environment for ShapeWorks called \"$CONDAENV\"..."
@@ -71,6 +71,8 @@ function install_pytorch() {
         pip install torch==1.11.0 torchvision==0.12.0 torchaudio==0.11.0 -f https://download.pytorch.org/whl/torch_stable.html
     elif [[ "$CUDA" == "11.0" || "$CUDA" == "11.1" || "$CUDA" == "11.2" ]]; then
         pip install torch==1.11.0+cu110 torchvision==0.12.0+cu110 torchaudio==0.11.0 -f https://download.pytorch.org/whl/torch_stable.html
+    elif [[ "$CUDA" == "11.7" || "$CUDA" == "11.8" || "$CUDA" == "12.0" || "$CUDA" == "12.1" ]]; then
+	pip install torch==1.13.1 torchvision==0.14.1 torchaudio==0.13.1 -f https://download.pytorch.org/whl/cu118
     else
         echo "CUDA version not compatible, using cpu-only"
         pip install torch==1.11.0+cpu torchvision==0.12.0+cpu torchaudio==0.11.0 -f https://download.pytorch.org/whl/torch_stable.html
