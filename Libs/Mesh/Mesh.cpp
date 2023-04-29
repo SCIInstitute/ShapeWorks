@@ -17,7 +17,6 @@
 #include <igl/principal_curvature.h>
 
 // vtk
-#include <Optimize/VtkMeshWrapper.h>
 #include <vtkAppendPolyData.h>
 #include <vtkButterflySubdivisionFilter.h>
 #include <vtkCenterOfMass.h>
@@ -60,6 +59,7 @@
 
 #include "FEFixMesh.h"
 #include "Image.h"
+#include "Libs/Optimize/Domain/VtkMeshWrapper.h"
 #include "Logging.h"
 #include "MeshUtils.h"
 #include "PreviewMeshQC/FEAreaCoverage.h"

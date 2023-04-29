@@ -2,7 +2,7 @@
 # Installs conda environment for building ShapeWorks
 #
 
-SW_MAJOR_VERSION=6.4
+SW_MAJOR_VERSION=6.5
 
 echo ""
 echo "Note: this script only supports bash and zsh shells "
@@ -46,7 +46,7 @@ done
 
 CONDAENV=shapeworks
 if [[ "${#POSITIONAL_ARGS[@]}" -eq 1 ]]; then
-   CONDAENV=${POSITIONAL_ARGS[0]}
+   CONDAENV=${POSITIONAL_ARGS[1]}
 fi
 
 echo "Creating new conda environment for ShapeWorks called \"$CONDAENV\"..."
@@ -112,7 +112,6 @@ function install_conda() {
     echo "Developer packages enabled"
 
     CONDA_PACKAGES+=(cmake=3.23.2 \
-		     gtest=1.11.0 \
 		     gmock=1.11.0 \
 		     doxygen=1.9.2 \
 		     graphviz=4.0.0 \
@@ -186,6 +185,17 @@ function install_conda() {
   if ! pip install seaborn==0.11.2;                     then return 1; fi
   if ! pip install swcc==1.0.5;                         then return 1; fi
   if ! pip install scikit-learn==1.1.1;                 then return 1; fi
+
+  # for network analysis
+  if [[ "$(uname)" == "Linux" ]]; then
+      if ! pip install open3d-cpu==0.17.0;              then return 1; fi
+  else
+      if ! pip install open3d==0.17.0;                  then return 1; fi
+  fi
+  if ! pip install spm1d==0.4.2;                        then return 1; fi
+#  if ! pip install vedo==2022.4.1;                      then return 1; fi
+#  if ! pip install opencv-python==4.6.0.66;             then return 1; fi
+  
   if ! pip install Python/DatasetUtilsPackage;          then return 1; fi # install the local GirderConnector code as a package
   if ! pip install Python/DocumentationUtilsPackage;    then return 1; fi # install shapeworks auto-documentation as a package
   if ! pip install Python/DataAugmentationUtilsPackage; then return 1; fi # install data augmentation code as a package
@@ -254,6 +264,8 @@ if install_conda; then
   echo "Pip installed packages:"
   pip list
 
+  conda clean -t -y
+  
   echo "$CONDAENV environment successfully created/updated!"
   
   conda activate $CONDAENV

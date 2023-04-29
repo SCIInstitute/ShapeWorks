@@ -608,7 +608,7 @@ int Session::get_num_particles() {
 }
 
 //---------------------------------------------------------------------------
-ParticleSystem Session::get_local_particle_system(int domain) {
+ParticleSystemEvaluation Session::get_local_particle_system(int domain) {
   return AnalysisUtils::get_local_particle_system(this, domain);
 }
 

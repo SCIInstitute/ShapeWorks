@@ -1,17 +1,20 @@
-pybind11_add_module(shapeworks_py ShapeworksPython.cpp)
+pybind11_add_module(shapeworks_py
+  ShapeworksPython.cpp
+  PythonAnalyze.cpp
+  )
 
 if(LINUX)
   SET(DTAG_EXTRA_FLAGS "-Wl,--disable-new-dtags")
 endif(LINUX)
 
 target_link_libraries(shapeworks_py PUBLIC
+  Analyze
   Common
   Image
   Mesh
   Optimize
   Project
   Particles
-  Project
   ${ITK_LIBRARIES}
   Eigen3::Eigen
   ${DTAG_EXTRA_FLAGS}
