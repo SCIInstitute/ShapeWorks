@@ -9,5 +9,9 @@ echo "#############################"
 TARGET="/tmp/${1}.${SUFFIX}"
 compress_file $TARGET "${2}"
 
-scp ${TARGET} runner@${CACHE_HOST}:github/artifacts
+# try 5 times
+for run in {1..5}; do
+    rsync ${TARGET} runner@${CACHE_HOST}:github/artifacts
+    sleep 1
+done
 rm ${TARGET}
