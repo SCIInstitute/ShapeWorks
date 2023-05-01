@@ -314,7 +314,7 @@ if(WIN32)
   if (NOT EXISTS "${WIN_SYSDIR}")
     file(TO_CMAKE_PATH "$ENV{windir}/system32" WIN_SYSDIR)
   endif()
-  install(FILES "${WIN_SYSDIR}/msvcp140.dll" "${WIN_SYSDIR}/vcomp140.dll" "${WIN_SYSDIR}/vcruntime140.dll" "${WIN_SYSDIR}/vcruntime140_1.dll" DESTINATION ${INSTALL_DESTINATION} OPTIONAL)
+  install(FILES "${WIN_SYSDIR}/msvcp140.dll" "${WIN_SYSDIR}/vcomp140.dll" "${WIN_SYSDIR}/vcruntime140.dll" "${WIN_SYSDIR}/vcruntime140_1.dll" DESTINATION bin)
     
 endif(WIN32)
 
