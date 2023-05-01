@@ -1,3 +1,86 @@
+Welcome to ShapeWorks!
+
+### To complete your installation:
+
+1. Download and install Miniconda for Windows.
+
+  https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe
+
+3. Double-click on the installer that you downloaded and follow the instructions.
+
+4. Open an Anaconda terminal and change directory to the chosen installation path.
+
+`cd "C:\Program Files\ShapeWorks"`
+
+5. Run install_shapeworks.bat to create a conda environment and install python packages
+
+`install_shapeworks.bat`
+
+  **Note:** You can pass a different name for the environment, enabling multiple installations.
+  `install_shapeworks shapeworks_61`
+
+  **Warning:** If you already have anaconda/miniconda installed, this step may
+    hang.  If so please uninstall anaconda/miniconda, re-install it, then run
+    install_shapeworks again. This seems to be an occasional problem with
+    Anaconda on Windows.
+
+**Important:** Your shapeworks conda environment must always be activated before using ShapeWorks python packages.
+
+
+### ShapeWorks comes with examples to get you started.
+
+1. Copy the Examples folder to another location of your choosing (you can also use Explorer).
+`xcopy /E/H Examples %HOMEPATH%\ShapeWorks-Examples\`
+
+### Studio ###
+
+1. Open ShapeWorks Studio
+
+2. Select "Open Exising Project"
+
+3. Select Examples/Studio/Ellipsoid/ellipsoid.xlsx
+
+### Python ###
+
+1. Open an Anaconda terminal and activate the shapeworks conda environment (use the environment name passed to `install_shapeworks` above).
+
+`conda activate shapeworks`
+
+2. Change to the Python folder of the Examples directory you copied.
+`cd %HOMEPATH%\ShapeWorks-Examples\Python`
+
+3. Run one of the included use cases. To list them all, run: `python RunUseCase.py --help`.
+`python RunUseCase.py ellipsoid`
+
+### ShapeWorks also includes interactive Jupyter Python notebook examples.
+
+1. Open an Anaconda terminal and activate the shapeworks conda environment (use the environment name passed to `install_shapeworks` above).
+`conda activate shapeworks`
+
+2. Change to the notebook tutorials folder of the Examples directory you copied.
+
+`cd %HOMEPATH%\ShapeWorks-Examples\Python\notebooks\tutorials`
+
+3. Start the Jupyter notebook server. This will open a new tab in your web brower.
+
+`jupyter notebook`
+
+4. Click on a notebook to get started.
+
+
+=====================
+
+Please contact us with any questions or ideas.
+
+Website    sciinstitute.github.io/ShapeWorks
+Email      shapeworks-users@sci.utah.edu
+Discourse  shapeworks.discourse.group
+Twitter    @ShapeWorksSuite
+
+=====================
+
+Release Notes:
+
 ==========================================
  ShapeWorks   v6.3.1 - 2022-07-22
 ==========================================
@@ -181,75 +264,3 @@ models, and visualizing the results.
 
 =====================
 
-You have downloaded a binary distribution of ShapeWorks.
-
-### Installation instructions.
-
-1. Download and install the "Microsoft Visual C++ Redistributable for Visual Studio 2015, 2017 and 2019."
-
-  https://aka.ms/vs/16/release/vc_redist.x64.exe
-
-2. Download and install Miniconda for Windows.
-
-  https://repo.anaconda.com/miniconda/Miniconda3-latest-Windows-x86_64.exe
-
-3. Double-click on the installer that you downloaded and follow the instructions.
-
-  **Note:** Choose whatever installation directory you want.
-
-4. Open an Anaconda terminal and change directory to the chosen installation path.
-`cd "C:\Program Files\ShapeWorks"`
-
-5. Create a protected conda environment that installs everything necessary to run.
-`install_shapeworks`
-
-  **Note:** You can pass a different name for the environment, enabling multiple installations.
-  `install_shapeworks shapeworks_61`
-
-  **Warning:** If you already have anaconda/miniconda installed, this step may
-    hang.  If so please uninstall anaconda/miniconda, re-install it, then run
-    install_shapeworks again. This seems to be an occasional problem with
-    Anaconda on Windows.
-
-**Important:** Your shapeworks conda environment must always be activated before using ShapeWorks.
-
-
-### ShapeWorks comes with Python examples to get you started.
-
-1. Open an Anaconda terminal and activate the shapeworks conda environment (use the environment name passed to `install_shapeworks` above).
-`conda activate shapeworks`
-
-2. Copy the Examples folder to another location of your choosing (you can also use Explorer).
-`xcopy /E/H Examples %HOMEPATH%\ShapeWorks-Examples\`
-
-3. Change to the Python folder of the Examples directory you copied.
-`cd %HOMEPATH%\ShapeWorks-Examples\Python`
-
-4. Run one of the included use cases. To list them all, run: `python RunUseCase.py --help`.
-`python RunUseCase.py ellipsoid_fd`
-
-
-### ShapeWorks also includes interactive Jupyter Python notebook examples.
-
-1. Open an Anaconda terminal and activate the shapeworks conda environment (use the environment name passed to `install_shapeworks` above).
-`conda activate shapeworks`
-
-2. Change to the notebook tutorials folder of the Examples directory you copied.
-`cd %HOMEPATH%\ShapeWorks-Examples\Python\notebooks\tutorials`
-
-3. Start the Jupyter notebook server. This will open a new tab in your web brower.
-`jupyter notebook`
-
-4. Click on a notebook to get started.
-
-
-=====================
-
-Please contact us with any questions or ideas.
-
-Website    sciinstitute.github.io/ShapeWorks
-Email      shapeworks-users@sci.utah.edu
-Discourse  shapeworks.discourse.group
-Twitter    @ShapeWorksSuite
-
-=====================
