@@ -11,7 +11,7 @@ compress_file $TARGET "${2}"
 
 
 if [[ "$PLATFORM" == "windows" ]]; then
-    conda install rsync
+    choco install rsync -y
 fi
 
 # try 5 times
