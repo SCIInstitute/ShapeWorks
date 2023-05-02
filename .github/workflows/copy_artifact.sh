@@ -31,7 +31,7 @@ fi
 
 # try 5 times
 for run in {1..5}; do
-    rsync ${TARGET} runner@${CACHE_HOST}:github/artifacts ||:
+    rsync -av ${TARGET} runner@${CACHE_HOST}:github/artifacts ||:
     sleep 1
 done
 rm ${TARGET}
