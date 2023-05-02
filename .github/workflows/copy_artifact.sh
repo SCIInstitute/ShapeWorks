@@ -12,8 +12,8 @@ compress_file $TARGET "${2}"
 
 if [[ "$PLATFORM" == "windows" ]]; then
     choco install rsync -y --no-progress
-    TARGET=`cygpath -m ${TARGET}`
-    echo "Using target ${TARGET}"
+    TARGET="${1}.${SUFFIX}"
+    cd /tmp
 fi
 
 # try 5 times
