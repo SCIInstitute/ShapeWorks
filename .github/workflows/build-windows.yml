@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - try_rsync
       - release_v*
     tags:
     - '*'
