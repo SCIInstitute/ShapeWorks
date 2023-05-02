@@ -40,7 +40,7 @@ cp ${CONDA_LOC}/python*.dll ${CONDA_LOC}/Library/bin/zlib.dll ${CONDA_LOC}/Libra
 
 # install visual studio redistributables
 WIN_DIR="/c/Windows/system32"
-for i in "msvcp140.dll" "vcomp140.dll" "vcruntime140.dll" "vcruntime140_1.dll" ; do
+for i in "msvcp140.dll" "msvcp140_1.dll" "vcomp140.dll" "vcruntime140.dll" "vcruntime140_1.dll" ; do
     cp ${WIN_DIR}/${i} $BUILD/bin/Release
 done
 
