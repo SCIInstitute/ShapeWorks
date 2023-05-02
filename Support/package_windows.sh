@@ -39,11 +39,10 @@ CONDA_LOC="/c/Miniconda3/envs/shapeworks"
 cp ${CONDA_LOC}/python*.dll ${CONDA_LOC}/Library/bin/zlib.dll ${CONDA_LOC}/Library/bin/tbb12.dll ${CONDA_LOC}/Library/bin/zstd.dll ${CONDA_LOC}/Library/bin/libpng16.dll ${CONDA_LOC}/Library/bin/half.dll ${CONDA_LOC}/Library/bin/boost_filesystem.dll ${CONDA_LOC}/Library/bin/spdlog.dll $BUILD/bin/Release
 
 # install visual studio redistributables
-WIN_DIR="/c/Windows/SysWOW64"
-for i in "msvcp140.dll" "vcomp140.dll" "vcruntime140.dll" ; do
+WIN_DIR="/c/Windows/system32"
+for i in "msvcp140.dll" "vcomp140.dll" "vcruntime140.dll" "vcruntime140_1.dll" ; do
     cp ${WIN_DIR}/${i} $BUILD/bin/Release
 done
-cp /c/Windows/system32/vcruntime140_1.dll $BUILD/bin/Release
 
 cp -r $BUILD/bin/Release bin
 rm bin/*Tests.pdb bin/Recon*.pdb bin/Mesh*.pdb
