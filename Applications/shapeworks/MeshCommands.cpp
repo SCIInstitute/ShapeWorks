@@ -1,15 +1,15 @@
+#include <boost/filesystem.hpp>
+
 #include "Commands.h"
 #include "MeshUtils.h"
 #include "MeshWarper.h"
-#include <boost/filesystem.hpp>
 
 namespace shapeworks {
 
 ///////////////////////////////////////////////////////////////////////////////
 // ReadMesh
 ///////////////////////////////////////////////////////////////////////////////
-void ReadMesh::buildParser()
-{
+void ReadMesh::buildParser() {
   const std::string prog = "read-mesh";
   const std::string desc = "reads a mesh";
   parser.prog(prog).description(desc);
@@ -19,8 +19,7 @@ void ReadMesh::buildParser()
   Command::buildParser();
 }
 
-bool ReadMesh::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
+bool ReadMesh::execute(const optparse::Values &options, SharedCommandData &sharedData) {
   std::string filename = options["name"];
   if (filename.length() == 0) {
     std::cerr << "readmesh error: no filename specified, must pass `--name <filename>`\n";
@@ -42,22 +41,23 @@ bool ReadMesh::execute(const optparse::Values &options, SharedCommandData &share
 ///////////////////////////////////////////////////////////////////////////////
 // WriteMesh
 ///////////////////////////////////////////////////////////////////////////////
-void WriteMesh::buildParser()
-{
+void WriteMesh::buildParser() {
   const std::string prog = "write-mesh";
   const std::string desc = "writes the current mesh";
   parser.prog(prog).description(desc);
 
   parser.add_option("--name").action("store").type("string").set_default("").help("Name of file to write.");
-  parser.add_option("--binary").action("store").type("bool").set_default(false).help("Whether to write file as binary.");
+  parser.add_option("--binary")
+      .action("store")
+      .type("bool")
+      .set_default(false)
+      .help("Whether to write file as binary.");
 
   Command::buildParser();
 }
 
-bool WriteMesh::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
-  if (!sharedData.validMesh())
-  {
+bool WriteMesh::execute(const optparse::Values &options, SharedCommandData &sharedData) {
+  if (!sharedData.validMesh()) {
     std::cerr << "No mesh to operate on\n";
     return false;
   }
@@ -76,26 +76,43 @@ bool WriteMesh::execute(const optparse::Values &options, SharedCommandData &shar
 ///////////////////////////////////////////////////////////////////////////////
 // MeshInfo
 ///////////////////////////////////////////////////////////////////////////////
-void MeshInfo::buildParser()
-{
+void MeshInfo::buildParser() {
   const std::string prog = "mesh-info";
-  const std::string desc = "prints requested mesh center, center of mass, number of vertices, number of faces and bounding box [default: prints everything]";
+  const std::string desc =
+      "prints requested mesh center, center of mass, number of vertices, number of faces and bounding box [default: "
+      "prints everything]";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--vertices").action("store_true").set_default(false).help("Whether to display number of vertices [default: true].");
-  parser.add_option("--faces").action("store_true").set_default(false).help("Whether to display number of faces [default: true].");
-  parser.add_option("--center").action("store_true").set_default(false).help("Whether to display center [default: true].");
-  parser.add_option("--centerofmass").action("store_true").set_default(false).help("Whether to display center of mass [default: true].");
-  parser.add_option("--boundingbox").action("store_true").set_default(false).help("Whether to display bounding box [default: true].");
-  parser.add_option("--fieldnames").action("store_true").set_default(false).help("Whether to display field names [default: true].");
+  parser.add_option("--vertices")
+      .action("store_true")
+      .set_default(false)
+      .help("Whether to display number of vertices [default: true].");
+  parser.add_option("--faces")
+      .action("store_true")
+      .set_default(false)
+      .help("Whether to display number of faces [default: true].");
+  parser.add_option("--center")
+      .action("store_true")
+      .set_default(false)
+      .help("Whether to display center [default: true].");
+  parser.add_option("--centerofmass")
+      .action("store_true")
+      .set_default(false)
+      .help("Whether to display center of mass [default: true].");
+  parser.add_option("--boundingbox")
+      .action("store_true")
+      .set_default(false)
+      .help("Whether to display bounding box [default: true].");
+  parser.add_option("--fieldnames")
+      .action("store_true")
+      .set_default(false)
+      .help("Whether to display field names [default: true].");
 
   Command::buildParser();
 }
 
-bool MeshInfo::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
-  if (!sharedData.validMesh())
-  {
+bool MeshInfo::execute(const optparse::Values &options, SharedCommandData &sharedData) {
+  if (!sharedData.validMesh()) {
     std::cerr << "No mesh to operate on\n";
     return false;
   }
@@ -108,23 +125,17 @@ bool MeshInfo::execute(const optparse::Values &options, SharedCommandData &share
   bool fieldNames = static_cast<bool>(options.get("fieldnames"));
 
   // by default: print everything
-  if (options.num_set() == 0)
-    vertices = faces = center = centerOfMass = boundingBox = fieldNames = true;
+  if (options.num_set() == 0) vertices = faces = center = centerOfMass = boundingBox = fieldNames = true;
 
-  if (vertices)
-    std::cout << "number of points:      " << sharedData.mesh->numPoints() << std::endl;
-  if (faces)
-    std::cout << "number of faces:       " << sharedData.mesh->numFaces() << std::endl;
-  if (center)
-    std::cout << "center:                " << sharedData.mesh->center() << std::endl;
-  if (centerOfMass)
-    std::cout << "center of mass (0,1]:  " << sharedData.mesh->centerOfMass() << std::endl;
-  if (boundingBox)
-    std::cout << "bounding box:          " << sharedData.mesh->boundingBox() << std::endl;
+  if (vertices) std::cout << "number of points:      " << sharedData.mesh->numPoints() << std::endl;
+  if (faces) std::cout << "number of faces:       " << sharedData.mesh->numFaces() << std::endl;
+  if (center) std::cout << "center:                " << sharedData.mesh->center() << std::endl;
+  if (centerOfMass) std::cout << "center of mass (0,1]:  " << sharedData.mesh->centerOfMass() << std::endl;
+  if (boundingBox) std::cout << "bounding box:          " << sharedData.mesh->boundingBox() << std::endl;
   if (fieldNames) {
     auto fields = sharedData.mesh->getFieldNames();
     std::cout << "field names: ";
-    for (auto field : fields) std::cout << field << " ";
+    for (auto &field : fields) std::cout << field << " ";
     std::cout << std::endl;
   }
 
@@ -134,24 +145,36 @@ bool MeshInfo::execute(const optparse::Values &options, SharedCommandData &share
 ///////////////////////////////////////////////////////////////////////////////
 /// Coverage
 ///////////////////////////////////////////////////////////////////////////////
-void Coverage::buildParser()
-{
+void Coverage::buildParser() {
   const std::string prog = "coverage";
   const std::string desc = "creates mesh of coverage between two meshes";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--name").action("store").type("string").set_default("").help("Path to other mesh with which to create coverage.");
-  parser.add_option("--allowbackintersections").action("store").type("bool").set_default(true).help("Allow back-intersections in coverage calculation [default: true].");
-  parser.add_option("--anglethreshold").action("store").type("double").set_default(0.0).help("This checks the cosine between the ray’s direction vector (e1) and the normal at the intersection point (e2) [default: %default].");
-  parser.add_option("--backsearchradius").action("store").type("double").set_default(0.0).help("Max distance of a back-intersection [default: %default].");
+  parser.add_option("--name").action("store").type("string").set_default("").help(
+      "Path to other mesh with which to create coverage.");
+  parser.add_option("--allowbackintersections")
+      .action("store")
+      .type("bool")
+      .set_default(true)
+      .help("Allow back-intersections in coverage calculation [default: true].");
+  parser.add_option("--anglethreshold")
+      .action("store")
+      .type("double")
+      .set_default(0.0)
+      .help(
+          "This checks the cosine between the ray’s direction vector (e1) and the normal at the intersection point "
+          "(e2) [default: %default].");
+  parser.add_option("--backsearchradius")
+      .action("store")
+      .type("double")
+      .set_default(0.0)
+      .help("Max distance of a back-intersection [default: %default].");
 
   Command::buildParser();
 }
 
-bool Coverage::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
-  if (!sharedData.validMesh())
-  {
+bool Coverage::execute(const optparse::Values &options, SharedCommandData &sharedData) {
+  if (!sharedData.validMesh()) {
     std::cerr << "No mesh to operate on\n";
     return false;
   }
@@ -161,8 +184,7 @@ bool Coverage::execute(const optparse::Values &options, SharedCommandData &share
   double angleThreshold = static_cast<double>(options.get("anglethreshold"));
   double backSearchRadius = static_cast<double>(options.get("backsearchradius"));
 
-  if (otherMesh.length() == 0)
-  {
+  if (otherMesh.length() == 0) {
     std::cerr << "Must specify path to other mesh\n";
     return false;
   }
@@ -174,22 +196,27 @@ bool Coverage::execute(const optparse::Values &options, SharedCommandData &share
 ///////////////////////////////////////////////////////////////////////////////
 // Smooth
 ///////////////////////////////////////////////////////////////////////////////
-void Smooth::buildParser()
-{
+void Smooth::buildParser() {
   const std::string prog = "smooth";
   const std::string desc = "applies laplacian smoothing";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--iterations").action("store").type("int").set_default(0).help("Number of iterations [default: %default].");
-  parser.add_option("--relaxation").action("store").type("double").set_default(0.0).help("Amount of displacement for a vertex to move in each iteration [default: %default].");
+  parser.add_option("--iterations")
+      .action("store")
+      .type("int")
+      .set_default(0)
+      .help("Number of iterations [default: %default].");
+  parser.add_option("--relaxation")
+      .action("store")
+      .type("double")
+      .set_default(0.0)
+      .help("Amount of displacement for a vertex to move in each iteration [default: %default].");
 
   Command::buildParser();
 }
 
-bool Smooth::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
-  if (!sharedData.validMesh())
-  {
+bool Smooth::execute(const optparse::Values &options, SharedCommandData &sharedData) {
+  if (!sharedData.validMesh()) {
     std::cerr << "No mesh to operate on\n";
     return false;
   }
@@ -204,22 +231,27 @@ bool Smooth::execute(const optparse::Values &options, SharedCommandData &sharedD
 ///////////////////////////////////////////////////////////////////////////////
 // Smooth Sinc
 ///////////////////////////////////////////////////////////////////////////////
-void SmoothSinc::buildParser()
-{
+void SmoothSinc::buildParser() {
   const std::string prog = "smooth-sinc";
   const std::string desc = "applies windowed sinc smoothing";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--iterations").action("store").type("int").set_default(0).help("Number of iterations [default: %default].");
-  parser.add_option("--passband").action("store").type("double").set_default(0.0).help("Set the passband value for the windowed sinc filter [default: %default].");
+  parser.add_option("--iterations")
+      .action("store")
+      .type("int")
+      .set_default(0)
+      .help("Number of iterations [default: %default].");
+  parser.add_option("--passband")
+      .action("store")
+      .type("double")
+      .set_default(0.0)
+      .help("Set the passband value for the windowed sinc filter [default: %default].");
 
   Command::buildParser();
 }
 
-bool SmoothSinc::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
-  if (!sharedData.validMesh())
-  {
+bool SmoothSinc::execute(const optparse::Values &options, SharedCommandData &sharedData) {
+  if (!sharedData.validMesh()) {
     std::cerr << "No mesh to operate on\n";
     return false;
   }
@@ -234,10 +266,10 @@ bool SmoothSinc::execute(const optparse::Values &options, SharedCommandData &sha
 ///////////////////////////////////////////////////////////////////////////////
 // Remesh
 ///////////////////////////////////////////////////////////////////////////////
-void Remesh::buildParser()
-{
+void Remesh::buildParser() {
   const std::string prog = "remesh";
-  const std::string desc = "applies remeshing using approximated centroidal voronoi diagrams for a given number of vertices and adaptivity";
+  const std::string desc =
+      "applies remeshing using approximated centroidal voronoi diagrams for a given number of vertices and adaptivity";
 
   parser.prog(prog).description(desc);
   parser.add_option("--target").action("store").type("double").help("Target number of vertices.");
@@ -246,10 +278,8 @@ void Remesh::buildParser()
   Command::buildParser();
 }
 
-bool Remesh::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
-  if (!sharedData.validMesh())
-  {
+bool Remesh::execute(const optparse::Values &options, SharedCommandData &sharedData) {
+  if (!sharedData.validMesh()) {
     std::cerr << "No mesh to operate on\n";
     return false;
   }
@@ -264,10 +294,11 @@ bool Remesh::execute(const optparse::Values &options, SharedCommandData &sharedD
 ///////////////////////////////////////////////////////////////////////////////
 // RemeshPercent
 ///////////////////////////////////////////////////////////////////////////////
-void RemeshPercent::buildParser()
-{
+void RemeshPercent::buildParser() {
   const std::string prog = "remesh-percent";
-  const std::string desc = "applies remeshing using approximated centroidal voronoi diagrams for a given percentage of vertices and adaptivity";
+  const std::string desc =
+      "applies remeshing using approximated centroidal voronoi diagrams for a given percentage of vertices and "
+      "adaptivity";
 
   parser.prog(prog).description(desc);
 
@@ -277,10 +308,8 @@ void RemeshPercent::buildParser()
   Command::buildParser();
 }
 
-bool RemeshPercent::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
-  if (!sharedData.validMesh())
-  {
+bool RemeshPercent::execute(const optparse::Values &options, SharedCommandData &sharedData) {
+  if (!sharedData.validMesh()) {
     std::cerr << "No mesh to operate on\n";
     return false;
   }
@@ -295,8 +324,7 @@ bool RemeshPercent::execute(const optparse::Values &options, SharedCommandData &
 ///////////////////////////////////////////////////////////////////////////////
 // InvertNormals
 ///////////////////////////////////////////////////////////////////////////////
-void InvertNormals::buildParser()
-{
+void InvertNormals::buildParser() {
   const std::string prog = "invert-normal";
   const std::string desc = "flips the normal";
   parser.prog(prog).description(desc);
@@ -304,10 +332,8 @@ void InvertNormals::buildParser()
   Command::buildParser();
 }
 
-bool InvertNormals::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
-  if (!sharedData.validMesh())
-  {
+bool InvertNormals::execute(const optparse::Values &options, SharedCommandData &sharedData) {
+  if (!sharedData.validMesh()) {
     std::cerr << "No mesh to operate on\n";
     return false;
   }
@@ -319,24 +345,34 @@ bool InvertNormals::execute(const optparse::Values &options, SharedCommandData &
 ///////////////////////////////////////////////////////////////////////////////
 // ReflectMesh
 ///////////////////////////////////////////////////////////////////////////////
-void ReflectMesh::buildParser()
-{
+void ReflectMesh::buildParser() {
   const std::string prog = "reflect-mesh";
   const std::string desc = "reflect meshes with respect to a specified center and specific axis";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--axis").action("store").type("string").set_default("").help("Axis along which to reflect (X, Y, or Z).");
-  parser.add_option("--originx", "-x").action("store").type("double").set_default(0.0).help("Origin about which reflection occurs in x-direction [default: %default].");
-  parser.add_option("--originy", "-y").action("store").type("double").set_default(0.0).help("Origin about which reflection occurs in y-direction [default: %default].");
-  parser.add_option("--originz", "-z").action("store").type("double").set_default(0.0).help("Origin about which reflection occurs in z-direction [default: %default].");
+  parser.add_option("--axis").action("store").type("string").set_default("").help(
+      "Axis along which to reflect (X, Y, or Z).");
+  parser.add_option("--originx", "-x")
+      .action("store")
+      .type("double")
+      .set_default(0.0)
+      .help("Origin about which reflection occurs in x-direction [default: %default].");
+  parser.add_option("--originy", "-y")
+      .action("store")
+      .type("double")
+      .set_default(0.0)
+      .help("Origin about which reflection occurs in y-direction [default: %default].");
+  parser.add_option("--originz", "-z")
+      .action("store")
+      .type("double")
+      .set_default(0.0)
+      .help("Origin about which reflection occurs in z-direction [default: %default].");
 
   Command::buildParser();
 }
 
-bool ReflectMesh::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
-  if (!sharedData.validMesh())
-  {
+bool ReflectMesh::execute(const optparse::Values &options, SharedCommandData &sharedData) {
+  if (!sharedData.validMesh()) {
     std::cerr << "No mesh to operate on\n";
     return false;
   }
@@ -348,13 +384,10 @@ bool ReflectMesh::execute(const optparse::Values &options, SharedCommandData &sh
   double originY = static_cast<double>(options.get("originy"));
   double originZ = static_cast<double>(options.get("originz"));
 
-  if (!axis_is_valid(axis))
-  {
+  if (!axis_is_valid(axis)) {
     std::cerr << "Must specify a valid axis (X, Y, or Z)\n";
     return false;
-  }
-  else
-  {
+  } else {
     sharedData.mesh->reflect(axis, makeVector({originX, originY, originZ}));
     return sharedData.validMesh();
   }
@@ -363,25 +396,33 @@ bool ReflectMesh::execute(const optparse::Values &options, SharedCommandData &sh
 ///////////////////////////////////////////////////////////////////////////////
 // TransformMesh
 ///////////////////////////////////////////////////////////////////////////////
-void TransformMesh::buildParser()
-{
+void TransformMesh::buildParser() {
   const std::string prog = "transform-mesh";
-  const std::string desc = "transform mesh to target mesh using iterative closest point (ICP) using specified landmark transform (rigid, similarity, or affine)";
+  const std::string desc =
+      "transform mesh to target mesh using iterative closest point (ICP) using specified landmark transform (rigid, "
+      "similarity, or affine)";
   parser.prog(prog).description(desc);
 
   parser.add_option("--target").action("store").type("string").set_default("").help("Filename of target mesh.");
   std::list<std::string> aligns{"rigid", "similarity", "affine"};
-  parser.add_option("--type").action("store").type("choice").choices(aligns.begin(), aligns.end()).set_default("similarity").help("Alignment type to use [default: %default].");
+  parser.add_option("--type")
+      .action("store")
+      .type("choice")
+      .choices(aligns.begin(), aligns.end())
+      .set_default("similarity")
+      .help("Alignment type to use [default: %default].");
   std::list<std::string> methods{"icp"};
-  parser.add_option("--iterations").action("store").type("unsigned").set_default(10).help("Number of iterations run [default: %default].");
+  parser.add_option("--iterations")
+      .action("store")
+      .type("unsigned")
+      .set_default(10)
+      .help("Number of iterations run [default: %default].");
 
   Command::buildParser();
 }
 
-bool TransformMesh::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
-  if (!sharedData.validMesh())
-  {
+bool TransformMesh::execute(const optparse::Values &options, SharedCommandData &sharedData) {
+  if (!sharedData.validMesh()) {
     std::cerr << "No mesh to operate on\n";
     return false;
   }
@@ -401,13 +442,10 @@ bool TransformMesh::execute(const optparse::Values &options, SharedCommandData &
     return false;
   }
 
-  if (targetMesh == "")
-  {
+  if (targetMesh == "") {
     std::cerr << "Must specify a target mesh\n";
     return false;
-  }
-  else
-  {
+  } else {
     Mesh target(targetMesh);
     MeshTransform transform(sharedData.mesh->createTransform(target, align, iterations));
     sharedData.mesh->applyTransform(transform);
@@ -418,8 +456,7 @@ bool TransformMesh::execute(const optparse::Values &options, SharedCommandData &
 ///////////////////////////////////////////////////////////////////////////////
 // FillHoles
 ///////////////////////////////////////////////////////////////////////////////
-void FillHoles::buildParser()
-{
+void FillHoles::buildParser() {
   const std::string prog = "fill-holes";
   const std::string desc = "finds holes in a mesh and closes them";
   parser.prog(prog).description(desc);
@@ -427,10 +464,8 @@ void FillHoles::buildParser()
   Command::buildParser();
 }
 
-bool FillHoles::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
-  if (!sharedData.validMesh())
-  {
+bool FillHoles::execute(const optparse::Values &options, SharedCommandData &sharedData) {
+  if (!sharedData.validMesh()) {
     std::cerr << "No mesh to operate on\n";
     return false;
   }
@@ -442,10 +477,11 @@ bool FillHoles::execute(const optparse::Values &options, SharedCommandData &shar
 ///////////////////////////////////////////////////////////////////////////////
 // ProbeVolume
 ///////////////////////////////////////////////////////////////////////////////
-void ProbeVolume::buildParser()
-{
+void ProbeVolume::buildParser() {
   const std::string prog = "probe-volume";
-  const std::string desc = "probe feature volumes at each mesh vertex and output vtk meshes with scalar field defined based on such probing process";
+  const std::string desc =
+      "probe feature volumes at each mesh vertex and output vtk meshes with scalar field defined based on such probing "
+      "process";
   parser.prog(prog).description(desc);
 
   parser.add_option("--image").action("store").type("string").set_default("").help("Path of image.");
@@ -453,18 +489,15 @@ void ProbeVolume::buildParser()
   Command::buildParser();
 }
 
-bool ProbeVolume::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
-  if (!sharedData.validMesh())
-  {
+bool ProbeVolume::execute(const optparse::Values &options, SharedCommandData &sharedData) {
+  if (!sharedData.validMesh()) {
     std::cerr << "No mesh to operate on\n";
     return false;
   }
 
   std::string filename = static_cast<std::string>(options.get("image"));
 
-  if (filename == "")
-  {
+  if (filename == "") {
     std::cerr << "Must specify an image\n";
     return false;
   }
@@ -478,36 +511,37 @@ bool ProbeVolume::execute(const optparse::Values &options, SharedCommandData &sh
 ///////////////////////////////////////////////////////////////////////////////
 // ClipMesh
 ///////////////////////////////////////////////////////////////////////////////
-void ClipMesh::buildParser()
-{
+void ClipMesh::buildParser() {
   const std::string prog = "clip-mesh";
   const std::string desc = "clips mesh";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--px").action("store").type("double").set_default(0.0).help("Value of point.x for cutting plane [default: %default].");
-  parser.add_option("--py").action("store").type("double").set_default(0.0).help("Value of point.y for cutting plane [default: %default].");
-  parser.add_option("--pz").action("store").type("double").set_default(0.0).help("Value of point.z for cutting plane [default: %default].");
-  parser.add_option("--nx").action("store").type("double").set_default(0.0).help("Value of normal.x for cutting plane [default: %default].");
-  parser.add_option("--ny").action("store").type("double").set_default(0.0).help("Value of normal.y for cutting plane [default: %default].");
-  parser.add_option("--nz").action("store").type("double").set_default(0.0).help("Value of normal.z for cutting plane [default: %default].");
+  parser.add_option("--px").action("store").type("double").set_default(0.0).help(
+      "Value of point.x for cutting plane [default: %default].");
+  parser.add_option("--py").action("store").type("double").set_default(0.0).help(
+      "Value of point.y for cutting plane [default: %default].");
+  parser.add_option("--pz").action("store").type("double").set_default(0.0).help(
+      "Value of point.z for cutting plane [default: %default].");
+  parser.add_option("--nx").action("store").type("double").set_default(0.0).help(
+      "Value of normal.x for cutting plane [default: %default].");
+  parser.add_option("--ny").action("store").type("double").set_default(0.0).help(
+      "Value of normal.y for cutting plane [default: %default].");
+  parser.add_option("--nz").action("store").type("double").set_default(0.0).help(
+      "Value of normal.z for cutting plane [default: %default].");
 
   Command::buildParser();
 }
 
-bool ClipMesh::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
-  if (!sharedData.validMesh())
-  {
+bool ClipMesh::execute(const optparse::Values &options, SharedCommandData &sharedData) {
+  if (!sharedData.validMesh()) {
     std::cerr << "No mesh to operate on\n";
     return false;
   }
 
-  Point point({static_cast<double>(options.get("px")),
-               static_cast<double>(options.get("py")),
+  Point point({static_cast<double>(options.get("px")), static_cast<double>(options.get("py")),
                static_cast<double>(options.get("pz"))});
 
-  Vector normal{makeVector({static_cast<double>(options.get("nx")),
-                            static_cast<double>(options.get("ny")),
+  Vector normal{makeVector({static_cast<double>(options.get("nx")), static_cast<double>(options.get("ny")),
                             static_cast<double>(options.get("nz"))})};
 
   sharedData.mesh->clip(makePlane(point, normal));
@@ -517,8 +551,7 @@ bool ClipMesh::execute(const optparse::Values &options, SharedCommandData &share
 ///////////////////////////////////////////////////////////////////////////////
 // TranslateMesh
 ///////////////////////////////////////////////////////////////////////////////
-void TranslateMesh::buildParser()
-{
+void TranslateMesh::buildParser() {
   const std::string prog = "translate-mesh";
   const std::string desc = "translates mesh";
   parser.prog(prog).description(desc);
@@ -530,10 +563,8 @@ void TranslateMesh::buildParser()
   Command::buildParser();
 }
 
-bool TranslateMesh::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
-  if (!sharedData.validMesh())
-  {
+bool TranslateMesh::execute(const optparse::Values &options, SharedCommandData &sharedData) {
+  if (!sharedData.validMesh()) {
     std::cerr << "No mesh to operate on\n";
     return false;
   }
@@ -549,8 +580,7 @@ bool TranslateMesh::execute(const optparse::Values &options, SharedCommandData &
 ///////////////////////////////////////////////////////////////////////////////
 // ScaleMesh
 ///////////////////////////////////////////////////////////////////////////////
-void ScaleMesh::buildParser()
-{
+void ScaleMesh::buildParser() {
   const std::string prog = "scale-mesh";
   const std::string desc = "scales mesh";
   parser.prog(prog).description(desc);
@@ -562,10 +592,8 @@ void ScaleMesh::buildParser()
   Command::buildParser();
 }
 
-bool ScaleMesh::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
-  if (!sharedData.validMesh())
-  {
+bool ScaleMesh::execute(const optparse::Values &options, SharedCommandData &sharedData) {
+  if (!sharedData.validMesh()) {
     std::cerr << "No mesh to operate on\n";
     return false;
   }
@@ -574,13 +602,10 @@ bool ScaleMesh::execute(const optparse::Values &options, SharedCommandData &shar
   double sy = static_cast<double>(options.get("sy"));
   double sz = static_cast<double>(options.get("sz"));
 
-  if (sx == 0 || sy == 0 || sz == 0)
-  {
+  if (sx == 0 || sy == 0 || sz == 0) {
     std::cerr << "Error: cannot scale by 0 in any dimension\n";
     return false;
-  }
-  else
-  {
+  } else {
     sharedData.mesh->scale(makeVector({sx, sy, sz}));
     return sharedData.validMesh();
   }
@@ -589,19 +614,21 @@ bool ScaleMesh::execute(const optparse::Values &options, SharedCommandData &shar
 ///////////////////////////////////////////////////////////////////////////////
 // BoundingBoxMesh
 ///////////////////////////////////////////////////////////////////////////////
-void BoundingBoxMesh::buildParser()
-{
+void BoundingBoxMesh::buildParser() {
   const std::string prog = "bounding-box-mesh";
   const std::string desc = "compute bounding box of mesh";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--names").action("store").type("multistring").set_default("").help("Paths to meshes (must be followed by `--`), ex: \"bounding-box-mesh --names *.vtk -- --center 1\")");
+  parser.add_option("--names")
+      .action("store")
+      .type("multistring")
+      .set_default("")
+      .help("Paths to meshes (must be followed by `--`), ex: \"bounding-box-mesh --names *.vtk -- --center 1\")");
 
   Command::buildParser();
 }
 
-bool BoundingBoxMesh::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
+bool BoundingBoxMesh::execute(const optparse::Values &options, SharedCommandData &sharedData) {
   std::vector<std::string> filenames = options.get("names");
 
   sharedData.region = MeshUtils::boundingBox(filenames);
@@ -612,8 +639,7 @@ bool BoundingBoxMesh::execute(const optparse::Values &options, SharedCommandData
 ///////////////////////////////////////////////////////////////////////////////
 // MeshBounds
 ///////////////////////////////////////////////////////////////////////////////
-void MeshBounds::buildParser()
-{
+void MeshBounds::buildParser() {
   const std::string prog = "mesh-bounds";
   const std::string desc = "return physical bounds of mesh";
   parser.prog(prog).description(desc);
@@ -621,8 +647,7 @@ void MeshBounds::buildParser()
   Command::buildParser();
 }
 
-bool MeshBounds::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
+bool MeshBounds::execute(const optparse::Values &options, SharedCommandData &sharedData) {
   sharedData.region = sharedData.mesh->boundingBox();
 
   std::cout << "Bounding box:\n" << sharedData.region << std::endl;
@@ -633,25 +658,34 @@ bool MeshBounds::execute(const optparse::Values &options, SharedCommandData &sha
 ///////////////////////////////////////////////////////////////////////////////
 // Distance
 ///////////////////////////////////////////////////////////////////////////////
-void Distance::buildParser()
-{
+void Distance::buildParser() {
   const std::string prog = "distance";
-  const std::string desc = "computes the distance between two meshes, printing the largest distance between any point from source to target, target to source, and the Hausdorff distance (the largest of these two)";
+  const std::string desc =
+      "computes the distance between two meshes, printing the largest distance between any point from source to "
+      "target, target to source, and the Hausdorff distance (the largest of these two)";
   parser.prog(prog).description(desc);
 
   parser.add_option("--name").action("store").type("string").set_default("").help("Filename of other mesh.");
   std::list<std::string> methods{"point-to-point", "point-to-cell"};
-  parser.add_option("--method").action("store").type("choice").choices(methods.begin(), methods.end()).set_default("point-to-cell").help("Method used to compute distance (point-to-point or point-to-cell) [default: %default].");
-  parser.add_option("--ids").action("store").type("bool").set_default(false).help("Set shared field to the ids of the closest points/cells instead of the distances [default: false].");
-  parser.add_option("--summary").action("store").type("bool").set_default(true).help("Print largest distance of any point in mesh to target [default: true].");
+  parser.add_option("--method")
+      .action("store")
+      .type("choice")
+      .choices(methods.begin(), methods.end())
+      .set_default("point-to-cell")
+      .help("Method used to compute distance (point-to-point or point-to-cell) [default: %default].");
+  parser.add_option("--ids").action("store").type("bool").set_default(false).help(
+      "Set shared field to the ids of the closest points/cells instead of the distances [default: false].");
+  parser.add_option("--summary")
+      .action("store")
+      .type("bool")
+      .set_default(true)
+      .help("Print largest distance of any point in mesh to target [default: true].");
 
   Command::buildParser();
 }
 
-bool Distance::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
-  if (!sharedData.validMesh())
-  {
+bool Distance::execute(const optparse::Values &options, SharedCommandData &sharedData) {
+  if (!sharedData.validMesh()) {
     std::cerr << "No mesh to operate on\n";
     return false;
   }
@@ -662,8 +696,7 @@ bool Distance::execute(const optparse::Values &options, SharedCommandData &share
   std::string methodopt(options.get("method"));
 
   std::string otherMesh = static_cast<std::string>(options.get("name"));
-  if (otherMesh == "")
-  {
+  if (otherMesh == "") {
     std::cerr << "Must specify a mesh\n";
     return false;
   }
@@ -672,17 +705,14 @@ bool Distance::execute(const optparse::Values &options, SharedCommandData &share
 
   if (methodopt == "point-to-point") {
     sharedData.field = sharedData.mesh->distance(other, Mesh::DistanceMethod::PointToPoint)[ids];
-  }
-  else if (methodopt == "point-to-cell") {
+  } else if (methodopt == "point-to-cell") {
     sharedData.field = sharedData.mesh->distance(other, Mesh::DistanceMethod::PointToCell)[ids];
-  }
-  else {
+  } else {
     std::cerr << "no such distance method: " << methodopt << std::endl;
     return false;
   }
 
-  if (summary && !ids)
-  {
+  if (summary && !ids) {
     auto distRange = range(sharedData.field);
     auto dist = std::max(distRange[0], distRange[1]);
     std::cout << "Maximum distance to target mesh: " << dist << std::endl;
@@ -694,8 +724,7 @@ bool Distance::execute(const optparse::Values &options, SharedCommandData &share
 ///////////////////////////////////////////////////////////////////////////////
 // ComputeNormals
 ///////////////////////////////////////////////////////////////////////////////
-void ComputeNormals::buildParser()
-{
+void ComputeNormals::buildParser() {
   const std::string prog = "compute-normals";
   const std::string desc = "computes and adds oriented point and cell normals";
   parser.prog(prog).description(desc);
@@ -703,10 +732,8 @@ void ComputeNormals::buildParser()
   Command::buildParser();
 }
 
-bool ComputeNormals::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
-  if (!sharedData.validMesh())
-  {
+bool ComputeNormals::execute(const optparse::Values &options, SharedCommandData &sharedData) {
+  if (!sharedData.validMesh()) {
     std::cerr << "No mesh to operate on\n";
     return false;
   }
@@ -718,8 +745,7 @@ bool ComputeNormals::execute(const optparse::Values &options, SharedCommandData 
 ///////////////////////////////////////////////////////////////////////////////
 // FixElement
 ///////////////////////////////////////////////////////////////////////////////
-void FixElement::buildParser()
-{
+void FixElement::buildParser() {
   const std::string prog = "fix-element";
   const std::string desc = "fix element winding of mesh";
   parser.prog(prog).description(desc);
@@ -727,10 +753,8 @@ void FixElement::buildParser()
   Command::buildParser();
 }
 
-bool FixElement::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
-  if (!sharedData.validMesh())
-  {
+bool FixElement::execute(const optparse::Values &options, SharedCommandData &sharedData) {
+  if (!sharedData.validMesh()) {
     std::cerr << "No mesh to operate on\n";
     return false;
   }
@@ -742,36 +766,37 @@ bool FixElement::execute(const optparse::Values &options, SharedCommandData &sha
 ///////////////////////////////////////////////////////////////////////////////
 // ClipClosedSurface
 ///////////////////////////////////////////////////////////////////////////////
-void ClipClosedSurface::buildParser()
-{
+void ClipClosedSurface::buildParser() {
   const std::string prog = "clip-closed-surface";
   const std::string desc = "clips mesh resulting in a closed surface";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--px").action("store").type("double").set_default(0.0).help("Value of point.x for cutting plane [default: %default].");
-  parser.add_option("--py").action("store").type("double").set_default(0.0).help("Value of point.y for cutting plane [default: %default].");
-  parser.add_option("--pz").action("store").type("double").set_default(0.0).help("Value of point.z for cutting plane [default: %default].");
-  parser.add_option("--nx").action("store").type("double").set_default(0.0).help("Value of normal.x for cutting plane [default: %default].");
-  parser.add_option("--ny").action("store").type("double").set_default(0.0).help("Value of normal.y for cutting plane [default: %default].");
-  parser.add_option("--nz").action("store").type("double").set_default(0.0).help("Value of normal.z for cutting plane [default: %default].");
+  parser.add_option("--px").action("store").type("double").set_default(0.0).help(
+      "Value of point.x for cutting plane [default: %default].");
+  parser.add_option("--py").action("store").type("double").set_default(0.0).help(
+      "Value of point.y for cutting plane [default: %default].");
+  parser.add_option("--pz").action("store").type("double").set_default(0.0).help(
+      "Value of point.z for cutting plane [default: %default].");
+  parser.add_option("--nx").action("store").type("double").set_default(0.0).help(
+      "Value of normal.x for cutting plane [default: %default].");
+  parser.add_option("--ny").action("store").type("double").set_default(0.0).help(
+      "Value of normal.y for cutting plane [default: %default].");
+  parser.add_option("--nz").action("store").type("double").set_default(0.0).help(
+      "Value of normal.z for cutting plane [default: %default].");
 
   Command::buildParser();
 }
 
-bool ClipClosedSurface::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
-  if (!sharedData.validMesh())
-  {
+bool ClipClosedSurface::execute(const optparse::Values &options, SharedCommandData &sharedData) {
+  if (!sharedData.validMesh()) {
     std::cerr << "No mesh to operate on\n";
     return false;
   }
 
-  Point point({static_cast<double>(options.get("px")),
-               static_cast<double>(options.get("py")),
+  Point point({static_cast<double>(options.get("px")), static_cast<double>(options.get("py")),
                static_cast<double>(options.get("pz"))});
 
-  Vector normal{makeVector({static_cast<double>(options.get("nx")),
-                            static_cast<double>(options.get("ny")),
+  Vector normal{makeVector({static_cast<double>(options.get("nx")), static_cast<double>(options.get("ny")),
                             static_cast<double>(options.get("nz"))})};
 
   sharedData.mesh->clipClosedSurface(makePlane(point, normal));
@@ -781,8 +806,7 @@ bool ClipClosedSurface::execute(const optparse::Values &options, SharedCommandDa
 ///////////////////////////////////////////////////////////////////////////////
 // ClosestPoint
 ///////////////////////////////////////////////////////////////////////////////
-void ClosestPoint::buildParser()
-{
+void ClosestPoint::buildParser() {
   const std::string prog = "closest-point";
   const std::string desc = "returns closest point to given point on mesh";
   parser.prog(prog).description(desc);
@@ -794,16 +818,13 @@ void ClosestPoint::buildParser()
   Command::buildParser();
 }
 
-bool ClosestPoint::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
-  if (!sharedData.validMesh())
-  {
+bool ClosestPoint::execute(const optparse::Values &options, SharedCommandData &sharedData) {
+  if (!sharedData.validMesh()) {
     std::cerr << "No mesh to operate on\n";
     return false;
   }
 
-  Point point({static_cast<double>(options.get("x")),
-               static_cast<double>(options.get("y")),
+  Point point({static_cast<double>(options.get("x")), static_cast<double>(options.get("y")),
                static_cast<double>(options.get("z"))});
 
   double distance;
@@ -818,8 +839,7 @@ bool ClosestPoint::execute(const optparse::Values &options, SharedCommandData &s
 ///////////////////////////////////////////////////////////////////////////////
 // GeodesicDistance
 ///////////////////////////////////////////////////////////////////////////////
-void GeodesicDistance::buildParser()
-{
+void GeodesicDistance::buildParser() {
   const std::string prog = "geodesic-distance";
   const std::string desc = "computes geodesic distance between two vertices on mesh";
   parser.prog(prog).description(desc);
@@ -830,10 +850,8 @@ void GeodesicDistance::buildParser()
   Command::buildParser();
 }
 
-bool GeodesicDistance::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
-  if (!sharedData.validMesh())
-  {
+bool GeodesicDistance::execute(const optparse::Values &options, SharedCommandData &sharedData) {
+  if (!sharedData.validMesh()) {
     std::cerr << "No mesh to operate on\n";
     return false;
   }
@@ -841,16 +859,14 @@ bool GeodesicDistance::execute(const optparse::Values &options, SharedCommandDat
   int v1 = static_cast<int>(options.get("v1"));
   int v2 = static_cast<int>(options.get("v2"));
 
-  std::cout << "Geodesic Distance between two points: "
-            << sharedData.mesh->geodesicDistance(v1, v2) << std::endl;
+  std::cout << "Geodesic Distance between two points: " << sharedData.mesh->geodesicDistance(v1, v2) << std::endl;
   return sharedData.validMesh();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // GeodesicDistanceToLandmark
 ///////////////////////////////////////////////////////////////////////////////
-void GeodesicDistanceToLandmark::buildParser()
-{
+void GeodesicDistanceToLandmark::buildParser() {
   const std::string prog = "geodesic-distance-landmark";
   const std::string desc = "computes geodesic distance between a point (landmark) and each vertex on mesh";
   parser.prog(prog).description(desc);
@@ -862,16 +878,13 @@ void GeodesicDistanceToLandmark::buildParser()
   Command::buildParser();
 }
 
-bool GeodesicDistanceToLandmark::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
-  if (!sharedData.validMesh())
-  {
+bool GeodesicDistanceToLandmark::execute(const optparse::Values &options, SharedCommandData &sharedData) {
+  if (!sharedData.validMesh()) {
     std::cerr << "No mesh to operate on\n";
     return false;
   }
 
-  Point landmark({static_cast<double>(options.get("x")),
-                  static_cast<double>(options.get("y")),
+  Point landmark({static_cast<double>(options.get("x")), static_cast<double>(options.get("y")),
                   static_cast<double>(options.get("z"))});
 
   sharedData.field = sharedData.mesh->geodesicDistance(landmark);
@@ -881,20 +894,26 @@ bool GeodesicDistanceToLandmark::execute(const optparse::Values &options, Shared
 ///////////////////////////////////////////////////////////////////////////////
 // MeanNormals
 ///////////////////////////////////////////////////////////////////////////////
-void MeanNormals::buildParser()
-{
+void MeanNormals::buildParser() {
   const std::string prog = "mean-normals";
   const std::string desc = "computes average normals for each point in given set of meshes";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--names").action("store").type("multistring").set_default("").help("Paths to meshes (must be followed by `--`), ex: \"mean-normals --names *.vtk --\")");
-  parser.add_option("--generatenormals").action("store").type("bool").set_default(true).help("Auto generate normals if the mesh does not have normals [default: true].");
+  parser.add_option("--names")
+      .action("store")
+      .type("multistring")
+      .set_default("")
+      .help("Paths to meshes (must be followed by `--`), ex: \"mean-normals --names *.vtk --\")");
+  parser.add_option("--generatenormals")
+      .action("store")
+      .type("bool")
+      .set_default(true)
+      .help("Auto generate normals if the mesh does not have normals [default: true].");
 
   Command::buildParser();
 }
 
-bool MeanNormals::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
+bool MeanNormals::execute(const optparse::Values &options, SharedCommandData &sharedData) {
   std::vector<std::string> filenames = options.get("names");
   bool generateNormals = static_cast<bool>(options.get("generatenormals"));
 
@@ -905,29 +924,29 @@ bool MeanNormals::execute(const optparse::Values &options, SharedCommandData &sh
 ///////////////////////////////////////////////////////////////////////////////
 // SetField
 ///////////////////////////////////////////////////////////////////////////////
-void SetField::buildParser()
-{
+void SetField::buildParser() {
   const std::string prog = "set-field";
   const std::string desc = "adds the current field to the current mesh with the given name.";
   parser.prog(prog).description(desc);
 
   parser.add_option("--name").action("store").type("string").set_default("").help("Name of scalar field.");
   std::list<std::string> type{"point", "face"};
-  parser.add_option("--type").action("store").type("choice").choices(type.begin(), type.end()).help("Type of field to set (point or face).");
+  parser.add_option("--type")
+      .action("store")
+      .type("choice")
+      .choices(type.begin(), type.end())
+      .help("Type of field to set (point or face).");
 
   Command::buildParser();
 }
 
-bool SetField::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
-  if (!sharedData.validMesh())
-  {
+bool SetField::execute(const optparse::Values &options, SharedCommandData &sharedData) {
+  if (!sharedData.validMesh()) {
     std::cerr << "No mesh to operate on\n";
     return false;
   }
 
-  if (!sharedData.field)
-  {
+  if (!sharedData.field) {
     std::cerr << "No field initialized to set\n";
     return false;
   }
@@ -937,11 +956,9 @@ bool SetField::execute(const optparse::Values &options, SharedCommandData &share
 
   if (typeopt == "point") {
     sharedData.mesh->setField(name, sharedData.field, Mesh::FieldType::Point);
-  }
-  else if (typeopt == "face") {
+  } else if (typeopt == "face") {
     sharedData.mesh->setField(name, sharedData.field, Mesh::FieldType::Face);
-  }
-  else {
+  } else {
     std::cerr << "no such type: " << typeopt << std::endl;
     return false;
   }
@@ -952,23 +969,24 @@ bool SetField::execute(const optparse::Values &options, SharedCommandData &share
 ///////////////////////////////////////////////////////////////////////////////
 // GetField
 ///////////////////////////////////////////////////////////////////////////////
-void GetField::buildParser()
-{
+void GetField::buildParser() {
   const std::string prog = "get-field";
   const std::string desc = "gets field of mesh with given name";
   parser.prog(prog).description(desc);
 
   parser.add_option("--name").action("store").type("string").set_default("").help("Name of scalar field.");
   std::list<std::string> type{"point", "face"};
-  parser.add_option("--type").action("store").type("choice").choices(type.begin(), type.end()).help("Type of field to get (point or face).");
+  parser.add_option("--type")
+      .action("store")
+      .type("choice")
+      .choices(type.begin(), type.end())
+      .help("Type of field to get (point or face).");
 
   Command::buildParser();
 }
 
-bool GetField::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
-  if (!sharedData.validMesh())
-  {
+bool GetField::execute(const optparse::Values &options, SharedCommandData &sharedData) {
+  if (!sharedData.validMesh()) {
     std::cerr << "No mesh to operate on\n";
     return false;
   }
@@ -978,11 +996,9 @@ bool GetField::execute(const optparse::Values &options, SharedCommandData &share
 
   if (typeopt == "point") {
     sharedData.field = sharedData.mesh->getField(name, Mesh::FieldType::Point);
-  }
-  else if (typeopt == "face") {
+  } else if (typeopt == "face") {
     sharedData.field = sharedData.mesh->getField(name, Mesh::FieldType::Face);
-  }
-  else {
+  } else {
     std::cerr << "no such type: " << typeopt << std::endl;
     return false;
   }
@@ -993,22 +1009,24 @@ bool GetField::execute(const optparse::Values &options, SharedCommandData &share
 ///////////////////////////////////////////////////////////////////////////////
 // Curvature
 ///////////////////////////////////////////////////////////////////////////////
-void Curvature::buildParser()
-{
+void Curvature::buildParser() {
   const std::string prog = "mesh-curvature";
   const std::string desc = "computes and adds curvature";
   parser.prog(prog).description(desc);
 
   std::list<std::string> curvs{"principal", "gaussian", "mean"};
-  parser.add_option("--type").action("store").type("choice").choices(curvs.begin(), curvs.end()).set_default("principal").help("Curvature type to use [default: %default].");
+  parser.add_option("--type")
+      .action("store")
+      .type("choice")
+      .choices(curvs.begin(), curvs.end())
+      .set_default("principal")
+      .help("Curvature type to use [default: %default].");
 
   Command::buildParser();
 }
 
-bool Curvature::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
-  if (!sharedData.validMesh())
-  {
+bool Curvature::execute(const optparse::Values &options, SharedCommandData &sharedData) {
+  if (!sharedData.validMesh()) {
     std::cerr << "No mesh to operate on\n";
     return false;
   }
@@ -1034,23 +1052,25 @@ bool Curvature::execute(const optparse::Values &options, SharedCommandData &shar
 ///////////////////////////////////////////////////////////////////////////////
 // SetFieldValue
 ///////////////////////////////////////////////////////////////////////////////
-void SetFieldValue::buildParser()
-{
+void SetFieldValue::buildParser() {
   const std::string prog = "set-field-value";
   const std::string desc = "sets value of element at index in given field of mesh";
   parser.prog(prog).description(desc);
 
   parser.add_option("--name").action("store").type("string").set_default("").help("Name of scalar field.");
-  parser.add_option("--index", "-i").action("store").type("int").set_default(0).help("index of value to return [default: %default].");
-  parser.add_option("--value").action("store").type("double").set_default(0).help("value to be set [default: %default].");
+  parser.add_option("--index", "-i")
+      .action("store")
+      .type("int")
+      .set_default(0)
+      .help("index of value to return [default: %default].");
+  parser.add_option("--value").action("store").type("double").set_default(0).help(
+      "value to be set [default: %default].");
 
   Command::buildParser();
 }
 
-bool SetFieldValue::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
-  if (!sharedData.validMesh())
-  {
+bool SetFieldValue::execute(const optparse::Values &options, SharedCommandData &sharedData) {
+  if (!sharedData.validMesh()) {
     std::cerr << "No mesh to operate on\n";
     return false;
   }
@@ -1066,22 +1086,23 @@ bool SetFieldValue::execute(const optparse::Values &options, SharedCommandData &
 ///////////////////////////////////////////////////////////////////////////////
 // GetFieldValue
 ///////////////////////////////////////////////////////////////////////////////
-void GetFieldValue::buildParser()
-{
+void GetFieldValue::buildParser() {
   const std::string prog = "get-field-value";
   const std::string desc = "prints value of element at index in given field of mesh";
   parser.prog(prog).description(desc);
 
   parser.add_option("--name").action("store").type("string").set_default("").help("Name of scalar field.");
-  parser.add_option("--index", "-i").action("store").type("int").set_default(0).help("index of value to return [default: %default].");
+  parser.add_option("--index", "-i")
+      .action("store")
+      .type("int")
+      .set_default(0)
+      .help("index of value to return [default: %default].");
 
   Command::buildParser();
 }
 
-bool GetFieldValue::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
-  if (!sharedData.validMesh())
-  {
+bool GetFieldValue::execute(const optparse::Values &options, SharedCommandData &sharedData) {
+  if (!sharedData.validMesh()) {
     std::cerr << "No mesh to operate on\n";
     return false;
   }
@@ -1096,23 +1117,24 @@ bool GetFieldValue::execute(const optparse::Values &options, SharedCommandData &
 ///////////////////////////////////////////////////////////////////////////////
 // FieldRange
 ///////////////////////////////////////////////////////////////////////////////
-void FieldRange::buildParser()
-{
+void FieldRange::buildParser() {
   const std::string prog = "field-range";
   const std::string desc = "prints the range of the given field";
   parser.prog(prog).description(desc);
 
   parser.add_option("--name").action("store").type("string").set_default("").help("Name of scalar field.");
   std::list<std::string> type{"point", "face"};
-  parser.add_option("--type").action("store").type("choice").choices(type.begin(), type.end()).help("Type of field to fetch (point or face).");
+  parser.add_option("--type")
+      .action("store")
+      .type("choice")
+      .choices(type.begin(), type.end())
+      .help("Type of field to fetch (point or face).");
 
   Command::buildParser();
 }
 
-bool FieldRange::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
-  if (!sharedData.validMesh())
-  {
+bool FieldRange::execute(const optparse::Values &options, SharedCommandData &sharedData) {
+  if (!sharedData.validMesh()) {
     std::cerr << "No mesh to operate on\n";
     return false;
   }
@@ -1123,11 +1145,9 @@ bool FieldRange::execute(const optparse::Values &options, SharedCommandData &sha
 
   if (typeopt == "point") {
     fieldRange = range(sharedData.mesh->getField(name, Mesh::FieldType::Point));
-  }
-  else if (typeopt == "face") {
+  } else if (typeopt == "face") {
     fieldRange = range(sharedData.mesh->getField(name, Mesh::FieldType::Face));
-  }
-  else {
+  } else {
     std::cerr << "no such type: " << typeopt << std::endl;
     return false;
   }
@@ -1139,23 +1159,24 @@ bool FieldRange::execute(const optparse::Values &options, SharedCommandData &sha
 ///////////////////////////////////////////////////////////////////////////////
 // FieldMean
 ///////////////////////////////////////////////////////////////////////////////
-void FieldMean::buildParser()
-{
+void FieldMean::buildParser() {
   const std::string prog = "field-mean";
   const std::string desc = "prints the mean of the given field";
   parser.prog(prog).description(desc);
 
   parser.add_option("--name").action("store").type("string").set_default("").help("Name of scalar field.");
   std::list<std::string> type{"point", "face"};
-  parser.add_option("--type").action("store").type("choice").choices(type.begin(), type.end()).help("Type of field to fetch (point or face).");
+  parser.add_option("--type")
+      .action("store")
+      .type("choice")
+      .choices(type.begin(), type.end())
+      .help("Type of field to fetch (point or face).");
 
   Command::buildParser();
 }
 
-bool FieldMean::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
-  if (!sharedData.validMesh())
-  {
+bool FieldMean::execute(const optparse::Values &options, SharedCommandData &sharedData) {
+  if (!sharedData.validMesh()) {
     std::cerr << "No mesh to operate on\n";
     return false;
   }
@@ -1165,11 +1186,9 @@ bool FieldMean::execute(const optparse::Values &options, SharedCommandData &shar
 
   if (typeopt == "point") {
     std::cout << mean(sharedData.mesh->getField(name, Mesh::FieldType::Point)) << "\n";
-  }
-  else if (typeopt == "face") {
+  } else if (typeopt == "face") {
     std::cout << mean(sharedData.mesh->getField(name, Mesh::FieldType::Face)) << "\n";
-  }
-  else {
+  } else {
     std::cerr << "no such type: " << typeopt << std::endl;
     return false;
   }
@@ -1180,23 +1199,24 @@ bool FieldMean::execute(const optparse::Values &options, SharedCommandData &shar
 ///////////////////////////////////////////////////////////////////////////////
 // FieldStd
 ///////////////////////////////////////////////////////////////////////////////
-void FieldStd::buildParser()
-{
+void FieldStd::buildParser() {
   const std::string prog = "field-std";
   const std::string desc = "prints the standard deviation of the given field";
   parser.prog(prog).description(desc);
 
   parser.add_option("--name").action("store").type("string").set_default("").help("Name of scalar field.");
   std::list<std::string> type{"point", "face"};
-  parser.add_option("--type").action("store").type("choice").choices(type.begin(), type.end()).help("Type of field to fetch (point or face).");
+  parser.add_option("--type")
+      .action("store")
+      .type("choice")
+      .choices(type.begin(), type.end())
+      .help("Type of field to fetch (point or face).");
 
   Command::buildParser();
 }
 
-bool FieldStd::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
-  if (!sharedData.validMesh())
-  {
+bool FieldStd::execute(const optparse::Values &options, SharedCommandData &sharedData) {
+  if (!sharedData.validMesh()) {
     std::cerr << "No mesh to operate on\n";
     return false;
   }
@@ -1206,11 +1226,9 @@ bool FieldStd::execute(const optparse::Values &options, SharedCommandData &share
 
   if (typeopt == "point") {
     std::cout << stddev(sharedData.mesh->getField(name, Mesh::FieldType::Point)) << "\n";
-  }
-  else if (typeopt == "face") {
+  } else if (typeopt == "face") {
     std::cout << stddev(sharedData.mesh->getField(name, Mesh::FieldType::Face)) << "\n";
-  }
-  else {
+  } else {
     std::cerr << "no such type: " << typeopt << std::endl;
     return false;
   }
@@ -1221,8 +1239,7 @@ bool FieldStd::execute(const optparse::Values &options, SharedCommandData &share
 ///////////////////////////////////////////////////////////////////////////////
 // FieldNames
 ///////////////////////////////////////////////////////////////////////////////
-void FieldNames::buildParser()
-{
+void FieldNames::buildParser() {
   const std::string prog = "field-names";
   const std::string desc = "prints all the field names present in mesh";
   parser.prog(prog).description(desc);
@@ -1230,41 +1247,39 @@ void FieldNames::buildParser()
   Command::buildParser();
 }
 
-bool FieldNames::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
-  if (!sharedData.validMesh())
-  {
+bool FieldNames::execute(const optparse::Values &options, SharedCommandData &sharedData) {
+  if (!sharedData.validMesh()) {
     std::cerr << "No mesh to operate on\n";
     return false;
   }
 
   std::vector<std::string> fields = sharedData.mesh->getFieldNames();
-  for (int i=0; i<fields.size(); i++)
-    std::cout << fields[i] << "\n";
+  for (int i = 0; i < fields.size(); i++) std::cout << fields[i] << "\n";
   return sharedData.validMesh();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // MeshToImage
 ///////////////////////////////////////////////////////////////////////////////
-void MeshToImage::buildParser()
-{
+void MeshToImage::buildParser() {
   const std::string prog = "mesh-to-image";
   const std::string desc = "converts mesh to a binary segmentation image, using unit spacing by default";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--sx").action("store").type("double").set_default(1.0).help("Spacing of output image in x-direction [default: unit spacing].");
-  parser.add_option("--sy").action("store").type("double").set_default(1.0).help("Spacing of output image in y-direction [default: unit spacing].");
-  parser.add_option("--sz").action("store").type("double").set_default(1.0).help("Spacing of output image in z-direction [default: unit spacing].");
-  parser.add_option("--pad").action("store").type("double").set_default(0.0).help("Pad the region to extract [default: 0.0].");
+  parser.add_option("--sx").action("store").type("double").set_default(1.0).help(
+      "Spacing of output image in x-direction [default: unit spacing].");
+  parser.add_option("--sy").action("store").type("double").set_default(1.0).help(
+      "Spacing of output image in y-direction [default: unit spacing].");
+  parser.add_option("--sz").action("store").type("double").set_default(1.0).help(
+      "Spacing of output image in z-direction [default: unit spacing].");
+  parser.add_option("--pad").action("store").type("double").set_default(0.0).help(
+      "Pad the region to extract [default: 0.0].");
 
   Command::buildParser();
 }
 
-bool MeshToImage::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
-  if (!sharedData.validMesh())
-  {
+bool MeshToImage::execute(const optparse::Values &options, SharedCommandData &sharedData) {
+  if (!sharedData.validMesh()) {
     std::cerr << "No mesh to operate on\n";
     return false;
   }
@@ -1274,9 +1289,9 @@ bool MeshToImage::execute(const optparse::Values &options, SharedCommandData &sh
   double z = static_cast<double>(options.get("sz"));
   double pad = static_cast<double>(options.get("pad"));
 
-  Point3 spacing({x,y,z});
+  Point3 spacing({x, y, z});
   auto region = sharedData.mesh->boundingBox().pad(pad);
-  
+
   sharedData.image = sharedData.mesh->toImage(region, spacing);
   return true;
 }
@@ -1284,24 +1299,25 @@ bool MeshToImage::execute(const optparse::Values &options, SharedCommandData &sh
 ///////////////////////////////////////////////////////////////////////////////
 // MeshToDT
 ///////////////////////////////////////////////////////////////////////////////
-void MeshToDT::buildParser()
-{
+void MeshToDT::buildParser() {
   const std::string prog = "mesh-to-dt";
   const std::string desc = "converts mesh to a distance transform, using unit spacing by default";
   parser.prog(prog).description(desc);
 
-  parser.add_option("--sx").action("store").type("double").set_default(1.0).help("Spacing of output image in x-direction [default: unit spacing].");
-  parser.add_option("--sy").action("store").type("double").set_default(1.0).help("Spacing of output image in y-direction [default: unit spacing].");
-  parser.add_option("--sz").action("store").type("double").set_default(1.0).help("Spacing of output image in z-direction [default: unit spacing].");
-  parser.add_option("--pad").action("store").type("int").set_default(1).help("Number of pixels to pad the output region [default: 1].");
+  parser.add_option("--sx").action("store").type("double").set_default(1.0).help(
+      "Spacing of output image in x-direction [default: unit spacing].");
+  parser.add_option("--sy").action("store").type("double").set_default(1.0).help(
+      "Spacing of output image in y-direction [default: unit spacing].");
+  parser.add_option("--sz").action("store").type("double").set_default(1.0).help(
+      "Spacing of output image in z-direction [default: unit spacing].");
+  parser.add_option("--pad").action("store").type("int").set_default(1).help(
+      "Number of pixels to pad the output region [default: 1].");
 
   Command::buildParser();
 }
 
-bool MeshToDT::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
-  if (!sharedData.validMesh())
-  {
+bool MeshToDT::execute(const optparse::Values &options, SharedCommandData &sharedData) {
+  if (!sharedData.validMesh()) {
     std::cerr << "No mesh to operate on\n";
     return false;
   }
@@ -1311,7 +1327,7 @@ bool MeshToDT::execute(const optparse::Values &options, SharedCommandData &share
   double z = static_cast<double>(options.get("sz"));
   unsigned pad = static_cast<unsigned>(options.get("pad"));
 
-  Point3 spacing({x,y,z});
+  Point3 spacing({x, y, z});
   auto region = sharedData.mesh->boundingBox();
   Dims padding({pad, pad, pad});
 
@@ -1322,8 +1338,7 @@ bool MeshToDT::execute(const optparse::Values &options, SharedCommandData &share
 ///////////////////////////////////////////////////////////////////////////////
 // CompareMesh
 ///////////////////////////////////////////////////////////////////////////////
-void CompareMesh::buildParser()
-{
+void CompareMesh::buildParser() {
   const std::string prog = "compare-mesh";
   const std::string desc = "compare two meshes";
   parser.prog(prog).description(desc);
@@ -1334,10 +1349,8 @@ void CompareMesh::buildParser()
   Command::buildParser();
 }
 
-bool CompareMesh::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
-  if (!sharedData.validMesh())
-  {
+bool CompareMesh::execute(const optparse::Values &options, SharedCommandData &sharedData) {
+  if (!sharedData.validMesh()) {
     std::cerr << "No mesh to operate on\n";
     return false;
   }
@@ -1350,13 +1363,10 @@ bool CompareMesh::execute(const optparse::Values &options, SharedCommandData &sh
 
   double eps = static_cast<double>(options.get("epsilon"));
 
-  if (sharedData.mesh->compare(Mesh(filename), eps))
-  {
+  if (sharedData.mesh->compare(Mesh(filename), eps)) {
     std::cout << "meshes are the same\n";
     return true;
-  }
-  else
-  {
+  } else {
     std::cout << "meshes are different\n";
     return false;
   }
@@ -1365,20 +1375,34 @@ bool CompareMesh::execute(const optparse::Values &options, SharedCommandData &sh
 ///////////////////////////////////////////////////////////////////////////////
 // WarpMesh
 ///////////////////////////////////////////////////////////////////////////////
-void WarpMesh::buildParser()
-{
+void WarpMesh::buildParser() {
   const std::string prog = "warp-mesh";
   const std::string desc = "warps a mesh given reference and target particles";
   parser.prog(prog).description(desc);
   parser.add_option("--reference_mesh").action("store").type("string").set_default("").help("Name of reference mesh.");
-  parser.add_option("--reference_points").action("store").type("string").set_default("").help("Name of reference points.");
-  parser.add_option("--landmark_file").action("store").type("string").set_default("").help("Optional Argument to specify the name of Landmark file, if landmarks are available for warping");
-  parser.add_option("--target_points").action("store").type("multistring").set_default("").help("Names of target points (must be followed by `--`), ex: \"... --target_points *.particles -- ...");
-  parser.add_option("--save_dir").action("store").type("string").set_default("").help("Optional: Path to the directory where the mesh files will be saved");
+  parser.add_option("--reference_points")
+      .action("store")
+      .type("string")
+      .set_default("")
+      .help("Name of reference points.");
+  parser.add_option("--landmark_file")
+      .action("store")
+      .type("string")
+      .set_default("")
+      .help("Optional Argument to specify the name of Landmark file, if landmarks are available for warping");
+  parser.add_option("--target_points")
+      .action("store")
+      .type("multistring")
+      .set_default("")
+      .help("Names of target points (must be followed by `--`), ex: \"... --target_points *.particles -- ...");
+  parser.add_option("--save_dir")
+      .action("store")
+      .type("string")
+      .set_default("")
+      .help("Optional: Path to the directory where the mesh files will be saved");
   Command::buildParser();
 }
-bool WarpMesh::execute(const optparse::Values &options, SharedCommandData &sharedData)
-{
+bool WarpMesh::execute(const optparse::Values &options, SharedCommandData &sharedData) {
   std::string inputMeshFilename = options["reference_mesh"];
   if (inputMeshFilename.length() == 0) {
     std::cerr << "warpmesh error: no reference mesh specified, must pass `--reference_mesh <filename>`\n";
@@ -1413,7 +1437,7 @@ bool WarpMesh::execute(const optparse::Values &options, SharedCommandData &share
       std::vector<std::string> landmarks_ar = {landmarkFilename};
       ParticleSystemEvaluation landmarksystem(landmarks_ar);
       Eigen::MatrixXd landmarksPoints = landmarksystem.Particles().col(0);
-      numLandmarks = landmarksPoints.rows() /3;
+      numLandmarks = landmarksPoints.rows() / 3;
       landmarksPoints.resize(3, numLandmarks);
       landmarksPoints.transposeInPlace();
       landmarks = landmarksPoints;
@@ -1438,59 +1462,52 @@ bool WarpMesh::execute(const optparse::Values &options, SharedCommandData &share
         int idx = static_cast<int>(filenm.rfind('/'));
         filenm.replace(0, idx, saveDir);
       }
-      
+
       Eigen::MatrixXd movingPoints = allPts.col(i);
       movingPoints.resize(3, numParticles);
       movingPoints.transposeInPlace();
       Mesh output = warper.build_mesh(movingPoints);
       output.write(filenm);
-      if(warp_along_with_landmarks){
+      if (warp_along_with_landmarks) {
         std::string warped_landmarks_filename = targetPointsFilenames[i];
-        warped_landmarks_filename.replace(static_cast<int>(warped_landmarks_filename.rfind('.')), warped_landmarks_filename.length(), "_warped_landmarks.particles");
-        if(saveDir.length() > 0)
-        {
-        int idx_ = static_cast<int>(warped_landmarks_filename.rfind('/'));
-        warped_landmarks_filename.replace(0, idx_, saveDir);
+        warped_landmarks_filename.replace(static_cast<int>(warped_landmarks_filename.rfind('.')),
+                                          warped_landmarks_filename.length(), "_warped_landmarks.particles");
+        if (saveDir.length() > 0) {
+          int idx_ = static_cast<int>(warped_landmarks_filename.rfind('/'));
+          warped_landmarks_filename.replace(0, idx_, saveDir);
         }
         Eigen::MatrixXd warped_landmarks = Eigen::MatrixXd::Constant(numLandmarks, 3, 0);
         Eigen::MatrixXd vertices_updated = output.points();
         std::map<int, int> landmarks_map = warper.get_landmarks_map();
 
-        for (vtkIdType i = 0; i < warper.get_warp_matrix().rows(); i++)
-        {
-          if (landmarks_map.count(i))
-          {
+        for (vtkIdType i = 0; i < warper.get_warp_matrix().rows(); i++) {
+          if (landmarks_map.count(i)) {
             // This vertex i corresponds to a landmark
-            int landmark_index = landmarks_map.lower_bound(i)->second; 
+            int landmark_index = landmarks_map.lower_bound(i)->second;
             warped_landmarks(landmark_index, 0) = vertices_updated(i, 0);
             warped_landmarks(landmark_index, 1) = vertices_updated(i, 1);
             warped_landmarks(landmark_index, 2) = vertices_updated(i, 2);
           }
         }
 
-        //Write warped landmarks file
+        // Write warped landmarks file
         std::ofstream out(warped_landmarks_filename);
-        if (!out)
-        {
+        if (!out) {
           std::cerr << "Error in writing Warped Landmarks file\n";
           return false;
         }
-        for (int i = 0; i < warped_landmarks.rows(); i++)
-        {
-          for (int j = 0; j < warped_landmarks.cols(); j++)
-          {
+        for (int i = 0; i < warped_landmarks.rows(); i++) {
+          for (int j = 0; j < warped_landmarks.cols(); j++) {
             out << warped_landmarks(i, j) << "    ";
           }
           out << "\n";
         }
         out.close();
-        if (out.bad())
-        {
+        if (out.bad()) {
           std::cerr << "Error in writing Warped Landmarks file\n";
           return false;
         }
       }
-
     }
     return true;
   } catch (std::exception &e) {
@@ -1502,4 +1519,4 @@ bool WarpMesh::execute(const optparse::Values &options, SharedCommandData &share
   }
 }
 
-} //shapeworks
+}  // namespace shapeworks
