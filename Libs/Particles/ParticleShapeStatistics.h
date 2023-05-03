@@ -7,7 +7,7 @@
 #include <string>
 #include <vector>
 
-#include "ParticleSystem.h"
+#include "ParticleSystemEvaluation.h"
 #include "Shapeworks.h"
 #include "itkParticlePositionReader.h"
 #include "itkParticlePositionWriter.h"
@@ -31,7 +31,7 @@ class ParticleShapeStatistics {
 
   int DoPCA(std::vector<std::vector<Point>> global_pts, int domainsPerShape = 1);
 
-  int DoPCA(ParticleSystem particleSystem, int domainsPerShape = 1);
+  int DoPCA(ParticleSystemEvaluation particleSystem, int domainsPerShape = 1);
 
   //! Dimensionality of the domain of the particle system.
   itkStaticConstMacro(Dimension, unsigned int, VDimension);

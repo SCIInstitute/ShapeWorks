@@ -2,7 +2,7 @@
 #include <Logging.h>
 #include <MeshGenerator.h>
 #include <MeshGroup.h>
-#include <Particles/ParticleSystem.h>
+#include <Particles/ParticleSystemEvaluation.h>
 #include <Project/ProjectUtils.h>
 #include <Shape.h>
 #include <Utils/StringUtils.h>
@@ -13,9 +13,10 @@
 #include <boost/filesystem.hpp>
 
 // vtk
-#include <Optimize/VtkMeshWrapper.h>
 #include <vtkKdTreePointLocator.h>
 #include <vtkPointData.h>
+
+#include "Libs/Optimize/Domain/VtkMeshWrapper.h"
 
 using ReaderType = itk::ImageFileReader<ImageType>;
 
@@ -457,7 +458,7 @@ void Shape::generate_meshes(std::vector<std::string> filenames, MeshGroup& mesh_
 
 //---------------------------------------------------------------------------
 bool Shape::import_point_file(std::string filename, Eigen::VectorXd& points) {
-  return ParticleSystem::ReadParticleFile(filename, points);
+  return ParticleSystemEvaluation::ReadParticleFile(filename, points);
 }
 
 //---------------------------------------------------------------------------
