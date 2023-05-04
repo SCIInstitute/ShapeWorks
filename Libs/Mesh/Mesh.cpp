@@ -983,22 +983,8 @@ Image Mesh::toDistanceTransform(PhysicalRegion region, const Point3 spacing, con
   return img;
 }
 
-Mesh& Mesh::assignThickness(Image &image, Image &dt, double threshold) {
-  mesh::assign_thickness(*this, image, dt, threshold);
-  SW_LOG("Assign thickness with threshold {}", threshold);
-
-  // for each vertex in the mesh
-
-  // Find the nearest neighbors to each point and compute distance between them
-  Point3 point;
-  for (int i = 0; i < numPoints(); i++) {
-    poly_data_->GetPoint(i, point.GetDataPointer());
-    // get DT value
-    // double dt_value = dt.evaluate(point);
-
-    // yeah
-  }
-
+Mesh& Mesh::computeThickness(Image &image, Image &dt, double threshold) {
+  mesh::compute_thickness(*this, image, dt, threshold);
   return *this;
 }
 

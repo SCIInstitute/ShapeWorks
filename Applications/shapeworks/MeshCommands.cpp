@@ -1520,11 +1520,11 @@ bool WarpMesh::execute(const optparse::Values &options, SharedCommandData &share
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// AssignThickness
+// ComputeThickness
 ///////////////////////////////////////////////////////////////////////////////
-void AssignThickness::buildParser() {
-  const std::string prog = "assign-thickness";
-  const std::string desc = "Assigns thickness values each mesh vertex and output vtk meshes with scalar field defined";
+void ComputeThickness::buildParser() {
+  const std::string prog = "compute-thickness";
+  const std::string desc = "Computes thickness values each mesh vertex and output vtk meshes with scalar field defined";
   parser.prog(prog).description(desc);
 
   parser.add_option("--image").action("store").type("string").set_default("").help("Path of image.");
@@ -1542,7 +1542,7 @@ void AssignThickness::buildParser() {
   Command::buildParser();
 }
 
-bool AssignThickness::execute(const optparse::Values &options, SharedCommandData &sharedData) {
+bool ComputeThickness::execute(const optparse::Values &options, SharedCommandData &sharedData) {
   if (!sharedData.validMesh()) {
     std::cerr << "No mesh to operate on\n";
     return false;
@@ -1564,7 +1564,7 @@ bool AssignThickness::execute(const optparse::Values &options, SharedCommandData
 
   double threshold = static_cast<double>(options.get("threshold"));
 
-  sharedData.mesh->assignThickness(img, dt, threshold);
+  sharedData.mesh->computeThickness(img, dt, threshold);
   return sharedData.validMesh();
 }
 }  // namespace shapeworks

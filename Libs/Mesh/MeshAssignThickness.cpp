@@ -31,11 +31,10 @@ static typename TImageType::PixelType get_value(TImageType *image, double *point
   return image->GetPixel(index);
 }
 
-void assign_thickness(Mesh &mesh, Image &image, Image &dt, double threshold) {
-  SW_LOG("Assign thickness with threshold {}", threshold);
+void compute_thickness(Mesh &mesh, Image &image, Image &dt, double threshold) {
+  SW_LOG("Computing thickness with threshold {}", threshold);
 
   // compute gradient image from distance transform
-
   auto gradient_filter = GradientFilterType::New();
   gradient_filter->SetInput(dt.getITKImage());
   gradient_filter->Update();
@@ -43,6 +42,7 @@ void assign_thickness(Mesh &mesh, Image &image, Image &dt, double threshold) {
 
   auto poly_data = mesh.getVTKMesh();
 
+  // create array of thickness values
   auto values = vtkSmartPointer<vtkDoubleArray>::New();
   values->SetNumberOfComponents(1);
   values->SetNumberOfTuples(poly_data->GetNumberOfPoints());
@@ -51,7 +51,9 @@ void assign_thickness(Mesh &mesh, Image &image, Image &dt, double threshold) {
   auto interpolator = GradientInterpolatorType::New();
   interpolator->SetInputImage(gradient_map);
 
-  // Find the nearest neighbors to each point and compute distance between them
+  Vector spacing = dt.spacing();
+  auto min_spacing = std::min<double>({spacing[0], spacing[1], spacing[2]});
+
   for (int i = 0; i < mesh.numPoints(); i++) {
     Point3 point;
     poly_data->GetPoint(i, point.GetDataPointer());
@@ -68,9 +70,9 @@ void assign_thickness(Mesh &mesh, Image &image, Image &dt, double threshold) {
 
       // normalize the gradient
       float norm = std::sqrt(gradient[0] * gradient[0] + gradient[1] * gradient[1] + gradient[2] * gradient[2]);
-      gradient[0] /= norm;
-      gradient[1] /= norm;
-      gradient[2] /= norm;
+      gradient[0] /= norm * min_spacing;
+      gradient[1] /= norm * min_spacing;
+      gradient[2] /= norm * min_spacing;
 
       point[0] += gradient[0];
       point[1] += gradient[1];
@@ -79,7 +81,7 @@ void assign_thickness(Mesh &mesh, Image &image, Image &dt, double threshold) {
       steps++;
     } while ((intensity > threshold && max_steps-- > 0) || steps < min_steps);
 
-    // compute distance between start and end itk points
+    // compute distance between start and end points
     double distance = start.EuclideanDistanceTo(point);
     values->InsertValue(i, distance);
   }

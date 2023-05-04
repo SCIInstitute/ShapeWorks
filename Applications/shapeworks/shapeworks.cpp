@@ -100,7 +100,7 @@ int main(int argc, char *argv[])
   shapeworks.addCommand(MeshToDT::getCommand());
   shapeworks.addCommand(CompareMesh::getCommand());
   shapeworks.addCommand(WarpMesh::getCommand());
-  shapeworks.addCommand(AssignThickness::getCommand());
+  shapeworks.addCommand(ComputeThickness::getCommand());
 
   // Misc Commands
   shapeworks.addCommand(Seed::getCommand());

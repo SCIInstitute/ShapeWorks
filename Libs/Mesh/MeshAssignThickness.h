@@ -1,12 +1,10 @@
+#pragma once
+
 #include <Image.h>
 #include <Mesh.h>
 
-namespace shapeworks {
+namespace shapeworks::mesh {
 
-namespace mesh {
+void compute_thickness(Mesh& mesh, Image& image, Image& dt, double threshold);
 
-void assign_thickness(Mesh& mesh, Image& image, Image& dt, double threshold);
-
-}
-
-}  // namespace shapeworks
+}  // namespace shapeworks::mesh
