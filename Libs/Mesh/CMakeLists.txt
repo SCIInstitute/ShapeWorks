@@ -9,6 +9,7 @@ set(Mesh_sources
  meshFIM.cpp
  MeshUtils.cpp
  MeshWarper.cpp
+ MeshAssignThickness.cpp
  )
 
 set(Mesh_headers

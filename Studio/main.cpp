@@ -78,10 +78,7 @@ int main(int argc, char** argv) {
     }
   }
 
-  // print args
-  for (int i = 0; i < argc; i++) {
-    SW_LOG("Arg {}: {}", i, argv[i]);
-  }
+  // to force single threaded
   // tbb::task_scheduler_init init(1);
 
   try {

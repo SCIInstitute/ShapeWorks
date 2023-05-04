@@ -171,6 +171,9 @@ class Mesh {
   Image toDistanceTransform(PhysicalRegion region = PhysicalRegion(), const Point3 spacing = Point3({1., 1., 1.}),
                             const Dims padding = Dims({1, 1, 1})) const;
 
+  /// assign thickness values from mesh points inward until threshold is met
+  Mesh& assignThickness(const Image& image, const Image& dt, double threshold);
+
   // query functions //
 
   /// center of mesh

@@ -1519,4 +1519,52 @@ bool WarpMesh::execute(const optparse::Values &options, SharedCommandData &share
   }
 }
 
+///////////////////////////////////////////////////////////////////////////////
+// AssignThickness
+///////////////////////////////////////////////////////////////////////////////
+void AssignThickness::buildParser() {
+  const std::string prog = "assign-thickness";
+  const std::string desc = "Assigns thickness values each mesh vertex and output vtk meshes with scalar field defined";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--image").action("store").type("string").set_default("").help("Path of image.");
+  parser.add_option("--distance_transform")
+      .action("store")
+      .type("string")
+      .set_default("")
+      .help("Path of distance_transform.");
+  parser.add_option("--threshold")
+      .action("store")
+      .type("double")
+      .set_default(0.0)
+      .help("Intensity threshold for thickness values");
+
+  Command::buildParser();
+}
+
+bool AssignThickness::execute(const optparse::Values &options, SharedCommandData &sharedData) {
+  if (!sharedData.validMesh()) {
+    std::cerr << "No mesh to operate on\n";
+    return false;
+  }
+
+  std::string filename = static_cast<std::string>(options.get("image"));
+  if (filename == "") {
+    std::cerr << "Must specify an image\n";
+    return false;
+  }
+  Image img(filename);
+
+  std::string dt_filename = static_cast<std::string>(options.get("distance_transform"));
+  if (dt_filename == "") {
+    std::cerr << "Must specify a distance_transform\n";
+    return false;
+  }
+  Image dt(dt_filename);
+
+  double threshold = static_cast<double>(options.get("threshold"));
+
+  sharedData.mesh->assignThickness(img, dt, threshold);
+  return sharedData.validMesh();
+}
 }  // namespace shapeworks
