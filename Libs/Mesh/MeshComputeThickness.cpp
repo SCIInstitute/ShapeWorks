@@ -31,7 +31,7 @@ static typename TImageType::PixelType get_value(TImageType *image, double *point
   return image->GetPixel(index);
 }
 
-void compute_thickness(Mesh &mesh, Image &image, Image &dt, double threshold) {
+void compute_thickness(Mesh &mesh, Image &image, Image &dt, double threshold, double min_dist, double max_dist) {
   SW_LOG("Computing thickness with threshold {}", threshold);
 
   // compute gradient image from distance transform
@@ -59,30 +59,61 @@ void compute_thickness(Mesh &mesh, Image &image, Image &dt, double threshold) {
     poly_data->GetPoint(i, point.GetDataPointer());
     Point3 start = point;
 
-    int max_steps = 500;
-    int min_steps = 2;
-    int steps = 0;
+    Point3 intensity_start = point;
+    bool intensity_found = false;
 
+    bool should_stop = false;
+    int steps = 0;
     float intensity = std::numeric_limits<float>::max();
     do {
-      VectorPixelType gradient = interpolator->Evaluate(point);
       intensity = image.evaluate(point);
+      if (!intensity_found && intensity > threshold) {
+        intensity_start = point;
+        intensity_found = true;
+      }
 
-      // normalize the gradient
-      float norm = std::sqrt(gradient[0] * gradient[0] + gradient[1] * gradient[1] + gradient[2] * gradient[2]);
-      gradient[0] /= norm * min_spacing;
-      gradient[1] /= norm * min_spacing;
-      gradient[2] /= norm * min_spacing;
+      should_stop = false;
 
-      point[0] += gradient[0];
-      point[1] += gradient[1];
-      point[2] += gradient[2];
+      double current_distance = start.EuclideanDistanceTo(point);
 
-      steps++;
-    } while ((intensity > threshold && max_steps-- > 0) || steps < min_steps);
+      // if we haven't found any intensity above the threshold within the min_dist, give up and call it a zero
+      if (!intensity_found && current_distance > min_dist) {
+        intensity_start = point;
+        should_stop = true;
+      }
+
+      // if we have found intensity above the threshold, and we've gone past the max_dist, stop
+      if (intensity_found && current_distance > max_dist) {
+        should_stop = true;
+      }
+
+      // if we've hit the intensity area and are now past it, stop
+      if (intensity_found && intensity < threshold) {
+        should_stop = true;
+      }
+
+      if (!should_stop) {
+        // evaluate gradient
+        VectorPixelType gradient = interpolator->Evaluate(point);
+
+        // normalize the gradient
+        float norm = std::sqrt(gradient[0] * gradient[0] + gradient[1] * gradient[1] + gradient[2] * gradient[2]);
+        gradient[0] /= norm * min_spacing;
+        gradient[1] /= norm * min_spacing;
+        gradient[2] /= norm * min_spacing;
+
+        // take step
+        point[0] += gradient[0];
+        point[1] += gradient[1];
+        point[2] += gradient[2];
+
+        steps++;
+      }
+
+    } while (!should_stop);
 
     // compute distance between start and end points
-    double distance = start.EuclideanDistanceTo(point);
+    double distance = intensity_start.EuclideanDistanceTo(point);
     values->InsertValue(i, distance);
   }
   mesh.setField("thickness", values, Mesh::Point);

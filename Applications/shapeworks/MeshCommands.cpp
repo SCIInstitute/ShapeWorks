@@ -1538,6 +1538,16 @@ void ComputeThickness::buildParser() {
       .type("double")
       .set_default(0.0)
       .help("Intensity threshold for thickness values");
+  parser.add_option("--min_dist")
+      .action("store")
+      .type("double")
+      .set_default(0.0)
+      .help("Minimum distance to intensity area");
+  parser.add_option("--max_dist")
+      .action("store")
+      .type("double")
+      .set_default(100000.0)
+      .help("Maximum distance to determine thickness");
 
   Command::buildParser();
 }
@@ -1563,8 +1573,10 @@ bool ComputeThickness::execute(const optparse::Values &options, SharedCommandDat
   Image dt(dt_filename);
 
   double threshold = static_cast<double>(options.get("threshold"));
+  double min_dist = static_cast<double>(options.get("min_dist"));
+  double max_dist = static_cast<double>(options.get("max_dist"));
 
-  sharedData.mesh->computeThickness(img, dt, threshold);
+  sharedData.mesh->computeThickness(img, dt, threshold, min_dist, max_dist);
   return sharedData.validMesh();
 }
 }  // namespace shapeworks
