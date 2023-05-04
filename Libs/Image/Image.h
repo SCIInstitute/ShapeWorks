@@ -32,7 +32,7 @@ class Image {
   using ImageType = itk::Image<PixelType, 3>;
   using StatsPtr = itk::StatisticsImageFilter<ImageType>::Pointer;
   using ImageIterator = itk::ImageRegionIterator<ImageType>;
-  using InterpolatorType = itk::LinearInterpolateImageFunction<ImageType, Image::PixelType>;
+  using InterpolatorType = itk::LinearInterpolateImageFunction<ImageType>;
 
   // constructors and assignment operators //
   Image(const Dims dims);
