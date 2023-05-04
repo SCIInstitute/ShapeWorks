@@ -1,5 +1,5 @@
 ==========================================
- ShapeWorks   v6.1.0 - Released June 2021
+ ShapeWorks v6.4.0 - Released May 2023
 ==========================================
 
 The ShapeWorks software is an open-source distribution of a new method for
@@ -15,9 +15,8 @@ models, and visualizing the results.
 
 =====================
 
-You have downloaded a binary distribution of ShapeWorks.
+Welcome to ShapeWorks!
 
-### Installation instructions.
 
 1. Install the ShapeWorks .pkg file by double-clicking on the file.
 
@@ -26,16 +25,28 @@ You have downloaded a binary distribution of ShapeWorks.
 
 3. Create a protected conda environment that installs everything necessary to run.
 `source install_shapeworks.sh`
-
   **Note:** You can pass a different name for the environment, enabling multiple installations.
   `source install_shapeworks.sh shapeworks_61`
 
-**Important:** Your shapeworks conda environment must always be activated before using ShapeWorks.
+
+### ShapeWorks comes with examples to get you started.
+
+#### Studio
+
+1. Copy the /Applications/ShapeWorks/Examples folder to another location of your choosing. (You can also use Finder.)
+
+2. Open ShapeWorks Studio
+
+3. Select "Open Exising Project"
+
+4. Select Examples/Studio/Ellipsoid/ellipsoid.xlsx
+
+5. Experiment with the Studio interface.
 
 
-### ShapeWorks comes with Python examples to get you started.
+#### Python
 
-1. Open a terminal and activate the shapeworks conda environment (use the environment name passed to `install_shapeworks` above).
+1. Open a terminal and activate the shapeworks conda environment (use the environment name passed to **install_shapeworks** above).
 `conda activate shapeworks`
 
 2. Copy the Examples folder to another location of your choosing.
@@ -45,12 +56,13 @@ You have downloaded a binary distribution of ShapeWorks.
 `cd $HOME/ShapeWorks-Examples/Python`
 
 4. Run one of the included use cases. To list them all, run: `python RunUseCase.py --help`.
-`python RunUseCase.py ellipsoid_fd`
+`python RunUseCase.py <insert name of use case here>`
 
 
-### ShapeWorks also includes interactive Jupyter Python notebook examples.
 
-1. Open a terminal and activate the shapeworks conda environment (use the environment name passed to `install_shapeworks` above).
+#### ShapeWorks also includes interactive Jupyter Python notebook examples.
+
+1. Open a terminal and activate the shapeworks conda environment (use the environment name passed to **install_shapeworks** above).
 `conda activate shapeworks`
 
 2. Change to the notebook tutorials folder of the Examples directory you copied.
@@ -60,6 +72,10 @@ You have downloaded a binary distribution of ShapeWorks.
 `jupyter notebook`
 
 4. Click on a notebook to get started.
+
+!!! note "Important"
+    Your shapeworks conda environment must always be activated before using ShapeWorks.
+
 
 
 =====================
