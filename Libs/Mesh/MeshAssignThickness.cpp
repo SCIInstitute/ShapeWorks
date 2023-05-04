@@ -1,6 +1,7 @@
 #include "MeshAssignThickness.h"
 
 #include <itkGradientImageFilter.h>
+#include <itkVectorLinearInterpolateImageFunction.h>
 
 #include "Logging.h"
 namespace shapeworks::mesh {
@@ -8,6 +9,7 @@ namespace shapeworks::mesh {
 using VectorPixelType = itk::CovariantVector<float, 3>;
 using GradientImageType = itk::Image<VectorPixelType, 3>;
 using GradientFilterType = itk::GradientImageFilter<Image::ImageType>;
+using GradientInterpolatorType = itk::VectorLinearInterpolateImageFunction<GradientImageType, double>;
 
 template <class TImageType>
 static typename TImageType::PixelType get_value(TImageType *image, double *point) {
@@ -29,7 +31,7 @@ static typename TImageType::PixelType get_value(TImageType *image, double *point
   return image->GetPixel(index);
 }
 
-void assign_thickness(Mesh &mesh, const Image &image, const Image &dt, double threshold) {
+void assign_thickness(Mesh &mesh, Image &image, Image &dt, double threshold) {
   SW_LOG("Assign thickness with threshold {}", threshold);
 
   // compute gradient image from distance transform
@@ -46,9 +48,11 @@ void assign_thickness(Mesh &mesh, const Image &image, const Image &dt, double th
   values->SetNumberOfTuples(poly_data->GetNumberOfPoints());
   values->SetName("thickness");
 
+  auto interpolator = GradientInterpolatorType::New();
+  interpolator->SetInputImage(gradient_map);
+
   // Find the nearest neighbors to each point and compute distance between them
-    for (int i = 0; i < mesh.numPoints(); i++) {
-  //for (int i = 0; i < 10; i++) {
+  for (int i = 0; i < mesh.numPoints(); i++) {
     Point3 point;
     poly_data->GetPoint(i, point.GetDataPointer());
     Point3 start = point;
@@ -59,29 +63,14 @@ void assign_thickness(Mesh &mesh, const Image &image, const Image &dt, double th
 
     float intensity = std::numeric_limits<float>::max();
     do {
-      VectorPixelType gradient = get_value(gradient_map, point.GetDataPointer());
-      intensity = get_value(image.getITKImage().GetPointer(), point.GetDataPointer());
-      float dt_value = get_value(dt.getITKImage().GetPointer(), point.GetDataPointer());
-
-      //SW_LOG("intensity: {}, dt: {}, gradient: ({}, {}, {})", intensity, dt_value, gradient[0], gradient[1],
-        //     gradient[2]);
+      VectorPixelType gradient = interpolator->Evaluate(point);
+      intensity = image.evaluate(point);
 
       // normalize the gradient
       float norm = std::sqrt(gradient[0] * gradient[0] + gradient[1] * gradient[1] + gradient[2] * gradient[2]);
       gradient[0] /= norm;
       gradient[1] /= norm;
       gradient[2] /= norm;
-
-      //      if (dt_value > 0) {
-      //        point[0] -= gradient[0];
-      //      point[1] -= gradient[1];
-      //    point[2] -= gradient[2];
-      //    }
-      //  else {
-      //  point[0] += gradient[0];
-      // point[1] += gradient[1];
-      // point[2] += gradient[2];
-      //}
 
       point[0] += gradient[0];
       point[1] += gradient[1];
@@ -90,7 +79,6 @@ void assign_thickness(Mesh &mesh, const Image &image, const Image &dt, double th
       steps++;
     } while ((intensity > threshold && max_steps-- > 0) || steps < min_steps);
 
-//    SW_TRACE(steps);
     // compute distance between start and end itk points
     double distance = start.EuclideanDistanceTo(point);
     values->InsertValue(i, distance);

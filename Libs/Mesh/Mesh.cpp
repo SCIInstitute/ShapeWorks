@@ -983,7 +983,7 @@ Image Mesh::toDistanceTransform(PhysicalRegion region, const Point3 spacing, con
   return img;
 }
 
-Mesh& Mesh::assignThickness(const Image& image, const Image& dt, double threshold) {
+Mesh& Mesh::assignThickness(Image &image, Image &dt, double threshold) {
   mesh::assign_thickness(*this, image, dt, threshold);
   SW_LOG("Assign thickness with threshold {}", threshold);
 

@@ -5,7 +5,7 @@ namespace shapeworks {
 
 namespace mesh {
 
-void assign_thickness(Mesh& mesh, const Image& image, const Image& dt, double threshold);
+void assign_thickness(Mesh& mesh, Image& image, Image& dt, double threshold);
 
 }
 
