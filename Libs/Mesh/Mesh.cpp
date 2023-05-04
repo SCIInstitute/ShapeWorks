@@ -61,7 +61,7 @@
 #include "Image.h"
 #include "Libs/Optimize/Domain/VtkMeshWrapper.h"
 #include "Logging.h"
-#include "MeshAssignThickness.h"
+#include "MeshComputeThickness.h"
 #include "MeshUtils.h"
 #include "PreviewMeshQC/FEAreaCoverage.h"
 #include "PreviewMeshQC/FEVTKExport.h"

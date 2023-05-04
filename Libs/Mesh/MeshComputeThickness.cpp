@@ -1,4 +1,4 @@
-#include "MeshAssignThickness.h"
+#include "MeshComputeThickness.h"
 
 #include <itkGradientImageFilter.h>
 #include <itkVectorLinearInterpolateImageFunction.h>
