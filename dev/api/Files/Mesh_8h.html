@@ -2419,7 +2419,7 @@
 </thead>
 <tbody>
 <tr>
-<td><strong><a href="../Namespaces/namespaceshapeworks.html">shapeworks</a></strong> <br>User usage reporting (telemetry)</td>
+<td><strong><a href="../Namespaces/namespaceshapeworks.html">shapeworks</a></strong></td>
 </tr>
 </tbody>
 </table>
@@ -2445,10 +2445,10 @@
 <h2 id="source-code">Source code</h2>
 <div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Image/ImageUtils.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ImageUtils.h&quot;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Shapeworks.h&quot;</span>
 
-<span class="k">class</span><span class="w"> </span><span class="nc">vtkStaticCellLocator</span><span class="p">;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">vtkCellLocator</span><span class="p">;</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">vtkKdTreePointLocator</span><span class="p">;</span>
 
 <span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
@@ -2518,9 +2518,7 @@
 
 <span class="w">  </span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">applyTransform</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">MeshTransform</span><span class="w"> </span><span class="n">transform</span><span class="p">);</span>
 
-<span class="w">  </span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">rotate</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">angle</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Axis</span><span class="w"> </span><span class="n">axis</span><span class="p">);</span>
-
-<span class="w">  </span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">fillHoles</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">hole_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1000.0</span><span class="p">);</span>
+<span class="w">  </span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">fillHoles</span><span class="p">();</span>
 
 <span class="w">  </span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">clean</span><span class="p">();</span>
 
@@ -2536,19 +2534,13 @@
 
 <span class="w">  </span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">fixElement</span><span class="p">();</span>
 
-<span class="w">  </span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">fixNonManifold</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">detectNonManifold</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">detectTriangular</span><span class="p">();</span>
-
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Field</span><span class="o">&gt;</span><span class="w"> </span><span class="n">distance</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="n">target</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">DistanceMethod</span><span class="w"> </span><span class="n">method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">PointToCell</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
 
 <span class="w">  </span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">clipClosedSurface</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Plane</span><span class="w"> </span><span class="n">plane</span><span class="p">);</span>
 
 <span class="w">  </span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">computeNormals</span><span class="p">();</span>
 
-<span class="w">  </span><span class="n">Point3</span><span class="w"> </span><span class="nf">closestPoint</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="n">point</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="o">&amp;</span><span class="w"> </span><span class="n">distance</span><span class="p">,</span><span class="w"> </span><span class="n">vtkIdType</span><span class="o">&amp;</span><span class="w"> </span><span class="n">face_id</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+<span class="w">  </span><span class="n">Point3</span><span class="w"> </span><span class="nf">closestPoint</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="n">point</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="o">&amp;</span><span class="w"> </span><span class="n">outside</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="o">&amp;</span><span class="w"> </span><span class="n">distance</span><span class="p">,</span><span class="w"> </span><span class="n">vtkIdType</span><span class="o">&amp;</span><span class="w"> </span><span class="n">face_id</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
 
 <span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">closestPointId</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="n">point</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
 
@@ -2620,7 +2612,10 @@
 
 <span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">getSupportedTypes</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="p">{</span><span class="s">&quot;vtk&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;vtp&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;ply&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;stl&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;obj&quot;</span><span class="p">};</span><span class="w"> </span><span class="p">}</span>
 
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">getFFCValue</span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">query</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">prepareFFCFields</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">boundaries</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">query</span><span class="p">,</span>
+<span class="w">                        </span><span class="kt">bool</span><span class="w"> </span><span class="n">onlyGenerateInOut</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span>
+
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">getFFCValue</span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">query</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
 
 <span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="nf">getFFCGradient</span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">query</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
 
@@ -2646,12 +2641,23 @@
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">invalidateLocators</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
 
-<span class="w">  </span><span class="k">mutable</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkStaticCellLocator</span><span class="o">&gt;</span><span class="w"> </span><span class="n">cellLocator</span><span class="p">;</span>
+<span class="w">  </span><span class="c1">// TODO: use vtkStaticCellLocator when vtk is upgraded to version 9</span>
+<span class="w">  </span><span class="k">mutable</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkCellLocator</span><span class="o">&gt;</span><span class="w"> </span><span class="n">cellLocator</span><span class="p">;</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">updateCellLocator</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
 
 <span class="w">  </span><span class="k">mutable</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkKdTreePointLocator</span><span class="o">&gt;</span><span class="w"> </span><span class="n">pointLocator</span><span class="p">;</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">updatePointLocator</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
 
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Eigen</span><span class="o">::</span><span class="n">Matrix3d</span><span class="o">&gt;</span><span class="w"> </span><span class="n">setGradientFieldForFFCs</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkDoubleArray</span><span class="o">&gt;</span><span class="w"> </span><span class="n">absvalues</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="n">V</span><span class="p">,</span>
+<span class="w">                                                       </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXi</span><span class="w"> </span><span class="n">F</span><span class="p">);</span>
+
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkDoubleArray</span><span class="o">&gt;</span><span class="w"> </span><span class="n">setDistanceToBoundaryValueFieldForFFCs</span><span class="p">(</span>
+<span class="w">      </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkDoubleArray</span><span class="o">&gt;</span><span class="w"> </span><span class="n">values</span><span class="p">,</span><span class="w"> </span><span class="n">MeshPoints</span><span class="w"> </span><span class="n">points</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">size_t</span><span class="o">&gt;</span><span class="w"> </span><span class="n">boundaryVerts</span><span class="p">,</span>
+<span class="w">      </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkDoubleArray</span><span class="o">&gt;</span><span class="w"> </span><span class="n">inout</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="n">V</span><span class="p">,</span>
+<span class="w">      </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXi</span><span class="w"> </span><span class="n">F</span><span class="p">);</span><span class="w">  </span><span class="c1">// fixme: sets value, returns absvalues, not sure why</span>
+
+<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkDoubleArray</span><span class="o">&gt;</span><span class="w"> </span><span class="n">computeInOutForFFCs</span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">query</span><span class="p">,</span>
+<span class="w">                                                      </span><span class="n">MeshType</span><span class="w"> </span><span class="n">halfmesh</span><span class="p">);</span><span class="w">  </span><span class="c1">// similar issues to above</span>
 
 <span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="nf">computeBarycentricCoordinates</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="o">&amp;</span><span class="w"> </span><span class="n">pt</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">face</span><span class="p">)</span>
 <span class="w">      </span><span class="k">const</span><span class="p">;</span><span class="w">  </span><span class="c1">// // WARNING: Copied directly from Meshwrapper. TODO: When refactoring, take this into account.</span>
@@ -2668,7 +2674,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-05-04 at 20:03:05 +0000</p>
+<p>Updated on 2022-07-23 at 16:40:07 -0600</p>
 
               
             </article>

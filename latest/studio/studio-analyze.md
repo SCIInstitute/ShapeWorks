@@ -18,6 +18,22 @@ Additionally an LDA chart is generated for group differences:
 
 ![ShapeWorks Studio LDA Chart](../img/studio/studio_lda.png){: width="300" }
 
+### Network Analysis
+
+![ShapeWorks Studio Network Analysis](../img/studio/studio_network_analysis.png){: width="200" }
+
+The Network Analysis tool provides a method to statistically analyze data captured in feature maps. Two implementations have been included: Network Analysis and SPM1D. Statistical parametric mapping (SPM, https://www.fil.ion.ucl.ac.uk/spm/) was introduced for the analysis of brain imaging data and has since been used in statistical analysis of surface-based group differences. The SPM1D option uses this technique without consideration of the connectivity and spatial relationship of the input data. The Network Analysis method uses the relative size of the network of connected correspondence particles to identify significant differences amongst groups, as originally described by Forman and colleagues (Forman SD, et al. Magnetic Resonance in Medicine33:636-647, 1995). Our publication on the specifics of this method and example applications is in review and will be referenced here when available.
+
+| Option            | Description                                                                                                                                                      |
+|-------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Feature Map       | Choose which feature to operate on.                                                                                                                              |
+| P-value Threshold | The initial p-value used to threshold particles as an initial step to the evaluation of cluster size. Only modify from 0.05 for adjusted statistical assumptions.|
+| Cluster P-value   | The cluster p-value defines the p-value used to identify significant clusters for the group. Traditional statistics would assume a p-value of 0.05.              |
+| Permutations      | This is the number of permutations used in the analysis. The maximum value is driven by the sample size, however 10,000 is generally considered acceptably large.|
+| Display           | Choose to display Network Analysis output or SPM1D                                                                                                               |
+
+
+
 ### Samples
 
 The Samples tab of the view panel allows you to view all of the samples in your cohort, view a single sample by index, or view the median sample.
@@ -33,6 +49,17 @@ The PCA tab of the View panel shows reconstructed shapes (surface meshes) along 
 `Eigenvalue` - This shows the eigenvalue of the currently selected mode.  This is a unitless measure of how much variance is explained by this mode.  The modes are sorted in decreasing order of eigenvalue, corresponding to the most variance explained first.
 
 ![ShapeWorks Studio Analysis View Panel PCA Display](../img/studio/studio_analyze_view_pca.png)
+
+### Multi-Level PCA
+
+The PCA tab of the View panel shows options to select modes of variation in different subspaces when a multiple domain shape model is loaded:
+![ShapeWorks Studio Analysis View Panel PCA Display for Multiple-Domain Shape Model](../img/studio/studio_analyze_view_pca_multiple_domain.png)
+
+`Shape and Relative Pose` - Selecting this option shows reconstructed shapes and it's eigenvalue and lambda, along ordinary PCA modes of variation. PCA is done in the shared space of the multi-object shape structure and thus  the shsape and pose variations are entangled here.
+
+`Shape` - Selecting this option shows reconstructed shapes and it's eigenvalue and lambda, along only morphological modes of variation. Multi-Level Component Analysis is done in the shape subspace (within-object) of the multi-object shape structure. Shape and pose variations are disentangled here and we only see morphological changes of each object in the shape structure.
+
+`Relative Pose` - Selecting this option shows reconstructed shapes and it's eigenvalue and lambda, along only relative pose modes of variation. Multi-Level Component Analysis is done in the relative pose subspace (between-objects) of the multi-object shape structure. Shape and pose variations are disentangled here and we only see alignment changes between the objects in the multi-object shape structure.
 
 ### Show Difference to Mean
 

@@ -14,7 +14,6 @@ title: shapeworks::CompareSettings
 |                | Name           |
 | -------------- | -------------- |
 | DisplayMode | **[get_display_mode](../Classes/classshapeworks_1_1CompareSettings.md#function-get-display-mode)**() |
-| bool | **[get_mean_shape_checked](../Classes/classshapeworks_1_1CompareSettings.md#function-get-mean-shape-checked)**() |
 
 ## Public Attributes
 
@@ -25,7 +24,6 @@ title: shapeworks::CompareSettings
 | bool | **[original_checked_](../Classes/classshapeworks_1_1CompareSettings.md#variable-original-checked-)**  |
 | bool | **[groomed_checked_](../Classes/classshapeworks_1_1CompareSettings.md#variable-groomed-checked-)**  |
 | bool | **[reconstructed_checked_](../Classes/classshapeworks_1_1CompareSettings.md#variable-reconstructed-checked-)**  |
-| bool | **[mean_shape_checked_](../Classes/classshapeworks_1_1CompareSettings.md#variable-mean-shape-checked-)**  |
 | float | **[opacity_](../Classes/classshapeworks_1_1CompareSettings.md#variable-opacity-)**  |
 
 ## Public Functions Documentation
@@ -34,13 +32,6 @@ title: shapeworks::CompareSettings
 
 ```cpp
 inline DisplayMode get_display_mode()
-```
-
-
-### function get_mean_shape_checked
-
-```cpp
-inline bool get_mean_shape_checked()
 ```
 
 
@@ -81,13 +72,6 @@ bool reconstructed_checked_ = false;
 ```
 
 
-### variable mean_shape_checked_
-
-```cpp
-bool mean_shape_checked_ = false;
-```
-
-
 ### variable opacity_
 
 ```cpp
@@ -97,4 +81,4 @@ float opacity_ = 1.0;
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:03 +0000
+Updated on 2022-07-23 at 16:40:06 -0600

@@ -19,7 +19,7 @@
     
     
       
-        <title>Studio/DeepSSM/DeepSSMTool.h - ShapeWorks</title>
+        <title>Studio/src/DeepSSM/DeepSSMTool.h - ShapeWorks</title>
       
     
     
@@ -84,7 +84,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#studiodeepssmdeepssmtoolh" class="md-skip">
+        <a href="#studiosrcdeepssmdeepssmtoolh" class="md-skip">
           Skip to content
         </a>
       
@@ -122,7 +122,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Studio/DeepSSM/DeepSSMTool.h
+              Studio/src/DeepSSM/DeepSSMTool.h
             
           </span>
         </div>
@@ -2409,7 +2409,7 @@
 
 
 
-<h1 id="studiodeepssmdeepssmtoolh">Studio/DeepSSM/DeepSSMTool.h</h1>
+<h1 id="studiosrcdeepssmdeepssmtoolh">Studio/src/DeepSSM/DeepSSMTool.h</h1>
 <h2 id="namespaces">Namespaces</h2>
 <table>
 <thead>
@@ -2419,7 +2419,7 @@
 </thead>
 <tbody>
 <tr>
-<td><strong><a href="../Namespaces/namespaceshapeworks.html">shapeworks</a></strong> <br>User usage reporting (telemetry)</td>
+<td><strong><a href="../Namespaces/namespaceshapeworks.html">shapeworks</a></strong></td>
 </tr>
 </tbody>
 </table>
@@ -2448,7 +2448,7 @@
 
 <span class="c1">// studio</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/Preferences.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Shape.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/Shape.h&gt;</span>
 
 <span class="k">class</span><span class="w"> </span><span class="nc">Ui_DeepSSMTool</span><span class="p">;</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">QLabel</span><span class="p">;</span>
@@ -2482,7 +2482,7 @@
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">shutdown</span><span class="p">();</span>
 
-<span class="w">  </span><span class="n">ShapeList</span><span class="w"> </span><span class="nf">get_shapes</span><span class="p">();</span>
+<span class="w">  </span><span class="n">QVector</span><span class="o">&lt;</span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Shape</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">get_shapes</span><span class="p">();</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">resizeEvent</span><span class="p">(</span><span class="n">QResizeEvent</span><span class="o">*</span><span class="w"> </span><span class="n">event</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
 
@@ -2507,10 +2507,13 @@
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">training_fine_tuning_changed</span><span class="p">();</span>
 
-<span class="w"> </span><span class="nl">Q_SIGNALS</span><span class="p">:</span>
+<span class="w"> </span><span class="nl">signals</span><span class="p">:</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_view</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">progress</span><span class="p">(</span><span class="kt">int</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">message</span><span class="p">(</span><span class="n">QString</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">error</span><span class="p">(</span><span class="n">QString</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">warning</span><span class="p">(</span><span class="n">QString</span><span class="p">);</span>
 
 <span class="w"> </span><span class="k">private</span><span class="o">:</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">update_meshes</span><span class="p">();</span>
@@ -2538,7 +2541,7 @@
 <span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">DeepSSMJob</span><span class="o">&gt;</span><span class="w"> </span><span class="n">deep_ssm_</span><span class="p">;</span>
 <span class="w">  </span><span class="n">QElapsedTimer</span><span class="w"> </span><span class="n">timer_</span><span class="p">;</span>
 
-<span class="w">  </span><span class="n">ShapeList</span><span class="w"> </span><span class="n">shapes_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">QVector</span><span class="o">&lt;</span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Shape</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">shapes_</span><span class="p">;</span>
 <span class="w">  </span><span class="n">QPixmap</span><span class="w"> </span><span class="n">violin_plot_</span><span class="p">;</span>
 <span class="w">  </span><span class="n">QPixmap</span><span class="w"> </span><span class="n">training_plot_</span><span class="p">;</span>
 <span class="p">};</span>
@@ -2546,7 +2549,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-05-04 at 20:03:05 +0000</p>
+<p>Updated on 2022-07-23 at 16:40:07 -0600</p>
 
               
             </article>

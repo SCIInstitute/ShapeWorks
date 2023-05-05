@@ -25,7 +25,6 @@ Inherits from QWidget
 | | **[~CompareWidget](../Classes/classshapeworks_1_1CompareWidget.md#function-~comparewidget)**() |
 | [CompareSettings](../Classes/classshapeworks_1_1CompareSettings.md) | **[get_settings](../Classes/classshapeworks_1_1CompareWidget.md#function-get-settings)**() |
 | void | **[set_available](../Classes/classshapeworks_1_1CompareWidget.md#function-set-available)**(DisplayMode mode, bool available) |
-| void | **[set_mean_shape_available](../Classes/classshapeworks_1_1CompareWidget.md#function-set-mean-shape-available)**(bool available) |
 | bool | **[check_any_available](../Classes/classshapeworks_1_1CompareWidget.md#function-check-any-available)**() |
 
 ## Public Signals Documentation
@@ -72,15 +71,6 @@ void set_available(
 ```
 
 
-### function set_mean_shape_available
-
-```cpp
-void set_mean_shape_available(
-    bool available
-)
-```
-
-
 ### function check_any_available
 
 ```cpp
@@ -90,4 +80,4 @@ bool check_any_available()
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:03 +0000
+Updated on 2022-07-23 at 16:40:06 -0600

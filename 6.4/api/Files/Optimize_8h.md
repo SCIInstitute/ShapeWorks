@@ -11,7 +11,7 @@ title: Libs/Optimize/Optimize.h
 
 | Name           |
 | -------------- |
-| **[shapeworks](../Namespaces/namespaceshapeworks.md)** <br>User usage reporting (telemetry)  |
+| **[shapeworks](../Namespaces/namespaceshapeworks.md)**  |
 
 ## Classes
 
@@ -29,45 +29,45 @@ title: Libs/Optimize/Optimize.h
 #pragma once
 
 #ifdef _WIN32
-#pragma warning(disable : 4996)
+#pragma warning( disable: 4996 )
 #endif
 
 // std
-#include <random>
-#include <string>
 #include <vector>
+#include <string>
+#include <random>
 
 // itk
-#include <itkCommand.h>
 #include <itkImage.h>
+#include <itkCommand.h>
 
 #include <Eigen/Eigen>
 
-// shapeworks
-#include <Project/Project.h>
+// shapeworks particle system
+#include "ParticleSystem/itkParticleSystem.h"
+#include "ParticleSystem/Sampler.h"
+#include "ParticleSystem/ParticleProcrustesRegistration.h"
+#include "ParticleSystem/itkParticleGoodBadAssessment.h"
+#include "ParticleSystem/itkParticleVectorFunction.h"
+#include "ParticleSystem/DomainType.h"
+#include "ParticleSystem/MeshWrapper.h"
+#include "ParticleSystem/OptimizationVisualizer.h"
+#include <Libs/Project/Project.h>
 
-#include "Libs/Optimize/Domain/DomainType.h"
-#include "Libs/Optimize/Domain/MeshWrapper.h"
-#include "Libs/Optimize/Function/VectorFunction.h"
-#include "Libs/Optimize/Utils/OptimizationVisualizer.h"
-#include "ParticleSystem.h"
-#include "ProcrustesRegistration.h"
-#include "Sampler.h"
 
 namespace shapeworks {
 
 class Project;
-class ParticleGoodBadAssessment;
 
 class MatrixContainer {
- public:
+  public:
   Eigen::MatrixXd matrix_;
 };
 
 class Optimize {
- public:
+public:
   using ImageType = itk::Image<float, 3>;
-  using VectorType = VectorFunction::VectorType;
+  using VectorType = itk::ParticleVectorFunction<3>::VectorType;
   using MatrixType = Eigen::MatrixXd;
 
   Optimize();
@@ -82,7 +82,9 @@ class Optimize {
 
   void SetProject(std::shared_ptr<Project> project);
 
-  void SetIterationCallbackFunction(const std::function<void(void)>& f) { this->iteration_callback_ = f; }
+
+  void SetIterationCallbackFunction(const std::function<void(void)> &f)
+  { this->m_iter_callback = f; }
 
   void AbortOptimization();
 
@@ -92,7 +94,7 @@ class Optimize {
 
   virtual std::vector<std::vector<itk::Point<double>>> GetGlobalPoints();
 
-  void SetCutPlanes(std::vector<std::array<itk::Point<double>, 3>> cut_planes);
+  void SetCutPlanes(std::vector<std::array<itk::Point<double>, 3 >> cut_planes);
 
   void SetVerbosity(int verbosity_level);
 
@@ -133,16 +135,16 @@ class Optimize {
 
   void SetOutputCuttingPlaneFile(std::string output_cutting_plane_file);
   void SetUseCuttingPlanes(bool use_cutting_planes);
-  void SetCuttingPlane(unsigned int i, const vnl_vector_fixed<double, 3>& va, const vnl_vector_fixed<double, 3>& vb,
+  void SetCuttingPlane(unsigned int i,
+                       const vnl_vector_fixed<double, 3>& va,
+                       const vnl_vector_fixed<double, 3>& vb,
                        const vnl_vector_fixed<double, 3>& vc);
 
   void SetProcessingMode(int mode);
   void SetAdaptivityMode(int adaptivity_mode);
-  void SetMeshFFCMode(int mesh_ffc_mode) {
-    m_mesh_ffc_mode = mesh_ffc_mode;
-    m_sampler->SetMeshFFCMode(mesh_ffc_mode);
-  }
+  void SetMeshFFCMode(int mesh_ffc_mode){m_mesh_ffc_mode = mesh_ffc_mode; m_sampler->SetMeshFFCMode(mesh_ffc_mode);}
   void SetAdaptivityStrength(double adaptivity_strength);
+  void SetPairwisePotentialType(int pairwise_potential_type);
   void SetTimePtsPerSubject(int time_pts_per_subject);
   int GetTimePtsPerSubject();
   void SetOptimizationIterations(int optimization_iterations);
@@ -162,6 +164,7 @@ class Optimize {
   void SetSaveInitSplits(bool save_init_splits);
   void SetCheckpointingInterval(int checkpointing_interval);
   void SetKeepCheckpoints(int keep_checkpoints);
+  void SetCotanSigmaFactor(double cotan_sigma_factor);
 
   void SetUseRegression(bool use_regression);
   void SetUseMixedEffects(bool use_mixed_effects);
@@ -208,7 +211,8 @@ class Optimize {
 
   void PrintParamInfo();
 
-  std::shared_ptr<Sampler> GetSampler() { return m_sampler; }
+  std::shared_ptr<Sampler> GetSampler()
+  { return m_sampler; }
 
   MatrixContainer GetParticleSystem();
 
@@ -218,21 +222,21 @@ class Optimize {
 
   void SetGeodesicsCacheSizeMultiplier(size_t n);
 
-  shapeworks::OptimizationVisualizer& GetVisualizer();
+  shapeworks::OptimizationVisualizer &GetVisualizer();
   void SetShowVisualizer(bool show);
   bool GetShowVisualizer();
 
-  bool GetMeshFFCMode() { return m_mesh_ffc_mode; }
+  bool GetMeshFFCMode(){return m_mesh_ffc_mode;}
 
   vnl_vector_fixed<double, 3> TransformPoint(int domain, vnl_vector_fixed<double, 3> input);
 
-  void UpdateProgress();
+protected:
 
- protected:
   virtual void SetIterationCallback();
 
-  void ComputeTotalIterations();
+  void RunProcrustes();
 
+  void OptimizeStart();
   void OptimizerStop();
 
   void ReadTransformFile();
@@ -244,6 +248,8 @@ class Optimize {
   void Initialize();
   void AddAdaptivity();
   void RunOptimize();
+
+  void SetInitialCorrespondenceMode();
 
   virtual void IterateCallback(itk::Object*, const itk::EventObject&);
 
@@ -260,12 +266,11 @@ class Optimize {
   void WritePointFilesWithFeatures(int iter = -1);
   void WritePointFilesWithFeatures(std::string iter_prefix);
   void WriteEnergyFiles();
-  void WriteSplitFiles(std::string name);
   void WriteCuttingPlanePoints(int iter = -1);
   void WriteParameters(std::string output_dir = "");
   void ReportBadParticles();
 
-  int SetParameters();
+  void SetParameters();
   void WriteModes();
 
   void PrintStartMessage(std::string str, unsigned int vlevel = 0) const;
@@ -282,8 +287,8 @@ class Optimize {
   std::string GetCheckpointDir();
 
   std::shared_ptr<Sampler> m_sampler;
-  ProcrustesRegistration::Pointer m_procrustes;
-  std::shared_ptr<ParticleGoodBadAssessment> m_good_bad;
+  ParticleProcrustesRegistration::Pointer m_procrustes;
+  itk::ParticleGoodBadAssessment<float, 3>::Pointer m_good_bad;
 
   unsigned int m_verbosity_level = 0;
 
@@ -291,6 +296,8 @@ class Optimize {
 
   int m_checkpoint_counter = 0;
   int m_procrustes_counter = 0;
+  int m_saturation_counter = 0;
+  bool m_disable_procrustes = true;
   bool m_use_cutting_planes = false;
   bool m_optimizing = false;
   bool m_use_regression = false;
@@ -316,6 +323,7 @@ class Optimize {
   int m_processing_mode = 3;
   int m_adaptivity_mode = 0;
   double m_adaptivity_strength = 0.0;
+  int m_pairwise_potential_type = 0;   // 0 - gaussian (Cates work), 1 - modified cotangent (Meyer),
 
   bool m_mesh_ffc_mode = 0;
 
@@ -345,10 +353,12 @@ class Optimize {
   bool m_fixed_domains_present = false;
   int m_use_shape_statistics_after = -1;
   std::string m_python_filename;
-  bool m_geodesics_enabled = false;             // geodesics disabled by default
-  size_t m_geodesic_cache_size_multiplier = 0;  // 0 => VtkMeshWrapper will use a heuristic to determine cache size
+  bool m_geodesics_enabled = false; // geodesics disabled by default
+  size_t m_geodesic_cache_size_multiplier = 0; // 0 => VtkMeshWrapper will use a heuristic to determine cache size
 
-  // m_spacing is used to scale the random update vector for particle splitting.
+  // Keeps track of which state the optimization is in.
+  unsigned int m_mode = 0;
+  /* m_spacing is used to scale the random update vector for particle splitting. */
   double m_spacing = 0;
 
   std::vector<std::string> m_filenames;
@@ -370,32 +380,27 @@ class Optimize {
 
   bool m_file_output_enabled = true;
   bool m_aborted = false;
-  std::vector<std::array<itk::Point<double>, 3>> m_cut_planes;
+  std::vector<std::array<itk::Point<double>, 3 >> m_cut_planes;
 
+  //itk::MemberCommand<Optimize>::Pointer m_iterate_command;
   int m_total_iterations = 0;
   int m_iteration_count = 0;
-  int m_split_number = 0;
 
-  int current_particle_iterations_ = 0;
-  int total_particle_iterations_ = 0;
+  int m_split_number{0};
 
-  std::function<void(void)> iteration_callback_;
-  bool show_visualizer_ = false;
-  shapeworks::OptimizationVisualizer visualizer_;
+  std::mt19937 m_rand{42};
+
+  std::function<void(void)> m_iter_callback;
+  bool show_visualizer = false;
+  shapeworks::OptimizationVisualizer visualizer;
 
   std::shared_ptr<Project> project_;
-
-  std::chrono::system_clock::time_point m_start_time;
-  std::chrono::system_clock::time_point m_last_update_time;
-  std::chrono::system_clock::time_point m_last_remaining_update_time;
-  std::string m_remaining_time_message;
-
 };
 
-}  // namespace shapeworks
+}
 ```
 
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:05 +0000
+Updated on 2022-07-23 at 16:40:07 -0600

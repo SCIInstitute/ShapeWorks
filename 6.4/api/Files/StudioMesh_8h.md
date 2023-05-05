@@ -1,9 +1,9 @@
 ---
-title: Libs/Analyze/StudioMesh.h
+title: Studio/src/Data/StudioMesh.h
 
 ---
 
-# Libs/Analyze/StudioMesh.h
+# Studio/src/Data/StudioMesh.h
 
 
 
@@ -11,7 +11,7 @@ title: Libs/Analyze/StudioMesh.h
 
 | Name           |
 | -------------- |
-| **[shapeworks](../Namespaces/namespaceshapeworks.md)** <br>User usage reporting (telemetry)  |
+| **[shapeworks](../Namespaces/namespaceshapeworks.md)**  |
 
 ## Classes
 
@@ -58,6 +58,8 @@ using ImageType =  itk::Image<PixelType, 3>;
 
 #include <Eigen/Dense>
 #include <Eigen/Sparse>
+#include <QSharedPointer>
+#include <QString>
 
 using PixelType = float;
 using ImageType = itk::Image<PixelType, 3>;
@@ -77,7 +79,11 @@ class StudioMesh {
 
   ~StudioMesh();
 
+  QString get_dimension_string();
+
   vtkSmartPointer<vtkPolyData> get_poly_data();
+
+  vnl_vector<double> get_center_transform();
 
   void set_poly_data(vtkSmartPointer<vtkPolyData> poly_data);
 
@@ -102,6 +108,11 @@ class StudioMesh {
   static constexpr const char* const FFC_PAINT = "ffc_paint";
 
  private:
+  // metadata
+  int dimensions_[3];
+  vnl_vector<double> center_transform_;
+
+  // the polydata
   vtkSmartPointer<vtkPolyData> poly_data_;
 
   vtkSmartPointer<vtkStaticPointLocator> locator_;
@@ -115,4 +126,4 @@ class StudioMesh {
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:05 +0000
+Updated on 2022-07-23 at 16:40:07 -0600

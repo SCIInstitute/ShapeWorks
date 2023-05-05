@@ -2570,7 +2570,7 @@
 <td><strong><a href="classshapeworks_1_1QOptimize.html#function-getglobalpoints">GetGlobalPoints</a></strong>() override<br>Return the global points.</td>
 </tr>
 <tr>
-<td>std::vector&lt; <a href="classshapeworks_1_1Particles.html">Particles</a> &gt;</td>
+<td>std::vector&lt; <a href="classshapeworks_1_1StudioParticles.html">StudioParticles</a> &gt;</td>
 <td><strong><a href="classshapeworks_1_1QOptimize.html#function-getparticles">GetParticles</a></strong>()</td>
 </tr>
 <tr>
@@ -2617,7 +2617,7 @@
 <td><strong><a href="classshapeworks_1_1Optimize.html#using-imagetype">ImageType</a></strong></td>
 </tr>
 <tr>
-<td>using <a href="classshapeworks_1_1VectorFunction.html#typedef-vectortype">VectorFunction::VectorType</a></td>
+<td>using <a href="classitk_1_1ParticleVectorFunction.html">itk::ParticleVectorFunction</a>&lt; 3 &gt;::VectorType</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#using-vectortype">VectorType</a></strong></td>
 </tr>
 <tr>
@@ -2673,7 +2673,7 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#function-setcutplanes">SetCutPlanes</a></strong>(std::vector&lt; std::array&lt; itk::Point&lt; double &gt;, 3 &gt; &gt; cut_planes)<br>Set cutting planes.</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setcutplanes">SetCutPlanes</a></strong>(std::vector&lt; std::array&lt; itk::Point&lt; double &gt;, 3 &gt;&gt; cut_planes)<br>Set cutting planes.</td>
 </tr>
 <tr>
 <td>void</td>
@@ -2793,6 +2793,10 @@
 </tr>
 <tr>
 <td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setpairwisepotentialtype">SetPairwisePotentialType</a></strong>(int pairwise_potential_type)<br>Set pairwise potential type (TODO: details)</td>
+</tr>
+<tr>
+<td>void</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#function-settimeptspersubject">SetTimePtsPerSubject</a></strong>(int time_pts_per_subject)<br>Set the number of time points per subject (TODO: details)</td>
 </tr>
 <tr>
@@ -2866,6 +2870,10 @@
 <tr>
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#function-setkeepcheckpoints">SetKeepCheckpoints</a></strong>(int keep_checkpoints)<br>Set if checkpoints should be kept (0=disable, 1=enable)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setcotansigmafactor">SetCotanSigmaFactor</a></strong>(double cotan_sigma_factor)<br>Set the cotan sigma factor (TODO: details)</td>
 </tr>
 <tr>
 <td>void</td>
@@ -3023,10 +3031,6 @@
 <td>vnl_vector_fixed&lt; double, 3 &gt;</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#function-transformpoint">TransformPoint</a></strong>(int domain, vnl_vector_fixed&lt; double, 3 &gt; input)<br>transform a point if necessary</td>
 </tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#function-updateprogress">UpdateProgress</a></strong>()</td>
-</tr>
 </tbody>
 </table>
 <p><strong>Protected Functions inherited from <a href="classshapeworks_1_1Optimize.html">shapeworks::Optimize</a></strong></p>
@@ -3040,7 +3044,11 @@
 <tbody>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#function-computetotaliterations">ComputeTotalIterations</a></strong>()</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-runprocrustes">RunProcrustes</a></strong>()<br>Run an iteration of procrustes.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-optimizestart">OptimizeStart</a></strong>()</td>
 </tr>
 <tr>
 <td>void</td>
@@ -3077,6 +3085,10 @@
 <tr>
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#function-runoptimize">RunOptimize</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setinitialcorrespondencemode">SetInitialCorrespondenceMode</a></strong>()</td>
 </tr>
 <tr>
 <td>void</td>
@@ -3124,10 +3136,6 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#function-writesplitfiles">WriteSplitFiles</a></strong>(std::string name)</td>
-</tr>
-<tr>
-<td>void</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#function-writecuttingplanepoints">WriteCuttingPlanePoints</a></strong>(int iter =-1)</td>
 </tr>
 <tr>
@@ -3139,7 +3147,7 @@
 <td><strong><a href="classshapeworks_1_1Optimize.html#function-reportbadparticles">ReportBadParticles</a></strong>()</td>
 </tr>
 <tr>
-<td>int</td>
+<td>void</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#function-setparameters">SetParameters</a></strong>()</td>
 </tr>
 <tr>
@@ -3178,11 +3186,11 @@
 <td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-sampler">m_sampler</a></strong></td>
 </tr>
 <tr>
-<td>ProcrustesRegistration::Pointer</td>
+<td>ParticleProcrustesRegistration::Pointer</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-procrustes">m_procrustes</a></strong></td>
 </tr>
 <tr>
-<td>std::shared_ptr&lt; <a href="classshapeworks_1_1ParticleGoodBadAssessment.html">ParticleGoodBadAssessment</a> &gt;</td>
+<td><a href="classitk_1_1ParticleGoodBadAssessment.html">itk::ParticleGoodBadAssessment</a>&lt; float, 3 &gt;::Pointer</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-good-bad">m_good_bad</a></strong></td>
 </tr>
 <tr>
@@ -3204,6 +3212,14 @@
 <tr>
 <td>int</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-procrustes-counter">m_procrustes_counter</a></strong></td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-saturation-counter">m_saturation_counter</a></strong></td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-disable-procrustes">m_disable_procrustes</a></strong></td>
 </tr>
 <tr>
 <td>bool</td>
@@ -3288,6 +3304,10 @@
 <tr>
 <td>double</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-adaptivity-strength">m_adaptivity_strength</a></strong></td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-pairwise-potential-type">m_pairwise_potential_type</a></strong></td>
 </tr>
 <tr>
 <td>bool</td>
@@ -3406,6 +3426,10 @@
 <td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-geodesic-cache-size-multiplier">m_geodesic_cache_size_multiplier</a></strong></td>
 </tr>
 <tr>
+<td>unsigned int</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-mode">m_mode</a></strong></td>
+</tr>
+<tr>
 <td>double</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-spacing">m_spacing</a></strong></td>
 </tr>
@@ -3482,44 +3506,24 @@
 <td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-split-number">m_split_number</a></strong></td>
 </tr>
 <tr>
-<td>int</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#variable-current-particle-iterations-">current_particle_iterations_</a></strong></td>
-</tr>
-<tr>
-<td>int</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#variable-total-particle-iterations-">total_particle_iterations_</a></strong></td>
+<td>std::mt19937</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-rand">m_rand</a></strong></td>
 </tr>
 <tr>
 <td>std::function&lt; void(void)&gt;</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#variable-iteration-callback-">iteration_callback_</a></strong></td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-iter-callback">m_iter_callback</a></strong></td>
 </tr>
 <tr>
 <td>bool</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#variable-show-visualizer-">show_visualizer_</a></strong></td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-show-visualizer">show_visualizer</a></strong></td>
 </tr>
 <tr>
 <td><a href="classshapeworks_1_1OptimizationVisualizer.html">shapeworks::OptimizationVisualizer</a></td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#variable-visualizer-">visualizer_</a></strong></td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-visualizer">visualizer</a></strong></td>
 </tr>
 <tr>
 <td>std::shared_ptr&lt; <a href="classshapeworks_1_1Project.html">Project</a> &gt;</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#variable-project-">project_</a></strong></td>
-</tr>
-<tr>
-<td>std::chrono::system_clock::time_point</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-start-time">m_start_time</a></strong></td>
-</tr>
-<tr>
-<td>std::chrono::system_clock::time_point</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-last-update-time">m_last_update_time</a></strong></td>
-</tr>
-<tr>
-<td>std::chrono::system_clock::time_point</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-last-remaining-update-time">m_last_remaining_update_time</a></strong></td>
-</tr>
-<tr>
-<td>std::string</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-remaining-time-message">m_remaining_time_message</a></strong></td>
 </tr>
 </tbody>
 </table>
@@ -3550,7 +3554,7 @@
 <p>Return the global points. </p>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1Optimize.html#function-getglobalpoints">shapeworks::Optimize::GetGlobalPoints</a></p>
 <h3 id="function-getparticles">function GetParticles</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Particles</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">GetParticles</span><span class="p">()</span>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">StudioParticles</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">GetParticles</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-getprocrustestransforms">function GetProcrustesTransforms</h3>
 <div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">GetProcrustesTransforms</span><span class="p">()</span><span class="w"> </span><span class="k">override</span>
@@ -3574,7 +3578,7 @@
 </code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classshapeworks_1_1Optimize.html#function-iteratecallback">shapeworks::Optimize::IterateCallback</a></p>
 <hr />
-<p>Updated on 2023-05-04 at 20:03:04 +0000</p>
+<p>Updated on 2022-07-23 at 16:40:06 -0600</p>
 
               
             </article>

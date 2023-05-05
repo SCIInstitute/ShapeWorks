@@ -11,7 +11,7 @@ title: Libs/Groom/Groom.h
 
 | Name           |
 | -------------- |
-| **[shapeworks](../Namespaces/namespaceshapeworks.md)** <br>User usage reporting (telemetry)  |
+| **[shapeworks](../Namespaces/namespaceshapeworks.md)**  |
 
 ## Classes
 
@@ -27,9 +27,11 @@ title: Libs/Groom/Groom.h
 ```cpp
 #pragma once
 
-#include "GroomParameters.h"
-#include <Image/Image.h>
-#include <Project/Project.h>
+#include <GroomParameters.h>
+#include <Libs/Image/Image.h>
+#include <Libs/Project/Project.h>
+#include <tbb/atomic.h>
+#include <tbb/mutex.h>
 
 namespace shapeworks {
 
@@ -38,7 +40,9 @@ class Groom {
  public:
   Groom(ProjectHandle project);
 
-  bool run();
+  virtual bool run();
+
+  void set_skip_grooming(bool skip);
 
   void abort();
 
@@ -50,10 +54,11 @@ class Groom {
                                                                   vtkSmartPointer<vtkPoints> target);
 
  protected:
+  virtual void update_progress(){};
 
-  std::atomic<float> progress_ = 0;
-  std::atomic<int> total_ops_ = 0;
-  std::atomic<int> progress_counter_ = 0;
+  tbb::atomic<float> progress_ = 0;
+  tbb::atomic<int> total_ops_ = 0;
+  tbb::atomic<int> progress_counter_ = 0;
 
  private:
   int get_total_ops();
@@ -100,11 +105,11 @@ class Groom {
 
   ProjectHandle project_;
 
+  bool skip_grooming_ = false;
+
   bool abort_ = false;
 
-  std::mutex mutex_;
-
-  std::set<std::string> used_names_;
+  tbb::mutex mutex_;
 };
 }  // namespace shapeworks
 ```
@@ -112,4 +117,4 @@ class Groom {
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:05 +0000
+Updated on 2022-07-23 at 16:40:07 -0600

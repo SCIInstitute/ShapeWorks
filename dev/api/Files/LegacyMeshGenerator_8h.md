@@ -1,10 +1,10 @@
 ---
-title: Libs/Analyze/LegacyMeshGenerator.h
+title: Studio/src/Data/LegacyMeshGenerator.h
 summary: Mesh generation. 
 
 ---
 
-# Libs/Analyze/LegacyMeshGenerator.h
+# Studio/src/Data/LegacyMeshGenerator.h
 
 Mesh generation.  [More...](#detailed-description)
 
@@ -95,4 +95,4 @@ private:
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:05 +0000
+Updated on 2022-07-23 at 16:40:07 -0600

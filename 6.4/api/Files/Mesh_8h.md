@@ -11,7 +11,7 @@ title: Libs/Mesh/Mesh.h
 
 | Name           |
 | -------------- |
-| **[shapeworks](../Namespaces/namespaceshapeworks.md)** <br>User usage reporting (telemetry)  |
+| **[shapeworks](../Namespaces/namespaceshapeworks.md)**  |
 
 ## Classes
 
@@ -28,10 +28,10 @@ title: Libs/Mesh/Mesh.h
 ```cpp
 #pragma once
 
-#include <Image/ImageUtils.h>
+#include "ImageUtils.h"
 #include "Shapeworks.h"
 
-class vtkStaticCellLocator;
+class vtkCellLocator;
 class vtkKdTreePointLocator;
 
 namespace shapeworks {
@@ -101,9 +101,7 @@ class Mesh {
 
   Mesh& applyTransform(const MeshTransform transform);
 
-  Mesh& rotate(const double angle, const Axis axis);
-
-  Mesh& fillHoles(double hole_size = 1000.0);
+  Mesh& fillHoles();
 
   Mesh& clean();
 
@@ -119,19 +117,13 @@ class Mesh {
 
   Mesh& fixElement();
 
-  Mesh& fixNonManifold();
-
-  bool detectNonManifold();
-
-  bool detectTriangular();
-
   std::vector<Field> distance(const Mesh& target, const DistanceMethod method = PointToCell) const;
 
   Mesh& clipClosedSurface(const Plane plane);
 
   Mesh& computeNormals();
 
-  Point3 closestPoint(const Point3 point, double& distance, vtkIdType& face_id) const;
+  Point3 closestPoint(const Point3 point, bool& outside, double& distance, vtkIdType& face_id) const;
 
   int closestPointId(const Point3 point) const;
 
@@ -203,6 +195,9 @@ class Mesh {
 
   static std::vector<std::string> getSupportedTypes() { return {"vtk", "vtp", "ply", "stl", "obj"}; }
 
+  bool prepareFFCFields(std::vector<std::vector<Eigen::Vector3d>> boundaries, Eigen::Vector3d query,
+                        bool onlyGenerateInOut = false);
+
   double getFFCValue(Eigen::Vector3d query) const;
 
   Eigen::Vector3d getFFCGradient(Eigen::Vector3d query) const;
@@ -229,12 +224,23 @@ class Mesh {
 
   void invalidateLocators() const;
 
-  mutable vtkSmartPointer<vtkStaticCellLocator> cellLocator;
+  // TODO: use vtkStaticCellLocator when vtk is upgraded to version 9
+  mutable vtkSmartPointer<vtkCellLocator> cellLocator;
   void updateCellLocator() const;
 
   mutable vtkSmartPointer<vtkKdTreePointLocator> pointLocator;
   void updatePointLocator() const;
 
+  std::vector<Eigen::Matrix3d> setGradientFieldForFFCs(vtkSmartPointer<vtkDoubleArray> absvalues, Eigen::MatrixXd V,
+                                                       Eigen::MatrixXi F);
+
+  vtkSmartPointer<vtkDoubleArray> setDistanceToBoundaryValueFieldForFFCs(
+      vtkSmartPointer<vtkDoubleArray> values, MeshPoints points, std::vector<size_t> boundaryVerts,
+      vtkSmartPointer<vtkDoubleArray> inout, Eigen::MatrixXd V,
+      Eigen::MatrixXi F);  // fixme: sets value, returns absvalues, not sure why
+
+  vtkSmartPointer<vtkDoubleArray> computeInOutForFFCs(Eigen::Vector3d query,
+                                                      MeshType halfmesh);  // similar issues to above
 
   Eigen::Vector3d computeBarycentricCoordinates(const Eigen::Vector3d& pt, int face)
       const;  // // WARNING: Copied directly from Meshwrapper. TODO: When refactoring, take this into account.
@@ -254,4 +260,4 @@ class MeshReader {
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:05 +0000
+Updated on 2022-07-23 at 16:40:07 -0600

@@ -2400,20 +2400,6 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#function-parameters" class="md-nav__link">
-    function Parameters
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-parameters_1" class="md-nav__link">
-    function Parameters
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#function-get" class="md-nav__link">
     function get
   </a>
@@ -2553,14 +2539,6 @@
 </thead>
 <tbody>
 <tr>
-<td></td>
-<td><strong><a href="classshapeworks_1_1Parameters.html#function-parameters">Parameters</a></strong>()<br>default constructor</td>
-</tr>
-<tr>
-<td></td>
-<td><strong><a href="classshapeworks_1_1Parameters.html#function-parameters">Parameters</a></strong>(StringMap map)<br>construct from map</td>
-</tr>
-<tr>
 <td><a href="classshapeworks_1_1Variant.html">Variant</a></td>
 <td><strong><a href="classshapeworks_1_1Parameters.html#function-get">get</a></strong>(std::string key, <a href="classshapeworks_1_1Variant.html">Variant</a> default_value)<br>get a parameter based on a key, return default if it doesn't exist</td>
 </tr>
@@ -2578,11 +2556,11 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Parameters.html#function-set-map">set_map</a></strong>(StringMap map)<br>set underlying map</td>
+<td><strong><a href="classshapeworks_1_1Parameters.html#function-set-map">set_map</a></strong>(std::map&lt; std::string, std::string &gt; map)<br>set underlying map</td>
 </tr>
 <tr>
-<td>StringMap</td>
-<td><strong><a href="classshapeworks_1_1Parameters.html#function-get-map">get_map</a></strong>() const<br>get underlying map</td>
+<td>std::map&lt; std::string, std::string &gt;</td>
+<td><strong><a href="classshapeworks_1_1Parameters.html#function-get-map">get_map</a></strong>()<br>get underlying map</td>
 </tr>
 <tr>
 <td>void</td>
@@ -2631,16 +2609,6 @@
 <p>Parameter settings. </p>
 <p>Store key/variant combinations Used to store parameters for various tools </p>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
-<h3 id="function-parameters">function Parameters</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Parameters</span><span class="p">()</span>
-</code></pre></div>
-<p>default constructor </p>
-<h3 id="function-parameters_1">function Parameters</h3>
-<div class="highlight"><pre><span></span><code><span class="k">explicit</span><span class="w"> </span><span class="n">Parameters</span><span class="p">(</span>
-<span class="w">    </span><span class="n">StringMap</span><span class="w"> </span><span class="n">map</span>
-<span class="p">)</span>
-</code></pre></div>
-<p>construct from map </p>
 <h3 id="function-get">function get</h3>
 <div class="highlight"><pre><span></span><code><span class="n">Variant</span><span class="w"> </span><span class="n">get</span><span class="p">(</span>
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">key</span><span class="p">,</span>
@@ -2669,12 +2637,12 @@
 <p>remove an entry </p>
 <h3 id="function-set_map">function set_map</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_map</span><span class="p">(</span>
-<span class="w">    </span><span class="n">StringMap</span><span class="w"> </span><span class="n">map</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">map</span>
 <span class="p">)</span>
 </code></pre></div>
 <p>set underlying map </p>
 <h3 id="function-get_map">function get_map</h3>
-<div class="highlight"><pre><span></span><code><span class="n">StringMap</span><span class="w"> </span><span class="n">get_map</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_map</span><span class="p">()</span>
 </code></pre></div>
 <p>get underlying map </p>
 <h3 id="function-reset_parameters">function reset_parameters</h3>
@@ -2701,7 +2669,7 @@
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">DEEPSSM_PARAMS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;deepssm&quot;</span><span class="p">;</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-05-04 at 20:03:04 +0000</p>
+<p>Updated on 2022-07-23 at 16:40:06 -0600</p>
 
               
             </article>

@@ -1,9 +1,9 @@
 ---
-title: Studio/Groom/GroomTool.h
+title: Studio/src/Groom/GroomTool.h
 
 ---
 
-# Studio/Groom/GroomTool.h
+# Studio/src/Groom/GroomTool.h
 
 
 
@@ -11,7 +11,7 @@ title: Studio/Groom/GroomTool.h
 
 | Name           |
 | -------------- |
-| **[shapeworks](../Namespaces/namespaceshapeworks.md)** <br>User usage reporting (telemetry)  |
+| **[shapeworks](../Namespaces/namespaceshapeworks.md)**  |
 
 ## Classes
 
@@ -27,17 +27,17 @@ title: Studio/Groom/GroomTool.h
 ```cpp
 #pragma once
 
-#include <Data/Preferences.h>
-#include <Groom/Groom.h>
-#include <Groom/GroomParameters.h>
-#include <Data/Telemetry.h>
+#include <string>
 
+#include <QWidget>
+#include <QSharedPointer>
+#include <QProgressDialog>
 #include <QElapsedTimer>
 #include <QObject>
-#include <QProgressDialog>
-#include <QSharedPointer>
-#include <QWidget>
-#include <string>
+
+#include <Data/Preferences.h>
+#include <Groom/QGroom.h>
+#include <Libs/Groom/GroomParameters.h>
 
 class Ui_GroomTool;
 
@@ -49,10 +49,10 @@ class Session;
 class ShapeWorksStudioApp;
 
 class GroomTool : public QWidget {
-  Q_OBJECT;
+Q_OBJECT;
+public:
 
- public:
-  GroomTool(Preferences& prefs, Telemetry& telemetry);
+  GroomTool(Preferences& prefs);
   ~GroomTool();
 
   void set_session(QSharedPointer<Session> session);
@@ -67,17 +67,19 @@ class GroomTool : public QWidget {
 
   void shutdown_threads();
 
- Q_SIGNALS:
+Q_SIGNALS:
   void groom_start();
   void groom_complete();
+  void error_message(QString);
+  void message(QString);
   void progress(int);
 
- public Q_SLOTS:
+public Q_SLOTS:
 
   void on_antialias_checkbox_stateChanged(int state);
   void on_blur_checkbox_stateChanged(int state);
   void on_autopad_checkbox_stateChanged(int state);
-  void skip_grooming_toggled();
+  void on_skip_button_clicked();
   void on_restore_defaults_clicked();
 
   void update_ui();
@@ -98,7 +100,8 @@ class GroomTool : public QWidget {
   void handle_progress(int val);
   void handle_error(QString msg);
 
- private:
+private:
+
   void set_ui_from_params(GroomParameters params);
 
   void update_page();
@@ -109,14 +112,13 @@ class GroomTool : public QWidget {
   void update_reflect_choices();
 
   Preferences& preferences_;
-  Telemetry& telemetry_;
 
   QList<QThread*> threads_;
 
   Ui_GroomTool* ui_;
   QSharedPointer<Session> session_;
 
-  QSharedPointer<shapeworks::Groom> groom_;
+  QSharedPointer<shapeworks::QGroom> groom_;
 
   QElapsedTimer timer_;
 
@@ -126,10 +128,10 @@ class GroomTool : public QWidget {
 
   QStringList reflect_columns_;
 };
-}  // namespace shapeworks
+}
 ```
 
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:05 +0000
+Updated on 2022-07-23 at 16:40:07 -0600

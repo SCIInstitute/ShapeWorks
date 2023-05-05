@@ -18,7 +18,7 @@ title: Libs/Project/Project.h
 
 |                | Name           |
 | -------------- | -------------- |
-| class | **[shapeworks::LandmarkDefinition](../Classes/classshapeworks_1_1LandmarkDefinition.md)** <br>Landmark class containing properties of each landmark.  |
+| class | **[shapeworks::LandmarkDefinition](../Classes/classshapeworks_1_1LandmarkDefinition.md)** <br>[Landmark](../Classes/classshapeworks_1_1Landmark.md) class containing properties of each landmark.  |
 | class | **[shapeworks::Project](../Classes/classshapeworks_1_1Project.md)** <br>Representation of a project.  |
 
 
@@ -242,4 +242,4 @@ class Project {
 
 -------------------------------
 
-Updated on 2022-07-23 at 17:50:05 -0600
+Updated on 2022-07-23 at 16:40:07 -0600

@@ -2419,7 +2419,7 @@
 </thead>
 <tbody>
 <tr>
-<td><strong><a href="../Namespaces/namespaceshapeworks.html">shapeworks</a></strong> <br>User usage reporting (telemetry)</td>
+<td><strong><a href="../Namespaces/namespaceshapeworks.html">shapeworks</a></strong></td>
 </tr>
 </tbody>
 </table>
@@ -2441,10 +2441,10 @@
 <h2 id="source-code">Source code</h2>
 <div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;exception&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;sstream&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;string&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;sstream&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;exception&gt;</span>
 
 <span class="k">class</span><span class="w"> </span><span class="nc">TiXmlHandle</span><span class="p">;</span>
 
@@ -2452,13 +2452,15 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">Optimize</span><span class="p">;</span>
 
 <span class="k">class</span><span class="w"> </span><span class="nc">OptimizeParameterFile</span><span class="w"> </span><span class="p">{</span>
-<span class="w"> </span><span class="k">public</span><span class="o">:</span>
+<span class="k">public</span><span class="o">:</span>
+
 <span class="w">  </span><span class="n">OptimizeParameterFile</span><span class="p">();</span>
 
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">load_parameter_file</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">filename</span><span class="p">,</span><span class="w"> </span><span class="n">Optimize</span><span class="o">*</span><span class="w"> </span><span class="n">optimize</span><span class="p">);</span>
 
-<span class="w"> </span><span class="k">private</span><span class="o">:</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">set_visualizer_parameters</span><span class="p">(</span><span class="n">TiXmlHandle</span><span class="o">*</span><span class="w"> </span><span class="n">docHandle</span><span class="p">,</span><span class="w"> </span><span class="n">Optimize</span><span class="o">*</span><span class="w"> </span><span class="n">optimize</span><span class="p">);</span>
+<span class="k">private</span><span class="o">:</span>
+
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">set_visualizer_parameters</span><span class="p">(</span><span class="n">TiXmlHandle</span><span class="w"> </span><span class="o">*</span><span class="n">docHandle</span><span class="p">,</span><span class="w"> </span><span class="n">Optimize</span><span class="w"> </span><span class="o">*</span><span class="n">optimize</span><span class="p">);</span>
 
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">set_io_parameters</span><span class="p">(</span><span class="n">TiXmlHandle</span><span class="o">*</span><span class="w"> </span><span class="n">docHandle</span><span class="p">,</span><span class="w"> </span><span class="n">Optimize</span><span class="o">*</span><span class="w"> </span><span class="n">optimize</span><span class="p">);</span>
 
@@ -2484,6 +2486,8 @@
 
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">read_cutting_spheres</span><span class="p">(</span><span class="n">TiXmlHandle</span><span class="o">*</span><span class="w"> </span><span class="n">doc_handle</span><span class="p">,</span><span class="w"> </span><span class="n">Optimize</span><span class="o">*</span><span class="w"> </span><span class="n">optimize</span><span class="p">);</span>
 
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">read_cutting_ffcs</span><span class="p">(</span><span class="n">TiXmlHandle</span><span class="o">*</span><span class="w"> </span><span class="n">docHandle</span><span class="p">,</span><span class="w"> </span><span class="n">Optimize</span><span class="o">*</span><span class="w"> </span><span class="n">optimize</span><span class="p">);</span>
+
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">read_explanatory_variables</span><span class="p">(</span><span class="n">TiXmlHandle</span><span class="o">*</span><span class="w"> </span><span class="n">doc_handle</span><span class="p">,</span><span class="w"> </span><span class="n">Optimize</span><span class="o">*</span><span class="w"> </span><span class="n">optimize</span><span class="p">);</span>
 
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">read_flag_particles</span><span class="p">(</span><span class="n">TiXmlHandle</span><span class="o">*</span><span class="w"> </span><span class="n">doc_handle</span><span class="p">,</span><span class="w"> </span><span class="n">Optimize</span><span class="o">*</span><span class="w"> </span><span class="n">optimize</span><span class="p">);</span>
@@ -2492,16 +2496,17 @@
 
 <span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_num_inputs</span><span class="p">(</span><span class="n">TiXmlHandle</span><span class="o">*</span><span class="w"> </span><span class="n">docHandle</span><span class="p">);</span>
 
-<span class="w"> </span><span class="k">private</span><span class="o">:</span>
+<span class="k">private</span><span class="o">:</span>
+
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">read_int_list</span><span class="p">(</span><span class="n">TiXmlHandle</span><span class="o">*</span><span class="w"> </span><span class="n">doc_handle</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">);</span>
 
 <span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">verbosity_level_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 <span class="p">};</span>
 
-<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
+<span class="p">}</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-05-04 at 20:03:05 +0000</p>
+<p>Updated on 2022-07-23 at 16:40:07 -0600</p>
 
               
             </article>

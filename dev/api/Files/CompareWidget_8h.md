@@ -1,9 +1,9 @@
 ---
-title: Studio/Interface/CompareWidget.h
+title: Studio/src/Interface/CompareWidget.h
 
 ---
 
-# Studio/Interface/CompareWidget.h
+# Studio/src/Interface/CompareWidget.h
 
 
 
@@ -12,7 +12,7 @@ title: Studio/Interface/CompareWidget.h
 | Name           |
 | -------------- |
 | **[Ui](../Namespaces/namespaceUi.md)**  |
-| **[shapeworks](../Namespaces/namespaceshapeworks.md)** <br>User usage reporting (telemetry)  |
+| **[shapeworks](../Namespaces/namespaceshapeworks.md)**  |
 
 ## Classes
 
@@ -47,7 +47,6 @@ class CompareWidget : public QWidget {
 
   CompareSettings get_settings();
   void set_available(DisplayMode mode, bool available);
-  void set_mean_shape_available(bool available);
 
   bool check_any_available();
 
@@ -65,4 +64,4 @@ class CompareWidget : public QWidget {
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:05 +0000
+Updated on 2022-07-23 at 16:40:07 -0600

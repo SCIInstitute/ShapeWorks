@@ -1,9 +1,9 @@
 ---
-title: Libs/Optimize/Sampler.h
+title: Libs/Optimize/ParticleSystem/Sampler.h
 
 ---
 
-# Libs/Optimize/Sampler.h
+# Libs/Optimize/ParticleSystem/Sampler.h
 
 
 
@@ -11,7 +11,7 @@ title: Libs/Optimize/Sampler.h
 
 | Name           |
 | -------------- |
-| **[shapeworks](../Namespaces/namespaceshapeworks.md)** <br>User usage reporting (telemetry)  |
+| **[shapeworks](../Namespaces/namespaceshapeworks.md)**  |
 
 ## Classes
 
@@ -20,6 +20,7 @@ title: Libs/Optimize/Sampler.h
 | class | **[shapeworks::Sampler](../Classes/classshapeworks_1_1Sampler.md)**  |
 | struct | **[shapeworks::Sampler::CuttingPlaneType](../Classes/structshapeworks_1_1Sampler_1_1CuttingPlaneType.md)**  |
 | struct | **[shapeworks::Sampler::SphereType](../Classes/structshapeworks_1_1Sampler_1_1SphereType.md)**  |
+| struct | **[shapeworks::Sampler::FFCType](../Classes/structshapeworks_1_1Sampler_1_1FFCType.md)**  |
 
 
 
@@ -29,54 +30,60 @@ title: Libs/Optimize/Sampler.h
 ```cpp
 #pragma once
 
-#include <Logging.h>
-#include <Mesh/Mesh.h>
+#include "itkParticleSystem.h"
+#include "itkParticleGradientDescentPositionOptimizer.h"
+#include "itkParticleEntropyGradientFunction.h"
+#include "ParticleImplicitSurfaceDomain.h"
+#include "itkParticleContainerArrayAttribute.h"
+#include "itkParticleCurvatureEntropyGradientFunction.h"
+#include "itkParticleMeanCurvatureAttribute.h"
+#include "itkParticleSurfaceNeighborhood.h"
+#include "itkParticleOmegaGradientFunction.h"
+#include "DomainType.h"
+#include "MeshWrapper.h"
+#include "MeshDomain.h"
 
 #include "CorrespondenceMode.h"
-#include "GradientDescentOptimizer.h"
-#include "Libs/Optimize/Container/GenericContainerArray.h"
-#include "Libs/Optimize/Container/MeanCurvatureContainer.h"
-#include "Libs/Optimize/Domain/DomainType.h"
-#include "Libs/Optimize/Domain/ImplicitSurfaceDomain.h"
-#include "Libs/Optimize/Domain/MeshDomain.h"
-#include "Libs/Optimize/Domain/MeshWrapper.h"
-#include "Libs/Optimize/Function/CorrespondenceFunction.h"
-#include "Libs/Optimize/Function/CurvatureSamplingFunction.h"
-#include "Libs/Optimize/Function/DualVectorFunction.h"
-#include "Libs/Optimize/Function/LegacyCorrespondenceFunction.h"
-#include "Libs/Optimize/Function/SamplingFunction.h"
-#include "Libs/Optimize/Matrix/LinearRegressionShapeMatrix.h"
-#include "Libs/Optimize/Matrix/MixedEffectsShapeMatrix.h"
-#include "Libs/Optimize/Neighborhood/ParticleSurfaceNeighborhood.h"
-#include "ParticleSystem.h"
-#include "TriMesh.h"
+#include "itkParticleDualVectorFunction.h"
+#include "itkParticleEnsembleEntropyFunction.h"
+#include "itkParticleShapeLinearRegressionMatrixAttribute.h"
+#include "itkParticleShapeMixedEffectsMatrixAttribute.h"
+#include "itkParticleMeshBasedGeneralEntropyGradientFunction.h"
+
+#include "itkParticleModifiedCotangentEntropyGradientFunction.h"
+#include "itkParticleConstrainedModifiedCotangentEntropyGradientFunction.h"
 #include "vnl/vnl_matrix_fixed.h"
 
+#include "TriMesh.h"
+
+#include "Mesh.h"
+
 // Uncomment to visualize FFCs with scalar and vector fields
-// #define VIZFFC
+//#define VIZFFC
 
 #if defined(VIZFFC)
-#include "MeshUtils.h"
+    #include "MeshUtils.h"
 #endif
 
 namespace shapeworks {
 
 class Sampler {
- public:
+
+public:
   using PixelType = float;
   static constexpr unsigned int Dimension = 3;
 
   using ImageType = itk::Image<PixelType, Dimension>;
   using PointType = ImageType::PointType;
 
-  using MeanCurvatureCacheType = MeanCurvatureContainer<PixelType, Dimension>;
+  using MeanCurvatureCacheType = itk::ParticleMeanCurvatureAttribute<PixelType, Dimension>;
   using TransformType = vnl_matrix_fixed<double, Dimension + 1, Dimension + 1>;
-  using OptimizerType = GradientDescentOptimizer;
+  using OptimizerType = itk::ParticleGradientDescentPositionOptimizer<PixelType, Dimension>;
 
   struct CuttingPlaneType {
-    vnl_vector_fixed<double, 3> a;
-    vnl_vector_fixed<double, 3> b;
-    vnl_vector_fixed<double, 3> c;
+    vnl_vector_fixed<double, Dimension> a;
+    vnl_vector_fixed<double, Dimension> b;
+    vnl_vector_fixed<double, Dimension> c;
   };
 
   struct SphereType {
@@ -84,232 +91,318 @@ class Sampler {
     double radius;
   };
 
-  itkGetObjectMacro(ParticleSystem, ParticleSystem);
+  struct FFCType {
+     std::vector< std::vector< Eigen::Vector3d > > boundaries;
+     Eigen::Vector3d query;
+  };
 
-  itkGetConstObjectMacro(ParticleSystem, ParticleSystem);
+  itkGetObjectMacro(ParticleSystem, itk::ParticleSystem);
+
+  itkGetConstObjectMacro(ParticleSystem, itk::ParticleSystem);
 
   Sampler();
 
-  virtual ~Sampler(){};
+  virtual ~Sampler()
+  {};
 
-  SamplingFunction* GetGradientFunction() {
-    return m_GradientFunction;
-  }
+  itk::ParticleEntropyGradientFunction<ImageType::PixelType, Dimension>*
+  GetGradientFunction()
+  { return m_GradientFunction; }
 
-  CurvatureSamplingFunction* GetCurvatureGradientFunction() {
-    return m_CurvatureGradientFunction;
-  }
+  itk::ParticleCurvatureEntropyGradientFunction<ImageType::PixelType, Dimension>*
+  GetCurvatureGradientFunction()
+  { return m_CurvatureGradientFunction; }
+
+  itk::ParticleModifiedCotangentEntropyGradientFunction<ImageType::PixelType, Dimension>*
+  GetModifiedCotangentGradientFunction()
+  { return m_ModifiedCotangentGradientFunction; }
+
+  itk::ParticleConstrainedModifiedCotangentEntropyGradientFunction<ImageType::PixelType, Dimension>*
+  GetConstrainedModifiedCotangentGradientFunction()
+  { return m_ConstrainedModifiedCotangentGradientFunction; }
+
+  itk::ParticleOmegaGradientFunction<ImageType::PixelType, Dimension>*
+  GetOmegaGradientFunction()
+  { return m_OmegaGradientFunction; }
 
   itkGetObjectMacro(Optimizer, OptimizerType);
 
   itkGetConstObjectMacro(Optimizer, OptimizerType);
 
-  void SetPointsFile(unsigned int i, const std::string& s) {
+  void SetPointsFile(unsigned int i, const std::string& s)
+  {
     if (m_PointsFiles.size() < i + 1) {
       m_PointsFiles.resize(i + 1);
     }
     m_PointsFiles[i] = s;
   }
 
-  void SetPointsFile(const std::string& s) { this->SetPointsFile(0, s); }
+  void SetPointsFile(const std::string& s)
+  { this->SetPointsFile(0, s); }
 
-  void SetMeshFile(unsigned int i, const std::string& s) {
+  void SetMeshFile(unsigned int i, const std::string& s)
+  {
     if (m_MeshFiles.size() < i + 1) {
       m_MeshFiles.resize(i + 1);
     }
     m_MeshFiles[i] = s;
   }
 
-  void SetMeshFile(const std::string& s) { this->SetMeshFile(0, s); }
+  void SetMeshFile(const std::string& s)
+  { this->SetMeshFile(0, s); }
 
-  void SetMeshFiles(const std::vector<std::string>& s) { m_MeshFiles = s; }
+  void SetMeshFiles(const std::vector<std::string>& s)
+  { m_MeshFiles = s; }
 
   void AddImage(ImageType::Pointer image, double narrow_band, std::string name = "");
 
-  void ApplyConstraintsToZeroCrossing() {
-    for (size_t i = 0; i < m_DomainList.size(); i++) {
-      this->m_DomainList[i]->UpdateZeroCrossingPoint();
-    }
+  void ApplyConstraintsToZeroCrossing(){
+      for(size_t i = 0; i < m_DomainList.size(); i++){
+          this->m_DomainList[i]->UpdateZeroCrossingPoint();
+      }
   }
 
   void AddMesh(std::shared_ptr<shapeworks::MeshWrapper> mesh);
 
   void AddContour(vtkSmartPointer<vtkPolyData> poly_data);
 
-  void SetFidsFiles(const std::vector<std::string>& s) { m_FidsFiles = s; }
+  void SetFidsFiles(const std::vector<std::string>& s)
+  { m_FidsFiles = s; }
 
-  void SetFeaFiles(const std::vector<std::string>& s) { m_FeaMeshFiles = s; }
+  void SetFeaFiles(const std::vector<std::string>& s)
+  { m_FeaMeshFiles = s; }
 
-  void SetFeaGradFiles(const std::vector<std::string>& s) { m_FeaGradFiles = s; }
+  void SetFeaGradFiles(const std::vector<std::string>& s)
+  { m_FeaGradFiles = s; }
 
-  void SetDomainsPerShape(int n) {
+  void SetDomainsPerShape(int n)
+  {
     m_DomainsPerShape = n;
     m_LinearRegressionShapeMatrix->SetDomainsPerShape(n);
     m_MixedEffectsShapeMatrix->SetDomainsPerShape(n);
-    m_LegacyShapeMatrix->SetDomainsPerShape(n);
-    m_CorrespondenceFunction->SetDomainsPerShape(n);
+    m_ShapeMatrix->SetDomainsPerShape(n);
+    m_MeshBasedGeneralEntropyGradientFunction->SetDomainsPerShape(n);
     m_GeneralShapeMatrix->SetDomainsPerShape(n);
     m_GeneralShapeGradMatrix->SetDomainsPerShape(n);
   }
 
-  void SetCuttingPlane(unsigned int i, const vnl_vector_fixed<double, Dimension>& va,
-                       const vnl_vector_fixed<double, Dimension>& vb, const vnl_vector_fixed<double, Dimension>& vc);
-  void AddFreeFormConstraint(int domain, const FreeFormConstraint& ffc);
+  void SetCuttingPlane(unsigned int i,
+                       const vnl_vector_fixed<double, Dimension>& va,
+                       const vnl_vector_fixed<double, Dimension>& vb,
+                       const vnl_vector_fixed<double, Dimension>& vc);
+  void AddFreeFormConstraint(unsigned int i,
+                             const std::vector< std::vector< Eigen::Vector3d > > boundaries,
+                             const Eigen::Vector3d query);
 
   void TransformCuttingPlanes(unsigned int i);
 
   void AddSphere(unsigned int i, vnl_vector_fixed<double, Dimension>& c, double r);
 
-  virtual void SetAdaptivityMode(int mode) {
-    SW_LOG("SetAdaptivityMode: {}, pairwise_potential_type: {}", mode, m_pairwise_potential_type);
+  virtual void SetAdaptivityMode(int mode)
+  {
     if (mode == 0) {
-      m_LinkingFunction->SetFunctionA(this->GetCurvatureGradientFunction());
-    } else if (mode == 1) {
+      if (this->m_pairwise_potential_type == 0)
+        m_LinkingFunction->SetFunctionA(this->GetCurvatureGradientFunction());
+      else if (this->m_pairwise_potential_type == 1)
+        m_LinkingFunction->SetFunctionA(this->GetModifiedCotangentGradientFunction());
+    }
+    else if (mode == 1) {
       m_LinkingFunction->SetFunctionA(this->GetGradientFunction());
+    }
+    else if (mode == 3) {
+      if (this->m_pairwise_potential_type == 0)
+        m_LinkingFunction->SetFunctionA(this->GetOmegaGradientFunction());
+      else if (this->m_pairwise_potential_type == 1)
+        m_LinkingFunction->SetFunctionA(this->GetConstrainedModifiedCotangentGradientFunction());
     }
 
     this->m_AdaptivityMode = mode;
   }
 
-  int GetAdaptivityMode() const { return m_AdaptivityMode; }
+  int GetAdaptivityMode() const
+  { return m_AdaptivityMode; }
 
-  void SetCorrespondenceOn() { m_LinkingFunction->SetBOn(); }
+  void SetCorrespondenceOn()
+  { m_LinkingFunction->SetBOn(); }
 
-  void SetCorrespondenceOff() { m_LinkingFunction->SetBOff(); }
+  void SetCorrespondenceOff()
+  { m_LinkingFunction->SetBOff(); }
 
-  void SetSamplingOn() { m_LinkingFunction->SetAOn(); }
+  void SetSamplingOn()
+  { m_LinkingFunction->SetAOn(); }
 
-  void SetSamplingOff() { m_LinkingFunction->SetAOff(); }
+  void SetSamplingOff()
+  { m_LinkingFunction->SetAOff(); }
 
-  bool GetCorrespondenceOn() const { return m_LinkingFunction->GetBOn(); }
+  bool GetCorrespondenceOn() const
+  { return m_LinkingFunction->GetBOn(); }
 
-  bool GetSamplingOn() const { return m_LinkingFunction->GetAOn(); }
+  bool GetSamplingOn() const
+  { return m_LinkingFunction->GetAOn(); }
 
-  virtual void SetCorrespondenceMode(shapeworks::CorrespondenceMode mode) {
+  virtual void SetCorrespondenceMode(shapeworks::CorrespondenceMode mode)
+  {
     if (mode == shapeworks::CorrespondenceMode::MeanEnergy) {
       m_LinkingFunction->SetFunctionB(m_EnsembleEntropyFunction);
       m_EnsembleEntropyFunction->UseMeanEnergy();
-    } else if (mode == shapeworks::CorrespondenceMode::EnsembleEntropy) {
+    }
+    else if (mode == shapeworks::CorrespondenceMode::EnsembleEntropy) {
       m_LinkingFunction->SetFunctionB(m_EnsembleEntropyFunction);
       m_EnsembleEntropyFunction->UseEntropy();
-    } else if (mode == shapeworks::CorrespondenceMode::EnsembleRegressionEntropy) {
+    }
+    else if (mode == shapeworks::CorrespondenceMode::EnsembleRegressionEntropy) {
       m_LinkingFunction->SetFunctionB(m_EnsembleRegressionEntropyFunction);
-    } else if (mode == shapeworks::CorrespondenceMode::EnsembleMixedEffectsEntropy) {
+    }
+    else if (mode == shapeworks::CorrespondenceMode::EnsembleMixedEffectsEntropy) {
       m_LinkingFunction->SetFunctionB(m_EnsembleMixedEffectsEntropyFunction);
-    } else if (mode == shapeworks::CorrespondenceMode::MeshBasedGeneralEntropy) {
-      m_LinkingFunction->SetFunctionB(m_CorrespondenceFunction);
-      m_CorrespondenceFunction->UseEntropy();
-    } else if (mode == shapeworks::CorrespondenceMode::MeshBasedGeneralMeanEnergy) {
-      m_LinkingFunction->SetFunctionB(m_CorrespondenceFunction);
-      m_CorrespondenceFunction->UseMeanEnergy();
+    }
+    else if (mode == shapeworks::CorrespondenceMode::MeshBasedGeneralEntropy) {
+      m_LinkingFunction->SetFunctionB(m_MeshBasedGeneralEntropyGradientFunction);
+      m_MeshBasedGeneralEntropyGradientFunction->UseEntropy();
+    }
+    else if (mode == shapeworks::CorrespondenceMode::MeshBasedGeneralMeanEnergy) {
+      m_LinkingFunction->SetFunctionB(m_MeshBasedGeneralEntropyGradientFunction);
+      m_MeshBasedGeneralEntropyGradientFunction->UseMeanEnergy();
     }
 
     m_CorrespondenceMode = mode;
   }
 
-  void RegisterGeneralShapeMatrices() {
-    this->m_ParticleSystem->RegisterObserver(m_GeneralShapeMatrix);
-    this->m_ParticleSystem->RegisterObserver(m_GeneralShapeGradMatrix);
+  void RegisterGeneralShapeMatrices()
+  {
+    this->m_ParticleSystem->RegisterAttribute(m_GeneralShapeMatrix);
+    this->m_ParticleSystem->RegisterAttribute(m_GeneralShapeGradMatrix);
   }
 
-  void SetAttributeScales(const std::vector<double>& s) {
-    m_CorrespondenceFunction->SetAttributeScales(s);
+  void SetAttributeScales(const std::vector<double>& s)
+  {
+    m_MeshBasedGeneralEntropyGradientFunction->SetAttributeScales(s);
     m_GeneralShapeMatrix->SetAttributeScales(s);
     m_GeneralShapeGradMatrix->SetAttributeScales(s);
   }
 
-  void SetXYZ(unsigned int i, bool flag) {
-    m_CorrespondenceFunction->SetXYZ(i, flag);
+  void SetXYZ(unsigned int i, bool flag)
+  {
+    m_MeshBasedGeneralEntropyGradientFunction->SetXYZ(i, flag);
     m_GeneralShapeMatrix->SetXYZ(i, flag);
     m_GeneralShapeGradMatrix->SetXYZ(i, flag);
   }
 
-  void SetNormals(int i, bool flag) {
-    m_CorrespondenceFunction->SetNormals(i, flag);
+  void SetNormals(int i, bool flag)
+  {
+    m_MeshBasedGeneralEntropyGradientFunction->SetNormals(i, flag);
     m_GeneralShapeMatrix->SetNormals(i, flag);
     m_GeneralShapeGradMatrix->SetNormals(i, flag);
   }
 
-  void SetAttributesPerDomain(const std::vector<int> s) {
+  void SetAttributesPerDomain(const std::vector<int> s)
+  {
     std::vector<int> s1;
     if (s.size() == 0) {
-      s1.resize(m_CorrespondenceFunction->GetDomainsPerShape());
-      for (int i = 0; i < m_CorrespondenceFunction->GetDomainsPerShape(); i++) s1[i] = 0;
-    } else
+      s1.resize(m_MeshBasedGeneralEntropyGradientFunction->GetDomainsPerShape());
+      for (int i = 0; i < m_MeshBasedGeneralEntropyGradientFunction->GetDomainsPerShape(); i++)
+        s1[i] = 0;
+    }
+    else
       s1 = s;
 
     m_AttributesPerDomain = s1;
-    m_CorrespondenceFunction->SetAttributesPerDomain(s1);
+    m_MeshBasedGeneralEntropyGradientFunction->SetAttributesPerDomain(s1);
     m_GeneralShapeMatrix->SetAttributesPerDomain(s1);
     m_GeneralShapeGradMatrix->SetAttributesPerDomain(s1);
   }
 
-  LegacyShapeMatrix* GetShapeMatrix() { return m_LegacyShapeMatrix.GetPointer(); }
-
-  ShapeMatrix* GetGeneralShapeMatrix() { return m_GeneralShapeMatrix.GetPointer(); }
-  ShapeGradientMatrix* GetGeneralShapeGradientMatrix() { return m_GeneralShapeGradMatrix.GetPointer(); }
-
-  DualVectorFunction* GetLinkingFunction() { return m_LinkingFunction.GetPointer(); }
-
-  LegacyCorrespondenceFunction* GetEnsembleEntropyFunction() { return m_EnsembleEntropyFunction.GetPointer(); }
-
-  LegacyCorrespondenceFunction* GetEnsembleRegressionEntropyFunction() {
-    return m_EnsembleRegressionEntropyFunction.GetPointer();
+  itk::ParticleShapeMatrixAttribute<double, Dimension>* GetShapeMatrix()
+  {
+    return m_ShapeMatrix.GetPointer();
   }
 
-  LegacyCorrespondenceFunction* GetEnsembleMixedEffectsEntropyFunction() {
-    return m_EnsembleMixedEffectsEntropyFunction.GetPointer();
+  itk::ParticleGeneralShapeMatrix<double, Dimension>* GetGeneralShapeMatrix()
+  {
+    return m_GeneralShapeMatrix.GetPointer();
   }
 
-  CorrespondenceFunction* GetMeshBasedGeneralEntropyGradientFunction() {
-    return m_CorrespondenceFunction.GetPointer();
+  itk::ParticleGeneralShapeGradientMatrix<double, Dimension>* GetGeneralShapeGradientMatrix()
+  {
+    return m_GeneralShapeGradMatrix.GetPointer();
   }
 
-  const DualVectorFunction* GetLinkingFunction() const { return m_LinkingFunction.GetPointer(); }
+  itk::ParticleDualVectorFunction<Dimension>* GetLinkingFunction()
+  { return m_LinkingFunction.GetPointer(); }
 
-  const LegacyCorrespondenceFunction* GetEnsembleEntropyFunction() const {
-    return m_EnsembleEntropyFunction.GetPointer();
+  itk::ParticleEnsembleEntropyFunction<Dimension>* GetEnsembleEntropyFunction()
+  { return m_EnsembleEntropyFunction.GetPointer(); }
+
+  itk::ParticleEnsembleEntropyFunction<Dimension>* GetEnsembleRegressionEntropyFunction()
+  { return m_EnsembleRegressionEntropyFunction.GetPointer(); }
+
+  itk::ParticleEnsembleEntropyFunction<Dimension>* GetEnsembleMixedEffectsEntropyFunction()
+  { return m_EnsembleMixedEffectsEntropyFunction.GetPointer(); }
+
+  itk::ParticleMeshBasedGeneralEntropyGradientFunction<Dimension>*
+  GetMeshBasedGeneralEntropyGradientFunction()
+  { return m_MeshBasedGeneralEntropyGradientFunction.GetPointer(); }
+
+  const itk::ParticleDualVectorFunction<Dimension>* GetLinkingFunction() const
+  { return m_LinkingFunction.GetPointer(); }
+
+  const itk::ParticleEnsembleEntropyFunction<Dimension>* GetEnsembleEntropyFunction() const
+  { return m_EnsembleEntropyFunction.GetPointer(); }
+
+  const itk::ParticleEnsembleEntropyFunction<Dimension>*
+  GetEnsembleRegressionEntropyFunction() const
+  { return m_EnsembleRegressionEntropyFunction.GetPointer(); }
+
+  const itk::ParticleEnsembleEntropyFunction<Dimension>*
+  GetEnsembleMixedEffectsEntropyFunction() const
+  { return m_EnsembleMixedEffectsEntropyFunction.GetPointer(); }
+
+  const itk::ParticleMeshBasedGeneralEntropyGradientFunction<Dimension>*
+  GetMeshBasedGeneralEntropyGradientFunction() const
+  { return m_MeshBasedGeneralEntropyGradientFunction.GetPointer(); }
+
+  void SetTimeptsPerIndividual(int n)
+  {
+    m_MixedEffectsShapeMatrix->SetTimeptsPerIndividual(n);
   }
 
-  const LegacyCorrespondenceFunction* GetEnsembleRegressionEntropyFunction() const {
-    return m_EnsembleRegressionEntropyFunction.GetPointer();
-  }
+  shapeworks::CorrespondenceMode GetCorrespondenceMode() const
+  { return m_CorrespondenceMode; }
 
-  const LegacyCorrespondenceFunction* GetEnsembleMixedEffectsEntropyFunction() const {
-    return m_EnsembleMixedEffectsEntropyFunction.GetPointer();
-  }
+  void SetTransformFile(const std::string& s)
+  { m_TransformFile = s; }
 
-  const CorrespondenceFunction* GetMeshBasedGeneralEntropyGradientFunction() const {
-    return m_CorrespondenceFunction.GetPointer();
-  }
+  void SetTransformFile(const char* s)
+  { m_TransformFile = std::string(s); }
 
-  void SetTimeptsPerIndividual(int n) { m_MixedEffectsShapeMatrix->SetTimeptsPerIndividual(n); }
+  void SetPrefixTransformFile(const std::string& s)
+  { m_PrefixTransformFile = s; }
 
-  shapeworks::CorrespondenceMode GetCorrespondenceMode() const { return m_CorrespondenceMode; }
+  void SetPrefixTransformFile(const char* s)
+  { m_PrefixTransformFile = std::string(s); }
 
-  void SetTransformFile(const std::string& s) { m_TransformFile = s; }
+  void SetPairwisePotentialType(int pairwise_potential_type)
+  { m_pairwise_potential_type = pairwise_potential_type; }
 
-  void SetTransformFile(const char* s) { m_TransformFile = std::string(s); }
+  int GetPairwisePotentialType()
+  { return m_pairwise_potential_type; }
 
-  void SetPrefixTransformFile(const std::string& s) { m_PrefixTransformFile = s; }
-
-  void SetPrefixTransformFile(const char* s) { m_PrefixTransformFile = std::string(s); }
-
-  void SetPairwisePotentialType(int pairwise_potential_type) { m_pairwise_potential_type = pairwise_potential_type; }
-
-  int GetPairwisePotentialType() { return m_pairwise_potential_type; }
-
-  void SetVerbosity(unsigned int val) {
+  void SetVerbosity(unsigned int val)
+  {
     m_verbosity = val;
     m_Optimizer->SetVerbosity(val);
   }
 
-  unsigned int GetVerbosity() { return m_verbosity; }
+  unsigned int GetVerbosity()
+  { return m_verbosity; }
 
-  MeanCurvatureCacheType* GetMeanCurvatureCache() { return m_MeanCurvatureCache.GetPointer(); }
+  MeanCurvatureCacheType* GetMeanCurvatureCache()
+  { return m_MeanCurvatureCache.GetPointer(); }
 
-  void SetSharedBoundaryEnabled(bool enabled) { m_IsSharedBoundaryEnabled = enabled; }
-  void SetSharedBoundaryWeight(double weight) { m_SharedBoundaryWeight = weight; }
+  void SetSharedBoundaryEnabled(bool enabled)
+  { m_IsSharedBoundaryEnabled = enabled; }
+  void SetSharedBoundaryWeight(double weight)
+  { m_SharedBoundaryWeight = weight; }
 
   void ReadTransforms();
   void ReadPointsFiles();
@@ -317,7 +410,8 @@ class Sampler {
   virtual void AllocateDomainsAndNeighborhoods();
   virtual void InitializeOptimizationFunctions();
 
-  virtual void Initialize() {
+  virtual void Initialize()
+  {
     this->m_Initializing = true;
     this->Execute();
     this->m_Initializing = false;
@@ -327,16 +421,15 @@ class Sampler {
 
   virtual void Execute();
 
-  std::vector<std::vector<std::pair<Eigen::Vector3d, Eigen::Vector3d>>> ComputeCuttingPlanes() {
-    std::vector<std::vector<std::pair<Eigen::Vector3d, Eigen::Vector3d>>> planes;
-    for (size_t i = 0; i < m_CuttingPlanes.size(); i++) {
-      std::vector<std::pair<Eigen::Vector3d, Eigen::Vector3d>> domain_i_cps;
-      for (size_t j = 0; j < m_CuttingPlanes[i].size(); j++) {
+  std::vector<std::vector<std::pair<Eigen::Vector3d, Eigen::Vector3d> > > ComputeCuttingPlanes()
+  {
+    std::vector<std::vector<std::pair<Eigen::Vector3d, Eigen::Vector3d> > > planes;
+    for(size_t i = 0; i < m_CuttingPlanes.size(); i++){
+      std::vector<std::pair<Eigen::Vector3d, Eigen::Vector3d> > domain_i_cps;
+      for(size_t j = 0; j < m_CuttingPlanes[i].size(); j++){
         std::pair<Eigen::Vector3d, Eigen::Vector3d> cut_plane;
-        cut_plane.first = ComputePlaneNormal(m_CuttingPlanes[i][j].a.as_ref(), m_CuttingPlanes[i][j].b.as_ref(),
-                                             m_CuttingPlanes[i][j].c.as_ref());
-        cut_plane.second =
-            Eigen::Vector3d(m_CuttingPlanes[i][j].a[0], m_CuttingPlanes[i][j].a[1], m_CuttingPlanes[i][j].a[2]);
+        cut_plane.first = ComputePlaneNormal(m_CuttingPlanes[i][j].a, m_CuttingPlanes[i][j].b, m_CuttingPlanes[i][j].c);
+        cut_plane.second = Eigen::Vector3d(m_CuttingPlanes[i][j].a[0], m_CuttingPlanes[i][j].a[1],m_CuttingPlanes[i][j].a[2]);
         domain_i_cps.push_back(cut_plane);
       }
       planes.push_back(domain_i_cps);
@@ -344,42 +437,53 @@ class Sampler {
     return planes;
   }
 
-  Eigen::Vector3d ComputePlaneNormal(const vnl_vector<double>& a, const vnl_vector<double>& b,
-                                     const vnl_vector<double>& c) {
+  Eigen::Vector3d ComputePlaneNormal(const vnl_vector<double> &a, const vnl_vector<double> &b,const vnl_vector<double> &c){
     // See http://mathworld.wolfram.com/Plane.html, for example
     vnl_vector<double> q;
-    q = vnl_cross_3d((b - a), (c - a));
+    q = vnl_cross_3d((b-a),(c-a));
 
-    if (q.magnitude() > 0.0) {
+    if (q.magnitude() > 0.0)
+    {
       Eigen::Vector3d qp;
-      q = q / q.magnitude();
-      qp(0) = q[0];
-      qp(1) = q[1];
-      qp(2) = q[2];
+      q = q/q.magnitude();
+      qp(0) = q[0]; qp(1) = q[1]; qp(2) = q[2];
       return qp;
-    } else {
-      std::cerr << "Error in Libs/Optimize/ParticleSystem/Sampler.h::ComputePlaneNormal" << std::endl;
-      std::cerr << "There was an issue with a cutting plane that was defined. It has yielded a 0,0,0 vector. Please "
-                   "check the inputs."
-                << std::endl;
-      throw std::runtime_error("Error computing plane normal");
     }
+    else{
+        std::cerr << "Error in Libs/Optimize/ParticleSystem/Sampler.h::ComputePlaneNormal" << std::endl;
+        std::cerr << "There was an issue with a cutting plane that was defined. It has yielded a 0,0,0 vector. Please check the inputs." << std::endl;
+        throw std::runtime_error("Error computing plane normal");
+    }
+
   }
 
-  std::vector<FreeFormConstraint> GetFFCs() { return m_FFCs; }
+  std::vector<FFCType> GetFFCs() { return m_FFCs; }
 
-  void SetMeshFFCMode(bool mesh_ffc_mode) { m_meshFFCMode = mesh_ffc_mode; }
+  void SetMeshFFCMode(bool mesh_ffc_mode) {m_meshFFCMode = mesh_ffc_mode;}
 
- protected:
+protected:
+
   void GenerateData();
 
-  bool GetInitialized() { return this->m_Initialized; }
+  bool GetInitialized()
+  {
+    return this->m_Initialized;
+  }
 
-  void SetInitialized(bool value) { this->m_Initialized = value; }
+  void SetInitialized(bool value)
+  {
+    this->m_Initialized = value;
+  }
 
-  bool GetInitializing() { return this->m_Initializing; }
+  bool GetInitializing()
+  {
+    return this->m_Initializing;
+  }
 
-  void SetInitializing(bool value) { this->m_Initializing = value; }
+  void SetInitializing(bool value)
+  {
+    this->m_Initializing = value;
+  }
 
   bool m_Initialized{false};
   int m_AdaptivityMode{0};
@@ -387,44 +491,52 @@ class Sampler {
 
   OptimizerType::Pointer m_Optimizer;
 
-  SamplingFunction::Pointer m_GradientFunction;
-  CurvatureSamplingFunction::Pointer m_CurvatureGradientFunction;
+  itk::ParticleEntropyGradientFunction<ImageType::PixelType, Dimension>::Pointer m_GradientFunction;
+  itk::ParticleCurvatureEntropyGradientFunction<ImageType::PixelType, Dimension>::Pointer m_CurvatureGradientFunction;
 
-  GenericContainerArray<double>::Pointer m_Sigma1Cache;
-  GenericContainerArray<double>::Pointer m_Sigma2Cache;
+  itk::ParticleModifiedCotangentEntropyGradientFunction<ImageType::PixelType, Dimension>
+  ::Pointer m_ModifiedCotangentGradientFunction;
+  itk::ParticleConstrainedModifiedCotangentEntropyGradientFunction<ImageType::PixelType, Dimension>
+  ::Pointer m_ConstrainedModifiedCotangentGradientFunction;
+
+  itk::ParticleOmegaGradientFunction<ImageType::PixelType, Dimension>::Pointer m_OmegaGradientFunction;
+
+  itk::ParticleContainerArrayAttribute<double, Dimension>::Pointer m_Sigma1Cache;
+  itk::ParticleContainerArrayAttribute<double, Dimension>::Pointer m_Sigma2Cache;
 
   MeanCurvatureCacheType::Pointer m_MeanCurvatureCache;
 
-  ParticleSystem::Pointer m_ParticleSystem;
+  itk::ParticleSystem::Pointer m_ParticleSystem;
 
   std::vector<ParticleDomain::Pointer> m_DomainList;
 
-  std::vector<ParticleSurfaceNeighborhood::Pointer> m_NeighborhoodList;
+  std::vector<itk::ParticleSurfaceNeighborhood<ImageType>::Pointer> m_NeighborhoodList;
 
   int m_pairwise_potential_type;
 
   shapeworks::CorrespondenceMode m_CorrespondenceMode;
 
-  DualVectorFunction::Pointer m_LinkingFunction;
+  itk::ParticleDualVectorFunction<Dimension>::Pointer m_LinkingFunction;
 
-  LegacyCorrespondenceFunction::Pointer m_EnsembleEntropyFunction;
-  LegacyCorrespondenceFunction::Pointer m_EnsembleRegressionEntropyFunction;
-  LegacyCorrespondenceFunction::Pointer m_EnsembleMixedEffectsEntropyFunction;
-  CorrespondenceFunction::Pointer m_CorrespondenceFunction;
+  itk::ParticleEnsembleEntropyFunction<Dimension>::Pointer m_EnsembleEntropyFunction;
+  itk::ParticleEnsembleEntropyFunction<Dimension>::Pointer m_EnsembleRegressionEntropyFunction;
+  itk::ParticleEnsembleEntropyFunction<Dimension>::Pointer m_EnsembleMixedEffectsEntropyFunction;
 
-  LegacyShapeMatrix::Pointer m_LegacyShapeMatrix;
+  itk::ParticleShapeMatrixAttribute<double, Dimension>::Pointer m_ShapeMatrix;
 
-  LinearRegressionShapeMatrix::Pointer m_LinearRegressionShapeMatrix;
-  MixedEffectsShapeMatrix::Pointer m_MixedEffectsShapeMatrix;
+  itk::ParticleShapeLinearRegressionMatrixAttribute<double, Dimension>::Pointer m_LinearRegressionShapeMatrix;
+  itk::ParticleShapeMixedEffectsMatrixAttribute<double, Dimension>::Pointer m_MixedEffectsShapeMatrix;
 
-  shapeworks::ShapeMatrix::Pointer m_GeneralShapeMatrix;
-  shapeworks::ShapeGradientMatrix::Pointer m_GeneralShapeGradMatrix;
+  itk::ParticleGeneralShapeMatrix<double, Dimension>::Pointer m_GeneralShapeMatrix;
+  itk::ParticleGeneralShapeGradientMatrix<double, Dimension>::Pointer m_GeneralShapeGradMatrix;
+
+  itk::ParticleMeshBasedGeneralEntropyGradientFunction<Dimension>::Pointer m_MeshBasedGeneralEntropyGradientFunction;
 
   bool initialize_ffcs(size_t dom);
 
- private:
-  Sampler(const Sampler&);         // purposely not implemented
-  void operator=(const Sampler&);  // purposely not implemented
+private:
+  Sampler(const Sampler&); //purposely not implemented
+  void operator=(const Sampler&); //purposely not implemented
 
   std::vector<std::string> m_PointsFiles;
   std::vector<std::string> m_MeshFiles;
@@ -441,17 +553,17 @@ class Sampler {
   std::string m_PrefixTransformFile;
   std::vector<std::vector<CuttingPlaneType>> m_CuttingPlanes;
   std::vector<std::vector<SphereType>> m_Spheres;
-  std::vector<FreeFormConstraint> m_FFCs;
+  std::vector<FFCType> m_FFCs;
   std::vector<vtkSmartPointer<vtkPolyData>> m_meshes;
   bool m_meshFFCMode = false;
 
   unsigned int m_verbosity;
 };
 
-}  // namespace shapeworks
+} // end namespace
 ```
 
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:05 +0000
+Updated on 2022-07-23 at 16:40:07 -0600

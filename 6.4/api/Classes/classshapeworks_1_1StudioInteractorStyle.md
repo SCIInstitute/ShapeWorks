@@ -22,7 +22,6 @@ Inherits from vtkInteractorStyleTrackballCamera
 | virtual | **[~StudioInteractorStyle](../Classes/classshapeworks_1_1StudioInteractorStyle.md#function-~studiointeractorstyle)**() |
 | void | **[OnLeftButtonDown](../Classes/classshapeworks_1_1StudioInteractorStyle.md#function-onleftbuttondown)**() override |
 | void | **[OnRightButtonDown](../Classes/classshapeworks_1_1StudioInteractorStyle.md#function-onrightbuttondown)**() override |
-| void | **[OnRightButtonUp](../Classes/classshapeworks_1_1StudioInteractorStyle.md#function-onrightbuttonup)**() override |
 | void | **[OnMouseWheelForward](../Classes/classshapeworks_1_1StudioInteractorStyle.md#function-onmousewheelforward)**() override |
 | void | **[OnMouseWheelBackward](../Classes/classshapeworks_1_1StudioInteractorStyle.md#function-onmousewheelbackward)**() override |
 | void | **[OnKeyDown](../Classes/classshapeworks_1_1StudioInteractorStyle.md#function-onkeydown)**() override |
@@ -92,13 +91,6 @@ void OnRightButtonDown() override
 ```
 
 
-### function OnRightButtonUp
-
-```cpp
-void OnRightButtonUp() override
-```
-
-
 ### function OnMouseWheelForward
 
 ```cpp
@@ -154,4 +146,4 @@ void Dolly(
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:05 +0000
+Updated on 2022-07-23 at 16:40:07 -0600

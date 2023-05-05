@@ -32,14 +32,17 @@ Inherits from QWidget
 | -------------- | -------------- |
 | void | **[optimize_start](../Classes/classshapeworks_1_1OptimizeTool.md#signal-optimize-start)**() |
 | void | **[optimize_complete](../Classes/classshapeworks_1_1OptimizeTool.md#signal-optimize-complete)**() |
+| void | **[error_message](../Classes/classshapeworks_1_1OptimizeTool.md#signal-error-message)**(QString ) |
+| void | **[warning_message](../Classes/classshapeworks_1_1OptimizeTool.md#signal-warning-message)**(QString ) |
 | void | **[progress](../Classes/classshapeworks_1_1OptimizeTool.md#signal-progress)**(int ) |
-| void | **[status](../Classes/classshapeworks_1_1OptimizeTool.md#signal-status)**(std::string ) |
+| void | **[message](../Classes/classshapeworks_1_1OptimizeTool.md#signal-message)**(QString ) |
+| void | **[status](../Classes/classshapeworks_1_1OptimizeTool.md#signal-status)**(QString ) |
 
 ## Public Functions
 
 |                | Name           |
 | -------------- | -------------- |
-| | **[OptimizeTool](../Classes/classshapeworks_1_1OptimizeTool.md#function-optimizetool)**([Preferences](../Classes/classPreferences.md) & prefs, [Telemetry](../Classes/classshapeworks_1_1Telemetry.md) & telemetry) |
+| | **[OptimizeTool](../Classes/classshapeworks_1_1OptimizeTool.md#function-optimizetool)**([Preferences](../Classes/classPreferences.md) & prefs) |
 | | **[~OptimizeTool](../Classes/classshapeworks_1_1OptimizeTool.md#function-~optimizetool)**() |
 | void | **[set_session](../Classes/classshapeworks_1_1OptimizeTool.md#function-set-session)**(QSharedPointer< [Session](../Classes/classshapeworks_1_1Session.md) > session)<br>set the pointer to the project  |
 | void | **[activate](../Classes/classshapeworks_1_1OptimizeTool.md#function-activate)**()<br>activate this tool  |
@@ -147,6 +150,24 @@ void optimize_complete()
 ```
 
 
+### signal error_message
+
+```cpp
+void error_message(
+    QString 
+)
+```
+
+
+### signal warning_message
+
+```cpp
+void warning_message(
+    QString 
+)
+```
+
+
 ### signal progress
 
 ```cpp
@@ -156,11 +177,20 @@ void progress(
 ```
 
 
+### signal message
+
+```cpp
+void message(
+    QString 
+)
+```
+
+
 ### signal status
 
 ```cpp
 void status(
-    std::string 
+    QString 
 )
 ```
 
@@ -171,8 +201,7 @@ void status(
 
 ```cpp
 OptimizeTool(
-    Preferences & prefs,
-    Telemetry & telemetry
+    Preferences & prefs
 )
 ```
 
@@ -244,4 +273,4 @@ shut down any running threads
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:04 +0000
+Updated on 2022-07-23 at 16:40:06 -0600

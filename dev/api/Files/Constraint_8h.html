@@ -19,7 +19,7 @@
     
     
       
-        <title>Libs/Optimize/Constraints/Constraint.h - ShapeWorks</title>
+        <title>Libs/Optimize/ParticleSystem/Constraint.h - ShapeWorks</title>
       
     
     
@@ -84,7 +84,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#libsoptimizeconstraintsconstrainth" class="md-skip">
+        <a href="#libsoptimizeparticlesystemconstrainth" class="md-skip">
           Skip to content
         </a>
       
@@ -122,7 +122,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Libs/Optimize/Constraints/Constraint.h
+              Libs/Optimize/ParticleSystem/Constraint.h
             
           </span>
         </div>
@@ -2409,7 +2409,7 @@
 
 
 
-<h1 id="libsoptimizeconstraintsconstrainth">Libs/Optimize/Constraints/Constraint.h</h1>
+<h1 id="libsoptimizeparticlesystemconstrainth">Libs/Optimize/ParticleSystem/Constraint.h</h1>
 <h2 id="namespaces">Namespaces</h2>
 <table>
 <thead>
@@ -2419,7 +2419,7 @@
 </thead>
 <tbody>
 <tr>
-<td><strong><a href="../Namespaces/namespaceshapeworks.html">shapeworks</a></strong> <br>User usage reporting (telemetry)</td>
+<td><strong><a href="../Namespaces/namespaceshapeworks.html">shapeworks</a></strong></td>
 </tr>
 </tbody>
 </table>
@@ -2443,7 +2443,6 @@
 
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vnl/vnl_math.h&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vnl/vnl_vector.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span>
 
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Eigen/Core&gt;</span>
 
@@ -2460,25 +2459,25 @@
 <span class="w">  </span><span class="c1">// For augmented lagrangian</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">setZ</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">inz</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">z_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">inz</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 <span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">getZ</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">z_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">setMus</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">inmu</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">mus_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">inmu</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">getMus</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">mus_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">setLambda</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">inLambda</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">lambda_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">inLambda</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">getLambda</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">lambda_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">setMu</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">inmu</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">mu_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">inmu</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">getMu</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">mu_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">setLambda</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">inLambda</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">lambda_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">inLambda</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="nf">getLambda</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">lambda_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">constraintGradient</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="o">&amp;</span><span class="n">pt</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="nf">constraintGradient</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="o">&amp;</span><span class="n">pt</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 <span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="nf">constraintEval</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="o">&amp;</span><span class="n">pt</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">updateZ</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="o">&amp;</span><span class="n">pt</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">C</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">updateMu</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="o">&amp;</span><span class="n">pt</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">C</span><span class="p">,</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">index</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">updateMu</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="o">&amp;</span><span class="n">pt</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">C</span><span class="p">);</span>
 
-<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="nf">lagragianGradient</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="o">&amp;</span><span class="n">pt</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">C</span><span class="p">,</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">index</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="nf">lagragianGradient</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="o">&amp;</span><span class="n">pt</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">C</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
 
 <span class="w"> </span><span class="k">protected</span><span class="o">:</span>
 <span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">sgn</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">val</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="kt">double</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">val</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="p">(</span><span class="n">val</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="p">(</span><span class="mi">0</span><span class="p">));</span><span class="w"> </span><span class="p">}</span>
 
 <span class="w">  </span><span class="c1">// For augmented lagrangian</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mus_</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">mu_</span><span class="p">;</span>
 <span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">z_</span><span class="p">;</span>
 <span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">lambda_</span><span class="p">;</span>
 <span class="p">};</span>
@@ -2486,7 +2485,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-05-04 at 20:03:05 +0000</p>
+<p>Updated on 2022-07-23 at 16:40:07 -0600</p>
 
               
             </article>

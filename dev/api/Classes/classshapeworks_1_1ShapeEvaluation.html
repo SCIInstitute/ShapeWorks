@@ -2500,27 +2500,27 @@
 </tr>
 <tr>
 <td>double</td>
-<td><strong><a href="classshapeworks_1_1ShapeEvaluation.html#function-computecompactness">ComputeCompactness</a></strong>(const <a href="classshapeworks_1_1ParticleSystemEvaluation.html">ParticleSystemEvaluation</a> &amp; ParticleSystemEvaluation, const int nModes, const std::string &amp; saveTo ="")</td>
+<td><strong><a href="classshapeworks_1_1ShapeEvaluation.html#function-computecompactness">ComputeCompactness</a></strong>(const <a href="classshapeworks_1_1ParticleSystem.html">ParticleSystem</a> &amp; particleSystem, const int nModes, const std::string &amp; saveTo ="")</td>
 </tr>
 <tr>
 <td>Eigen::VectorXd</td>
-<td><strong><a href="classshapeworks_1_1ShapeEvaluation.html#function-computefullcompactness">ComputeFullCompactness</a></strong>(const <a href="classshapeworks_1_1ParticleSystemEvaluation.html">ParticleSystemEvaluation</a> &amp; ParticleSystemEvaluation, std::function&lt; void(float)&gt; progress_callback =nullptr)</td>
+<td><strong><a href="classshapeworks_1_1ShapeEvaluation.html#function-computefullcompactness">ComputeFullCompactness</a></strong>(const <a href="classshapeworks_1_1ParticleSystem.html">ParticleSystem</a> &amp; particleSystem, std::function&lt; void(float)&gt; progress_callback =nullptr)</td>
 </tr>
 <tr>
 <td>double</td>
-<td><strong><a href="classshapeworks_1_1ShapeEvaluation.html#function-computegeneralization">ComputeGeneralization</a></strong>(const <a href="classshapeworks_1_1ParticleSystemEvaluation.html">ParticleSystemEvaluation</a> &amp; ParticleSystemEvaluation, const int nModes, const std::string &amp; saveTo ="")</td>
+<td><strong><a href="classshapeworks_1_1ShapeEvaluation.html#function-computegeneralization">ComputeGeneralization</a></strong>(const <a href="classshapeworks_1_1ParticleSystem.html">ParticleSystem</a> &amp; particleSystem, const int nModes, const std::string &amp; saveTo ="")</td>
 </tr>
 <tr>
 <td>Eigen::VectorXd</td>
-<td><strong><a href="classshapeworks_1_1ShapeEvaluation.html#function-computefullgeneralization">ComputeFullGeneralization</a></strong>(const <a href="classshapeworks_1_1ParticleSystemEvaluation.html">ParticleSystemEvaluation</a> &amp; ParticleSystemEvaluation, std::function&lt; void(float)&gt; progress_callback =nullptr)</td>
+<td><strong><a href="classshapeworks_1_1ShapeEvaluation.html#function-computefullgeneralization">ComputeFullGeneralization</a></strong>(const <a href="classshapeworks_1_1ParticleSystem.html">ParticleSystem</a> &amp; particleSystem, std::function&lt; void(float)&gt; progress_callback =nullptr)</td>
 </tr>
 <tr>
 <td>double</td>
-<td><strong><a href="classshapeworks_1_1ShapeEvaluation.html#function-computespecificity">ComputeSpecificity</a></strong>(const <a href="classshapeworks_1_1ParticleSystemEvaluation.html">ParticleSystemEvaluation</a> &amp; ParticleSystemEvaluation, const int nModes, const std::string &amp; saveTo ="")</td>
+<td><strong><a href="classshapeworks_1_1ShapeEvaluation.html#function-computespecificity">ComputeSpecificity</a></strong>(const <a href="classshapeworks_1_1ParticleSystem.html">ParticleSystem</a> &amp; particleSystem, const int nModes, const std::string &amp; saveTo ="")</td>
 </tr>
 <tr>
 <td>Eigen::VectorXd</td>
-<td><strong><a href="classshapeworks_1_1ShapeEvaluation.html#function-computefullspecificity">ComputeFullSpecificity</a></strong>(const <a href="classshapeworks_1_1ParticleSystemEvaluation.html">ParticleSystemEvaluation</a> &amp; ParticleSystemEvaluation, std::function&lt; void(float)&gt; progress_callback =nullptr)</td>
+<td><strong><a href="classshapeworks_1_1ShapeEvaluation.html#function-computefullspecificity">ComputeFullSpecificity</a></strong>(const <a href="classshapeworks_1_1ParticleSystem.html">ParticleSystem</a> &amp; particleSystem, std::function&lt; void(float)&gt; progress_callback =nullptr)</td>
 </tr>
 </tbody>
 </table>
@@ -2545,40 +2545,40 @@
 </code></pre></div>
 <h3 id="function-computecompactness">function ComputeCompactness</h3>
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">ComputeCompactness</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystemEvaluation</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ParticleSystemEvaluation</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">particleSystem</span><span class="p">,</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">nModes</span><span class="p">,</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">saveTo</span><span class="w"> </span><span class="o">=</span><span class="s">&quot;&quot;</span>
 <span class="p">)</span>
 </code></pre></div>
 <h3 id="function-computefullcompactness">function ComputeFullCompactness</h3>
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">ComputeFullCompactness</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystemEvaluation</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ParticleSystemEvaluation</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">particleSystem</span><span class="p">,</span>
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">void</span><span class="p">(</span><span class="kt">float</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="n">progress_callback</span><span class="w"> </span><span class="o">=</span><span class="k">nullptr</span>
 <span class="p">)</span>
 </code></pre></div>
 <h3 id="function-computegeneralization">function ComputeGeneralization</h3>
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">ComputeGeneralization</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystemEvaluation</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ParticleSystemEvaluation</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">particleSystem</span><span class="p">,</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">nModes</span><span class="p">,</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">saveTo</span><span class="w"> </span><span class="o">=</span><span class="s">&quot;&quot;</span>
 <span class="p">)</span>
 </code></pre></div>
 <h3 id="function-computefullgeneralization">function ComputeFullGeneralization</h3>
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">ComputeFullGeneralization</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystemEvaluation</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ParticleSystemEvaluation</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">particleSystem</span><span class="p">,</span>
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">void</span><span class="p">(</span><span class="kt">float</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="n">progress_callback</span><span class="w"> </span><span class="o">=</span><span class="k">nullptr</span>
 <span class="p">)</span>
 </code></pre></div>
 <h3 id="function-computespecificity">function ComputeSpecificity</h3>
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">ComputeSpecificity</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystemEvaluation</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ParticleSystemEvaluation</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">particleSystem</span><span class="p">,</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">nModes</span><span class="p">,</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">saveTo</span><span class="w"> </span><span class="o">=</span><span class="s">&quot;&quot;</span>
 <span class="p">)</span>
 </code></pre></div>
 <h3 id="function-computefullspecificity">function ComputeFullSpecificity</h3>
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">ComputeFullSpecificity</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystemEvaluation</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ParticleSystemEvaluation</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParticleSystem</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">particleSystem</span><span class="p">,</span>
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">void</span><span class="p">(</span><span class="kt">float</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="n">progress_callback</span><span class="w"> </span><span class="o">=</span><span class="k">nullptr</span>
 <span class="p">)</span>
 </code></pre></div>
@@ -2587,7 +2587,7 @@
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-05-04 at 20:03:04 +0000</p>
+<p>Updated on 2022-07-23 at 16:40:06 -0600</p>
 
               
             </article>

@@ -1,10 +1,10 @@
 ---
-title: Libs/Analyze/MeshWorker.h
+title: Studio/src/Data/MeshWorker.h
 summary: Worker class for parallel mesh reconstruction. 
 
 ---
 
-# Libs/Analyze/MeshWorker.h
+# Studio/src/Data/MeshWorker.h
 
 Worker class for parallel mesh reconstruction.  [More...](#detailed-description)
 
@@ -12,7 +12,7 @@ Worker class for parallel mesh reconstruction.  [More...](#detailed-description)
 
 | Name           |
 | -------------- |
-| **[shapeworks](../Namespaces/namespaceshapeworks.md)** <br>User usage reporting (telemetry)  |
+| **[shapeworks](../Namespaces/namespaceshapeworks.md)**  |
 
 ## Classes
 
@@ -56,9 +56,9 @@ Q_DECLARE_METATYPE(
 #include <QMetaType>
 #include <QRunnable>
 
-#include "MeshWorkQueue.h"
-#include "MeshCache.h"
-#include "MeshGenerator.h"
+#include <Data/MeshWorkQueue.h>
+#include <Data/MeshCache.h>
+#include <Data/MeshGenerator.h>
 
 Q_DECLARE_METATYPE(vtkSmartPointer<vtkPolyData>);
 
@@ -87,4 +87,4 @@ private:
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:05 +0000
+Updated on 2022-07-23 at 16:40:07 -0600

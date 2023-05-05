@@ -2414,8 +2414,22 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-get_dimension_string" class="md-nav__link">
+    function get_dimension_string
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-get_poly_data" class="md-nav__link">
     function get_poly_data
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_center_transform" class="md-nav__link">
+    function get_center_transform
   </a>
   
 </li>
@@ -2554,8 +2568,16 @@
 <td><strong><a href="classshapeworks_1_1StudioMesh.html#function-~studiomesh">~StudioMesh</a></strong>()<br>Destructor.</td>
 </tr>
 <tr>
+<td>QString</td>
+<td><strong><a href="classshapeworks_1_1StudioMesh.html#function-get-dimension-string">get_dimension_string</a></strong>()<br>Get the dimensions as a string for display (if loaded from an image)</td>
+</tr>
+<tr>
 <td>vtkSmartPointer&lt; vtkPolyData &gt;</td>
 <td><strong><a href="classshapeworks_1_1StudioMesh.html#function-get-poly-data">get_poly_data</a></strong>()<br>Get the mesh polydata.</td>
+</tr>
+<tr>
+<td>vnl_vector&lt; double &gt;</td>
+<td><strong><a href="classshapeworks_1_1StudioMesh.html#function-get-center-transform">get_center_transform</a></strong>()<br>Get the center transform.</td>
 </tr>
 <tr>
 <td>void</td>
@@ -2618,8 +2640,7 @@
 <div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">shapeworks</span><span class="o">::</span><span class="n">StudioMesh</span><span class="p">;</span>
 </code></pre></div>
 <p>Representation of a single mesh. </p>
-<p>The <a href="classshapeworks_1_1Mesh.html">Mesh</a> class represents a single mesh generated from an image file or set of particles. It is responsible for loading the image and generating a mesh from it.</p>
-<p>TODO: Merge this functionality with Libs/Mesh/Mesh class </p>
+<p>The <a href="classshapeworks_1_1Mesh.html">Mesh</a> class represents a single mesh generated from an image file or set of particles. It is responsible for loading the image and generating a mesh from it. </p>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-studiomesh">function StudioMesh</h3>
 <div class="highlight"><pre><span></span><code><span class="n">StudioMesh</span><span class="p">()</span>
@@ -2629,10 +2650,18 @@
 <div class="highlight"><pre><span></span><code><span class="o">~</span><span class="n">StudioMesh</span><span class="p">()</span>
 </code></pre></div>
 <p>Destructor. </p>
+<h3 id="function-get_dimension_string">function get_dimension_string</h3>
+<div class="highlight"><pre><span></span><code><span class="n">QString</span><span class="w"> </span><span class="n">get_dimension_string</span><span class="p">()</span>
+</code></pre></div>
+<p>Get the dimensions as a string for display (if loaded from an image) </p>
 <h3 id="function-get_poly_data">function get_poly_data</h3>
 <div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_poly_data</span><span class="p">()</span>
 </code></pre></div>
 <p>Get the mesh polydata. </p>
+<h3 id="function-get_center_transform">function get_center_transform</h3>
+<div class="highlight"><pre><span></span><code><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_center_transform</span><span class="p">()</span>
+</code></pre></div>
+<p>Get the center transform. </p>
 <h3 id="function-set_poly_data">function set_poly_data</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_poly_data</span><span class="p">(</span>
 <span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">poly_data</span>
@@ -2698,7 +2727,7 @@
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="k">const</span><span class="w"> </span><span class="n">FFC_PAINT</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;ffc_paint&quot;</span><span class="p">;</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-05-04 at 20:03:05 +0000</p>
+<p>Updated on 2022-07-23 at 16:40:07 -0600</p>
 
               
             </article>

@@ -21,7 +21,7 @@ summary: 3D Viewer
 | | **[~Viewer](../Classes/classshapeworks_1_1Viewer.md#function-~viewer)**() =default |
 | void | **[set_renderer](../Classes/classshapeworks_1_1Viewer.md#function-set-renderer)**(vtkSmartPointer< vtkRenderer > renderer) |
 | vtkSmartPointer< vtkRenderer > | **[get_renderer](../Classes/classshapeworks_1_1Viewer.md#function-get-renderer)**() |
-| void | **[display_shape](../Classes/classshapeworks_1_1Viewer.md#function-display-shape)**(std::shared_ptr< [Shape](../Classes/classshapeworks_1_1Shape.md) > shape) |
+| void | **[display_shape](../Classes/classshapeworks_1_1Viewer.md#function-display-shape)**(QSharedPointer< [Shape](../Classes/classshapeworks_1_1Shape.md) > shape) |
 | void | **[clear_viewer](../Classes/classshapeworks_1_1Viewer.md#function-clear-viewer)**() |
 | void | **[reset_camera](../Classes/classshapeworks_1_1Viewer.md#function-reset-camera)**(std::array< double, 3 > c) |
 | void | **[reset_camera](../Classes/classshapeworks_1_1Viewer.md#function-reset-camera)**() |
@@ -33,13 +33,12 @@ summary: 3D Viewer
 | QSharedPointer< [Session](../Classes/classshapeworks_1_1Session.md) > | **[get_session](../Classes/classshapeworks_1_1Viewer.md#function-get-session)**() |
 | void | **[set_show_glyphs](../Classes/classshapeworks_1_1Viewer.md#function-set-show-glyphs)**(bool show) |
 | void | **[set_show_surface](../Classes/classshapeworks_1_1Viewer.md#function-set-show-surface)**(bool show) |
-| void | **[set_scale_arrows](../Classes/classshapeworks_1_1Viewer.md#function-set-scale-arrows)**(bool scale) |
 | void | **[update_points](../Classes/classshapeworks_1_1Viewer.md#function-update-points)**() |
 | void | **[update_glyph_properties](../Classes/classshapeworks_1_1Viewer.md#function-update-glyph-properties)**() |
 | int | **[handle_pick](../Classes/classshapeworks_1_1Viewer.md#function-handle-pick)**(int * click_pos) |
 | [PickResult](../Classes/classshapeworks_1_1PickResult.md) | **[handle_ctrl_click](../Classes/classshapeworks_1_1Viewer.md#function-handle-ctrl-click)**(int * click_pos) |
 | void | **[set_selected_point](../Classes/classshapeworks_1_1Viewer.md#function-set-selected-point)**(int id) |
-| void | **[set_glyph_lut](../Classes/classshapeworks_1_1Viewer.md#function-set-glyph-lut)**(vtkSmartPointer< vtkLookupTable > lut) |
+| void | **[set_lut](../Classes/classshapeworks_1_1Viewer.md#function-set-lut)**(vtkSmartPointer< vtkLookupTable > lut) |
 | void | **[set_loading_screen](../Classes/classshapeworks_1_1Viewer.md#function-set-loading-screen)**(vtkSmartPointer< vtkImageData > loading_screen) |
 | void | **[set_color_scheme](../Classes/classshapeworks_1_1Viewer.md#function-set-color-scheme)**(int i) |
 | void | **[handle_new_mesh](../Classes/classshapeworks_1_1Viewer.md#function-handle-new-mesh)**() |
@@ -47,7 +46,7 @@ summary: 3D Viewer
 | void | **[set_visualizer](../Classes/classshapeworks_1_1Viewer.md#function-set-visualizer)**([Visualizer](../Classes/classshapeworks_1_1Visualizer.md) * visualizer) |
 | void | **[update_feature_range](../Classes/classshapeworks_1_1Viewer.md#function-update-feature-range)**(double * range) |
 | void | **[update_opacities](../Classes/classshapeworks_1_1Viewer.md#function-update-opacities)**() |
-| std::shared_ptr< [Shape](../Classes/classshapeworks_1_1Shape.md) > | **[get_shape](../Classes/classshapeworks_1_1Viewer.md#function-get-shape)**() |
+| QSharedPointer< [Shape](../Classes/classshapeworks_1_1Shape.md) > | **[get_shape](../Classes/classshapeworks_1_1Viewer.md#function-get-shape)**() |
 | void | **[update_landmarks](../Classes/classshapeworks_1_1Viewer.md#function-update-landmarks)**() |
 | void | **[update_planes](../Classes/classshapeworks_1_1Viewer.md#function-update-planes)**() |
 | void | **[update_ffc_mode](../Classes/classshapeworks_1_1Viewer.md#function-update-ffc-mode)**() |
@@ -120,7 +119,7 @@ vtkSmartPointer< vtkRenderer > get_renderer()
 
 ```cpp
 void display_shape(
-    std::shared_ptr< Shape > shape
+    QSharedPointer< Shape > shape
 )
 ```
 
@@ -215,15 +214,6 @@ void set_show_surface(
 ```
 
 
-### function set_scale_arrows
-
-```cpp
-void set_scale_arrows(
-    bool scale
-)
-```
-
-
 ### function update_points
 
 ```cpp
@@ -265,10 +255,10 @@ void set_selected_point(
 ```
 
 
-### function set_glyph_lut
+### function set_lut
 
 ```cpp
-void set_glyph_lut(
+void set_lut(
     vtkSmartPointer< vtkLookupTable > lut
 )
 ```
@@ -334,7 +324,7 @@ void update_opacities()
 ### function get_shape
 
 ```cpp
-std::shared_ptr< Shape > get_shape()
+QSharedPointer< Shape > get_shape()
 ```
 
 
@@ -531,4 +521,4 @@ static bool is_reverse(
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:05 +0000
+Updated on 2022-07-23 at 16:40:07 -0600

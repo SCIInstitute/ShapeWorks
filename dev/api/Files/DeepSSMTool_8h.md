@@ -1,9 +1,9 @@
 ---
-title: Studio/DeepSSM/DeepSSMTool.h
+title: Studio/src/DeepSSM/DeepSSMTool.h
 
 ---
 
-# Studio/DeepSSM/DeepSSMTool.h
+# Studio/src/DeepSSM/DeepSSMTool.h
 
 
 
@@ -11,7 +11,7 @@ title: Studio/DeepSSM/DeepSSMTool.h
 
 | Name           |
 | -------------- |
-| **[shapeworks](../Namespaces/namespaceshapeworks.md)** <br>User usage reporting (telemetry)  |
+| **[shapeworks](../Namespaces/namespaceshapeworks.md)**  |
 
 ## Classes
 
@@ -34,7 +34,7 @@ title: Studio/DeepSSM/DeepSSMTool.h
 
 // studio
 #include <Data/Preferences.h>
-#include <Shape.h>
+#include <Data/Shape.h>
 
 class Ui_DeepSSMTool;
 class QLabel;
@@ -68,7 +68,7 @@ class DeepSSMTool : public QWidget {
 
   void shutdown();
 
-  ShapeList get_shapes();
+  QVector<QSharedPointer<Shape>> get_shapes();
 
   void resizeEvent(QResizeEvent* event) override;
 
@@ -93,10 +93,13 @@ class DeepSSMTool : public QWidget {
 
   void training_fine_tuning_changed();
 
- Q_SIGNALS:
+ signals:
 
   void update_view();
   void progress(int);
+  void message(QString);
+  void error(QString);
+  void warning(QString);
 
  private:
   void update_meshes();
@@ -124,7 +127,7 @@ class DeepSSMTool : public QWidget {
   QSharedPointer<DeepSSMJob> deep_ssm_;
   QElapsedTimer timer_;
 
-  ShapeList shapes_;
+  QVector<QSharedPointer<Shape>> shapes_;
   QPixmap violin_plot_;
   QPixmap training_plot_;
 };
@@ -135,4 +138,4 @@ class DeepSSMTool : public QWidget {
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:05 +0000
+Updated on 2022-07-23 at 16:40:07 -0600

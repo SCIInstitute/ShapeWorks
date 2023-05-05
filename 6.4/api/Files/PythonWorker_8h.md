@@ -1,9 +1,9 @@
 ---
-title: Studio/Python/PythonWorker.h
+title: Studio/src/Python/PythonWorker.h
 
 ---
 
-# Studio/Python/PythonWorker.h
+# Studio/src/Python/PythonWorker.h
 
 
 
@@ -11,7 +11,7 @@ title: Studio/Python/PythonWorker.h
 
 | Name           |
 | -------------- |
-| **[shapeworks](../Namespaces/namespaceshapeworks.md)** <br>User usage reporting (telemetry)  |
+| **[shapeworks](../Namespaces/namespaceshapeworks.md)**  |
 
 ## Classes
 
@@ -45,7 +45,7 @@ class PythonWorker : public QObject {
   Q_OBJECT
 
  public:
-  constexpr static const char* python_api_version = "6.5";
+  constexpr static const char* python_api_version = "6.3";
 
   PythonWorker();
   ~PythonWorker();
@@ -72,6 +72,9 @@ class PythonWorker : public QObject {
  Q_SIGNALS:
 
   void result_ready();
+  void error_message(QString);
+  void warning_message(QString);
+  void message(QString);
   void finished();
 
  private:
@@ -92,4 +95,4 @@ class PythonWorker : public QObject {
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:05 +0000
+Updated on 2022-07-23 at 16:40:07 -0600

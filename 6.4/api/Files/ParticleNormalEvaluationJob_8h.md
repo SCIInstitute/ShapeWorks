@@ -1,9 +1,9 @@
 ---
-title: Studio/Job/ParticleNormalEvaluationJob.h
+title: Studio/src/Job/ParticleNormalEvaluationJob.h
 
 ---
 
-# Studio/Job/ParticleNormalEvaluationJob.h
+# Studio/src/Job/ParticleNormalEvaluationJob.h
 
 
 
@@ -11,7 +11,7 @@ title: Studio/Job/ParticleNormalEvaluationJob.h
 
 | Name           |
 | -------------- |
-| **[shapeworks](../Namespaces/namespaceshapeworks.md)** <br>User usage reporting (telemetry)  |
+| **[shapeworks](../Namespaces/namespaceshapeworks.md)**  |
 
 ## Classes
 
@@ -43,7 +43,7 @@ class ParticleNormalEvaluationJob : public Job {
 
   std::vector<bool> get_good_bad();
 
-Q_SIGNALS:
+signals:
 
   void result_ready(std::vector<bool> good_bad);
 
@@ -59,4 +59,4 @@ Q_SIGNALS:
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:05 +0000
+Updated on 2022-07-23 at 16:40:07 -0600

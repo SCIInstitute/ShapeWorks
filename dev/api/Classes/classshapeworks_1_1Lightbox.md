@@ -21,20 +21,14 @@ Inherits from QObject
 | -------------- | -------------- |
 | void | **[handle_timer_callback](../Classes/classshapeworks_1_1Lightbox.md#slot-handle-timer-callback)**() |
 
-## Public Signals
-
-|                | Name           |
-| -------------- | -------------- |
-| void | **[right_click](../Classes/classshapeworks_1_1Lightbox.md#signal-right-click)**(int index) |
-
 ## Public Functions
 
 |                | Name           |
 | -------------- | -------------- |
 | | **[Lightbox](../Classes/classshapeworks_1_1Lightbox.md#function-lightbox)**() |
 | | **[~Lightbox](../Classes/classshapeworks_1_1Lightbox.md#function-~lightbox)**() |
-| void | **[set_shapes](../Classes/classshapeworks_1_1Lightbox.md#function-set-shapes)**(ShapeList shapes) |
-| ShapeList | **[get_shapes](../Classes/classshapeworks_1_1Lightbox.md#function-get-shapes)**() |
+| void | **[set_shapes](../Classes/classshapeworks_1_1Lightbox.md#function-set-shapes)**(QVector< QSharedPointer< [Shape](../Classes/classshapeworks_1_1Shape.md) >> shapes) |
+| QVector< ShapeHandle > | **[get_shapes](../Classes/classshapeworks_1_1Lightbox.md#function-get-shapes)**() |
 | void | **[set_interactor](../Classes/classshapeworks_1_1Lightbox.md#function-set-interactor)**(vtkRenderWindowInteractor * interactor) |
 | void | **[set_render_window](../Classes/classshapeworks_1_1Lightbox.md#function-set-render-window)**(vtkRenderWindow * render_window) |
 | void | **[set_tile_layout](../Classes/classshapeworks_1_1Lightbox.md#function-set-tile-layout)**(int width, int height) |
@@ -47,7 +41,6 @@ Inherits from QObject
 | void | **[handle_pick](../Classes/classshapeworks_1_1Lightbox.md#function-handle-pick)**(int * click_pos, bool one, bool ctrl) |
 | void | **[handle_hover](../Classes/classshapeworks_1_1Lightbox.md#function-handle-hover)**(int * click_pos) |
 | void | **[handle_key](../Classes/classshapeworks_1_1Lightbox.md#function-handle-key)**(int * click_pos, std::string key) |
-| void | **[handle_right_click](../Classes/classshapeworks_1_1Lightbox.md#function-handle-right-click)**(int * click_pos, vtkRenderer * renderer)<br>Handle a right click that did not involve any movement.  |
 | void | **[set_glyph_lut](../Classes/classshapeworks_1_1Lightbox.md#function-set-glyph-lut)**(vtkSmartPointer< vtkLookupTable > lut) |
 | void | **[set_session](../Classes/classshapeworks_1_1Lightbox.md#function-set-session)**(QSharedPointer< [Session](../Classes/classshapeworks_1_1Session.md) > session) |
 | void | **[set_visualizer](../Classes/classshapeworks_1_1Lightbox.md#function-set-visualizer)**([Visualizer](../Classes/classshapeworks_1_1Visualizer.md) * visualizer) |
@@ -83,17 +76,6 @@ void handle_timer_callback()
 ```
 
 
-## Public Signals Documentation
-
-### signal right_click
-
-```cpp
-void right_click(
-    int index
-)
-```
-
-
 ## Public Functions Documentation
 
 ### function Lightbox
@@ -114,7 +96,7 @@ Lightbox()
 
 ```cpp
 void set_shapes(
-    ShapeList shapes
+    QVector< QSharedPointer< Shape >> shapes
 )
 ```
 
@@ -122,7 +104,7 @@ void set_shapes(
 ### function get_shapes
 
 ```cpp
-ShapeList get_shapes()
+QVector< ShapeHandle > get_shapes()
 ```
 
 
@@ -227,17 +209,6 @@ void handle_key(
 )
 ```
 
-
-### function handle_right_click
-
-```cpp
-void handle_right_click(
-    int * click_pos,
-    vtkRenderer * renderer
-)
-```
-
-Handle a right click that did not involve any movement. 
 
 ### function set_glyph_lut
 
@@ -358,4 +329,4 @@ vtkRenderWindow * get_render_window()
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:04 +0000
+Updated on 2022-07-23 at 16:40:06 -0600

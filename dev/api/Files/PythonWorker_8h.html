@@ -19,7 +19,7 @@
     
     
       
-        <title>Studio/Python/PythonWorker.h - ShapeWorks</title>
+        <title>Studio/src/Python/PythonWorker.h - ShapeWorks</title>
       
     
     
@@ -84,7 +84,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#studiopythonpythonworkerh" class="md-skip">
+        <a href="#studiosrcpythonpythonworkerh" class="md-skip">
           Skip to content
         </a>
       
@@ -122,7 +122,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Studio/Python/PythonWorker.h
+              Studio/src/Python/PythonWorker.h
             
           </span>
         </div>
@@ -2409,7 +2409,7 @@
 
 
 
-<h1 id="studiopythonpythonworkerh">Studio/Python/PythonWorker.h</h1>
+<h1 id="studiosrcpythonpythonworkerh">Studio/src/Python/PythonWorker.h</h1>
 <h2 id="namespaces">Namespaces</h2>
 <table>
 <thead>
@@ -2419,7 +2419,7 @@
 </thead>
 <tbody>
 <tr>
-<td><strong><a href="../Namespaces/namespaceshapeworks.html">shapeworks</a></strong> <br>User usage reporting (telemetry)</td>
+<td><strong><a href="../Namespaces/namespaceshapeworks.html">shapeworks</a></strong></td>
 </tr>
 </tbody>
 </table>
@@ -2459,7 +2459,7 @@
 <span class="w">  </span><span class="n">Q_OBJECT</span>
 
 <span class="w"> </span><span class="k">public</span><span class="o">:</span>
-<span class="w">  </span><span class="k">constexpr</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">python_api_version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;6.5&quot;</span><span class="p">;</span>
+<span class="w">  </span><span class="k">constexpr</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">python_api_version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;6.3&quot;</span><span class="p">;</span>
 
 <span class="w">  </span><span class="n">PythonWorker</span><span class="p">();</span>
 <span class="w">  </span><span class="o">~</span><span class="n">PythonWorker</span><span class="p">();</span>
@@ -2486,6 +2486,9 @@
 <span class="w"> </span><span class="nl">Q_SIGNALS</span><span class="p">:</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">result_ready</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">error_message</span><span class="p">(</span><span class="n">QString</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">warning_message</span><span class="p">(</span><span class="n">QString</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">message</span><span class="p">(</span><span class="n">QString</span><span class="p">);</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">finished</span><span class="p">();</span>
 
 <span class="w"> </span><span class="k">private</span><span class="o">:</span>
@@ -2503,7 +2506,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-05-04 at 20:03:05 +0000</p>
+<p>Updated on 2022-07-23 at 16:40:07 -0600</p>
 
               
             </article>

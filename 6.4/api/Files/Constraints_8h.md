@@ -1,9 +1,9 @@
 ---
-title: Libs/Optimize/Constraints/Constraints.h
+title: Libs/Optimize/ParticleSystem/Constraints.h
 
 ---
 
-# Libs/Optimize/Constraints/Constraints.h
+# Libs/Optimize/ParticleSystem/Constraints.h
 
 
 
@@ -11,7 +11,7 @@ title: Libs/Optimize/Constraints/Constraints.h
 
 | Name           |
 | -------------- |
-| **[shapeworks](../Namespaces/namespaceshapeworks.md)** <br>User usage reporting (telemetry)  |
+| **[shapeworks](../Namespaces/namespaceshapeworks.md)**  |
 
 ## Classes
 
@@ -32,7 +32,7 @@ title: Libs/Optimize/Constraints/Constraints.h
 #include "Constraint.h"
 #include "Eigen/Dense"
 #include "FreeFormConstraint.h"
-#include "Libs/Mesh/Mesh.h"
+#include "Mesh.h"
 #include "PlaneConstraint.h"
 #include "SphereConstraint.h"
 #include "itkPoint.h"
@@ -84,7 +84,7 @@ class Constraints {
 
   void printAll();
 
-  std::string violationReport(const Point3 &pos, size_t index);
+  std::string violationReport(const Point3 &pos);
 
   std::vector<std::vector<double>> violationReportData(const Point3 &pos);
 
@@ -95,20 +95,20 @@ class Constraints {
   vnl_vector_fixed<double, 3> constraintsGradient(const Point3 &pos) const;
 
   // Lagragian gradient computation
-  vnl_vector_fixed<double, 3> constraintsLagrangianGradient(const Point3 &pos, const Point3 &prepos, double C, size_t index);
+  vnl_vector_fixed<double, 3> constraintsLagrangianGradient(const Point3 &pos, const Point3 &prepos, double C);
 
   // Parameters lambda, mu and z initialization
-  void InitializeLagrangianParameters(double lambda, std::vector<double> mus);
+  void InitializeLagrangianParameters(double lambda, double mu, double z);
 
   void UpdateZs(const Point3 &pos, double C);
 
-  void UpdateMus(const Point3 &pos, double C, size_t index);
+  void UpdateMus(const Point3 &pos, double C);
 
   bool GetActive() { return active_; }
   void SetActive(bool ac) { active_ = ac; }
 
-  void read(std::string filename);
-  void write(std::string filename);
+  void Read(std::string filename);
+  void Write(std::string filename);
 
   FreeFormConstraint& getFreeformConstraint();
 
@@ -137,4 +137,4 @@ class Constraints {
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:05 +0000
+Updated on 2022-07-23 at 16:40:07 -0600

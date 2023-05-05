@@ -12,10 +12,10 @@
         <meta name="author" content="Shireen Elhabian et al.">
       
       
-        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.3/api/Files/LandmarkTableModel_8h.html">
+        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Files/LandmarkTableModel_8h.html">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.8">
+      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.3.8">
     
     
       
@@ -23,11 +23,12 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.644de097.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.1d29e8d0.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.e6a45f82.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.cbb835fc.min.css">
         
+      
       
     
     
@@ -40,6 +41,8 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
     
       <link rel="stylesheet" href="../../css/custom.css">
     
@@ -107,7 +110,7 @@
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
     </label>
     <div class="md-header__title" data-md-component="header-title">
       <div class="md-header__ellipsis">
@@ -133,7 +136,7 @@
           <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="" data-md-color-accent=""  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
           
             <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 9a3 3 0 0 1 3 3 3 3 0 0 1-3 3 3 3 0 0 1-3-3 3 3 0 0 1 3-3m0-4.5c5 0 9.27 3.11 11 7.5-1.73 4.39-6 7.5-11 7.5S2.73 16.39 1 12c1.73-4.39 6-7.5 11-7.5M3.18 12a9.821 9.821 0 0 0 17.64 0 9.821 9.821 0 0 0-17.64 0z"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 9a3 3 0 0 1 3 3 3 3 0 0 1-3 3 3 3 0 0 1-3-3 3 3 0 0 1 3-3m0-4.5c5 0 9.27 3.11 11 7.5-1.73 4.39-6 7.5-11 7.5S2.73 16.39 1 12c1.73-4.39 6-7.5 11-7.5M3.18 12a9.821 9.821 0 0 0 17.64 0 9.821 9.821 0 0 0-17.64 0Z"/></svg>
             </label>
           
         
@@ -142,7 +145,7 @@
           <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="" data-md-color-accent=""  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
           
             <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0 8a5 5 0 0 1-5-5 5 5 0 0 1 5-5 5 5 0 0 1 5 5 5 5 0 0 1-5 5m0-12.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5z"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0 8a5 5 0 0 1-5-5 5 5 0 0 1 5-5 5 5 0 0 1 5 5 5 5 0 0 1-5 5m0-12.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5Z"/></svg>
             </label>
           
         
@@ -151,7 +154,7 @@
     
     
       <label class="md-header__button md-icon" for="__search">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
       </label>
       <div class="md-search" data-md-component="search" role="dialog">
   <label class="md-search__overlay" for="__search"></label>
@@ -159,13 +162,13 @@
     <form class="md-search__form" name="search">
       <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
       <label class="md-search__icon md-icon" for="__search">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
       </label>
       <nav class="md-search__options" aria-label="Search">
         
         <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
         </button>
       </nav>
       
@@ -883,12 +886,172 @@
       
       
         <label class="md-nav__link" for="__nav_7">
+          ShapeWorks Cloud
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="ShapeWorks Cloud" data-md-level="1">
+        <label class="md-nav__title" for="__nav_7">
+          <span class="md-nav__icon md-icon"></span>
+          ShapeWorks Cloud
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cloud/getting-started-with-cloud.html" class="md-nav__link">
+        Getting Started
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cloud/cloud-dataset.html" class="md-nav__link">
+        Datasets
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cloud/cloud-project.html" class="md-nav__link">
+        Projects
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cloud/cloud-data-module.html" class="md-nav__link">
+        Data Module
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cloud/cloud-groom-module.html" class="md-nav__link">
+        Groom Module
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cloud/cloud-optimize-module.html" class="md-nav__link">
+        Optimize Module
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cloud/cloud-analyze-module.html" class="md-nav__link">
+        Analyze Module
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cloud/cloud-shape-viewer.html" class="md-nav__link">
+        Shape Viewer
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cloud/swcc.html" class="md-nav__link">
+        ShapeWorks Cloud Client
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_8" type="checkbox" id="__nav_8" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_8">
           ShapeWorks Tools
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="ShapeWorks Tools" data-md-level="1">
-        <label class="md-nav__title" for="__nav_7">
+        <label class="md-nav__title" for="__nav_8">
           <span class="md-nav__icon md-icon"></span>
           ShapeWorks Tools
         </label>
@@ -925,18 +1088,18 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_8" type="checkbox" id="__nav_8" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_9" type="checkbox" id="__nav_9" >
       
       
       
       
-        <label class="md-nav__link" for="__nav_8">
+        <label class="md-nav__link" for="__nav_9">
           ShapeWorks in Python
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="ShapeWorks in Python" data-md-level="1">
-        <label class="md-nav__title" for="__nav_8">
+        <label class="md-nav__title" for="__nav_9">
           <span class="md-nav__icon md-icon"></span>
           ShapeWorks in Python
         </label>
@@ -1085,18 +1248,18 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_9" type="checkbox" id="__nav_9" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10" type="checkbox" id="__nav_10" >
       
       
       
       
-        <label class="md-nav__link" for="__nav_9">
+        <label class="md-nav__link" for="__nav_10">
           Deep Learning & SSMs
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="Deep Learning & SSMs" data-md-level="1">
-        <label class="md-nav__title" for="__nav_9">
+        <label class="md-nav__title" for="__nav_10">
           <span class="md-nav__icon md-icon"></span>
           Deep Learning & SSMs
         </label>
@@ -1161,18 +1324,18 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10" type="checkbox" id="__nav_10" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_11" type="checkbox" id="__nav_11" >
       
       
       
       
-        <label class="md-nav__link" for="__nav_10">
+        <label class="md-nav__link" for="__nav_11">
           Use Cases
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="Use Cases" data-md-level="1">
-        <label class="md-nav__title" for="__nav_10">
+        <label class="md-nav__title" for="__nav_11">
           <span class="md-nav__icon md-icon"></span>
           Use Cases
         </label>
@@ -1201,18 +1364,18 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10_2" type="checkbox" id="__nav_10_2" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_11_2" type="checkbox" id="__nav_11_2" >
       
       
       
       
-        <label class="md-nav__link" for="__nav_10_2">
+        <label class="md-nav__link" for="__nav_11_2">
           Segmentation Based Use Cases
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="Segmentation Based Use Cases" data-md-level="2">
-        <label class="md-nav__title" for="__nav_10_2">
+        <label class="md-nav__title" for="__nav_11_2">
           <span class="md-nav__icon md-icon"></span>
           Segmentation Based Use Cases
         </label>
@@ -1276,18 +1439,18 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10_3" type="checkbox" id="__nav_10_3" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_11_3" type="checkbox" id="__nav_11_3" >
       
       
       
       
-        <label class="md-nav__link" for="__nav_10_3">
+        <label class="md-nav__link" for="__nav_11_3">
           Mesh Based Use Cases
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="Mesh Based Use Cases" data-md-level="2">
-        <label class="md-nav__title" for="__nav_10_3">
+        <label class="md-nav__title" for="__nav_11_3">
           <span class="md-nav__icon md-icon"></span>
           Mesh Based Use Cases
         </label>
@@ -1349,6 +1512,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../use-cases/mesh-based/hip.html" class="md-nav__link">
+        Hip: Multiple Domains Alignment
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -1365,18 +1542,18 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10_4" type="checkbox" id="__nav_10_4" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_11_4" type="checkbox" id="__nav_11_4" >
       
       
       
       
-        <label class="md-nav__link" for="__nav_10_4">
+        <label class="md-nav__link" for="__nav_11_4">
           Contour Based Use Cases
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="Contour Based Use Cases" data-md-level="2">
-        <label class="md-nav__title" for="__nav_10_4">
+        <label class="md-nav__title" for="__nav_11_4">
           <span class="md-nav__icon md-icon"></span>
           Contour Based Use Cases
         </label>
@@ -1412,18 +1589,18 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10_5" type="checkbox" id="__nav_10_5" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_11_5" type="checkbox" id="__nav_11_5" >
       
       
       
       
-        <label class="md-nav__link" for="__nav_10_5">
+        <label class="md-nav__link" for="__nav_11_5">
           Constraints Based Use Cases
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="Constraints Based Use Cases" data-md-level="2">
-        <label class="md-nav__title" for="__nav_10_5">
+        <label class="md-nav__title" for="__nav_11_5">
           <span class="md-nav__icon md-icon"></span>
           Constraints Based Use Cases
         </label>
@@ -1487,18 +1664,18 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10_6" type="checkbox" id="__nav_10_6" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_11_6" type="checkbox" id="__nav_11_6" >
       
       
       
       
-        <label class="md-nav__link" for="__nav_10_6">
+        <label class="md-nav__link" for="__nav_11_6">
           Multi-Step Optimization Use Cases
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="Multi-Step Optimization Use Cases" data-md-level="2">
-        <label class="md-nav__title" for="__nav_10_6">
+        <label class="md-nav__title" for="__nav_11_6">
           <span class="md-nav__icon md-icon"></span>
           Multi-Step Optimization Use Cases
         </label>
@@ -1548,18 +1725,18 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10_7" type="checkbox" id="__nav_10_7" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_11_7" type="checkbox" id="__nav_11_7" >
       
       
       
       
-        <label class="md-nav__link" for="__nav_10_7">
+        <label class="md-nav__link" for="__nav_11_7">
           Statistics Based Use Cases
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="Statistics Based Use Cases" data-md-level="2">
-        <label class="md-nav__title" for="__nav_10_7">
+        <label class="md-nav__title" for="__nav_11_7">
           <span class="md-nav__icon md-icon"></span>
           Statistics Based Use Cases
         </label>
@@ -1623,18 +1800,18 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10_8" type="checkbox" id="__nav_10_8" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_11_8" type="checkbox" id="__nav_11_8" >
       
       
       
       
-        <label class="md-nav__link" for="__nav_10_8">
+        <label class="md-nav__link" for="__nav_11_8">
           Deep Learning Based Use Cases
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="Deep Learning Based Use Cases" data-md-level="2">
-        <label class="md-nav__title" for="__nav_10_8">
+        <label class="md-nav__title" for="__nav_11_8">
           <span class="md-nav__icon md-icon"></span>
           Deep Learning Based Use Cases
         </label>
@@ -1670,18 +1847,18 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10_9" type="checkbox" id="__nav_10_9" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_11_9" type="checkbox" id="__nav_11_9" >
       
       
       
       
-        <label class="md-nav__link" for="__nav_10_9">
+        <label class="md-nav__link" for="__nav_11_9">
           Shared Boundary Use Cases
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="Shared Boundary Use Cases" data-md-level="2">
-        <label class="md-nav__title" for="__nav_10_9">
+        <label class="md-nav__title" for="__nav_11_9">
           <span class="md-nav__icon md-icon"></span>
           Shared Boundary Use Cases
         </label>
@@ -1739,22 +1916,36 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_11" type="checkbox" id="__nav_11" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_12" type="checkbox" id="__nav_12" >
       
       
       
       
-        <label class="md-nav__link" for="__nav_11">
+        <label class="md-nav__link" for="__nav_12">
           For Developers
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="For Developers" data-md-level="1">
-        <label class="md-nav__title" for="__nav_11">
+        <label class="md-nav__title" for="__nav_12">
           <span class="md-nav__icon md-icon"></span>
           For Developers
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../dev/onboarding.html" class="md-nav__link">
+        Onboarding
+      </a>
+    </li>
+  
+
+            
           
             
               
@@ -1951,26 +2142,55 @@
   
   
   
+    <li class="md-nav__item">
+      <a href="../../python/python-api.html" class="md-nav__link">
+        Python API Reference
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
     
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_12" type="checkbox" id="__nav_12" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_14" type="checkbox" id="__nav_14" >
       
       
       
       
-        <label class="md-nav__link" for="__nav_12">
-          API Reference
+        <label class="md-nav__link" for="__nav_14">
+          C++ API Reference
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" aria-label="API Reference" data-md-level="1">
-        <label class="md-nav__title" for="__nav_12">
+      <nav class="md-nav" aria-label="C++ API Reference" data-md-level="1">
+        <label class="md-nav__title" for="__nav_14">
           <span class="md-nav__icon md-icon"></span>
-          API Reference
+          C++ API Reference
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../dev/shapeworks-library.html" class="md-nav__link">
+        ShapeWorks as a Library
+      </a>
+    </li>
+  
+
+            
           
             
               
@@ -2045,18 +2265,18 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_13" type="checkbox" id="__nav_13" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_15" type="checkbox" id="__nav_15" >
       
       
       
       
-        <label class="md-nav__link" for="__nav_13">
+        <label class="md-nav__link" for="__nav_15">
           About
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="About" data-md-level="1">
-        <label class="md-nav__title" for="__nav_13">
+        <label class="md-nav__title" for="__nav_15">
           <span class="md-nav__icon md-icon"></span>
           About
         </label>
@@ -2183,9 +2403,9 @@
             <article class="md-content__inner md-typeset">
               
                 
-<a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/api/Files/LandmarkTableModel_8h.md" title="Edit this page" class="md-content__button md-icon">
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
-</a>
+  <a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/api/Files/LandmarkTableModel_8h.md" title="Edit this page" class="md-content__button md-icon">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
+  </a>
 
 
 
@@ -2222,97 +2442,98 @@
 <div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
 
 <span class="c1">// QT Includes</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/Session.h&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Libs/Project/Project.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/Session.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Libs/Project/Project.h&gt;</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QAbstractTableModel&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QIcon&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QItemSelection&gt;</span><span class="cp"></span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QModelIndex&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QAbstractTableModel&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QIcon&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QItemSelection&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QModelIndex&gt;</span>
 
-<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
 
-<span class="k">class</span><span class="w"> </span><span class="nc">Project</span><span class="p">;</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Project</span><span class="p">;</span>
 
-<span class="k">enum</span><span class="w"> </span><span class="nc">LandmarkColumns</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">VISIBLE_E</span><span class="p">,</span><span class="w"> </span><span class="n">COLOR_E</span><span class="p">,</span><span class="w"> </span><span class="n">NAME_E</span><span class="p">,</span><span class="w"> </span><span class="n">POSITION_E</span><span class="p">,</span><span class="w"> </span><span class="n">SET_BUTTON_E</span><span class="p">,</span><span class="w"> </span><span class="n">COMMENT_E</span><span class="p">,</span><span class="w"> </span><span class="n">END_E</span><span class="w"> </span><span class="p">};</span><span class="w"></span>
+<span class="k">enum</span><span class="w"> </span><span class="nc">LandmarkColumns</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">VISIBLE_E</span><span class="p">,</span><span class="w"> </span><span class="n">COLOR_E</span><span class="p">,</span><span class="w"> </span><span class="n">NAME_E</span><span class="p">,</span><span class="w"> </span><span class="n">POSITION_E</span><span class="p">,</span><span class="w"> </span><span class="n">SET_BUTTON_E</span><span class="p">,</span><span class="w"> </span><span class="n">COMMENT_E</span><span class="p">,</span><span class="w"> </span><span class="n">END_E</span><span class="w"> </span><span class="p">};</span>
 
-<span class="k">enum</span><span class="w"> </span><span class="nc">LandmarkVisibility</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">ALL_VISIBLE_E</span><span class="p">,</span><span class="w"> </span><span class="n">NONE_VISIBLE_E</span><span class="p">,</span><span class="w"> </span><span class="n">SOME_VISIBLE_E</span><span class="w"> </span><span class="p">};</span><span class="w"></span>
+<span class="k">enum</span><span class="w"> </span><span class="nc">LandmarkVisibility</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">ALL_VISIBLE_E</span><span class="p">,</span><span class="w"> </span><span class="n">NONE_VISIBLE_E</span><span class="p">,</span><span class="w"> </span><span class="n">SOME_VISIBLE_E</span><span class="w"> </span><span class="p">};</span>
 
-<span class="k">class</span><span class="w"> </span><span class="nc">LandmarkTableModel</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">QAbstractTableModel</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
-<span class="w">  </span><span class="n">Q_OBJECT</span><span class="w"></span>
+<span class="k">class</span><span class="w"> </span><span class="nc">LandmarkTableModel</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">QAbstractTableModel</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="n">Q_OBJECT</span>
 
-<span class="w"> </span><span class="k">public</span><span class="o">:</span><span class="w"></span>
-<span class="w">  </span><span class="n">LandmarkTableModel</span><span class="p">(</span><span class="n">QObject</span><span class="w"> </span><span class="o">*</span><span class="n">parent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span><span class="w"></span>
+<span class="w"> </span><span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="n">LandmarkTableModel</span><span class="p">(</span><span class="n">QObject</span><span class="w"> </span><span class="o">*</span><span class="n">parent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
 
-<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">LandmarkTableModel</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">LandmarkTableModel</span><span class="p">();</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_session</span><span class="p">(</span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Session</span><span class="o">&gt;</span><span class="w"> </span><span class="n">session</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_session</span><span class="p">(</span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Session</span><span class="o">&gt;</span><span class="w"> </span><span class="n">session</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">store_landmarks</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">store_landmarks</span><span class="p">();</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_active_domain</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_active_domain</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_table</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_table</span><span class="p">();</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_cells</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_cells</span><span class="p">();</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">remove_rows</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="n">rows</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">remove_rows</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="n">rows</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">toggle_visible</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">toggle_visible</span><span class="p">();</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_placing_landmark</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">row</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_placing_landmark</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">row</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">delete_landmarks</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">QModelIndexList</span><span class="w"> </span><span class="o">&amp;</span><span class="n">list</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">delete_landmarks</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">QModelIndexList</span><span class="w"> </span><span class="o">&amp;</span><span class="n">list</span><span class="p">);</span>
 
 <span class="w">  </span><span class="c1">//------------------  QAbstractTableModel implementation ------------------</span>
 
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">rowCount</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">QModelIndex</span><span class="w"> </span><span class="o">&amp;</span><span class="n">index</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">rowCount</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">QModelIndex</span><span class="w"> </span><span class="o">&amp;</span><span class="n">index</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
 
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">columnCount</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">QModelIndex</span><span class="w"> </span><span class="o">&amp;</span><span class="n">index</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">columnCount</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">QModelIndex</span><span class="w"> </span><span class="o">&amp;</span><span class="n">index</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
 
-<span class="w">  </span><span class="n">QVariant</span><span class="w"> </span><span class="nf">data</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">QModelIndex</span><span class="w"> </span><span class="o">&amp;</span><span class="n">index</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">role</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">QVariant</span><span class="w"> </span><span class="nf">data</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">QModelIndex</span><span class="w"> </span><span class="o">&amp;</span><span class="n">index</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">role</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
 
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">setData</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">QModelIndex</span><span class="w"> </span><span class="o">&amp;</span><span class="n">index</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">QVariant</span><span class="w"> </span><span class="o">&amp;</span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">role</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">setData</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">QModelIndex</span><span class="w"> </span><span class="o">&amp;</span><span class="n">index</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">QVariant</span><span class="w"> </span><span class="o">&amp;</span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">role</span><span class="p">)</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
 
-<span class="w">  </span><span class="n">QVariant</span><span class="w"> </span><span class="nf">headerData</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">section</span><span class="p">,</span><span class="w"> </span><span class="n">Qt</span><span class="o">::</span><span class="n">Orientation</span><span class="w"> </span><span class="n">orientation</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">role</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">QVariant</span><span class="w"> </span><span class="nf">headerData</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">section</span><span class="p">,</span><span class="w"> </span><span class="n">Qt</span><span class="o">::</span><span class="n">Orientation</span><span class="w"> </span><span class="n">orientation</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">role</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
 
-<span class="w">  </span><span class="n">Qt</span><span class="o">::</span><span class="n">ItemFlags</span><span class="w"> </span><span class="nf">flags</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">QModelIndex</span><span class="w"> </span><span class="o">&amp;</span><span class="n">index</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">Qt</span><span class="o">::</span><span class="n">ItemFlags</span><span class="w"> </span><span class="nf">flags</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">QModelIndex</span><span class="w"> </span><span class="o">&amp;</span><span class="n">index</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span><span class="p">;</span>
 
-<span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Q_SLOTS</span><span class="o">:</span><span class="w"></span>
+<span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Q_SLOTS</span><span class="o">:</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">new_landmark</span><span class="p">();</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">new_landmark</span><span class="p">();</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_click</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">QModelIndex</span><span class="w"> </span><span class="o">&amp;</span><span class="n">index</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_click</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">QModelIndex</span><span class="w"> </span><span class="o">&amp;</span><span class="n">index</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_double_click</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">QModelIndex</span><span class="w"> </span><span class="o">&amp;</span><span class="n">index</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_double_click</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">QModelIndex</span><span class="w"> </span><span class="o">&amp;</span><span class="n">index</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_header_click</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">index</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_header_click</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">index</span><span class="p">);</span>
 
-<span class="w"> </span><span class="k">private</span><span class="o">:</span><span class="w"></span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">update_visibility</span><span class="p">();</span><span class="w"></span>
+<span class="w"> </span><span class="k">private</span><span class="o">:</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">update_visibility</span><span class="p">();</span>
 
-<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">remove_eigen_row</span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="o">&amp;</span><span class="n">matrix</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">row_to_remove</span><span class="p">);</span><span class="w"></span>
+<span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">remove_eigen_row</span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="o">&amp;</span><span class="n">matrix</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">row_to_remove</span><span class="p">);</span>
 
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="w"> </span><span class="n">project_</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Session</span><span class="o">&gt;</span><span class="w"> </span><span class="n">session_</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="w"> </span><span class="n">project_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">Session</span><span class="o">&gt;</span><span class="w"> </span><span class="n">session_</span><span class="p">;</span>
 
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">visibility_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">LandmarkVisibility</span><span class="o">::</span><span class="n">ALL_VISIBLE_E</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">button_text_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;  Place  &quot;</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">visibility_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">LandmarkVisibility</span><span class="o">::</span><span class="n">ALL_VISIBLE_E</span><span class="p">;</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">button_text_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;  Place  &quot;</span><span class="p">;</span>
 
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">LandmarkDefinition</span><span class="o">&gt;</span><span class="w"> </span><span class="n">landmarks_</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">LandmarkDefinition</span><span class="o">&gt;</span><span class="w"> </span><span class="n">landmarks_</span><span class="p">;</span>
 
-<span class="w">  </span><span class="n">QIcon</span><span class="w"> </span><span class="n">visible_</span><span class="p">;</span><span class="w"></span>
-<span class="w">  </span><span class="n">QIcon</span><span class="w"> </span><span class="n">visible_off_</span><span class="p">;</span><span class="w"></span>
+<span class="w">  </span><span class="n">QIcon</span><span class="w"> </span><span class="n">visible_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">QIcon</span><span class="w"> </span><span class="n">visible_off_</span><span class="p">;</span>
 
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">active_domain_</span><span class="p">;</span><span class="w"></span>
-<span class="p">};</span><span class="w"></span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">active_domain_</span><span class="p">;</span>
+<span class="p">};</span>
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2022-07-23 at 17:50:05 -0600</p>
+<p>Updated on 2022-07-23 at 16:40:07 -0600</p>
 
               
             </article>
+            
           </div>
         </div>
         
@@ -2344,10 +2565,10 @@
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.5e67fbfe.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.b97dbffb.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.c44cc438.min.js"></script>
+      <script src="../../assets/javascripts/bundle.0238f547.min.js"></script>
       
         <script src="../../assets/mathjaxhelper.js"></script>
       

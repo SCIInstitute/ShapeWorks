@@ -42,13 +42,13 @@ Inherits from [shapeworks::Constraint](../Classes/classshapeworks_1_1Constraint.
 | -------------- | -------------- |
 | void | **[setZ](../Classes/classshapeworks_1_1Constraint.md#function-setz)**(double inz) |
 | double | **[getZ](../Classes/classshapeworks_1_1Constraint.md#function-getz)**() |
-| void | **[setMus](../Classes/classshapeworks_1_1Constraint.md#function-setmus)**(std::vector< double > inmu) |
-| std::vector< double > | **[getMus](../Classes/classshapeworks_1_1Constraint.md#function-getmus)**() |
+| void | **[setMu](../Classes/classshapeworks_1_1Constraint.md#function-setmu)**(double inmu) |
+| double | **[getMu](../Classes/classshapeworks_1_1Constraint.md#function-getmu)**() |
 | void | **[setLambda](../Classes/classshapeworks_1_1Constraint.md#function-setlambda)**(double inLambda) |
 | double | **[getLambda](../Classes/classshapeworks_1_1Constraint.md#function-getlambda)**() |
 | void | **[updateZ](../Classes/classshapeworks_1_1Constraint.md#function-updatez)**(const Eigen::Vector3d & pt, double C) |
-| void | **[updateMu](../Classes/classshapeworks_1_1Constraint.md#function-updatemu)**(const Eigen::Vector3d & pt, double C, size_t index) |
-| Eigen::Vector3d | **[lagragianGradient](../Classes/classshapeworks_1_1Constraint.md#function-lagragiangradient)**(const Eigen::Vector3d & pt, double C, size_t index) const |
+| void | **[updateMu](../Classes/classshapeworks_1_1Constraint.md#function-updatemu)**(const Eigen::Vector3d & pt, double C) |
+| Eigen::Vector3d | **[lagragianGradient](../Classes/classshapeworks_1_1Constraint.md#function-lagragiangradient)**(const Eigen::Vector3d & pt, double C) const |
 
 **Protected Functions inherited from [shapeworks::Constraint](../Classes/classshapeworks_1_1Constraint.md)**
 
@@ -60,7 +60,7 @@ Inherits from [shapeworks::Constraint](../Classes/classshapeworks_1_1Constraint.
 
 |                | Name           |
 | -------------- | -------------- |
-| std::vector< double > | **[mus_](../Classes/classshapeworks_1_1Constraint.md#variable-mus-)**  |
+| double | **[mu_](../Classes/classshapeworks_1_1Constraint.md#variable-mu-)**  |
 | double | **[z_](../Classes/classshapeworks_1_1Constraint.md#variable-z-)**  |
 | double | **[lambda_](../Classes/classshapeworks_1_1Constraint.md#variable-lambda-)**  |
 
@@ -209,4 +209,4 @@ Return this plane as a vtkPlane.
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:04 +0000
+Updated on 2022-07-23 at 16:40:06 -0600

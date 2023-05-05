@@ -8,41 +8,43 @@ title: Files
 
 
 
-* **dir [Applications](../Files/dir_8c1195e4829fa17630c4278c41da729a.md#dir-applications)** 
-    * **dir [Applications/shapeworks](../Files/dir_486a45e6ebc11931a27093b877e14af3.md#dir-applications/shapeworks)** 
+* **dir [Applications](../Files/dir_925225c0eef11af96a0fb8df2dcb7a5d.md#dir-applications)** 
+    * **dir [Applications/shapeworks](../Files/dir_ea9658a0b2dcf1e0678dd2881ea8a9f7.md#dir-applications/shapeworks)** 
         * **file [Applications/shapeworks/Command.h](../Files/Command_8h.md#file-command.h)** 
         * **file [Applications/shapeworks/Commands.h](../Files/Commands_8h.md#file-commands.h)** 
         * **file [Applications/shapeworks/Executable.h](../Files/Executable_8h.md#file-executable.h)** 
         * **file [Applications/shapeworks/SharedCommandData.h](../Files/SharedCommandData_8h.md#file-sharedcommanddata.h)** 
 * **dir [Documentation](../Files/dir_b411e2045bdee07628d0d58438795fa9.md#dir-documentation)** 
     * **dir [Documentation/Doxygen](../Files/dir_8fed0776758098ce30d5aa2d3debb7a2.md#dir-documentation/doxygen)** 
-* **dir [Libs](../Files/dir_6e6cb9563333489fde7459b1f95e59a5.md#dir-libs)** 
-    * **dir [Libs/Alignment](../Files/dir_c8a30dba58b805ee2d567ab327483fca.md#dir-libs/alignment)** 
-        * **dir [Libs/Alignment/Transforms](../Files/dir_3c387d8f52af5a1c9b80596228515621.md#dir-libs/alignment/transforms)** 
+* **dir [Documentation](../Files/dir_c89c29973a5cfaead106d4a97e3032da.md#dir-documentation)** 
+    * **dir [Documentation/Doxygen](../Files/dir_82b7eea2627757703ae9d649bc5dbcc3.md#dir-documentation/doxygen)** 
+* **dir [Libs](../Files/dir_36240504c08e57f076881a3fb4a95f20.md#dir-libs)** 
+    * **dir [Libs/Alignment](../Files/dir_3f2aeec9c7c878ca07fbf4e7262f152c.md#dir-libs/alignment)** 
+        * **dir [Libs/Alignment/Transforms](../Files/dir_63319d77c710ac903ec06d30a495a580.md#dir-libs/alignment/transforms)** 
             * **file [Libs/Alignment/Transforms/itkAdvancedTransform.h](../Files/itkAdvancedTransform_8h.md#file-itkadvancedtransform.h)** 
             * **file [Libs/Alignment/Transforms/itkCompactlySupportedRBFSparseKernelTransform.h](../Files/itkCompactlySupportedRBFSparseKernelTransform_8h.md#file-itkcompactlysupportedrbfsparsekerneltransform.h)** 
             * **file [Libs/Alignment/Transforms/itkKernelTransform2.h](../Files/itkKernelTransform2_8h.md#file-itkkerneltransform2.h)** 
             * **file [Libs/Alignment/Transforms/itkSparseKernelTransform.h](../Files/itkSparseKernelTransform_8h.md#file-itksparsekerneltransform.h)** 
             * **file [Libs/Alignment/Transforms/itkThinPlateSplineKernelTransform2.h](../Files/itkThinPlateSplineKernelTransform2_8h.md#file-itkthinplatesplinekerneltransform2.h)** 
         * **file [Libs/Alignment/Procrustes3D.h](../Files/Procrustes3D_8h.md#file-procrustes3d.h)** 
-    * **dir [Libs/Analyze](../Files/dir_d77cc112773b74d11448b7fad9142c8e.md#dir-libs/analyze)** 
+    * **dir [Libs/Analyze](../Files/dir_ca024e1e317bddf8f5c3fbf04807e20e.md#dir-libs/analyze)** 
         * **file [Libs/Analyze/Reconstruction.h](../Files/Reconstruction_8h.md#file-reconstruction.h)** 
         * **file [Libs/Analyze/Vis.h](../Files/Vis_8h.md#file-vis.h)** 
-    * **dir [Libs/Common](../Files/dir_c13ed27a749775eeb2d59234813cae48.md#dir-libs/common)** 
+    * **dir [Libs/Common](../Files/dir_e3a1760e9bf597c410142040ba98286a.md#dir-libs/common)** 
         * **file [Libs/Common/Exception.h](../Files/Exception_8h.md#file-exception.h)** 
         * **file [Libs/Common/Region.h](../Files/Region_8h.md#file-region.h)** 
         * **file [Libs/Common/Shapeworks.h](../Files/Shapeworks_8h.md#file-shapeworks.h)** 
         * **file [Libs/Common/ShapeworksUtils.h](../Files/ShapeworksUtils_8h.md#file-shapeworksutils.h)** 
-    * **dir [Libs/Groom](../Files/dir_c8ce71b7fc76205395f44c2291e69b75.md#dir-libs/groom)** 
+    * **dir [Libs/Groom](../Files/dir_69bd03084155054f5d382ef462099146.md#dir-libs/groom)** 
         * **file [Libs/Groom/Groom.h](../Files/Groom_8h.md#file-groom.h)** 
         * **file [Libs/Groom/GroomParameters.h](../Files/GroomParameters_8h.md#file-groomparameters.h)** 
-    * **dir [Libs/Image](../Files/dir_9e4ba78685e6608cfdea07960abd189c.md#dir-libs/image)** 
+    * **dir [Libs/Image](../Files/dir_1b9bde9e8bcb867599949113f2bdd2a5.md#dir-libs/image)** 
         * **file [Libs/Image/Image.h](../Files/Image_8h.md#file-image.h)** 
         * **file [Libs/Image/ImageUtils.h](../Files/ImageUtils_8h.md#file-imageutils.h)** 
         * **file [Libs/Image/VectorImage.h](../Files/VectorImage_8h.md#file-vectorimage.h)** 
         * **file [Libs/Image/itkTPGACLevelSetImageFilter.h](../Files/itkTPGACLevelSetImageFilter_8h.md#file-itktpgaclevelsetimagefilter.h)** 
-    * **dir [Libs/Mesh](../Files/dir_36d0ece48b2c599ca7cdf3fcf70a4111.md#dir-libs/mesh)** 
-        * **dir [Libs/Mesh/PreviewMeshQC](../Files/dir_409787ee32d93aa6a212981d92e6dc9a.md#dir-libs/mesh/previewmeshqc)** 
+    * **dir [Libs/Mesh](../Files/dir_392252d3263d830764b835f935e42d37.md#dir-libs/mesh)** 
+        * **dir [Libs/Mesh/PreviewMeshQC](../Files/dir_720ddc5c113bb27270f3aaf47adf4baa.md#dir-libs/mesh/previewmeshqc)** 
             * **file [Libs/Mesh/PreviewMeshQC/FEAreaCoverage.h](../Files/FEAreaCoverage_8h.md#file-feareacoverage.h)** 
             * **file [Libs/Mesh/PreviewMeshQC/FEAutoMesher.h](../Files/FEAutoMesher_8h.md#file-feautomesher.h)** 
             * **file [Libs/Mesh/PreviewMeshQC/FECVDDecimationModifier.h](../Files/FECVDDecimationModifier_8h.md#file-fecvddecimationmodifier.h)** 
@@ -65,8 +67,9 @@ title: Files
         * **file [Libs/Mesh/MeshWarper.h](../Files/MeshWarper_8h.md#file-meshwarper.h)** <br>Mesh warping capability. 
         * **file [Libs/Mesh/itkMultiplyByConstantImageFilter.h](../Files/itkMultiplyByConstantImageFilter_8h.md#file-itkmultiplybyconstantimagefilter.h)** 
         * **file [Libs/Mesh/meshFIM.h](../Files/meshFIM_8h.md#file-meshfim.h)** 
-    * **dir [Libs/Optimize](../Files/dir_f02d5d8e81e1edd3722111e50e18938d.md#dir-libs/optimize)** 
-        * **dir [Libs/Optimize/ParticleSystem](../Files/dir_8f268951dfa1af237c8fb7830f5f1164.md#dir-libs/optimize/particlesystem)** 
+    * **dir [Libs/Optimize](../Files/dir_10424771f6a262e50315a09e8b2bd9a3.md#dir-libs/optimize)** 
+        * **file [Libs/Optimize/Global.h](../Files/Global_8h.md#file-global.h)** 
+        * **dir [Libs/Optimize/ParticleSystem](../Files/dir_fba537b80af807d5d79f951b79947834.md#dir-libs/optimize/particlesystem)** 
             * **file [Libs/Optimize/ParticleSystem/Constraint.h](../Files/Constraint_8h.md#file-constraint.h)** 
             * **file [Libs/Optimize/ParticleSystem/ConstraintType.h](../Files/ConstraintType_8h.md#file-constrainttype.h)** 
             * **file [Libs/Optimize/ParticleSystem/Constraints.h](../Files/Constraints_8h.md#file-constraints.h)** 
@@ -126,7 +129,7 @@ title: Files
         * **file [Libs/Optimize/Optimize.h](../Files/Optimize_8h.md#file-optimize.h)** 
         * **file [Libs/Optimize/OptimizeParameterFile.h](../Files/OptimizeParameterFile_8h.md#file-optimizeparameterfile.h)** 
         * **file [Libs/Optimize/OptimizeParameters.h](../Files/OptimizeParameters_8h.md#file-optimizeparameters.h)** 
-    * **dir [Libs/Particles](../Files/dir_f6c26397dfcef1d1f5f1786f8168e7dd.md#dir-libs/particles)** 
+    * **dir [Libs/Particles](../Files/dir_964794cfbc0200ee98d033e96f05265a.md#dir-libs/particles)** 
         * **file [Libs/Particles/EvaluationUtil.h](../Files/EvaluationUtil_8h.md#file-evaluationutil.h)** 
         * **file [Libs/Particles/ParticleNormalEvaluation.h](../Files/ParticleNormalEvaluation_8h.md#file-particlenormalevaluation.h)** 
         * **file [Libs/Particles/ParticleShapeStatistics.h](../Files/ParticleShapeStatistics_8h.md#file-particleshapestatistics.h)** 
@@ -135,25 +138,28 @@ title: Files
         * **file [Libs/Particles/ShapeEvaluation.h](../Files/ShapeEvaluation_8h.md#file-shapeevaluation.h)** 
         * **file [Libs/Particles/itkParticlePositionReader.h](../Files/itkParticlePositionReader_8h.md#file-itkparticlepositionreader.h)** 
         * **file [Libs/Particles/itkParticlePositionWriter.h](../Files/itkParticlePositionWriter_8h.md#file-itkparticlepositionwriter.h)** 
-    * **dir [Libs/Project](../Files/dir_4ea27a77bf632cd63100af8008b8abf4.md#dir-libs/project)** 
+    * **dir [Libs/Project](../Files/dir_a889af563de662e6568ebda1f8c410f4.md#dir-libs/project)** 
+        * **file [Libs/Project/Landmarks.h](../Files/Landmarks_8h.md#file-landmarks.h)** 
         * **file [Libs/Project/Parameters.h](../Files/Parameters_8h.md#file-parameters.h)** 
         * **file [Libs/Project/Project.h](../Files/Project_8h.md#file-project.h)** 
         * **file [Libs/Project/ProjectUtils.h](../Files/ProjectUtils_8h.md#file-projectutils.h)** 
         * **file [Libs/Project/Subject.h](../Files/Subject_8h.md#file-subject.h)** 
         * **file [Libs/Project/Variant.h](../Files/Variant_8h.md#file-variant.h)** 
-    * **dir [Libs/Python](../Files/dir_6cd87311705ab44b460cce19838a0cf5.md#dir-libs/python)** 
+    * **dir [Libs/Python](../Files/dir_ec75ec4ccaa74e64f2f250059b2be5cf.md#dir-libs/python)** 
         * **file [Libs/Python/pybind_utils.h](../Files/pybind__utils_8h.md#file-pybind-utils.h)** 
-    * **dir [Libs/Utils](../Files/dir_73a09fceee206218e6d903b3c5deb969.md#dir-libs/utils)** 
+    * **dir [Libs/Utils](../Files/dir_85437404c76aaafe9c9d27fadf09a713.md#dir-libs/utils)** 
         * **file [Libs/Utils/EigenUtils.h](../Files/EigenUtils_8h.md#file-eigenutils.h)** 
         * **file [Libs/Utils/StringUtils.h](../Files/StringUtils_8h.md#file-stringutils.h)** 
         * **file [Libs/Utils/Utils.h](../Files/Utils_8h.md#file-utils.h)** 
-* **file [Module.dox](../Files/Module_8dox.md#file-module.dox)** 
-* **dir [Studio](../Files/dir_baf8d66207f3fc39faf866e67ca98ce2.md#dir-studio)** 
-    * **dir [Studio/src](../Files/dir_15d8e205eb0e69868bf0703ef3760a37.md#dir-studio/src)** 
-        * **dir [Studio/src/Analysis](../Files/dir_85be493154e47884a39224bf31e366f0.md#dir-studio/src/analysis)** 
+* **file [Module.dox](../Files/code_2Documentation_2Doxygen_2Module_8dox.md#file-module.dox)** 
+* **file [Module.dox](../Files/bin_2Documentation_2Doxygen_2Module_8dox.md#file-module.dox)** 
+* **file [Overview.dox](../Files/Overview_8dox.md#file-overview.dox)** 
+* **dir [Studio](../Files/dir_2dba964ac8d35ee2b73d07c3398d03ee.md#dir-studio)** 
+    * **dir [Studio/src](../Files/dir_c292d0d9f58edd2738b3a726b968950c.md#dir-studio/src)** 
+        * **dir [Studio/src/Analysis](../Files/dir_55dd09ea5eb3d41c580bfa8e99cbc98a.md#dir-studio/src/analysis)** 
             * **file [Studio/src/Analysis/AnalysisTool.h](../Files/AnalysisTool_8h.md#file-analysistool.h)** 
             * **file [Studio/src/Analysis/ShapeEvaluationJob.h](../Files/ShapeEvaluationJob_8h.md#file-shapeevaluationjob.h)** 
-        * **dir [Studio/src/Data](../Files/dir_217db32785bc9a56b002739d3e5efbb6.md#dir-studio/src/data)** 
+        * **dir [Studio/src/Data](../Files/dir_0d6dcc6d5df1fd3d3bccf1e77b62959b.md#dir-studio/src/data)** 
             * **file [Studio/src/Data/CustomSurfaceReconstructionFilter.h](../Files/CustomSurfaceReconstructionFilter_8h.md#file-customsurfacereconstructionfilter.h)** 
             * **file [Studio/src/Data/DataTool.h](../Files/DataTool_8h.md#file-datatool.h)** 
             * **file [Studio/src/Data/ExportUtils.h](../Files/ExportUtils_8h.md#file-exportutils.h)** 
@@ -168,6 +174,7 @@ title: Files
             * **file [Studio/src/Data/MeshSettings.h](../Files/MeshSettings_8h.md#file-meshsettings.h)** 
             * **file [Studio/src/Data/MeshWorkQueue.h](../Files/MeshWorkQueue_8h.md#file-meshworkqueue.h)** <br>Provides concurrent access to a list of shapes to work needing reconstruction. 
             * **file [Studio/src/Data/MeshWorker.h](../Files/MeshWorker_8h.md#file-meshworker.h)** <br>Worker class for parallel mesh reconstruction. 
+            * **file [Studio/src/Data/PlaneTableModel.h](../Files/PlaneTableModel_8h.md#file-planetablemodel.h)** 
             * **file [Studio/src/Data/Preferences.h](../Files/Preferences_8h.md#file-preferences.h)** 
             * **file [Studio/src/Data/PreferencesWindow.h](../Files/PreferencesWindow_8h.md#file-preferenceswindow.h)** 
             * **file [Studio/src/Data/QMeshWarper.h](../Files/QMeshWarper_8h.md#file-qmeshwarper.h)** 
@@ -181,14 +188,17 @@ title: Files
             * **file [Studio/src/Data/SurfaceReconstructor.h](../Files/SurfaceReconstructor_8h.md#file-surfacereconstructor.h)** <br>Surface [Reconstruction](../Classes/classReconstruction.md) Layer. 
             * **file [Studio/src/Data/Worker.h](../Files/Worker_8h.md#file-worker.h)** 
             * **file [Studio/src/Data/vtkPolyDataToImageData.h](../Files/vtkPolyDataToImageData_8h.md#file-vtkpolydatatoimagedata.h)** 
-        * **dir [Studio/src/DeepSSM](../Files/dir_dec1a63a19e4f4a11987b8b8502ff5c9.md#dir-studio/src/deepssm)** 
+        * **dir [Studio/src/DeepSSM](../Files/dir_9ecbc4e1f736ca640622fadff39dff6e.md#dir-studio/src/deepssm)** 
             * **file [Studio/src/DeepSSM/DeepSSMJob.h](../Files/DeepSSMJob_8h.md#file-deepssmjob.h)** 
             * **file [Studio/src/DeepSSM/DeepSSMParameters.h](../Files/DeepSSMParameters_8h.md#file-deepssmparameters.h)** 
             * **file [Studio/src/DeepSSM/DeepSSMTool.h](../Files/DeepSSMTool_8h.md#file-deepssmtool.h)** 
-        * **dir [Studio/src/Groom](../Files/dir_8c7b8cb8b689625715d68fff39675b66.md#dir-studio/src/groom)** 
+        * **dir [Studio/src/Groom](../Files/dir_b23654212ee2e801f3acf694e99fc6b4.md#dir-studio/src/groom)** 
+            * **file [Studio/src/Groom/GroomAlignment.h](../Files/GroomAlignment_8h.md#file-groomalignment.h)** 
+            * **file [Studio/src/Groom/GroomImage.h](../Files/GroomImage_8h.md#file-groomimage.h)** 
+            * **file [Studio/src/Groom/GroomMesh.h](../Files/GroomMesh_8h.md#file-groommesh.h)** 
             * **file [Studio/src/Groom/GroomTool.h](../Files/GroomTool_8h.md#file-groomtool.h)** 
             * **file [Studio/src/Groom/QGroom.h](../Files/QGroom_8h.md#file-qgroom.h)** 
-        * **dir [Studio/src/Interface](../Files/dir_efdc2f3bb304c468939ff6eb3a94c2bf.md#dir-studio/src/interface)** 
+        * **dir [Studio/src/Interface](../Files/dir_872a66bfca900cf3b352d7fa402e7751.md#dir-studio/src/interface)** 
             * **file [Studio/src/Interface/CompareWidget.h](../Files/CompareWidget_8h.md#file-comparewidget.h)** 
             * **file [Studio/src/Interface/ExportImageDialog.h](../Files/ExportImageDialog_8h.md#file-exportimagedialog.h)** 
             * **file [Studio/src/Interface/KeyboardShortcuts.h](../Files/KeyboardShortcuts_8h.md#file-keyboardshortcuts.h)** 
@@ -198,25 +208,25 @@ title: Files
             * **file [Studio/src/Interface/StatusBarWidget.h](../Files/StatusBarWidget_8h.md#file-statusbarwidget.h)** 
             * **file [Studio/src/Interface/Style.h](../Files/Style_8h.md#file-style.h)** 
             * **file [Studio/src/Interface/WheelEventForwarder.h](../Files/WheelEventForwarder_8h.md#file-wheeleventforwarder.h)** 
-        * **dir [Studio/src/Job](../Files/dir_3e441cbfff25a2e63cb70556b317072d.md#dir-studio/src/job)** 
+        * **dir [Studio/src/Job](../Files/dir_8b0a57a5f9c87d7f95a67c8e50dd7805.md#dir-studio/src/job)** 
             * **file [Studio/src/Job/GroupPvalueJob.h](../Files/GroupPvalueJob_8h.md#file-grouppvaluejob.h)** 
             * **file [Studio/src/Job/Job.h](../Files/Job_8h.md#file-job.h)** 
             * **file [Studio/src/Job/ParticleNormalEvaluationJob.h](../Files/ParticleNormalEvaluationJob_8h.md#file-particlenormalevaluationjob.h)** 
             * **file [Studio/src/Job/StatsGroupLDAJob.h](../Files/StatsGroupLDAJob_8h.md#file-statsgroupldajob.h)** 
-        * **dir [Studio/src/Optimize](../Files/dir_502f02e7679d4b0b85423ea2b48b81cb.md#dir-studio/src/optimize)** 
+        * **dir [Studio/src/Optimize](../Files/dir_dcf71d18a8c9bcac3d5e841f31ca458f.md#dir-studio/src/optimize)** 
             * **file [Studio/src/Optimize/OptimizeTool.h](../Files/OptimizeTool_8h.md#file-optimizetool.h)** 
             * **file [Studio/src/Optimize/QOptimize.h](../Files/QOptimize_8h.md#file-qoptimize.h)** 
-        * **dir [Studio/src/Python](../Files/dir_55e6ce8615c819fee18162671e1bdfe2.md#dir-studio/src/python)** 
+        * **dir [Studio/src/Python](../Files/dir_e2530fdd25284f834f8437552c23cc88.md#dir-studio/src/python)** 
             * **file [Studio/src/Python/PythonWorker.h](../Files/PythonWorker_8h.md#file-pythonworker.h)** 
-        * **dir [Studio/src/Resources](../Files/dir_f61e18dd1eaf83b576d05cfa79718e5e.md#dir-studio/src/resources)** 
+        * **dir [Studio/src/Resources](../Files/dir_f34156dd64edde617f7946d05bb2afa0.md#dir-studio/src/resources)** 
             * **file [Studio/src/Resources/resource.h](../Files/resource_8h.md#file-resource.h)** 
-        * **dir [Studio/src/Utils](../Files/dir_6dabbda62b442fabee487c4141c09499.md#dir-studio/src/utils)** 
+        * **dir [Studio/src/Utils](../Files/dir_46e862a5ac462f7be96c385f5f7ea1d7.md#dir-studio/src/utils)** 
             * **file [Studio/src/Utils/AnalysisUtils.h](../Files/AnalysisUtils_8h.md#file-analysisutils.h)** 
             * **file [Studio/src/Utils/ImageLabel.h](../Files/ImageLabel_8h.md#file-imagelabel.h)** 
             * **file [Studio/src/Utils/StackWalker.h](../Files/StackWalker_8h.md#file-stackwalker.h)** 
             * **file [Studio/src/Utils/StudioUtils.h](../Files/StudioUtils_8h.md#file-studioutils.h)** 
             * **file [Studio/src/Utils/WindowsCrashHandler.h](../Files/WindowsCrashHandler_8h.md#file-windowscrashhandler.h)** 
-        * **dir [Studio/src/Visualization](../Files/dir_637230a14b7eb9dd0045894e3626aeed.md#dir-studio/src/visualization)** 
+        * **dir [Studio/src/Visualization](../Files/dir_d636eff8c67aac1071ab05c0f0b00c59.md#dir-studio/src/visualization)** 
             * **file [Studio/src/Visualization/ColorMap.h](../Files/ColorMap_8h.md#file-colormap.h)** 
             * **file [Studio/src/Visualization/ColorSchemes.h](../Files/ColorSchemes_8h.md#file-colorschemes.h)** 
             * **file [Studio/src/Visualization/LandmarkWidget.h](../Files/LandmarkWidget_8h.md#file-landmarkwidget.h)** 
@@ -236,4 +246,4 @@ title: Files
 
 -------------------------------
 
-Updated on 2022-07-23 at 17:50:05 -0600
+Updated on 2022-07-23 at 16:40:07 -0600

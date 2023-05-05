@@ -19,7 +19,7 @@
     
     
       
-        <title>Libs/Optimize/Utils/OptimizationVisualizer.h - ShapeWorks</title>
+        <title>Libs/Optimize/ParticleSystem/OptimizationVisualizer.h - ShapeWorks</title>
       
     
     
@@ -84,7 +84,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#libsoptimizeutilsoptimizationvisualizerh" class="md-skip">
+        <a href="#libsoptimizeparticlesystemoptimizationvisualizerh" class="md-skip">
           Skip to content
         </a>
       
@@ -122,7 +122,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Libs/Optimize/Utils/OptimizationVisualizer.h
+              Libs/Optimize/ParticleSystem/OptimizationVisualizer.h
             
           </span>
         </div>
@@ -2409,7 +2409,7 @@
 
 
 
-<h1 id="libsoptimizeutilsoptimizationvisualizerh">Libs/Optimize/Utils/OptimizationVisualizer.h</h1>
+<h1 id="libsoptimizeparticlesystemoptimizationvisualizerh">Libs/Optimize/ParticleSystem/OptimizationVisualizer.h</h1>
 <h2 id="namespaces">Namespaces</h2>
 <table>
 <thead>
@@ -2419,7 +2419,7 @@
 </thead>
 <tbody>
 <tr>
-<td><strong><a href="../Namespaces/namespaceshapeworks.html">shapeworks</a></strong> <br>User usage reporting (telemetry)</td>
+<td><strong><a href="../Namespaces/namespaceshapeworks.html">shapeworks</a></strong></td>
 </tr>
 </tbody>
 </table>
@@ -2441,71 +2441,77 @@
 <h2 id="source-code">Source code</h2>
 <div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkActor.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkCellArray.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkPoints.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkPolyData.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkPolyDataMapper.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkRenderWindow.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkRenderer.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkSphereSource.h&gt;</span>
-
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;string&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;string&gt;</span>
 
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;TriMesh.h&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ParticleSystem.h&quot;</span>
 
-<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">OptimizationVisualizer</span><span class="w"> </span><span class="p">{</span>
-<span class="w"> </span><span class="k">public</span><span class="o">:</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">AddMesh</span><span class="p">(</span><span class="n">vtkPolyData</span><span class="o">*</span><span class="w"> </span><span class="n">mesh</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">trimesh</span><span class="o">::</span><span class="n">TriMesh</span><span class="o">&gt;</span><span class="w"> </span><span class="n">tmesh</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">IterationCallback</span><span class="p">(</span><span class="n">ParticleSystem</span><span class="o">*</span><span class="w"> </span><span class="n">particleSystem</span><span class="p">);</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkPolyData.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkPolyDataMapper.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkActor.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkRenderer.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkRenderWindow.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkPoints.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkSphereSource.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkCellArray.h&gt;</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetWireFrame</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetSaveScreenshots</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">path</span><span class="p">);</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ParticleSystem/itkParticleSystem.h&quot;</span>
 
-<span class="w">  </span><span class="n">OptimizationVisualizer</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
-<span class="w">  </span><span class="o">~</span><span class="n">OptimizationVisualizer</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
+<span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span>
+<span class="p">{</span>
+<span class="w">  </span><span class="k">class</span><span class="w"> </span><span class="nc">OptimizationVisualizer</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">  </span><span class="k">public</span><span class="o">:</span>
 
-<span class="w"> </span><span class="k">private</span><span class="o">:</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">initialize</span><span class="p">();</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">AddMesh</span><span class="p">(</span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">*</span><span class="n">mesh</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">trimesh</span><span class="o">::</span><span class="n">TriMesh</span><span class="o">&gt;</span><span class="w"> </span><span class="n">tmesh</span><span class="p">);</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">IterationCallback</span><span class="p">(</span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleSystem</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">particleSystem</span><span class="p">);</span>
 
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">screenshotDirectory</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">saveScreenshots</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">wireFrame</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">colorNormals</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">initialized</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetWireFrame</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span><span class="p">);</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetSaveScreenshots</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">path</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">double</span><span class="o">*</span><span class="w"> </span><span class="n">focalPoint</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">iteration</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">radius</span><span class="p">;</span>
+<span class="w">    </span><span class="n">OptimizationVisualizer</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">}</span>
+<span class="w">    </span><span class="o">~</span><span class="n">OptimizationVisualizer</span><span class="p">()</span><span class="w"> </span><span class="p">{}</span>
 
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">meshes</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">trimesh</span><span class="o">::</span><span class="n">TriMesh</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">tmeshes</span><span class="p">;</span>
+<span class="w">  </span><span class="k">private</span><span class="o">:</span>
 
-<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyDataMapper</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mapper</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyDataMapper</span><span class="o">&gt;::</span><span class="n">New</span><span class="p">();</span>
-<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkActor</span><span class="o">&gt;</span><span class="w"> </span><span class="n">actor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkActor</span><span class="o">&gt;::</span><span class="n">New</span><span class="p">();</span>
-<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkRenderer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mainRenderer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkRenderer</span><span class="o">&gt;::</span><span class="n">New</span><span class="p">();</span>
-<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkRenderWindow</span><span class="o">&gt;</span><span class="w"> </span><span class="n">renderWindow</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkRenderWindow</span><span class="o">&gt;::</span><span class="n">New</span><span class="p">();</span>
-<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPoints</span><span class="o">&gt;</span><span class="w"> </span><span class="n">points</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPoints</span><span class="o">&gt;::</span><span class="n">New</span><span class="p">();</span>
-<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">polydata</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;::</span><span class="n">New</span><span class="p">();</span>
-<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkSphereSource</span><span class="o">&gt;</span><span class="w"> </span><span class="n">cubeSource</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkSphereSource</span><span class="o">&gt;::</span><span class="n">New</span><span class="p">();</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">initialize</span><span class="p">();</span>
 
-<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyDataMapper</span><span class="o">&gt;</span><span class="w"> </span><span class="n">lineMapper</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyDataMapper</span><span class="o">&gt;::</span><span class="n">New</span><span class="p">();</span>
-<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkActor</span><span class="o">&gt;</span><span class="w"> </span><span class="n">lineActor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkActor</span><span class="o">&gt;::</span><span class="n">New</span><span class="p">();</span>
-<span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkCellArray</span><span class="o">&gt;</span><span class="w"> </span><span class="n">lines</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkCellArray</span><span class="o">&gt;::</span><span class="n">New</span><span class="p">();</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">screenshotDirectory</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">saveScreenshots</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">wireFrame</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">colorNormals</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">initialized</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
 
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkRenderer</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">sampleRenderers</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyDataMapper</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">sampleMappers</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPoints</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">samplePoints</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">samplePolyData</span><span class="p">;</span>
-<span class="p">};</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">*</span><span class="n">focalPoint</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">iteration</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">radius</span><span class="p">;</span>
 
-<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">meshes</span><span class="p">;</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">trimesh</span><span class="o">::</span><span class="n">TriMesh</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">tmeshes</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyDataMapper</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mapper</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyDataMapper</span><span class="o">&gt;::</span><span class="n">New</span><span class="p">();</span>
+<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkActor</span><span class="o">&gt;</span><span class="w"> </span><span class="n">actor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkActor</span><span class="o">&gt;::</span><span class="n">New</span><span class="p">();</span>
+<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkRenderer</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mainRenderer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkRenderer</span><span class="o">&gt;::</span><span class="n">New</span><span class="p">();</span>
+<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkRenderWindow</span><span class="o">&gt;</span><span class="w"> </span><span class="n">renderWindow</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkRenderWindow</span><span class="o">&gt;::</span><span class="n">New</span><span class="p">();</span>
+<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPoints</span><span class="o">&gt;</span><span class="w"> </span><span class="n">points</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPoints</span><span class="o">&gt;::</span><span class="n">New</span><span class="p">();</span>
+<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">polydata</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;::</span><span class="n">New</span><span class="p">();</span>
+<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkSphereSource</span><span class="o">&gt;</span><span class="w"> </span><span class="n">cubeSource</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkSphereSource</span><span class="o">&gt;::</span><span class="n">New</span><span class="p">();</span>
+
+<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyDataMapper</span><span class="o">&gt;</span><span class="w"> </span><span class="n">lineMapper</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyDataMapper</span><span class="o">&gt;::</span><span class="n">New</span><span class="p">();</span>
+<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkActor</span><span class="o">&gt;</span><span class="w"> </span><span class="n">lineActor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkActor</span><span class="o">&gt;::</span><span class="n">New</span><span class="p">();</span>
+<span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkCellArray</span><span class="o">&gt;</span><span class="w"> </span><span class="n">lines</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkCellArray</span><span class="o">&gt;::</span><span class="n">New</span><span class="p">();</span>
+
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkRenderer</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">sampleRenderers</span><span class="p">;</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyDataMapper</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">sampleMappers</span><span class="p">;</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPoints</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">samplePoints</span><span class="p">;</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">samplePolyData</span><span class="p">;</span>
+
+<span class="w">  </span><span class="p">};</span>
+
+<span class="p">}</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-05-04 at 20:03:05 +0000</p>
+<p>Updated on 2022-07-23 at 16:40:07 -0600</p>
 
               
             </article>

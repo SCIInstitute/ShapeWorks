@@ -1,9 +1,9 @@
 ---
-title: Studio/Visualization/StudioVtkOutputWindow.h
+title: Studio/src/Visualization/StudioVtkOutputWindow.h
 
 ---
 
-# Studio/Visualization/StudioVtkOutputWindow.h
+# Studio/src/Visualization/StudioVtkOutputWindow.h
 
 
 
@@ -11,7 +11,7 @@ title: Studio/Visualization/StudioVtkOutputWindow.h
 
 | Name           |
 | -------------- |
-| **[shapeworks](../Namespaces/namespaceshapeworks.md)** <br>User usage reporting (telemetry)  |
+| **[shapeworks](../Namespaces/namespaceshapeworks.md)**  |
 
 ## Classes
 
@@ -27,32 +27,35 @@ title: Studio/Visualization/StudioVtkOutputWindow.h
 ```cpp
 #pragma once
 
-#include <vtkOutputWindow.h>
-
 #include <QObject>
+#include <vtkOutputWindow.h>
 
 namespace shapeworks {
 
 class StudioVtkOutputWindow : public QObject, public vtkOutputWindow {
-  Q_OBJECT;
+Q_OBJECT;
 
- public:
+public:
   static StudioVtkOutputWindow* New();
 
-  vtkTypeMacro(StudioVtkOutputWindow, vtkOutputWindow);
+vtkTypeMacro(StudioVtkOutputWindow, vtkOutputWindow);
 
   StudioVtkOutputWindow();
 
   void DisplayErrorText(const char* text) override;
   void DisplayWarningText(const char* text) override;
-  void DisplayGenericWarningText(const char* text) override;
-  void DisplayDebugText(const char* text) override;
- private:
+
+Q_SIGNALS:
+  void warning(QString message);
+  void error(QString message);
+
+private:
+
 };
-}  // namespace shapeworks
+}
 ```
 
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:05 +0000
+Updated on 2022-07-23 at 16:40:07 -0600

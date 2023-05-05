@@ -11,13 +11,16 @@ title: shapeworks::Job
 
 Inherits from QObject
 
-Inherited by [shapeworks::DeepSSMJob](../Classes/classshapeworks_1_1DeepSSMJob.md), [shapeworks::GroupPvalueJob](../Classes/classshapeworks_1_1GroupPvalueJob.md), [shapeworks::NetworkAnalysisJob](../Classes/classshapeworks_1_1NetworkAnalysisJob.md), [shapeworks::ParticleNormalEvaluationJob](../Classes/classshapeworks_1_1ParticleNormalEvaluationJob.md), [shapeworks::ShapeEvaluationJob](../Classes/classshapeworks_1_1ShapeEvaluationJob.md), [shapeworks::StatsGroupLDAJob](../Classes/classshapeworks_1_1StatsGroupLDAJob.md)
+Inherited by [shapeworks::DeepSSMJob](../Classes/classshapeworks_1_1DeepSSMJob.md), [shapeworks::GroupPvalueJob](../Classes/classshapeworks_1_1GroupPvalueJob.md), [shapeworks::ParticleNormalEvaluationJob](../Classes/classshapeworks_1_1ParticleNormalEvaluationJob.md), [shapeworks::ShapeEvaluationJob](../Classes/classshapeworks_1_1ShapeEvaluationJob.md), [shapeworks::StatsGroupLDAJob](../Classes/classshapeworks_1_1StatsGroupLDAJob.md)
 
 ## Public Signals
 
 |                | Name           |
 | -------------- | -------------- |
+| void | **[error_message](../Classes/classshapeworks_1_1Job.md#signal-error-message)**(QString ) |
+| void | **[warning_message](../Classes/classshapeworks_1_1Job.md#signal-warning-message)**(QString ) |
 | void | **[progress](../Classes/classshapeworks_1_1Job.md#signal-progress)**(double ) |
+| void | **[message](../Classes/classshapeworks_1_1Job.md#signal-message)**(QString ) |
 | void | **[finished](../Classes/classshapeworks_1_1Job.md#signal-finished)**() |
 
 ## Public Functions
@@ -34,11 +37,38 @@ Inherited by [shapeworks::DeepSSMJob](../Classes/classshapeworks_1_1DeepSSMJob.m
 
 ## Public Signals Documentation
 
+### signal error_message
+
+```cpp
+void error_message(
+    QString 
+)
+```
+
+
+### signal warning_message
+
+```cpp
+void warning_message(
+    QString 
+)
+```
+
+
 ### signal progress
 
 ```cpp
 void progress(
     double 
+)
+```
+
+
+### signal message
+
+```cpp
+void message(
+    QString 
 )
 ```
 
@@ -73,7 +103,7 @@ virtual void run() =0
 ```
 
 
-**Reimplemented by**: [shapeworks::ShapeEvaluationJob::run](../Classes/classshapeworks_1_1ShapeEvaluationJob.md#function-run), [shapeworks::DeepSSMJob::run](../Classes/classshapeworks_1_1DeepSSMJob.md#function-run), [shapeworks::GroupPvalueJob::run](../Classes/classshapeworks_1_1GroupPvalueJob.md#function-run), [shapeworks::NetworkAnalysisJob::run](../Classes/classshapeworks_1_1NetworkAnalysisJob.md#function-run), [shapeworks::ParticleNormalEvaluationJob::run](../Classes/classshapeworks_1_1ParticleNormalEvaluationJob.md#function-run), [shapeworks::StatsGroupLDAJob::run](../Classes/classshapeworks_1_1StatsGroupLDAJob.md#function-run)
+**Reimplemented by**: [shapeworks::ShapeEvaluationJob::run](../Classes/classshapeworks_1_1ShapeEvaluationJob.md#function-run), [shapeworks::DeepSSMJob::run](../Classes/classshapeworks_1_1DeepSSMJob.md#function-run), [shapeworks::GroupPvalueJob::run](../Classes/classshapeworks_1_1GroupPvalueJob.md#function-run), [shapeworks::ParticleNormalEvaluationJob::run](../Classes/classshapeworks_1_1ParticleNormalEvaluationJob.md#function-run), [shapeworks::StatsGroupLDAJob::run](../Classes/classshapeworks_1_1StatsGroupLDAJob.md#function-run)
 
 
 ### function name
@@ -83,7 +113,7 @@ virtual QString name() =0
 ```
 
 
-**Reimplemented by**: [shapeworks::ShapeEvaluationJob::name](../Classes/classshapeworks_1_1ShapeEvaluationJob.md#function-name), [shapeworks::DeepSSMJob::name](../Classes/classshapeworks_1_1DeepSSMJob.md#function-name), [shapeworks::GroupPvalueJob::name](../Classes/classshapeworks_1_1GroupPvalueJob.md#function-name), [shapeworks::NetworkAnalysisJob::name](../Classes/classshapeworks_1_1NetworkAnalysisJob.md#function-name), [shapeworks::ParticleNormalEvaluationJob::name](../Classes/classshapeworks_1_1ParticleNormalEvaluationJob.md#function-name), [shapeworks::StatsGroupLDAJob::name](../Classes/classshapeworks_1_1StatsGroupLDAJob.md#function-name)
+**Reimplemented by**: [shapeworks::ShapeEvaluationJob::name](../Classes/classshapeworks_1_1ShapeEvaluationJob.md#function-name), [shapeworks::DeepSSMJob::name](../Classes/classshapeworks_1_1DeepSSMJob.md#function-name), [shapeworks::GroupPvalueJob::name](../Classes/classshapeworks_1_1GroupPvalueJob.md#function-name), [shapeworks::ParticleNormalEvaluationJob::name](../Classes/classshapeworks_1_1ParticleNormalEvaluationJob.md#function-name), [shapeworks::StatsGroupLDAJob::name](../Classes/classshapeworks_1_1StatsGroupLDAJob.md#function-name)
 
 
 ### function get_completion_message
@@ -109,4 +139,4 @@ qint64 timer_elapsed()
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:04 +0000
+Updated on 2022-07-23 at 16:40:06 -0600

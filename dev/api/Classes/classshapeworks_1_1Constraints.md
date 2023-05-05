@@ -39,17 +39,17 @@ title: shapeworks::Constraints
 | bool | **[isAnyViolated](../Classes/classshapeworks_1_1Constraints.md#function-isanyviolated)**(const Point3 & pos) |
 | std::vector< int > | **[planesViolated](../Classes/classshapeworks_1_1Constraints.md#function-planesviolated)**(Eigen::Vector3d pt) |
 | void | **[printAll](../Classes/classshapeworks_1_1Constraints.md#function-printall)**() |
-| std::string | **[violationReport](../Classes/classshapeworks_1_1Constraints.md#function-violationreport)**(const Point3 & pos, size_t index) |
+| std::string | **[violationReport](../Classes/classshapeworks_1_1Constraints.md#function-violationreport)**(const Point3 & pos) |
 | std::vector< std::vector< double > > | **[violationReportData](../Classes/classshapeworks_1_1Constraints.md#function-violationreportdata)**(const Point3 & pos) |
 | vnl_vector_fixed< double, 3 > | **[constraintsGradient](../Classes/classshapeworks_1_1Constraints.md#function-constraintsgradient)**(const Point3 & pos) const |
-| vnl_vector_fixed< double, 3 > | **[constraintsLagrangianGradient](../Classes/classshapeworks_1_1Constraints.md#function-constraintslagrangiangradient)**(const Point3 & pos, const Point3 & prepos, double C, size_t index) |
-| void | **[InitializeLagrangianParameters](../Classes/classshapeworks_1_1Constraints.md#function-initializelagrangianparameters)**(double lambda, std::vector< double > mus) |
+| vnl_vector_fixed< double, 3 > | **[constraintsLagrangianGradient](../Classes/classshapeworks_1_1Constraints.md#function-constraintslagrangiangradient)**(const Point3 & pos, const Point3 & prepos, double C) |
+| void | **[InitializeLagrangianParameters](../Classes/classshapeworks_1_1Constraints.md#function-initializelagrangianparameters)**(double lambda, double mu, double z) |
 | void | **[UpdateZs](../Classes/classshapeworks_1_1Constraints.md#function-updatezs)**(const Point3 & pos, double C) |
-| void | **[UpdateMus](../Classes/classshapeworks_1_1Constraints.md#function-updatemus)**(const Point3 & pos, double C, size_t index) |
+| void | **[UpdateMus](../Classes/classshapeworks_1_1Constraints.md#function-updatemus)**(const Point3 & pos, double C) |
 | bool | **[GetActive](../Classes/classshapeworks_1_1Constraints.md#function-getactive)**() |
 | void | **[SetActive](../Classes/classshapeworks_1_1Constraints.md#function-setactive)**(bool ac) |
-| void | **[read](../Classes/classshapeworks_1_1Constraints.md#function-read)**(std::string filename) |
-| void | **[write](../Classes/classshapeworks_1_1Constraints.md#function-write)**(std::string filename) |
+| void | **[Read](../Classes/classshapeworks_1_1Constraints.md#function-read)**(std::string filename) |
+| void | **[Write](../Classes/classshapeworks_1_1Constraints.md#function-write)**(std::string filename) |
 | [FreeFormConstraint](../Classes/classshapeworks_1_1FreeFormConstraint.md) & | **[getFreeformConstraint](../Classes/classshapeworks_1_1Constraints.md#function-getfreeformconstraint)**() |
 | bool | **[hasConstraints](../Classes/classshapeworks_1_1Constraints.md#function-hasconstraints)**() |
 | void | **[clipMesh](../Classes/classshapeworks_1_1Constraints.md#function-clipmesh)**([Mesh](../Classes/classshapeworks_1_1Mesh.md) & mesh) |
@@ -241,8 +241,7 @@ void printAll()
 
 ```cpp
 std::string violationReport(
-    const Point3 & pos,
-    size_t index
+    const Point3 & pos
 )
 ```
 
@@ -271,8 +270,7 @@ vnl_vector_fixed< double, 3 > constraintsGradient(
 vnl_vector_fixed< double, 3 > constraintsLagrangianGradient(
     const Point3 & pos,
     const Point3 & prepos,
-    double C,
-    size_t index
+    double C
 )
 ```
 
@@ -282,7 +280,8 @@ vnl_vector_fixed< double, 3 > constraintsLagrangianGradient(
 ```cpp
 void InitializeLagrangianParameters(
     double lambda,
-    std::vector< double > mus
+    double mu,
+    double z
 )
 ```
 
@@ -302,8 +301,7 @@ void UpdateZs(
 ```cpp
 void UpdateMus(
     const Point3 & pos,
-    double C,
-    size_t index
+    double C
 )
 ```
 
@@ -324,19 +322,19 @@ inline void SetActive(
 ```
 
 
-### function read
+### function Read
 
 ```cpp
-void read(
+void Read(
     std::string filename
 )
 ```
 
 
-### function write
+### function Write
 
 ```cpp
-void write(
+void Write(
     std::string filename
 )
 ```
@@ -367,4 +365,4 @@ void clipMesh(
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:03 +0000
+Updated on 2022-07-23 at 16:40:06 -0600

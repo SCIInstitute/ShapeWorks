@@ -11,7 +11,7 @@ title: Libs/Optimize/OptimizeParameterFile.h
 
 | Name           |
 | -------------- |
-| **[shapeworks](../Namespaces/namespaceshapeworks.md)** <br>User usage reporting (telemetry)  |
+| **[shapeworks](../Namespaces/namespaceshapeworks.md)**  |
 
 ## Classes
 
@@ -27,10 +27,10 @@ title: Libs/Optimize/OptimizeParameterFile.h
 ```cpp
 #pragma once
 
-#include <exception>
-#include <sstream>
 #include <string>
 #include <vector>
+#include <sstream>
+#include <exception>
 
 class TiXmlHandle;
 
@@ -38,13 +38,15 @@ namespace shapeworks {
 class Optimize;
 
 class OptimizeParameterFile {
- public:
+public:
+
   OptimizeParameterFile();
 
   bool load_parameter_file(std::string filename, Optimize* optimize);
 
- private:
-  bool set_visualizer_parameters(TiXmlHandle* docHandle, Optimize* optimize);
+private:
+
+  bool set_visualizer_parameters(TiXmlHandle *docHandle, Optimize *optimize);
 
   bool set_io_parameters(TiXmlHandle* docHandle, Optimize* optimize);
 
@@ -70,6 +72,8 @@ class OptimizeParameterFile {
 
   bool read_cutting_spheres(TiXmlHandle* doc_handle, Optimize* optimize);
 
+  bool read_cutting_ffcs(TiXmlHandle* docHandle, Optimize* optimize);
+
   bool read_explanatory_variables(TiXmlHandle* doc_handle, Optimize* optimize);
 
   bool read_flag_particles(TiXmlHandle* doc_handle, Optimize* optimize);
@@ -78,16 +82,17 @@ class OptimizeParameterFile {
 
   int get_num_inputs(TiXmlHandle* docHandle);
 
- private:
+private:
+
   std::vector<int> read_int_list(TiXmlHandle* doc_handle, std::string name);
 
   int verbosity_level_ = 0;
 };
 
-}  // namespace shapeworks
+}
 ```
 
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:05 +0000
+Updated on 2022-07-23 at 16:40:07 -0600

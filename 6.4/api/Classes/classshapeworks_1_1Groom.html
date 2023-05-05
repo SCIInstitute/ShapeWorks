@@ -2378,6 +2378,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#protected-functions" class="md-nav__link">
+    Protected Functions
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#protected-attributes" class="md-nav__link">
     Protected Attributes
   </a>
@@ -2414,6 +2421,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-set_skip_grooming" class="md-nav__link">
+    function set_skip_grooming
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-abort" class="md-nav__link">
     function abort
   </a>
@@ -2437,6 +2451,26 @@
           <li class="md-nav__item">
   <a href="#function-compute_landmark_transform" class="md-nav__link">
     function compute_landmark_transform
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#protected-functions-documentation" class="md-nav__link">
+    Protected Functions Documentation
+  </a>
+  
+    <nav class="md-nav" aria-label="Protected Functions Documentation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#function-update_progress" class="md-nav__link">
+    function update_progress
   </a>
   
 </li>
@@ -2501,6 +2535,7 @@
 <h1 id="shapeworksgroom">shapeworks::Groom</h1>
 <p>High level groom API.  <a href="#detailed-description">More...</a></p>
 <p><code>#include &lt;Groom.h&gt;</code></p>
+<p>Inherited by <a href="classshapeworks_1_1QGroom.html">shapeworks::QGroom</a></p>
 <h2 id="public-functions">Public Functions</h2>
 <table>
 <thead>
@@ -2515,8 +2550,12 @@
 <td><strong><a href="classshapeworks_1_1Groom.html#function-groom">Groom</a></strong>(ProjectHandle project)</td>
 </tr>
 <tr>
-<td>bool</td>
+<td>virtual bool</td>
 <td><strong><a href="classshapeworks_1_1Groom.html#function-run">run</a></strong>()<br>Run the grooming.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Groom.html#function-set-skip-grooming">set_skip_grooming</a></strong>(bool skip)<br>Set if grooming steps should be skipped.</td>
 </tr>
 <tr>
 <td>void</td>
@@ -2536,6 +2575,21 @@
 </tr>
 </tbody>
 </table>
+<h2 id="protected-functions">Protected Functions</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>virtual void</td>
+<td><strong><a href="classshapeworks_1_1Groom.html#function-update-progress">update_progress</a></strong>()<br>call to be overridden by subclasses</td>
+</tr>
+</tbody>
+</table>
 <h2 id="protected-attributes">Protected Attributes</h2>
 <table>
 <thead>
@@ -2546,15 +2600,15 @@
 </thead>
 <tbody>
 <tr>
-<td>std::atomic&lt; float &gt;</td>
+<td>tbb::atomic&lt; float &gt;</td>
 <td><strong><a href="classshapeworks_1_1Groom.html#variable-progress-">progress_</a></strong></td>
 </tr>
 <tr>
-<td>std::atomic&lt; int &gt;</td>
+<td>tbb::atomic&lt; int &gt;</td>
 <td><strong><a href="classshapeworks_1_1Groom.html#variable-total-ops-">total_ops_</a></strong></td>
 </tr>
 <tr>
-<td>std::atomic&lt; int &gt;</td>
+<td>tbb::atomic&lt; int &gt;</td>
 <td><strong><a href="classshapeworks_1_1Groom.html#variable-progress-counter-">progress_counter_</a></strong></td>
 </tr>
 </tbody>
@@ -2571,9 +2625,15 @@
 <span class="p">)</span>
 </code></pre></div>
 <h3 id="function-run">function run</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">run</span><span class="p">()</span>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">run</span><span class="p">()</span>
 </code></pre></div>
 <p>Run the grooming. </p>
+<h3 id="function-set_skip_grooming">function set_skip_grooming</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_skip_grooming</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">skip</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Set if grooming steps should be skipped. </p>
 <h3 id="function-abort">function abort</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">abort</span><span class="p">()</span>
 </code></pre></div>
@@ -2596,18 +2656,24 @@
 <span class="p">)</span>
 </code></pre></div>
 <p>Util to compute landmark transform. </p>
+<h2 id="protected-functions-documentation">Protected Functions Documentation</h2>
+<h3 id="function-update_progress">function update_progress</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">update_progress</span><span class="p">()</span>
+</code></pre></div>
+<p>call to be overridden by subclasses </p>
+<p><strong>Reimplemented by</strong>: <a href="classshapeworks_1_1QGroom.html#function-update-progress">shapeworks::QGroom::update_progress</a></p>
 <h2 id="protected-attributes-documentation">Protected Attributes Documentation</h2>
 <h3 id="variable-progress_">variable progress_</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">atomic</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">progress_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<div class="highlight"><pre><span></span><code><span class="n">tbb</span><span class="o">::</span><span class="n">atomic</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">progress_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="variable-total_ops_">variable total_ops_</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">atomic</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">total_ops_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<div class="highlight"><pre><span></span><code><span class="n">tbb</span><span class="o">::</span><span class="n">atomic</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">total_ops_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="variable-progress_counter_">variable progress_counter_</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">atomic</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">progress_counter_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<div class="highlight"><pre><span></span><code><span class="n">tbb</span><span class="o">::</span><span class="n">atomic</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">progress_counter_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-05-04 at 20:03:04 +0000</p>
+<p>Updated on 2022-07-23 at 16:40:06 -0600</p>
 
               
             </article>

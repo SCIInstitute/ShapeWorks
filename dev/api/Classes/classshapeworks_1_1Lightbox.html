@@ -2378,13 +2378,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#public-signals" class="md-nav__link">
-    Public Signals
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#public-functions" class="md-nav__link">
     Public Functions
   </a>
@@ -2409,26 +2402,6 @@
           <li class="md-nav__item">
   <a href="#slot-handle_timer_callback" class="md-nav__link">
     slot handle_timer_callback
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#public-signals-documentation" class="md-nav__link">
-    Public Signals Documentation
-  </a>
-  
-    <nav class="md-nav" aria-label="Public Signals Documentation">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#signal-right_click" class="md-nav__link">
-    signal right_click
   </a>
   
 </li>
@@ -2554,13 +2527,6 @@
           <li class="md-nav__item">
   <a href="#function-handle_key" class="md-nav__link">
     function handle_key
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-handle_right_click" class="md-nav__link">
-    function handle_right_click
   </a>
   
 </li>
@@ -2712,21 +2678,6 @@
 </tr>
 </tbody>
 </table>
-<h2 id="public-signals">Public Signals</h2>
-<table>
-<thead>
-<tr>
-<th></th>
-<th>Name</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1Lightbox.html#signal-right-click">right_click</a></strong>(int index)</td>
-</tr>
-</tbody>
-</table>
 <h2 id="public-functions">Public Functions</h2>
 <table>
 <thead>
@@ -2746,10 +2697,10 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Lightbox.html#function-set-shapes">set_shapes</a></strong>(ShapeList shapes)</td>
+<td><strong><a href="classshapeworks_1_1Lightbox.html#function-set-shapes">set_shapes</a></strong>(QVector&lt; QSharedPointer&lt; <a href="classshapeworks_1_1Shape.html">Shape</a> &gt;&gt; shapes)</td>
 </tr>
 <tr>
-<td>ShapeList</td>
+<td>QVector&lt; ShapeHandle &gt;</td>
 <td><strong><a href="classshapeworks_1_1Lightbox.html#function-get-shapes">get_shapes</a></strong>()</td>
 </tr>
 <tr>
@@ -2799,10 +2750,6 @@
 <tr>
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1Lightbox.html#function-handle-key">handle_key</a></strong>(int * click_pos, std::string key)</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1Lightbox.html#function-handle-right-click">handle_right_click</a></strong>(int * click_pos, vtkRenderer * renderer)<br>Handle a right click that did not involve any movement.</td>
 </tr>
 <tr>
 <td>void</td>
@@ -2875,12 +2822,6 @@
 <h3 id="slot-handle_timer_callback">slot handle_timer_callback</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_timer_callback</span><span class="p">()</span>
 </code></pre></div>
-<h2 id="public-signals-documentation">Public Signals Documentation</h2>
-<h3 id="signal-right_click">signal right_click</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">right_click</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">index</span>
-<span class="p">)</span>
-</code></pre></div>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-lightbox">function Lightbox</h3>
 <div class="highlight"><pre><span></span><code><span class="n">Lightbox</span><span class="p">()</span>
@@ -2890,11 +2831,11 @@
 </code></pre></div>
 <h3 id="function-set_shapes">function set_shapes</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_shapes</span><span class="p">(</span>
-<span class="w">    </span><span class="n">ShapeList</span><span class="w"> </span><span class="n">shapes</span>
+<span class="w">    </span><span class="n">QVector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Shape</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">shapes</span>
 <span class="p">)</span>
 </code></pre></div>
 <h3 id="function-get_shapes">function get_shapes</h3>
-<div class="highlight"><pre><span></span><code><span class="n">ShapeList</span><span class="w"> </span><span class="n">get_shapes</span><span class="p">()</span>
+<div class="highlight"><pre><span></span><code><span class="n">QVector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">ShapeHandle</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_shapes</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-set_interactor">function set_interactor</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_interactor</span><span class="p">(</span>
@@ -2950,13 +2891,6 @@
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">key</span>
 <span class="p">)</span>
 </code></pre></div>
-<h3 id="function-handle_right_click">function handle_right_click</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_right_click</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">click_pos</span><span class="p">,</span>
-<span class="w">    </span><span class="n">vtkRenderer</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">renderer</span>
-<span class="p">)</span>
-</code></pre></div>
-<p>Handle a right click that did not involve any movement. </p>
 <h3 id="function-set_glyph_lut">function set_glyph_lut</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_glyph_lut</span><span class="p">(</span>
 <span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkLookupTable</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">lut</span>
@@ -3015,7 +2949,7 @@
 <div class="highlight"><pre><span></span><code><span class="n">vtkRenderWindow</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">get_render_window</span><span class="p">()</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-05-04 at 20:03:04 +0000</p>
+<p>Updated on 2022-07-23 at 16:40:06 -0600</p>
 
               
             </article>

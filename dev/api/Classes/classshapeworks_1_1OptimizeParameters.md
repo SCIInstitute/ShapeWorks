@@ -7,10 +7,7 @@ title: shapeworks::OptimizeParameters
 
 
 
- [More...](#detailed-description)
 
-
-`#include <OptimizeParameters.h>`
 
 ## Public Functions
 
@@ -72,21 +69,6 @@ title: shapeworks::OptimizeParameters
 | void | **[set_load_callback](../Classes/classshapeworks_1_1OptimizeParameters.md#function-set-load-callback)**(const std::function< void(int)> & f) |
 | bool | **[set_up_optimize](../Classes/classshapeworks_1_1OptimizeParameters.md#function-set-up-optimize)**([Optimize](../Classes/classshapeworks_1_1Optimize.md) * optimize) |
 | bool | **[is_subject_fixed](../Classes/classshapeworks_1_1OptimizeParameters.md#function-is-subject-fixed)**(std::shared_ptr< [Subject](../Classes/classshapeworks_1_1Subject.md) > subject) |
-| int | **[get_checkpoint_interval](../Classes/classshapeworks_1_1OptimizeParameters.md#function-get-checkpoint-interval)**() |
-| void | **[set_checkpoint_interval](../Classes/classshapeworks_1_1OptimizeParameters.md#function-set-checkpoint-interval)**(int iterations) |
-| bool | **[get_save_init_splits](../Classes/classshapeworks_1_1OptimizeParameters.md#function-get-save-init-splits)**() |
-| void | **[set_save_init_splits](../Classes/classshapeworks_1_1OptimizeParameters.md#function-set-save-init-splits)**(bool enabled) |
-| bool | **[get_keep_checkpoints](../Classes/classshapeworks_1_1OptimizeParameters.md#function-get-keep-checkpoints)**() |
-| void | **[set_keep_checkpoints](../Classes/classshapeworks_1_1OptimizeParameters.md#function-set-keep-checkpoints)**(bool enabled) |
-
-## Detailed Description
-
-```cpp
-class shapeworks::OptimizeParameters;
-```
-
-
-This class encapsulated processing of Optimization parameters 
 
 ## Public Functions Documentation
 
@@ -542,54 +524,6 @@ bool is_subject_fixed(
 ```
 
 
-### function get_checkpoint_interval
-
-```cpp
-int get_checkpoint_interval()
-```
-
-
-### function set_checkpoint_interval
-
-```cpp
-void set_checkpoint_interval(
-    int iterations
-)
-```
-
-
-### function get_save_init_splits
-
-```cpp
-bool get_save_init_splits()
-```
-
-
-### function set_save_init_splits
-
-```cpp
-void set_save_init_splits(
-    bool enabled
-)
-```
-
-
-### function get_keep_checkpoints
-
-```cpp
-bool get_keep_checkpoints()
-```
-
-
-### function set_keep_checkpoints
-
-```cpp
-void set_keep_checkpoints(
-    bool enabled
-)
-```
-
-
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:04 +0000
+Updated on 2022-07-23 at 16:40:06 -0600

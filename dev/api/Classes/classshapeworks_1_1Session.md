@@ -24,6 +24,7 @@ Inherits from QObject, QEnableSharedFromThis< Session >
 | bool | **[get_landmark_drag_mode](../Classes/classshapeworks_1_1Session.md#slot-get-landmark-drag-mode)**() |
 | void | **[handle_clear_cache](../Classes/classshapeworks_1_1Session.md#slot-handle-clear-cache)**() |
 | void | **[handle_new_mesh](../Classes/classshapeworks_1_1Session.md#slot-handle-new-mesh)**() |
+| void | **[handle_message](../Classes/classshapeworks_1_1Session.md#slot-handle-message)**(QString s) |
 | void | **[handle_thread_complete](../Classes/classshapeworks_1_1Session.md#slot-handle-thread-complete)**() |
 
 ## Public Signals
@@ -37,12 +38,13 @@ Inherits from QObject, QEnableSharedFromThis< Session >
 | void | **[ffc_changed](../Classes/classshapeworks_1_1Session.md#signal-ffc-changed)**() |
 | void | **[update_display](../Classes/classshapeworks_1_1Session.md#signal-update-display)**() |
 | void | **[new_mesh](../Classes/classshapeworks_1_1Session.md#signal-new-mesh)**() |
+| void | **[message](../Classes/classshapeworks_1_1Session.md#signal-message)**(QString ) |
+| void | **[error](../Classes/classshapeworks_1_1Session.md#signal-error)**(QString ) |
 | void | **[feature_range_changed](../Classes/classshapeworks_1_1Session.md#signal-feature-range-changed)**() |
 | void | **[update_view_mode](../Classes/classshapeworks_1_1Session.md#signal-update-view-mode)**() |
 | void | **[image_slice_settings_changed](../Classes/classshapeworks_1_1Session.md#signal-image-slice-settings-changed)**() |
 | void | **[ffc_paint_mode_changed](../Classes/classshapeworks_1_1Session.md#signal-ffc-paint-mode-changed)**() |
 | void | **[repaint](../Classes/classshapeworks_1_1Session.md#signal-repaint)**() |
-| void | **[reinsert_shapes](../Classes/classshapeworks_1_1Session.md#signal-reinsert-shapes)**() |
 
 ## Public Functions
 
@@ -60,14 +62,14 @@ Inherits from QObject, QEnableSharedFromThis< Session >
 | void | **[load_original_files](../Classes/classshapeworks_1_1Session.md#function-load-original-files)**(std::vector< std::string > filenames)<br>import files  |
 | void | **[load_groomed_files](../Classes/classshapeworks_1_1Session.md#function-load-groomed-files)**(std::vector< std::string > file_names, double iso, int domains_per_shape)<br>load groomed files  |
 | bool | **[load_point_files](../Classes/classshapeworks_1_1Session.md#function-load-point-files)**(std::vector< std::string > local, std::vector< std::string > world, int domains_per_shape) |
-| bool | **[update_particles](../Classes/classshapeworks_1_1Session.md#function-update-particles)**(std::vector< [Particles](../Classes/classshapeworks_1_1Particles.md) > particles) |
+| bool | **[update_particles](../Classes/classshapeworks_1_1Session.md#function-update-particles)**(std::vector< [StudioParticles](../Classes/classshapeworks_1_1StudioParticles.md) > particles) |
 | int | **[get_num_particles](../Classes/classshapeworks_1_1Session.md#function-get-num-particles)**()<br>Return the total number of particles for all domains, combined.  |
-| [ParticleSystemEvaluation](../Classes/classshapeworks_1_1ParticleSystemEvaluation.md) | **[get_local_particle_system](../Classes/classshapeworks_1_1Session.md#function-get-local-particle-system)**(int domain) |
-| void | **[update_procrustes_transforms](../Classes/classshapeworks_1_1Session.md#function-update-procrustes-transforms)**(std::vector< std::vector< std::vector< double > > > transforms) |
+| [ParticleSystem](../Classes/classshapeworks_1_1ParticleSystem.md) | **[get_local_particle_system](../Classes/classshapeworks_1_1Session.md#function-get-local-particle-system)**(int domain) |
+| void | **[update_procrustes_transforms](../Classes/classshapeworks_1_1Session.md#function-update-procrustes-transforms)**(std::vector< std::vector< std::vector< double >>> transforms) |
 | bool | **[is_light_project](../Classes/classshapeworks_1_1Session.md#function-is-light-project)**() |
 | bool | **[get_groomed_present](../Classes/classshapeworks_1_1Session.md#function-get-groomed-present)**() |
 | void | **[remove_shapes](../Classes/classshapeworks_1_1Session.md#function-remove-shapes)**(QList< int > list)<br>remove shapes  |
-| ShapeList | **[get_shapes](../Classes/classshapeworks_1_1Session.md#function-get-shapes)**()<br>return all shapes  |
+| QVector< QSharedPointer< [Shape](../Classes/classshapeworks_1_1Shape.md) > > | **[get_shapes](../Classes/classshapeworks_1_1Session.md#function-get-shapes)**()<br>return all shapes  |
 | void | **[calculate_reconstructed_samples](../Classes/classshapeworks_1_1Session.md#function-calculate-reconstructed-samples)**() |
 | QString | **[get_filename](../Classes/classshapeworks_1_1Session.md#function-get-filename)**()<br>get the filename  |
 | QString | **[get_display_name](../Classes/classshapeworks_1_1Session.md#function-get-display-name)**()<br>get file display name  |
@@ -78,7 +80,7 @@ Inherits from QObject, QEnableSharedFromThis< Session >
 | int | **[get_num_shapes](../Classes/classshapeworks_1_1Session.md#function-get-num-shapes)**() |
 | int | **[get_domains_per_shape](../Classes/classshapeworks_1_1Session.md#function-get-domains-per-shape)**() |
 | std::string | **[get_default_feature_map](../Classes/classshapeworks_1_1Session.md#function-get-default-feature-map)**() |
-| std::shared_ptr< [MeshManager](../Classes/classshapeworks_1_1MeshManager.md) > | **[get_mesh_manager](../Classes/classshapeworks_1_1Session.md#function-get-mesh-manager)**() |
+| QSharedPointer< [MeshManager](../Classes/classshapeworks_1_1MeshManager.md) > | **[get_mesh_manager](../Classes/classshapeworks_1_1Session.md#function-get-mesh-manager)**() |
 | [shapeworks::Parameters](../Classes/classshapeworks_1_1Parameters.md) & | **[parameters](../Classes/classshapeworks_1_1Session.md#function-parameters)**() |
 | std::vector< DomainType > | **[get_groomed_domain_types](../Classes/classshapeworks_1_1Session.md#function-get-groomed-domain-types)**() |
 | double | **[update_auto_glyph_size](../Classes/classshapeworks_1_1Session.md#function-update-auto-glyph-size)**() |
@@ -112,7 +114,7 @@ Inherits from QObject, QEnableSharedFromThis< Session >
 | bool | **[set_image_name](../Classes/classshapeworks_1_1Session.md#function-set-image-name)**(std::string image_name) |
 | std::string | **[get_image_name](../Classes/classshapeworks_1_1Session.md#function-get-image-name)**() |
 | void | **[set_image_axis](../Classes/classshapeworks_1_1Session.md#function-set-image-axis)**(QString axis) |
-| [Axis](../Namespaces/namespaceshapeworks.md#enum-axis) | **[get_image_axis](../Classes/classshapeworks_1_1Session.md#function-get-image-axis)**() |
+| Axis | **[get_image_axis](../Classes/classshapeworks_1_1Session.md#function-get-image-axis)**() |
 | void | **[set_image_3d_mode](../Classes/classshapeworks_1_1Session.md#function-set-image-3d-mode)**(bool mode) |
 | bool | **[get_image_3d_mode](../Classes/classshapeworks_1_1Session.md#function-get-image-3d-mode)**() |
 | void | **[set_image_share_window_and_level](../Classes/classshapeworks_1_1Session.md#function-set-image-share-window-and-level)**(bool enabled) |
@@ -138,12 +140,11 @@ Inherits from QObject, QEnableSharedFromThis< Session >
 | bool | **[should_difference_vectors_show](../Classes/classshapeworks_1_1Session.md#function-should-difference-vectors-show)**() |
 | std::vector< bool > | **[get_good_bad_particles](../Classes/classshapeworks_1_1Session.md#function-get-good-bad-particles)**() |
 | void | **[set_good_bad_particles](../Classes/classshapeworks_1_1Session.md#function-set-good-bad-particles)**(const std::vector< bool > & good_bad) |
-| void | **[set_difference_particles](../Classes/classshapeworks_1_1Session.md#function-set-difference-particles)**([Particles](../Classes/classshapeworks_1_1Particles.md) particles) |
-| [Particles](../Classes/classshapeworks_1_1Particles.md) | **[get_difference_particles](../Classes/classshapeworks_1_1Session.md#function-get-difference-particles)**() |
+| void | **[set_difference_particles](../Classes/classshapeworks_1_1Session.md#function-set-difference-particles)**([StudioParticles](../Classes/classshapeworks_1_1StudioParticles.md) particles) |
+| [StudioParticles](../Classes/classshapeworks_1_1StudioParticles.md) | **[get_difference_particles](../Classes/classshapeworks_1_1Session.md#function-get-difference-particles)**() |
 | void | **[set_compare_settings](../Classes/classshapeworks_1_1Session.md#function-set-compare-settings)**([CompareSettings](../Classes/classshapeworks_1_1CompareSettings.md) settings) |
 | [CompareSettings](../Classes/classshapeworks_1_1CompareSettings.md) | **[get_compare_settings](../Classes/classshapeworks_1_1Session.md#function-get-compare-settings)**() |
 | void | **[trigger_repaint](../Classes/classshapeworks_1_1Session.md#function-trigger-repaint)**() |
-| void | **[trigger_reinsert_shapes](../Classes/classshapeworks_1_1Session.md#function-trigger-reinsert-shapes)**() |
 | void | **[set_display_mode](../Classes/classshapeworks_1_1Session.md#function-set-display-mode)**(DisplayMode mode)<br>set display mode (original, groomed, reconstructed)  |
 | DisplayMode | **[get_display_mode](../Classes/classshapeworks_1_1Session.md#function-get-display-mode)**()<br>return the current display mode  |
 | bool | **[is_supported_file_format](../Classes/classshapeworks_1_1Session.md#function-is-supported-file-format)**(std::string filename) |
@@ -210,6 +211,15 @@ void handle_new_mesh()
 ```
 
 
+### slot handle_message
+
+```cpp
+void handle_message(
+    QString s
+)
+```
+
+
 ### slot handle_thread_complete
 
 ```cpp
@@ -269,6 +279,24 @@ void new_mesh()
 ```
 
 
+### signal message
+
+```cpp
+void message(
+    QString 
+)
+```
+
+
+### signal error
+
+```cpp
+void error(
+    QString 
+)
+```
+
+
 ### signal feature_range_changed
 
 ```cpp
@@ -301,13 +329,6 @@ void ffc_paint_mode_changed()
 
 ```cpp
 void repaint()
-```
-
-
-### signal reinsert_shapes
-
-```cpp
-void reinsert_shapes()
 ```
 
 
@@ -435,7 +456,7 @@ bool load_point_files(
 
 ```cpp
 bool update_particles(
-    std::vector< Particles > particles
+    std::vector< StudioParticles > particles
 )
 ```
 
@@ -451,7 +472,7 @@ Return the total number of particles for all domains, combined.
 ### function get_local_particle_system
 
 ```cpp
-ParticleSystemEvaluation get_local_particle_system(
+ParticleSystem get_local_particle_system(
     int domain
 )
 ```
@@ -461,7 +482,7 @@ ParticleSystemEvaluation get_local_particle_system(
 
 ```cpp
 void update_procrustes_transforms(
-    std::vector< std::vector< std::vector< double > > > transforms
+    std::vector< std::vector< std::vector< double >>> transforms
 )
 ```
 
@@ -493,7 +514,7 @@ remove shapes
 ### function get_shapes
 
 ```cpp
-ShapeList get_shapes()
+QVector< QSharedPointer< Shape > > get_shapes()
 ```
 
 return all shapes 
@@ -573,7 +594,7 @@ std::string get_default_feature_map()
 ### function get_mesh_manager
 
 ```cpp
-inline std::shared_ptr< MeshManager > get_mesh_manager()
+inline QSharedPointer< MeshManager > get_mesh_manager()
 ```
 
 
@@ -1044,7 +1065,7 @@ void set_good_bad_particles(
 
 ```cpp
 inline void set_difference_particles(
-    Particles particles
+    StudioParticles particles
 )
 ```
 
@@ -1052,7 +1073,7 @@ inline void set_difference_particles(
 ### function get_difference_particles
 
 ```cpp
-inline Particles get_difference_particles()
+inline StudioParticles get_difference_particles()
 ```
 
 
@@ -1076,13 +1097,6 @@ CompareSettings get_compare_settings()
 
 ```cpp
 void trigger_repaint()
-```
-
-
-### function trigger_reinsert_shapes
-
-```cpp
-void trigger_reinsert_shapes()
 ```
 
 
@@ -1162,4 +1176,4 @@ static const std::string DEEPSSM_C;
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:04 +0000
+Updated on 2022-07-23 at 16:40:06 -0600

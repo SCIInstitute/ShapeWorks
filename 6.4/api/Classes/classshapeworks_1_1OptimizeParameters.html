@@ -2378,13 +2378,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#detailed-description" class="md-nav__link">
-    Detailed Description
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#public-functions-documentation" class="md-nav__link">
     Public Functions Documentation
   </a>
@@ -2784,48 +2777,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#function-get_checkpoint_interval" class="md-nav__link">
-    function get_checkpoint_interval
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-set_checkpoint_interval" class="md-nav__link">
-    function set_checkpoint_interval
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-get_save_init_splits" class="md-nav__link">
-    function get_save_init_splits
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-set_save_init_splits" class="md-nav__link">
-    function set_save_init_splits
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-get_keep_checkpoints" class="md-nav__link">
-    function get_keep_checkpoints
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-set_keep_checkpoints" class="md-nav__link">
-    function set_keep_checkpoints
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -2850,8 +2801,6 @@
 
 
 <h1 id="shapeworksoptimizeparameters">shapeworks::OptimizeParameters</h1>
-<p><a href="#detailed-description">More...</a></p>
-<p><code>#include &lt;OptimizeParameters.h&gt;</code></p>
 <h2 id="public-functions">Public Functions</h2>
 <table>
 <thead>
@@ -3085,36 +3034,8 @@
 <td>bool</td>
 <td><strong><a href="classshapeworks_1_1OptimizeParameters.html#function-is-subject-fixed">is_subject_fixed</a></strong>(std::shared_ptr&lt; <a href="classshapeworks_1_1Subject.html">Subject</a> &gt; subject)</td>
 </tr>
-<tr>
-<td>int</td>
-<td><strong><a href="classshapeworks_1_1OptimizeParameters.html#function-get-checkpoint-interval">get_checkpoint_interval</a></strong>()</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1OptimizeParameters.html#function-set-checkpoint-interval">set_checkpoint_interval</a></strong>(int iterations)</td>
-</tr>
-<tr>
-<td>bool</td>
-<td><strong><a href="classshapeworks_1_1OptimizeParameters.html#function-get-save-init-splits">get_save_init_splits</a></strong>()</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1OptimizeParameters.html#function-set-save-init-splits">set_save_init_splits</a></strong>(bool enabled)</td>
-</tr>
-<tr>
-<td>bool</td>
-<td><strong><a href="classshapeworks_1_1OptimizeParameters.html#function-get-keep-checkpoints">get_keep_checkpoints</a></strong>()</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1OptimizeParameters.html#function-set-keep-checkpoints">set_keep_checkpoints</a></strong>(bool enabled)</td>
-</tr>
 </tbody>
 </table>
-<h2 id="detailed-description">Detailed Description</h2>
-<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">shapeworks</span><span class="o">::</span><span class="n">OptimizeParameters</span><span class="p">;</span>
-</code></pre></div>
-<p>This class encapsulated processing of Optimization parameters </p>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-optimizeparameters">function OptimizeParameters</h3>
 <div class="highlight"><pre><span></span><code><span class="k">explicit</span><span class="w"> </span><span class="n">OptimizeParameters</span><span class="p">(</span>
@@ -3344,32 +3265,8 @@
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Subject</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">subject</span>
 <span class="p">)</span>
 </code></pre></div>
-<h3 id="function-get_checkpoint_interval">function get_checkpoint_interval</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_checkpoint_interval</span><span class="p">()</span>
-</code></pre></div>
-<h3 id="function-set_checkpoint_interval">function set_checkpoint_interval</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_checkpoint_interval</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">iterations</span>
-<span class="p">)</span>
-</code></pre></div>
-<h3 id="function-get_save_init_splits">function get_save_init_splits</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_save_init_splits</span><span class="p">()</span>
-</code></pre></div>
-<h3 id="function-set_save_init_splits">function set_save_init_splits</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_save_init_splits</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span>
-<span class="p">)</span>
-</code></pre></div>
-<h3 id="function-get_keep_checkpoints">function get_keep_checkpoints</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_keep_checkpoints</span><span class="p">()</span>
-</code></pre></div>
-<h3 id="function-set_keep_checkpoints">function set_keep_checkpoints</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_keep_checkpoints</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span>
-<span class="p">)</span>
-</code></pre></div>
 <hr />
-<p>Updated on 2023-05-04 at 20:03:04 +0000</p>
+<p>Updated on 2022-07-23 at 16:40:06 -0600</p>
 
               
             </article>

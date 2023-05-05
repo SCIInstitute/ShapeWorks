@@ -26,7 +26,10 @@ Inherits from [shapeworks::Job](../Classes/classshapeworks_1_1Job.md), QObject
 
 |                | Name           |
 | -------------- | -------------- |
+| void | **[error_message](../Classes/classshapeworks_1_1Job.md#signal-error-message)**(QString ) |
+| void | **[warning_message](../Classes/classshapeworks_1_1Job.md#signal-warning-message)**(QString ) |
 | void | **[progress](../Classes/classshapeworks_1_1Job.md#signal-progress)**(double ) |
+| void | **[message](../Classes/classshapeworks_1_1Job.md#signal-message)**(QString ) |
 | void | **[finished](../Classes/classshapeworks_1_1Job.md#signal-finished)**() |
 
 **Public Functions inherited from [shapeworks::Job](../Classes/classshapeworks_1_1Job.md)**
@@ -80,4 +83,4 @@ Eigen::VectorXf get_group_pvalues()
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:04 +0000
+Updated on 2022-07-23 at 16:40:06 -0600

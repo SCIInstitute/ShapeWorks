@@ -11,7 +11,7 @@ title: Libs/Utils/StringUtils.h
 
 | Name           |
 | -------------- |
-| **[shapeworks](../Namespaces/namespaceshapeworks.md)** <br>User usage reporting (telemetry)  |
+| **[shapeworks](../Namespaces/namespaceshapeworks.md)**  |
 
 ## Classes
 
@@ -42,12 +42,8 @@ class StringUtils {
   static bool hasSuffix(std::string const& filename, std::string const& suffix);
   static std::vector<std::string> getFileNamesFromPaths(const std::vector<std::string>& paths);
 
-  static std::string getLowerExtension(std::string const& filename);
-
   // safely convert a const char* to string, allowing for nullptr
   static std::string safeString(const char* s) { return s == nullptr ? std::string() : s; }
-
-  static std::string replace_string(std::string str, const std::string& search, const std::string& replace);
 };
 
 }  // namespace shapeworks
@@ -56,4 +52,4 @@ class StringUtils {
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:05 +0000
+Updated on 2022-07-23 at 16:40:07 -0600

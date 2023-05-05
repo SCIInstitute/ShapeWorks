@@ -19,7 +19,7 @@
     
     
       
-        <title>Libs/Analyze/StudioMesh.h - ShapeWorks</title>
+        <title>Studio/src/Data/StudioMesh.h - ShapeWorks</title>
       
     
     
@@ -84,7 +84,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#libsanalyzestudiomeshh" class="md-skip">
+        <a href="#studiosrcdatastudiomeshh" class="md-skip">
           Skip to content
         </a>
       
@@ -122,7 +122,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Libs/Analyze/StudioMesh.h
+              Studio/src/Data/StudioMesh.h
             
           </span>
         </div>
@@ -2443,7 +2443,7 @@
 
 
 
-<h1 id="libsanalyzestudiomeshh">Libs/Analyze/StudioMesh.h</h1>
+<h1 id="studiosrcdatastudiomeshh">Studio/src/Data/StudioMesh.h</h1>
 <h2 id="namespaces">Namespaces</h2>
 <table>
 <thead>
@@ -2453,7 +2453,7 @@
 </thead>
 <tbody>
 <tr>
-<td><strong><a href="../Namespaces/namespaceshapeworks.html">shapeworks</a></strong> <br>User usage reporting (telemetry)</td>
+<td><strong><a href="../Namespaces/namespaceshapeworks.html">shapeworks</a></strong></td>
 </tr>
 </tbody>
 </table>
@@ -2509,6 +2509,8 @@
 
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Eigen/Dense&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Eigen/Sparse&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QSharedPointer&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QString&gt;</span>
 
 <span class="k">using</span><span class="w"> </span><span class="n">PixelType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">float</span><span class="p">;</span>
 <span class="k">using</span><span class="w"> </span><span class="n">ImageType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Image</span><span class="o">&lt;</span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="p">;</span>
@@ -2528,7 +2530,11 @@
 
 <span class="w">  </span><span class="o">~</span><span class="n">StudioMesh</span><span class="p">();</span>
 
+<span class="w">  </span><span class="n">QString</span><span class="w"> </span><span class="nf">get_dimension_string</span><span class="p">();</span>
+
 <span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_poly_data</span><span class="p">();</span>
+
+<span class="w">  </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_center_transform</span><span class="p">();</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_poly_data</span><span class="p">(</span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">poly_data</span><span class="p">);</span>
 
@@ -2553,6 +2559,11 @@
 <span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">FFC_PAINT</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;ffc_paint&quot;</span><span class="p">;</span>
 
 <span class="w"> </span><span class="k">private</span><span class="o">:</span>
+<span class="w">  </span><span class="c1">// metadata</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">dimensions_</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span>
+<span class="w">  </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">center_transform_</span><span class="p">;</span>
+
+<span class="w">  </span><span class="c1">// the polydata</span>
 <span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">poly_data_</span><span class="p">;</span>
 
 <span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkStaticPointLocator</span><span class="o">&gt;</span><span class="w"> </span><span class="n">locator_</span><span class="p">;</span>
@@ -2563,7 +2574,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-05-04 at 20:03:05 +0000</p>
+<p>Updated on 2022-07-23 at 16:40:07 -0600</p>
 
               
             </article>

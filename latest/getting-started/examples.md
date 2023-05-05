@@ -12,7 +12,7 @@ This example is a stepping stone for the user to get familiar with the workflow 
 ### [Left Atrium: Shape Model from Segmentations](../use-cases/segmentation-based/left-atrium.md)
 This use case demonstrates using the ShapeWorks functionality to groom real segmentations and corresponding imaging data (e.g., MRI) of a real-world left atrium dataset. This use case also showcases a single-scale and multi-scale optimization for correspondence models.
 
-### [Fixed Domains Ellipsoid: Shape Model on New Shapes](../use-cases/segmentation-based/fixed-domain-ellipsoid.md)
+### [Fixed Domains Ellipsoid: Shape Model on New Shapes](../use-cases/multistep/fixed-domain-ellipsoid.md)
 This use case is designed to demonstrate the functionality of the fixed domain of ShapeWorks. Fixed domains are used for the cases where we need to place correspondences on new shapes using a pre-existing shape model.
 
 ### [Shape Model for Multiple Domains from Segmentations](../use-cases/segmentation-based/ellipsoid-multiple-domain.md)

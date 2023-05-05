@@ -18,7 +18,7 @@ Inherits from QWidget
 | void | **[on_antialias_checkbox_stateChanged](../Classes/classshapeworks_1_1GroomTool.md#slot-on-antialias-checkbox-statechanged)**(int state) |
 | void | **[on_blur_checkbox_stateChanged](../Classes/classshapeworks_1_1GroomTool.md#slot-on-blur-checkbox-statechanged)**(int state) |
 | void | **[on_autopad_checkbox_stateChanged](../Classes/classshapeworks_1_1GroomTool.md#slot-on-autopad-checkbox-statechanged)**(int state) |
-| void | **[skip_grooming_toggled](../Classes/classshapeworks_1_1GroomTool.md#slot-skip-grooming-toggled)**() |
+| void | **[on_skip_button_clicked](../Classes/classshapeworks_1_1GroomTool.md#slot-on-skip-button-clicked)**() |
 | void | **[on_restore_defaults_clicked](../Classes/classshapeworks_1_1GroomTool.md#slot-on-restore-defaults-clicked)**() |
 | void | **[update_ui](../Classes/classshapeworks_1_1GroomTool.md#slot-update-ui)**() |
 | void | **[domain_changed](../Classes/classshapeworks_1_1GroomTool.md#slot-domain-changed)**() |
@@ -39,13 +39,15 @@ Inherits from QWidget
 | -------------- | -------------- |
 | void | **[groom_start](../Classes/classshapeworks_1_1GroomTool.md#signal-groom-start)**() |
 | void | **[groom_complete](../Classes/classshapeworks_1_1GroomTool.md#signal-groom-complete)**() |
+| void | **[error_message](../Classes/classshapeworks_1_1GroomTool.md#signal-error-message)**(QString ) |
+| void | **[message](../Classes/classshapeworks_1_1GroomTool.md#signal-message)**(QString ) |
 | void | **[progress](../Classes/classshapeworks_1_1GroomTool.md#signal-progress)**(int ) |
 
 ## Public Functions
 
 |                | Name           |
 | -------------- | -------------- |
-| | **[GroomTool](../Classes/classshapeworks_1_1GroomTool.md#function-groomtool)**([Preferences](../Classes/classPreferences.md) & prefs, [Telemetry](../Classes/classshapeworks_1_1Telemetry.md) & telemetry) |
+| | **[GroomTool](../Classes/classshapeworks_1_1GroomTool.md#function-groomtool)**([Preferences](../Classes/classPreferences.md) & prefs) |
 | | **[~GroomTool](../Classes/classshapeworks_1_1GroomTool.md#function-~groomtool)**() |
 | void | **[set_session](../Classes/classshapeworks_1_1GroomTool.md#function-set-session)**(QSharedPointer< [Session](../Classes/classshapeworks_1_1Session.md) > session)<br>Set the pointer to the session.  |
 | void | **[activate](../Classes/classshapeworks_1_1GroomTool.md#function-activate)**()<br>activate this tool  |
@@ -84,10 +86,10 @@ void on_autopad_checkbox_stateChanged(
 ```
 
 
-### slot skip_grooming_toggled
+### slot on_skip_button_clicked
 
 ```cpp
-void skip_grooming_toggled()
+void on_skip_button_clicked()
 ```
 
 
@@ -215,6 +217,24 @@ void groom_complete()
 ```
 
 
+### signal error_message
+
+```cpp
+void error_message(
+    QString 
+)
+```
+
+
+### signal message
+
+```cpp
+void message(
+    QString 
+)
+```
+
+
 ### signal progress
 
 ```cpp
@@ -230,8 +250,7 @@ void progress(
 
 ```cpp
 GroomTool(
-    Preferences & prefs,
-    Telemetry & telemetry
+    Preferences & prefs
 )
 ```
 
@@ -303,4 +322,4 @@ shut down any running threads
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:04 +0000
+Updated on 2022-07-23 at 16:40:06 -0600

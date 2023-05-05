@@ -1,9 +1,9 @@
 ---
-title: Studio/Interface/ShapeWorksStudioApp.h
+title: Studio/src/Interface/ShapeWorksStudioApp.h
 
 ---
 
-# Studio/Interface/ShapeWorksStudioApp.h
+# Studio/src/Interface/ShapeWorksStudioApp.h
 
 
 
@@ -11,7 +11,7 @@ title: Studio/Interface/ShapeWorksStudioApp.h
 
 | Name           |
 | -------------- |
-| **[shapeworks](../Namespaces/namespaceshapeworks.md)** <br>User usage reporting (telemetry)  |
+| **[shapeworks](../Namespaces/namespaceshapeworks.md)**  |
 
 ## Classes
 
@@ -28,14 +28,10 @@ title: Studio/Interface/ShapeWorksStudioApp.h
 #pragma once
 
 #include <Data/PreferencesWindow.h>
-#include <Data/Telemetry.h>
 #include <Interface/LogWindow.h>
 #include <Visualization/StudioVtkOutputWindow.h>
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
-
-#include <Interface/StudioLogger.h>
-#include <Interface/UpdateChecker.h>
 
 #include <Eigen/Eigen>
 #include <QActionGroup>
@@ -47,9 +43,9 @@ title: Studio/Interface/ShapeWorksStudioApp.h
 #include <QMainWindow>
 #include <QPointer>
 #include <QProgressBar>
+#include <QSlider>
 #include <QSpinBox>
 #include <QTimer>
-#include <Interface/CustomSlider.h>
 
 // Forward Qt class declarations
 class Ui_ShapeWorksStudioApp;
@@ -68,7 +64,6 @@ class WheelEventForwarder;
 class StatusBarWidget;
 class PythonWorker;
 class CompareWidget;
-
 
 
 class ShapeWorksStudioApp : public QMainWindow {
@@ -90,12 +85,9 @@ class ShapeWorksStudioApp : public QMainWindow {
   void on_action_open_project_triggered();
   void on_action_show_project_folder_triggered();
   bool on_action_save_project_triggered();
-  bool save_project_as(QString type);
-  void save_as_swproj_clicked();
-  void save_as_xlsx_clicked();
+  bool on_action_save_project_as_triggered();
   void on_action_quit_triggered();
   void on_action_import_triggered();
-  void splash_screen_closed();
 
   void on_vertical_scroll_bar_valueChanged();
 
@@ -110,7 +102,7 @@ class ShapeWorksStudioApp : public QMainWindow {
   void on_actionExport_Eigenvectors_triggered();
   void on_actionExport_PCA_Mode_Points_triggered();
   void on_action_preferences_triggered();
-  void action_export_current_mesh_triggered(int index = 0);
+  void on_action_export_current_mesh_triggered();
   void on_action_export_current_particles_triggered();
   void on_action_export_mesh_scalars_triggered();
   void on_action_export_pca_scores_triggered();
@@ -126,8 +118,6 @@ class ShapeWorksStudioApp : public QMainWindow {
 
   void handle_pca_changed();
   void handle_slider_update();
-
-  void handle_mca_changed();
 
   void handle_project_changed();
   void handle_points_changed();
@@ -147,30 +137,21 @@ class ShapeWorksStudioApp : public QMainWindow {
   void handle_color_scheme();
   void handle_pca_update();
   void clear_message();
-
-  // callbacks from logger
-  void handle_message(std::string str);
-  void handle_error(std::string str);
-  void handle_warning(std::string str);
-  void handle_debug(std::string str);
-  void handle_status(std::string str);
-  void handle_progress_with_message(int amt, std::string str);
+  void handle_message(QString str);
+  void handle_status(QString str);
+  void handle_error(QString str);
+  void handle_warning(QString str);
   void handle_progress(int amt);
-
-  void message_callback(std::string str);
   void handle_new_mesh();
   void handle_clear_cache();
   void handle_compare_settings_changed();
 
-  void handle_lightbox_right_click(int index);
-
-  void update_feature_map_selection(int index);
+  void update_feature_map_selection(const QString& feature_map);
   void update_feature_map_scale();
 
-  void image_combo_changed(int index);
+  void image_combo_changed(const QString& image_name);
 
   void show_splash_screen();
-  void hide_splash_screen();
   void about();
   void keyboard_shortcuts();
 
@@ -218,7 +199,7 @@ class ShapeWorksStudioApp : public QMainWindow {
 
   void update_display(bool force = false);
 
-  void display_mode_shape();
+  void compute_mode_shape();
 
   bool set_feature_map(std::string feature_map);
   std::string get_feature_map();
@@ -262,19 +243,17 @@ class ShapeWorksStudioApp : public QMainWindow {
   QSharedPointer<WheelEventForwarder> wheel_event_forwarder_;
 
   // programmatic UI elements
-  CustomSlider* glyph_size_slider_;
-  CustomSlider* glyph_quality_slider_;
+  QSlider* glyph_size_slider_;
+  QSlider* glyph_quality_slider_;
   QLabel* glyph_size_label_;
   QLabel* glyph_quality_label_;
   QCheckBox* glyph_auto_size_;
-  QCheckBox* glyph_arrow_scale_{nullptr};
   QList<QAction*> recent_file_actions_;
   LogWindow log_window_;
   QPointer<StatusBarWidget> status_bar_;
   QSharedPointer<shapeworks::SplashScreen> splash_screen_;
   QErrorMessage error_message_dialog_;
-  std::vector<CustomSlider*> iso_opacity_sliders_;
-  std::vector<QCheckBox*> domain_particle_checkboxes_;
+  std::vector<QSlider*> iso_opacity_sliders_;
 
   QString current_message_;
 
@@ -289,10 +268,6 @@ class ShapeWorksStudioApp : public QMainWindow {
   QStringList current_image_list_;
 
   QSharedPointer<PythonWorker> py_worker_;
-
-  StudioLogger logger_;
-  UpdateChecker update_checker_{preferences_};
-  Telemetry telemetry_{preferences_};
 };
 }  // namespace shapeworks
 ```
@@ -300,4 +275,4 @@ class ShapeWorksStudioApp : public QMainWindow {
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:05 +0000
+Updated on 2022-07-23 at 16:40:07 -0600

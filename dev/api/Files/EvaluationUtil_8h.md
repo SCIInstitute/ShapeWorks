@@ -11,7 +11,7 @@ title: Libs/Particles/EvaluationUtil.h
 
 | Name           |
 | -------------- |
-| **[shapeworks](../Namespaces/namespaceshapeworks.md)** <br>User usage reporting (telemetry)  |
+| **[shapeworks](../Namespaces/namespaceshapeworks.md)**  |
 
 ## Classes
 
@@ -28,11 +28,9 @@ title: Libs/Particles/EvaluationUtil.h
 ```cpp
 #pragma once
 
+#include <random>
 #include <Eigen/Core>
 #include <Eigen/Dense>
-
-#include <boost/random/mersenne_twister.hpp>
-#include <boost/random/normal_distribution.hpp>
 
 namespace shapeworks {
 struct MultiVariateNormalRandom
@@ -41,8 +39,8 @@ struct MultiVariateNormalRandom
   Eigen::MatrixXd transform;
 
   // seed set as constant 42 for test repeatability
-  boost::mt19937 gen{42};
-  boost::normal_distribution<> dist;
+  std::mt19937 gen{42};
+  std::normal_distribution<> dist;
 
   MultiVariateNormalRandom(Eigen::MatrixXd const &covar)
           : MultiVariateNormalRandom(Eigen::VectorXd::Zero(covar.rows()), covar)
@@ -108,4 +106,4 @@ void SaveReconstructions(std::vector<Reconstruction> &reconstructions, const std
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:05 +0000
+Updated on 2022-07-23 at 16:40:07 -0600

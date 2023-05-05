@@ -1,9 +1,9 @@
 ---
-title: Libs/Optimize/Domain/VtkMeshWrapper.h
+title: Libs/Optimize/ParticleSystem/VtkMeshWrapper.h
 
 ---
 
-# Libs/Optimize/Domain/VtkMeshWrapper.h
+# Libs/Optimize/ParticleSystem/VtkMeshWrapper.h
 
 
 
@@ -11,7 +11,7 @@ title: Libs/Optimize/Domain/VtkMeshWrapper.h
 
 | Name           |
 | -------------- |
-| **[shapeworks](../Namespaces/namespaceshapeworks.md)** <br>User usage reporting (telemetry)  |
+| **[shapeworks](../Namespaces/namespaceshapeworks.md)**  |
 
 ## Classes
 
@@ -27,18 +27,17 @@ title: Libs/Optimize/Domain/VtkMeshWrapper.h
 ```cpp
 #pragma once
 
-#include <geometrycentral/surface/heat_method_distance.h>
-#include <geometrycentral/surface/meshio.h>
-#include <geometrycentral/surface/surface_mesh.h>
-#include <vtkPolyData.h>
-#include <vtkSmartPointer.h>
+#include "MeshWrapper.h"
+#include "MeshGeoEntry.h"
 
 #include <unordered_map>
 #include <unordered_set>
-
-#include "ExternalLibs/robin_hood/robin_hood.h"
-#include "MeshGeoEntry.h"
-#include "MeshWrapper.h"
+#include <robin_hood.h>
+#include <vtkPolyData.h>
+#include <vtkSmartPointer.h>
+#include <geometrycentral/surface/surface_mesh.h>
+#include <geometrycentral/surface/meshio.h>
+#include <geometrycentral/surface/heat_method_distance.h>
 
 class vtkCellLocator;
 
@@ -215,4 +214,4 @@ private:
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:05 +0000
+Updated on 2022-07-23 at 16:40:07 -0600

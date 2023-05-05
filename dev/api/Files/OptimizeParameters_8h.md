@@ -11,7 +11,7 @@ title: Libs/Optimize/OptimizeParameters.h
 
 | Name           |
 | -------------- |
-| **[shapeworks](../Namespaces/namespaceshapeworks.md)** <br>User usage reporting (telemetry)  |
+| **[shapeworks](../Namespaces/namespaceshapeworks.md)**  |
 
 ## Classes
 
@@ -27,7 +27,7 @@ title: Libs/Optimize/OptimizeParameters.h
 ```cpp
 #pragma once
 
-#include <Project/Project.h>
+#include <Libs/Project/Project.h>
 
 #include <functional>
 
@@ -121,16 +121,6 @@ class OptimizeParameters {
 
   bool is_subject_fixed(std::shared_ptr<Subject> subject);
 
-  int get_checkpoint_interval();
-  void set_checkpoint_interval(int iterations);
-
-  bool get_save_init_splits();
-  void set_save_init_splits(bool enabled);
-
-  bool get_keep_checkpoints();
-  void set_keep_checkpoints(bool enabled);
-
-
  private:
   std::string get_output_prefix();
 
@@ -148,4 +138,4 @@ class OptimizeParameters {
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:05 +0000
+Updated on 2022-07-23 at 16:40:07 -0600

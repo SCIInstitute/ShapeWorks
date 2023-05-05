@@ -2421,8 +2421,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#slot-skip_grooming_toggled" class="md-nav__link">
-    slot skip_grooming_toggled
+  <a href="#slot-on_skip_button_clicked" class="md-nav__link">
+    slot on_skip_button_clicked
   </a>
   
 </li>
@@ -2541,6 +2541,20 @@
           <li class="md-nav__item">
   <a href="#signal-groom_complete" class="md-nav__link">
     signal groom_complete
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#signal-error_message" class="md-nav__link">
+    signal error_message
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#signal-message" class="md-nav__link">
+    signal message
   </a>
   
 </li>
@@ -2676,7 +2690,7 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1GroomTool.html#slot-skip-grooming-toggled">skip_grooming_toggled</a></strong>()</td>
+<td><strong><a href="classshapeworks_1_1GroomTool.html#slot-on-skip-button-clicked">on_skip_button_clicked</a></strong>()</td>
 </tr>
 <tr>
 <td>void</td>
@@ -2751,6 +2765,14 @@
 </tr>
 <tr>
 <td>void</td>
+<td><strong><a href="classshapeworks_1_1GroomTool.html#signal-error-message">error_message</a></strong>(QString )</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1GroomTool.html#signal-message">message</a></strong>(QString )</td>
+</tr>
+<tr>
+<td>void</td>
 <td><strong><a href="classshapeworks_1_1GroomTool.html#signal-progress">progress</a></strong>(int )</td>
 </tr>
 </tbody>
@@ -2766,7 +2788,7 @@
 <tbody>
 <tr>
 <td></td>
-<td><strong><a href="classshapeworks_1_1GroomTool.html#function-groomtool">GroomTool</a></strong>(<a href="classPreferences.html">Preferences</a> &amp; prefs, <a href="classshapeworks_1_1Telemetry.html">Telemetry</a> &amp; telemetry)</td>
+<td><strong><a href="classshapeworks_1_1GroomTool.html#function-groomtool">GroomTool</a></strong>(<a href="classPreferences.html">Preferences</a> &amp; prefs)</td>
 </tr>
 <tr>
 <td></td>
@@ -2818,8 +2840,8 @@
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">state</span>
 <span class="p">)</span>
 </code></pre></div>
-<h3 id="slot-skip_grooming_toggled">slot skip_grooming_toggled</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">skip_grooming_toggled</span><span class="p">()</span>
+<h3 id="slot-on_skip_button_clicked">slot on_skip_button_clicked</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">on_skip_button_clicked</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="slot-on_restore_defaults_clicked">slot on_restore_defaults_clicked</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">on_restore_defaults_clicked</span><span class="p">()</span>
@@ -2884,6 +2906,16 @@
 <h3 id="signal-groom_complete">signal groom_complete</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">groom_complete</span><span class="p">()</span>
 </code></pre></div>
+<h3 id="signal-error_message">signal error_message</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">error_message</span><span class="p">(</span>
+<span class="w">    </span><span class="n">QString</span><span class="w"> </span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="signal-message">signal message</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">message</span><span class="p">(</span>
+<span class="w">    </span><span class="n">QString</span><span class="w"> </span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="signal-progress">signal progress</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">progress</span><span class="p">(</span>
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span>
@@ -2892,8 +2924,7 @@
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-groomtool">function GroomTool</h3>
 <div class="highlight"><pre><span></span><code><span class="n">GroomTool</span><span class="p">(</span>
-<span class="w">    </span><span class="n">Preferences</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">prefs</span><span class="p">,</span>
-<span class="w">    </span><span class="n">Telemetry</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">telemetry</span>
+<span class="w">    </span><span class="n">Preferences</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">prefs</span>
 <span class="p">)</span>
 </code></pre></div>
 <h3 id="function-groomtool_1">function ~GroomTool</h3>
@@ -2930,7 +2961,7 @@
 </code></pre></div>
 <p>shut down any running threads </p>
 <hr />
-<p>Updated on 2023-05-04 at 20:03:04 +0000</p>
+<p>Updated on 2022-07-23 at 16:40:06 -0600</p>
 
               
             </article>

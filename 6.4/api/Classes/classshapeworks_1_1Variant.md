@@ -26,17 +26,17 @@ summary: Variant class to represent multiple types.
 | | **[Variant](../Classes/classshapeworks_1_1Variant.md#function-variant)**(std::vector< double > v) |
 | | **[Variant](../Classes/classshapeworks_1_1Variant.md#function-variant)**(std::vector< int > v) |
 | | **[Variant](../Classes/classshapeworks_1_1Variant.md#function-variant)**(std::vector< bool > v) |
-| | **[operator std::string](../Classes/classshapeworks_1_1Variant.md#function-operator-stdstring)**() const |
-| | **[operator bool](../Classes/classshapeworks_1_1Variant.md#function-operator-bool)**() const |
-| | **[operator int](../Classes/classshapeworks_1_1Variant.md#function-operator-int)**() const |
-| | **[operator unsigned int](../Classes/classshapeworks_1_1Variant.md#function-operator-unsigned-int)**() const |
-| | **[operator long](../Classes/classshapeworks_1_1Variant.md#function-operator-long)**() const |
-| | **[operator unsigned long](../Classes/classshapeworks_1_1Variant.md#function-operator-unsigned-long)**() const |
-| | **[operator float](../Classes/classshapeworks_1_1Variant.md#function-operator-float)**() const |
-| | **[operator double](../Classes/classshapeworks_1_1Variant.md#function-operator-double)**() const |
-| | **[operator std::vector< double >](../Classes/classshapeworks_1_1Variant.md#function-operator-stdvector<-double->)**() const |
-| | **[operator std::vector< int >](../Classes/classshapeworks_1_1Variant.md#function-operator-stdvector<-int->)**() const |
-| | **[operator std::vector< bool >](../Classes/classshapeworks_1_1Variant.md#function-operator-stdvector<-bool->)**() const |
+| | **[operator std::string](../Classes/classshapeworks_1_1Variant.md#function-operator-stdstring)**() |
+| | **[operator bool](../Classes/classshapeworks_1_1Variant.md#function-operator-bool)**() |
+| | **[operator int](../Classes/classshapeworks_1_1Variant.md#function-operator-int)**() |
+| | **[operator unsigned int](../Classes/classshapeworks_1_1Variant.md#function-operator-unsigned-int)**() |
+| | **[operator long](../Classes/classshapeworks_1_1Variant.md#function-operator-long)**() |
+| | **[operator unsigned long](../Classes/classshapeworks_1_1Variant.md#function-operator-unsigned-long)**() |
+| | **[operator float](../Classes/classshapeworks_1_1Variant.md#function-operator-float)**() |
+| | **[operator double](../Classes/classshapeworks_1_1Variant.md#function-operator-double)**() |
+| | **[operator std::vector< double >](../Classes/classshapeworks_1_1Variant.md#function-operator-stdvector<-double->)**() |
+| | **[operator std::vector< int >](../Classes/classshapeworks_1_1Variant.md#function-operator-stdvector<-int->)**() |
+| | **[operator std::vector< bool >](../Classes/classshapeworks_1_1Variant.md#function-operator-stdvector<-bool->)**() |
 
 ## Detailed Description
 
@@ -132,80 +132,80 @@ inline Variant(
 ### function operator std::string
 
 ```cpp
-operator std::string() const
+operator std::string()
 ```
 
 
 ### function operator bool
 
 ```cpp
-operator bool() const
+operator bool()
 ```
 
 
 ### function operator int
 
 ```cpp
-operator int() const
+operator int()
 ```
 
 
 ### function operator unsigned int
 
 ```cpp
-operator unsigned int() const
+operator unsigned int()
 ```
 
 
 ### function operator long
 
 ```cpp
-operator long() const
+operator long()
 ```
 
 
 ### function operator unsigned long
 
 ```cpp
-operator unsigned long() const
+operator unsigned long()
 ```
 
 
 ### function operator float
 
 ```cpp
-operator float() const
+operator float()
 ```
 
 
 ### function operator double
 
 ```cpp
-operator double() const
+operator double()
 ```
 
 
 ### function operator std::vector< double >
 
 ```cpp
-operator std::vector< double >() const
+operator std::vector< double >()
 ```
 
 
 ### function operator std::vector< int >
 
 ```cpp
-operator std::vector< int >() const
+operator std::vector< int >()
 ```
 
 
 ### function operator std::vector< bool >
 
 ```cpp
-operator std::vector< bool >() const
+operator std::vector< bool >()
 ```
 
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:05 +0000
+Updated on 2022-07-23 at 16:40:07 -0600

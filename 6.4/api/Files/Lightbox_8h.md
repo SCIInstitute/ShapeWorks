@@ -1,9 +1,9 @@
 ---
-title: Studio/Visualization/Lightbox.h
+title: Studio/src/Visualization/Lightbox.h
 
 ---
 
-# Studio/Visualization/Lightbox.h
+# Studio/src/Visualization/Lightbox.h
 
 
 
@@ -11,7 +11,7 @@ title: Studio/Visualization/Lightbox.h
 
 | Name           |
 | -------------- |
-| **[shapeworks](../Namespaces/namespaceshapeworks.md)** <br>User usage reporting (telemetry)  |
+| **[shapeworks](../Namespaces/namespaceshapeworks.md)**  |
 
 ## Classes
 
@@ -60,8 +60,8 @@ class Lightbox : public QObject {
   Lightbox();
   ~Lightbox();
 
-  void set_shapes(ShapeList shapes);
-  ShapeList get_shapes();
+  void set_shapes(QVector<QSharedPointer<Shape>> shapes);
+  QVector<ShapeHandle> get_shapes();
 
   void set_interactor(vtkRenderWindowInteractor* interactor);
 
@@ -85,8 +85,6 @@ class Lightbox : public QObject {
   void handle_hover(int* click_pos);
 
   void handle_key(int* click_pos, std::string key);
-
-  void handle_right_click(int* click_pos, vtkRenderer* renderer);
 
   void set_glyph_lut(vtkSmartPointer<vtkLookupTable> lut);
   void set_session(QSharedPointer<Session> session);
@@ -120,9 +118,6 @@ class Lightbox : public QObject {
  public Q_SLOTS:
   void handle_timer_callback();
 
- Q_SIGNALS:
-  void right_click(int index);
-
  private:
   vtkSmartPointer<vtkOrientationMarkerWidget> create_orientation_marker();
 
@@ -130,13 +125,13 @@ class Lightbox : public QObject {
 
   void display_shapes();
 
-  void insert_shape_into_viewer(std::shared_ptr<Shape> shape, int position);
+  void insert_shape_into_viewer(QSharedPointer<Shape> shape, int position);
 
   int get_start_shape();
 
   vtkSmartPointer<vtkRenderer> renderer_;
 
-  ShapeList shapes_;
+  QVector<QSharedPointer<Shape>> shapes_;
 
   // there is one viewer for every tile in the lightbox display
   ViewerList viewers_;
@@ -181,4 +176,4 @@ class Lightbox : public QObject {
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:05 +0000
+Updated on 2022-07-23 at 16:40:07 -0600

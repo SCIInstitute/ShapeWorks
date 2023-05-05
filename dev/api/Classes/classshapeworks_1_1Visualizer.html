@@ -2581,20 +2581,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-set_mean_shape" class="md-nav__link">
-    function set_mean_shape
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-get_mean_shape" class="md-nav__link">
-    function get_mean_shape
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#function-reset_camera" class="md-nav__link">
     function reset_camera
   </a>
@@ -2751,20 +2737,6 @@
           <li class="md-nav__item">
   <a href="#function-get_opacities" class="md-nav__link">
     function get_opacities
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-set_domain_particle_visibilities" class="md-nav__link">
-    function set_domain_particle_visibilities
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-get_domain_particle_visibilities" class="md-nav__link">
-    function get_domain_particle_visibilities
   </a>
   
 </li>
@@ -2933,7 +2905,7 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Visualizer.html#function-display-shapes">display_shapes</a></strong>(ShapeList shapes)</td>
+<td><strong><a href="classshapeworks_1_1Visualizer.html#function-display-shapes">display_shapes</a></strong>(QVector&lt; QSharedPointer&lt; <a href="classshapeworks_1_1Shape.html">Shape</a> &gt;&gt; shapes)</td>
 </tr>
 <tr>
 <td>void</td>
@@ -2949,14 +2921,6 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Visualizer.html#function-set-mean-shape">set_mean_shape</a></strong>(ShapeHandle mean_shape)</td>
-</tr>
-<tr>
-<td>ShapeHandle</td>
-<td><strong><a href="classshapeworks_1_1Visualizer.html#function-get-mean-shape">get_mean_shape</a></strong>()</td>
-</tr>
-<tr>
-<td>void</td>
 <td><strong><a href="classshapeworks_1_1Visualizer.html#function-reset-camera">reset_camera</a></strong>()</td>
 </tr>
 <tr>
@@ -2964,7 +2928,7 @@
 <td><strong><a href="classshapeworks_1_1Visualizer.html#function-update-lut">update_lut</a></strong>()</td>
 </tr>
 <tr>
-<td><a href="classshapeworks_1_1Particles.html">Particles</a></td>
+<td><a href="classshapeworks_1_1StudioParticles.html">StudioParticles</a></td>
 <td><strong><a href="classshapeworks_1_1Visualizer.html#function-get-current-shape">get_current_shape</a></strong>()</td>
 </tr>
 <tr>
@@ -2981,11 +2945,11 @@
 </tr>
 <tr>
 <td>vtkSmartPointer&lt; vtkPolyData &gt;</td>
-<td><strong><a href="classshapeworks_1_1Visualizer.html#function-get-current-mesh">get_current_mesh</a></strong>(int index)</td>
+<td><strong><a href="classshapeworks_1_1Visualizer.html#function-get-current-mesh">get_current_mesh</a></strong>()</td>
 </tr>
 <tr>
 <td>std::vector&lt; vtkSmartPointer&lt; vtkPolyData &gt; &gt;</td>
-<td><strong><a href="classshapeworks_1_1Visualizer.html#function-get-current-meshes-transformed">get_current_meshes_transformed</a></strong>(int index)</td>
+<td><strong><a href="classshapeworks_1_1Visualizer.html#function-get-current-meshes-transformed">get_current_meshes_transformed</a></strong>()</td>
 </tr>
 <tr>
 <td>const std::string &amp;</td>
@@ -3033,11 +2997,11 @@
 </tr>
 <tr>
 <td>vtkSmartPointer&lt; vtkTransform &gt;</td>
-<td><strong><a href="classshapeworks_1_1Visualizer.html#function-get-transform">get_transform</a></strong>(std::shared_ptr&lt; <a href="classshapeworks_1_1Shape.html">Shape</a> &gt; shape, int alignment_domain, int domain)<br>Request the transform for a given shape and domain.</td>
+<td><strong><a href="classshapeworks_1_1Visualizer.html#function-get-transform">get_transform</a></strong>(QSharedPointer&lt; <a href="classshapeworks_1_1Shape.html">Shape</a> &gt; shape, int alignment_domain, int domain)<br>Request the transform for a given shape and domain.</td>
 </tr>
 <tr>
 <td>vtkSmartPointer&lt; vtkTransform &gt;</td>
-<td><strong><a href="classshapeworks_1_1Visualizer.html#function-get-transform">get_transform</a></strong>(std::shared_ptr&lt; <a href="classshapeworks_1_1Shape.html">Shape</a> &gt; shape, DisplayMode display_mode, int alignment_domain, int domain)<br>Request the transform for a given shape and domain and display mode.</td>
+<td><strong><a href="classshapeworks_1_1Visualizer.html#function-get-transform">get_transform</a></strong>(QSharedPointer&lt; <a href="classshapeworks_1_1Shape.html">Shape</a> &gt; shape, DisplayMode display_mode, int alignment_domain, int domain)<br>Request the transform for a given shape and domain and display mode.</td>
 </tr>
 <tr>
 <td>void</td>
@@ -3046,14 +3010,6 @@
 <tr>
 <td>std::vector&lt; float &gt;</td>
 <td><strong><a href="classshapeworks_1_1Visualizer.html#function-get-opacities">get_opacities</a></strong>()<br>Get domain opacities.</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1Visualizer.html#function-set-domain-particle-visibilities">set_domain_particle_visibilities</a></strong>(std::vector&lt; bool &gt; visibilities)<br>Set the per-domain particle visibilities.</td>
-</tr>
-<tr>
-<td>std::vector&lt; bool &gt;</td>
-<td><strong><a href="classshapeworks_1_1Visualizer.html#function-get-domain-particle-visibilities">get_domain_particle_visibilities</a></strong>()<br>Get the per-domain particle visibilities.</td>
 </tr>
 <tr>
 <td>double</td>
@@ -3174,7 +3130,7 @@
 </code></pre></div>
 <h3 id="function-display_shapes">function display_shapes</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">display_shapes</span><span class="p">(</span>
-<span class="w">    </span><span class="n">ShapeList</span><span class="w"> </span><span class="n">shapes</span>
+<span class="w">    </span><span class="n">QVector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Shape</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">shapes</span>
 <span class="p">)</span>
 </code></pre></div>
 <h3 id="function-set_selected_point_one">function set_selected_point_one</h3>
@@ -3192,14 +3148,6 @@
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">mean</span>
 <span class="p">)</span>
 </code></pre></div>
-<h3 id="function-set_mean_shape">function set_mean_shape</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_mean_shape</span><span class="p">(</span>
-<span class="w">    </span><span class="n">ShapeHandle</span><span class="w"> </span><span class="n">mean_shape</span>
-<span class="p">)</span>
-</code></pre></div>
-<h3 id="function-get_mean_shape">function get_mean_shape</h3>
-<div class="highlight"><pre><span></span><code><span class="n">ShapeHandle</span><span class="w"> </span><span class="n">get_mean_shape</span><span class="p">()</span>
-</code></pre></div>
 <h3 id="function-reset_camera">function reset_camera</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">reset_camera</span><span class="p">()</span>
 </code></pre></div>
@@ -3207,7 +3155,7 @@
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_lut</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-get_current_shape">function get_current_shape</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Particles</span><span class="w"> </span><span class="n">get_current_shape</span><span class="p">()</span>
+<div class="highlight"><pre><span></span><code><span class="n">StudioParticles</span><span class="w"> </span><span class="n">get_current_shape</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-get_current_particle_scalars">function get_current_particle_scalars</h3>
 <div class="highlight"><pre><span></span><code><span class="n">vtkFloatArray</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">get_current_particle_scalars</span><span class="p">()</span>
@@ -3219,14 +3167,10 @@
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_new_mesh</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-get_current_mesh">function get_current_mesh</h3>
-<div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_current_mesh</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">index</span>
-<span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_current_mesh</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-get_current_meshes_transformed">function get_current_meshes_transformed</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_current_meshes_transformed</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">index</span>
-<span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkPolyData</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_current_meshes_transformed</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-get_feature_map">function get_feature_map</h3>
 <div class="highlight"><pre><span></span><code><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">get_feature_map</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
@@ -3285,7 +3229,7 @@
 <p>Update the feature range with a given range. </p>
 <h3 id="function-get_transform">function get_transform</h3>
 <div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkTransform</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_transform</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Shape</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">shape</span><span class="p">,</span>
+<span class="w">    </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Shape</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">shape</span><span class="p">,</span>
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">alignment_domain</span><span class="p">,</span>
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span>
 <span class="p">)</span>
@@ -3293,7 +3237,7 @@
 <p>Request the transform for a given shape and domain. </p>
 <h3 id="function-get_transform_1">function get_transform</h3>
 <div class="highlight"><pre><span></span><code><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkTransform</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_transform</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Shape</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">shape</span><span class="p">,</span>
+<span class="w">    </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Shape</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">shape</span><span class="p">,</span>
 <span class="w">    </span><span class="n">DisplayMode</span><span class="w"> </span><span class="n">display_mode</span><span class="p">,</span>
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">alignment_domain</span><span class="p">,</span>
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span>
@@ -3310,16 +3254,6 @@
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_opacities</span><span class="p">()</span>
 </code></pre></div>
 <p>Get domain opacities. </p>
-<h3 id="function-set_domain_particle_visibilities">function set_domain_particle_visibilities</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_domain_particle_visibilities</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">visibilities</span>
-<span class="p">)</span>
-</code></pre></div>
-<p>Set the per-domain particle visibilities. </p>
-<h3 id="function-get_domain_particle_visibilities">function get_domain_particle_visibilities</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_domain_particle_visibilities</span><span class="p">()</span>
-</code></pre></div>
-<p>Get the per-domain particle visibilities. </p>
 <h3 id="function-get_current_glyph_size">function get_current_glyph_size</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">get_current_glyph_size</span><span class="p">()</span>
 </code></pre></div>
@@ -3349,7 +3283,7 @@
 </code></pre></div>
 <p>Return render window size. </p>
 <hr />
-<p>Updated on 2023-05-04 at 20:03:05 +0000</p>
+<p>Updated on 2022-07-23 at 16:40:07 -0600</p>
 
               
             </article>

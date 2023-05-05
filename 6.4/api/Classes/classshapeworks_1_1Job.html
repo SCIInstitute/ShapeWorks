@@ -2393,8 +2393,29 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#signal-error_message" class="md-nav__link">
+    signal error_message
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#signal-warning_message" class="md-nav__link">
+    signal warning_message
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#signal-progress" class="md-nav__link">
     signal progress
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#signal-message" class="md-nav__link">
+    signal message
   </a>
   
 </li>
@@ -2493,7 +2514,7 @@
 
 <h1 id="shapeworksjob">shapeworks::Job</h1>
 <p>Inherits from QObject</p>
-<p>Inherited by <a href="classshapeworks_1_1DeepSSMJob.html">shapeworks::DeepSSMJob</a>, <a href="classshapeworks_1_1GroupPvalueJob.html">shapeworks::GroupPvalueJob</a>, <a href="classshapeworks_1_1NetworkAnalysisJob.html">shapeworks::NetworkAnalysisJob</a>, <a href="classshapeworks_1_1ParticleNormalEvaluationJob.html">shapeworks::ParticleNormalEvaluationJob</a>, <a href="classshapeworks_1_1ShapeEvaluationJob.html">shapeworks::ShapeEvaluationJob</a>, <a href="classshapeworks_1_1StatsGroupLDAJob.html">shapeworks::StatsGroupLDAJob</a></p>
+<p>Inherited by <a href="classshapeworks_1_1DeepSSMJob.html">shapeworks::DeepSSMJob</a>, <a href="classshapeworks_1_1GroupPvalueJob.html">shapeworks::GroupPvalueJob</a>, <a href="classshapeworks_1_1ParticleNormalEvaluationJob.html">shapeworks::ParticleNormalEvaluationJob</a>, <a href="classshapeworks_1_1ShapeEvaluationJob.html">shapeworks::ShapeEvaluationJob</a>, <a href="classshapeworks_1_1StatsGroupLDAJob.html">shapeworks::StatsGroupLDAJob</a></p>
 <h2 id="public-signals">Public Signals</h2>
 <table>
 <thead>
@@ -2505,7 +2526,19 @@
 <tbody>
 <tr>
 <td>void</td>
+<td><strong><a href="classshapeworks_1_1Job.html#signal-error-message">error_message</a></strong>(QString )</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Job.html#signal-warning-message">warning_message</a></strong>(QString )</td>
+</tr>
+<tr>
+<td>void</td>
 <td><strong><a href="classshapeworks_1_1Job.html#signal-progress">progress</a></strong>(double )</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Job.html#signal-message">message</a></strong>(QString )</td>
 </tr>
 <tr>
 <td>void</td>
@@ -2553,9 +2586,24 @@
 </tbody>
 </table>
 <h2 id="public-signals-documentation">Public Signals Documentation</h2>
+<h3 id="signal-error_message">signal error_message</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">error_message</span><span class="p">(</span>
+<span class="w">    </span><span class="n">QString</span><span class="w"> </span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="signal-warning_message">signal warning_message</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">warning_message</span><span class="p">(</span>
+<span class="w">    </span><span class="n">QString</span><span class="w"> </span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="signal-progress">signal progress</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">progress</span><span class="p">(</span>
 <span class="w">    </span><span class="kt">double</span><span class="w"> </span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="signal-message">signal message</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">message</span><span class="p">(</span>
+<span class="w">    </span><span class="n">QString</span><span class="w"> </span>
 <span class="p">)</span>
 </code></pre></div>
 <h3 id="signal-finished">signal finished</h3>
@@ -2571,11 +2619,11 @@
 <h3 id="function-run">function run</h3>
 <div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">run</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
 </code></pre></div>
-<p><strong>Reimplemented by</strong>: <a href="classshapeworks_1_1ShapeEvaluationJob.html#function-run">shapeworks::ShapeEvaluationJob::run</a>, <a href="classshapeworks_1_1DeepSSMJob.html#function-run">shapeworks::DeepSSMJob::run</a>, <a href="classshapeworks_1_1GroupPvalueJob.html#function-run">shapeworks::GroupPvalueJob::run</a>, <a href="classshapeworks_1_1NetworkAnalysisJob.html#function-run">shapeworks::NetworkAnalysisJob::run</a>, <a href="classshapeworks_1_1ParticleNormalEvaluationJob.html#function-run">shapeworks::ParticleNormalEvaluationJob::run</a>, <a href="classshapeworks_1_1StatsGroupLDAJob.html#function-run">shapeworks::StatsGroupLDAJob::run</a></p>
+<p><strong>Reimplemented by</strong>: <a href="classshapeworks_1_1ShapeEvaluationJob.html#function-run">shapeworks::ShapeEvaluationJob::run</a>, <a href="classshapeworks_1_1DeepSSMJob.html#function-run">shapeworks::DeepSSMJob::run</a>, <a href="classshapeworks_1_1GroupPvalueJob.html#function-run">shapeworks::GroupPvalueJob::run</a>, <a href="classshapeworks_1_1ParticleNormalEvaluationJob.html#function-run">shapeworks::ParticleNormalEvaluationJob::run</a>, <a href="classshapeworks_1_1StatsGroupLDAJob.html#function-run">shapeworks::StatsGroupLDAJob::run</a></p>
 <h3 id="function-name">function name</h3>
 <div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="n">name</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="mi">0</span>
 </code></pre></div>
-<p><strong>Reimplemented by</strong>: <a href="classshapeworks_1_1ShapeEvaluationJob.html#function-name">shapeworks::ShapeEvaluationJob::name</a>, <a href="classshapeworks_1_1DeepSSMJob.html#function-name">shapeworks::DeepSSMJob::name</a>, <a href="classshapeworks_1_1GroupPvalueJob.html#function-name">shapeworks::GroupPvalueJob::name</a>, <a href="classshapeworks_1_1NetworkAnalysisJob.html#function-name">shapeworks::NetworkAnalysisJob::name</a>, <a href="classshapeworks_1_1ParticleNormalEvaluationJob.html#function-name">shapeworks::ParticleNormalEvaluationJob::name</a>, <a href="classshapeworks_1_1StatsGroupLDAJob.html#function-name">shapeworks::StatsGroupLDAJob::name</a></p>
+<p><strong>Reimplemented by</strong>: <a href="classshapeworks_1_1ShapeEvaluationJob.html#function-name">shapeworks::ShapeEvaluationJob::name</a>, <a href="classshapeworks_1_1DeepSSMJob.html#function-name">shapeworks::DeepSSMJob::name</a>, <a href="classshapeworks_1_1GroupPvalueJob.html#function-name">shapeworks::GroupPvalueJob::name</a>, <a href="classshapeworks_1_1ParticleNormalEvaluationJob.html#function-name">shapeworks::ParticleNormalEvaluationJob::name</a>, <a href="classshapeworks_1_1StatsGroupLDAJob.html#function-name">shapeworks::StatsGroupLDAJob::name</a></p>
 <h3 id="function-get_completion_message">function get_completion_message</h3>
 <div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="n">get_completion_message</span><span class="p">()</span>
 </code></pre></div>
@@ -2586,7 +2634,7 @@
 <div class="highlight"><pre><span></span><code><span class="n">qint64</span><span class="w"> </span><span class="n">timer_elapsed</span><span class="p">()</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-05-04 at 20:03:04 +0000</p>
+<p>Updated on 2022-07-23 at 16:40:06 -0600</p>
 
               
             </article>

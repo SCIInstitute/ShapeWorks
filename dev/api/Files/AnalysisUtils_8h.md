@@ -1,9 +1,9 @@
 ---
-title: Studio/Utils/AnalysisUtils.h
+title: Studio/src/Utils/AnalysisUtils.h
 
 ---
 
-# Studio/Utils/AnalysisUtils.h
+# Studio/src/Utils/AnalysisUtils.h
 
 
 
@@ -11,7 +11,7 @@ title: Studio/Utils/AnalysisUtils.h
 
 | Name           |
 | -------------- |
-| **[shapeworks](../Namespaces/namespaceshapeworks.md)** <br>User usage reporting (telemetry)  |
+| **[shapeworks](../Namespaces/namespaceshapeworks.md)**  |
 
 ## Classes
 
@@ -27,7 +27,7 @@ title: Studio/Utils/AnalysisUtils.h
 ```cpp
 #pragma once
 
-#include <Particles/ParticleSystemEvaluation.h>
+#include <Libs/Particles/ParticleSystem.h>
 
 namespace shapeworks {
 
@@ -36,7 +36,7 @@ namespace shapeworks {
   class AnalysisUtils {
   public:
 
-    static ParticleSystemEvaluation get_local_particle_system(Session* session, int domain);
+    static ParticleSystem get_local_particle_system(Session* session, int domain);
 
 
   };
@@ -47,4 +47,4 @@ namespace shapeworks {
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:05 +0000
+Updated on 2022-07-23 at 16:40:07 -0600

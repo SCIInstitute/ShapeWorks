@@ -19,7 +19,7 @@
     
     
       
-        <title>Libs/Analyze/SurfaceReconstructor.h - ShapeWorks</title>
+        <title>Studio/src/Data/SurfaceReconstructor.h - ShapeWorks</title>
       
     
     
@@ -84,7 +84,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#libsanalyzesurfacereconstructorh" class="md-skip">
+        <a href="#studiosrcdatasurfacereconstructorh" class="md-skip">
           Skip to content
         </a>
       
@@ -122,7 +122,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Libs/Analyze/SurfaceReconstructor.h
+              Studio/src/Data/SurfaceReconstructor.h
             
           </span>
         </div>
@@ -2409,7 +2409,7 @@
 
 
 
-<h1 id="libsanalyzesurfacereconstructorh">Libs/Analyze/SurfaceReconstructor.h</h1>
+<h1 id="studiosrcdatasurfacereconstructorh">Studio/src/Data/SurfaceReconstructor.h</h1>
 <p>Surface <a href="../Classes/classReconstruction.html">Reconstruction</a> Layer.  <a href="#detailed-description">More...</a></p>
 <h2 id="classes">Classes</h2>
 <table>
@@ -2435,19 +2435,41 @@
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;string&gt;</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;itkPoint.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkPoints.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkPolyData.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Eigen/Core&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;itkImageFileReader.h&gt;</span>
 
-<span class="k">class</span><span class="w"> </span><span class="nc">SurfaceReconstructorPrivate</span><span class="p">;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Reconstruction.h&gt;</span>
 
-<span class="k">class</span><span class="w"> </span><span class="nc">SurfaceReconstructor</span><span class="w"> </span><span class="p">{</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SurfaceReconstructor</span>
+<span class="p">{</span>
 
-<span class="w"> </span><span class="k">public</span><span class="o">:</span>
+<span class="k">public</span><span class="o">:</span>
+
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">PixelType</span><span class="p">;</span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Image</span><span class="o">&lt;</span><span class="w"> </span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">ImageType</span><span class="p">;</span>
+
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ImageFileReader</span><span class="o">&lt;</span><span class="w"> </span><span class="n">ImageType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">ReaderType</span><span class="p">;</span>
+
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">CoordinateRepType</span><span class="p">;</span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">CompactlySupportedRBFSparseKernelTransform</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">CoordinateRepType</span><span class="p">,</span>
+<span class="w">                                                            </span><span class="mi">3</span><span class="o">&gt;</span><span class="w"> </span><span class="n">RBFTransformType</span><span class="p">;</span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ThinPlateSplineKernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">CoordinateRepType</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ThinPlateSplineType</span><span class="p">;</span>
+
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">LinearInterpolateImageFunction</span><span class="o">&lt;</span><span class="n">ImageType</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">InterpolatorType</span><span class="p">;</span>
+
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="n">Reconstruction</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">CompactlySupportedRBFSparseKernelTransform</span><span class="p">,</span>
+<span class="w">                           </span><span class="n">itk</span><span class="o">::</span><span class="n">LinearInterpolateImageFunction</span><span class="p">,</span>
+<span class="w">                           </span><span class="n">CoordinateRepType</span><span class="p">,</span><span class="w"> </span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="n">ImageType</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ReconstructionType</span><span class="p">;</span>
+
+<span class="cm">/*</span>
+<span class="cm">   typedef Reconstruction &lt; itk::ThinPlateSplineKernelTransform2,</span>
+<span class="cm">                           itk::LinearInterpolateImageFunction,</span>
+<span class="cm">                           CoordinateRepType, PixelType, ImageType&gt; ReconstructionType;</span>
+<span class="cm"> */</span>
+
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">ReconstructionType</span><span class="o">::</span><span class="n">PointType</span><span class="w"> </span><span class="n">PointType</span><span class="p">;</span>
+<span class="w">  </span><span class="k">typedef</span><span class="w"> </span><span class="k">typename</span><span class="w"> </span><span class="nc">ReconstructionType</span><span class="o">::</span><span class="n">PointArrayType</span><span class="w"> </span><span class="n">PointArrayType</span><span class="p">;</span>
 
 <span class="w">  </span><span class="n">SurfaceReconstructor</span><span class="p">();</span>
-<span class="w">  </span><span class="o">~</span><span class="n">SurfaceReconstructor</span><span class="p">();</span>
 
 <span class="w">  </span><span class="c1">//**********************************************//</span>
 <span class="w">  </span><span class="c1">//************Imported From Studio *************//</span>
@@ -2477,9 +2499,8 @@
 
 <span class="w">  </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkPolyData</span><span class="o">&gt;</span><span class="w"> </span><span class="n">build_mesh</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">shape</span><span class="p">);</span>
 
-<span class="w"> </span><span class="k">private</span><span class="o">:</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">unique_ptr</span><span class="o">&lt;</span><span class="n">SurfaceReconstructorPrivate</span><span class="o">&gt;</span><span class="w"> </span><span class="n">private_</span><span class="p">;</span>
+<span class="k">private</span><span class="o">:</span>
+<span class="w">  </span><span class="n">ReconstructionType</span><span class="w"> </span><span class="n">reconstructor_</span><span class="p">;</span>
 
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">surface_reconstruction_available_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
 
@@ -2489,7 +2510,7 @@
 <span class="p">};</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-05-04 at 20:03:05 +0000</p>
+<p>Updated on 2022-07-23 at 16:40:07 -0600</p>
 
               
             </article>

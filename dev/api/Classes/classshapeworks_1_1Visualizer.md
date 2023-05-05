@@ -44,20 +44,18 @@ Inherits from QObject
 | void | **[update_ffc_mode](../Classes/classshapeworks_1_1Visualizer.md#function-update-ffc-mode)**() |
 | void | **[display_sample](../Classes/classshapeworks_1_1Visualizer.md#function-display-sample)**(int i) |
 | void | **[display_shape](../Classes/classshapeworks_1_1Visualizer.md#function-display-shape)**(ShapeHandle shape) |
-| void | **[display_shapes](../Classes/classshapeworks_1_1Visualizer.md#function-display-shapes)**(ShapeList shapes) |
+| void | **[display_shapes](../Classes/classshapeworks_1_1Visualizer.md#function-display-shapes)**(QVector< QSharedPointer< [Shape](../Classes/classshapeworks_1_1Shape.md) >> shapes) |
 | void | **[set_selected_point_one](../Classes/classshapeworks_1_1Visualizer.md#function-set-selected-point-one)**(int id) |
 | void | **[set_selected_point_two](../Classes/classshapeworks_1_1Visualizer.md#function-set-selected-point-two)**(int id) |
 | void | **[set_mean](../Classes/classshapeworks_1_1Visualizer.md#function-set-mean)**(const Eigen::VectorXd & mean) |
-| void | **[set_mean_shape](../Classes/classshapeworks_1_1Visualizer.md#function-set-mean-shape)**(ShapeHandle mean_shape) |
-| ShapeHandle | **[get_mean_shape](../Classes/classshapeworks_1_1Visualizer.md#function-get-mean-shape)**() |
 | void | **[reset_camera](../Classes/classshapeworks_1_1Visualizer.md#function-reset-camera)**() |
 | void | **[update_lut](../Classes/classshapeworks_1_1Visualizer.md#function-update-lut)**() |
-| [Particles](../Classes/classshapeworks_1_1Particles.md) | **[get_current_shape](../Classes/classshapeworks_1_1Visualizer.md#function-get-current-shape)**() |
+| [StudioParticles](../Classes/classshapeworks_1_1StudioParticles.md) | **[get_current_shape](../Classes/classshapeworks_1_1Visualizer.md#function-get-current-shape)**() |
 | vtkFloatArray * | **[get_current_particle_scalars](../Classes/classshapeworks_1_1Visualizer.md#function-get-current-particle-scalars)**() |
 | vtkSmartPointer< vtkPolyData > | **[get_current_particle_poly_data](../Classes/classshapeworks_1_1Visualizer.md#function-get-current-particle-poly-data)**() |
 | void | **[handle_new_mesh](../Classes/classshapeworks_1_1Visualizer.md#function-handle-new-mesh)**() |
-| vtkSmartPointer< vtkPolyData > | **[get_current_mesh](../Classes/classshapeworks_1_1Visualizer.md#function-get-current-mesh)**(int index) |
-| std::vector< vtkSmartPointer< vtkPolyData > > | **[get_current_meshes_transformed](../Classes/classshapeworks_1_1Visualizer.md#function-get-current-meshes-transformed)**(int index) |
+| vtkSmartPointer< vtkPolyData > | **[get_current_mesh](../Classes/classshapeworks_1_1Visualizer.md#function-get-current-mesh)**() |
+| std::vector< vtkSmartPointer< vtkPolyData > > | **[get_current_meshes_transformed](../Classes/classshapeworks_1_1Visualizer.md#function-get-current-meshes-transformed)**() |
 | const std::string & | **[get_feature_map](../Classes/classshapeworks_1_1Visualizer.md#function-get-feature-map)**() const<br>Get the currently selected feature map.  |
 | void | **[set_uniform_feature_range](../Classes/classshapeworks_1_1Visualizer.md#function-set-uniform-feature-range)**(bool value)<br>Set if we are using a uniform feature range.  |
 | bool | **[get_uniform_feature_range](../Classes/classshapeworks_1_1Visualizer.md#function-get-uniform-feature-range)**(void )<br>Return if we are using a uniform feature range.  |
@@ -69,12 +67,10 @@ Inherits from QObject
 | bool | **[get_feature_range_valid](../Classes/classshapeworks_1_1Visualizer.md#function-get-feature-range-valid)**()<br>Return if the feature range is valid or not.  |
 | void | **[update_feature_range](../Classes/classshapeworks_1_1Visualizer.md#function-update-feature-range)**(double * range)<br>Update the feature range with a given range.  |
 | void | **[update_feature_range](../Classes/classshapeworks_1_1Visualizer.md#function-update-feature-range)**(double min, double max)<br>Update the feature range with a given range.  |
-| vtkSmartPointer< vtkTransform > | **[get_transform](../Classes/classshapeworks_1_1Visualizer.md#function-get-transform)**(std::shared_ptr< [Shape](../Classes/classshapeworks_1_1Shape.md) > shape, int alignment_domain, int domain)<br>Request the transform for a given shape and domain.  |
-| vtkSmartPointer< vtkTransform > | **[get_transform](../Classes/classshapeworks_1_1Visualizer.md#function-get-transform)**(std::shared_ptr< [Shape](../Classes/classshapeworks_1_1Shape.md) > shape, DisplayMode display_mode, int alignment_domain, int domain)<br>Request the transform for a given shape and domain and display mode.  |
+| vtkSmartPointer< vtkTransform > | **[get_transform](../Classes/classshapeworks_1_1Visualizer.md#function-get-transform)**(QSharedPointer< [Shape](../Classes/classshapeworks_1_1Shape.md) > shape, int alignment_domain, int domain)<br>Request the transform for a given shape and domain.  |
+| vtkSmartPointer< vtkTransform > | **[get_transform](../Classes/classshapeworks_1_1Visualizer.md#function-get-transform)**(QSharedPointer< [Shape](../Classes/classshapeworks_1_1Shape.md) > shape, DisplayMode display_mode, int alignment_domain, int domain)<br>Request the transform for a given shape and domain and display mode.  |
 | void | **[set_opacities](../Classes/classshapeworks_1_1Visualizer.md#function-set-opacities)**(std::vector< float > opacities)<br>Set domain opacities.  |
 | std::vector< float > | **[get_opacities](../Classes/classshapeworks_1_1Visualizer.md#function-get-opacities)**()<br>Get domain opacities.  |
-| void | **[set_domain_particle_visibilities](../Classes/classshapeworks_1_1Visualizer.md#function-set-domain-particle-visibilities)**(std::vector< bool > visibilities)<br>Set the per-domain particle visibilities.  |
-| std::vector< bool > | **[get_domain_particle_visibilities](../Classes/classshapeworks_1_1Visualizer.md#function-get-domain-particle-visibilities)**()<br>Get the per-domain particle visibilities.  |
 | double | **[get_current_glyph_size](../Classes/classshapeworks_1_1Visualizer.md#function-get-current-glyph-size)**()<br>Get the current glyph size.  |
 | void | **[handle_ctrl_click](../Classes/classshapeworks_1_1Visualizer.md#function-handle-ctrl-click)**([PickResult](../Classes/classshapeworks_1_1PickResult.md) result)<br>Handle ctrl click.  |
 | void | **[redraw](../Classes/classshapeworks_1_1Visualizer.md#function-redraw)**()<br>Redraw renderers.  |
@@ -267,7 +263,7 @@ void display_shape(
 
 ```cpp
 void display_shapes(
-    ShapeList shapes
+    QVector< QSharedPointer< Shape >> shapes
 )
 ```
 
@@ -299,22 +295,6 @@ void set_mean(
 ```
 
 
-### function set_mean_shape
-
-```cpp
-void set_mean_shape(
-    ShapeHandle mean_shape
-)
-```
-
-
-### function get_mean_shape
-
-```cpp
-ShapeHandle get_mean_shape()
-```
-
-
 ### function reset_camera
 
 ```cpp
@@ -332,7 +312,7 @@ void update_lut()
 ### function get_current_shape
 
 ```cpp
-Particles get_current_shape()
+StudioParticles get_current_shape()
 ```
 
 
@@ -360,18 +340,14 @@ void handle_new_mesh()
 ### function get_current_mesh
 
 ```cpp
-vtkSmartPointer< vtkPolyData > get_current_mesh(
-    int index
-)
+vtkSmartPointer< vtkPolyData > get_current_mesh()
 ```
 
 
 ### function get_current_meshes_transformed
 
 ```cpp
-std::vector< vtkSmartPointer< vtkPolyData > > get_current_meshes_transformed(
-    int index
-)
+std::vector< vtkSmartPointer< vtkPolyData > > get_current_meshes_transformed()
 ```
 
 
@@ -478,7 +454,7 @@ Update the feature range with a given range.
 
 ```cpp
 vtkSmartPointer< vtkTransform > get_transform(
-    std::shared_ptr< Shape > shape,
+    QSharedPointer< Shape > shape,
     int alignment_domain,
     int domain
 )
@@ -490,7 +466,7 @@ Request the transform for a given shape and domain.
 
 ```cpp
 vtkSmartPointer< vtkTransform > get_transform(
-    std::shared_ptr< Shape > shape,
+    QSharedPointer< Shape > shape,
     DisplayMode display_mode,
     int alignment_domain,
     int domain
@@ -516,24 +492,6 @@ std::vector< float > get_opacities()
 ```
 
 Get domain opacities. 
-
-### function set_domain_particle_visibilities
-
-```cpp
-void set_domain_particle_visibilities(
-    std::vector< bool > visibilities
-)
-```
-
-Set the per-domain particle visibilities. 
-
-### function get_domain_particle_visibilities
-
-```cpp
-std::vector< bool > get_domain_particle_visibilities()
-```
-
-Get the per-domain particle visibilities. 
 
 ### function get_current_glyph_size
 
@@ -585,4 +543,4 @@ Return render window size.
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:05 +0000
+Updated on 2022-07-23 at 16:40:07 -0600

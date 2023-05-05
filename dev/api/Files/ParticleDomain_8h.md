@@ -1,9 +1,9 @@
 ---
-title: Libs/Optimize/Domain/ParticleDomain.h
+title: Libs/Optimize/ParticleSystem/ParticleDomain.h
 
 ---
 
-# Libs/Optimize/Domain/ParticleDomain.h
+# Libs/Optimize/ParticleSystem/ParticleDomain.h
 
 
 
@@ -11,7 +11,7 @@ title: Libs/Optimize/Domain/ParticleDomain.h
 
 | Name           |
 | -------------- |
-| **[shapeworks](../Namespaces/namespaceshapeworks.md)** <br>User usage reporting (telemetry)  |
+| **[shapeworks](../Namespaces/namespaceshapeworks.md)**  |
 
 ## Classes
 
@@ -27,8 +27,8 @@ title: Libs/Optimize/Domain/ParticleDomain.h
 ```cpp
 #pragma once
 
+#include "Constraints.h"
 #include "DomainType.h"
-#include "Libs/Optimize/Constraints/Constraints.h"
 #include "itkDataObject.h"
 #include "itkPoint.h"
 #include "vnl/vnl_matrix_fixed.h"
@@ -139,4 +139,4 @@ class ParticleDomain {
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:05 +0000
+Updated on 2022-07-23 at 16:40:07 -0600

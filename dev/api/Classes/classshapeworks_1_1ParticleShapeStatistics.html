@@ -2449,34 +2449,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-computemultilevelanalysisstatistics" class="md-nav__link">
-    function ComputeMultiLevelAnalysisStatistics
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-computeshapedevmodesformca" class="md-nav__link">
-    function ComputeShapeDevModesForMca
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-computerelposemodesformca" class="md-nav__link">
-    function ComputeRelPoseModesForMca
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-setnumberofparticlesarray" class="md-nav__link">
-    function SetNumberOfParticlesArray
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#function-readpointfiles" class="md-nav__link">
     function ReadPointFiles
   </a>
@@ -2507,13 +2479,6 @@
           <li class="md-nav__item">
   <a href="#function-computemodes" class="md-nav__link">
     function ComputeModes
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-get_num_modes" class="md-nav__link">
-    function get_num_modes
   </a>
   
 </li>
@@ -2561,20 +2526,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-numberofobjects" class="md-nav__link">
-    function NumberOfObjects
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-numberofpointsarray" class="md-nav__link">
-    function NumberOfPointsArray
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#function-groupid" class="md-nav__link">
     function GroupID
   </a>
@@ -2598,48 +2549,6 @@
           <li class="md-nav__item">
   <a href="#function-eigenvalues" class="md-nav__link">
     function Eigenvalues
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-eigenvectorsrelpose" class="md-nav__link">
-    function EigenvectorsRelPose
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-eigenvaluesshapedev" class="md-nav__link">
-    function EigenvaluesShapeDev
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-eigenvectorsshapedev" class="md-nav__link">
-    function EigenvectorsShapeDev
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-eigenvaluesrelpose" class="md-nav__link">
-    function EigenvaluesRelPose
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-meanshapedev" class="md-nav__link">
-    function MeanShapeDev
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-meanrelpose" class="md-nav__link">
-    function MeanRelPose
   </a>
   
 </li>
@@ -2770,13 +2679,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#function-matrix" class="md-nav__link">
-    function matrix
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -2846,11 +2748,11 @@
 </tr>
 <tr>
 <td>int</td>
-<td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-dopca">DoPCA</a></strong>(std::vector&lt; std::vector&lt; Point &gt; &gt; global_pts, int domainsPerShape =1)</td>
+<td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-dopca">DoPCA</a></strong>(std::vector&lt; std::vector&lt; Point &gt;&gt; global_pts, int domainsPerShape =1)</td>
 </tr>
 <tr>
 <td>int</td>
-<td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-dopca">DoPCA</a></strong>(<a href="classshapeworks_1_1ParticleSystemEvaluation.html">ParticleSystemEvaluation</a> particleSystem, int domainsPerShape =1)</td>
+<td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-dopca">DoPCA</a></strong>(<a href="classshapeworks_1_1ParticleSystem.html">ParticleSystem</a> particleSystem, int domainsPerShape =1)</td>
 </tr>
 <tr>
 <td></td>
@@ -2859,22 +2761,6 @@
 <tr>
 <td>int</td>
 <td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-importpoints">ImportPoints</a></strong>(std::vector&lt; Eigen::VectorXd &gt; points, std::vector&lt; int &gt; group_ids)<br>Loads a set of point files and pre-computes some statistics.</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-computemultilevelanalysisstatistics">ComputeMultiLevelAnalysisStatistics</a></strong>(std::vector&lt; Eigen::VectorXd &gt; points, unsigned int dps)<br>Loads a set of point files and pre-computes statistics for multi-level analysis.</td>
-</tr>
-<tr>
-<td>int</td>
-<td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-computeshapedevmodesformca">ComputeShapeDevModesForMca</a></strong>()<br>Compute shape variations for MLCA.</td>
-</tr>
-<tr>
-<td>int</td>
-<td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-computerelposemodesformca">ComputeRelPoseModesForMca</a></strong>()<br>Compute pose variations for MLCA.</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-setnumberofparticlesarray">SetNumberOfParticlesArray</a></strong>(const std::vector&lt; int &gt; &amp; num_particles_array)<br>Set number of particles per domain/object (required for multi-level analysis)</td>
 </tr>
 <tr>
 <td>int</td>
@@ -2895,10 +2781,6 @@
 <tr>
 <td>int</td>
 <td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-computemodes">ComputeModes</a></strong>()<br>Computes PCA modes from the set of correspondence mode positions. Requires that ReadPointFiles be called first.</td>
-</tr>
-<tr>
-<td>int</td>
-<td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-get-num-modes">get_num_modes</a></strong>() const<br>Return the number of modes.</td>
 </tr>
 <tr>
 <td>int</td>
@@ -2926,14 +2808,6 @@
 </tr>
 <tr>
 <td>int</td>
-<td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-numberofobjects">NumberOfObjects</a></strong>()<br>Return Number of objects present in Multi-Object <a href="">Shape</a> Structure.</td>
-</tr>
-<tr>
-<td>std::vector&lt; int &gt;</td>
-<td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-numberofpointsarray">NumberOfPointsArray</a></strong>()</td>
-</tr>
-<tr>
-<td>int</td>
 <td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-groupid">GroupID</a></strong>(unsigned int i) const<br>Returns the group ids.</td>
 </tr>
 <tr>
@@ -2947,30 +2821,6 @@
 <tr>
 <td>const std::vector&lt; double &gt; &amp;</td>
 <td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-eigenvalues">Eigenvalues</a></strong>() const</td>
-</tr>
-<tr>
-<td>const Eigen::MatrixXd &amp;</td>
-<td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-eigenvectorsrelpose">EigenvectorsRelPose</a></strong>()<br>Returns the eigenvectors/eigenvalues for morphological and relative pose pariations of MLCA.</td>
-</tr>
-<tr>
-<td>const std::vector&lt; double &gt; &amp;</td>
-<td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-eigenvaluesshapedev">EigenvaluesShapeDev</a></strong>()</td>
-</tr>
-<tr>
-<td>const Eigen::MatrixXd &amp;</td>
-<td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-eigenvectorsshapedev">EigenvectorsShapeDev</a></strong>()</td>
-</tr>
-<tr>
-<td>const std::vector&lt; double &gt; &amp;</td>
-<td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-eigenvaluesrelpose">EigenvaluesRelPose</a></strong>()</td>
-</tr>
-<tr>
-<td>const Eigen::VectorXd &amp;</td>
-<td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-meanshapedev">MeanShapeDev</a></strong>()<br>Returns the mean vector of within and between subspace.</td>
-</tr>
-<tr>
-<td>const Eigen::VectorXd &amp;</td>
-<td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-meanrelpose">MeanRelPose</a></strong>()</td>
 </tr>
 <tr>
 <td>const Eigen::VectorXd &amp;</td>
@@ -3026,27 +2876,23 @@
 </tr>
 <tr>
 <td>Eigen::VectorXd</td>
-<td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-get-compactness">get_compactness</a></strong>(const std::function&lt; void(float)&gt; &amp; progress_callback =nullptr) const</td>
+<td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-get-compactness">get_compactness</a></strong>(std::function&lt; void(float)&gt; progress_callback)</td>
 </tr>
 <tr>
 <td>Eigen::VectorXd</td>
-<td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-get-specificity">get_specificity</a></strong>(const std::function&lt; void(float)&gt; &amp; progress_callback =nullptr) const</td>
+<td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-get-specificity">get_specificity</a></strong>(std::function&lt; void(float)&gt; progress_callback)</td>
 </tr>
 <tr>
 <td>Eigen::VectorXd</td>
-<td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-get-generalization">get_generalization</a></strong>(const std::function&lt; void(float)&gt; &amp; progress_callback =nullptr) const</td>
+<td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-get-generalization">get_generalization</a></strong>(std::function&lt; void(float)&gt; progress_callback)</td>
 </tr>
 <tr>
 <td>Eigen::MatrixXd</td>
-<td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-get-group1-matrix">get_group1_matrix</a></strong>() const</td>
+<td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-get-group1-matrix">get_group1_matrix</a></strong>()</td>
 </tr>
 <tr>
 <td>Eigen::MatrixXd</td>
-<td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-get-group2-matrix">get_group2_matrix</a></strong>() const</td>
-</tr>
-<tr>
-<td>Eigen::MatrixXd &amp;</td>
-<td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-matrix">matrix</a></strong>()</td>
+<td><strong><a href="classshapeworks_1_1ParticleShapeStatistics.html#function-get-group2-matrix">get_group2_matrix</a></strong>()</td>
 </tr>
 </tbody>
 </table>
@@ -3083,13 +2929,13 @@
 </code></pre></div>
 <h3 id="function-dopca">function DoPCA</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">DoPCA</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Point</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">global_pts</span><span class="p">,</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Point</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">global_pts</span><span class="p">,</span>
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domainsPerShape</span><span class="w"> </span><span class="o">=</span><span class="mi">1</span>
 <span class="p">)</span>
 </code></pre></div>
 <h3 id="function-dopca_1">function DoPCA</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">DoPCA</span><span class="p">(</span>
-<span class="w">    </span><span class="n">ParticleSystemEvaluation</span><span class="w"> </span><span class="n">particleSystem</span><span class="p">,</span>
+<span class="w">    </span><span class="n">ParticleSystem</span><span class="w"> </span><span class="n">particleSystem</span><span class="p">,</span>
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domainsPerShape</span><span class="w"> </span><span class="o">=</span><span class="mi">1</span>
 <span class="p">)</span>
 </code></pre></div>
@@ -3108,27 +2954,6 @@
 <span class="p">)</span>
 </code></pre></div>
 <p>Loads a set of point files and pre-computes some statistics. </p>
-<h3 id="function-computemultilevelanalysisstatistics">function ComputeMultiLevelAnalysisStatistics</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">ComputeMultiLevelAnalysisStatistics</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">points</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">dps</span>
-<span class="p">)</span>
-</code></pre></div>
-<p>Loads a set of point files and pre-computes statistics for multi-level analysis. </p>
-<h3 id="function-computeshapedevmodesformca">function ComputeShapeDevModesForMca</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">ComputeShapeDevModesForMca</span><span class="p">()</span>
-</code></pre></div>
-<p>Compute shape variations for MLCA. </p>
-<h3 id="function-computerelposemodesformca">function ComputeRelPoseModesForMca</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">ComputeRelPoseModesForMca</span><span class="p">()</span>
-</code></pre></div>
-<p>Compute pose variations for MLCA. </p>
-<h3 id="function-setnumberofparticlesarray">function SetNumberOfParticlesArray</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetNumberOfParticlesArray</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">num_particles_array</span>
-<span class="p">)</span>
-</code></pre></div>
-<p>Set number of particles per domain/object (required for multi-level analysis) </p>
 <h3 id="function-readpointfiles">function ReadPointFiles</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">ReadPointFiles</span><span class="p">(</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">s</span>
@@ -3154,10 +2979,6 @@
 <div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">ComputeModes</span><span class="p">()</span>
 </code></pre></div>
 <p>Computes PCA modes from the set of correspondence mode positions. Requires that ReadPointFiles be called first. </p>
-<h3 id="function-get_num_modes">function get_num_modes</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_num_modes</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
-<p>Return the number of modes. </p>
 <h3 id="function-principalcomponentprojections">function PrincipalComponentProjections</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">PrincipalComponentProjections</span><span class="p">()</span>
 </code></pre></div>
@@ -3182,13 +3003,6 @@
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">NumberOfDimensions</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>Returns the number of dimensions (this is number of points times Dimension) </p>
-<h3 id="function-numberofobjects">function NumberOfObjects</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">NumberOfObjects</span><span class="p">()</span>
-</code></pre></div>
-<p>Return Number of objects present in Multi-Object <a href="">Shape</a> Structure. </p>
-<h3 id="function-numberofpointsarray">function NumberOfPointsArray</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">NumberOfPointsArray</span><span class="p">()</span>
-</code></pre></div>
 <h3 id="function-groupid">function GroupID</h3>
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">GroupID</span><span class="p">(</span>
 <span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span>
@@ -3204,26 +3018,6 @@
 <p>Returns the eigenvectors/values. </p>
 <h3 id="function-eigenvalues">function Eigenvalues</h3>
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">Eigenvalues</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
-<h3 id="function-eigenvectorsrelpose">function EigenvectorsRelPose</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">EigenvectorsRelPose</span><span class="p">()</span>
-</code></pre></div>
-<p>Returns the eigenvectors/eigenvalues for morphological and relative pose pariations of MLCA. </p>
-<h3 id="function-eigenvaluesshapedev">function EigenvaluesShapeDev</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">EigenvaluesShapeDev</span><span class="p">()</span>
-</code></pre></div>
-<h3 id="function-eigenvectorsshapedev">function EigenvectorsShapeDev</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">EigenvectorsShapeDev</span><span class="p">()</span>
-</code></pre></div>
-<h3 id="function-eigenvaluesrelpose">function EigenvaluesRelPose</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">EigenvaluesRelPose</span><span class="p">()</span>
-</code></pre></div>
-<h3 id="function-meanshapedev">function MeanShapeDev</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">MeanShapeDev</span><span class="p">()</span>
-</code></pre></div>
-<p>Returns the mean vector of within and between subspace. </p>
-<h3 id="function-meanrelpose">function MeanRelPose</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">MeanRelPose</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-mean">function Mean</h3>
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">Mean</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
@@ -3285,34 +3079,31 @@
 <p>Computes a simple linear regression of the first list of values with respect to the second y=a + bx. Returns the estimated parameters a &amp; b. Returns 0 on success and -1 on fail.*/ </p>
 <h3 id="function-get_compactness">function get_compactness</h3>
 <div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">get_compactness</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">void</span><span class="p">(</span><span class="kt">float</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">progress_callback</span><span class="w"> </span><span class="o">=</span><span class="k">nullptr</span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">void</span><span class="p">(</span><span class="kt">float</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="n">progress_callback</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-get_specificity">function get_specificity</h3>
 <div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">get_specificity</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">void</span><span class="p">(</span><span class="kt">float</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">progress_callback</span><span class="w"> </span><span class="o">=</span><span class="k">nullptr</span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">void</span><span class="p">(</span><span class="kt">float</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="n">progress_callback</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-get_generalization">function get_generalization</h3>
 <div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">get_generalization</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">void</span><span class="p">(</span><span class="kt">float</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">progress_callback</span><span class="w"> </span><span class="o">=</span><span class="k">nullptr</span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">void</span><span class="p">(</span><span class="kt">float</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="n">progress_callback</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-get_group1_matrix">function get_group1_matrix</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="n">get_group1_matrix</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+<div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="n">get_group1_matrix</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-get_group2_matrix">function get_group2_matrix</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="n">get_group2_matrix</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
-<h3 id="function-matrix">function matrix</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">matrix</span><span class="p">()</span>
+<div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="n">get_group2_matrix</span><span class="p">()</span>
 </code></pre></div>
 <h2 id="public-attributes-documentation">Public Attributes Documentation</h2>
 <h3 id="variable-vdimension">variable VDimension</h3>
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">constexpr</span><span class="w"> </span><span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">VDimension</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-05-04 at 20:03:04 +0000</p>
+<p>Updated on 2022-07-23 at 16:40:06 -0600</p>
 
               
             </article>

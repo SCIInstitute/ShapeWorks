@@ -123,7 +123,7 @@ virtual bool ApplyConstraints(
 ```
 
 
-**Reimplemented by**: [shapeworks::ContourDomain::ApplyConstraints](../Classes/classshapeworks_1_1ContourDomain.md#function-applyconstraints), [shapeworks::ImplicitSurfaceDomain::ApplyConstraints](../Classes/classshapeworks_1_1ImplicitSurfaceDomain.md#function-applyconstraints), [shapeworks::MeshDomain::ApplyConstraints](../Classes/classshapeworks_1_1MeshDomain.md#function-applyconstraints)
+**Reimplemented by**: [shapeworks::ContourDomain::ApplyConstraints](../Classes/classshapeworks_1_1ContourDomain.md#function-applyconstraints), [shapeworks::MeshDomain::ApplyConstraints](../Classes/classshapeworks_1_1MeshDomain.md#function-applyconstraints), [shapeworks::ParticleImplicitSurfaceDomain::ApplyConstraints](../Classes/classshapeworks_1_1ParticleImplicitSurfaceDomain.md#function-applyconstraints)
 
 
 Apply any constraints to the given point location. This should force the point to a position on the surface that satisfies all constraints. 
@@ -185,7 +185,7 @@ virtual VectorFloatType SampleGradientAtPoint(
 ```
 
 
-**Reimplemented by**: [shapeworks::ImageDomainWithGradients::SampleGradientAtPoint](../Classes/classshapeworks_1_1ImageDomainWithGradients.md#function-samplegradientatpoint), [shapeworks::ContourDomain::SampleGradientAtPoint](../Classes/classshapeworks_1_1ContourDomain.md#function-samplegradientatpoint), [shapeworks::MeshDomain::SampleGradientAtPoint](../Classes/classshapeworks_1_1MeshDomain.md#function-samplegradientatpoint)
+**Reimplemented by**: [shapeworks::ParticleImageDomainWithGradients::SampleGradientAtPoint](../Classes/classshapeworks_1_1ParticleImageDomainWithGradients.md#function-samplegradientatpoint), [shapeworks::ContourDomain::SampleGradientAtPoint](../Classes/classshapeworks_1_1ContourDomain.md#function-samplegradientatpoint), [shapeworks::MeshDomain::SampleGradientAtPoint](../Classes/classshapeworks_1_1MeshDomain.md#function-samplegradientatpoint)
 
 
 ### function SampleNormalAtPoint
@@ -198,7 +198,7 @@ virtual VectorFloatType SampleNormalAtPoint(
 ```
 
 
-**Reimplemented by**: [shapeworks::ImageDomainWithGradients::SampleNormalAtPoint](../Classes/classshapeworks_1_1ImageDomainWithGradients.md#function-samplenormalatpoint), [shapeworks::ContourDomain::SampleNormalAtPoint](../Classes/classshapeworks_1_1ContourDomain.md#function-samplenormalatpoint), [shapeworks::MeshDomain::SampleNormalAtPoint](../Classes/classshapeworks_1_1MeshDomain.md#function-samplenormalatpoint)
+**Reimplemented by**: [shapeworks::ParticleImageDomainWithGradients::SampleNormalAtPoint](../Classes/classshapeworks_1_1ParticleImageDomainWithGradients.md#function-samplenormalatpoint), [shapeworks::ContourDomain::SampleNormalAtPoint](../Classes/classshapeworks_1_1ContourDomain.md#function-samplenormalatpoint), [shapeworks::MeshDomain::SampleNormalAtPoint](../Classes/classshapeworks_1_1MeshDomain.md#function-samplenormalatpoint)
 
 
 ### function SampleGradNAtPoint
@@ -211,7 +211,7 @@ virtual GradNType SampleGradNAtPoint(
 ```
 
 
-**Reimplemented by**: [shapeworks::ContourDomain::SampleGradNAtPoint](../Classes/classshapeworks_1_1ContourDomain.md#function-samplegradnatpoint), [shapeworks::ImageDomainWithGradN::SampleGradNAtPoint](../Classes/classshapeworks_1_1ImageDomainWithGradN.md#function-samplegradnatpoint), [shapeworks::MeshDomain::SampleGradNAtPoint](../Classes/classshapeworks_1_1MeshDomain.md#function-samplegradnatpoint)
+**Reimplemented by**: [shapeworks::ContourDomain::SampleGradNAtPoint](../Classes/classshapeworks_1_1ContourDomain.md#function-samplegradnatpoint), [shapeworks::MeshDomain::SampleGradNAtPoint](../Classes/classshapeworks_1_1MeshDomain.md#function-samplegradnatpoint), [shapeworks::ParticleImageDomainWithGradN::SampleGradNAtPoint](../Classes/classshapeworks_1_1ParticleImageDomainWithGradN.md#function-samplegradnatpoint)
 
 
 ### function Distance
@@ -281,10 +281,10 @@ virtual double GetCurvature(
 ```
 
 
-**Reimplemented by**: [shapeworks::ContourDomain::GetCurvature](../Classes/classshapeworks_1_1ContourDomain.md#function-getcurvature), [shapeworks::ImageDomainWithCurvature::GetCurvature](../Classes/classshapeworks_1_1ImageDomainWithCurvature.md#function-getcurvature), [shapeworks::MeshDomain::GetCurvature](../Classes/classshapeworks_1_1MeshDomain.md#function-getcurvature)
+**Reimplemented by**: [shapeworks::ContourDomain::GetCurvature](../Classes/classshapeworks_1_1ContourDomain.md#function-getcurvature), [shapeworks::MeshDomain::GetCurvature](../Classes/classshapeworks_1_1MeshDomain.md#function-getcurvature), [shapeworks::ParticleImageDomainWithCurvature::GetCurvature](../Classes/classshapeworks_1_1ParticleImageDomainWithCurvature.md#function-getcurvature)
 
 
-Used in [ParticleMeanCurvatureAttribute](../Classes/classParticleMeanCurvatureAttribute.md)
+Used in ParticleMeanCurvatureAttribute 
 
 
 ### function GetSurfaceMeanCurvature
@@ -294,10 +294,10 @@ virtual double GetSurfaceMeanCurvature() const =0
 ```
 
 
-**Reimplemented by**: [shapeworks::ContourDomain::GetSurfaceMeanCurvature](../Classes/classshapeworks_1_1ContourDomain.md#function-getsurfacemeancurvature), [shapeworks::ImageDomainWithCurvature::GetSurfaceMeanCurvature](../Classes/classshapeworks_1_1ImageDomainWithCurvature.md#function-getsurfacemeancurvature), [shapeworks::MeshDomain::GetSurfaceMeanCurvature](../Classes/classshapeworks_1_1MeshDomain.md#function-getsurfacemeancurvature)
+**Reimplemented by**: [shapeworks::ContourDomain::GetSurfaceMeanCurvature](../Classes/classshapeworks_1_1ContourDomain.md#function-getsurfacemeancurvature), [shapeworks::MeshDomain::GetSurfaceMeanCurvature](../Classes/classshapeworks_1_1MeshDomain.md#function-getsurfacemeancurvature), [shapeworks::ParticleImageDomainWithCurvature::GetSurfaceMeanCurvature](../Classes/classshapeworks_1_1ParticleImageDomainWithCurvature.md#function-getsurfacemeancurvature)
 
 
-Used in [ParticleMeanCurvatureAttribute](../Classes/classParticleMeanCurvatureAttribute.md)
+Used in ParticleMeanCurvatureAttribute 
 
 
 ### function GetSurfaceStdDevCurvature
@@ -307,10 +307,10 @@ virtual double GetSurfaceStdDevCurvature() const =0
 ```
 
 
-**Reimplemented by**: [shapeworks::ContourDomain::GetSurfaceStdDevCurvature](../Classes/classshapeworks_1_1ContourDomain.md#function-getsurfacestddevcurvature), [shapeworks::ImageDomainWithCurvature::GetSurfaceStdDevCurvature](../Classes/classshapeworks_1_1ImageDomainWithCurvature.md#function-getsurfacestddevcurvature), [shapeworks::MeshDomain::GetSurfaceStdDevCurvature](../Classes/classshapeworks_1_1MeshDomain.md#function-getsurfacestddevcurvature)
+**Reimplemented by**: [shapeworks::ContourDomain::GetSurfaceStdDevCurvature](../Classes/classshapeworks_1_1ContourDomain.md#function-getsurfacestddevcurvature), [shapeworks::MeshDomain::GetSurfaceStdDevCurvature](../Classes/classshapeworks_1_1MeshDomain.md#function-getsurfacestddevcurvature), [shapeworks::ParticleImageDomainWithCurvature::GetSurfaceStdDevCurvature](../Classes/classshapeworks_1_1ParticleImageDomainWithCurvature.md#function-getsurfacestddevcurvature)
 
 
-Used in [ParticleMeanCurvatureAttribute](../Classes/classParticleMeanCurvatureAttribute.md)
+Used in ParticleMeanCurvatureAttribute 
 
 
 ### function GetLowerBound
@@ -323,7 +323,7 @@ virtual const PointType & GetLowerBound() const =0
 **Reimplemented by**: [shapeworks::ParticleRegionDomain::GetLowerBound](../Classes/classshapeworks_1_1ParticleRegionDomain.md#function-getlowerbound), [shapeworks::ContourDomain::GetLowerBound](../Classes/classshapeworks_1_1ContourDomain.md#function-getlowerbound), [shapeworks::MeshDomain::GetLowerBound](../Classes/classshapeworks_1_1MeshDomain.md#function-getlowerbound)
 
 
-Gets the minimum x, y, z values of the bounding box for the domain. This is used for setting up the [PowerOfTwoPointTree](../Classes/classshapeworks_1_1PowerOfTwoPointTree.md). 
+Gets the minimum x, y, z values of the bounding box for the domain. This is used for setting up the PowerOfTwoPointTree. 
 
 
 ### function GetUpperBound
@@ -336,7 +336,7 @@ virtual const PointType & GetUpperBound() const =0
 **Reimplemented by**: [shapeworks::ParticleRegionDomain::GetUpperBound](../Classes/classshapeworks_1_1ParticleRegionDomain.md#function-getupperbound), [shapeworks::ContourDomain::GetUpperBound](../Classes/classshapeworks_1_1ContourDomain.md#function-getupperbound), [shapeworks::MeshDomain::GetUpperBound](../Classes/classshapeworks_1_1MeshDomain.md#function-getupperbound)
 
 
-Gets the maximum x, y, z values of the bounding box for the domain. This is used for setting up the [PowerOfTwoPointTree](../Classes/classshapeworks_1_1PowerOfTwoPointTree.md). 
+Gets the maximum x, y, z values of the bounding box for the domain. This is used for setting up the PowerOfTwoPointTree. 
 
 
 ### function GetZeroCrossingPoint
@@ -346,7 +346,7 @@ virtual PointType GetZeroCrossingPoint() const =0
 ```
 
 
-**Reimplemented by**: [shapeworks::ContourDomain::GetZeroCrossingPoint](../Classes/classshapeworks_1_1ContourDomain.md#function-getzerocrossingpoint), [shapeworks::ImplicitSurfaceDomain::GetZeroCrossingPoint](../Classes/classshapeworks_1_1ImplicitSurfaceDomain.md#function-getzerocrossingpoint), [shapeworks::MeshDomain::GetZeroCrossingPoint](../Classes/classshapeworks_1_1MeshDomain.md#function-getzerocrossingpoint)
+**Reimplemented by**: [shapeworks::ContourDomain::GetZeroCrossingPoint](../Classes/classshapeworks_1_1ContourDomain.md#function-getzerocrossingpoint), [shapeworks::MeshDomain::GetZeroCrossingPoint](../Classes/classshapeworks_1_1MeshDomain.md#function-getzerocrossingpoint), [shapeworks::ParticleImplicitSurfaceDomain::GetZeroCrossingPoint](../Classes/classshapeworks_1_1ParticleImplicitSurfaceDomain.md#function-getzerocrossingpoint)
 
 
 Get any valid point on the domain. This is used to place the first particle. 
@@ -359,7 +359,7 @@ virtual double GetSurfaceArea() const =0
 ```
 
 
-**Reimplemented by**: [shapeworks::ContourDomain::GetSurfaceArea](../Classes/classshapeworks_1_1ContourDomain.md#function-getsurfacearea), [shapeworks::ImageDomain::GetSurfaceArea](../Classes/classshapeworks_1_1ImageDomain.md#function-getsurfacearea), [shapeworks::MeshDomain::GetSurfaceArea](../Classes/classshapeworks_1_1MeshDomain.md#function-getsurfacearea)
+**Reimplemented by**: [shapeworks::ContourDomain::GetSurfaceArea](../Classes/classshapeworks_1_1ContourDomain.md#function-getsurfacearea), [shapeworks::MeshDomain::GetSurfaceArea](../Classes/classshapeworks_1_1MeshDomain.md#function-getsurfacearea), [shapeworks::ParticleImageDomain::GetSurfaceArea](../Classes/classshapeworks_1_1ParticleImageDomain.md#function-getsurfacearea)
 
 
 Use for neighborhood radius. 
@@ -374,7 +374,7 @@ virtual PointType GetValidLocationNear(
 ```
 
 
-**Reimplemented by**: [shapeworks::ContourDomain::GetValidLocationNear](../Classes/classshapeworks_1_1ContourDomain.md#function-getvalidlocationnear), [shapeworks::ImageDomain::GetValidLocationNear](../Classes/classshapeworks_1_1ImageDomain.md#function-getvalidlocationnear), [shapeworks::MeshDomain::GetValidLocationNear](../Classes/classshapeworks_1_1MeshDomain.md#function-getvalidlocationnear)
+**Reimplemented by**: [shapeworks::ContourDomain::GetValidLocationNear](../Classes/classshapeworks_1_1ContourDomain.md#function-getvalidlocationnear), [shapeworks::MeshDomain::GetValidLocationNear](../Classes/classshapeworks_1_1MeshDomain.md#function-getvalidlocationnear), [shapeworks::ParticleImageDomain::GetValidLocationNear](../Classes/classshapeworks_1_1ParticleImageDomain.md#function-getvalidlocationnear)
 
 
 GetValidLocation returns a PointType location on the surface. Used for placing the first particle. 
@@ -387,7 +387,7 @@ virtual double GetMaxDiameter() const =0
 ```
 
 
-**Reimplemented by**: [shapeworks::ContourDomain::GetMaxDiameter](../Classes/classshapeworks_1_1ContourDomain.md#function-getmaxdiameter), [shapeworks::ImageDomain::GetMaxDiameter](../Classes/classshapeworks_1_1ImageDomain.md#function-getmaxdiameter), [shapeworks::MeshDomain::GetMaxDiameter](../Classes/classshapeworks_1_1MeshDomain.md#function-getmaxdiameter)
+**Reimplemented by**: [shapeworks::ContourDomain::GetMaxDiameter](../Classes/classshapeworks_1_1ContourDomain.md#function-getmaxdiameter), [shapeworks::MeshDomain::GetMaxDiameter](../Classes/classshapeworks_1_1MeshDomain.md#function-getmaxdiameter), [shapeworks::ParticleImageDomain::GetMaxDiameter](../Classes/classshapeworks_1_1ParticleImageDomain.md#function-getmaxdiameter)
 
 
 GetMaxDiameter returns the maximum diameter of the domain and is used for computing sigma 
@@ -400,7 +400,7 @@ virtual void DeleteImages() =0
 ```
 
 
-**Reimplemented by**: [shapeworks::ContourDomain::DeleteImages](../Classes/classshapeworks_1_1ContourDomain.md#function-deleteimages), [shapeworks::ImageDomain::DeleteImages](../Classes/classshapeworks_1_1ImageDomain.md#function-deleteimages), [shapeworks::ImageDomainWithGradients::DeleteImages](../Classes/classshapeworks_1_1ImageDomainWithGradients.md#function-deleteimages), [shapeworks::ImageDomainWithGradN::DeleteImages](../Classes/classshapeworks_1_1ImageDomainWithGradN.md#function-deleteimages), [shapeworks::MeshDomain::DeleteImages](../Classes/classshapeworks_1_1MeshDomain.md#function-deleteimages)
+**Reimplemented by**: [shapeworks::ContourDomain::DeleteImages](../Classes/classshapeworks_1_1ContourDomain.md#function-deleteimages), [shapeworks::MeshDomain::DeleteImages](../Classes/classshapeworks_1_1MeshDomain.md#function-deleteimages), [shapeworks::ParticleImageDomain::DeleteImages](../Classes/classshapeworks_1_1ParticleImageDomain.md#function-deleteimages), [shapeworks::ParticleImageDomainWithGradients::DeleteImages](../Classes/classshapeworks_1_1ParticleImageDomainWithGradients.md#function-deleteimages), [shapeworks::ParticleImageDomainWithGradN::DeleteImages](../Classes/classshapeworks_1_1ParticleImageDomainWithGradN.md#function-deleteimages)
 
 
 ### function DeletePartialDerivativeImages
@@ -410,7 +410,7 @@ virtual void DeletePartialDerivativeImages() =0
 ```
 
 
-**Reimplemented by**: [shapeworks::ContourDomain::DeletePartialDerivativeImages](../Classes/classshapeworks_1_1ContourDomain.md#function-deletepartialderivativeimages), [shapeworks::ImageDomainWithGradN::DeletePartialDerivativeImages](../Classes/classshapeworks_1_1ImageDomainWithGradN.md#function-deletepartialderivativeimages), [shapeworks::MeshDomain::DeletePartialDerivativeImages](../Classes/classshapeworks_1_1MeshDomain.md#function-deletepartialderivativeimages)
+**Reimplemented by**: [shapeworks::ContourDomain::DeletePartialDerivativeImages](../Classes/classshapeworks_1_1ContourDomain.md#function-deletepartialderivativeimages), [shapeworks::MeshDomain::DeletePartialDerivativeImages](../Classes/classshapeworks_1_1MeshDomain.md#function-deletepartialderivativeimages), [shapeworks::ParticleImageDomainWithGradN::DeletePartialDerivativeImages](../Classes/classshapeworks_1_1ParticleImageDomainWithGradN.md#function-deletepartialderivativeimages)
 
 
 ### function UpdateZeroCrossingPoint
@@ -420,7 +420,7 @@ virtual void UpdateZeroCrossingPoint() =0
 ```
 
 
-**Reimplemented by**: [shapeworks::ContourDomain::UpdateZeroCrossingPoint](../Classes/classshapeworks_1_1ContourDomain.md#function-updatezerocrossingpoint), [shapeworks::ImageDomain::UpdateZeroCrossingPoint](../Classes/classshapeworks_1_1ImageDomain.md#function-updatezerocrossingpoint), [shapeworks::MeshDomain::UpdateZeroCrossingPoint](../Classes/classshapeworks_1_1MeshDomain.md#function-updatezerocrossingpoint)
+**Reimplemented by**: [shapeworks::ContourDomain::UpdateZeroCrossingPoint](../Classes/classshapeworks_1_1ContourDomain.md#function-updatezerocrossingpoint), [shapeworks::MeshDomain::UpdateZeroCrossingPoint](../Classes/classshapeworks_1_1MeshDomain.md#function-updatezerocrossingpoint), [shapeworks::ParticleImageDomain::UpdateZeroCrossingPoint](../Classes/classshapeworks_1_1ParticleImageDomain.md#function-updatezerocrossingpoint)
 
 
 ### function IsDomainFixed
@@ -437,7 +437,7 @@ virtual shapeworks::DomainType GetDomainType() const =0
 ```
 
 
-**Reimplemented by**: [shapeworks::ContourDomain::GetDomainType](../Classes/classshapeworks_1_1ContourDomain.md#function-getdomaintype), [shapeworks::ImplicitSurfaceDomain::GetDomainType](../Classes/classshapeworks_1_1ImplicitSurfaceDomain.md#function-getdomaintype), [shapeworks::MeshDomain::GetDomainType](../Classes/classshapeworks_1_1MeshDomain.md#function-getdomaintype)
+**Reimplemented by**: [shapeworks::ContourDomain::GetDomainType](../Classes/classshapeworks_1_1ContourDomain.md#function-getdomaintype), [shapeworks::MeshDomain::GetDomainType](../Classes/classshapeworks_1_1MeshDomain.md#function-getdomaintype), [shapeworks::ParticleImplicitSurfaceDomain::GetDomainType](../Classes/classshapeworks_1_1ParticleImplicitSurfaceDomain.md#function-getdomaintype)
 
 
 ### function GetConstraints
@@ -528,4 +528,4 @@ std::shared_ptr< shapeworks::Constraints > constraints;
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:04 +0000
+Updated on 2022-07-23 at 16:40:06 -0600

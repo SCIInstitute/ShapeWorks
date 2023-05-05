@@ -1,9 +1,9 @@
 ---
-title: Studio/Data/Session.h
+title: Studio/src/Data/Session.h
 
 ---
 
-# Studio/Data/Session.h
+# Studio/src/Data/Session.h
 
 
 
@@ -11,7 +11,7 @@ title: Studio/Data/Session.h
 
 | Name           |
 | -------------- |
-| **[shapeworks](../Namespaces/namespaceshapeworks.md)** <br>User usage reporting (telemetry)  |
+| **[shapeworks](../Namespaces/namespaceshapeworks.md)**  |
 
 ## Classes
 
@@ -28,19 +28,19 @@ title: Studio/Data/Session.h
 ```cpp
 #pragma once
 
-#include <Analyze/Particles.h>
+#include <Data/StudioEnums.h>
+#include <Data/MeshManager.h>
 #include <Data/Preferences.h>
-#include <MeshManager.h>
-#include <Particles/ParticleSystemEvaluation.h>
-#include <Project/Project.h>
+#include <Data/StudioParticles.h>
+#include <Libs/Particles/ParticleSystem.h>
+#include <Libs/Project/Project.h>
 #include <Shapeworks.h>
-#include <StudioEnums.h>
 #include <Visualization/Viewer.h>
 #include <itkMatrixOffsetTransformBase.h>
 
 #include <QSharedPointer>
 #include <QVector>
-//#include <cstdlib>
+#include <cstdlib>
 #include <map>
 #include <string>
 #include <vector>
@@ -54,7 +54,6 @@ class CompareSettings {
   bool original_checked_ = false;
   bool groomed_checked_ = false;
   bool reconstructed_checked_ = false;
-  bool mean_shape_checked_ = false;
   float opacity_ = 1.0;
   DisplayMode get_display_mode() {
     if (original_checked_) {
@@ -64,9 +63,6 @@ class CompareSettings {
     } else {
       return DisplayMode::Reconstructed;
     }
-  }
-  bool get_mean_shape_checked() {
-    return mean_shape_checked_;
   }
 };
 
@@ -106,11 +102,11 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
 
   bool load_point_files(std::vector<std::string> local, std::vector<std::string> world, int domains_per_shape);
 
-  bool update_particles(std::vector<Particles> particles);
+  bool update_particles(std::vector<StudioParticles> particles);
 
   int get_num_particles();
 
-  ParticleSystemEvaluation get_local_particle_system(int domain);
+  ParticleSystem get_local_particle_system(int domain);
 
   void update_procrustes_transforms(std::vector<std::vector<std::vector<double>>> transforms);
 
@@ -120,7 +116,7 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
 
   void remove_shapes(QList<int> list);
 
-  ShapeList get_shapes();
+  QVector<QSharedPointer<Shape>> get_shapes();
 
   void calculate_reconstructed_samples();
 
@@ -140,7 +136,7 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
 
   static bool is_supported_file_format(std::string filename);
 
-  std::shared_ptr<MeshManager> get_mesh_manager() { return this->mesh_manager_; }
+  QSharedPointer<MeshManager> get_mesh_manager() { return this->mesh_manager_; }
 
   shapeworks::Parameters& parameters();
 
@@ -235,16 +231,13 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   void set_good_bad_particles(const std::vector<bool>& good_bad);
 
   // for setting difference to mean, etc
-  void set_difference_particles(Particles particles) { difference_particles_ = particles; }
-  Particles get_difference_particles() { return difference_particles_; }
+  void set_difference_particles(StudioParticles particles) { difference_particles_ = particles; }
+  StudioParticles get_difference_particles() { return difference_particles_; }
 
   void set_compare_settings(CompareSettings settings);
   CompareSettings get_compare_settings();
 
-
   void trigger_repaint();
-
-  void trigger_reinsert_shapes();
 
   void set_display_mode(DisplayMode mode);
 
@@ -258,9 +251,10 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
 
   void handle_clear_cache();
   void handle_new_mesh();
+  void handle_message(QString s);
   void handle_thread_complete();
 
-  Q_SIGNALS:
+ signals:
   void data_changed();
   void points_changed();
   void landmarks_changed();
@@ -268,12 +262,13 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   void ffc_changed();
   void update_display();
   void new_mesh();
+  void message(QString);
+  void error(QString);
   void feature_range_changed();
   void update_view_mode();
   void image_slice_settings_changed();
   void ffc_paint_mode_changed();
   void repaint();
-  void reinsert_shapes();
 
  public:
   // constants
@@ -284,6 +279,7 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   const static std::string DEEPSSM_C;
 
  private:
+  void save_particles_file(std::string filename, const Eigen::VectorXd& points);
 
   void renumber_shapes();
 
@@ -297,11 +293,13 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
 
   QString filename_;
 
-  ShapeList shapes_;
+  QString project_path_;
 
-  Particles difference_particles_;
+  QVector<QSharedPointer<Shape>> shapes_;
 
-  std::shared_ptr<MeshManager> mesh_manager_;
+  StudioParticles difference_particles_;
+
+  QSharedPointer<MeshManager> mesh_manager_;
 
   bool groups_available_{false};
   bool is_light_project_{false};
@@ -324,7 +322,7 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
 
   bool ffc_painting_active_ = false;
   bool ffc_painting_inclusive_mode_ = false;
-  double ffc_paint_size_ = 50;
+  double ffc_paint_size = 50;
 
   bool is_loading_ = false;
   CompareSettings compare_settings_;
@@ -336,4 +334,4 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:05 +0000
+Updated on 2022-07-23 at 16:40:07 -0600

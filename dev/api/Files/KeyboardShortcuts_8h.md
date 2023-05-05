@@ -1,9 +1,9 @@
 ---
-title: Studio/Interface/KeyboardShortcuts.h
+title: Studio/src/Interface/KeyboardShortcuts.h
 
 ---
 
-# Studio/Interface/KeyboardShortcuts.h
+# Studio/src/Interface/KeyboardShortcuts.h
 
 
 
@@ -11,7 +11,7 @@ title: Studio/Interface/KeyboardShortcuts.h
 
 | Name           |
 | -------------- |
-| **[shapeworks](../Namespaces/namespaceshapeworks.md)** <br>User usage reporting (telemetry)  |
+| **[shapeworks](../Namespaces/namespaceshapeworks.md)**  |
 
 ## Classes
 
@@ -55,4 +55,4 @@ private:
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:05 +0000
+Updated on 2022-07-23 at 16:40:07 -0600

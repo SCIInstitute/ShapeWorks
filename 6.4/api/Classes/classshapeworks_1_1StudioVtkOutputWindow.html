@@ -2371,9 +2371,43 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#public-signals" class="md-nav__link">
+    Public Signals
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#public-functions" class="md-nav__link">
     Public Functions
   </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#public-signals-documentation" class="md-nav__link">
+    Public Signals Documentation
+  </a>
+  
+    <nav class="md-nav" aria-label="Public Signals Documentation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#signal-warning" class="md-nav__link">
+    signal warning
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#signal-error" class="md-nav__link">
+    signal error
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -2420,20 +2454,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#function-displaygenericwarningtext" class="md-nav__link">
-    function DisplayGenericWarningText
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-displaydebugtext" class="md-nav__link">
-    function DisplayDebugText
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -2461,6 +2481,25 @@
 <p>Implementation of vtkOutputWindow to capture and display VTK error messages. </p>
 <p><code>#include &lt;StudioVtkOutputWindow.h&gt;</code></p>
 <p>Inherits from QObject, vtkOutputWindow</p>
+<h2 id="public-signals">Public Signals</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1StudioVtkOutputWindow.html#signal-warning">warning</a></strong>(QString message)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1StudioVtkOutputWindow.html#signal-error">error</a></strong>(QString message)</td>
+</tr>
+</tbody>
+</table>
 <h2 id="public-functions">Public Functions</h2>
 <table>
 <thead>
@@ -2490,16 +2529,19 @@
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1StudioVtkOutputWindow.html#function-displaywarningtext">DisplayWarningText</a></strong>(const char * text) override</td>
 </tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1StudioVtkOutputWindow.html#function-displaygenericwarningtext">DisplayGenericWarningText</a></strong>(const char * text) override</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1StudioVtkOutputWindow.html#function-displaydebugtext">DisplayDebugText</a></strong>(const char * text) override</td>
-</tr>
 </tbody>
 </table>
+<h2 id="public-signals-documentation">Public Signals Documentation</h2>
+<h3 id="signal-warning">signal warning</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">warning</span><span class="p">(</span>
+<span class="w">    </span><span class="n">QString</span><span class="w"> </span><span class="n">message</span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="signal-error">signal error</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">error</span><span class="p">(</span>
+<span class="w">    </span><span class="n">QString</span><span class="w"> </span><span class="n">message</span>
+<span class="p">)</span>
+</code></pre></div>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-new">function New</h3>
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="n">StudioVtkOutputWindow</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">New</span><span class="p">()</span>
@@ -2523,18 +2565,8 @@
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">text</span>
 <span class="p">)</span><span class="w"> </span><span class="k">override</span>
 </code></pre></div>
-<h3 id="function-displaygenericwarningtext">function DisplayGenericWarningText</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">DisplayGenericWarningText</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">text</span>
-<span class="p">)</span><span class="w"> </span><span class="k">override</span>
-</code></pre></div>
-<h3 id="function-displaydebugtext">function DisplayDebugText</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">DisplayDebugText</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">text</span>
-<span class="p">)</span><span class="w"> </span><span class="k">override</span>
-</code></pre></div>
 <hr />
-<p>Updated on 2023-05-04 at 20:03:05 +0000</p>
+<p>Updated on 2022-07-23 at 16:40:07 -0600</p>
 
               
             </article>

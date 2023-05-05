@@ -2419,7 +2419,7 @@
 </thead>
 <tbody>
 <tr>
-<td><strong><a href="../Namespaces/namespaceshapeworks.html">shapeworks</a></strong> <br>User usage reporting (telemetry)</td>
+<td><strong><a href="../Namespaces/namespaceshapeworks.html">shapeworks</a></strong></td>
 </tr>
 </tbody>
 </table>
@@ -2441,7 +2441,7 @@
 <h2 id="source-code">Source code</h2>
 <div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Project/Project.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Libs/Project/Project.h&gt;</span>
 
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;functional&gt;</span>
 
@@ -2535,16 +2535,6 @@
 
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">is_subject_fixed</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Subject</span><span class="o">&gt;</span><span class="w"> </span><span class="n">subject</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">get_checkpoint_interval</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_checkpoint_interval</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">iterations</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_save_init_splits</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_save_init_splits</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">get_keep_checkpoints</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">set_keep_checkpoints</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span><span class="p">);</span>
-
-
 <span class="w"> </span><span class="k">private</span><span class="o">:</span>
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">get_output_prefix</span><span class="p">();</span>
 
@@ -2559,7 +2549,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-05-04 at 20:03:05 +0000</p>
+<p>Updated on 2022-07-23 at 16:40:07 -0600</p>
 
               
             </article>

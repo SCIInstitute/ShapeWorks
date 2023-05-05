@@ -19,7 +19,7 @@
     
     
       
-        <title>Studio/Interface/ShapeWorksStudioApp.h - ShapeWorks</title>
+        <title>Studio/src/Interface/ShapeWorksStudioApp.h - ShapeWorks</title>
       
     
     
@@ -84,7 +84,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#studiointerfaceshapeworksstudioapph" class="md-skip">
+        <a href="#studiosrcinterfaceshapeworksstudioapph" class="md-skip">
           Skip to content
         </a>
       
@@ -122,7 +122,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Studio/Interface/ShapeWorksStudioApp.h
+              Studio/src/Interface/ShapeWorksStudioApp.h
             
           </span>
         </div>
@@ -2409,7 +2409,7 @@
 
 
 
-<h1 id="studiointerfaceshapeworksstudioapph">Studio/Interface/ShapeWorksStudioApp.h</h1>
+<h1 id="studiosrcinterfaceshapeworksstudioapph">Studio/src/Interface/ShapeWorksStudioApp.h</h1>
 <h2 id="namespaces">Namespaces</h2>
 <table>
 <thead>
@@ -2419,7 +2419,7 @@
 </thead>
 <tbody>
 <tr>
-<td><strong><a href="../Namespaces/namespaceshapeworks.html">shapeworks</a></strong> <br>User usage reporting (telemetry)</td>
+<td><strong><a href="../Namespaces/namespaceshapeworks.html">shapeworks</a></strong></td>
 </tr>
 </tbody>
 </table>
@@ -2442,14 +2442,10 @@
 <div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
 
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/PreferencesWindow.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Data/Telemetry.h&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Interface/LogWindow.h&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Visualization/StudioVtkOutputWindow.h&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkPolyData.h&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vtkSmartPointer.h&gt;</span>
-
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Interface/StudioLogger.h&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Interface/UpdateChecker.h&gt;</span>
 
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Eigen/Eigen&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QActionGroup&gt;</span>
@@ -2461,9 +2457,9 @@
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QMainWindow&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QPointer&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QProgressBar&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QSlider&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QSpinBox&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;QTimer&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Interface/CustomSlider.h&gt;</span>
 
 <span class="c1">// Forward Qt class declarations</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Ui_ShapeWorksStudioApp</span><span class="p">;</span>
@@ -2482,7 +2478,6 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">StatusBarWidget</span><span class="p">;</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">PythonWorker</span><span class="p">;</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">CompareWidget</span><span class="p">;</span>
-
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">ShapeWorksStudioApp</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">QMainWindow</span><span class="w"> </span><span class="p">{</span>
@@ -2504,12 +2499,9 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_action_open_project_triggered</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_action_show_project_folder_triggered</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">on_action_save_project_triggered</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">save_project_as</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">type</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">save_as_swproj_clicked</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">save_as_xlsx_clicked</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">on_action_save_project_as_triggered</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_action_quit_triggered</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_action_import_triggered</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">splash_screen_closed</span><span class="p">();</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_vertical_scroll_bar_valueChanged</span><span class="p">();</span>
 
@@ -2524,7 +2516,7 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_actionExport_Eigenvectors_triggered</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_actionExport_PCA_Mode_Points_triggered</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_action_preferences_triggered</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">action_export_current_mesh_triggered</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">index</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_action_export_current_mesh_triggered</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_action_export_current_particles_triggered</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_action_export_mesh_scalars_triggered</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_action_export_pca_scores_triggered</span><span class="p">();</span>
@@ -2540,8 +2532,6 @@
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_pca_changed</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_slider_update</span><span class="p">();</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_mca_changed</span><span class="p">();</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_project_changed</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_points_changed</span><span class="p">();</span>
@@ -2561,30 +2551,21 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_color_scheme</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_pca_update</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">clear_message</span><span class="p">();</span>
-
-<span class="w">  </span><span class="c1">// callbacks from logger</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_message</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">str</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_error</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">str</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_warning</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">str</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_debug</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">str</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_status</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">str</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_progress_with_message</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">amt</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">str</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_message</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">str</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_status</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">str</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_error</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">str</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_warning</span><span class="p">(</span><span class="n">QString</span><span class="w"> </span><span class="n">str</span><span class="p">);</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_progress</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">amt</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">message_callback</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">str</span><span class="p">);</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_new_mesh</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_clear_cache</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_compare_settings_changed</span><span class="p">();</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">handle_lightbox_right_click</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">index</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_feature_map_selection</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">index</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_feature_map_selection</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">QString</span><span class="o">&amp;</span><span class="w"> </span><span class="n">feature_map</span><span class="p">);</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_feature_map_scale</span><span class="p">();</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">image_combo_changed</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">index</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">image_combo_changed</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">QString</span><span class="o">&amp;</span><span class="w"> </span><span class="n">image_name</span><span class="p">);</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">show_splash_screen</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">hide_splash_screen</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">about</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">keyboard_shortcuts</span><span class="p">();</span>
 
@@ -2632,7 +2613,7 @@
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_display</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">force</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">display_mode_shape</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">compute_mode_shape</span><span class="p">();</span>
 
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">set_feature_map</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">feature_map</span><span class="p">);</span>
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">get_feature_map</span><span class="p">();</span>
@@ -2676,19 +2657,17 @@
 <span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">WheelEventForwarder</span><span class="o">&gt;</span><span class="w"> </span><span class="n">wheel_event_forwarder_</span><span class="p">;</span>
 
 <span class="w">  </span><span class="c1">// programmatic UI elements</span>
-<span class="w">  </span><span class="n">CustomSlider</span><span class="o">*</span><span class="w"> </span><span class="n">glyph_size_slider_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">CustomSlider</span><span class="o">*</span><span class="w"> </span><span class="n">glyph_quality_slider_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">QSlider</span><span class="o">*</span><span class="w"> </span><span class="n">glyph_size_slider_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">QSlider</span><span class="o">*</span><span class="w"> </span><span class="n">glyph_quality_slider_</span><span class="p">;</span>
 <span class="w">  </span><span class="n">QLabel</span><span class="o">*</span><span class="w"> </span><span class="n">glyph_size_label_</span><span class="p">;</span>
 <span class="w">  </span><span class="n">QLabel</span><span class="o">*</span><span class="w"> </span><span class="n">glyph_quality_label_</span><span class="p">;</span>
 <span class="w">  </span><span class="n">QCheckBox</span><span class="o">*</span><span class="w"> </span><span class="n">glyph_auto_size_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">QCheckBox</span><span class="o">*</span><span class="w"> </span><span class="n">glyph_arrow_scale_</span><span class="p">{</span><span class="k">nullptr</span><span class="p">};</span>
 <span class="w">  </span><span class="n">QList</span><span class="o">&lt;</span><span class="n">QAction</span><span class="o">*&gt;</span><span class="w"> </span><span class="n">recent_file_actions_</span><span class="p">;</span>
 <span class="w">  </span><span class="n">LogWindow</span><span class="w"> </span><span class="n">log_window_</span><span class="p">;</span>
 <span class="w">  </span><span class="n">QPointer</span><span class="o">&lt;</span><span class="n">StatusBarWidget</span><span class="o">&gt;</span><span class="w"> </span><span class="n">status_bar_</span><span class="p">;</span>
 <span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">shapeworks</span><span class="o">::</span><span class="n">SplashScreen</span><span class="o">&gt;</span><span class="w"> </span><span class="n">splash_screen_</span><span class="p">;</span>
 <span class="w">  </span><span class="n">QErrorMessage</span><span class="w"> </span><span class="n">error_message_dialog_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">CustomSlider</span><span class="o">*&gt;</span><span class="w"> </span><span class="n">iso_opacity_sliders_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">QCheckBox</span><span class="o">*&gt;</span><span class="w"> </span><span class="n">domain_particle_checkboxes_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">QSlider</span><span class="o">*&gt;</span><span class="w"> </span><span class="n">iso_opacity_sliders_</span><span class="p">;</span>
 
 <span class="w">  </span><span class="n">QString</span><span class="w"> </span><span class="n">current_message_</span><span class="p">;</span>
 
@@ -2703,15 +2682,11 @@
 <span class="w">  </span><span class="n">QStringList</span><span class="w"> </span><span class="n">current_image_list_</span><span class="p">;</span>
 
 <span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">PythonWorker</span><span class="o">&gt;</span><span class="w"> </span><span class="n">py_worker_</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">StudioLogger</span><span class="w"> </span><span class="n">logger_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">UpdateChecker</span><span class="w"> </span><span class="n">update_checker_</span><span class="p">{</span><span class="n">preferences_</span><span class="p">};</span>
-<span class="w">  </span><span class="n">Telemetry</span><span class="w"> </span><span class="n">telemetry_</span><span class="p">{</span><span class="n">preferences_</span><span class="p">};</span>
 <span class="p">};</span>
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-05-04 at 20:03:05 +0000</p>
+<p>Updated on 2022-07-23 at 16:40:07 -0600</p>
 
               
             </article>

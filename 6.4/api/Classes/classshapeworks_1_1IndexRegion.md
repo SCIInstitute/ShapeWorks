@@ -20,10 +20,10 @@ Indices into a 3d region of memory (can be negative, e.g., for the purpose of pa
 | | **[IndexRegion](../Classes/classshapeworks_1_1IndexRegion.md#function-indexregion)**() =default |
 | | **[IndexRegion](../Classes/classshapeworks_1_1IndexRegion.md#function-indexregion)**(const [IndexRegion](../Classes/classshapeworks_1_1IndexRegion.md) & ) =default |
 | | **[IndexRegion](../Classes/classshapeworks_1_1IndexRegion.md#function-indexregion)**(const Dims & dims) |
-| | **[IndexRegion](../Classes/classshapeworks_1_1IndexRegion.md#function-indexregion)**(const [Coord](../Namespaces/namespaceshapeworks.md#using-coord) & _min, const [Coord](../Namespaces/namespaceshapeworks.md#using-coord) & _max) |
+| | **[IndexRegion](../Classes/classshapeworks_1_1IndexRegion.md#function-indexregion)**(const Coord & _min, const Coord & _max) |
 | bool | **[operator==](../Classes/classshapeworks_1_1IndexRegion.md#function-operator==)**(const [IndexRegion](../Classes/classshapeworks_1_1IndexRegion.md) & other) const |
 | bool | **[valid](../Classes/classshapeworks_1_1IndexRegion.md#function-valid)**() const<br>verified min/max do not create an inverted or an empty region  |
-| [Coord](../Namespaces/namespaceshapeworks.md#using-coord) | **[origin](../Classes/classshapeworks_1_1IndexRegion.md#function-origin)**() const |
+| Coord | **[origin](../Classes/classshapeworks_1_1IndexRegion.md#function-origin)**() const |
 | Dims | **[size](../Classes/classshapeworks_1_1IndexRegion.md#function-size)**() const |
 | [IndexRegion](../Classes/classshapeworks_1_1IndexRegion.md) & | **[pad](../Classes/classshapeworks_1_1IndexRegion.md#function-pad)**(int padding)<br>uniformly grows or shrinks the region by the specified amount  |
 
@@ -31,8 +31,8 @@ Indices into a 3d region of memory (can be negative, e.g., for the purpose of pa
 
 |                | Name           |
 | -------------- | -------------- |
-| [Coord](../Namespaces/namespaceshapeworks.md#using-coord) | **[min](../Classes/classshapeworks_1_1IndexRegion.md#variable-min)**  |
-| [Coord](../Namespaces/namespaceshapeworks.md#using-coord) | **[max](../Classes/classshapeworks_1_1IndexRegion.md#variable-max)**  |
+| Coord | **[min](../Classes/classshapeworks_1_1IndexRegion.md#variable-min)**  |
+| Coord | **[max](../Classes/classshapeworks_1_1IndexRegion.md#variable-max)**  |
 
 ## Public Functions Documentation
 
@@ -130,4 +130,4 @@ Coord max {-1000000000, -1000000000, -1000000000};
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:04 +0000
+Updated on 2022-07-23 at 16:40:06 -0600

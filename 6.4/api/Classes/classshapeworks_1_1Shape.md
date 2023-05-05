@@ -25,51 +25,56 @@ Representation of a single shape/patient/subject.
 | -------------- | -------------- |
 | | **[Shape](../Classes/classshapeworks_1_1Shape.md#function-shape)**() |
 | | **[~Shape](../Classes/classshapeworks_1_1Shape.md#function-~shape)**() |
-| std::string | **[get_display_name](../Classes/classshapeworks_1_1Shape.md#function-get-display-name)**() |
+| QString | **[get_display_name](../Classes/classshapeworks_1_1Shape.md#function-get-display-name)**() |
 | [MeshGroup](../Classes/classshapeworks_1_1MeshGroup.md) | **[get_meshes](../Classes/classshapeworks_1_1Shape.md#function-get-meshes)**(DisplayMode display_mode, bool wait =false) |
-| void | **[set_annotations](../Classes/classshapeworks_1_1Shape.md#function-set-annotations)**(std::vector< std::string > annotations, bool only_overwrite_blank =true) |
-| std::vector< std::string > | **[get_annotations](../Classes/classshapeworks_1_1Shape.md#function-get-annotations)**() |
-| void | **[set_mesh_manager](../Classes/classshapeworks_1_1Shape.md#function-set-mesh-manager)**(std::shared_ptr< [MeshManager](../Classes/classshapeworks_1_1MeshManager.md) > mesh_manager) |
+| void | **[set_annotations](../Classes/classshapeworks_1_1Shape.md#function-set-annotations)**(QStringList annotations, bool only_overwrite_blank =true) |
+| QStringList | **[get_annotations](../Classes/classshapeworks_1_1Shape.md#function-get-annotations)**() |
+| void | **[set_mesh_manager](../Classes/classshapeworks_1_1Shape.md#function-set-mesh-manager)**(QSharedPointer< [MeshManager](../Classes/classshapeworks_1_1MeshManager.md) > mesh_manager) |
 | void | **[set_subject](../Classes/classshapeworks_1_1Shape.md#function-set-subject)**(std::shared_ptr< [shapeworks::Subject](../Classes/classshapeworks_1_1Subject.md) > subject) |
 | bool | **[is_subject](../Classes/classshapeworks_1_1Shape.md#function-is-subject)**() |
 | std::shared_ptr< [shapeworks::Subject](../Classes/classshapeworks_1_1Subject.md) > | **[get_subject](../Classes/classshapeworks_1_1Shape.md#function-get-subject)**() |
-| void | **[import_original_file](../Classes/classshapeworks_1_1Shape.md#function-import-original-file)**(const std::string & filename)<br>Import the original raw mesh or image file.  |
+| void | **[import_original_image](../Classes/classshapeworks_1_1Shape.md#function-import-original-image)**(const std::string & filename)<br>Import the original raw image file.  |
 | [MeshGroup](../Classes/classshapeworks_1_1MeshGroup.md) | **[get_original_meshes](../Classes/classshapeworks_1_1Shape.md#function-get-original-meshes)**(bool wait =false)<br>Retrieve the original meshes.  |
 | [MeshGroup](../Classes/classshapeworks_1_1MeshGroup.md) | **[get_groomed_meshes](../Classes/classshapeworks_1_1Shape.md#function-get-groomed-meshes)**(bool wait =false)<br>Retrieve the groomed meshes.  |
 | [MeshGroup](../Classes/classshapeworks_1_1MeshGroup.md) | **[get_reconstructed_meshes](../Classes/classshapeworks_1_1Shape.md#function-get-reconstructed-meshes)**(bool wait =false)<br>Retrieve the reconstructed meshes.  |
 | void | **[reset_groomed_mesh](../Classes/classshapeworks_1_1Shape.md#function-reset-groomed-mesh)**()<br>Reset the groomed mesh so that it will be re-created.  |
-| bool | **[import_global_point_files](../Classes/classshapeworks_1_1Shape.md#function-import-global-point-files)**(std::vector< std::string > filenames)<br>Import global correspondence point files.  |
-| bool | **[import_local_point_files](../Classes/classshapeworks_1_1Shape.md#function-import-local-point-files)**(std::vector< std::string > filenames)<br>Import local correspondence point files.  |
-| bool | **[import_landmarks_files](../Classes/classshapeworks_1_1Shape.md#function-import-landmarks-files)**(std::vector< std::string > filenames)<br>Import landmarks files.  |
+| bool | **[import_global_point_files](../Classes/classshapeworks_1_1Shape.md#function-import-global-point-files)**(QStringList filenames)<br>Import global correspondence point files.  |
+| bool | **[import_local_point_files](../Classes/classshapeworks_1_1Shape.md#function-import-local-point-files)**(QStringList filenames)<br>Import local correspondence point files.  |
+| bool | **[import_landmarks_files](../Classes/classshapeworks_1_1Shape.md#function-import-landmarks-files)**(QStringList filenames)<br>Import landmarks files.  |
 | bool | **[store_landmarks](../Classes/classshapeworks_1_1Shape.md#function-store-landmarks)**()<br>Store landmarks.  |
-| bool | **[import_constraints](../Classes/classshapeworks_1_1Shape.md#function-import-constraints)**(std::vector< std::string > filenames)<br>import constraints  |
+| bool | **[import_constraints](../Classes/classshapeworks_1_1Shape.md#function-import-constraints)**(QStringList filenames)<br>import constraints  |
 | bool | **[store_constraints](../Classes/classshapeworks_1_1Shape.md#function-store-constraints)**()<br>Store constraints.  |
-| void | **[set_particles](../Classes/classshapeworks_1_1Shape.md#function-set-particles)**([Particles](../Classes/classshapeworks_1_1Particles.md) particles) |
-| [Particles](../Classes/classshapeworks_1_1Particles.md) | **[get_particles](../Classes/classshapeworks_1_1Shape.md#function-get-particles)**() |
-| void | **[set_particle_transform](../Classes/classshapeworks_1_1Shape.md#function-set-particle-transform)**(vtkSmartPointer< vtkTransform > transform)<br>Set the particle transform (alignment)  |
-| void | **[set_alignment_type](../Classes/classshapeworks_1_1Shape.md#function-set-alignment-type)**(int alignment)<br>Set the alignment type.  |
+| void | **[set_particles](../Classes/classshapeworks_1_1Shape.md#function-set-particles)**([StudioParticles](../Classes/classshapeworks_1_1StudioParticles.md) particles) |
+| [StudioParticles](../Classes/classshapeworks_1_1StudioParticles.md) | **[get_particles](../Classes/classshapeworks_1_1Shape.md#function-get-particles)**() |
+| void | **[set_particle_transform](../Classes/classshapeworks_1_1Shape.md#function-set-particle-transform)**(vtkSmartPointer< vtkTransform > transform) |
 | Eigen::VectorXd | **[get_global_correspondence_points](../Classes/classshapeworks_1_1Shape.md#function-get-global-correspondence-points)**()<br>Get the global correspondence points.  |
-| std::vector< Eigen::VectorXd > | **[get_particles_for_display](../Classes/classshapeworks_1_1Shape.md#function-get-particles-for-display)**()<br>Get the global correspondence points for display.  |
+| Eigen::VectorXd | **[get_correspondence_points_for_display](../Classes/classshapeworks_1_1Shape.md#function-get-correspondence-points-for-display)**()<br>Get the global correspondence points for display.  |
 | Eigen::VectorXd | **[get_local_correspondence_points](../Classes/classshapeworks_1_1Shape.md#function-get-local-correspondence-points)**()<br>Get the local correspondence points.  |
 | void | **[clear_reconstructed_mesh](../Classes/classshapeworks_1_1Shape.md#function-clear-reconstructed-mesh)**() |
 | int | **[get_id](../Classes/classshapeworks_1_1Shape.md#function-get-id)**()<br>Get the id of this shape.  |
 | void | **[set_id](../Classes/classshapeworks_1_1Shape.md#function-set-id)**(int id)<br>Set the id of this shape.  |
-| std::vector< std::string > | **[get_original_filenames](../Classes/classshapeworks_1_1Shape.md#function-get-original-filenames)**() |
-| std::vector< std::string > | **[get_original_filenames_with_path](../Classes/classshapeworks_1_1Shape.md#function-get-original-filenames-with-path)**() |
-| std::string | **[get_original_filename](../Classes/classshapeworks_1_1Shape.md#function-get-original-filename)**() |
-| std::string | **[get_original_filename_with_path](../Classes/classshapeworks_1_1Shape.md#function-get-original-filename-with-path)**() |
-| std::string | **[get_groomed_filename](../Classes/classshapeworks_1_1Shape.md#function-get-groomed-filename)**() |
-| std::string | **[get_groomed_filename_with_path](../Classes/classshapeworks_1_1Shape.md#function-get-groomed-filename-with-path)**(int domain) |
-| std::string | **[get_global_point_filename](../Classes/classshapeworks_1_1Shape.md#function-get-global-point-filename)**() |
-| std::string | **[get_global_point_filename_with_path](../Classes/classshapeworks_1_1Shape.md#function-get-global-point-filename-with-path)**() |
-| std::string | **[get_local_point_filename](../Classes/classshapeworks_1_1Shape.md#function-get-local-point-filename)**() |
-| std::string | **[get_local_point_filename_with_path](../Classes/classshapeworks_1_1Shape.md#function-get-local-point-filename-with-path)**() |
+| std::vector< QString > | **[get_original_filenames](../Classes/classshapeworks_1_1Shape.md#function-get-original-filenames)**() |
+| std::vector< QString > | **[get_original_filenames_with_path](../Classes/classshapeworks_1_1Shape.md#function-get-original-filenames-with-path)**() |
+| QString | **[get_original_filename](../Classes/classshapeworks_1_1Shape.md#function-get-original-filename)**() |
+| QString | **[get_original_filename_with_path](../Classes/classshapeworks_1_1Shape.md#function-get-original-filename-with-path)**() |
+| QString | **[get_groomed_filename](../Classes/classshapeworks_1_1Shape.md#function-get-groomed-filename)**() |
+| QString | **[get_groomed_filename_with_path](../Classes/classshapeworks_1_1Shape.md#function-get-groomed-filename-with-path)**(int domain) |
+| QString | **[get_global_point_filename](../Classes/classshapeworks_1_1Shape.md#function-get-global-point-filename)**() |
+| QString | **[get_global_point_filename_with_path](../Classes/classshapeworks_1_1Shape.md#function-get-global-point-filename-with-path)**() |
+| QString | **[get_local_point_filename](../Classes/classshapeworks_1_1Shape.md#function-get-local-point-filename)**() |
+| QString | **[get_local_point_filename_with_path](../Classes/classshapeworks_1_1Shape.md#function-get-local-point-filename-with-path)**() |
+| QList< [Point](../Classes/classshapeworks_1_1Shape_1_1Point.md) > | **[get_exclusion_sphere_centers](../Classes/classshapeworks_1_1Shape.md#function-get-exclusion-sphere-centers)**() |
+| void | **[set_exclusion_sphere_centers](../Classes/classshapeworks_1_1Shape.md#function-set-exclusion-sphere-centers)**(QList< [Point](../Classes/classshapeworks_1_1Shape_1_1Point.md) > centers) |
+| QList< double > | **[get_exclusion_sphere_radii](../Classes/classshapeworks_1_1Shape.md#function-get-exclusion-sphere-radii)**() |
+| void | **[set_exclusion_sphere_radii](../Classes/classshapeworks_1_1Shape.md#function-set-exclusion-sphere-radii)**(QList< double > radii) |
+| int | **[get_group_id](../Classes/classshapeworks_1_1Shape.md#function-get-group-id)**() |
+| void | **[set_group_id](../Classes/classshapeworks_1_1Shape.md#function-set-group-id)**(int id) |
 | void | **[set_transform](../Classes/classshapeworks_1_1Shape.md#function-set-transform)**(vtkSmartPointer< vtkTransform > transform) |
 | vtkSmartPointer< vtkTransform > | **[get_transform](../Classes/classshapeworks_1_1Shape.md#function-get-transform)**(int domain =0) |
 | vtkSmartPointer< vtkTransform > | **[get_inverse_transform](../Classes/classshapeworks_1_1Shape.md#function-get-inverse-transform)**(int domain =0) |
 | bool | **[has_alignment](../Classes/classshapeworks_1_1Shape.md#function-has-alignment)**() |
 | vtkSmartPointer< vtkTransform > | **[get_original_transform](../Classes/classshapeworks_1_1Shape.md#function-get-original-transform)**(int domain =0) |
-| void | **[set_reconstruction_transforms](../Classes/classshapeworks_1_1Shape.md#function-set-reconstruction-transforms)**(std::vector< vtkSmartPointer< vtkTransform > > transforms) |
+| void | **[set_reconstruction_transforms](../Classes/classshapeworks_1_1Shape.md#function-set-reconstruction-transforms)**(std::vector< vtkSmartPointer< vtkTransform >> transforms) |
 | vtkSmartPointer< vtkTransform > | **[get_reconstruction_transform](../Classes/classshapeworks_1_1Shape.md#function-get-reconstruction-transform)**(int domain) |
 | vtkSmartPointer< vtkTransform > | **[get_groomed_transform](../Classes/classshapeworks_1_1Shape.md#function-get-groomed-transform)**(int domain =0) |
 | vtkSmartPointer< vtkTransform > | **[get_procrustest_transform](../Classes/classshapeworks_1_1Shape.md#function-get-procrustest-transform)**(int domain =0) |
@@ -107,7 +112,7 @@ Shape()
 ### function get_display_name
 
 ```cpp
-std::string get_display_name()
+QString get_display_name()
 ```
 
 
@@ -125,7 +130,7 @@ MeshGroup get_meshes(
 
 ```cpp
 void set_annotations(
-    std::vector< std::string > annotations,
+    QStringList annotations,
     bool only_overwrite_blank =true
 )
 ```
@@ -134,7 +139,7 @@ void set_annotations(
 ### function get_annotations
 
 ```cpp
-std::vector< std::string > get_annotations()
+QStringList get_annotations()
 ```
 
 
@@ -142,7 +147,7 @@ std::vector< std::string > get_annotations()
 
 ```cpp
 void set_mesh_manager(
-    std::shared_ptr< MeshManager > mesh_manager
+    QSharedPointer< MeshManager > mesh_manager
 )
 ```
 
@@ -170,15 +175,15 @@ std::shared_ptr< shapeworks::Subject > get_subject()
 ```
 
 
-### function import_original_file
+### function import_original_image
 
 ```cpp
-void import_original_file(
+void import_original_image(
     const std::string & filename
 )
 ```
 
-Import the original raw mesh or image file. 
+Import the original raw image file. 
 
 ### function get_original_meshes
 
@@ -222,7 +227,7 @@ Reset the groomed mesh so that it will be re-created.
 
 ```cpp
 bool import_global_point_files(
-    std::vector< std::string > filenames
+    QStringList filenames
 )
 ```
 
@@ -232,7 +237,7 @@ Import global correspondence point files.
 
 ```cpp
 bool import_local_point_files(
-    std::vector< std::string > filenames
+    QStringList filenames
 )
 ```
 
@@ -242,7 +247,7 @@ Import local correspondence point files.
 
 ```cpp
 bool import_landmarks_files(
-    std::vector< std::string > filenames
+    QStringList filenames
 )
 ```
 
@@ -260,7 +265,7 @@ Store landmarks.
 
 ```cpp
 bool import_constraints(
-    std::vector< std::string > filenames
+    QStringList filenames
 )
 ```
 
@@ -278,7 +283,7 @@ Store constraints.
 
 ```cpp
 void set_particles(
-    Particles particles
+    StudioParticles particles
 )
 ```
 
@@ -286,7 +291,7 @@ void set_particles(
 ### function get_particles
 
 ```cpp
-Particles get_particles()
+StudioParticles get_particles()
 ```
 
 
@@ -298,17 +303,6 @@ void set_particle_transform(
 )
 ```
 
-Set the particle transform (alignment) 
-
-### function set_alignment_type
-
-```cpp
-void set_alignment_type(
-    int alignment
-)
-```
-
-Set the alignment type. 
 
 ### function get_global_correspondence_points
 
@@ -318,10 +312,10 @@ Eigen::VectorXd get_global_correspondence_points()
 
 Get the global correspondence points. 
 
-### function get_particles_for_display
+### function get_correspondence_points_for_display
 
 ```cpp
-std::vector< Eigen::VectorXd > get_particles_for_display()
+Eigen::VectorXd get_correspondence_points_for_display()
 ```
 
 Get the global correspondence points for display. 
@@ -362,42 +356,42 @@ Set the id of this shape.
 ### function get_original_filenames
 
 ```cpp
-std::vector< std::string > get_original_filenames()
+std::vector< QString > get_original_filenames()
 ```
 
 
 ### function get_original_filenames_with_path
 
 ```cpp
-std::vector< std::string > get_original_filenames_with_path()
+std::vector< QString > get_original_filenames_with_path()
 ```
 
 
 ### function get_original_filename
 
 ```cpp
-std::string get_original_filename()
+QString get_original_filename()
 ```
 
 
 ### function get_original_filename_with_path
 
 ```cpp
-std::string get_original_filename_with_path()
+QString get_original_filename_with_path()
 ```
 
 
 ### function get_groomed_filename
 
 ```cpp
-std::string get_groomed_filename()
+QString get_groomed_filename()
 ```
 
 
 ### function get_groomed_filename_with_path
 
 ```cpp
-std::string get_groomed_filename_with_path(
+QString get_groomed_filename_with_path(
     int domain
 )
 ```
@@ -406,28 +400,76 @@ std::string get_groomed_filename_with_path(
 ### function get_global_point_filename
 
 ```cpp
-std::string get_global_point_filename()
+QString get_global_point_filename()
 ```
 
 
 ### function get_global_point_filename_with_path
 
 ```cpp
-std::string get_global_point_filename_with_path()
+QString get_global_point_filename_with_path()
 ```
 
 
 ### function get_local_point_filename
 
 ```cpp
-std::string get_local_point_filename()
+QString get_local_point_filename()
 ```
 
 
 ### function get_local_point_filename_with_path
 
 ```cpp
-std::string get_local_point_filename_with_path()
+QString get_local_point_filename_with_path()
+```
+
+
+### function get_exclusion_sphere_centers
+
+```cpp
+QList< Point > get_exclusion_sphere_centers()
+```
+
+
+### function set_exclusion_sphere_centers
+
+```cpp
+void set_exclusion_sphere_centers(
+    QList< Point > centers
+)
+```
+
+
+### function get_exclusion_sphere_radii
+
+```cpp
+QList< double > get_exclusion_sphere_radii()
+```
+
+
+### function set_exclusion_sphere_radii
+
+```cpp
+void set_exclusion_sphere_radii(
+    QList< double > radii
+)
+```
+
+
+### function get_group_id
+
+```cpp
+int get_group_id()
+```
+
+
+### function set_group_id
+
+```cpp
+void set_group_id(
+    int id
+)
 ```
 
 
@@ -478,7 +520,7 @@ vtkSmartPointer< vtkTransform > get_original_transform(
 
 ```cpp
 void set_reconstruction_transforms(
-    std::vector< vtkSmartPointer< vtkTransform > > transforms
+    std::vector< vtkSmartPointer< vtkTransform >> transforms
 )
 ```
 
@@ -629,4 +671,4 @@ std::vector< std::shared_ptr< VtkMeshWrapper > > get_groomed_mesh_wrappers()
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:04 +0000
+Updated on 2022-07-23 at 16:40:06 -0600

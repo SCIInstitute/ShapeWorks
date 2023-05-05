@@ -7,10 +7,7 @@ title: shapeworks::GroomParameters
 
 
 
- [More...](#detailed-description)
 
-
-`#include <GroomParameters.h>`
 
 ## Public Functions
 
@@ -92,8 +89,6 @@ title: shapeworks::GroomParameters
 | void | **[set_remesh_num_vertices](../Classes/classshapeworks_1_1GroomParameters.md#function-set-remesh-num-vertices)**(int num_vertices) |
 | double | **[get_remesh_gradation](../Classes/classshapeworks_1_1GroomParameters.md#function-get-remesh-gradation)**() |
 | void | **[set_remesh_gradation](../Classes/classshapeworks_1_1GroomParameters.md#function-set-remesh-gradation)**(double gradation) |
-| bool | **[get_skip_grooming](../Classes/classshapeworks_1_1GroomParameters.md#function-get-skip-grooming)**() |
-| void | **[set_skip_grooming](../Classes/classshapeworks_1_1GroomParameters.md#function-set-skip-grooming)**(bool skip) |
 | void | **[restore_defaults](../Classes/classshapeworks_1_1GroomParameters.md#function-restore-defaults)**() |
 
 ## Public Attributes
@@ -105,15 +100,6 @@ title: shapeworks::GroomParameters
 | const std::string | **[GROOM_ALIGNMENT_CENTER_C](../Classes/classshapeworks_1_1GroomParameters.md#variable-groom-alignment-center-c)**  |
 | const std::string | **[GROOM_ALIGNMENT_ICP_C](../Classes/classshapeworks_1_1GroomParameters.md#variable-groom-alignment-icp-c)**  |
 | const std::string | **[GROOM_ALIGNMENT_LANDMARK_C](../Classes/classshapeworks_1_1GroomParameters.md#variable-groom-alignment-landmark-c)**  |
-
-## Detailed Description
-
-```cpp
-class shapeworks::GroomParameters;
-```
-
-
-This class encapsulated processing of [Groom](../Classes/classshapeworks_1_1Groom.md) parameters 
 
 ## Public Functions Documentation
 
@@ -724,22 +710,6 @@ void set_remesh_gradation(
 ```
 
 
-### function get_skip_grooming
-
-```cpp
-bool get_skip_grooming()
-```
-
-
-### function set_skip_grooming
-
-```cpp
-void set_skip_grooming(
-    bool skip
-)
-```
-
-
 ### function restore_defaults
 
 ```cpp
@@ -786,4 +756,4 @@ static const std::string GROOM_ALIGNMENT_LANDMARK_C;
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:04 +0000
+Updated on 2022-07-23 at 16:40:06 -0600

@@ -13,14 +13,14 @@ title: shapeworks::AnalysisUtils
 
 |                | Name           |
 | -------------- | -------------- |
-| [ParticleSystemEvaluation](../Classes/classshapeworks_1_1ParticleSystemEvaluation.md) | **[get_local_particle_system](../Classes/classshapeworks_1_1AnalysisUtils.md#function-get-local-particle-system)**([Session](../Classes/classshapeworks_1_1Session.md) * session, int domain) |
+| [ParticleSystem](../Classes/classshapeworks_1_1ParticleSystem.md) | **[get_local_particle_system](../Classes/classshapeworks_1_1AnalysisUtils.md#function-get-local-particle-system)**([Session](../Classes/classshapeworks_1_1Session.md) * session, int domain) |
 
 ## Public Functions Documentation
 
 ### function get_local_particle_system
 
 ```cpp
-static ParticleSystemEvaluation get_local_particle_system(
+static ParticleSystem get_local_particle_system(
     Session * session,
     int domain
 )
@@ -29,4 +29,4 @@ static ParticleSystemEvaluation get_local_particle_system(
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:03 +0000
+Updated on 2022-07-23 at 16:40:06 -0600

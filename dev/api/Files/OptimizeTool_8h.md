@@ -1,9 +1,9 @@
 ---
-title: Studio/Optimize/OptimizeTool.h
+title: Studio/src/Optimize/OptimizeTool.h
 
 ---
 
-# Studio/Optimize/OptimizeTool.h
+# Studio/src/Optimize/OptimizeTool.h
 
 
 
@@ -11,7 +11,7 @@ title: Studio/Optimize/OptimizeTool.h
 
 | Name           |
 | -------------- |
-| **[shapeworks](../Namespaces/namespaceshapeworks.md)** <br>User usage reporting (telemetry)  |
+| **[shapeworks](../Namespaces/namespaceshapeworks.md)**  |
 
 ## Classes
 
@@ -35,7 +35,6 @@ title: Studio/Optimize/OptimizeTool.h
 #include <itkPoint.h>
 
 #include <Data/Preferences.h>
-#include <Data/Telemetry.h>
 
 class Ui_OptimizeTool;
 
@@ -52,7 +51,7 @@ Q_OBJECT;
 
 public:
 
-  OptimizeTool(Preferences& prefs, Telemetry& telemetry);
+  OptimizeTool(Preferences& prefs);
   ~OptimizeTool();
 
   void set_session(QSharedPointer<Session> session);
@@ -82,12 +81,15 @@ public Q_SLOTS:
 
   bool validate_inputs();
 
-Q_SIGNALS:
+signals:
   void optimize_start();
   void optimize_complete();
 
+  void error_message(QString);
+  void warning_message(QString);
   void progress(int);
-  void status(std::string);
+  void message(QString);
+  void status(QString);
 
 private:
 
@@ -100,8 +102,6 @@ private:
   std::vector<QLineEdit*> particle_boxes_;
 
   Preferences& preferences_;
-  Telemetry& telemetry_;
-
 
   std::vector<QLineEdit*> line_edits_;
 
@@ -120,4 +120,4 @@ private:
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:05 +0000
+Updated on 2022-07-23 at 16:40:07 -0600

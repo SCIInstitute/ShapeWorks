@@ -11,7 +11,7 @@ title: Libs/Groom/GroomParameters.h
 
 | Name           |
 | -------------- |
-| **[shapeworks](../Namespaces/namespaceshapeworks.md)** <br>User usage reporting (telemetry)  |
+| **[shapeworks](../Namespaces/namespaceshapeworks.md)**  |
 
 ## Classes
 
@@ -27,16 +27,25 @@ title: Libs/Groom/GroomParameters.h
 ```cpp
 #pragma once
 
-#include <Project/Project.h>
+#include <Libs/Project/Project.h>
 
 namespace shapeworks {
 
 class GroomParameters {
-  enum class MeshSmoothingOption { laplacian, sinc };
 
-  enum class AlignmentOption { none, center, icp };
+  enum class MeshSmoothingOption {
+    laplacian,
+    sinc
+  };
 
- public:
+  enum class AlignmentOption {
+    none,
+    center,
+    icp
+  };
+
+public:
+
   explicit GroomParameters(ProjectHandle project, std::string domain_name = "");
   void set_domain_name(std::string domain_name);
   void save_to_project();
@@ -111,6 +120,7 @@ class GroomParameters {
   bool get_convert_to_mesh();
   void set_convert_to_mesh(bool value);
 
+
   // reflection
   bool get_reflect();
   void set_reflect(bool reflect);
@@ -146,8 +156,6 @@ class GroomParameters {
   double get_remesh_gradation();
   void set_remesh_gradation(double gradation);
 
-  bool get_skip_grooming();
-  void set_skip_grooming(bool skip);
 
   void restore_defaults();
 
@@ -159,15 +167,16 @@ class GroomParameters {
   const static std::string GROOM_ALIGNMENT_ICP_C;
   const static std::string GROOM_ALIGNMENT_LANDMARK_C;
 
- private:
+private:
+
   Parameters params_;
   ProjectHandle project_;
   std::string domain_name_;
 };
-}  // namespace shapeworks
+}
 ```
 
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:05 +0000
+Updated on 2022-07-23 at 16:40:07 -0600

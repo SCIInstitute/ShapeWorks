@@ -1,9 +1,9 @@
 ---
-title: Studio/Data/ExportUtils.h
+title: Studio/src/Data/ExportUtils.h
 
 ---
 
-# Studio/Data/ExportUtils.h
+# Studio/src/Data/ExportUtils.h
 
 
 
@@ -11,7 +11,7 @@ title: Studio/Data/ExportUtils.h
 
 | Name           |
 | -------------- |
-| **[shapeworks](../Namespaces/namespaceshapeworks.md)** <br>User usage reporting (telemetry)  |
+| **[shapeworks](../Namespaces/namespaceshapeworks.md)**  |
 
 ## Classes
 
@@ -45,7 +45,7 @@ class ExportUtils {
 
   static bool write_scalars(ShapeWorksStudioApp* app, vtkSmartPointer<vtkPolyData> poly_data, QString filename);
 
-  static bool write_particle_scalars(ShapeWorksStudioApp* app, std::shared_ptr<Shape> shape, QString filename);
+  static bool write_particle_scalars(ShapeWorksStudioApp* app, QSharedPointer<Shape> shape, QString filename);
 };
 
 }  // namespace shapeworks
@@ -54,4 +54,4 @@ class ExportUtils {
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:05 +0000
+Updated on 2022-07-23 at 16:40:07 -0600

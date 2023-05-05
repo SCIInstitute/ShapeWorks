@@ -1,23 +1,24 @@
 ---
-title: Libs/Analyze/MeshWorkQueue.h
+title: Studio/src/Data/MeshWorkQueue.h
+summary: Provides concurrent access to a list of shapes to work needing reconstruction. 
 
 ---
 
-# Libs/Analyze/MeshWorkQueue.h
+# Studio/src/Data/MeshWorkQueue.h
 
-
+Provides concurrent access to a list of shapes to work needing reconstruction. 
 
 ## Namespaces
 
 | Name           |
 | -------------- |
-| **[shapeworks](../Namespaces/namespaceshapeworks.md)** <br>User usage reporting (telemetry)  |
+| **[shapeworks](../Namespaces/namespaceshapeworks.md)**  |
 
 ## Classes
 
 |                | Name           |
 | -------------- | -------------- |
-| class | **[shapeworks::MeshWorkItem](../Classes/classshapeworks_1_1MeshWorkItem.md)** <br>Provides concurrent access to a list of shapes to work needing reconstruction.  |
+| class | **[shapeworks::MeshWorkItem](../Classes/classshapeworks_1_1MeshWorkItem.md)**  |
 | class | **[shapeworks::MeshWorkQueue](../Classes/classshapeworks_1_1MeshWorkQueue.md)**  |
 
 ## Functions
@@ -49,16 +50,20 @@ Q_DECLARE_METATYPE(
 #include <list>
 
 // qt
-#include <QMetaType>
 #include <QMutex>
+#include <QMetaType>
 
-// eigen
+// vnl
+#include "vnl/vnl_vector.h"
+
 #include <Eigen/Eigen>
+
 
 namespace shapeworks {
 
-class MeshWorkItem {
- public:
+class MeshWorkItem
+{
+public:
   std::string filename;
   Eigen::VectorXd points;
   int domain{0};
@@ -70,8 +75,12 @@ class MeshWorkItem {
   friend bool operator==(const MeshWorkItem &a, const MeshWorkItem &b);
 };
 
-class MeshWorkQueue {
- public:
+
+class MeshWorkQueue
+{
+
+public:
+
   using WorkList = std::list<MeshWorkItem>;
 
   MeshWorkQueue();
@@ -79,7 +88,7 @@ class MeshWorkQueue {
 
   void push(const MeshWorkItem &item);
 
-  MeshWorkItem *get_next_work_item();
+  MeshWorkItem* get_next_work_item();
 
   bool is_inside(const MeshWorkItem &item);
 
@@ -89,8 +98,9 @@ class MeshWorkQueue {
 
   int size();
 
- private:
-  bool in_inside_list(const MeshWorkItem &item, const WorkList &list);
+private:
+
+  bool in_inside_list(const MeshWorkItem &item, const WorkList& list);
 
   // for concurrent access
   QMutex mutex_;
@@ -99,7 +109,7 @@ class MeshWorkQueue {
 
   WorkList processing_list_;
 };
-}  // namespace shapeworks
+}
 
 Q_DECLARE_METATYPE(shapeworks::MeshWorkItem);
 ```
@@ -107,4 +117,4 @@ Q_DECLARE_METATYPE(shapeworks::MeshWorkItem);
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:05 +0000
+Updated on 2022-07-23 at 16:40:07 -0600

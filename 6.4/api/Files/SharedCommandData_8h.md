@@ -11,7 +11,7 @@ title: Applications/shapeworks/SharedCommandData.h
 
 | Name           |
 | -------------- |
-| **[shapeworks](../Namespaces/namespaceshapeworks.md)** <br>User usage reporting (telemetry)  |
+| **[shapeworks](../Namespaces/namespaceshapeworks.md)**  |
 
 ## Classes
 
@@ -27,12 +27,11 @@ title: Applications/shapeworks/SharedCommandData.h
 ```cpp
 #pragma once
 
-#include <string>
-
 #include "Image.h"
 #include "Mesh.h"
-#include "ParticleSystemEvaluation.h"
+#include "ParticleSystem.h"
 #include "Shapeworks.h"
+#include <string>
 
 namespace shapeworks {
 
@@ -41,7 +40,7 @@ struct SharedCommandData
   Image image;
   std::unique_ptr<Mesh> mesh;
   PhysicalRegion region;
-  ParticleSystemEvaluation particleSystem;
+  ParticleSystem particleSystem;
   Field field;
 
   bool validImage() const { return image.itk_image_ != nullptr; }
@@ -56,4 +55,4 @@ struct SharedCommandData
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:05 +0000
+Updated on 2022-07-23 at 16:40:07 -0600

@@ -2419,7 +2419,7 @@
 </thead>
 <tbody>
 <tr>
-<td><strong><a href="../Namespaces/namespaceshapeworks.html">shapeworks</a></strong> <br>User usage reporting (telemetry)</td>
+<td><strong><a href="../Namespaces/namespaceshapeworks.html">shapeworks</a></strong></td>
 </tr>
 </tbody>
 </table>
@@ -2446,45 +2446,45 @@
 <div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
 
 <span class="cp">#ifdef _WIN32</span>
-<span class="cp">#pragma warning(disable : 4996)</span>
+<span class="cp">#pragma warning( disable: 4996 )</span>
 <span class="cp">#endif</span>
 
 <span class="c1">// std</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;random&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;string&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;string&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;random&gt;</span>
 
 <span class="c1">// itk</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;itkCommand.h&gt;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;itkImage.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;itkCommand.h&gt;</span>
 
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Eigen/Eigen&gt;</span>
 
-<span class="c1">// shapeworks</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Project/Project.h&gt;</span>
+<span class="c1">// shapeworks particle system</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ParticleSystem/itkParticleSystem.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ParticleSystem/Sampler.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ParticleSystem/ParticleProcrustesRegistration.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ParticleSystem/itkParticleGoodBadAssessment.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ParticleSystem/itkParticleVectorFunction.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ParticleSystem/DomainType.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ParticleSystem/MeshWrapper.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ParticleSystem/OptimizationVisualizer.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Libs/Project/Project.h&gt;</span>
 
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Domain/DomainType.h&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Domain/MeshWrapper.h&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Function/VectorFunction.h&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Utils/OptimizationVisualizer.h&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ParticleSystem.h&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;ProcrustesRegistration.h&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Sampler.h&quot;</span>
 
 <span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
 
 <span class="k">class</span><span class="w"> </span><span class="nc">Project</span><span class="p">;</span>
-<span class="k">class</span><span class="w"> </span><span class="nc">ParticleGoodBadAssessment</span><span class="p">;</span>
 
 <span class="k">class</span><span class="w"> </span><span class="nc">MatrixContainer</span><span class="w"> </span><span class="p">{</span>
-<span class="w"> </span><span class="k">public</span><span class="o">:</span>
+<span class="w">  </span><span class="k">public</span><span class="o">:</span>
 <span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="w"> </span><span class="n">matrix_</span><span class="p">;</span>
 <span class="p">};</span>
 
 <span class="k">class</span><span class="w"> </span><span class="nc">Optimize</span><span class="w"> </span><span class="p">{</span>
-<span class="w"> </span><span class="k">public</span><span class="o">:</span>
+<span class="k">public</span><span class="o">:</span>
 <span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">ImageType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Image</span><span class="o">&lt;</span><span class="kt">float</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="p">;</span>
-<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">VectorType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">VectorFunction</span><span class="o">::</span><span class="n">VectorType</span><span class="p">;</span>
+<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">VectorType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleVectorFunction</span><span class="o">&lt;</span><span class="mi">3</span><span class="o">&gt;::</span><span class="n">VectorType</span><span class="p">;</span>
 <span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">MatrixType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">MatrixXd</span><span class="p">;</span>
 
 <span class="w">  </span><span class="n">Optimize</span><span class="p">();</span>
@@ -2499,7 +2499,9 @@
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetProject</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="w"> </span><span class="n">project</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetIterationCallbackFunction</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="kt">void</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">f</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">iteration_callback_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">f</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetIterationCallbackFunction</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="kt">void</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="n">f</span><span class="p">)</span>
+<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="k">this</span><span class="o">-&gt;</span><span class="n">m_iter_callback</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">f</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">AbortOptimization</span><span class="p">();</span>
 
@@ -2509,7 +2511,7 @@
 
 <span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">GetGlobalPoints</span><span class="p">();</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetCutPlanes</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">array</span><span class="o">&lt;</span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">cut_planes</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetCutPlanes</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">array</span><span class="o">&lt;</span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">cut_planes</span><span class="p">);</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetVerbosity</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">verbosity_level</span><span class="p">);</span>
 
@@ -2550,16 +2552,16 @@
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetOutputCuttingPlaneFile</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">output_cutting_plane_file</span><span class="p">);</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetUseCuttingPlanes</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">use_cutting_planes</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetCuttingPlane</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">va</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">vb</span><span class="p">,</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetCuttingPlane</span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="p">,</span>
+<span class="w">                       </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">va</span><span class="p">,</span>
+<span class="w">                       </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">vb</span><span class="p">,</span>
 <span class="w">                       </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">vc</span><span class="p">);</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetProcessingMode</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">mode</span><span class="p">);</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetAdaptivityMode</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">adaptivity_mode</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetMeshFFCMode</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">mesh_ffc_mode</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">m_mesh_ffc_mode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mesh_ffc_mode</span><span class="p">;</span>
-<span class="w">    </span><span class="n">m_sampler</span><span class="o">-&gt;</span><span class="n">SetMeshFFCMode</span><span class="p">(</span><span class="n">mesh_ffc_mode</span><span class="p">);</span>
-<span class="w">  </span><span class="p">}</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetMeshFFCMode</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">mesh_ffc_mode</span><span class="p">){</span><span class="n">m_mesh_ffc_mode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mesh_ffc_mode</span><span class="p">;</span><span class="w"> </span><span class="n">m_sampler</span><span class="o">-&gt;</span><span class="n">SetMeshFFCMode</span><span class="p">(</span><span class="n">mesh_ffc_mode</span><span class="p">);}</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetAdaptivityStrength</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">adaptivity_strength</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetPairwisePotentialType</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">pairwise_potential_type</span><span class="p">);</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetTimePtsPerSubject</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">time_pts_per_subject</span><span class="p">);</span>
 <span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">GetTimePtsPerSubject</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetOptimizationIterations</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">optimization_iterations</span><span class="p">);</span>
@@ -2579,6 +2581,7 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetSaveInitSplits</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">save_init_splits</span><span class="p">);</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetCheckpointingInterval</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">checkpointing_interval</span><span class="p">);</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetKeepCheckpoints</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">keep_checkpoints</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetCotanSigmaFactor</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">cotan_sigma_factor</span><span class="p">);</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetUseRegression</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">use_regression</span><span class="p">);</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetUseMixedEffects</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">use_mixed_effects</span><span class="p">);</span>
@@ -2625,7 +2628,8 @@
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">PrintParamInfo</span><span class="p">();</span>
 
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Sampler</span><span class="o">&gt;</span><span class="w"> </span><span class="n">GetSampler</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_sampler</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Sampler</span><span class="o">&gt;</span><span class="w"> </span><span class="n">GetSampler</span><span class="p">()</span>
+<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_sampler</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
 
 <span class="w">  </span><span class="n">MatrixContainer</span><span class="w"> </span><span class="n">GetParticleSystem</span><span class="p">();</span>
 
@@ -2635,21 +2639,21 @@
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetGeodesicsCacheSizeMultiplier</span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">n</span><span class="p">);</span>
 
-<span class="w">  </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">OptimizationVisualizer</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">GetVisualizer</span><span class="p">();</span>
+<span class="w">  </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">OptimizationVisualizer</span><span class="w"> </span><span class="o">&amp;</span><span class="nf">GetVisualizer</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetShowVisualizer</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">show</span><span class="p">);</span>
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">GetShowVisualizer</span><span class="p">();</span>
 
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">GetMeshFFCMode</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_mesh_ffc_mode</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">GetMeshFFCMode</span><span class="p">(){</span><span class="k">return</span><span class="w"> </span><span class="n">m_mesh_ffc_mode</span><span class="p">;}</span>
 
 <span class="w">  </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="w"> </span><span class="n">TransformPoint</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">,</span><span class="w"> </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="w"> </span><span class="n">input</span><span class="p">);</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">UpdateProgress</span><span class="p">();</span>
+<span class="k">protected</span><span class="o">:</span>
 
-<span class="w"> </span><span class="k">protected</span><span class="o">:</span>
 <span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetIterationCallback</span><span class="p">();</span>
 
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">ComputeTotalIterations</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">RunProcrustes</span><span class="p">();</span>
 
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">OptimizeStart</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">OptimizerStop</span><span class="p">();</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">ReadTransformFile</span><span class="p">();</span>
@@ -2661,6 +2665,8 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">Initialize</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">AddAdaptivity</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">RunOptimize</span><span class="p">();</span>
+
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetInitialCorrespondenceMode</span><span class="p">();</span>
 
 <span class="w">  </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">IterateCallback</span><span class="p">(</span><span class="n">itk</span><span class="o">::</span><span class="n">Object</span><span class="o">*</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">EventObject</span><span class="o">&amp;</span><span class="p">);</span>
 
@@ -2677,12 +2683,11 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">WritePointFilesWithFeatures</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">iter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">);</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">WritePointFilesWithFeatures</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">iter_prefix</span><span class="p">);</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">WriteEnergyFiles</span><span class="p">();</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">WriteSplitFiles</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">name</span><span class="p">);</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">WriteCuttingPlanePoints</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">iter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">);</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">WriteParameters</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">output_dir</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">);</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">ReportBadParticles</span><span class="p">();</span>
 
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="nf">SetParameters</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetParameters</span><span class="p">();</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">WriteModes</span><span class="p">();</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">PrintStartMessage</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">str</span><span class="p">,</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">vlevel</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
@@ -2699,8 +2704,8 @@
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="nf">GetCheckpointDir</span><span class="p">();</span>
 
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Sampler</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_sampler</span><span class="p">;</span>
-<span class="w">  </span><span class="n">ProcrustesRegistration</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_procrustes</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">ParticleGoodBadAssessment</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_good_bad</span><span class="p">;</span>
+<span class="w">  </span><span class="n">ParticleProcrustesRegistration</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_procrustes</span><span class="p">;</span>
+<span class="w">  </span><span class="n">itk</span><span class="o">::</span><span class="n">ParticleGoodBadAssessment</span><span class="o">&lt;</span><span class="kt">float</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_good_bad</span><span class="p">;</span>
 
 <span class="w">  </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">m_verbosity_level</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 
@@ -2708,6 +2713,8 @@
 
 <span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">m_checkpoint_counter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 <span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">m_procrustes_counter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">m_saturation_counter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_disable_procrustes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_use_cutting_planes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_optimizing</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_use_regression</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
@@ -2733,6 +2740,7 @@
 <span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">m_processing_mode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
 <span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">m_adaptivity_mode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 <span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">m_adaptivity_strength</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">m_pairwise_potential_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w">   </span><span class="c1">// 0 - gaussian (Cates work), 1 - modified cotangent (Meyer),</span>
 
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_mesh_ffc_mode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 
@@ -2762,10 +2770,12 @@
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_fixed_domains_present</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
 <span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">m_use_shape_statistics_after</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">;</span>
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">m_python_filename</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_geodesics_enabled</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w">             </span><span class="c1">// geodesics disabled by default</span>
-<span class="w">  </span><span class="kt">size_t</span><span class="w"> </span><span class="n">m_geodesic_cache_size_multiplier</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w">  </span><span class="c1">// 0 =&gt; VtkMeshWrapper will use a heuristic to determine cache size</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_geodesics_enabled</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span><span class="w"> </span><span class="c1">// geodesics disabled by default</span>
+<span class="w">  </span><span class="kt">size_t</span><span class="w"> </span><span class="n">m_geodesic_cache_size_multiplier</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="c1">// 0 =&gt; VtkMeshWrapper will use a heuristic to determine cache size</span>
 
-<span class="w">  </span><span class="c1">// m_spacing is used to scale the random update vector for particle splitting.</span>
+<span class="w">  </span><span class="c1">// Keeps track of which state the optimization is in.</span>
+<span class="w">  </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">m_mode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">  </span><span class="cm">/* m_spacing is used to scale the random update vector for particle splitting. */</span>
 <span class="w">  </span><span class="kt">double</span><span class="w"> </span><span class="n">m_spacing</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_filenames</span><span class="p">;</span>
@@ -2787,32 +2797,27 @@
 
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_file_output_enabled</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span>
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_aborted</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">array</span><span class="o">&lt;</span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">m_cut_planes</span><span class="p">;</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">array</span><span class="o">&lt;</span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">m_cut_planes</span><span class="p">;</span>
 
+<span class="w">  </span><span class="c1">//itk::MemberCommand&lt;Optimize&gt;::Pointer m_iterate_command;</span>
 <span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">m_total_iterations</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 <span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">m_iteration_count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">m_split_number</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
 
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">current_particle_iterations_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">total_particle_iterations_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">int</span><span class="w"> </span><span class="n">m_split_number</span><span class="p">{</span><span class="mi">0</span><span class="p">};</span>
 
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="kt">void</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="n">iteration_callback_</span><span class="p">;</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">show_visualizer_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
-<span class="w">  </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">OptimizationVisualizer</span><span class="w"> </span><span class="n">visualizer_</span><span class="p">;</span>
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">mt19937</span><span class="w"> </span><span class="n">m_rand</span><span class="p">{</span><span class="mi">42</span><span class="p">};</span>
+
+<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">function</span><span class="o">&lt;</span><span class="kt">void</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="n">m_iter_callback</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">show_visualizer</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">  </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">OptimizationVisualizer</span><span class="w"> </span><span class="n">visualizer</span><span class="p">;</span>
 
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">Project</span><span class="o">&gt;</span><span class="w"> </span><span class="n">project_</span><span class="p">;</span>
-
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">chrono</span><span class="o">::</span><span class="n">system_clock</span><span class="o">::</span><span class="n">time_point</span><span class="w"> </span><span class="n">m_start_time</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">chrono</span><span class="o">::</span><span class="n">system_clock</span><span class="o">::</span><span class="n">time_point</span><span class="w"> </span><span class="n">m_last_update_time</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">chrono</span><span class="o">::</span><span class="n">system_clock</span><span class="o">::</span><span class="n">time_point</span><span class="w"> </span><span class="n">m_last_remaining_update_time</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">m_remaining_time_message</span><span class="p">;</span>
-
 <span class="p">};</span>
 
-<span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
+<span class="p">}</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-05-04 at 20:03:05 +0000</p>
+<p>Updated on 2022-07-23 at 16:40:07 -0600</p>
 
               
             </article>

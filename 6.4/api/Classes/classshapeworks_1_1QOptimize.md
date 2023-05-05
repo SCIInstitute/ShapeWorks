@@ -29,7 +29,7 @@ Inherits from QObject, [shapeworks::Optimize](../Classes/classshapeworks_1_1Opti
 | virtual | **[~QOptimize](../Classes/classshapeworks_1_1QOptimize.md#function-~qoptimize)**() |
 | virtual std::vector< std::vector< itk::Point< double > > > | **[GetLocalPoints](../Classes/classshapeworks_1_1QOptimize.md#function-getlocalpoints)**() override<br>Return the local points.  |
 | virtual std::vector< std::vector< itk::Point< double > > > | **[GetGlobalPoints](../Classes/classshapeworks_1_1QOptimize.md#function-getglobalpoints)**() override<br>Return the global points.  |
-| std::vector< [Particles](../Classes/classshapeworks_1_1Particles.md) > | **[GetParticles](../Classes/classshapeworks_1_1QOptimize.md#function-getparticles)**() |
+| std::vector< [StudioParticles](../Classes/classshapeworks_1_1StudioParticles.md) > | **[GetParticles](../Classes/classshapeworks_1_1QOptimize.md#function-getparticles)**() |
 | virtual std::vector< std::vector< std::vector< double > > > | **[GetProcrustesTransforms](../Classes/classshapeworks_1_1QOptimize.md#function-getprocrustestransforms)**() override |
 | virtual void | **[UpdateExportablePoints](../Classes/classshapeworks_1_1QOptimize.md#function-updateexportablepoints)**() override |
 
@@ -47,7 +47,7 @@ Inherits from QObject, [shapeworks::Optimize](../Classes/classshapeworks_1_1Opti
 |                | Name           |
 | -------------- | -------------- |
 | using itk::Image< float, 3 > | **[ImageType](../Classes/classshapeworks_1_1Optimize.md#using-imagetype)**  |
-| using [VectorFunction::VectorType](../Classes/classshapeworks_1_1VectorFunction.md#typedef-vectortype) | **[VectorType](../Classes/classshapeworks_1_1Optimize.md#using-vectortype)**  |
+| using [itk::ParticleVectorFunction](../Classes/classitk_1_1ParticleVectorFunction.md)< 3 >::VectorType | **[VectorType](../Classes/classshapeworks_1_1Optimize.md#using-vectortype)**  |
 | using Eigen::MatrixXd | **[MatrixType](../Classes/classshapeworks_1_1Optimize.md#using-matrixtype)**  |
 
 **Public Functions inherited from [shapeworks::Optimize](../Classes/classshapeworks_1_1Optimize.md)**
@@ -63,7 +63,7 @@ Inherits from QObject, [shapeworks::Optimize](../Classes/classshapeworks_1_1Opti
 | void | **[SetIterationCallbackFunction](../Classes/classshapeworks_1_1Optimize.md#function-setiterationcallbackfunction)**(const std::function< void(void)> & f) |
 | void | **[AbortOptimization](../Classes/classshapeworks_1_1Optimize.md#function-abortoptimization)**()<br>Abort optimization.  |
 | bool | **[GetAborted](../Classes/classshapeworks_1_1Optimize.md#function-getaborted)**()<br>Return if the optimization was aborted.  |
-| void | **[SetCutPlanes](../Classes/classshapeworks_1_1Optimize.md#function-setcutplanes)**(std::vector< std::array< itk::Point< double >, 3 > > cut_planes)<br>Set cutting planes.  |
+| void | **[SetCutPlanes](../Classes/classshapeworks_1_1Optimize.md#function-setcutplanes)**(std::vector< std::array< itk::Point< double >, 3 >> cut_planes)<br>Set cutting planes.  |
 | void | **[SetVerbosity](../Classes/classshapeworks_1_1Optimize.md#function-setverbosity)**(int verbosity_level)<br>Set the verbosity level (0-5)  |
 | void | **[SetDomainsPerShape](../Classes/classshapeworks_1_1Optimize.md#function-setdomainspershape)**(int domains_per_shape)<br>Set the number of domains per shape.  |
 | int | **[GetDomainsPerShape](../Classes/classshapeworks_1_1Optimize.md#function-getdomainspershape)**()<br>Return the number of domains per shape.  |
@@ -93,6 +93,7 @@ Inherits from QObject, [shapeworks::Optimize](../Classes/classshapeworks_1_1Opti
 | void | **[SetAdaptivityMode](../Classes/classshapeworks_1_1Optimize.md#function-setadaptivitymode)**(int adaptivity_mode)<br>Set adaptivity mode (TODO: details)  |
 | void | **[SetMeshFFCMode](../Classes/classshapeworks_1_1Optimize.md#function-setmeshffcmode)**(int mesh_ffc_mode)<br>Set [Mesh](../Classes/classshapeworks_1_1Mesh.md) FFC Mode false/0 = mesh clipping mode, true/1 = mesh augmented lagrangian mode.  |
 | void | **[SetAdaptivityStrength](../Classes/classshapeworks_1_1Optimize.md#function-setadaptivitystrength)**(double adaptivity_strength)<br>Set adaptivity strength (TODO: details)  |
+| void | **[SetPairwisePotentialType](../Classes/classshapeworks_1_1Optimize.md#function-setpairwisepotentialtype)**(int pairwise_potential_type)<br>Set pairwise potential type (TODO: details)  |
 | void | **[SetTimePtsPerSubject](../Classes/classshapeworks_1_1Optimize.md#function-settimeptspersubject)**(int time_pts_per_subject)<br>Set the number of time points per subject (TODO: details)  |
 | int | **[GetTimePtsPerSubject](../Classes/classshapeworks_1_1Optimize.md#function-gettimeptspersubject)**()<br>Get the number of time points per subject (TODO: details)  |
 | void | **[SetOptimizationIterations](../Classes/classshapeworks_1_1Optimize.md#function-setoptimizationiterations)**(int optimization_iterations)<br>Set the number of optimization iterations.  |
@@ -112,6 +113,7 @@ Inherits from QObject, [shapeworks::Optimize](../Classes/classshapeworks_1_1Opti
 | void | **[SetSaveInitSplits](../Classes/classshapeworks_1_1Optimize.md#function-setsaveinitsplits)**(bool save_init_splits)<br>Set if initialization splits should be saved or not.  |
 | void | **[SetCheckpointingInterval](../Classes/classshapeworks_1_1Optimize.md#function-setcheckpointinginterval)**(int checkpointing_interval)<br>Set the checkpointing interval.  |
 | void | **[SetKeepCheckpoints](../Classes/classshapeworks_1_1Optimize.md#function-setkeepcheckpoints)**(int keep_checkpoints)<br>Set if checkpoints should be kept (0=disable, 1=enable)  |
+| void | **[SetCotanSigmaFactor](../Classes/classshapeworks_1_1Optimize.md#function-setcotansigmafactor)**(double cotan_sigma_factor)<br>Set the cotan sigma factor (TODO: details)  |
 | void | **[SetUseRegression](../Classes/classshapeworks_1_1Optimize.md#function-setuseregression)**(bool use_regression)<br>Set if regression should be used (TODO: details)  |
 | void | **[SetUseMixedEffects](../Classes/classshapeworks_1_1Optimize.md#function-setusemixedeffects)**(bool use_mixed_effects)<br>Set if mixed effects should be used (TODO: details)  |
 | void | **[SetNormalAngle](../Classes/classshapeworks_1_1Optimize.md#function-setnormalangle)**(double normal_angle)<br>For good/bad analysis, set the normal angle to use (TODO: details)  |
@@ -151,13 +153,13 @@ Inherits from QObject, [shapeworks::Optimize](../Classes/classshapeworks_1_1Opti
 | bool | **[GetShowVisualizer](../Classes/classshapeworks_1_1Optimize.md#function-getshowvisualizer)**() |
 | bool | **[GetMeshFFCMode](../Classes/classshapeworks_1_1Optimize.md#function-getmeshffcmode)**() |
 | vnl_vector_fixed< double, 3 > | **[TransformPoint](../Classes/classshapeworks_1_1Optimize.md#function-transformpoint)**(int domain, vnl_vector_fixed< double, 3 > input)<br>transform a point if necessary  |
-| void | **[UpdateProgress](../Classes/classshapeworks_1_1Optimize.md#function-updateprogress)**() |
 
 **Protected Functions inherited from [shapeworks::Optimize](../Classes/classshapeworks_1_1Optimize.md)**
 
 |                | Name           |
 | -------------- | -------------- |
-| void | **[ComputeTotalIterations](../Classes/classshapeworks_1_1Optimize.md#function-computetotaliterations)**() |
+| void | **[RunProcrustes](../Classes/classshapeworks_1_1Optimize.md#function-runprocrustes)**()<br>Run an iteration of procrustes.  |
+| void | **[OptimizeStart](../Classes/classshapeworks_1_1Optimize.md#function-optimizestart)**() |
 | void | **[OptimizerStop](../Classes/classshapeworks_1_1Optimize.md#function-optimizerstop)**() |
 | void | **[ReadTransformFile](../Classes/classshapeworks_1_1Optimize.md#function-readtransformfile)**() |
 | void | **[ReadPrefixTransformFile](../Classes/classshapeworks_1_1Optimize.md#function-readprefixtransformfile)**(const std::string & s) |
@@ -167,6 +169,7 @@ Inherits from QObject, [shapeworks::Optimize](../Classes/classshapeworks_1_1Opti
 | void | **[Initialize](../Classes/classshapeworks_1_1Optimize.md#function-initialize)**() |
 | void | **[AddAdaptivity](../Classes/classshapeworks_1_1Optimize.md#function-addadaptivity)**() |
 | void | **[RunOptimize](../Classes/classshapeworks_1_1Optimize.md#function-runoptimize)**() |
+| void | **[SetInitialCorrespondenceMode](../Classes/classshapeworks_1_1Optimize.md#function-setinitialcorrespondencemode)**() |
 | void | **[ComputeEnergyAfterIteration](../Classes/classshapeworks_1_1Optimize.md#function-computeenergyafteriteration)**() |
 | void | **[SetCotanSigma](../Classes/classshapeworks_1_1Optimize.md#function-setcotansigma)**() |
 | void | **[WriteTransformFile](../Classes/classshapeworks_1_1Optimize.md#function-writetransformfile)**(int iter =-1) const |
@@ -178,11 +181,10 @@ Inherits from QObject, [shapeworks::Optimize](../Classes/classshapeworks_1_1Opti
 | void | **[WritePointFilesWithFeatures](../Classes/classshapeworks_1_1Optimize.md#function-writepointfileswithfeatures)**(int iter =-1) |
 | void | **[WritePointFilesWithFeatures](../Classes/classshapeworks_1_1Optimize.md#function-writepointfileswithfeatures)**(std::string iter_prefix) |
 | void | **[WriteEnergyFiles](../Classes/classshapeworks_1_1Optimize.md#function-writeenergyfiles)**() |
-| void | **[WriteSplitFiles](../Classes/classshapeworks_1_1Optimize.md#function-writesplitfiles)**(std::string name) |
 | void | **[WriteCuttingPlanePoints](../Classes/classshapeworks_1_1Optimize.md#function-writecuttingplanepoints)**(int iter =-1) |
 | void | **[WriteParameters](../Classes/classshapeworks_1_1Optimize.md#function-writeparameters)**(std::string output_dir ="") |
 | void | **[ReportBadParticles](../Classes/classshapeworks_1_1Optimize.md#function-reportbadparticles)**() |
-| int | **[SetParameters](../Classes/classshapeworks_1_1Optimize.md#function-setparameters)**() |
+| void | **[SetParameters](../Classes/classshapeworks_1_1Optimize.md#function-setparameters)**() |
 | void | **[WriteModes](../Classes/classshapeworks_1_1Optimize.md#function-writemodes)**() |
 | void | **[PrintStartMessage](../Classes/classshapeworks_1_1Optimize.md#function-printstartmessage)**(std::string str, unsigned int vlevel =0) const |
 | void | **[PrintDoneMessage](../Classes/classshapeworks_1_1Optimize.md#function-printdonemessage)**(unsigned int vlevel =0) const |
@@ -194,13 +196,15 @@ Inherits from QObject, [shapeworks::Optimize](../Classes/classshapeworks_1_1Opti
 |                | Name           |
 | -------------- | -------------- |
 | std::shared_ptr< [Sampler](../Classes/classshapeworks_1_1Sampler.md) > | **[m_sampler](../Classes/classshapeworks_1_1Optimize.md#variable-m-sampler)**  |
-| ProcrustesRegistration::Pointer | **[m_procrustes](../Classes/classshapeworks_1_1Optimize.md#variable-m-procrustes)**  |
-| std::shared_ptr< [ParticleGoodBadAssessment](../Classes/classshapeworks_1_1ParticleGoodBadAssessment.md) > | **[m_good_bad](../Classes/classshapeworks_1_1Optimize.md#variable-m-good-bad)**  |
+| ParticleProcrustesRegistration::Pointer | **[m_procrustes](../Classes/classshapeworks_1_1Optimize.md#variable-m-procrustes)**  |
+| [itk::ParticleGoodBadAssessment](../Classes/classitk_1_1ParticleGoodBadAssessment.md)< float, 3 >::Pointer | **[m_good_bad](../Classes/classshapeworks_1_1Optimize.md#variable-m-good-bad)**  |
 | unsigned int | **[m_verbosity_level](../Classes/classshapeworks_1_1Optimize.md#variable-m-verbosity-level)**  |
 | std::vector< std::vector< itk::Point< double > > > | **[m_local_points](../Classes/classshapeworks_1_1Optimize.md#variable-m-local-points)**  |
 | std::vector< std::vector< itk::Point< double > > > | **[m_global_points](../Classes/classshapeworks_1_1Optimize.md#variable-m-global-points)**  |
 | int | **[m_checkpoint_counter](../Classes/classshapeworks_1_1Optimize.md#variable-m-checkpoint-counter)**  |
 | int | **[m_procrustes_counter](../Classes/classshapeworks_1_1Optimize.md#variable-m-procrustes-counter)**  |
+| int | **[m_saturation_counter](../Classes/classshapeworks_1_1Optimize.md#variable-m-saturation-counter)**  |
+| bool | **[m_disable_procrustes](../Classes/classshapeworks_1_1Optimize.md#variable-m-disable-procrustes)**  |
 | bool | **[m_use_cutting_planes](../Classes/classshapeworks_1_1Optimize.md#variable-m-use-cutting-planes)**  |
 | bool | **[m_optimizing](../Classes/classshapeworks_1_1Optimize.md#variable-m-optimizing)**  |
 | bool | **[m_use_regression](../Classes/classshapeworks_1_1Optimize.md#variable-m-use-regression)**  |
@@ -222,6 +226,7 @@ Inherits from QObject, [shapeworks::Optimize](../Classes/classshapeworks_1_1Opti
 | int | **[m_processing_mode](../Classes/classshapeworks_1_1Optimize.md#variable-m-processing-mode)**  |
 | int | **[m_adaptivity_mode](../Classes/classshapeworks_1_1Optimize.md#variable-m-adaptivity-mode)**  |
 | double | **[m_adaptivity_strength](../Classes/classshapeworks_1_1Optimize.md#variable-m-adaptivity-strength)**  |
+| int | **[m_pairwise_potential_type](../Classes/classshapeworks_1_1Optimize.md#variable-m-pairwise-potential-type)**  |
 | bool | **[m_mesh_ffc_mode](../Classes/classshapeworks_1_1Optimize.md#variable-m-mesh-ffc-mode)**  |
 | unsigned int | **[m_timepts_per_subject](../Classes/classshapeworks_1_1Optimize.md#variable-m-timepts-per-subject)**  |
 | int | **[m_optimization_iterations](../Classes/classshapeworks_1_1Optimize.md#variable-m-optimization-iterations)**  |
@@ -251,6 +256,7 @@ Inherits from QObject, [shapeworks::Optimize](../Classes/classshapeworks_1_1Opti
 | std::string | **[m_python_filename](../Classes/classshapeworks_1_1Optimize.md#variable-m-python-filename)**  |
 | bool | **[m_geodesics_enabled](../Classes/classshapeworks_1_1Optimize.md#variable-m-geodesics-enabled)**  |
 | size_t | **[m_geodesic_cache_size_multiplier](../Classes/classshapeworks_1_1Optimize.md#variable-m-geodesic-cache-size-multiplier)**  |
+| unsigned int | **[m_mode](../Classes/classshapeworks_1_1Optimize.md#variable-m-mode)**  |
 | double | **[m_spacing](../Classes/classshapeworks_1_1Optimize.md#variable-m-spacing)**  |
 | std::vector< std::string > | **[m_filenames](../Classes/classshapeworks_1_1Optimize.md#variable-m-filenames)**  |
 | int | **[m_num_shapes](../Classes/classshapeworks_1_1Optimize.md#variable-m-num-shapes)**  |
@@ -270,16 +276,11 @@ Inherits from QObject, [shapeworks::Optimize](../Classes/classshapeworks_1_1Opti
 | int | **[m_total_iterations](../Classes/classshapeworks_1_1Optimize.md#variable-m-total-iterations)**  |
 | int | **[m_iteration_count](../Classes/classshapeworks_1_1Optimize.md#variable-m-iteration-count)**  |
 | int | **[m_split_number](../Classes/classshapeworks_1_1Optimize.md#variable-m-split-number)**  |
-| int | **[current_particle_iterations_](../Classes/classshapeworks_1_1Optimize.md#variable-current-particle-iterations-)**  |
-| int | **[total_particle_iterations_](../Classes/classshapeworks_1_1Optimize.md#variable-total-particle-iterations-)**  |
-| std::function< void(void)> | **[iteration_callback_](../Classes/classshapeworks_1_1Optimize.md#variable-iteration-callback-)**  |
-| bool | **[show_visualizer_](../Classes/classshapeworks_1_1Optimize.md#variable-show-visualizer-)**  |
-| [shapeworks::OptimizationVisualizer](../Classes/classshapeworks_1_1OptimizationVisualizer.md) | **[visualizer_](../Classes/classshapeworks_1_1Optimize.md#variable-visualizer-)**  |
+| std::mt19937 | **[m_rand](../Classes/classshapeworks_1_1Optimize.md#variable-m-rand)**  |
+| std::function< void(void)> | **[m_iter_callback](../Classes/classshapeworks_1_1Optimize.md#variable-m-iter-callback)**  |
+| bool | **[show_visualizer](../Classes/classshapeworks_1_1Optimize.md#variable-show-visualizer)**  |
+| [shapeworks::OptimizationVisualizer](../Classes/classshapeworks_1_1OptimizationVisualizer.md) | **[visualizer](../Classes/classshapeworks_1_1Optimize.md#variable-visualizer)**  |
 | std::shared_ptr< [Project](../Classes/classshapeworks_1_1Project.md) > | **[project_](../Classes/classshapeworks_1_1Optimize.md#variable-project-)**  |
-| std::chrono::system_clock::time_point | **[m_start_time](../Classes/classshapeworks_1_1Optimize.md#variable-m-start-time)**  |
-| std::chrono::system_clock::time_point | **[m_last_update_time](../Classes/classshapeworks_1_1Optimize.md#variable-m-last-update-time)**  |
-| std::chrono::system_clock::time_point | **[m_last_remaining_update_time](../Classes/classshapeworks_1_1Optimize.md#variable-m-last-remaining-update-time)**  |
-| std::string | **[m_remaining_time_message](../Classes/classshapeworks_1_1Optimize.md#variable-m-remaining-time-message)**  |
 
 
 ## Public Signals Documentation
@@ -337,7 +338,7 @@ Return the global points.
 ### function GetParticles
 
 ```cpp
-std::vector< Particles > GetParticles()
+std::vector< StudioParticles > GetParticles()
 ```
 
 
@@ -389,4 +390,4 @@ virtual void IterateCallback(
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:04 +0000
+Updated on 2022-07-23 at 16:40:06 -0600

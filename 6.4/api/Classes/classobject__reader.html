@@ -2371,9 +2371,126 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#public-types" class="md-nav__link">
+    Public Types
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#public-functions" class="md-nav__link">
+    Public Functions
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#detailed-description" class="md-nav__link">
     Detailed Description
   </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#public-types-documentation" class="md-nav__link">
+    Public Types Documentation
+  </a>
+  
+    <nav class="md-nav" aria-label="Public Types Documentation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#typedef-self" class="md-nav__link">
+    typedef Self
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#typedef-objecttype" class="md-nav__link">
+    typedef ObjectType
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#public-functions-documentation" class="md-nav__link">
+    Public Functions Documentation
+  </a>
+  
+    <nav class="md-nav" aria-label="Public Functions Documentation">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#function-getoutput" class="md-nav__link">
+    function GetOutput
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-getoutput_1" class="md-nav__link">
+    function GetOutput
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-setfilename" class="md-nav__link">
+    function SetFileName
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-setfilename_1" class="md-nav__link">
+    function SetFileName
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-getfilename" class="md-nav__link">
+    function GetFileName
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-read" class="md-nav__link">
+    function Read
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-update" class="md-nav__link">
+    function Update
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-object_reader" class="md-nav__link">
+    function object_reader
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-object_reader_1" class="md-nav__link">
+    function ~object_reader
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -2397,13 +2514,122 @@
 
 <h1 id="object_reader">object_reader</h1>
 <p><a href="#detailed-description">More...</a></p>
-<p><code>#include &lt;ObjectReader.h&gt;</code></p>
+<p><code>#include &lt;object_reader.h&gt;</code></p>
+<h2 id="public-types">Public Types</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>typedef <a href="classobject__reader.html">object_reader</a></td>
+<td><strong><a href="classobject__reader.html#typedef-self">Self</a></strong></td>
+</tr>
+<tr>
+<td>typedef T</td>
+<td><strong><a href="classobject__reader.html#typedef-objecttype">ObjectType</a></strong></td>
+</tr>
+</tbody>
+</table>
+<h2 id="public-functions">Public Functions</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>const std::vector&lt; ObjectType &gt; &amp;</td>
+<td><strong><a href="classobject__reader.html#function-getoutput">GetOutput</a></strong>() const</td>
+</tr>
+<tr>
+<td>std::vector&lt; ObjectType &gt; &amp;</td>
+<td><strong><a href="classobject__reader.html#function-getoutput">GetOutput</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classobject__reader.html#function-setfilename">SetFileName</a></strong>(const char * fn)</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classobject__reader.html#function-setfilename">SetFileName</a></strong>(const std::string &amp; fn)</td>
+</tr>
+<tr>
+<td>const std::string &amp;</td>
+<td><strong><a href="classobject__reader.html#function-getfilename">GetFileName</a></strong>() const</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classobject__reader.html#function-read">Read</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classobject__reader.html#function-update">Update</a></strong>()</td>
+</tr>
+<tr>
+<td></td>
+<td><strong><a href="classobject__reader.html#function-object-reader">object_reader</a></strong>()</td>
+</tr>
+<tr>
+<td>virtual</td>
+<td><strong><a href="classobject__reader.html#function-~object-reader">~object_reader</a></strong>()</td>
+</tr>
+</tbody>
+</table>
 <h2 id="detailed-description">Detailed Description</h2>
-<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">object_reader</span><span class="p">;</span>
+<div class="highlight"><pre><span></span><code><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">T</span><span class="w"> </span><span class="o">&gt;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">object_reader</span><span class="p">;</span>
 </code></pre></div>
 <p>Reads a std::vector of c++ objects. The first integer in the file is assumed to represent the number of transforms in the file. The size of each transform is determined by the templating. </p>
+<h2 id="public-types-documentation">Public Types Documentation</h2>
+<h3 id="typedef-self">typedef Self</h3>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">object_reader</span><span class="w"> </span><span class="n">object_reader</span><span class="o">&lt;</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Self</span><span class="p">;</span>
+</code></pre></div>
+<p>Standard class typedefs </p>
+<h3 id="typedef-objecttype">typedef ObjectType</h3>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="n">object_reader</span><span class="o">&lt;</span><span class="w"> </span><span class="n">T</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">ObjectType</span><span class="p">;</span>
+</code></pre></div>
+<h2 id="public-functions-documentation">Public Functions Documentation</h2>
+<h3 id="function-getoutput">function GetOutput</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">ObjectType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetOutput</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
+<p>Get the output of the reader. The output is a std::vector of TransformType. </p>
+<h3 id="function-getoutput_1">function GetOutput</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">ObjectType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetOutput</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="function-setfilename">function SetFileName</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetFileName</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">fn</span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="function-setfilename_1">function SetFileName</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetFileName</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">fn</span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="function-getfilename">function GetFileName</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetFileName</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
+<h3 id="function-read">function Read</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">Read</span><span class="p">()</span>
+</code></pre></div>
+<p>Read the file. </p>
+<h3 id="function-update">function Update</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">Update</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="function-object_reader">function object_reader</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">object_reader</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="function-object_reader_1">function ~object_reader</h3>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">object_reader</span><span class="p">()</span>
+</code></pre></div>
 <hr />
-<p>Updated on 2023-05-04 at 20:03:05 +0000</p>
+<p>Updated on 2022-07-23 at 16:40:07 -0600</p>
 
               
             </article>

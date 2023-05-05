@@ -1,9 +1,9 @@
 ---
-title: Studio/Data/Preferences.h
+title: Studio/src/Data/Preferences.h
 
 ---
 
-# Studio/Data/Preferences.h
+# Studio/src/Data/Preferences.h
 
 
 
@@ -76,9 +76,6 @@ class Preferences : public QObject {
   bool get_glyph_auto_size();
   void set_glyph_auto_size(bool value);
 
-  bool get_glyph_scale_arrows();
-  void set_glyph_scale_arrows(bool value);
-
   float get_pca_range();
   void set_pca_range(float value);
 
@@ -87,9 +84,6 @@ class Preferences : public QObject {
 
   void set_color_scheme(int value);
   int get_color_scheme();
-
-  void set_particle_colors(int value);
-  int get_particle_colors();
 
   void set_color_map(int value);
   int get_color_map();
@@ -133,23 +127,6 @@ class Preferences : public QObject {
   void set_export_pca_modes(QString string);
   QString get_export_pca_modes();
 
-  bool get_auto_update_check();
-  void set_auto_update_check(bool enabled);
-
-  QDateTime get_update_snooze_until();
-  void set_update_snooze_until(QDateTime date);
-
-  QString get_device_id();
-
-  bool get_telemetry_enabled();
-  void set_telemetry_enabled(bool enabled);
-
-  bool get_telemetry_asked();
-  void set_telemetry_asked(bool asked);
-
-  QStringList get_pending_telemetry_events();
-  void set_pending_telemetry_events(QStringList events);
-
  Q_SIGNALS:
 
   void color_scheme_changed(int newIndex);
@@ -170,4 +147,4 @@ class Preferences : public QObject {
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:05 +0000
+Updated on 2022-07-23 at 16:40:07 -0600

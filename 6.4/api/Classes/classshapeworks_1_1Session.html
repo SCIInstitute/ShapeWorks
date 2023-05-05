@@ -2449,6 +2449,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#slot-handle_message" class="md-nav__link">
+    slot handle_message
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#slot-handle_thread_complete" class="md-nav__link">
     slot handle_thread_complete
   </a>
@@ -2518,6 +2525,20 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#signal-message" class="md-nav__link">
+    signal message
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#signal-error" class="md-nav__link">
+    signal error
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#signal-feature_range_changed" class="md-nav__link">
     signal feature_range_changed
   </a>
@@ -2548,13 +2569,6 @@
           <li class="md-nav__item">
   <a href="#signal-repaint" class="md-nav__link">
     signal repaint
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#signal-reinsert_shapes" class="md-nav__link">
-    signal reinsert_shapes
   </a>
   
 </li>
@@ -3238,13 +3252,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-trigger_reinsert_shapes" class="md-nav__link">
-    function trigger_reinsert_shapes
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#function-set_display_mode" class="md-nav__link">
     function set_display_mode
   </a>
@@ -3378,6 +3385,10 @@
 </tr>
 <tr>
 <td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#slot-handle-message">handle_message</a></strong>(QString s)</td>
+</tr>
+<tr>
+<td>void</td>
 <td><strong><a href="classshapeworks_1_1Session.html#slot-handle-thread-complete">handle_thread_complete</a></strong>()</td>
 </tr>
 </tbody>
@@ -3421,6 +3432,14 @@
 </tr>
 <tr>
 <td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#signal-message">message</a></strong>(QString )</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Session.html#signal-error">error</a></strong>(QString )</td>
+</tr>
+<tr>
+<td>void</td>
 <td><strong><a href="classshapeworks_1_1Session.html#signal-feature-range-changed">feature_range_changed</a></strong>()</td>
 </tr>
 <tr>
@@ -3438,10 +3457,6 @@
 <tr>
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1Session.html#signal-repaint">repaint</a></strong>()</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1Session.html#signal-reinsert-shapes">reinsert_shapes</a></strong>()</td>
 </tr>
 </tbody>
 </table>
@@ -3504,19 +3519,19 @@
 </tr>
 <tr>
 <td>bool</td>
-<td><strong><a href="classshapeworks_1_1Session.html#function-update-particles">update_particles</a></strong>(std::vector&lt; <a href="classshapeworks_1_1Particles.html">Particles</a> &gt; particles)</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-update-particles">update_particles</a></strong>(std::vector&lt; <a href="classshapeworks_1_1StudioParticles.html">StudioParticles</a> &gt; particles)</td>
 </tr>
 <tr>
 <td>int</td>
 <td><strong><a href="classshapeworks_1_1Session.html#function-get-num-particles">get_num_particles</a></strong>()<br>Return the total number of particles for all domains, combined.</td>
 </tr>
 <tr>
-<td><a href="classshapeworks_1_1ParticleSystemEvaluation.html">ParticleSystemEvaluation</a></td>
+<td><a href="classshapeworks_1_1ParticleSystem.html">ParticleSystem</a></td>
 <td><strong><a href="classshapeworks_1_1Session.html#function-get-local-particle-system">get_local_particle_system</a></strong>(int domain)</td>
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Session.html#function-update-procrustes-transforms">update_procrustes_transforms</a></strong>(std::vector&lt; std::vector&lt; std::vector&lt; double &gt; &gt; &gt; transforms)</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-update-procrustes-transforms">update_procrustes_transforms</a></strong>(std::vector&lt; std::vector&lt; std::vector&lt; double &gt;&gt;&gt; transforms)</td>
 </tr>
 <tr>
 <td>bool</td>
@@ -3531,7 +3546,7 @@
 <td><strong><a href="classshapeworks_1_1Session.html#function-remove-shapes">remove_shapes</a></strong>(QList&lt; int &gt; list)<br>remove shapes</td>
 </tr>
 <tr>
-<td>ShapeList</td>
+<td>QVector&lt; QSharedPointer&lt; <a href="classshapeworks_1_1Shape.html">Shape</a> &gt; &gt;</td>
 <td><strong><a href="classshapeworks_1_1Session.html#function-get-shapes">get_shapes</a></strong>()<br>return all shapes</td>
 </tr>
 <tr>
@@ -3575,7 +3590,7 @@
 <td><strong><a href="classshapeworks_1_1Session.html#function-get-default-feature-map">get_default_feature_map</a></strong>()</td>
 </tr>
 <tr>
-<td>std::shared_ptr&lt; <a href="classshapeworks_1_1MeshManager.html">MeshManager</a> &gt;</td>
+<td>QSharedPointer&lt; <a href="classshapeworks_1_1MeshManager.html">MeshManager</a> &gt;</td>
 <td><strong><a href="classshapeworks_1_1Session.html#function-get-mesh-manager">get_mesh_manager</a></strong>()</td>
 </tr>
 <tr>
@@ -3711,7 +3726,7 @@
 <td><strong><a href="classshapeworks_1_1Session.html#function-set-image-axis">set_image_axis</a></strong>(QString axis)</td>
 </tr>
 <tr>
-<td><a href="../Namespaces/namespaceshapeworks.html#enum-axis">Axis</a></td>
+<td>Axis</td>
 <td><strong><a href="classshapeworks_1_1Session.html#function-get-image-axis">get_image_axis</a></strong>()</td>
 </tr>
 <tr>
@@ -3816,10 +3831,10 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Session.html#function-set-difference-particles">set_difference_particles</a></strong>(<a href="classshapeworks_1_1Particles.html">Particles</a> particles)</td>
+<td><strong><a href="classshapeworks_1_1Session.html#function-set-difference-particles">set_difference_particles</a></strong>(<a href="classshapeworks_1_1StudioParticles.html">StudioParticles</a> particles)</td>
 </tr>
 <tr>
-<td><a href="classshapeworks_1_1Particles.html">Particles</a></td>
+<td><a href="classshapeworks_1_1StudioParticles.html">StudioParticles</a></td>
 <td><strong><a href="classshapeworks_1_1Session.html#function-get-difference-particles">get_difference_particles</a></strong>()</td>
 </tr>
 <tr>
@@ -3833,10 +3848,6 @@
 <tr>
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1Session.html#function-trigger-repaint">trigger_repaint</a></strong>()</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1Session.html#function-trigger-reinsert-shapes">trigger_reinsert_shapes</a></strong>()</td>
 </tr>
 <tr>
 <td>void</td>
@@ -3912,6 +3923,11 @@
 <h3 id="slot-handle_new_mesh">slot handle_new_mesh</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_new_mesh</span><span class="p">()</span>
 </code></pre></div>
+<h3 id="slot-handle_message">slot handle_message</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_message</span><span class="p">(</span>
+<span class="w">    </span><span class="n">QString</span><span class="w"> </span><span class="n">s</span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="slot-handle_thread_complete">slot handle_thread_complete</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_thread_complete</span><span class="p">()</span>
 </code></pre></div>
@@ -3938,6 +3954,16 @@
 <h3 id="signal-new_mesh">signal new_mesh</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">new_mesh</span><span class="p">()</span>
 </code></pre></div>
+<h3 id="signal-message">signal message</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">message</span><span class="p">(</span>
+<span class="w">    </span><span class="n">QString</span><span class="w"> </span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="signal-error">signal error</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">error</span><span class="p">(</span>
+<span class="w">    </span><span class="n">QString</span><span class="w"> </span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="signal-feature_range_changed">signal feature_range_changed</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">feature_range_changed</span><span class="p">()</span>
 </code></pre></div>
@@ -3952,9 +3978,6 @@
 </code></pre></div>
 <h3 id="signal-repaint">signal repaint</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">repaint</span><span class="p">()</span>
-</code></pre></div>
-<h3 id="signal-reinsert_shapes">signal reinsert_shapes</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">reinsert_shapes</span><span class="p">()</span>
 </code></pre></div>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-session">function Session</h3>
@@ -4029,7 +4052,7 @@
 </code></pre></div>
 <h3 id="function-update_particles">function update_particles</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">update_particles</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Particles</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">particles</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">StudioParticles</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">particles</span>
 <span class="p">)</span>
 </code></pre></div>
 <h3 id="function-get_num_particles">function get_num_particles</h3>
@@ -4037,13 +4060,13 @@
 </code></pre></div>
 <p>Return the total number of particles for all domains, combined. </p>
 <h3 id="function-get_local_particle_system">function get_local_particle_system</h3>
-<div class="highlight"><pre><span></span><code><span class="n">ParticleSystemEvaluation</span><span class="w"> </span><span class="n">get_local_particle_system</span><span class="p">(</span>
+<div class="highlight"><pre><span></span><code><span class="n">ParticleSystem</span><span class="w"> </span><span class="n">get_local_particle_system</span><span class="p">(</span>
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span>
 <span class="p">)</span>
 </code></pre></div>
 <h3 id="function-update_procrustes_transforms">function update_procrustes_transforms</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_procrustes_transforms</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">transforms</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">transforms</span>
 <span class="p">)</span>
 </code></pre></div>
 <h3 id="function-is_light_project">function is_light_project</h3>
@@ -4059,7 +4082,7 @@
 </code></pre></div>
 <p>remove shapes </p>
 <h3 id="function-get_shapes">function get_shapes</h3>
-<div class="highlight"><pre><span></span><code><span class="n">ShapeList</span><span class="w"> </span><span class="n">get_shapes</span><span class="p">()</span>
+<div class="highlight"><pre><span></span><code><span class="n">QVector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Shape</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_shapes</span><span class="p">()</span>
 </code></pre></div>
 <p>return all shapes </p>
 <h3 id="function-calculate_reconstructed_samples">function calculate_reconstructed_samples</h3>
@@ -4095,7 +4118,7 @@
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">get_default_feature_map</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-get_mesh_manager">function get_mesh_manager</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">MeshManager</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_mesh_manager</span><span class="p">()</span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">MeshManager</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_mesh_manager</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-parameters">function parameters</h3>
 <div class="highlight"><pre><span></span><code><span class="n">shapeworks</span><span class="o">::</span><span class="n">Parameters</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">parameters</span><span class="p">()</span>
@@ -4326,11 +4349,11 @@
 </code></pre></div>
 <h3 id="function-set_difference_particles">function set_difference_particles</h3>
 <div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_difference_particles</span><span class="p">(</span>
-<span class="w">    </span><span class="n">Particles</span><span class="w"> </span><span class="n">particles</span>
+<span class="w">    </span><span class="n">StudioParticles</span><span class="w"> </span><span class="n">particles</span>
 <span class="p">)</span>
 </code></pre></div>
 <h3 id="function-get_difference_particles">function get_difference_particles</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Particles</span><span class="w"> </span><span class="n">get_difference_particles</span><span class="p">()</span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">StudioParticles</span><span class="w"> </span><span class="n">get_difference_particles</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-set_compare_settings">function set_compare_settings</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_compare_settings</span><span class="p">(</span>
@@ -4342,9 +4365,6 @@
 </code></pre></div>
 <h3 id="function-trigger_repaint">function trigger_repaint</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">trigger_repaint</span><span class="p">()</span>
-</code></pre></div>
-<h3 id="function-trigger_reinsert_shapes">function trigger_reinsert_shapes</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">trigger_reinsert_shapes</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-set_display_mode">function set_display_mode</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_display_mode</span><span class="p">(</span>
@@ -4384,7 +4404,7 @@
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">DEEPSSM_C</span><span class="p">;</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-05-04 at 20:03:04 +0000</p>
+<p>Updated on 2022-07-23 at 16:40:06 -0600</p>
 
               
             </article>

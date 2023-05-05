@@ -23,8 +23,8 @@ title: shapeworks::MultiVariateNormalRandom
 | -------------- | -------------- |
 | Eigen::VectorXd | **[mean](../Classes/structshapeworks_1_1MultiVariateNormalRandom.md#variable-mean)**  |
 | Eigen::MatrixXd | **[transform](../Classes/structshapeworks_1_1MultiVariateNormalRandom.md#variable-transform)**  |
-| boost::mt19937 | **[gen](../Classes/structshapeworks_1_1MultiVariateNormalRandom.md#variable-gen)**  |
-| boost::normal_distribution | **[dist](../Classes/structshapeworks_1_1MultiVariateNormalRandom.md#variable-dist)**  |
+| std::mt19937 | **[gen](../Classes/structshapeworks_1_1MultiVariateNormalRandom.md#variable-gen)**  |
+| std::normal_distribution | **[dist](../Classes/structshapeworks_1_1MultiVariateNormalRandom.md#variable-dist)**  |
 
 ## Public Functions Documentation
 
@@ -73,17 +73,17 @@ Eigen::MatrixXd transform;
 ### variable gen
 
 ```cpp
-boost::mt19937 gen {42};
+std::mt19937 gen {42};
 ```
 
 
 ### variable dist
 
 ```cpp
-boost::normal_distribution dist;
+std::normal_distribution dist;
 ```
 
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:04 +0000
+Updated on 2022-07-23 at 16:40:06 -0600

@@ -16,7 +16,6 @@ Inherits from QWidget
 |                | Name           |
 | -------------- | -------------- |
 | enum| **[AlignmentType](../Classes/classshapeworks_1_1AnalysisTool.md#enum-alignmenttype)** { Global = -2, Local = -1} |
-| enum| **[McaMode](../Classes/classshapeworks_1_1AnalysisTool.md#enum-mcamode)** { Vanilla, Within, Between} |
 | using itk::Point< double, 3 > | **[PointType](../Classes/classshapeworks_1_1AnalysisTool.md#using-pointtype)**  |
 
 ## Public Slots
@@ -50,7 +49,6 @@ Inherits from QWidget
 | void | **[reconstruction_method_changed](../Classes/classshapeworks_1_1AnalysisTool.md#slot-reconstruction-method-changed)**() |
 | void | **[initialize_mesh_warper](../Classes/classshapeworks_1_1AnalysisTool.md#slot-initialize-mesh-warper)**() |
 | void | **[group_p_values_clicked](../Classes/classshapeworks_1_1AnalysisTool.md#slot-group-p-values-clicked)**() |
-| void | **[network_analysis_clicked](../Classes/classshapeworks_1_1AnalysisTool.md#slot-network-analysis-clicked)**() |
 | void | **[handle_eval_thread_complete](../Classes/classshapeworks_1_1AnalysisTool.md#slot-handle-eval-thread-complete)**(ShapeEvaluationJob::JobType job_type, Eigen::VectorXd data) |
 | void | **[handle_eval_thread_progress](../Classes/classshapeworks_1_1AnalysisTool.md#slot-handle-eval-thread-progress)**(ShapeEvaluationJob::JobType job_type, float progress) |
 | void | **[handle_eval_particle_normals_progress](../Classes/classshapeworks_1_1AnalysisTool.md#slot-handle-eval-particle-normals-progress)**(float progress) |
@@ -60,8 +58,6 @@ Inherits from QWidget
 | void | **[run_good_bad_particles](../Classes/classshapeworks_1_1AnalysisTool.md#slot-run-good-bad-particles)**() |
 | void | **[handle_lda_progress](../Classes/classshapeworks_1_1AnalysisTool.md#slot-handle-lda-progress)**(double progress) |
 | void | **[handle_lda_complete](../Classes/classshapeworks_1_1AnalysisTool.md#slot-handle-lda-complete)**() |
-| void | **[handle_network_analysis_progress](../Classes/classshapeworks_1_1AnalysisTool.md#slot-handle-network-analysis-progress)**(int progress) |
-| void | **[handle_network_analysis_complete](../Classes/classshapeworks_1_1AnalysisTool.md#slot-handle-network-analysis-complete)**() |
 | void | **[show_difference_to_mean_clicked](../Classes/classshapeworks_1_1AnalysisTool.md#slot-show-difference-to-mean-clicked)**() |
 
 ## Public Signals
@@ -71,6 +67,9 @@ Inherits from QWidget
 | void | **[update_view](../Classes/classshapeworks_1_1AnalysisTool.md#signal-update-view)**() |
 | void | **[pca_update](../Classes/classshapeworks_1_1AnalysisTool.md#signal-pca-update)**() |
 | void | **[progress](../Classes/classshapeworks_1_1AnalysisTool.md#signal-progress)**(int ) |
+| void | **[message](../Classes/classshapeworks_1_1AnalysisTool.md#signal-message)**(QString ) |
+| void | **[error](../Classes/classshapeworks_1_1AnalysisTool.md#signal-error)**(QString ) |
+| void | **[warning](../Classes/classshapeworks_1_1AnalysisTool.md#signal-warning)**(QString ) |
 | void | **[reconstruction_complete](../Classes/classshapeworks_1_1AnalysisTool.md#signal-reconstruction-complete)**() |
 
 ## Public Functions
@@ -82,7 +81,6 @@ Inherits from QWidget
 | void | **[set_session](../Classes/classshapeworks_1_1AnalysisTool.md#function-set-session)**(QSharedPointer< [Session](../Classes/classshapeworks_1_1Session.md) > session)<br>set the pointer to the session  |
 | QSharedPointer< [Session](../Classes/classshapeworks_1_1Session.md) > | **[get_session](../Classes/classshapeworks_1_1AnalysisTool.md#function-get-session)**()<br>Return the session.  |
 | void | **[set_app](../Classes/classshapeworks_1_1AnalysisTool.md#function-set-app)**([ShapeWorksStudioApp](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md) * app)<br>set the pointer to the application  |
-| [ShapeWorksStudioApp](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md) * | **[get_app](../Classes/classshapeworks_1_1AnalysisTool.md#function-get-app)**() |
 | void | **[set_active](../Classes/classshapeworks_1_1AnalysisTool.md#function-set-active)**(bool active)<br>Set if this tool is active.  |
 | bool | **[get_active](../Classes/classshapeworks_1_1AnalysisTool.md#function-get-active)**()<br>Return if this tool is active.  |
 | bool | **[get_group_difference_mode](../Classes/classshapeworks_1_1AnalysisTool.md#function-get-group-difference-mode)**() |
@@ -94,19 +92,15 @@ Inherits from QWidget
 | double | **[get_group_ratio](../Classes/classshapeworks_1_1AnalysisTool.md#function-get-group-ratio)**() |
 | double | **[get_pca_value](../Classes/classshapeworks_1_1AnalysisTool.md#function-get-pca-value)**() |
 | bool | **[pca_animate](../Classes/classshapeworks_1_1AnalysisTool.md#function-pca-animate)**() |
-| McaMode | **[get_mca_level](../Classes/classshapeworks_1_1AnalysisTool.md#function-get-mca-level)**() const |
 | int | **[get_sample_number](../Classes/classshapeworks_1_1AnalysisTool.md#function-get-sample-number)**() |
 | bool | **[compute_stats](../Classes/classshapeworks_1_1AnalysisTool.md#function-compute-stats)**() |
 | void | **[update_slider](../Classes/classshapeworks_1_1AnalysisTool.md#function-update-slider)**() |
 | void | **[reset_stats](../Classes/classshapeworks_1_1AnalysisTool.md#function-reset-stats)**() |
 | void | **[enable_actions](../Classes/classshapeworks_1_1AnalysisTool.md#function-enable-actions)**(bool newly_enabled =false) |
-| [Particles](../Classes/classshapeworks_1_1Particles.md) | **[get_mean_shape_points](../Classes/classshapeworks_1_1AnalysisTool.md#function-get-mean-shape-points)**() |
+| [StudioParticles](../Classes/classshapeworks_1_1StudioParticles.md) | **[get_mean_shape_points](../Classes/classshapeworks_1_1AnalysisTool.md#function-get-mean-shape-points)**() |
 | ShapeHandle | **[get_mean_shape](../Classes/classshapeworks_1_1AnalysisTool.md#function-get-mean-shape)**() |
-| [Particles](../Classes/classshapeworks_1_1Particles.md) | **[get_shape_points](../Classes/classshapeworks_1_1AnalysisTool.md#function-get-shape-points)**(int mode, double value) |
-| [Particles](../Classes/classshapeworks_1_1Particles.md) | **[get_multi_level_shape_points](../Classes/classshapeworks_1_1AnalysisTool.md#function-get-multi-level-shape-points)**(int mode, double value, McaMode level) |
+| [StudioParticles](../Classes/classshapeworks_1_1StudioParticles.md) | **[get_shape_points](../Classes/classshapeworks_1_1AnalysisTool.md#function-get-shape-points)**(int mode, double value) |
 | ShapeHandle | **[get_mode_shape](../Classes/classshapeworks_1_1AnalysisTool.md#function-get-mode-shape)**(int mode, double value) |
-| ShapeHandle | **[get_mca_mode_shape](../Classes/classshapeworks_1_1AnalysisTool.md#function-get-mca-mode-shape)**(int mode, double value, McaMode level) |
-| ShapeHandle | **[get_current_shape](../Classes/classshapeworks_1_1AnalysisTool.md#function-get-current-shape)**() |
 | [ParticleShapeStatistics](../Classes/classshapeworks_1_1ParticleShapeStatistics.md) | **[get_stats](../Classes/classshapeworks_1_1AnalysisTool.md#function-get-stats)**() |
 | void | **[load_settings](../Classes/classshapeworks_1_1AnalysisTool.md#function-load-settings)**() |
 | void | **[store_settings](../Classes/classshapeworks_1_1AnalysisTool.md#function-store-settings)**() |
@@ -132,17 +126,6 @@ Inherits from QWidget
 | ---------- | ----- | ----------- |
 | Global | -2|   |
 | Local | -1|   |
-
-
-
-
-### enum McaMode
-
-| Enumerator | Value | Description |
-| ---------- | ----- | ----------- |
-| Vanilla | |   |
-| Within | |   |
-| Between | |   |
 
 
 
@@ -352,13 +335,6 @@ void group_p_values_clicked()
 ```
 
 
-### slot network_analysis_clicked
-
-```cpp
-void network_analysis_clicked()
-```
-
-
 ### slot handle_eval_thread_complete
 
 ```cpp
@@ -436,22 +412,6 @@ void handle_lda_complete()
 ```
 
 
-### slot handle_network_analysis_progress
-
-```cpp
-void handle_network_analysis_progress(
-    int progress
-)
-```
-
-
-### slot handle_network_analysis_complete
-
-```cpp
-void handle_network_analysis_complete()
-```
-
-
 ### slot show_difference_to_mean_clicked
 
 ```cpp
@@ -480,6 +440,33 @@ void pca_update()
 ```cpp
 void progress(
     int 
+)
+```
+
+
+### signal message
+
+```cpp
+void message(
+    QString 
+)
+```
+
+
+### signal error
+
+```cpp
+void error(
+    QString 
+)
+```
+
+
+### signal warning
+
+```cpp
+void warning(
+    QString 
 )
 ```
 
@@ -536,13 +523,6 @@ void set_app(
 ```
 
 set the pointer to the application 
-
-### function get_app
-
-```cpp
-inline ShapeWorksStudioApp * get_app()
-```
-
 
 ### function set_active
 
@@ -630,13 +610,6 @@ bool pca_animate()
 ```
 
 
-### function get_mca_level
-
-```cpp
-McaMode get_mca_level() const
-```
-
-
 ### function get_sample_number
 
 ```cpp
@@ -677,7 +650,7 @@ void enable_actions(
 ### function get_mean_shape_points
 
 ```cpp
-Particles get_mean_shape_points()
+StudioParticles get_mean_shape_points()
 ```
 
 
@@ -691,20 +664,9 @@ ShapeHandle get_mean_shape()
 ### function get_shape_points
 
 ```cpp
-Particles get_shape_points(
+StudioParticles get_shape_points(
     int mode,
     double value
-)
-```
-
-
-### function get_multi_level_shape_points
-
-```cpp
-Particles get_multi_level_shape_points(
-    int mode,
-    double value,
-    McaMode level
 )
 ```
 
@@ -716,24 +678,6 @@ ShapeHandle get_mode_shape(
     int mode,
     double value
 )
-```
-
-
-### function get_mca_mode_shape
-
-```cpp
-ShapeHandle get_mca_mode_shape(
-    int mode,
-    double value,
-    McaMode level
-)
-```
-
-
-### function get_current_shape
-
-```cpp
-ShapeHandle get_current_shape()
 ```
 
 
@@ -820,4 +764,4 @@ static const std::string MODE_REGRESSION_C;
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:03 +0000
+Updated on 2022-07-23 at 16:40:06 -0600

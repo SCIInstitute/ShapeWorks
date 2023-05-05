@@ -9,7 +9,7 @@ title: shapeworks::shapeworks_exception
 
 
 
-Inherits from std::runtime_error
+Inherits from runtime_error
 
 ## Public Functions
 
@@ -40,4 +40,4 @@ shapeworks_exception(
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:05 +0000
+Updated on 2022-07-23 at 16:40:06 -0600

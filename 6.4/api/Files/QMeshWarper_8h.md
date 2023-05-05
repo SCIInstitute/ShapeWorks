@@ -1,9 +1,9 @@
 ---
-title: Libs/Analyze/QMeshWarper.h
+title: Studio/src/Data/QMeshWarper.h
 
 ---
 
-# Libs/Analyze/QMeshWarper.h
+# Studio/src/Data/QMeshWarper.h
 
 
 
@@ -11,7 +11,7 @@ title: Libs/Analyze/QMeshWarper.h
 
 | Name           |
 | -------------- |
-| **[shapeworks](../Namespaces/namespaceshapeworks.md)** <br>User usage reporting (telemetry)  |
+| **[shapeworks](../Namespaces/namespaceshapeworks.md)**  |
 
 ## Classes
 
@@ -27,7 +27,7 @@ title: Libs/Analyze/QMeshWarper.h
 ```cpp
 #pragma once
 
-#include <Mesh/MeshWarper.h>
+#include <Libs/Mesh/MeshWarper.h>
 #include <QObject>
 #include <QMutex>
 #include <QElapsedTimer>
@@ -59,4 +59,4 @@ private:
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:05 +0000
+Updated on 2022-07-23 at 16:40:07 -0600

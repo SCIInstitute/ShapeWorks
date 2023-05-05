@@ -1,9 +1,9 @@
 ---
-title: Studio/Analysis/ShapeEvaluationJob.h
+title: Studio/src/Analysis/ShapeEvaluationJob.h
 
 ---
 
-# Studio/Analysis/ShapeEvaluationJob.h
+# Studio/src/Analysis/ShapeEvaluationJob.h
 
 
 
@@ -11,7 +11,7 @@ title: Studio/Analysis/ShapeEvaluationJob.h
 
 | Name           |
 | -------------- |
-| **[shapeworks](../Namespaces/namespaceshapeworks.md)** <br>User usage reporting (telemetry)  |
+| **[shapeworks](../Namespaces/namespaceshapeworks.md)**  |
 
 ## Classes
 
@@ -76,7 +76,7 @@ public:
 
   QString name() override;
 
-Q_SIGNALS:
+signals:
 
   void report_progress(shapeworks::ShapeEvaluationJob::JobType job_type, float progress);
   void result_ready(shapeworks::ShapeEvaluationJob::JobType job_type, Eigen::VectorXd data);
@@ -97,4 +97,4 @@ Q_DECLARE_METATYPE(shapeworks::ShapeEvaluationJob::JobType);
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:05 +0000
+Updated on 2022-07-23 at 16:40:07 -0600

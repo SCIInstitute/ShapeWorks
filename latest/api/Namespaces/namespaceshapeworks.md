@@ -30,7 +30,10 @@ title: shapeworks
 | class | **[shapeworks::ExportUtils](../Classes/classshapeworks_1_1ExportUtils.md)** <br>Export utilities for Studio.  |
 | class | **[shapeworks::FreeFormConstraint](../Classes/classshapeworks_1_1FreeFormConstraint.md)** <br>[FreeFormConstraint]().  |
 | class | **[shapeworks::Groom](../Classes/classshapeworks_1_1Groom.md)** <br>High level groom API.  |
+| class | **[shapeworks::GroomAlignment](../Classes/classshapeworks_1_1GroomAlignment.md)**  |
 | class | **[shapeworks::GroomCommandGroup](../Classes/classshapeworks_1_1GroomCommandGroup.md)**  |
+| class | **[shapeworks::GroomImage](../Classes/classshapeworks_1_1GroomImage.md)**  |
+| class | **[shapeworks::GroomMesh](../Classes/classshapeworks_1_1GroomMesh.md)**  |
 | class | **[shapeworks::GroomParameters](../Classes/classshapeworks_1_1GroomParameters.md)**  |
 | class | **[shapeworks::GroomTool](../Classes/classshapeworks_1_1GroomTool.md)**  |
 | class | **[shapeworks::GroupPvalueJob](../Classes/classshapeworks_1_1GroupPvalueJob.md)**  |
@@ -41,8 +44,10 @@ title: shapeworks
 | class | **[shapeworks::IndexRegion](../Classes/classshapeworks_1_1IndexRegion.md)** <br>Indices into a 3d region of memory (can be negative, e.g., for the purpose of padding an image)  |
 | class | **[shapeworks::Job](../Classes/classshapeworks_1_1Job.md)**  |
 | class | **[shapeworks::KeyboardShortcuts](../Classes/classshapeworks_1_1KeyboardShortcuts.md)**  |
-| class | **[shapeworks::LandmarkDefinition](../Classes/classshapeworks_1_1LandmarkDefinition.md)** <br>Landmark class containing properties of each landmark.  |
+| class | **[shapeworks::Landmark](../Classes/classshapeworks_1_1Landmark.md)**  |
+| class | **[shapeworks::LandmarkDefinition](../Classes/classshapeworks_1_1LandmarkDefinition.md)** <br>[Landmark](../Classes/classshapeworks_1_1Landmark.md) class containing properties of each landmark.  |
 | class | **[shapeworks::LandmarkItemDelegate](../Classes/classshapeworks_1_1LandmarkItemDelegate.md)**  |
+| class | **[shapeworks::Landmarks](../Classes/classshapeworks_1_1Landmarks.md)** <br>Representation of the project's landmarks.  |
 | class | **[shapeworks::LandmarkTableModel](../Classes/classshapeworks_1_1LandmarkTableModel.md)**  |
 | class | **[shapeworks::LandmarkWidget](../Classes/classshapeworks_1_1LandmarkWidget.md)** <br>[LandmarkWidget]().  |
 | class | **[shapeworks::Lightbox](../Classes/classshapeworks_1_1Lightbox.md)** <br>Display multiple Viewers in a tiled display.  |
@@ -90,6 +95,8 @@ title: shapeworks
 | class | **[shapeworks::PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md)** <br>physical bounds of a 3d region of space  |
 | class | **[shapeworks::PickResult](../Classes/classshapeworks_1_1PickResult.md)**  |
 | class | **[shapeworks::PlaneConstraint](../Classes/classshapeworks_1_1PlaneConstraint.md)** <br>[PlaneConstraint]().  |
+| class | **[shapeworks::PlaneInfo](../Classes/classshapeworks_1_1PlaneInfo.md)**  |
+| class | **[shapeworks::PlaneTableModel](../Classes/classshapeworks_1_1PlaneTableModel.md)**  |
 | class | **[shapeworks::PlaneWidget](../Classes/classshapeworks_1_1PlaneWidget.md)** <br>[PlaneWidget]().  |
 | class | **[shapeworks::PreferencesWindow](../Classes/classshapeworks_1_1PreferencesWindow.md)** <br>Qt UI dialog to control preferences.  |
 | class | **[shapeworks::Project](../Classes/classshapeworks_1_1Project.md)** <br>Representation of a project.  |
@@ -145,8 +152,10 @@ title: shapeworks
 | enum class int | **[CorrespondenceMode](../Namespaces/namespaceshapeworks.md#enum-correspondencemode)** { MeanEnergy = 0, EnsembleEntropy = 1, EnsembleRegressionEntropy = 3, EnsembleMixedEffectsEntropy = 4, MeshBasedGeneralEntropy = 5, MeshBasedGeneralMeanEnergy = 6} |
 | enum class char | **[DomainType](../Namespaces/namespaceshapeworks.md#enum-domaintype)** { Image = 'I', Mesh = 'M', Contour = 'C'} |
 | enum| **[ArrayTransferOptions](../Namespaces/namespaceshapeworks.md#enum-arraytransferoptions)** { COPY_ARRAY, SHARE_ARRAY, MOVE_ARRAY}<br>ways of tranferring Arrays to Python, copy being the least efficient but most conservative  |
-| enum| **[LandmarkColumns](../Namespaces/namespaceshapeworks.md#enum-landmarkcolumns)** { VISIBLE_E, COLOR_E, NAME_E, POSITION_E, SET_BUTTON_E, COMMENT_E, END_E} |
-| enum| **[LandmarkVisibility](../Namespaces/namespaceshapeworks.md#enum-landmarkvisibility)** { ALL_VISIBLE_E, NONE_VISIBLE_E, SOME_VISIBLE_E} |
+| enum| **[LandmarkColumns](../Namespaces/namespaceshapeworks.md#enum-landmarkcolumns)** { VISIBLE_E, COLOR_E, NAME_E, POSITION_E, SET_BUTTON_E, COMMENT_E, END_E, VISIBLE_E, COLOR_E, NAME_E, POSITION_E, SET_BUTTON_E, COMMENT_E, END_E} |
+| enum| **[LandmarkVisibility](../Namespaces/namespaceshapeworks.md#enum-landmarkvisibility)** { ALL_VISIBLE_E, NONE_VISIBLE_E, SOME_VISIBLE_E, ALL_VISIBLE_E, NONE_VISIBLE_E, SOME_VISIBLE_E} |
+| enum| **[LandmarkColumns](../Namespaces/namespaceshapeworks.md#enum-landmarkcolumns)** { VISIBLE_E, COLOR_E, NAME_E, POSITION_E, SET_BUTTON_E, COMMENT_E, END_E, VISIBLE_E, COLOR_E, NAME_E, POSITION_E, SET_BUTTON_E, COMMENT_E, END_E} |
+| enum| **[LandmarkVisibility](../Namespaces/namespaceshapeworks.md#enum-landmarkvisibility)** { ALL_VISIBLE_E, NONE_VISIBLE_E, SOME_VISIBLE_E, ALL_VISIBLE_E, NONE_VISIBLE_E, SOME_VISIBLE_E} |
 | enum| **[DisplayMode](../Namespaces/namespaceshapeworks.md#enum-displaymode)** { Original = 0, Groomed = 1, Reconstructed = 2} |
 | enum class| **[MessageType](../Namespaces/namespaceshapeworks.md#enum-messagetype)** { normal, warning, error, debug} |
 | using itk::Index< 3 > | **[Coord](../Namespaces/namespaceshapeworks.md#using-coord)** <br>Simple names for common types used in the framework.  |
@@ -434,6 +443,13 @@ ways of tranferring Arrays to Python, copy being the least efficient but most co
 | SET_BUTTON_E | |   |
 | COMMENT_E | |   |
 | END_E | |   |
+| VISIBLE_E | |   |
+| COLOR_E | |   |
+| NAME_E | |   |
+| POSITION_E | |   |
+| SET_BUTTON_E | |   |
+| COMMENT_E | |   |
+| END_E | |   |
 
 
 
@@ -442,6 +458,45 @@ ways of tranferring Arrays to Python, copy being the least efficient but most co
 
 | Enumerator | Value | Description |
 | ---------- | ----- | ----------- |
+| ALL_VISIBLE_E | |   |
+| NONE_VISIBLE_E | |   |
+| SOME_VISIBLE_E | |   |
+| ALL_VISIBLE_E | |   |
+| NONE_VISIBLE_E | |   |
+| SOME_VISIBLE_E | |   |
+
+
+
+
+### enum LandmarkColumns
+
+| Enumerator | Value | Description |
+| ---------- | ----- | ----------- |
+| VISIBLE_E | |   |
+| COLOR_E | |   |
+| NAME_E | |   |
+| POSITION_E | |   |
+| SET_BUTTON_E | |   |
+| COMMENT_E | |   |
+| END_E | |   |
+| VISIBLE_E | |   |
+| COLOR_E | |   |
+| NAME_E | |   |
+| POSITION_E | |   |
+| SET_BUTTON_E | |   |
+| COMMENT_E | |   |
+| END_E | |   |
+
+
+
+
+### enum LandmarkVisibility
+
+| Enumerator | Value | Description |
+| ---------- | ----- | ----------- |
+| ALL_VISIBLE_E | |   |
+| NONE_VISIBLE_E | |   |
+| SOME_VISIBLE_E | |   |
 | ALL_VISIBLE_E | |   |
 | NONE_VISIBLE_E | |   |
 | SOME_VISIBLE_E | |   |
@@ -2415,4 +2470,4 @@ pi that doesn't depend on deprecated or non-std lib defines
 
 -------------------------------
 
-Updated on 2022-07-23 at 17:50:03 -0600
+Updated on 2022-07-23 at 16:40:06 -0600

@@ -24,6 +24,9 @@ Inherits from QObject
 |                | Name           |
 | -------------- | -------------- |
 | void | **[result_ready](../Classes/classshapeworks_1_1PythonWorker.md#signal-result-ready)**() |
+| void | **[error_message](../Classes/classshapeworks_1_1PythonWorker.md#signal-error-message)**(QString ) |
+| void | **[warning_message](../Classes/classshapeworks_1_1PythonWorker.md#signal-warning-message)**(QString ) |
+| void | **[message](../Classes/classshapeworks_1_1PythonWorker.md#signal-message)**(QString ) |
 | void | **[finished](../Classes/classshapeworks_1_1PythonWorker.md#signal-finished)**() |
 
 ## Public Functions
@@ -76,6 +79,33 @@ void finalize_python()
 
 ```cpp
 void result_ready()
+```
+
+
+### signal error_message
+
+```cpp
+void error_message(
+    QString 
+)
+```
+
+
+### signal warning_message
+
+```cpp
+void warning_message(
+    QString 
+)
+```
+
+
+### signal message
+
+```cpp
+void message(
+    QString 
+)
 ```
 
 
@@ -157,10 +187,10 @@ void abort_job()
 ### variable python_api_version
 
 ```cpp
-static constexpr static const char * python_api_version = "6.5";
+static constexpr static const char * python_api_version = "6.3";
 ```
 
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:04 +0000
+Updated on 2022-07-23 at 16:40:06 -0600

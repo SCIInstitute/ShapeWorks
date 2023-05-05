@@ -24,12 +24,9 @@ Inherits from QMainWindow
 | void | **[on_action_open_project_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-action-open-project-triggered)**() |
 | void | **[on_action_show_project_folder_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-action-show-project-folder-triggered)**() |
 | bool | **[on_action_save_project_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-action-save-project-triggered)**() |
-| bool | **[save_project_as](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-save-project-as)**(QString type) |
-| void | **[save_as_swproj_clicked](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-save-as-swproj-clicked)**() |
-| void | **[save_as_xlsx_clicked](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-save-as-xlsx-clicked)**() |
+| bool | **[on_action_save_project_as_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-action-save-project-as-triggered)**() |
 | void | **[on_action_quit_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-action-quit-triggered)**() |
 | void | **[on_action_import_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-action-import-triggered)**() |
-| void | **[splash_screen_closed](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-splash-screen-closed)**() |
 | void | **[on_vertical_scroll_bar_valueChanged](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-vertical-scroll-bar-valuechanged)**() |
 | void | **[on_action_import_mode_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-action-import-mode-triggered)**() |
 | void | **[on_action_groom_mode_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-action-groom-mode-triggered)**() |
@@ -42,7 +39,7 @@ Inherits from QMainWindow
 | void | **[on_actionExport_Eigenvectors_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-actionexport-eigenvectors-triggered)**() |
 | void | **[on_actionExport_PCA_Mode_Points_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-actionexport-pca-mode-points-triggered)**() |
 | void | **[on_action_preferences_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-action-preferences-triggered)**() |
-| void | **[action_export_current_mesh_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-action-export-current-mesh-triggered)**(int index =0) |
+| void | **[on_action_export_current_mesh_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-action-export-current-mesh-triggered)**() |
 | void | **[on_action_export_current_particles_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-action-export-current-particles-triggered)**() |
 | void | **[on_action_export_mesh_scalars_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-action-export-mesh-scalars-triggered)**() |
 | void | **[on_action_export_pca_scores_triggered](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-action-export-pca-scores-triggered)**() |
@@ -56,7 +53,6 @@ Inherits from QMainWindow
 | void | **[on_auto_view_button_clicked](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-on-auto-view-button-clicked)**() |
 | void | **[handle_pca_changed](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-pca-changed)**() |
 | void | **[handle_slider_update](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-slider-update)**() |
-| void | **[handle_mca_changed](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-mca-changed)**() |
 | void | **[handle_project_changed](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-project-changed)**() |
 | void | **[handle_points_changed](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-points-changed)**() |
 | void | **[handle_groom_start](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-groom-start)**() |
@@ -72,23 +68,18 @@ Inherits from QMainWindow
 | void | **[handle_color_scheme](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-color-scheme)**() |
 | void | **[handle_pca_update](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-pca-update)**() |
 | void | **[clear_message](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-clear-message)**() |
-| void | **[handle_message](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-message)**(std::string str) |
-| void | **[handle_error](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-error)**(std::string str) |
-| void | **[handle_warning](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-warning)**(std::string str) |
-| void | **[handle_debug](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-debug)**(std::string str) |
-| void | **[handle_status](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-status)**(std::string str) |
-| void | **[handle_progress_with_message](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-progress-with-message)**(int amt, std::string str) |
+| void | **[handle_message](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-message)**(QString str) |
+| void | **[handle_status](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-status)**(QString str) |
+| void | **[handle_error](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-error)**(QString str) |
+| void | **[handle_warning](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-warning)**(QString str) |
 | void | **[handle_progress](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-progress)**(int amt) |
-| void | **[message_callback](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-message-callback)**(std::string str) |
 | void | **[handle_new_mesh](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-new-mesh)**() |
 | void | **[handle_clear_cache](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-clear-cache)**() |
 | void | **[handle_compare_settings_changed](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-compare-settings-changed)**() |
-| void | **[handle_lightbox_right_click](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-handle-lightbox-right-click)**(int index) |
-| void | **[update_feature_map_selection](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-update-feature-map-selection)**(int index) |
+| void | **[update_feature_map_selection](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-update-feature-map-selection)**(const QString & feature_map) |
 | void | **[update_feature_map_scale](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-update-feature-map-scale)**() |
-| void | **[image_combo_changed](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-image-combo-changed)**(int index) |
+| void | **[image_combo_changed](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-image-combo-changed)**(const QString & image_name) |
 | void | **[show_splash_screen](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-show-splash-screen)**() |
-| void | **[hide_splash_screen](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-hide-splash-screen)**() |
 | void | **[about](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-about)**() |
 | void | **[keyboard_shortcuts](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-keyboard-shortcuts)**() |
 | void | **[toggle_log_window](../Classes/classshapeworks_1_1ShapeWorksStudioApp.md#slot-toggle-log-window)**() |
@@ -163,26 +154,10 @@ bool on_action_save_project_triggered()
 ```
 
 
-### slot save_project_as
+### slot on_action_save_project_as_triggered
 
 ```cpp
-bool save_project_as(
-    QString type
-)
-```
-
-
-### slot save_as_swproj_clicked
-
-```cpp
-void save_as_swproj_clicked()
-```
-
-
-### slot save_as_xlsx_clicked
-
-```cpp
-void save_as_xlsx_clicked()
+bool on_action_save_project_as_triggered()
 ```
 
 
@@ -197,13 +172,6 @@ void on_action_quit_triggered()
 
 ```cpp
 void on_action_import_triggered()
-```
-
-
-### slot splash_screen_closed
-
-```cpp
-void splash_screen_closed()
 ```
 
 
@@ -291,12 +259,10 @@ void on_action_preferences_triggered()
 ```
 
 
-### slot action_export_current_mesh_triggered
+### slot on_action_export_current_mesh_triggered
 
 ```cpp
-void action_export_current_mesh_triggered(
-    int index =0
-)
+void on_action_export_current_mesh_triggered()
 ```
 
 
@@ -390,13 +356,6 @@ void handle_pca_changed()
 
 ```cpp
 void handle_slider_update()
-```
-
-
-### slot handle_mca_changed
-
-```cpp
-void handle_mca_changed()
 ```
 
 
@@ -509,34 +468,7 @@ void clear_message()
 
 ```cpp
 void handle_message(
-    std::string str
-)
-```
-
-
-### slot handle_error
-
-```cpp
-void handle_error(
-    std::string str
-)
-```
-
-
-### slot handle_warning
-
-```cpp
-void handle_warning(
-    std::string str
-)
-```
-
-
-### slot handle_debug
-
-```cpp
-void handle_debug(
-    std::string str
+    QString str
 )
 ```
 
@@ -545,17 +477,25 @@ void handle_debug(
 
 ```cpp
 void handle_status(
-    std::string str
+    QString str
 )
 ```
 
 
-### slot handle_progress_with_message
+### slot handle_error
 
 ```cpp
-void handle_progress_with_message(
-    int amt,
-    std::string str
+void handle_error(
+    QString str
+)
+```
+
+
+### slot handle_warning
+
+```cpp
+void handle_warning(
+    QString str
 )
 ```
 
@@ -565,15 +505,6 @@ void handle_progress_with_message(
 ```cpp
 void handle_progress(
     int amt
-)
-```
-
-
-### slot message_callback
-
-```cpp
-void message_callback(
-    std::string str
 )
 ```
 
@@ -599,20 +530,11 @@ void handle_compare_settings_changed()
 ```
 
 
-### slot handle_lightbox_right_click
-
-```cpp
-void handle_lightbox_right_click(
-    int index
-)
-```
-
-
 ### slot update_feature_map_selection
 
 ```cpp
 void update_feature_map_selection(
-    int index
+    const QString & feature_map
 )
 ```
 
@@ -628,7 +550,7 @@ void update_feature_map_scale()
 
 ```cpp
 void image_combo_changed(
-    int index
+    const QString & image_name
 )
 ```
 
@@ -637,13 +559,6 @@ void image_combo_changed(
 
 ```cpp
 void show_splash_screen()
-```
-
-
-### slot hide_splash_screen
-
-```cpp
-void hide_splash_screen()
 ```
 
 
@@ -761,4 +676,4 @@ void dropEvent(
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:05 +0000
+Updated on 2022-07-23 at 16:40:06 -0600

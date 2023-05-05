@@ -2463,8 +2463,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-import_original_file" class="md-nav__link">
-    function import_original_file
+  <a href="#function-import_original_image" class="md-nav__link">
+    function import_original_image
   </a>
   
 </li>
@@ -2561,13 +2561,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-set_alignment_type" class="md-nav__link">
-    function set_alignment_type
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#function-get_global_correspondence_points" class="md-nav__link">
     function get_global_correspondence_points
   </a>
@@ -2575,8 +2568,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-get_particles_for_display" class="md-nav__link">
-    function get_particles_for_display
+  <a href="#function-get_correspondence_points_for_display" class="md-nav__link">
+    function get_correspondence_points_for_display
   </a>
   
 </li>
@@ -2675,6 +2668,48 @@
           <li class="md-nav__item">
   <a href="#function-get_local_point_filename_with_path" class="md-nav__link">
     function get_local_point_filename_with_path
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_exclusion_sphere_centers" class="md-nav__link">
+    function get_exclusion_sphere_centers
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-set_exclusion_sphere_centers" class="md-nav__link">
+    function set_exclusion_sphere_centers
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_exclusion_sphere_radii" class="md-nav__link">
+    function get_exclusion_sphere_radii
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-set_exclusion_sphere_radii" class="md-nav__link">
+    function set_exclusion_sphere_radii
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_group_id" class="md-nav__link">
+    function get_group_id
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-set_group_id" class="md-nav__link">
+    function set_group_id
   </a>
   
 </li>
@@ -2899,7 +2934,7 @@
 <td><strong><a href="classshapeworks_1_1Shape.html#function-~shape">~Shape</a></strong>()</td>
 </tr>
 <tr>
-<td>std::string</td>
+<td>QString</td>
 <td><strong><a href="classshapeworks_1_1Shape.html#function-get-display-name">get_display_name</a></strong>()</td>
 </tr>
 <tr>
@@ -2908,15 +2943,15 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Shape.html#function-set-annotations">set_annotations</a></strong>(std::vector&lt; std::string &gt; annotations, bool only_overwrite_blank =true)</td>
+<td><strong><a href="classshapeworks_1_1Shape.html#function-set-annotations">set_annotations</a></strong>(QStringList annotations, bool only_overwrite_blank =true)</td>
 </tr>
 <tr>
-<td>std::vector&lt; std::string &gt;</td>
+<td>QStringList</td>
 <td><strong><a href="classshapeworks_1_1Shape.html#function-get-annotations">get_annotations</a></strong>()</td>
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Shape.html#function-set-mesh-manager">set_mesh_manager</a></strong>(std::shared_ptr&lt; <a href="classshapeworks_1_1MeshManager.html">MeshManager</a> &gt; mesh_manager)</td>
+<td><strong><a href="classshapeworks_1_1Shape.html#function-set-mesh-manager">set_mesh_manager</a></strong>(QSharedPointer&lt; <a href="classshapeworks_1_1MeshManager.html">MeshManager</a> &gt; mesh_manager)</td>
 </tr>
 <tr>
 <td>void</td>
@@ -2932,7 +2967,7 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Shape.html#function-import-original-file">import_original_file</a></strong>(const std::string &amp; filename)<br>Import the original raw mesh or image file.</td>
+<td><strong><a href="classshapeworks_1_1Shape.html#function-import-original-image">import_original_image</a></strong>(const std::string &amp; filename)<br>Import the original raw image file.</td>
 </tr>
 <tr>
 <td><a href="classshapeworks_1_1MeshGroup.html">MeshGroup</a></td>
@@ -2952,15 +2987,15 @@
 </tr>
 <tr>
 <td>bool</td>
-<td><strong><a href="classshapeworks_1_1Shape.html#function-import-global-point-files">import_global_point_files</a></strong>(std::vector&lt; std::string &gt; filenames)<br>Import global correspondence point files.</td>
+<td><strong><a href="classshapeworks_1_1Shape.html#function-import-global-point-files">import_global_point_files</a></strong>(QStringList filenames)<br>Import global correspondence point files.</td>
 </tr>
 <tr>
 <td>bool</td>
-<td><strong><a href="classshapeworks_1_1Shape.html#function-import-local-point-files">import_local_point_files</a></strong>(std::vector&lt; std::string &gt; filenames)<br>Import local correspondence point files.</td>
+<td><strong><a href="classshapeworks_1_1Shape.html#function-import-local-point-files">import_local_point_files</a></strong>(QStringList filenames)<br>Import local correspondence point files.</td>
 </tr>
 <tr>
 <td>bool</td>
-<td><strong><a href="classshapeworks_1_1Shape.html#function-import-landmarks-files">import_landmarks_files</a></strong>(std::vector&lt; std::string &gt; filenames)<br>Import landmarks files.</td>
+<td><strong><a href="classshapeworks_1_1Shape.html#function-import-landmarks-files">import_landmarks_files</a></strong>(QStringList filenames)<br>Import landmarks files.</td>
 </tr>
 <tr>
 <td>bool</td>
@@ -2968,7 +3003,7 @@
 </tr>
 <tr>
 <td>bool</td>
-<td><strong><a href="classshapeworks_1_1Shape.html#function-import-constraints">import_constraints</a></strong>(std::vector&lt; std::string &gt; filenames)<br>import constraints</td>
+<td><strong><a href="classshapeworks_1_1Shape.html#function-import-constraints">import_constraints</a></strong>(QStringList filenames)<br>import constraints</td>
 </tr>
 <tr>
 <td>bool</td>
@@ -2976,27 +3011,23 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Shape.html#function-set-particles">set_particles</a></strong>(<a href="classshapeworks_1_1Particles.html">Particles</a> particles)</td>
+<td><strong><a href="classshapeworks_1_1Shape.html#function-set-particles">set_particles</a></strong>(<a href="classshapeworks_1_1StudioParticles.html">StudioParticles</a> particles)</td>
 </tr>
 <tr>
-<td><a href="classshapeworks_1_1Particles.html">Particles</a></td>
+<td><a href="classshapeworks_1_1StudioParticles.html">StudioParticles</a></td>
 <td><strong><a href="classshapeworks_1_1Shape.html#function-get-particles">get_particles</a></strong>()</td>
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Shape.html#function-set-particle-transform">set_particle_transform</a></strong>(vtkSmartPointer&lt; vtkTransform &gt; transform)<br>Set the particle transform (alignment)</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1Shape.html#function-set-alignment-type">set_alignment_type</a></strong>(int alignment)<br>Set the alignment type.</td>
+<td><strong><a href="classshapeworks_1_1Shape.html#function-set-particle-transform">set_particle_transform</a></strong>(vtkSmartPointer&lt; vtkTransform &gt; transform)</td>
 </tr>
 <tr>
 <td>Eigen::VectorXd</td>
 <td><strong><a href="classshapeworks_1_1Shape.html#function-get-global-correspondence-points">get_global_correspondence_points</a></strong>()<br>Get the global correspondence points.</td>
 </tr>
 <tr>
-<td>std::vector&lt; Eigen::VectorXd &gt;</td>
-<td><strong><a href="classshapeworks_1_1Shape.html#function-get-particles-for-display">get_particles_for_display</a></strong>()<br>Get the global correspondence points for display.</td>
+<td>Eigen::VectorXd</td>
+<td><strong><a href="classshapeworks_1_1Shape.html#function-get-correspondence-points-for-display">get_correspondence_points_for_display</a></strong>()<br>Get the global correspondence points for display.</td>
 </tr>
 <tr>
 <td>Eigen::VectorXd</td>
@@ -3015,44 +3046,68 @@
 <td><strong><a href="classshapeworks_1_1Shape.html#function-set-id">set_id</a></strong>(int id)<br>Set the id of this shape.</td>
 </tr>
 <tr>
-<td>std::vector&lt; std::string &gt;</td>
+<td>std::vector&lt; QString &gt;</td>
 <td><strong><a href="classshapeworks_1_1Shape.html#function-get-original-filenames">get_original_filenames</a></strong>()</td>
 </tr>
 <tr>
-<td>std::vector&lt; std::string &gt;</td>
+<td>std::vector&lt; QString &gt;</td>
 <td><strong><a href="classshapeworks_1_1Shape.html#function-get-original-filenames-with-path">get_original_filenames_with_path</a></strong>()</td>
 </tr>
 <tr>
-<td>std::string</td>
+<td>QString</td>
 <td><strong><a href="classshapeworks_1_1Shape.html#function-get-original-filename">get_original_filename</a></strong>()</td>
 </tr>
 <tr>
-<td>std::string</td>
+<td>QString</td>
 <td><strong><a href="classshapeworks_1_1Shape.html#function-get-original-filename-with-path">get_original_filename_with_path</a></strong>()</td>
 </tr>
 <tr>
-<td>std::string</td>
+<td>QString</td>
 <td><strong><a href="classshapeworks_1_1Shape.html#function-get-groomed-filename">get_groomed_filename</a></strong>()</td>
 </tr>
 <tr>
-<td>std::string</td>
+<td>QString</td>
 <td><strong><a href="classshapeworks_1_1Shape.html#function-get-groomed-filename-with-path">get_groomed_filename_with_path</a></strong>(int domain)</td>
 </tr>
 <tr>
-<td>std::string</td>
+<td>QString</td>
 <td><strong><a href="classshapeworks_1_1Shape.html#function-get-global-point-filename">get_global_point_filename</a></strong>()</td>
 </tr>
 <tr>
-<td>std::string</td>
+<td>QString</td>
 <td><strong><a href="classshapeworks_1_1Shape.html#function-get-global-point-filename-with-path">get_global_point_filename_with_path</a></strong>()</td>
 </tr>
 <tr>
-<td>std::string</td>
+<td>QString</td>
 <td><strong><a href="classshapeworks_1_1Shape.html#function-get-local-point-filename">get_local_point_filename</a></strong>()</td>
 </tr>
 <tr>
-<td>std::string</td>
+<td>QString</td>
 <td><strong><a href="classshapeworks_1_1Shape.html#function-get-local-point-filename-with-path">get_local_point_filename_with_path</a></strong>()</td>
+</tr>
+<tr>
+<td>QList&lt; <a href="classshapeworks_1_1Shape_1_1Point.html">Point</a> &gt;</td>
+<td><strong><a href="classshapeworks_1_1Shape.html#function-get-exclusion-sphere-centers">get_exclusion_sphere_centers</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Shape.html#function-set-exclusion-sphere-centers">set_exclusion_sphere_centers</a></strong>(QList&lt; <a href="classshapeworks_1_1Shape_1_1Point.html">Point</a> &gt; centers)</td>
+</tr>
+<tr>
+<td>QList&lt; double &gt;</td>
+<td><strong><a href="classshapeworks_1_1Shape.html#function-get-exclusion-sphere-radii">get_exclusion_sphere_radii</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Shape.html#function-set-exclusion-sphere-radii">set_exclusion_sphere_radii</a></strong>(QList&lt; double &gt; radii)</td>
+</tr>
+<tr>
+<td>int</td>
+<td><strong><a href="classshapeworks_1_1Shape.html#function-get-group-id">get_group_id</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Shape.html#function-set-group-id">set_group_id</a></strong>(int id)</td>
 </tr>
 <tr>
 <td>void</td>
@@ -3076,7 +3131,7 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Shape.html#function-set-reconstruction-transforms">set_reconstruction_transforms</a></strong>(std::vector&lt; vtkSmartPointer&lt; vtkTransform &gt; &gt; transforms)</td>
+<td><strong><a href="classshapeworks_1_1Shape.html#function-set-reconstruction-transforms">set_reconstruction_transforms</a></strong>(std::vector&lt; vtkSmartPointer&lt; vtkTransform &gt;&gt; transforms)</td>
 </tr>
 <tr>
 <td>vtkSmartPointer&lt; vtkTransform &gt;</td>
@@ -3156,7 +3211,7 @@
 <div class="highlight"><pre><span></span><code><span class="o">~</span><span class="n">Shape</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-get_display_name">function get_display_name</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">get_display_name</span><span class="p">()</span>
+<div class="highlight"><pre><span></span><code><span class="n">QString</span><span class="w"> </span><span class="n">get_display_name</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-get_meshes">function get_meshes</h3>
 <div class="highlight"><pre><span></span><code><span class="n">MeshGroup</span><span class="w"> </span><span class="n">get_meshes</span><span class="p">(</span>
@@ -3166,16 +3221,16 @@
 </code></pre></div>
 <h3 id="function-set_annotations">function set_annotations</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_annotations</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">annotations</span><span class="p">,</span>
+<span class="w">    </span><span class="n">QStringList</span><span class="w"> </span><span class="n">annotations</span><span class="p">,</span>
 <span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">only_overwrite_blank</span><span class="w"> </span><span class="o">=</span><span class="nb">true</span>
 <span class="p">)</span>
 </code></pre></div>
 <h3 id="function-get_annotations">function get_annotations</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_annotations</span><span class="p">()</span>
+<div class="highlight"><pre><span></span><code><span class="n">QStringList</span><span class="w"> </span><span class="n">get_annotations</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-set_mesh_manager">function set_mesh_manager</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_mesh_manager</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">MeshManager</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">mesh_manager</span>
+<span class="w">    </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">MeshManager</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">mesh_manager</span>
 <span class="p">)</span>
 </code></pre></div>
 <h3 id="function-set_subject">function set_subject</h3>
@@ -3189,12 +3244,12 @@
 <h3 id="function-get_subject">function get_subject</h3>
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Subject</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_subject</span><span class="p">()</span>
 </code></pre></div>
-<h3 id="function-import_original_file">function import_original_file</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">import_original_file</span><span class="p">(</span>
+<h3 id="function-import_original_image">function import_original_image</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">import_original_image</span><span class="p">(</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">filename</span>
 <span class="p">)</span>
 </code></pre></div>
-<p>Import the original raw mesh or image file. </p>
+<p>Import the original raw image file. </p>
 <h3 id="function-get_original_meshes">function get_original_meshes</h3>
 <div class="highlight"><pre><span></span><code><span class="n">MeshGroup</span><span class="w"> </span><span class="n">get_original_meshes</span><span class="p">(</span>
 <span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">wait</span><span class="w"> </span><span class="o">=</span><span class="nb">false</span>
@@ -3219,19 +3274,19 @@
 <p>Reset the groomed mesh so that it will be re-created. </p>
 <h3 id="function-import_global_point_files">function import_global_point_files</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">import_global_point_files</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">filenames</span>
+<span class="w">    </span><span class="n">QStringList</span><span class="w"> </span><span class="n">filenames</span>
 <span class="p">)</span>
 </code></pre></div>
 <p>Import global correspondence point files. </p>
 <h3 id="function-import_local_point_files">function import_local_point_files</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">import_local_point_files</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">filenames</span>
+<span class="w">    </span><span class="n">QStringList</span><span class="w"> </span><span class="n">filenames</span>
 <span class="p">)</span>
 </code></pre></div>
 <p>Import local correspondence point files. </p>
 <h3 id="function-import_landmarks_files">function import_landmarks_files</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">import_landmarks_files</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">filenames</span>
+<span class="w">    </span><span class="n">QStringList</span><span class="w"> </span><span class="n">filenames</span>
 <span class="p">)</span>
 </code></pre></div>
 <p>Import landmarks files. </p>
@@ -3241,7 +3296,7 @@
 <p>Store landmarks. </p>
 <h3 id="function-import_constraints">function import_constraints</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">import_constraints</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">filenames</span>
+<span class="w">    </span><span class="n">QStringList</span><span class="w"> </span><span class="n">filenames</span>
 <span class="p">)</span>
 </code></pre></div>
 <p>import constraints </p>
@@ -3251,30 +3306,23 @@
 <p>Store constraints. </p>
 <h3 id="function-set_particles">function set_particles</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_particles</span><span class="p">(</span>
-<span class="w">    </span><span class="n">Particles</span><span class="w"> </span><span class="n">particles</span>
+<span class="w">    </span><span class="n">StudioParticles</span><span class="w"> </span><span class="n">particles</span>
 <span class="p">)</span>
 </code></pre></div>
 <h3 id="function-get_particles">function get_particles</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Particles</span><span class="w"> </span><span class="n">get_particles</span><span class="p">()</span>
+<div class="highlight"><pre><span></span><code><span class="n">StudioParticles</span><span class="w"> </span><span class="n">get_particles</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-set_particle_transform">function set_particle_transform</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_particle_transform</span><span class="p">(</span>
 <span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkTransform</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">transform</span>
 <span class="p">)</span>
 </code></pre></div>
-<p>Set the particle transform (alignment) </p>
-<h3 id="function-set_alignment_type">function set_alignment_type</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_alignment_type</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">alignment</span>
-<span class="p">)</span>
-</code></pre></div>
-<p>Set the alignment type. </p>
 <h3 id="function-get_global_correspondence_points">function get_global_correspondence_points</h3>
 <div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">get_global_correspondence_points</span><span class="p">()</span>
 </code></pre></div>
 <p>Get the global correspondence points. </p>
-<h3 id="function-get_particles_for_display">function get_particles_for_display</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_particles_for_display</span><span class="p">()</span>
+<h3 id="function-get_correspondence_points_for_display">function get_correspondence_points_for_display</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="n">get_correspondence_points_for_display</span><span class="p">()</span>
 </code></pre></div>
 <p>Get the global correspondence points for display. </p>
 <h3 id="function-get_local_correspondence_points">function get_local_correspondence_points</h3>
@@ -3295,36 +3343,60 @@
 </code></pre></div>
 <p>Set the id of this shape. </p>
 <h3 id="function-get_original_filenames">function get_original_filenames</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_original_filenames</span><span class="p">()</span>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_original_filenames</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-get_original_filenames_with_path">function get_original_filenames_with_path</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_original_filenames_with_path</span><span class="p">()</span>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">QString</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_original_filenames_with_path</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-get_original_filename">function get_original_filename</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">get_original_filename</span><span class="p">()</span>
+<div class="highlight"><pre><span></span><code><span class="n">QString</span><span class="w"> </span><span class="n">get_original_filename</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-get_original_filename_with_path">function get_original_filename_with_path</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">get_original_filename_with_path</span><span class="p">()</span>
+<div class="highlight"><pre><span></span><code><span class="n">QString</span><span class="w"> </span><span class="n">get_original_filename_with_path</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-get_groomed_filename">function get_groomed_filename</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">get_groomed_filename</span><span class="p">()</span>
+<div class="highlight"><pre><span></span><code><span class="n">QString</span><span class="w"> </span><span class="n">get_groomed_filename</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-get_groomed_filename_with_path">function get_groomed_filename_with_path</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">get_groomed_filename_with_path</span><span class="p">(</span>
+<div class="highlight"><pre><span></span><code><span class="n">QString</span><span class="w"> </span><span class="n">get_groomed_filename_with_path</span><span class="p">(</span>
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span>
 <span class="p">)</span>
 </code></pre></div>
 <h3 id="function-get_global_point_filename">function get_global_point_filename</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">get_global_point_filename</span><span class="p">()</span>
+<div class="highlight"><pre><span></span><code><span class="n">QString</span><span class="w"> </span><span class="n">get_global_point_filename</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-get_global_point_filename_with_path">function get_global_point_filename_with_path</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">get_global_point_filename_with_path</span><span class="p">()</span>
+<div class="highlight"><pre><span></span><code><span class="n">QString</span><span class="w"> </span><span class="n">get_global_point_filename_with_path</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-get_local_point_filename">function get_local_point_filename</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">get_local_point_filename</span><span class="p">()</span>
+<div class="highlight"><pre><span></span><code><span class="n">QString</span><span class="w"> </span><span class="n">get_local_point_filename</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-get_local_point_filename_with_path">function get_local_point_filename_with_path</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">get_local_point_filename_with_path</span><span class="p">()</span>
+<div class="highlight"><pre><span></span><code><span class="n">QString</span><span class="w"> </span><span class="n">get_local_point_filename_with_path</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="function-get_exclusion_sphere_centers">function get_exclusion_sphere_centers</h3>
+<div class="highlight"><pre><span></span><code><span class="n">QList</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Point</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_exclusion_sphere_centers</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="function-set_exclusion_sphere_centers">function set_exclusion_sphere_centers</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_exclusion_sphere_centers</span><span class="p">(</span>
+<span class="w">    </span><span class="n">QList</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Point</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">centers</span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="function-get_exclusion_sphere_radii">function get_exclusion_sphere_radii</h3>
+<div class="highlight"><pre><span></span><code><span class="n">QList</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_exclusion_sphere_radii</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="function-set_exclusion_sphere_radii">function set_exclusion_sphere_radii</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_exclusion_sphere_radii</span><span class="p">(</span>
+<span class="w">    </span><span class="n">QList</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">radii</span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="function-get_group_id">function get_group_id</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_group_id</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="function-set_group_id">function set_group_id</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_group_id</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">id</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-set_transform">function set_transform</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_transform</span><span class="p">(</span>
@@ -3351,7 +3423,7 @@
 </code></pre></div>
 <h3 id="function-set_reconstruction_transforms">function set_reconstruction_transforms</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_reconstruction_transforms</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkTransform</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">transforms</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkTransform</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">transforms</span>
 <span class="p">)</span>
 </code></pre></div>
 <h3 id="function-get_reconstruction_transform">function get_reconstruction_transform</h3>
@@ -3431,7 +3503,7 @@
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">VtkMeshWrapper</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_groomed_mesh_wrappers</span><span class="p">()</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-05-04 at 20:03:04 +0000</p>
+<p>Updated on 2022-07-23 at 16:40:06 -0600</p>
 
               
             </article>

@@ -1,9 +1,9 @@
 ---
-title: Studio/Utils/WindowsCrashHandler.h
+title: Studio/src/Utils/WindowsCrashHandler.h
 
 ---
 
-# Studio/Utils/WindowsCrashHandler.h
+# Studio/src/Utils/WindowsCrashHandler.h
 
 
 
@@ -34,4 +34,4 @@ int init_crash_handler();
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:05 +0000
+Updated on 2022-07-23 at 16:40:07 -0600

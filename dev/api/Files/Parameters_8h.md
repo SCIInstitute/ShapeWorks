@@ -11,7 +11,7 @@ title: Libs/Project/Parameters.h
 
 | Name           |
 | -------------- |
-| **[shapeworks](../Namespaces/namespaceshapeworks.md)** <br>User usage reporting (telemetry)  |
+| **[shapeworks](../Namespaces/namespaceshapeworks.md)**  |
 
 ## Classes
 
@@ -27,7 +27,8 @@ title: Libs/Project/Parameters.h
 ```cpp
 #pragma once
 
-#include "ProjectUtils.h"
+#include <map>
+#include <string>
 
 #include "Variant.h"
 
@@ -35,8 +36,6 @@ namespace shapeworks {
 
 
 class Parameters {
-  using StringMap = project::types::StringMap;
-
  public:
   static constexpr const char* ANALYSIS_PARAMS = "analysis";
   static constexpr const char* GROOM_PARAMS = "groom";
@@ -44,10 +43,6 @@ class Parameters {
   static constexpr const char* STUDIO_PARAMS = "studio";
   static constexpr const char* PROJECT_PARAMS = "project";
   static constexpr const char* DEEPSSM_PARAMS = "deepssm";
-
-  Parameters();
-
-  explicit Parameters(StringMap map);
 
   Variant get(std::string key, Variant default_value);
 
@@ -57,21 +52,19 @@ class Parameters {
 
   void remove_entry(std::string key);
 
-  void set_map(StringMap map);
+  void set_map(std::map<std::string, std::string> map);
 
-  StringMap get_map() const;
+  std::map<std::string, std::string> get_map();
 
   void reset_parameters();
 
  private:
-  StringMap map_;
-
+  std::map<std::string, std::string> map_;
 };
-
 }  // namespace shapeworks
 ```
 
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:05 +0000
+Updated on 2022-07-23 at 16:40:07 -0600

@@ -1,9 +1,9 @@
 ---
-title: Studio/DeepSSM/DeepSSMJob.h
+title: Studio/src/DeepSSM/DeepSSMJob.h
 
 ---
 
-# Studio/DeepSSM/DeepSSMJob.h
+# Studio/src/DeepSSM/DeepSSMJob.h
 
 
 
@@ -11,7 +11,7 @@ title: Studio/DeepSSM/DeepSSMJob.h
 
 | Name           |
 | -------------- |
-| **[shapeworks](../Namespaces/namespaceshapeworks.md)** <br>User usage reporting (telemetry)  |
+| **[shapeworks](../Namespaces/namespaceshapeworks.md)**  |
 
 ## Classes
 
@@ -28,7 +28,7 @@ title: Studio/DeepSSM/DeepSSMJob.h
 #pragma once
 
 #include <QObject>
-#include <Project/Project.h>
+#include <Libs/Project/Project.h>
 #include <Job/Job.h>
 #include <DeepSSM/DeepSSMTool.h>
 
@@ -78,4 +78,4 @@ private:
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:05 +0000
+Updated on 2022-07-23 at 16:40:07 -0600

@@ -11,7 +11,7 @@ title: Applications/shapeworks/Command.h
 
 | Name           |
 | -------------- |
-| **[shapeworks](../Namespaces/namespaceshapeworks.md)** <br>User usage reporting (telemetry)  |
+| **[shapeworks](../Namespaces/namespaceshapeworks.md)**  |
 
 ## Classes
 
@@ -22,8 +22,6 @@ title: Applications/shapeworks/Command.h
 | class | **[shapeworks::MeshCommand](../Classes/classshapeworks_1_1MeshCommand.md)**  |
 | class | **[shapeworks::OptimizeCommandGroup](../Classes/classshapeworks_1_1OptimizeCommandGroup.md)**  |
 | class | **[shapeworks::GroomCommandGroup](../Classes/classshapeworks_1_1GroomCommandGroup.md)**  |
-| class | **[shapeworks::AnalyzeCommandGroup](../Classes/classshapeworks_1_1AnalyzeCommandGroup.md)**  |
-| class | **[shapeworks::ProjectCommandGroup](../Classes/classshapeworks_1_1ProjectCommandGroup.md)**  |
 | class | **[shapeworks::ParticleSystemCommand](../Classes/classshapeworks_1_1ParticleSystemCommand.md)**  |
 | class | **[shapeworks::ShapeworksCommand](../Classes/classshapeworks_1_1ShapeworksCommand.md)**  |
 
@@ -158,22 +156,6 @@ public:
 private:
 };
 
-class AnalyzeCommandGroup : public Command
-{
-public:
-  const std::string type() override { return "Analyze"; }
-
-private:
-};
-
-class ProjectCommandGroup : public Command
-{
-public:
-  const std::string type() override { return "Project"; }
-
-private:
-};
-
 class ParticleSystemCommand : public Command
 {
 public:
@@ -198,4 +180,4 @@ std::ostream& operator<<(std::ostream& os, const shapeworks::Command &cmd);
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:05 +0000
+Updated on 2022-07-23 at 16:40:07 -0600

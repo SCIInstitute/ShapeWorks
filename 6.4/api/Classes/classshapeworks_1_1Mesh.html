@@ -2602,13 +2602,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-rotate" class="md-nav__link">
-    function rotate
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#function-fillholes" class="md-nav__link">
     function fillHoles
   </a>
@@ -2660,27 +2653,6 @@
           <li class="md-nav__item">
   <a href="#function-fixelement" class="md-nav__link">
     function fixElement
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-fixnonmanifold" class="md-nav__link">
-    function fixNonManifold
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-detectnonmanifold" class="md-nav__link">
-    function detectNonManifold
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-detecttriangular" class="md-nav__link">
-    function detectTriangular
   </a>
   
 </li>
@@ -2910,6 +2882,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-prepareffcfields" class="md-nav__link">
+    function prepareFFCFields
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-getffcvalue" class="md-nav__link">
     function getFFCValue
   </a>
@@ -3105,23 +3084,19 @@
 </tr>
 <tr>
 <td><a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp;</td>
-<td><strong><a href="classshapeworks_1_1Mesh.html#function-reflect">reflect</a></strong>(const <a href="../Namespaces/namespaceshapeworks.html#enum-axis">Axis</a> &amp; axis, const Vector3 &amp; origin =<a href="../Namespaces/namespaceshapeworks.html#function-makevector">makeVector</a>({0.0, 0.0, 0.0}))<br>reflect meshes with respect to a specified center and specific axis</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-reflect">reflect</a></strong>(const Axis &amp; axis, const Vector3 &amp; origin =makeVector({0.0, 0.0, 0.0}))<br>reflect meshes with respect to a specified center and specific axis</td>
 </tr>
 <tr>
-<td><a href="../Namespaces/namespaceshapeworks.html#using-meshtransform">MeshTransform</a></td>
+<td>MeshTransform</td>
 <td><strong><a href="classshapeworks_1_1Mesh.html#function-createtransform">createTransform</a></strong>(const <a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp; target, AlignmentType align =Similarity, unsigned iterations =10)</td>
 </tr>
 <tr>
 <td><a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp;</td>
-<td><strong><a href="classshapeworks_1_1Mesh.html#function-applytransform">applyTransform</a></strong>(const <a href="../Namespaces/namespaceshapeworks.html#using-meshtransform">MeshTransform</a> transform)<br>applies the given transformation to the mesh</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-applytransform">applyTransform</a></strong>(const MeshTransform transform)<br>applies the given transformation to the mesh</td>
 </tr>
 <tr>
 <td><a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp;</td>
-<td><strong><a href="classshapeworks_1_1Mesh.html#function-rotate">rotate</a></strong>(const double angle, const <a href="../Namespaces/namespaceshapeworks.html#enum-axis">Axis</a> axis)<br>applies the given rotation to the given axis</td>
-</tr>
-<tr>
-<td><a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp;</td>
-<td><strong><a href="classshapeworks_1_1Mesh.html#function-fillholes">fillHoles</a></strong>(double hole_size =1000.0)<br>finds holes in a mesh and closes them</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-fillholes">fillHoles</a></strong>()<br>finds holes in a mesh and closes them</td>
 </tr>
 <tr>
 <td><a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp;</td>
@@ -3152,18 +3127,6 @@
 <td><strong><a href="classshapeworks_1_1Mesh.html#function-fixelement">fixElement</a></strong>()<br>fix element winding of mesh</td>
 </tr>
 <tr>
-<td><a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp;</td>
-<td><strong><a href="classshapeworks_1_1Mesh.html#function-fixnonmanifold">fixNonManifold</a></strong>()<br>Attempt to fix non-manifold edges.</td>
-</tr>
-<tr>
-<td>bool</td>
-<td><strong><a href="classshapeworks_1_1Mesh.html#function-detectnonmanifold">detectNonManifold</a></strong>()<br>Detect if mesh contain non-manifold edges.</td>
-</tr>
-<tr>
-<td>bool</td>
-<td><strong><a href="classshapeworks_1_1Mesh.html#function-detecttriangular">detectTriangular</a></strong>()<br>Detect if mesh is triangular;.</td>
-</tr>
-<tr>
 <td>std::vector&lt; Field &gt;</td>
 <td><strong><a href="classshapeworks_1_1Mesh.html#function-distance">distance</a></strong>(const <a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp; target, const DistanceMethod method =PointToCell) const</td>
 </tr>
@@ -3177,7 +3140,7 @@
 </tr>
 <tr>
 <td>Point3</td>
-<td><strong><a href="classshapeworks_1_1Mesh.html#function-closestpoint">closestPoint</a></strong>(const Point3 point, double &amp; distance, vtkIdType &amp; face_id) const</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-closestpoint">closestPoint</a></strong>(const Point3 point, bool &amp; outside, double &amp; distance, vtkIdType &amp; face_id) const</td>
 </tr>
 <tr>
 <td>int</td>
@@ -3292,6 +3255,10 @@
 <td><strong><a href="classshapeworks_1_1Mesh.html#function-operator==">operator==</a></strong>(const <a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp; other) const<br>compare meshes</td>
 </tr>
 <tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-prepareffcfields">prepareFFCFields</a></strong>(std::vector&lt; std::vector&lt; Eigen::Vector3d &gt;&gt; boundaries, Eigen::Vector3d query, bool onlyGenerateInOut =false)<br>Prepares the mesh for FFCs by setting scalar and vector fields.</td>
+</tr>
+<tr>
 <td>double</td>
 <td><strong><a href="classshapeworks_1_1Mesh.html#function-getffcvalue">getFFCValue</a></strong>(Eigen::Vector3d query) const<br>Gets values for FFCs.</td>
 </tr>
@@ -3309,7 +3276,7 @@
 </tr>
 <tr>
 <td>std::vector&lt; std::string &gt;</td>
-<td><strong><a href="classshapeworks_1_1Mesh.html#function-getsupportedtypes">getSupportedTypes</a></strong>()<br>Return supported file types.</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-getsupportedtypes">getSupportedTypes</a></strong>()<br>getSupportedTypes</td>
 </tr>
 </tbody>
 </table>
@@ -3575,17 +3542,8 @@
 <span class="p">)</span>
 </code></pre></div>
 <p>applies the given transformation to the mesh </p>
-<h3 id="function-rotate">function rotate</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">rotate</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">angle</span><span class="p">,</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Axis</span><span class="w"> </span><span class="n">axis</span>
-<span class="p">)</span>
-</code></pre></div>
-<p>applies the given rotation to the given axis </p>
 <h3 id="function-fillholes">function fillHoles</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">fillHoles</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">hole_size</span><span class="w"> </span><span class="o">=</span><span class="mf">1000.0</span>
-<span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">fillHoles</span><span class="p">()</span>
 </code></pre></div>
 <p>finds holes in a mesh and closes them </p>
 <h3 id="function-clean">function clean</h3>
@@ -3624,18 +3582,6 @@
 <div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">fixElement</span><span class="p">()</span>
 </code></pre></div>
 <p>fix element winding of mesh </p>
-<h3 id="function-fixnonmanifold">function fixNonManifold</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">fixNonManifold</span><span class="p">()</span>
-</code></pre></div>
-<p>Attempt to fix non-manifold edges. </p>
-<h3 id="function-detectnonmanifold">function detectNonManifold</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">detectNonManifold</span><span class="p">()</span>
-</code></pre></div>
-<p>Detect if mesh contain non-manifold edges. </p>
-<h3 id="function-detecttriangular">function detectTriangular</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">detectTriangular</span><span class="p">()</span>
-</code></pre></div>
-<p>Detect if mesh is triangular;. </p>
 <h3 id="function-distance">function distance</h3>
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Field</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">distance</span><span class="p">(</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">target</span><span class="p">,</span>
@@ -3656,12 +3602,14 @@
 <h3 id="function-closestpoint">function closestPoint</h3>
 <div class="highlight"><pre><span></span><code><span class="n">Point3</span><span class="w"> </span><span class="n">closestPoint</span><span class="p">(</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="n">point</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">outside</span><span class="p">,</span>
 <span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">distance</span><span class="p">,</span>
 <span class="w">    </span><span class="n">vtkIdType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">face_id</span>
 <span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>Returns closest point on this mesh to the given point in space. In addition, returns by reference:</p>
 <ul>
+<li>whether the point in space is outside the mesh or not</li>
 <li>the distance of the point in space from this mesh</li>
 <li>the face_id containing the closest point </li>
 </ul>
@@ -3836,6 +3784,14 @@
 <span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>compare meshes </p>
+<h3 id="function-prepareffcfields">function prepareFFCFields</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">prepareFFCFields</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">boundaries</span><span class="p">,</span>
+<span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">query</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">onlyGenerateInOut</span><span class="w"> </span><span class="o">=</span><span class="nb">false</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Prepares the mesh for FFCs by setting scalar and vector fields. </p>
 <h3 id="function-getffcvalue">function getFFCValue</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">getFFCValue</span><span class="p">(</span>
 <span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">query</span>
@@ -3865,15 +3821,13 @@
 <h3 id="function-getsupportedtypes">function getSupportedTypes</h3>
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kr">inline</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">getSupportedTypes</span><span class="p">()</span>
 </code></pre></div>
-<p>Return supported file types. </p>
+<p>getSupportedTypes </p>
 <h2 id="friends_1">Friends</h2>
 <h3 id="friend-sharedcommanddata">friend SharedCommandData</h3>
-<div class="highlight"><pre><span></span><code><span class="k">friend</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">SharedCommandData</span><span class="p">(</span>
-<span class="w">    </span><span class="n">SharedCommandData</span><span class="w"> </span>
-<span class="p">);</span>
+<div class="highlight"><pre><span></span><code><span class="k">friend</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">SharedCommandData</span><span class="p">();</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-05-04 at 20:03:05 +0000</p>
+<p>Updated on 2022-07-23 at 16:40:07 -0600</p>
 
               
             </article>

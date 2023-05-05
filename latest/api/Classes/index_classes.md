@@ -40,6 +40,7 @@ title: Classes
 * **class [FEVTKExport](../Classes/classFEVTKExport.md)** 
 * **class [FEVTKimport](../Classes/classFEVTKimport.md)** 
 * **class [GLCOLOR](../Classes/classGLCOLOR.md)** 
+* **class [Global](../Classes/classGlobal.md)** 
 * **struct [Intersection](../Classes/structIntersection.md)** 
 * **class [LegacyMeshGenerator](../Classes/classLegacyMeshGenerator.md)** 
 * **class [MeshSettings](../Classes/classMeshSettings.md)** <br>Settings for creating a mesh. 
@@ -133,7 +134,10 @@ title: Classes
     * **class [ExportUtils](../Classes/classshapeworks_1_1ExportUtils.md)** <br>Export utilities for Studio. 
     * **class [FreeFormConstraint](../Classes/classshapeworks_1_1FreeFormConstraint.md)** <br>[FreeFormConstraint](). 
     * **class [Groom](../Classes/classshapeworks_1_1Groom.md)** <br>High level groom API. 
+    * **class [GroomAlignment](../Classes/classshapeworks_1_1GroomAlignment.md)** 
     * **class [GroomCommandGroup](../Classes/classshapeworks_1_1GroomCommandGroup.md)** 
+    * **class [GroomImage](../Classes/classshapeworks_1_1GroomImage.md)** 
+    * **class [GroomMesh](../Classes/classshapeworks_1_1GroomMesh.md)** 
     * **class [GroomParameters](../Classes/classshapeworks_1_1GroomParameters.md)** 
     * **class [GroomTool](../Classes/classshapeworks_1_1GroomTool.md)** 
     * **class [GroupPvalueJob](../Classes/classshapeworks_1_1GroupPvalueJob.md)** 
@@ -144,10 +148,12 @@ title: Classes
     * **class [IndexRegion](../Classes/classshapeworks_1_1IndexRegion.md)** <br>Indices into a 3d region of memory (can be negative, e.g., for the purpose of padding an image) 
     * **class [Job](../Classes/classshapeworks_1_1Job.md)** 
     * **class [KeyboardShortcuts](../Classes/classshapeworks_1_1KeyboardShortcuts.md)** 
-    * **class [LandmarkDefinition](../Classes/classshapeworks_1_1LandmarkDefinition.md)** <br>Landmark class containing properties of each landmark. 
+    * **class [Landmark](../Classes/classshapeworks_1_1Landmark.md)** 
+    * **class [LandmarkDefinition](../Classes/classshapeworks_1_1LandmarkDefinition.md)** <br>[Landmark](../Classes/classshapeworks_1_1Landmark.md) class containing properties of each landmark. 
     * **class [LandmarkItemDelegate](../Classes/classshapeworks_1_1LandmarkItemDelegate.md)** 
     * **class [LandmarkTableModel](../Classes/classshapeworks_1_1LandmarkTableModel.md)** 
     * **class [LandmarkWidget](../Classes/classshapeworks_1_1LandmarkWidget.md)** <br>[LandmarkWidget](). 
+    * **class [Landmarks](../Classes/classshapeworks_1_1Landmarks.md)** <br>Representation of the project's landmarks. 
     * **class [Lightbox](../Classes/classshapeworks_1_1Lightbox.md)** <br>Display multiple Viewers in a tiled display. 
     * **class [LogWindow](../Classes/classshapeworks_1_1LogWindow.md)** <br>Log Window. 
     * **class [MatrixContainer](../Classes/classshapeworks_1_1MatrixContainer.md)** 
@@ -193,6 +199,8 @@ title: Classes
     * **class [PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md)** <br>physical bounds of a 3d region of space 
     * **class [PickResult](../Classes/classshapeworks_1_1PickResult.md)** 
     * **class [PlaneConstraint](../Classes/classshapeworks_1_1PlaneConstraint.md)** <br>[PlaneConstraint](). 
+    * **class [PlaneInfo](../Classes/classshapeworks_1_1PlaneInfo.md)** 
+    * **class [PlaneTableModel](../Classes/classshapeworks_1_1PlaneTableModel.md)** 
     * **class [PlaneWidget](../Classes/classshapeworks_1_1PlaneWidget.md)** <br>[PlaneWidget](). 
     * **class [PreferencesWindow](../Classes/classshapeworks_1_1PreferencesWindow.md)** <br>Qt UI dialog to control preferences. 
     * **class [Project](../Classes/classshapeworks_1_1Project.md)** <br>Representation of a project. 
@@ -254,4 +262,4 @@ title: Classes
 
 -------------------------------
 
-Updated on 2022-07-23 at 17:50:05 -0600
+Updated on 2022-07-23 at 16:40:07 -0600

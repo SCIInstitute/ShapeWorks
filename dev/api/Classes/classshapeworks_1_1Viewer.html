@@ -2505,13 +2505,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-set_scale_arrows" class="md-nav__link">
-    function set_scale_arrows
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#function-update_points" class="md-nav__link">
     function update_points
   </a>
@@ -2547,8 +2540,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-set_glyph_lut" class="md-nav__link">
-    function set_glyph_lut
+  <a href="#function-set_lut" class="md-nav__link">
+    function set_lut
   </a>
   
 </li>
@@ -2837,7 +2830,7 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Viewer.html#function-display-shape">display_shape</a></strong>(std::shared_ptr&lt; <a href="classshapeworks_1_1Shape.html">Shape</a> &gt; shape)</td>
+<td><strong><a href="classshapeworks_1_1Viewer.html#function-display-shape">display_shape</a></strong>(QSharedPointer&lt; <a href="classshapeworks_1_1Shape.html">Shape</a> &gt; shape)</td>
 </tr>
 <tr>
 <td>void</td>
@@ -2885,10 +2878,6 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Viewer.html#function-set-scale-arrows">set_scale_arrows</a></strong>(bool scale)</td>
-</tr>
-<tr>
-<td>void</td>
 <td><strong><a href="classshapeworks_1_1Viewer.html#function-update-points">update_points</a></strong>()</td>
 </tr>
 <tr>
@@ -2909,7 +2898,7 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Viewer.html#function-set-glyph-lut">set_glyph_lut</a></strong>(vtkSmartPointer&lt; vtkLookupTable &gt; lut)</td>
+<td><strong><a href="classshapeworks_1_1Viewer.html#function-set-lut">set_lut</a></strong>(vtkSmartPointer&lt; vtkLookupTable &gt; lut)</td>
 </tr>
 <tr>
 <td>void</td>
@@ -2940,7 +2929,7 @@
 <td><strong><a href="classshapeworks_1_1Viewer.html#function-update-opacities">update_opacities</a></strong>()</td>
 </tr>
 <tr>
-<td>std::shared_ptr&lt; <a href="classshapeworks_1_1Shape.html">Shape</a> &gt;</td>
+<td>QSharedPointer&lt; <a href="classshapeworks_1_1Shape.html">Shape</a> &gt;</td>
 <td><strong><a href="classshapeworks_1_1Viewer.html#function-get-shape">get_shape</a></strong>()</td>
 </tr>
 <tr>
@@ -3067,7 +3056,7 @@
 </code></pre></div>
 <h3 id="function-display_shape">function display_shape</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">display_shape</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Shape</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">shape</span>
+<span class="w">    </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Shape</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">shape</span>
 <span class="p">)</span>
 </code></pre></div>
 <h3 id="function-clear_viewer">function clear_viewer</h3>
@@ -3116,11 +3105,6 @@
 <span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">show</span>
 <span class="p">)</span>
 </code></pre></div>
-<h3 id="function-set_scale_arrows">function set_scale_arrows</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_scale_arrows</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">scale</span>
-<span class="p">)</span>
-</code></pre></div>
 <h3 id="function-update_points">function update_points</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_points</span><span class="p">()</span>
 </code></pre></div>
@@ -3142,8 +3126,8 @@
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">id</span>
 <span class="p">)</span>
 </code></pre></div>
-<h3 id="function-set_glyph_lut">function set_glyph_lut</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_glyph_lut</span><span class="p">(</span>
+<h3 id="function-set_lut">function set_lut</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_lut</span><span class="p">(</span>
 <span class="w">    </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">vtkLookupTable</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">lut</span>
 <span class="p">)</span>
 </code></pre></div>
@@ -3177,7 +3161,7 @@
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_opacities</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-get_shape">function get_shape</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Shape</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_shape</span><span class="p">()</span>
+<div class="highlight"><pre><span></span><code><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Shape</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_shape</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-update_landmarks">function update_landmarks</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_landmarks</span><span class="p">()</span>
@@ -3271,7 +3255,7 @@
 <span class="p">)</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-05-04 at 20:03:05 +0000</p>
+<p>Updated on 2022-07-23 at 16:40:07 -0600</p>
 
               
             </article>

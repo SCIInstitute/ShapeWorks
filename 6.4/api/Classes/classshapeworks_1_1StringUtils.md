@@ -24,9 +24,7 @@ String utility functions.
 | std::string | **[toLower](../Classes/classshapeworks_1_1StringUtils.md#function-tolower)**(std::string s) |
 | bool | **[hasSuffix](../Classes/classshapeworks_1_1StringUtils.md#function-hassuffix)**(std::string const & filename, std::string const & suffix) |
 | std::vector< std::string > | **[getFileNamesFromPaths](../Classes/classshapeworks_1_1StringUtils.md#function-getfilenamesfrompaths)**(const std::vector< std::string > & paths) |
-| std::string | **[getLowerExtension](../Classes/classshapeworks_1_1StringUtils.md#function-getlowerextension)**(std::string const & filename) |
 | std::string | **[safeString](../Classes/classshapeworks_1_1StringUtils.md#function-safestring)**(const char * s) |
-| std::string | **[replace_string](../Classes/classshapeworks_1_1StringUtils.md#function-replace-string)**(std::string str, const std::string & search, const std::string & replace)<br>Replace a search string with a replacement.  |
 
 ## Public Functions Documentation
 
@@ -96,15 +94,6 @@ static std::vector< std::string > getFileNamesFromPaths(
 ```
 
 
-### function getLowerExtension
-
-```cpp
-static std::string getLowerExtension(
-    std::string const & filename
-)
-```
-
-
 ### function safeString
 
 ```cpp
@@ -114,18 +103,6 @@ static inline std::string safeString(
 ```
 
 
-### function replace_string
-
-```cpp
-static std::string replace_string(
-    std::string str,
-    const std::string & search,
-    const std::string & replace
-)
-```
-
-Replace a search string with a replacement. 
-
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:05 +0000
+Updated on 2022-07-23 at 16:40:07 -0600

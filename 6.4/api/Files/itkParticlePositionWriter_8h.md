@@ -11,13 +11,13 @@ title: Libs/Particles/itkParticlePositionWriter.h
 
 | Name           |
 | -------------- |
-| **[shapeworks](../Namespaces/namespaceshapeworks.md)** <br>User usage reporting (telemetry)  |
+| **[itk](../Namespaces/namespaceitk.md)**  |
 
 ## Classes
 
 |                | Name           |
 | -------------- | -------------- |
-| class | **[shapeworks::ParticlePositionWriter](../Classes/classshapeworks_1_1ParticlePositionWriter.md)**  |
+| class | **[itk::ParticlePositionWriter](../Classes/classitk_1_1ParticlePositionWriter.md)**  |
 
 
 
@@ -35,20 +35,20 @@ title: Libs/Particles/itkParticlePositionWriter.h
 #include "itkPoint.h"
 #include "itkWeakPointer.h"
 
-namespace shapeworks {
-class ParticlePositionWriter : public itk::DataObject {
+namespace itk {
+class ITK_EXPORT ParticlePositionWriter : public DataObject {
  public:
   typedef ParticlePositionWriter Self;
   typedef DataObject Superclass;
-  typedef itk::SmartPointer<Self> Pointer;
-  typedef itk::SmartPointer<const Self> ConstPointer;
-  typedef itk::WeakPointer<const Self> ConstWeakPointer;
+  typedef SmartPointer<Self> Pointer;
+  typedef SmartPointer<const Self> ConstPointer;
+  typedef WeakPointer<const Self> ConstWeakPointer;
 
-  typedef itk::Point<double, 3> PointType;
+  typedef Point<double, 3> PointType;
 
   itkNewMacro(Self);
 
-  itkTypeMacro(ParticlePositionWriter, itk::DataObject);
+  itkTypeMacro(ParticlePositionWriter, DataObject);
 
   void SetInput(const std::vector<PointType>& p) { m_Input = p; }
 
@@ -79,7 +79,7 @@ class ParticlePositionWriter : public itk::DataObject {
 
  protected:
   ParticlePositionWriter() {}
-  void PrintSelf(std::ostream& os, itk::Indent indent) const {
+  void PrintSelf(std::ostream& os, Indent indent) const {
     Superclass::PrintSelf(os, indent);
 
     os << indent << "ParticlePositionWriter: " << std::endl;
@@ -100,4 +100,4 @@ class ParticlePositionWriter : public itk::DataObject {
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:05 +0000
+Updated on 2022-07-23 at 16:40:07 -0600

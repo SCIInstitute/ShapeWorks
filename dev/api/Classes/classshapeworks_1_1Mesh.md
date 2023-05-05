@@ -46,11 +46,10 @@ title: shapeworks::Mesh
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[remesh](../Classes/classshapeworks_1_1Mesh.md#function-remesh)**(int numVertices, double adaptivity =1.0)<br>applies remeshing using approximated centroidal voronoi diagrams for a given number of vertices and adaptivity  |
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[remeshPercent](../Classes/classshapeworks_1_1Mesh.md#function-remeshpercent)**(double percentage, double adaptivity =1.0)<br>applies remeshing using approximated centroidal voronoi diagrams for a given percentage of vertices and adaptivity  |
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[invertNormals](../Classes/classshapeworks_1_1Mesh.md#function-invertnormals)**()<br>handle flipping normals  |
-| [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[reflect](../Classes/classshapeworks_1_1Mesh.md#function-reflect)**(const [Axis](../Namespaces/namespaceshapeworks.md#enum-axis) & axis, const Vector3 & origin =[makeVector](../Namespaces/namespaceshapeworks.md#function-makevector)({0.0, 0.0, 0.0}))<br>reflect meshes with respect to a specified center and specific axis  |
-| [MeshTransform](../Namespaces/namespaceshapeworks.md#using-meshtransform) | **[createTransform](../Classes/classshapeworks_1_1Mesh.md#function-createtransform)**(const [Mesh](../Classes/classshapeworks_1_1Mesh.md) & target, AlignmentType align =Similarity, unsigned iterations =10) |
-| [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[applyTransform](../Classes/classshapeworks_1_1Mesh.md#function-applytransform)**(const [MeshTransform](../Namespaces/namespaceshapeworks.md#using-meshtransform) transform)<br>applies the given transformation to the mesh  |
-| [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[rotate](../Classes/classshapeworks_1_1Mesh.md#function-rotate)**(const double angle, const [Axis](../Namespaces/namespaceshapeworks.md#enum-axis) axis)<br>applies the given rotation to the given axis  |
-| [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[fillHoles](../Classes/classshapeworks_1_1Mesh.md#function-fillholes)**(double hole_size =1000.0)<br>finds holes in a mesh and closes them  |
+| [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[reflect](../Classes/classshapeworks_1_1Mesh.md#function-reflect)**(const Axis & axis, const Vector3 & origin =makeVector({0.0, 0.0, 0.0}))<br>reflect meshes with respect to a specified center and specific axis  |
+| MeshTransform | **[createTransform](../Classes/classshapeworks_1_1Mesh.md#function-createtransform)**(const [Mesh](../Classes/classshapeworks_1_1Mesh.md) & target, AlignmentType align =Similarity, unsigned iterations =10) |
+| [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[applyTransform](../Classes/classshapeworks_1_1Mesh.md#function-applytransform)**(const MeshTransform transform)<br>applies the given transformation to the mesh  |
+| [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[fillHoles](../Classes/classshapeworks_1_1Mesh.md#function-fillholes)**()<br>finds holes in a mesh and closes them  |
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[clean](../Classes/classshapeworks_1_1Mesh.md#function-clean)**()<br>clean mesh  |
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[probeVolume](../Classes/classshapeworks_1_1Mesh.md#function-probevolume)**(const [Image](../Classes/classshapeworks_1_1Image.md) & image)<br>samples image data values at point locations specified by image  |
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[clip](../Classes/classshapeworks_1_1Mesh.md#function-clip)**(const Plane plane)<br>clips a mesh using a cutting plane  |
@@ -58,13 +57,10 @@ title: shapeworks::Mesh
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[scale](../Classes/classshapeworks_1_1Mesh.md#function-scale)**(const Vector3 & v)<br>helper to scale mesh  |
 | [PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md) | **[boundingBox](../Classes/classshapeworks_1_1Mesh.md#function-boundingbox)**() const<br>computes bounding box of current mesh  |
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[fixElement](../Classes/classshapeworks_1_1Mesh.md#function-fixelement)**()<br>fix element winding of mesh  |
-| [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[fixNonManifold](../Classes/classshapeworks_1_1Mesh.md#function-fixnonmanifold)**()<br>Attempt to fix non-manifold edges.  |
-| bool | **[detectNonManifold](../Classes/classshapeworks_1_1Mesh.md#function-detectnonmanifold)**()<br>Detect if mesh contain non-manifold edges.  |
-| bool | **[detectTriangular](../Classes/classshapeworks_1_1Mesh.md#function-detecttriangular)**()<br>Detect if mesh is triangular;.  |
 | std::vector< Field > | **[distance](../Classes/classshapeworks_1_1Mesh.md#function-distance)**(const [Mesh](../Classes/classshapeworks_1_1Mesh.md) & target, const DistanceMethod method =PointToCell) const |
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[clipClosedSurface](../Classes/classshapeworks_1_1Mesh.md#function-clipclosedsurface)**(const Plane plane)<br>clips a mesh using a cutting plane resulting in a closed surface  |
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[computeNormals](../Classes/classshapeworks_1_1Mesh.md#function-computenormals)**()<br>computes and adds oriented point and cell normals  |
-| Point3 | **[closestPoint](../Classes/classshapeworks_1_1Mesh.md#function-closestpoint)**(const Point3 point, double & distance, vtkIdType & face_id) const |
+| Point3 | **[closestPoint](../Classes/classshapeworks_1_1Mesh.md#function-closestpoint)**(const Point3 point, bool & outside, double & distance, vtkIdType & face_id) const |
 | int | **[closestPointId](../Classes/classshapeworks_1_1Mesh.md#function-closestpointid)**(const Point3 point) const<br>returns closest point id in this mesh to the given point in space  |
 | double | **[geodesicDistance](../Classes/classshapeworks_1_1Mesh.md#function-geodesicdistance)**(int source, int target) const<br>computes geodesic distance between two vertices (specified by their indices) on mesh  |
 | Field | **[geodesicDistance](../Classes/classshapeworks_1_1Mesh.md#function-geodesicdistance)**(const Point3 landmark) const<br>computes geodesic distance between a point (landmark) and each vertex on mesh  |
@@ -93,11 +89,12 @@ title: shapeworks::Mesh
 | bool | **[compareField](../Classes/classshapeworks_1_1Mesh.md#function-comparefield)**(const [Mesh](../Classes/classshapeworks_1_1Mesh.md) & other_mesh, const std::string & name1, const std::string & name2 ="", const double eps =-1.0) const<br>compare field of meshes to be (eps)equal (same field for both if only one specified)  |
 | bool | **[compare](../Classes/classshapeworks_1_1Mesh.md#function-compare)**(const [Mesh](../Classes/classshapeworks_1_1Mesh.md) & other_mesh, const double eps =-1.0) const<br>compare meshes  |
 | bool | **[operator==](../Classes/classshapeworks_1_1Mesh.md#function-operator==)**(const [Mesh](../Classes/classshapeworks_1_1Mesh.md) & other) const<br>compare meshes  |
+| bool | **[prepareFFCFields](../Classes/classshapeworks_1_1Mesh.md#function-prepareffcfields)**(std::vector< std::vector< Eigen::Vector3d >> boundaries, Eigen::Vector3d query, bool onlyGenerateInOut =false)<br>Prepares the mesh for FFCs by setting scalar and vector fields.  |
 | double | **[getFFCValue](../Classes/classshapeworks_1_1Mesh.md#function-getffcvalue)**(Eigen::Vector3d query) const<br>Gets values for FFCs.  |
 | Eigen::Vector3d | **[getFFCGradient](../Classes/classshapeworks_1_1Mesh.md#function-getffcgradient)**(Eigen::Vector3d query) const<br>Gets gradients for FFCs.  |
 | MeshPoints | **[getIGLMesh](../Classes/classshapeworks_1_1Mesh.md#function-getiglmesh)**(Eigen::MatrixXd & V, Eigen::MatrixXi & F) const<br>Formats mesh into an IGL format.  |
 | vtkSmartPointer< vtkPolyData > | **[clipByField](../Classes/classshapeworks_1_1Mesh.md#function-clipbyfield)**(const std::string & name, double value)<br>Clips the mesh according to a field value.  |
-| std::vector< std::string > | **[getSupportedTypes](../Classes/classshapeworks_1_1Mesh.md#function-getsupportedtypes)**()<br>Return supported file types.  |
+| std::vector< std::string > | **[getSupportedTypes](../Classes/classshapeworks_1_1Mesh.md#function-getsupportedtypes)**()<br>getSupportedTypes  |
 
 ## Friends
 
@@ -377,23 +374,10 @@ Mesh & applyTransform(
 
 applies the given transformation to the mesh 
 
-### function rotate
-
-```cpp
-Mesh & rotate(
-    const double angle,
-    const Axis axis
-)
-```
-
-applies the given rotation to the given axis 
-
 ### function fillHoles
 
 ```cpp
-Mesh & fillHoles(
-    double hole_size =1000.0
-)
+Mesh & fillHoles()
 ```
 
 finds holes in a mesh and closes them 
@@ -462,30 +446,6 @@ Mesh & fixElement()
 
 fix element winding of mesh 
 
-### function fixNonManifold
-
-```cpp
-Mesh & fixNonManifold()
-```
-
-Attempt to fix non-manifold edges. 
-
-### function detectNonManifold
-
-```cpp
-bool detectNonManifold()
-```
-
-Detect if mesh contain non-manifold edges. 
-
-### function detectTriangular
-
-```cpp
-bool detectTriangular()
-```
-
-Detect if mesh is triangular;. 
-
 ### function distance
 
 ```cpp
@@ -522,6 +482,7 @@ computes and adds oriented point and cell normals
 ```cpp
 Point3 closestPoint(
     const Point3 point,
+    bool & outside,
     double & distance,
     vtkIdType & face_id
 ) const
@@ -530,6 +491,7 @@ Point3 closestPoint(
 
 Returns closest point on this mesh to the given point in space. In addition, returns by reference:
 
+* whether the point in space is outside the mesh or not
 * the distance of the point in space from this mesh
 * the face_id containing the closest point 
 
@@ -817,6 +779,18 @@ inline bool operator==(
 
 compare meshes 
 
+### function prepareFFCFields
+
+```cpp
+bool prepareFFCFields(
+    std::vector< std::vector< Eigen::Vector3d >> boundaries,
+    Eigen::Vector3d query,
+    bool onlyGenerateInOut =false
+)
+```
+
+Prepares the mesh for FFCs by setting scalar and vector fields. 
+
 ### function getFFCValue
 
 ```cpp
@@ -865,19 +839,17 @@ Clips the mesh according to a field value.
 static inline std::vector< std::string > getSupportedTypes()
 ```
 
-Return supported file types. 
+getSupportedTypes 
 
 ## Friends
 
 ### friend SharedCommandData
 
 ```cpp
-friend struct SharedCommandData(
-    SharedCommandData 
-);
+friend struct SharedCommandData();
 ```
 
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:05 +0000
+Updated on 2022-07-23 at 16:40:07 -0600

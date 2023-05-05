@@ -7,10 +7,7 @@ title: shapeworks::OptimizeParameterFile
 
 
 
- [More...](#detailed-description)
 
-
-`#include <OptimizeParameterFile.h>`
 
 ## Public Functions
 
@@ -18,20 +15,6 @@ title: shapeworks::OptimizeParameterFile
 | -------------- | -------------- |
 | | **[OptimizeParameterFile](../Classes/classshapeworks_1_1OptimizeParameterFile.md#function-optimizeparameterfile)**() |
 | bool | **[load_parameter_file](../Classes/classshapeworks_1_1OptimizeParameterFile.md#function-load-parameter-file)**(std::string filename, [Optimize](../Classes/classshapeworks_1_1Optimize.md) * optimize)<br>Load a parameter file and set the values on an [Optimize](../Classes/classshapeworks_1_1Optimize.md) object.  |
-
-## Detailed Description
-
-```cpp
-class shapeworks::OptimizeParameterFile;
-```
-
-
-**Par**: Overview of OptimizeParameterFile
-
-Implementation of [Optimize](../Classes/classshapeworks_1_1Optimize.md) library parameter file
-
-
-The [OptimizeParameterFile](../Classes/classshapeworks_1_1OptimizeParameterFile.md) class reads in a parameter file and sets the appropriate values for an [Optimize](../Classes/classshapeworks_1_1Optimize.md) object. 
 
 ## Public Functions Documentation
 
@@ -55,4 +38,4 @@ Load a parameter file and set the values on an [Optimize](../Classes/classshapew
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:04 +0000
+Updated on 2022-07-23 at 16:40:06 -0600

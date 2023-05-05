@@ -2461,6 +2461,27 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#signal-error_message" class="md-nav__link">
+    signal error_message
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#signal-warning_message" class="md-nav__link">
+    signal warning_message
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#signal-message" class="md-nav__link">
+    signal message
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#signal-finished" class="md-nav__link">
     signal finished
   </a>
@@ -2568,6 +2589,18 @@
 </tr>
 <tr>
 <td>void</td>
+<td><strong><a href="classshapeworks_1_1ShapeworksWorker.html#signal-error-message">error_message</a></strong>(QString )</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1ShapeworksWorker.html#signal-warning-message">warning_message</a></strong>(QString )</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1ShapeworksWorker.html#signal-message">message</a></strong>(QString )</td>
+</tr>
+<tr>
+<td>void</td>
 <td><strong><a href="classshapeworks_1_1ShapeworksWorker.html#signal-finished">finished</a></strong>()</td>
 </tr>
 </tbody>
@@ -2583,7 +2616,7 @@
 <tbody>
 <tr>
 <td></td>
-<td><strong><a href="classshapeworks_1_1ShapeworksWorker.html#function-shapeworksworker">ShapeworksWorker</a></strong>(ThreadType type, QSharedPointer&lt; <a href="classshapeworks_1_1Groom.html">Groom</a> &gt; groom, QSharedPointer&lt; <a href="classshapeworks_1_1Optimize.html">Optimize</a> &gt; optimize, QSharedPointer&lt; <a href="classshapeworks_1_1OptimizeParameters.html">OptimizeParameters</a> &gt; optimize_parameters, QSharedPointer&lt; <a href="classshapeworks_1_1Session.html">Session</a> &gt; session, double maxAngle =45., float decimationPercent =0.3f, int numClusters =5)</td>
+<td><strong><a href="classshapeworks_1_1ShapeworksWorker.html#function-shapeworksworker">ShapeworksWorker</a></strong>(ThreadType type, QSharedPointer&lt; <a href="classshapeworks_1_1QGroom.html">QGroom</a> &gt; groom, QSharedPointer&lt; <a href="classshapeworks_1_1Optimize.html">Optimize</a> &gt; optimize, QSharedPointer&lt; <a href="classshapeworks_1_1OptimizeParameters.html">OptimizeParameters</a> &gt; optimize_parameters, QSharedPointer&lt; <a href="classshapeworks_1_1Session.html">Session</a> &gt; session, std::vector&lt; std::vector&lt; itk::Point&lt; double &gt;&gt;&gt; local_pts =std::vector&lt; std::vector&lt; itk::Point&lt; double &gt;&gt;&gt;(), std::vector&lt; std::vector&lt; itk::Point&lt; double &gt;&gt;&gt; global_pts =std::vector&lt; std::vector&lt; itk::Point&lt; double &gt;&gt;&gt;(), std::vector&lt; std::string &gt; distance_transform =std::vector&lt; std::string &gt;(), double maxAngle =45., float decimationPercent =0.3f, int numClusters =5)</td>
 </tr>
 <tr>
 <td></td>
@@ -2630,6 +2663,21 @@
 <h3 id="signal-failure">signal failure</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">failure</span><span class="p">()</span>
 </code></pre></div>
+<h3 id="signal-error_message">signal error_message</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">error_message</span><span class="p">(</span>
+<span class="w">    </span><span class="n">QString</span><span class="w"> </span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="signal-warning_message">signal warning_message</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">warning_message</span><span class="p">(</span>
+<span class="w">    </span><span class="n">QString</span><span class="w"> </span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="signal-message">signal message</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">message</span><span class="p">(</span>
+<span class="w">    </span><span class="n">QString</span><span class="w"> </span>
+<span class="p">)</span>
+</code></pre></div>
 <h3 id="signal-finished">signal finished</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">finished</span><span class="p">()</span>
 </code></pre></div>
@@ -2637,10 +2685,13 @@
 <h3 id="function-shapeworksworker">function ShapeworksWorker</h3>
 <div class="highlight"><pre><span></span><code><span class="n">ShapeworksWorker</span><span class="p">(</span>
 <span class="w">    </span><span class="n">ThreadType</span><span class="w"> </span><span class="n">type</span><span class="p">,</span>
-<span class="w">    </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Groom</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">groom</span><span class="p">,</span>
+<span class="w">    </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">QGroom</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">groom</span><span class="p">,</span>
 <span class="w">    </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Optimize</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">optimize</span><span class="p">,</span>
 <span class="w">    </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">OptimizeParameters</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">optimize_parameters</span><span class="p">,</span>
 <span class="w">    </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Session</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">session</span><span class="p">,</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">local_pts</span><span class="w"> </span><span class="o">=</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;&gt;&gt;</span><span class="p">(),</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">global_pts</span><span class="w"> </span><span class="o">=</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;&gt;&gt;</span><span class="p">(),</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">distance_transform</span><span class="w"> </span><span class="o">=</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="p">(),</span>
 <span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">maxAngle</span><span class="w"> </span><span class="o">=</span><span class="mf">45.</span><span class="p">,</span>
 <span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">decimationPercent</span><span class="w"> </span><span class="o">=</span><span class="mf">0.3f</span><span class="p">,</span>
 <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">numClusters</span><span class="w"> </span><span class="o">=</span><span class="mi">5</span>
@@ -2650,7 +2701,7 @@
 <div class="highlight"><pre><span></span><code><span class="o">~</span><span class="n">ShapeworksWorker</span><span class="p">()</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-05-04 at 20:03:05 +0000</p>
+<p>Updated on 2022-07-23 at 16:40:06 -0600</p>
 
               
             </article>

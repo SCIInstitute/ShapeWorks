@@ -21,7 +21,7 @@ Inherits from QObject
 | -------------- | -------------- |
 | enum| **[OrientationMarkerType](../Classes/classPreferences.md#enum-orientationmarkertype)** { medical = 0, triad = 1, none = 2} |
 | enum| **[OrientationMarkerCorner](../Classes/classPreferences.md#enum-orientationmarkercorner)** { upper_right = 0, lower_right = 1, lower_left = 2, upper_left = 3} |
-| enum| **[@4](../Classes/classPreferences.md#enum-@4)** { MAX_RECENT_FILES = 64} |
+| enum| **[@0](../Classes/classPreferences.md#enum-@0)** { MAX_RECENT_FILES = 64} |
 
 ## Public Signals
 
@@ -63,16 +63,12 @@ Inherits from QObject
 | void | **[set_glyph_quality](../Classes/classPreferences.md#function-set-glyph-quality)**(float value) |
 | bool | **[get_glyph_auto_size](../Classes/classPreferences.md#function-get-glyph-auto-size)**() |
 | void | **[set_glyph_auto_size](../Classes/classPreferences.md#function-set-glyph-auto-size)**(bool value) |
-| bool | **[get_glyph_scale_arrows](../Classes/classPreferences.md#function-get-glyph-scale-arrows)**() |
-| void | **[set_glyph_scale_arrows](../Classes/classPreferences.md#function-set-glyph-scale-arrows)**(bool value) |
 | float | **[get_pca_range](../Classes/classPreferences.md#function-get-pca-range)**() |
 | void | **[set_pca_range](../Classes/classPreferences.md#function-set-pca-range)**(float value) |
 | int | **[get_pca_steps](../Classes/classPreferences.md#function-get-pca-steps)**() |
 | void | **[set_pca_steps](../Classes/classPreferences.md#function-set-pca-steps)**(int value) |
 | void | **[set_color_scheme](../Classes/classPreferences.md#function-set-color-scheme)**(int value) |
 | int | **[get_color_scheme](../Classes/classPreferences.md#function-get-color-scheme)**() |
-| void | **[set_particle_colors](../Classes/classPreferences.md#function-set-particle-colors)**(int value) |
-| int | **[get_particle_colors](../Classes/classPreferences.md#function-get-particle-colors)**() |
 | void | **[set_color_map](../Classes/classPreferences.md#function-set-color-map)**(int value) |
 | int | **[get_color_map](../Classes/classPreferences.md#function-get-color-map)**() |
 | void | **[set_discrete_color_mode](../Classes/classPreferences.md#function-set-discrete-color-mode)**(bool value) |
@@ -105,17 +101,6 @@ Inherits from QObject
 | void | **[set_export_pca_range](../Classes/classPreferences.md#function-set-export-pca-range)**(double range) |
 | void | **[set_export_pca_modes](../Classes/classPreferences.md#function-set-export-pca-modes)**(QString string) |
 | QString | **[get_export_pca_modes](../Classes/classPreferences.md#function-get-export-pca-modes)**() |
-| bool | **[get_auto_update_check](../Classes/classPreferences.md#function-get-auto-update-check)**() |
-| void | **[set_auto_update_check](../Classes/classPreferences.md#function-set-auto-update-check)**(bool enabled) |
-| QDateTime | **[get_update_snooze_until](../Classes/classPreferences.md#function-get-update-snooze-until)**() |
-| void | **[set_update_snooze_until](../Classes/classPreferences.md#function-set-update-snooze-until)**(QDateTime date) |
-| QString | **[get_device_id](../Classes/classPreferences.md#function-get-device-id)**() |
-| bool | **[get_telemetry_enabled](../Classes/classPreferences.md#function-get-telemetry-enabled)**() |
-| void | **[set_telemetry_enabled](../Classes/classPreferences.md#function-set-telemetry-enabled)**(bool enabled) |
-| bool | **[get_telemetry_asked](../Classes/classPreferences.md#function-get-telemetry-asked)**() |
-| void | **[set_telemetry_asked](../Classes/classPreferences.md#function-set-telemetry-asked)**(bool asked) |
-| QStringList | **[get_pending_telemetry_events](../Classes/classPreferences.md#function-get-pending-telemetry-events)**() |
-| void | **[set_pending_telemetry_events](../Classes/classPreferences.md#function-set-pending-telemetry-events)**(QStringList events) |
 
 ## Detailed Description
 
@@ -152,7 +137,7 @@ The [Preferences](../Classes/classPreferences.md) singleton controls all prefere
 
 
 
-### enum @4
+### enum @0
 
 | Enumerator | Value | Description |
 | ---------- | ----- | ----------- |
@@ -409,22 +394,6 @@ void set_glyph_auto_size(
 ```
 
 
-### function get_glyph_scale_arrows
-
-```cpp
-bool get_glyph_scale_arrows()
-```
-
-
-### function set_glyph_scale_arrows
-
-```cpp
-void set_glyph_scale_arrows(
-    bool value
-)
-```
-
-
 ### function get_pca_range
 
 ```cpp
@@ -470,22 +439,6 @@ void set_color_scheme(
 
 ```cpp
 int get_color_scheme()
-```
-
-
-### function set_particle_colors
-
-```cpp
-void set_particle_colors(
-    int value
-)
-```
-
-
-### function get_particle_colors
-
-```cpp
-int get_particle_colors()
 ```
 
 
@@ -745,93 +698,6 @@ QString get_export_pca_modes()
 ```
 
 
-### function get_auto_update_check
-
-```cpp
-bool get_auto_update_check()
-```
-
-
-### function set_auto_update_check
-
-```cpp
-void set_auto_update_check(
-    bool enabled
-)
-```
-
-
-### function get_update_snooze_until
-
-```cpp
-QDateTime get_update_snooze_until()
-```
-
-
-### function set_update_snooze_until
-
-```cpp
-void set_update_snooze_until(
-    QDateTime date
-)
-```
-
-
-### function get_device_id
-
-```cpp
-QString get_device_id()
-```
-
-
-### function get_telemetry_enabled
-
-```cpp
-bool get_telemetry_enabled()
-```
-
-
-### function set_telemetry_enabled
-
-```cpp
-void set_telemetry_enabled(
-    bool enabled
-)
-```
-
-
-### function get_telemetry_asked
-
-```cpp
-bool get_telemetry_asked()
-```
-
-
-### function set_telemetry_asked
-
-```cpp
-void set_telemetry_asked(
-    bool asked
-)
-```
-
-
-### function get_pending_telemetry_events
-
-```cpp
-QStringList get_pending_telemetry_events()
-```
-
-
-### function set_pending_telemetry_events
-
-```cpp
-void set_pending_telemetry_events(
-    QStringList events
-)
-```
-
-
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:05 +0000
+Updated on 2022-07-23 at 16:40:07 -0600

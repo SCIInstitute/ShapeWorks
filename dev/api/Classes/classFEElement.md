@@ -15,7 +15,7 @@ Inherits from [FEElement_](../Classes/classFEElement__.md), [FEItem](../Classes/
 
 |                | Name           |
 | -------------- | -------------- |
-| enum| **[@3](../Classes/classFEElement.md#enum-@3)** { MAX_NODES = 27} |
+| enum| **[@2](../Classes/classFEElement.md#enum-@2)** { MAX_NODES = 27} |
 
 ## Public Functions
 
@@ -101,7 +101,7 @@ Inherits from [FEElement_](../Classes/classFEElement__.md), [FEItem](../Classes/
 
 ## Public Types Documentation
 
-### enum @3
+### enum @2
 
 | Enumerator | Value | Description |
 | ---------- | ----- | ----------- |
@@ -152,4 +152,4 @@ Set the element type.
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:05 +0000
+Updated on 2022-07-23 at 16:40:07 -0600

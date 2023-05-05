@@ -1,9 +1,9 @@
 ---
-title: Libs/Optimize/Constraints/SphereConstraint.h
+title: Libs/Optimize/ParticleSystem/SphereConstraint.h
 
 ---
 
-# Libs/Optimize/Constraints/SphereConstraint.h
+# Libs/Optimize/ParticleSystem/SphereConstraint.h
 
 
 
@@ -11,7 +11,7 @@ title: Libs/Optimize/Constraints/SphereConstraint.h
 
 | Name           |
 | -------------- |
-| **[shapeworks](../Namespaces/namespaceshapeworks.md)** <br>User usage reporting (telemetry)  |
+| **[shapeworks](../Namespaces/namespaceshapeworks.md)**  |
 
 ## Classes
 
@@ -27,9 +27,9 @@ title: Libs/Optimize/Constraints/SphereConstraint.h
 ```cpp
 #pragma once
 
-#include <iostream>
+#include "Constraint.h"
 
-#include "Libs/Optimize/Constraints/Constraint.h"
+#include <iostream>
 
 namespace shapeworks {
 
@@ -59,7 +59,7 @@ class SphereConstraint : public Constraint {
 
   double constraintEvalSphere(const Eigen::Vector3d &pt, const Eigen::Vector3d &updpt) const;
 
-  Eigen::Vector3d lagragianGradient(const Eigen::Vector3d &pt, const Eigen::Vector3d &updpt, double C, size_t index) const;
+  Eigen::Vector3d lagragianGradient(const Eigen::Vector3d &pt, const Eigen::Vector3d &updpt, double C) const;
 
  private:
   double radius_;
@@ -72,4 +72,4 @@ class SphereConstraint : public Constraint {
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:05 +0000
+Updated on 2022-07-23 at 16:40:07 -0600

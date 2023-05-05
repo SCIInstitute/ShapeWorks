@@ -24,7 +24,7 @@ Helper functions for image.
 |                | Name           |
 | -------------- | -------------- |
 | [PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md) | **[boundingBox](../Classes/classshapeworks_1_1ImageUtils.md#function-boundingbox)**(const std::vector< std::string > & filenames, Image::PixelType isoValue =1.0)<br>calculate bounding box for images using the region of data <= the given isoValue  |
-| [PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md) | **[boundingBox](../Classes/classshapeworks_1_1ImageUtils.md#function-boundingbox)**(const std::vector< std::reference_wrapper< const [Image](../Classes/classshapeworks_1_1Image.md) > > & images, Image::PixelType isoValue =1.0)<br>calculate bounding box for shapework images using the region of data <= the given isoValue  |
+| [PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md) | **[boundingBox](../Classes/classshapeworks_1_1ImageUtils.md#function-boundingbox)**(const std::vector< std::reference_wrapper< const [Image](../Classes/classshapeworks_1_1Image.md) >> & images, Image::PixelType isoValue =1.0)<br>calculate bounding box for shapework images using the region of data <= the given isoValue  |
 | TPSTransform::Pointer | **[createWarpTransform](../Classes/classshapeworks_1_1ImageUtils.md#function-createwarptransform)**(const std::string & source_landmarks_file, const std::string & target_landmarks_file, const int stride =1) |
 
 ## Public Types Documentation
@@ -54,7 +54,7 @@ calculate bounding box for images using the region of data <= the given isoValue
 
 ```cpp
 static PhysicalRegion boundingBox(
-    const std::vector< std::reference_wrapper< const Image > > & images,
+    const std::vector< std::reference_wrapper< const Image >> & images,
     Image::PixelType isoValue =1.0
 )
 ```
@@ -74,4 +74,4 @@ static TPSTransform::Pointer createWarpTransform(
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:04 +0000
+Updated on 2022-07-23 at 16:40:06 -0600

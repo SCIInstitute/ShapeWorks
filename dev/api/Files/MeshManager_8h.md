@@ -1,23 +1,30 @@
 ---
-title: Libs/Analyze/MeshManager.h
+title: Studio/src/Data/MeshManager.h
+summary: Class to manage meshes. 
 
 ---
 
-# Libs/Analyze/MeshManager.h
+# Studio/src/Data/MeshManager.h
 
-
+Class to manage meshes.  [More...](#detailed-description)
 
 ## Namespaces
 
 | Name           |
 | -------------- |
-| **[shapeworks](../Namespaces/namespaceshapeworks.md)** <br>User usage reporting (telemetry)  |
+| **[shapeworks](../Namespaces/namespaceshapeworks.md)**  |
 
 ## Classes
 
 |                | Name           |
 | -------------- | -------------- |
-| class | **[shapeworks::MeshManager](../Classes/classshapeworks_1_1MeshManager.md)** <br>Class to manage meshes.  |
+| class | **[shapeworks::MeshManager](../Classes/classshapeworks_1_1MeshManager.md)**  |
+
+## Detailed Description
+
+Class to manage meshes. 
+
+The MeshManager handles all aspects of mesh generation and caching. It houses the cache and manages threads to work on mesh generation in the background. 
 
 
 
@@ -27,16 +34,17 @@ title: Libs/Analyze/MeshManager.h
 ```cpp
 #pragma once
 
-#include "MeshCache.h"
-#include "MeshGenerator.h"
-#include "MeshWorkQueue.h"
-#include "MeshWorker.h"
-
 #include <vtkSmartPointer.h>
 
-#include <QThreadPool>
 #include <QWaitCondition>
+#include <QThreadPool>
 
+#include <Data/MeshCache.h>
+#include <Data/MeshGenerator.h>
+#include <Data/MeshWorkQueue.h>
+#include <Data/MeshWorker.h>
+
+#include <Data/Preferences.h>
 class SurfaceReconstructor;
 
 namespace shapeworks {
@@ -44,53 +52,49 @@ namespace shapeworks {
 class MeshWarper;
 
 class MeshManager : public QObject {
-  Q_OBJECT
+Q_OBJECT
 
- public:
-  MeshManager();
+public:
+  MeshManager(Preferences& prefs);
   ~MeshManager();
-
-  void set_cache_enabled(bool enabled);
-
-  void set_cache_memory_percent(int percent);
-
-  void set_parallel_enabled(bool enabled) { parallel_enabled_ = enabled; }
-
-  void set_num_threads(int num_threads) { num_threads_ = num_threads; }
 
   void generate_mesh(const MeshWorkItem item);
 
   MeshHandle get_mesh(const MeshWorkItem& item, bool wait = false);
 
-  MeshHandle get_mesh(const Eigen::VectorXd& points, int domain, bool wait = false);
+  MeshHandle get_mesh(const Eigen::VectorXd& points, int domain);
 
   std::shared_ptr<SurfaceReconstructor> get_surface_reconstructor(int domain);
 
   std::shared_ptr<MeshWarper> get_mesh_warper(int domain);
 
-  std::shared_ptr<MeshGenerator> get_mesh_generator() { return this->mesh_generator_; }
+  std::shared_ptr<MeshGenerator> get_mesh_generator()
+  { return this->mesh_generator_; }
 
   void clear_cache();
 
- public Q_SLOTS:
+public Q_SLOTS:
 
   void handle_thread_complete(const MeshWorkItem& item, MeshHandle mesh);
 
   void handle_warper_progress();
 
- Q_SIGNALS:
+Q_SIGNALS:
 
   void new_mesh();
 
   void error_encountered(QString message);
 
   void progress(int);
-  void status(std::string);
+  void status(QString);
 
- private:
+private:
+
   std::shared_ptr<MeshReconstructors> reconstructors_ = std::make_shared<MeshReconstructors>();
 
   void check_error_status(MeshHandle mesh);
+
+  Preferences& prefs_;
 
   // cache of shape meshes
   MeshCache mesh_cache_;
@@ -103,17 +107,13 @@ class MeshManager : public QObject {
 
   QThreadPool thread_pool_;
 
-  bool cache_enabled_ = true;
-  bool parallel_enabled_ = true;
-  int num_threads_ = 1;
-
   bool error_emitted_ = false;
 };
 
-}  // namespace shapeworks
+}
 ```
 
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:05 +0000
+Updated on 2022-07-23 at 16:40:07 -0600

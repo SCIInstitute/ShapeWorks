@@ -1,9 +1,9 @@
 ---
-title: Libs/Analyze/MeshGroup.h
+title: Studio/src/Data/MeshGroup.h
 
 ---
 
-# Libs/Analyze/MeshGroup.h
+# Studio/src/Data/MeshGroup.h
 
 
 
@@ -11,7 +11,7 @@ title: Libs/Analyze/MeshGroup.h
 
 | Name           |
 | -------------- |
-| **[shapeworks](../Namespaces/namespaceshapeworks.md)** <br>User usage reporting (telemetry)  |
+| **[shapeworks](../Namespaces/namespaceshapeworks.md)**  |
 
 ## Classes
 
@@ -27,7 +27,7 @@ title: Libs/Analyze/MeshGroup.h
 ```cpp
 #pragma once
 
-#include "StudioMesh.h"
+#include <Data/StudioMesh.h>
 
 namespace shapeworks {
 
@@ -59,4 +59,4 @@ class MeshGroup {
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:05 +0000
+Updated on 2022-07-23 at 16:40:07 -0600

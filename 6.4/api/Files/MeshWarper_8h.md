@@ -12,7 +12,7 @@ Mesh warping capability.  [More...](#detailed-description)
 
 | Name           |
 | -------------- |
-| **[shapeworks](../Namespaces/namespaceshapeworks.md)** <br>User usage reporting (telemetry)  |
+| **[shapeworks](../Namespaces/namespaceshapeworks.md)**  |
 
 ## Classes
 
@@ -58,9 +58,7 @@ class MeshWarper {
 
   bool is_contour() { return this->is_contour_; }
 
-  std::map<int, int> get_landmarks_map() const { return landmarks_map_; }
-
-  std::vector<int> get_good_particle_indices() const { return good_particles_; }
+  std::map<int, int> get_landmarks_map() { return landmarks_map_; }
 
   const Eigen::MatrixXd& get_warp_matrix() const { return this->warp_; }
 
@@ -91,7 +89,7 @@ class MeshWarper {
 
   static vtkSmartPointer<vtkPolyData> clean_mesh(vtkSmartPointer<vtkPolyData> mesh);
 
-  static vtkSmartPointer<vtkPolyData> recreate_mesh(vtkSmartPointer<vtkPolyData> mesh);
+  vtkSmartPointer<vtkPolyData> recreate_mesh(vtkSmartPointer<vtkPolyData> mesh);
 
   bool generate_warp_matrix(Eigen::MatrixXd TV, Eigen::MatrixXi TF, const Eigen::MatrixXd& Vref, Eigen::MatrixXd& W);
 
@@ -123,4 +121,4 @@ class MeshWarper {
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:05 +0000
+Updated on 2022-07-23 at 16:40:07 -0600

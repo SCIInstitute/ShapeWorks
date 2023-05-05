@@ -1,10 +1,10 @@
 ---
-title: Libs/Analyze/MeshGenerator.h
+title: Studio/src/Data/MeshGenerator.h
 summary: Mesh generation. 
 
 ---
 
-# Libs/Analyze/MeshGenerator.h
+# Studio/src/Data/MeshGenerator.h
 
 Mesh generation.  [More...](#detailed-description)
 
@@ -12,7 +12,7 @@ Mesh generation.  [More...](#detailed-description)
 
 | Name           |
 | -------------- |
-| **[shapeworks](../Namespaces/namespaceshapeworks.md)** <br>User usage reporting (telemetry)  |
+| **[shapeworks](../Namespaces/namespaceshapeworks.md)**  |
 
 ## Classes
 
@@ -34,12 +34,14 @@ The MeshGenerator performs the actual work of reconstructing a mesh from a shape
 
 ```cpp
 #pragma once
+
 #include <QSharedPointer>
 
 #include "vnl/vnl_vector.h"
 
-#include "StudioMesh.h"
-#include "MeshWorkQueue.h"
+#include <Data/StudioMesh.h>
+#include <Data/Preferences.h>
+#include <Data/MeshWorkQueue.h>
 
 class SurfaceReconstructor;
 
@@ -90,4 +92,4 @@ private:
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:05 +0000
+Updated on 2022-07-23 at 16:40:07 -0600

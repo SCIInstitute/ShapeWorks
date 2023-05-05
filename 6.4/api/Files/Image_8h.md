@@ -11,7 +11,7 @@ title: Libs/Image/Image.h
 
 | Name           |
 | -------------- |
-| **[shapeworks](../Namespaces/namespaceshapeworks.md)** <br>User usage reporting (telemetry)  |
+| **[shapeworks](../Namespaces/namespaceshapeworks.md)**  |
 
 ## Classes
 
@@ -220,8 +220,6 @@ class Image {
 
   Image::PixelType evaluate(Point p);
 
-  static std::vector<std::string> getSupportedTypes() { return {"nrrd", "nii", "nii.gz", "mhd", "tiff", "jpeg", "jpg", "png", "dcm", "ima"}; }
-
  private:
   friend struct SharedCommandData;
   Image()
@@ -261,4 +259,4 @@ Image& operator/=(Image& img, const double x);
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:05 +0000
+Updated on 2022-07-23 at 16:40:07 -0600

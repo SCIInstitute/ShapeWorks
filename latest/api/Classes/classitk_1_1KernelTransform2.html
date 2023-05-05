@@ -12,10 +12,10 @@
         <meta name="author" content="Shireen Elhabian et al.">
       
       
-        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.3/api/Classes/classitk_1_1KernelTransform2.html">
+        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.4/api/Classes/classitk_1_1KernelTransform2.html">
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.2.8">
+      <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.3.8">
     
     
       
@@ -23,11 +23,12 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.644de097.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.1d29e8d0.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.e6a45f82.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.cbb835fc.min.css">
         
+      
       
     
     
@@ -40,6 +41,8 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
     
       <link rel="stylesheet" href="../../css/custom.css">
     
@@ -107,7 +110,7 @@
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
     </label>
     <div class="md-header__title" data-md-component="header-title">
       <div class="md-header__ellipsis">
@@ -133,7 +136,7 @@
           <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="" data-md-color-accent=""  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
           
             <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 9a3 3 0 0 1 3 3 3 3 0 0 1-3 3 3 3 0 0 1-3-3 3 3 0 0 1 3-3m0-4.5c5 0 9.27 3.11 11 7.5-1.73 4.39-6 7.5-11 7.5S2.73 16.39 1 12c1.73-4.39 6-7.5 11-7.5M3.18 12a9.821 9.821 0 0 0 17.64 0 9.821 9.821 0 0 0-17.64 0z"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 9a3 3 0 0 1 3 3 3 3 0 0 1-3 3 3 3 0 0 1-3-3 3 3 0 0 1 3-3m0-4.5c5 0 9.27 3.11 11 7.5-1.73 4.39-6 7.5-11 7.5S2.73 16.39 1 12c1.73-4.39 6-7.5 11-7.5M3.18 12a9.821 9.821 0 0 0 17.64 0 9.821 9.821 0 0 0-17.64 0Z"/></svg>
             </label>
           
         
@@ -142,7 +145,7 @@
           <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="" data-md-color-accent=""  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
           
             <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0 8a5 5 0 0 1-5-5 5 5 0 0 1 5-5 5 5 0 0 1 5 5 5 5 0 0 1-5 5m0-12.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5z"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0 8a5 5 0 0 1-5-5 5 5 0 0 1 5-5 5 5 0 0 1 5 5 5 5 0 0 1-5 5m0-12.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5Z"/></svg>
             </label>
           
         
@@ -151,7 +154,7 @@
     
     
       <label class="md-header__button md-icon" for="__search">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
       </label>
       <div class="md-search" data-md-component="search" role="dialog">
   <label class="md-search__overlay" for="__search"></label>
@@ -159,13 +162,13 @@
     <form class="md-search__form" name="search">
       <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
       <label class="md-search__icon md-icon" for="__search">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
       </label>
       <nav class="md-search__options" aria-label="Search">
         
         <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
         </button>
       </nav>
       
@@ -883,12 +886,172 @@
       
       
         <label class="md-nav__link" for="__nav_7">
+          ShapeWorks Cloud
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="ShapeWorks Cloud" data-md-level="1">
+        <label class="md-nav__title" for="__nav_7">
+          <span class="md-nav__icon md-icon"></span>
+          ShapeWorks Cloud
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cloud/getting-started-with-cloud.html" class="md-nav__link">
+        Getting Started
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cloud/cloud-dataset.html" class="md-nav__link">
+        Datasets
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cloud/cloud-project.html" class="md-nav__link">
+        Projects
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cloud/cloud-data-module.html" class="md-nav__link">
+        Data Module
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cloud/cloud-groom-module.html" class="md-nav__link">
+        Groom Module
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cloud/cloud-optimize-module.html" class="md-nav__link">
+        Optimize Module
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cloud/cloud-analyze-module.html" class="md-nav__link">
+        Analyze Module
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cloud/cloud-shape-viewer.html" class="md-nav__link">
+        Shape Viewer
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cloud/swcc.html" class="md-nav__link">
+        ShapeWorks Cloud Client
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_8" type="checkbox" id="__nav_8" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_8">
           ShapeWorks Tools
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="ShapeWorks Tools" data-md-level="1">
-        <label class="md-nav__title" for="__nav_7">
+        <label class="md-nav__title" for="__nav_8">
           <span class="md-nav__icon md-icon"></span>
           ShapeWorks Tools
         </label>
@@ -925,18 +1088,18 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_8" type="checkbox" id="__nav_8" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_9" type="checkbox" id="__nav_9" >
       
       
       
       
-        <label class="md-nav__link" for="__nav_8">
+        <label class="md-nav__link" for="__nav_9">
           ShapeWorks in Python
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="ShapeWorks in Python" data-md-level="1">
-        <label class="md-nav__title" for="__nav_8">
+        <label class="md-nav__title" for="__nav_9">
           <span class="md-nav__icon md-icon"></span>
           ShapeWorks in Python
         </label>
@@ -1085,18 +1248,18 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_9" type="checkbox" id="__nav_9" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10" type="checkbox" id="__nav_10" >
       
       
       
       
-        <label class="md-nav__link" for="__nav_9">
+        <label class="md-nav__link" for="__nav_10">
           Deep Learning & SSMs
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="Deep Learning & SSMs" data-md-level="1">
-        <label class="md-nav__title" for="__nav_9">
+        <label class="md-nav__title" for="__nav_10">
           <span class="md-nav__icon md-icon"></span>
           Deep Learning & SSMs
         </label>
@@ -1161,18 +1324,18 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10" type="checkbox" id="__nav_10" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_11" type="checkbox" id="__nav_11" >
       
       
       
       
-        <label class="md-nav__link" for="__nav_10">
+        <label class="md-nav__link" for="__nav_11">
           Use Cases
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="Use Cases" data-md-level="1">
-        <label class="md-nav__title" for="__nav_10">
+        <label class="md-nav__title" for="__nav_11">
           <span class="md-nav__icon md-icon"></span>
           Use Cases
         </label>
@@ -1201,18 +1364,18 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10_2" type="checkbox" id="__nav_10_2" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_11_2" type="checkbox" id="__nav_11_2" >
       
       
       
       
-        <label class="md-nav__link" for="__nav_10_2">
+        <label class="md-nav__link" for="__nav_11_2">
           Segmentation Based Use Cases
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="Segmentation Based Use Cases" data-md-level="2">
-        <label class="md-nav__title" for="__nav_10_2">
+        <label class="md-nav__title" for="__nav_11_2">
           <span class="md-nav__icon md-icon"></span>
           Segmentation Based Use Cases
         </label>
@@ -1276,18 +1439,18 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10_3" type="checkbox" id="__nav_10_3" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_11_3" type="checkbox" id="__nav_11_3" >
       
       
       
       
-        <label class="md-nav__link" for="__nav_10_3">
+        <label class="md-nav__link" for="__nav_11_3">
           Mesh Based Use Cases
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="Mesh Based Use Cases" data-md-level="2">
-        <label class="md-nav__title" for="__nav_10_3">
+        <label class="md-nav__title" for="__nav_11_3">
           <span class="md-nav__icon md-icon"></span>
           Mesh Based Use Cases
         </label>
@@ -1349,6 +1512,20 @@
 
             
           
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../use-cases/mesh-based/hip.html" class="md-nav__link">
+        Hip: Multiple Domains Alignment
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -1365,18 +1542,18 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10_4" type="checkbox" id="__nav_10_4" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_11_4" type="checkbox" id="__nav_11_4" >
       
       
       
       
-        <label class="md-nav__link" for="__nav_10_4">
+        <label class="md-nav__link" for="__nav_11_4">
           Contour Based Use Cases
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="Contour Based Use Cases" data-md-level="2">
-        <label class="md-nav__title" for="__nav_10_4">
+        <label class="md-nav__title" for="__nav_11_4">
           <span class="md-nav__icon md-icon"></span>
           Contour Based Use Cases
         </label>
@@ -1412,18 +1589,18 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10_5" type="checkbox" id="__nav_10_5" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_11_5" type="checkbox" id="__nav_11_5" >
       
       
       
       
-        <label class="md-nav__link" for="__nav_10_5">
+        <label class="md-nav__link" for="__nav_11_5">
           Constraints Based Use Cases
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="Constraints Based Use Cases" data-md-level="2">
-        <label class="md-nav__title" for="__nav_10_5">
+        <label class="md-nav__title" for="__nav_11_5">
           <span class="md-nav__icon md-icon"></span>
           Constraints Based Use Cases
         </label>
@@ -1487,18 +1664,18 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10_6" type="checkbox" id="__nav_10_6" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_11_6" type="checkbox" id="__nav_11_6" >
       
       
       
       
-        <label class="md-nav__link" for="__nav_10_6">
+        <label class="md-nav__link" for="__nav_11_6">
           Multi-Step Optimization Use Cases
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="Multi-Step Optimization Use Cases" data-md-level="2">
-        <label class="md-nav__title" for="__nav_10_6">
+        <label class="md-nav__title" for="__nav_11_6">
           <span class="md-nav__icon md-icon"></span>
           Multi-Step Optimization Use Cases
         </label>
@@ -1548,18 +1725,18 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10_7" type="checkbox" id="__nav_10_7" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_11_7" type="checkbox" id="__nav_11_7" >
       
       
       
       
-        <label class="md-nav__link" for="__nav_10_7">
+        <label class="md-nav__link" for="__nav_11_7">
           Statistics Based Use Cases
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="Statistics Based Use Cases" data-md-level="2">
-        <label class="md-nav__title" for="__nav_10_7">
+        <label class="md-nav__title" for="__nav_11_7">
           <span class="md-nav__icon md-icon"></span>
           Statistics Based Use Cases
         </label>
@@ -1623,18 +1800,18 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10_8" type="checkbox" id="__nav_10_8" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_11_8" type="checkbox" id="__nav_11_8" >
       
       
       
       
-        <label class="md-nav__link" for="__nav_10_8">
+        <label class="md-nav__link" for="__nav_11_8">
           Deep Learning Based Use Cases
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="Deep Learning Based Use Cases" data-md-level="2">
-        <label class="md-nav__title" for="__nav_10_8">
+        <label class="md-nav__title" for="__nav_11_8">
           <span class="md-nav__icon md-icon"></span>
           Deep Learning Based Use Cases
         </label>
@@ -1670,18 +1847,18 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_10_9" type="checkbox" id="__nav_10_9" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_11_9" type="checkbox" id="__nav_11_9" >
       
       
       
       
-        <label class="md-nav__link" for="__nav_10_9">
+        <label class="md-nav__link" for="__nav_11_9">
           Shared Boundary Use Cases
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="Shared Boundary Use Cases" data-md-level="2">
-        <label class="md-nav__title" for="__nav_10_9">
+        <label class="md-nav__title" for="__nav_11_9">
           <span class="md-nav__icon md-icon"></span>
           Shared Boundary Use Cases
         </label>
@@ -1739,22 +1916,36 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_11" type="checkbox" id="__nav_11" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_12" type="checkbox" id="__nav_12" >
       
       
       
       
-        <label class="md-nav__link" for="__nav_11">
+        <label class="md-nav__link" for="__nav_12">
           For Developers
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="For Developers" data-md-level="1">
-        <label class="md-nav__title" for="__nav_11">
+        <label class="md-nav__title" for="__nav_12">
           <span class="md-nav__icon md-icon"></span>
           For Developers
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../dev/onboarding.html" class="md-nav__link">
+        Onboarding
+      </a>
+    </li>
+  
+
+            
           
             
               
@@ -1951,26 +2142,55 @@
   
   
   
+    <li class="md-nav__item">
+      <a href="../../python/python-api.html" class="md-nav__link">
+        Python API Reference
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
     
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_12" type="checkbox" id="__nav_12" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_14" type="checkbox" id="__nav_14" >
       
       
       
       
-        <label class="md-nav__link" for="__nav_12">
-          API Reference
+        <label class="md-nav__link" for="__nav_14">
+          C++ API Reference
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" aria-label="API Reference" data-md-level="1">
-        <label class="md-nav__title" for="__nav_12">
+      <nav class="md-nav" aria-label="C++ API Reference" data-md-level="1">
+        <label class="md-nav__title" for="__nav_14">
           <span class="md-nav__icon md-icon"></span>
-          API Reference
+          C++ API Reference
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../dev/shapeworks-library.html" class="md-nav__link">
+        ShapeWorks as a Library
+      </a>
+    </li>
+  
+
+            
           
             
               
@@ -2045,18 +2265,18 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_13" type="checkbox" id="__nav_13" >
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_15" type="checkbox" id="__nav_15" >
       
       
       
       
-        <label class="md-nav__link" for="__nav_13">
+        <label class="md-nav__link" for="__nav_15">
           About
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="About" data-md-level="1">
-        <label class="md-nav__title" for="__nav_13">
+        <label class="md-nav__title" for="__nav_15">
           <span class="md-nav__icon md-icon"></span>
           About
         </label>
@@ -3101,9 +3321,9 @@
             <article class="md-content__inner md-typeset">
               
                 
-<a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/api/Classes/classitk_1_1KernelTransform2.md" title="Edit this page" class="md-content__button md-icon">
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
-</a>
+  <a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/api/Classes/classitk_1_1KernelTransform2.md" title="Edit this page" class="md-content__button md-icon">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
+  </a>
 
 
 
@@ -3763,9 +3983,9 @@
 </tbody>
 </table>
 <h2 id="detailed-description">Detailed Description</h2>
-<div class="highlight"><pre><span></span><code><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">TScalarType</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
-<span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">NDimensions</span><span class="o">&gt;</span><span class="w"></span>
-<span class="k">class</span><span class="w"> </span><span class="nc">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">TScalarType</span><span class="w"> </span><span class="p">,</span>
+<span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">NDimensions</span><span class="o">&gt;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="p">;</span>
 </code></pre></div>
 <p>Intended to be a base class for elastic body spline and thin plate spline. This is implemented in as straightforward a manner as possible from the IEEE TMI paper by Davis, Khotanzad, Flamig, and Harms, Vol. 16, No. 3 June 1997. Notation closely follows their paper, so if you have it in front of you, this code will make a lot more sense.</p>
 <p><a href="classitk_1_1KernelTransform2.html">KernelTransform2</a>: Provides support for defining source and target landmarks Defines a number of data types used in the computations Defines the mathematical framework used to compute all splines, so that subclasses need only provide a kernel specific to that spline</p>
@@ -3782,357 +4002,357 @@ Registration". In 18th International Conference of the IEEE Engineering in Medic
 </ul>
 <h2 id="public-types-documentation">Public Types Documentation</h2>
 <h3 id="typedef-self">typedef Self</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">KernelTransform2</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Self</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">KernelTransform2</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Self</span><span class="p">;</span>
 </code></pre></div>
 <p>Standard class typedefs. </p>
 <h3 id="typedef-superclass">typedef Superclass</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">AdvancedTransform</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Superclass</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">AdvancedTransform</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Superclass</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="typedef-pointer">typedef Pointer</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Self</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Self</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="typedef-constpointer">typedef ConstPointer</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">ConstPointer</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">SmartPointer</span><span class="o">&lt;</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Self</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">ConstPointer</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="typedef-scalartype">typedef ScalarType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">ScalarType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">ScalarType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">ScalarType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">ScalarType</span><span class="p">;</span>
 </code></pre></div>
 <p>Typedefs. </p>
 <h3 id="typedef-parameterstype">typedef ParametersType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">ParametersType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">ParametersType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">ParametersType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">ParametersType</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="typedef-numberofparameterstype">typedef NumberOfParametersType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">NumberOfParametersType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">NumberOfParametersType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">NumberOfParametersType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">NumberOfParametersType</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="typedef-jacobiantype">typedef JacobianType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">JacobianType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">JacobianType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">JacobianType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">JacobianType</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="typedef-inputpointtype">typedef InputPointType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">InputPointType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">InputPointType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">InputPointType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">InputPointType</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="typedef-outputpointtype">typedef OutputPointType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">OutputPointType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">OutputPointType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">OutputPointType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">OutputPointType</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="typedef-inputvectortype">typedef InputVectorType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">InputVectorType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">InputVectorType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">InputVectorType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">InputVectorType</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="typedef-outputvectortype">typedef OutputVectorType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">OutputVectorType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">OutputVectorType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">OutputVectorType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">OutputVectorType</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="typedef-inputcovariantvectortype">typedef InputCovariantVectorType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">InputCovariantVectorType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">InputCovariantVectorType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">InputCovariantVectorType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">InputCovariantVectorType</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="typedef-outputcovariantvectortype">typedef OutputCovariantVectorType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">OutputCovariantVectorType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">OutputCovariantVectorType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">OutputCovariantVectorType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">OutputCovariantVectorType</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="typedef-inputvnlvectortype">typedef InputVnlVectorType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">InputVnlVectorType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">InputVnlVectorType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">InputVnlVectorType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">InputVnlVectorType</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="typedef-outputvnlvectortype">typedef OutputVnlVectorType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">OutputVnlVectorType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">OutputVnlVectorType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">OutputVnlVectorType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">OutputVnlVectorType</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="typedef-nonzerojacobianindicestype">typedef NonZeroJacobianIndicesType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="w"> </span><span class="o">::</span><span class="n">NonZeroJacobianIndicesType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">NonZeroJacobianIndicesType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="w"> </span><span class="o">::</span><span class="n">NonZeroJacobianIndicesType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">NonZeroJacobianIndicesType</span><span class="p">;</span>
 </code></pre></div>
 <p><a href="classitk_1_1AdvancedTransform.html">AdvancedTransform</a> typedefs. </p>
 <h3 id="typedef-spatialjacobiantype">typedef SpatialJacobianType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">SpatialJacobianType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">SpatialJacobianType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">SpatialJacobianType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">SpatialJacobianType</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="typedef-jacobianofspatialjacobiantype">typedef JacobianOfSpatialJacobianType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="w"> </span><span class="o">::</span><span class="n">JacobianOfSpatialJacobianType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">JacobianOfSpatialJacobianType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="w"> </span><span class="o">::</span><span class="n">JacobianOfSpatialJacobianType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">JacobianOfSpatialJacobianType</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="typedef-spatialhessiantype">typedef SpatialHessianType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">SpatialHessianType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">SpatialHessianType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">SpatialHessianType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">SpatialHessianType</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="typedef-jacobianofspatialhessiantype">typedef JacobianOfSpatialHessianType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="w"> </span><span class="o">::</span><span class="n">JacobianOfSpatialHessianType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">JacobianOfSpatialHessianType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="w"> </span><span class="o">::</span><span class="n">JacobianOfSpatialHessianType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">JacobianOfSpatialHessianType</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="typedef-internalmatrixtype">typedef InternalMatrixType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">InternalMatrixType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">InternalMatrixType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">Superclass</span><span class="o">::</span><span class="n">InternalMatrixType</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">InternalMatrixType</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="typedef-pointsettraitstype">typedef PointSetTraitsType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">DefaultStaticMeshTraits</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="p">,</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">TScalarType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">PointSetTraitsType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">DefaultStaticMeshTraits</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="p">,</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">TScalarType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">PointSetTraitsType</span><span class="p">;</span>
 </code></pre></div>
 <p>PointList typedef. This type is used for maintaining lists of points, specifically, the source and target landmark lists. </p>
 <h3 id="typedef-pointsettype">typedef PointSetType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">PointSet</span><span class="o">&lt;</span><span class="w"> </span><span class="n">InputPointType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="p">,</span><span class="w"> </span><span class="n">PointSetTraitsType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">PointSetType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">PointSet</span><span class="o">&lt;</span><span class="w"> </span><span class="n">InputPointType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="p">,</span><span class="w"> </span><span class="n">PointSetTraitsType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">PointSetType</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="typedef-pointsetpointer">typedef PointSetPointer</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">PointSetType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">PointSetPointer</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">PointSetType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">PointSetPointer</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="typedef-pointscontainer">typedef PointsContainer</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">PointSetType</span><span class="o">::</span><span class="n">PointsContainer</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">PointsContainer</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">PointSetType</span><span class="o">::</span><span class="n">PointsContainer</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">PointsContainer</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="typedef-pointsiterator">typedef PointsIterator</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">PointSetType</span><span class="o">::</span><span class="n">PointsContainerIterator</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">PointsIterator</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">PointSetType</span><span class="o">::</span><span class="n">PointsContainerIterator</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">PointsIterator</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="typedef-pointsconstiterator">typedef PointsConstIterator</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">PointSetType</span><span class="o">::</span><span class="n">PointsContainerConstIterator</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">PointsConstIterator</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">PointSetType</span><span class="o">::</span><span class="n">PointsContainerConstIterator</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">PointsConstIterator</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="typedef-vectorsettype">typedef VectorSetType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">VectorContainer</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">long</span><span class="p">,</span><span class="w"> </span><span class="n">InputVectorType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">VectorSetType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">VectorContainer</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">long</span><span class="p">,</span><span class="w"> </span><span class="n">InputVectorType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">VectorSetType</span><span class="p">;</span>
 </code></pre></div>
 <p>VectorSet typedef. </p>
 <h3 id="typedef-vectorsetpointer">typedef VectorSetPointer</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">VectorSetType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">VectorSetPointer</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">VectorSetType</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">VectorSetPointer</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="typedef-imatrixtype">typedef IMatrixType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">vnl_matrix_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">IMatrixType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">vnl_matrix_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">IMatrixType</span><span class="p">;</span>
 </code></pre></div>
 <p>'I' (identity) matrix typedef. </p>
 <h3 id="typedef-gmatrixtype">typedef GMatrixType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">vnl_matrix_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">GMatrixType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">vnl_matrix_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">GMatrixType</span><span class="p">;</span>
 </code></pre></div>
 <p>'G' matrix typedef. </p>
 <h3 id="typedef-lmatrixtype">typedef LMatrixType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">vnl_matrix</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">LMatrixType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">vnl_matrix</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">LMatrixType</span><span class="p">;</span>
 </code></pre></div>
 <p>'L' matrix typedef. </p>
 <h3 id="typedef-kmatrixtype">typedef KMatrixType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">vnl_matrix</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">KMatrixType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">vnl_matrix</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">KMatrixType</span><span class="p">;</span>
 </code></pre></div>
 <p>'K' matrix typedef. </p>
 <h3 id="typedef-pmatrixtype">typedef PMatrixType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">vnl_matrix</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">PMatrixType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">vnl_matrix</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">PMatrixType</span><span class="p">;</span>
 </code></pre></div>
 <p>'P' matrix typedef. </p>
 <h3 id="typedef-ymatrixtype">typedef YMatrixType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">vnl_matrix</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">YMatrixType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">vnl_matrix</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">YMatrixType</span><span class="p">;</span>
 </code></pre></div>
 <p>'Y' matrix typedef. </p>
 <h3 id="typedef-wmatrixtype">typedef WMatrixType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">vnl_matrix</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">WMatrixType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">vnl_matrix</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">WMatrixType</span><span class="p">;</span>
 </code></pre></div>
 <p>'W' matrix typedef. </p>
 <h3 id="typedef-dmatrixtype">typedef DMatrixType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">vnl_matrix</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">DMatrixType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">vnl_matrix</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">DMatrixType</span><span class="p">;</span>
 </code></pre></div>
 <p>'D' matrix typedef. Deformation component </p>
 <h3 id="typedef-amatrixtype">typedef AMatrixType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">vnl_matrix_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">AMatrixType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">vnl_matrix_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">AMatrixType</span><span class="p">;</span>
 </code></pre></div>
 <p>'A' matrix typedef. Rotational part of the Affine component </p>
 <h3 id="typedef-bmatrixtype">typedef BMatrixType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">BMatrixType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">BMatrixType</span><span class="p">;</span>
 </code></pre></div>
 <p>'B' matrix typedef. Translational part of the Affine component </p>
 <h3 id="typedef-rowmatrixtype">typedef RowMatrixType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">vnl_matrix_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">RowMatrixType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">vnl_matrix_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">RowMatrixType</span><span class="p">;</span>
 </code></pre></div>
 <p>Row matrix typedef. </p>
 <h3 id="typedef-columnmatrixtype">typedef ColumnMatrixType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">vnl_matrix_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">ColumnMatrixType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">vnl_matrix_fixed</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">ColumnMatrixType</span><span class="p">;</span>
 </code></pre></div>
 <p>Column matrix typedef. </p>
 <h2 id="protected-types-documentation">Protected Types Documentation</h2>
 <h3 id="typedef-svddecompositiontype">typedef SVDDecompositionType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">vnl_svd</span><span class="o">&lt;</span><span class="w"> </span><span class="n">ScalarType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">SVDDecompositionType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">vnl_svd</span><span class="o">&lt;</span><span class="w"> </span><span class="n">ScalarType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">SVDDecompositionType</span><span class="p">;</span>
 </code></pre></div>
 <p>Decompositions, needed for the L matrix. These decompositions are cached for performance reasons during registration. During registration, in every iteration <a href="classitk_1_1KernelTransform2.html#function-setparameters">SetParameters()</a> is called, which in turn calls <a href="classitk_1_1KernelTransform2.html#function-computewmatrix">ComputeWMatrix()</a>. The L matrix is not changed however, and therefore it is not needed to redo the decomposition. </p>
 <h3 id="typedef-qrdecompositiontype">typedef QRDecompositionType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">vnl_qr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">ScalarType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">QRDecompositionType</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="n">vnl_qr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">ScalarType</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">KernelTransform2</span><span class="o">&lt;</span><span class="w"> </span><span class="n">TScalarType</span><span class="p">,</span><span class="w"> </span><span class="n">NDimensions</span><span class="w"> </span><span class="o">&gt;::</span><span class="n">QRDecompositionType</span><span class="p">;</span>
 </code></pre></div>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-itktypemacro">function itkTypeMacro</h3>
-<div class="highlight"><pre><span></span><code><span class="n">itkTypeMacro</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">KernelTransform2</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">itkTypeMacro</span><span class="p">(</span>
+<span class="w">    </span><span class="n">KernelTransform2</span><span class="w"> </span><span class="p">,</span>
 <span class="w">    </span><span class="n">AdvancedTransform</span><span class="w"> </span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Run-time type information (and related methods). </p>
 <h3 id="function-itknewmacro">function itkNewMacro</h3>
-<div class="highlight"><pre><span></span><code><span class="n">itkNewMacro</span><span class="p">(</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">itkNewMacro</span><span class="p">(</span>
 <span class="w">    </span><span class="n">Self</span><span class="w"> </span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span>
 </code></pre></div>
 <p>New macro for creation of through a Smart Pointer. </p>
 <h3 id="function-itkstaticconstmacro">function itkStaticConstMacro</h3>
-<div class="highlight"><pre><span></span><code><span class="n">itkStaticConstMacro</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">SpaceDimension</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">itkStaticConstMacro</span><span class="p">(</span>
+<span class="w">    </span><span class="n">SpaceDimension</span><span class="w"> </span><span class="p">,</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="p">,</span>
 <span class="w">    </span><span class="n">NDimensions</span><span class="w"> </span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Dimension of the domain space. </p>
 <h3 id="function-getnumberofparameters">function GetNumberOfParameters</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">NumberOfParametersType</span><span class="w"> </span><span class="n">GetNumberOfParameters</span><span class="p">(</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">NumberOfParametersType</span><span class="w"> </span><span class="n">GetNumberOfParameters</span><span class="p">(</span>
 <span class="w">    </span><span class="kt">void</span><span class="w"> </span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>Return the number of parameters that completely define the Transform. </p>
 <h3 id="function-itkgetobjectmacro">function itkGetObjectMacro</h3>
-<div class="highlight"><pre><span></span><code><span class="n">itkGetObjectMacro</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">SourceLandmarks</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">itkGetObjectMacro</span><span class="p">(</span>
+<span class="w">    </span><span class="n">SourceLandmarks</span><span class="w"> </span><span class="p">,</span>
 <span class="w">    </span><span class="n">PointSetType</span><span class="w"> </span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Get the source landmarks list, which we will denote <span class="arithmatex">\( p \)</span>. </p>
 <h3 id="function-setsourcelandmarks">function SetSourceLandmarks</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetSourceLandmarks</span><span class="p">(</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetSourceLandmarks</span><span class="p">(</span>
 <span class="w">    </span><span class="n">PointSetType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Set the source landmarks list. </p>
 <h3 id="function-itkgetobjectmacro_1">function itkGetObjectMacro</h3>
-<div class="highlight"><pre><span></span><code><span class="n">itkGetObjectMacro</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">TargetLandmarks</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">itkGetObjectMacro</span><span class="p">(</span>
+<span class="w">    </span><span class="n">TargetLandmarks</span><span class="w"> </span><span class="p">,</span>
 <span class="w">    </span><span class="n">PointSetType</span><span class="w"> </span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Get the target landmarks list, which we will denote <span class="arithmatex">\( q \)</span>. </p>
 <h3 id="function-settargetlandmarks">function SetTargetLandmarks</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetTargetLandmarks</span><span class="p">(</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetTargetLandmarks</span><span class="p">(</span>
 <span class="w">    </span><span class="n">PointSetType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Set the target landmarks list. </p>
 <h3 id="function-itkgetobjectmacro_2">function itkGetObjectMacro</h3>
-<div class="highlight"><pre><span></span><code><span class="n">itkGetObjectMacro</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">Displacements</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">itkGetObjectMacro</span><span class="p">(</span>
+<span class="w">    </span><span class="n">Displacements</span><span class="w"> </span><span class="p">,</span>
 <span class="w">    </span><span class="n">VectorSetType</span><span class="w"> </span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Get the displacements list, which we will denote <span class="arithmatex">\( d \)</span>, where <span class="arithmatex">\( d_i = q_i - p_i \)</span>. </p>
 <h3 id="function-computewmatrix">function ComputeWMatrix</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">ComputeWMatrix</span><span class="p">(</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">ComputeWMatrix</span><span class="p">(</span>
 <span class="w">    </span><span class="kt">void</span><span class="w"> </span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Compute W matrix. </p>
 <h3 id="function-computelinverse">function ComputeLInverse</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">ComputeLInverse</span><span class="p">(</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">ComputeLInverse</span><span class="p">(</span>
 <span class="w">    </span><span class="kt">void</span><span class="w"> </span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Compute L matrix inverse. </p>
 <h3 id="function-transformpoint">function TransformPoint</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">OutputPointType</span><span class="w"> </span><span class="n">TransformPoint</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">InputPointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">thisPoint</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="n">OutputPointType</span><span class="w"> </span><span class="n">TransformPoint</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">InputPointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">thisPoint</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>Compute the position of point in the new space </p>
 <h3 id="function-transformvector">function TransformVector</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">OutputVectorType</span><span class="w"> </span><span class="n">TransformVector</span><span class="p">(</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">OutputVectorType</span><span class="w"> </span><span class="n">TransformVector</span><span class="p">(</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">InputVectorType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>These vector transforms are not implemented for this transform. </p>
 <h3 id="function-transformvector_1">function TransformVector</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">OutputVnlVectorType</span><span class="w"> </span><span class="n">TransformVector</span><span class="p">(</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">OutputVnlVectorType</span><span class="w"> </span><span class="n">TransformVector</span><span class="p">(</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">InputVnlVectorType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-transformcovariantvector">function TransformCovariantVector</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">OutputCovariantVectorType</span><span class="w"> </span><span class="n">TransformCovariantVector</span><span class="p">(</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">OutputCovariantVectorType</span><span class="w"> </span><span class="n">TransformCovariantVector</span><span class="p">(</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">InputCovariantVectorType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-getjacobian">function GetJacobian</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">GetJacobian</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">InputPointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">JacobianType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">GetJacobian</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">InputPointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="p">,</span>
+<span class="w">    </span><span class="n">JacobianType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="p">,</span>
 <span class="w">    </span><span class="n">NonZeroJacobianIndicesType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>Compute the Jacobian of the transformation. </p>
 <h3 id="function-setidentity">function SetIdentity</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetIdentity</span><span class="p">(</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetIdentity</span><span class="p">(</span>
 <span class="w">    </span><span class="kt">void</span><span class="w"> </span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Set the Transformation Parameters to be an identity transform. </p>
 <h3 id="function-setparameters">function SetParameters</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetParameters</span><span class="p">(</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetParameters</span><span class="p">(</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParametersType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Set the Transformation Parameters and update the internal transformation. The parameters represent the source landmarks. Each landmark point is represented by NDimensions doubles. All the landmarks are concatenated to form one flat Array<double>. </p>
 <h3 id="function-setfixedparameters">function SetFixedParameters</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetFixedParameters</span><span class="p">(</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetFixedParameters</span><span class="p">(</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">ParametersType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Set Transform Fixed Parameters: To support the transform file writer this function was added to set the target landmarks similar to the SetParameters function setting the source landmarks </p>
 <h3 id="function-updateparameters">function UpdateParameters</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">UpdateParameters</span><span class="p">(</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">UpdateParameters</span><span class="p">(</span>
 <span class="w">    </span><span class="kt">void</span><span class="w"> </span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Update the Parameters array from the landmarks coordinates. </p>
 <h3 id="function-getparameters">function GetParameters</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">ParametersType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetParameters</span><span class="p">(</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">ParametersType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetParameters</span><span class="p">(</span>
 <span class="w">    </span><span class="kt">void</span><span class="w"> </span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>Get the Transformation Parameters - Gets the source landmarks. </p>
 <h3 id="function-getfixedparameters">function GetFixedParameters</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">ParametersType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetFixedParameters</span><span class="p">(</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">ParametersType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GetFixedParameters</span><span class="p">(</span>
 <span class="w">    </span><span class="kt">void</span><span class="w"> </span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>Get Transform Fixed Parameters - Gets the target landmarks. </p>
 <h3 id="function-setstiffness">function SetStiffness</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetStiffness</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">stiffness</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetStiffness</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">stiffness</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Stiffness of the spline. A stiffness of zero results in the standard interpolating spline. A non-zero stiffness allows the spline to approximate rather than interpolate the landmarks. Stiffness values are usually rather small, typically in the range of 0.001 to 0.1. The approximating spline formulation is based on the short paper by R. Sprengel, K. Rohr, H. Stiehl. "Thin-Plate
 Spline Approximation for Image Registration". In 18th International Conference of the IEEE Engineering in Medicine and Biology Society. 1996. </p>
 <h3 id="function-itkgetmacro">function itkGetMacro</h3>
-<div class="highlight"><pre><span></span><code><span class="n">itkGetMacro</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">Stiffness</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">itkGetMacro</span><span class="p">(</span>
+<span class="w">    </span><span class="n">Stiffness</span><span class="w"> </span><span class="p">,</span>
 <span class="w">    </span><span class="kt">double</span><span class="w"> </span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-setalpha">function SetAlpha</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetAlpha</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">TScalarType</span><span class="w">  </span><span class="n">itkNotUsedAlpha</span><span class="w"></span>
-<span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">SetAlpha</span><span class="p">(</span>
+<span class="w">    </span><span class="n">TScalarType</span><span class="w">  </span><span class="n">itkNotUsedAlpha</span>
+<span class="p">)</span>
 </code></pre></div>
 <p>This method makes only sense for the ElasticBody splines. Declare here, so that you can always call it if you don't know the type of kernel beforehand. It will be overridden in the ElasticBodySplineKernelTransform and in the ElasticBodyReciprocalSplineKernelTransform. </p>
 <h3 id="function-getalpha">function GetAlpha</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">TScalarType</span><span class="w"> </span><span class="n">GetAlpha</span><span class="p">(</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">TScalarType</span><span class="w"> </span><span class="n">GetAlpha</span><span class="p">(</span>
 <span class="w">    </span><span class="kt">void</span><span class="w"> </span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-itksetmacro">function itkSetMacro</h3>
-<div class="highlight"><pre><span></span><code><span class="n">itkSetMacro</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">PoissonRatio</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">itkSetMacro</span><span class="p">(</span>
+<span class="w">    </span><span class="n">PoissonRatio</span><span class="w"> </span><span class="p">,</span>
 <span class="w">    </span><span class="n">TScalarType</span><span class="w"> </span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span>
 </code></pre></div>
 <p>This method makes only sense for the ElasticBody splines. Declare here, so that you can always call it if you don't know the type of kernel beforehand. It will be overridden in the ElasticBodySplineKernelTransform and in the ElasticBodyReciprocalSplineKernelTransform. </p>
 <h3 id="function-getpoissonratio">function GetPoissonRatio</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TScalarType</span><span class="w"> </span><span class="n">GetPoissonRatio</span><span class="p">(</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">TScalarType</span><span class="w"> </span><span class="n">GetPoissonRatio</span><span class="p">(</span>
 <span class="w">    </span><span class="kt">void</span><span class="w"> </span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-itksetmacro_1">function itkSetMacro</h3>
-<div class="highlight"><pre><span></span><code><span class="n">itkSetMacro</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">MatrixInversionMethod</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">itkSetMacro</span><span class="p">(</span>
+<span class="w">    </span><span class="n">MatrixInversionMethod</span><span class="w"> </span><span class="p">,</span>
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Matrix inversion by SVD or QR decomposition. </p>
 <h3 id="function-itkgetconstreferencemacro">function itkGetConstReferenceMacro</h3>
-<div class="highlight"><pre><span></span><code><span class="n">itkGetConstReferenceMacro</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">MatrixInversionMethod</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">itkGetConstReferenceMacro</span><span class="p">(</span>
+<span class="w">    </span><span class="n">MatrixInversionMethod</span><span class="w"> </span><span class="p">,</span>
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-getspatialjacobian">function GetSpatialJacobian</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">GetSpatialJacobian</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">InputPointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ipp</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">SpatialJacobianType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">sj</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">GetSpatialJacobian</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">InputPointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ipp</span><span class="p">,</span>
+<span class="w">    </span><span class="n">SpatialJacobianType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">sj</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classitk_1_1AdvancedTransform.html#function-getspatialjacobian">itk::AdvancedTransform::GetSpatialJacobian</a></p>
 <p>Must be provided. </p>
 <h3 id="function-getspatialhessian">function GetSpatialHessian</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">GetSpatialHessian</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">InputPointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ipp</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">SpatialHessianType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">sh</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">GetSpatialHessian</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">InputPointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ipp</span><span class="p">,</span>
+<span class="w">    </span><span class="n">SpatialHessianType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">sh</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p><strong>Reimplements</strong>: <a href="classitk_1_1AdvancedTransform.html#function-getspatialhessian">itk::AdvancedTransform::GetSpatialHessian</a></p>
 <p>Compute the spatial Hessian of the transformation.</p>
@@ -4140,205 +4360,206 @@ Spline Approximation for Image Registration". In 18th International Conference o
 <p>
 <script type="math/tex; mode=display"> sH=\left[ \begin{array}{cc} \frac{\partial^2 T_{i}}{\partial x_{1} \partial x_{1}}(p) & \frac{\partial^2 T_{i}}{\partial x_{1} \partial x_{2}}(p) \\ \frac{\partial^2 T_{i}}{\partial x_{1} \partial x_{2}}(p) & \frac{\partial^2 T_{i}}{\partial x_{2} \partial x_{2}}(p) \\ \end{array}\right], </script> with i the i-th component of the transformation. </p>
 <h3 id="function-getjacobianofspatialjacobian">function GetJacobianOfSpatialJacobian</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">GetJacobianOfSpatialJacobian</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">InputPointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ipp</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">JacobianOfSpatialJacobianType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">jsj</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">NonZeroJacobianIndicesType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">nonZeroJacobianIndices</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">GetJacobianOfSpatialJacobian</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">InputPointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ipp</span><span class="p">,</span>
+<span class="w">    </span><span class="n">JacobianOfSpatialJacobianType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">jsj</span><span class="p">,</span>
+<span class="w">    </span><span class="n">NonZeroJacobianIndicesType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">nonZeroJacobianIndices</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-getjacobianofspatialjacobian_1">function GetJacobianOfSpatialJacobian</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">GetJacobianOfSpatialJacobian</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">InputPointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ipp</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">SpatialJacobianType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">sj</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">JacobianOfSpatialJacobianType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">jsj</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">NonZeroJacobianIndicesType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">nonZeroJacobianIndices</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">GetJacobianOfSpatialJacobian</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">InputPointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ipp</span><span class="p">,</span>
+<span class="w">    </span><span class="n">SpatialJacobianType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">sj</span><span class="p">,</span>
+<span class="w">    </span><span class="n">JacobianOfSpatialJacobianType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">jsj</span><span class="p">,</span>
+<span class="w">    </span><span class="n">NonZeroJacobianIndicesType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">nonZeroJacobianIndices</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-getjacobianofspatialhessian">function GetJacobianOfSpatialHessian</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">GetJacobianOfSpatialHessian</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">InputPointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ipp</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">JacobianOfSpatialHessianType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">jsh</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">NonZeroJacobianIndicesType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">nonZeroJacobianIndices</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">GetJacobianOfSpatialHessian</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">InputPointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ipp</span><span class="p">,</span>
+<span class="w">    </span><span class="n">JacobianOfSpatialHessianType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">jsh</span><span class="p">,</span>
+<span class="w">    </span><span class="n">NonZeroJacobianIndicesType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">nonZeroJacobianIndices</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-getjacobianofspatialhessian_1">function GetJacobianOfSpatialHessian</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">GetJacobianOfSpatialHessian</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">InputPointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ipp</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">SpatialHessianType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">sh</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">JacobianOfSpatialHessianType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">jsh</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">NonZeroJacobianIndicesType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">nonZeroJacobianIndices</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">GetJacobianOfSpatialHessian</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">InputPointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ipp</span><span class="p">,</span>
+<span class="w">    </span><span class="n">SpatialHessianType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">sh</span><span class="p">,</span>
+<span class="w">    </span><span class="n">JacobianOfSpatialHessianType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">jsh</span><span class="p">,</span>
+<span class="w">    </span><span class="n">NonZeroJacobianIndicesType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">nonZeroJacobianIndices</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h2 id="protected-functions-documentation">Protected Functions Documentation</h2>
 <h3 id="function-kerneltransform2">function KernelTransform2</h3>
-<div class="highlight"><pre><span></span><code><span class="n">KernelTransform2</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">KernelTransform2</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-kerneltransform2_1">function ~KernelTransform2</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">KernelTransform2</span><span class="p">()</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">KernelTransform2</span><span class="p">()</span>
 </code></pre></div>
 <h3 id="function-printself">function PrintSelf</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">PrintSelf</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">os</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">Indent</span><span class="w"> </span><span class="n">indent</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">PrintSelf</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">os</span><span class="p">,</span>
+<span class="w">    </span><span class="n">Indent</span><span class="w"> </span><span class="n">indent</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <h3 id="function-computeg">function ComputeG</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">ComputeG</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">InputVectorType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">landmarkVector</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">GMatrixType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GMatrix</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">ComputeG</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">InputVectorType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">landmarkVector</span><span class="p">,</span>
+<span class="w">    </span><span class="n">GMatrixType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GMatrix</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p><strong>Reimplemented by</strong>: <a href="classitk_1_1ThinPlateSplineKernelTransform2.html#function-computeg">itk::ThinPlateSplineKernelTransform2::ComputeG</a></p>
 <p>Compute G(x) This is essentially the kernel of the transform. By overriding this method, we can obtain (among others): Elastic body spline Thin plate spline Volume spline. </p>
 <h3 id="function-computereflexiveg">function ComputeReflexiveG</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">ComputeReflexiveG</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="n">PointsIterator</span><span class="w"> </span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">GMatrixType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GMatrix</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">ComputeReflexiveG</span><span class="p">(</span>
+<span class="w">    </span><span class="n">PointsIterator</span><span class="w"> </span><span class="p">,</span>
+<span class="w">    </span><span class="n">GMatrixType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">GMatrix</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>Compute a G(x) for a point to itself (i.e. for the block diagonal elements of the matrix K. Parameter indicates for which landmark the reflexive G is to be computed. The default implementation for the reflexive contribution is a diagonal matrix where the diagonal elements are the stiffness of the spline. </p>
 <h3 id="function-computedeformationcontribution">function ComputeDeformationContribution</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">ComputeDeformationContribution</span><span class="p">(</span><span class="w"></span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">InputPointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">inputPoint</span><span class="p">,</span><span class="w"></span>
-<span class="w">    </span><span class="n">OutputPointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">result</span><span class="w"></span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">ComputeDeformationContribution</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">InputPointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">inputPoint</span><span class="p">,</span>
+<span class="w">    </span><span class="n">OutputPointType</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">result</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p><strong>Reimplemented by</strong>: <a href="classitk_1_1ThinPlateSplineKernelTransform2.html#function-computedeformationcontribution">itk::ThinPlateSplineKernelTransform2::ComputeDeformationContribution</a></p>
 <p>Compute the contribution of the landmarks weighted by the kernel function to the global deformation of the space. </p>
 <h3 id="function-computek">function ComputeK</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">ComputeK</span><span class="p">(</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">ComputeK</span><span class="p">(</span>
 <span class="w">    </span><span class="kt">void</span><span class="w"> </span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Compute K matrix. </p>
 <h3 id="function-computel">function ComputeL</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">ComputeL</span><span class="p">(</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">ComputeL</span><span class="p">(</span>
 <span class="w">    </span><span class="kt">void</span><span class="w"> </span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Compute L matrix. </p>
 <h3 id="function-computep">function ComputeP</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">ComputeP</span><span class="p">(</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">ComputeP</span><span class="p">(</span>
 <span class="w">    </span><span class="kt">void</span><span class="w"> </span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Compute P matrix. </p>
 <h3 id="function-computey">function ComputeY</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">ComputeY</span><span class="p">(</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">ComputeY</span><span class="p">(</span>
 <span class="w">    </span><span class="kt">void</span><span class="w"> </span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Compute Y matrix. </p>
 <h3 id="function-computed">function ComputeD</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">ComputeD</span><span class="p">(</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">ComputeD</span><span class="p">(</span>
 <span class="w">    </span><span class="kt">void</span><span class="w"> </span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span>
 </code></pre></div>
 <p>Compute displacements <span class="arithmatex">\( q_i - p_i \)</span>. </p>
 <h3 id="function-reorganizew">function ReorganizeW</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">ReorganizeW</span><span class="p">(</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">ReorganizeW</span><span class="p">(</span>
 <span class="w">    </span><span class="kt">void</span><span class="w"> </span>
-<span class="p">)</span><span class="w"></span>
+<span class="p">)</span>
 </code></pre></div>
 <p><strong>Warning</strong>: This method release the memory of the W Matrix. </p>
 <p>Reorganize the components of W into D (deformable), A (rotation part of affine) and B (translational part of affine ) components. </p>
 <h2 id="public-attributes-documentation">Public Attributes Documentation</h2>
 <h3 id="variable-m_sourcelandmarks">variable m_SourceLandmarks</h3>
-<div class="highlight"><pre><span></span><code><span class="n">PointSetPointer</span><span class="w"> </span><span class="n">m_SourceLandmarks</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">PointSetPointer</span><span class="w"> </span><span class="n">m_SourceLandmarks</span><span class="p">;</span>
 </code></pre></div>
 <p>The list of source landmarks, denoted 'p'. </p>
 <h3 id="variable-m_targetlandmarks">variable m_TargetLandmarks</h3>
-<div class="highlight"><pre><span></span><code><span class="n">PointSetPointer</span><span class="w"> </span><span class="n">m_TargetLandmarks</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">PointSetPointer</span><span class="w"> </span><span class="n">m_TargetLandmarks</span><span class="p">;</span>
 </code></pre></div>
 <p>The list of target landmarks, denoted 'q'. </p>
 <h2 id="protected-attributes-documentation">Protected Attributes Documentation</h2>
 <h3 id="variable-m_stiffness">variable m_Stiffness</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">m_Stiffness</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">m_Stiffness</span><span class="p">;</span>
 </code></pre></div>
 <p>Stiffness parameter. </p>
 <h3 id="variable-m_displacements">variable m_Displacements</h3>
-<div class="highlight"><pre><span></span><code><span class="n">VectorSetPointer</span><span class="w"> </span><span class="n">m_Displacements</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">VectorSetPointer</span><span class="w"> </span><span class="n">m_Displacements</span><span class="p">;</span>
 </code></pre></div>
 <p>The list of displacements. d[i] = q[i] - p[i]; </p>
 <h3 id="variable-m_lmatrix">variable m_LMatrix</h3>
-<div class="highlight"><pre><span></span><code><span class="n">LMatrixType</span><span class="w"> </span><span class="n">m_LMatrix</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">LMatrixType</span><span class="w"> </span><span class="n">m_LMatrix</span><span class="p">;</span>
 </code></pre></div>
 <p>The L matrix. </p>
 <h3 id="variable-m_lmatrixinverse">variable m_LMatrixInverse</h3>
-<div class="highlight"><pre><span></span><code><span class="n">LMatrixType</span><span class="w"> </span><span class="n">m_LMatrixInverse</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">LMatrixType</span><span class="w"> </span><span class="n">m_LMatrixInverse</span><span class="p">;</span>
 </code></pre></div>
 <p>The inverse of L, which we also cache. </p>
 <h3 id="variable-m_kmatrix">variable m_KMatrix</h3>
-<div class="highlight"><pre><span></span><code><span class="n">KMatrixType</span><span class="w"> </span><span class="n">m_KMatrix</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">KMatrixType</span><span class="w"> </span><span class="n">m_KMatrix</span><span class="p">;</span>
 </code></pre></div>
 <p>The K matrix. </p>
 <h3 id="variable-m_pmatrix">variable m_PMatrix</h3>
-<div class="highlight"><pre><span></span><code><span class="n">PMatrixType</span><span class="w"> </span><span class="n">m_PMatrix</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">PMatrixType</span><span class="w"> </span><span class="n">m_PMatrix</span><span class="p">;</span>
 </code></pre></div>
 <p>The P matrix. </p>
 <h3 id="variable-m_ymatrix">variable m_YMatrix</h3>
-<div class="highlight"><pre><span></span><code><span class="n">YMatrixType</span><span class="w"> </span><span class="n">m_YMatrix</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">YMatrixType</span><span class="w"> </span><span class="n">m_YMatrix</span><span class="p">;</span>
 </code></pre></div>
 <p>The Y matrix. </p>
 <h3 id="variable-m_wmatrix">variable m_WMatrix</h3>
-<div class="highlight"><pre><span></span><code><span class="n">WMatrixType</span><span class="w"> </span><span class="n">m_WMatrix</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">WMatrixType</span><span class="w"> </span><span class="n">m_WMatrix</span><span class="p">;</span>
 </code></pre></div>
 <p>The W matrix. </p>
 <h3 id="variable-m_dmatrix">variable m_DMatrix</h3>
-<div class="highlight"><pre><span></span><code><span class="n">DMatrixType</span><span class="w"> </span><span class="n">m_DMatrix</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">DMatrixType</span><span class="w"> </span><span class="n">m_DMatrix</span><span class="p">;</span>
 </code></pre></div>
 <p>The Deformation matrix. This is an auxiliary matrix that will hold the Deformation (non-affine) part of the transform. Those are the coefficients that will multiply the Kernel function. </p>
 <h3 id="variable-m_amatrix">variable m_AMatrix</h3>
-<div class="highlight"><pre><span></span><code><span class="n">AMatrixType</span><span class="w"> </span><span class="n">m_AMatrix</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">AMatrixType</span><span class="w"> </span><span class="n">m_AMatrix</span><span class="p">;</span>
 </code></pre></div>
 <p>Rotational/Shearing part of the Affine component of the Transformation. </p>
 <h3 id="variable-m_bvector">variable m_BVector</h3>
-<div class="highlight"><pre><span></span><code><span class="n">BMatrixType</span><span class="w"> </span><span class="n">m_BVector</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">BMatrixType</span><span class="w"> </span><span class="n">m_BVector</span><span class="p">;</span>
 </code></pre></div>
 <p>Translational part of the Affine component of the Transformation. </p>
 <h3 id="variable-m_wmatrixcomputed">variable m_WMatrixComputed</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">m_WMatrixComputed</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">m_WMatrixComputed</span><span class="p">;</span>
 </code></pre></div>
 <p>The G matrix. It used to be mutable because m_GMatrix was made an ivar only to avoid copying the matrix at return time but this is not necessary. SK: we don't need this matrix anymore as a member. Has the W matrix been computed? </p>
 <h3 id="variable-m_lmatrixcomputed">variable m_LMatrixComputed</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">m_LMatrixComputed</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">m_LMatrixComputed</span><span class="p">;</span>
 </code></pre></div>
 <p>Has the L matrix been computed? </p>
 <h3 id="variable-m_linversecomputed">variable m_LInverseComputed</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">m_LInverseComputed</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">m_LInverseComputed</span><span class="p">;</span>
 </code></pre></div>
 <p>Has the L inverse matrix been computed? </p>
 <h3 id="variable-m_lmatrixdecompositioncomputed">variable m_LMatrixDecompositionComputed</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">m_LMatrixDecompositionComputed</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">m_LMatrixDecompositionComputed</span><span class="p">;</span>
 </code></pre></div>
 <p>Has the L matrix decomposition been computed? </p>
 <h3 id="variable-m_lmatrixdecompositionsvd">variable m_LMatrixDecompositionSVD</h3>
-<div class="highlight"><pre><span></span><code><span class="n">SVDDecompositionType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">m_LMatrixDecompositionSVD</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">SVDDecompositionType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">m_LMatrixDecompositionSVD</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="variable-m_lmatrixdecompositionqr">variable m_LMatrixDecompositionQR</h3>
-<div class="highlight"><pre><span></span><code><span class="n">QRDecompositionType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">m_LMatrixDecompositionQR</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">QRDecompositionType</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">m_LMatrixDecompositionQR</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="variable-m_i">variable m_I</h3>
-<div class="highlight"><pre><span></span><code><span class="n">IMatrixType</span><span class="w"> </span><span class="n">m_I</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">IMatrixType</span><span class="w"> </span><span class="n">m_I</span><span class="p">;</span>
 </code></pre></div>
 <p>Identity matrix. </p>
 <h3 id="variable-m_nonzerojacobianindices">variable m_NonZeroJacobianIndices</h3>
-<div class="highlight"><pre><span></span><code><span class="n">NonZeroJacobianIndicesType</span><span class="w"> </span><span class="n">m_NonZeroJacobianIndices</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">NonZeroJacobianIndicesType</span><span class="w"> </span><span class="n">m_NonZeroJacobianIndices</span><span class="p">;</span>
 </code></pre></div>
 <p>Precomputed nonzero Jacobian indices (simply all params) </p>
 <h3 id="variable-m_nonzerojacobianindicestemp">variable m_NonZeroJacobianIndicesTemp</h3>
-<div class="highlight"><pre><span></span><code><span class="n">NonZeroJacobianIndicesType</span><span class="w"> </span><span class="n">m_NonZeroJacobianIndicesTemp</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">NonZeroJacobianIndicesType</span><span class="w"> </span><span class="n">m_NonZeroJacobianIndicesTemp</span><span class="p">;</span>
 </code></pre></div>
 <p>for old <a href="classitk_1_1KernelTransform2.html#function-getjacobian">GetJacobian()</a> method: </p>
 <h3 id="variable-m_fastcomputationpossible">variable m_FastComputationPossible</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">m_FastComputationPossible</span><span class="p">;</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">m_FastComputationPossible</span><span class="p">;</span>
 </code></pre></div>
 <p>The Jacobian can be computed much faster for some of the derived kerbel transforms, most notably the TPS. </p>
 <hr />
-<p>Updated on 2022-07-23 at 17:50:02 -0600</p>
+<p>Updated on 2022-07-23 at 16:40:05 -0600</p>
 
               
             </article>
+            
           </div>
         </div>
         
@@ -4370,10 +4591,10 @@ Spline Approximation for Image Registration". In 18th International Conference o
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.5e67fbfe.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.b97dbffb.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.c44cc438.min.js"></script>
+      <script src="../../assets/javascripts/bundle.0238f547.min.js"></script>
       
         <script src="../../assets/mathjaxhelper.js"></script>
       

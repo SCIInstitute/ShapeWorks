@@ -2392,13 +2392,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#detailed-description" class="md-nav__link">
-    Detailed Description
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#public-slots-documentation" class="md-nav__link">
     Public Slots Documentation
   </a>
@@ -2489,34 +2482,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-set_cache_enabled" class="md-nav__link">
-    function set_cache_enabled
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-set_cache_memory_percent" class="md-nav__link">
-    function set_cache_memory_percent
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-set_parallel_enabled" class="md-nav__link">
-    function set_parallel_enabled
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-set_num_threads" class="md-nav__link">
-    function set_num_threads
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#function-generate_mesh" class="md-nav__link">
     function generate_mesh
   </a>
@@ -2589,8 +2554,6 @@
 
 
 <h1 id="shapeworksmeshmanager">shapeworks::MeshManager</h1>
-<p>Class to manage meshes.  <a href="#detailed-description">More...</a></p>
-<p><code>#include &lt;MeshManager.h&gt;</code></p>
 <p>Inherits from QObject</p>
 <h2 id="public-slots">Public Slots</h2>
 <table>
@@ -2634,7 +2597,7 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1MeshManager.html#signal-status">status</a></strong>(std::string )</td>
+<td><strong><a href="classshapeworks_1_1MeshManager.html#signal-status">status</a></strong>(QString )</td>
 </tr>
 </tbody>
 </table>
@@ -2649,27 +2612,11 @@
 <tbody>
 <tr>
 <td></td>
-<td><strong><a href="classshapeworks_1_1MeshManager.html#function-meshmanager">MeshManager</a></strong>()</td>
+<td><strong><a href="classshapeworks_1_1MeshManager.html#function-meshmanager">MeshManager</a></strong>(<a href="classPreferences.html">Preferences</a> &amp; prefs)</td>
 </tr>
 <tr>
 <td></td>
 <td><strong><a href="classshapeworks_1_1MeshManager.html#function-~meshmanager">~MeshManager</a></strong>()</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1MeshManager.html#function-set-cache-enabled">set_cache_enabled</a></strong>(bool enabled)<br>Set if the cache should be enabled.</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1MeshManager.html#function-set-cache-memory-percent">set_cache_memory_percent</a></strong>(int percent)<br>Set the memory cache size.</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1MeshManager.html#function-set-parallel-enabled">set_parallel_enabled</a></strong>(bool enabled)<br>Set if parallel reconstruction should be enabled.</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1MeshManager.html#function-set-num-threads">set_num_threads</a></strong>(int num_threads)<br>Set the number of threads for parallel reconstruction.</td>
 </tr>
 <tr>
 <td>void</td>
@@ -2681,7 +2628,7 @@
 </tr>
 <tr>
 <td>MeshHandle</td>
-<td><strong><a href="classshapeworks_1_1MeshManager.html#function-get-mesh">get_mesh</a></strong>(const Eigen::VectorXd &amp; points, int domain, bool wait =false)<br>get a mesh for a set of points</td>
+<td><strong><a href="classshapeworks_1_1MeshManager.html#function-get-mesh">get_mesh</a></strong>(const Eigen::VectorXd &amp; points, int domain)<br>get a mesh for a set of points</td>
 </tr>
 <tr>
 <td>std::shared_ptr&lt; <a href="classSurfaceReconstructor.html">SurfaceReconstructor</a> &gt;</td>
@@ -2701,11 +2648,6 @@
 </tr>
 </tbody>
 </table>
-<h2 id="detailed-description">Detailed Description</h2>
-<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">shapeworks</span><span class="o">::</span><span class="n">MeshManager</span><span class="p">;</span>
-</code></pre></div>
-<p>Class to manage meshes. </p>
-<p>The <a href="classshapeworks_1_1MeshManager.html">MeshManager</a> handles all aspects of mesh generation and caching. It houses the cache and manages threads to work on mesh generation in the background. </p>
 <h2 id="public-slots-documentation">Public Slots Documentation</h2>
 <h3 id="slot-handle_thread_complete">slot handle_thread_complete</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">handle_thread_complete</span><span class="p">(</span>
@@ -2732,40 +2674,18 @@
 </code></pre></div>
 <h3 id="signal-status">signal status</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">status</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span>
+<span class="w">    </span><span class="n">QString</span><span class="w"> </span>
 <span class="p">)</span>
 </code></pre></div>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-meshmanager">function MeshManager</h3>
-<div class="highlight"><pre><span></span><code><span class="n">MeshManager</span><span class="p">()</span>
+<div class="highlight"><pre><span></span><code><span class="n">MeshManager</span><span class="p">(</span>
+<span class="w">    </span><span class="n">Preferences</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">prefs</span>
+<span class="p">)</span>
 </code></pre></div>
 <h3 id="function-meshmanager_1">function ~MeshManager</h3>
 <div class="highlight"><pre><span></span><code><span class="o">~</span><span class="n">MeshManager</span><span class="p">()</span>
 </code></pre></div>
-<h3 id="function-set_cache_enabled">function set_cache_enabled</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_cache_enabled</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span>
-<span class="p">)</span>
-</code></pre></div>
-<p>Set if the cache should be enabled. </p>
-<h3 id="function-set_cache_memory_percent">function set_cache_memory_percent</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_cache_memory_percent</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">percent</span>
-<span class="p">)</span>
-</code></pre></div>
-<p>Set the memory cache size. </p>
-<h3 id="function-set_parallel_enabled">function set_parallel_enabled</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_parallel_enabled</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span>
-<span class="p">)</span>
-</code></pre></div>
-<p>Set if parallel reconstruction should be enabled. </p>
-<h3 id="function-set_num_threads">function set_num_threads</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">set_num_threads</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">num_threads</span>
-<span class="p">)</span>
-</code></pre></div>
-<p>Set the number of threads for parallel reconstruction. </p>
 <h3 id="function-generate_mesh">function generate_mesh</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">generate_mesh</span><span class="p">(</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">MeshWorkItem</span><span class="w"> </span><span class="n">item</span>
@@ -2782,8 +2702,7 @@
 <h3 id="function-get_mesh_1">function get_mesh</h3>
 <div class="highlight"><pre><span></span><code><span class="n">MeshHandle</span><span class="w"> </span><span class="n">get_mesh</span><span class="p">(</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">points</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">wait</span><span class="w"> </span><span class="o">=</span><span class="nb">false</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">domain</span>
 <span class="p">)</span>
 </code></pre></div>
 <p>get a mesh for a set of points </p>
@@ -2808,7 +2727,7 @@
 </code></pre></div>
 <p>clear the cache </p>
 <hr />
-<p>Updated on 2023-05-04 at 20:03:04 +0000</p>
+<p>Updated on 2022-07-23 at 16:40:06 -0600</p>
 
               
             </article>

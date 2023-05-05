@@ -1,9 +1,9 @@
 ---
-title: Studio/Visualization/ColorSchemes.h
+title: Studio/src/Visualization/ColorSchemes.h
 
 ---
 
-# Studio/Visualization/ColorSchemes.h
+# Studio/src/Visualization/ColorSchemes.h
 
 
 
@@ -148,4 +148,4 @@ class ColorSchemes : public std::vector<ColorScheme> {
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:05 +0000
+Updated on 2022-07-23 at 16:40:07 -0600

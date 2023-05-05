@@ -1,9 +1,9 @@
 ---
-title: Studio/Data/LandmarkTableModel.h
+title: Studio/src/Data/LandmarkTableModel.h
 
 ---
 
-# Studio/Data/LandmarkTableModel.h
+# Studio/src/Data/LandmarkTableModel.h
 
 
 
@@ -11,7 +11,7 @@ title: Studio/Data/LandmarkTableModel.h
 
 | Name           |
 | -------------- |
-| **[shapeworks](../Namespaces/namespaceshapeworks.md)** <br>User usage reporting (telemetry)  |
+| **[shapeworks](../Namespaces/namespaceshapeworks.md)**  |
 
 ## Classes
 
@@ -29,7 +29,7 @@ title: Studio/Data/LandmarkTableModel.h
 
 // QT Includes
 #include <Data/Session.h>
-#include <Project/Project.h>
+#include <Libs/Project/Project.h>
 
 #include <QAbstractTableModel>
 #include <QIcon>
@@ -118,4 +118,4 @@ class LandmarkTableModel : public QAbstractTableModel {
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:05 +0000
+Updated on 2022-07-23 at 16:40:07 -0600

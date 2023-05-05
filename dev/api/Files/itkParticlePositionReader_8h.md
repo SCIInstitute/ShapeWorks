@@ -11,13 +11,13 @@ title: Libs/Particles/itkParticlePositionReader.h
 
 | Name           |
 | -------------- |
-| **[shapeworks](../Namespaces/namespaceshapeworks.md)** <br>User usage reporting (telemetry)  |
+| **[itk](../Namespaces/namespaceitk.md)**  |
 
 ## Classes
 
 |                | Name           |
 | -------------- | -------------- |
-| class | **[shapeworks::ParticlePositionReader](../Classes/classshapeworks_1_1ParticlePositionReader.md)**  |
+| class | **[itk::ParticlePositionReader](../Classes/classitk_1_1ParticlePositionReader.md)**  |
 
 
 
@@ -36,20 +36,20 @@ title: Libs/Particles/itkParticlePositionReader.h
 #include "itkPoint.h"
 #include "itkWeakPointer.h"
 
-namespace shapeworks {
-class ParticlePositionReader : public itk::DataObject {
+namespace itk {
+class ITK_EXPORT ParticlePositionReader : public DataObject {
  public:
   typedef ParticlePositionReader Self;
   typedef DataObject Superclass;
-  typedef itk::SmartPointer<Self> Pointer;
-  typedef itk::SmartPointer<const Self> ConstPointer;
-  typedef itk::WeakPointer<const Self> ConstWeakPointer;
+  typedef SmartPointer<Self> Pointer;
+  typedef SmartPointer<const Self> ConstPointer;
+  typedef WeakPointer<const Self> ConstWeakPointer;
 
-  typedef itk::Point<double, 3> PointType;
+  typedef Point<double, 3> PointType;
 
   itkNewMacro(Self);
 
-  itkTypeMacro(ParticlePositionReader, itk::DataObject);
+  itkTypeMacro(ParticlePositionReader, DataObject);
 
   const std::vector<PointType>& GetOutput() const { return m_Output; }
 
@@ -82,7 +82,7 @@ class ParticlePositionReader : public itk::DataObject {
 
  protected:
   ParticlePositionReader() {}
-  void PrintSelf(std::ostream& os, itk::Indent indent) const {
+  void PrintSelf(std::ostream& os, Indent indent) const {
     Superclass::PrintSelf(os, indent);
 
     os << indent << "ParticlePositionReader: " << std::endl;
@@ -97,10 +97,10 @@ class ParticlePositionReader : public itk::DataObject {
   std::string m_FileName;
 };
 
-}  // namespace shapeworks
+}  // end namespace itk
 ```
 
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:05 +0000
+Updated on 2022-07-23 at 16:40:07 -0600

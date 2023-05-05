@@ -30,18 +30,13 @@ Inherits from [shapeworks::Constraint](../Classes/classshapeworks_1_1Constraint.
 | void | **[setDefinition](../Classes/classshapeworks_1_1FreeFormConstraint.md#function-setdefinition)**(vtkSmartPointer< vtkPolyData > polyData)<br>Set polydata where per-vertex free form constraint definition exists.  |
 | vtkSmartPointer< vtkPolyData > | **[getDefinition](../Classes/classshapeworks_1_1FreeFormConstraint.md#function-getdefinition)**()<br>Get polydata where per-vertex free form constraint definition exists.  |
 | void | **[applyToPolyData](../Classes/classshapeworks_1_1FreeFormConstraint.md#function-applytopolydata)**(vtkSmartPointer< vtkPolyData > polyData)<br>Apply the free form constraint to a polydata.  |
-| std::vector< std::vector< Eigen::Vector3d > > & | **[boundaries](../Classes/classshapeworks_1_1FreeFormConstraint.md#function-boundaries)**() |
-| Eigen::Vector3d | **[getQueryPoint](../Classes/classshapeworks_1_1FreeFormConstraint.md#function-getquerypoint)**() |
-| void | **[setQueryPoint](../Classes/classshapeworks_1_1FreeFormConstraint.md#function-setquerypoint)**(Eigen::Vector3d queryPoint) |
-| void | **[computeBoundaries](../Classes/classshapeworks_1_1FreeFormConstraint.md#function-computeboundaries)**() |
-| void | **[setInoutPolyData](../Classes/classshapeworks_1_1FreeFormConstraint.md#function-setinoutpolydata)**(vtkSmartPointer< vtkPolyData > polyData)<br>Set the in/out polydata.  |
-| vtkSmartPointer< vtkPolyData > | **[getInoutPolyData](../Classes/classshapeworks_1_1FreeFormConstraint.md#function-getinoutpolydata)**()<br>Get the in/out polydata.  |
-| void | **[createInoutPolyData](../Classes/classshapeworks_1_1FreeFormConstraint.md#function-createinoutpolydata)**()<br>Create the in/out poly data from the definition poly data.  |
+| std::vector< std::vector< Eigen::Vector3d > > & | **[boundaries](../Classes/classshapeworks_1_1FreeFormConstraint.md#function-boundaries)**()<br>Access the set of boundaries.  |
+| Eigen::Vector3d | **[getQueryPoint](../Classes/classshapeworks_1_1FreeFormConstraint.md#function-getquerypoint)**()<br>Get query (inside) point.  |
+| void | **[setQueryPoint](../Classes/classshapeworks_1_1FreeFormConstraint.md#function-setquerypoint)**(Eigen::Vector3d queryPoint)<br>Set query (inside) point.  |
+| void | **[computeBoundaries](../Classes/classshapeworks_1_1FreeFormConstraint.md#function-computeboundaries)**()<br>Compute boundaries from definition polydata with ffc_paint scalars.  |
 | bool | **[isSet](../Classes/classshapeworks_1_1FreeFormConstraint.md#function-isset)**()<br>Return if this FFC is set or not.  |
 | void | **[setPainted](../Classes/classshapeworks_1_1FreeFormConstraint.md#function-setpainted)**(bool painted)<br>Set if this FFC has paint on it or not.  |
 | void | **[reset](../Classes/classshapeworks_1_1FreeFormConstraint.md#function-reset)**()<br>Reset to initial state.  |
-| void | **[computeGradientFields](../Classes/classshapeworks_1_1FreeFormConstraint.md#function-computegradientfields)**(std::shared_ptr< [Mesh](../Classes/classshapeworks_1_1Mesh.md) > mesh)<br>Compute gradient fields for a mesh.  |
-| void | **[convertLegacyFFC](../Classes/classshapeworks_1_1FreeFormConstraint.md#function-convertlegacyffc)**(vtkSmartPointer< vtkPolyData > polyData)<br>Convert legacy FFC to new format.  |
 
 ## Additional inherited members
 
@@ -51,13 +46,13 @@ Inherits from [shapeworks::Constraint](../Classes/classshapeworks_1_1Constraint.
 | -------------- | -------------- |
 | void | **[setZ](../Classes/classshapeworks_1_1Constraint.md#function-setz)**(double inz) |
 | double | **[getZ](../Classes/classshapeworks_1_1Constraint.md#function-getz)**() |
-| void | **[setMus](../Classes/classshapeworks_1_1Constraint.md#function-setmus)**(std::vector< double > inmu) |
-| std::vector< double > | **[getMus](../Classes/classshapeworks_1_1Constraint.md#function-getmus)**() |
+| void | **[setMu](../Classes/classshapeworks_1_1Constraint.md#function-setmu)**(double inmu) |
+| double | **[getMu](../Classes/classshapeworks_1_1Constraint.md#function-getmu)**() |
 | void | **[setLambda](../Classes/classshapeworks_1_1Constraint.md#function-setlambda)**(double inLambda) |
 | double | **[getLambda](../Classes/classshapeworks_1_1Constraint.md#function-getlambda)**() |
 | void | **[updateZ](../Classes/classshapeworks_1_1Constraint.md#function-updatez)**(const Eigen::Vector3d & pt, double C) |
-| void | **[updateMu](../Classes/classshapeworks_1_1Constraint.md#function-updatemu)**(const Eigen::Vector3d & pt, double C, size_t index) |
-| Eigen::Vector3d | **[lagragianGradient](../Classes/classshapeworks_1_1Constraint.md#function-lagragiangradient)**(const Eigen::Vector3d & pt, double C, size_t index) const |
+| void | **[updateMu](../Classes/classshapeworks_1_1Constraint.md#function-updatemu)**(const Eigen::Vector3d & pt, double C) |
+| Eigen::Vector3d | **[lagragianGradient](../Classes/classshapeworks_1_1Constraint.md#function-lagragiangradient)**(const Eigen::Vector3d & pt, double C) const |
 
 **Protected Functions inherited from [shapeworks::Constraint](../Classes/classshapeworks_1_1Constraint.md)**
 
@@ -69,7 +64,7 @@ Inherits from [shapeworks::Constraint](../Classes/classshapeworks_1_1Constraint.
 
 |                | Name           |
 | -------------- | -------------- |
-| std::vector< double > | **[mus_](../Classes/classshapeworks_1_1Constraint.md#variable-mus-)**  |
+| double | **[mu_](../Classes/classshapeworks_1_1Constraint.md#variable-mu-)**  |
 | double | **[z_](../Classes/classshapeworks_1_1Constraint.md#variable-z-)**  |
 | double | **[lambda_](../Classes/classshapeworks_1_1Constraint.md#variable-lambda-)**  |
 
@@ -196,10 +191,7 @@ Apply the free form constraint to a polydata.
 std::vector< std::vector< Eigen::Vector3d > > & boundaries()
 ```
 
-
-**Deprecated**: 
-
-Access the set of boundaries 
+Access the set of boundaries. 
 
 ### function getQueryPoint
 
@@ -207,10 +199,7 @@ Access the set of boundaries
 inline Eigen::Vector3d getQueryPoint()
 ```
 
-
-**Deprecated**: 
-
-Get query (inside) point 
+Get query (inside) point. 
 
 ### function setQueryPoint
 
@@ -220,10 +209,7 @@ inline void setQueryPoint(
 )
 ```
 
-
-**Deprecated**: 
-
-Set query (inside) point 
+Set query (inside) point. 
 
 ### function computeBoundaries
 
@@ -231,36 +217,7 @@ Set query (inside) point
 void computeBoundaries()
 ```
 
-
-**Deprecated**: 
-
-Compute boundaries from definition polydata with ffc_paint scalars 
-
-### function setInoutPolyData
-
-```cpp
-inline void setInoutPolyData(
-    vtkSmartPointer< vtkPolyData > polyData
-)
-```
-
-Set the in/out polydata. 
-
-### function getInoutPolyData
-
-```cpp
-inline vtkSmartPointer< vtkPolyData > getInoutPolyData()
-```
-
-Get the in/out polydata. 
-
-### function createInoutPolyData
-
-```cpp
-void createInoutPolyData()
-```
-
-Create the in/out poly data from the definition poly data. 
+Compute boundaries from definition polydata with ffc_paint scalars. 
 
 ### function isSet
 
@@ -288,26 +245,6 @@ void reset()
 
 Reset to initial state. 
 
-### function computeGradientFields
-
-```cpp
-void computeGradientFields(
-    std::shared_ptr< Mesh > mesh
-)
-```
-
-Compute gradient fields for a mesh. 
-
-### function convertLegacyFFC
-
-```cpp
-void convertLegacyFFC(
-    vtkSmartPointer< vtkPolyData > polyData
-)
-```
-
-Convert legacy FFC to new format. 
-
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:04 +0000
+Updated on 2022-07-23 at 16:40:06 -0600

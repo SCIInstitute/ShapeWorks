@@ -2371,13 +2371,6 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#public-types" class="md-nav__link">
-    Public Types
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#public-functions" class="md-nav__link">
     Public Functions
   </a>
@@ -2388,26 +2381,6 @@
   <a href="#detailed-description" class="md-nav__link">
     Detailed Description
   </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#public-types-documentation" class="md-nav__link">
-    Public Types Documentation
-  </a>
-  
-    <nav class="md-nav" aria-label="Public Types Documentation">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#using-stringmap" class="md-nav__link">
-    using StringMap
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -2443,13 +2416,6 @@
           <li class="md-nav__item">
   <a href="#function-save" class="md-nav__link">
     function save
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-set_project_path" class="md-nav__link">
-    function set_project_path
   </a>
   
 </li>
@@ -2504,13 +2470,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-set_domain_names" class="md-nav__link">
-    function set_domain_names
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#function-get_subjects" class="md-nav__link">
     function get_subjects
   </a>
@@ -2520,13 +2479,6 @@
           <li class="md-nav__item">
   <a href="#function-set_subjects" class="md-nav__link">
     function set_subjects
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-update_subjects" class="md-nav__link">
-    function update_subjects
   </a>
   
 </li>
@@ -2595,20 +2547,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-get_parameter_map" class="md-nav__link">
-    function get_parameter_map
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-set_parameter_map" class="md-nav__link">
-    function set_parameter_map
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#function-set_parameters" class="md-nav__link">
     function set_parameters
   </a>
@@ -2618,6 +2556,13 @@
           <li class="md-nav__item">
   <a href="#function-clear_parameters" class="md-nav__link">
     function clear_parameters
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-store_subjects" class="md-nav__link">
+    function store_subjects
   </a>
   
 </li>
@@ -2646,13 +2591,6 @@
           <li class="md-nav__item">
   <a href="#function-get_all_landmark_definitions" class="md-nav__link">
     function get_all_landmark_definitions
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-set_landmark_definitions" class="md-nav__link">
-    function set_landmark_definitions
   </a>
   
 </li>
@@ -2732,21 +2670,6 @@
 <h1 id="shapeworksproject">shapeworks::Project</h1>
 <p>Representation of a project.  <a href="#detailed-description">More...</a></p>
 <p><code>#include &lt;Project.h&gt;</code></p>
-<h2 id="public-types">Public Types</h2>
-<table>
-<thead>
-<tr>
-<th></th>
-<th>Name</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>using std::map&lt; std::string, std::string &gt;</td>
-<td><strong><a href="classshapeworks_1_1Project.html#using-stringmap">StringMap</a></strong></td>
-</tr>
-</tbody>
-</table>
 <h2 id="public-functions">Public Functions</h2>
 <table>
 <thead>
@@ -2766,15 +2689,11 @@
 </tr>
 <tr>
 <td>bool</td>
-<td><strong><a href="classshapeworks_1_1Project.html#function-load">load</a></strong>(const std::string &amp; filename)<br>Load from project file.</td>
+<td><strong><a href="classshapeworks_1_1Project.html#function-load">load</a></strong>(const std::string &amp; filename)<br>Load from XLSX file.</td>
 </tr>
 <tr>
 <td>bool</td>
-<td><strong><a href="classshapeworks_1_1Project.html#function-save">save</a></strong>(const std::string &amp; filename)<br>Save to project file.</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1Project.html#function-set-project-path">set_project_path</a></strong>(const std::string &amp; path)<br>Set the project path.</td>
+<td><strong><a href="classshapeworks_1_1Project.html#function-save">save</a></strong>(const std::string &amp; filename)<br>Save to XLSX file.</td>
 </tr>
 <tr>
 <td>std::string</td>
@@ -2805,20 +2724,12 @@
 <td><strong><a href="classshapeworks_1_1Project.html#function-get-domain-names">get_domain_names</a></strong>()<br>Return the domain names (e.g. femur, pelvis, etc)</td>
 </tr>
 <tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1Project.html#function-set-domain-names">set_domain_names</a></strong>(std::vector&lt; std::string &gt; domain_names)<br>Set the domain names.</td>
-</tr>
-<tr>
 <td>std::vector&lt; std::shared_ptr&lt; <a href="classshapeworks_1_1Subject.html">Subject</a> &gt; &gt; &amp;</td>
 <td><strong><a href="classshapeworks_1_1Project.html#function-get-subjects">get_subjects</a></strong>()<br>Return the Subjects (as a reference)</td>
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Project.html#function-set-subjects">set_subjects</a></strong>(const std::vector&lt; std::shared_ptr&lt; <a href="classshapeworks_1_1Subject.html">Subject</a> &gt; &gt; &amp; subjects)<br>Set the Subjects.</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1Project.html#function-update-subjects">update_subjects</a></strong>()</td>
+<td><strong><a href="classshapeworks_1_1Project.html#function-set-subjects">set_subjects</a></strong>(const std::vector&lt; std::shared_ptr&lt; <a href="classshapeworks_1_1Subject.html">Subject</a> &gt;&gt; &amp; subjects)<br>Set the Subjects.</td>
 </tr>
 <tr>
 <td>bool</td>
@@ -2857,20 +2768,16 @@
 <td><strong><a href="classshapeworks_1_1Project.html#function-get-parameters">get_parameters</a></strong>(const std::string &amp; name, std::string domain_name ="")<br>Retrieve parameters based on key.</td>
 </tr>
 <tr>
-<td>std::map&lt; std::string, <a href="classshapeworks_1_1Parameters.html">Parameters</a> &gt;</td>
-<td><strong><a href="classshapeworks_1_1Project.html#function-get-parameter-map">get_parameter_map</a></strong>(const std::string &amp; name)<br>Retrieve full parameter map for a given name.</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1Project.html#function-set-parameter-map">set_parameter_map</a></strong>(const std::string &amp; name, std::map&lt; std::string, <a href="classshapeworks_1_1Parameters.html">Parameters</a> &gt; map)<br>Set parameter map for a given name.</td>
-</tr>
-<tr>
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1Project.html#function-set-parameters">set_parameters</a></strong>(const std::string &amp; name, <a href="classshapeworks_1_1Parameters.html">Parameters</a> params, std::string domain_name ="")<br>Store parameters based on key.</td>
 </tr>
 <tr>
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1Project.html#function-clear-parameters">clear_parameters</a></strong>(const std::string &amp; name)<br>Clear parameters based on key.</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Project.html#function-store-subjects">store_subjects</a></strong>()<br>Store from subject list to spreadsheet.</td>
 </tr>
 <tr>
 <td>int</td>
@@ -2887,10 +2794,6 @@
 <tr>
 <td>std::vector&lt; std::vector&lt; <a href="classshapeworks_1_1LandmarkDefinition.html">LandmarkDefinition</a> &gt; &gt;</td>
 <td><strong><a href="classshapeworks_1_1Project.html#function-get-all-landmark-definitions">get_all_landmark_definitions</a></strong>()<br>Return all landmark definitions.</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1Project.html#function-set-landmark-definitions">set_landmark_definitions</a></strong>(std::vector&lt; std::vector&lt; <a href="classshapeworks_1_1LandmarkDefinition.html">LandmarkDefinition</a> &gt; &gt; defs)<br>Set all landmark definitions.</td>
 </tr>
 <tr>
 <td>bool</td>
@@ -2927,10 +2830,6 @@
 </code></pre></div>
 <p>Representation of a project. </p>
 <p>The <a href="classshapeworks_1_1Project.html">Project</a> class encapsulates the spreadsheet based file format for storing project data. </p>
-<h2 id="public-types-documentation">Public Types Documentation</h2>
-<h3 id="using-stringmap">using StringMap</h3>
-<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Project</span><span class="o">::</span><span class="n">StringMap</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="p">;</span>
-</code></pre></div>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-project">function Project</h3>
 <div class="highlight"><pre><span></span><code><span class="n">Project</span><span class="p">()</span>
@@ -2943,19 +2842,13 @@
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">filename</span>
 <span class="p">)</span>
 </code></pre></div>
-<p>Load from project file. </p>
+<p>Load from XLSX file. </p>
 <h3 id="function-save">function save</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">save</span><span class="p">(</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">filename</span>
 <span class="p">)</span>
 </code></pre></div>
-<p>Save to project file. </p>
-<h3 id="function-set_project_path">function set_project_path</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_project_path</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">path</span>
-<span class="p">)</span>
-</code></pre></div>
-<p>Set the project path. </p>
+<p>Save to XLSX file. </p>
 <h3 id="function-get_filename">function get_filename</h3>
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">get_filename</span><span class="p">()</span>
 </code></pre></div>
@@ -2988,25 +2881,16 @@
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_domain_names</span><span class="p">()</span>
 </code></pre></div>
 <p>Return the domain names (e.g. femur, pelvis, etc) </p>
-<h3 id="function-set_domain_names">function set_domain_names</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_domain_names</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">domain_names</span>
-<span class="p">)</span>
-</code></pre></div>
-<p>Set the domain names. </p>
 <h3 id="function-get_subjects">function get_subjects</h3>
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Subject</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">get_subjects</span><span class="p">()</span>
 </code></pre></div>
 <p>Return the Subjects (as a reference) </p>
 <h3 id="function-set_subjects">function set_subjects</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_subjects</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Subject</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">subjects</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Subject</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">subjects</span>
 <span class="p">)</span>
 </code></pre></div>
 <p>Set the Subjects. </p>
-<h3 id="function-update_subjects">function update_subjects</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_subjects</span><span class="p">()</span>
-</code></pre></div>
 <h3 id="function-get_originals_present">function get_originals_present</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_originals_present</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
@@ -3048,19 +2932,6 @@
 <span class="p">)</span>
 </code></pre></div>
 <p>Retrieve parameters based on key. </p>
-<h3 id="function-get_parameter_map">function get_parameter_map</h3>
-<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">,</span><span class="w"> </span><span class="n">Parameters</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_parameter_map</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">name</span>
-<span class="p">)</span>
-</code></pre></div>
-<p>Retrieve full parameter map for a given name. </p>
-<h3 id="function-set_parameter_map">function set_parameter_map</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_parameter_map</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">name</span><span class="p">,</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">,</span><span class="w"> </span><span class="n">Parameters</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">map</span>
-<span class="p">)</span>
-</code></pre></div>
-<p>Set parameter map for a given name. </p>
 <h3 id="function-set_parameters">function set_parameters</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_parameters</span><span class="p">(</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">name</span><span class="p">,</span>
@@ -3075,6 +2946,10 @@
 <span class="p">)</span>
 </code></pre></div>
 <p>Clear parameters based on key. </p>
+<h3 id="function-store_subjects">function store_subjects</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">store_subjects</span><span class="p">()</span>
+</code></pre></div>
+<p>Store from subject list to spreadsheet. </p>
 <h3 id="function-get_supported_version">function get_supported_version</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">get_supported_version</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
@@ -3093,12 +2968,6 @@
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">LandmarkDefinition</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_all_landmark_definitions</span><span class="p">()</span>
 </code></pre></div>
 <p>Return all landmark definitions. </p>
-<h3 id="function-set_landmark_definitions">function set_landmark_definitions</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_landmark_definitions</span><span class="p">(</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">LandmarkDefinition</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">defs</span>
-<span class="p">)</span>
-</code></pre></div>
-<p>Set all landmark definitions. </p>
 <h3 id="function-get_landmarks_present">function get_landmarks_present</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_landmarks_present</span><span class="p">()</span>
 </code></pre></div>
@@ -3137,7 +3006,7 @@
 </code></pre></div>
 <p>Get the groomed domain types. </p>
 <hr />
-<p>Updated on 2023-05-04 at 20:03:04 +0000</p>
+<p>Updated on 2022-07-23 at 16:40:06 -0600</p>
 
               
             </article>

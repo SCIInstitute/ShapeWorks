@@ -22,7 +22,7 @@ Below are the default optimization parameters for this use case.
  {
         "number_of_particles": 128,
         "use_normals": 0,
-        "normal_weight": 15.0,
+        "normals_strength": 15.0,
         "checkpointing_interval": 0,
         "keep_checkpoints": 0,
         "iterations_per_split": 10,

@@ -20,6 +20,7 @@ Inherits from QWidget
 | void | **[set_placing_button_clicked](../Classes/classshapeworks_1_1DataTool.md#slot-set-placing-button-clicked)**(int id) |
 | void | **[handle_landmark_mode_changed](../Classes/classshapeworks_1_1DataTool.md#slot-handle-landmark-mode-changed)**() |
 | void | **[handle_constraints_mode_changed](../Classes/classshapeworks_1_1DataTool.md#slot-handle-constraints-mode-changed)**() |
+| void | **[handle_ffc_active_changed](../Classes/classshapeworks_1_1DataTool.md#slot-handle-ffc-active-changed)**() |
 
 ## Public Signals
 
@@ -83,6 +84,13 @@ void handle_landmark_mode_changed()
 
 ```cpp
 void handle_constraints_mode_changed()
+```
+
+
+### slot handle_ffc_active_changed
+
+```cpp
+void handle_ffc_active_changed()
 ```
 
 
@@ -210,4 +218,4 @@ void store_data()
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:03 +0000
+Updated on 2022-07-23 at 16:40:06 -0600

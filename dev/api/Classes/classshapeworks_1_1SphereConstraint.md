@@ -25,7 +25,7 @@ Inherits from [shapeworks::Constraint](../Classes/classshapeworks_1_1Constraint.
 | Eigen::Vector3d | **[constraintGradientSphere](../Classes/classshapeworks_1_1SphereConstraint.md#function-constraintgradientsphere)**(const Eigen::Vector3d & pt, const Eigen::Vector3d & updpt) const |
 | virtual double | **[constraintEval](../Classes/classshapeworks_1_1SphereConstraint.md#function-constrainteval)**(const Eigen::Vector3d & pt) const override |
 | double | **[constraintEvalSphere](../Classes/classshapeworks_1_1SphereConstraint.md#function-constraintevalsphere)**(const Eigen::Vector3d & pt, const Eigen::Vector3d & updpt) const |
-| Eigen::Vector3d | **[lagragianGradient](../Classes/classshapeworks_1_1SphereConstraint.md#function-lagragiangradient)**(const Eigen::Vector3d & pt, const Eigen::Vector3d & updpt, double C, size_t index) const |
+| Eigen::Vector3d | **[lagragianGradient](../Classes/classshapeworks_1_1SphereConstraint.md#function-lagragiangradient)**(const Eigen::Vector3d & pt, const Eigen::Vector3d & updpt, double C) const |
 
 ## Additional inherited members
 
@@ -35,12 +35,12 @@ Inherits from [shapeworks::Constraint](../Classes/classshapeworks_1_1Constraint.
 | -------------- | -------------- |
 | void | **[setZ](../Classes/classshapeworks_1_1Constraint.md#function-setz)**(double inz) |
 | double | **[getZ](../Classes/classshapeworks_1_1Constraint.md#function-getz)**() |
-| void | **[setMus](../Classes/classshapeworks_1_1Constraint.md#function-setmus)**(std::vector< double > inmu) |
-| std::vector< double > | **[getMus](../Classes/classshapeworks_1_1Constraint.md#function-getmus)**() |
+| void | **[setMu](../Classes/classshapeworks_1_1Constraint.md#function-setmu)**(double inmu) |
+| double | **[getMu](../Classes/classshapeworks_1_1Constraint.md#function-getmu)**() |
 | void | **[setLambda](../Classes/classshapeworks_1_1Constraint.md#function-setlambda)**(double inLambda) |
 | double | **[getLambda](../Classes/classshapeworks_1_1Constraint.md#function-getlambda)**() |
 | void | **[updateZ](../Classes/classshapeworks_1_1Constraint.md#function-updatez)**(const Eigen::Vector3d & pt, double C) |
-| void | **[updateMu](../Classes/classshapeworks_1_1Constraint.md#function-updatemu)**(const Eigen::Vector3d & pt, double C, size_t index) |
+| void | **[updateMu](../Classes/classshapeworks_1_1Constraint.md#function-updatemu)**(const Eigen::Vector3d & pt, double C) |
 
 **Protected Functions inherited from [shapeworks::Constraint](../Classes/classshapeworks_1_1Constraint.md)**
 
@@ -52,7 +52,7 @@ Inherits from [shapeworks::Constraint](../Classes/classshapeworks_1_1Constraint.
 
 |                | Name           |
 | -------------- | -------------- |
-| std::vector< double > | **[mus_](../Classes/classshapeworks_1_1Constraint.md#variable-mus-)**  |
+| double | **[mu_](../Classes/classshapeworks_1_1Constraint.md#variable-mu-)**  |
 | double | **[z_](../Classes/classshapeworks_1_1Constraint.md#variable-z-)**  |
 | double | **[lambda_](../Classes/classshapeworks_1_1Constraint.md#variable-lambda-)**  |
 
@@ -163,12 +163,11 @@ double constraintEvalSphere(
 Eigen::Vector3d lagragianGradient(
     const Eigen::Vector3d & pt,
     const Eigen::Vector3d & updpt,
-    double C,
-    size_t index
+    double C
 ) const
 ```
 
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:05 +0000
+Updated on 2022-07-23 at 16:40:06 -0600

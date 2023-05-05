@@ -1,10 +1,10 @@
 ---
-title: Libs/Analyze/SurfaceReconstructor.h
+title: Studio/src/Data/SurfaceReconstructor.h
 summary: Surface Reconstruction Layer. 
 
 ---
 
-# Libs/Analyze/SurfaceReconstructor.h
+# Studio/src/Data/SurfaceReconstructor.h
 
 Surface [Reconstruction](../Classes/classReconstruction.md) Layer.  [More...](#detailed-description)
 
@@ -31,19 +31,41 @@ The [SurfaceReconstructor](../Classes/classSurfaceReconstructor.md) wraps the su
 #include <vector>
 #include <string>
 
-#include <itkPoint.h>
-#include <vtkPoints.h>
-#include <vtkPolyData.h>
-#include <Eigen/Core>
+#include <itkImageFileReader.h>
 
-class SurfaceReconstructorPrivate;
+#include <Reconstruction.h>
 
-class SurfaceReconstructor {
+class SurfaceReconstructor
+{
 
- public:
+public:
+
+  typedef float PixelType;
+  typedef itk::Image< PixelType, 3 > ImageType;
+
+  typedef itk::ImageFileReader< ImageType > ReaderType;
+
+  typedef double CoordinateRepType;
+  typedef itk::CompactlySupportedRBFSparseKernelTransform < CoordinateRepType,
+                                                            3> RBFTransformType;
+  typedef itk::ThinPlateSplineKernelTransform2< CoordinateRepType, 3> ThinPlateSplineType;
+
+  typedef itk::LinearInterpolateImageFunction<ImageType, double > InterpolatorType;
+
+  typedef Reconstruction < itk::CompactlySupportedRBFSparseKernelTransform,
+                           itk::LinearInterpolateImageFunction,
+                           CoordinateRepType, PixelType, ImageType> ReconstructionType;
+
+/*
+   typedef Reconstruction < itk::ThinPlateSplineKernelTransform2,
+                           itk::LinearInterpolateImageFunction,
+                           CoordinateRepType, PixelType, ImageType> ReconstructionType;
+ */
+
+  typedef typename ReconstructionType::PointType PointType;
+  typedef typename ReconstructionType::PointArrayType PointArrayType;
 
   SurfaceReconstructor();
-  ~SurfaceReconstructor();
 
   //**********************************************//
   //************Imported From Studio *************//
@@ -73,9 +95,8 @@ class SurfaceReconstructor {
 
   vtkSmartPointer<vtkPolyData> build_mesh(const Eigen::VectorXd& shape);
 
- private:
-
-  std::unique_ptr<SurfaceReconstructorPrivate> private_;
+private:
+  ReconstructionType reconstructor_;
 
   bool surface_reconstruction_available_ = false;
 
@@ -88,4 +109,4 @@ class SurfaceReconstructor {
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:05 +0000
+Updated on 2022-07-23 at 16:40:07 -0600

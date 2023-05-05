@@ -1,9 +1,9 @@
 ---
-title: Studio/Analysis/AnalysisTool.h
+title: Studio/src/Analysis/AnalysisTool.h
 
 ---
 
-# Studio/Analysis/AnalysisTool.h
+# Studio/src/Analysis/AnalysisTool.h
 
 
 
@@ -11,7 +11,7 @@ title: Studio/Analysis/AnalysisTool.h
 
 | Name           |
 | -------------- |
-| **[shapeworks](../Namespaces/namespaceshapeworks.md)** <br>User usage reporting (telemetry)  |
+| **[shapeworks](../Namespaces/namespaceshapeworks.md)**  |
 
 ## Classes
 
@@ -40,7 +40,7 @@ title: Studio/Analysis/AnalysisTool.h
 // Studio
 #include <Analysis/ShapeEvaluationJob.h>
 #include <Data/Preferences.h>
-#include <Shape.h>
+#include <Data/Shape.h>
 #include <Visualization/Visualizer.h>
 
 class Ui_AnalysisTool;
@@ -52,7 +52,6 @@ class Session;
 class Lightbox;
 class ShapeWorksStudioApp;
 class GroupPvalueJob;
-class NetworkAnalysisJob;
 class StatsGroupLDAJob;
 
 class AnalysisTool : public QWidget {
@@ -64,8 +63,6 @@ class AnalysisTool : public QWidget {
     Local = -1,
   };
 
-  enum McaMode { Vanilla, Within, Between };
-
   using PointType = itk::Point<double, 3>;
 
   AnalysisTool(Preferences& prefs);
@@ -76,7 +73,6 @@ class AnalysisTool : public QWidget {
   QSharedPointer<Session> get_session();
 
   void set_app(ShapeWorksStudioApp* app);
-  ShapeWorksStudioApp* get_app() { return app_; }
 
   void set_active(bool active);
 
@@ -98,7 +94,6 @@ class AnalysisTool : public QWidget {
   double get_pca_value();
 
   bool pca_animate();
-  McaMode get_mca_level() const;
 
   int get_sample_number();
 
@@ -109,14 +104,11 @@ class AnalysisTool : public QWidget {
   void reset_stats();
   void enable_actions(bool newly_enabled = false);
 
-  Particles get_mean_shape_points();
+  StudioParticles get_mean_shape_points();
   ShapeHandle get_mean_shape();
 
-  Particles get_shape_points(int mode, double value);
-  Particles get_multi_level_shape_points(int mode, double value, McaMode level);
+  StudioParticles get_shape_points(int mode, double value);
   ShapeHandle get_mode_shape(int mode, double value);
-  ShapeHandle get_mca_mode_shape(int mode, double value, McaMode level);
-  ShapeHandle get_current_shape();
 
   ParticleShapeStatistics get_stats();
   void load_settings();
@@ -158,6 +150,7 @@ class AnalysisTool : public QWidget {
   void handle_group_animate_state_changed();
   void handle_group_timer();
 
+
   void handle_reconstruction_complete();
 
   void on_reconstructionButton_clicked();
@@ -183,7 +176,6 @@ class AnalysisTool : public QWidget {
   void initialize_mesh_warper();
 
   void group_p_values_clicked();
-  void network_analysis_clicked();
 
   void handle_eval_thread_complete(ShapeEvaluationJob::JobType job_type, Eigen::VectorXd data);
   void handle_eval_thread_progress(ShapeEvaluationJob::JobType job_type, float progress);
@@ -198,16 +190,16 @@ class AnalysisTool : public QWidget {
   void handle_lda_progress(double progress);
   void handle_lda_complete();
 
-  void handle_network_analysis_progress(int progress);
-  void handle_network_analysis_complete();
-
   void show_difference_to_mean_clicked();
 
- Q_SIGNALS:
+ signals:
 
   void update_view();
   void pca_update();
   void progress(int);
+  void message(QString);
+  void error(QString);
+  void warning(QString);
   void reconstruction_complete();
 
  private:
@@ -218,12 +210,13 @@ class AnalysisTool : public QWidget {
   bool active_ = false;
 
   void pca_labels_changed(QString value, QString eigen, QString lambda);
+  void compute_mode_shape();
   void update_analysis_mode();
   void update_interface();
 
   bool group_pvalues_valid();
 
-  Particles convert_from_combined(const Eigen::VectorXd& points);
+  StudioParticles convert_from_combined(const Eigen::VectorXd& points);
 
   void update_group_boxes();
   void update_group_values();
@@ -233,7 +226,7 @@ class AnalysisTool : public QWidget {
 
   void update_difference_particles();
 
-  ShapeHandle create_shape_from_points(Particles points);
+  ShapeHandle create_shape_from_points(StudioParticles points);
 
   Preferences& preferences_;
 
@@ -244,8 +237,6 @@ class AnalysisTool : public QWidget {
   ParticleShapeStatistics stats_;
   bool stats_ready_ = false;
   bool evals_ready_ = false;
-  bool large_particle_disclaimer_waived_ = false;
-  bool skip_evals_ = false;
 
   Eigen::VectorXd eval_specificity_;
   Eigen::VectorXd eval_compactness_;
@@ -253,8 +244,6 @@ class AnalysisTool : public QWidget {
 
   vnl_vector<double> empty_shape_;
   Eigen::VectorXd temp_shape_;
-  Eigen::VectorXd temp_shape_mca;
-  std::vector<int> number_of_particles_ar;
 
   bool pca_animate_direction_ = true;
   QTimer pca_animate_timer_;
@@ -267,7 +256,6 @@ class AnalysisTool : public QWidget {
   ShapeList group1_list_;
   ShapeList group2_list_;
 
-
   std::string feature_map_;
 
   std::vector<std::string> current_group_names_;
@@ -277,8 +265,6 @@ class AnalysisTool : public QWidget {
 
   QSharedPointer<GroupPvalueJob> group_pvalue_job_;
   QSharedPointer<StatsGroupLDAJob> group_lda_job_;
-  QSharedPointer<NetworkAnalysisJob> network_analysis_job_;
-
   bool group_lda_job_running_ = false;
   bool block_group_change_ = false;
 
@@ -290,4 +276,4 @@ class AnalysisTool : public QWidget {
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:05 +0000
+Updated on 2022-07-23 at 16:40:07 -0600

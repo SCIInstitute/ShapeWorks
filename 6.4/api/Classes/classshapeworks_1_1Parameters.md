@@ -17,14 +17,12 @@ Parameter settings.  [More...](#detailed-description)
 
 |                | Name           |
 | -------------- | -------------- |
-| | **[Parameters](../Classes/classshapeworks_1_1Parameters.md#function-parameters)**()<br>default constructor  |
-| | **[Parameters](../Classes/classshapeworks_1_1Parameters.md#function-parameters)**(StringMap map)<br>construct from map  |
 | [Variant](../Classes/classshapeworks_1_1Variant.md) | **[get](../Classes/classshapeworks_1_1Parameters.md#function-get)**(std::string key, [Variant](../Classes/classshapeworks_1_1Variant.md) default_value)<br>get a parameter based on a key, return default if it doesn't exist  |
 | bool | **[key_exists](../Classes/classshapeworks_1_1Parameters.md#function-key-exists)**(std::string key)<br>return if a key exists or not  |
 | void | **[set](../Classes/classshapeworks_1_1Parameters.md#function-set)**(std::string key, [Variant](../Classes/classshapeworks_1_1Variant.md) value)<br>set a parameter based on a key  |
 | void | **[remove_entry](../Classes/classshapeworks_1_1Parameters.md#function-remove-entry)**(std::string key)<br>remove an entry  |
-| void | **[set_map](../Classes/classshapeworks_1_1Parameters.md#function-set-map)**(StringMap map)<br>set underlying map  |
-| StringMap | **[get_map](../Classes/classshapeworks_1_1Parameters.md#function-get-map)**() const<br>get underlying map  |
+| void | **[set_map](../Classes/classshapeworks_1_1Parameters.md#function-set-map)**(std::map< std::string, std::string > map)<br>set underlying map  |
+| std::map< std::string, std::string > | **[get_map](../Classes/classshapeworks_1_1Parameters.md#function-get-map)**()<br>get underlying map  |
 | void | **[reset_parameters](../Classes/classshapeworks_1_1Parameters.md#function-reset-parameters)**()<br>reset parameters to blank  |
 
 ## Public Attributes
@@ -49,24 +47,6 @@ Parameter settings.
 Store key/variant combinations Used to store parameters for various tools 
 
 ## Public Functions Documentation
-
-### function Parameters
-
-```cpp
-Parameters()
-```
-
-default constructor 
-
-### function Parameters
-
-```cpp
-explicit Parameters(
-    StringMap map
-)
-```
-
-construct from map 
 
 ### function get
 
@@ -114,7 +94,7 @@ remove an entry
 
 ```cpp
 void set_map(
-    StringMap map
+    std::map< std::string, std::string > map
 )
 ```
 
@@ -123,7 +103,7 @@ set underlying map
 ### function get_map
 
 ```cpp
-StringMap get_map() const
+std::map< std::string, std::string > get_map()
 ```
 
 get underlying map 
@@ -182,4 +162,4 @@ static constexpr const char * DEEPSSM_PARAMS = "deepssm";
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:04 +0000
+Updated on 2022-07-23 at 16:40:06 -0600

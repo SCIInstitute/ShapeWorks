@@ -11,7 +11,7 @@ title: shapeworks::ParticleRegionDomain
 
 Inherits from [shapeworks::ParticleDomain](../Classes/classshapeworks_1_1ParticleDomain.md)
 
-Inherited by [shapeworks::ImageDomain< T >](../Classes/classshapeworks_1_1ImageDomain.md)
+Inherited by [shapeworks::ParticleImageDomain< T >](../Classes/classshapeworks_1_1ParticleImageDomain.md)
 
 ## Public Types
 
@@ -143,7 +143,7 @@ inline virtual const PointType & GetUpperBound() const
 **Reimplements**: [shapeworks::ParticleDomain::GetUpperBound](../Classes/classshapeworks_1_1ParticleDomain.md#function-getupperbound)
 
 
-Gets the maximum x, y, z values of the bounding box for the domain. This is used for setting up the [PowerOfTwoPointTree](../Classes/classshapeworks_1_1PowerOfTwoPointTree.md). 
+Gets the maximum x, y, z values of the bounding box for the domain. This is used for setting up the PowerOfTwoPointTree. 
 
 
 ### function GetLowerBound
@@ -156,7 +156,7 @@ inline virtual const PointType & GetLowerBound() const
 **Reimplements**: [shapeworks::ParticleDomain::GetLowerBound](../Classes/classshapeworks_1_1ParticleDomain.md#function-getlowerbound)
 
 
-Gets the minimum x, y, z values of the bounding box for the domain. This is used for setting up the [PowerOfTwoPointTree](../Classes/classshapeworks_1_1PowerOfTwoPointTree.md). 
+Gets the minimum x, y, z values of the bounding box for the domain. This is used for setting up the PowerOfTwoPointTree. 
 
 
 ### function SetUpperBound
@@ -227,4 +227,4 @@ Check whether the point p may be sampled in this domain.
 
 -------------------------------
 
-Updated on 2023-05-04 at 20:03:04 +0000
+Updated on 2022-07-23 at 16:40:06 -0600
