@@ -13,7 +13,7 @@
 #include <vtkTransform.h>
 
 // shapeworks
-#include <Optimize/DomainType.h>
+#include <Libs/Optimize/Domain/DomainType.h>
 
 namespace shapeworks {
 

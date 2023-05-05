@@ -1,83 +1,69 @@
 
 #include "Sampler.h"
 
-#include "ContourDomain.h"
-#include "itkImageRegionIterator.h"
-#include "ParticleImageDomain.h"
-#include "itkParticlePositionReader.h"
-#include "object_reader.h"
 #include <Logging.h>
+
+#include "Libs/Optimize/Domain/ContourDomain.h"
+#include "Libs/Optimize/Domain/ImageDomain.h"
+#include "Libs/Optimize/Utils/ObjectReader.h"
+#include "itkImageRegionIterator.h"
+#include "itkParticlePositionReader.h"
 
 namespace shapeworks {
 
 Sampler::Sampler() {
-  // Allocate the particle system members.
-  m_ParticleSystem = itk::ParticleSystem::New();
+  m_ParticleSystem = ParticleSystem::New();
 
-  m_GradientFunction = itk::ParticleEntropyGradientFunction<ImageType::PixelType, Dimension>::New();
-  m_CurvatureGradientFunction = itk::ParticleCurvatureEntropyGradientFunction<ImageType::PixelType, Dimension>::New();
+  m_GradientFunction = SamplingFunction::New();
+  m_CurvatureGradientFunction = CurvatureSamplingFunction::New();
 
-  m_ModifiedCotangentGradientFunction =
-      itk::ParticleModifiedCotangentEntropyGradientFunction<ImageType::PixelType, Dimension>::New();
-  m_ConstrainedModifiedCotangentGradientFunction =
-      itk::ParticleConstrainedModifiedCotangentEntropyGradientFunction<ImageType::PixelType, Dimension>::New();
-
-  m_OmegaGradientFunction = itk::ParticleOmegaGradientFunction<ImageType::PixelType, Dimension>::New();
-
-  // Allocate some optimization code.
   m_Optimizer = OptimizerType::New();
 
   m_PointsFiles.push_back("");
   m_MeshFiles.push_back("");
 
-  m_LinkingFunction = itk::ParticleDualVectorFunction<Dimension>::New();
-  m_EnsembleEntropyFunction = itk::ParticleEnsembleEntropyFunction<Dimension>::New();
-  m_EnsembleRegressionEntropyFunction = itk::ParticleEnsembleEntropyFunction<Dimension>::New();
-  m_EnsembleMixedEffectsEntropyFunction = itk::ParticleEnsembleEntropyFunction<Dimension>::New();
-  m_MeshBasedGeneralEntropyGradientFunction = itk::ParticleMeshBasedGeneralEntropyGradientFunction<Dimension>::New();
+  m_LinkingFunction = DualVectorFunction::New();
+  m_EnsembleEntropyFunction = LegacyCorrespondenceFunction::New();
+  m_EnsembleRegressionEntropyFunction = LegacyCorrespondenceFunction::New();
+  m_EnsembleMixedEffectsEntropyFunction = LegacyCorrespondenceFunction::New();
+  m_CorrespondenceFunction = CorrespondenceFunction::New();
 
-  m_ShapeMatrix = itk::ParticleShapeMatrixAttribute<double, Dimension>::New();
-  m_GeneralShapeMatrix = itk::ParticleGeneralShapeMatrix<double, Dimension>::New();
-  m_GeneralShapeGradMatrix = itk::ParticleGeneralShapeGradientMatrix<double, Dimension>::New();
+  m_LegacyShapeMatrix = LegacyShapeMatrix::New();
+  m_GeneralShapeMatrix = ShapeMatrix::New();
+  m_GeneralShapeGradMatrix = ShapeGradientMatrix::New();
 
-  m_LinearRegressionShapeMatrix = itk::ParticleShapeLinearRegressionMatrixAttribute<double, Dimension>::New();
-  m_MixedEffectsShapeMatrix = itk::ParticleShapeMixedEffectsMatrixAttribute<double, Dimension>::New();
+  m_LinearRegressionShapeMatrix = LinearRegressionShapeMatrix::New();
+  m_MixedEffectsShapeMatrix = MixedEffectsShapeMatrix::New();
 
-  m_EnsembleEntropyFunction->SetShapeMatrix(m_ShapeMatrix);
+  m_EnsembleEntropyFunction->SetShapeMatrix(m_LegacyShapeMatrix);
 
   m_EnsembleRegressionEntropyFunction->SetShapeMatrix(m_LinearRegressionShapeMatrix);
   m_EnsembleMixedEffectsEntropyFunction->SetShapeMatrix(m_MixedEffectsShapeMatrix);
 
-  m_MeshBasedGeneralEntropyGradientFunction->SetShapeData(m_GeneralShapeMatrix);
-  m_MeshBasedGeneralEntropyGradientFunction->SetShapeGradient(m_GeneralShapeGradMatrix);
+  m_CorrespondenceFunction->SetShapeData(m_GeneralShapeMatrix);
+  m_CorrespondenceFunction->SetShapeGradient(m_GeneralShapeGradMatrix);
 
-  m_ParticleSystem->RegisterAttribute(m_ShapeMatrix);
-  m_ParticleSystem->RegisterAttribute(m_LinearRegressionShapeMatrix);
-  m_ParticleSystem->RegisterAttribute(m_MixedEffectsShapeMatrix);
+  m_ParticleSystem->RegisterObserver(m_LegacyShapeMatrix);
+  m_ParticleSystem->RegisterObserver(m_LinearRegressionShapeMatrix);
+  m_ParticleSystem->RegisterObserver(m_MixedEffectsShapeMatrix);
 
   m_CorrespondenceMode = shapeworks::CorrespondenceMode::EnsembleEntropy;
 }
 
 void Sampler::AllocateDataCaches() {
   // Set up the various data caches that the optimization functions will use.
-  m_Sigma1Cache = itk::ParticleContainerArrayAttribute<double, Dimension>::New();
-  m_ParticleSystem->RegisterAttribute(m_Sigma1Cache);
+  m_Sigma1Cache = GenericContainerArray<double>::New();
+  m_ParticleSystem->RegisterObserver(m_Sigma1Cache);
   m_GradientFunction->SetSpatialSigmaCache(m_Sigma1Cache);
   m_CurvatureGradientFunction->SetSpatialSigmaCache(m_Sigma1Cache);
 
-  m_ModifiedCotangentGradientFunction->SetSpatialSigmaCache(m_Sigma1Cache);
-  m_ConstrainedModifiedCotangentGradientFunction->SetSpatialSigmaCache(m_Sigma1Cache);
+  m_Sigma2Cache = GenericContainerArray<double>::New();
+  m_ParticleSystem->RegisterObserver(m_Sigma2Cache);
 
-  m_OmegaGradientFunction->SetSpatialSigmaCache(m_Sigma1Cache);
-
-  m_Sigma2Cache = itk::ParticleContainerArrayAttribute<double, Dimension>::New();
-  m_ParticleSystem->RegisterAttribute(m_Sigma2Cache);
-
-  m_MeanCurvatureCache = itk::ParticleMeanCurvatureAttribute<ImageType::PixelType, Dimension>::New();
+  m_MeanCurvatureCache = MeanCurvatureContainer<ImageType::PixelType, Dimension>::New();
   m_MeanCurvatureCache->SetVerbosity(m_verbosity);
   m_CurvatureGradientFunction->SetMeanCurvatureCache(m_MeanCurvatureCache);
-  m_OmegaGradientFunction->SetMeanCurvatureCache(m_MeanCurvatureCache);
-  m_ParticleSystem->RegisterAttribute(m_MeanCurvatureCache);
+  m_ParticleSystem->RegisterObserver(m_MeanCurvatureCache);
 }
 
 void Sampler::AllocateDomainsAndNeighborhoods() {
@@ -111,7 +97,7 @@ void Sampler::AllocateDomainsAndNeighborhoods() {
           }
         }
 
-      auto imageDomain = static_cast<ParticleImplicitSurfaceDomain<ImageType::PixelType>*>(domain.get());
+      auto imageDomain = static_cast<ImplicitSurfaceDomain<ImageType::PixelType>*>(domain.get());
 
 
       // Adding free-form constraints to constraint object
@@ -193,7 +179,7 @@ void Sampler::ReadPointsFiles() {
   // If points file names have been specified, then read the initial points.
   for (unsigned int i = 0; i < m_PointsFiles.size(); i++) {
     if (m_PointsFiles[i] != "") {
-      itk::ParticlePositionReader::Pointer reader = itk::ParticlePositionReader::New();
+      ParticlePositionReader::Pointer reader = ParticlePositionReader::New();
       reader->SetFileName(m_PointsFiles[i].c_str());
       reader->Update();
       this->GetParticleSystem()->AddPositionList(reader->GetOutput(), i);
@@ -231,24 +217,9 @@ void Sampler::InitializeOptimizationFunctions() {
     m_CurvatureGradientFunction->SetSharedBoundaryWeight(this->m_SharedBoundaryWeight);
   }
 
-  m_ModifiedCotangentGradientFunction->SetMinimumNeighborhoodRadius(minimumNeighborhoodRadius);
-  m_ModifiedCotangentGradientFunction->SetMaximumNeighborhoodRadius(maxradius);
-  m_ModifiedCotangentGradientFunction->SetParticleSystem(this->GetParticleSystem());
-  m_ModifiedCotangentGradientFunction->SetDomainNumber(0);
-
-  m_ConstrainedModifiedCotangentGradientFunction->SetMinimumNeighborhoodRadius(minimumNeighborhoodRadius);
-  m_ConstrainedModifiedCotangentGradientFunction->SetMaximumNeighborhoodRadius(maxradius);
-  m_ConstrainedModifiedCotangentGradientFunction->SetParticleSystem(this->GetParticleSystem());
-  m_ConstrainedModifiedCotangentGradientFunction->SetDomainNumber(0);
-
-  m_OmegaGradientFunction->SetMinimumNeighborhoodRadius(minimumNeighborhoodRadius);
-  m_OmegaGradientFunction->SetMaximumNeighborhoodRadius(maxradius);
-  m_OmegaGradientFunction->SetParticleSystem(this->GetParticleSystem());
-  m_OmegaGradientFunction->SetDomainNumber(0);
-
   m_LinearRegressionShapeMatrix->Initialize();
   m_MixedEffectsShapeMatrix->Initialize();
-  m_ShapeMatrix->Initialize();
+  m_LegacyShapeMatrix->Initialize();
 
   m_GeneralShapeMatrix->Initialize();
   m_GeneralShapeGradMatrix->Initialize();
@@ -284,7 +255,7 @@ void Sampler::Execute() {
 
 void Sampler::ReadTransforms() {
   if (m_TransformFile != "") {
-    object_reader<itk::ParticleSystem::TransformType> reader;
+    ObjectReader<ParticleSystem::TransformType> reader;
     reader.SetFileName(m_TransformFile.c_str());
     reader.Update();
 
@@ -293,7 +264,7 @@ void Sampler::ReadTransforms() {
   }
 
   if (m_PrefixTransformFile != "") {
-    object_reader<itk::ParticleSystem::TransformType> reader;
+    ObjectReader<ParticleSystem::TransformType> reader;
     reader.SetFileName(m_PrefixTransformFile.c_str());
     reader.Update();
 
@@ -316,7 +287,7 @@ void Sampler::ReInitialize() {
 
 void Sampler::AddMesh(std::shared_ptr<shapeworks::MeshWrapper> mesh) {
   auto domain = std::make_shared<MeshDomain>();
-  m_NeighborhoodList.push_back(itk::ParticleSurfaceNeighborhood<ImageType>::New());
+  m_NeighborhoodList.push_back(ParticleSurfaceNeighborhood::New());
   if (mesh) {
     this->m_Spacing = 1;
     domain->SetMesh(mesh);
@@ -328,7 +299,7 @@ void Sampler::AddMesh(std::shared_ptr<shapeworks::MeshWrapper> mesh) {
 
 void Sampler::AddContour(vtkSmartPointer<vtkPolyData> poly_data) {
   auto domain = std::make_shared<ContourDomain>();
-  m_NeighborhoodList.push_back(itk::ParticleSurfaceNeighborhood<ImageType>::New());
+  m_NeighborhoodList.push_back(ParticleSurfaceNeighborhood::New());
   if (poly_data != nullptr) {
     this->m_Spacing = 1;
     domain->SetPolyLine(poly_data);
@@ -393,9 +364,9 @@ void Sampler::AddFreeFormConstraint(int domain, const FreeFormConstraint &ffc) {
 }
 
 void Sampler::AddImage(ImageType::Pointer image, double narrow_band, std::string name) {
-  auto domain = std::make_shared<ParticleImplicitSurfaceDomain<ImageType::PixelType>>();
+  auto domain = std::make_shared<ImplicitSurfaceDomain<ImageType::PixelType>>();
 
-  m_NeighborhoodList.push_back(itk::ParticleSurfaceNeighborhood<ImageType>::New());
+  m_NeighborhoodList.push_back(ParticleSurfaceNeighborhood::New());
 
   if (image) {
     this->m_Spacing = image->GetSpacing()[0];

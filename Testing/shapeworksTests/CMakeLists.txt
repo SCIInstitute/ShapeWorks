@@ -7,7 +7,6 @@ add_executable(shapeworksTests
   )
 
 target_link_libraries(shapeworksTests
-  ${ITK_LIBRARIES} ${VTK_LIBRARIES}
   Testing
   )
 

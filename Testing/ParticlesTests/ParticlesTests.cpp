@@ -1,14 +1,13 @@
-#include <vector>
 #include <string>
+#include <vector>
 
-#include "Testing.h"
-
-#include "ParticleSystem.h"
-#include "ShapeEvaluation.h"
-#include "ParticleShapeStatistics.h"
+#include "Libs/Optimize/Domain/VtkMeshWrapper.h"
 #include "ParticleNormalEvaluation.h"
+#include "ParticleShapeStatistics.h"
+#include "ParticleSystemEvaluation.h"
 #include "ReconstructSurface.h"
-#include <Optimize/VtkMeshWrapper.h>
+#include "ShapeEvaluation.h"
+#include "Testing.h"
 
 using namespace shapeworks;
 
@@ -61,9 +60,9 @@ std::string goodPointsFile = std::string(TEST_DATA_DIR) + "/_goodPoints.txt";
 
 TEST(ParticlesTests, pca)
 {
-  ParticleSystem particleSystem(subFilenames);
+  ParticleSystemEvaluation ParticleSystemEvaluation(subFilenames);
   ParticleShapeStatistics stats;
-  stats.DoPCA(particleSystem);
+  stats.DoPCA(ParticleSystemEvaluation);
   stats.PrincipalComponentProjections();
   auto pcaVec = stats.PCALoadings();
 
@@ -77,22 +76,22 @@ TEST(ParticlesTests, pca)
 
 TEST(ParticlesTests, compactness)
 {
-  ParticleSystem particleSystem(filenames);
-  const double compactness = ShapeEvaluation::ComputeCompactness(particleSystem, 1);
+  ParticleSystemEvaluation ParticleSystemEvaluation(filenames);
+  const double compactness = ShapeEvaluation::ComputeCompactness(ParticleSystemEvaluation, 1);
   ASSERT_DOUBLE_EQ(compactness, 0.99178682878009183);
 }
 
 TEST(ParticlesTests, generalization)
 {
-  ParticleSystem particleSystem(filenames);
-  const double generalization = ShapeEvaluation::ComputeGeneralization(particleSystem, 1);
+  ParticleSystemEvaluation ParticleSystemEvaluation(filenames);
+  const double generalization = ShapeEvaluation::ComputeGeneralization(ParticleSystemEvaluation, 1);
   ASSERT_DOUBLE_EQ(generalization, 0.19815116412998687);
 }
 
 TEST(ParticlesTests, specificity)
 {
-  ParticleSystem particleSystem(filenames);
-  const double specificity = ShapeEvaluation::ComputeSpecificity(particleSystem, 1);
+  ParticleSystemEvaluation ParticleSystemEvaluation(filenames);
+  const double specificity = ShapeEvaluation::ComputeSpecificity(ParticleSystemEvaluation, 1);
   ASSERT_NEAR(specificity, 0.262809, 1e-1f);
 }
 
@@ -134,11 +133,11 @@ TEST(ParticlesTests, reconstructsurfaceTestRBFS)
   std::string(TEST_DATA_DIR) + "/ellipsoid_02.local_dense.particles"
   };
 
-  ParticleSystem baselineSparseParticles(baselineSparseParticleFiles);
-  ParticleSystem sparseParticles(sparseParticlesFiles);
+  ParticleSystemEvaluation baselineSparseParticles(baselineSparseParticleFiles);
+  ParticleSystemEvaluation sparseParticles(sparseParticlesFiles);
 
-  ParticleSystem baselineDenseParticles(baselineDenseParticleFiles);
-  ParticleSystem denseParticles(denseParticleFiles);
+  ParticleSystemEvaluation baselineDenseParticles(baselineDenseParticleFiles);
+  ParticleSystemEvaluation denseParticles(denseParticleFiles);
 
   ASSERT_TRUE(baselineSparseParticles.EvaluationCompare(sparseParticles) && baselineDenseParticles.EvaluationCompare(denseParticles) &&
               baselineDenseMesh1 == denseMesh1 && baselineDenseMesh2 == denseMesh2 && baselineDenseMesh3 == denseMesh3);
@@ -182,11 +181,11 @@ TEST(ParticlesTests, reconstructsurfaceTestThinPlateSpline)
   std::string(TEST_DATA_DIR) + "/ellipsoid_02.local_dense.particles"
   };
 
-  ParticleSystem baselineSparseParticles(baselineSparseParticleFiles);
-  ParticleSystem sparseParticles(sparseParticlesFiles);
+  ParticleSystemEvaluation baselineSparseParticles(baselineSparseParticleFiles);
+  ParticleSystemEvaluation sparseParticles(sparseParticlesFiles);
 
-  ParticleSystem baselineDenseParticles(baselineDenseParticleFiles);
-  ParticleSystem denseParticles(denseParticleFiles);
+  ParticleSystemEvaluation baselineDenseParticles(baselineDenseParticleFiles);
+  ParticleSystemEvaluation denseParticles(denseParticleFiles);
 
   ASSERT_TRUE(baselineSparseParticles.EvaluationCompare(sparseParticles) && baselineDenseParticles.EvaluationCompare(denseParticles) &&
               baselineDenseMesh1 == denseMesh1 && baselineDenseMesh2 == denseMesh2 && baselineDenseMesh3 == denseMesh3);
@@ -278,7 +277,7 @@ TEST(ParticlesTests, particle_normal_evaluation_test)
     std::string(TEST_DATA_DIR) + "/particle_normals/particle_normals_particles/particle_normals3_groomed_groomed_local.particles"
   };
 
-  ParticleSystem system(particle_files);
+  ParticleSystemEvaluation system(particle_files);
   auto particles = system.Particles();
 
   auto eval = [&](double angle, int expected_good_count) {
