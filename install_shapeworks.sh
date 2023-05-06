@@ -188,13 +188,14 @@ function install_conda() {
   if ! pip install seaborn==0.11.2;                     then return 1; fi
   if ! pip install swcc==1.0.5;                         then return 1; fi
   if ! pip install scikit-learn==1.1.1;                 then return 1; fi
-  if ! pip install Python/DatasetUtilsPackage;          then return 1; fi # install the local GirderConnector code as a package
-  if ! pip install Python/DocumentationUtilsPackage;    then return 1; fi # install shapeworks auto-documentation as a package
-  if ! pip install Python/DataAugmentationUtilsPackage; then return 1; fi # install data augmentation code as a package
-  if ! pip install Python/DeepSSMUtilsPackage;          then return 1; fi # install DeepSSM code as a package
-  if ! pip install Python/ShapeCohortGenPackage;        then return 1; fi # install shape cohort generation code as a package
 
-
+  for package in DataAugmentationUtilsPackage DatasetUtilsPackage DeepSSMUtilsPackage DocumentationUtilsPackage ShapeCohortGenPackage shapeworks ; do
+    if [[ -e Python/${package}.tar.gz ]] ; then
+      if ! pip install Python/${package}.tar.gz;        then return 1; fi
+    else
+      if ! pip install Python/${package};               then return 1; fi
+    fi
+  done
   
   ./Installation/install_python_module.sh   # install python module
   ./Installation/conda_env_setup.sh         # install conda [de]activate scripts
