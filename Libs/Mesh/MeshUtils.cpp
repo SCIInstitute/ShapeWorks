@@ -1,22 +1,21 @@
 #include "MeshUtils.h"
-#include "ParticleSystem.h"
-#include "Utils.h"
-
-#include <vtkRenderWindow.h>
-#include <vtkRenderWindowInteractor.h>
-#include <vtkLookupTable.h>
-#include <vtkArrowSource.h>
-#include <vtkNamedColors.h>
-#include <vtkPolyDataMapper.h>
-#include <vtkRenderer.h>
-#include <vtkIterativeClosestPointTransform.h>
-#include <vtkTransformPolyDataFilter.h>
-#include <vtkLandmarkTransform.h>
-#include <vtkDoubleArray.h>
-#include <vtkCellData.h>
 
 #include <igl/matrix_to_list.h>
+#include <vtkArrowSource.h>
+#include <vtkCellData.h>
+#include <vtkDoubleArray.h>
+#include <vtkIterativeClosestPointTransform.h>
+#include <vtkLandmarkTransform.h>
+#include <vtkLookupTable.h>
+#include <vtkNamedColors.h>
+#include <vtkPolyDataMapper.h>
+#include <vtkRenderWindow.h>
+#include <vtkRenderWindowInteractor.h>
+#include <vtkRenderer.h>
+#include <vtkTransformPolyDataFilter.h>
 
+#include "ParticleSystemEvaluation.h"
+#include "Utils.h"
 
 //boundary loop extractor libraries
 #include <igl/boundary_loop.h>

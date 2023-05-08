@@ -369,7 +369,7 @@ int ParticleShapeStatistics::ReadPointFiles(const std::string& s) {
   if (elem) this->m_domainsPerShape = atoi(elem->GetText());
 
   // Read the point files.  Assumes all the same size.
-  itk::ParticlePositionReader::Pointer reader1 = itk::ParticlePositionReader::New();
+  ParticlePositionReader::Pointer reader1 = ParticlePositionReader::New();
   reader1->SetFileName(pointsfiles[0].c_str());
   reader1->Update();
   m_numSamples1 = 0;
@@ -427,7 +427,7 @@ int ParticleShapeStatistics::ReadPointFiles(const std::string& s) {
   for (unsigned int i = 0; i < m_numSamples; i++) {
     for (unsigned int k = 0; k < m_domainsPerShape; k++) {
       // read file
-      itk::ParticlePositionReader::Pointer reader = itk::ParticlePositionReader::New();
+      ParticlePositionReader::Pointer reader = ParticlePositionReader::New();
       reader->SetFileName(pointsfiles[i * m_domainsPerShape + k].c_str());
       reader->Update();
       unsigned int q = reader->GetOutput().size();
@@ -482,7 +482,7 @@ ParticleShapeStatistics::ParticleShapeStatistics(std::shared_ptr<Project> projec
     Eigen::VectorXd particles;
     for (auto& file : world_files) {
       Eigen::VectorXd domain_particles;
-      ParticleSystem::ReadParticleFile(file, domain_particles);
+      ParticleSystemEvaluation::ReadParticleFile(file, domain_particles);
       Eigen::VectorXd combined(particles.size() + domain_particles.size());
       combined << particles, domain_particles;
       particles = combined;
@@ -548,8 +548,8 @@ int ParticleShapeStatistics::DoPCA(std::vector<std::vector<Point>> global_pts, i
   return 0;
 }
 
-int ParticleShapeStatistics::DoPCA(ParticleSystem particleSystem, int domainsPerShape) {
-  Eigen::MatrixXd p = particleSystem.Particles();
+int ParticleShapeStatistics::DoPCA(ParticleSystemEvaluation ParticleSystemEvaluation, int domainsPerShape) {
+  Eigen::MatrixXd p = ParticleSystemEvaluation.Particles();
 
   std::vector<std::vector<Point>> particlePoints;
 
@@ -577,7 +577,7 @@ int ParticleShapeStatistics::ReloadPointFiles() {
   for (unsigned int i = 0; i < m_numSamples; i++) {
     for (unsigned int k = 0; k < m_domainsPerShape; k++) {
       // read file
-      itk::ParticlePositionReader::Pointer reader = itk::ParticlePositionReader::New();
+      ParticlePositionReader::Pointer reader = ParticlePositionReader::New();
       reader->SetFileName(m_pointsfiles[i * m_domainsPerShape + k].c_str());
       reader->Update();
       unsigned int q = reader->GetOutput().size();
@@ -838,17 +838,17 @@ int ParticleShapeStatistics::WriteCSVFile(const std::string& s) {
 }
 
 Eigen::VectorXd ParticleShapeStatistics::get_compactness(const std::function<void(float)>& progress_callback) const {
-  auto ps = shapeworks::ParticleSystem(this->m_Matrix);
+  auto ps = shapeworks::ParticleSystemEvaluation(this->m_Matrix);
   return shapeworks::ShapeEvaluation::ComputeFullCompactness(ps, progress_callback);
 }
 
 Eigen::VectorXd ParticleShapeStatistics::get_specificity(const std::function<void(float)>& progress_callback) const {
-  auto ps = shapeworks::ParticleSystem(this->m_Matrix);
+  auto ps = shapeworks::ParticleSystemEvaluation(this->m_Matrix);
   return shapeworks::ShapeEvaluation::ComputeFullSpecificity(ps, progress_callback);
 }
 
 Eigen::VectorXd ParticleShapeStatistics::get_generalization(const std::function<void(float)>& progress_callback) const {
-  auto ps = shapeworks::ParticleSystem(this->m_Matrix);
+  auto ps = shapeworks::ParticleSystemEvaluation(this->m_Matrix);
   return shapeworks::ShapeEvaluation::ComputeFullGeneralization(ps, progress_callback);
 }
 

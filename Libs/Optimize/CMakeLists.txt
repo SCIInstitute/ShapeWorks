@@ -1,4 +1,14 @@
-FILE(GLOB Optimize_sources *.cpp)
+FILE(GLOB Optimize_sources
+  *.cpp
+  Constraints/*.cpp
+  Container/*.cpp
+  Domain/*.cpp
+  Function/*.cpp
+  Matrix/*.cpp
+  Neighborhood/*.cpp
+  Utils/*.cpp
+  )
+
 FILE(GLOB Optimize_headers *.h *.txx)
 
 set(SW_PYTHON_LIBS pybind11::embed)
@@ -28,6 +38,21 @@ target_link_libraries(Optimize PUBLIC
   nlohmann_json::nlohmann_json
   ${SW_PYTHON_LIBS}
   )
+
+
+IF(USE_PCH)
+  target_precompile_headers(Optimize PRIVATE
+    "<vtkPolyData.h>"
+    "<itkImage.h>"
+    "<Eigen/Dense>"
+    "<Eigen/Sparse>"
+    "<Eigen/Core>"
+    "<map>"
+    "<itkCommand.h>"
+    "<openvdb/openvdb.h>"
+    )
+ENDIF(USE_PCH)
+
 
 # Create an interface library that will bring pybind11::embed along
 # This can't be used to create the shared libary for the Python API

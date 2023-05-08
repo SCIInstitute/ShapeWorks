@@ -40,6 +40,8 @@ call pip install bokeh==2.4.3
 call pip install seaborn==0.11.2
 call pip install scikit-learn==1.1.1
 call pip install pyvista==0.34.1
+call pip install open3d==0.17.0
+call pip install spm1d==0.4.2
 
 call pip install swcc==1.0.5
 
@@ -56,7 +58,7 @@ call .\Installation\install_python_module.bat
 call .\Installation\conda_env_setup.bat
 
 md %USERPROFILE%\.shapeworks
-python -c "import sys; print('\n'.join(sys.path))" > %USERPROFILE%\.shapeworks\python_path_6.4.txt
-python -c "import sys; print(sys.prefix)" > %USERPROFILE%\.shapeworks\python_home_6.4.txt
-echo %PATH% > %USERPROFILE%\.shapeworks\path_6.4.txt
+python -c "import sys; print('\n'.join(sys.path))" > %USERPROFILE%\.shapeworks\python_path_6.5.txt
+python -c "import sys; print(sys.prefix)" > %USERPROFILE%\.shapeworks\python_home_6.5.txt
+echo %PATH% > %USERPROFILE%\.shapeworks\path_6.5.txt
 call conda info

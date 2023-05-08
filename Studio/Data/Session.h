@@ -1,12 +1,12 @@
 #pragma once
 
-#include <StudioEnums.h>
-#include <MeshManager.h>
-#include <Data/Preferences.h>
 #include <Analyze/Particles.h>
-#include <Particles/ParticleSystem.h>
+#include <Data/Preferences.h>
+#include <MeshManager.h>
+#include <Particles/ParticleSystemEvaluation.h>
 #include <Project/Project.h>
 #include <Shapeworks.h>
+#include <StudioEnums.h>
 #include <Visualization/Viewer.h>
 #include <itkMatrixOffsetTransformBase.h>
 
@@ -97,7 +97,7 @@ class Session : public QObject, public QEnableSharedFromThis<Session> {
   //! Return the total number of particles for all domains, combined
   int get_num_particles();
 
-  ParticleSystem get_local_particle_system(int domain);
+  ParticleSystemEvaluation get_local_particle_system(int domain);
 
   void update_procrustes_transforms(std::vector<std::vector<std::vector<double>>> transforms);
 
