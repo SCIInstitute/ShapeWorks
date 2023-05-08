@@ -32,7 +32,7 @@ static typename TImageType::PixelType get_value(TImageType *image, double *point
 }
 
 void compute_thickness(Mesh &mesh, Image &image, Image &dt, double threshold, double min_dist, double max_dist) {
-  SW_LOG("Computing thickness with threshold {}", threshold);
+  SW_DEBUG("Computing thickness with threshold {}, min_dist {}, max_dist {}", threshold, min_dist, max_dist);
 
   // compute gradient image from distance transform
   auto gradient_filter = GradientFilterType::New();
@@ -61,6 +61,8 @@ void compute_thickness(Mesh &mesh, Image &image, Image &dt, double threshold, do
 
     Point3 intensity_start = point;
     bool intensity_found = false;
+
+    double last_distance = 0;
 
     bool should_stop = false;
     int steps = 0;
@@ -92,15 +94,29 @@ void compute_thickness(Mesh &mesh, Image &image, Image &dt, double threshold, do
         should_stop = true;
       }
 
+      // if we've passed the center and the DT is telling us to go back
+      if (current_distance < last_distance) {
+        should_stop = true;
+      }
+      last_distance = current_distance;
+
+      if (steps > 1000) {  // fail-safe
+        should_stop = true;
+      }
+
       if (!should_stop) {
         // evaluate gradient
         VectorPixelType gradient = interpolator->Evaluate(point);
 
         // normalize the gradient
         float norm = std::sqrt(gradient[0] * gradient[0] + gradient[1] * gradient[1] + gradient[2] * gradient[2]);
-        gradient[0] /= norm * min_spacing;
-        gradient[1] /= norm * min_spacing;
-        gradient[2] /= norm * min_spacing;
+        gradient[0] /= norm;
+        gradient[1] /= norm;
+        gradient[2] /= norm;
+
+        gradient[0] *= min_spacing * 0.1;
+        gradient[1] *= min_spacing * 0.1;
+        gradient[2] *= min_spacing * 0.1;
 
         // take step
         point[0] += gradient[0];
