@@ -4622,7 +4622,7 @@
 <td><strong><a href="namespaceshapeworks.html#using-projecthandle">ProjectHandle</a></strong></td>
 </tr>
 <tr>
-<td>template &lt;typename T &gt; <br>using Eigen::Matrix&lt; T, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor &gt;</td>
+<td>template &lt;typename T > <br>using Eigen::Matrix&lt; T, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor &gt;</td>
 <td><strong><a href="namespaceshapeworks.html#using-vnlmatrix">VnlMatrix</a></strong></td>
 </tr>
 <tr>
@@ -5109,7 +5109,7 @@
 <td><strong><a href="namespaceshapeworks.html#function-tocoord">toCoord</a></strong>(const Point &amp; p)</td>
 </tr>
 <tr>
-<td>template &lt;typename P &gt; <br>P</td>
+<td>template &lt;typename P > <br>P</td>
 <td><strong><a href="namespaceshapeworks.html#function-negate">negate</a></strong>(const P &amp; p)<br>Negation operator (ITK only has it for Vectors, but sometimes useful for Points)</td>
 </tr>
 <tr>
@@ -5117,7 +5117,7 @@
 <td><strong><a href="namespaceshapeworks.html#function-negate">negate</a></strong>(const Vector3 &amp; v)<br>Negate function for Vector (requires makeVector)</td>
 </tr>
 <tr>
-<td>template &lt;typename P &gt; <br>P</td>
+<td>template &lt;typename P > <br>P</td>
 <td><strong><a href="namespaceshapeworks.html#function-invertvalue">invertValue</a></strong>(const P &amp; p)<br>Inversion function for all but Vector.</td>
 </tr>
 <tr>
@@ -5209,7 +5209,7 @@
 <td></td>
 </tr>
 <tr>
-<td>template &lt;typename T &gt; <br>bool</td>
+<td>template &lt;typename T > <br>bool</td>
 <td><strong><a href="namespaceshapeworks.html#function-epsequal">epsEqual</a></strong>(T a, T b, T epsilon)</td>
 </tr>
 <tr>
@@ -5221,7 +5221,7 @@
 <td><strong><a href="namespaceshapeworks.html#function-epsequal">epsEqual</a></strong>(double a, double b, double eps)</td>
 </tr>
 <tr>
-<td>template &lt;typename T &gt; <br>T</td>
+<td>template &lt;typename T > <br>T</td>
 <td><strong><a href="namespaceshapeworks.html#function-clamp">clamp</a></strong>(T value, T min, T max)<br>Simple clamp operation until C++17.</td>
 </tr>
 <tr>
@@ -5253,7 +5253,7 @@
 <td><strong><a href="namespaceshapeworks.html#function-savereconstructions">SaveReconstructions</a></strong>(std::vector&lt; <a href="../Classes/structshapeworks_1_1Reconstruction.html">Reconstruction</a> &gt; &amp; reconstructions, const std::vector&lt; std::string &gt; &amp; srcPaths, const std::string &amp; saveTo)</td>
 </tr>
 <tr>
-<td>template &lt;typename T &gt; <br>std::string</td>
+<td>template &lt;typename T > <br>std::string</td>
 <td><strong><a href="namespaceshapeworks.html#function-variant-to-string">variant_to_string</a></strong>(T begin, T end)</td>
 </tr>
 <tr>
@@ -5297,27 +5297,27 @@
 <td><strong><a href="namespaceshapeworks.html#function-eigen44tovtktransform">eigen44ToVtkTransform</a></strong>(const Eigen::Matrix&lt; double, 4, 4, Eigen::RowMajor &gt; &amp; eigen_mat)</td>
 </tr>
 <tr>
-<td>template &lt;typename T ,unsigned NRows,unsigned NCols&gt; <br>Eigen::Matrix&lt; T, NRows, NCols, Eigen::RowMajor &gt;</td>
+<td>template &lt;typename T ,unsigned NRows,unsigned NCols> <br>Eigen::Matrix&lt; T, NRows, NCols, Eigen::RowMajor &gt;</td>
 <td><strong><a href="namespaceshapeworks.html#function-itktoeigen">itkToEigen</a></strong>(const itk::Matrix&lt; T, NRows, NCols &gt; &amp; itk_mat)<br>Conversion (by copy) of itk matrix to Eigen::Matrix.</td>
 </tr>
 <tr>
-<td>template &lt;typename T ,int NRows,int NCols&gt; <br>itk::Matrix&lt; T, NRows, NCols &gt;</td>
+<td>template &lt;typename T ,int NRows,int NCols> <br>itk::Matrix&lt; T, NRows, NCols &gt;</td>
 <td><strong><a href="namespaceshapeworks.html#function-eigentoitk">eigenToItk</a></strong>(const Eigen::Matrix&lt; T, NRows, NCols, Eigen::RowMajor &gt; &amp; eigen_mat)<br>Conversion (by copy) of Eigen::Matrix to itk (i.e., vnl) matrix.</td>
 </tr>
 <tr>
-<td>template &lt;typename T &gt; <br>Eigen::Map&lt; VnlMatrix&lt; T &gt; &gt;</td>
+<td>template &lt;typename T > <br>Eigen::Map&lt; VnlMatrix&lt; T &gt; &gt;</td>
 <td><strong><a href="namespaceshapeworks.html#function-vnltoeigen">vnlToEigen</a></strong>(const vnl_matrix&lt; T &gt; &amp; vnl_mat)<br>Wrap vnl matrix data to Eigen Matrix.</td>
 </tr>
 <tr>
-<td>template &lt;int NRows,int NCols,typename T &gt; <br>Eigen::Map&lt; Eigen::Matrix&lt; T, NRows, NCols, Eigen::RowMajor &gt; &gt;</td>
+<td>template &lt;int NRows,int NCols,typename T > <br>Eigen::Map&lt; Eigen::Matrix&lt; T, NRows, NCols, Eigen::RowMajor &gt; &gt;</td>
 <td><strong><a href="namespaceshapeworks.html#function-wrapdatawitheigen">wrapDataWithEigen</a></strong>(T * data)</td>
 </tr>
 <tr>
-<td>template &lt;typename T &gt; <br>Eigen::Map&lt; Eigen::Matrix&lt; T, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor &gt; &gt;</td>
+<td>template &lt;typename T > <br>Eigen::Map&lt; Eigen::Matrix&lt; T, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor &gt; &gt;</td>
 <td><strong><a href="namespaceshapeworks.html#function-wrapdatawitheigen">wrapDataWithEigen</a></strong>(T * data, size_t nrows, size_t ncols)<br>Wrap a data pointer of the specified size with Eigen::Matrix.</td>
 </tr>
 <tr>
-<td>template &lt;unsigned NRows,unsigned NCols,typename T &gt; <br>itk::Matrix&lt; T, NRows, NCols &gt;</td>
+<td>template &lt;unsigned NRows,unsigned NCols,typename T > <br>itk::Matrix&lt; T, NRows, NCols &gt;</td>
 <td><strong><a href="namespaceshapeworks.html#function-wrapdatawithitk">wrapDataWithItk</a></strong>(T * data)</td>
 </tr>
 <tr>
