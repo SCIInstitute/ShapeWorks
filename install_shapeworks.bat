@@ -55,8 +55,8 @@ REM install the shapeworks python module and conda [de]activate scripts
 call .\Installation\install_python_module.bat
 call .\Installation\conda_env_setup.bat
 
-md %USERPROFILE%\.shapeworks
-python -c "import sys; print('\n'.join(sys.path))" > %USERPROFILE%\.shapeworks\python_path_6.5.txt
-python -c "import sys; print(sys.prefix)" > %USERPROFILE%\.shapeworks\python_home_6.5.txt
-echo %PATH% > %USERPROFILE%\.shapeworks\path_6.5.txt
+md "%USERPROFILE%\.shapeworks"
+python -c "import sys; print('\n'.join(sys.path))" > "%USERPROFILE%\.shapeworks\python_path_6.5.txt"
+python -c "import sys; print(sys.prefix)" > "%USERPROFILE%\.shapeworks\python_home_6.5.txt"
+echo %PATH% > "%USERPROFILE%\.shapeworks\path_6.5.txt"
 call conda info
