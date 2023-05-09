@@ -8,7 +8,10 @@ The analyze module can be viewed after a successful optimization job. There are 
 
 ## View PCA
 
-The View PCA panel shows reconstructed shapes (surface meshes) along PCA modes of variation. Modes of variations are shape parameters learned/discovered from your data that describes shape variations. You can control the location along the PCA mode with the Standard Deviation slider.  
+The View PCA panel shows reconstructed shapes (surface meshes) along PCA modes of variation. Modes of variations are shape parameters learned/discovered from your data that describes shape variations. You can control the location along the PCA mode with the Standard Deviation slider and/or the animate option.
+
+The animate option allows for an automatic adjustment of the Standard Deviation slider within a mode of variation. Upon selecting the animate option, the comparison vectors and colormap for each shape in the mode will be calculated. This will only occur the first time that the option is selected for a given mode.
+
 Values displayed:
 
 `Lambda` - This shows the PCA loading of current position of the slider.  The middle of the slider, at the mean value, will be 0.  The extent of lambda is defined by the number of standard deviations of the slider as described above.  At standard deviation of 1.0, it will be the square root of the mode's eigenvalue.
