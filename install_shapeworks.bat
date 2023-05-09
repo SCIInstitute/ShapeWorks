@@ -50,6 +50,8 @@ call pip install Python/DocumentationUtilsPackage.tar.gz
 call pip install Python/DataAugmentationUtilsPackage.tar.gz
 call pip install Python/DeepSSMUtilsPackage.tar.gz
 call pip install Python/ShapeCohortGenPackage.tar.gz
+call pip install Python/shapeworks.tar.gz
+
 
 REM install the shapeworks python module and conda [de]activate scripts
 call .\Installation\install_python_module.bat
