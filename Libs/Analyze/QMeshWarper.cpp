@@ -10,7 +10,7 @@ QMeshWarper::QMeshWarper(QObject* parent) : QObject(parent)
 void QMeshWarper::update_progress(float p)
 {
   this->current_progress_ = p;
-  emit progress();
+  Q_EMIT progress();
 }
 
 //---------------------------------------------------------------------------

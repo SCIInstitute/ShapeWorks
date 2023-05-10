@@ -1,6 +1,6 @@
 #include "ProjectUtils.h"
 
-#include <Libs/Mesh/MeshUtils.h>
+#include <Mesh/MeshUtils.h>
 #include <Project.h>
 #include <StringUtils.h>
 
@@ -11,7 +11,7 @@ using StringMap = ProjectUtils::StringMap;
 
 using namespace project::prefixes;
 
-static StringList input_prefixes{SEGMENTATION_PREFIX, SHAPE_PREFIX, MESH_PREFIX, CONTOUR_PREFIX};
+static const StringList input_prefixes{SEGMENTATION_PREFIX, SHAPE_PREFIX, MESH_PREFIX, CONTOUR_PREFIX};
 
 //---------------------------------------------------------------------------
 vtkSmartPointer<vtkTransform> shapeworks::ProjectUtils::convert_transform(std::vector<double> list) {
@@ -140,7 +140,7 @@ StringList ProjectUtils::get_values(StringList prefixes, StringList domain_names
     for (auto& [key, value] : key_map) {
       for (const auto& prefix : prefixes) {
         if (key == prefix + domain) {
-          values.push_back(value);
+          values.push_back(StringUtils::replace_string(value, "\\", "/"));
         }
       }
     }
@@ -275,11 +275,11 @@ static void assign_keys(StringMap& j, std::vector<std::string> prefixes, std::ve
   }
   assert(!domains.empty());
   if (domains.empty()) {
-    throw std::runtime_error("Empty domains");
+    throw std::invalid_argument("Empty domains");
   }
   auto prefix = prefixes[0];
   if (filenames.size() != domains.size()) {
-    throw std::runtime_error(prefix + " filenames and number of domains mismatch (" +
+    throw std::invalid_argument(prefix + " filenames and number of domains mismatch (" +
                              std::to_string(filenames.size()) + " vs " + std::to_string(domains.size()) + ")");
   }
   for (int i = 0; i < domains.size(); i++) {
@@ -299,7 +299,7 @@ static void assign_transforms(StringMap& j, std::string prefix, std::vector<std:
     return;
   }
   if (transforms.size() != domains.size() && transforms.size() != domains.size() + 1) {
-    throw std::runtime_error(prefix + " filenames and number of domains mismatch (" +
+    throw std::invalid_argument(prefix + " filenames and number of domains mismatch (" +
                              std::to_string(transforms.size()) + " vs " + std::to_string(domains.size()) + ")");
   }
   for (int i = 0; i < transforms.size(); i++) {

@@ -1,9 +1,9 @@
 #pragma once
 
-#include "ImageUtils.h"
+#include <Image/ImageUtils.h>
 #include "Shapeworks.h"
 
-class vtkCellLocator;
+class vtkStaticCellLocator;
 class vtkKdTreePointLocator;
 
 namespace shapeworks {
@@ -93,8 +93,11 @@ class Mesh {
   /// applies the given transformation to the mesh
   Mesh& applyTransform(const MeshTransform transform);
 
+  /// applies the given rotation to the given axis 
+  Mesh& rotate(const double angle, const Axis axis);
+
   /// finds holes in a mesh and closes them
-  Mesh& fillHoles();
+  Mesh& fillHoles(double hole_size = 1000.0);
 
   /// clean mesh
   Mesh& clean();
@@ -117,6 +120,15 @@ class Mesh {
   /// fix element winding of mesh
   Mesh& fixElement();
 
+  /// Attempt to fix non-manifold edges
+  Mesh& fixNonManifold();
+
+  /// Detect if mesh contain non-manifold edges
+  bool detectNonManifold();
+
+  /// Detect if mesh is triangular;
+  bool detectTriangular();
+
   /// Computes distance from each vertex to closest cell or point in target
   /// mesh, specified as PointToCell (default) or PointToPoint. Returns Fields
   /// containing distance to target and ids of the associated cells or points.
@@ -130,10 +142,9 @@ class Mesh {
 
   /// Returns closest point on this mesh to the given point in space.
   /// In addition, returns by reference:
-  /// - whether the point in space is outside the mesh or not
   /// - the distance of the point in space from this mesh
   /// - the face_id containing the closest point
-  Point3 closestPoint(const Point3 point, bool& outside, double& distance, vtkIdType& face_id) const;
+  Point3 closestPoint(const Point3 point, double& distance, vtkIdType& face_id) const;
 
   /// returns closest point id in this mesh to the given point in space
   int closestPointId(const Point3 point) const;
@@ -234,22 +245,18 @@ class Mesh {
   //! Return supported file types
   static std::vector<std::string> getSupportedTypes() { return {"vtk", "vtp", "ply", "stl", "obj"}; }
 
-  /// Prepares the mesh for FFCs by setting scalar and vector fields
-  bool prepareFFCFields(std::vector<std::vector<Eigen::Vector3d>> boundaries, Eigen::Vector3d query,
-                        bool onlyGenerateInOut = false);
-
-  /// Gets values for FFCs
+  //! Gets values for FFCs
   double getFFCValue(Eigen::Vector3d query) const;
 
-  /// Gets gradients for FFCs
+  //! Gets gradients for FFCs
   Eigen::Vector3d getFFCGradient(Eigen::Vector3d query) const;
 
-  /// Formats mesh into an IGL format
+  //! Formats mesh into an IGL format
   MeshPoints getIGLMesh(Eigen::MatrixXd& V, Eigen::MatrixXi& F)
       const;  // Copied directly from VtkMeshWrapper. this->poly_data_ becomes this->mesh. // WARNING: Copied directly
               // from Meshwrapper. TODO: When refactoring, take this into account.
 
-  /// Clips the mesh according to a field value
+  //! Clips the mesh according to a field value
   vtkSmartPointer<vtkPolyData> clipByField(const std::string& name, double value);
 
  private:
@@ -273,27 +280,13 @@ class Mesh {
   void invalidateLocators() const;
 
   /// Cell locator for functions that query for cells repeatedly
-  // TODO: use vtkStaticCellLocator when vtk is upgraded to version 9
-  mutable vtkSmartPointer<vtkCellLocator> cellLocator;
+  mutable vtkSmartPointer<vtkStaticCellLocator> cellLocator;
   void updateCellLocator() const;
 
   /// Point locator for functions that query for points repeatedly
   mutable vtkSmartPointer<vtkKdTreePointLocator> pointLocator;
   void updatePointLocator() const;
 
-  /// Computes the gradient vector field for FFCs w.r.t the boundary
-  std::vector<Eigen::Matrix3d> setGradientFieldForFFCs(vtkSmartPointer<vtkDoubleArray> absvalues, Eigen::MatrixXd V,
-                                                       Eigen::MatrixXi F);
-
-  /// Computes scalar distance field w.r.t. the boundary
-  vtkSmartPointer<vtkDoubleArray> setDistanceToBoundaryValueFieldForFFCs(
-      vtkSmartPointer<vtkDoubleArray> values, MeshPoints points, std::vector<size_t> boundaryVerts,
-      vtkSmartPointer<vtkDoubleArray> inout, Eigen::MatrixXd V,
-      Eigen::MatrixXi F);  // fixme: sets value, returns absvalues, not sure why
-
-  /// Computes whether point is inside or outside the boundary
-  vtkSmartPointer<vtkDoubleArray> computeInOutForFFCs(Eigen::Vector3d query,
-                                                      MeshType halfmesh);  // similar issues to above
 
   /// Computes baricentric coordinates given a query point and a face number
   Eigen::Vector3d computeBarycentricCoordinates(const Eigen::Vector3d& pt, int face)

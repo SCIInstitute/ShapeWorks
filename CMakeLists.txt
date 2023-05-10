@@ -1,13 +1,13 @@
-cmake_minimum_required(VERSION 3.11)
+cmake_minimum_required(VERSION 3.20)
 
 ##########################################
 # SHAPEWORKS VERSION
 ###########################################
 SET(SHAPEWORKS_MAJOR_VERSION 6 CACHE INTERNAL "Major version number" FORCE)
-SET(SHAPEWORKS_MINOR_VERSION 4 CACHE INTERNAL "Minor version number" FORCE)
+SET(SHAPEWORKS_MINOR_VERSION 5 CACHE INTERNAL "Minor version number" FORCE)
 SET(SHAPEWORKS_PATCH_VERSION 0 CACHE INTERNAL "Patch version number" FORCE)
-SET(SHAPEWORKS_VERSION_STRING "6.4.0-dev")
-
+SET(SHAPEWORKS_VERSION_STRING "6.5.0-dev")
+SET(SHAPEWORKS_VERSION "${SHAPEWORKS_MAJOR_VERSION}.${SHAPEWORKS_MINOR_VERSION}.${SHAPEWORKS_PATCH_VERSION}")
 
 # First, check that files were checked out properly using git-lfs
 file(MD5 "${CMAKE_CURRENT_SOURCE_DIR}/Testing/data/icp_baseline.nrrd" HASH)
@@ -17,28 +17,35 @@ endif()
 
 set(CMAKE_CXX_STANDARD 17)             # available options are [98, 11, 14, 17. 20]
 
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/CMake")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 find_package(Python3 3.9 EXACT REQUIRED COMPONENTS Interpreter Development)
 
 if (NOT APPLE)
   option(USE_OPENMP      "Build using OpenMP" ON)
 endif()
-option(Build_Studio    "Build studio"       ON)
 option(BUILD_TESTS     "Build tests"        ON)
 
-if ("${Build_Studio}")
-  set(SHAPEWORKS_GUI ON)
-  set(SHAPEWORKS_QT_REQUIRED REQUIRED)
-else()
-  set(SHAPEWORKS_GUI OFF)
-endif()
-message(STATUS "SHAPEWORKS_GUI: ${SHAPEWORKS_GUI}")
+option(USE_PCH "Use pre-compiled headers" OFF)
+
+option(USE_ORIGIN_RPATH "Use $ORIGIN in rpath, for deployment" OFF)
+
+SET(GA_MEASUREMENT_ID "" CACHE STRING "Google Analytics Measurement ID")
+SET(GA_API_SECRET "" CACHE STRING "Google Analytics API Secret")
+
+set(SHAPEWORKS_QT_REQUIRED REQUIRED)
 
 set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/install" CACHE STRING "Install path prefix, prepended onto install directories.")
 
 include(DefaultBuildType)
 
 project(ShapeWorks)
+
+
+### vtk
+find_package(VTK 9.1.0)
+if (NOT VTK_FOUND)
+  message(FATAL_ERROR "VTK is required, but could not be found! Make sure path to VTKConfig.cmake is included in CMAKE_PREFIX_PATH")
+endif()
 
 # OpenVDB only provides a module file (FindOpenVDB.cmake), so we use OpenVDB_DIR to find it
 if (NOT DEFINED OpenVDB_DIR OR "${OpenVDB_DIR}" STREQUAL "OpenVDB_DIR-NOTFOUND")
@@ -62,7 +69,7 @@ endif()
 if(LINUX)
   # We need RPATH rather than RUNPATH since RUNPATH
   # though recommended, is not used for transitive dependencies
-  SET(CMAKE_EXE_LINKER_FLAGS "-Wl,--disable-new-dtags")
+  SET(CMAKE_EXE_LINKER_FLAGS "-Wl,--disable-new-dtags ${CMAKE_EXE_LINKER_FLAGS}")
   SET(CMAKE_SHARED_LINKER_FLAGS "-Wl,--disable-new-dtags")
 endif(LINUX)
 
@@ -84,50 +91,42 @@ if(MSVC)
 endif(MSVC)
 
 # GUI
-if (SHAPEWORKS_GUI)
-    
-  find_package(Qt5 COMPONENTS Core Widgets OpenGL Gui Sql Xml Svg PrintSupport ${SHAPEWORKS_QT_REQUIRED})
-  if (Qt5Core_FOUND AND Qt5Widgets_FOUND AND Qt5OpenGL_FOUND AND Qt5Gui_FOUND AND Qt5Sql_FOUND)
-    set(SHAPEWORKS_QT_FOUND 1)
-    if (Qt5Widgets_VERSION VERSION_LESS 5.15.4)
-        message(FATAL_ERROR "Minimum supported Qt5 version is 5.15.4!  Add the shapeworks conda env's bin dir to the start of $PATH")
-    endif()
-  else()
-    set(SHAPEWORKS_QT_FOUND 0)
+find_package(Qt5 COMPONENTS Core Widgets OpenGL Gui Sql Xml Svg PrintSupport ${SHAPEWORKS_QT_REQUIRED})
+if (Qt5Core_FOUND AND Qt5Widgets_FOUND AND Qt5OpenGL_FOUND AND Qt5Gui_FOUND AND Qt5Sql_FOUND)
+  set(SHAPEWORKS_QT_FOUND 1)
+  if (Qt5Widgets_VERSION VERSION_LESS 5.15.4)
+      message(FATAL_ERROR "Minimum supported Qt5 version is 5.15.4!  Add the shapeworks conda env's bin dir to the start of $PATH")
   endif()
-  
-  find_package(JKQTCommonSharedLib REQUIRED)
-  find_package(JKQTMathTextSharedLib REQUIRED)
-  find_package(JKQTPlotterSharedLib REQUIRED)
-
-  # headers (TODO: move to shapeworks gui targets' includes)
-  include_directories(${Qt5Widgets_INCLUDE_DIRS})
-  include_directories(${Qt5OpenGL_INCLUDE_DIRS})
-  include_directories(${Qt5Core_INCLUDE_DIRS})
-  include_directories(${Qt5Gui_INCLUDE_DIRS})
-  include_directories(${Qt5Sql_INCLUDE_DIRS})
-  
-  # defines (TODO: move to shapeworks gui targets' includes)
-  add_definitions(${Qt5Widgets_DEFINITIONS})
-  add_definitions(${Qt5OpenGL_DEFINITIONS})
-  add_definitions(${Qt5Core_DEFINITIONS})
-  add_definitions(${Qt5Gui_DEFINITIONS})
-  add_definitions(${Qt5Sql_DEFINITIONS})
-  
-  if (WIN32)
-    cmake_policy(SET CMP0020 NEW)   # link to qtmain.lib on Windows
-  else()
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-write-strings")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
-  endif()
+else()
+  set(SHAPEWORKS_QT_FOUND 0)
 endif()
+  
+find_package(JKQTCommonSharedLib REQUIRED)
+find_package(JKQTMathTextSharedLib REQUIRED)
+find_package(JKQTPlotterSharedLib REQUIRED)
 
-### vtk
-find_package(VTK 8.2.0)
-if (NOT VTK_FOUND)
-  message(FATAL_ERROR "VTK is required, but could not be found! Make sure path to VTKConfig.cmake is included in CMAKE_PREFIX_PATH")
+# headers (TODO: move to shapeworks gui targets' includes)
+include_directories(${Qt5Widgets_INCLUDE_DIRS})
+include_directories(${Qt5OpenGL_INCLUDE_DIRS})
+include_directories(${Qt5Core_INCLUDE_DIRS})
+include_directories(${Qt5Gui_INCLUDE_DIRS})
+include_directories(${Qt5Sql_INCLUDE_DIRS})
+  
+# defines (TODO: move to shapeworks gui targets' includes)
+add_definitions(${Qt5Widgets_DEFINITIONS})
+add_definitions(${Qt5OpenGL_DEFINITIONS})
+add_definitions(${Qt5Core_DEFINITIONS})
+add_definitions(${Qt5Gui_DEFINITIONS})
+add_definitions(${Qt5Sql_DEFINITIONS})
+
+add_definitions(-DQT_NO_KEYWORDS)
+  
+if (WIN32)
+  cmake_policy(SET CMP0020 NEW)   # link to qtmain.lib on Windows
+else()
+  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-write-strings")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
 endif()
-include(${VTK_USE_FILE})
 
 ### Eigen
 find_package (Eigen3 3.3 REQUIRED NO_MODULE)
@@ -160,13 +159,8 @@ find_package(nlohmann_json 3.10.5 REQUIRED)
 ### spdlog library
 find_package(spdlog 1.10.0 REQUIRED)
 
-### Geometry central include
-if (NOT DEFINED GEOMETRY_CENTRAL_DIR)
-  set(GEOMETRY_CENTRAL_DIR ${CMAKE_PREFIX_PATH}/geometry-central/)
-endif()
-MESSAGE(status "GEOMETRY_CENTRAL_DIR: ${GEOMETRY_CENTRAL_DIR}")
-# we need to explicitly specify the output folder if adding a subdirectory outside the current working dir.
-add_subdirectory(${GEOMETRY_CENTRAL_DIR} ./geometry-central-build/)
+### Geometry Central
+find_package (GEOMETRYCENTRAL REQUIRED)
 
 if(USE_OPENMP)
   find_package(OpenMP REQUIRED)
@@ -175,50 +169,60 @@ if(USE_OPENMP)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS} -fPIC")
 endif(USE_OPENMP)
 
+SET(CMAKE_INSTALL_LIBDIR lib)
+
 if(APPLE)
-  set(CMAKE_INSTALL_RPATH "@executable_path/../lib")
+  set(CMAKE_INSTALL_RPATH "@executable_path/ShapeWorksStudio.app/Contents/Frameworks")
 else()
-  set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib")
+  if(USE_ORIGIN_RPATH)
+    set(CMAKE_INSTALL_RPATH "$ORIGIN/../lib")
+  else()
+    set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}")
+  endif()
+    
+  set(CMAKE_SKIP_BUILD_RPATH FALSE)
+  set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
+  set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 endif()
 
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/Libs")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/Libs/Common")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/ExternalLibs/optparse")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/ExternalLibs/robin_hood")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/ExternalLibs/ordered_map")
 
-SET(PYBIND11_PYTHON_VERSION 3.7)
+FILE(GLOB ORDERED_MAP_INCLUDES "${CMAKE_CURRENT_SOURCE_DIR}/ExternalLibs/ordered_map/*.h")
+INSTALL(FILES ${ORDERED_MAP_INCLUDES}
+  DESTINATION include)
+
+SET(PYBIND11_PYTHON_VERSION 3.9)
 find_package(pybind11 2.5.0 REQUIRED)
 
 add_subdirectory(ExternalLibs)
 add_subdirectory(Libs)
 add_subdirectory(Applications)
+add_subdirectory(Studio)
 
-if(Build_Studio)
-  add_subdirectory(Studio/src)
-endif(Build_Studio)
-
-if (SHAPEWORKS_GUI)
-  foreach(plugin ${Qt5Network_PLUGINS})
-    get_target_property(_loc ${plugin} LOCATION)
-    message("Plugin ${plugin} is at location ${_loc}")
-  endforeach()
+foreach(plugin ${Qt5Network_PLUGINS})
+  get_target_property(_loc ${plugin} LOCATION)
+  message("Plugin ${plugin} is at location ${_loc}")
+endforeach()
   
-  get_filename_component(Qt_BIN_DIR "${QT_QMAKE_EXECUTABLE}" PATH)
-  get_filename_component(Qt_PREFIX_DIR "${Qt_BIN_DIR}" PATH)
-  get_filename_component(QT_LOC Qt5::Widgets DIRECTORY)
+get_filename_component(Qt_BIN_DIR "${QT_QMAKE_EXECUTABLE}" PATH)
+get_filename_component(Qt_PREFIX_DIR "${Qt_BIN_DIR}" PATH)
+get_filename_component(QT_LOC Qt5::Widgets DIRECTORY)
   
-  set(qtlib "Widgets")
+set(qtlib "Widgets")
   
-  get_filename_component(qt_dlls_dir "${QtWidgets_location}" PATH)
-  get_filename_component(qt_dlls_dir "${qt_dlls_dir}" PATH)
+get_filename_component(qt_dlls_dir "${QtWidgets_location}" PATH)
+get_filename_component(qt_dlls_dir "${qt_dlls_dir}" PATH)
   
-  get_target_property(QT5_WIDGETSLIBRARY Qt5::Widgets LOCATION)
-  get_filename_component(QT5_WIDGETSLIBRARYPATH ${QT5_WIDGETSLIBRARY} PATH)
-  MESSAGE(STATUS "QT widget: ${QT5_WIDGETSLIBRARYPATH}")
-  set(DIRS "${CMAKE_INSTALL_PREFIX}/lib")
-  list(APPEND DIRS "${QT5_WIDGETSLIBRARYPATH}")
-endif()
+get_target_property(QT5_WIDGETSLIBRARY Qt5::Widgets LOCATION)
+get_filename_component(QT5_WIDGETSLIBRARYPATH ${QT5_WIDGETSLIBRARY} PATH)
+MESSAGE(STATUS "QT widget: ${QT5_WIDGETSLIBRARYPATH}")
+set(DIRS "${CMAKE_INSTALL_PREFIX}/lib")
+list(APPEND DIRS "${QT5_WIDGETSLIBRARYPATH}")
 
 #----------------------------------------------------------------------------
 if(BUILD_TESTS)
@@ -248,3 +252,41 @@ MESSAGE(STATUS "CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
 MESSAGE(STATUS "CMAKE_EXE_LINKER_FLAGS: ${CMAKE_EXE_LINKER_FLAGS}")
 message(STATUS "CMAKE_SHARED_LINKER_FLAGS: ${CMAKE_SHARED_LINKER_FLAGS}")
 
+############################################################
+# Below to handle installation and use as external library
+############################################################
+
+set(SHAPEWORKS_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+set(SHAPEWORKS_LIBS Project)
+set(SHAPEWORKS_CMAKE_CFG_DEST_DIR ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
+
+install(TARGETS igl igl_common EXPORT ShapeWorksTargets
+  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  RUNTIME DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  PUBLIC_HEADER DESTINATION include
+  )
+
+install(EXPORT ShapeWorksTargets
+  FILE ShapeWorksTargets.cmake
+  NAMESPACE shapeworks::
+  DESTINATION ${SHAPEWORKS_CMAKE_CFG_DEST_DIR})
+
+include(CMakePackageConfigHelpers)
+
+configure_package_config_file(cmake/ShapeWorksConfig.cmake.in
+  ${CMAKE_CURRENT_BINARY_DIR}/ShapeWorksConfig.cmake
+  INSTALL_DESTINATION ${SHAPEWORKS_CMAKE_CFG_DEST_DIR}
+  PATH_VARS SHAPEWORKS_INCLUDE_DIR)
+
+write_basic_package_version_file(ShapeWorksConfigVersion.cmake
+  VERSION ${SHAPEWORKS_VERSION}
+  COMPATIBILITY ExactVersion)
+
+install(FILES
+  ${CMAKE_CURRENT_BINARY_DIR}/ShapeWorksConfig.cmake
+  ${CMAKE_CURRENT_BINARY_DIR}/ShapeWorksConfigVersion.cmake
+  ${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindXLNT.cmake
+  ${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindLIBIGL.cmake
+  ${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindACVD.cmake
+  DESTINATION ${SHAPEWORKS_CMAKE_CFG_DEST_DIR})

@@ -22,14 +22,14 @@ random.seed(4)
 
 def Run_Pipeline(args):
     ######################################################################################
-    print("\nStep 1. Extract Data")
+    print("\nStep 1. Acquire Data")
     """
-    Step 1: EXTRACT DATA
+    Step 1: ACQUIRE DATA
     We define dataset_name which determines which dataset to download from
     the portal and the directory to save output from the use case in.
     This data is comprised of femur meshes and corresponding hip CT scans.
     """
-    dataset_name = "femur"
+    dataset_name =  "deep_ssm_femur"
     output_directory = os.getcwd() + "/Output/deep_ssm/"
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
@@ -39,7 +39,9 @@ def Run_Pipeline(args):
         os.environ['OMP_NUM_THREADS'] = "1"
     # If running a tiny_test, then download subset of the data
     if args.tiny_test:
-        sw.data.download_subset(args.use_case, dataset_name, output_directory)
+        dataset_name =  "deep_ssm_femur_tiny_test"
+        sw.download_dataset(dataset_name, output_directory)
+        dataset_name = "femur"
         mesh_files = sorted(glob.glob(output_directory +
                             dataset_name + "/meshes/*.ply"))[:5]
         image_files = sorted(glob.glob(output_directory +
@@ -47,7 +49,8 @@ def Run_Pipeline(args):
         plane_files = sorted(glob.glob(output_directory +
                             dataset_name + "/constraints/*.json"))[:5]
     else:
-        sw.data.download_and_unzip_dataset(dataset_name, output_directory)
+        sw.download_dataset(dataset_name, output_directory)
+        dataset_name = "femur"
         mesh_files = sorted(glob.glob(output_directory +
                             dataset_name + "/meshes/*.ply"))
         image_files = sorted(glob.glob(output_directory + 
@@ -215,25 +218,20 @@ def Run_Pipeline(args):
     parameter_dictionary = {
         "number_of_particles" : 512,
         "use_normals": 0,
-        "normal_weight": 10.0,
+        "normals_strength": 10.0,
         "checkpointing_interval" : 200,
         "keep_checkpoints" : 0,
         "iterations_per_split" : 1500,
         "optimization_iterations" : 1000,
         "starting_regularization" : 200,
         "ending_regularization" : 0.1,
-        "recompute_regularization_interval" : 2,
-        "domains_per_shape" : 1,
         "relative_weighting" : 10,
         "initial_relative_weighting" : 0.1,
         "procrustes" : 1,
         "procrustes_interval" : 1,
         "procrustes_scaling" : 1,
         "save_init_splits" : 1,
-        "debug_projection" : 0,
         "verbosity" : 0,
-        "use_statistics_in_init" : 0,
-        "adaptivity_mode": 0
     } 
     # If running a tiny test, reduce some parameters
     if args.tiny_test:
@@ -242,17 +240,16 @@ def Run_Pipeline(args):
     # Run multiscale optimization unless single scale is specified
     if not args.use_single_scale:
         parameter_dictionary["multiscale"] = 1
-        parameter_dictionary["use_shape_statistics_after"] = 64
+        parameter_dictionary["multiscale_particles"] = 64
 
     for key in parameter_dictionary:
         parameters.set(key,sw.Variant([parameter_dictionary[key]]))
-    parameters.set("domain_type",sw.Variant('mesh'))
     project.set_parameters("optimize",parameters)
     spreadsheet_file = data_dir + "train.xlsx"
     project.save(spreadsheet_file)
 
     # Run optimization
-    optimizeCmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
+    optimizeCmd = ('shapeworks optimize --progress --name ' + spreadsheet_file).split()
     subprocess.check_call(optimizeCmd)
 
     print("To analyze train shape model, call:")
@@ -536,7 +533,7 @@ def Run_Pipeline(args):
     project.save(spreadsheet_file)
 
     # Run optimization
-    optimize_cmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
+    optimize_cmd = ('shapeworks optimize --progress --name ' + spreadsheet_file).split()
     subprocess.check_call(optimize_cmd)
 
     print("To analyze validation shape model, call:")

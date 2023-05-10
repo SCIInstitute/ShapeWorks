@@ -203,7 +203,6 @@ Required:
 ```
 Optional:
 ```
-  -D Build_Studio=[OFF|ON]             default: ON
   -D BUILD_TESTS=[OFF|ON]              default: ON
   -D CMAKE_INSTALL_PREFIX=<path>       default: ./install
   -D CMAKE_BUILD_TYPE=[Debug|Release]  

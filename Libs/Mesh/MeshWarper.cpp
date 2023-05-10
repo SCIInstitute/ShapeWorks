@@ -1,5 +1,5 @@
-#include <Libs/Mesh/Mesh.h>
-#include <Libs/Mesh/MeshWarper.h>
+#include <Mesh/Mesh.h>
+#include <Mesh/MeshWarper.h>
 #include <igl/biharmonic_coordinates.h>
 #include <igl/point_mesh_squared_distance.h>
 #include <igl/remove_unreferenced.h>
@@ -10,6 +10,8 @@
 #include <vtkPointLocator.h>
 #include <vtkPolyDataConnectivityFilter.h>
 #include <vtkTriangleFilter.h>
+
+#include <Logging.h>
 
 #include <set>
 
@@ -28,6 +30,13 @@ vtkSmartPointer<vtkPolyData> MeshWarper::build_mesh(const Eigen::MatrixXd& parti
     return nullptr;
   }
 
+  if (particles.size() != reference_particles_.size()) {
+    // This may be a stale mesh warper
+    // don't return nullptr or the user will get an error
+    auto blank = vtkSmartPointer<vtkPolyData>::New();
+    return blank;
+  }
+
   auto points = this->remove_bad_particles(particles);
 
   vtkSmartPointer<vtkPolyData> poly_data = MeshWarper::warp_mesh(points);
@@ -36,7 +45,7 @@ vtkSmartPointer<vtkPolyData> MeshWarper::build_mesh(const Eigen::MatrixXd& parti
     double* p = poly_data->GetPoint(i);
     if (std::isnan(p[0]) || std::isnan(p[1]) || std::isnan(p[2])) {
       this->warp_available_ = false;  // failed
-      std::cerr << "Reconstruction Failed\n";
+      SW_ERROR("Reconstruction failed. NaN detected in mesh.");
       return nullptr;
     }
   }
@@ -96,10 +105,15 @@ void MeshWarper::add_particle_vertices(Eigen::MatrixXd& vertices) {
   bool not_all_done = true;
   float count = 0;
 
+  if (!Mesh(reference_mesh_).detectTriangular()) {
+    throw std::runtime_error("Mesh is not fully triangular");
+  }
+
   // Iteratively process the mesh: Find all new vertices that can be added without conflicting
   // with each other.  If multiple particles (new vertices) land on the same triangle, the we will need
   // multiple passes since we will have to make the changes and rebuild the locator.
   while (not_all_done) {
+
     not_all_done = false;
 
     this->reference_mesh_->BuildLinks();
@@ -353,6 +367,7 @@ void MeshWarper::split_cell_on_edge(int cell_id, int new_vertex, int v0, int v1,
 vtkSmartPointer<vtkPolyData> MeshWarper::prep_mesh(vtkSmartPointer<vtkPolyData> mesh) {
   vtkSmartPointer<vtkTriangleFilter> triangle_filter = vtkSmartPointer<vtkTriangleFilter>::New();
   triangle_filter->SetInputData(mesh);
+  triangle_filter->PassLinesOff();
   triangle_filter->Update();
 
   vtkSmartPointer<vtkPolyDataConnectivityFilter> connectivity = vtkSmartPointer<vtkPolyDataConnectivityFilter>::New();
@@ -360,7 +375,14 @@ vtkSmartPointer<vtkPolyData> MeshWarper::prep_mesh(vtkSmartPointer<vtkPolyData> 
   connectivity->SetExtractionModeToLargestRegion();
   connectivity->Update();
 
-  return MeshWarper::clean_mesh(connectivity->GetOutput());
+  auto cleaned = MeshWarper::clean_mesh(connectivity->GetOutput());
+
+  auto fixed = Mesh(cleaned).fixNonManifold();
+
+  // remove deleted triangles and clean up
+  auto recreate = MeshWarper::recreate_mesh(fixed.getVTKMesh());
+
+  return MeshWarper::clean_mesh(recreate);
 }
 
 //---------------------------------------------------------------------------
@@ -389,15 +411,16 @@ vtkSmartPointer<vtkPolyData> MeshWarper::recreate_mesh(vtkSmartPointer<vtkPolyDa
 
   // copy triangles
   for (vtkIdType i = 0; i < mesh->GetNumberOfCells(); i++) {
-    vtkCell* cell = this->reference_mesh_->GetCell(i);
+    vtkCell* cell = mesh->GetCell(i);
 
     if (cell->GetCellType() != VTK_EMPTY_CELL) {  // VTK_EMPTY_CELL means it was deleted
-
-      vtkIdType pts[3];
-      pts[0] = cell->GetPointId(0);
-      pts[1] = cell->GetPointId(1);
-      pts[2] = cell->GetPointId(2);
-      polys->InsertNextCell(3, pts);
+      // create an array of vtkIdType
+      vtkIdType *pts = new vtkIdType[cell->GetNumberOfPoints()];
+      for (vtkIdType j = 0; j < cell->GetNumberOfPoints(); j++) {
+        pts[j] = cell->GetPointId(j);
+      }
+      polys->InsertNextCell(cell->GetNumberOfPoints(), pts);
+      delete[] pts;
     }
   }
 
@@ -408,7 +431,11 @@ vtkSmartPointer<vtkPolyData> MeshWarper::recreate_mesh(vtkSmartPointer<vtkPolyDa
 
 //---------------------------------------------------------------------------
 bool MeshWarper::generate_warp() {
-  // clean mesh
+  if (is_contour_) {
+    this->update_progress(1.0);
+    this->needs_warp_ = false;
+    return true;
+  }
   this->reference_mesh_ = MeshWarper::prep_mesh(this->incoming_reference_mesh_);
 
   // prep points
@@ -464,7 +491,7 @@ bool MeshWarper::generate_warp_matrix(Eigen::MatrixXd TV, Eigen::MatrixXi TF, co
   // faster and looks OK
   const int k = 2;
   if (!igl::biharmonic_coordinates(TV, TF, S, k, W)) {
-    std::cerr << "igl:biharmonic_coordinates failed\n";
+    SW_ERROR("Mesh Warp Error: igl:biharmonic_coordinates failed");
     return false;
   }
   // Throw away interior tet-vertices, keep weights and indices of boundary
@@ -516,24 +543,23 @@ vtkSmartPointer<vtkPolyData> MeshWarper::warp_mesh(const Eigen::MatrixXd& points
 }
 
 //---------------------------------------------------------------------------
-Eigen::MatrixXd MeshWarper::extract_landmarks(vtkSmartPointer<vtkPolyData> warped_mesh)
-{
-    Eigen::MatrixXd landmarks;
-    landmarks.resize(landmarks_map_.size(), 3);
+Eigen::MatrixXd MeshWarper::extract_landmarks(vtkSmartPointer<vtkPolyData> warped_mesh) {
+  Eigen::MatrixXd landmarks;
+  landmarks.resize(landmarks_map_.size(), 3);
 
-    vtkSmartPointer<vtkDataArray> data_array = warped_mesh->GetPoints()->GetData();
+  vtkSmartPointer<vtkDataArray> data_array = warped_mesh->GetPoints()->GetData();
 
     for (auto ids : landmarks_map_)
     {
         auto id_landmark = ids.first;
         auto id_vertice = ids.second;
 
-        landmarks(id_landmark, 0) = data_array->GetComponent(id_vertice, 0);
-        landmarks(id_landmark, 1) = data_array->GetComponent(id_vertice, 1);
-        landmarks(id_landmark, 2) = data_array->GetComponent(id_vertice, 2);
-    }
+    landmarks(id_landmark, 0) = data_array->GetComponent(id_vertice, 0);
+    landmarks(id_landmark, 1) = data_array->GetComponent(id_vertice, 1);
+    landmarks(id_landmark, 2) = data_array->GetComponent(id_vertice, 2);
+  }
 
-    return landmarks;
+  return landmarks;
 }
 
 }  // namespace shapeworks

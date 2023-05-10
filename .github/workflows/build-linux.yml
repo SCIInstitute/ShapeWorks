@@ -12,15 +12,20 @@ on:
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: Release
-  SW_PORTAL_LOGIN: ${{ secrets.PORTAL_LOGIN }}
+  SW_CLOUD_LOGIN: ${{ secrets.CLOUD_LOGIN }}
   CACHE_HOST: ${{ secrets.SSH_HOST }}
-#  LD_LIBRARY_PATH: /opt/conda/envs/shapeworks/lib
-    
+  GA_MEASUREMENT_ID: ${{ secrets.GA_MEASUREMENT_ID }}
+  GA_API_SECRET: ${{ secrets.GA_API_SECRET }}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+  
 jobs:
   build:
 
     runs-on: ubuntu-latest
-    container: akenmorris/ubuntu-build-box-qt512
+    container: akenmorris/ubuntu-build-box-sw65
     
     steps:
 
@@ -71,7 +76,7 @@ jobs:
 
     - name: cmake
       shell: bash -l {0}
-      run: conda activate shapeworks && mkdir build && cd build && cmake -DCMAKE_CXX_FLAGS=-g -DITK_DIR=$HOME/install/lib/cmake/ITK-5.2 -DVTK_DIR=$HOME/install/lib/cmake/vtk-9.1 -DEigen3_DIR=$HOME/install/share/eigen3/cmake -DXLNT_DIR=$HOME/install -DLIBIGL_DIR=$HOME/install -DOpenVDB_DIR=$HOME/install/lib/cmake/OpenVDB -DGEOMETRY_CENTRAL_DIR=$HOME/install/geometry-central -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DBuild_Studio=ON -DJKQTCommonSharedLib_DIR=$HOME/install/lib/cmake/JKQTCommonSharedLib -DJKQTMathTextSharedLib_DIR=$HOME/install/lib/cmake/JKQTMathTextSharedLib -DJKQTPlotterSharedLib_DIR=$HOME/install/lib/cmake/JKQTPlotterSharedLib -DACVD_DIR=$HOME/install -DCMAKE_PREFIX_PATH=${CONDA_PREFIX} -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/shapeworks-install ..
+      run: conda activate shapeworks && mkdir build && cd build && cmake -DCMAKE_CXX_FLAGS=-g -DITK_DIR=$HOME/install/lib/cmake/ITK-5.2 -DVTK_DIR=$HOME/install/lib/cmake/vtk-9.1 -DXLNT_DIR=$HOME/install -DLIBIGL_DIR=$HOME/install -DOpenVDB_DIR=$HOME/install/lib/cmake/OpenVDB -DGEOMETRYCENTRAL_DIR=$HOME/install -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DBuild_Studio=ON -DJKQTCommonSharedLib_DIR=$HOME/install/lib/cmake/JKQTCommonSharedLib -DJKQTMathTextSharedLib_DIR=$HOME/install/lib/cmake/JKQTMathTextSharedLib -DJKQTPlotterSharedLib_DIR=$HOME/install/lib/cmake/JKQTPlotterSharedLib -DACVD_DIR=$HOME/install -DCMAKE_PREFIX_PATH=${CONDA_PREFIX} -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/shapeworks-install -DUSE_ORIGIN_RPATH=ON -DGA_MEASUREMENT_ID=$GA_MEASUREMENT_ID -DGA_API_SECRET=$GA_API_SECRET ..
 
     - name: Check space5
       run: df -h
@@ -87,21 +92,19 @@ jobs:
       shell: bash -l {0}
       run: conda activate shapeworks && cd build && make install
       
-#    - name: Remove Qt SQL Stuff
-#      run: mv /usr/local/plugins/sqldrivers/libqsqlmysql.so /usr/local/plugins/sqldrivers/libqsqlpsql.so /tmp
-
     - name: Build Binary Package
       shell: bash -l {0}
       env:
         PR_NUMBER: ${{ github.event.number }}
       run: conda activate shapeworks && source ./devenv.sh ./build/bin && PATH=$HOME:$PATH ./Support/package.sh tag ${GITHUB_WORKSPACE}/shapeworks-install $HOME/install
 
+    - name: Download test data
+      shell: bash -l {0}
+      run: .github/workflows/download_test_data.sh
+      
     - name: make test
       shell: bash -l {0}
       run: conda activate shapeworks && source ./devenv.sh ./build/bin && cd build && ctest -VV
-  
-#    - name: Replace Qt SQL Stuff
-#      run: mv /tmp/lib*.so /usr/local/plugins/sqldrivers
 
     - name: Copy artifact
       shell: bash -l {0}

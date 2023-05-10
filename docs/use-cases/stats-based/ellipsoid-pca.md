@@ -36,6 +36,7 @@ Using `shape_statistics` object, you can now extract the following entities:
 * Dimension of each shape: `numDims()`
 * Variance explained by each mode: `percentVarByMode()`
 
+Details about shape statistics functions can be found [in the API Reference](http://sciinstitute.github.io/ShapeWorks/latest/api/Classes/classshapeworks_1_1ParticleShapeStatistics.html#function-particleshapestatistics)
 
 When the use case is run, plots similar to those below will be generated.
 ![PCA Loading Violin Plot](https://sci.utah.edu/~shapeworks/doc-resources/pngs/pca_loadings_violin_plot.png)

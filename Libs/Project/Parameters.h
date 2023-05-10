@@ -1,6 +1,6 @@
 #pragma once
 
-#include <ProjectUtils.h>
+#include "ProjectUtils.h"
 
 #include "Variant.h"
 
@@ -44,7 +44,7 @@ class Parameters {
   void set_map(StringMap map);
 
   //! get underlying map
-  StringMap get_map();
+  StringMap get_map() const;
 
   //! reset parameters to blank
   void reset_parameters();
@@ -52,9 +52,6 @@ class Parameters {
  private:
   StringMap map_;
 
-  //  std::vector< std::pair<const std::string, std::string> >  container_;
-  // std::pair<const std::string, std::string>  container_;
-  //const std::string joke_;
-  tsl::ordered_map<std::string,std::string> mappy_;
 };
+
 }  // namespace shapeworks

@@ -1,7 +1,8 @@
 #include "ParticleNormalEvaluation.h"
 
 #include <Utils.h>
-#include <VtkMeshWrapper.h>
+
+#include "Libs/Optimize/Domain/VtkMeshWrapper.h"
 
 namespace shapeworks {
 

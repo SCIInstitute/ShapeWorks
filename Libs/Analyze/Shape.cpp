@@ -1,13 +1,11 @@
+#include <Image/Image.h>
+#include <Logging.h>
 #include <MeshGenerator.h>
 #include <MeshGroup.h>
-
+#include <Particles/ParticleSystemEvaluation.h>
+#include <Project/ProjectUtils.h>
 #include <Shape.h>
-#include <Libs/Image/Image.h>
-#include <Libs/Project/ProjectUtils.h>
-#include <Libs/Utils/StringUtils.h>
-#include <Libs/Particles/ParticleSystem.h>
-#include <Logging.h>
-
+#include <Utils/StringUtils.h>
 #include <itkImageFileReader.h>
 #include <itkOrientImageFilter.h>
 #include <vtkCenterOfMass.h>
@@ -15,9 +13,10 @@
 #include <boost/filesystem.hpp>
 
 // vtk
-#include <Libs/Optimize/ParticleSystem/VtkMeshWrapper.h>
 #include <vtkKdTreePointLocator.h>
 #include <vtkPointData.h>
+
+#include "Libs/Optimize/Domain/VtkMeshWrapper.h"
 
 using ReaderType = itk::ImageFileReader<ImageType>;
 
@@ -252,7 +251,7 @@ bool Shape::import_constraints(std::vector<std::string> filenames) {
     Constraints constraints;
     try {
       if (!(filenames[i] == "")) {
-        constraints.Read(filenames[i]);
+        constraints.read(filenames[i]);
       }
     } catch (std::exception& e) {
       SW_ERROR(e.what());
@@ -295,7 +294,7 @@ bool Shape::store_constraints() {
 
   for (int i = 0; i < filenames.size(); i++) {
     try {
-      get_constraints(i).Write(filenames[i]);
+      get_constraints(i).write(filenames[i]);
     } catch (std::exception& e) {
       SW_ERROR(e.what());
       return false;
@@ -308,7 +307,9 @@ bool Shape::store_constraints() {
 Eigen::VectorXd Shape::get_global_correspondence_points() { return particles_.get_combined_global_particles(); }
 
 //---------------------------------------------------------------------------
-Eigen::VectorXd Shape::get_local_correspondence_points() { return particles_.get_combined_local_particles(); }
+Eigen::VectorXd Shape::get_local_correspondence_points() {
+  return particles_.get_combined_local_particles();
+}
 
 //---------------------------------------------------------------------------
 int Shape::get_id() { return id_; }
@@ -457,7 +458,7 @@ void Shape::generate_meshes(std::vector<std::string> filenames, MeshGroup& mesh_
 
 //---------------------------------------------------------------------------
 bool Shape::import_point_file(std::string filename, Eigen::VectorXd& points) {
-  return ParticleSystem::ReadParticleFile(filename, points);
+  return ParticleSystemEvaluation::ReadParticleFile(filename, points);
 }
 
 //---------------------------------------------------------------------------
@@ -698,6 +699,11 @@ void Shape::set_particle_transform(vtkSmartPointer<vtkTransform> transform) {
 }
 
 //---------------------------------------------------------------------------
+void Shape::set_alignment_type(int alignment) {
+  particles_.set_alignment_type(alignment);
+}
+
+//---------------------------------------------------------------------------
 vtkSmartPointer<vtkTransform> Shape::get_reconstruction_transform(int domain) {
   if (domain < reconstruction_transforms_.size()) {
     return reconstruction_transforms_[domain];
@@ -710,18 +716,16 @@ vtkSmartPointer<vtkTransform> Shape::get_reconstruction_transform(int domain) {
 }
 
 //---------------------------------------------------------------------------
-Eigen::VectorXd Shape::get_correspondence_points_for_display() {
-  auto locals = particles_.get_local_particles();
-  int size = 0;
-  for (int i = 0; i < locals.size(); i++) {
-    size += locals[i].size();
-  }
-  Eigen::VectorXd points;
-  points.resize(size);
+std::vector<Eigen::VectorXd> Shape::get_particles_for_display() {
+  std::vector<Eigen::VectorXd> particles;
 
-  int idx = 0;
+  auto locals = particles_.get_local_particles();
+
+  // int idx = 0;
   for (int i = 0; i < locals.size(); i++) {
+    Eigen::VectorXd points = locals[i];
     for (int j = 0; j < locals[i].size(); j += 3) {
+      int idx = j;
       double p[3];
       p[0] = locals[i][j + 0];
       p[1] = locals[i][j + 1];
@@ -737,9 +741,10 @@ Eigen::VectorXd Shape::get_correspondence_points_for_display() {
         points[idx++] = p[2];
       }
     }
+    particles.push_back(points);
   }
 
-  return points;
+  return particles;
 }
 
 //---------------------------------------------------------------------------

@@ -12,9 +12,15 @@ on:
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: Release
-  SW_PORTAL_LOGIN: ${{ secrets.PORTAL_LOGIN }}
+  SW_CLOUD_LOGIN: ${{ secrets.CLOUD_LOGIN }}
   CACHE_HOST: ${{ secrets.SSH_HOST }}
-  
+  GA_MEASUREMENT_ID: ${{ secrets.GA_MEASUREMENT_ID }}
+  GA_API_SECRET: ${{ secrets.GA_API_SECRET }}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
 
@@ -47,7 +53,7 @@ jobs:
 
     - name: Get tags
       run: git fetch --unshallow origin +refs/tags/*:refs/tags/*
-        
+
     - name: Restore Caches
       shell: bash -l {0}
       run: .github/workflows/restore_caches.sh
@@ -62,7 +68,7 @@ jobs:
 
     - name: cmake
       shell: bash -l {0}
-      run: conda activate shapeworks && mkdir build && cd build && cmake -DCMAKE_LIBTOOL=/usr/bin/libtool -DCMAKE_CXX_FLAGS=-g -DCMAKE_PREFIX_PATH=$HOME/install -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DPython3_ROOT_DIR:FILEPATH=${CONDA_PREFIX} -DUSE_OPENMP=OFF -DBuild_PythonAPI=ON -DBuild_Studio=ON -DBuild_View2=ON -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/shapeworks-install -DCMAKE_OSX_SYSROOT="$HOME/MacOSX10.15.sdk" -DCMAKE_OSX_DEPLOYMENT_TARGET="10.15" -DBUILD_DOCUMENTATION=ON ..
+      run: conda activate shapeworks && mkdir build && cd build && cmake -DCMAKE_LIBTOOL=/usr/bin/libtool -DCMAKE_CXX_FLAGS=-g -DCMAKE_PREFIX_PATH=$HOME/install -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DPython3_ROOT_DIR:FILEPATH=${CONDA_PREFIX} -DUSE_OPENMP=OFF -DBuild_Studio=ON -DCMAKE_INSTALL_PREFIX=${GITHUB_WORKSPACE}/shapeworks-install -DCMAKE_OSX_SYSROOT="$HOME/MacOSX10.15.sdk" -DCMAKE_OSX_DEPLOYMENT_TARGET="10.15" -DBUILD_DOCUMENTATION=ON -DGA_MEASUREMENT_ID=$GA_MEASUREMENT_ID -DGA_API_SECRET=$GA_API_SECRET ..
 
     - name: make
       shell: bash -l {0}
@@ -78,6 +84,10 @@ jobs:
         PR_NUMBER: ${{ github.event.number }}
       run: conda activate shapeworks && source ./devenv.sh ./build/bin && ./Support/package.sh tag ${GITHUB_WORKSPACE}/shapeworks-install $HOME/install
 
+    - name: Download test data
+      shell: bash -l {0}
+      run: .github/workflows/download_test_data.sh
+      
     - name: make test
       shell: bash -l {0}
       run: conda activate shapeworks && source ./devenv.sh ./build/bin && cd build && ctest -VV

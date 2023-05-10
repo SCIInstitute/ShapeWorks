@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>CompareWidget</class>
+ <widget class="QWidget" name="CompareWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>470</width>
+    <height>172</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="8" column="1">
+    <widget class="CustomSlider" name="opacity">
+     <property name="maximum">
+      <number>100</number>
+     </property>
+     <property name="value">
+      <number>100</number>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0">
+    <widget class="QRadioButton" name="groomed">
+     <property name="text">
+      <string>Groomed</string>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Opacity</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0">
+    <widget class="QRadioButton" name="reconstructed">
+     <property name="text">
+      <string>Reconstructed</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QRadioButton" name="original">
+     <property name="text">
+      <string>Original</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="0">
+    <widget class="QCheckBox" name="surface_distance">
+     <property name="text">
+      <string>Surface to Surface Distance</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="0">
+    <widget class="QRadioButton" name="mean_shape">
+     <property name="text">
+      <string>Mean Shape</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CustomSlider</class>
+   <extends>QSlider</extends>
+   <header>Interface/CustomSlider.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

@@ -3,13 +3,15 @@
 #include <ItkToVtk.h>
 #include <LegacyMeshGenerator.h>
 #include <MeshGenerator.h>
+#include <vtkImageImport.h>
+#include <itkImageFileReader.h>
 
 #include <QMeshWarper.h>
 
 #include <Logging.h>
-#include <Libs/Mesh/Mesh.h>
-#include <Libs/Mesh/MeshUtils.h>
-#include <Libs/Utils/StringUtils.h>
+#include <Mesh/Mesh.h>
+#include <Mesh/MeshUtils.h>
+#include <Utils/StringUtils.h>
 #include <itkOrientImageFilter.h>
 #include <itkPoint.h>
 #include <itkVTKImageExport.h>
@@ -46,12 +48,6 @@ MeshHandle MeshGenerator::build_mesh_from_points(const Eigen::VectorXd& shape, i
 
   auto& surface_reconstructors = this->reconstructors_->surface_reconstructors_;
   auto& mesh_warpers = this->reconstructors_->mesh_warpers_;
-  if (mesh_warpers.size() > domain && mesh_warpers[domain]->is_contour()) {
-    auto poly_data = vtkSmartPointer<vtkPolyData>::New();
-    mesh->set_poly_data(poly_data);
-    return mesh;
-  }
-
   // temporary support for contours
   if (mesh_warpers.size() > domain && mesh_warpers[domain]->is_contour()) {
     auto poly_data = vtkSmartPointer<vtkPolyData>::New();
@@ -82,6 +78,8 @@ MeshHandle MeshGenerator::build_mesh_from_points(const Eigen::VectorXd& shape, i
     if (!poly_data) {
       std::string message = "Unable to warp mesh";
       SW_ERROR(message);
+      poly_data = vtkSmartPointer<vtkPolyData>::New();
+      mesh->set_poly_data(poly_data);
       mesh->set_error_message(message);
       return mesh;
     }
@@ -120,9 +118,9 @@ MeshHandle MeshGenerator::build_mesh_from_image(ImageType::Pointer image, float 
     mesh->set_poly_data(Mesh(marching->GetOutput()).clean().computeNormals().getVTKMesh());
 
   } catch (itk::ExceptionObject& excep) {
-    std::cerr << "Exception caught!" << std::endl;
-    std::cerr << excep << std::endl;
-    mesh->set_error_message(std::string("Exception: ") + excep.what());
+    auto message = std::string("Exception: ") + excep.what();
+    SW_ERROR(message);
+    mesh->set_error_message(message);
   }
   return mesh;
 }

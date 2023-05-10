@@ -1,11 +1,12 @@
 #pragma once
 
-#include <Libs/Optimize/ParticleSystem/DomainType.h>
-#include <ProjectUtils.h>
+#include <Libs/Optimize/Domain/DomainType.h>
 
 #include <map>
 #include <string>
 #include <vector>
+
+#include "ProjectUtils.h"
 
 namespace shapeworks {
 

@@ -1,17 +1,17 @@
-#include <Libs/Mesh/MeshUtils.h>
-#include <Libs/Optimize/OptimizeParameters.h>
-#include <Libs/Project/Project.h>
+#include <Mesh/MeshUtils.h>
+#include <Optimize/OptimizeParameters.h>
+#include <Project/Project.h>
 #include <itkApproximateSignedDistanceMapImageFilter.h>
 #include <itkImageFileReader.h>
 #include <itkImageFileWriter.h>
 
 #include <cstdio>
 
+#include "Libs/Optimize/Domain/VtkMeshWrapper.h"
 #include "Optimize.h"
 #include "OptimizeParameterFile.h"
 #include "ParticleShapeStatistics.h"
 #include "Testing.h"
-#include "VtkMeshWrapper.h"
 
 using namespace shapeworks;
 
@@ -290,92 +290,6 @@ TEST(OptimizeTests, mesh_use_normals_test) {
 }
 
 //---------------------------------------------------------------------------
-TEST(OptimizeTests, cutting_plane_test) {
-  setupenv(std::string(TEST_DATA_DIR) + "/optimize/cutting_plane_multi");
-
-  // make sure we clean out at least one output file
-  std::remove("optimize_particles/sphere10_DT_world.particles");
-
-  auto start = shapeworks::ShapeworksUtils::now();
-
-  // run with parameter file
-  Optimize app;
-  ProjectHandle project = std::make_shared<Project>();
-  ASSERT_TRUE(project->load("optimize.xlsx"));
-  OptimizeParameters params(project);
-  ASSERT_TRUE(params.set_up_optimize(&app));
-  app.Run();
-
-  // compute stats
-  ParticleShapeStatistics stats;
-  stats.ReadPointFiles("analyze.xml");
-  stats.ComputeModes();
-  stats.PrincipalComponentProjections();
-
-  bool good = check_constraint_violations(app, 1.5e-1);
-
-  auto end = shapeworks::ShapeworksUtils::now();
-  std::cout << "Time taken to run cutting_plane optimize test: "
-            << shapeworks::ShapeworksUtils::elapsed(start, end, false) << "sec \n";
-
-  ASSERT_TRUE(good);
-}
-
-//---------------------------------------------------------------------------
-TEST(OptimizeTests, ffc_test) {
-  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/optimize/ffc");
-  chdir(test_location.c_str());
-
-  // make sure we clean out at least one output file
-  std::remove("optimize_particles/sphere10_DT_world.particles");
-
-  // run with parameter file
-  Optimize app;
-  ProjectHandle project = std::make_shared<Project>();
-  ASSERT_TRUE(project->load("optimize.xlsx"));
-  OptimizeParameters params(project);
-  ASSERT_TRUE(params.set_up_optimize(&app));
-  app.Run();
-
-  // compute stats
-  ParticleShapeStatistics stats;
-  stats.ReadPointFiles("analyze.xml");
-  stats.ComputeModes();
-  stats.PrincipalComponentProjections();
-
-  bool good = check_constraint_violations(app, 4.0e-1);
-
-  ASSERT_TRUE(good);
-}
-
-//---------------------------------------------------------------------------
-TEST(OptimizeTests, multi_domain_constraint) {
-  setupenv(std::string(TEST_DATA_DIR) + "/optimize/multidomain_constraints");
-
-  // make sure we clean out at least one output file
-  std::remove("optimize_particles/sphere10_DT_world.particles");
-  std::remove("optimize_particles/sphere10_DT_50_world.particles");
-
-  // run with parameter file
-  Optimize app;
-  ProjectHandle project = std::make_shared<Project>();
-  ASSERT_TRUE(project->load("optimize.xlsx"));
-  OptimizeParameters params(project);
-  ASSERT_TRUE(params.set_up_optimize(&app));
-  app.Run();
-
-  // compute stats
-  ParticleShapeStatistics stats;
-  stats.ReadPointFiles("analyze.xml");
-  stats.ComputeModes();
-  stats.PrincipalComponentProjections();
-
-  bool good = check_constraint_violations(app, 7.5e-1);
-
-  ASSERT_TRUE(good);
-}
-
-//---------------------------------------------------------------------------
 TEST(OptimizeTests, embedded_python_test) {
   setupenv(std::string(TEST_DATA_DIR) + "/simple");
 
@@ -460,73 +374,7 @@ TEST(OptimizeTests, contour_domain_test) {
   ASSERT_LT(values[values.size() - 2], 1.0);
 }
 
-//---------------------------------------------------------------------------
-TEST(OptimizeTests, mesh_ffc_test) {
-  setupenv(std::string(TEST_DATA_DIR) + "/optimize/mesh_constraints");
 
-  // make sure we clean out at least one output file
-  std::remove("optimize_particles/sphere10_world.particles");
-  std::remove("optimize_particles/sphere20_world.particles");
-  std::remove("optimize_particles/sphere30_world.particles");
-  std::remove("optimize_particles/sphere40_world.particles");
-
-  // run with parameter file
-  Optimize app;
-  ProjectHandle project = std::make_shared<Project>();
-  ASSERT_TRUE(project->load("optimize.xlsx"));
-  OptimizeParameters params(project);
-  ASSERT_TRUE(params.set_up_optimize(&app));
-  app.Run();
-
-  // compute stats
-  ParticleShapeStatistics stats;
-  stats.ReadPointFiles("analyze.xml");
-  stats.ComputeModes();
-  stats.PrincipalComponentProjections();
-
-  // print out eigenvalues (for debugging)
-  auto values = stats.Eigenvalues();
-  for (int i = 0; i < values.size(); i++) {
-    std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
-  }
-
-  bool good = check_constraint_violations(app, 4.0e-1);
-  ASSERT_TRUE(good);
-}
-
-//---------------------------------------------------------------------------
-TEST(OptimizeTests, mesh_ffc_test_aug_lag) {
-  setupenv(std::string(TEST_DATA_DIR) + "/optimize/mesh_constraints_aug_lag");
-
-  // make sure we clean out at least one output file
-  std::remove("optimize_particles/sphere10_world.particles");
-  std::remove("optimize_particles/sphere20_world.particles");
-  std::remove("optimize_particles/sphere30_world.particles");
-  std::remove("optimize_particles/sphere40_world.particles");
-
-  // run with parameter file
-  Optimize app;
-  ProjectHandle project = std::make_shared<Project>();
-  ASSERT_TRUE(project->load("optimize.xlsx"));
-  OptimizeParameters params(project);
-  ASSERT_TRUE(params.set_up_optimize(&app));
-  app.Run();
-
-  // compute stats
-  ParticleShapeStatistics stats;
-  stats.ReadPointFiles("analyze.xml");
-  stats.ComputeModes();
-  stats.PrincipalComponentProjections();
-
-  // print out eigenvalues (for debugging)
-  auto values = stats.Eigenvalues();
-  for (int i = 0; i < values.size(); i++) {
-    std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
-  }
-
-  bool good = check_constraint_violations(app, 20.0e-1);
-  ASSERT_TRUE(good);
-}
 
 //---------------------------------------------------------------------------
 TEST(OptimizeTests, procrustes_disabled_test) {
@@ -688,4 +536,159 @@ TEST(OptimizeTests, mesh_geodesics_test) {
       ASSERT_NEAR(computed, truth, 0.06);
     }
   }
+}
+
+// Constraint tests
+//---------------------------------------------------------------------------
+TEST(OptimizeTests, cutting_plane_test) {
+  setupenv(std::string(TEST_DATA_DIR) + "/optimize/cutting_plane_multi");
+
+  // make sure we clean out at least one output file
+  std::remove("optimize_particles/sphere10_DT_world.particles");
+
+  auto start = shapeworks::ShapeworksUtils::now();
+
+  // run with parameter file
+  Optimize app;
+  ProjectHandle project = std::make_shared<Project>();
+  ASSERT_TRUE(project->load("optimize.xlsx"));
+  OptimizeParameters params(project);
+  ASSERT_TRUE(params.set_up_optimize(&app));
+  app.Run();
+
+  // compute stats
+  ParticleShapeStatistics stats;
+  stats.ReadPointFiles("analyze.xml");
+  stats.ComputeModes();
+  stats.PrincipalComponentProjections();
+
+  bool good = check_constraint_violations(app, 1.5e-1);
+
+  auto end = shapeworks::ShapeworksUtils::now();
+  std::cout << "Time taken to run cutting_plane optimize test: "
+            << shapeworks::ShapeworksUtils::elapsed(start, end, false) << "sec \n";
+
+  ASSERT_TRUE(good);
+}
+
+//---------------------------------------------------------------------------
+TEST(OptimizeTests, ffc_test) {
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/optimize/ffc");
+  chdir(test_location.c_str());
+
+  // make sure we clean out at least one output file
+  std::remove("optimize_particles/sphere10_DT_world.particles");
+
+  // run with parameter file
+  Optimize app;
+  ProjectHandle project = std::make_shared<Project>();
+  ASSERT_TRUE(project->load("optimize.xlsx"));
+  OptimizeParameters params(project);
+  ASSERT_TRUE(params.set_up_optimize(&app));
+  app.Run();
+
+  // compute stats
+  ParticleShapeStatistics stats;
+  stats.ReadPointFiles("analyze.xml");
+  stats.ComputeModes();
+  stats.PrincipalComponentProjections();
+
+  bool good = check_constraint_violations(app, 4.0e-1);
+
+  ASSERT_TRUE(good);
+}
+
+//---------------------------------------------------------------------------
+TEST(OptimizeTests, multi_domain_constraint) {
+  setupenv(std::string(TEST_DATA_DIR) + "/optimize/multidomain_constraints");
+
+  // make sure we clean out at least one output file
+  std::remove("optimize_particles/sphere10_DT_world.particles");
+  std::remove("optimize_particles/sphere10_DT_50_world.particles");
+
+  // run with parameter file
+  Optimize app;
+  ProjectHandle project = std::make_shared<Project>();
+  ASSERT_TRUE(project->load("optimize.xlsx"));
+  OptimizeParameters params(project);
+  ASSERT_TRUE(params.set_up_optimize(&app));
+  app.Run();
+
+  // compute stats
+  ParticleShapeStatistics stats;
+  stats.ReadPointFiles("analyze.xml");
+  stats.ComputeModes();
+  stats.PrincipalComponentProjections();
+
+  bool good = check_constraint_violations(app, 7.5e-1);
+
+  ASSERT_TRUE(good);
+}
+
+//---------------------------------------------------------------------------
+TEST(OptimizeTests, mesh_ffc_test) {
+  setupenv(std::string(TEST_DATA_DIR) + "/optimize/mesh_constraints");
+
+  // make sure we clean out at least one output file
+  std::remove("optimize_particles/sphere10_world.particles");
+  std::remove("optimize_particles/sphere20_world.particles");
+  std::remove("optimize_particles/sphere30_world.particles");
+  std::remove("optimize_particles/sphere40_world.particles");
+
+  // run with parameter file
+  Optimize app;
+  ProjectHandle project = std::make_shared<Project>();
+  ASSERT_TRUE(project->load("optimize.xlsx"));
+  OptimizeParameters params(project);
+  ASSERT_TRUE(params.set_up_optimize(&app));
+  app.Run();
+
+  // compute stats
+  ParticleShapeStatistics stats;
+  stats.ReadPointFiles("analyze.xml");
+  stats.ComputeModes();
+  stats.PrincipalComponentProjections();
+
+  // print out eigenvalues (for debugging)
+  auto values = stats.Eigenvalues();
+  for (int i = 0; i < values.size(); i++) {
+    std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
+  }
+
+  bool good = check_constraint_violations(app, 4.0e-1);
+  ASSERT_TRUE(good);
+}
+
+//---------------------------------------------------------------------------
+TEST(OptimizeTests, mesh_ffc_test_aug_lag) {
+  setupenv(std::string(TEST_DATA_DIR) + "/optimize/mesh_constraints_aug_lag");
+
+  // make sure we clean out at least one output file
+  std::remove("optimize_particles/sphere10_world.particles");
+  std::remove("optimize_particles/sphere20_world.particles");
+  std::remove("optimize_particles/sphere30_world.particles");
+  std::remove("optimize_particles/sphere40_world.particles");
+
+  // run with parameter file
+  Optimize app;
+  ProjectHandle project = std::make_shared<Project>();
+  ASSERT_TRUE(project->load("optimize.xlsx"));
+  OptimizeParameters params(project);
+  ASSERT_TRUE(params.set_up_optimize(&app));
+  app.Run();
+
+  // compute stats
+  ParticleShapeStatistics stats;
+  stats.ReadPointFiles("analyze.xml");
+  stats.ComputeModes();
+  stats.PrincipalComponentProjections();
+
+  // print out eigenvalues (for debugging)
+  auto values = stats.Eigenvalues();
+  for (int i = 0; i < values.size(); i++) {
+    std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
+  }
+
+  bool good = check_constraint_violations(app, 20.0e-1);
+  ASSERT_TRUE(good);
 }

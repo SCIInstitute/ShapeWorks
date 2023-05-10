@@ -6,14 +6,14 @@
 #include <vector>
 
 // tsl
-#include "ordered_map.h"
+#include <ordered_map.h>
 
 // vtk
 #include <vtkSmartPointer.h>
 #include <vtkTransform.h>
 
 // shapeworks
-#include <DomainType.h>
+#include <Libs/Optimize/Domain/DomainType.h>
 
 namespace shapeworks {
 

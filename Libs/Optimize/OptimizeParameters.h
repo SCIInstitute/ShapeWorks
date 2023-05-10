@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Libs/Project/Project.h>
+#include <Project/Project.h>
 
 #include <functional>
 
@@ -8,6 +8,12 @@ namespace shapeworks {
 
 class Optimize;
 
+/**
+ * \class OptimizeParameters
+ * \ingroup Group-Optimize
+ *
+ * This class encapsulated processing of Optimization parameters
+ */
 class OptimizeParameters {
  public:
   explicit OptimizeParameters(ProjectHandle project);
@@ -93,6 +99,16 @@ class OptimizeParameters {
   bool set_up_optimize(Optimize* optimize);
 
   bool is_subject_fixed(std::shared_ptr<Subject> subject);
+
+  int get_checkpoint_interval();
+  void set_checkpoint_interval(int iterations);
+
+  bool get_save_init_splits();
+  void set_save_init_splits(bool enabled);
+
+  bool get_keep_checkpoints();
+  void set_keep_checkpoints(bool enabled);
+
 
  private:
   std::string get_output_prefix();
