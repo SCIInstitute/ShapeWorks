@@ -76,7 +76,10 @@ ShapeWorks has been effective in various applications, including psychology, bio
 
 Now enjoy some tour videos for different recent software releases.
 
-*ShapeWorks 6.3 tour - Landmarks, cutting planes, free form constratins in Studio, and more ...*
+*ShapeWorks 6.4 tour - Multi-level PCA, Improved Constraints, Python Docs, and more ...*
+<p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/ShapeWorks6.4.mp4" autoplay muted loop controls style="width:100%"></p>
+
+*ShapeWorks 6.3 tour - Landmarks, cutting planes, free form constraints in Studio, and more ...*
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/ShapeWorks6.3.mp4" autoplay muted loop controls style="width:100%"></p>
 
 *ShapeWorks 6.2 tour - DeepSSM in Studio, multi-domain alignments, shape evaluation charts, scalar and opacity controls, and more ...*
@@ -87,7 +90,6 @@ Now enjoy some tour videos for different recent software releases.
 
 *ShapeWorks 6.0 tour - mesh support and more in ShapeWorks Studio*
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_6.0_tour.mp4" autoplay muted loop controls style="width:100%"></p>
-
 
 *ShapeWorks 5.5 tour - feature support in ShapeWorks Studio*
 <p><video src="https://sci.utah.edu/~shapeworks/doc-resources/mp4s/studio_5.5_tour.mp4" autoplay muted loop controls style="width:100%"></p>
