@@ -48,7 +48,8 @@ cp -r $BUILD/bin/Release bin
 rm bin/*Tests.pdb bin/Recon*.pdb bin/Mesh*.pdb
 rm -rf Post
 
-# Build python packages
+# Build python package tarballs
+# Pip can't install these otherwise from a read-only area like C:\Program Files\ShapeWorks
 for package in DataAugmentationUtilsPackage DatasetUtilsPackage DeepSSMUtilsPackage DocumentationUtilsPackage ShapeCohortGenPackage shapeworks ; do
     cd Python
     tar czvf ${package}.tar.gz $package
