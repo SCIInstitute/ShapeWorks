@@ -21,7 +21,8 @@ Latest Release
 <!--![](docs/img/about/release6.0.png)-->
 <!--![](docs/img/about/release6.1.png)-->
 <!--![](docs/img/about/release6.2.png)-->
-![](docs/img/about/release6.3.png)
+<!--![](docs/img/about/release6.3.png)-->
+![](docs/img/about/release6.4.png)
 
 Quick Links
 =====================
