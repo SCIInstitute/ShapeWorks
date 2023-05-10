@@ -17,32 +17,34 @@ Eigen::MatrixXd optimize_get_particle_system(shapeworks::Optimize *opt)
 namespace py = pybind11;
 using namespace pybind11::literals;
 
-#include <bitset>
-#include <sstream>
-
 #include <itkImportImageFilter.h>
 #include <vtkDoubleArray.h>
 #include <vtkFloatArray.h>
 
-#include "Shapeworks.h"
-#include "ShapeworksUtils.h"
+#include <bitset>
+#include <sstream>
+
+#include "EigenUtils.h"
 #include "Image.h"
-#include "VectorImage.h"
 #include "ImageUtils.h"
 #include "Mesh.h"
 #include "MeshUtils.h"
 #include "MeshWarper.h"
 #include "Optimize.h"
-#include "ParticleSystem.h"
-#include "ShapeEvaluation.h"
+#include "Parameters.h"
 #include "ParticleShapeStatistics.h"
+#include "ParticleSystemEvaluation.h"
 #include "Project.h"
+#include "ReconstructSurface.h"
+#include "ShapeEvaluation.h"
+#include "Shapeworks.h"
+#include "ShapeworksUtils.h"
 #include "Subject.h"
 #include "Variant.h"
-#include "Parameters.h"
-#include "ReconstructSurface.h"
-#include "EigenUtils.h"
+#include "VectorImage.h"
 #include "pybind_utils.h"
+
+#include "PythonAnalyze.h"
 
 using namespace shapeworks;
 
@@ -1379,12 +1381,12 @@ PYBIND11_MODULE(shapeworks_py, m)
   ;
 
   // ParticleSystem
-  py::class_<ParticleSystem>(m, "ParticleSystem")
+  py::class_<ParticleSystemEvaluation>(m, "ParticleSystem")
 
   .def(py::init<const std::vector<std::string> &>())
 
   .def("ShapeAsPointSet",
-      [](ParticleSystem &p, int id_shape) -> decltype(auto) {
+      [](ParticleSystemEvaluation &p, int id_shape) -> decltype(auto) {
           Eigen::MatrixXd points = p.Particles().col(id_shape);
           points.resize(3, points.size() / 3);
           points.transposeInPlace();
@@ -1394,22 +1396,22 @@ PYBIND11_MODULE(shapeworks_py, m)
       "id_shape"_a)
 
   .def("Particles",
-       &ParticleSystem::Particles)
+       &ParticleSystemEvaluation::Particles)
 
   .def("Paths",
-       &ParticleSystem::Paths)
+       &ParticleSystemEvaluation::Paths)
 
   .def("N",
-       &ParticleSystem::N)
+       &ParticleSystemEvaluation::N)
 
   .def("D",
-       &ParticleSystem::D)
+       &ParticleSystemEvaluation::D)
 
   .def("ExactCompare",
-       &ParticleSystem::ExactCompare)
+       &ParticleSystemEvaluation::ExactCompare)
 
   .def("EvaluationCompare",
-       &ParticleSystem::EvaluationCompare)
+       &ParticleSystemEvaluation::EvaluationCompare)
   ;
 
   // ShapeEvaluation
@@ -1451,7 +1453,7 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def(py::init<>())
 
   .def("PCA",
-       py::overload_cast<ParticleSystem, int>(&ParticleShapeStatistics::DoPCA),
+       py::overload_cast<ParticleSystemEvaluation, int>(&ParticleShapeStatistics::DoPCA),
        "calculates the eigen values and eigen vectors of the data",
        "particleSystem"_a, "domainsPerShape"_a=1)
 
@@ -1485,6 +1487,8 @@ PYBIND11_MODULE(shapeworks_py, m)
        &ParticleShapeStatistics::PercentVarByMode,
        "return the variance accounted for by the principal components")
   ;
+
+  define_python_analyze(m);
 
   py::class_<ReconstructSurface<ThinPlateSplineTransform>>(m, "ReconstructSurface_ThinPlateSplineTransform")
 
@@ -1964,13 +1968,17 @@ PYBIND11_MODULE(shapeworks_py, m)
       "remove an entry",
       "key"_a)
 
-  .def("set_map",
-      &Parameters::set_map,
-      "set underlying map",
-      "map"_a)
+  .def("as_map",
+      [](const Parameters& params) -> decltype(auto) {
+          project::types::StringMap m = params.get_map();
+          std::map<std::string,std::string> map;
 
-  .def("get_map",
-      &Parameters::get_map,
+         for (auto& [k, v] : m) {
+           map[k] = v;
+         }
+
+         return map;
+       },
       "get underlying map")
 
   .def("reset_parameters",
@@ -1997,6 +2005,12 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def(py::init< const char*> ())
 
   .def(py::init< bool> ())
+
+  .def("as_str",
+        [](const Variant& v) -> decltype(auto) {
+          return static_cast<std::string>(v);
+       },
+      "Return the variant string content")
 
   ; //Variant
 } // PYBIND11_MODULE(shapeworks_py)

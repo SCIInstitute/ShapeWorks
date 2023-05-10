@@ -1,7 +1,7 @@
 # Particles library
 
 set(Particles_sources
- ParticleSystem.cpp
+        ParticleSystemEvaluation.cpp
  ParticleShapeStatistics.cpp
  ShapeEvaluation.cpp
  ReconstructSurface.cpp
@@ -9,7 +9,7 @@ set(Particles_sources
  )
 
 set(Particles_headers
- ParticleSystem.h
+        ParticleSystemEvaluation.h
  ParticleShapeStatistics.h
  itkParticlePositionReader.h
  itkParticlePositionWriter.h
