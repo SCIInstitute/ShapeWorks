@@ -14,7 +14,7 @@ Parameters::Parameters(StringMap map) { set_map(map); }
 void Parameters::set_map(StringMap map) { map_ = map; }
 
 //---------------------------------------------------------------------------
-StringMap Parameters::get_map() { return map_; }
+StringMap Parameters::get_map() const { return map_; }
 
 //---------------------------------------------------------------------------
 Variant Parameters::get(std::string key, Variant default_value) {

@@ -26,6 +26,7 @@ The layer choice option is NOT available in the [analyze module](cloud-analyze-m
 | Groomed | The groomed mesh (colored green) |
 | Reconstructed | The reconstructed mesh (colored red) |
 | Particles | Optimization particles for the shape |
+| Landmarks | Landmarks which mark anatomical features |
 
 ## Set Thumbnail
 

@@ -4,12 +4,12 @@
 namespace shapeworks {
 
 //---------------------------------------------------------------------------
-ParticleSystem AnalysisUtils::get_local_particle_system(Session* session, int domain) {
+ParticleSystemEvaluation AnalysisUtils::get_local_particle_system(Session* session, int domain) {
   Eigen::MatrixXd matrix;
   int num_shapes = session->get_num_shapes();
   int num_total_particles = session->get_num_particles();
   if (num_shapes == 0 || num_total_particles == 0) {
-    return ParticleSystem{matrix};
+    return ParticleSystemEvaluation{matrix};
   }
 
   auto shapes = session->get_shapes();
@@ -25,7 +25,7 @@ ParticleSystem AnalysisUtils::get_local_particle_system(Session* session, int do
     }
   }
 
-  return ParticleSystem{matrix};
+  return ParticleSystemEvaluation{matrix};
 }
 //---------------------------------------------------------------------------
 

@@ -2,7 +2,7 @@
 # Installs conda environment for building ShapeWorks
 #
 
-SW_MAJOR_VERSION=6.4
+SW_MAJOR_VERSION=6.5
 
 echo ""
 echo "Note: this script only supports bash and zsh shells "
@@ -114,7 +114,6 @@ function install_conda() {
     echo "Developer packages enabled"
 
     CONDA_PACKAGES+=(cmake=3.23.2 \
-		     gtest=1.11.0 \
 		     gmock=1.11.0 \
 		     doxygen=1.9.2 \
 		     graphviz=4.0.0 \
@@ -189,6 +188,14 @@ function install_conda() {
   if ! pip install swcc==1.0.5;                         then return 1; fi
   if ! pip install scikit-learn==1.1.1;                 then return 1; fi
 
+  # for network analysis
+  if [[ "$(uname)" == "Linux" ]]; then
+      if ! pip install open3d-cpu==0.17.0;              then return 1; fi
+  else
+      if ! pip install open3d==0.17.0;                  then return 1; fi
+  fi
+  if ! pip install spm1d==0.4.2;                        then return 1; fi
+
   for package in DataAugmentationUtilsPackage DatasetUtilsPackage DeepSSMUtilsPackage DocumentationUtilsPackage ShapeCohortGenPackage shapeworks ; do
     if [[ -e Python/${package}.tar.gz ]] ; then
       if ! pip install Python/${package}.tar.gz;        then return 1; fi
@@ -257,6 +264,8 @@ if install_conda; then
   echo "Pip installed packages:"
   pip list
 
+  conda clean -t -y
+  
   echo "$CONDAENV environment successfully created/updated!"
   
   conda activate $CONDAENV

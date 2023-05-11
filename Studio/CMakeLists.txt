@@ -102,6 +102,7 @@ SET(STUDIO_DATA_MOC_HDRS
 SET(STUDIO_JOB_SRCS
   Job/Job.cpp
   Job/GroupPvalueJob.cpp
+  Job/NetworkAnalysisJob.cpp
   Job/ParticleNormalEvaluationJob.cpp
   Job/StatsGroupLDAJob.cpp
   )
@@ -109,6 +110,7 @@ SET(STUDIO_JOB_SRCS
 SET(STUDIO_JOB_MOC_HDRS
   Job/Job.h
   Job/GroupPvalueJob.h
+  Job/NetworkAnalysisJob.h
   Job/ParticleNormalEvaluationJob.h
   Job/StatsGroupLDAJob.h
   )

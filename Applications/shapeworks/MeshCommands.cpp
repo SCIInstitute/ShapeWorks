@@ -1407,11 +1407,11 @@ bool WarpMesh::execute(const optparse::Values &options, SharedCommandData &share
     MeshWarper warper;
     Mesh inputMesh(inputMeshFilename);
     targetPointsFilenames.push_back(inputPointsFilename);
-    ParticleSystem particlesystem(targetPointsFilenames);
+    ParticleSystemEvaluation particlesystem(targetPointsFilenames);
     Eigen::MatrixXd landmarks;
     if (warp_along_with_landmarks) {
       std::vector<std::string> landmarks_ar = {landmarkFilename};
-      ParticleSystem landmarksystem(landmarks_ar);
+      ParticleSystemEvaluation landmarksystem(landmarks_ar);
       Eigen::MatrixXd landmarksPoints = landmarksystem.Particles().col(0);
       numLandmarks = landmarksPoints.rows() /3;
       landmarksPoints.resize(3, numLandmarks);

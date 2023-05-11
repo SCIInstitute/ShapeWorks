@@ -4,6 +4,8 @@
 #include "Mesh.h"
 #include "MeshUtils.h"
 #include "MeshWarper.h"
+#include "Image.h"
+#include "ParticleSystemEvaluation.h"
 #include "ParticleSystem.h"
 #include "Testing.h"
 
@@ -701,7 +703,7 @@ void mesh_warp_test(std::string ref_mesh, std::string ref_particles, std::string
   std::vector<std::string> paths;
   paths.push_back(staticPath);
   paths.push_back(movingPath);
-  ParticleSystem particlesystem(paths);
+  ParticleSystemEvaluation particlesystem(paths);
   Eigen::MatrixXd allPts = particlesystem.Particles();
   Eigen::MatrixXd staticPoints = allPts.col(0);
   Eigen::MatrixXd movingPoints = allPts.col(1);
