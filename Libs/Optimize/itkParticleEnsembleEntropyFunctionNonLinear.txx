@@ -43,9 +43,6 @@ ParticleEnsembleEntropyFunctionNonLinear<VDimension>
     m_GradientUpdatesNet->set_size(dM, N);
     m_GradientUpdatesNet->fill(0.0);
 
-    m_log_det_g_ar->clear(); m_log_det_g_ar->resize(N);
-    m_log_det_j_ar->clear(); m_log_det_j_ar->resize(N);
-    m_log_prob_u_ar->clear(); m_log_prob_u_ar->resize(N);
 
     Tensor jacobian_matrix_all = torch::zeros({N, L, dM}, torch::TensorOptions(torch::kCPU).dtype(torch::kDouble));
     std::cout << "AAA" << std::endl;
@@ -85,9 +82,6 @@ ParticleEnsembleEntropyFunctionNonLinear<VDimension>
             std::cout << "CJ 4" << std::endl;
             m_BaseShapeMatrix->set_columns(n, output_vec);
             std::cout << "CJ 5" << std::endl;
-            m_log_det_g_ar->insert(m_log_det_g_ar->begin() + n, log_det_g.begin(), log_det_g.end());
-            m_log_det_j_ar->insert(m_log_det_j_ar->begin() + n, log_det_j.begin(), log_det_j.end());
-            m_log_prob_u_ar->insert(m_log_prob_u_ar->begin() + n, log_prob_u.begin(), log_prob_u.end());
             std::cout << "CJ 6" << std::endl;
             n += block_size;
             std::cout << "CJ loop end | n = " << n << std::endl; 
@@ -290,10 +284,6 @@ ParticleEnsembleEntropyFunctionNonLinear<VDimension>
     //std::cout <<  "Energy Computation Execution Time: " << std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count() << "ms" << std::endl;
 
     energy = energy_in_data_space;
-    // double det_g = std::exp(m_log_det_g_ar->at(subject_id));
-    // double det_j = std::exp(m_log_det_j_ar->at(subject_id));
-    // double p_u = std::exp(m_log_prob_u_ar->at(subject_id));
-    // double term2 = ((p_u)/(std::sqrt(det_g) * det_j)) * (m_log_det_j_ar->at(subject_id) - (0.5 * m_log_det_g_ar->at(subject_id)));
 
     for (unsigned int i = 0; i< VDimension; i++)
     {

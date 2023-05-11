@@ -181,9 +181,6 @@ public:
     copy->m_ShapeMatrix = this->m_ShapeMatrix;
     copy->m_BaseShapeMatrix = this->m_BaseShapeMatrix;
     copy->m_GradientUpdatesNet = this->m_GradientUpdatesNet;
-    copy->m_log_det_g_ar = this->m_log_det_g_ar;
-    copy->m_log_det_j_ar = this->m_log_det_j_ar;
-    copy->m_log_prob_u_ar = this->m_log_prob_u_ar;
 
     copy->m_InverseCovMatrix = this->m_InverseCovMatrix;
     copy->m_points_mean = this->m_points_mean;
@@ -211,9 +208,6 @@ protected:
 
     m_BaseShapeMatrix = std::make_shared<vnl_matrix_type>(10, 10);
     m_GradientUpdatesNet = std::make_shared<vnl_matrix_type>(10, 10);
-    m_log_det_g_ar = std::make_shared<std::vector<double>>(10);
-    m_log_det_j_ar = std::make_shared<std::vector<double>>(10);
-    m_log_prob_u_ar = std::make_shared<std::vector<double>>(10);
     m_optimizing_check_ = false;
   }
   virtual ~ParticleEnsembleEntropyFunctionNonLinear() {}
@@ -245,9 +239,6 @@ protected:
   std::shared_ptr<vnl_matrix_type> m_BaseShapeMatrix;
   std::shared_ptr<vnl_matrix_type> m_GradientUpdatesNet;
 
-  std::shared_ptr<std::vector<double>> m_log_det_g_ar;
-  std::shared_ptr<std::vector<double>> m_log_det_j_ar;
-  std::shared_ptr<std::vector<double>> m_log_prob_u_ar;
 
 };
 
