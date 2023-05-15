@@ -46,6 +46,14 @@ rm -rf "package/$VERSION"
 
 mkdir -p "package/$VERSION"
 
+# Build python package tarballs
+# Pip can't install these otherwise from a read-only area like /Applications
+for package in DataAugmentationUtilsPackage DatasetUtilsPackage DeepSSMUtilsPackage DocumentationUtilsPackage ShapeCohortGenPackage shapeworks ; do
+    cd Python
+    tar czvf ${package}.tar.gz $package
+    cd ..
+done
+
 BASE_LIB=${INSTALL_DEP_DIR}/lib
 cp -a $INSTALL_DIR/* "package/${VERSION}"
 cp -a Examples "package/${VERSION}"

@@ -1,6 +1,17 @@
 # Release Notes
 
-## ShapeWorks 6.4.0 - 2023-04-??
+## ShapeWorks 6.4.1 - 2023-05-10
+
+### Fixes
+
+  * Fix grooming crash when there are free form constraints in an untitled/unsaved project (#2078)
+  * Fix update checker potentially crashing (#2079)
+
+
+## ShapeWorks 6.4.0 - 2023-05-05
+
+![](../img/about/release6.4.png)
+
 ### What is new?
   * **ShapeWorks Back-end**
     * New shapeworks 'analyze' command for offline analysis of shape models

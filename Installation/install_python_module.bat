@@ -1,9 +1,6 @@
 REM Installs the shapeworks python module.
 REM  NOTE: assumes all library dependencies are in this directory\bin
 
-REM install pip module
-call pip install Python\shapeworks.tar.gz
-
 set CONDA_INSTALL_DIR=%CONDA_PREFIX%\lib\site-packages\shapeworks
 
 :: format windows path to use forward slashes
