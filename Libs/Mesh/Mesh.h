@@ -162,6 +162,9 @@ class Mesh {
   /// computes curvature using principal (default) or gaussian or mean algorithms
   Field curvature(const CurvatureType type = Principal) const;
 
+  /// compute the gradient of a scalar field
+  void computeFieldGradient(const std::string& field) const;
+
   /// applies subdivision filter (butterfly (default) or loop)
   Mesh& applySubdivisionFilter(const SubdivisionType type = Butterfly, int subdivision = 1);
 
