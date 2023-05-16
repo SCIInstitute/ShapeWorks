@@ -862,6 +862,53 @@ Field Mesh::curvature(const CurvatureType type) const {
   return curv;
 }
 
+void Mesh::computeFieldGradient(const std::string& field) const {
+  auto arr = poly_data_->GetPointData()->GetArray(field.c_str());
+
+  // for each vertex, compute the gradient of the field and store x,y,z
+  // components in a vector
+  auto gradient = vtkSmartPointer<vtkDoubleArray>::New();
+  gradient->SetNumberOfComponents(3);
+  gradient->SetNumberOfTuples(numPoints());
+  gradient->SetName((std::string("gradient_") + field).c_str());
+
+  for (int i = 0; i < numPoints(); i++) {
+    // get the field value at this vertex
+    double value = arr->GetTuple1(i);
+
+    // collect all neighboring vertices using vtk
+    auto cell = vtkSmartPointer<vtkGenericCell>::New();
+    auto neighbors = vtkSmartPointer<vtkIdList>::New();
+    poly_data_->GetPointCells(i, neighbors);
+    int num_neighbors = neighbors->GetNumberOfIds();
+
+    // for each neighbor vertex
+    double x = 0.0;
+    double y = 0.0;
+    double z = 0.0;
+
+    for (int j = 0; j < num_neighbors; j++) {
+      // get the neighbor vertex id
+      int neighbor_id = neighbors->GetId(j);
+
+      // get the neighbor vertex
+      auto neighbor = poly_data_->GetPoint(neighbor_id);
+
+      // get the neighbor vertex value
+      double neighbor_value = arr->GetTuple1(neighbor_id);
+
+      // compute the gradient
+      x += (neighbor[0] - getPoint(i)[0]) * (neighbor_value - value);
+      y += (neighbor[1] - getPoint(i)[1]) * (neighbor_value - value);
+      z += (neighbor[2] - getPoint(i)[2]) * (neighbor_value - value);
+    }
+
+    gradient->SetTuple3(i, x, y, z);
+  }
+
+  poly_data_->GetPointData()->AddArray(gradient);
+}
+
 Mesh& Mesh::applySubdivisionFilter(const SubdivisionType type, int subdivision) {
   if (type == Mesh::SubdivisionType::Loop) {
     auto filter = vtkSmartPointer<vtkLoopSubdivisionFilter>::New();
