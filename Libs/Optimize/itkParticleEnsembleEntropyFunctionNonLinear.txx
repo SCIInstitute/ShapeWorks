@@ -30,12 +30,12 @@ ParticleEnsembleEntropyFunctionNonLinear<VDimension>
     {
     // 1. Forward Pass and get latent space representation, jacobians
     // All tensors in CPU and double precision here
-    MSG("Hi! Before Iterations in FINAL CPP COMPUTE GRADS | COMPUTING Gradient Updates...");
+    MSG("Hi! Before Iteration | COMPUTING Gradient Updates...");
     unsigned int dM = m_ShapeMatrix->rows();
     int M = (int)(dM / 3);
     unsigned int N = m_ShapeMatrix->cols();
     unsigned int L = m_ShapeMatrix->GetLatentDimensions();
-    int B  = m_ShapeMatrix->GetBatchSize();
+    int B  = m_ShapeMatrix->GetBatchSize(); // for faster jacobian computations, do forward passes in batches
     m_BaseShapeMatrix->clear();
     m_BaseShapeMatrix->set_size(L, N);
     m_BaseShapeMatrix->fill(0.0);
@@ -43,35 +43,34 @@ ParticleEnsembleEntropyFunctionNonLinear<VDimension>
     m_GradientUpdatesNet->set_size(dM, N);
     m_GradientUpdatesNet->fill(0.0);
 
-
-    Tensor jacobian_matrix_all = torch::zeros({N, L, dM}, torch::TensorOptions(torch::kCPU).dtype(torch::kDouble));
-    std::cout << "AAA" << std::endl;
+    Tensor jacobian_matrix_all_outer = torch::zeros({N, L, dM}, torch::TensorOptions(torch::kCPU).dtype(torch::kDouble)); // g function
+    Tensor jacobian_matrix_all_inner = torch::zeros({N, L, L}, torch::TensorOptions(torch::kCPU).dtype(torch::kDouble)); // h function 
 
     try{        
         // B forward passes with jacobian computation
         int n = 0;
         DEBUG(n); DEBUG(N);
+        // TODO: Try TBB block for this part's parallelization
         while (n < N)
         {
             unsigned int block_size = ((n+B) < N) ? B : (N-n);
-            std::cout << "n = " << n << "and BS = " << block_size << std::endl;
-            std::vector<double> log_det_g(block_size, 0.0); 
-            std::vector<double> log_det_j(block_size, 0.0); 
-            std::vector<double> log_prob_u(block_size, 0.0); 
+            std::cout << "Shape id n = " << n << "and Batch Size BS = " << block_size << std::endl;
 
-            auto input_vec = m_ShapeMatrix->get_n_columns(n, block_size); // B vectors
+            auto input_vec = m_ShapeMatrix->get_n_columns(n, block_size); // B vectors of size dM --> dM X B
             input_vec = input_vec.inplace_transpose(); // B X dM
-            Tensor jacobian_matrix;
-            Tensor output_tensor; // returned in Double CPU
+            Tensor jacobian_outer, jacobian_inner;
+            Tensor true_latent; // returned in Double CPU
             auto vmar = input_vec.data_array();
-            Tensor input_tensor = torch::from_blob(input_vec.data_block(), {block_size, dM}, torch::TensorOptions(torch::kCPU).dtype(torch::kDouble)).clone();
-            this->m_ShapeMatrix->ForwardPass(input_tensor, output_tensor, 
-                                                    jacobian_matrix, log_prob_u, 
-                                                    log_det_g, log_det_j);
-            std::cout << "Compute Jacobian(CJ) 1 | bs = " << block_size << std::endl;
-            jacobian_matrix_all.index_put_({torch::indexing::Slice(n, n+block_size), "..."}, jacobian_matrix);
-            std::cout << "Forward Pass Done | output size " << output_tensor.sizes() << std::endl;
-            double* output_data_ptr = output_tensor.data_ptr<double>();
+            Tensor input_shape = torch::from_blob(input_vec.data_block(), {block_size, dM}, torch::TensorOptions(torch::kCPU).dtype(torch::kDouble)).clone();
+            
+            this->m_ShapeMatrix->ForwardPass(input_shape, true_latent, jacobian_outer, jacobian_inner);
+            std::cout << "Compute Jacobian(CJ) 1 done | bs = " << block_size << std::endl;
+            jacobian_all_outer.index_put_({torch::indexing::Slice(n, n+block_size), "..."}, jacobian_outer);
+            jacobian_all_inner.index_put_({torch::indexing::Slice(n, n+block_size), "..."}, jacobian_inner);
+
+            std::cout << "Both Forward Passes Done | output size " << true_latent.sizes() << std::endl;
+            double* output_data_ptr = true_latent.data_ptr<double>();
+
             std::cout << "CJ 2" << std::endl;
             vnl_matrix<double> output_vec;
             output_vec.set_size(block_size, L);
@@ -82,7 +81,6 @@ ParticleEnsembleEntropyFunctionNonLinear<VDimension>
             std::cout << "CJ 4" << std::endl;
             m_BaseShapeMatrix->set_columns(n, output_vec);
             std::cout << "CJ 5" << std::endl;
-            std::cout << "CJ 6" << std::endl;
             n += block_size;
             std::cout << "CJ loop end | n = " << n << std::endl; 
         }
@@ -94,9 +92,8 @@ ParticleEnsembleEntropyFunctionNonLinear<VDimension>
 
     // 2. Do regular gradient computations in latent space assuming Gaussian Distrubution
     std::cout << "COMPUTING SW grads" << std::endl;
-    this->ComputeBaseSpaceGradientUpdates();
+    this->ComputeBaseSpaceGradientUpdates(); // On True Latent space
     std::cout << "COMPUTING SW grads done" << std::endl;
-    
     // 3. Compute Final Gradient Updates in Data space (Z)
     try
     {
@@ -105,8 +102,21 @@ ParticleEnsembleEntropyFunctionNonLinear<VDimension>
         auto vmar2 = tmp.data_array();
         Tensor dH_dU = torch::from_blob(tmp.data_block(), {N, L}, torch::TensorOptions(torch::kCPU).dtype(torch::kDouble)).clone();
         dH_dU = dH_dU.view({N, 1, L}).to(torch::TensorOptions(torch::kCUDA, 0).dtype(torch::kDouble));
+
         jacobian_matrix_all = jacobian_matrix_all.to(torch::TensorOptions(torch::kCUDA, 0).dtype(torch::kDouble));
         // N X 1 X L \times N X L X dM ===> N X 1 x dM
+        for (unsigned int k = 0; k < N; ++k)
+        {
+            auto J_k = jacobian_matrix_all.index({i, "..."}); // dM X dM
+            auto adj_J_k = J_k.adjoint();
+            for (unsigned int i = 0; i < L; ++i)
+            {
+                //Tr(adj(J(x^k) X derivative of Jacobian wrt x)
+            
+            }
+            
+        }
+
         Tensor dH_dZ = torch::bmm(dH_dU, jacobian_matrix_all); // N X 1 X dM
         std::cout << " bmm done  " << std::endl;
         dH_dZ = dH_dZ.view({N, dM}).to(torch::TensorOptions(torch::kCPU).dtype(torch::kDouble));
