@@ -97,6 +97,10 @@ class NonLinearCorrespondenceFunction : public VectorFunction {
     m_HoldMinimumVariance = false;
   }
   bool GetMinimumVarianceDecayConstant() const { return m_MinimumVarianceDecayConstant; }
+  
+  int GetLatentDimension() const { return m_LatentDimension; }
+  void SetLatentDimension(bool val) { m_LatentDimension = val; }
+
 
   void PrintShapeMatrix() { m_ShapeMatrix->PrintMatrix(); }
 
@@ -144,6 +148,7 @@ class NonLinearCorrespondenceFunction : public VectorFunction {
     m_MinimumVarianceDecayConstant = 1.0;  // log(2.0) / 50000.0;
     m_RecomputeCovarianceInterval = 1;
     m_Counter = 0;
+    m_LatentDimension = 128;
     m_UseMeanEnergy = true;
     m_PointsUpdate = std::make_shared<vnl_matrix_type>(10, 10);
     m_PointsUpdateNonLinear = std::make_shared<vnl_matrix_type>(10, 10);
@@ -167,9 +172,10 @@ class NonLinearCorrespondenceFunction : public VectorFunction {
   int m_RecomputeCovarianceInterval;
   int m_Counter;
   bool m_UseMeanEnergy;
+  int m_LatentDimension;
 
-  std::shared_ptr<vnl_matrix_type> m_points_mean;       // 3Nx3N - used for energy computation
-  std::shared_ptr<vnl_matrix_type> m_InverseCovMatrix;  // 3NxM - used for energy computation
+  std::shared_ptr<vnl_matrix_type> m_points_mean;
+  std::shared_ptr<vnl_matrix_type> m_InverseCovMatrix; 
 };
 
 }  // namespace shapeworks
