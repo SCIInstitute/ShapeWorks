@@ -135,6 +135,11 @@ class Optimize {
   //! Set if Normals are being used, one value per domain
   void SetUseNormals(std::vector<bool> use_normals);
 
+   //! Set if optimization should be done using Non Linear SSM method 
+  void SetUseNonLinearSSM(bool use_disentangled_ssm_4d);
+  //! Returns true if optimization is to be done using Non Linear SSM method 
+  bool SetUseNonLinearSSM();
+
   //! Set the attributes per domain
   void SetAttributesPerDomain(std::vector<int> attributes_per_domain);
   //! Get attributes per domain
@@ -366,6 +371,7 @@ class Optimize {
   int m_procrustes_counter = 0;
   bool m_use_cutting_planes = false;
   bool m_optimizing = false;
+  bool m_use_non_linear_ssm = false;
   bool m_use_regression = false;
   bool m_use_mixed_effects = false;
 
