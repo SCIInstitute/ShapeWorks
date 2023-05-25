@@ -284,6 +284,11 @@ class Optimize {
   //! Return the particle system as a matrix
   MatrixContainer GetParticleSystem();
 
+  //! Getters/Setters for NLS API
+  MatrixContainer GetLatentGradientUpdates();
+  MatrixContainer SetNonLinearGradientUpdates();
+  MatrixContainer SetLatentShapeMatrix();
+
   //! Set the python file to run at startup
   void SetPythonFile(std::string filename);
 
