@@ -62,6 +62,11 @@ class NonLinearCorrespondenceFunction : public VectorFunction {
 
   /**Access the shape matrix. */
   void SetShapeMatrix(ShapeMatrixType* s) { m_ShapeMatrix = s; }
+
+  // Access these shared pointers (Latent shape matrix and Non Linear Grad Updates) and will be used in Optimize to be set up from python later
+  std::shared_ptr<vnl_matrix<double>> GetLatentShapeMatrix() {return this->m_LatentShapeMatrix; };
+  std::shared_ptr<vnl_matrix<double>> GetNonLinearPointsUpdate() {return this->m_PointsUpdateNonLinear; };
+
   ShapeMatrixType* GetShapeMatrix() { return m_ShapeMatrix.GetPointer(); }
   const ShapeMatrixType* GetShapeMatrix() const { return m_ShapeMatrix.GetPointer(); }
 
