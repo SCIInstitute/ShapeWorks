@@ -2052,6 +2052,55 @@ MatrixContainer Optimize::GetParticleSystem() {
 }
 
 //---------------------------------------------------------------------------
+MatrixContainer Optimize::GetLatentGradientUpdates() {
+  auto shape_matrix = m_sampler->GetNonLinearEnsembleEntropyFunction()->GetLatentPointsUpdate();
+
+  MatrixType matrix;
+  matrix.resize(shape_matrix->rows(), shape_matrix->cols());
+
+  for (int i = 0; i < shape_matrix->rows(); i++) {
+    for (int j = 0; j < shape_matrix->cols(); j++) {
+      matrix(i, j) = shape_matrix->get(i, j);
+    }
+  }
+
+  MatrixContainer container;
+  container.matrix_ = matrix;
+  return container;
+}
+
+
+//---------------------------------------------------------------------------
+void Optimize::SetNonLinearGradientUpdates(MatrixContainer matrix)
+{
+  auto vnl = this->m_sampler->GetNonLinearEnsembleEntropyFunction()->GetNonLinearPointsUpdate();
+  vnl->clear();
+  vnl->fill(0.0);
+  auto eigen = matrix.matrix_;
+  vnl->set_size(eigen.rows(), eigen.cols());
+  for (int r = 0; r < eigen.rows(); r++) {
+    for (int c = 0; c < eigen.cols(); c++) {
+      vnl->put(r, c, eigen(r, c));
+    }
+  }
+}
+
+//---------------------------------------------------------------------------
+void Optimize::SetLatentShapeMatrix(MatrixContainer matrix)
+{
+  auto vnl = this->m_sampler->GetNonLinearEnsembleEntropyFunction()->GetLatentShapeMatrix();
+  vnl->clear();
+  vnl->fill(0.0);
+  auto eigen = matrix.matrix_;
+  vnl->set_size(eigen.rows(), eigen.cols());
+  for (int r = 0; r < eigen.rows(); r++) {
+    for (int c = 0; c < eigen.cols(); c++) {
+      vnl->put(r, c, eigen(r, c));
+    }
+  }
+}
+
+//---------------------------------------------------------------------------
 std::string Optimize::GetCheckpointDir() {
   int num_digits = std::to_string(abs(m_total_iterations)).length();
   std::stringstream ss;
