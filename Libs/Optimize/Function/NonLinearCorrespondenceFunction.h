@@ -170,6 +170,8 @@ class NonLinearCorrespondenceFunction : public VectorFunction {
   std::shared_ptr<vnl_matrix_type> m_LatentShapeMatrix; // Shape Matrix for Gaussian Latent Space: L X N
 
   virtual void ComputeCovarianceMatrix();
+  virtual void ComputeLatentSpaceGradientUpdates();
+
   std::shared_ptr<vnl_matrix_type> m_PointsUpdate; // Gaussian Latent Space
   std::shared_ptr<vnl_matrix_type> m_PointsUpdateNonLinear; // Non-Gaussian Shape (Data) Space
   double m_MinimumVariance;
