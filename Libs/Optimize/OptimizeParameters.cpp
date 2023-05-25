@@ -41,6 +41,7 @@ const std::string use_fixed_subjects = "use_fixed_subjects";
 const std::string fixed_subjects_column = "fixed_subjects_column";
 const std::string fixed_subjects_choice = "fixed_subjects_choice";
 const std::string checkpointing_interval = "checkpointing_interval";
+const std::string use_non_linear_ssm = "use_non_linear_ssm";
 const std::string save_init_splits = "save_init_splits";
 const std::string keep_checkpoints = "keep_checkpoints";
 }  // namespace Keys
@@ -75,6 +76,7 @@ OptimizeParameters::OptimizeParameters(ProjectHandle project) {
                                          Keys::fixed_subjects_column,
                                          Keys::fixed_subjects_choice,
                                          Keys::checkpointing_interval,
+                                         Keys::use_non_linear_ssm,
                                          Keys::save_init_splits,
                                          Keys::keep_checkpoints
 
@@ -158,6 +160,12 @@ std::vector<bool> OptimizeParameters::get_use_normals() {
 
 //---------------------------------------------------------------------------
 void OptimizeParameters::set_use_normals(std::vector<bool> use_normals) { params_.set(Keys::use_normals, use_normals); }
+
+//---------------------------------------------------------------------------
+bool OptimizeParameters::get_use_non_linear_ssm() { return params_.get(Keys::use_non_linear_ssm, false); }
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_use_non_linear_ssm(bool value) { params_.set(Keys::use_non_linear_ssm, value); }
 
 //---------------------------------------------------------------------------
 double OptimizeParameters::get_normals_strength() { return params_.get(Keys::normals_strength, 10); }
@@ -329,6 +337,7 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
   optimize->SetGeodesicsCacheSizeMultiplier(get_geodesic_cache_multiplier());
   optimize->SetNarrowBand(get_narrow_band());
   optimize->SetOutputDir(get_output_prefix());
+  optimize->SetUseNonLinearSSM(get_use_non_linear_ssm());
   optimize->SetMeshFFCMode(get_mesh_ffc_mode());
 
   // TODO Remove this once Studio has controls for shared boundary

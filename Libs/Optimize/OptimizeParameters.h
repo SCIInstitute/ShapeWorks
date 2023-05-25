@@ -52,6 +52,9 @@ class OptimizeParameters {
   std::vector<bool> get_use_normals();
   void set_use_normals(std::vector<bool> use_normals);
 
+  bool get_use_non_linear_ssm();
+  void set_use_non_linear_ssm(bool value);
+
   double get_normals_strength();
   void set_normals_strength(double value);
 
