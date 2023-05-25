@@ -68,6 +68,7 @@ class NonLinearCorrespondenceFunction : public VectorFunction {
   std::shared_ptr<vnl_matrix<double>> GetLatentPointsUpdate() {return this->m_PointsUpdate; };
   std::shared_ptr<vnl_matrix<double>> GetNonLinearPointsUpdate() {return this->m_PointsUpdateNonLinear; };
 
+  void SetNonLinearGradientComputationCallbackFunction(const std::function<void(void)>& f) { this->m_non_linear_gradient_computation_callback = f; };
 
   ShapeMatrixType* GetShapeMatrix() { return m_ShapeMatrix.GetPointer(); }
   const ShapeMatrixType* GetShapeMatrix() const { return m_ShapeMatrix.GetPointer(); }
@@ -194,6 +195,7 @@ class NonLinearCorrespondenceFunction : public VectorFunction {
   std::shared_ptr<vnl_matrix_type> m_points_mean; // for data space
   std::shared_ptr<vnl_matrix_type> m_points_mean_latent; // for latent space
   std::shared_ptr<vnl_matrix_type> m_InverseCovMatrix; // for Latent Gaussian Shape Matrix
+  std::function<void(void)> m_non_linear_gradient_computation_callback;
 };
 
 }  // namespace shapeworks

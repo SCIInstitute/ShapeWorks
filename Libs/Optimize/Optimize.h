@@ -78,6 +78,9 @@ class Optimize {
 
   void SetIterationCallbackFunction(const std::function<void(void)>& f) { this->iteration_callback_ = f; }
 
+  //! Callback, executed on python side for NLS computations
+  void SetNonLinearGradientComputationCallbackFunction(const std::function<void(void)>& f);
+
   //! Abort optimization
   void AbortOptimization();
 
