@@ -2127,6 +2127,12 @@ void Optimize::SetNonLinearGradientComputationCallbackFunction(const std::functi
 }
 
 //---------------------------------------------------------------------------
+void Optimize::ComputeLatentSpaceGradientUpdates()
+{
+  this->m_sampler->GetNonLinearEnsembleEntropyFunction()->ComputeLatentSpaceGradientUpdates();
+}
+
+//---------------------------------------------------------------------------
 std::string Optimize::GetCheckpointDir() {
   int num_digits = std::to_string(abs(m_total_iterations)).length();
   std::stringstream ss;

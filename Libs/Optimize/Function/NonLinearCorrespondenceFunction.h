@@ -70,6 +70,8 @@ class NonLinearCorrespondenceFunction : public VectorFunction {
 
   void SetNonLinearGradientComputationCallbackFunction(const std::function<void(void)>& f) { this->m_non_linear_gradient_computation_callback = f; };
 
+  void ComputeLatentSpaceGradientUpdates();
+
   ShapeMatrixType* GetShapeMatrix() { return m_ShapeMatrix.GetPointer(); }
   const ShapeMatrixType* GetShapeMatrix() const { return m_ShapeMatrix.GetPointer(); }
 
@@ -78,7 +80,11 @@ class NonLinearCorrespondenceFunction : public VectorFunction {
     m_ShapeMatrix->BeforeIteration();
 
     if (m_Counter == 0) {
-      this->ComputeCovarianceMatrix();
+      if(this->m_non_linear_gradient_computation_callback)
+      {
+        std::cout << "Making Callback, from CPP for Gradient Calcualtions " << std::endl;
+        this->m_non_linear_gradient_computation_callback();
+      }
     }
   }
 
@@ -178,7 +184,6 @@ class NonLinearCorrespondenceFunction : public VectorFunction {
   std::shared_ptr<vnl_matrix_type> m_LatentShapeMatrix; // Shape Matrix for Gaussian Latent Space: L X N
 
   virtual void ComputeCovarianceMatrix();
-  virtual void ComputeLatentSpaceGradientUpdates();
 
   std::shared_ptr<vnl_matrix_type> m_PointsUpdate; // Gaussian Latent Space
   std::shared_ptr<vnl_matrix_type> m_PointsUpdateNonLinear; // Non-Gaussian Shape (Data) Space

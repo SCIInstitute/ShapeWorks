@@ -81,6 +81,8 @@ class Optimize {
   //! Callback, executed on python side for NLS computations
   void SetNonLinearGradientComputationCallbackFunction(const std::function<void(void)>& f);
 
+  void ComputeLatentSpaceGradientUpdates();
+
   //! Abort optimization
   void AbortOptimization();
 
