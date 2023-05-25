@@ -15,6 +15,7 @@
 #include "Libs/Optimize/Function/CurvatureSamplingFunction.h"
 #include "Libs/Optimize/Function/DualVectorFunction.h"
 #include "Libs/Optimize/Function/LegacyCorrespondenceFunction.h"
+#include "Libs/Optimize/Function/NonLinearCorrespondenceFunction.h"
 #include "Libs/Optimize/Function/SamplingFunction.h"
 #include "Libs/Optimize/Matrix/LinearRegressionShapeMatrix.h"
 #include "Libs/Optimize/Matrix/MixedEffectsShapeMatrix.h"
@@ -180,7 +181,14 @@ class Sampler {
 
   /** This method sets the optimization function for correspondences between surfaces (domains). */
   virtual void SetCorrespondenceMode(shapeworks::CorrespondenceMode mode) {
-    if (mode == shapeworks::CorrespondenceMode::MeanEnergy) {
+    if (mode == shapeworks::CorrespondenceMode::NonLinearMeanEnergy) {
+      m_LinkingFunction->SetFunctionB(m_NonLinearEnsembleEntropyFunction);
+      m_NonLinearEnsembleEntropyFunction->UseMeanEnergy();
+    } else if (mode == shapeworks::CorrespondenceMode::NonLinearEnsembleEntropy) {
+      m_LinkingFunction->SetFunctionB(m_NonLinearEnsembleEntropyFunction);
+      m_NonLinearEnsembleEntropyFunction->UseEntropy();
+    }
+    else if (mode == shapeworks::CorrespondenceMode::MeanEnergy) {
       m_LinkingFunction->SetFunctionB(m_EnsembleEntropyFunction);
       m_EnsembleEntropyFunction->UseMeanEnergy();
     } else if (mode == shapeworks::CorrespondenceMode::EnsembleEntropy) {
@@ -247,6 +255,8 @@ class Sampler {
 
   LegacyCorrespondenceFunction* GetEnsembleEntropyFunction() { return m_EnsembleEntropyFunction.GetPointer(); }
 
+  NonLinearCorrespondenceFunction* GetNonLinearEnsembleEntropyFunction() { return m_NonLinearEnsembleEntropyFunction.GetPointer(); }
+
   LegacyCorrespondenceFunction* GetEnsembleRegressionEntropyFunction() {
     return m_EnsembleRegressionEntropyFunction.GetPointer();
   }
@@ -260,6 +270,10 @@ class Sampler {
   }
 
   const DualVectorFunction* GetLinkingFunction() const { return m_LinkingFunction.GetPointer(); }
+
+  const NonLinearCorrespondenceFunction* GetNonLinearEnsembleEntropyFunction() const {
+    return m_NonLinearEnsembleEntropyFunction.GetPointer();
+  }
 
   const LegacyCorrespondenceFunction* GetEnsembleEntropyFunction() const {
     return m_EnsembleEntropyFunction.GetPointer();
@@ -403,6 +417,7 @@ class Sampler {
   DualVectorFunction::Pointer m_LinkingFunction;
 
   LegacyCorrespondenceFunction::Pointer m_EnsembleEntropyFunction;
+  NonLinearCorrespondenceFunction::Pointer m_NonLinearEnsembleEntropyFunction;
   LegacyCorrespondenceFunction::Pointer m_EnsembleRegressionEntropyFunction;
   LegacyCorrespondenceFunction::Pointer m_EnsembleMixedEffectsEntropyFunction;
   CorrespondenceFunction::Pointer m_CorrespondenceFunction;
