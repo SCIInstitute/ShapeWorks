@@ -114,6 +114,8 @@ class NonLinearCorrespondenceFunction : public VectorFunction {
     NonLinearCorrespondenceFunction::Pointer copy = NonLinearCorrespondenceFunction::New();
 
     copy->m_PointsUpdate = this->m_PointsUpdate;
+    copy->m_PointsUpdateNonLinear = this->m_PointsUpdateNonLinear;
+
     copy->m_MinimumVariance = this->m_MinimumVariance;
     copy->m_MinimumEigenValue = this->m_MinimumEigenValue;
     copy->m_CurrentEnergy = this->m_CurrentEnergy;
@@ -144,6 +146,8 @@ class NonLinearCorrespondenceFunction : public VectorFunction {
     m_Counter = 0;
     m_UseMeanEnergy = true;
     m_PointsUpdate = std::make_shared<vnl_matrix_type>(10, 10);
+    m_PointsUpdateNonLinear = std::make_shared<vnl_matrix_type>(10, 10);
+
     m_InverseCovMatrix = std::make_shared<vnl_matrix_type>(10, 10);
     m_points_mean = std::make_shared<vnl_matrix_type>(10, 10);
   }
@@ -154,6 +158,7 @@ class NonLinearCorrespondenceFunction : public VectorFunction {
 
   virtual void ComputeCovarianceMatrix();
   std::shared_ptr<vnl_matrix_type> m_PointsUpdate;
+  std::shared_ptr<vnl_matrix_type> m_PointsUpdateNonLinear;
   double m_MinimumVariance;
   double m_MinimumEigenValue;
   double m_CurrentEnergy;
