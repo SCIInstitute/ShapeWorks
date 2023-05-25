@@ -1648,6 +1648,41 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def("LoadParameterFile",
        &Optimize::LoadParameterFile)
 
+  .def("LoadXlsxProjectFile",
+       &Optimize::LoadXlsxProjectFile)
+
+  .def("SaveProject",
+       &Optimize::SaveProject)
+
+  .def("GetLatentGradientUpdates",
+       [](Optimize *opt){
+          shapeworks::MatrixContainer container = opt->GetLatentGradientUpdates();
+          return container.matrix_;
+     }
+     )
+
+  .def("SetNonLinearGradientUpdates",
+     [](Optimize *opt,Eigen::MatrixXd updates){
+          shapeworks::MatrixContainer container;
+          container.matrix_ = updates;
+          opt->SetNonLinearGradientUpdates(container);
+          }
+     )
+
+  .def("SetLatentShapeMatrix",
+     [](Optimize *opt,Eigen::MatrixXd updates){
+          shapeworks::MatrixContainer container;
+          container.matrix_ = updates;
+          opt->SetLatentShapeMatrix(container);
+          }
+     )
+
+  .def("SetIterationCallbackFunction",
+       &Optimize::SetNonLinearGradientComputationCallbackFunction)
+
+  .def("ComputeLatentSpaceGradientUpdates",
+       &Optimize::ComputeLatentSpaceGradientUpdates)
+
   .def("SetUpOptimize",
        &Optimize::SetUpOptimize,
        "projectFile"_a )
