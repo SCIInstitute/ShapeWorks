@@ -23,6 +23,7 @@ Sampler::Sampler() {
   m_MeshFiles.push_back("");
 
   m_LinkingFunction = DualVectorFunction::New();
+  m_NonLinearEnsembleEntropyFunction = NonLinearCorrespondenceFunction::New();
   m_EnsembleEntropyFunction = LegacyCorrespondenceFunction::New();
   m_EnsembleRegressionEntropyFunction = LegacyCorrespondenceFunction::New();
   m_EnsembleMixedEffectsEntropyFunction = LegacyCorrespondenceFunction::New();
@@ -35,6 +36,7 @@ Sampler::Sampler() {
   m_LinearRegressionShapeMatrix = LinearRegressionShapeMatrix::New();
   m_MixedEffectsShapeMatrix = MixedEffectsShapeMatrix::New();
 
+  m_NonLinearEnsembleEntropyFunction->SetShapeMatrix(m_LegacyShapeMatrix);
   m_EnsembleEntropyFunction->SetShapeMatrix(m_LegacyShapeMatrix);
 
   m_EnsembleRegressionEntropyFunction->SetShapeMatrix(m_LinearRegressionShapeMatrix);
