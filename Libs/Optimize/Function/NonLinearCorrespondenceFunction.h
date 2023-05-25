@@ -97,9 +97,9 @@ class NonLinearCorrespondenceFunction : public VectorFunction {
     m_HoldMinimumVariance = false;
   }
   bool GetMinimumVarianceDecayConstant() const { return m_MinimumVarianceDecayConstant; }
-  
-  int GetLatentDimension() const { return m_LatentDimension; }
-  void SetLatentDimension(bool val) { m_LatentDimension = val; }
+
+  int GetLatentDimensions() const { return m_LatentDimensions; }
+  void SetLatentDimensions(bool val) { m_LatentDimensions = val; }
 
 
   void PrintShapeMatrix() { m_ShapeMatrix->PrintMatrix(); }
@@ -127,6 +127,8 @@ class NonLinearCorrespondenceFunction : public VectorFunction {
     copy->m_MinimumVarianceDecayConstant = this->m_MinimumVarianceDecayConstant;
     copy->m_RecomputeCovarianceInterval = this->m_RecomputeCovarianceInterval;
     copy->m_Counter = m_Counter;
+    copy->m_LatentDimensions = m_LatentDimensions;
+
 
     copy->m_DomainNumber = this->m_DomainNumber;
     copy->m_ParticleSystem = this->m_ParticleSystem;
@@ -148,7 +150,7 @@ class NonLinearCorrespondenceFunction : public VectorFunction {
     m_MinimumVarianceDecayConstant = 1.0;  // log(2.0) / 50000.0;
     m_RecomputeCovarianceInterval = 1;
     m_Counter = 0;
-    m_LatentDimension = 128;
+    m_LatentDimensions = 128;
     m_UseMeanEnergy = true;
     m_PointsUpdate = std::make_shared<vnl_matrix_type>(10, 10);
     m_PointsUpdateNonLinear = std::make_shared<vnl_matrix_type>(10, 10);
@@ -162,8 +164,8 @@ class NonLinearCorrespondenceFunction : public VectorFunction {
   typename ShapeMatrixType::Pointer m_ShapeMatrix;
 
   virtual void ComputeCovarianceMatrix();
-  std::shared_ptr<vnl_matrix_type> m_PointsUpdate;
-  std::shared_ptr<vnl_matrix_type> m_PointsUpdateNonLinear;
+  std::shared_ptr<vnl_matrix_type> m_PointsUpdate; // Gaussian Latent Space
+  std::shared_ptr<vnl_matrix_type> m_PointsUpdateNonLinear; // Non-Gaussian Shape (Data) Space
   double m_MinimumVariance;
   double m_MinimumEigenValue;
   double m_CurrentEnergy;
@@ -172,7 +174,7 @@ class NonLinearCorrespondenceFunction : public VectorFunction {
   int m_RecomputeCovarianceInterval;
   int m_Counter;
   bool m_UseMeanEnergy;
-  int m_LatentDimension;
+  int m_LatentDimensions;
 
   std::shared_ptr<vnl_matrix_type> m_points_mean;
   std::shared_ptr<vnl_matrix_type> m_InverseCovMatrix; 
