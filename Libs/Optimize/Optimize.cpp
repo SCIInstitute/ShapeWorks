@@ -2039,6 +2039,12 @@ bool Optimize::LoadXlsxProjectFile(std::string filename)
   return true;
 }
 
+void Optimize::SaveProject(const std::string& filename)
+{
+  project_->save(filename);
+  std::cout << "Project File saved! " << std::endl;
+}
+
 bool Optimize::SetUpOptimize(ProjectHandle projectFile) {
   OptimizeParameters param(projectFile);
   param.set_up_optimize(this);

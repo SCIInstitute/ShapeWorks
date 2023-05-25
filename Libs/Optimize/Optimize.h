@@ -69,6 +69,8 @@ class Optimize {
   //! Load SW XLSX Project file
   bool LoadXlsxProjectFile(std::string filename);
 
+  void SaveProject(const std::string& filename);
+
   bool SetUpOptimize(ProjectHandle projectFile);
 
   //! Set the Projects
