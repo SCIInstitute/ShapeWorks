@@ -286,8 +286,8 @@ class Optimize {
 
   //! Getters/Setters for NLS API
   MatrixContainer GetLatentGradientUpdates();
-  MatrixContainer SetNonLinearGradientUpdates();
-  MatrixContainer SetLatentShapeMatrix();
+  void SetNonLinearGradientUpdates(MatrixContainer matrix);
+  void SetLatentShapeMatrix(MatrixContainer matrix);
 
   //! Set the python file to run at startup
   void SetPythonFile(std::string filename);
