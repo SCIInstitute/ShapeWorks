@@ -133,9 +133,11 @@ class NonLinearCorrespondenceFunction : public VectorFunction {
     copy->m_DomainNumber = this->m_DomainNumber;
     copy->m_ParticleSystem = this->m_ParticleSystem;
     copy->m_ShapeMatrix = this->m_ShapeMatrix;
+    copy->m_LatentShapeMatrix = this->m_LatentShapeMatrix;
 
     copy->m_InverseCovMatrix = this->m_InverseCovMatrix;
     copy->m_points_mean = this->m_points_mean;
+    copy->m_points_mean_latent = this->m_points_mean_latent;
     copy->m_UseMeanEnergy = this->m_UseMeanEnergy;
 
     return (VectorFunction::Pointer)copy;
@@ -154,14 +156,18 @@ class NonLinearCorrespondenceFunction : public VectorFunction {
     m_UseMeanEnergy = true;
     m_PointsUpdate = std::make_shared<vnl_matrix_type>(10, 10);
     m_PointsUpdateNonLinear = std::make_shared<vnl_matrix_type>(10, 10);
+    m_LatentShapeMatrix = std::make_shared<vnl_matrix_type>(10, 10);
 
     m_InverseCovMatrix = std::make_shared<vnl_matrix_type>(10, 10);
     m_points_mean = std::make_shared<vnl_matrix_type>(10, 10);
+    m_points_mean_latent = std::make_shared<vnl_matrix_type>(10, 10);
+
   }
   virtual ~NonLinearCorrespondenceFunction() {}
   void operator=(const NonLinearCorrespondenceFunction&);
   NonLinearCorrespondenceFunction(const NonLinearCorrespondenceFunction&);
-  typename ShapeMatrixType::Pointer m_ShapeMatrix;
+  typename ShapeMatrixType::Pointer m_ShapeMatrix; // Actual Shape (Data) Matrix, lives in high dimensional space : dM X N
+  std::shared_ptr<vnl_matrix_type> m_LatentShapeMatrix; // Shape Matrix for Gaussian Latent Space: L X N
 
   virtual void ComputeCovarianceMatrix();
   std::shared_ptr<vnl_matrix_type> m_PointsUpdate; // Gaussian Latent Space
@@ -176,8 +182,9 @@ class NonLinearCorrespondenceFunction : public VectorFunction {
   bool m_UseMeanEnergy;
   int m_LatentDimensions;
 
-  std::shared_ptr<vnl_matrix_type> m_points_mean;
-  std::shared_ptr<vnl_matrix_type> m_InverseCovMatrix; 
+  std::shared_ptr<vnl_matrix_type> m_points_mean; // for data space
+  std::shared_ptr<vnl_matrix_type> m_points_mean_latent; // for latent space
+  std::shared_ptr<vnl_matrix_type> m_InverseCovMatrix; // for Latent Gaussian Shape Matrix
 };
 
 }  // namespace shapeworks
