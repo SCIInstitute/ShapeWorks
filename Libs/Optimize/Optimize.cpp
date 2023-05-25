@@ -444,6 +444,10 @@ void Optimize::InitializeSampler() {
   m_sampler->GetEnsembleEntropyFunction()->SetRecomputeCovarianceInterval(1);
   m_sampler->GetEnsembleEntropyFunction()->SetHoldMinimumVariance(false);
 
+  m_sampler->GetNonLinearEnsembleEntropyFunction()->SetMinimumVariance(m_starting_regularization);
+  m_sampler->GetNonLinearEnsembleEntropyFunction()->SetRecomputeCovarianceInterval(1);
+  m_sampler->GetNonLinearEnsembleEntropyFunction()->SetHoldMinimumVariance(false);
+
   m_sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetMinimumVariance(m_starting_regularization);
   m_sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetRecomputeCovarianceInterval(1);
   m_sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetHoldMinimumVariance(false);
@@ -466,6 +470,8 @@ void Optimize::InitializeSampler() {
   m_sampler->GetEnsembleEntropyFunction()->SetRecomputeCovarianceInterval(m_recompute_regularization_interval);
   m_sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetRecomputeCovarianceInterval(
       m_recompute_regularization_interval);
+  m_sampler->GetNonLinearEnsembleEntropyFunction()->SetRecomputeCovarianceInterval(m_recompute_regularization_interval);
+
   m_sampler->GetEnsembleRegressionEntropyFunction()->SetRecomputeCovarianceInterval(
       m_recompute_regularization_interval);
   m_sampler->GetEnsembleMixedEffectsEntropyFunction()->SetRecomputeCovarianceInterval(
@@ -558,6 +564,9 @@ void Optimize::Initialize() {
 
     m_sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetMinimumVarianceDecay(
         m_starting_regularization, m_ending_regularization, m_iterations_per_split);
+    
+    m_sampler->GetNonLinearEnsembleEntropyFunction()->SetMinimumVarianceDecay(m_starting_regularization, m_ending_regularization,
+                                                                     m_iterations_per_split);
   } else {
     // force to mean
     if ((m_attributes_per_domain.size() > 0 &&
@@ -779,6 +788,11 @@ void Optimize::RunOptimize() {
   m_sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetMinimumVarianceDecay(
       m_starting_regularization, m_ending_regularization,
       m_optimization_iterations - m_optimization_iterations_completed);
+
+  m_sampler->GetNonLinearEnsembleEntropyFunction()->SetMinimumVarianceDecay(
+      m_starting_regularization, m_ending_regularization,
+      m_optimization_iterations - m_optimization_iterations_completed);
+
   m_sampler->GetEnsembleRegressionEntropyFunction()->SetMinimumVarianceDecay(
       m_starting_regularization, m_ending_regularization,
       m_optimization_iterations - m_optimization_iterations_completed);
@@ -793,7 +807,13 @@ void Optimize::RunOptimize() {
 
   m_sampler->SetCorrespondenceOn();
 
-  if ((m_attributes_per_domain.size() > 0 &&
+  if(m_use_non_linear_ssm)
+  {
+    if (m_starting_regularization == m_ending_regularization) 
+       m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::NonLinearMeanEnergy);
+    else
+       m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::NonLinearEnsembleEntropy);
+  } else if ((m_attributes_per_domain.size() > 0 &&
        *std::max_element(m_attributes_per_domain.begin(), m_attributes_per_domain.end()) > 0) ||
       m_mesh_based_attributes) {
     m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::MeshBasedGeneralEntropy);
