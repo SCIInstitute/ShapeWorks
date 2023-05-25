@@ -2025,6 +2025,20 @@ bool Optimize::LoadParameterFile(std::string filename) {
   return true;
 }
 
+//---------------------------------------------------------------------------
+bool Optimize::LoadXlsxProjectFile(std::string filename)
+{
+  ProjectHandle project = std::make_shared<Project>();
+  project->load(filename);
+  OptimizeParameters params(project);
+  if(!params.set_up_optimize(this)){
+    std::cerr << "Error in loading xlsx sheet" << std::endl;
+    return false;
+  }
+  this->SetProject(project);
+  return true;
+}
+
 bool Optimize::SetUpOptimize(ProjectHandle projectFile) {
   OptimizeParameters param(projectFile);
   param.set_up_optimize(this);

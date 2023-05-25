@@ -66,6 +66,9 @@ class Optimize {
   //! Load a parameter file
   bool LoadParameterFile(std::string filename);
 
+  //! Load SW XLSX Project file
+  bool LoadXlsxProjectFile(std::string filename);
+
   bool SetUpOptimize(ProjectHandle projectFile);
 
   //! Set the Projects
