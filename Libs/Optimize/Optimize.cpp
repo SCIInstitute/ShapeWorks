@@ -370,7 +370,7 @@ void Optimize::SetUseXYZ(std::vector<bool> use_xyz) { this->m_use_xyz = use_xyz;
 void Optimize::SetUseNormals(std::vector<bool> use_normals) { this->m_use_normals = use_normals; }
 
 //---------------------------------------------------------------------------
-void Optimize::SetUseNonLinearSSM(std::vector<bool> val) { this->m_use_non_linear_ssm = val; }
+void Optimize::SetUseNonLinearSSM(bool val) { this->m_use_non_linear_ssm = val; }
 
 bool Optimize::GetUseNonLinearSSM() { return this->m_use_non_linear_ssm; }
 

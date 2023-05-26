@@ -146,7 +146,7 @@ class Optimize {
   void SetUseNormals(std::vector<bool> use_normals);
 
    //! Set if optimization should be done using Non Linear SSM method 
-  void SetUseNonLinearSSM(bool use_disentangled_ssm_4d);
+  void SetUseNonLinearSSM(bool val);
   //! Returns true if optimization is to be done using Non Linear SSM method 
   bool GetUseNonLinearSSM();
 
