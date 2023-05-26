@@ -370,6 +370,11 @@ void Optimize::SetUseXYZ(std::vector<bool> use_xyz) { this->m_use_xyz = use_xyz;
 void Optimize::SetUseNormals(std::vector<bool> use_normals) { this->m_use_normals = use_normals; }
 
 //---------------------------------------------------------------------------
+void Optimize::SetUseNonLinearSSM(std::vector<bool> val) { this->m_use_non_linear_ssm = val; }
+
+bool Optimize::GetUseNonLinearSSM() { return this->m_use_non_linear_ssm; }
+
+//---------------------------------------------------------------------------
 void Optimize::SetAttributesPerDomain(std::vector<int> attributes_per_domain) {
   this->m_attributes_per_domain = attributes_per_domain;
   this->m_sampler->SetAttributesPerDomain(attributes_per_domain);

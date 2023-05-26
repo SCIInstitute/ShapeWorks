@@ -148,7 +148,7 @@ class Optimize {
    //! Set if optimization should be done using Non Linear SSM method 
   void SetUseNonLinearSSM(bool use_disentangled_ssm_4d);
   //! Returns true if optimization is to be done using Non Linear SSM method 
-  bool SetUseNonLinearSSM();
+  bool GetUseNonLinearSSM();
 
   //! Set the attributes per domain
   void SetAttributesPerDomain(std::vector<int> attributes_per_domain);
