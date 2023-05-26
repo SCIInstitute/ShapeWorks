@@ -38,8 +38,12 @@ ShapeWorks Studio is a cross-platform graphical user interface (GUI) to support 
 
 For more information about ShapeWorks Studio, see [here](../studio/getting-started-with-studio.md)
 
-## ShapeWorks in the Cloud 
+## ShapeWorks Cloud
 
-*Work in progress ... Stay tuned!*
+ShapeWorks Cloud provides an All-in-one browser interface to the ShapeWorks toolkit.
+ShapeWorks Cloud supports the standard shape analysis workflow used by most ShapeWorks users. In ShapeWorks Cloud, you can access datasets, create projects, as well view and interact with, groom, optimize, and analyze your data.
 
-![In Progress](../img/misc/in-progress.png)
+!!! important "Active Development"
+    ShapeWorks Cloud is currently under active development, and the current form/features may change. To view the most up-to-date documentation for ShapeWorks Cloud navigate [here](http://sciinstitute.github.io/ShapeWorks/dev/cloud/getting-started-with-cloud.html)
+
+For more information about ShapeWorks Cloud, see [here](../cloud/getting-started-with-cloud.md)
