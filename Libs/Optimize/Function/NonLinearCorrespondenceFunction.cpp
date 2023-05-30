@@ -20,7 +20,7 @@ void NonLinearCorrespondenceFunction ::WriteModes(const std::string& prefix, int
 
 void NonLinearCorrespondenceFunction ::ComputeLatentSpaceGradientUpdates() {
 
-  const unsigned int num_samples = m_LatentShapeMatrix->cols();
+  const unsigned int num_samples = m_ShapeMatrix->cols();
   const unsigned int num_dims = m_LatentDimensions;
 
   if (m_PointsUpdate->rows() != num_dims || m_PointsUpdate->cols() != num_samples) {
@@ -35,7 +35,16 @@ void NonLinearCorrespondenceFunction ::ComputeLatentSpaceGradientUpdates() {
   m_points_mean_latent->clear();
   m_points_mean_latent->set_size(num_dims, 1);
 
-  // Compute the covariance matrix.
+  // mean for non linear space
+  int full_num_dims = m_ShapeMatrix->rows();
+  for (unsigned int j = 0; j < full_num_dims; j++) {
+    double total = 0.0;
+    for (unsigned int i = 0; i < num_samples; i++) {
+      total += m_ShapeMatrix->operator()(j, i);
+    }
+    m_points_mean->put(j, 0, total / (double)num_samples);
+  }
+  // mean for gaussian latent space
   double _total = 0.0;
   for (unsigned int j = 0; j < num_dims; j++) {
     double total = 0.0;
@@ -196,8 +205,6 @@ NonLinearCorrespondenceFunction::VectorType NonLinearCorrespondenceFunction ::Ev
                                                                                        const ParticleSystem* system,
                                                                                        double& maxdt,
                                                                                        double& energy) const {
-  // NOTE: This code requires that indices be contiguous, i.e. it won't work if
-  // you start deleting particles.
   const unsigned int DomainsPerShape = m_ShapeMatrix->GetDomainsPerShape();
 
   maxdt = m_non_linear_max_move;
@@ -224,7 +231,7 @@ NonLinearCorrespondenceFunction::VectorType NonLinearCorrespondenceFunction ::Ev
   energy = tmp(0, 0);
 
   for (unsigned int i = 0; i < VDimension; i++) {
-    gradE[i] = m_PointsUpdate->get(k + i, d / DomainsPerShape);
+    gradE[i] = m_PointsUpdateNonLinear->get(k + i, d / DomainsPerShape);
   }
 
   return system->TransformVector(gradE, system->GetInversePrefixTransform(d) * system->GetInverseTransform(d));
