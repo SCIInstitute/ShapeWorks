@@ -80,12 +80,20 @@ class NonLinearCorrespondenceFunction : public VectorFunction {
   /** Called before each iteration of a solver. */
   virtual void BeforeIteration() {
     m_ShapeMatrix->BeforeIteration();
+    m_TrainCounter++;
+    if (m_TrainCounter >= m_training_interval) {
+      m_TrainCounter = 0;
+      if(this->m_train_invertible_network_callback)
+      {
+        std::cout << "Making Callback, from CPP for Training Invertible Network " << std::endl;
+        this->m_train_invertible_network_callback(); 
+    }
 
     if (m_Counter == 0) {
       if(this->m_non_linear_gradient_computation_callback)
       {
         std::cout << "Making Callback, from CPP for Gradient Calcualtions " << std::endl;
-        this->m_non_linear_gradient_computation_callback();
+        this->m_non_linear_gradient_computation_callback(); // compute latent covariance matrix inside this callback
       }
     }
   }
@@ -117,6 +125,9 @@ class NonLinearCorrespondenceFunction : public VectorFunction {
   int GetLatentDimensions() const { return m_LatentDimensions; }
   void SetLatentDimensions(int val) { m_LatentDimensions = val; }
 
+  double GetNonLinearMaxMove() const { return m_non_linear_max_move; }
+  void SetNonLinearMaxMove(double val) { m_non_linear_max_move = val; }
+
 
   void PrintShapeMatrix() { m_ShapeMatrix->PrintMatrix(); }
 
@@ -143,8 +154,10 @@ class NonLinearCorrespondenceFunction : public VectorFunction {
     copy->m_HoldMinimumVariance = this->m_HoldMinimumVariance;
     copy->m_MinimumVarianceDecayConstant = this->m_MinimumVarianceDecayConstant;
     copy->m_RecomputeCovarianceInterval = this->m_RecomputeCovarianceInterval;
-    copy->m_Counter = m_Counter;
-    copy->m_LatentDimensions = m_LatentDimensions;
+    copy->m_Counter = this->m_Counter;
+    copy->m_TrainCounter = this->m_TrainCounter;
+    copy->m_non_linear_max_move = this->m_non_linear_max_move;
+    copy->m_LatentDimensions = this->m_LatentDimensions;
 
 
     copy->m_DomainNumber = this->m_DomainNumber;
@@ -156,6 +169,9 @@ class NonLinearCorrespondenceFunction : public VectorFunction {
     copy->m_points_mean = this->m_points_mean;
     copy->m_points_mean_latent = this->m_points_mean_latent;
     copy->m_UseMeanEnergy = this->m_UseMeanEnergy;
+
+    copy->m_non_linear_gradient_computation_callback = this->m_non_linear_gradient_computation_callback;
+    copy->m_train_invertible_network_callback = this->m_train_invertible_network_callback;
 
     return (VectorFunction::Pointer)copy;
   }
@@ -169,6 +185,8 @@ class NonLinearCorrespondenceFunction : public VectorFunction {
     m_MinimumVarianceDecayConstant = 1.0;  // log(2.0) / 50000.0;
     m_RecomputeCovarianceInterval = 1;
     m_Counter = 0;
+    m_TrainCounter = 1; // Init with 1, as burn-in has already been trained
+    m_non_linear_max_move = 0.0;
     m_LatentDimensions = 128;
     m_training_interval = -1;
     m_UseMeanEnergy = true;
@@ -198,6 +216,8 @@ class NonLinearCorrespondenceFunction : public VectorFunction {
   double m_MinimumVarianceDecayConstant;
   int m_RecomputeCovarianceInterval;
   int m_Counter;
+  int m_TrainCounter;
+  doubele m_non_linear_max_move;
   bool m_UseMeanEnergy;
   int m_LatentDimensions;
   int m_training_interval;

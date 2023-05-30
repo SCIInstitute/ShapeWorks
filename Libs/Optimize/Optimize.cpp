@@ -2155,6 +2155,11 @@ void Optimize::SetTrainInvertibleNetworkCallbackFunction(const std::function<voi
   this->m_sampler->GetNonLinearEnsembleEntropyFunction()->SetTrainInvertibleNetworkCallbackFunction(f);
 }
 
+//---------------------------------------------------------------------------
+void Optimize::SetNonLinearMaxMove(double val)
+{
+  this->m_sampler->GetNonLinearEnsembleEntropyFunction()->SetNonLinearMaxMove(val);
+}
 
 //---------------------------------------------------------------------------
 void Optimize::ComputeLatentSpaceGradientUpdates()

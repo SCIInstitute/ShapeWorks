@@ -1683,6 +1683,9 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def("SetTrainInvertibleNetworkCallbackFunction",
        &Optimize::SetTrainInvertibleNetworkCallbackFunction)
 
+  .def("SetNonLinearMaxMove",
+       &Optimize::SetNonLinearMaxMove)
+
   .def("ComputeLatentSpaceGradientUpdates",
        &Optimize::ComputeLatentSpaceGradientUpdates)
 

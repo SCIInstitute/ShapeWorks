@@ -84,6 +84,9 @@ class Optimize {
   //! Callback, executed on python side forInevrtible Network Training
   void SetTrainInvertibleNetworkCallbackFunction(const std::function<void(void)>& f);
 
+  //! Set Max Move of gradient  in non-linear shape space
+  void SetNonLinearMaxMove(double val);
+
   void ComputeLatentSpaceGradientUpdates();
 
   //! Abort optimization

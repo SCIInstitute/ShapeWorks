@@ -200,7 +200,7 @@ NonLinearCorrespondenceFunction::VectorType NonLinearCorrespondenceFunction ::Ev
   // you start deleting particles.
   const unsigned int DomainsPerShape = m_ShapeMatrix->GetDomainsPerShape();
 
-  maxdt = m_MinimumEigenValue;
+  maxdt = m_non_linear_max_move;
 
   VectorType gradE;
   unsigned int k = 0;
@@ -215,10 +215,7 @@ NonLinearCorrespondenceFunction::VectorType NonLinearCorrespondenceFunction ::Ev
 
   vnl_matrix_type tmp1(3, 3, 0.0);
 
-  if (this->m_UseMeanEnergy)
-    tmp1.set_identity();
-  else
-    tmp1 = m_InverseCovMatrix->extract(3, 3, k, k);
+  tmp1.set_identity(); // TODO: Try other strategies
 
   vnl_matrix_type tmp = Xi.transpose() * tmp1;
 
