@@ -153,6 +153,10 @@ class Optimize {
   void SetInvertibleNetworkTrainingInterval(int val);
   //! Get how often the Invertible Network needs to be trained, if non-linear SSM method is used 
   int GetInvertibleNetworkTrainingInterval();
+  //! Set Latent Dimensions of Gaussian Subspace, if non-linear SSM method is used 
+  void SetNonLinearSSMLatentDimensions(int val);
+  //! Get Latent Dimensions of Gaussian Subspace, if non-linear SSM method is used 
+  int GetNonLinearSSMLatentDimensions();
 
   //! Set the attributes per domain
   void SetAttributesPerDomain(std::vector<int> attributes_per_domain);
