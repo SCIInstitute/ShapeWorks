@@ -87,8 +87,8 @@ class NonLinearCorrespondenceFunction : public VectorFunction {
       {
         std::cout << "Making Callback, from CPP for Training Invertible Network " << std::endl;
         this->m_train_invertible_network_callback(); 
+      }
     }
-
     if (m_Counter == 0) {
       if(this->m_non_linear_gradient_computation_callback)
       {
@@ -97,6 +97,7 @@ class NonLinearCorrespondenceFunction : public VectorFunction {
       }
     }
   }
+
 
   /** Called after each iteration of the solver. */
   virtual void AfterIteration() {
@@ -217,7 +218,7 @@ class NonLinearCorrespondenceFunction : public VectorFunction {
   int m_RecomputeCovarianceInterval;
   int m_Counter;
   int m_TrainCounter;
-  doubele m_non_linear_max_move;
+  double m_non_linear_max_move;
   bool m_UseMeanEnergy;
   int m_LatentDimensions;
   int m_training_interval;
