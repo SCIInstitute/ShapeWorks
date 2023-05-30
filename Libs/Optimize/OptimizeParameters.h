@@ -55,6 +55,9 @@ class OptimizeParameters {
   bool get_use_non_linear_ssm();
   void set_use_non_linear_ssm(bool value);
 
+  int get_invertible_network_training_interval();
+  void set_invertible_network_training_interval(int value);
+
   double get_normals_strength();
   void set_normals_strength(double value);
 

@@ -372,7 +372,14 @@ void Optimize::SetUseNormals(std::vector<bool> use_normals) { this->m_use_normal
 //---------------------------------------------------------------------------
 void Optimize::SetUseNonLinearSSM(bool val) { this->m_use_non_linear_ssm = val; }
 
+//---------------------------------------------------------------------------
 bool Optimize::GetUseNonLinearSSM() { return this->m_use_non_linear_ssm; }
+
+//---------------------------------------------------------------------------
+void Optimize::SetUseNonLinearSSM(int val) { this->m_invertible_network_training_interval = val; }
+
+//---------------------------------------------------------------------------
+int Optimize::GetUseNonLinearSSM() { return this->m_invertible_network_training_interval; }
 
 //---------------------------------------------------------------------------
 void Optimize::SetAttributesPerDomain(std::vector<int> attributes_per_domain) {
@@ -818,6 +825,8 @@ void Optimize::RunOptimize() {
        m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::NonLinearMeanEnergy);
     else
        m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::NonLinearEnsembleEntropy);
+
+    m_sampler->GetNonLinearEnsembleEntropyFunction()->SetTrainingInterval(m_invertible_network_training_interval);
   } else if ((m_attributes_per_domain.size() > 0 &&
        *std::max_element(m_attributes_per_domain.begin(), m_attributes_per_domain.end()) > 0) ||
       m_mesh_based_attributes) {

@@ -41,7 +41,9 @@ const std::string use_fixed_subjects = "use_fixed_subjects";
 const std::string fixed_subjects_column = "fixed_subjects_column";
 const std::string fixed_subjects_choice = "fixed_subjects_choice";
 const std::string checkpointing_interval = "checkpointing_interval";
+// Non-Linear Invertible Network Optimization Parameters
 const std::string use_non_linear_ssm = "use_non_linear_ssm";
+const std::string invertible_network_training_interval = "invertible_network_training_interval";
 const std::string save_init_splits = "save_init_splits";
 const std::string keep_checkpoints = "keep_checkpoints";
 }  // namespace Keys
@@ -160,6 +162,12 @@ std::vector<bool> OptimizeParameters::get_use_normals() {
 
 //---------------------------------------------------------------------------
 void OptimizeParameters::set_use_normals(std::vector<bool> use_normals) { params_.set(Keys::use_normals, use_normals); }
+
+//---------------------------------------------------------------------------
+int OptimizeParameters::get_invertible_network_training_interval() { return params_.get(Keys::invertible_network_training_interval, 10); }
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_invertible_network_training_interval(int value) { params_.set(Keys::invertible_network_training_interval, value); }
 
 //---------------------------------------------------------------------------
 bool OptimizeParameters::get_use_non_linear_ssm() { return params_.get(Keys::use_non_linear_ssm, false); }
@@ -338,6 +346,7 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
   optimize->SetNarrowBand(get_narrow_band());
   optimize->SetOutputDir(get_output_prefix());
   optimize->SetUseNonLinearSSM(get_use_non_linear_ssm());
+  optimize->SetInvertibleNetworkTrainingInterval(get_invertible_network_training_interval());
   optimize->SetMeshFFCMode(get_mesh_ffc_mode());
 
   // TODO Remove this once Studio has controls for shared boundary

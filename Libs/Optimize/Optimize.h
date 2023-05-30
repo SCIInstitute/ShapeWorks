@@ -149,6 +149,10 @@ class Optimize {
   void SetUseNonLinearSSM(bool val);
   //! Returns true if optimization is to be done using Non Linear SSM method 
   bool GetUseNonLinearSSM();
+  //! Set how often the Invertible Network needs to be trained, if non-linear SSM method is used 
+  void SetInvertibleNetworkTrainingInterval(int val);
+  //! Get how often the Invertible Network needs to be trained, if non-linear SSM method is used 
+  int GetInvertibleNetworkTrainingInterval();
 
   //! Set the attributes per domain
   void SetAttributesPerDomain(std::vector<int> attributes_per_domain);
@@ -387,6 +391,7 @@ class Optimize {
   bool m_use_cutting_planes = false;
   bool m_optimizing = false;
   bool m_use_non_linear_ssm = false;
+  int m_invertible_network_training_interval = 10;
   bool m_use_regression = false;
   bool m_use_mixed_effects = false;
 

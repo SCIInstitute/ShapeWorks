@@ -69,7 +69,7 @@ class NonLinearCorrespondenceFunction : public VectorFunction {
   std::shared_ptr<vnl_matrix<double>> GetNonLinearPointsUpdate() {return this->m_PointsUpdateNonLinear; };
 
   void SetNonLinearGradientComputationCallbackFunction(const std::function<void(void)>& f) { this->m_non_linear_gradient_computation_callback = f; };
-
+  void SetTrainingInterval(int val) {this->m_training_interval = val;} ;
   void ComputeLatentSpaceGradientUpdates();
 
   ShapeMatrixType* GetShapeMatrix() { return m_ShapeMatrix.GetPointer(); }
@@ -133,6 +133,7 @@ class NonLinearCorrespondenceFunction : public VectorFunction {
 
     copy->m_PointsUpdate = this->m_PointsUpdate;
     copy->m_PointsUpdateNonLinear = this->m_PointsUpdateNonLinear;
+    copy->m_training_interval = this->m_training_interval;
 
     copy->m_MinimumVariance = this->m_MinimumVariance;
     copy->m_MinimumEigenValue = this->m_MinimumEigenValue;
@@ -167,6 +168,7 @@ class NonLinearCorrespondenceFunction : public VectorFunction {
     m_RecomputeCovarianceInterval = 1;
     m_Counter = 0;
     m_LatentDimensions = 128;
+    m_training_interval = -1;
     m_UseMeanEnergy = true;
     m_PointsUpdate = std::make_shared<vnl_matrix_type>(10, 10);
     m_PointsUpdateNonLinear = std::make_shared<vnl_matrix_type>(10, 10);
@@ -196,6 +198,7 @@ class NonLinearCorrespondenceFunction : public VectorFunction {
   int m_Counter;
   bool m_UseMeanEnergy;
   int m_LatentDimensions;
+  int m_training_interval;
 
   std::shared_ptr<vnl_matrix_type> m_points_mean; // for data space
   std::shared_ptr<vnl_matrix_type> m_points_mean_latent; // for latent space
