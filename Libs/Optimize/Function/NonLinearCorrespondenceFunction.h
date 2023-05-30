@@ -113,7 +113,7 @@ class NonLinearCorrespondenceFunction : public VectorFunction {
   bool GetMinimumVarianceDecayConstant() const { return m_MinimumVarianceDecayConstant; }
 
   int GetLatentDimensions() const { return m_LatentDimensions; }
-  void SetLatentDimensions(bool val) { m_LatentDimensions = val; }
+  void SetLatentDimensions(int val) { m_LatentDimensions = val; }
 
 
   void PrintShapeMatrix() { m_ShapeMatrix->PrintMatrix(); }

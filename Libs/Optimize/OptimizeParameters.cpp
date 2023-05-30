@@ -44,6 +44,7 @@ const std::string checkpointing_interval = "checkpointing_interval";
 // Non-Linear Invertible Network Optimization Parameters
 const std::string use_non_linear_ssm = "use_non_linear_ssm";
 const std::string invertible_network_training_interval = "invertible_network_training_interval";
+const std::string non_linear_ssm_latent_dimensions = "non_linear_ssm_latent_dimensions";
 const std::string save_init_splits = "save_init_splits";
 const std::string keep_checkpoints = "keep_checkpoints";
 }  // namespace Keys
@@ -168,6 +169,12 @@ int OptimizeParameters::get_invertible_network_training_interval() { return para
 
 //---------------------------------------------------------------------------
 void OptimizeParameters::set_invertible_network_training_interval(int value) { params_.set(Keys::invertible_network_training_interval, value); }
+
+//---------------------------------------------------------------------------
+int OptimizeParameters::get_non_linear_ssm_latent_dimensions() { return params_.get(Keys::non_linear_ssm_latent_dimensions, 10); }
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_non_linear_ssm_latent_dimensions(int value) { params_.set(Keys::non_linear_ssm_latent_dimensions, value); }
 
 //---------------------------------------------------------------------------
 bool OptimizeParameters::get_use_non_linear_ssm() { return params_.get(Keys::use_non_linear_ssm, false); }
@@ -347,6 +354,7 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
   optimize->SetOutputDir(get_output_prefix());
   optimize->SetUseNonLinearSSM(get_use_non_linear_ssm());
   optimize->SetInvertibleNetworkTrainingInterval(get_invertible_network_training_interval());
+  optimize->SetNonLinearSSMLatentDimensions(get_non_linear_ssm_latent_dimensions());
   optimize->SetMeshFFCMode(get_mesh_ffc_mode());
 
   // TODO Remove this once Studio has controls for shared boundary

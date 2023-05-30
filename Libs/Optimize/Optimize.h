@@ -392,6 +392,7 @@ class Optimize {
   bool m_optimizing = false;
   bool m_use_non_linear_ssm = false;
   int m_invertible_network_training_interval = 10;
+  int m_non_linear_latent_dimensions = 128;
   bool m_use_regression = false;
   bool m_use_mixed_effects = false;
 

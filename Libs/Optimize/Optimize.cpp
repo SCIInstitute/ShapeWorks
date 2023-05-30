@@ -376,10 +376,16 @@ void Optimize::SetUseNonLinearSSM(bool val) { this->m_use_non_linear_ssm = val; 
 bool Optimize::GetUseNonLinearSSM() { return this->m_use_non_linear_ssm; }
 
 //---------------------------------------------------------------------------
-void Optimize::SetUseNonLinearSSM(int val) { this->m_invertible_network_training_interval = val; }
+void Optimize::SetInvertibleNetworkTrainingInterval(int val) { this->m_invertible_network_training_interval = val; }
 
 //---------------------------------------------------------------------------
-int Optimize::GetUseNonLinearSSM() { return this->m_invertible_network_training_interval; }
+int Optimize::GetInvertibleNetworkTrainingInterval() { return this->m_invertible_network_training_interval; }
+
+//---------------------------------------------------------------------------
+void Optimize::SetNonLinearSSMLatentDimensions(int val) { this->m_non_linear_latent_dimensions = val; }
+
+//---------------------------------------------------------------------------
+int Optimize::GetNonLinearSSMLatentDimensions() { return this->m_non_linear_latent_dimensions; }
 
 //---------------------------------------------------------------------------
 void Optimize::SetAttributesPerDomain(std::vector<int> attributes_per_domain) {
@@ -827,6 +833,9 @@ void Optimize::RunOptimize() {
        m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::NonLinearEnsembleEntropy);
 
     m_sampler->GetNonLinearEnsembleEntropyFunction()->SetTrainingInterval(m_invertible_network_training_interval);
+    m_sampler->GetNonLinearEnsembleEntropyFunction()->SetLatentDimensions(m_non_linear_latent_dimensions);
+
+
   } else if ((m_attributes_per_domain.size() > 0 &&
        *std::max_element(m_attributes_per_domain.begin(), m_attributes_per_domain.end()) > 0) ||
       m_mesh_based_attributes) {

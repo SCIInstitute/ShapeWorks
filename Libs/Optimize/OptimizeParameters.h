@@ -58,6 +58,9 @@ class OptimizeParameters {
   int get_invertible_network_training_interval();
   void set_invertible_network_training_interval(int value);
 
+  int get_non_linear_ssm_latent_dimensions();
+  void set_non_linear_ssm_latent_dimensions(int value);
+
   double get_normals_strength();
   void set_normals_strength(double value);
 
