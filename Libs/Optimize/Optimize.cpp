@@ -2150,6 +2150,13 @@ void Optimize::SetNonLinearGradientComputationCallbackFunction(const std::functi
 }
 
 //---------------------------------------------------------------------------
+void Optimize::SetTrainInvertibleNetworkCallbackFunction(const std::function<void(void)>& f)
+{
+  this->m_sampler->GetNonLinearEnsembleEntropyFunction()->SetTrainInvertibleNetworkCallbackFunction(f);
+}
+
+
+//---------------------------------------------------------------------------
 void Optimize::ComputeLatentSpaceGradientUpdates()
 {
   this->m_sampler->GetNonLinearEnsembleEntropyFunction()->ComputeLatentSpaceGradientUpdates();

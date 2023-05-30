@@ -1677,8 +1677,11 @@ PYBIND11_MODULE(shapeworks_py, m)
           }
      )
 
-  .def("SetIterationCallbackFunction",
+  .def("SetNonLinearGradientComputationCallbackFunction",
        &Optimize::SetNonLinearGradientComputationCallbackFunction)
+
+  .def("SetTrainInvertibleNetworkCallbackFunction",
+       &Optimize::SetTrainInvertibleNetworkCallbackFunction)
 
   .def("ComputeLatentSpaceGradientUpdates",
        &Optimize::ComputeLatentSpaceGradientUpdates)
