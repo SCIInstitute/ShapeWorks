@@ -249,28 +249,6 @@ std::vector<std::vector<double>> Constraints::violationReportData(const Point3& 
   return alls;
 }
 
-vnl_vector_fixed<double, 3> Constraints::constraintsGradient(const Point3& pos) const {
-  Eigen::Vector3d pt;
-  pt(0) = pos[0];
-  pt(1) = pos[1];
-  pt(2) = pos[2];
-  Eigen::Vector3d grad = Eigen::Vector3d(0, 0, 0);
-  for (size_t i = 0; i < planeConstraints_.size(); i++) {
-    grad -= planeConstraints_[i].constraintGradient(pt);
-  }
-  for (size_t i = 0; i < sphereConstraints_.size(); i++) {
-    grad -= sphereConstraints_[i].constraintGradient(pt);
-  }
-  if (freeFormConstraint_.readyForOptimize()) {
-    grad -= freeFormConstraint_.constraintGradient(pt);
-  }
-  vnl_vector_fixed<double, 3> gradE;
-  for (size_t i = 0; i < 3; i++) {
-    gradE[i] = grad(i);
-  }
-  return gradE;
-}
-
 vnl_vector_fixed<double, 3> Constraints::constraintsLagrangianGradient(const Point3& pos, const Point3& prepos,
                                                                        double C, size_t index) {
   Eigen::Vector3d pt;

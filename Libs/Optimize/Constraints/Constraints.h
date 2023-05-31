@@ -78,8 +78,6 @@ class Constraints {
   // ============================
   // Augmented Lagragian Fuctions
   // ============================
-  // Energy gradient computations
-  vnl_vector_fixed<double, 3> constraintsGradient(const Point3 &pos) const;
 
   /// Returns the constraint gradient. prepos is the current particle, pos is the particle with an optimization update applied, C can be 1, and index is the index of the particle.
   vnl_vector_fixed<double, 3> constraintsLagrangianGradient(const Point3 &pos, const Point3 &prepos, double C, size_t index);
