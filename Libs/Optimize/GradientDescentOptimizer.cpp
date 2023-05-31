@@ -245,7 +245,6 @@ void GradientDescentOptimizer::AugmentedLagrangianConstraints(VectorType& gradie
 
   double c = 1e0;
   double multiplier = 2;
-  m_ParticleSystem->GetDomain(dom)->GetConstraints()->UpdateZs(upd_pt, c);
   VectorType constraint_energy =
       m_ParticleSystem->GetDomain(dom)->GetConstraints()->constraintsLagrangianGradient(upd_pt, pt, c, index);
   if (constraint_energy.magnitude() > multiplier * gradmag) {

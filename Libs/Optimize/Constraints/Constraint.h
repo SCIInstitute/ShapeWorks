@@ -29,8 +29,6 @@ class Constraint {
   virtual void print() const = 0;
 
   // For augmented lagrangian
-  void setZ(double inz) { z_ = inz; }
-  double getZ() { return z_; }
   /// Initializes mu
   void setMus(std::vector<double> inmu) { mus_ = inmu; }
   /// Gets mu
@@ -45,8 +43,6 @@ class Constraint {
   /// Returns the evaluation on the constraint, i.e. the signed distance to the constraint boundary
   virtual double constraintEval(const Eigen::Vector3d &pt) const = 0;
 
-  void updateZ(const Eigen::Vector3d &pt, double C);
-
   /// Updates the value of mu according to the augmented lagrangian update
   void updateMu(const Eigen::Vector3d &pt, double C, size_t index);
 
@@ -60,7 +56,6 @@ class Constraint {
   // For augmented lagrangian
   /// Mu is the lagrangian momentum term
   std::vector<double> mus_;
-  double z_;
   double lambda_;
 };
 

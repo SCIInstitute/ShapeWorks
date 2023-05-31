@@ -586,23 +586,6 @@ void Constraints::InitializeLagrangianParameters(double lambda, std::vector<doub
 }
 
 //-----------------------------------------------------------------------------
-void Constraints::UpdateZs(const Point3& pos, double C) {
-  Eigen::Vector3d pt;
-  pt(0) = pos[0];
-  pt(1) = pos[1];
-  pt(2) = pos[2];
-  for (size_t i = 0; i < planeConstraints_.size(); i++) {
-    planeConstraints_[i].updateZ(pt, C);
-  }
-  for (size_t i = 0; i < sphereConstraints_.size(); i++) {
-    sphereConstraints_[i].updateZ(pt, C);
-  }
-  if (freeFormConstraint_.readyForOptimize()) {
-    freeFormConstraint_.updateZ(pt, C);
-  }
-}
-
-//-----------------------------------------------------------------------------
 void Constraints::UpdateMus(const Point3& pos, double C, size_t index) {
   Eigen::Vector3d pt;
   pt(0) = pos[0];

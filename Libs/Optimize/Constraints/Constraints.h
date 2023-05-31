@@ -101,8 +101,6 @@ class Constraints {
   ///Initializes lagrangian parameters lambdas and mus
   void InitializeLagrangianParameters(double lambda, std::vector<double> mus);
 
-  void UpdateZs(const Point3 &pos, double C);
-
   /// Updates mus, the momentum variable of the augmented lagrangian
   void UpdateMus(const Point3 &pos, double C, size_t index);
 
