@@ -46,20 +46,6 @@ class Constraints {
   /// Applies transformations to cutting-plane constraints
   bool transformPlanes(const vnl_matrix_fixed<double, 4, 4> &transform);
 
-  // Apply functions
-  /// DEPRECATED: Applies constraints by snapping particles back to a projected region. Double vector
-  std::stringstream applyBoundaryConstraints(vnl_vector_fixed<double, 3> &gradE, const Point3 &pos);
-  /// DEPRECATED: Applies constraints by snapping particles back to a projected region. Float vector
-  std::stringstream applyBoundaryConstraints(vnl_vector_fixed<float, 3> &gradE, const Point3 &pos);
-  /// DEPRECATED: Applies plane constraints by snapping particles back to a projected region. Double vector
-  std::stringstream applyPlaneConstraints(vnl_vector_fixed<double, 3> &gradE, const Point3 &pos);
-
-  // Write constraints
-  /// Writes out a cutting plane into filename
-  bool writePlanes(std::string filename) { return true; }
-  bool writeSpheres(std::string filename) { return true; }
-  bool writeFreeFormConstraint(std::string filename) { return true; }
-
   // Is defined? functions
   /// Returns true if at least one cutting plane is defined
   bool isCuttingPlaneDefined() const { return !planeConstraints_.empty(); }
@@ -127,12 +113,8 @@ class Constraints {
   /// The object that constains a free-form boundary constraints. Constraints are used to isolate areas of interest on shape surfaces
   FreeFormConstraint freeFormConstraint_;
 
-  // Projections and intersects
+  /// Determines whether constraints are used in the optimizer
   bool active_;
-  Eigen::Vector3d projectOntoLine(Eigen::Vector3d a, Eigen::Vector3d b, Eigen::Vector3d p);
-  Eigen::Vector3d linePlaneIntersect(Eigen::Vector3d n, Eigen::Vector3d p0, Eigen::Vector3d l0, Eigen::Vector3d l);
-  bool PlanePlaneIntersect(Eigen::Vector3d n1, Eigen::Vector3d p1, Eigen::Vector3d n2, Eigen::Vector3d p2,
-                           Eigen::Vector3d &l0_result, Eigen::Vector3d &l1_result);
 };
 
 }  // namespace shapeworks
