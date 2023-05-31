@@ -33,10 +33,6 @@ class Constraint {
   void setMus(std::vector<double> inmu) { mus_ = inmu; }
   /// Gets mu
   std::vector<double> getMus() { return mus_; }
-  /// Sets Lambda
-  void setLambda(double inLambda) { lambda_ = inLambda; }
-  /// Gets Lambda
-  double getLambda() { return lambda_; }
 
   /// Returns the gradient of the constraint
   virtual Eigen::Vector3d constraintGradient(const Eigen::Vector3d &pt) const = 0;
@@ -56,7 +52,6 @@ class Constraint {
   // For augmented lagrangian
   /// Mu is the lagrangian momentum term
   std::vector<double> mus_;
-  double lambda_;
 };
 
 }  // namespace shapeworks

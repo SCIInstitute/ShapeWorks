@@ -84,8 +84,8 @@ class Constraints {
   /// Returns the constraint gradient. prepos is the current particle, pos is the particle with an optimization update applied, C can be 1, and index is the index of the particle.
   vnl_vector_fixed<double, 3> constraintsLagrangianGradient(const Point3 &pos, const Point3 &prepos, double C, size_t index);
 
-  ///Initializes lagrangian parameters lambdas and mus
-  void InitializeLagrangianParameters(double lambda, std::vector<double> mus);
+  ///Initializes lagrangian parameter mus.
+  void InitializeLagrangianParameters(std::vector<double> mus);
 
   /// Updates mus, the momentum variable of the augmented lagrangian
   void UpdateMus(const Point3 &pos, double C, size_t index);

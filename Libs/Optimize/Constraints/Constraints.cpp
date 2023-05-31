@@ -305,17 +305,14 @@ vnl_vector_fixed<double, 3> Constraints::constraintsLagrangianGradient(const Poi
 }
 
 //-----------------------------------------------------------------------------
-void Constraints::InitializeLagrangianParameters(double lambda, std::vector<double> mus) {
+void Constraints::InitializeLagrangianParameters(std::vector<double> mus) {
   for (size_t i = 0; i < planeConstraints_.size(); i++) {
-    planeConstraints_[i].setLambda(lambda);
     planeConstraints_[i].setMus(mus);
   }
   for (size_t i = 0; i < sphereConstraints_.size(); i++) {
-    sphereConstraints_[i].setLambda(lambda);
     sphereConstraints_[i].setMus(mus);
   }
   if (freeFormConstraint_.readyForOptimize()) {
-    freeFormConstraint_.setLambda(lambda);
     freeFormConstraint_.setMus(mus);
   }
 }

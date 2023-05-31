@@ -246,7 +246,7 @@ void ParticleSystem::AdvancedAllParticleSplitting(double epsilon, unsigned int d
     for (size_t domain = dom_to_process; domain < num_doms; domain += domains_per_shape) {
       size_t num_particles = lists[0].size();
       std::vector<double> zeros(num_particles*2, 0.0);
-      this->GetDomain(domain)->GetConstraints()->InitializeLagrangianParameters(0, zeros);
+      this->GetDomain(domain)->GetConstraints()->InitializeLagrangianParameters(zeros);
     }
 
     // For each shape, split particle i in all shapes in direction random and -random to obtain split particles
