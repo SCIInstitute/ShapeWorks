@@ -6,6 +6,14 @@
 
 namespace shapeworks {
 
+/**
+ * \class SphereConstraint
+ * \ingroup Group-Constraints
+ *
+ *  Encapsulate functionality related to plane constraints. Inherits from Constraint. See Constraint.h for more information
+ *
+ */
+
 class SphereConstraint : public Constraint {
  public:
   bool isViolated(const Eigen::Vector3d &pt) const override;

@@ -11,10 +11,10 @@ class vtkPlane;
 namespace shapeworks {
 
 /**
- * \class PlaneConstraint
+ * \class SphereConstraint
  * \ingroup Group-Constraints
  *
- *  Encapsulate functionality related to plane constraints. Inherits from Constraint. See Constraint.h for more information
+ *  DEPRECATED: Encapsulate functionality related to Sphere constraints. Inherits from Constraint. See Constraint.h for more information
  *
  */
 
