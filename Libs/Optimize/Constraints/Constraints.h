@@ -25,7 +25,9 @@ namespace shapeworks {
  */
 
 /* Constraints Roadmap
- * For future tinkerers, this is a guide to all the code relevant to constraints to help you navigate the optimizer and change things if desired.
+ * For future tinkerers, this is a guide to all the code relevant to constraints to help you navigate the optimizer and change things if desired. In simple terms,
+ *      constraints define areas of interest by getting violation regions to repel particles by attaching a mechanism to all gradient updates that push them back
+ *      if a violation does occur. "Look up quadratic penalty method" for more information.
  *
  * - Reading json constraints: From Libs/Optimize/OptimizeParameters::set_up_optimize -> Libs/Optimize/Constraints/Constraints::read
  *
