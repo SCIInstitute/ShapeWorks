@@ -21,7 +21,45 @@ namespace shapeworks {
  * This class contains the set of boundary constraints that are appleid to the shapes in the dataset. They are used to isolate areas of interest on shape surfaces/volumes. These boundary constraints currently take the form of cutting planes, cutting spheres (deprecated), or free-form constraints (FFCs).
  * Do not confuse these with the ApplyConstraints function found in the "domain" code, they refer to the action of snapping to the surface and do not serve to isolate areas of interest.
  *
+ * Please check out Libs/Optimize/Constraints/Constraints for a constraints roadmap
  */
+
+/* Constraints Roadmap
+ * For future tinkerers, this is a guide to all the code relevant to constraints to help you navigate the optimizer and change things if desired.
+ *
+ * - Reading json constraints: From Libs/Optimize/OptimizeParameters::set_up_optimize -> Libs/Optimize/Constraints/Constraints::read
+ *
+ * - Initialization: The various steps in the constraints initialization are
+ *          +Libs/Optimize/Optimize::Initialize and ParticleSystem::AdvancedAllParticleSplitting initialize quadratic penalty mus.
+ *          +Libs/Optimize/Domain/{Image,Contour,Mesh}Domain determine the picking of the initial particle position to be optimized which is assured not to violate any constraint here
+ *          +Libs/Optimize/Sampler::AllocateDomainsAndNeighborhoods sets the constraints within the constraints class via Libs/Optimize/Constraints/Constraints::addSphere and addPlane, and initializes FFCs via Sampler::initialize_ffcs -> Constraints::addFreeFormConstraint
+ *          +Libs/Optimize/Sampler::initialize_ffcs also computes the gradient fields to allow distance and gradient queries
+ *
+ * - Optimization: For optimization, the relevant constraints code is in Libs/Optimize/GradientDescentOptimizer::StartAdaptiveGaussSeidelOptimization in Step B,
+ *      where it calls GradientDescentOptimizer::AugmentedLagrangianConstraints to tweak any updates by our constraints class corrections to not violate constraints.
+ *      See constraints class.
+ *
+ * - Constraints class: This class implements a quadratic penalty style optimizer for the entire ShapeWorks particle system to apply boundary constraints.
+ *      This Libs/Optimize/Constraints/ directory contains the following files
+ *          +Constraints: Contains the processing of multiple interacting constraints and computing gradients for the optimizer. Constains all constraints for a full particle system (multiple shapes/domains).
+ *          +Constraint: A general class for any type of constraint. Contains only one constraint, but has quadratic penalty equations to facilitate any single-constraint operations.
+ *              *PlaneConstraint: Cutting plane constraints that use the equation of a plane to compute distances and gradients.
+ *              *SphereConstraint(deprecated): It uses the equation of a sphere.
+ *              *Free-form constraints: Use a signed geodesic mesh field to represent regions of interest of arbitrary shape, see below.
+ *
+ * - Mesh fields used for FFCs: FFCs use mesh field representations which are of class shapeworks::Mesh, located in Libs/Mesh/Mesh. Within Libs/Mesh/Mesh, the relevant functions are
+ *          +Mesh::clip: Clips by cutting plane
+ *          +Mesh::clipByField: Clips by a value field
+ *          +Mesh::getFFCValue: Allows getting the shortest signed geodesic distance of a point to any boundary
+ *          +Mesh::getFFCGradient: Allows getting the direction to the boundary. This might be the opposite direction for violated
+ *
+ * - The Parameter mesh_ffc_mode is exposed through Libs/Optimize/OptimizeParameters and are passed to Libs/Optimize/Optimize
+ *          +mesh_ffc_mode: when running on meshes, 0 is for mesh clipping (default) and 1 is for the quadratic penalty
+ *
+ * - DEPRECATED: Reading xml constraints: Constraints from xmls are read via Libs/Optimize/OptimizeParameterFile::read_cutting_planes and read_cutting_spheres,
+ *      then go through Optimize.cpp::SetCuttingPlane -> Sampler->SetCuttingPlane and Libs/Optimize/Constraints/Constraints::addPlane. Same for spheres and FFCs (both deprecated).
+ *
+*/
 
 class Constraints {
  public:
