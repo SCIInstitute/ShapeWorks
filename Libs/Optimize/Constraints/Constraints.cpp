@@ -177,16 +177,6 @@ bool Constraints::isAnyViolated(const Point3& pos) {
   return false;
 }
 
-std::vector<int> Constraints::planesViolated(Eigen::Vector3d pt) {
-  std::vector<int> planesViolated;
-  for (size_t i = 0; i < planeConstraints_.size(); i++) {
-    if (planeConstraints_[i].isViolated(pt)) {
-      planesViolated.push_back(i);
-    }
-  }
-  return planesViolated;
-}
-
 void Constraints::printAll() {
   std::cout << "Cutting planes " << planeConstraints_.size() << std::endl;
   for (size_t i = 0; i < planeConstraints_.size(); i++) {

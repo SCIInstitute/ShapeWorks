@@ -46,12 +46,6 @@ class Constraints {
   /// Applies transformations to cutting-plane constraints
   bool transformPlanes(const vnl_matrix_fixed<double, 4, 4> &transform);
 
-  // Is defined? functions
-  /// Returns true if at least one cutting plane is defined
-  bool isCuttingPlaneDefined() const { return !planeConstraints_.empty(); }
-  /// Returns true if at least one sphere constraint is defined
-  bool isCuttingSphereDefined() const { return !sphereConstraints_.empty(); }
-
   // Constraint get function
   /// Returns the vector that constains all plane constraints, of type PlaneConstraint. See class PlaneConstraint for more info
   std::vector<PlaneConstraint> &getPlaneConstraints() { return planeConstraints_; }
@@ -62,9 +56,6 @@ class Constraints {
 
   /// Returns true if any constraint is violated by point pos
   bool isAnyViolated(const Point3 &pos);
-
-  /// Returns true if any cutting-plane constraint is violated by point pt
-  std::vector<int> planesViolated(Eigen::Vector3d pt);
 
   /// Prints all constraints in a neat format. Make sure to disable multithreading if printing within to optimization to avoid jumbled output
   void printAll();
