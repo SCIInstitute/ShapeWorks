@@ -258,6 +258,9 @@ class Image {
   /// converts from a physical coordinate to a logical coordinate
   Coord physicalToLogical(const Point3& p) const;
 
+  /// checks if a given point is inside the image
+  bool isInside(const Point3& p) const;
+
   /// creates an image iterator and returns it
   ImageIterator iterator();
 
