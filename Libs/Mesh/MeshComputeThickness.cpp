@@ -2,6 +2,7 @@
 
 #include <itkGradientImageFilter.h>
 #include <itkVectorLinearInterpolateImageFunction.h>
+#include <vtkPointData.h>
 
 #include "Logging.h"
 namespace shapeworks::mesh {
@@ -30,14 +31,12 @@ std::vector<double> smoothIntensities(std::vector<double> intensities) {
   return smoothed_intensities;
 }
 
-void compute_thickness(Mesh& mesh, Image& image, Image& dt, double threshold, double min_dist, double max_dist) {
+void compute_thickness(Mesh& mesh, Image& image, Image* dt, double threshold, double min_dist, double max_dist) {
   SW_DEBUG("Computing thickness with threshold {}, min_dist {}, max_dist {}", threshold, min_dist, max_dist);
 
-  // compute gradient image from distance transform
-  auto gradient_filter = GradientFilterType::New();
-  gradient_filter->SetInput(dt.getITKImage());
-  gradient_filter->Update();
-  auto gradient_map = gradient_filter->GetOutput();
+  bool use_dt = dt != nullptr;
+
+  mesh.computeNormals();
 
   auto poly_data = mesh.getVTKMesh();
 
@@ -48,20 +47,41 @@ void compute_thickness(Mesh& mesh, Image& image, Image& dt, double threshold, do
   values->SetName("thickness");
 
   auto interpolator = GradientInterpolatorType::New();
-  interpolator->SetInputImage(gradient_map);
 
-  Vector spacing = dt.spacing();
-  auto min_spacing = std::min<double>({spacing[0], spacing[1], spacing[2]});
+  if (use_dt) {
+    // compute gradient image from distance transform
+    auto gradient_filter = GradientFilterType::New();
+    gradient_filter->SetInput(dt->getITKImage());
+    gradient_filter->Update();
+    auto gradient_map = gradient_filter->GetOutput();
+    interpolator->SetInputImage(gradient_map);
+  }
+
+  auto check_inside = [&](Point3 point) -> bool {
+    if (use_dt) {
+      return image.isInside(point) && interpolator->IsInsideBuffer(point);
+    } else {
+      return image.isInside(point);
+    }
+  };
+
+  auto get_gradient = [&](int i, Point3 point) -> VectorPixelType {
+    if (use_dt) {
+      return interpolator->Evaluate(point);
+    } else {
+      double normal[3];
+      poly_data->GetPointData()->GetNormals()->GetTuple(i, normal);
+      VectorPixelType gradient;
+      gradient[0] = -normal[0];
+      gradient[1] = -normal[1];
+      gradient[2] = -normal[2];
+      return gradient;
+    }
+  };
 
   for (int i = 0; i < mesh.numPoints(); i++) {
     Point3 point;
     poly_data->GetPoint(i, point.GetDataPointer());
-    Point3 start = point;
-
-    Point3 intensity_start = point;
-    bool intensity_found = false;
-
-    double last_distance = 0;
 
     std::vector<double> intensities;
     double step_size = 0.1;
@@ -70,15 +90,14 @@ void compute_thickness(Mesh& mesh, Image& image, Image& dt, double threshold, do
 
     for (int j = 0; j <= distance_outside / step_size; j++) {
       // check if point is inside image
-      if (!image.isInside(point) || !interpolator->IsInsideBuffer(point)) {
+      if (!check_inside(point)) {
         break;
       }
 
       double intensity = image.evaluate(point);
       intensities.push_back(intensity);
 
-      // evaluate gradient
-      VectorPixelType gradient = interpolator->Evaluate(point);
+      VectorPixelType gradient = get_gradient(i, point);
 
       // normalize the gradient
       float norm = std::sqrt(gradient[0] * gradient[0] + gradient[1] * gradient[1] + gradient[2] * gradient[2]);
@@ -107,7 +126,7 @@ void compute_thickness(Mesh& mesh, Image& image, Image& dt, double threshold, do
 
     for (int j = 0; j < distance_inside / step_size; j++) {
       // check if point is inside image
-      if (!image.isInside(point) || !interpolator->IsInsideBuffer(point)) {
+      if (!check_inside(point)) {
         break;
       }
 
@@ -115,7 +134,7 @@ void compute_thickness(Mesh& mesh, Image& image, Image& dt, double threshold, do
       intensities.push_back(intensity);
 
       // evaluate gradient
-      VectorPixelType gradient = interpolator->Evaluate(point);
+      VectorPixelType gradient = get_gradient(i, point);
 
       // normalize the gradient
       float norm = std::sqrt(gradient[0] * gradient[0] + gradient[1] * gradient[1] + gradient[2] * gradient[2]);
@@ -244,8 +263,8 @@ void compute_thickness(Mesh& mesh, Image& image, Image& dt, double threshold, do
     }
 */
 
-    //if (i < 10) {
-      if (distance > 9) {
+    // if (i < 10) {
+    if (distance > 9) {
       //   if (i == 12344) {
       //    write out the intensities to a file named with the point id
       std::ofstream out("intensities_" + std::to_string(i) + ".txt");
@@ -280,15 +299,8 @@ void compute_thickness(Mesh& mesh, Image& image, Image& dt, double threshold, do
       out3 << "}\n";
     }
 
-    // compute distance between start and end points
-    // double distance = intensity_start.EuclideanDistanceTo(point);
-    /*
-            if (i==475) {
-              distance = 100;
-            } else {
-              distance = 0;
-            }
-    */
+    distance = std::min<double>(distance, max_dist);
+
     values->InsertValue(i, distance);
   }
   mesh.setField("thickness", values, Mesh::Point);

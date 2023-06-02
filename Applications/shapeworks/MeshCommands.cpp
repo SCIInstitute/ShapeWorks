@@ -1528,6 +1528,7 @@ void ComputeThickness::buildParser() {
   parser.prog(prog).description(desc);
 
   parser.add_option("--image").action("store").type("string").set_default("").help("Path of image.");
+
   parser.add_option("--distance_transform")
       .action("store")
       .type("string")
@@ -1565,18 +1566,19 @@ bool ComputeThickness::execute(const optparse::Values &options, SharedCommandDat
   }
   Image img(filename);
 
-  std::string dt_filename = static_cast<std::string>(options.get("distance_transform"));
-  if (dt_filename == "") {
-    std::cerr << "Must specify a distance_transform\n";
-    return false;
-  }
-  Image dt(dt_filename);
-
   double threshold = static_cast<double>(options.get("threshold"));
   double min_dist = static_cast<double>(options.get("min_dist"));
   double max_dist = static_cast<double>(options.get("max_dist"));
 
-  sharedData.mesh->computeThickness(img, dt, threshold, min_dist, max_dist);
+  std::string dt_filename = static_cast<std::string>(options.get("distance_transform"));
+  if (dt_filename == "") {
+    sharedData.mesh->computeThickness(img, nullptr, threshold, min_dist, max_dist);
+  } else {
+    Image dt(dt_filename);
+    sharedData.mesh->computeThickness(img, &dt, threshold, min_dist, max_dist);
+  }
+
+
   return sharedData.validMesh();
 }
 }  // namespace shapeworks
