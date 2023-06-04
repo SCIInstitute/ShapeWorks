@@ -161,7 +161,7 @@ class Sampler {
   void AddSphere(unsigned int i, vnl_vector_fixed<double, Dimension>& c, double r);
 
   virtual void SetAdaptivityMode(int mode) {
-    SW_LOG("SetAdaptivityMode: {}, pairwise_potential_type: {}", mode, m_pairwise_potential_type);
+    //SW_LOG("SetAdaptivityMode: {}, pairwise_potential_type: {}", mode, m_pairwise_potential_type);
     if (mode == 0) {
       m_LinkingFunction->SetFunctionA(this->GetCurvatureGradientFunction());
     } else if (mode == 1) {
@@ -454,4 +454,4 @@ class Sampler {
 
 -------------------------------
 
-Updated on 2023-06-02 at 07:19:27 +0000
+Updated on 2023-06-04 at 06:36:00 +0000
