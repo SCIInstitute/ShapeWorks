@@ -718,6 +718,10 @@ void Constraints::write(std::string filename) {
   for (auto& plane : planeConstraints_) {
     json planeJson;
     std::vector<json> points;
+    if (plane.points().size() != 3) {
+      SW_WARN("Not saving plane with less than 3 points");
+      continue;
+    }
     for (auto& point : plane.points()) {
       points.push_back({point[0], point[1], point[2]});
     }
