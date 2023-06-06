@@ -70,11 +70,13 @@ bool Optimize::Run() {
   m_last_update_time = m_start_time;
 
   // control number of threads
-  int num_threads = tbb::info::default_concurrency();
+  // int num_threads = tbb::info::default_concurrency();
+  int num_threads = 1;
   const char* num_threads_env = getenv("TBB_NUM_THREADS");
   if (num_threads_env) {
     num_threads = std::max(1, atoi(num_threads_env));
   }
+  std::cout << "DEBUGGING WITH ONE THREAD, " << std::endl;
   SW_DEBUG("TBB using {} threads", num_threads);
   tbb::global_control c(tbb::global_control::max_allowed_parallelism, num_threads);
 
@@ -2077,8 +2079,8 @@ bool Optimize::SetUpOptimize(ProjectHandle projectFile) {
 void Optimize::SetProject(std::shared_ptr<Project> project) { project_ = project; }
 
 //---------------------------------------------------------------------------
-MatrixContainer Optimize::GetParticleSystem() {
-  auto shape_matrix = m_sampler->GetGeneralShapeMatrix();
+MatrixContainer Optimize::GetParticleSystemNonLinear() {
+  auto shape_matrix = m_sampler->GetNonLinearEnsembleEntropyFunction()->GetShapeMatrix();
 
   MatrixType matrix;
   matrix.resize(shape_matrix->rows(), shape_matrix->cols());

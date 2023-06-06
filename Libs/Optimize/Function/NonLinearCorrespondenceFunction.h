@@ -101,6 +101,7 @@ class NonLinearCorrespondenceFunction : public VectorFunction {
 
   /** Called after each iteration of the solver. */
   virtual void AfterIteration() {
+    std::cout << "Inside After Iteration " << std::endl;
     m_ShapeMatrix->AfterIteration();
     // Update the annealing parameter.
     if (m_HoldMinimumVariance != true && !m_UseMeanEnergy) {
@@ -206,7 +207,6 @@ class NonLinearCorrespondenceFunction : public VectorFunction {
   typename ShapeMatrixType::Pointer m_ShapeMatrix; // Actual Shape (Data) Matrix, lives in high dimensional space : dM X N
   std::shared_ptr<vnl_matrix_type> m_LatentShapeMatrix; // Shape Matrix for Gaussian Latent Space: L X N
 
-  virtual void ComputeCovarianceMatrix();
 
   std::shared_ptr<vnl_matrix_type> m_PointsUpdate; // Gaussian Latent Space
   std::shared_ptr<vnl_matrix_type> m_PointsUpdateNonLinear; // Non-Gaussian Shape (Data) Space

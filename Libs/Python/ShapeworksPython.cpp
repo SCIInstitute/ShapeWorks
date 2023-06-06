@@ -4,7 +4,7 @@
 
 Eigen::MatrixXd optimize_get_particle_system(shapeworks::Optimize *opt)
 {
-  shapeworks::MatrixContainer container = opt->GetParticleSystem();
+  shapeworks::MatrixContainer container = opt->GetParticleSystemNonLinear();
   return container.matrix_;
 }
 
@@ -1699,7 +1699,7 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def("SetIterationCallbackFunction",
        &Optimize::SetIterationCallbackFunction)
 
-  .def("GetParticleSystem",
+  .def("GetParticleSystemNonLinear",
        &optimize_get_particle_system)
   ;
 

@@ -306,7 +306,7 @@ class Optimize {
   std::shared_ptr<Sampler> GetSampler() { return m_sampler; }
 
   //! Return the particle system as a matrix
-  MatrixContainer GetParticleSystem();
+  MatrixContainer GetParticleSystemNonLinear();
 
   //! Getters/Setters for NLS API
   MatrixContainer GetLatentGradientUpdates();

@@ -125,6 +125,7 @@ void GradientDescentOptimizer::StartAdaptiveGaussSeidelOptimization() {
                 // Compute gradient update.
                 double energy = 0.0;
                 localGradientFunction->BeforeEvaluate(k, dom, m_ParticleSystem);
+                // std::cout << "Before Evaluation all done " << std::endl;
                 // maximumUpdateAllowed is set based on some fraction of the distance between particles
                 // This is to avoid particles shooting past their neighbors
                 double maximumUpdateAllowed;
@@ -138,7 +139,10 @@ void GradientDescentOptimizer::StartAdaptiveGaussSeidelOptimization() {
                     domain->ProjectVectorToSurfaceTangent(original_gradient, pt, k);
 
                 double newenergy, gradmag;
+                int loop_iter = 0;
                 while (true) {
+                  // std::cout << "Loop iter = " << loop_iter << std::endl;
+                  loop_iter++;
                   // Step A scale the projected gradient by the current time step
                   VectorType gradient = original_gradient_projectedOntoTangentSpace * m_TimeSteps[dom][k];
 
@@ -168,11 +172,14 @@ void GradientDescentOptimizer::StartAdaptiveGaussSeidelOptimization() {
 
                   if (newenergy < energy)  // good move, increase timestep for next time
                   {
+                    // std::cout << "Good move | New Energy = " << newenergy << " Energy =  " << energy << std::endl;
                     m_TimeSteps[dom][k] *= factor;
                     if (gradmag > maxchange) maxchange = gradmag;
                     break;
                   } else {  // bad move, reset point position and back off on timestep
+                    // std::cout << "Bad move | New Energy = " << newenergy << " Energy =  " << energy << std::endl;
                     if (m_TimeSteps[dom][k] > minimumTimeStep) {
+                      // std::cout << "Invalidating Particle" << std::endl;
                       domain->ApplyConstraints(pt, k);
                       m_ParticleSystem->SetPosition(pt, k, dom);
                       domain->InvalidateParticlePosition(k);
@@ -180,6 +187,7 @@ void GradientDescentOptimizer::StartAdaptiveGaussSeidelOptimization() {
                       m_TimeSteps[dom][k] /= factor;
                     } else  // keep the move with timestep 1.0 anyway
                     {
+                      // std::cout << "Keeping move " << std::endl;
                       if (gradmag > maxchange) maxchange = gradmag;
                       break;
                     }
