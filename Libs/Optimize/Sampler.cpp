@@ -385,6 +385,21 @@ void Sampler::AddImage(ImageType::Pointer image, double narrow_band, std::string
   m_DomainList.push_back(domain);
 }
 
+std::shared_ptr<vnl_matrix<double>> Sampler::GetCorrespondencePointsUpdate()
+{
+  return this->m_PointsUpdate;
+}
+
+std::shared_ptr<vnl_matrix<double>> Sampler::GetInputCovarianceMatrix()
+{
+  return this->m_InputCovariance;
+}
+
+double Sampler::Get_MinimumVariance()
+{
+ return this->m_CorrespondenceFunction->GetMinimumVariance();
+}
+
 bool Sampler::initialize_ffcs(size_t dom) {
   auto mesh = std::make_shared<Mesh>(m_meshes[dom]);
   if (m_verbosity >= 1) std::cout << "dom " << dom << " point count " << mesh->numPoints() << " faces " << mesh->numFaces() << std::endl;

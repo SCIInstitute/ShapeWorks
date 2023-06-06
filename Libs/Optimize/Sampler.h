@@ -364,7 +364,9 @@ class Sampler {
   std::vector<FreeFormConstraint> GetFFCs() { return m_FFCs; }
 
   void SetMeshFFCMode(bool mesh_ffc_mode) { m_meshFFCMode = mesh_ffc_mode; }
-
+  std::shared_ptr<vnl_matrix<double>> GetCorrespondencePointsUpdate();
+  std::shared_ptr<vnl_matrix<double>> GetInputCovarianceMatrix();
+  double Get_MinimumVariance();
  protected:
   void GenerateData();
 
@@ -414,6 +416,10 @@ class Sampler {
 
   shapeworks::ShapeMatrix::Pointer m_GeneralShapeMatrix;
   shapeworks::ShapeGradientMatrix::Pointer m_GeneralShapeGradMatrix;
+
+  std::shared_ptr<vnl_matrix<double>> m_PointsUpdate = std::make_shared<vnl_matrix<double>>(10, 10);
+  std::shared_ptr<vnl_matrix<double>> m_InputCovariance = std::make_shared<vnl_matrix<double>>(10,10,0);
+
 
   bool initialize_ffcs(size_t dom);
 

@@ -17,11 +17,12 @@
 
 // shapeworks
 #include <Project/Project.h>
-
+#include "EigenUtils.h"
 #include "Libs/Optimize/Domain/DomainType.h"
 #include "Libs/Optimize/Domain/MeshWrapper.h"
 #include "Libs/Optimize/Function/VectorFunction.h"
 #include "Libs/Optimize/Utils/OptimizationVisualizer.h"
+
 #include "ParticleSystem.h"
 #include "ProcrustesRegistration.h"
 #include "Sampler.h"
@@ -278,6 +279,21 @@ class Optimize {
 
   //! Return the particle system as a matrix
   MatrixContainer GetParticleSystem();
+
+  //! Return the shape gradient matrix
+  MatrixContainer GetShapeGradientMatrix();
+
+  //! Return the shape gradient matrix given a particle system
+  MatrixContainer GetShapeGradientMatrix(MatrixContainer positions);
+
+  //! Return the correspondence update matrix
+  MatrixContainer GetCorrespondenceUpdateMatrix();
+
+  //! Set the correspondence update matrix
+  void SetCorrespondenceUpdateMatrix(MatrixContainer matrix);
+
+  //! Set Covariance Matrix
+  void SetInputCovarianceMatrix(MatrixContainer matrix);
 
   //! Set the python file to run at startup
   void SetPythonFile(std::string filename);

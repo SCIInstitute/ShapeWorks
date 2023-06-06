@@ -1659,7 +1659,35 @@ PYBIND11_MODULE(shapeworks_py, m)
        &Optimize::SetIterationCallbackFunction)
 
   .def("GetParticleSystem",
-       &optimize_get_particle_system)
+       [](Optimize *opt){
+          shapeworks::MatrixContainer container = opt->GetParticleSystem();
+          return container.matrix_;
+     }
+     )
+
+  .def("SetBeforeEvaluateCallbackFunction",
+      &Optimize::SetBeforeEvaluateCallbackFunction)
+
+  .def("GetCorrespondenceUpdateMatrix",
+      [](Optimize *opt){
+          shapeworks::MatrixContainer container = opt->GetCorrespondenceUpdateMatrix();
+          return container.matrix_;})
+
+  .def("SetCorrespondenceUpdateMatrix",
+     [](Optimize *opt,Eigen::MatrixXd updates){
+          shapeworks::MatrixContainer container;
+          container.matrix_ = updates;
+          opt->SetCorrespondenceUpdateMatrix(container);
+          }
+     )
+
+  .def("SetInputCovarianceMatrix",
+     [](Optimize *opt, Eigen::MatrixXd covariance){
+          shapeworks::MatrixContainer container;
+          container.matrix_ = covariance;
+          opt->SetInputCovarianceMatrix(container);
+     })
+
   ;
 
   // DomainType

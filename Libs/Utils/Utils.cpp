@@ -5,7 +5,7 @@
 #include <cmath>
 #include <sstream>      // std::istringstream
 #include <Eigen/Dense>
-
+#include <Eigen/Core>
 // namespace shapeworks {  //todo (need to make sure everything that calls these functions uses namespace
 
 std::vector<int> Utils::randperm(int n)
@@ -509,6 +509,23 @@ double Utils::averageThetaChord(std::vector<double> thetas)
 
     return atan2(M, N);
 }
+
+
+
+// Eigen::MatrixXd Utils::vnlToEigen(const vnl_matrix<double>& vnl)
+// {
+//   Eigen::MatrixXd matrix;
+//   matrix.resize(vnl.rows(), vnl.cols());
+
+//   for (int i = 0; i < vnl.rows(); i++) {
+//     for (int j = 0; j < vnl.cols(); j++) {
+//       matrix(i, j) = vnl.get(i, j);
+//     }
+//   }
+
+//   return matrix;
+// }
+
 
 // the exact method
 double Utils::averageThetaArc(std::vector<double> thetas)

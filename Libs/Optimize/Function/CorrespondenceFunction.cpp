@@ -2,7 +2,7 @@
 #include "CorrespondenceFunction.h"
 
 #include <math.h>
-
+// #include "Libs/Utils/EigenUtils.h"
 #include "Libs/Utils/Utils.h"
 #include "vnl/algo/vnl_svd.h"
 #include "vnl/vnl_diag_matrix.h"
@@ -43,7 +43,20 @@ void CorrespondenceFunction::ComputeUpdates(const ParticleSystem* c) {
     pinvMat.set_identity();
     m_InverseCovMatrix->clear();
   } else {
-    gramMat = points_minus_mean.transpose() * points_minus_mean;
+    // gramMat = points_minus_mean.transpose() * points_minus_mean;
+    if (!m_InputCovariance->is_zero())
+        {
+        
+        gramMat = *m_InputCovariance;
+        
+        }    
+
+        else
+        {
+
+        gramMat = points_minus_mean.transpose()* points_minus_mean;
+
+        }
 
     vnl_svd<double> svd(gramMat);
 

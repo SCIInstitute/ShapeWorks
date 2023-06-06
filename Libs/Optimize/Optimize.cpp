@@ -23,7 +23,7 @@
 
 // shapeworks
 #include <Project/Project.h>
-
+#include "EigenUtils.h"
 #include "Libs/Optimize/Domain/ImageDomain.h"
 #include "Libs/Optimize/Domain/ImplicitSurfaceDomain.h"
 #include "Libs/Optimize/Domain/VtkMeshWrapper.h"
@@ -2030,7 +2030,68 @@ MatrixContainer Optimize::GetParticleSystem() {
   container.matrix_ = matrix;
   return container;
 }
+//---------------------------------------------------------------------------
+MatrixContainer Optimize::GetShapeGradientMatrix()
+{
+  MatrixContainer container;
+  container.matrix_ = EigenUtils::vnlToEigen(*(m_sampler->GetGeneralShapeGradientMatrix()));
+  return container;
+}
 
+//---------------------------------------------------------------------------
+MatrixContainer Optimize::GetShapeGradientMatrix(MatrixContainer positions)
+{
+  /*
+  
+  ShapeWorks/Libs/Optimize/Optimize.cpp:2416:37: error: ‘itk::ParticleSystem’ is not a template
+   itk::ParticleSystem::Pointer ps = itk::ParticleSystem<3>::New();
+   Need to fix this
+  */
+  // itk::ParticleSystem::Pointer ps = itk::ParticleSystem<3>::New();
+  // need to add domains, set positions, etc
+
+  MatrixContainer container;
+  container.matrix_ = EigenUtils::vnlToEigen(*(m_sampler->GetGeneralShapeGradientMatrix()));
+  return container;
+}
+
+//---------------------------------------------------------------------------
+MatrixContainer Optimize::GetCorrespondenceUpdateMatrix()
+{
+  auto matrix = this->m_sampler->GetCorrespondencePointsUpdate();
+
+  MatrixContainer container;
+  container.matrix_ = EigenUtils::vnlToEigen(*matrix);
+  return container;
+}
+
+//---------------------------------------------------------------------------
+void Optimize::SetCorrespondenceUpdateMatrix(MatrixContainer matrix)
+{
+  auto vnl = this->m_sampler->GetCorrespondencePointsUpdate();
+
+  auto eigen = matrix.matrix_;
+  vnl->set_size(eigen.rows(), eigen.cols());
+  for (int r = 0; r < eigen.rows(); r++) {
+    for (int c = 0; c < eigen.cols(); c++) {
+      vnl->put(r, c, eigen(r, c));
+    }
+  }
+}
+//---------------------------------------------------------------------------
+void Optimize::SetInputCovarianceMatrix(MatrixContainer matrix)
+{ 
+
+  auto eigen = matrix.matrix_;
+  auto vnl = this->m_sampler->GetInputCovarianceMatrix();
+  
+  vnl->set_size(eigen.rows(), eigen.cols());
+  for (int r = 0; r < eigen.rows(); r++) {
+    for (int c = 0; c < eigen.cols(); c++) {
+      vnl->put(r, c, eigen(r, c));
+    }
+  }
+}
 //---------------------------------------------------------------------------
 std::string Optimize::GetCheckpointDir() {
   int num_digits = std::to_string(abs(m_total_iterations)).length();
