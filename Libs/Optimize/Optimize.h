@@ -17,7 +17,7 @@
 
 // shapeworks
 #include <Project/Project.h>
-#include "EigenUtils.h"
+#include "Libs/Utils/EigenUtils.h"
 #include "Libs/Optimize/Domain/DomainType.h"
 #include "Libs/Optimize/Domain/MeshWrapper.h"
 #include "Libs/Optimize/Function/VectorFunction.h"
@@ -72,8 +72,10 @@ class Optimize {
   //! Set the Projects
   void SetProject(std::shared_ptr<Project> project);
 
-  void SetIterationCallbackFunction(const std::function<void(void)>& f) { this->iteration_callback_ = f; }
+  void SetIterationCallbackFunction(const std::function<void(void)>& f) 
+  { this->iteration_callback_ = f; }
 
+  void SetBeforeEvaluateCallbackFunction(const std::function<void(void)> &f);
   //! Abort optimization
   void AbortOptimization();
 

@@ -23,7 +23,7 @@
 
 // shapeworks
 #include <Project/Project.h>
-#include "EigenUtils.h"
+#include "Libs/Utils/EigenUtils.h"
 #include "Libs/Optimize/Domain/ImageDomain.h"
 #include "Libs/Optimize/Domain/ImplicitSurfaceDomain.h"
 #include "Libs/Optimize/Domain/VtkMeshWrapper.h"
@@ -2034,7 +2034,7 @@ MatrixContainer Optimize::GetParticleSystem() {
 MatrixContainer Optimize::GetShapeGradientMatrix()
 {
   MatrixContainer container;
-  container.matrix_ = EigenUtils::vnlToEigen(*(m_sampler->GetGeneralShapeGradientMatrix()));
+  container.matrix_ = vnlToEigen(*(m_sampler->GetGeneralShapeGradientMatrix()));
   return container;
 }
 
@@ -2051,7 +2051,7 @@ MatrixContainer Optimize::GetShapeGradientMatrix(MatrixContainer positions)
   // need to add domains, set positions, etc
 
   MatrixContainer container;
-  container.matrix_ = EigenUtils::vnlToEigen(*(m_sampler->GetGeneralShapeGradientMatrix()));
+  container.matrix_ = vnlToEigen(*(m_sampler->GetGeneralShapeGradientMatrix()));
   return container;
 }
 
@@ -2061,7 +2061,7 @@ MatrixContainer Optimize::GetCorrespondenceUpdateMatrix()
   auto matrix = this->m_sampler->GetCorrespondencePointsUpdate();
 
   MatrixContainer container;
-  container.matrix_ = EigenUtils::vnlToEigen(*matrix);
+  container.matrix_ = vnlToEigen(*matrix);
   return container;
 }
 
