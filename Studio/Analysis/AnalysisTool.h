@@ -201,6 +201,7 @@ class AnalysisTool : public QWidget {
   void update_interface();
 
   bool group_pvalues_valid();
+  bool groups_on();
 
   //! Break apart combined points into per-domain
   Particles convert_from_combined(const Eigen::VectorXd& points);

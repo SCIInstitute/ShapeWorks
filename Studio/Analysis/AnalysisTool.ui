@@ -714,7 +714,7 @@ QWidget#particles_panel {
                     </widget>
                    </item>
                    <item row="6" column="0" colspan="3">
-                    <widget class="QGroupBox" name="groupBox_2">
+                    <widget class="QGroupBox" name="group_p_values_box">
                      <property name="title">
                       <string>Group Particle P-values</string>
                      </property>

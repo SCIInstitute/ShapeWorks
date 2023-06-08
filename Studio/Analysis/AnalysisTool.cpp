@@ -251,6 +251,9 @@ bool AnalysisTool::group_pvalues_valid() {
 }
 
 //---------------------------------------------------------------------------
+bool AnalysisTool::groups_on() { return ui_->group_box->currentText() != "-None-"; }
+
+//---------------------------------------------------------------------------
 void AnalysisTool::handle_analysis_options() {
   if (ui_->tabWidget->currentWidget() == ui_->samples_tab) {
     ui_->pcaAnimateCheckBox->setChecked(false);
@@ -1007,13 +1010,13 @@ void AnalysisTool::set_analysis_mode(std::string mode) {
 ShapeHandle AnalysisTool::get_mean_shape() {
   auto shape_points = get_mean_shape_points();
   ShapeHandle shape = create_shape_from_points(shape_points);
-  if (ui_->group_p_values_checkbox->isChecked() && group_pvalue_job_ &&
+  if (groups_on() && ui_->group_p_values_checkbox->isChecked() && group_pvalue_job_ &&
       group_pvalue_job_->get_group_pvalues().rows() > 0) {
     shape->set_point_features("p_values", group_pvalue_job_->get_group_pvalues());
     shape->set_override_feature("p_values");
   }
 
-  if (ui_->network_analysis_display->isChecked() && network_analysis_job_ &&
+  if (groups_on() && ui_->network_analysis_display->isChecked() && network_analysis_job_ &&
       network_analysis_job_->get_tvalues().rows() > 0) {
     if (ui_->network_analysis_option->isChecked()) {
       shape->set_point_features("t_values", network_analysis_job_->get_tvalues());
@@ -1165,20 +1168,23 @@ void AnalysisTool::update_group_values() {
     }
   }
 
-  bool groups_on = ui_->group_box->currentText() != "-None-";
+  ui_->group1_button->setEnabled(groups_on());
+  ui_->group2_button->setEnabled(groups_on());
+  ui_->difference_button->setEnabled(groups_on());
+  ui_->group_p_values_box->setEnabled(groups_on());
+  ui_->group_slider->setEnabled(groups_on());
+  ui_->group_left->setEnabled(groups_on());
+  ui_->group_right->setEnabled(groups_on());
+  ui_->group_animate_checkbox->setEnabled(groups_on());
+  ui_->network_analysis_box->setEnabled(groups_on());
 
-  ui_->group1_button->setEnabled(groups_on);
-  ui_->group2_button->setEnabled(groups_on);
-  ui_->difference_button->setEnabled(groups_on);
-  ui_->group_p_values_checkbox->setEnabled(groups_on);
-  ui_->group_slider->setEnabled(groups_on);
-  ui_->group_left->setEnabled(groups_on);
-  ui_->group_right->setEnabled(groups_on);
-  ui_->group_animate_checkbox->setEnabled(groups_on);
-  ui_->network_analysis_box->setEnabled(groups_on);
+  if (!groups_on()) {
+    ui_->group_p_values_checkbox->setChecked(false);
+  }
 
   block_group_change_ = false;
   group_changed();
+  Q_EMIT update_view();
 }
 
 //---------------------------------------------------------------------------
