@@ -395,6 +395,11 @@ std::shared_ptr<vnl_matrix<double>> Sampler::GetInputCovarianceMatrix()
   return this->m_InputCovariance;
 }
 
+std::shared_ptr<vnl_matrix<double>> Sampler::GetInputInvCovarianceMatrix()
+{
+  return this->m_InputInvCovariance;
+}
+
 double Sampler::Get_MinimumVariance()
 {
  return this->m_CorrespondenceFunction->GetMinimumVariance();

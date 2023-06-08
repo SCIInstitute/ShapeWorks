@@ -1688,6 +1688,12 @@ PYBIND11_MODULE(shapeworks_py, m)
           opt->SetInputCovarianceMatrix(container);
      })
 
+  .def("SetInputInvCovarianceMatrix",
+     [](Optimize *opt, Eigen::MatrixXd invcovariance){
+          shapeworks::MatrixContainer container;
+          container.matrix_ = invcovariance;
+          opt->SetInputInvCovarianceMatrix(container);
+     })
   ;
 
   // DomainType

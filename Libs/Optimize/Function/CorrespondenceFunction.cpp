@@ -153,7 +153,12 @@ CorrespondenceFunction::VectorType CorrespondenceFunction::Evaluate(unsigned int
                                                                      double& energy) const {
   int dom = d % m_DomainsPerShape;      // domain number within shape
   int sampNum = d / m_DomainsPerShape;  // shape number
-
+  if (!m_InputInvCovariance->is_zero())
+        {
+        
+        *m_InverseCovMatrix = *m_InputInvCovariance;
+        
+        } 
   int sz_Yidx = 0;
   if (m_UseXYZ[dom]) {
     sz_Yidx += 3;

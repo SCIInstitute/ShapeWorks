@@ -58,6 +58,12 @@ class CorrespondenceFunction : public VectorFunction {
   {
         this->m_InputCovariance = user_input_covariance;
   }
+
+  void SetInputInvCovarianceMatrix(std::shared_ptr<vnl_matrix<double>> user_input_invcovariance)
+  {
+        this->m_InputInvCovariance = user_input_invcovariance;
+  }
+
   /** The first argument is a pointer to the particle system.  The second
        argument is the index of the domain within that particle system.  The
        third argument is the index of the particle location within the given
@@ -155,6 +161,7 @@ class CorrespondenceFunction : public VectorFunction {
     copy->m_MinimumVarianceDecayConstant = this->m_MinimumVarianceDecayConstant;
     copy->m_PointsUpdate = this->m_PointsUpdate;
     copy->m_InputCovariance = this->m_InputCovariance;
+    copy->m_InputInvCovariance = this->m_InputInvCovariance;
     copy->m_RecomputeCovarianceInterval = this->m_RecomputeCovarianceInterval;
     copy->m_AttributesPerDomain = this->m_AttributesPerDomain;
     copy->m_DomainsPerShape = this->m_DomainsPerShape;
@@ -195,6 +202,7 @@ class CorrespondenceFunction : public VectorFunction {
   typename ShapeDataType::Pointer m_ShapeData;
   typename ShapeGradientType::Pointer m_ShapeGradient;
   std::shared_ptr<vnl_matrix_type> m_InputCovariance;
+  std::shared_ptr<vnl_matrix_type> m_InputInvCovariance;
   virtual void ComputeUpdates(const ParticleSystem* c);
   std::shared_ptr<vnl_matrix_type> m_PointsUpdate;
 

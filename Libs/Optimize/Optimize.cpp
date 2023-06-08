@@ -2092,6 +2092,22 @@ void Optimize::SetInputCovarianceMatrix(MatrixContainer matrix)
     }
   }
 }
+
+//---------------------------------------------------------------------------
+void Optimize::SetInputInvCovarianceMatrix(MatrixContainer matrix)
+{ 
+
+  auto eigen = matrix.matrix_;
+  auto vnl = this->m_sampler->GetInputInvCovarianceMatrix();
+  
+  vnl->set_size(eigen.rows(), eigen.cols());
+  for (int r = 0; r < eigen.rows(); r++) {
+    for (int c = 0; c < eigen.cols(); c++) {
+      vnl->put(r, c, eigen(r, c));
+    }
+  }
+}
+
 //---------------------------------------------------------------------------
 std::string Optimize::GetCheckpointDir() {
   int num_digits = std::to_string(abs(m_total_iterations)).length();

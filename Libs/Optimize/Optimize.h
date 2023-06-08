@@ -297,6 +297,9 @@ class Optimize {
   //! Set Covariance Matrix
   void SetInputCovarianceMatrix(MatrixContainer matrix);
 
+  //! Set Covariance Matrix
+  void SetInputInvCovarianceMatrix(MatrixContainer matrix);
+
   //! Set the python file to run at startup
   void SetPythonFile(std::string filename);
 

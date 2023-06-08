@@ -366,6 +366,7 @@ class Sampler {
   void SetMeshFFCMode(bool mesh_ffc_mode) { m_meshFFCMode = mesh_ffc_mode; }
   std::shared_ptr<vnl_matrix<double>> GetCorrespondencePointsUpdate();
   std::shared_ptr<vnl_matrix<double>> GetInputCovarianceMatrix();
+  std::shared_ptr<vnl_matrix<double>> GetInputInvCovarianceMatrix();
   double Get_MinimumVariance();
  protected:
   void GenerateData();
@@ -419,6 +420,7 @@ class Sampler {
 
   std::shared_ptr<vnl_matrix<double>> m_PointsUpdate = std::make_shared<vnl_matrix<double>>(10, 10);
   std::shared_ptr<vnl_matrix<double>> m_InputCovariance = std::make_shared<vnl_matrix<double>>(10,10,0);
+  std::shared_ptr<vnl_matrix<double>> m_InputInvCovariance = std::make_shared<vnl_matrix<double>>(10,10,0);
 
 
   bool initialize_ffcs(size_t dom);
