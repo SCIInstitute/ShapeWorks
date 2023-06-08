@@ -716,28 +716,16 @@ QWidget#particles_panel {
                    <item row="6" column="0" colspan="3">
                     <widget class="QGroupBox" name="groupBox_2">
                      <property name="title">
-                      <string>P-values</string>
+                      <string>Group Particle P-values</string>
                      </property>
                      <property name="checkable">
                       <bool>false</bool>
                      </property>
                      <layout class="QGridLayout" name="gridLayout_27">
                       <item row="0" column="0">
-                       <widget class="QPushButton" name="group_p_values_button">
-                        <property name="enabled">
-                         <bool>true</bool>
-                        </property>
-                        <property name="toolTip">
-                         <string>Display p-values on surface</string>
-                        </property>
+                       <widget class="QCheckBox" name="group_p_values_checkbox">
                         <property name="text">
-                         <string>Display</string>
-                        </property>
-                        <property name="checkable">
-                         <bool>true</bool>
-                        </property>
-                        <property name="autoExclusive">
-                         <bool>false</bool>
+                         <string>Display Per Particle Group P-values</string>
                         </property>
                        </widget>
                       </item>

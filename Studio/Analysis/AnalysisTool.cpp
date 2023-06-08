@@ -76,14 +76,13 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
   connect(ui_->group_box, qOverload<int>(&QComboBox::currentIndexChanged), this, &AnalysisTool::update_group_values);
   connect(ui_->group_left, qOverload<int>(&QComboBox::currentIndexChanged), this, &AnalysisTool::group_changed);
   connect(ui_->group_right, qOverload<int>(&QComboBox::currentIndexChanged), this, &AnalysisTool::group_changed);
-  connect(ui_->group_p_values_button, &QPushButton::clicked, this, &AnalysisTool::group_p_values_clicked);
+  connect(ui_->group_p_values_checkbox, &QPushButton::clicked, this, &AnalysisTool::group_p_values_clicked);
 
   // network analysis
   connect(ui_->network_analysis_button, &QPushButton::clicked, this, &AnalysisTool::network_analysis_clicked);
   connect(ui_->network_analysis_display, &QCheckBox::stateChanged, this, &AnalysisTool::update_view);
   connect(ui_->network_analysis_option, &QRadioButton::clicked, this, &AnalysisTool::update_view);
   connect(ui_->network_spm1d_option, &QRadioButton::clicked, this, &AnalysisTool::update_view);
-
 
   connect(ui_->reference_domain, qOverload<int>(&QComboBox::currentIndexChanged), this,
           &AnalysisTool::handle_alignment_changed);
@@ -223,7 +222,7 @@ void AnalysisTool::set_session(QSharedPointer<Session> session) {
   // reset to original
   ui_->mesh_warping_radio_button->setChecked(true);
   ui_->difference_button->setChecked(false);
-  ui_->group_p_values_button->setChecked(false);
+  ui_->group_p_values_checkbox->setChecked(false);
   ui_->group1_button->setChecked(false);
   ui_->group2_button->setChecked(false);
   update_difference_particles();
@@ -333,7 +332,7 @@ void AnalysisTool::on_group1_button_clicked() {
   ui_->difference_button->setChecked(false);
   ui_->group_animate_checkbox->setChecked(false);
   ui_->group1_button->setChecked(true);
-  ui_->group_p_values_button->setChecked(false);
+  ui_->group_p_values_checkbox->setChecked(false);
   update_difference_particles();
   Q_EMIT update_view();
 }
@@ -346,7 +345,7 @@ void AnalysisTool::on_group2_button_clicked() {
   ui_->difference_button->setChecked(false);
   ui_->group_animate_checkbox->setChecked(false);
   ui_->group2_button->setChecked(true);
-  ui_->group_p_values_button->setChecked(false);
+  ui_->group_p_values_checkbox->setChecked(false);
   update_difference_particles();
   Q_EMIT update_view();
 }
@@ -357,7 +356,7 @@ void AnalysisTool::on_difference_button_clicked() {
   ui_->mean_button->setChecked(false);
   ui_->group1_button->setChecked(false);
   ui_->group2_button->setChecked(false);
-  ui_->group_p_values_button->setChecked(false);
+  ui_->group_p_values_checkbox->setChecked(false);
   ui_->group_animate_checkbox->setChecked(false);
   ui_->difference_button->setChecked(true);
   update_difference_particles();
@@ -366,11 +365,14 @@ void AnalysisTool::on_difference_button_clicked() {
 
 //---------------------------------------------------------------------------
 void AnalysisTool::group_p_values_clicked() {
+  if (!ui_->group_p_values_checkbox->isChecked()) {
+    Q_EMIT update_view();
+    return;
+  }
   ui_->group_slider->setValue(10);
   ui_->mean_button->setChecked(false);
   ui_->group1_button->setChecked(false);
   ui_->group2_button->setChecked(false);
-  ui_->group_p_values_button->setChecked(true);
   ui_->group_animate_checkbox->setChecked(false);
   ui_->difference_button->setChecked(false);
   update_difference_particles();
@@ -1005,7 +1007,7 @@ void AnalysisTool::set_analysis_mode(std::string mode) {
 ShapeHandle AnalysisTool::get_mean_shape() {
   auto shape_points = get_mean_shape_points();
   ShapeHandle shape = create_shape_from_points(shape_points);
-  if (ui_->group_p_values_button->isChecked() && group_pvalue_job_ &&
+  if (ui_->group_p_values_checkbox->isChecked() && group_pvalue_job_ &&
       group_pvalue_job_->get_group_pvalues().rows() > 0) {
     shape->set_point_features("p_values", group_pvalue_job_->get_group_pvalues());
     shape->set_override_feature("p_values");
@@ -1105,7 +1107,7 @@ std::string AnalysisTool::get_display_feature_map() {
   if (session_->get_show_difference_vectors()) {
     return "surface_difference";
   }
-  if (ui_->group_p_values_button->isChecked() && group_pvalue_job_ &&
+  if (ui_->group_p_values_checkbox->isChecked() && group_pvalue_job_ &&
       group_pvalue_job_->get_group_pvalues().rows() > 0) {
     return "p_values";
   }
@@ -1168,7 +1170,7 @@ void AnalysisTool::update_group_values() {
   ui_->group1_button->setEnabled(groups_on);
   ui_->group2_button->setEnabled(groups_on);
   ui_->difference_button->setEnabled(groups_on);
-  ui_->group_p_values_button->setEnabled(groups_on);
+  ui_->group_p_values_checkbox->setEnabled(groups_on);
   ui_->group_slider->setEnabled(groups_on);
   ui_->group_left->setEnabled(groups_on);
   ui_->group_right->setEnabled(groups_on);
