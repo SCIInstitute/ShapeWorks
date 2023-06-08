@@ -5,10 +5,9 @@
 namespace py = pybind11;
 using namespace pybind11::literals;  // to bring in the `_a` literal
 
-#include <Shape.h>
 #include <Logging.h>
 #include <Python/PythonWorker.h>
-#include <Logging.h>
+#include <Shape.h>
 
 #include <QFileInfo>
 #include <QMessageBox>
@@ -74,29 +73,28 @@ void PythonWorker::set_vtk_output_window(vtkSmartPointer<StudioVtkOutputWindow> 
 
 //---------------------------------------------------------------------------
 void PythonWorker::start_job(QSharedPointer<Job> job) {
-  if (this->init()) {
+  if (init()) {
     try {
-      this->current_job_ = job;
-      this->current_job_->run();
+      job->start_timer();
+      SW_LOG("Running Task: " + job->name().toStdString());
+      Q_EMIT job->progress(0);
+      current_job_ = job;
+      current_job_->run();
       SW_LOG(current_job_->get_completion_message().toStdString());
     } catch (py::error_already_set& e) {
       SW_ERROR(e.what());
     }
   }
 
-  this->python_logger_->clear_abort();
-  Q_EMIT this->current_job_->finished();
+  python_logger_->clear_abort();
+  if (current_job_) {
+    Q_EMIT current_job_->finished();
+  }
 }
 
 //---------------------------------------------------------------------------
 void PythonWorker::run_job(QSharedPointer<Job> job) {
-  Q_EMIT job->progress(0);
-  SW_LOG("Running Task: " + job->name().toStdString());
-
-  job->start_timer();
-  this->current_job_ = job;
   job->moveToThread(this->thread_);
-
   // run on python thread
   QMetaObject::invokeMethod(this, "start_job", Qt::QueuedConnection, Q_ARG(QSharedPointer<Job>, job));
 }
