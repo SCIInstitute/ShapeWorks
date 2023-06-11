@@ -99,7 +99,7 @@ void ParticleSystem::SetTransform(unsigned int i, const TransformType& T) {
   m_Transforms[i] = T;
   m_InverseTransforms[i] = this->InvertTransform(T);
 
-  // Notify any observers.
+  // Notify any observers.m_Positions
   ParticleTransformSetEvent e;
   e.SetDomainIndex(i);
   this->InvokeEvent(e);
@@ -160,6 +160,39 @@ const typename ParticleSystem::PointType& ParticleSystem::AddPosition(const Poin
 
   return m_Positions[d]->operator[](m_IndexCounters[d] - 1);
 }
+
+//overloaded version
+const typename ParticleSystem::PointType& ParticleSystem::AddPosition(const PointType& p, unsigned int d, double p_offset) {
+  m_Positions[d]->operator[](m_IndexCounters[d]) = p;
+  m_PositionOffsets[d].push_back(p_offset);
+
+  // Potentially modifies position!
+  if (m_DomainFlags[d] == false) {
+    // debugg
+    // std::cout << "d" << d << " before apply " << m_Positions[d]->operator[](m_IndexCounters[d]);
+    const auto idx = m_IndexCounters[d];
+    m_Domains[d]->ApplyConstraints(m_Positions[d]->operator[](idx), idx);
+    // debugg
+    // std::cout << " after apply " << m_Positions[d]->operator[](m_IndexCounters[d]) << std::endl;
+    m_Neighborhoods[d]->AddPosition(m_Positions[d]->operator[](idx), idx);
+  }
+
+  // Increase the FixedParticleFlag list size if necessary.
+  if (m_IndexCounters[d] >= m_FixedParticleFlags[d % m_DomainsPerShape].size()) {
+    m_FixedParticleFlags[d % m_DomainsPerShape].push_back(false);
+  }
+
+  // Notify any observers.
+  ParticlePositionAddEvent e;
+  e.SetDomainIndex(d);
+  e.SetPositionIndex(m_IndexCounters[d]);
+  this->InvokeEvent(e);
+  m_IndexCounters[d]++;
+
+  return m_Positions[d]->operator[](m_IndexCounters[d] - 1);
+}
+
+
 
 const typename ParticleSystem::PointType& ParticleSystem::SetPosition(const PointType& p, unsigned long int k,
                                                                       unsigned int d) {

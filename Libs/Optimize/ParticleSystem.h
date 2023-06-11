@@ -116,6 +116,8 @@ class ParticleSystem : public itk::DataObject {
       SetTransformedPosition sets the position using a Point transformed by the
       m_Transform associated with the given domain.*/
   const PointType &AddPosition(const PointType &, unsigned int d = 0);
+  const PointType &AddPosition(const PointType &, unsigned int d = 0, double o); // overload AddPosition for adding position offset defined at a paricle position
+
   const PointType &SetPosition(const PointType &, unsigned long int k, unsigned int d = 0);
 
 
@@ -424,7 +426,7 @@ class ParticleSystem : public itk::DataObject {
   /** The 2D array of particle positions.  1st array axis is the domain number.
       These values may only be modified by the ParticleSystem class itself. */
   std::vector<PointContainerType::Pointer> m_Positions;
-  std::vector<PointContainerType::Pointer> m_PositionOffsets;
+  std::vector<std::vector<double>> m_PositionOffsets;
 
 
   /** The set of particle domain definitions. */
