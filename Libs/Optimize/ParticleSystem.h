@@ -131,6 +131,11 @@ class ParticleSystem : public itk::DataObject {
       transform matrix for the given domain.*/
   PointType &GetPosition(unsigned long int k, unsigned int d = 0) { return m_Positions[d]->operator[](k); }
   const PointType &GetPosition(unsigned long int k, unsigned int d = 0) const { return m_Positions[d]->operator[](k); }
+
+  // Position Offsets Getter
+  double &GetPositionOffset(unsigned long int k, unsigned int d = 0) { return m_PositionOffsets[d][k]; }
+  const double &GetPositionOffset(unsigned long int k, unsigned int d = 0) const { return m_PositionOffsets[d][k]; }
+
   PointType GetTransformedPosition(unsigned long int k, unsigned int d = 0) const {
     return this->TransformPoint(m_Positions[d]->operator[](k), m_Transforms[d] * m_PrefixTransforms[d]);
   }
@@ -294,8 +299,8 @@ class ParticleSystem : public itk::DataObject {
   const PointContainerType::Pointer &GetPositions(unsigned int d) const { return m_Positions[d]; }
 
   /** Return the array of offsets defined at particle positions. */
-  const std::vector<PointContainerType::Pointer> &GetPositionOffsets() const { return m_PositionOffsets; }
-  const PointContainerType::Pointer &GetPositionOffsets(unsigned int d) const { return m_PositionOffsets[d]; }
+  const std::vector<std::vector<double>> &GetPositionOffsets() const { return m_PositionOffsets; }
+  const std::vector<double> &GetPositionOffsets(unsigned int d) const { return m_PositionOffsets[d]; }
 
   /** Adds a list of points to the specified domain.  The arguments are the
      std::vector of points and the domain number. */
