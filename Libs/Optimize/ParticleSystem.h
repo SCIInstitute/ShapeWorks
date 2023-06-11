@@ -291,6 +291,10 @@ class ParticleSystem : public itk::DataObject {
   const std::vector<PointContainerType::Pointer> &GetPositions() const { return m_Positions; }
   const PointContainerType::Pointer &GetPositions(unsigned int d) const { return m_Positions[d]; }
 
+  /** Return the array of offsets defined at particle positions. */
+  const std::vector<PointContainerType::Pointer> &GetPositionOffsets() const { return m_PositionOffsets; }
+  const PointContainerType::Pointer &GetPositionOffsets(unsigned int d) const { return m_PositionOffsets[d]; }
+
   /** Adds a list of points to the specified domain.  The arguments are the
      std::vector of points and the domain number. */
   void AddPositionList(const std::vector<PointType> &, unsigned int d = 0);
@@ -420,6 +424,8 @@ class ParticleSystem : public itk::DataObject {
   /** The 2D array of particle positions.  1st array axis is the domain number.
       These values may only be modified by the ParticleSystem class itself. */
   std::vector<PointContainerType::Pointer> m_Positions;
+  std::vector<PointContainerType::Pointer> m_PositionOffsets;
+
 
   /** The set of particle domain definitions. */
   std::vector<DomainType::Pointer> m_Domains;
