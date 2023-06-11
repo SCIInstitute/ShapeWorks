@@ -34,14 +34,24 @@ void GradientDescentOptimizer::ResetTimeStepVectors() {
     m_TimeSteps.push_back(tmp);
   }
 
+  while (m_TimeStepsForOffsets.size() != m_ParticleSystem->GetNumberOfDomains()) {
+    std::vector<double> tmp;
+    m_TimeStepsForOffsets.push_back(tmp);
+  }
+
   for (unsigned int i = 0; i < m_ParticleSystem->GetNumberOfDomains(); i++) {
     unsigned int np = m_ParticleSystem->GetPositions(i)->GetSize();
     if (m_TimeSteps[i].size() != np) {
       // resize and initialize everything to 1.0
       m_TimeSteps[i].resize(np);
     }
+
+    if (m_TimeStepsForOffsets[i].size() != np) {
+      m_TimeStepsForOffsets[i].resize(np);
+    }
     for (unsigned int j = 0; j < np; j++) {
       m_TimeSteps[i][j] = 1.0;
+      m_TimeStepsForOffsets[i][j] = 1e-6;
     }
   }
 }
@@ -89,6 +99,7 @@ void GradientDescentOptimizer::StartAdaptiveGaussSeidelOptimization() {
 
     const auto accTimerBegin = std::chrono::steady_clock::now();
     m_GradientFunction->SetParticleSystem(m_ParticleSystem);
+    // lags the particle system, compute correspondence gradient updates ONLY
     if (counter % global_iteration == 0) m_GradientFunction->BeforeIteration();
     counter++;
 

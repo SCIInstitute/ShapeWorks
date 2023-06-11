@@ -131,6 +131,8 @@ class GradientDescentOptimizer : public itk::Object {
   double m_Tolerance;
   double m_TimeStep;
   std::vector<std::vector<double> > m_TimeSteps;
+  std::vector<std::vector<double> > m_TimeStepsForOffsets;
+  
   unsigned int m_verbosity;
 
   // Adaptive Initialization variables
