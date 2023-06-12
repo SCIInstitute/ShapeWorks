@@ -2109,6 +2109,12 @@ void Optimize::SetInputInvCovarianceMatrix(MatrixContainer matrix)
 }
 
 //---------------------------------------------------------------------------
+void Optimize::SetBeforeEvaluateCallbackFunction(const std::function<void(void)>& f)
+{
+  this->m_sampler->GetOptimizer()->SetBeforeEvaluateCallbackFunction(f);
+}
+
+//---------------------------------------------------------------------------
 std::string Optimize::GetCheckpointDir() {
   int num_digits = std::to_string(abs(m_total_iterations)).length();
   std::stringstream ss;

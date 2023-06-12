@@ -92,6 +92,10 @@ void GradientDescentOptimizer::StartAdaptiveGaussSeidelOptimization() {
     if (counter % global_iteration == 0) m_GradientFunction->BeforeIteration();
     counter++;
 
+    if (this->m_BeforeEvaluateCallback) 
+    {
+        this->m_BeforeEvaluateCallback();
+    }
     // Iterate over each domain
     const auto domains_per_shape = m_ParticleSystem->GetDomainsPerShape();
     tbb::parallel_for(

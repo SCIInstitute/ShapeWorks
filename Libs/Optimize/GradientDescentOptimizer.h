@@ -105,6 +105,9 @@ class GradientDescentOptimizer : public itk::Object {
   itkGetObjectMacro(GradientFunction, GradientFunctionType);
   itkSetObjectMacro(GradientFunction, GradientFunctionType);
 
+  void SetBeforeEvaluateCallbackFunction(const std::function<void(void)> &f)
+  { this->m_BeforeEvaluateCallback = f; }
+
   /// Determines if this is an initialization (true) or an optimization (false)
   void SetInitializationMode(bool b) { m_initialization_mode = b; }
 
@@ -139,6 +142,7 @@ class GradientDescentOptimizer : public itk::Object {
   double m_initialization_start_scaling_factor;
 
   void ResetTimeStepVectors();
+  std::function<void(void)> m_BeforeEvaluateCallback;
 };
 
 }  // namespace shapeworks
