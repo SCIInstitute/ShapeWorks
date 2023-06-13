@@ -5,6 +5,7 @@
 
 namespace shapeworks::mesh {
 
-void compute_thickness(Mesh& mesh, Image &image, Image *dt, double threshold, double min_dist, double max_dist);
+void compute_thickness(Mesh &mesh, Image &image, Image *dt, double threshold, double min_dist, double max_dist,
+                       std::string distance_mesh);
 
 }  // namespace shapeworks::mesh

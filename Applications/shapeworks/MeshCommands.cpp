@@ -1549,6 +1549,11 @@ void ComputeThickness::buildParser() {
       .type("double")
       .set_default(100000.0)
       .help("Maximum distance to determine thickness");
+  parser.add_option("--distance_mesh")
+      .action("store")
+      .type("string")
+      .set_default("")
+      .help("Path to write distance mesh.");
 
   Command::buildParser();
 }
@@ -1571,11 +1576,14 @@ bool ComputeThickness::execute(const optparse::Values &options, SharedCommandDat
   double max_dist = static_cast<double>(options.get("max_dist"));
 
   std::string dt_filename = static_cast<std::string>(options.get("distance_transform"));
+
+  std::string distance_mesh_filename = static_cast<std::string>(options.get("distance_mesh"));
+
   if (dt_filename == "") {
-    sharedData.mesh->computeThickness(img, nullptr, threshold, min_dist, max_dist);
+    sharedData.mesh->computeThickness(img, nullptr, threshold, min_dist, max_dist, distance_mesh_filename);
   } else {
     Image dt(dt_filename);
-    sharedData.mesh->computeThickness(img, &dt, threshold, min_dist, max_dist);
+    sharedData.mesh->computeThickness(img, &dt, threshold, min_dist, max_dist, distance_mesh_filename);
   }
 
 

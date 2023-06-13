@@ -31,7 +31,8 @@ std::vector<double> smoothIntensities(std::vector<double> intensities) {
   return smoothed_intensities;
 }
 
-void compute_thickness(Mesh& mesh, Image& image, Image* dt, double threshold, double min_dist, double max_dist) {
+void compute_thickness(Mesh& mesh, Image& image, Image* dt, double threshold, double min_dist, double max_dist,
+                       std::string distance_mesh) {
   SW_DEBUG("Computing thickness with threshold {}, min_dist {}, max_dist {}", threshold, min_dist, max_dist);
 
   bool use_dt = dt != nullptr;
@@ -79,12 +80,13 @@ void compute_thickness(Mesh& mesh, Image& image, Image* dt, double threshold, do
     }
   };
 
+  const double step_size = 0.1;
+
   for (int i = 0; i < mesh.numPoints(); i++) {
     Point3 point;
     poly_data->GetPoint(i, point.GetDataPointer());
 
     std::vector<double> intensities;
-    double step_size = 0.1;
     double distance_outside = 4.0;
     double distance_inside = 12.0;
 
@@ -304,5 +306,59 @@ void compute_thickness(Mesh& mesh, Image& image, Image* dt, double threshold, do
     values->InsertValue(i, distance);
   }
   mesh.setField("thickness", values, Mesh::Point);
+
+  if (distance_mesh != "") {
+    // create a copy
+    Mesh d_mesh = mesh;
+
+    // for each vertex, move the particle the distance scalar
+
+    vtkSmartPointer<vtkPolyData> poly_data = d_mesh.getVTKMesh();
+    for (int i = 0; i < mesh.numPoints(); i++) {
+      Point3 point;
+      poly_data->GetPoint(i, point.GetDataPointer());
+
+      double distance_travelled = 0;
+
+      double distance = values->GetValue(i);
+
+      int count = 500;
+      while (distance_travelled < distance && count-- > 0) {
+        if (!check_inside(point)) {
+          break;
+        }
+
+        VectorPixelType gradient = get_gradient(i, point);
+
+        // normalize the gradient
+        float norm = std::sqrt(gradient[0] * gradient[0] + gradient[1] * gradient[1] + gradient[2] * gradient[2]);
+        gradient[0] /= norm;
+        gradient[1] /= norm;
+        gradient[2] /= norm;
+
+        gradient[0] *= step_size;
+        gradient[1] *= step_size;
+        gradient[2] *= step_size;
+
+        point[0] += gradient[0];
+        point[1] += gradient[1];
+        point[2] += gradient[2];
+
+        distance_travelled += step_size;
+      }
+
+      if (i < 10) {
+        std::cerr << "distance: " << distance << std::endl;
+        std::cerr << "distance_travelled: " << distance_travelled << std::endl;
+
+
+      }
+
+      // modify the point position in the poly_data
+      poly_data->GetPoints()->SetPoint(i, point.GetDataPointer());
+    }
+
+    d_mesh.write(distance_mesh);
+  }
 }
 }  // namespace shapeworks::mesh
