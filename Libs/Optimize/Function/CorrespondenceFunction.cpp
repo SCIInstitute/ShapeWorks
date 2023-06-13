@@ -44,7 +44,7 @@ void CorrespondenceFunction::ComputeUpdates(const ParticleSystem* c) {
     m_InverseCovMatrix->clear();
   } else {
     // gramMat = points_minus_mean.transpose() * points_minus_mean;
-    if (!m_InputCovariance->is_zero())
+    if (m_InputCovariance)
         {
         
         gramMat = *m_InputCovariance;
@@ -153,7 +153,7 @@ CorrespondenceFunction::VectorType CorrespondenceFunction::Evaluate(unsigned int
                                                                      double& energy) const {
   int dom = d % m_DomainsPerShape;      // domain number within shape
   int sampNum = d / m_DomainsPerShape;  // shape number
-  if (!m_InputInvCovariance->is_zero())
+  if (m_InputInvCovariance)
         {
         
         *m_InverseCovMatrix = *m_InputInvCovariance;
