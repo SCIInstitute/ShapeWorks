@@ -200,6 +200,30 @@ bool PythonWorker::init() {
     py::module py_matplot_lib = py::module::import("matplotlib");
     py_matplot_lib.attr("use")("agg");
 
+    // search directories in python_path vector for the python executable
+    QString python_executable;
+
+#ifdef _WIN32
+    QString path_executable = python_home + "/python.exe";
+#else
+    QString path_executable = python_home + "/bin/python";
+#endif
+    SW_LOG("checking {}", path_executable);
+
+    // check that it exists and is a file and is executable
+    if (QFile::exists(path_executable) && QFileInfo(path_executable).isFile() &&
+        QFile::permissions(path_executable) & QFile::ExeUser) {
+      python_executable = path_executable;
+    } else {
+      SW_LOG("Unable to locate python executable");
+    }
+
+    // set up for multprocessing
+    py::module multiprocessing = py::module::import("multiprocessing");
+    // set the executable
+    multiprocessing.attr("set_executable")(python_executable.toStdString());
+    SW_LOG("Python executable: {}", python_executable.toStdString());
+
     this->python_logger_->set_callback(std::bind(&PythonWorker::incoming_python_message, this, std::placeholders::_1));
     this->python_logger_->set_progress_callback(
         std::bind(&PythonWorker::incoming_python_progress, this, std::placeholders::_1));
