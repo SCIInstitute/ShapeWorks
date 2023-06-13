@@ -201,15 +201,19 @@ bool PythonWorker::init() {
     // search directories in python_path vector for the python executable
     QString python_executable;
 
-    QString path_executable = python_home + "/bin/python";
-    SW_LOG("checking {}", path_executable);
 #ifdef _WIN32
-    path_executable += ".exe";
+    QString path_executable = python_home + "/python.exe";
+#else
+    QString path_executable = python_home + "/bin/python";
 #endif
+    SW_LOG("checking {}", path_executable);
+
     // check that it exists and is a file and is executable
     if (QFile::exists(path_executable) && QFileInfo(path_executable).isFile() &&
         QFile::permissions(path_executable) & QFile::ExeUser) {
       python_executable = path_executable;
+    } else {
+      SW_LOG("Unable to locate python executable");
     }
 
     // set up for multprocessing
