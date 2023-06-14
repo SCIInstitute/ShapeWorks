@@ -54,13 +54,39 @@ class CurvatureSamplingFunction : public SamplingFunction {
     return this->Evaluate(a, b, c, d, e);
   }
 
+  inline virtual VectorType EvaluateParticleGradientMode(unsigned int a, unsigned int b, const ParticleSystem* c, double& d) const {
+    double e;
+    return this->EvaluateParticleGradientMode(a, b, c, d, e);
+  }
+
+  inline virtual double EvaluateOffsetGradientMode(unsigned int a, unsigned int b, const ParticleSystem* c, double& d) const {
+    double e;
+    return this->EvaluateOffsetGradientMode(a, b, c, d, e);
+  }
+
   virtual VectorType Evaluate(unsigned int, unsigned int, const ParticleSystem*, double&, double&) const;
+
+  virtual double EvaluateOffsetGradientMode(unsigned int, unsigned int, const ParticleSystem*, double&, double&) const;
+
+  virtual VectorType EvaluateParticleGradientMode(unsigned int, unsigned int, const ParticleSystem*, double&, double&) const;
 
   virtual void BeforeEvaluate(unsigned int, unsigned int, const ParticleSystem*);
 
   inline virtual double Energy(unsigned int a, unsigned int b, const ParticleSystem* c) const {
     double d, e;
     this->Evaluate(a, b, c, d, e);
+    return e;
+  }
+
+  inline virtual double EnergyParticleGradientMode(unsigned int a, unsigned int b, const ParticleSystem* c) const {
+    double d, e;
+    this->EvaluateParticleGradientMode(a, b, c, d, e);
+    return e;
+  }
+
+  inline virtual double EnergyOffsetGradientMode(unsigned int a, unsigned int b, const ParticleSystem* c) const {
+    double d, e;
+    this->EvaluateOffsetGradientMode(a, b, c, d, e);
     return e;
   }
 

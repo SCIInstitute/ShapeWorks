@@ -236,6 +236,242 @@ CurvatureSamplingFunction::VectorType CurvatureSamplingFunction::Evaluate(unsign
   gradE = gradE / m_avgKappa;
   return gradE;
 }
+
+CurvatureSamplingFunction::VectorType CurvatureSamplingFunction::EvaluateParticleGradientMode(unsigned int idx, unsigned int d,
+                                                                          const ParticleSystem* system, double& maxmove,
+                                                                          double& energy) const {
+  const double epsilon = 1.0e-6;
+
+  // Get the position for which we are computing the gradient.
+  PointType pos = system->GetPosition(idx, d);
+
+  // Compute the gradients
+  double sigma2inv = 1.0 / (2.0 * m_CurrentSigma * m_CurrentSigma + epsilon);
+
+  VectorType gradE;
+
+  for (unsigned int n = 0; n < VDimension; n++) {
+    gradE[n] = 0.0;
+  }
+
+  double mymc = m_MeanCurvatureCache->operator[](d)->operator[](idx);
+  double A = 0.0;
+  
+
+  for (unsigned int i = 0; i < m_CurrentNeighborhood.size(); i++) {
+    double mc = m_MeanCurvatureCache->operator[](d)->operator[](m_CurrentNeighborhood[i].pi_pair.Index);
+    double Dij = (mymc + mc) * 0.5;  // average my curvature with my neighbors
+    double kappa = this->ComputeKappa(Dij, d);
+
+    VectorType r;
+
+    // Use the domain distance metric only if the two domains are the same
+    // See https://github.com/SCIInstitute/ShapeWorks/issues/1215
+    if (m_CurrentNeighborhood[i].dom == d) {
+      system->GetDomain(d)->Distance(pos, idx, m_CurrentNeighborhood[i].pi_pair.Point,
+                                     m_CurrentNeighborhood[i].pi_pair.Index, &r);
+    } else {
+      for (unsigned int n = 0; n < VDimension; n++) {
+        // Note that the Neighborhood object has already filtered the
+        // neighborhood for points whose normals differ by > 90 degrees.
+        r[n] = (pos[n] - m_CurrentNeighborhood[i].pi_pair.Point[n]) * kappa;
+      }
+    }
+    r *= kappa;
+
+    double q = kappa * exp(-dot_product(r, r) * sigma2inv);
+    A += q;
+
+    for (unsigned int n = 0; n < VDimension; n++) {
+      gradE[n] += m_CurrentNeighborhood[i].weight * r[n] * q;
+    }
+  }
+
+  double p = 0.0;
+  if (A > epsilon) {
+    p = -1.0 / (A * m_CurrentSigma * m_CurrentSigma);
+  }
+
+  for (unsigned int n = 0; n < VDimension; n++) {
+    gradE[n] *= p;
+  }
+
+  maxmove = (m_CurrentSigma / m_avgKappa) * m_MaxMoveFactor;
+
+  // Contour domain cannot recover from swapped particles. This works around that by constraining moves to be no more
+  // than 0.5 times the distance to closest neighbor.
+  if (system->GetDomain(d)->GetDomainType() == shapeworks::DomainType::Contour && m_CurrentNeighborhood.size() > 0) {
+    auto min_it = std::min_element(
+        m_CurrentNeighborhood.begin(), m_CurrentNeighborhood.end(),
+        [](const CrossDomainNeighborhood& n1, const CrossDomainNeighborhood& n2) { return n1.distance < n2.distance; });
+    maxmove = std::min(maxmove, 0.5 * min_it->distance);
+  }
+
+  energy = (A * sigma2inv) / m_avgKappa;
+
+  gradE = gradE / m_avgKappa;
+
+  bool computeRobustUpdates = true;
+  if(computeRobustUpdates)
+  {
+    // Compute modified gradient part
+    VectorType gradQ, gradR, gradTemp, gradNew;
+    for (unsigned int n = 0; n < VDimension; n++) {
+      gradQ[n] = 0.0;
+      gradR[n] = 0.0;
+      gradTemp[n] = 0.0;
+      gradNew[n] = 0.0;
+    }
+
+    double lambda1 = system->GetSparsityCoefficient();
+    double lambda2 = system->GetSmoothnessCoefficient();
+    
+    double offsetCurrent = system->GetPositionOffset(/*k=*/idx, /*dom=*/d);
+    double offsetPrev = system->GetPreviousPositionOffset(idx, d);
+
+    double beta = 1.0e6;
+    double t1 = 1/(1 + std::exp(-beta * offsetCurrent));
+    double t2 = 1/(1 + std::exp(beta * offsetCurrent));
+    PointType previousPos = system->GetPreviousPosition(idx, d);
+    for (unsigned int n = 0; n < VDimension; ++n)
+    {
+      double tempVal = (pos[n] - previousPos[n]);
+      gradTemp[n] = (offsetCurrent - offsetPrev)/(std::max(tempVal, epsilon));
+    }
+    gradQ = lambda1 * (t1-t2) * gradTemp;
+
+    // gradR calculations
+    double offsetNeighborDiff = 0.0;
+    for (unsigned int i = 0; i < m_CurrentNeighborhood.size(); i++) {
+      double offset_j = system->GetPositionOffset(m_CurrentNeighborhood[i].pi_pair.Index, d);
+      offsetNeighborDiff += (offsetCurrent - offset_j);
+    }
+
+    gradR = 2 * lambda2 * offsetNeighborDiff * gradTemp;
+    gradNew = gradE + gradQ + gradR;
+    return gradNew;
+  }
+
+  else{
+    return gradE;
+  }
+}
+
+double CurvatureSamplingFunction::EvaluateOffsetGradientMode(unsigned int idx, unsigned int d,
+                                                                          const ParticleSystem* system, double& maxmove,
+                                                                          double& energy) const {
+  const double epsilon = 1.0e-6;
+
+  // Get the position for which we are computing the gradient.
+  PointType pos = system->GetPosition(idx, d);
+
+  // Compute the gradients
+  double sigma2inv = 1.0 / (2.0 * m_CurrentSigma * m_CurrentSigma + epsilon);
+
+  VectorType gradE;
+
+  for (unsigned int n = 0; n < VDimension; n++) {
+    gradE[n] = 0.0;
+  }
+
+  double mymc = m_MeanCurvatureCache->operator[](d)->operator[](idx);
+  double A = 0.0;
+
+  for (unsigned int i = 0; i < m_CurrentNeighborhood.size(); i++) {
+    double mc = m_MeanCurvatureCache->operator[](d)->operator[](m_CurrentNeighborhood[i].pi_pair.Index);
+    double Dij = (mymc + mc) * 0.5;  // average my curvature with my neighbors
+    double kappa = this->ComputeKappa(Dij, d);
+
+    VectorType r;
+
+    // Use the domain distance metric only if the two domains are the same
+    // See https://github.com/SCIInstitute/ShapeWorks/issues/1215
+    if (m_CurrentNeighborhood[i].dom == d) {
+      system->GetDomain(d)->Distance(pos, idx, m_CurrentNeighborhood[i].pi_pair.Point,
+                                     m_CurrentNeighborhood[i].pi_pair.Index, &r);
+    } else {
+      for (unsigned int n = 0; n < VDimension; n++) {
+        // Note that the Neighborhood object has already filtered the
+        // neighborhood for points whose normals differ by > 90 degrees.
+        r[n] = (pos[n] - m_CurrentNeighborhood[i].pi_pair.Point[n]) * kappa;
+      }
+    }
+    r *= kappa;
+
+    double q = kappa * exp(-dot_product(r, r) * sigma2inv);
+    A += q;
+
+    for (unsigned int n = 0; n < VDimension; n++) {
+      gradE[n] += m_CurrentNeighborhood[i].weight * r[n] * q;
+    }
+  }
+
+  double p = 0.0;
+  if (A > epsilon) {
+    p = -1.0 / (A * m_CurrentSigma * m_CurrentSigma);
+  }
+
+  for (unsigned int n = 0; n < VDimension; n++) {
+    gradE[n] *= p;
+  }
+
+  maxmove = (m_CurrentSigma / m_avgKappa) * m_MaxMoveFactor;
+
+  // Contour domain cannot recover from swapped particles. This works around that by constraining moves to be no more
+  // than 0.5 times the distance to closest neighbor.
+  if (system->GetDomain(d)->GetDomainType() == shapeworks::DomainType::Contour && m_CurrentNeighborhood.size() > 0) {
+    auto min_it = std::min_element(
+        m_CurrentNeighborhood.begin(), m_CurrentNeighborhood.end(),
+        [](const CrossDomainNeighborhood& n1, const CrossDomainNeighborhood& n2) { return n1.distance < n2.distance; });
+    maxmove = std::min(maxmove, 0.5 * min_it->distance);
+  }
+
+  energy = (A * sigma2inv) / m_avgKappa;
+
+  gradE = gradE / m_avgKappa;
+
+  bool computeRobustUpdates = true;
+  if (computeRobustUpdates)
+  {
+    double lambda1 = system->GetSparsityCoefficient();
+    double lambda2 = system->GetSmoothnessCoefficient();
+    
+    double offsetCurrent = system->GetPositionOffset(idx, d);
+    double offsetPrev = system->GetPreviousPositionOffset(idx, d);
+
+    double beta = 1.0e6;
+    double t1 = 1/(1 + std::exp(-beta * offsetCurrent));
+    double t2 = 1/(1 + std::exp(beta * offsetCurrent));
+    PointType previousPos = system->GetPreviousPosition(idx, d);
+    VectorType gradE_temp;
+
+    // grad_E modified for offset
+    for(unsigned int n=0; n < VDimension; ++n)
+    {
+      double tempVal = (offsetCurrent - offsetPrev);
+      gradE_temp[n] = gradE[n] * ((pos[n] - previousPos[n])/std::max(tempVal, epsilon));
+    }
+    double gradE_new = gradE_temp.magnitude();
+
+    // gradQ
+    double gradQ = lambda1 * (t1-t2);
+    
+    
+    // gradR calculations
+    double offsetNeighborDiff = 0.0;
+    for (unsigned int i = 0; i < m_CurrentNeighborhood.size(); i++) {
+      double offset_j = system->GetPositionOffset(m_CurrentNeighborhood[i].pi_pair.Index, d);
+      offsetNeighborDiff += (offsetCurrent - offset_j);
+    }
+    double gradR = 2 * lambda2 * offsetNeighborDiff
+
+    double gradNew = gradE_new + gradQ + gradR
+    return gradNew;
+  }
+  return 0.0;
+}
+
+
 void CurvatureSamplingFunction::UpdateNeighborhood(const CurvatureSamplingFunction::PointType& pos, int idx, int d,
                                                    double radius, const ParticleSystem* system) {
   const auto domains_per_shape = system->GetDomainsPerShape();
