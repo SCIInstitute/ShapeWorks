@@ -104,6 +104,82 @@ class DualVectorFunction : public VectorFunction {
     return ansA;
   }
 
+  virtual VectorType EvaluateParticleGradientMode(unsigned int idx, unsigned int d, const ParticleSystem* system,
+                              double& maxmove) const {
+    double maxA, maxB, maxC;
+    maxA = 0;
+    maxB = 0;
+    maxC = 0;
+    VectorType ansA;
+    ansA.fill(0.0);
+    VectorType ansB;
+    ansB.fill(0.0);
+    VectorType ansC;
+    ansC.fill(0.0);
+
+    const_cast<DualVectorFunction*>(this)->m_Counter = m_Counter + 1.0;
+
+    // evaluate individual functions: A = surface energy, B = correspondence
+    if (m_AOn == true) {
+      ansA = m_FunctionA->EvaluateParticleGradientMode(idx, d, system, maxA);
+      const_cast<DualVectorFunction*>(this)->m_AverageGradMagA = m_AverageGradMagA + ansA.magnitude();
+    }
+
+    if (m_BOn == true) {
+      ansB = m_FunctionB->Evaluate(idx, d, system, maxB);
+      const_cast<DualVectorFunction*>(this)->m_AverageGradMagB = m_AverageGradMagB + ansB.magnitude();
+    }
+
+    if (m_RelativeGradientScaling == 0.0) {
+      ansB.fill(0.0);
+      maxB = 0.0;
+    }
+
+    // get maxmove and predicted move for current configuration
+    VectorType predictedMove;
+    predictedMove.fill(0.0);
+    if (m_BOn == true) {
+      if (m_AOn == true)  // both A and B are active
+      {
+        if (maxB > maxA) {
+          maxmove = maxB;
+        } else {
+          maxmove = maxA;
+        }
+
+        maxmove = maxA;  // always driven by the sampling to decrease the senstivity to covariance regularization
+
+        predictedMove = ansA + m_RelativeGradientScaling * ansB;
+
+        return (predictedMove);
+      } else  // B is active, A is not active
+      {
+        maxmove = maxB;
+
+        predictedMove = ansB;
+
+        return (predictedMove);
+      }
+    } else  // only A is active
+    {
+      maxmove = maxA;
+      return ansA;
+    }
+    maxmove = 0.0;
+    return ansA;
+  }
+
+  virtual double EvaluateOffsetGradientMode(unsigned int idx, unsigned int d, const ParticleSystem* system,
+                              double& maxmove) const {
+    double maxA;
+    maxA = 0;
+    double ansA;
+    ansA = 0.0;
+    ansA = m_FunctionA->EvaluateOffsetGradientMode(idx, d, system, maxA);
+    maxmove = maxA;
+    return ansA;
+  }
+
   virtual double EnergyA(unsigned int idx, unsigned int d, const ParticleSystem* system) const {
     m_FunctionA->BeforeEvaluate(idx, d, system);
     double ansA = 0.0;
@@ -159,6 +235,50 @@ class DualVectorFunction : public VectorFunction {
     }
 
     return 0.0;
+  }
+
+  virtual double EnergyParticleGradientMode(unsigned int idx, unsigned int d, const ParticleSystem* system) const {
+    double ansA = 0.0;
+    double ansB = 0.0;
+    double ansC = 0.0;
+    double finalEnergy = 0.0;
+
+    // evaluate individual functions: A = surface energy, B = correspondence
+    if (m_AOn == true) {
+      ansA = m_FunctionA->EnergyParticleGradientMode(idx, d, system);
+    }
+
+    if (m_BOn == true) {
+      ansB = m_FunctionB->Energy(idx, d, system);
+    }
+
+    if (m_RelativeEnergyScaling == 0) {
+      ansB = 0.0;
+    }
+
+    // compute final energy for current configuration
+    if (m_BOn == true) {
+      if (m_AOn == true)  // both A and B are active
+      {
+        finalEnergy = ansA + m_RelativeEnergyScaling * ansB;
+        return (finalEnergy);
+      } else  // B is active, A is not active
+      {
+        finalEnergy = ansB;
+        return finalEnergy;
+      }
+    } else  // only A is active
+    {
+      return ansA;
+    }
+
+    return 0.0;
+  }
+
+  virtual double EnergyOffsetGradientMode(unsigned int idx, unsigned int d, const ParticleSystem* system) const {
+    double ansA = 0.0;
+    ansA = m_FunctionA->EnergyOffsetGradientMode(idx, d, system);
+    return ansA;
   }
 
   virtual VectorType Evaluate(unsigned int idx, unsigned int d, const ParticleSystem* system, double& maxmove,
@@ -233,6 +353,94 @@ class DualVectorFunction : public VectorFunction {
       return ansA;
     }
     maxmove = 0.0;
+    return ansA;
+  }
+
+
+  virtual VectorType EvaluateParticleGradientMode(unsigned int idx, unsigned int d, const ParticleSystem* system, double& maxmove,
+                              double& energy) const {
+    double maxA = 0.0;
+    double maxB = 0.0;
+    double energyA = 0.0;
+    double energyB = 0.0;
+    VectorType ansA;
+    ansA.fill(0.0);
+    VectorType ansB;
+    ansB.fill(0.0);
+
+    const_cast<DualVectorFunction*>(this)->m_Counter = m_Counter + 1.0;
+
+    // evaluate individual functions: A = surface energy, B = correspondence
+    if (m_AOn == true) {
+      ansA = m_FunctionA->EvaluateParticleGradientMode(idx, d, system, maxA, energyA);
+
+      const_cast<DualVectorFunction*>(this)->m_AverageGradMagA = m_AverageGradMagA + ansA.magnitude();
+      const_cast<DualVectorFunction*>(this)->m_AverageEnergyA = m_AverageEnergyA + energyA;
+    }
+
+    if (m_BOn == true) {
+      ansB = m_FunctionB->Evaluate(idx, d, system, maxB, energyB);
+
+      const_cast<DualVectorFunction*>(this)->m_AverageGradMagB = m_AverageGradMagB + ansB.magnitude();
+      const_cast<DualVectorFunction*>(this)->m_AverageEnergyB = m_AverageEnergyB + energyB;
+    }
+
+    if (m_RelativeEnergyScaling == 0.0) {
+      energyB = 0.0;
+      ansB.fill(0.0);
+    }
+
+    if (m_RelativeGradientScaling == 0.0) {
+      maxB = 0.0;
+      ansB.fill(0.0);
+    }
+
+    // compute final energy, maxmove and predicted move based on current configuration
+    VectorType predictedMove;
+    predictedMove.fill(0.0);
+    if (m_BOn == true) {
+      if (m_AOn == true)  // both A and B are active
+      {
+        if (maxB > maxA) {
+          maxmove = maxB;
+        } else {
+          maxmove = maxA;
+        }
+
+        energy = energyA + m_RelativeEnergyScaling * energyB;
+
+        maxmove = maxA;  // always driven by the sampling to decrease the senstivity to covariance regularization
+
+        predictedMove = ansA + m_RelativeGradientScaling * ansB;
+
+        return (predictedMove);
+      } else  // only B is active, A is not active
+      {
+        maxmove = maxB;
+        energy = energyB;
+        predictedMove = ansB;
+
+        return (predictedMove);
+      }
+    } else  // only A is active
+    {
+      maxmove = maxA;
+      energy = energyA;
+      return ansA;
+    }
+    maxmove = 0.0;
+    return ansA;
+  }
+
+  virtual double EvaluateOffsetGradientMode(unsigned int idx, unsigned int d, const ParticleSystem* system, double& maxmove,
+                              double& energy) const {
+
+    double energyA = 0.0;
+    double ansA;
+    double maxA;
+
+    ansA = m_FunctionA->EvaluateParticleGradientMode(idx, d, system, maxA, energyA);
+    maxmove = maxA;
     return ansA;
   }
 
