@@ -66,6 +66,11 @@ class LegacyShapeMatrix : public vnl_matrix<double>, public Observer {
     const unsigned int idx = event.GetPositionIndex();
     const typename ParticleSystem::PointType pos = ps->GetTransformedPosition(idx, d);
 
+    auto domainOb = ps->GetDomain(d);
+    auto normalAtPos = domainOb->SampleNormalAtPoint(pos, idx);
+    double normalMag = normalAtPos.magnitude();
+    double offset = ps->GetPositionOffset(idx, d);
+
     int numRows = 0;
     for (int i = 0; i < m_DomainsPerShape; i++) numRows += VDimension * ps->GetNumberOfParticles(i);
 
@@ -76,7 +81,7 @@ class LegacyShapeMatrix : public vnl_matrix<double>, public Observer {
     for (int i = 0; i < dom; i++) k += VDimension * ps->GetNumberOfParticles(i);
     k += idx * VDimension;
 
-    for (unsigned int i = 0; i < VDimension; i++) this->operator()(i + k, d / m_DomainsPerShape) = pos[i];
+    for (unsigned int i = 0; i < VDimension; i++) this->operator()(i + k, d / m_DomainsPerShape) = pos[i] - ((offset * normalAtPos[i])/normalMag);
   }
 
   virtual void PositionSetEventCallback(Object* o, const itk::EventObject& e) {
@@ -87,12 +92,17 @@ class LegacyShapeMatrix : public vnl_matrix<double>, public Observer {
     const unsigned int idx = event.GetPositionIndex();
     const typename ParticleSystem::PointType pos = ps->GetTransformedPosition(idx, d);
 
+    auto domainOb = ps->GetDomain(d);
+    auto normalAtPos = domainOb->SampleNormalAtPoint(pos, idx);
+    double normalMag = normalAtPos.magnitude();
+    double offset = ps->GetPositionOffset(idx, d);
+
     unsigned int k = 0;
     int dom = d % m_DomainsPerShape;
     for (int i = 0; i < dom; i++) k += VDimension * ps->GetNumberOfParticles(i);
     k += idx * VDimension;
 
-    for (unsigned int i = 0; i < VDimension; i++) this->operator()(i + k, d / m_DomainsPerShape) = pos[i];
+    for (unsigned int i = 0; i < VDimension; i++) this->operator()(i + k, d / m_DomainsPerShape) = pos[i]- ((offset * normalAtPos[i])/normalMag);
   }
 
   virtual void PositionRemoveEventCallback(Object*, const itk::EventObject&) {
