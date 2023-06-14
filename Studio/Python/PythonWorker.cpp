@@ -227,6 +227,8 @@ bool PythonWorker::init() {
         std::bind(&PythonWorker::incoming_python_progress, this, std::placeholders::_1));
     py::module logger = py::module::import("logger");
 
+    SW_LOG("Initializing ShapeWorks Python Module");
+
     py::module sw_utils = py::module::import("shapeworks.utils");
 
     py::object get_version = sw_utils.attr("get_api_version");
