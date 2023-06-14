@@ -132,9 +132,16 @@ class ParticleSystem : public itk::DataObject {
   PointType &GetPosition(unsigned long int k, unsigned int d = 0) { return m_Positions[d]->operator[](k); }
   const PointType &GetPosition(unsigned long int k, unsigned int d = 0) const { return m_Positions[d]->operator[](k); }
 
+  PointType &GetPreviousPosition(unsigned long int k, unsigned int d = 0) { return m_PreviousPositions[d]->operator[](k); }
+  const PointType &GetPreviousPosition(unsigned long int k, unsigned int d = 0) const { return m_PreviousPositions[d]->operator[](k); }
+
   // Position Offsets Getter
   double &GetPositionOffset(unsigned long int k, unsigned int d = 0) { return m_PositionOffsets[d][k]; }
   const double &GetPositionOffset(unsigned long int k, unsigned int d = 0) const { return m_PositionOffsets[d][k]; }
+
+  // Position Offsets Getter
+  double &GetPreviousPositionOffset(unsigned long int k, unsigned int d = 0) { return m_PreviousPositionOffsets[d][k]; }
+  const double &GetPreviousPositionOffset(unsigned long int k, unsigned int d = 0) const { return m_PreviousPositionOffsets[d][k]; }
 
   PointType GetTransformedPosition(unsigned long int k, unsigned int d = 0) const {
     return this->TransformPoint(m_Positions[d]->operator[](k), m_Transforms[d] * m_PrefixTransforms[d]);
@@ -305,6 +312,10 @@ class ParticleSystem : public itk::DataObject {
   const std::vector<PointContainerType::Pointer> &GetPositions() const { return m_Positions; }
   const PointContainerType::Pointer &GetPositions(unsigned int d) const { return m_Positions[d]; }
 
+  /** Return the array of previous particle positions. */
+  const std::vector<PointContainerType::Pointer> &GetPreviousPositions() const { return m_PreviousPositions; }
+  const PointContainerType::Pointer &GetPreviousPositions(unsigned int d) const { return m_PreviousPositions[d]; }
+
   /** Return the array of offsets defined at particle positions. */
   const std::vector<std::vector<double>> &GetPositionOffsets() const { return m_PositionOffsets; }
   const std::vector<double> &GetPositionOffsets(unsigned int d) const { return m_PositionOffsets[d]; }
@@ -438,7 +449,10 @@ class ParticleSystem : public itk::DataObject {
   /** The 2D array of particle positions.  1st array axis is the domain number.
       These values may only be modified by the ParticleSystem class itself. */
   std::vector<PointContainerType::Pointer> m_Positions;
+  std::vector<PointContainerType::Pointer> m_PreviousPositions;
+
   std::vector<std::vector<double>> m_PositionOffsets;
+  std::vector<std::vector<double>> m_PreviousPositionOffsets;
 
 
   /** The set of particle domain definitions. */
