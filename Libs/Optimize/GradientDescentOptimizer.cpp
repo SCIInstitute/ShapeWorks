@@ -79,12 +79,23 @@ void GradientDescentOptimizer::StartAdaptiveGaussSeidelOptimization() {
   ResetTimeStepVectors();
   double minimumTimeStep = 1.0;
 
+  double minimumTimeStepForOffsets = 1.0;
+
   const double pi = std::acos(-1.0);
   unsigned int numdomains = m_ParticleSystem->GetNumberOfDomains();
 
   unsigned int counter = 0;
 
   double maxchange = 0.0;
+  double maxchangeForOffsets = 0.0;
+
+  // TODO: Cache Previous particle positions before making particle Updates
+  std::vector<std::vector<PointType>> previousPositionsCache(numdomains);
+  for (unsigned int dd = 0; dd < numdomains; ++dd)
+  { 
+    previousPositionsCache[dd].resize(m_ParticleSystem->GetPositions(d)->GetSize());
+  }
+
   while (m_StopOptimization == false)  // iterations loop
   {
     double dampening = 1;
@@ -104,6 +115,7 @@ void GradientDescentOptimizer::StartAdaptiveGaussSeidelOptimization() {
     counter++;
 
     // Iterate over each domain
+    // Below is the Main Particle Update Block
     const auto domains_per_shape = m_ParticleSystem->GetDomainsPerShape();
     tbb::parallel_for(
         tbb::blocked_range<size_t>{0, numdomains / domains_per_shape}, [&](const tbb::blocked_range<size_t>& r) {
@@ -140,7 +152,7 @@ void GradientDescentOptimizer::StartAdaptiveGaussSeidelOptimization() {
                 // This is to avoid particles shooting past their neighbors
                 double maximumUpdateAllowed;
                 VectorType original_gradient =
-                    localGradientFunction->Evaluate(k, dom, m_ParticleSystem, maximumUpdateAllowed, energy);
+                    localGradientFunction->EvaluateParticleGradientMode(k, dom, m_ParticleSystem, maximumUpdateAllowed, energy);
 
                 PointType pt = m_ParticleSystem->GetPositions(dom)->Get(k);
 
@@ -169,13 +181,14 @@ void GradientDescentOptimizer::StartAdaptiveGaussSeidelOptimization() {
                   }
 
                   // Step D compute the new point position
+                  previousPositionsCache[dom][k] = pt;
                   PointType newpoint = domain->UpdateParticlePosition(pt, k, gradient);
 
                   // Step F update the point position in the particle system
                   m_ParticleSystem->SetPosition(newpoint, k, dom);
 
                   // Step G compute the new energy of the particle system
-                  newenergy = localGradientFunction->Energy(k, dom, m_ParticleSystem);
+                  newenergy = localGradientFunction->EnergyParticleGradientMode(k, dom, m_ParticleSystem);
 
                   if (newenergy < energy)  // good move, increase timestep for next time
                   {
@@ -192,6 +205,82 @@ void GradientDescentOptimizer::StartAdaptiveGaussSeidelOptimization() {
                     } else  // keep the move with timestep 1.0 anyway
                     {
                       if (gradmag > maxchange) maxchange = gradmag;
+                      break;
+                    }
+                  }
+                }  // end while(true)
+              }    // for each particle
+            }
+          }  // for each domain
+        });
+
+      // Below is the main block for Making gradient updates for offsets
+      tbb::parallel_for(
+        tbb::blocked_range<size_t>{0, numdomains / domains_per_shape}, [&](const tbb::blocked_range<size_t>& r) {
+          for (size_t shape = r.begin(); shape < r.end(); ++shape) {
+            for (int shape_dom_idx = 0; shape_dom_idx < domains_per_shape; shape_dom_idx++) {
+              auto dom = shape * domains_per_shape + shape_dom_idx;
+
+              // skip any flagged domains
+              if (m_ParticleSystem->GetDomainFlag(dom) == true) {
+                return;
+              }
+
+              const shapeworks::ParticleDomain* domain = m_ParticleSystem->GetDomain(dom);
+
+              typename GradientFunctionType::Pointer localGradientFunctionForOffset = m_GradientFunction;
+
+              // must clone this as we are in a thread and the gradient function is not thread-safe
+              localGradientFunctionForOffset = m_GradientFunction->Clone();
+
+              // Tell function which domain we are working on.
+              localGradientFunctionForOffset->SetDomainNumber(dom);
+
+              // Iterate over each particle position
+              for (auto k = 0; k < m_ParticleSystem->GetPositions(dom)->GetSize(); k++) {
+                if (m_TimeStepsForOffsets[dom][k] < minimumTimeStepForOffsets) {
+                  m_TimeStepsForOffsets[dom][k] = minimumTimeStepForOffsets;
+                }
+                // Compute gradient update.
+                double energy = 0.0;
+                //TODO: Disable before evaluate for offset updates, see connection! Maybe --> No, Sigma and neighbourhood is updated according to the current particle, np need to disable
+                localGradientFunctionForOffset->BeforeEvaluate(k, dom, m_ParticleSystem);
+                // maximumUpdateAllowed is set based on some fraction of the distance between particles
+                // This is to avoid particles shooting past their neighbors
+                double maximumUpdateAllowedForOffset; // redundant variable, Not Applicable right now for Offset Updates, TODO: Look after some initial experiments, if its required for scaling
+                double original_gradient =
+                    localGradientFunctionForOffset->EvaluateOffsetGradientMode(k, dom, m_ParticleSystem, maximumUpdateAllowedForOffset, energy);
+
+                m_ParticleSystem->SetPreviousPosition(previousPositionsCache[dom][k], k, dom);
+                double offsetOriginal = m_ParticleSystem->GetPositionOffset(dom, k);
+
+                double newenergy;
+                while (true) {
+                  // Step A scale the gradient by the current time step
+                  double scaled_gradient = original_gradient * m_TimeStepsForOffsets[dom][k];
+
+                  // Step D compute the new position offset
+                  m_ParticleSystem->SetPreviousPositionOffset(offsetOriginal, k, dom);
+
+                  double offsetModified = offset - scaled_gradient;
+                  m_ParticleSystem->SetPositionOffset(offsetModified, k, dom);
+
+                  // Step G compute the new energy of the particle system
+                  newenergy = localGradientFunctionForOffset->EnergyOffsetGradientMode(k, dom, m_ParticleSystem);
+
+                  if (newenergy < energy)  // good move, increase timestep for next time
+                  {
+                    m_TimeStepsForOffsets[dom][k] *= factor;
+                    if (scaled_gradient > maxchangeForOffsets) maxchangeForOffsets = scaled_gradient;
+                    break;
+                  } else {  // bad move, reset position offset and back off on timestep
+                    if (m_TimeStepsForOffsets[dom][k] > minimumTimeStep) {
+                      //TODO: See if something similar like ApplyConstraints should be done for Offsets too?
+                      m_ParticleSystem->SetPositionOffset(offsetOriginal, k, dom);
+                      m_TimeStepsForOffsets[dom][k] /= factor;
+                    } else  // keep the move with timestep 1.0 anyway
+                    {
+                      if (scaled_gradient > maxchangeForOffsets) maxchangeForOffsets = scaled_gradient;
                       break;
                     }
                   }
