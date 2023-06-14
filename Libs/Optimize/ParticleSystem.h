@@ -231,6 +231,13 @@ class ParticleSystem : public itk::DataObject {
   /** Returns the number of domains contained in the particle system. */
   unsigned int GetNumberOfDomains() const { return m_Domains.size(); }
 
+  /** Get and Set Spartsity and Smoothness Coefficient for Robust SSM. */
+  double GetSparsityCoefficient() const { return m_SparsityCoefficient; }
+  double GetSmoothnessCoefficient() const { return m_SmoothnessCoefficient; }
+
+  void SetSmoothnessCoefficient(double v) { return m_SmoothnessCoefficient = v; }
+  void SetSparsityCoefficient(double v) { return m_SparsityCoefficient = v; }
+
   /** Set the transform associated with domain i. This method will also compute
       and set the corresponding inverse transform if possible.  If the inverse
       transform cannot be computed, the exception is quietly handled by this
@@ -439,6 +446,9 @@ class ParticleSystem : public itk::DataObject {
 
   /** Set number of domains per shape -- Praful */
   unsigned int m_DomainsPerShape;
+
+  double m_SparsityCoefficient;
+  double m_SmoothnessCoefficent;
 
   /** The set of domain neighborhood objects. */
   std::vector<NeighborhoodType::Pointer> m_Neighborhoods;
