@@ -181,6 +181,7 @@ void GradientDescentOptimizer::StartAdaptiveGaussSeidelOptimization() {
                   }
 
                   // Step D compute the new point position
+                  //TODO: Some changes here
                   previousPositionsCache[dom][k] = pt;
                   PointType newpoint = domain->UpdateParticlePosition(pt, k, gradient);
 
