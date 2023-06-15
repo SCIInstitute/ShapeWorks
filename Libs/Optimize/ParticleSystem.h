@@ -116,7 +116,6 @@ class ParticleSystem : public itk::DataObject {
       SetTransformedPosition sets the position using a Point transformed by the
       m_Transform associated with the given domain.*/
   const PointType &AddPosition(const PointType &, unsigned int d = 0);
-  const PointType &AddPosition(const PointType &, unsigned int d = 0, double o); // overload AddPosition for adding position offset defined at a paricle position
 
   const PointType &SetPosition(const PointType &, unsigned long int k, unsigned int d = 0);
 
