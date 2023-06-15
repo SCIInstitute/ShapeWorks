@@ -105,6 +105,7 @@ void GradientDescentOptimizer::StartAdaptiveGaussSeidelOptimization() {
                       double(m_MaximumNumberOfIterations - startDampening));
     }
     minimumTimeStep = dampening;
+    minimumTimeStepForOffsets = dampening;
 
     maxchange = 0.0;
 
@@ -214,7 +215,7 @@ void GradientDescentOptimizer::StartAdaptiveGaussSeidelOptimization() {
             }
           }  // for each domain
         });
-
+      std::cout << "Starting Offset Updates block for iteration " << std::endl;
       // Below is the main block for Making gradient updates for offsets
       tbb::parallel_for(
         tbb::blocked_range<size_t>{0, numdomains / domains_per_shape}, [&](const tbb::blocked_range<size_t>& r) {
@@ -254,7 +255,7 @@ void GradientDescentOptimizer::StartAdaptiveGaussSeidelOptimization() {
                 double original_gradient =
                     localGradientFunctionForOffset->EvaluateOffsetGradientMode(k, dom, m_ParticleSystem, maximumUpdateAllowedForOffset, energy);
 
-                double offsetOriginal = m_ParticleSystem->GetPositionOffset(dom, k);
+                double offsetOriginal = m_ParticleSystem->GetPositionOffset(k, dom);
                 m_ParticleSystem->SetPreviousPositionOffset(offsetOriginal, k, dom);
 
                 double newenergy;
@@ -276,7 +277,7 @@ void GradientDescentOptimizer::StartAdaptiveGaussSeidelOptimization() {
                     if (scaled_gradient > maxchangeForOffsets) maxchangeForOffsets = scaled_gradient;
                     break;
                   } else {  // bad move, reset position offset and back off on timestep
-                    if (m_TimeStepsForOffsets[dom][k] > minimumTimeStep) {
+                    if (m_TimeStepsForOffsets[dom][k] > minimumTimeStepForOffsets) {
                       //TODO: See if something similar like ApplyConstraints should be done for Offsets too?
                       m_ParticleSystem->SetPositionOffset(offsetOriginal, k, dom);
                       m_TimeStepsForOffsets[dom][k] /= factor;
