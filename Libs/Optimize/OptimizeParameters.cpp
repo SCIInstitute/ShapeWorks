@@ -34,6 +34,8 @@ const std::string multiscale = "multiscale";
 const std::string multiscale_particles = "multiscale_particles";
 const std::string optimize_output_prefix = "optimize_output_prefix";
 const std::string narrow_band = "narrow_band";
+const std::string robust_smoothness_coefficient = "robust_smoothness_coefficient";
+const std::robust_sparsity_coefficient = "robust_sparsity_coefficient";
 const std::string verbosity = "verbosity";
 const std::string mesh_ffc_mode = "mesh_ffc_mode";
 const std::string use_landmarks = "use_landmarks";
@@ -76,7 +78,9 @@ OptimizeParameters::OptimizeParameters(ProjectHandle project) {
                                          Keys::fixed_subjects_choice,
                                          Keys::checkpointing_interval,
                                          Keys::save_init_splits,
-                                         Keys::keep_checkpoints
+                                         Keys::keep_checkpoints,
+                                         Keys::robust_smoothness_coefficient;
+                                         Keys::robust_sparsity_coefficient;
 
   };
 
@@ -107,6 +111,26 @@ double OptimizeParameters::get_initial_relative_weighting() {
 //---------------------------------------------------------------------------
 void OptimizeParameters::set_initial_relative_weighting(double value) {
   params_.set(Keys::initial_relative_weighting, value);
+}
+
+//---------------------------------------------------------------------------
+double OptimizeParameters::get_robust_sparsity_coefficient() {
+  return params_.get(Keys::robust_sparsity_coefficient, 0.005);
+}
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_robust_sparsity_coefficient(double value) {
+  params_.set(Keys::robust_sparsity_coefficient, value);
+}
+
+//---------------------------------------------------------------------------
+double OptimizeParameters::get_robust_smoothness_coefficient() {
+  return params_.get(Keys::robust_smoothness_coefficient, 0.005);
+}
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_robust_smoothness_coefficient(double value) {
+  params_.set(Keys::robust_smoothness_coefficient, value);
 }
 
 //---------------------------------------------------------------------------
