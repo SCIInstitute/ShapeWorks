@@ -93,7 +93,7 @@ void GradientDescentOptimizer::StartAdaptiveGaussSeidelOptimization() {
   std::vector<std::vector<PointType>> previousPositionsCache(numdomains);
   for (unsigned int dd = 0; dd < numdomains; ++dd)
   { 
-    previousPositionsCache[dd].resize(m_ParticleSystem->GetPositions(d)->GetSize());
+    previousPositionsCache[dd].resize(m_ParticleSystem->GetPositions(dd)->GetSize());
   }
 
   while (m_StopOptimization == false)  // iterations loop
@@ -264,7 +264,7 @@ void GradientDescentOptimizer::StartAdaptiveGaussSeidelOptimization() {
 
                   // Step D compute the new position offset
 
-                  double offsetModified = offset - scaled_gradient;
+                  double offsetModified = offsetOriginal - scaled_gradient;
                   m_ParticleSystem->SetPositionOffset(offsetModified, k, dom);
 
                   // Step G compute the new energy of the particle system

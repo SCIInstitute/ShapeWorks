@@ -439,7 +439,7 @@ class DualVectorFunction : public VectorFunction {
     double ansA;
     double maxA;
 
-    ansA = m_FunctionA->EvaluateParticleGradientMode(idx, d, system, maxA, energyA);
+    ansA = m_FunctionA->EvaluateOffsetGradientMode(idx, d, system, maxA, energyA);
     maxmove = maxA;
     return ansA;
   }

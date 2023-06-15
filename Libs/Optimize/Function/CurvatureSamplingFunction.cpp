@@ -463,9 +463,9 @@ double CurvatureSamplingFunction::EvaluateOffsetGradientMode(unsigned int idx, u
       double offset_j = system->GetPositionOffset(m_CurrentNeighborhood[i].pi_pair.Index, d);
       offsetNeighborDiff += (offsetCurrent - offset_j);
     }
-    double gradR = 2 * lambda2 * offsetNeighborDiff
+    double gradR = 2 * lambda2 * offsetNeighborDiff;
 
-    double gradNew = gradE_new + gradQ + gradR
+    double gradNew = gradE_new + gradQ + gradR;
     return gradNew;
   }
   return 0.0;

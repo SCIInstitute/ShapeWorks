@@ -45,12 +45,12 @@ class VectorFunction : public itk::LightObject {
   virtual double Energy(unsigned int, unsigned int, const ParticleSystem*) const = 0;
 
   // Pure Virtual Definitions for Robust SSM Particle and Offset Updates, implemented in selected base classes only
-  virtual double EvaluateOffsetGradientMode(unsigned int, unsigned int, const ParticleSystem*, double&, double&) const = 0;
-  virtual VectorType EvaluateParticleGradientMode(unsigned int, unsigned int, const ParticleSystem*, double&, double&) const = 0;
-  virtual double EvaluateOffsetGradientMode(unsigned int a, unsigned int b, const ParticleSystem* c, double& d) const = 0; 
-  virtual VectorType EvaluateParticleGradientMode(unsigned int a, unsigned int b, const ParticleSystem* c, double& d) const = 0;
-  virtual double EnergyOffsetGradientMode(unsigned int a, unsigned int b, const ParticleSystem* c) const = 0;
-  virtual double EnergyParticleGradientMode(unsigned int a, unsigned int b, const ParticleSystem* c) const = 0;
+  virtual double EvaluateOffsetGradientMode(unsigned int, unsigned int, const ParticleSystem*, double&, double&) {}
+  virtual VectorType EvaluateParticleGradientMode(unsigned int, unsigned int, const ParticleSystem*, double&, double&) {}
+  virtual double EvaluateOffsetGradientMode(unsigned int a, unsigned int b, const ParticleSystem* c, double& d) const {}
+  virtual VectorType EvaluateParticleGradientMode(unsigned int a, unsigned int b, const ParticleSystem* c, double& d) {}
+  virtual double EnergyOffsetGradientMode(unsigned int a, unsigned int b, const ParticleSystem* c) {}
+  virtual double EnergyParticleGradientMode(unsigned int a, unsigned int b, const ParticleSystem* c) {}
   
   /** May be called by the solver class. */
   virtual void ResetBuffers() {}

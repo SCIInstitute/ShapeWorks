@@ -261,8 +261,8 @@ class ParticleSystem : public itk::DataObject {
   double GetSparsityCoefficient() const { return m_SparsityCoefficient; }
   double GetSmoothnessCoefficient() const { return m_SmoothnessCoefficient; }
 
-  void SetSmoothnessCoefficient(double v) { return m_SmoothnessCoefficient = v; }
-  void SetSparsityCoefficient(double v) { return m_SparsityCoefficient = v; }
+  void SetSmoothnessCoefficient(double v) { this->m_SmoothnessCoefficient = v; }
+  void SetSparsityCoefficient(double v) { this->m_SparsityCoefficient = v; }
 
   /** Set the transform associated with domain i. This method will also compute
       and set the corresponding inverse transform if possible.  If the inverse
