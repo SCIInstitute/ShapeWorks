@@ -461,7 +461,7 @@ class ParticleSystem : public itk::DataObject {
   unsigned int m_DomainsPerShape;
 
   double m_SparsityCoefficient;
-  double m_SmoothnessCoefficent;
+  double m_SmoothnessCoefficient;
 
   /** The set of domain neighborhood objects. */
   std::vector<NeighborhoodType::Pointer> m_Neighborhoods;
