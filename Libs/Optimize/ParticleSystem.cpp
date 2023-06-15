@@ -48,6 +48,9 @@ void ParticleSystem::SetNumberOfDomains(unsigned int num) {
     m_InversePrefixTransforms.push_back(transform);
   }
   m_Positions.resize(num);
+  m_PreviousPositions.resize(num);
+  m_PositionOffsets.resize(num, std::vector<double>(1));
+  m_PreviousPositionOffsets.resize(num, std::vector<double>(1));
   m_IndexCounters.resize(num);
   m_Neighborhoods.resize(num);
   while (num >= this->m_DomainFlags.size()) {
@@ -63,6 +66,7 @@ void ParticleSystem::AddDomain(DomainType::Pointer input) {
     if (!m_Domains[idx]) {
       m_Domains[idx] = input;
       m_Positions[idx] = PointContainerType::New();
+      m_PreviousPositions[idx] = PointContainerType::New();
       m_IndexCounters[idx] = 0;
       return;
     }
@@ -71,6 +75,9 @@ void ParticleSystem::AddDomain(DomainType::Pointer input) {
   this->SetNumberOfDomains(static_cast<int>(m_Domains.size() + 1));
   m_Domains[static_cast<int>(m_Domains.size()) - 1] = input;
   m_Positions[static_cast<int>(m_Domains.size()) - 1] = PointContainerType::New();
+  m_PreviousPositions[static_cast<int>(m_Domains.size()) - 1] = PointContainerType::New();
+  m_PositionOffsets[static_cast<int>(m_Domains.size()) - 1] = std::vector<double>(1, 0.0);
+  m_PreviousPositionOffsets[static_cast<int>(m_Domains.size()) - 1] = std::vector<double>(1, 0.0);
   m_IndexCounters[static_cast<int>(m_Domains.size() - 1)] = 0;
   m_Neighborhoods[static_cast<int>(m_Domains.size() - 1)] = NeighborhoodType::New();
   m_Transforms[static_cast<int>(m_Domains.size() - 1)].set_identity();
@@ -88,6 +95,7 @@ void ParticleSystem::PrintSelf(std::ostream& os, itk::Indent indent) const {
 
   os << indent << "m_IndexCounters.size(): " << m_IndexCounters.size() << std::endl;
   os << indent << "m_Positions.size() : " << m_Positions.size() << std::endl;
+  os << indent << "m_PreviousPositions.size() : " << m_PreviousPositions.size() << std::endl;
   os << indent << "m_Domains.size() : " << m_Domains.size() << std::endl;
 }
 
@@ -134,7 +142,8 @@ void ParticleSystem::SetNeighborhood(unsigned int i, NeighborhoodType* N) {
 
 const typename ParticleSystem::PointType& ParticleSystem::AddPosition(const PointType& p, unsigned int d) {
   m_Positions[d]->operator[](m_IndexCounters[d]) = p;
-
+  m_PreviousPositions[d]->operator[](m_IndexCounters[d]) = p; // only for adding new particle
+  
   // Potentially modifies position!
   if (m_DomainFlags[d] == false) {
     // debugg
@@ -157,42 +166,12 @@ const typename ParticleSystem::PointType& ParticleSystem::AddPosition(const Poin
   e.SetPositionIndex(m_IndexCounters[d]);
   this->InvokeEvent(e);
   m_IndexCounters[d]++;
+  
+  m_PreviousPositionOffsets[d].resize(m_IndexCounters[d]+1, 0.0);
+  m_PositionOffsets[d].resize(m_IndexCounters[d]+1, 0.0);
 
   return m_Positions[d]->operator[](m_IndexCounters[d] - 1);
 }
-
-//overloaded version
-const typename ParticleSystem::PointType& ParticleSystem::AddPosition(const PointType& p, unsigned int d, double p_offset) {
-  m_Positions[d]->operator[](m_IndexCounters[d]) = p;
-  m_PositionOffsets[d].push_back(p_offset);
-
-  // Potentially modifies position!
-  if (m_DomainFlags[d] == false) {
-    // debugg
-    // std::cout << "d" << d << " before apply " << m_Positions[d]->operator[](m_IndexCounters[d]);
-    const auto idx = m_IndexCounters[d];
-    m_Domains[d]->ApplyConstraints(m_Positions[d]->operator[](idx), idx);
-    // debugg
-    // std::cout << " after apply " << m_Positions[d]->operator[](m_IndexCounters[d]) << std::endl;
-    m_Neighborhoods[d]->AddPosition(m_Positions[d]->operator[](idx), idx);
-  }
-
-  // Increase the FixedParticleFlag list size if necessary.
-  if (m_IndexCounters[d] >= m_FixedParticleFlags[d % m_DomainsPerShape].size()) {
-    m_FixedParticleFlags[d % m_DomainsPerShape].push_back(false);
-  }
-
-  // Notify any observers.
-  ParticlePositionAddEvent e;
-  e.SetDomainIndex(d);
-  e.SetPositionIndex(m_IndexCounters[d]);
-  this->InvokeEvent(e);
-  m_IndexCounters[d]++;
-
-  return m_Positions[d]->operator[](m_IndexCounters[d] - 1);
-}
-
-
 
 const typename ParticleSystem::PointType& ParticleSystem::SetPosition(const PointType& p, unsigned long int k,
                                                                       unsigned int d) {
