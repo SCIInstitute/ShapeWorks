@@ -344,8 +344,10 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
   optimize->SetDomainsPerShape(domains_per_shape);
   optimize->SetNumberOfParticles(get_number_of_particles());
   optimize->SetInitialRelativeWeighting(get_initial_relative_weighting());
-  optimize->SetRobustSmoothnessCoefficient(get_robust_smoothness_coefficient());
-  optimize->SetRobustSparsityCoefficient(get_robust_sparsity_coefficient());
+  // optimize->SetRobustSmoothnessCoefficient(get_robust_smoothness_coefficient());
+  // optimize->SetRobustSparsityCoefficient(get_robust_sparsity_coefficient());
+  optimize->GetSampler()->SetRobustSparsityCoefficient(get_robust_sparsity_coefficient());
+  optimize->GetSampler()->SetRobustSparsityCoefficient(get_robust_sparsity_coefficient());
   optimize->SetRelativeWeighting(get_relative_weighting());
   optimize->SetStartingRegularization(get_starting_regularization());
   optimize->SetEndingRegularization(get_ending_regularization());

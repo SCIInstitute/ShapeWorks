@@ -164,6 +164,16 @@ class Sampler {
     this->m_AdaptivityMode = mode;
   }
 
+  void SetRobustSmoothnessCoefficient(double val)
+  {
+    this->m_ParticleSystem->SetSmoothnessCoefficient(val);
+  }
+  void SetRobustSparsityCoefficient(double val)
+  {
+    this->m_ParticleSystem->SetSparsityCoefficient(val);
+  }
+  
+  void SetRobustSparsityCoefficient(double val);
   int GetAdaptivityMode() const { return m_AdaptivityMode; }
 
   void SetCorrespondenceOn() { m_LinkingFunction->SetBOn(); }
