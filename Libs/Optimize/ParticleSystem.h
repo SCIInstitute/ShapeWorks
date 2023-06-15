@@ -119,6 +119,26 @@ class ParticleSystem : public itk::DataObject {
 
   const PointType &SetPosition(const PointType &, unsigned long int k, unsigned int d = 0);
 
+  void SetPreviousPosition(const PointType & p, unsigned long int k, unsigned int d = 0)
+  {
+    if (m_FixedParticleFlags[d % m_DomainsPerShape][k] == false) {
+      if (m_DomainFlags[d] == false) {
+        m_PreviousPositions[d]->operator[](k) = p;
+
+      }
+    }
+  }
+
+  void SetPreviousPositionOffset(double offset, unsigned long int k, unsigned int d = 0)
+  {
+    m_PreviousPositionOffsets[d][k] = offset;
+  }
+
+  void SetPositionOffset(double offset, unsigned long int k, unsigned int d = 0)
+  {
+    m_PositionOffsets[d][k] = offset;
+  }
+
 
   void RemovePosition(unsigned long int k, unsigned int d = 0);
 
