@@ -1817,6 +1817,17 @@ void Optimize::SetEndingRegularization(double ending_regularization) {
 }
 
 //---------------------------------------------------------------------------
+void Optimize::SetRobustSmoothnessCoefficient(double val) {
+  this->m_robust_smoothness_coefficient = val;
+}
+
+//---------------------------------------------------------------------------
+void Optimize::SetRobustSparsityCoefficient(double val) {
+  this->m_robust_sparsity_coefficient = val;
+}
+
+
+//---------------------------------------------------------------------------
 void Optimize::SetRecomputeRegularizationInterval(int recompute_regularization_interval) {
   this->m_recompute_regularization_interval = recompute_regularization_interval;
 }

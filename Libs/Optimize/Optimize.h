@@ -189,6 +189,8 @@ class Optimize {
   //! Set the relative weighting (TODO: details)
   void SetRelativeWeighting(double relative_weighting);
   //! Set the initial relative weigting (TODO: details)
+  void SetRobustSmoothnessCoefficient(double val);
+  void SetRobustSparsityCoefficient(double val);
   void SetInitialRelativeWeighting(double initial_relative_weighting);
   //! Set the starting regularization (TODO: details)
   void SetStartingRegularization(double starting_regularization);
@@ -406,6 +408,8 @@ class Optimize {
   double m_initial_relative_weighting = 0.05;
   double m_starting_regularization = 1000;
   double m_ending_regularization = 1.0;
+  double m_robust_smoothness_coefficient = 0.005;
+  double m_robust_sparsity_coefficient = 0.005;
   int m_recompute_regularization_interval = 1;
   bool m_save_init_splits = false;
   unsigned int m_checkpointing_interval = 50;

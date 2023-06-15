@@ -35,7 +35,7 @@ const std::string multiscale_particles = "multiscale_particles";
 const std::string optimize_output_prefix = "optimize_output_prefix";
 const std::string narrow_band = "narrow_band";
 const std::string robust_smoothness_coefficient = "robust_smoothness_coefficient";
-const std::robust_sparsity_coefficient = "robust_sparsity_coefficient";
+const std::string robust_sparsity_coefficient = "robust_sparsity_coefficient";
 const std::string verbosity = "verbosity";
 const std::string mesh_ffc_mode = "mesh_ffc_mode";
 const std::string use_landmarks = "use_landmarks";
@@ -344,6 +344,8 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
   optimize->SetDomainsPerShape(domains_per_shape);
   optimize->SetNumberOfParticles(get_number_of_particles());
   optimize->SetInitialRelativeWeighting(get_initial_relative_weighting());
+  optimize->SetRobustSmoothnessCoefficient(get_robust_smoothness_coefficient());
+  optimize->SetRobustSparsityCoefficient(get_robust_sparsity_coefficient());
   optimize->SetRelativeWeighting(get_relative_weighting());
   optimize->SetStartingRegularization(get_starting_regularization());
   optimize->SetEndingRegularization(get_ending_regularization());
