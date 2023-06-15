@@ -245,14 +245,16 @@ void GradientDescentOptimizer::StartAdaptiveGaussSeidelOptimization() {
                 double energy = 0.0;
                 //TODO: Disable before evaluate for offset updates, see connection! Maybe --> No, Sigma and neighbourhood is updated according to the current particle, np need to disable
                 localGradientFunctionForOffset->BeforeEvaluate(k, dom, m_ParticleSystem);
+                m_ParticleSystem->SetPreviousPosition(previousPositionsCache[dom][k], k, dom);
+                
                 // maximumUpdateAllowed is set based on some fraction of the distance between particles
                 // This is to avoid particles shooting past their neighbors
                 double maximumUpdateAllowedForOffset; // redundant variable, Not Applicable right now for Offset Updates, TODO: Look after some initial experiments, if its required for scaling
                 double original_gradient =
                     localGradientFunctionForOffset->EvaluateOffsetGradientMode(k, dom, m_ParticleSystem, maximumUpdateAllowedForOffset, energy);
 
-                m_ParticleSystem->SetPreviousPosition(previousPositionsCache[dom][k], k, dom);
                 double offsetOriginal = m_ParticleSystem->GetPositionOffset(dom, k);
+                m_ParticleSystem->SetPreviousPositionOffset(offsetOriginal, k, dom);
 
                 double newenergy;
                 while (true) {
@@ -260,7 +262,6 @@ void GradientDescentOptimizer::StartAdaptiveGaussSeidelOptimization() {
                   double scaled_gradient = original_gradient * m_TimeStepsForOffsets[dom][k];
 
                   // Step D compute the new position offset
-                  m_ParticleSystem->SetPreviousPositionOffset(offsetOriginal, k, dom);
 
                   double offsetModified = offset - scaled_gradient;
                   m_ParticleSystem->SetPositionOffset(offsetModified, k, dom);
