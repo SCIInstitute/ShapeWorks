@@ -79,8 +79,8 @@ OptimizeParameters::OptimizeParameters(ProjectHandle project) {
                                          Keys::checkpointing_interval,
                                          Keys::save_init_splits,
                                          Keys::keep_checkpoints,
-                                         Keys::robust_smoothness_coefficient;
-                                         Keys::robust_sparsity_coefficient;
+                                         Keys::robust_smoothness_coefficient,
+                                         Keys::robust_sparsity_coefficient
 
   };
 

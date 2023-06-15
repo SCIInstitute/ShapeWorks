@@ -1816,15 +1816,15 @@ void Optimize::SetEndingRegularization(double ending_regularization) {
   this->m_ending_regularization = ending_regularization;
 }
 
-//---------------------------------------------------------------------------
-void Optimize::SetRobustSmoothnessCoefficient(double val) {
-  this->m_robust_smoothness_coefficient = val;
-}
+// //---------------------------------------------------------------------------
+// void Optimize::SetRobustSmoothnessCoefficient(double val) {
+//   this->m_robust_smoothness_coefficient = val;
+// }
 
-//---------------------------------------------------------------------------
-void Optimize::SetRobustSparsityCoefficient(double val) {
-  this->m_robust_sparsity_coefficient = val;
-}
+// //---------------------------------------------------------------------------
+// void Optimize::SetRobustSparsityCoefficient(double val) {
+//   this->m_robust_sparsity_coefficient = val;
+// }
 
 
 //---------------------------------------------------------------------------

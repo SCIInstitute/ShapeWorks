@@ -34,6 +34,12 @@ class OptimizeParameters {
   double get_starting_regularization();
   void set_starting_regularization(double value);
 
+  double get_robust_smoothness_coefficient();
+  double get_robust_sparsity_coefficient();
+
+  void set_robust_smoothness_coefficient(double val);
+  void set_robust_sparsity_coefficient(double val);
+
   double get_ending_regularization();
   void set_ending_regularization(double value);
 
