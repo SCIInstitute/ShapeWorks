@@ -51,7 +51,7 @@ void GradientDescentOptimizer::ResetTimeStepVectors() {
     }
     for (unsigned int j = 0; j < np; j++) {
       m_TimeSteps[i][j] = 1.0;
-      m_TimeStepsForOffsets[i][j] = 1e-6;
+      m_TimeStepsForOffsets[i][j] = 1.0;
     }
   }
 }
@@ -91,9 +91,12 @@ void GradientDescentOptimizer::StartAdaptiveGaussSeidelOptimization() {
 
   // TODO: Cache Previous particle positions before making particle Updates
   std::vector<std::vector<PointType>> previousPositionsCache(numdomains);
+  std::vector<std::vector<PointType>> currentPositionsCache(numdomains);
+
   for (unsigned int dd = 0; dd < numdomains; ++dd)
   { 
     previousPositionsCache[dd].resize(m_ParticleSystem->GetPositions(dd)->GetSize());
+    currentPositionsCache[dd].resize(m_ParticleSystem->GetPositions(dd)->GetSize());
   }
 
   while (m_StopOptimization == false)  // iterations loop
@@ -182,8 +185,6 @@ void GradientDescentOptimizer::StartAdaptiveGaussSeidelOptimization() {
                   }
 
                   // Step D compute the new point position
-                  //TODO: Some changes here
-                  previousPositionsCache[dom][k] = pt;
                   PointType newpoint = domain->UpdateParticlePosition(pt, k, gradient);
 
                   // Step F update the point position in the particle system
@@ -215,7 +216,7 @@ void GradientDescentOptimizer::StartAdaptiveGaussSeidelOptimization() {
             }
           }  // for each domain
         });
-      std::cout << "Starting Offset Updates block for iteration " << std::endl;
+
       // Below is the main block for Making gradient updates for offsets
       tbb::parallel_for(
         tbb::blocked_range<size_t>{0, numdomains / domains_per_shape}, [&](const tbb::blocked_range<size_t>& r) {
@@ -252,12 +253,11 @@ void GradientDescentOptimizer::StartAdaptiveGaussSeidelOptimization() {
                 // maximumUpdateAllowed is set based on some fraction of the distance between particles
                 // This is to avoid particles shooting past their neighbors
                 double maximumUpdateAllowedForOffset; // redundant variable, Not Applicable right now for Offset Updates, TODO: Look after some initial experiments, if its required for scaling
-                double original_gradient =
-                    localGradientFunctionForOffset->EvaluateOffsetGradientMode(k, dom, m_ParticleSystem, maximumUpdateAllowedForOffset, energy);
-
                 double offsetOriginal = m_ParticleSystem->GetPositionOffset(k, dom);
                 m_ParticleSystem->SetPreviousPositionOffset(offsetOriginal, k, dom);
-
+                double original_gradient =
+                    localGradientFunctionForOffset->EvaluateOffsetGradientMode(k, dom, m_ParticleSystem, maximumUpdateAllowedForOffset, energy);
+                    
                 double newenergy;
                 while (true) {
                   // Step A scale the gradient by the current time step
