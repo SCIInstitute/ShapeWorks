@@ -193,6 +193,7 @@ void GradientDescentOptimizer::StartAdaptiveGaussSeidelOptimization() {
                   // Step G compute the new energy of the particle system
                   newenergy = localGradientFunction->EnergyParticleGradientMode(k, dom, m_ParticleSystem);
 
+                  // TODO: Cache all particles, pt and newpoint
                   if (newenergy < energy)  // good move, increase timestep for next time
                   {
                     m_TimeSteps[dom][k] *= factor;
@@ -211,6 +212,12 @@ void GradientDescentOptimizer::StartAdaptiveGaussSeidelOptimization() {
                       break;
                     }
                   }
+                  // Invalidate all particles properly wrt cache values, offset gradient needs neighborhood for original particle
+
+
+                  // Now, make offset updates, do constant 
+
+
                 }  // end while(true)
               }    // for each particle
             }
