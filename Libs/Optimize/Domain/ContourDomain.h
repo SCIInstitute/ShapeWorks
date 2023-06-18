@@ -34,7 +34,7 @@ class ContourDomain : public ParticleDomain {
     throw std::runtime_error("Contours do not have normals");
   }
 
-  virtual VectorFloatType SnapToSurface(const PointType& point, int idx) const override {
+  virtual PointType SnapToSurface(const PointType& point, int idx) const override {
     throw std::runtime_error("Contours do not have normals and particles cannot be snapped back to surface");
   }
 

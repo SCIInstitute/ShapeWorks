@@ -34,7 +34,7 @@ class ParticleDomain {
                                                          int idx) const = 0;
   virtual VectorFloatType SampleGradientAtPoint(const PointType &point, int idx) const = 0;
   virtual VectorFloatType SampleNormalAtPoint(const PointType &point, int idx) const = 0;
-  virtual VectorFloatType SnapToSurface(const PointType &point, int idx) const = 0;
+  virtual PointType SnapToSurface(const PointType &point, int idx) const = 0;
   virtual GradNType SampleGradNAtPoint(const PointType &p, int idx) const = 0;
 
   /** Distance between locations is used for computing energy and neighborhoods. Optionally

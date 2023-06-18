@@ -45,7 +45,7 @@ class ImageDomainWithGradients : public ImageDomain<T> {
     return grad.normalize();
   }
 
-  inline vnl_vector_fixed<float, DIMENSION> SnapToSurface(const PointType& p, int idx) const {
+  inline PointType SnapToSurface(const PointType& p, int idx) const {
     throw std::runtime_error("SnapToSurface not defined for ImageDomains yet.");
   }
 
