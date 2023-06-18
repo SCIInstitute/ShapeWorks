@@ -142,7 +142,7 @@ void ParticleSystem::SetNeighborhood(unsigned int i, NeighborhoodType* N) {
 
 const typename ParticleSystem::PointType& ParticleSystem::AddPosition(const PointType& p, unsigned int d) {
   m_Positions[d]->operator[](m_IndexCounters[d]) = p;
-  m_PreviousPositions[d]->operator[](m_IndexCounters[d]) = p; // only for adding new particle
+  m_PreviousPositions[d]->operator[](m_IndexCounters[d]) = p; // upon addition of particle, previous position is same as current position
   
   // Potentially modifies position!
   if (m_DomainFlags[d] == false) {
@@ -167,7 +167,7 @@ const typename ParticleSystem::PointType& ParticleSystem::AddPosition(const Poin
   this->InvokeEvent(e);
   m_IndexCounters[d]++;
   
-  m_PreviousPositionOffsets[d].resize(m_IndexCounters[d]+1, 0.0);
+  m_PreviousPositionOffsets[d].resize(m_IndexCounters[d]+1, 0.0); // upon addition of particle, offset is zero
   m_PositionOffsets[d].resize(m_IndexCounters[d]+1, 0.0);
 
   return m_Positions[d]->operator[](m_IndexCounters[d] - 1);
