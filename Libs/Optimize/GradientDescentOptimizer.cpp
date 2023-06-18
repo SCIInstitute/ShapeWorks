@@ -198,6 +198,7 @@ void GradientDescentOptimizer::StartAdaptiveGaussSeidelOptimization() {
                   {
                     m_TimeSteps[dom][k] *= factor;
                     if (gradmag > maxchange) maxchange = gradmag;
+                    m_ParticleSystem->SetPreviousPosition(pt, k, dom); // Update Validated
                     break;
                   } else {  // bad move, reset point position and back off on timestep
                     if (m_TimeSteps[dom][k] > minimumTimeStep) {
@@ -209,6 +210,7 @@ void GradientDescentOptimizer::StartAdaptiveGaussSeidelOptimization() {
                     } else  // keep the move with timestep 1.0 anyway
                     {
                       if (gradmag > maxchange) maxchange = gradmag;
+                      m_ParticleSystem->SetPreviousPosition(pt, k, dom); // Update Validated
                       break;
                     }
                   }
