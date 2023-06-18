@@ -438,6 +438,7 @@ class DualVectorFunction : public VectorFunction {
     double energyA = 0.0;
     double ansA;
     double maxA;
+    //TODO: Add energy from B to see its ramifications on offset updates 
 
     ansA = m_FunctionA->EvaluateOffsetGradientMode(idx, d, system, maxA, energyA);
     maxmove = maxA;

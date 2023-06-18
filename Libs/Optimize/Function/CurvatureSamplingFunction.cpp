@@ -336,19 +336,25 @@ CurvatureSamplingFunction::VectorType CurvatureSamplingFunction::EvaluateParticl
     for (unsigned int n = 0; n < VDimension; ++n)
     {
       double tempVal = (pos[n] - previousPos[n]);
-      gradTemp[n] = (offsetCurrent - offsetPrev)/(std::max(tempVal, epsilon));
+      gradTemp[n] = (offsetCurrent - offsetPrev)/(tempVal + epsilon);
     }
     gradQ = lambda1 * (t1-t2) * gradTemp;
 
     // gradR calculations
     double offsetNeighborDiff = 0.0;
+    double diff_sq = 0.0;
     for (unsigned int i = 0; i < m_CurrentNeighborhood.size(); i++) {
       double offset_j = system->GetPositionOffset(m_CurrentNeighborhood[i].pi_pair.Index, d);
-      offsetNeighborDiff += (offsetCurrent - offset_j);
+      double diff_temp = (offsetCurrent - offset_j);
+      offsetNeighborDiff += diff_temp;
+      diff_sq += (diff_temp*diff_temp);
     }
 
     gradR = 2 * lambda2 * offsetNeighborDiff * gradTemp;
     gradNew = gradE + gradQ + gradR;
+
+    double energyNew = energy + lambda1*std::abs(offsetCurrent) + lambda2*diff_sq;
+    energy = energyNew;
     return gradNew;
   }
 
@@ -449,23 +455,26 @@ double CurvatureSamplingFunction::EvaluateOffsetGradientMode(unsigned int idx, u
     for(unsigned int n=0; n < VDimension; ++n)
     {
       double tempVal = (offsetCurrent - offsetPrev);
-      gradE_temp[n] = gradE[n] * ((pos[n] - previousPos[n])/std::max(tempVal, epsilon));
+      gradE_temp[n] = gradE[n] * ((pos[n] - previousPos[n])/(tempVal + epsilon));
     }
     double gradE_new = gradE_temp.magnitude();
 
     // gradQ
     double gradQ = lambda1 * (t1-t2);
-    
-    
     // gradR calculations
     double offsetNeighborDiff = 0.0;
+    double diff_sq = 0.0;
     for (unsigned int i = 0; i < m_CurrentNeighborhood.size(); i++) {
       double offset_j = system->GetPositionOffset(m_CurrentNeighborhood[i].pi_pair.Index, d);
-      offsetNeighborDiff += (offsetCurrent - offset_j);
+      double diff_temp = (offsetCurrent - offset_j);
+      offsetNeighborDiff += diff_temp;
+      diff_sq += (diff_temp * diff_temp);
     }
     double gradR = 2 * lambda2 * offsetNeighborDiff;
 
     double gradNew = gradE_new + gradQ + gradR;
+    double energyNew = energy + lambda1*std::abs(offsetCurrent) + lambda2*diff_sq;
+    energy = energyNew;
     return gradNew;
   }
   return 0.0;
