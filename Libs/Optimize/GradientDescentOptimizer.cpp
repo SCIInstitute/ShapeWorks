@@ -89,16 +89,6 @@ void GradientDescentOptimizer::StartAdaptiveGaussSeidelOptimization() {
   double maxchange = 0.0;
   double maxchangeForOffsets = 0.0;
 
-  // TODO: Cache Previous particle positions before making particle Updates
-  std::vector<std::vector<PointType>> previousPositionsCache(numdomains);
-  std::vector<std::vector<PointType>> currentPositionsCache(numdomains);
-
-  for (unsigned int dd = 0; dd < numdomains; ++dd)
-  { 
-    previousPositionsCache[dd].resize(m_ParticleSystem->GetPositions(dd)->GetSize());
-    currentPositionsCache[dd].resize(m_ParticleSystem->GetPositions(dd)->GetSize());
-  }
-
   while (m_StopOptimization == false)  // iterations loop
   {
     double dampening = 1;
@@ -214,12 +204,6 @@ void GradientDescentOptimizer::StartAdaptiveGaussSeidelOptimization() {
                       break;
                     }
                   }
-                  // Invalidate all particles properly wrt cache values, offset gradient needs neighborhood for original particle
-
-
-                  // Now, make offset updates, do constant 
-
-
                 }  // end while(true)
               }    // for each particle
             }
