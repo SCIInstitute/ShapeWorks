@@ -45,6 +45,10 @@ class ImageDomainWithGradients : public ImageDomain<T> {
     return grad.normalize();
   }
 
+  inline vnl_vector_fixed<float, DIMENSION> SnapToSurface(const PointType& p, int idx) const {
+    throw std::runtime_error("SnapToSurface not defined for ImageDomains yet.");
+  }
+
   /** This method is called by an optimizer after a call to Evaluate and may be
       used to apply any constraints the resulting vector, such as a projection
       to the surface tangent plane. Returns true if the gradient was modified.*/

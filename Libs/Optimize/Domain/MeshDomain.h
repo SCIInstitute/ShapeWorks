@@ -74,6 +74,11 @@ class MeshDomain : public ParticleDomain {
   inline vnl_vector_fixed<float, DIMENSION> SampleNormalAtPoint(const PointType &point, int idx) const override {
     return meshWrapper->SampleNormalAtPoint(point, idx);
   }
+
+  inline vnl_vector_fixed<float, DIMENSION> SnapToSurface(const PointType &point, int idx) const override {
+    return meshWrapper->SnapToMesh(point, idx);
+  }
+
   inline GradNType SampleGradNAtPoint(const PointType &p, int idx) const override {
     return meshWrapper->SampleGradNAtPoint(p, idx);
   }

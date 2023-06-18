@@ -190,6 +190,17 @@ const typename ParticleSystem::PointType& ParticleSystem::SetPosition(const Poin
     }
   }
 
+  // Find x_tilda, and then compute offset
+  auto x_tilda = this->GetDomain(d)->SnapToSurface(p, k);
+  auto normalAtPos = this->GetDomain(d)->SampleNormalAtPoint(p, k);
+  double newOffset;
+  // offset vector magnitude along the direction of surface normal
+  for (unsigned int n = 0; n < VDimension; ++n){
+    newOffset += (p[n]-x_tilda[n])*normalAtPos[n];
+  }
+  this->SetPreviousPositionOffset(this->GetPositionOffset(k, d), k, d) ;
+  this->SetPositionOffset(newOffset, k, d);
+
   // Notify any observers.
   ParticlePositionSetEvent e;
   e.SetDomainIndex(d);
