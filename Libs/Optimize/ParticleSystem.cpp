@@ -198,6 +198,7 @@ const typename ParticleSystem::PointType& ParticleSystem::SetPosition(const Poin
   for (unsigned int n = 0; n < VDimension; ++n){
     newOffset += (p[n]-x_tilda[n])*normalAtPos[n];
   }
+  std::cout << "New Offset computed while setting position \n newOffset = " << newOffset << "Previous Offset = " << this->GetPositionOffset(k, d) << std::endl;
   this->SetPreviousPositionOffset(this->GetPositionOffset(k, d), k, d) ;
   this->SetPositionOffset(newOffset, k, d);
 

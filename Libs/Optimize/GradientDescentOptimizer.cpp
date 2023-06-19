@@ -145,8 +145,13 @@ void GradientDescentOptimizer::StartAdaptiveGaussSeidelOptimization() {
                 // maximumUpdateAllowed is set based on some fraction of the distance between particles
                 // This is to avoid particles shooting past their neighbors
                 double maximumUpdateAllowed;
+                double energy_new = 0.0;
+                VectorType original_gradientNoOffset =
+                    localGradientFunction->Evaluate(k, dom, m_ParticleSystem, maximumUpdateAllowed, energy_new);
                 VectorType original_gradient =
                     localGradientFunction->EvaluateParticleGradientMode(k, dom, m_ParticleSystem, maximumUpdateAllowed, energy);
+                std::cout << "NO_OFFSET = " << original_gradientNoOffset[0] << " " <<  original_gradientNoOffset[1] << " " <<  original_gradientNoOffset[2] << std::endl;
+                std::cout << "OFFSET_ON = " << original_gradient[0] << " " <<  original_gradient[1] << " " <<  original_gradient[2] << std::endl;
 
                 PointType pt = m_ParticleSystem->GetPositions(dom)->Get(k);
 

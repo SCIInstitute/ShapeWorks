@@ -111,11 +111,13 @@ class SamplingFunction : public VectorFunction {
   }
   virtual VectorType EvaluateParticleGradientMode(unsigned int, unsigned int, const ParticleSystem*, double&, double&)
   {
+    std::cout << "Inside EvaluateParticleGradientMode of incorrect Sampling Function" << std::endl;
     itkExceptionMacro("This method not implemented");
     return VectorType();
   }
   virtual double EvaluateOffsetGradientMode(unsigned int a, unsigned int b, const ParticleSystem* c, double& d)
   {
+    std::cout << "Inside EvaluateOffsetGradientMode of incorrect Sampling Function" << std::endl;
     itkExceptionMacro("This method not implemented");
     return 0.0;
   }

@@ -70,11 +70,13 @@ bool Optimize::Run() {
   m_last_update_time = m_start_time;
 
   // control number of threads
-  int num_threads = tbb::info::default_concurrency();
+  // int num_threads = tbb::info::default_concurrency();
+  int num_threads = 1;
   const char* num_threads_env = getenv("TBB_NUM_THREADS");
   if (num_threads_env) {
     num_threads = std::max(1, atoi(num_threads_env));
   }
+  std::cout << "Explicitly using ONE THREAD for debugging" << std::endl;
   SW_DEBUG("TBB using {} threads", num_threads);
   tbb::global_control c(tbb::global_control::max_allowed_parallelism, num_threads);
 
@@ -461,7 +463,7 @@ void Optimize::InitializeSampler() {
   m_sampler->SetSamplingOn();
 
   m_sampler->SetCorrespondenceOn();
-
+  std::cout << "Setting Adaptivity Mode in Optimizer | Mode Set to " << m_adaptivity_mode << std::endl;
   m_sampler->SetAdaptivityMode(m_adaptivity_mode);
   m_sampler->GetEnsembleEntropyFunction()->SetRecomputeCovarianceInterval(m_recompute_regularization_interval);
   m_sampler->GetMeshBasedGeneralEntropyGradientFunction()->SetRecomputeCovarianceInterval(
