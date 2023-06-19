@@ -147,71 +147,7 @@ void GradientDescentOptimizer::StartAdaptiveGaussSeidelOptimization() {
                 // This is to avoid particles shooting past their neighbors
                 double maximumUpdateAllowed;
                 double energy_new = 0.0;
-                // VectorType original_gradientNoOffset =
-                //     localGradientFunction->Evaluate(k, dom, m_ParticleSystem, maximumUpdateAllowed, energy);
                 VectorType original_gradient = dynamic_cast<DualVectorFunction*>(localGradientFunction.GetPointer())->EvaluateParticleGradientMode(k, dom, m_ParticleSystem, maximumUpdateAllowed, energy);
-                // Do Gradient Computations for L1 and L2 here
-                // if(true)
-                // {
-                //   // Compute modified gradient part
-                //   PointType pos = m_ParticleSystem->GetPosition(k, dom);
-
-                //   VectorType gradE, gradQ, gradR, gradTemp, gradNew;
-                //   for (unsigned int n = 0; n < VDimension; n++) {
-                //     gradQ[n] = 0.0;
-                //     gradR[n] = 0.0;
-                //     gradTemp[n] = 0.0;
-                //     gradNew[n] = 0.0;
-                //     gradE[n] = original_gradientNoOffset[n];
-                //   }
-
-                //   double lambda1 = m_ParticleSystem->GetSparsityCoefficient();
-                //   double lambda2 = m_ParticleSystem->GetSmoothnessCoefficient();
-                  
-                //   double offsetCurrent = m_ParticleSystem->GetPositionOffset(/*k=*/k, /*dom=*/dom);
-                //   double offsetPrev = m_ParticleSystem->GetPreviousPositionOffset(k, dom);
-
-                //   double beta = 1.0e6;
-                //   double t1 = 1/(1 + std::exp(-beta * offsetCurrent));
-                //   double t2 = 1/(1 + std::exp(beta * offsetCurrent));
-                //   PointType previousPos = m_ParticleSystem->GetPreviousPosition(k, dom);
-                //   for (unsigned int n = 0; n < VDimension; ++n)
-                //   {
-                //     double tempVal = (pos[n] - previousPos[n]);
-                //     if (tempVal < epsilon) gradTemp[n] = 0.0;
-                //     else gradTemp[n] = (offsetCurrent - offsetPrev)/(tempVal + epsilon);
-                //   }
-                //   gradQ = lambda1 * (t1-t2) * gradTemp;
-
-                //   // gradR calculations
-                //   double offsetNeighborDiff = 0.0;
-                //   double diff_sq = 0.0;
-                //   for (unsigned int i = 0; i < m_CurrentNeighborhood.size(); i++) {
-                //     double offset_j = m_ParticleSystem->GetPositionOffset(m_CurrentNeighborhood[i].pi_pair.Index, dom);
-                //     double diff_temp = (offsetCurrent - offset_j);
-                //     offsetNeighborDiff += diff_temp;
-                //     diff_sq += (diff_temp*diff_temp);
-                //   }
-
-                //   gradR = 2 * lambda2 * offsetNeighborDiff * gradTemp;
-                //   gradNew = gradE + gradQ + gradR;
-                //   std::string logFileForGradients =  "/home/sci/nawazish.khan/1-robust-expts/ellipsoid/shape_models/GradientLog.txt";
-                //   std::ofstream outl(logFileForGradients.c_str(), std::ofstream::app);
-                //   outl << "GradE: inside" << gradE[0] << " " <<  gradE[1] << " " <<  gradE[2] << std::endl;
-                //   outl << "GradQ: " << gradQ[0] << " " <<  gradQ[1] << " " <<  gradQ[2] << std::endl;
-                //   outl << "GradR: " << gradR[0] << " " <<  gradR[1] << " " <<  gradR[2] << std::endl;
-                //   outl << "GradNew: " << gradNew[0] << " " <<  gradNew[1] << " " <<  gradNew[2] << std::endl;
-                //   outl << "Offset Current = " << offsetCurrent << " | Offset Prev = " << offsetPrev << std::endl;
-                  
-                //   double energyNew = energy + lambda1*std::abs(offsetCurrent) + lambda2*diff_sq;
-                //   outl << "New Energy  = " << energyNew << " | Energy = " << energy << std::endl;
-                //   outl << "lambda1 " << lambda1 << " | lambda2 = " << lambda2 << std::endl;
-                //   outl.close();
-                //   energy = energyNew;
-                //   original_gradient =  gradNew;
-                // }
-
-                // std::cout << "NO_OFFSET = " << original_gradientNoOffset[0] << " " <<  original_gradientNoOffset[1] << " " <<  original_gradientNoOffset[2] << std::endl;
                 std::cout << "OFFSET_ON = " << original_gradient[0] << " " <<  original_gradient[1] << " " <<  original_gradient[2] << std::endl;
 
                 PointType pt = m_ParticleSystem->GetPositions(dom)->Get(k);
@@ -249,26 +185,6 @@ void GradientDescentOptimizer::StartAdaptiveGaussSeidelOptimization() {
                   // Step G compute the new energy of the particle system
                   // newenergy = localGradientFunction->Energy(k, dom, m_ParticleSystem);
                   newenergy = dynamic_cast<DualVectorFunction*>(localGradientFunction.GetPointer())->EnergyParticleGradientMode(k, dom, m_ParticleSystem);
-
-                  // Do New Energy computations here
-                  // if(true)
-                  // {
-
-                  //   double lambda1 = m_ParticleSystem->GetSparsityCoefficient();
-                  //   double lambda2 = m_ParticleSystem->GetSmoothnessCoefficient();
-                    
-                  //   double offsetCurrent = m_ParticleSystem->GetPositionOffset(/*k=*/k, /*dom=*/dom);
-                  //   double offsetNeighborDiff = 0.0;
-                  //   double diff_sq = 0.0;
-                  //   for (unsigned int i = 0; i < m_CurrentNeighborhood.size(); i++) {
-                  //     double offset_j = m_ParticleSystem->GetPositionOffset(m_CurrentNeighborhood[i].pi_pair.Index, dom);
-                  //     double diff_temp = (offsetCurrent - offset_j);
-                  //     offsetNeighborDiff += diff_temp;
-                  //     diff_sq += (diff_temp*diff_temp);
-                  //   }
-                  //   double energyNew = newenergy + lambda1*std::abs(offsetCurrent) + lambda2*diff_sq;
-                  //   newenergy = energyNew;
-                  // }
 
                   if (newenergy < energy)  // good move, increase timestep for next time
                   {
@@ -331,51 +247,7 @@ void GradientDescentOptimizer::StartAdaptiveGaussSeidelOptimization() {
                 // This is to avoid particles shooting past their neighbors
                 double maximumUpdateAllowedForOffset; // redundant variable, Not Applicable right now for Offset Updates, TODO: Look after some initial experiments, if its required for scaling
                 double offsetOriginal = m_ParticleSystem->GetPositionOffset(k, dom);
-                // VectorType original_gradientNoOffset =
-                //     localGradientFunctionForOffset->Evaluate(k, dom, m_ParticleSystem, maximumUpdateAllowedForOffset, energy);
                 double original_gradient = dynamic_cast<DualVectorFunction*>(localGradientFunctionForOffset.GetPointer())->EvaluateOffsetGradientMode(k, dom, m_ParticleSystem, maximumUpdateAllowedForOffset, energy);
-                // if (true)
-                // {
-                //   PointType pos = m_ParticleSystem->GetPosition(k, dom);
-                //   double lambda1 = m_ParticleSystem->GetSparsityCoefficient();
-                //   double lambda2 = m_ParticleSystem->GetSmoothnessCoefficient();
-                  
-                //   double offsetCurrent = m_ParticleSystem->GetPositionOffset(k, dom);
-                //   double offsetPrev = m_ParticleSystem->GetPreviousPositionOffset(k, dom);
-
-                //   double beta = 1.0e6;
-                //   double t1 = 1/(1 + std::exp(-beta * offsetCurrent));
-                //   double t2 = 1/(1 + std::exp(beta * offsetCurrent));
-                //   PointType previousPos = m_ParticleSystem->GetPreviousPosition(k, dom);
-                //   VectorType gradE_temp;
-
-                //   // grad_E modified for offset
-                //   for(unsigned int n=0; n < VDimension; ++n)
-                //   {
-                //     double tempVal = (offsetCurrent - offsetPrev);
-                //     if (tempVal < epsilon) gradE_temp[n] = 0.0;
-                //     else gradE_temp[n] = original_gradientNoOffset[n] * ((pos[n] - previousPos[n])/(tempVal + epsilon));
-                //   }
-                //   double gradE_new = gradE_temp.magnitude();
-
-                //   // gradQ
-                //   double gradQ = lambda1 * (t1-t2);
-                //   // gradR calculations
-                //   double offsetNeighborDiff = 0.0;
-                //   double diff_sq = 0.0;
-                //   for (unsigned int i = 0; i < m_CurrentNeighborhood.size(); i++) {
-                //     double offset_j = m_ParticleSystem->GetPositionOffset(m_CurrentNeighborhood[i].pi_pair.Index, dom);
-                //     double diff_temp = (offsetCurrent - offset_j);
-                //     offsetNeighborDiff += diff_temp;
-                //     diff_sq += (diff_temp * diff_temp);
-                //   }
-                //   double gradR = 2 * lambda2 * offsetNeighborDiff;
-
-                //   double gradNew = gradE_new + gradQ + gradR;
-                //   double energyNew = energy + lambda1*std::abs(offsetCurrent) + lambda2*diff_sq;
-                //   energy = energyNew;
-                //   original_gradient = gradNew;
-                // }
                 
                 double newenergy;
                 while (true) {
@@ -389,26 +261,6 @@ void GradientDescentOptimizer::StartAdaptiveGaussSeidelOptimization() {
 
                   // Step G compute the new energy of the particle system
                   newenergy = dynamic_cast<DualVectorFunction*>(localGradientFunctionForOffset.GetPointer())->EnergyOffsetGradientMode(k, dom, m_ParticleSystem);
-                  // newenergy = localGradientFunctionForOffset->EnergyA(k, dom, m_ParticleSystem);
-                  // Do New Energy computations here
-                  // if(true)
-                  // {
-
-                  //   double lambda1 = m_ParticleSystem->GetSparsityCoefficient();
-                  //   double lambda2 = m_ParticleSystem->GetSmoothnessCoefficient();
-                    
-                  //   double offsetCurrent = m_ParticleSystem->GetPositionOffset(/*k=*/k, /*dom=*/dom);
-                  //   double offsetNeighborDiff = 0.0;
-                  //   double diff_sq = 0.0;
-                  //   for (unsigned int i = 0; i < m_CurrentNeighborhood.size(); i++) {
-                  //     double offset_j = m_ParticleSystem->GetPositionOffset(m_CurrentNeighborhood[i].pi_pair.Index, dom);
-                  //     double diff_temp = (offsetCurrent - offset_j);
-                  //     offsetNeighborDiff += diff_temp;
-                  //     diff_sq += (diff_temp*diff_temp);
-                  //   }
-                  //   double energyNew = newenergy + lambda1*std::abs(offsetCurrent) + lambda2*diff_sq;
-                  //   newenergy = energyNew;
-                  // }
 
                   if (newenergy < energy)  // good move, increase timestep for next time
                   {
