@@ -193,12 +193,28 @@ const typename ParticleSystem::PointType& ParticleSystem::SetPosition(const Poin
   // Find x_tilda, and then compute offset
   auto x_tilda = this->GetDomain(d)->SnapToSurface(p, k);
   auto normalAtPos = this->GetDomain(d)->SampleNormalAtPoint(p, k);
-  double newOffset;
+  double normalMagnitude = normalAtPos.magnitude();
+  auto unitVectorAlongNormal = (1/normalMagnitude) * normalAtPos;
+  double newOffset = 0.0;
+  double offsetThreshold = 1.0e-6;
   // offset vector magnitude along the direction of surface normal
   for (unsigned int n = 0; n < VDimension; ++n){
-    newOffset += (p[n]-x_tilda[n])*normalAtPos[n];
+    double offsetDiff_n = (x_tilda[n]-p[n])
+    if (offsetDiff_n < offsetThreshold) newOffset += 0.0;
+    else newOffset += (offsetDiff_n*unitVectorAlongNormal[n]);
   }
-  std::cout << "New Offset computed while setting position \n newOffset = " << newOffset << "Previous Offset = " << this->GetPositionOffset(k, d) << std::endl;
+  newOffset = std::abs(newOffset);
+  std::string logFileForPOU =  "/home/sci/nawazish.khan/1-robust-expts/ellipsoid/shape_models/ParticleOffsetUpdatesLog.txt";
+  std::ofstream outl(logFileForPOU.c_str(), std::ofstream::app);
+  outl << "######### d = " << d << " k = " << k << " #########" <<  std::endl;
+  outl << "x  = " << p[0] << " " << p[1] << " " << p[2] << std::endl;
+  outl << "x~ = " << x_tilda[0] << " " << x_tilda[1] << " " << x_tilda[2] << std::endl;
+  outl << "Offset_(t-1) = " << this->GetPositionOffset(k, d) << std::endl;
+  outl << "Offset_(t) =   " << newOffset << std::endl;
+  outl << std::endl;
+  outl << std::endl;
+  outl.close();
+
   this->SetPreviousPositionOffset(this->GetPositionOffset(k, d), k, d) ;
   this->SetPositionOffset(newOffset, k, d);
 

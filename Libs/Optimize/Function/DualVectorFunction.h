@@ -374,11 +374,8 @@ class DualVectorFunction : public VectorFunction {
 
     // evaluate individual functions: A = surface energy, B = correspondence
     if (m_AOn == true) {
-      std::cout << "Calling EvaluateParticleGradientMode from DualVectorFunction " << std::endl;
       ansA = dynamic_cast<CurvatureSamplingFunction*>(m_FunctionA.GetPointer())->EvaluateParticleGradientMode(idx, d, system, maxA, energyA);
-      std::cout << "SAMPLING_GRADIENT_WITH_OFFSET = " << ansA[0] << " " <<  ansA[1] << " " <<  ansA[2] << std::endl;
-
-
+      // std::cout << "SAMPLING_GRADIENT_WITH_OFFSET = " << ansA[0] << " " <<  ansA[1] << " " <<  ansA[2] << std::endl;
       const_cast<DualVectorFunction*>(this)->m_AverageGradMagA = m_AverageGradMagA + ansA.magnitude();
       const_cast<DualVectorFunction*>(this)->m_AverageEnergyA = m_AverageEnergyA + energyA;
     }

@@ -70,13 +70,13 @@ bool Optimize::Run() {
   m_last_update_time = m_start_time;
 
   // control number of threads
-  // int num_threads = tbb::info::default_concurrency();
-  int num_threads = 1;
+  int num_threads = tbb::info::default_concurrency();
+  // int num_threads = 1;
   const char* num_threads_env = getenv("TBB_NUM_THREADS");
   if (num_threads_env) {
     num_threads = std::max(1, atoi(num_threads_env));
   }
-  std::cout << "Explicitly using ONE THREAD for debugging" << std::endl;
+  // std::cout << "Explicitly using ONE THREAD for debugging" << std::endl;
   SW_DEBUG("TBB using {} threads", num_threads);
   tbb::global_control c(tbb::global_control::max_allowed_parallelism, num_threads);
 
@@ -1817,16 +1817,6 @@ void Optimize::SetStartingRegularization(double starting_regularization) {
 void Optimize::SetEndingRegularization(double ending_regularization) {
   this->m_ending_regularization = ending_regularization;
 }
-
-// //---------------------------------------------------------------------------
-// void Optimize::SetRobustSmoothnessCoefficient(double val) {
-//   this->m_robust_smoothness_coefficient = val;
-// }
-
-// //---------------------------------------------------------------------------
-// void Optimize::SetRobustSparsityCoefficient(double val) {
-//   this->m_robust_sparsity_coefficient = val;
-// }
 
 
 //---------------------------------------------------------------------------

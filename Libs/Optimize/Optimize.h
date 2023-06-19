@@ -189,8 +189,6 @@ class Optimize {
   //! Set the relative weighting (TODO: details)
   void SetRelativeWeighting(double relative_weighting);
   //! Set the initial relative weigting (TODO: details)
-  // void SetRobustSmoothnessCoefficient(double val);
-  // void SetRobustSparsityCoefficient(double val);
   void SetInitialRelativeWeighting(double initial_relative_weighting);
   //! Set the starting regularization (TODO: details)
   void SetStartingRegularization(double starting_regularization);

@@ -164,8 +164,7 @@ void CurvatureSamplingFunction::BeforeEvaluate(unsigned int idx, unsigned int d,
 
 CurvatureSamplingFunction::VectorType CurvatureSamplingFunction::Evaluate(unsigned int idx, unsigned int d,
                                                                           const ParticleSystem* system, double& maxmove,
-                                                                          double& energy) const {
-  std::cout << "Inside Simple Evaluate " << std::endl;                                                                         
+                                                                          double& energy) const {                                                                       
   const double epsilon = 1.0e-6;
 
   // Get the position for which we are computing the gradient.
@@ -240,8 +239,7 @@ CurvatureSamplingFunction::VectorType CurvatureSamplingFunction::Evaluate(unsign
 
 CurvatureSamplingFunction::VectorType CurvatureSamplingFunction::EvaluateParticleGradientMode(unsigned int idx, unsigned int d,
                                                                           const ParticleSystem* system, double& maxmove,
-                                                                          double& energy) const {
-  std::cout << "Inside EvaluateParticleGradientMode " << std::endl;                                                                         
+                                                                          double& energy) const {                                                                       
   const double epsilon = 1.0e-6;
 
   // Get the position for which we are computing the gradient.
@@ -312,8 +310,6 @@ CurvatureSamplingFunction::VectorType CurvatureSamplingFunction::EvaluateParticl
   energy = (A * sigma2inv) / m_avgKappa;
 
   gradE = gradE / m_avgKappa;
-  std::cout << "GradE: outside" << gradE[0] << " " <<  gradE[1] << " " <<  gradE[2] << std::endl;
-  std::cout << "Simple Energy  = " << energy << std::endl;
 
   bool computeRobustUpdates = true;
   if(computeRobustUpdates)
@@ -340,7 +336,8 @@ CurvatureSamplingFunction::VectorType CurvatureSamplingFunction::EvaluateParticl
     for (unsigned int n = 0; n < VDimension; ++n)
     {
       double tempVal = (pos[n] - previousPos[n]);
-      gradTemp[n] = (offsetCurrent - offsetPrev)/(tempVal + epsilon);
+      if (tempVal < epsilon) gradTemp[n] = 0.0;
+      else gradTemp[n] = (offsetCurrent - offsetPrev)/(tempVal + epsilon);
     }
     gradQ = lambda1 * (t1-t2) * gradTemp;
 
@@ -356,17 +353,10 @@ CurvatureSamplingFunction::VectorType CurvatureSamplingFunction::EvaluateParticl
 
     gradR = 2 * lambda2 * offsetNeighborDiff * gradTemp;
     gradNew = gradE + gradQ + gradR;
-    // std::cout << "GradE: inside" << gradE[0] << " " <<  gradE[1] << " " <<  gradE[2] << std::endl;
-    // std::cout << "GradQ: " << gradQ[0] << " " <<  gradQ[1] << " " <<  gradQ[2] << std::endl;
-    // std::cout << "GradR: " << gradR[0] << " " <<  gradR[1] << " " <<  gradR[2] << std::endl;
-    // std::cout << "GradNew: " << gradNew[0] << " " <<  gradNew[1] << " " <<  gradNew[2] << std::endl;
-    // std::cout << "Offset Current = " << offsetCurrent << " | Offset Prev = " << offsetPrev << std::endl;
-    // std::cout << std::endl;
-    // std::cout << std::endl;
-    
     std::string logFileForGradients =  "/home/sci/nawazish.khan/1-robust-expts/ellipsoid/shape_models/GradientLog.txt";
     std::ofstream outl(logFileForGradients.c_str(), std::ofstream::app);
-    outl << "GradE: inside" << gradE[0] << " " <<  gradE[1] << " " <<  gradE[2] << std::endl;
+    outl << "######### d = " << d << " k = " << idx << " #########" <<  std::endl;
+    outl << "GradE: " << gradE[0] << " " <<  gradE[1] << " " <<  gradE[2] << std::endl;
     outl << "GradQ: " << gradQ[0] << " " <<  gradQ[1] << " " <<  gradQ[2] << std::endl;
     outl << "GradR: " << gradR[0] << " " <<  gradR[1] << " " <<  gradR[2] << std::endl;
     outl << "GradNew: " << gradNew[0] << " " <<  gradNew[1] << " " <<  gradNew[2] << std::endl;
@@ -375,6 +365,8 @@ CurvatureSamplingFunction::VectorType CurvatureSamplingFunction::EvaluateParticl
     double energyNew = energy + lambda1*std::abs(offsetCurrent) + lambda2*diff_sq;
     outl << "New Energy  = " << energyNew << " | Energy = " << energy << std::endl;
     outl << "lambda1 " << lambda1 << " | lambda2 = " << lambda2 << std::endl;
+    outl << std::endl;
+    outl << std::endl;
     outl.close();
     energy = energyNew;
     return gradNew;
@@ -477,7 +469,8 @@ double CurvatureSamplingFunction::EvaluateOffsetGradientMode(unsigned int idx, u
     for(unsigned int n=0; n < VDimension; ++n)
     {
       double tempVal = (offsetCurrent - offsetPrev);
-      gradE_temp[n] = gradE[n] * ((pos[n] - previousPos[n])/(tempVal + epsilon));
+      if (tempVal < epsilon) gradE_temp[n] = 0.0;
+      else gradE_temp[n] = gradE[n] * ((pos[n] - previousPos[n])/(tempVal + epsilon));
     }
     double gradE_new = gradE_temp.magnitude();
 
