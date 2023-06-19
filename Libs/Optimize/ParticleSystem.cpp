@@ -199,7 +199,7 @@ const typename ParticleSystem::PointType& ParticleSystem::SetPosition(const Poin
   double offsetThreshold = 1.0e-6;
   // offset vector magnitude along the direction of surface normal
   for (unsigned int n = 0; n < VDimension; ++n){
-    double offsetDiff_n = (x_tilda[n]-p[n])
+    double offsetDiff_n = (x_tilda[n]-p[n]);
     if (offsetDiff_n < offsetThreshold) newOffset += 0.0;
     else newOffset += (offsetDiff_n*unitVectorAlongNormal[n]);
   }
