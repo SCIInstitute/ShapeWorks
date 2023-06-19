@@ -353,21 +353,21 @@ CurvatureSamplingFunction::VectorType CurvatureSamplingFunction::EvaluateParticl
 
     gradR = 2 * lambda2 * offsetNeighborDiff * gradTemp;
     gradNew = gradE + gradQ + gradR;
-    std::string logFileForGradients =  "/home/sci/nawazish.khan/1-robust-expts/ellipsoid/shape_models/GradientLog.txt";
-    std::ofstream outl(logFileForGradients.c_str(), std::ofstream::app);
-    outl << "######### d = " << d << " k = " << idx << " #########" <<  std::endl;
-    outl << "GradE: " << gradE[0] << " " <<  gradE[1] << " " <<  gradE[2] << std::endl;
-    outl << "GradQ: " << gradQ[0] << " " <<  gradQ[1] << " " <<  gradQ[2] << std::endl;
-    outl << "GradR: " << gradR[0] << " " <<  gradR[1] << " " <<  gradR[2] << std::endl;
-    outl << "GradNew: " << gradNew[0] << " " <<  gradNew[1] << " " <<  gradNew[2] << std::endl;
-    outl << "Offset Current = " << offsetCurrent << " | Offset Prev = " << offsetPrev << std::endl;
+    // std::string logFileForGradients =  "/home/sci/nawazish.khan/1-robust-expts/ellipsoid/shape_models/GradientLog.txt";
+    // std::ofstream outl(logFileForGradients.c_str(), std::ofstream::app);
+    // outl << "######### d = " << d << " k = " << idx << " #########" <<  std::endl;
+    // outl << "GradE: " << gradE[0] << " " <<  gradE[1] << " " <<  gradE[2] << std::endl;
+    // outl << "GradQ: " << gradQ[0] << " " <<  gradQ[1] << " " <<  gradQ[2] << std::endl;
+    // outl << "GradR: " << gradR[0] << " " <<  gradR[1] << " " <<  gradR[2] << std::endl;
+    // outl << "GradNew: " << gradNew[0] << " " <<  gradNew[1] << " " <<  gradNew[2] << std::endl;
+    // outl << "Offset Current = " << offsetCurrent << " | Offset Prev = " << offsetPrev << std::endl;
     
     double energyNew = energy + lambda1*std::abs(offsetCurrent) + lambda2*diff_sq;
-    outl << "New Energy  = " << energyNew << " | Energy = " << energy << std::endl;
-    outl << "lambda1 " << lambda1 << " | lambda2 = " << lambda2 << std::endl;
-    outl << std::endl;
-    outl << std::endl;
-    outl.close();
+    // outl << "New Energy  = " << energyNew << " | Energy = " << energy << std::endl;
+    // outl << "lambda1 " << lambda1 << " | lambda2 = " << lambda2 << std::endl;
+    // outl << std::endl;
+    // outl << std::endl;
+    // outl.close();
     energy = energyNew;
     return gradNew;
   }

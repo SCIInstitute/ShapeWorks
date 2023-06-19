@@ -203,16 +203,16 @@ const typename ParticleSystem::PointType& ParticleSystem::SetPosition(const Poin
     else newOffset += (offsetDiff_n*normalAtPos[n]/normalMagnitude);
   }
   newOffset = std::abs(newOffset);
-  std::string logFileForPOU =  "/home/sci/nawazish.khan/1-robust-expts/ellipsoid/shape_models/ParticleOffsetUpdatesLog.txt";
-  std::ofstream outl(logFileForPOU.c_str(), std::ofstream::app);
-  outl << "######### d = " << d << " k = " << k << " #########" <<  std::endl;
-  outl << "x  = " << p[0] << " " << p[1] << " " << p[2] << std::endl;
-  outl << "x~ = " << x_tilda[0] << " " << x_tilda[1] << " " << x_tilda[2] << std::endl;
-  outl << "Offset_(t-1) = " << this->GetPositionOffset(k, d) << std::endl;
-  outl << "Offset_(t) =   " << newOffset << std::endl;
-  outl << std::endl;
-  outl << std::endl;
-  outl.close();
+  // std::string logFileForPOU =  "/home/sci/nawazish.khan/1-robust-expts/ellipsoid/shape_models/ParticleOffsetUpdatesLog.txt";
+  // std::ofstream outl(logFileForPOU.c_str(), std::ofstream::app);
+  // outl << "######### d = " << d << " k = " << k << " #########" <<  std::endl;
+  // outl << "x  = " << p[0] << " " << p[1] << " " << p[2] << std::endl;
+  // outl << "x~ = " << x_tilda[0] << " " << x_tilda[1] << " " << x_tilda[2] << std::endl;
+  // outl << "Offset_(t-1) = " << this->GetPositionOffset(k, d) << std::endl;
+  // outl << "Offset_(t) =   " << newOffset << std::endl;
+  // outl << std::endl;
+  // outl << std::endl;
+  // outl.close();
 
   this->SetPreviousPositionOffset(this->GetPositionOffset(k, d), k, d) ;
   this->SetPositionOffset(newOffset, k, d);

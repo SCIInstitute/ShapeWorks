@@ -259,12 +259,12 @@ void GradientDescentOptimizer::StartAdaptiveGaussSeidelOptimization() {
 
                   double offsetModified = offsetOriginal - scaled_gradient;
                   m_ParticleSystem->SetPositionOffset(offsetModified, k, dom);
-                  outl << "######### d = " << dom << " k = " << k << " #########" <<  std::endl;
-                  outl << "original_gradient = " << original_gradient << " | m_TimeStepsForOffsets = " << m_TimeStepsForOffsets[dom][k] << " | scaled_gradient = " << scaled_gradient << std::endl;
-                  outl << "offsetModified = " << offsetModified << std::endl; 
+                  // outl << "######### d = " << dom << " k = " << k << " #########" <<  std::endl;
+                  // outl << "original_gradient = " << original_gradient << " | m_TimeStepsForOffsets = " << m_TimeStepsForOffsets[dom][k] << " | scaled_gradient = " << scaled_gradient << std::endl;
+                  // outl << "offsetModified = " << offsetModified << std::endl; 
                   // Step G compute the new energy of the particle system
                   newenergy = dynamic_cast<DualVectorFunction*>(localGradientFunctionForOffset.GetPointer())->EnergyOffsetGradientMode(k, dom, m_ParticleSystem);
-                  outl << "newenergy = " << newenergy << " | energy = " << energy << std::endl;
+                  // outl << "newenergy = " << newenergy << " | energy = " << energy << std::endl;
 
                   if (newenergy < energy)  // good move, increase timestep for next time
                   {
@@ -276,15 +276,15 @@ void GradientDescentOptimizer::StartAdaptiveGaussSeidelOptimization() {
                       //TODO: See if something similar like ApplyConstraints should be done for Offsets too?
                       m_ParticleSystem->SetPositionOffset(offsetOriginal, k, dom);
                       m_TimeStepsForOffsets[dom][k] /= factor;
-                      outl << "Move INVALIDATED " << std::endl;
+                      // outl << "Move INVALIDATED " << std::endl;
                     } else  // keep the move with timestep 1.0 anyway
                     {
                       if (scaled_gradient > maxchangeForOffsets) maxchangeForOffsets = scaled_gradient;
                       break;
                     }
                   }
-                outl << std::endl;
-                outl << std::endl;
+                // outl << std::endl;
+                // outl << std::endl;
                 }
                 outl.close();  // end while(true)
               }    // for each particle
