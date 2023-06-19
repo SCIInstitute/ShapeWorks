@@ -1247,11 +1247,13 @@ void Optimize::WritePointFiles(std::string iter_prefix) {
 
     std::string local_file = iter_prefix + "/" + m_filenames[i] + "_local.particles";
     std::string world_file = iter_prefix + "/" + m_filenames[i] + "_world.particles";
+    std::string offset_file = iter_prefix + "/" + m_filenames[i] + "_offset.txt";
 
     std::ofstream out(local_file.c_str());
     std::ofstream outw(world_file.c_str());
+    std::ofstream outOffset(offset_file.c_str());
 
-    std::string str = "Writing " + world_file + " and " + local_file + " files...";
+    std::string str = "Writing " + world_file + " and " + local_file + " and offset files...";
     this->PrintStartMessage(str, 1);
     if (!out) {
       std::cerr << "Error opening output file: " << local_file << std::endl;
@@ -1261,10 +1263,16 @@ void Optimize::WritePointFiles(std::string iter_prefix) {
       std::cerr << "Error opening output file: " << world_file << std::endl;
       throw 1;
     }
+    if (!outOffset) {
+      std::cerr << "Error opening Offset file: " << offset_file << std::endl;
+      throw 1;
+    }
 
     for (unsigned int j = 0; j < m_sampler->GetParticleSystem()->GetNumberOfParticles(i); j++) {
       PointType pos = m_sampler->GetParticleSystem()->GetPosition(j, i);
       PointType wpos = m_sampler->GetParticleSystem()->GetTransformedPosition(j, i);
+      double offsetValue = m_sampler->GetParticleSystem()->GetPositionOffset(j, i);
+
 
       for (unsigned int k = 0; k < 3; k++) {
         out << pos[k] << " ";
@@ -1275,12 +1283,14 @@ void Optimize::WritePointFiles(std::string iter_prefix) {
         outw << wpos[k] << " ";
       }
       outw << std::endl;
-
+      outOffset << offsetValue;
+      outOffset << std::endl;
       counter++;
     }  // end for points
 
     out.close();
     outw.close();
+    outOffset.close();
 
     std::stringstream st;
     st << counter;
