@@ -55,37 +55,6 @@ class LegacyCorrespondenceFunction : public VectorFunction {
     return e;
   }
 
-  virtual double EvaluateOffsetGradientMode(unsigned int, unsigned int, const ParticleSystem*, double&, double&)
-  {
-    itkExceptionMacro("This method not implemented");
-    return 0.0;
-  }
-  virtual VectorType EvaluateParticleGradientMode(unsigned int, unsigned int, const ParticleSystem*, double&, double&)
-  {
-    itkExceptionMacro("This method not implemented");
-    return VectorType();
-  }
-  virtual double EvaluateOffsetGradientMode(unsigned int a, unsigned int b, const ParticleSystem* c, double& d)
-  {
-    itkExceptionMacro("This method not implemented");
-    return 0.0;
-  }
-  virtual VectorType EvaluateParticleGradientMode(unsigned int a, unsigned int b, const ParticleSystem* c, double& d)
-  {
-    itkExceptionMacro("This method not implemented");
-    return VectorType();
-  }
-  virtual double EnergyOffsetGradientMode(unsigned int a, unsigned int b, const ParticleSystem* c)
-  {
-    itkExceptionMacro("This method not implemented");
-    return 0.0;
-  }
-  virtual double EnergyParticleGradientMode(unsigned int a, unsigned int b, const ParticleSystem* c)
-  {
-    itkExceptionMacro("This method not implemented");
-    return 0.0;
-  }
-
   /** Write the first n modes to +- 3 std dev and the mean of the model
       described by the covariance matrix.  The string argument is a prefix to
       the file names. */

@@ -6,6 +6,7 @@
 
 #include "Libs/Optimize/Domain/ImageDomainWithGradients.h"
 #include "Libs/Optimize/Function/VectorFunction.h"
+#include "Libs/Optimize/Function/DualVectorFunction.h"
 #include "ParticleSystem.h"
 #include "itkObject.h"
 #include "itkObjectFactory.h"

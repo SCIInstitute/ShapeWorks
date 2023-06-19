@@ -5,6 +5,8 @@
 #include "itkObjectFactory.h"
 #include "itkWeakPointer.h"
 #include "vnl/vnl_vector_fixed.h"
+#include "CurvatureSamplingFunction.h"
+#include "SamplingFunction.h"
 
 namespace shapeworks {
 
@@ -121,7 +123,7 @@ class DualVectorFunction : public VectorFunction {
 
     // evaluate individual functions: A = surface energy, B = correspondence
     if (m_AOn == true) {
-      ansA = m_FunctionA->EvaluateParticleGradientMode(idx, d, system, maxA);
+      ansA = dynamic_cast<CurvatureSamplingFunction*>(m_FunctionA.GetPointer())->EvaluateParticleGradientMode(idx, d, system, maxA);
       const_cast<DualVectorFunction*>(this)->m_AverageGradMagA = m_AverageGradMagA + ansA.magnitude();
     }
 
@@ -175,7 +177,7 @@ class DualVectorFunction : public VectorFunction {
     maxA = 0;
     double ansA;
     ansA = 0.0;
-    ansA = m_FunctionA->EvaluateOffsetGradientMode(idx, d, system, maxA);
+    ansA = dynamic_cast<CurvatureSamplingFunction*>(m_FunctionA.GetPointer())->EvaluateOffsetGradientMode(idx, d, system, maxA);
     maxmove = maxA;
     return ansA;
   }
@@ -245,7 +247,7 @@ class DualVectorFunction : public VectorFunction {
 
     // evaluate individual functions: A = surface energy, B = correspondence
     if (m_AOn == true) {
-      ansA = m_FunctionA->EnergyParticleGradientMode(idx, d, system);
+      ansA = dynamic_cast<CurvatureSamplingFunction*>(m_FunctionA.GetPointer())->EnergyParticleGradientMode(idx, d, system);
     }
 
     if (m_BOn == true) {
@@ -277,7 +279,7 @@ class DualVectorFunction : public VectorFunction {
 
   virtual double EnergyOffsetGradientMode(unsigned int idx, unsigned int d, const ParticleSystem* system) const {
     double ansA = 0.0;
-    ansA = m_FunctionA->EnergyOffsetGradientMode(idx, d, system);
+    ansA = dynamic_cast<CurvatureSamplingFunction*>(m_FunctionA.GetPointer())->EnergyOffsetGradientMode(idx, d, system);
     return ansA;
   }
 
@@ -373,7 +375,7 @@ class DualVectorFunction : public VectorFunction {
     // evaluate individual functions: A = surface energy, B = correspondence
     if (m_AOn == true) {
       std::cout << "Calling EvaluateParticleGradientMode from DualVectorFunction " << std::endl;
-      ansA = m_FunctionA->EvaluateParticleGradientMode(idx, d, system, maxA, energyA);
+      ansA = dynamic_cast<CurvatureSamplingFunction*>(m_FunctionA.GetPointer())->EvaluateParticleGradientMode(idx, d, system, maxA, energyA);
       std::cout << "SAMPLING_GRADIENT_WITH_OFFSET = " << ansA[0] << " " <<  ansA[1] << " " <<  ansA[2] << std::endl;
 
 
@@ -443,7 +445,7 @@ class DualVectorFunction : public VectorFunction {
     double maxA;
     //TODO: Add energy from B to see its ramifications on offset updates 
 
-    ansA = m_FunctionA->EvaluateOffsetGradientMode(idx, d, system, maxA, energyA);
+    ansA = dynamic_cast<CurvatureSamplingFunction*>(m_FunctionA.GetPointer())->EvaluateOffsetGradientMode(idx, d, system, maxA, energyA);
     maxmove = maxA;
     return ansA;
   }
