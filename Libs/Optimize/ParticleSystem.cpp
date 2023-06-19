@@ -194,14 +194,13 @@ const typename ParticleSystem::PointType& ParticleSystem::SetPosition(const Poin
   auto x_tilda = this->GetDomain(d)->SnapToSurface(p, k);
   auto normalAtPos = this->GetDomain(d)->SampleNormalAtPoint(p, k);
   double normalMagnitude = normalAtPos.magnitude();
-  auto unitVectorAlongNormal = (1/normalMagnitude) * normalAtPos;
   double newOffset = 0.0;
   double offsetThreshold = 1.0e-6;
   // offset vector magnitude along the direction of surface normal
   for (unsigned int n = 0; n < VDimension; ++n){
     double offsetDiff_n = (x_tilda[n]-p[n]);
     if (offsetDiff_n < offsetThreshold) newOffset += 0.0;
-    else newOffset += (offsetDiff_n*unitVectorAlongNormal[n]);
+    else newOffset += (offsetDiff_n*normalAtPos[n]/normalMagnitude);
   }
   newOffset = std::abs(newOffset);
   std::string logFileForPOU =  "/home/sci/nawazish.khan/1-robust-expts/ellipsoid/shape_models/ParticleOffsetUpdatesLog.txt";
