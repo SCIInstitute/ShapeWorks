@@ -5,10 +5,9 @@
 namespace py = pybind11;
 using namespace pybind11::literals;  // to bring in the `_a` literal
 
-#include <Shape.h>
 #include <Logging.h>
 #include <Python/PythonWorker.h>
-#include <Logging.h>
+#include <Shape.h>
 
 #include <QFileInfo>
 #include <QMessageBox>
@@ -74,29 +73,28 @@ void PythonWorker::set_vtk_output_window(vtkSmartPointer<StudioVtkOutputWindow> 
 
 //---------------------------------------------------------------------------
 void PythonWorker::start_job(QSharedPointer<Job> job) {
-  if (this->init()) {
+  if (init()) {
     try {
-      this->current_job_ = job;
-      this->current_job_->run();
+      job->start_timer();
+      SW_LOG("Running Task: " + job->name().toStdString());
+      Q_EMIT job->progress(0);
+      current_job_ = job;
+      current_job_->run();
       SW_LOG(current_job_->get_completion_message().toStdString());
     } catch (py::error_already_set& e) {
       SW_ERROR(e.what());
     }
   }
 
-  this->python_logger_->clear_abort();
-  Q_EMIT this->current_job_->finished();
+  python_logger_->clear_abort();
+  if (current_job_) {
+    Q_EMIT current_job_->finished();
+  }
 }
 
 //---------------------------------------------------------------------------
 void PythonWorker::run_job(QSharedPointer<Job> job) {
-  Q_EMIT job->progress(0);
-  SW_LOG("Running Task: " + job->name().toStdString());
-
-  job->start_timer();
-  this->current_job_ = job;
   job->moveToThread(this->thread_);
-
   // run on python thread
   QMetaObject::invokeMethod(this, "start_job", Qt::QueuedConnection, Q_ARG(QSharedPointer<Job>, job));
 }
@@ -203,15 +201,19 @@ bool PythonWorker::init() {
     // search directories in python_path vector for the python executable
     QString python_executable;
 
-    QString path_executable = python_home + "/bin/python";
-    SW_LOG("checking {}", path_executable);
 #ifdef _WIN32
-    path_executable += ".exe";
+    QString path_executable = python_home + "/python.exe";
+#else
+    QString path_executable = python_home + "/bin/python";
 #endif
+    SW_LOG("checking {}", path_executable);
+
     // check that it exists and is a file and is executable
     if (QFile::exists(path_executable) && QFileInfo(path_executable).isFile() &&
         QFile::permissions(path_executable) & QFile::ExeUser) {
       python_executable = path_executable;
+    } else {
+      SW_LOG("Unable to locate python executable");
     }
 
     // set up for multprocessing
@@ -224,6 +226,8 @@ bool PythonWorker::init() {
     this->python_logger_->set_progress_callback(
         std::bind(&PythonWorker::incoming_python_progress, this, std::placeholders::_1));
     py::module logger = py::module::import("logger");
+
+    SW_LOG("Initializing ShapeWorks Python Module");
 
     py::module sw_utils = py::module::import("shapeworks.utils");
 

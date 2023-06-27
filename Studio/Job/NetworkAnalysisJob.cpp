@@ -1,3 +1,4 @@
+#include <Common/Logging.h>
 #include <Libs/Project/Project.h>
 #include <pybind11/eigen.h>
 #include <pybind11/embed.h>
@@ -17,6 +18,8 @@ NetworkAnalysisJob::NetworkAnalysisJob(std::shared_ptr<Project> project, std::st
 
 //---------------------------------------------------------------------------
 void NetworkAnalysisJob::run() {
+  SW_DEBUG("Running network analysis job");
+
   auto group_1_data = this->stats_.get_group1_matrix();
   auto group_2_data = this->stats_.get_group2_matrix();
   py::module sw = py::module::import("shapeworks");
@@ -51,6 +54,7 @@ void NetworkAnalysisJob::run() {
   for (int i = 0; i < spm_values.rows(); i++) {
     spm_values_(i) = spm_values(i, 0);
   }
+  SW_DEBUG("End network analysis job");
 }
 
 //---------------------------------------------------------------------------
