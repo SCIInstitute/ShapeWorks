@@ -2247,7 +2247,7 @@ Reference Domain</string>
             <item>
              <widget class="QLabel" name="particles_label">
               <property name="text">
-               <string>Particles</string>
+               <string>Good/Bad Particles</string>
               </property>
              </widget>
             </item>
