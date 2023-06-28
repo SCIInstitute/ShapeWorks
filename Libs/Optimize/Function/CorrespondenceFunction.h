@@ -21,8 +21,7 @@ class CorrespondenceFunction : public VectorFunction {
   typedef VectorFunction Superclass;
   itkTypeMacro(CorrespondenceFunction, VectorFunction)
 
-
-  typedef shapeworks::ShapeMatrix ShapeDataType;
+      typedef shapeworks::ShapeMatrix ShapeDataType;
   typedef shapeworks::ShapeGradientMatrix ShapeGradientType;
 
   typedef ShapeDataType::DataType DataType;
@@ -49,18 +48,12 @@ class CorrespondenceFunction : public VectorFunction {
   ShapeGradientType* GetShapeGradient() { return m_ShapeGradient.GetPointer(); }
   const ShapeGradientType* GetShapeGradient() const { return m_ShapeGradient.GetPointer(); }
 
+  void SetPointsUpdate(std::shared_ptr<vnl_matrix<double>> points_update) { this->m_PointsUpdate = points_update; }
 
-   void SetPointsUpdate(std::shared_ptr<vnl_matrix<double>> points_update)
-    {
-      this->m_PointsUpdate = points_update;
-    }
+  void SetInputCovarianceMatrix(std::shared_ptr<vnl_matrix<double>> user_input_covariance) {
+    this->m_InputCovariance = user_input_covariance;
+  }
 
-    void SetInputCovarianceMatrix(std::shared_ptr<vnl_matrix<double>> user_input_covariance)
-    {
-        this->m_InputCovariance = user_input_covariance;
-    }
-
-  
   /** The first argument is a pointer to the particle system.  The second
        argument is the index of the domain within that particle system.  The
        third argument is the index of the particle location within the given
@@ -157,6 +150,7 @@ class CorrespondenceFunction : public VectorFunction {
     copy->m_MinimumVariance = this->m_MinimumVariance;
     copy->m_MinimumVarianceDecayConstant = this->m_MinimumVarianceDecayConstant;
     copy->m_PointsUpdate = this->m_PointsUpdate;
+    copy->m_InputCovariance = this->m_InputCovariance;
     copy->m_RecomputeCovarianceInterval = this->m_RecomputeCovarianceInterval;
     copy->m_AttributesPerDomain = this->m_AttributesPerDomain;
     copy->m_DomainsPerShape = this->m_DomainsPerShape;
@@ -196,6 +190,7 @@ class CorrespondenceFunction : public VectorFunction {
 
   typename ShapeDataType::Pointer m_ShapeData;
   typename ShapeGradientType::Pointer m_ShapeGradient;
+  std::shared_ptr<vnl_matrix_type> m_InputCovariance;
 
   virtual void ComputeUpdates(const ParticleSystem* c);
   std::shared_ptr<vnl_matrix_type> m_PointsUpdate;

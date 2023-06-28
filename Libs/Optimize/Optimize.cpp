@@ -30,6 +30,7 @@
 #include "Libs/Optimize/Utils/ObjectReader.h"
 #include "Libs/Optimize/Utils/ObjectWriter.h"
 #include "Libs/Optimize/Utils/ParticleGoodBadAssessment.h"
+#include "Libs/Utils/Utils.h"
 #include "Logging.h"
 #include "Optimize.h"
 #include "OptimizeParameterFile.h"

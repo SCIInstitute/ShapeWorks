@@ -43,14 +43,12 @@ Sampler::Sampler() {
 
   m_EnsembleMixedEffectsEntropyFunction->SetShapeMatrix(m_MixedEffectsShapeMatrix);
 
-  m_CorrespondenceFunction->SetShapeData(m_GeneralShapeMatrix);
-  m_CorrespondenceFunction->SetShapeGradient(m_GeneralShapeGradMatrix);
   m_EnsembleMixedEffectsEntropyFunction->SetPointsUpdate( m_PointsUpdate);
 
-  m_MeshBasedGeneralEntropyGradientFunction->SetShapeData(m_GeneralShapeMatrix);
-  m_MeshBasedGeneralEntropyGradientFunction->SetShapeGradient(m_GeneralShapeGradMatrix);
-  m_MeshBasedGeneralEntropyGradientFunction->SetPointsUpdate( m_PointsUpdate);
-  m_MeshBasedGeneralEntropyGradientFunction->SetInputCovarianceMatrix(m_InputCovariance);
+  m_CorrespondenceFunction->SetShapeData(m_GeneralShapeMatrix);
+  m_CorrespondenceFunction->SetShapeGradient(m_GeneralShapeGradMatrix);
+  m_CorrespondenceFunction->SetPointsUpdate( m_PointsUpdate);
+  m_CorrespondenceFunction->SetInputCovarianceMatrix(m_InputCovariance);
 
   m_ParticleSystem->RegisterObserver(m_LegacyShapeMatrix);
   m_ParticleSystem->RegisterObserver(m_LinearRegressionShapeMatrix);
@@ -408,7 +406,7 @@ std::shared_ptr<vnl_matrix<double>> Sampler::GetInputCovarianceMatrix()
 
 double Sampler::Get_MinimumVariance()
 {
- return this->m_MeshBasedGeneralEntropyGradientFunction->GetMinimumVariance();
+ return this->m_CorrespondenceFunction->GetMinimumVariance();
 }
 
 

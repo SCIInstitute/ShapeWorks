@@ -631,10 +631,7 @@ void ShapeWorksStudioApp::handle_rppca_changed() {
   compute_rppca_mode_shape();
 }
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::handle_rppca_slider_update()
-{
-  analysis_tool_->updateRPPCASlider();
-}
+void ShapeWorksStudioApp::handle_rppca_slider_update() { analysis_tool_->updateRPPCASlider(); }
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::handle_slider_update() { analysis_tool_->update_slider(); }
 
@@ -720,9 +717,7 @@ void ShapeWorksStudioApp::handle_progress_with_message(int value, std::string st
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::handle_progress(int value) {
-  status_bar_->set_progress(value);
-}
+void ShapeWorksStudioApp::handle_progress(int value) { status_bar_->set_progress(value); }
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::set_message(MessageType message_type, QString message) {
@@ -1271,7 +1266,6 @@ void ShapeWorksStudioApp::handle_display_setting_changed() {
   }
 
   update_display(true);
-
 }
 
 //---------------------------------------------------------------------------
@@ -1387,12 +1381,14 @@ void ShapeWorksStudioApp::update_display(bool force) {
         session_->set_display_mode(DisplayMode::Reconstructed);
         display_mode_shape();
         visualizer_->reset_camera();
-      } else if(mode == AnalysisTool::MODE_RPPCA_C){
-        set_view_combo_item_enabled(VIEW_MODE::ORIGINAL, false);
-        set_view_combo_item_enabled(VIEW_MODE::GROOMED, false);
-        set_view_combo_item_enabled(VIEW_MODE::RECONSTRUCTED, true);
-        set_view_mode(Visualizer::MODE_RECONSTRUCTION_C);
-        compute_mode_shape();
+      } else if (mode == AnalysisTool::MODE_RPPCA_C) {
+        set_view_combo_item_enabled(DisplayMode::Original, false);
+        set_view_combo_item_enabled(DisplayMode::Groomed, false);
+        set_view_combo_item_enabled(DisplayMode::Reconstructed, true);
+        session_->set_display_mode(DisplayMode::Reconstructed);
+
+        display_mode_shape();
+
         visualizer_->reset_camera();
       } else if (mode == AnalysisTool::MODE_SINGLE_SAMPLE_C) {
         visualizer_->display_sample(analysis_tool_->get_sample_number());

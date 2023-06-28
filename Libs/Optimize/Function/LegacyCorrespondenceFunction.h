@@ -65,16 +65,12 @@ class LegacyCorrespondenceFunction : public VectorFunction {
   ShapeMatrixType* GetShapeMatrix() { return m_ShapeMatrix.GetPointer(); }
   const ShapeMatrixType* GetShapeMatrix() const { return m_ShapeMatrix.GetPointer(); }
 
- void SetPointsUpdate(std::shared_ptr<vnl_matrix<double>> points_update)
-  {
-    this->m_PointsUpdate = points_update;
-  }
+  void SetPointsUpdate(std::shared_ptr<vnl_matrix<double>> points_update) { this->m_PointsUpdate = points_update; }
 
-  void SetInputCovarianceMatrix(std::shared_ptr<vnl_matrix<double>> user_input_covariance)
-  {
+  void SetInputCovarianceMatrix(std::shared_ptr<vnl_matrix<double>> user_input_covariance) {
     this->m_InputCovariance = user_input_covariance;
   }
-  
+
   /** Called before each iteration of a solver. */
   virtual void BeforeIteration() {
     m_ShapeMatrix->BeforeIteration();
@@ -124,6 +120,7 @@ class LegacyCorrespondenceFunction : public VectorFunction {
     LegacyCorrespondenceFunction::Pointer copy = LegacyCorrespondenceFunction::New();
 
     copy->m_PointsUpdate = this->m_PointsUpdate;
+    copy->m_InputCovariance = this->m_InverseCovMatrix;
     copy->m_MinimumVariance = this->m_MinimumVariance;
     copy->m_MinimumEigenValue = this->m_MinimumEigenValue;
     copy->m_CurrentEnergy = this->m_CurrentEnergy;
@@ -161,6 +158,7 @@ class LegacyCorrespondenceFunction : public VectorFunction {
   void operator=(const LegacyCorrespondenceFunction&);
   LegacyCorrespondenceFunction(const LegacyCorrespondenceFunction&);
   typename ShapeMatrixType::Pointer m_ShapeMatrix;
+  std::shared_ptr<vnl_matrix_type> m_InputCovariance;
 
   virtual void ComputeCovarianceMatrix();
   std::shared_ptr<vnl_matrix_type> m_PointsUpdate;

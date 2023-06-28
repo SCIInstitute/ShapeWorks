@@ -53,8 +53,8 @@ void GradientDescentOptimizer::StartAdaptiveGaussSeidelOptimization() {
   if (this->m_AbortProcessing) {
     return;
   }
-  const double factor = 1.1;
-  if(m_factor!=0) {
+  double factor = 1.1;
+  if (m_factor != 0) {
     factor = m_factor;
   }
 
@@ -238,7 +238,8 @@ void GradientDescentOptimizer::StartAdaptiveGaussSeidelOptimization() {
 }
 
 void GradientDescentOptimizer::AugmentedLagrangianConstraints(VectorType& gradient, const PointType& pt,
-                                                              const size_t& dom, const double& maximumUpdateAllowed, size_t index) {
+                                                              const size_t& dom, const double& maximumUpdateAllowed,
+                                                              size_t index) {
   // Step B 2: Augmented lagrangian constraint method
   double gradmag = gradient.magnitude();
 

@@ -670,7 +670,6 @@ int ParticleShapeStatistics::ComputeModes() {
   return 0;
 }
 
-
 // int ParticleShapeStatistics::ComputeRPPCAMode()
 // {
 //   // Eigen::MatrixXd A = m_pointsMinusMean.transpose()
@@ -679,7 +678,8 @@ int ParticleShapeStatistics::ComputeModes() {
 //   // vnl_matrix<double> vnlA = vnl_matrix<double>(A.data(), A.rows(), A.cols());
 //   // vnl_symmetric_eigensystem<double> symEigen(vnlA);
 
-//   // Eigen::MatrixXd eigenSymEigenV = Eigen::Map<Eigen::MatrixXd>(symEigen.V.transpose().data_block(), symEigen.V.rows(), symEigen.V.cols());
+//   // Eigen::MatrixXd eigenSymEigenV = Eigen::Map<Eigen::MatrixXd>(symEigen.V.transpose().data_block(),
+//   symEigen.V.rows(), symEigen.V.cols());
 //   // Eigen::VectorXd eigenSymEigenD = Eigen::Map<Eigen::VectorXd>(symEigen.D.data_block(), symEigen.D.rows(), 1);
 //   // if(!this->m_rppca_job_done){
 //   //   std::cout << "RPPCA Job Not Run" << std::endl;
@@ -702,21 +702,12 @@ int ParticleShapeStatistics::ComputeModes() {
 
 //   }
 
-
-
 //   return 0;
 // }
 
 int ParticleShapeStatistics::get_num_modes() const { return m_numSamples - 1; }
 
 int ParticleShapeStatistics::PrincipalComponentProjections() {
-
-
-
-
-
-int ParticleShapeStatistics::PrincipalComponentProjections()
-{
   // Now print the projection of each shape
   m_principals.resize(m_numSamples, m_numSamples);
 
