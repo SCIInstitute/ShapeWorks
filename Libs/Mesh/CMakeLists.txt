@@ -34,21 +34,18 @@ target_include_directories(Mesh PUBLIC
  $<INSTALL_INTERFACE:include>
  )
 
-target_link_libraries(
-  Mesh
+target_link_libraries(Mesh PUBLIC
+  ${VTK_LIBRARIES}
   Image
   Common
-  Optimize
+  Alignment
   Utils
   trimesh2
-  vgl
-  vgl_algo
-  ${VTK_LIBRARIES}
   Eigen3::Eigen
   igl::core
   Particles
   TBB::tbb
-  geometry-central
+  ${GEOMETRYCENTRAL_LIBRARY}
   Boost::filesystem
   acvd::acvd
   )
@@ -58,22 +55,15 @@ set_target_properties(Mesh PROPERTIES PUBLIC_HEADER
  "${Mesh_headers};${PreviewMeshQC_headers}"
  )
 
-install(TARGETS Mesh
- ARCHIVE DESTINATION lib
- RUNTIME DESTINATION lib
- LIBRARY DESTINATION lib
- PUBLIC_HEADER DESTINATION include
+install(TARGETS Mesh EXPORT ShapeWorksTargets
+ ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+ RUNTIME DESTINATION ${CMAKE_INSTALL_LIBDIR}
+ LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+ PUBLIC_HEADER DESTINATION include/Mesh
  )
 
 
 
-ADD_EXECUTABLE(shared_boundary_extractor shared_boundary_extractor.cpp)
-TARGET_LINK_LIBRARIES(shared_boundary_extractor ${VTK_LIBRARIES} igl::core)
-INSTALL(TARGETS shared_boundary_extractor RUNTIME DESTINATION bin)
-
-ADD_EXECUTABLE(boundary_loop_extractor boundary_loop_extractor.cpp)
-TARGET_LINK_LIBRARIES(boundary_loop_extractor ${VTK_LIBRARIES} igl::core)
-INSTALL(TARGETS boundary_loop_extractor RUNTIME DESTINATION bin)
 
 #ADD_EXECUTABLE(ComputeGeodesicDistanceToCurve ComputeGeodesicDistanceToCurve.cxx)
 #TARGET_LINK_LIBRARIES(ComputeGeodesicDistanceToCurve ${ITK_LIBRARIES} Mesh tinyxml)

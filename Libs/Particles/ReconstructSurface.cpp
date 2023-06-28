@@ -422,8 +422,8 @@ Eigen::MatrixXd ReconstructSurface<TransformType>::computeParticlesNormals(vtkSm
   VectorImage vectorImage(dt);
   dt.applyGradientFilter();
 
-  VectorImage::ImageIterator gradIter = vectorImage.setIterator();
-  Image::ImageIterator magIter = dt.setIterator();
+  VectorImage::ImageIterator gradIter = vectorImage.iterator();
+  Image::ImageIterator magIter = dt.iterator();
 
   Image::ImageType::Pointer nxImage = Image::ImageType::New();
   nxImage->SetRegions(dt.getITKImage()->GetLargestPossibleRegion());
@@ -1062,7 +1062,7 @@ void ReconstructSurface<TransformType>::samplesAlongPCAModes(const std::vector<s
 
     // writing stds on file
     std::string stdfilename = cur_path + "/" + prefix + "mode-" + modeStr + "_stds.txt";
-    ofstream ofs(stdfilename.c_str());
+    std::ofstream ofs(stdfilename.c_str());
 
     if (!ofs)
       throw std::runtime_error("Could not open file for output: " + stdfilename);

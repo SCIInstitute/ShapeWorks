@@ -16,24 +16,29 @@ import subprocess
 
 def Run_Pipeline(args):
     """
-    Download supershapes data. Refer to `generate_supershapes` in this file to see the generation
-    process
+    Step 1: ACQUIRE DATA
+
+    We define dataset_name which determines which dataset to download from 
+    the portal and the directory to save output from the use case in. 
     """
-    print("\nStep 1. Extract Data\n")
-    dataset_name = "peanut"
+    print("\nStep 1. Acquire Data\n")
     output_directory = "Output/peanut_shared_boundary/"
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
 
     # If running a tiny_test, then download subset of the data
     if args.tiny_test:
+        dataset_name = "peanut_shared_boundary_tiny_test"
         args.use_single_scale = 1
-        sw.data.download_subset(args.use_case, dataset_name, output_directory)
+        sw.download_dataset(dataset_name, output_directory)
+        dataset_name = "peanut"
         mesh_files = sorted(glob.glob(output_directory +
                             dataset_name + "/meshes/*.stl"))[:2]
     # Else download the entire dataset
     else:
-        sw.data.download_and_unzip_dataset(dataset_name, output_directory)
+        dataset_name = "peanut_shared_boundary"
+        sw.download_dataset(dataset_name, output_directory)
+        dataset_name = "peanut"
         mesh_files = sorted(glob.glob(output_directory +
                                      dataset_name + "/meshes/*.stl"))
 
@@ -48,7 +53,7 @@ def Run_Pipeline(args):
     The required grooming steps are: 
     1. Remesh 
     2. Extract Shared Boundary Surface
-    3. Smooth? 
+    3. Smooth
     4. Extract Boundary Loop contours
     """
 
@@ -76,7 +81,7 @@ def Run_Pipeline(args):
         mesh = sw.Mesh(mesh_file)
         # do initial grooming steps
         print("Grooming: " + mesh_name)
-        mesh.remeshPercent(percentage=60, adaptivity=1.0)
+        mesh.remeshPercent(percentage=0.99, adaptivity=1.0)
         # append to the mesh list
         mesh_list.append(mesh)
 
@@ -94,7 +99,7 @@ def Run_Pipeline(args):
     extracted_meshes = []
     extracted_shared_names = [mesh_names[i].replace("l","s") for i in domain1_indx]
     # distance threshold to consider two surfaces as "shared"
-    tol = 1e-3
+    tol = 1e-1
     num_init_domains = 2 # left and right
     for i in range(len(domain1_indx)):
         mesh_l = mesh_list[domain1_indx[i]]
@@ -102,8 +107,8 @@ def Run_Pipeline(args):
         print("Extracting shared surface between files: ", mesh_names[i*num_init_domains],"\t",mesh_names[i*num_init_domains+1])
         extracted_l,extracted_r,extracted_s = sw.MeshUtils.sharedBoundaryExtractor(mesh_l,mesh_r,tol)
         #smooth the meshes 
-        extracted_l.smooth()
-        extracted_r.smooth()
+        extracted_l.remeshPercent(percentage=0.99, adaptivity=1.0).smooth()
+        extracted_r.remeshPercent(percentage=0.99, adaptivity=1.0).smooth()
         extracted_s.smooth()
         # append the extracted meshes to list
         extracted_meshes.append(extracted_l)
@@ -142,7 +147,7 @@ def Run_Pipeline(args):
     """
 
     # Create project spreadsheet
-    project_location = output_directory + "shape_models/"
+    project_location = output_directory 
     if not os.path.exists(project_location):
         os.makedirs(project_location)
     domains_per_shape = 4
@@ -188,7 +193,6 @@ def Run_Pipeline(args):
         "optimization_iterations" : 2500,
         "starting_regularization" :100,
         "ending_regularization" : 0.01,
-        "domains_per_shape" : 4,
         "relative_weighting" : 12, 
         "initial_relative_weighting" : 0.01,
         "procrustes_interval" : 3,
@@ -196,8 +200,6 @@ def Run_Pipeline(args):
         "save_init_splits" : 0,
         "verbosity" : 0,
         "multiscale_particles" : 8,
-        "recompute_regularization_interval" : 2
-
       }
 
     # If running a tiny test, reduce some parameters
@@ -212,16 +214,15 @@ def Run_Pipeline(args):
         parameters.set(key, sw.Variant([parameter_dictionary[key]]))
     parameters.set("number_of_particles" ,sw.Variant(num_particles))
     project.set_parameters("optimize", parameters)
-    
-    spreadsheet_file = output_directory + "shape_models/peanut_shared_boundary_" + args.option_set + ".xlsx"
+    spreadsheet_file = output_directory + "peanut_shared_boundary_" + args.option_set + ".swproj"
     project.save(spreadsheet_file)
 
     # Run optimization
-    optimize_cmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
+    optimize_cmd = ('shapeworks optimize --progress --name ' + spreadsheet_file).split()
     subprocess.check_call(optimize_cmd)
 
     # If tiny test or verify, check results and exit
-    sw.utils.check_results(args, spreadsheet_file)
+    sw.utils.check_results_pattern(args, spreadsheet_file, "l_world")
 
     print("\nStep 4. Analysis - Launch ShapeWorksStudio")
     """

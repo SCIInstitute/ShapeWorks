@@ -37,7 +37,7 @@ sys.stdout = Logger()
 async def read_stream(stream, callback):
     try:
         while True:
-            line = await stream.readline()
+            line = await stream.read(80)
             if line:
                 callback(line)
             else:
@@ -48,21 +48,18 @@ async def read_stream(stream, callback):
 
 async def run_command(args):
     proc = await asyncio.subprocess.create_subprocess_exec(
-        *args, stdout=asyncio.subprocess.PIPE
+        *args, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE, limit=2**25,
     )
 
-    await asyncio.wait(
-        [
-            read_stream(
-                proc.stdout,
-                lambda x: sys.stdout.write(x.decode("UTF8")),
-            ),
-            read_stream(
-                proc.stderr,
-                lambda x: sys.stdout.write(x.decode("UTF8")),
-            ),
-        ]
+    loop = asyncio.get_event_loop()
+    task1 = loop.create_task(
+        read_stream(proc.stdout, lambda x: sys.stdout.write(x.decode("UTF8")))
     )
+    task2 = loop.create_task(
+        read_stream(proc.stderr, lambda x: sys.stdout.write(x.decode("UTF8")))
+    )
+
+    await asyncio.wait({task1, task2})
 
     await proc.wait()
     success = (proc.returncode == 0)
@@ -102,34 +99,37 @@ def main():
     run_case("ellipsoid_mesh --tiny_test")
     run_case("ellipsoid_fd --tiny_test")
     run_case("ellipsoid_cut --tiny_test")
-    run_case("lumps --tiny_test")
-    run_case("left_atrium --tiny_test")
-    run_case("ellipsoid --tiny_test")
-    run_case("ellipsoid_mesh --tiny_test")
-    run_case("ellipsoid_fd --tiny_test")
-    run_case("ellipsoid_cut --tiny_test")
-    run_case("lumps --tiny_test")
-    run_case("left_atrium --tiny_test")
-    run_case("femur_cut --tiny_test")
-    run_case("deep_ssm --tiny_test")
-    run_case("supershapes_1mode_contour --tiny_test")
-    run_case("thin_cavity_bean --tiny_test")
     run_case("ellipsoid_multiple_domain --tiny_test")
     run_case("ellipsoid_multiple_domain_mesh --tiny_test")
     run_case("ellipsoid_pca --tiny_test")
+    run_case("lumps --tiny_test")
+    run_case("left_atrium --tiny_test")
+    run_case("femur_cut --tiny_test")
+    run_case("femur_pvalues --tiny_test")
+    run_case("supershapes_1mode_contour --tiny_test")
+    run_case("thin_cavity_bean --tiny_test")
+    run_case("peanut_shared_boundary --tiny_test")
+    run_case("incremental_supershapes --tiny_test")
+    run_case("hip_multiple_domain --tiny_test")
+    run_case("deep_ssm --tiny_test")
 
     if not args.tiny_test:
         run_case("ellipsoid --verify")
-        run_case("ellipsoid_cut --verify")
-        run_case("ellipsoid_fd --verify")
         run_case("ellipsoid_mesh --verify")
+        run_case("ellipsoid_fd --verify")
+        run_case("ellipsoid_cut --verify")
         run_case("ellipsoid_multiple_domain --verify")
         run_case("ellipsoid_multiple_domain_mesh --verify")
-        run_case("femur_cut --verify")
-        run_case("left_atrium --verify")
+        run_case("ellipsoid_pca --verify")
         run_case("lumps --verify")
-        run_case("thin_cavity_bean --verify")
+        run_case("left_atrium --verify")
+        run_case("femur_cut --verify")
+        run_case("femur_pvalues --verify")
         run_case("supershapes_1mode_contour --verify")
+        run_case("thin_cavity_bean --verify")
+        run_case("peanut_shared_boundary --verify")
+        run_case("incremental_supershapes --verify")
+        run_case("hip_multiple_domain --verify")
     #        run_case("deep_ssm --verify")
 
     end = time.time()

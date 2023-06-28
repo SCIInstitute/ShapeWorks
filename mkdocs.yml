@@ -1,12 +1,13 @@
 site_name: ShapeWorks
-site_url: http://www.sci.utah.edu/software/shapeworks.html
+site_url: https://www.sci.utah.edu/software/shapeworks.html
 repo_url: https://github.com/SCIInstitute/ShapeWorks
+repo_name: SCIInstitute/ShapeWorks
 edit_uri: edit/master/docs/ # should be changed to master branch
-site_description: The official documentation of ShapeWorks 
+site_description: The official documentation of ShapeWorks
 site_author: Shireen Elhabian et al.
 use_directory_urls: false
 docs_dir: 'docs/'
-copyright: Copyright © 1998 - 2021 Scientific Computing and Imaging Institute. All rights reserved. This project is supported by the National Institutes of Health under grant numbers NIBIB-U24EB029011, NIAMS-R01AR076120, NHLBI-R01HL135568, NIBIB-R01EB016701, and NIGMS-P41GM103545. Software maintenance and support are provided within the funding period.
+copyright: Copyright © 1998 - 2022 Scientific Computing and Imaging Institute. All rights reserved. This project is supported by the National Institutes of Health under grant numbers NIBIB-U24EB029011, NIAMS-R01AR076120, NHLBI-R01HL135568, NIBIB-R01EB016701, and NIGMS-P41GM103545. Software maintenance and support are provided within the funding period.
 google_analytics: ['UA-36723568-3', 'mkdocs.org']
 
 nav:
@@ -14,8 +15,8 @@ nav:
 - Getting Started:
    - 'Shapes, What & From Where?':           'getting-started/shapes.md'
    - 'Shape Modeling Workflow':              'getting-started/workflow.md'
-   - 'ShapeWorks Success Stories':           'getting-started/sw-stories.md'   
-   - 'ShapeWorks Interfaces':                'getting-started/interfaces.md'   
+   - 'ShapeWorks Success Stories':           'getting-started/sw-stories.md'
+   - 'ShapeWorks Interfaces':                'getting-started/interfaces.md'
    - 'Examples':                             'getting-started/examples.md'
    - 'How-Tos':                              'getting-started/how-tos.md'
 - For Users:
@@ -24,7 +25,9 @@ nav:
    - 'Revelant Papers':                      'users/papers.md'
 - Workflow:
    - 'How to Groom Your Dataset?':           'workflow/groom.md'
-   - 'How to Optimize Your Shape Model?' :   'workflow/optimize.md'        
+   - Shape Model Optimization:
+      - 'How to Optimize Your Shape Model?': 'workflow/optimize.md'
+      - 'Optimization Parameters':           'workflow/parameters.md'
    - 'How to Analyze Your Shape Model?' :    'workflow/analyze.md'     
 - What is New?:
    - 'New in ShapeWorks Studio':             'new/new-studio.md'
@@ -34,15 +37,31 @@ nav:
    - 'Shape Model Evaluation':               'new/ssm-eval.md'
    - 'ShapeWorks in Python':                 'new/shapeworks-python.md'
    - 'Ellipsoid Joint Generation':           'new/ellipsoid-joint-generation.md'
+- ShapeWorks Studio:
+   - 'Getting Started':                      'studio/getting-started-with-studio.md'
+   - 'Viewer Controls':                      'studio/studio-viewer.md'
+   - 'Export Options':                       'studio/studio-export.md'
+   - 'Data Module':                          'studio/studio-data.md'
+   - 'Groom Module':                         'studio/studio-groom.md'
+   - 'Optimize Module':                      'studio/studio-optimize.md'
+   - 'Analyze Module':                       'studio/studio-analyze.md'
+   - 'DeepSSM Module':                       'studio/deepssm-in-studio.md'
+   - 'Multiple Domains SSM':                 'studio/multiple-domains.md'
+- ShapeWorks Cloud:
+   - 'Getting Started':                      'cloud/getting-started-with-cloud.md'
+   - 'Datasets':                             'cloud/cloud-dataset.md'
+   - 'Projects':                             'cloud/cloud-project.md'
+   - 'Data Module':                          'cloud/cloud-data-module.md'
+   - 'Groom Module':                         'cloud/cloud-groom-module.md'
+   - 'Optimize Module':                      'cloud/cloud-optimize-module.md'
+   - 'Analyze Module':                       'cloud/cloud-analyze-module.md'
+   - 'Shape Viewer':                         'cloud/cloud-shape-viewer.md'
+   - 'ShapeWorks Cloud Client':              'cloud/swcc.md'
 - ShapeWorks Tools:
    - 'ShapeWorks Commands': 'tools/ShapeWorksCommands.md'
-- ShapeWorks Studio:
-   - 'Getting Started With ShapeWorks Studio': 'studio/getting-started-with-studio.md'
-   - 'Multiple Domains SSM': 'studio/multiple-domains.md'
-   - 'DeepSSM in Studio': 'studio/deepssm-in-studio.md'
 - ShapeWorks in Python:
-   - 'Getting Started with Notebooks' :               'notebooks/getting-started-with-notebooks.ipynb'  
-   - 'Getting Started with Segmentations' :           'notebooks/getting-started-with-segmentations.ipynb'  
+   - 'Getting Started with Notebooks' :               'notebooks/getting-started-with-notebooks.ipynb'
+   - 'Getting Started with Segmentations' :           'notebooks/getting-started-with-segmentations.ipynb'
    - 'Getting Started with Meshes' :                  'notebooks/getting-started-with-meshes.ipynb'
    - 'Getting Started with Exploring Segmentations' : 'notebooks/getting-started-with-exploring-segmentations.ipynb'
    - 'Getting Started with Data Augmentation' :       'notebooks/getting-started-with-data-augmentation.ipynb'
@@ -59,27 +78,34 @@ nav:
    - Segmentation Based Use Cases:
       - 'Ellipsoid: Basic Example':                                  'use-cases/segmentation-based/ellipsoid.md'
       - 'Left Atrium: Shape Model from Segmentations':               'use-cases/segmentation-based/left-atrium.md'
-      - 'Fixed Domains Ellipsoid: Shape Model on New Shapes':        'use-cases/segmentation-based/fixed-domain-ellipsoid.md'
       - 'Shape Model for Multiple Domains from Segmentations':       'use-cases/segmentation-based/ellipsoid-multiple-domain.md'
    - Mesh Based Use Cases:
       - 'Ellipsoid Mesh: Basic Example':                             'use-cases/mesh-based/ellipsoid_mesh.md'
       - 'Lumps: Shape Model directly from Mesh':                     'use-cases/mesh-based/lumps.md'
       - 'Thin Cavity Bean: Shape Model with Geodesic Distances':     'use-cases/mesh-based/thin-cavity-bean.md'
       - 'Shape Model for Multiple Domains directly from Mesh':       'use-cases/mesh-based/ellipsoid-multiple-domain-mesh.md'
+      - 'Hip: Multiple Domains Alignment':                           'use-cases/mesh-based/hip.md'
    - Contour Based Use Cases:
       - 'Supershapes:Shape Model for Contour Domains':               'use-cases/contour-based/supershapes-contour.md'
    - Constraints Based Use Cases:
       - 'Ellipsoid: Shape Model with Cutting Planes':                'use-cases/constraint-based/ellipsoid-cutting-planes.md'
       - 'Femur:Shape Model with Cutting Planes':                     'use-cases//constraint-based/femur-cutting-planes.md'
+      - 'Studio Femur: Shape Model from Meshes with Cutting Planes Using Studio': 'use-cases//constraint-based/femur-cutting-planes-studio.md'
+   - Multi-Step Optimization Use Cases:
+      - 'Fixed Domains Ellipsoid: Shape Model on New Shapes':        'use-cases/multistep/fixed-domain-ellipsoid.md'
+      - 'Incremental Supershapes: Building a Shape Model Incrementally': 'use-cases/multistep/incremental_supershapes.md'
    - Statistics Based Use Cases:
-      - 'Ellipsoid: Shape Statistics in Python':                     'use-cases/stats-based/ellipsoid-pca.md'   
+      - 'Ellipsoid: Shape Statistics in Python':                     'use-cases/stats-based/ellipsoid-pca.md'
       - 'Femur: Group Difference Statistics in Python':              'use-cases/stats-based/femur-pvalues.md'
       - 'Ellipsoid: Shape Evaluation in Python':                     'use-cases/stats-based/ellipsoid-evaluate.md'
    - Deep Learning Based Use Cases:
       - 'Femur SSM Directly from Images':                            'use-cases/deep-learning-based/deep-ssm-femur.md'
+   - Shared Boundary Use Cases:
+      - 'Peanut:Shape Model of Multiple Domains with Shared Boundaries': 'use-cases/shared-boundary-based/peanut.md'
    - 'Right Ventricle: Highly Variable Shapes':                      'use-cases/right-ventricle.md'
-   
+
 - For Developers:
+   - 'Onboarding':                           'dev/onboarding.md'
    - 'How to Build ShapeWorks from Source?': 'dev/build.md'
    - 'How to Contribute to ShapeWorks?':     'dev/contribute.md'
    - 'How to Add ShapeWorks Commands?':      'dev/commands.md'
@@ -94,7 +120,10 @@ nav:
    - 'Getting Started with Markdown':        'dev/markdown.md'
    - 'Adding to PATH Environment Variable':  'dev/paths.md'
 
-- API Reference:
+- Python API Reference: 'python/python-api.md'
+     
+- C++ API Reference:
+   - ShapeWorks as a Library: 'dev/shapeworks-library.md'
    - Groups:     'api/Modules/index_groups.md'
    - Namespaces: 'api/Namespaces/index_namespaces.md'
    - Classes:    'api/Classes/index_classes.md'
@@ -105,20 +134,31 @@ nav:
    - 'Release Notes':      'about/release-notes.md'
    - 'License':            'about/license.md'
    - 'Contact Us':         'about/contact.md'
- 
+
 
 theme:
-   name: readthedocs #rtd-dropdown #readthedocs #yeti  #united  #spacelab  #sandstone  #minty #lumen #flatly
+   name: material #readthedocs #rtd-dropdown #readthedocs #yeti  #united  #spacelab  #sandstone  #minty #lumen #flatly
+   logo: assets/shapeworks-logo-small.png
    include_sidebar: true
    highlightjs: true
    hljs_languages:
       - yaml
       - python
       - c++
+   # features:     // pretty cool, and not necessarily problems, but leaving it off for now
+   #  - navigation.instant
+   palette:
+    - scheme: default
+      toggle:
+        icon: material/eye-outline
+        name: Switch to dark mode
+    - scheme: slate
+      toggle:
+        icon: material/eye
+        name: Switch to light mode
 
 markdown_extensions:
    - attr_list
-   - fontawesome_markdown
    - pymdownx.tasklist
    - mdx_math
    - admonition
@@ -133,10 +173,23 @@ extra_css:
 extra_javascript:
   - assets/mathjaxhelper.js
   - https://polyfill.io/v3/polyfill.min.js?features=es6
-  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js  
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
 
 plugins:
   - search
+  - mkdocstrings:
+      handlers:
+        python:
+          selection:
+            docstring_style: google
+            docstring_options:
+              ignore_init_summary: yes
+          setup_commands:
+            - "import sys"
+            - "print(sys.path)"
+            - "import shapeworks"
+          rendering:
+            merge_init_into_class: yes
   - mkdocs-jupyter:
       execute: False
       include_source: True
@@ -147,3 +200,11 @@ plugins:
       javascript_dir: js       # the directory to put the version selector's JS
       canonical_version: null  # the version for <link rel="canonical">; `null`
                                # uses the version specified via `mike deploy`
+
+# for material theme, mike versioning is supported as an extra
+extra:
+  version:
+    provider: mike
+  analytics:
+    provider: google
+    property: UA-36723568-3

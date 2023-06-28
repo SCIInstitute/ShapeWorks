@@ -16,12 +16,14 @@ def Run_Pipeline(args):
     Download supershapes data. Refer to `generate_supershapes` in this file to see the generation
     process
     """
-    print("\nStep 1. Extract Data\n")
-    dataset_name = "supershapes2D_1mode"
+    print("\nStep 1. Acquire Data\n")
+    dataset_name = "supershapes_1mode"
     output_directory = "Output/supershapes_1mode_contour/"
-
+    if not os.path.exists(output_directory):
+        os.makedirs(output_directory)
     # See the generate_supershapes() function in this file for how the data is generated
-    sw.data.download_and_unzip_dataset(dataset_name, output_directory)
+    sw.download_dataset(dataset_name, output_directory)
+    dataset_name = "supershapes2D_1mode"
     contour_files = sorted(glob.glob(output_directory + dataset_name + "/contours/*.vtp"))
     
     """
@@ -40,7 +42,7 @@ def Run_Pipeline(args):
     Step 3: OPTIMIZE - Particle Based Optimization
     """
      # Create project spreadsheet
-    project_location = output_directory + "shape_models/"
+    project_location = output_directory
     if not os.path.exists(project_location):
         os.makedirs(project_location)
     # Set subjects
@@ -73,8 +75,6 @@ def Run_Pipeline(args):
         "optimization_iterations" : 500,
         "starting_regularization" : 100,
         "ending_regularization" : 1,
-        "recompute_regularization_interval" : 1,
-        "domains_per_shape" : 1,
         "relative_weighting" : 5,
         "initial_relative_weighting" : 0.1,
         "procrustes" : 1,
@@ -83,22 +83,23 @@ def Run_Pipeline(args):
         "save_init_splits" : 0,
         "verbosity" : 0,
         "multiscale": 1,
-        "multiscale_particles": 4,
+        "multiscale_particles": 8,
       }
     # If running a tiny test, reduce some parameters
     if args.tiny_test:
         parameter_dictionary["number_of_particles"] = 32
         parameter_dictionary["optimization_iterations"] = 25
+        parameter_dictionary["multiscale_particles"] = 4
 
     # Add param dictionary to spreadsheet
     for key in parameter_dictionary:
         parameters.set(key,sw.Variant([parameter_dictionary[key]]))
     project.set_parameters("optimize",parameters)
-    spreadsheet_file = output_directory + "shape_models/supershapes_1mode_contour_" + args.option_set+ ".xlsx"
+    spreadsheet_file = project_location + "supershapes_1mode_contour_" + args.option_set+ ".swproj"
     project.save(spreadsheet_file)
 
     # Run optimization
-    optimize_cmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
+    optimize_cmd = ('shapeworks optimize --progress --name ' + spreadsheet_file).split()
     subprocess.check_call(optimize_cmd)
 
     # If tiny test or verify, check results and exit

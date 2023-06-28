@@ -10,29 +10,32 @@ import subprocess
 import shapeworks as sw
 
 def Run_Pipeline(args):
-    print("\nStep 1. Extract Data\n")
+    print("\nStep 1. Acquire Data\n")
     """
-    Step 1: EXTRACT DATA
+    Step 1: ACQUIRE DATA
     We define dataset_name which determines which dataset to download from 
     the portal and the directory to save output from the use case in. 
     """
-    dataset_name = "ellipsoid_1mode"
+    dataset_name = "ellipsoid_mesh"
     output_directory = "Output/ellipsoid_mesh/"
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
 
     # If running a tiny_test, then download subset of the data
     if args.tiny_test:
+        dataset_name = "ellipsoid_mesh_tiny_test"
         args.use_single_scale = 1
-        sw.data.download_subset(args.use_case, dataset_name, output_directory)
+        sw.download_dataset(dataset_name, output_directory)
+        dataset_name = "ellipsoid_1mode"
         mesh_files = sorted(glob.glob(output_directory +
                             dataset_name + "/meshes/*.vtk"))[:3]
     # else download the entire dataset
     else:
-        sw.data.download_and_unzip_dataset(dataset_name, output_directory)
+        dataset_name = "ellipsoid_mesh"
+        sw.download_dataset(dataset_name, output_directory)
+        dataset_name = "ellipsoid_1mode"
         mesh_files = sorted(glob.glob(output_directory +
                             dataset_name + "/meshes/*.vtk"))
-
         # Select data if using subsample
         if args.use_subsample:
             inputMeshes =[sw.Mesh(filename) for filename in mesh_files]
@@ -52,7 +55,7 @@ def Run_Pipeline(args):
     """
 
     # Create a directory for groomed output
-    groom_dir = output_directory + 'groomed/'
+    groom_dir = output_directory + 'groomed_tinytest/'
     if not os.path.exists(groom_dir):
         os.makedirs(groom_dir)
 
@@ -68,7 +71,7 @@ def Run_Pipeline(args):
         """
         Grooming Step 1: load mesh and remesh
         """
-        mesh = sw.Mesh(mesh_file).remeshPercent(percentage=99, adaptivity=1.0)
+        mesh = sw.Mesh(mesh_file).remeshPercent(percentage=0.99, adaptivity=1.0)
         # append to the list
         mesh_list.append(mesh)
 
@@ -112,7 +115,7 @@ def Run_Pipeline(args):
     """
 
     # Create project spreadsheet
-    project_location = output_directory + "shape_models/"
+    project_location = output_directory
     if not os.path.exists(project_location):
         os.makedirs(project_location)
     # Set subjects
@@ -138,15 +141,13 @@ def Run_Pipeline(args):
     parameter_dictionary = {
         "number_of_particles": 128,
         "use_normals": 0,
-        "normal_weight": 10.0,
+        "normals_strength": 10.0,
         "checkpointing_interval": 1000,
         "keep_checkpoints": 0,
         "iterations_per_split": 1000,
         "optimization_iterations": 1000,
         "starting_regularization": 10,
         "ending_regularization": 1,
-        "recompute_regularization_interval": 1,
-        "domains_per_shape": 1,
         "relative_weighting": 1,
         "initial_relative_weighting": 0.05,
         "procrustes_interval": 0,
@@ -167,13 +168,12 @@ def Run_Pipeline(args):
     # Add param dictionary to spreadsheet
     for key in parameter_dictionary:
         parameters.set(key, sw.Variant([parameter_dictionary[key]]))
-    parameters.set("domain_type",sw.Variant('mesh'))
     project.set_parameters("optimize", parameters)
-    spreadsheet_file = output_directory + "shape_models/ellipsoid_mesh_" + args.option_set+ ".xlsx"
+    spreadsheet_file = project_location + "ellipsoid_mesh_" + args.option_set+ ".swproj"
     project.save(spreadsheet_file)
 
     # Run optimization
-    optimize_cmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
+    optimize_cmd = ('shapeworks optimize --progress --name ' + spreadsheet_file).split()
     subprocess.check_call(optimize_cmd)
 
     # If tiny test or verify, check results and exit

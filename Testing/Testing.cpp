@@ -12,8 +12,10 @@ void setupenv(const std::string& testDirectory) {
   std::string data(TEST_DATA_DIR);
 #ifdef _WIN32
   _putenv_s("DATA", data.c_str());
+  _putenv_s("VTK_SMP_BACKEND_IN_USE", "Sequential");
 #else
   setenv("DATA", data.c_str(), true);
+  setenv("VTK_SMP_BACKEND_IN_USE", "Sequential", true);
 #endif
 }
 
@@ -33,7 +35,7 @@ TestUtils::~TestUtils() {
   if (!temp_base_.empty() && !should_keep_dir()) {
     try {
       boost::filesystem::remove_all(temp_base_);
-    } catch (std::exception &e) {
+    } catch (std::exception& e) {
       std::cerr << "Error removing test output directory: " << temp_base_ << "\n";
       std::cerr << "Error: " << e.what();
     }
@@ -60,6 +62,13 @@ std::string TestUtils::get_output_dir(std::string test_name) {
 }
 
 //-----------------------------------------------------------------------------
+void TestUtils::prep_temp(std::string test_folder, std::string test_name) {
+  auto temp_dir = get_output_dir(test_name);
+  recursive_copy(test_folder, temp_dir);
+  boost::filesystem::current_path(temp_dir);
+}
+
+//-----------------------------------------------------------------------------
 bool TestUtils::should_keep_dir() {
   bool keep = false;
   const char* keep_env = getenv("SW_KEEP_TEST_OUTPUT");
@@ -71,5 +80,23 @@ bool TestUtils::should_keep_dir() {
 
   return keep;
 }
+
+//-----------------------------------------------------------------------------
+void TestUtils::recursive_copy(const boost::filesystem::path& src, const boost::filesystem::path& dst) {
+  // adapted from https://gist.github.com/ssteffl/30055ac128bb92801568899ebad73365
+
+  if (boost::filesystem::is_directory(src)) {
+    boost::filesystem::create_directories(dst);
+    for (boost::filesystem::directory_entry& item : boost::filesystem::directory_iterator(src)) {
+      recursive_copy(item.path(), dst / item.path().filename());
+    }
+  } else if (boost::filesystem::is_regular_file(src)) {
+    boost::filesystem::copy(src, dst);
+  } else {
+    throw std::runtime_error(dst.generic_string() + " not dir or file");
+  }
+}
+
+//-----------------------------------------------------------------------------
 
 }  // namespace shapeworks

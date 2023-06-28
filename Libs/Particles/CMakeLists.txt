@@ -1,7 +1,7 @@
 # Particles library
 
 set(Particles_sources
- ParticleSystem.cpp
+        ParticleSystemEvaluation.cpp
  ParticleShapeStatistics.cpp
  ShapeEvaluation.cpp
  ReconstructSurface.cpp
@@ -9,7 +9,7 @@ set(Particles_sources
  )
 
 set(Particles_headers
- ParticleSystem.h
+        ParticleSystemEvaluation.h
  ParticleShapeStatistics.h
  itkParticlePositionReader.h
  itkParticlePositionWriter.h
@@ -31,6 +31,7 @@ target_include_directories(Particles PUBLIC
 
 target_link_libraries(Particles PUBLIC
   Mesh
+  Optimize
   tinyxml
   Eigen3::Eigen
   )
@@ -40,9 +41,9 @@ set_target_properties(Particles PROPERTIES PUBLIC_HEADER
   "${Particles_headers}"
   )
 
-install(TARGETS Particles
-  ARCHIVE DESTINATION lib
-  RUNTIME DESTINATION lib
-  LIBRARY DESTINATION lib
+install(TARGETS Particles EXPORT ShapeWorksTargets
+  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  RUNTIME DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
   PUBLIC_HEADER DESTINATION include
   )

@@ -1,6 +1,118 @@
 # Release Notes
 
+## ShapeWorks 6.4.1 - 2023-05-10
 
+### Fixes
+
+  * Fix grooming crash when there are free form constraints in an untitled/unsaved project (#2078)
+  * Fix update checker potentially crashing (#2079)
+
+
+## ShapeWorks 6.4.0 - 2023-05-05
+
+![](../img/about/release6.4.png)
+
+### What is new?
+  * **ShapeWorks Back-end**
+    * New shapeworks 'analyze' command for offline analysis of shape models
+    * Improved free form constraints that now support doubly connected areas (e.g. donut-like)
+    * Data Portal migrated to new ShapeWorks Cloud and swcc (ShapeWorks Cloud Client) tool
+    * ShapeWorks can now be used as a 3rd party library ([details here](../dev/shapeworks-library.md))
+    * Added support for 'save_init_splits' and 'checkpointing_interval' parameters in the project spreadsheet formats
+    * Added new JSON based file format for storing ShapeWorks projects (swproj)
+    * Added a unified logging library for ShapeWorks (spdlog)
+    * Uniform numerical computation of specificity across platforms
+    * Updated dependencies.  Python now at 3.9, PyTorch 1.11.0, VTK 9.1, ITK 5.2.1
+  * **ShapeWorks Front-end**
+    * Studio can now automatically check for updates and prompt the user to download them
+    * Improved progress bar in Studio is more representative and also estimates time remaining
+    * Added ability to arbitrarily scale difference arrows in Studio
+    * Added file association support for swproj file extension on Windows and Mac
+    * New multi-level analysis feature in Studio ([details here](../studio/studio-analyze.md#multi-level-pca))
+    * Added ability to hide/show particles per domain
+  * **User's Support**
+    * Hip Use Case: The use case uses the hip joint to demonstrate the capability of ShapeWorks 
+      to capture inter-domain correlations and interactions directly on triangular surface meshes. 
+      The use case showcases calculating the alignment options available for multiple organ anatomies.
+      ([details here](../use-cases/mesh-based/hip.md))
+    * Added options to the incremental use case when run in --interactive mode, including sorting method, 
+      initial model size, and incremental batch size. The sorting method determines how the shapes are sorted 
+      to be added incrementally. There are three options: random, median, distribution.
+      ([details here](../use-cases/multistep/incremental_supershapes.md))
+    * [Python API documentation](../python/python-api.md) has been added to the ShapeWorks documentation site
+
+### Fixes
+  * Fix Studio python problem causing crash on group differences (#1781)
+  * Fix Studio slow/hanging on certain free form constraints (#1817, #1801)
+  * Fix crashes on certain projects (#1800, #1815)
+  * Fix procrustes with multi-domain models (#1755)
+  * Fixed crashes in groom due to multi-threading (#1944)
+
+## ShapeWorks 6.3.2 - 2022-10-04
+### Fixes
+
+  * Fix install_shapeworks.sh on Linux (#1883)
+
+
+## ShapeWorks 6.3.1 - 2022-07-22
+
+### Fixes
+  * Fix Studio python problem causing crash on group differences (#1781)
+  * Fix Studio slow/hanging on certain free form constraints (#1817, #1801)
+  * Fix crashes on certain projects (#1800, #1815)
+
+
+---
+## ShapeWorks 6.3.0 - 2022-06-09
+
+
+![](../img/about/release6.3.png)
+
+### What is new?
+  * **ShapeWorks Back-end**
+    * Added constraints functionality for the mesh domain both clipping and augmented lagrangian together with a flag to flip between the two options.
+    * Group Difference Statistics in Python can now perform LDA.  The use case also demonstrates Linear Discrimination of Variation (LDA) for analyzing shape variation between the subgroups.
+  * **ShapeWorks Front-end**
+    * New selectable and configurable colormap support
+    * Added new support for showing the difference to the mean for any given mesh (subjects or generated PCA mode positions)
+    * Added new support for displaying multiple image types (e.g. original vs groomed) with individual opacity settings. Also ability to show surface to surface distance.
+    * The multiple domains groom section has been upgraded to its own panel for better UI consistency. A new checkbox for applying grooming steps to all domains has been added to assist when many domains are in use
+    * A new image export dialog as been added with various export options
+    * PCA Montage and Fringe plot export.  Building on the image export dialog, the PCA Montage exporter allows you to create a multi-image montage across PCA modes.
+    * Export scalar values: Addition export options have been added to export mesh scalars, particle scalars, and all subjects particle scalars.
+    * Image volume support: New support has been added for displaying 2D slices from image volumes (e.g. CT/MRI)
+    * Landmark placement UI in Studio, landmark registration, landmarks as initializers
+    * Cutting planes UI in Studio: Added new support for defining and manipulating cutting planes
+    * Free form constraints UI in Studio: Added new support for defining free form constraints
+    * Procrustes scaling only mode: New support for running procrustes in a scaling-only mode has been added.
+    * Good/bad particle display: The Particles Panel enabled the display of "good/bad particles" in ShapeWorks Studio.
+    * Group LDA chart in Studio: Support for the group LDA chart has been added in Studio
+  * **User's Support**
+    * Added grooming steps to mesh-based use cases using the mesh Python API
+    * Alignment transforms are now passed to the optimizer and used in optimization instead of being applied before optimization. This results in local particles in the original data's coordinate system, allowing for easier subsequent analysis
+    * The use cases now use project spreadsheets in optimizations instead of XML files. This format is more interpretable and allows of better integration with Studio. The project sheets support multiple domains, fixed domains, constraints
+    * The femur use case has been refactored into a single use case where alignment transforms and cutting plane constraints are passed in optimization.
+    * Grooming added for multiple domain use cases. The pipeline demonstrates alignment w.r.t domain 1 ellipsoids.
+    * DeepSSM Use Case:
+        * The DeepSSM use case has been updated to demonstrate the full pipeline, including training data generation instead of relying on the femur use case to create a training shape model.
+        * The use case now demonstrates how to optimize validation particles via fixed domain optimization where the training particles are unchanged.
+        * Image-to-image registration tools have been added to prepare DeepSSM input images without requiring corresponding segmentations or meshes. This allows for true inference with DeepSSM.
+    * Incremental Use Case:
+        * A new use case has been added, demonstrating how a shape model can be optimized incrementally on 3D supershapes. This approach is beneficial when the cohort of shapes is very large, and single optimization would be slow, and when the dataset is small but contains a large amount of shape variation.
+        * Functionality has been added to select the order of shape optimization based on the distance of each shape to all others in the cohort. This allows for particles to be fit to inlier shapes first, then outliers.
+        * Documentation has been added that explains the use case and quantitatively demonstrates the benefit of incremental optimization.
+    * Added a Studio use case for constraints and a pseudo-tutorial for it in the documentation.
+
+### Fixes
+  * Studio: TabWidget rendering on MacOS 11/12 fixed
+  * Mesh::toDistanceTransform fixed
+  * Studio: Fixed optimization abort not always aborting
+  * Optimize: Fixed particle splitting for use with input transforms
+  * Studio: Fix clamping of glyph size
+  * Studio: Fix bug when groom output path is blank
+
+  
+---
 ## ShapeWorks 6.2.1 - 2022-01-07
 
 ### What is new?
@@ -20,6 +132,8 @@
   * Studio: Fixed display names in the corner (removing long paths)
   * Studio: Fixed recomputation of shape statistics upon re-running shape model and removing shapes
 
+
+---
 ## ShapeWorks 6.2 - 2021-11-16
 
 ![](../img/about/release6.2.png)
@@ -108,6 +222,7 @@ The following tools are supported from all three different interfaces - command 
 
 * **Fix processing of all orientation images:** We have fixed ShapeWorks to handle all orientations of images. Previously, only a subset (such as RAI) was fully compatible with all tools. 
 
+---
 ## ShapeWorks 6.1 - 2021-06-28
 
 ![](../img/about/release6.1.png)
@@ -194,7 +309,7 @@ The following tools are supported from all three different interfaces - command 
 
 * **DeepSSM evaluation:** The DeepSSM evaluation step in the use case is updated to use ShapeWorks mesh distance rather than the deprecated SurfaceToSurfaceDistance command. 
 
-
+---
 ## ShapeWorks 6.0 - 2021-03-30
 
 ![](../img/about/release6.0.png)

@@ -28,8 +28,6 @@ def distanceTest2():
   rev_distance_and_ids = femur2.distance(femur1)
   femur1.setField("distance", fwd_distance_and_ids[0], Mesh.Point)
   femur2.setField("distance", rev_distance_and_ids[0], Mesh.Point)
-  femur1.setField("closestCells", fwd_distance_and_ids[1], Mesh.Point)
-  femur2.setField("closestCells", rev_distance_and_ids[1], Mesh.Point)
 
   fwd = Mesh(os.environ["DATA"] + "/meshdistance_cell_fwd.vtk")
   rev = Mesh(os.environ["DATA"] + "/meshdistance_cell_rev.vtk")

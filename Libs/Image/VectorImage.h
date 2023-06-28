@@ -1,24 +1,18 @@
 #pragma once
 
-#include "Image.h"
-
-#include <itkVectorLinearInterpolateImageFunction.h>
 #include <itkGradientImageFilter.h>
+#include <itkVectorLinearInterpolateImageFunction.h>
+
+#include "Image.h"
 
 namespace shapeworks {
 
-/// Image composed of vectors instead of just scalars
-//
-// TODO: generalize Image class instead of this:
-//       https://github.com/SCIInstitute/ShapeWorks/issues/1053
-class VectorImage
-{
-public:
-
+//! Gradient (vector) image
+class VectorImage {
+ public:
   using GradientImageFilter = itk::GradientImageFilter<Image::ImageType>;
   using ImageType = itk::Image<Covariant, 3>;
-  using GradientInterpolator = itk::VectorLinearInterpolateImageFunction<
-    ImageType, typename Image::PixelType>;
+  using GradientInterpolatorType = itk::VectorLinearInterpolateImageFunction<ImageType, Image::PixelType>;
   using ImageIterator = itk::ImageRegionIterator<ImageType>;
 
   /// Creates a gradient vector image of image (presumably a distance transform)
@@ -27,12 +21,12 @@ public:
   ~VectorImage() = default;
 
   /// Returns a Vector (which can be normalized using `v.Normalize()`).
-  Vector evaluate(Point p) { return toVector(interpolator->Evaluate(p)); }
-  ImageIterator setIterator();
+  Vector evaluate(Point p);
+  ImageIterator iterator();
 
-private:
-  itk::SmartPointer<ImageType> image;
-  itk::SmartPointer<GradientInterpolator> interpolator;
+ private:
+  itk::SmartPointer<ImageType> itk_image_;
+  itk::SmartPointer<GradientInterpolatorType> interpolator_;
 };
 
-} // shapeworks
+}  // namespace shapeworks

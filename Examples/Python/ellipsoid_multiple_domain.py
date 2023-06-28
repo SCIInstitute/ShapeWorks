@@ -13,34 +13,34 @@ import os
 import glob
 import numpy as np
 import shapeworks as sw
-import OptimizeUtils
 import AnalyzeUtils
 import subprocess
 
 def Run_Pipeline(args):
-    print("\nStep 1. Extract Data\n")
+    print("\nStep 1. Acquire Data\n")
     """
-    Step 1: EXTRACT DATA
+    Step 1: ACQUIRE DATA
 
     We define dataset_name which determines which dataset to download from 
     the portal and the directory to save output from the use case in. 
     """
     
-    dataset_name = "ellipsoid_joint_rotation"
     output_directory = "Output/ellipsoid_multiple_domain/"
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
 
-
     # If running a tiny_test, then download subset of the data
     if args.tiny_test:
-        sw.data.download_subset(
-            args.use_case, dataset_name, output_directory)
+        dataset_name = "ellipsoid_multiple_domain_tiny_test"
+        sw.download_dataset(dataset_name, output_directory)
+        dataset_name = "ellipsoid_joint_rotation"
         file_list = sorted(glob.glob(output_directory +
                                      dataset_name + "/segmentations/*.nrrd"))[:6]
     # Else download the entire dataset
     else:
-        sw.data.download_and_unzip_dataset(dataset_name, output_directory)
+        dataset_name = "ellipsoid_multiple_domain"
+        sw.download_dataset(dataset_name, output_directory)
+        dataset_name = "ellipsoid_joint_rotation"
         file_list = sorted(glob.glob(output_directory +
                                      dataset_name + "/segmentations/*.nrrd"))
 
@@ -210,7 +210,7 @@ def Run_Pipeline(args):
     """
 
     # Create project spreadsheet
-    project_location = output_directory + "shape_models/"
+    project_location = output_directory
     if not os.path.exists(project_location):
         os.makedirs(project_location)
     # Set subjects
@@ -244,8 +244,6 @@ def Run_Pipeline(args):
         "optimization_iterations" : 200,
         "starting_regularization" :1000,
         "ending_regularization" : 0.1,
-        "recompute_regularization_interval" : 1,
-        "domains_per_shape" : domains_per_shape,
         "relative_weighting" : 10, 
         "initial_relative_weighting" : 0.1,
         "procrustes_interval" : 0,
@@ -269,11 +267,11 @@ def Run_Pipeline(args):
         parameters.set(key, sw.Variant([parameter_dictionary[key]]))
     parameters.set("number_of_particles" ,sw.Variant(num_particles))
     project.set_parameters("optimize", parameters)
-    spreadsheet_file = output_directory + "shape_models/ellipsoid_multiple_domain_" + args.option_set + ".xlsx"
+    spreadsheet_file = output_directory + "ellipsoid_multiple_domain_" + args.option_set + ".swproj"
     project.save(spreadsheet_file)
 
     # Run optimization
-    optimize_cmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
+    optimize_cmd = ('shapeworks optimize --progress --name ' + spreadsheet_file).split()
     subprocess.check_call(optimize_cmd)
 
     # If tiny test or verify, check results and exit

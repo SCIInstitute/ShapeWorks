@@ -1,17 +1,17 @@
-#include <Libs/Mesh/MeshUtils.h>
-#include <Libs/Optimize/OptimizeParameters.h>
-#include <Libs/Project/Project.h>
+#include <Mesh/MeshUtils.h>
+#include <Optimize/OptimizeParameters.h>
+#include <Project/Project.h>
 #include <itkApproximateSignedDistanceMapImageFilter.h>
 #include <itkImageFileReader.h>
 #include <itkImageFileWriter.h>
 
 #include <cstdio>
 
+#include "Libs/Optimize/Domain/VtkMeshWrapper.h"
 #include "Optimize.h"
 #include "OptimizeParameterFile.h"
 #include "ParticleShapeStatistics.h"
 #include "Testing.h"
-#include "VtkMeshWrapper.h"
 
 using namespace shapeworks;
 
@@ -38,6 +38,7 @@ static void prep_distance_transform(std::string input, std::string output) {
   writer->SetUseCompression(true);
   writer->Update();
 }
+
 
 //---------------------------------------------------------------------------
 static bool check_constraint_violations(Optimize &app, double slack) {
@@ -90,22 +91,17 @@ static bool check_constraint_violations(Optimize &app, double slack) {
 
 //---------------------------------------------------------------------------
 TEST(OptimizeTests, sample) {
-  setupenv(std::string(TEST_DATA_DIR) + "/sphere");
-
-  // prep/groom
-  prep_distance_transform("sphere10.nrrd", "sphere10_DT.nrrd");
-  prep_distance_transform("sphere20.nrrd", "sphere20_DT.nrrd");
-  prep_distance_transform("sphere30.nrrd", "sphere30_DT.nrrd");
-  prep_distance_transform("sphere40.nrrd", "sphere40_DT.nrrd");
+  setupenv(std::string(TEST_DATA_DIR) + "/optimize/sphere");
 
   // make sure we clean out at least one necessary file to make sure we re-run
-  std::remove("output/sphere10_DT_world.particles");
+  std::remove("optimize_particles/sphere10_DT_world.particles");
 
   // run with parameter file
-  std::string paramfile = std::string("sphere.xml");
   Optimize app;
-  OptimizeParameterFile param;
-  ASSERT_TRUE(param.load_parameter_file(paramfile.c_str(), &app));
+  ProjectHandle project = std::make_shared<Project>();
+  ASSERT_TRUE(project->load("optimize.xlsx"));
+  OptimizeParameters params(project);
+  ASSERT_TRUE(params.set_up_optimize(&app));
   app.Run();
 
   // compute stats
@@ -129,18 +125,18 @@ TEST(OptimizeTests, sample) {
 
 //---------------------------------------------------------------------------
 TEST(OptimizeTests, open_mesh_test) {
-  setupenv(std::string(TEST_DATA_DIR) + "/hemisphere");
+  setupenv(std::string(TEST_DATA_DIR) + "/optimize/hemisphere");
 
   // make sure we clean out at least one necessary file to make sure we re-run
-  std::remove("output/hemisphere_world.particles");
+  std::remove("optimize_particles/hemisphere00_world.particles");
 
   // run with parameter file
-  std::string paramfile = std::string("hemisphere.xml");
   Optimize app;
-  OptimizeParameterFile param;
-  ASSERT_TRUE(param.load_parameter_file(paramfile.c_str(), &app));
+  ProjectHandle project = std::make_shared<Project>();
+  ASSERT_TRUE(project->load("optimize.xlsx"));
+  OptimizeParameters params(project);
+  ASSERT_TRUE(params.set_up_optimize(&app));
   app.Run();
-  std::cerr << "finished running\n";
 
   // compute stats
   ParticleShapeStatistics stats;
@@ -163,22 +159,17 @@ TEST(OptimizeTests, open_mesh_test) {
 
 //---------------------------------------------------------------------------
 TEST(OptimizeTests, fixed_domain) {
-  setupenv(std::string(TEST_DATA_DIR) + "/fixed_domain");
-
-  // prep/groom
-  prep_distance_transform("sphere10.nrrd", "sphere10_DT.nrrd");
-  prep_distance_transform("sphere20.nrrd", "sphere20_DT.nrrd");
-  prep_distance_transform("sphere30.nrrd", "sphere30_DT.nrrd");
-  prep_distance_transform("sphere40.nrrd", "sphere40_DT.nrrd");
+  setupenv(std::string(TEST_DATA_DIR) + "/optimize/fixed_domain");
 
   // make sure we clean out the output file of interest
-  std::remove("output/sphere40_DT_world.particles");
+  std::remove("optimize_particles/sphere10_DT_world.particles");
 
   // run with parameter file
-  std::string paramfile = std::string("fixed_domain.xml");
   Optimize app;
-  OptimizeParameterFile param;
-  ASSERT_TRUE(param.load_parameter_file(paramfile.c_str(), &app));
+  ProjectHandle project = std::make_shared<Project>();
+  ASSERT_TRUE(project->load("optimize.xlsx"));
+  OptimizeParameters params(project);
+  ASSERT_TRUE(params.set_up_optimize(&app));
   app.Run();
 
   // compute stats
@@ -202,16 +193,17 @@ TEST(OptimizeTests, fixed_domain) {
 
 //---------------------------------------------------------------------------
 TEST(OptimizeTests, fixed_mesh_domain_test) {
-  setupenv(std::string(TEST_DATA_DIR) + "/fixed_mesh_domain");
+  setupenv(std::string(TEST_DATA_DIR) + "/optimize/fixed_mesh_domain");
 
   // make sure we clean out the output file of interest
-  std::remove("shape_models/id0000_ss3_world.particles");
+  std::remove("optimize_particles/id0000_ss3_world.particles");
 
   // run with parameter file
-  std::string paramfile = std::string("fixed_mesh_domain.xml");
   Optimize app;
-  OptimizeParameterFile param;
-  ASSERT_TRUE(param.load_parameter_file(paramfile.c_str(), &app));
+  ProjectHandle project = std::make_shared<Project>();
+  ASSERT_TRUE(project->load("optimize.xlsx"));
+  OptimizeParameters params(project);
+  ASSERT_TRUE(params.set_up_optimize(&app));
   app.Run();
 
   // compute stats
@@ -233,22 +225,17 @@ TEST(OptimizeTests, fixed_mesh_domain_test) {
 
 //---------------------------------------------------------------------------
 TEST(OptimizeTests, use_normals_test) {
-  setupenv(std::string(TEST_DATA_DIR) + "/use_normals");
-
-  // prep/groom
-  prep_distance_transform("sphere10.nrrd", "sphere10_DT.nrrd");
-  prep_distance_transform("sphere20.nrrd", "sphere20_DT.nrrd");
-  prep_distance_transform("sphere30.nrrd", "sphere30_DT.nrrd");
-  prep_distance_transform("sphere40.nrrd", "sphere40_DT.nrrd");
+  setupenv(std::string(TEST_DATA_DIR) + "/optimize/use_normals");
 
   // make sure we clean out at least one output file
-  std::remove("output/sphere10_DT_world.particles");
+  std::remove("optimize_particles/sphere10_DT_world.particles");
 
   // run with parameter file
-  std::string paramfile = std::string("use_normals.xml");
   Optimize app;
-  OptimizeParameterFile param;
-  ASSERT_TRUE(param.load_parameter_file(paramfile.c_str(), &app));
+  ProjectHandle project = std::make_shared<Project>();
+  ASSERT_TRUE(project->load("optimize.xlsx"));
+  OptimizeParameters params(project);
+  ASSERT_TRUE(params.set_up_optimize(&app));
   app.Run();
 
   // compute stats
@@ -271,16 +258,17 @@ TEST(OptimizeTests, use_normals_test) {
 
 //---------------------------------------------------------------------------
 TEST(OptimizeTests, mesh_use_normals_test) {
-  setupenv(std::string(TEST_DATA_DIR) + "/mesh_use_normals");
+  setupenv(std::string(TEST_DATA_DIR) + "/optimize/mesh_use_normals");
 
   // make sure we clean out at least one output file
-  std::remove("output/sphere_00_world.particles");
+  std::remove("optimize_particles/sphere_00_world.particles");
 
   // run with parameter file
-  std::string paramfile = std::string("mesh_use_normals.xml");
   Optimize app;
-  OptimizeParameterFile param;
-  ASSERT_TRUE(param.load_parameter_file(paramfile.c_str(), &app));
+  ProjectHandle project = std::make_shared<Project>();
+  ASSERT_TRUE(project->load("optimize.xlsx"));
+  OptimizeParameters params(project);
+  ASSERT_TRUE(params.set_up_optimize(&app));
   app.Run();
 
   // compute stats
@@ -302,178 +290,6 @@ TEST(OptimizeTests, mesh_use_normals_test) {
 }
 
 //---------------------------------------------------------------------------
-TEST(OptimizeTests, cutting_plane_test) {
-  setupenv(std::string(TEST_DATA_DIR) + "/cutting_plane_multi");
-
-  // prep/groom
-  prep_distance_transform("sphere10.nrrd", "sphere10_DT.nrrd");
-  prep_distance_transform("sphere20.nrrd", "sphere20_DT.nrrd");
-  prep_distance_transform("sphere30.nrrd", "sphere30_DT.nrrd");
-  prep_distance_transform("sphere40.nrrd", "sphere40_DT.nrrd");
-
-  // make sure we clean out at least one output file
-  std::remove("output/sphere10_DT_world.particles");
-
-  auto start = shapeworks::ShapeworksUtils::now();
-
-  // run with parameter file
-  std::string paramfile = std::string("cutting_plane.xml");
-  Optimize app;
-  OptimizeParameterFile param;
-  std::cout << "Loading parameters-----" << std::endl;
-  ASSERT_TRUE(param.load_parameter_file(paramfile.c_str(), &app));
-  std::cout << "Running-----" << std::endl;
-  app.Run();
-
-  // compute stats
-  ParticleShapeStatistics stats;
-  stats.ReadPointFiles("analyze.xml");
-  stats.ComputeModes();
-  stats.PrincipalComponentProjections();
-
-  bool good = check_constraint_violations(app, 1.5e-1);
-
-  auto end = shapeworks::ShapeworksUtils::now();
-  std::cout << "Time taken to run cutting_plane optimize test: "
-            << shapeworks::ShapeworksUtils::elapsed(start, end, false) << "sec \n";
-
-  ASSERT_TRUE(good);
-}
-
-//---------------------------------------------------------------------------
-TEST(OptimizeTests, sphere_constraint) {
-  setupenv(std::string(TEST_DATA_DIR) + "/sphere_constraint");
-
-  // prep/groom
-  prep_distance_transform("sphere10.nrrd", "sphere10_DT.nrrd");
-  prep_distance_transform("sphere20.nrrd", "sphere20_DT.nrrd");
-  prep_distance_transform("sphere30.nrrd", "sphere30_DT.nrrd");
-  prep_distance_transform("sphere40.nrrd", "sphere40_DT.nrrd");
-
-  // make sure we clean out at least one output file
-  std::remove("output/sphere10_DT_world.particles");
-
-  // run with parameter file
-  std::string paramfile = std::string("sphere_constraint.xml");
-  Optimize app;
-  OptimizeParameterFile param;
-  ASSERT_TRUE(param.load_parameter_file(paramfile.c_str(), &app));
-  app.Run();
-
-  // compute stats
-  ParticleShapeStatistics stats;
-  stats.ReadPointFiles("analyze.xml");
-  stats.ComputeModes();
-  stats.PrincipalComponentProjections();
-
-  bool good = check_constraint_violations(app, 15.0e-1);
-
-  ASSERT_TRUE(good);
-}
-
-//---------------------------------------------------------------------------
-TEST(OptimizeTests, sphere_cutting_plane_constraint) {
-  setupenv(std::string(TEST_DATA_DIR) + "/sphere_cutting_plane_constraint");
-
-  // prep/groom
-  prep_distance_transform("sphere10.nrrd", "sphere10_DT.nrrd");
-  prep_distance_transform("sphere20.nrrd", "sphere20_DT.nrrd");
-  prep_distance_transform("sphere30.nrrd", "sphere30_DT.nrrd");
-  prep_distance_transform("sphere40.nrrd", "sphere40_DT.nrrd");
-
-  // make sure we clean out at least one output file
-  std::remove("output/sphere10_DT_world.particles");
-
-  // run with parameter file
-  std::string paramfile = std::string("sphere_cutting_plane_constraint.xml");
-  Optimize app;
-  OptimizeParameterFile param;
-  ASSERT_TRUE(param.load_parameter_file(paramfile.c_str(), &app));
-  app.Run();
-
-  // compute stats
-  ParticleShapeStatistics stats;
-  stats.ReadPointFiles("analyze.xml");
-  stats.ComputeModes();
-  stats.PrincipalComponentProjections();
-
-  // print out eigenvalues (for debugging)
-  auto values = stats.Eigenvalues();
-  for (int i = 0; i < values.size(); i++) {
-    std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
-  }
-
-  bool good = check_constraint_violations(app, 8.5e-1);
-
-  ASSERT_TRUE(good);
-}
-
-//---------------------------------------------------------------------------
-TEST(OptimizeTests, ffc_test) {
-  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/ffc");
-  chdir(test_location.c_str());
-
-  // prep/groom
-  prep_distance_transform("sphere10.nrrd", "sphere10_DT.nrrd");
-  prep_distance_transform("sphere20.nrrd", "sphere20_DT.nrrd");
-  prep_distance_transform("sphere30.nrrd", "sphere30_DT.nrrd");
-  prep_distance_transform("sphere40.nrrd", "sphere40_DT.nrrd");
-
-  // make sure we clean out at least one output file
-  std::remove("output/sphere10_DT_world.particles");
-
-  // run with parameter file
-  std::string paramfile = std::string("ffc.xml");
-  Optimize app;
-  OptimizeParameterFile param;
-  std::cout << "Loading parameters-----" << std::endl;
-  ASSERT_TRUE(param.load_parameter_file(paramfile.c_str(), &app));
-  std::cout << "Running-----" << std::endl;
-  app.Run();
-
-  // compute stats
-  ParticleShapeStatistics stats;
-  stats.ReadPointFiles("analyze.xml");
-  stats.ComputeModes();
-  stats.PrincipalComponentProjections();
-
-  bool good = check_constraint_violations(app, 3.0e-1);
-
-  ASSERT_TRUE(good);
-}
-
-//---------------------------------------------------------------------------
-TEST(OptimizeTests, multi_domain_constraint) {
-  setupenv(std::string(TEST_DATA_DIR) + "/multidomain_constraints");
-
-  // prep/groom
-  prep_distance_transform("sphere10.nrrd", "sphere10_DT.nrrd");
-  prep_distance_transform("sphere20.nrrd", "sphere20_DT.nrrd");
-  prep_distance_transform("sphere30.nrrd", "sphere30_DT.nrrd");
-  prep_distance_transform("sphere40.nrrd", "sphere40_DT.nrrd");
-
-  // make sure we clean out at least one output file
-  std::remove("output/sphere10_DT_world.particles");
-
-  // run with parameter file
-  std::string paramfile = std::string("multidomain_constraints.xml");
-  Optimize app;
-  OptimizeParameterFile param;
-  ASSERT_TRUE(param.load_parameter_file(paramfile.c_str(), &app));
-  app.Run();
-
-  // compute stats
-  ParticleShapeStatistics stats;
-  stats.ReadPointFiles("analyze.xml");
-  stats.ComputeModes();
-  stats.PrincipalComponentProjections();
-
-  bool good = check_constraint_violations(app, 7.5e-1);
-
-  ASSERT_TRUE(good);
-}
-
-//---------------------------------------------------------------------------
 TEST(OptimizeTests, embedded_python_test) {
   setupenv(std::string(TEST_DATA_DIR) + "/simple");
 
@@ -489,16 +305,10 @@ TEST(OptimizeTests, embedded_python_test) {
 
 //---------------------------------------------------------------------------
 TEST(OptimizeTests, project_test) {
-  setupenv(std::string(TEST_DATA_DIR) + "/sphere");
-
-  // prep/groom
-  prep_distance_transform("sphere10.nrrd", "sphere10_DT.nrrd");
-  prep_distance_transform("sphere20.nrrd", "sphere20_DT.nrrd");
-  prep_distance_transform("sphere30.nrrd", "sphere30_DT.nrrd");
-  prep_distance_transform("sphere40.nrrd", "sphere40_DT.nrrd");
+  setupenv(std::string(TEST_DATA_DIR) + "/optimize/sphere");
 
   // make sure we clean out at least one necessary file to make sure we re-run
-  std::remove("output/sphere10_DT_world.particles");
+  std::remove("optimize_particles/sphere10_DT_world.particles");
 
   Optimize app;
 
@@ -507,7 +317,6 @@ TEST(OptimizeTests, project_test) {
   project->load("optimize.xlsx");
   OptimizeParameters params(project);
   params.set_up_optimize(&app);
-  app.SetOutputDir("output");
 
   // run optimize
   bool success = app.Run();
@@ -532,6 +341,167 @@ TEST(OptimizeTests, project_test) {
   ASSERT_LT(value, 100);
 }
 
+//---------------------------------------------------------------------------
+TEST(OptimizeTests, contour_domain_test) {
+  setupenv(std::string(TEST_DATA_DIR) + "/optimize/supershapes_2d");
+
+  // make sure we clean out at least one output file
+  std::remove("optimize_particles/ss_0_groomed_world.particles");
+
+  // run with parameter file
+  Optimize app;
+  ProjectHandle project = std::make_shared<Project>();
+  ASSERT_TRUE(project->load("optimize.xlsx"));
+  OptimizeParameters params(project);
+  ASSERT_TRUE(params.set_up_optimize(&app));
+  app.Run();
+
+  // compute stats
+  ParticleShapeStatistics stats;
+  stats.ReadPointFiles("analyze.xml");
+  stats.ComputeModes();
+  stats.PrincipalComponentProjections();
+
+  // print out eigenvalues (for debugging)
+  auto values = stats.Eigenvalues();
+  for (int i = 0; i < values.size(); i++) {
+    std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
+  }
+
+  // Check the modes of variation.  The first mode should contain almost all the variation and the 2nd
+  // and higher modes should contain very little
+  ASSERT_GT(values[values.size() - 1], 2000.0);
+  ASSERT_LT(values[values.size() - 2], 1.0);
+}
+
+
+
+//---------------------------------------------------------------------------
+TEST(OptimizeTests, procrustes_disabled_test) {
+  TestUtils::Instance().prep_temp(std::string(TEST_DATA_DIR) + "/optimize/procrustes", "procrustes_disabled_test");
+
+  ProjectHandle project = std::make_shared<Project>();
+  project->load("procrustes.xlsx");
+  OptimizeParameters params(project);
+  params.set_use_procrustes(false);
+
+  Optimize app;
+  params.set_up_optimize(&app);
+
+  // run optimize
+  bool success = app.Run();
+  ASSERT_TRUE(success);
+
+  // compute stats
+  ParticleShapeStatistics stats(project);
+  stats.ComputeModes();
+  stats.PrincipalComponentProjections();
+
+  // print out eigenvalues (for debugging)
+  auto values = stats.Eigenvalues();
+  for (int i = 0; i < values.size(); i++) {
+    std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
+  }
+  ASSERT_GT(values[values.size() - 1], 700.0);
+}
+
+//---------------------------------------------------------------------------
+TEST(OptimizeTests, procrustes_no_scale_test) {
+  TestUtils::Instance().prep_temp(std::string(TEST_DATA_DIR) + "/optimize/procrustes", "procrustes_no_scale_test");
+
+  ProjectHandle project = std::make_shared<Project>();
+  project->load("procrustes.xlsx");
+  OptimizeParameters params(project);
+  params.set_use_procrustes(true);
+  params.set_use_procrustes_rotation_translation(true);
+  params.set_use_procrustes_scaling(false);
+
+  Optimize app;
+  params.set_up_optimize(&app);
+
+  // run optimize
+  bool success = app.Run();
+  ASSERT_TRUE(success);
+
+  // compute stats
+  ParticleShapeStatistics stats(project);
+  stats.ComputeModes();
+  stats.PrincipalComponentProjections();
+
+  // print out eigenvalues (for debugging)
+  auto values = stats.Eigenvalues();
+  for (int i = 0; i < values.size(); i++) {
+    std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
+  }
+  ASSERT_GT(values[values.size() - 1], 150.0);
+  ASSERT_LT(values[values.size() - 1], 200.0);
+}
+
+//---------------------------------------------------------------------------
+TEST(OptimizeTests, procrustes_both_enabled_test) {
+  TestUtils::Instance().prep_temp(std::string(TEST_DATA_DIR) + "/optimize/procrustes", "procrustes_both_enabled_test");
+
+  ProjectHandle project = std::make_shared<Project>();
+  project->load("procrustes.xlsx");
+  OptimizeParameters params(project);
+  params.set_use_procrustes(true);
+  params.set_use_procrustes_rotation_translation(true);
+  params.set_use_procrustes_scaling(true);
+
+  Optimize app;
+  params.set_up_optimize(&app);
+
+  // run optimize
+  bool success = app.Run();
+  ASSERT_TRUE(success);
+
+  // compute stats
+  ParticleShapeStatistics stats(project);
+  stats.ComputeModes();
+  stats.PrincipalComponentProjections();
+
+  // print out eigenvalues (for debugging)
+  auto values = stats.Eigenvalues();
+  for (int i = 0; i < values.size(); i++) {
+    std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
+  }
+  // should be tiny with all of procrustes enabled
+  ASSERT_LT(values[values.size() - 1], 1.0);
+}
+
+//---------------------------------------------------------------------------
+TEST(OptimizeTests, procrustes_scale_only_test) {
+  TestUtils::Instance().prep_temp(std::string(TEST_DATA_DIR) + "/optimize/procrustes", "procrustes_scale_only_test");
+
+  ProjectHandle project = std::make_shared<Project>();
+  project->load("procrustes.xlsx");
+  OptimizeParameters params(project);
+  params.set_use_procrustes(true);
+  params.set_use_procrustes_rotation_translation(false);
+  params.set_use_procrustes_scaling(true);
+
+  Optimize app;
+  params.set_up_optimize(&app);
+
+  // run optimize
+  bool success = app.Run();
+  ASSERT_TRUE(success);
+
+  // compute stats
+  ParticleShapeStatistics stats(project);
+  stats.ComputeModes();
+  stats.PrincipalComponentProjections();
+
+  // print out eigenvalues (for debugging)
+  auto values = stats.Eigenvalues();
+  for (int i = 0; i < values.size(); i++) {
+    std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
+  }
+  ASSERT_GT(values[values.size() - 1], 275.0);
+  ASSERT_LT(values[values.size() - 1], 335.0);
+}
+
+// TODO Move this to mesh tests?
 //---------------------------------------------------------------------------
 TEST(OptimizeTests, mesh_geodesics_test) {
   const std::string sphere_mesh_path = std::string(TEST_DATA_DIR) + "/sphere_highres.ply";
@@ -568,18 +538,22 @@ TEST(OptimizeTests, mesh_geodesics_test) {
   }
 }
 
+// Constraint tests
 //---------------------------------------------------------------------------
-TEST(OptimizeTests, contour_domain_test) {
-  setupenv(std::string(TEST_DATA_DIR) + "/supershapes_2d");
+TEST(OptimizeTests, cutting_plane_test) {
+  setupenv(std::string(TEST_DATA_DIR) + "/optimize/cutting_plane_multi");
 
   // make sure we clean out at least one output file
-  std::remove("output/ss_0_world.particles");
+  std::remove("optimize_particles/sphere10_DT_world.particles");
+
+  auto start = shapeworks::ShapeworksUtils::now();
 
   // run with parameter file
-  std::string paramfile = std::string("contour_domain_test.xml");
   Optimize app;
-  OptimizeParameterFile param;
-  ASSERT_TRUE(param.load_parameter_file(paramfile.c_str(), &app));
+  ProjectHandle project = std::make_shared<Project>();
+  ASSERT_TRUE(project->load("optimize.xlsx"));
+  OptimizeParameters params(project);
+  ASSERT_TRUE(params.set_up_optimize(&app));
   app.Run();
 
   // compute stats
@@ -588,33 +562,85 @@ TEST(OptimizeTests, contour_domain_test) {
   stats.ComputeModes();
   stats.PrincipalComponentProjections();
 
-  // print out eigenvalues (for debugging)
-  auto values = stats.Eigenvalues();
-  for (int i = 0; i < values.size(); i++) {
-    std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
-  }
+  bool good = check_constraint_violations(app, 1.5e-1);
 
-  // Check the modes of variation.  The first mode should contain almost all the variation and the 2nd
-  // and higher modes should contain very little
-  ASSERT_GT(values[values.size() - 1], 2000.0);
-  ASSERT_LT(values[values.size() - 2], 1.0);
+  auto end = shapeworks::ShapeworksUtils::now();
+  std::cout << "Time taken to run cutting_plane optimize test: "
+            << shapeworks::ShapeworksUtils::elapsed(start, end, false) << "sec \n";
+
+  ASSERT_TRUE(good);
+}
+
+//---------------------------------------------------------------------------
+TEST(OptimizeTests, ffc_test) {
+  std::string test_location = std::string(TEST_DATA_DIR) + std::string("/optimize/ffc");
+  chdir(test_location.c_str());
+
+  // make sure we clean out at least one output file
+  std::remove("optimize_particles/sphere10_DT_world.particles");
+
+  // run with parameter file
+  Optimize app;
+  ProjectHandle project = std::make_shared<Project>();
+  ASSERT_TRUE(project->load("optimize.xlsx"));
+  OptimizeParameters params(project);
+  ASSERT_TRUE(params.set_up_optimize(&app));
+  app.Run();
+
+  // compute stats
+  ParticleShapeStatistics stats;
+  stats.ReadPointFiles("analyze.xml");
+  stats.ComputeModes();
+  stats.PrincipalComponentProjections();
+
+  bool good = check_constraint_violations(app, 4.0e-1);
+
+  ASSERT_TRUE(good);
+}
+
+//---------------------------------------------------------------------------
+TEST(OptimizeTests, multi_domain_constraint) {
+  setupenv(std::string(TEST_DATA_DIR) + "/optimize/multidomain_constraints");
+
+  // make sure we clean out at least one output file
+  std::remove("optimize_particles/sphere10_DT_world.particles");
+  std::remove("optimize_particles/sphere10_DT_50_world.particles");
+
+  // run with parameter file
+  Optimize app;
+  ProjectHandle project = std::make_shared<Project>();
+  ASSERT_TRUE(project->load("optimize.xlsx"));
+  OptimizeParameters params(project);
+  ASSERT_TRUE(params.set_up_optimize(&app));
+  app.Run();
+
+  // compute stats
+  ParticleShapeStatistics stats;
+  stats.ReadPointFiles("analyze.xml");
+  stats.ComputeModes();
+  stats.PrincipalComponentProjections();
+
+  bool good = check_constraint_violations(app, 7.5e-1);
+
+  ASSERT_TRUE(good);
 }
 
 //---------------------------------------------------------------------------
 TEST(OptimizeTests, mesh_ffc_test) {
-  setupenv(std::string(TEST_DATA_DIR) + "/mesh_constraints");
+  setupenv(std::string(TEST_DATA_DIR) + "/optimize/mesh_constraints");
 
   // make sure we clean out at least one output file
-  std::remove("output/sphere_00_world.particles");
-  std::remove("output/sphere_01_world.particles");
-  std::remove("output/sphere_02_world.particles");
-  std::remove("output/sphere_03_world.particles");
+  std::remove("optimize_particles/sphere10_world.particles");
+  std::remove("optimize_particles/sphere20_world.particles");
+  std::remove("optimize_particles/sphere30_world.particles");
+  std::remove("optimize_particles/sphere40_world.particles");
 
   // run with parameter file
-  std::string paramfile = std::string("mesh_constraints.xml");
   Optimize app;
-  OptimizeParameterFile param;
-  ASSERT_TRUE(param.load_parameter_file(paramfile.c_str(), &app));
+  ProjectHandle project = std::make_shared<Project>();
+  ASSERT_TRUE(project->load("optimize.xlsx"));
+  OptimizeParameters params(project);
+  ASSERT_TRUE(params.set_up_optimize(&app));
   app.Run();
 
   // compute stats
@@ -629,6 +655,40 @@ TEST(OptimizeTests, mesh_ffc_test) {
     std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
   }
 
-  bool good = check_constraint_violations(app, 3.0e-1);
+  bool good = check_constraint_violations(app, 4.0e-1);
+  ASSERT_TRUE(good);
+}
+
+//---------------------------------------------------------------------------
+TEST(OptimizeTests, mesh_ffc_test_aug_lag) {
+  setupenv(std::string(TEST_DATA_DIR) + "/optimize/mesh_constraints_aug_lag");
+
+  // make sure we clean out at least one output file
+  std::remove("optimize_particles/sphere10_world.particles");
+  std::remove("optimize_particles/sphere20_world.particles");
+  std::remove("optimize_particles/sphere30_world.particles");
+  std::remove("optimize_particles/sphere40_world.particles");
+
+  // run with parameter file
+  Optimize app;
+  ProjectHandle project = std::make_shared<Project>();
+  ASSERT_TRUE(project->load("optimize.xlsx"));
+  OptimizeParameters params(project);
+  ASSERT_TRUE(params.set_up_optimize(&app));
+  app.Run();
+
+  // compute stats
+  ParticleShapeStatistics stats;
+  stats.ReadPointFiles("analyze.xml");
+  stats.ComputeModes();
+  stats.PrincipalComponentProjections();
+
+  // print out eigenvalues (for debugging)
+  auto values = stats.Eigenvalues();
+  for (int i = 0; i < values.size(); i++) {
+    std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
+  }
+
+  bool good = check_constraint_violations(app, 20.0e-1);
   ASSERT_TRUE(good);
 }

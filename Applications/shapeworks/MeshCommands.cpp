@@ -806,12 +806,10 @@ bool ClosestPoint::execute(const optparse::Values &options, SharedCommandData &s
                static_cast<double>(options.get("y")),
                static_cast<double>(options.get("z"))});
 
-  bool outside = false;
   double distance;
   vtkIdType face_id = -1;
-  auto closest_pt = sharedData.mesh->closestPoint(point, outside, distance, face_id);
+  auto closest_pt = sharedData.mesh->closestPoint(point, distance, face_id);
   std::cout << "Closest point to given point on mesh: " << closest_pt << std::endl
-            << "- outside mesh: " << (outside ? "true" : "false") << std::endl
             << "- distance: " << distance << std::endl
             << "- face_id: " << face_id << std::endl;
   return sharedData.validMesh();
@@ -1354,12 +1352,12 @@ bool CompareMesh::execute(const optparse::Values &options, SharedCommandData &sh
 
   if (sharedData.mesh->compare(Mesh(filename), eps))
   {
-    std::cout << "compare success\n";
+    std::cout << "meshes are the same\n";
     return true;
   }
   else
   {
-    std::cout << "compare failure\n";
+    std::cout << "meshes are different\n";
     return false;
   }
 }
@@ -1409,11 +1407,11 @@ bool WarpMesh::execute(const optparse::Values &options, SharedCommandData &share
     MeshWarper warper;
     Mesh inputMesh(inputMeshFilename);
     targetPointsFilenames.push_back(inputPointsFilename);
-    ParticleSystem particlesystem(targetPointsFilenames);
+    ParticleSystemEvaluation particlesystem(targetPointsFilenames);
     Eigen::MatrixXd landmarks;
     if (warp_along_with_landmarks) {
       std::vector<std::string> landmarks_ar = {landmarkFilename};
-      ParticleSystem landmarksystem(landmarks_ar);
+      ParticleSystemEvaluation landmarksystem(landmarks_ar);
       Eigen::MatrixXd landmarksPoints = landmarksystem.Particles().col(0);
       numLandmarks = landmarksPoints.rows() /3;
       landmarksPoints.resize(3, numLandmarks);

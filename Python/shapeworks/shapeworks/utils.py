@@ -4,6 +4,7 @@ import sys
 import vtk
 import glob
 import shutil
+import zipfile
 import shapeworks as sw
 
 # Global shapeworks logger object (e.g. attached to Studio)
@@ -162,7 +163,7 @@ def compute_line_indices(n, is_closed=True):
     return lines
 
 def get_api_version():
-    return "6.2"
+    return "6.5"
 
 def set_sw_logger(log_object):
     """Set the shapeworks logger object"""
@@ -286,10 +287,31 @@ def verify(args, world_point_files):
 
 def check_results(args, project_spreadsheet):
     # If tiny test or verify, check results and exit
-    particle_dir = project_spreadsheet.replace(".xlsx", "_particles/")
+    particle_dir = project_spreadsheet.replace(".xlsx", "_particles/").replace(".swproj", "_particles/")
     world_point_files = []
     for file in sorted(os.listdir(particle_dir)):
         if "world" in file:
+            world_point_files.append(particle_dir + file)
+    if args.tiny_test or args.verify:
+        # if verification dir doesn't exist, unzip verification.zip
+        if not os.path.exists("Data/Verification"):
+            print("Unzipping verification data")
+            # unzip using python
+            with zipfile.ZipFile("Data/Verification.zip", 'r') as zip_ref:
+                zip_ref.extractall("Data/")
+
+        print("Verifying shape model")
+        if not verify(args, world_point_files):
+            exit(-1)
+        print("Done with test, verification succeeded.")
+        exit()
+
+def check_results_pattern(args, project_spreadsheet, pattern):
+    # If tiny test or verify, check results and exit
+    particle_dir = project_spreadsheet.replace(".xlsx", "_particles/").replace(".swproj", "_particles/")
+    world_point_files = []
+    for file in sorted(os.listdir(particle_dir)):
+        if pattern in file:
             world_point_files.append(particle_dir + file)
     if args.tiny_test or args.verify:
         print("Verifying shape model")
@@ -297,7 +319,7 @@ def check_results(args, project_spreadsheet):
             exit(-1)
         print("Done with test, verification succeeded.")
         exit()
-
+        
 def findMeanShape(shapeModelDir):
     fileList = sorted(glob.glob(shapeModelDir + '/*local.particles'))
     for i in range(len(fileList)):
@@ -308,3 +330,12 @@ def findMeanShape(shapeModelDir):
     meanShape = meanShape / len(fileList)
     nmMS = shapeModelDir + '/meanshape_local.particles'
     np.savetxt(nmMS, meanShape)
+
+def transformParticles(particles, transform, inverse=False):
+    if inverse:
+        transform = np.linalg.inv(transform)
+    transformed_particles = []
+    for particle in particles:
+        transformed_particles.append(np.matmul(transform, np.append(particle, 1))[:3])
+    transformed_particles = np.array(transformed_particles)
+    return transformed_particles

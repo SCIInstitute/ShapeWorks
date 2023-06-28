@@ -2005,6 +2005,8 @@ shapeworks  warp-mesh [args]...
 
 **--reference_points=STRING:**  Name of reference points.
 
+**--landmark_file=STRING:**  Optional Argument to specify the name of Landmark file, if landmarks are available for warping
+
 **--target_points <list of strings>:**  Names of target points (must be followed by `--`), ex: "... --target_points *.particles -- ...
 
 **--save_dir=STRING:** Optional: Path to the directory where the mesh files will be saved  

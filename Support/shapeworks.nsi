@@ -1,5 +1,6 @@
 ; ShapeWorks.nsi
 
+!include "Support\FileAssociation.nsh"
 
 ;--------------------------------s
 ; Include Modern UI
@@ -41,6 +42,11 @@ RequestExecutionLevel admin
  
 ;--------------------------------
 ;Installer Pages
+  !define MUI_ICON "Support/windows/installer_icon.ico"
+  !define MUI_UNICON "Support/windows/installer_icon.ico"
+  !define MUI_HEADERIMAGE
+  !define MUI_HEADERIMAGE_BITMAP "Support/windows/installer_header_image.bmp"
+  !define MUI_HEADERIMAGE_UNBITMAP "Support/windows/installer_header_image.bmp"
   !define MUI_FINISHPAGE_SHOWREADME "Windows_README.txt"
   !define MUI_FINISHPAGE_SHOWREADME_TEXT "Show README"
   !define MUI_FINISHPAGE_TITLE "Installation Complete"
@@ -69,9 +75,9 @@ Section "ShapeWorks (required)"
   File /r "bin"
   File /r "Examples"
   File /r /x Studio /x Lib "Python"
-  File /r "Documentation"
   File /r "Installation"
 
+  ${registerExtension} "$INSTDIR\bin\ShapeWorksStudio.exe" ".swproj" "ShapeWorks Project"
   
   ; Write the installation path into the registry
   WriteRegStr HKLM SOFTWARE\ShapeWorks "Install_Dir" "$INSTDIR"
@@ -108,6 +114,8 @@ Section "Uninstall"
 
   ; Remove shortcuts, if any
   Delete "$SMPROGRAMS\ShapeWorks\*.*"
+
+  ${unregisterExtension} ".swprojc" "ShapeWorks Project"
 
   ; Remove directories used
   RMDir "$SMPROGRAMS\ShapeWorks"

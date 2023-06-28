@@ -16,22 +16,22 @@ import subprocess
 import shapeworks as sw
 
 def Run_Pipeline(args):
-    print("\nStep 1. Extract Data\n")
+    print("\nStep 1. Acquire Data\n")
     """
-    Step 1: EXTRACT DATA
+    Step 1: ACQUIRE DATA
 
     We define dataset_name which determines which dataset to download from 
     the portal and the directory to save output from the use case in. 
     """
-    dataset_name = "ellipsoid_1mode_aligned"
+    dataset_name = "ellipsoid_fd"
     output_directory = "Output/ellipsoid_fd/"
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
-    sw.data.download_and_unzip_dataset(dataset_name, output_directory)
-
-    file_list_segs = sorted(glob.glob(output_directory + dataset_name + "/segmentations/*.nrrd"))
+    sw.portal.download_dataset(dataset_name, output_directory)
+    dataset_name = "ellipsoid_1mode_aligned"
+    file_list_segs = sorted(glob.glob(output_directory + dataset_name + "/segmentations/fd_*.nrrd"))
     file_list_dts = sorted(glob.glob(output_directory + dataset_name + "/groomed/distance_transforms/*.nrrd"))
-    file_list_new_segs = sorted(glob.glob(output_directory + dataset_name + "/fd_segmentations/*.nrrd"))
+    file_list_new_segs = sorted(glob.glob(output_directory + dataset_name + "/segmentations/new_*.nrrd"))
 
     print("\nStep 2. Groom - Create distance transforms\n")
     """
@@ -56,7 +56,7 @@ def Run_Pipeline(args):
     at the zero-level set. We then need to smooth the DT as it will have some remaining aliasing effect 
     of binarization. 
     So the steps are:
-        - Antialias 
+        - Antialias file_list_dts
         - Compute distance transform
         - Apply smoothing
         - Save the distance transform
@@ -112,15 +112,16 @@ def Run_Pipeline(args):
     all_local_particles = fixed_local_particles + [mean_shape_path, mean_shape_path, mean_shape_path, mean_shape_path];
 
     # Create spreadsheet
-    project_location = output_directory + "shape_models/"
+    project_location = output_directory 
     subjects = []
 
     # Add current shape model (e.g. fixed subjects)
     for i in range(len(file_list_segs)):
         subject = sw.Subject()
+        original_groom_files = sw.utils.get_relative_paths([os.getcwd() + "/" + file_list_segs[i]], project_location)
         rel_groom_files = sw.utils.get_relative_paths([os.getcwd() + "/" + file_list_dts[i]], project_location)
         rel_particle_files = sw.utils.get_relative_paths([os.getcwd() + "/" + fixed_local_particles[i]],  project_location)
-        subject.set_original_filenames(rel_groom_files)
+        subject.set_original_filenames(original_groom_files)
         subject.set_groomed_filenames(rel_groom_files)
         subject.set_landmarks_filenames(rel_particle_files)
         subject.set_extra_values({"fixed": "yes"})
@@ -129,9 +130,10 @@ def Run_Pipeline(args):
     # Add new shapes
     for i in range(len(file_list_new_segs)):
         subject = sw.Subject()
+        original_groom_files = sw.utils.get_relative_paths([os.getcwd() + "/" + file_list_new_segs[i]], project_location)
         rel_groom_files = sw.utils.get_relative_paths([os.getcwd() + "/" + new_dt_files[i]], project_location)
         rel_particle_files = sw.utils.get_relative_paths([os.getcwd() + "/" + mean_shape_path], project_location)
-        subject.set_original_filenames(rel_groom_files)
+        subject.set_original_filenames(original_groom_files)
         subject.set_groomed_filenames(rel_groom_files)
         subject.set_landmarks_filenames(rel_particle_files)
         subject.set_extra_values({"fixed": "no"})
@@ -145,14 +147,13 @@ def Run_Pipeline(args):
     parameter_dictionary = {
         "number_of_particles": 128,
         "use_normals": 0,
-        "normal_weight": 15.0,
+        "normals_strength": 15.0,
         "checkpointing_interval": 0,
         "keep_checkpoints": 0,
         "iterations_per_split": 10,
         "optimization_iterations": 10,
         "starting_regularization": 100,
         "ending_regularization": 0.1,
-        "recompute_regularization_interval": 2,
         "relative_weighting": 15,
         "initial_relative_weighting": 0.05,
         "procrustes_interval": 0,
@@ -180,11 +181,11 @@ def Run_Pipeline(args):
     for key in studio_dictionary:
         studio_parameters.set(key, sw.Variant(studio_dictionary[key]))
     project.set_parameters("studio", studio_parameters)
-    spreadsheet_file = output_directory + "shape_models/ellipsoid_fd_" + args.option_set + ".xlsx"
+    spreadsheet_file = output_directory + "ellipsoid_fd_" + args.option_set + ".swproj"
     project.save(spreadsheet_file)
 
     # Run optimization
-    optimize_cmd = ('shapeworks optimize --name ' + spreadsheet_file).split()
+    optimize_cmd = ('shapeworks optimize --progress --name ' + spreadsheet_file).split()
     subprocess.check_call(optimize_cmd)
 
     # If tiny test or verify, check results and exit

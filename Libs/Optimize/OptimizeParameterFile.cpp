@@ -1,17 +1,15 @@
 #include "OptimizeParameterFile.h"
-#include "Optimize.h"
-#include "ParticleSystem/DomainType.h"
 
+#include <Mesh/MeshUtils.h>
+#include <Utils/StringUtils.h>
 #include <itkImageFileReader.h>
 #include <vtkPLYReader.h>
 
-#include <tinyxml.h>
-
-#include "ParticleSystem/MeshWrapper.h"
-#include "ParticleSystem/TriMeshWrapper.h"
-#include "ParticleSystem/VtkMeshWrapper.h"
-#include <Libs/Utils/StringUtils.h>
-#include <Libs/Mesh/MeshUtils.h>
+#include "ExternalLibs/tinyxml/tinyxml.h"
+#include "Libs/Optimize/Domain/DomainType.h"
+#include "Libs/Optimize/Domain/MeshWrapper.h"
+#include "Libs/Optimize/Domain/VtkMeshWrapper.h"
+#include "Optimize.h"
 
 namespace shapeworks {
 
@@ -164,7 +162,7 @@ bool OptimizeParameterFile::set_visualizer_parameters(TiXmlHandle* docHandle, Op
 {
   TiXmlElement* elem = nullptr;
   // Currently the visualizer only works if you call AddMesh on it for every domain.
-  // In order to get it working for image domains, need to add code that extracts meshes from each image and adds them to the visualizer.
+  // In order to get it working for image domains, need to add code that extracts meshes from each image and adds them to the visualizer_.
   elem = docHandle->FirstChild("visualizer_enable").Element();
   if (elem) {
     optimize->SetShowVisualizer((bool) atoi(elem->GetText()));
@@ -320,9 +318,6 @@ bool OptimizeParameterFile::set_optimization_parameters(TiXmlHandle* docHandle, 
   elem = docHandle->FirstChild("adaptivity_strength").Element();
   if (elem) { optimize->SetAdaptivityStrength(atof(elem->GetText())); }
 
-  elem = docHandle->FirstChild("pairwise_potential_type").Element();
-  if (elem) { optimize->SetPairwisePotentialType(atoi(elem->GetText())); }
-
   elem = docHandle->FirstChild("timepts_per_subject").Element();
   if (elem) { optimize->SetTimePtsPerSubject(atoi(elem->GetText())); }
 
@@ -350,6 +345,9 @@ bool OptimizeParameterFile::set_optimization_parameters(TiXmlHandle* docHandle, 
   elem = docHandle->FirstChild("procrustes_scaling").Element();
   if (elem) { optimize->SetProcrustesScaling(atoi(elem->GetText())); }
 
+  elem = docHandle->FirstChild("procrustes_rotation_translation").Element();
+  if (elem) { optimize->SetProcrustesRotationTranslation(atoi(elem->GetText())); }
+
   elem = docHandle->FirstChild("relative_weighting").Element();
   if (elem) { optimize->SetRelativeWeighting(atof(elem->GetText())); }
 
@@ -374,9 +372,6 @@ bool OptimizeParameterFile::set_optimization_parameters(TiXmlHandle* docHandle, 
   elem = docHandle->FirstChild("keep_checkpoints").Element();
   if (elem) { optimize->SetKeepCheckpoints(atoi(elem->GetText())); }
 
-  elem = docHandle->FirstChild("cotan_sigma_factor").Element();
-  if (elem) { optimize->SetCotanSigmaFactor(atof(elem->GetText())); }
-
   elem = docHandle->FirstChild("narrow_band").Element();
   if (elem) { optimize->SetNarrowBand(atof(elem->GetText())); }
 
@@ -388,6 +383,9 @@ bool OptimizeParameterFile::set_optimization_parameters(TiXmlHandle* docHandle, 
 
   elem = docHandle->FirstChild("geodesics_cache_size_multiplier").Element();
   if (elem) { optimize->SetGeodesicsCacheSizeMultiplier((size_t) atol(elem->GetText())); }
+
+  elem = docHandle->FirstChild("mesh_ffc_mode").Element();
+  if (elem) { optimize->SetMeshFFCMode((bool) atoi(elem->GetText())); }
 
   elem = docHandle->FirstChild("shared_boundary_enabled").Element();
   if (elem) { optimize->SetSharedBoundaryEnabled((bool) atoi(elem->GetText())); }
@@ -536,13 +534,15 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle* docHandle, Optimize* o
         }
       }
 
-      if (this->verbosity_level_ > 1) {
-        std::cout << "ffcssize " << ffcs.size() << std::endl;
-      }
-      if (index < ffcs.size()) {
-        mesh.prepareFFCFields(ffcs[index].boundaries, ffcs[index].query);
-        mesh = Mesh(mesh.clipByField("inout", 1.0));
-      }
+      if(optimize->GetMeshFFCMode() == 0){
+          if (this->verbosity_level_ > 1) {
+            std::cout << "ffcssize " << ffcs.size() << std::endl;
+          }
+            if (index < ffcs.size()) {
+              ffcs[index].applyToPolyData(mesh.getVTKMesh());
+              mesh = Mesh(mesh.clipByField("ffc_paint", 0.0));
+            }
+        }
 
       auto poly_data = mesh.getVTKMesh();
 
@@ -821,7 +821,7 @@ bool OptimizeParameterFile::read_constraints(TiXmlHandle* doc_handle, Optimize* 
     return false;
   }
 
-  return this->read_cutting_ffcs(doc_handle, optimize);
+  return true;
 }
 
 //---------------------------------------------------------------------------
@@ -876,9 +876,9 @@ bool OptimizeParameterFile::read_distribution_cutting_plane(TiXmlHandle* doc_han
 
       // If initial transform provided, transform cutting plane points
       if (optimize->GetPrefixTransformFile() != "" && optimize->GetTransformFile() != "") {
-        itk::ParticleSystem::PointType pa;
-        itk::ParticleSystem::PointType pb;
-        itk::ParticleSystem::PointType pc;
+        ParticleSystem::PointType pa;
+        ParticleSystem::PointType pb;
+        ParticleSystem::PointType pc;
 
         pa[0] = a[0];
         pa[1] = a[1];
@@ -890,10 +890,10 @@ bool OptimizeParameterFile::read_distribution_cutting_plane(TiXmlHandle* doc_han
         pc[1] = c[1];
         pc[2] = c[2];
 
-        itk::ParticleSystem::TransformType T =
+        ParticleSystem::TransformType T =
           optimize->GetSampler()->GetParticleSystem()->GetTransform(
             shapeCount);
-        itk::ParticleSystem::TransformType prefT =
+        ParticleSystem::TransformType prefT =
           optimize->GetSampler()->GetParticleSystem()->GetPrefixTransform(shapeCount);
         pa = optimize->GetSampler()->GetParticleSystem()->TransformPoint(pa, T * prefT);
         pb = optimize->GetSampler()->GetParticleSystem()->TransformPoint(pb, T * prefT);
@@ -1029,9 +1029,9 @@ bool OptimizeParameterFile::read_cutting_planes(TiXmlHandle* docHandle, Optimize
 
         // If initial transform provided, transform cutting plane points
         if (optimize->GetPrefixTransformFile() != "" && optimize->GetTransformFile() != "") {
-          itk::ParticleSystem::PointType pa;
-          itk::ParticleSystem::PointType pb;
-          itk::ParticleSystem::PointType pc;
+          ParticleSystem::PointType pa;
+          ParticleSystem::PointType pb;
+          ParticleSystem::PointType pc;
 
           pa[0] = a[0];
           pa[1] = a[1];
@@ -1043,10 +1043,10 @@ bool OptimizeParameterFile::read_cutting_planes(TiXmlHandle* docHandle, Optimize
           pc[1] = c[1];
           pc[2] = c[2];
 
-          itk::ParticleSystem::TransformType T =
+          ParticleSystem::TransformType T =
             optimize->GetSampler()->GetParticleSystem()->GetTransform(
               shapeCount);
-          itk::ParticleSystem::TransformType prefT =
+          ParticleSystem::TransformType prefT =
             optimize->GetSampler()->GetParticleSystem()->GetPrefixTransform(shapeCount);
           pa = optimize->GetSampler()->GetParticleSystem()->TransformPoint(pa, T * prefT);
           pb = optimize->GetSampler()->GetParticleSystem()->TransformPoint(pb, T * prefT);
@@ -1161,116 +1161,6 @@ bool OptimizeParameterFile::read_cutting_spheres(TiXmlHandle* doc_handle, Optimi
   return true;
 }
 
-bool OptimizeParameterFile::read_cutting_ffcs(TiXmlHandle* docHandle, Optimize* optimize)
-{
-  TiXmlElement* elem;
-  std::istringstream inputsBuffer;
-  int num_inputs = this->get_num_inputs(docHandle);
-
-  int num_ffcs = num_inputs;
-
-  if (this->verbosity_level_ > 1) {
-    std::cout << "Number of free-form constraints " << num_ffcs << std::endl;
-  }
-  // Check that if ffcs are not given, return true. If we expected ffcs(num_ffcs_per_input was given), print a warning to cerr.
-  elem = docHandle->FirstChild("ffcs").Element();
-  if (!elem) {
-    return true;
-  }
-
-  inputsBuffer.str(elem->GetText());
-  auto flags = optimize->GetDomainFlags();
-
-  // load ffc filenames
-  std::vector<std::string> ffcFiles;
-  std::string ffcfilename;
-  while (inputsBuffer >> ffcfilename) {
-    ffcFiles.push_back(ffcfilename);
-  }
-
-  size_t count = 0;
-  std::string buffer;
-  if (ffcFiles.size() != num_ffcs) {
-    std::cerr << "ERROR: Error reading free-form constraint(ffc) data! Expected " << num_ffcs
-              << " but instead got " << ffcFiles.size()
-              << " instead. Can't use ffcs, please fix the input xml." << std::endl;
-    throw 1;
-  }
-  else {
-    for (size_t shapeCount = 0; shapeCount < num_inputs; shapeCount++) {
-      // Reading in ffc file for shape shapeCount # ffcCount
-      std::string fn = ffcFiles[count];
-      //std::cout << "Shape " << shapeCount << " ffc num " << ffcCount << " filename " <<  fn << std::endl;
-      bool query_read = true;
-
-      std::vector<std::vector<Eigen::Vector3d>> boundaries;
-      int boundary_count = -1;
-      Eigen::Vector3d query;
-
-      fstream newfile;
-      newfile.open(fn, ios::in);
-
-      if (newfile.is_open()) {   //checking whether the file is open
-        std::string tp;
-        while (getline(newfile, tp)) { //read data from file object and put it into string.
-          //cout << tp << "\n"; //print the data of the string
-          if (tp == "query") {
-            query_read = true;
-          }
-          else if (tp == "boundary_pts") {
-            query_read = false;
-            std::vector<Eigen::Vector3d> boundary;
-            boundaries.push_back(boundary);
-            boundary_count++;
-          }
-          else {
-            try {
-              if (query_read) {
-                std::istringstream iss(tp);
-                iss >> buffer;
-                query(0) = std::stod(buffer);
-                iss >> buffer;
-                query(1) = std::stod(buffer);
-                iss >> buffer;
-                query(2) = std::stod(buffer);
-                //cout << "Added query " << query.transpose() << "\n";
-              }
-              else {
-                Eigen::Vector3d bpt;
-                std::istringstream iss(tp);
-                iss >> buffer;
-                bpt(0) = std::stod(buffer);
-                iss >> buffer;
-                bpt(1) = std::stod(buffer);
-                iss >> buffer;
-                bpt(2) = std::stod(buffer);
-                boundaries[boundary_count].push_back(bpt);
-                //cout << "Added boundary " << bpt.transpose() << "\n";
-              }
-            }
-            catch (std::exception& e) {
-              cout << e.what() << '\n';
-              std::cerr << "ERROR: File " << fn
-                        << " threw an exception. Please check the correctness and formating of the file."
-                        << std::endl;
-              throw 1;
-            }
-          }
-        }
-        newfile.close(); //close the file object.
-      }
-      else {
-        std::cerr << "ERROR: File " << fn
-                  << " could not be opened. Please check that the file is available." << std::endl;
-        throw 1;
-      }
-      optimize->GetSampler()->AddFreeFormConstraint(shapeCount, boundaries, query);
-      count++;
-    }
-  }
-
-  return true;
-}
 
 //---------------------------------------------------------------------------
 bool OptimizeParameterFile::read_explanatory_variables(TiXmlHandle* doc_handle, Optimize* optimize)
@@ -1291,11 +1181,11 @@ bool OptimizeParameterFile::read_explanatory_variables(TiXmlHandle* doc_handle, 
     evars.push_back(etmp);
   }
 
-  dynamic_cast < itk::ParticleShapeLinearRegressionMatrixAttribute<double, 3>* >
+  dynamic_cast <LinearRegressionShapeMatrix* >
   (optimize->GetSampler()->GetEnsembleRegressionEntropyFunction()->GetShapeMatrix())->SetExplanatory(
     evars);
 
-  dynamic_cast < itk::ParticleShapeMixedEffectsMatrixAttribute<double, 3>* >
+  dynamic_cast <MixedEffectsShapeMatrix* >
   (optimize->GetSampler()->GetEnsembleMixedEffectsEntropyFunction()->GetShapeMatrix())->
     SetExplanatory(evars);
 

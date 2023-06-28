@@ -43,7 +43,7 @@ def download_subset(use_case,datasetName,outputDirectory):
         if(generate_download_flag(outputDirectory,"segmentations")):
             segFilesList = sorted([files for files in fileList if re.search("^segmentations(?:/|\\\).*nrrd$",files)])[:3]
             DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = segFilesList)
-    elif(use_case in ["femur_cut","lumps","thin_cavity_bean"]):
+    elif(use_case in ["femur_cut","lumps","thin_cavity_bean","incremental_supershapes"]):
         if(generate_download_flag(outputDirectory,"meshes")):
             meshFilesList = sorted([files for files in fileList if re.search("^meshes(?:/|\\\).*ply$",files)])[:3]
             DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = meshFilesList)
@@ -56,22 +56,20 @@ def download_subset(use_case,datasetName,outputDirectory):
             imageFilelist = sorted([files for files in fileList if re.search("^images(?:/|\\\).*nrrd$",files)])[:3]
             DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = imageFilelist)
     elif(use_case=="deep_ssm"):
+        if(generate_download_flag(outputDirectory,"meshes")):
+            meshFilesList = sorted([files for files in fileList if re.search("^meshes(?:/|\\\).*ply$",files)])[:5]
+            DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = meshFilesList)
         if(generate_download_flag(outputDirectory,"images/")):
-            imageFilesList = sorted([files for files in fileList if re.search("^images(?:/|\\\).*nrrd$",files)])[:7]
+            imageFilesList = sorted([files for files in fileList if re.search("^images(?:/|\\\).*nrrd$",files)])[:5]
             DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = imageFilesList)
-        if(generate_download_flag(outputDirectory,"particles/")):
-            wolrdFilesList = sorted([files for files in fileList if re.search("^particles(?:/|\\\).*world.particles$",files)])[:7]
-            DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = wolrdFilesList)
-            localFilesList = sorted([files for files in fileList if re.search("^particles(?:/|\\\).*local.particles$",files)])[:7]
-            DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = localFilesList)
-        if(generate_download_flag(outputDirectory,"mean/")):
-            meanFilesList = sorted([files for files in fileList if re.search("^mean(?:/|\\\).*",files)])
-            DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = meanFilesList)
+        if(generate_download_flag(outputDirectory,"constraints")):
+            planeFilesList = sorted([files for files in fileList if re.search("^constraints(?:/|\\\).*json$",files)])[:5]
+            DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = planeFilesList)
     elif(use_case=="ellipsoid_multiple_domain"):
         if(generate_download_flag(outputDirectory,"segmentations")):
             segFilesList = sorted([files for files in fileList if re.search("^segmentations(?:/|\\\).*nrrd$",files)])[:6]
             DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = segFilesList)
-    elif(use_case=="ellipsoid_multiple_domain_mesh"):
+    elif(use_case in ["ellipsoid_multiple_domain_mesh","hip_multiple_domain"]):
         if(generate_download_flag(outputDirectory,"meshes")):
             meshFilesList = sorted([files for files in fileList if re.search("^meshes(?:/|\\\).*vtk$",files)])[:6]
             DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = meshFilesList)
@@ -84,10 +82,13 @@ def download_subset(use_case,datasetName,outputDirectory):
             planeFilesList = sorted([files for files in fileList if re.search("^constraints(?:/|\\\).*json$",files)])[:3]
             DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = planeFilesList)
     if(use_case=="peanut_shared_boundary"):
-        print("I am here")
         if(generate_download_flag(outputDirectory,"meshes")):
             meshFilesList = sorted([files for files in fileList if re.search("^meshes(?:/|\\\).*stl$",files)])[:2]
             DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = meshFilesList)
+    if(use_case in ["hip_multiple_domain"]):
+        if(generate_download_flag(outputDirectory,"constraints")):
+            planeFilesList = sorted([files for files in fileList if re.search("^constraints(?:/|\\\).*json$",files)])[:6]
+            DatasetUtils.downloadDataset(datasetName,destinationPath=outputDirectory,fileList = planeFilesList)
 
 
 def download_and_unzip_dataset(datasetName, outputDirectory):
@@ -204,7 +205,7 @@ def sample_meshes(inMeshList, num_sample, printCmd=False,domains_per_shape=1):
         for j in range(i, len(inMeshList)):
             mesh1 = inMeshList[i]
             mesh2 = inMeshList[j]
-            dist = sw.mean(mesh1.distance(mesh2).getField("distance", sw.Mesh.FieldType.Point))
+            dist = np.mean(mesh1.distance(mesh2)[0])
             D[i, j] = dist
     D += D.T
     A = np.exp(- D ** 2 / (2. * np.std(np.triu(D))**2))

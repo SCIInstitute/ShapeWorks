@@ -1,5 +1,8 @@
 #!/bin/bash -x
 
+# exit when any command fails
+set -e
+
 if [ "$#" -ne 3 ]; then
     echo "Usage: $0 <version> <install_dir> <install_dep_dir>"
     exit 1
@@ -43,8 +46,15 @@ rm -rf "package/$VERSION"
 
 mkdir -p "package/$VERSION"
 
+# Build python package tarballs
+# Pip can't install these otherwise from a read-only area like /Applications
+for package in DataAugmentationUtilsPackage DatasetUtilsPackage DeepSSMUtilsPackage DocumentationUtilsPackage ShapeCohortGenPackage shapeworks ; do
+    cd Python
+    tar czvf ${package}.tar.gz $package
+    cd ..
+done
+
 BASE_LIB=${INSTALL_DEP_DIR}/lib
-cp -a $INSTALL_DEP_DIR/* "package/${VERSION}"
 cp -a $INSTALL_DIR/* "package/${VERSION}"
 cp -a Examples "package/${VERSION}"
 cp -a Python "package/${VERSION}"
@@ -53,12 +63,14 @@ cp install_shapeworks.sh package/${VERSION}
 cp docs/about/release-notes.md package/${VERSION}
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
+    cp -a $INSTALL_DEP_DIR/lib/*.dylib "package/${VERSION}/bin/ShapeWorksStudio.app/Contents/Frameworks"
     cp docs/users/Mac_README.txt package/${VERSION}/README.txt
     if [ $? -ne 0 ]; then
 	echo "Failed to copy Mac package README"
 	exit 1
     fi
 else
+    cp -a $INSTALL_DEP_DIR/lib "package/${VERSION}"
     cp docs/users/Linux_README.txt package/${VERSION}/README.txt
     if [ $? -ne 0 ]; then
 	echo "Failed to copy Linux package README"
@@ -67,51 +79,49 @@ else
 fi
 
 cd "package/${VERSION}"
-rm bin/h5cc bin/h5c++ bin/itkTestDriver
 rm -rf include share v3p plugins libigl
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
     # Mac OSX
     cd bin
-    macdeployqt ShapeWorksStudio.app -no-strip
-    install_name_tool -add_rpath @executable_path/../Frameworks ShapeWorksStudio.app/Contents/MacOS/ShapeWorksStudio
-    install_name_tool -add_rpath @executable_path/../../../../lib ShapeWorksStudio.app/Contents/MacOS/ShapeWorksStudio
+    install_name_tool -add_rpath @executable_path/../Frameworks ShapeWorksStudio.app/Contents/MacOS/ShapeWorksStudio || echo ok
     QT_LIB_LOCATION="@executable_path/ShapeWorksStudio.app/Contents/Frameworks"
     QT_LOADER_LIB_LOCATION="@loader_path/ShapeWorksStudio.app/Contents/Frameworks"
-
 
     # copy platform plugins for Studio
     cp -a ShapeWorksStudio.app/Contents/PlugIns .
 
     for i in *.so ; do
-	install_name_tool -add_rpath "@loader_path/../lib" $i
-	install_name_tool -add_rpath $QT_LOADER_LIB_LOCATION $i
+	install_name_tool -add_rpath "@loader_path/../lib" $i || echo ok
+	install_name_tool -add_rpath $QT_LOADER_LIB_LOCATION $i || echo ok
     done
 
     for i in * ; do
-	install_name_tool -add_rpath $QT_LIB_LOCATION $i
+	install_name_tool -add_rpath $QT_LIB_LOCATION $i || echo ok
     done
 
-    cd ../lib
     # Copy libraries from anaconda
     conda_libs="libpython libboost_filesystem"
     for clib in $conda_libs; do
-        cp ${CONDA_PREFIX}/lib/${clib}* .
-        cp ${CONDA_PREFIX}/lib/${clib}* ../bin/ShapeWorksStudio.app/Contents/Frameworks
+        cp ${CONDA_PREFIX}/lib/${clib}* ShapeWorksStudio.app/Contents/Frameworks
     done
-    # remove static libs
-    rm *.a ../bin/ShapeWorksStudio.app/Contents/Frameworks/*.a
-    
-    # Fix transitive loaded libs
-    for i in *.dylib ; do
-	install_name_tool -change ${BASE_LIB}/libitkgdcmopenjp2-5.0.1.dylib @rpath/libitkgdcmopenjp2-5.0.1.dylib $i
-    done
-    install_name_tool -id @rpath/libitkgdcmopenjp2-5.0.1.dylib libitkgdcmopenjp2-5.0.1.dylib
+
+
+    # # Fix transitive loaded libs
+    # for i in ShapeWorksStudio.app/Contents/Frameworks/*.dylib ; do
+    # 	install_name_tool -change ${BASE_LIB}/libitkgdcmopenjp2-5.2.1.dylib @rpath/libitkgdcmopenjp2-5.2.1.dylib $i
+    # done
+    # install_name_tool -id @rpath/libitkgdcmopenjp2-5.2.1.dylib ShapeWorksStudio.app/Contents/Frameworks/libitkgdcmopenjp2-5.2.1.dylib
 
     cd ..
+
+    # remove static libs
+    pwd
+    rm lib/*.a
+
 else
     # Copy libraries from anaconda
-    conda_libs="libboost_iostreams libboost_filesystem libbz2 liblzma liblz4 libtbb libHalf libpython libz"
+    conda_libs="libboost_iostreams libboost_filesystem libbz2 liblzma liblz4 libtbb libHalf libpython libz libspd"
     for clib in $conda_libs; do
         cp ${CONDA_PREFIX}/lib/${clib}* lib
     done
@@ -124,7 +134,6 @@ else
     cd ..
     
     rm lib/libxcb* lib/libX* lib/libfont* lib/libfreetype*
-    rm bin/vdb_print
     rm -rf geometry-central doc
 fi
 
@@ -146,10 +155,18 @@ cp -a Documentation "${ROOT}/package/${VERSION}"
 
 mkdir ${ROOT}/artifacts
 cd ${ROOT}/package
-zip -y -r ${ROOT}/artifacts/${VERSION}.zip ${VERSION}
-if [ $? -ne 0 ]; then
-    echo "Failed to zip artifact"
-    exit 1
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    zip -y -r ${ROOT}/artifacts/${VERSION}.zip ${VERSION}
+    if [ $? -ne 0 ]; then
+	echo "Failed to zip artifact"
+	exit 1
+    fi
+else
+    tar czvf ${ROOT}/artifacts/${VERSION}.tar.gz ${VERSION}
+    if [ $? -ne 0 ]; then
+	echo "Failed to tar artifact"
+	exit 1
+    fi
 fi
 
 # Additionally on Mac, create an installer

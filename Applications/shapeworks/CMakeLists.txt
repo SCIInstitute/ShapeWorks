@@ -20,18 +20,10 @@ add_executable(shapeworks_exe
 target_include_directories(shapeworks_exe PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
   $<INSTALL_INTERFACE:include>)
+
 target_link_libraries(shapeworks_exe
-  Utils
-  Image
-  Common
-  Mesh
-  Analyze
-  Particles
-  Optimize
-  Groom
-  Project
-  ${ITK_LIBRARIES}
-  OptimizeLibraries
+  Mesh ${VTK_LIBRARIES} Optimize Utils trimesh2 Particles
+  pybind11::embed Project Image Groom Analyze
   )
 
 message(STATUS "opt libs ${OPTIMIZE_LIBRARIES}")
