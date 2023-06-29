@@ -171,8 +171,8 @@ class Mesh {
   Image toDistanceTransform(PhysicalRegion region = PhysicalRegion(), const Point3 spacing = Point3({1., 1., 1.}),
                             const Dims padding = Dims({1, 1, 1})) const;
 
-  /// assign thickness values from mesh points inward until threshold is met
-  Mesh& computeThickness(Image& image, Image* dt, double threshold, double min_dist, double max_dist, std::string distance_mesh);
+  /// assign cortical thickness values from mesh points
+  Mesh& computeThickness(Image& image, Image* dt, double max_dist, std::string distance_mesh);
 
   // query functions //
 

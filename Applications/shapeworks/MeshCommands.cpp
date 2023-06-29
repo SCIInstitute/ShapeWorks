@@ -1534,16 +1534,6 @@ void ComputeThickness::buildParser() {
       .type("string")
       .set_default("")
       .help("Path of distance_transform.");
-  parser.add_option("--threshold")
-      .action("store")
-      .type("double")
-      .set_default(0.0)
-      .help("Intensity threshold for thickness values");
-  parser.add_option("--min_dist")
-      .action("store")
-      .type("double")
-      .set_default(0.0)
-      .help("Minimum distance to intensity area");
   parser.add_option("--max_dist")
       .action("store")
       .type("double")
@@ -1571,8 +1561,6 @@ bool ComputeThickness::execute(const optparse::Values &options, SharedCommandDat
   }
   Image img(filename);
 
-  double threshold = static_cast<double>(options.get("threshold"));
-  double min_dist = static_cast<double>(options.get("min_dist"));
   double max_dist = static_cast<double>(options.get("max_dist"));
 
   std::string dt_filename = static_cast<std::string>(options.get("distance_transform"));
@@ -1580,10 +1568,10 @@ bool ComputeThickness::execute(const optparse::Values &options, SharedCommandDat
   std::string distance_mesh_filename = static_cast<std::string>(options.get("distance_mesh"));
 
   if (dt_filename == "") {
-    sharedData.mesh->computeThickness(img, nullptr, threshold, min_dist, max_dist, distance_mesh_filename);
+    sharedData.mesh->computeThickness(img, nullptr, max_dist, distance_mesh_filename);
   } else {
     Image dt(dt_filename);
-    sharedData.mesh->computeThickness(img, &dt, threshold, min_dist, max_dist, distance_mesh_filename);
+    sharedData.mesh->computeThickness(img, &dt, max_dist, distance_mesh_filename);
   }
 
 
