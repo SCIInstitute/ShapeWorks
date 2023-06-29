@@ -33,9 +33,8 @@ std::vector<double> smoothIntensities(std::vector<double> intensities) {
 }
 
 //---------------------------------------------------------------------------
-void compute_thickness(Mesh& mesh, Image& image, Image* dt, double threshold, double min_dist, double max_dist,
-                       std::string distance_mesh) {
-  SW_DEBUG("Computing thickness with threshold {}, min_dist {}, max_dist {}", threshold, min_dist, max_dist);
+void compute_thickness(Mesh& mesh, Image& image, Image* dt, double max_dist, std::string distance_mesh) {
+  SW_DEBUG("Computing thickness with max_dist {}", max_dist);
 
   bool use_dt = dt != nullptr;
 
