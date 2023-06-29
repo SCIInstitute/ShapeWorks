@@ -44,6 +44,8 @@ using namespace pybind11::literals;
 #include "VectorImage.h"
 #include "pybind_utils.h"
 
+#include "PythonAnalyze.h"
+
 using namespace shapeworks;
 
 PYBIND11_MODULE(shapeworks_py, m)
@@ -1012,7 +1014,8 @@ PYBIND11_MODULE(shapeworks_py, m)
 
   .def("fillHoles",
        &Mesh::fillHoles,
-       "finds holes in a mesh and closes them")
+       "finds holes in a mesh and closes them",
+       "hole_size"_a=1000)
 
   .def("probeVolume",
        &Mesh::probeVolume,
@@ -1080,11 +1083,10 @@ PYBIND11_MODULE(shapeworks_py, m)
 
   .def("closestPoint",
        [](Mesh &mesh, std::vector<double> p) -> decltype(auto) {
-         bool outside = false;
          double distance;
          vtkIdType face_id = -1;
-         auto pt = mesh.closestPoint(Point({p[0], p[1], p[2]}), outside, distance, face_id);
-         return py::make_tuple(py::array(3, pt.GetDataPointer()), outside, face_id);
+         auto pt = mesh.closestPoint(Point({p[0], p[1], p[2]}), distance, face_id);
+         return py::make_tuple(py::array(3, pt.GetDataPointer()), face_id);
        },
        "returns closest point to given point on mesh",
        "point"_a)
@@ -1486,6 +1488,8 @@ PYBIND11_MODULE(shapeworks_py, m)
        &ParticleShapeStatistics::PercentVarByMode,
        "return the variance accounted for by the principal components")
   ;
+
+  define_python_analyze(m);
 
   py::class_<ReconstructSurface<ThinPlateSplineTransform>>(m, "ReconstructSurface_ThinPlateSplineTransform")
 
@@ -1965,13 +1969,17 @@ PYBIND11_MODULE(shapeworks_py, m)
       "remove an entry",
       "key"_a)
 
-  .def("set_map",
-      &Parameters::set_map,
-      "set underlying map",
-      "map"_a)
+  .def("as_map",
+      [](const Parameters& params) -> decltype(auto) {
+          project::types::StringMap m = params.get_map();
+          std::map<std::string,std::string> map;
 
-  .def("get_map",
-      &Parameters::get_map,
+         for (auto& [k, v] : m) {
+           map[k] = v;
+         }
+
+         return map;
+       },
       "get underlying map")
 
   .def("reset_parameters",
@@ -1998,6 +2006,12 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def(py::init< const char*> ())
 
   .def(py::init< bool> ())
+
+  .def("as_str",
+        [](const Variant& v) -> decltype(auto) {
+          return static_cast<std::string>(v);
+       },
+      "Return the variant string content")
 
   ; //Variant
 } // PYBIND11_MODULE(shapeworks_py)

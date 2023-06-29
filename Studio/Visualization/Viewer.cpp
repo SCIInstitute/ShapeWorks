@@ -246,11 +246,11 @@ void Viewer::display_vector_field() {
   /////////////////////////////////////////////////////////////////////////////////
 
   // Dot product difference vectors with the surface normals.
-  vtkSmartPointer<vtkFloatArray> magnitudes = vtkSmartPointer<vtkFloatArray>::New();
+  auto magnitudes = vtkSmartPointer<vtkFloatArray>::New();
   magnitudes->SetName("magnitudes");
   magnitudes->SetNumberOfComponents(1);
 
-  vtkSmartPointer<vtkFloatArray> vectors = vtkSmartPointer<vtkFloatArray>::New();
+  auto vectors = vtkSmartPointer<vtkFloatArray>::New();
   vectors->SetName("vectors");
   vectors->SetNumberOfComponents(3);
 
@@ -660,6 +660,9 @@ void Viewer::display_shape(std::shared_ptr<Shape> shape) {
 
       auto poly_data = mesh->get_poly_data();
 
+      if (!poly_data) {
+        continue;
+      }
       auto feature_map = get_displayed_feature_map();
 
       if (session_->should_difference_vectors_show()) {
@@ -903,7 +906,6 @@ void Viewer::update_points() {
     scalars->Reset();
 
     int point_index = 0;
-    unsigned int idx = 0;
     for (int d = 0; d < correspondence_points.size(); d++) {
       int num_points_this_domain = correspondence_points[d].size() / 3;
 
@@ -1016,7 +1018,10 @@ void Viewer::update_actors() {
       cell_picker_->AddPickList(unclipped_surface_actors_[i]);
       prop_picker_->AddPickList(unclipped_surface_actors_[i]);
       point_placer_->AddProp(unclipped_surface_actors_[i]);
-      point_placer_->GetPolys()->AddItem(meshes_.meshes()[i]->get_poly_data());
+      auto poly_data = meshes_.meshes()[i]->get_poly_data();
+      if (poly_data) {
+        point_placer_->GetPolys()->AddItem(poly_data);
+      }
     }
   }
 

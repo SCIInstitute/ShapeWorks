@@ -1,11 +1,11 @@
 # Based on old ubuntu to create more compatible binaries
 
-# To build (e.g. for ShapeWorks 6.4):
-#    docker build --progress=plain -t akenmorris/ubuntu-build-box-sw64 .
+# To build (e.g. for ShapeWorks 6.5):
+#    docker build --progress=plain -t akenmorris/ubuntu-build-box-sw65 .
 # To publish:
-#    docker push akenmorris/ubuntu-build-box-sw64
+#    docker push akenmorris/ubuntu-build-box-sw65
 
-FROM ubuntu:xenial-20210429 AS env
+FROM ubuntu:bionic-20230308 AS env
 MAINTAINER akenmorris@gmail.com
 
 # Set environment variables
@@ -43,4 +43,4 @@ RUN curl -L -o $HOME/linuxdeployqt.AppImage https://github.com/probonopd/linuxde
 RUN ln -s /root/squashfs-root/usr/bin/linuxdeployqt /usr/bin
 
 # Set compression for ccache
-RUN mkdir /root/.ccache && echo "compression = true" > /root/.ccache/ccache.conf
+RUN mkdir /root/.ccache && echo "max_size = 500M\ncompression = true" > /root/.ccache/ccache.conf

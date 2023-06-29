@@ -21,7 +21,8 @@ Latest Release
 <!--![](docs/img/about/release6.0.png)-->
 <!--![](docs/img/about/release6.1.png)-->
 <!--![](docs/img/about/release6.2.png)-->
-![](docs/img/about/release6.3.png)
+<!--![](docs/img/about/release6.3.png)-->
+![](docs/img/about/release6.4.png)
 
 Quick Links
 =====================
@@ -40,7 +41,7 @@ Using
 [ShapeWorks Commands](http://sciinstitute.github.io/ShapeWorks/latest/tools/ShapeWorksCommands)  
 [ShapeWorks Studio](http://sciinstitute.github.io/ShapeWorks/latest/getting-started/interfaces#shapeworksstudio)  
 [Python API](http://sciinstitute.github.io/ShapeWorks/latest/getting-started/interfaces#shapeworks-in-python) _(New!)_  
-[Clouds Deployments](http://sciinstitute.github.io/ShapeWorks/latest/getting-started/interfaces#shapeworks-in-the-cloud) _(Coming Soon!)_  
+[Clouds Deployments](http://sciinstitute.github.io/ShapeWorks/latest/cloud/getting-started-with-cloud.html) _(New!)_
 
 
 

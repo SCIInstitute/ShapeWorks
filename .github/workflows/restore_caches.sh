@@ -6,6 +6,8 @@ echo "#############################"
 
 set +e
 
+BASE=`pwd`
+
 . $GITHUB_WORKSPACE/.github/workflows/common.sh
 
 # based on root folder

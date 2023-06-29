@@ -2,7 +2,7 @@
 # Installs conda environment for building ShapeWorks
 #
 
-SW_MAJOR_VERSION=6.4
+SW_MAJOR_VERSION=6.5
 
 echo ""
 echo "Note: this script only supports bash and zsh shells "
@@ -46,7 +46,7 @@ done
 
 CONDAENV=shapeworks
 if [[ "${#POSITIONAL_ARGS[@]}" -eq 1 ]]; then
-   CONDAENV=${POSITIONAL_ARGS[0]}
+   CONDAENV=${POSITIONAL_ARGS[@]:0:1}
 fi
 
 echo "Creating new conda environment for ShapeWorks called \"$CONDAENV\"..."
@@ -71,6 +71,8 @@ function install_pytorch() {
         pip install torch==1.11.0 torchvision==0.12.0 torchaudio==0.11.0 -f https://download.pytorch.org/whl/torch_stable.html
     elif [[ "$CUDA" == "11.0" || "$CUDA" == "11.1" || "$CUDA" == "11.2" ]]; then
         pip install torch==1.11.0+cu110 torchvision==0.12.0+cu110 torchaudio==0.11.0 -f https://download.pytorch.org/whl/torch_stable.html
+    elif [[ "$CUDA" == "11.7" || "$CUDA" == "11.8" || "$CUDA" == "12.0" || "$CUDA" == "12.1" ]]; then
+	pip install torch==1.13.1 torchvision==0.14.1 torchaudio==0.13.1 -f https://download.pytorch.org/whl/cu118
     else
         echo "CUDA version not compatible, using cpu-only"
         pip install torch==1.11.0+cpu torchvision==0.12.0+cpu torchaudio==0.11.0 -f https://download.pytorch.org/whl/torch_stable.html
@@ -112,7 +114,6 @@ function install_conda() {
     echo "Developer packages enabled"
 
     CONDA_PACKAGES+=(cmake=3.23.2 \
-		     gtest=1.11.0 \
 		     gmock=1.11.0 \
 		     doxygen=1.9.2 \
 		     graphviz=4.0.0 \
@@ -184,15 +185,24 @@ function install_conda() {
   if ! pip install SimpleITK==2.1.1.2;                  then return 1; fi
   if ! pip install bokeh==2.4.3;                        then return 1; fi
   if ! pip install seaborn==0.11.2;                     then return 1; fi
-  if ! pip install swcc==1.0.3;                         then return 1; fi
+  if ! pip install swcc==1.0.5;                         then return 1; fi
   if ! pip install scikit-learn==1.1.1;                 then return 1; fi
-  if ! pip install Python/DatasetUtilsPackage;          then return 1; fi # install the local GirderConnector code as a package
-  if ! pip install Python/DocumentationUtilsPackage;    then return 1; fi # install shapeworks auto-documentation as a package
-  if ! pip install Python/DataAugmentationUtilsPackage; then return 1; fi # install data augmentation code as a package
-  if ! pip install Python/DeepSSMUtilsPackage;          then return 1; fi # install DeepSSM code as a package
-  if ! pip install Python/ShapeCohortGenPackage;        then return 1; fi # install shape cohort generation code as a package
 
+  # for network analysis
+  if [[ "$(uname)" == "Linux" ]]; then
+      if ! pip install open3d-cpu==0.17.0;              then return 1; fi
+  else
+      if ! pip install open3d==0.17.0;                  then return 1; fi
+  fi
+  if ! pip install spm1d==0.4.2;                        then return 1; fi
 
+  for package in DataAugmentationUtilsPackage DatasetUtilsPackage DeepSSMUtilsPackage DocumentationUtilsPackage ShapeCohortGenPackage shapeworks ; do
+    if [[ -e Python/${package}.tar.gz ]] ; then
+      if ! pip install Python/${package}.tar.gz;        then return 1; fi
+    else
+      if ! pip install Python/${package};               then return 1; fi
+    fi
+  done
   
   ./Installation/install_python_module.sh   # install python module
   ./Installation/conda_env_setup.sh         # install conda [de]activate scripts
@@ -254,6 +264,8 @@ if install_conda; then
   echo "Pip installed packages:"
   pip list
 
+  conda clean -t -y
+  
   echo "$CONDAENV environment successfully created/updated!"
   
   conda activate $CONDAENV

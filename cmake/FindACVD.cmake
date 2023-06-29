@@ -8,14 +8,14 @@ find_path(ACVD_INCLUDE_DIR
 
 find_library(ACVD_VOLUME_LIBRARY 
   libvtkVolumeProcessing
-  NAMES libvtkVolumeProcessing.dylib libvtkVolumeProcessing.so vtkVolumeProcessing.lib libvtkVolumeProcessing-d.dylib libvtkVolumeProcessing-d.so vtkVolumeProcessing-d.lib
+  NAMES libvtkVolumeProcessing.a libvtkVolumeProcessing-d.a libvtkVolumeProcessing.dylib libvtkVolumeProcessing.so vtkVolumeProcessing.lib libvtkVolumeProcessing-d.dylib libvtkVolumeProcessing-d.so vtkVolumeProcessing-d.lib vtkVolumeProcessing-d.a
   HINTS /usr/local/lib
   HINTS ${ACVD_DIR}/build/source
   HINTS ${ACVD_DIR}/lib
   )
 find_library(ACVD_SURFACE_LIBRARY 
   libvtkSurface
-  NAMES libvtkSurface.dylib libvtkSurface.so vtkSurface.lib libvtkSurface-d.dylib libvtkSurface-d.so vtkSurface-d.lib
+  NAMES libvtkSurface.a libvtkSurface-d.a libvtkSurface.dylib libvtkSurface.so vtkSurface.lib libvtkSurface-d.dylib libvtkSurface-d.so vtkSurface-d.lib vtkSurface-d.a
   HINTS /usr/local/lib
   HINTS ${ACVD_DIR}/build/source
   HINTS ${ACVD_DIR}/lib

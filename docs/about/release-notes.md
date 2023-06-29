@@ -1,5 +1,58 @@
 # Release Notes
 
+## ShapeWorks 6.4.1 - 2023-05-10
+
+### Fixes
+
+  * Fix grooming crash when there are free form constraints in an untitled/unsaved project (#2078)
+  * Fix update checker potentially crashing (#2079)
+
+
+## ShapeWorks 6.4.0 - 2023-05-05
+
+![](../img/about/release6.4.png)
+
+### What is new?
+  * **ShapeWorks Back-end**
+    * New shapeworks 'analyze' command for offline analysis of shape models
+    * Improved free form constraints that now support doubly connected areas (e.g. donut-like)
+    * Data Portal migrated to new ShapeWorks Cloud and swcc (ShapeWorks Cloud Client) tool
+    * ShapeWorks can now be used as a 3rd party library ([details here](../dev/shapeworks-library.md))
+    * Added support for 'save_init_splits' and 'checkpointing_interval' parameters in the project spreadsheet formats
+    * Added new JSON based file format for storing ShapeWorks projects (swproj)
+    * Added a unified logging library for ShapeWorks (spdlog)
+    * Uniform numerical computation of specificity across platforms
+    * Updated dependencies.  Python now at 3.9, PyTorch 1.11.0, VTK 9.1, ITK 5.2.1
+  * **ShapeWorks Front-end**
+    * Studio can now automatically check for updates and prompt the user to download them
+    * Improved progress bar in Studio is more representative and also estimates time remaining
+    * Added ability to arbitrarily scale difference arrows in Studio
+    * Added file association support for swproj file extension on Windows and Mac
+    * New multi-level analysis feature in Studio ([details here](../studio/studio-analyze.md#multi-level-pca))
+    * Added ability to hide/show particles per domain
+  * **User's Support**
+    * Hip Use Case: The use case uses the hip joint to demonstrate the capability of ShapeWorks 
+      to capture inter-domain correlations and interactions directly on triangular surface meshes. 
+      The use case showcases calculating the alignment options available for multiple organ anatomies.
+      ([details here](../use-cases/mesh-based/hip.md))
+    * Added options to the incremental use case when run in --interactive mode, including sorting method, 
+      initial model size, and incremental batch size. The sorting method determines how the shapes are sorted 
+      to be added incrementally. There are three options: random, median, distribution.
+      ([details here](../use-cases/multistep/incremental_supershapes.md))
+    * [Python API documentation](../python/python-api.md) has been added to the ShapeWorks documentation site
+
+### Fixes
+  * Fix Studio python problem causing crash on group differences (#1781)
+  * Fix Studio slow/hanging on certain free form constraints (#1817, #1801)
+  * Fix crashes on certain projects (#1800, #1815)
+  * Fix procrustes with multi-domain models (#1755)
+  * Fixed crashes in groom due to multi-threading (#1944)
+
+## ShapeWorks 6.3.2 - 2022-10-04
+### Fixes
+
+  * Fix install_shapeworks.sh on Linux (#1883)
+
 
 ## ShapeWorks 6.3.1 - 2022-07-22
 

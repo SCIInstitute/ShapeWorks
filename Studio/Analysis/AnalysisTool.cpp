@@ -8,6 +8,7 @@
 #include <Data/ShapeWorksWorker.h>
 #include <Interface/ShapeWorksStudioApp.h>
 #include <Job/GroupPvalueJob.h>
+#include <Job/NetworkAnalysisJob.h>
 #include <Job/ParticleNormalEvaluationJob.h>
 #include <Job/StatsGroupLDAJob.h>
 #include <Logging.h>
@@ -31,6 +32,9 @@ const std::string AnalysisTool::MODE_REGRESSION_C("regression");
 AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
   ui_ = new Ui_AnalysisTool;
   ui_->setupUi(this);
+
+  auto spacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
+  layout()->addItem(spacer);
 
 #ifdef Q_OS_MACOS
   ui_->tabWidget->tabBar()->setMinimumWidth(200);
@@ -74,6 +78,13 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
   connect(ui_->group_right, qOverload<int>(&QComboBox::currentIndexChanged), this, &AnalysisTool::group_changed);
   connect(ui_->group_p_values_button, &QPushButton::clicked, this, &AnalysisTool::group_p_values_clicked);
 
+  // network analysis
+  connect(ui_->network_analysis_button, &QPushButton::clicked, this, &AnalysisTool::network_analysis_clicked);
+  connect(ui_->network_analysis_display, &QCheckBox::stateChanged, this, &AnalysisTool::update_view);
+  connect(ui_->network_analysis_option, &QRadioButton::clicked, this, &AnalysisTool::update_view);
+  connect(ui_->network_spm1d_option, &QRadioButton::clicked, this, &AnalysisTool::update_view);
+
+
   connect(ui_->reference_domain, qOverload<int>(&QComboBox::currentIndexChanged), this,
           &AnalysisTool::handle_alignment_changed);
 
@@ -83,7 +94,7 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
   /// TODO nothing there yet (regression tab)
   ui_->tabWidget->removeTab(3);
 
-  for (auto button : {ui_->distance_transfom_radio_button, ui_->mesh_warping_radio_button, ui_->legacy_radio_button}) {
+  for (auto button : {ui_->distance_transform_radio_button, ui_->mesh_warping_radio_button, ui_->legacy_radio_button}) {
     connect(button, &QRadioButton::clicked, this, &AnalysisTool::reconstruction_method_changed);
   }
 
@@ -378,6 +389,22 @@ void AnalysisTool::group_p_values_clicked() {
   }
 }
 
+//---------------------------------------------------------------------------
+void AnalysisTool::network_analysis_clicked() {
+  network_analysis_job_ =
+      QSharedPointer<NetworkAnalysisJob>::create(session_->get_project(), ui_->group_box->currentText().toStdString(),
+                                                 ui_->network_feature->currentText().toStdString());
+  network_analysis_job_->set_pvalue_of_interest(ui_->network_pvalue_of_interest->text().toDouble());
+  network_analysis_job_->set_pvalue_threshold(ui_->network_pvalue_threshold->text().toDouble());
+  network_analysis_job_->set_num_iterations(ui_->network_iterations->text().toInt());
+
+  connect(network_analysis_job_.data(), &NetworkAnalysisJob::progress, this,
+          &AnalysisTool::handle_network_analysis_progress);
+  connect(network_analysis_job_.data(), &NetworkAnalysisJob::finished, this,
+          &AnalysisTool::handle_network_analysis_complete);
+  app_->get_py_worker()->run_job(network_analysis_job_);
+}
+
 //-----------------------------------------------------------------------------
 bool AnalysisTool::compute_stats() {
   if (stats_ready_) {
@@ -541,6 +568,7 @@ Particles AnalysisTool::get_shape_points(int mode, double value) {
   }
 
   unsigned int m = stats_.Eigenvectors().cols() - (mode + 1);
+  m = std::clamp<unsigned int>(m, 0, stats_.Eigenvectors().cols() - 1);
 
   Eigen::VectorXd e = stats_.Eigenvectors().col(m);
 
@@ -669,6 +697,11 @@ void AnalysisTool::load_settings() {
   ui_->numClusters->setValue(params.get("reconstruction_clusters", 3));
   ui_->meshDecimation->setValue(params.get("reconstruction_decimation", 0.30));
   ui_->maxAngle->setValue(params.get("reconstruction_max_angle", 60));
+  ui_->network_iterations->setText(QString::number(static_cast<double>(params.get("network_iterations", 10000))));
+  double pvalue_of_interest = params.get("network_pvalue_of_interest", 0.05);
+  ui_->network_pvalue_of_interest->setText(QString::number(pvalue_of_interest));
+  ui_->network_pvalue_threshold->setText(
+      QString::number(static_cast<double>(params.get("network_pvalue_threshold", 0.05))));
 
   update_group_boxes();
 
@@ -681,6 +714,10 @@ void AnalysisTool::store_settings() {
   params.set("reconstruction_clusters", ui_->numClusters->value());
   params.set("reconstruction_decimation", ui_->meshDecimation->value());
   params.set("reconstruction_max_angle", ui_->maxAngle->value());
+  params.set("network_iterations", ui_->network_iterations->text().toStdString());
+  params.set("network_pvalue_of_interest", ui_->network_pvalue_of_interest->text().toStdString());
+  params.set("network_pvalue_threshold", ui_->network_pvalue_threshold->text().toStdString());
+
   session_->get_project()->set_parameters(Parameters::ANALYSIS_PARAMS, params);
 }
 
@@ -772,7 +809,7 @@ void AnalysisTool::on_pcaSlider_valueChanged() {
 //---------------------------------------------------------------------------
 void AnalysisTool::on_group_slider_valueChanged() {
   // this will make the slider handle redraw making the UI appear more responsive
-  // QCoreApplication::processEvents();
+  QCoreApplication::processEvents();
 
   ui_->group1_button->setChecked(false);
   ui_->group2_button->setChecked(false);
@@ -783,9 +820,7 @@ void AnalysisTool::on_group_slider_valueChanged() {
 }
 
 //---------------------------------------------------------------------------
-void AnalysisTool::on_pcaModeSpinBox_valueChanged(int i) {
-  Q_EMIT pca_update();
-}
+void AnalysisTool::on_pcaModeSpinBox_valueChanged(int i) { Q_EMIT pca_update(); }
 
 //---------------------------------------------------------------------------
 void AnalysisTool::handle_pca_animate_state_changed() {
@@ -904,6 +939,8 @@ void AnalysisTool::reset_stats() {
     ui_->mcaLevelBetweenButton->setEnabled(false);
   }
 
+  ui_->network_progress_widget->hide();
+
   stats_ready_ = false;
   evals_ready_ = false;
   stats_ = ParticleShapeStatistics();
@@ -923,8 +960,8 @@ void AnalysisTool::enable_actions(bool newly_enabled) {
   if (session_->particles_present()) {
     auto domain_types = session_->get_groomed_domain_types();
     bool image_domain = domain_types.size() > 0 && domain_types[0] == DomainType::Image;
-    ui_->distance_transfom_radio_button->setEnabled(session_->particles_present() && session_->get_groomed_present() &&
-                                                    image_domain);
+    ui_->distance_transform_radio_button->setEnabled(session_->particles_present() && session_->get_groomed_present() &&
+                                                     image_domain);
 
     ui_->mesh_warping_radio_button->setEnabled(session_->particles_present() && session_->get_groomed_present());
 
@@ -933,6 +970,12 @@ void AnalysisTool::enable_actions(bool newly_enabled) {
     }
     reconstruction_method_changed();
   }
+
+  bool network_ready = network_analysis_job_ && network_analysis_job_->get_tvalues().rows() > 0;
+
+  ui_->network_analysis_option->setEnabled(network_ready);
+  ui_->network_spm1d_option->setEnabled(network_ready);
+  ui_->network_analysis_display->setEnabled(network_ready);
 
   update_group_boxes();
   ui_->sampleSpinBox->setMaximum(session_->get_num_shapes() - 1);
@@ -966,6 +1009,17 @@ ShapeHandle AnalysisTool::get_mean_shape() {
       group_pvalue_job_->get_group_pvalues().rows() > 0) {
     shape->set_point_features("p_values", group_pvalue_job_->get_group_pvalues());
     shape->set_override_feature("p_values");
+  }
+
+  if (ui_->network_analysis_display->isChecked() && network_analysis_job_ &&
+      network_analysis_job_->get_tvalues().rows() > 0) {
+    if (ui_->network_analysis_option->isChecked()) {
+      shape->set_point_features("t_values", network_analysis_job_->get_tvalues());
+      shape->set_override_feature("t_values");
+    } else {
+      shape->set_point_features("spm_values", network_analysis_job_->get_spm_values());
+      shape->set_override_feature("spm_values");
+    }
   }
 
   int num_points = shape_points.get_combined_global_particles().size() / 3;
@@ -1055,6 +1109,16 @@ std::string AnalysisTool::get_display_feature_map() {
       group_pvalue_job_->get_group_pvalues().rows() > 0) {
     return "p_values";
   }
+
+  if (ui_->network_analysis_display->isChecked() && network_analysis_job_ &&
+      network_analysis_job_->get_tvalues().rows() > 0) {
+    if (ui_->network_analysis_option->isChecked()) {
+      return "t_values";
+    } else {
+      return "spm_values";
+    }
+  }
+
   return feature_map_;
 }
 
@@ -1109,6 +1173,7 @@ void AnalysisTool::update_group_values() {
   ui_->group_left->setEnabled(groups_on);
   ui_->group_right->setEnabled(groups_on);
   ui_->group_animate_checkbox->setEnabled(groups_on);
+  ui_->network_analysis_box->setEnabled(groups_on);
 
   block_group_change_ = false;
   group_changed();
@@ -1285,7 +1350,9 @@ void AnalysisTool::initialize_mesh_warper() {
       Mesh mesh(poly_data);
       median_shape->get_constraints(i).clipMesh(mesh);
 
+      // std::cerr << "domain: " << i << "\n";
       session_->get_mesh_manager()->get_mesh_warper(i)->set_reference_mesh(mesh.getVTKMesh(), points);
+      // session_->get_mesh_manager()->get_mesh_warper(i)->generate_warp();
     }
   }
 }
@@ -1420,6 +1487,29 @@ void AnalysisTool::handle_lda_complete() {
   ui_->lda_hint_label->setVisible(true);
 }
 
+void AnalysisTool::handle_network_analysis_progress(int progress) {
+  if (progress > 0) {
+    ui_->network_progress->setMaximum(100);
+  } else {
+    ui_->network_progress->setMaximum(0);
+  }
+
+  bool show_progress = progress < 1;
+
+  ui_->network_progress_widget->setVisible(show_progress);
+  ui_->network_analysis_button->setEnabled(!show_progress);
+  ui_->network_progress->setValue(progress * 100);
+  ui_->network_progress->update();
+}
+
+void AnalysisTool::handle_network_analysis_complete() {
+  handle_network_analysis_progress(100);
+  SW_LOG("Network analysis complete");
+  enable_actions(true);
+  Q_EMIT progress(100);
+  Q_EMIT update_view();
+}
+
 //---------------------------------------------------------------------------
 void AnalysisTool::show_difference_to_mean_clicked() {
   update_difference_particles();
@@ -1428,9 +1518,9 @@ void AnalysisTool::show_difference_to_mean_clicked() {
 
 //---------------------------------------------------------------------------
 void AnalysisTool::reconstruction_method_changed() {
-  ui_->reconstruction_options->setVisible(ui_->distance_transfom_radio_button->isChecked());
+  ui_->reconstruction_options->setVisible(ui_->distance_transform_radio_button->isChecked());
   std::string method = MeshGenerator::RECONSTRUCTION_LEGACY_C;
-  if (ui_->distance_transfom_radio_button->isChecked()) {
+  if (ui_->distance_transform_radio_button->isChecked()) {
     method = MeshGenerator::RECONSTRUCTION_DISTANCE_TRANSFORM_C;
   } else if (ui_->mesh_warping_radio_button->isChecked()) {
     method = MeshGenerator::RECONSTRUCTION_MESH_WARPER_C;
@@ -1449,6 +1539,15 @@ void AnalysisTool::set_active(bool active) {
   if (!active) {
     ui_->pcaAnimateCheckBox->setChecked(false);
     pca_animate_timer_.stop();
+  } else {
+    auto features = session_->get_project()->get_feature_names();
+    ui_->network_feature->clear();
+    // convert to QStringList
+    QStringList qfeatures;
+    for (auto feature : features) {
+      qfeatures.append(QString::fromStdString(feature));
+    }
+    ui_->network_feature->addItems(qfeatures);
   }
   active_ = active;
   update_interface();
@@ -1550,4 +1649,5 @@ void AnalysisTool::create_plot(JKQTPlotter* plot, Eigen::VectorXd data, QString 
   plot->addGraph(graph);
   plot->zoomToFit();
 }
+
 }  // namespace shapeworks

@@ -1,25 +1,23 @@
 #include <tbb/tbb.h>
 
-#include <iostream>
-
 #include <QApplication>
-#include <QResource>
-#include <QMessageBox>
+#include <QDateTime>
 #include <QDir>
 #include <QFileOpenEvent>
-#include <QDateTime>
+#include <QMessageBox>
+#include <QResource>
 #include <QStandardPaths>
 #include <QSurfaceFormat>
+#include <iostream>
 
 // itk
 #include <itkMacro.h>
 
 // vtk
-#include <QVTKOpenGLNativeWidget.h>
-
-#include <Interface/ShapeWorksStudioApp.h>
 #include <Applications/Configuration.h>
+#include <Interface/ShapeWorksStudioApp.h>
 #include <Logging.h>
+#include <QVTKOpenGLNativeWidget.h>
 
 #ifdef _WIN32
 #include <Utils/WindowsCrashHandler.h>
@@ -30,19 +28,16 @@ using namespace shapeworks;
 
 class OverrideQApplication : public QApplication {
  public:
-  OverrideQApplication(int& argc, char **argv)
-      : QApplication(argc, argv) {
-  }
+  OverrideQApplication(int& argc, char** argv) : QApplication(argc, argv) {}
 
-  bool event(QEvent *event) override {
+  bool event(QEvent* event) override {
     if (event->type() == QEvent::FileOpen) {
-      QFileOpenEvent *openEvent = static_cast<QFileOpenEvent *>(event);
+      QFileOpenEvent* openEvent = static_cast<QFileOpenEvent*>(event);
       SW_LOG("Open file {}", openEvent->file().toStdString());
       stored_filename_ = openEvent->file();
       if (file_open_callback_) {
         file_open_callback_(openEvent->file());
       }
-
     }
 
     return QApplication::event(event);
@@ -76,11 +71,10 @@ static void new_log() {
   Logging::Instance().open_file_log(logfile.toStdString());
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
   // tbb::task_scheduler_init init(1);
 
   try {
-
     // needed to ensure appropriate OpenGL context is created for VTK rendering.
     QSurfaceFormat format = QVTKOpenGLNativeWidget::defaultFormat();
 #ifdef _WIN32
@@ -116,7 +110,6 @@ int main(int argc, char **argv) {
       project_loaded = true;
     };
 
-
     // Try to process a QEvent::FileOpen event before showing the splash screen
     QApplication::processEvents();
     QApplication::processEvents();
@@ -139,7 +132,6 @@ int main(int argc, char **argv) {
       if (!project_loaded) {
         studio_app->show_splash_screen();
       }
-
     }
 
     if (!project_loaded && !app.stored_filename_.isEmpty()) {

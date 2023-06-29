@@ -146,6 +146,10 @@ bool OptimizeCommand::execute(const optparse::Values& options, SharedCommandData
       if (success) {
         project->save(projectFile);
       }
+      if (show_progress) {
+        // final newline so that the next line doesn't garble with the progress
+        std::cout << "\n";
+      }
 
       return success;
     } catch (std::exception& e) {
@@ -204,6 +208,11 @@ bool GroomCommand::execute(const optparse::Values& options, SharedCommandData& s
     if (success) {
       project->save(projectFile);
     }
+    if (show_progress) {
+      // final newline so that the next line doesn't garble with the progress
+      std::cout << "\n";
+    }
+
     return success;
   } catch (std::exception& e) {
     SW_ERROR(e.what());

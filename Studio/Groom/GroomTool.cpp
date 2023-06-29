@@ -455,6 +455,14 @@ void GroomTool::on_run_groom_button_clicked() {
     return;
   }
 
+  if (session_->get_filename() == "") {
+    SW_ERROR("Project must be saved before running Groom");
+    ui_->run_groom_button->setEnabled(true);
+    return;
+  } else {
+    session_->save_project(session_->get_filename());
+  }
+
   store_params();
 
   bool question_dt = false;

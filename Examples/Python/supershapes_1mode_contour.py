@@ -16,7 +16,7 @@ def Run_Pipeline(args):
     Download supershapes data. Refer to `generate_supershapes` in this file to see the generation
     process
     """
-    print("\nStep 1. Extract Data\n")
+    print("\nStep 1. Acquire Data\n")
     dataset_name = "supershapes_1mode"
     output_directory = "Output/supershapes_1mode_contour/"
     if not os.path.exists(output_directory):

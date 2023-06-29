@@ -4,6 +4,7 @@ import sys
 import vtk
 import glob
 import shutil
+import zipfile
 import shapeworks as sw
 
 # Global shapeworks logger object (e.g. attached to Studio)
@@ -162,7 +163,7 @@ def compute_line_indices(n, is_closed=True):
     return lines
 
 def get_api_version():
-    return "6.4"
+    return "6.5"
 
 def set_sw_logger(log_object):
     """Set the shapeworks logger object"""
@@ -292,6 +293,13 @@ def check_results(args, project_spreadsheet):
         if "world" in file:
             world_point_files.append(particle_dir + file)
     if args.tiny_test or args.verify:
+        # if verification dir doesn't exist, unzip verification.zip
+        if not os.path.exists("Data/Verification"):
+            print("Unzipping verification data")
+            # unzip using python
+            with zipfile.ZipFile("Data/Verification.zip", 'r') as zip_ref:
+                zip_ref.extractall("Data/")
+
         print("Verifying shape model")
         if not verify(args, world_point_files):
             exit(-1)

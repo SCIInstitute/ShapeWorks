@@ -24,7 +24,7 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    container: akenmorris/ubuntu-build-box-sw64
+    container: akenmorris/ubuntu-build-box-sw65
     
     steps:
 
@@ -81,7 +81,7 @@ jobs:
 
     - name: make
       shell: bash -l {0}
-      run: conda activate shapeworks && cd build && make -j4
+      run: conda activate shapeworks && cd build && make -j2
 
     - name: Check space6
       run: df -h
@@ -89,6 +89,10 @@ jobs:
     - name: make install
       shell: bash -l {0}
       run: conda activate shapeworks && cd build && make install
+
+    - name: Download test data
+      shell: bash -l {0}
+      run: .github/workflows/download_test_data.sh
       
     - name: make test
       shell: bash -l {0}
