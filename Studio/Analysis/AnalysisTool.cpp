@@ -103,7 +103,7 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
   ui_->particles_open_button->toggle();
   ui_->particles_progress->hide();
 
-  ui_->lda_panel->hide();
+  // ui_->lda_panel->hide();
   ui_->lda_graph->hide();
   ui_->lda_hint_label->hide();
   group_lda_job_ = QSharedPointer<StatsGroupLDAJob>::create();
@@ -111,6 +111,9 @@ AnalysisTool::AnalysisTool(Preferences& prefs) : preferences_(prefs) {
   connect(group_lda_job_.data(), &StatsGroupLDAJob::finished, this, &AnalysisTool::handle_lda_complete);
 
   connect(ui_->show_difference_to_mean, &QPushButton::clicked, this, &AnalysisTool::show_difference_to_mean_clicked);
+
+  connect(ui_->group_analysis_combo, qOverload<int>(&QComboBox::currentIndexChanged), this,
+          &AnalysisTool::group_analysis_combo_changed);
 }
 
 //---------------------------------------------------------------------------
@@ -788,7 +791,7 @@ void AnalysisTool::compute_shape_evaluations() {
         SW_DEBUG("job type: spec job");
         break;
       default:
-        SW_DEBUG("job type: wtf");
+        SW_DEBUG("job type: unknown");
     }
 
     auto worker = Worker::create_worker();
@@ -799,6 +802,15 @@ void AnalysisTool::compute_shape_evaluations() {
   }
 
   evals_ready_ = true;
+}
+
+//---------------------------------------------------------------------------
+AnalysisTool::GroupAnalysisType AnalysisTool::get_group_analysis_type() {
+  if (!groups_on()) {
+    return GroupAnalysisType::None;
+  } else {
+    return static_cast<GroupAnalysisType>(ui_->group_analysis_combo->currentIndex());
+  }
 }
 
 //---------------------------------------------------------------------------
@@ -945,6 +957,8 @@ void AnalysisTool::reset_stats() {
   }
 
   ui_->network_progress_widget->hide();
+  ui_->group_analysis_combo->setCurrentIndex(0);
+  group_analysis_combo_changed();
 
   stats_ready_ = false;
   evals_ready_ = false;
@@ -1010,20 +1024,25 @@ void AnalysisTool::set_analysis_mode(std::string mode) {
 ShapeHandle AnalysisTool::get_mean_shape() {
   auto shape_points = get_mean_shape_points();
   ShapeHandle shape = create_shape_from_points(shape_points);
-  if (groups_on() && ui_->group_p_values_checkbox->isChecked() && group_pvalue_job_ &&
-      group_pvalue_job_->get_group_pvalues().rows() > 0) {
-    shape->set_point_features("p_values", group_pvalue_job_->get_group_pvalues());
-    shape->set_override_feature("p_values");
+
+  if (get_group_analysis_type() == GroupAnalysisType::Pvalues) {
+    if (groups_on() && ui_->group_p_values_checkbox->isChecked() && group_pvalue_job_ &&
+        group_pvalue_job_->get_group_pvalues().rows() > 0) {
+      shape->set_point_features("p_values", group_pvalue_job_->get_group_pvalues());
+      shape->set_override_feature("p_values");
+    }
   }
 
-  if (groups_on() && ui_->network_analysis_display->isChecked() && network_analysis_job_ &&
-      network_analysis_job_->get_tvalues().rows() > 0) {
-    if (ui_->network_analysis_option->isChecked()) {
-      shape->set_point_features("t_values", network_analysis_job_->get_tvalues());
-      shape->set_override_feature("t_values");
-    } else {
-      shape->set_point_features("spm_values", network_analysis_job_->get_spm_values());
-      shape->set_override_feature("spm_values");
+  if (get_group_analysis_type() == GroupAnalysisType::NetworkAnalysis) {
+    if (groups_on() && ui_->network_analysis_display->isChecked() && network_analysis_job_ &&
+        network_analysis_job_->get_tvalues().rows() > 0) {
+      if (ui_->network_analysis_option->isChecked()) {
+        shape->set_point_features("t_values", network_analysis_job_->get_tvalues());
+        shape->set_override_feature("t_values");
+      } else {
+        shape->set_point_features("spm_values", network_analysis_job_->get_spm_values());
+        shape->set_override_feature("spm_values");
+      }
     }
   }
 
@@ -1110,17 +1129,22 @@ std::string AnalysisTool::get_display_feature_map() {
   if (session_->get_show_difference_vectors()) {
     return "surface_difference";
   }
-  if (ui_->group_p_values_checkbox->isChecked() && group_pvalue_job_ &&
-      group_pvalue_job_->get_group_pvalues().rows() > 0) {
-    return "p_values";
+
+  if (get_group_analysis_type() == GroupAnalysisType::Pvalues) {
+    if (ui_->group_p_values_checkbox->isChecked() && group_pvalue_job_ &&
+        group_pvalue_job_->get_group_pvalues().rows() > 0) {
+      return "p_values";
+    }
   }
 
-  if (ui_->network_analysis_display->isChecked() && network_analysis_job_ &&
-      network_analysis_job_->get_tvalues().rows() > 0) {
-    if (ui_->network_analysis_option->isChecked()) {
-      return "t_values";
-    } else {
-      return "spm_values";
+  if (get_group_analysis_type() == GroupAnalysisType::NetworkAnalysis) {
+    if (ui_->network_analysis_display->isChecked() && network_analysis_job_ &&
+        network_analysis_job_->get_tvalues().rows() > 0) {
+      if (ui_->network_analysis_option->isChecked()) {
+        return "t_values";
+      } else {
+        return "spm_values";
+      }
     }
   }
 
@@ -1171,12 +1195,14 @@ void AnalysisTool::update_group_values() {
   ui_->group1_button->setEnabled(groups_on());
   ui_->group2_button->setEnabled(groups_on());
   ui_->difference_button->setEnabled(groups_on());
-  ui_->group_p_values_box->setEnabled(groups_on());
+  // ui_->group_p_values_box->setEnabled(groups_on());
   ui_->group_slider->setEnabled(groups_on());
   ui_->group_left->setEnabled(groups_on());
   ui_->group_right->setEnabled(groups_on());
   ui_->group_animate_checkbox->setEnabled(groups_on());
-  ui_->network_analysis_box->setEnabled(groups_on());
+  ui_->group_analysis_combo->setEnabled(groups_on());
+  group_analysis_combo_changed();
+  // ui_->network_analysis_box->setEnabled(groups_on());
 
   if (!groups_on()) {
     ui_->group_p_values_checkbox->setChecked(false);
@@ -1208,9 +1234,9 @@ void AnalysisTool::update_domain_alignment_box() {
 //---------------------------------------------------------------------------
 void AnalysisTool::update_lda_graph() {
   if (groups_active()) {
-    if (!group_lda_job_running_) {
+    if (!lda_computed_ && !group_lda_job_running_) {
       group_lda_job_running_ = true;
-      ui_->lda_panel->show();
+      // ui_->lda_panel->show();
       ui_->lda_label->show();
       ui_->lda_progress->setValue(0);
       ui_->lda_progress->setMaximum(0);
@@ -1258,8 +1284,8 @@ void AnalysisTool::group_changed() {
   }
   stats_ready_ = false;
   group_pvalue_job_ = nullptr;
+  lda_computed_ = false;
   compute_stats();
-  update_lda_graph();
 }
 
 //---------------------------------------------------------------------------
@@ -1486,6 +1512,7 @@ void AnalysisTool::handle_lda_complete() {
   ui_->lda_progress_widget->setVisible(false);
   ui_->lda_label->setVisible(false);
   group_lda_job_running_ = false;
+  lda_computed_ = true;
 
   QString left_group = ui_->group_left->currentText();
   QString right_group = ui_->group_right->currentText();
@@ -1521,6 +1548,27 @@ void AnalysisTool::handle_network_analysis_complete() {
 //---------------------------------------------------------------------------
 void AnalysisTool::show_difference_to_mean_clicked() {
   update_difference_particles();
+  Q_EMIT update_view();
+}
+
+//---------------------------------------------------------------------------
+void AnalysisTool::group_analysis_combo_changed() {
+  SW_LOG("Group analysis combo changed: {}", ui_->group_analysis_combo->currentText().toStdString());
+  int index = ui_->group_analysis_combo->currentIndex();
+  if (!groups_active()) {
+    index = 0;
+  }
+  if (index == 0) {  // none
+    ui_->group_analysis_stacked_widget->setVisible(false);
+    ui_->group_analysis_stacked_widget->setEnabled(false);
+  } else {
+    ui_->group_analysis_stacked_widget->setCurrentIndex(index - 1);
+    ui_->group_analysis_stacked_widget->setVisible(true);
+    ui_->group_analysis_stacked_widget->setEnabled(true);
+    if (ui_->group_analysis_stacked_widget->currentWidget() == ui_->lda_page) {
+      update_lda_graph();
+    }
+  }
   Q_EMIT update_view();
 }
 

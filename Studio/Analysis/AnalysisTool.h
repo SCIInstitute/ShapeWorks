@@ -37,6 +37,8 @@ class AnalysisTool : public QWidget {
     Local = -1,
   };
 
+  enum GroupAnalysisType { None = 0, Pvalues = 1, NetworkAnalysis = 2, LDA = 3 };
+
   enum McaMode { Vanilla, Within, Between };
 
   using PointType = itk::Point<double, 3>;
@@ -112,6 +114,8 @@ class AnalysisTool : public QWidget {
   static const std::string MODE_SINGLE_SAMPLE_C;
   static const std::string MODE_REGRESSION_C;
 
+  GroupAnalysisType get_group_analysis_type();
+
  public Q_SLOTS:
 
   // analysis mode
@@ -182,6 +186,9 @@ class AnalysisTool : public QWidget {
 
   void show_difference_to_mean_clicked();
 
+  void group_analysis_combo_changed();
+
+
  Q_SIGNALS:
 
   void update_view();
@@ -249,7 +256,6 @@ class AnalysisTool : public QWidget {
   ShapeList group1_list_;
   ShapeList group2_list_;
 
-
   std::string feature_map_;
 
   std::vector<std::string> current_group_names_;
@@ -262,6 +268,7 @@ class AnalysisTool : public QWidget {
   QSharedPointer<NetworkAnalysisJob> network_analysis_job_;
 
   bool group_lda_job_running_ = false;
+  bool lda_computed_ = false;
   bool block_group_change_ = false;
 
   AlignmentType current_alignment_{AlignmentType::Local};
