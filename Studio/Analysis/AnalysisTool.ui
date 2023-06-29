@@ -853,6 +853,18 @@ QWidget#particles_panel {
                         </widget>
                         <widget class="QWidget" name="lda_page">
                          <layout class="QGridLayout" name="gridLayout_26">
+                          <property name="leftMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="topMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="rightMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="bottomMargin">
+                           <number>0</number>
+                          </property>
                           <item row="0" column="0">
                            <widget class="JKQTPlotter" name="lda_graph" native="true">
                             <property name="sizePolicy">
@@ -876,6 +888,9 @@ QWidget#particles_panel {
                             </property>
                             <property name="alignment">
                              <set>Qt::AlignCenter</set>
+                            </property>
+                            <property name="wordWrap">
+                             <bool>true</bool>
                             </property>
                            </widget>
                           </item>
