@@ -12,8 +12,8 @@ using GradientImageType = itk::Image<VectorPixelType, 3>;
 using GradientFilterType = itk::GradientImageFilter<Image::ImageType>;
 using GradientInterpolatorType = itk::VectorLinearInterpolateImageFunction<GradientImageType, double>;
 
+//---------------------------------------------------------------------------
 std::vector<double> smoothIntensities(std::vector<double> intensities) {
-  //return intensities;
   // smooth using average of neighbors
   std::vector<double> smoothed_intensities;
 
@@ -32,6 +32,7 @@ std::vector<double> smoothIntensities(std::vector<double> intensities) {
   return smoothed_intensities;
 }
 
+//---------------------------------------------------------------------------
 void compute_thickness(Mesh& mesh, Image& image, Image* dt, double threshold, double min_dist, double max_dist,
                        std::string distance_mesh) {
   SW_DEBUG("Computing thickness with threshold {}, min_dist {}, max_dist {}", threshold, min_dist, max_dist);
@@ -81,7 +82,6 @@ void compute_thickness(Mesh& mesh, Image& image, Image* dt, double threshold, do
     }
   };
 
-
   // get minimum spacing
   double spacing = image.spacing()[0];
   for (int i = 1; i < 3; i++) {
@@ -93,7 +93,6 @@ void compute_thickness(Mesh& mesh, Image& image, Image* dt, double threshold, do
   double step_size = spacing / 10.0;
 
   for (int i = 0; i < mesh.numPoints(); i++) {
-//      for (int i = 0; i < 1; i++) {
     Point3 point;
     poly_data->GetPoint(i, point.GetDataPointer());
 
@@ -101,9 +100,6 @@ void compute_thickness(Mesh& mesh, Image& image, Image* dt, double threshold, do
     double distance_outside = 4.0;
     double distance_inside = 12.0;
 
-
-    //std::cerr << "going outward\n";
-    //std::cerr << "point is at " << point << std::endl;
     for (int j = 0; j <= distance_outside / step_size; j++) {
       double intensity = 0;
       // check if point is inside image
@@ -128,9 +124,6 @@ void compute_thickness(Mesh& mesh, Image& image, Image* dt, double threshold, do
       point[0] -= gradient[0];
       point[1] -= gradient[1];
       point[2] -= gradient[2];
-      if (i == 181) {
-        std::cerr << "intensity " << intensity << ", point now: " << point << std::endl;
-      }
     }
 
     // reverse the intensities vector
@@ -142,8 +135,6 @@ void compute_thickness(Mesh& mesh, Image& image, Image* dt, double threshold, do
     // reset point position back to the surface
     poly_data->GetPoint(i, point.GetDataPointer());
 
-    //std::cerr << "going inward\n";
-    //std::cerr << "point is at " << point << std::endl;
     for (int j = 0; j < distance_inside / step_size; j++) {
       double intensity = 0;
       // check if point is inside image
@@ -152,7 +143,6 @@ void compute_thickness(Mesh& mesh, Image& image, Image* dt, double threshold, do
       }
 
       intensities.push_back(intensity);
-      //std::cerr << "intensity = " << intensity << std::endl;
 
       // evaluate gradient
       VectorPixelType gradient = get_gradient(i, point);
@@ -171,12 +161,7 @@ void compute_thickness(Mesh& mesh, Image& image, Image* dt, double threshold, do
       point[0] += gradient[0];
       point[1] += gradient[1];
       point[2] += gradient[2];
-      if (i == 181) {
-        std::cerr << "intensity " << intensity << ", point now: " << point << std::endl;
-      }
     }
-
-    std::cerr << "num intensities: " << intensities.size() << std::endl;
 
     auto smoothed = smoothIntensities(intensities);
     for (int k = 0; k < 10; k++) {
@@ -221,11 +206,6 @@ void compute_thickness(Mesh& mesh, Image& image, Image* dt, double threshold, do
 
     // equation 2
     double dhu_threshold = mean_dhu + 4.27 * std_dhu;
-    if (i == 0) {
-      std::cerr << "mean_dhu: " << mean_dhu << std::endl;
-      std::cerr << "std_dhu: " << std_dhu << std::endl;
-      std::cerr << "dhu_threshold: " << dhu_threshold << std::endl;
-    }
 
     // find the first index where the derivative is greater than the threshold (point b)
     int point_b = -1;
@@ -244,12 +224,10 @@ void compute_thickness(Mesh& mesh, Image& image, Image* dt, double threshold, do
     double hu_a = intensities[point_a];
     double hu_c = intensities[point_b];
 
-    double k_cor = 0.605;
+    // constant from paper
+    const double k_cor = 0.605;
 
     double hu_threshold = (hu_a - hu_c) * k_cor + hu_c;
-    // std::cerr << "hu_threshold before: " << hu_threshold << std::endl;
-    // hu_threshold = std::max<double>(hu_threshold, 400);
-    // std::cerr << "hu_threshold after: " << hu_threshold << std::endl;
 
     // find the first and last point above hu_threshold
     int point_d = -1;
@@ -277,21 +255,8 @@ void compute_thickness(Mesh& mesh, Image& image, Image* dt, double threshold, do
       distance = 0;
     }
 
-    /*
-    int point_e = 0;
-    for (int j = intensities.size() - 1; j >= 0; j--) {
-      if (intensities[j] > hu_threshold) {
-        point_e = j;
-        break;
-      }
-    }
-*/
-
-//    if (i < 10) {
-  //    if (i < 1) {
-    if (distance < 0.85) {
-    //if (distance > 9 || 1) {
-      //   if (i == 12344) {
+#if 0  // debug
+    if (i < 10) {
       //    write out the intensities to a file named with the point id
       std::ofstream out("intensities_" + std::to_string(i) + ".txt");
       for (auto intensity : intensities) {
@@ -324,6 +289,7 @@ void compute_thickness(Mesh& mesh, Image& image, Image* dt, double threshold, do
       out3 << "  \"dhu_threshold\": " << dhu_threshold << "\n";
       out3 << "}\n";
     }
+#endif
 
     distance = std::min<double>(distance, max_dist);
 
@@ -369,13 +335,6 @@ void compute_thickness(Mesh& mesh, Image& image, Image* dt, double threshold, do
         point[2] += gradient[2];
 
         distance_travelled += step_size;
-      }
-
-      if (i < 10) {
-        std::cerr << "distance: " << distance << std::endl;
-        std::cerr << "distance_travelled: " << distance_travelled << std::endl;
-
-
       }
 
       // modify the point position in the poly_data
