@@ -806,6 +806,5 @@ TEST(MeshTests, thicknessTest) {
   Mesh thickness = sphere.computeThickness(ct);
 
   Mesh baseline(std::string(TEST_DATA_DIR) + "/thickness/thickness.vtk");
-  thickness.write("/tmp/thickness.vtk");
   ASSERT_TRUE(thickness == baseline);
 }
