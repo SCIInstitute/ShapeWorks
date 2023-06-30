@@ -72,13 +72,6 @@ static void new_log() {
 }
 
 int main(int argc, char** argv) {
-  if (argc > 1) {
-    if (std::string(argv[1]) == "-c") {
-      return 0;
-    }
-  }
-
-  // to force single threaded
   // tbb::task_scheduler_init init(1);
 
   try {

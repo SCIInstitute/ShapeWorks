@@ -154,7 +154,7 @@ class Sampler {
       mode 1 = no adaptivity
   */
   virtual void SetAdaptivityMode(int mode) {
-    SW_LOG("SetAdaptivityMode: {}, pairwise_potential_type: {}", mode, m_pairwise_potential_type);
+    //SW_LOG("SetAdaptivityMode: {}, pairwise_potential_type: {}", mode, m_pairwise_potential_type);
     if (mode == 0) {
       m_LinkingFunction->SetFunctionA(this->GetCurvatureGradientFunction());
     } else if (mode == 1) {
