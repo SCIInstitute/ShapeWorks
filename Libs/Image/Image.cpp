@@ -940,6 +940,18 @@ Point3 Image::logicalToPhysical(const Coord& v) const {
 
 Coord Image::physicalToLogical(const Point3& p) const { return itk_image_->TransformPhysicalPointToIndex(p); }
 
+bool Image::isInside(const Point3 &p) const {
+  auto itk_image = getITKImage();
+  auto region = itk_image->GetLargestPossibleRegion();
+  Image::ImageType::IndexType index;
+  Image::ImageType::PointType pitk;
+  pitk[0] = p[0];
+  pitk[1] = p[1];
+  pitk[2] = p[2];
+  itk_image->TransformPhysicalPointToIndex( pitk, index );
+  return region.IsInside(index);
+}
+
 Image::ImageIterator Image::iterator() {
   ImageIterator iter(this->itk_image_, itk_image_->GetRequestedRegion());
   return iter;

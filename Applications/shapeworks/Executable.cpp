@@ -52,7 +52,7 @@ void Executable::addCommand(Command &command)
 {
   auto cmdkey = commands.find(command.name());
   if (cmdkey != commands.end()) {
-    throw std::runtime_error(cmdkey->first + " already exists!");
+    throw std::runtime_error(command.name() + " already exists!");
   }
 
   commands.insert(std::pair<std::string, Command&>(command.name(), command));

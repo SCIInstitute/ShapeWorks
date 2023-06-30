@@ -152,3 +152,5 @@ TEST(shapeworksTests, shapeevaluationTest) { run_test("shapeevaluation.sh"); }
 TEST(shapeworksTests, isolateTest) { run_test("isolate.sh"); }
 
 TEST(shapeworksTests, analyzeTest) { run_sandboxed_test("analyze"); }
+
+TEST(shapeworksTests, thicknessTest) { run_test("thickness.sh"); }

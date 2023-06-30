@@ -61,6 +61,7 @@
 #include "Image.h"
 #include "Libs/Optimize/Domain/VtkMeshWrapper.h"
 #include "Logging.h"
+#include "MeshComputeThickness.h"
 #include "MeshUtils.h"
 #include "PreviewMeshQC/FEAreaCoverage.h"
 #include "PreviewMeshQC/FEVTKExport.h"
@@ -982,6 +983,11 @@ Image Mesh::toDistanceTransform(PhysicalRegion region, const Point3 spacing, con
   return img;
 }
 
+Mesh& Mesh::computeThickness(Image &image, Image *dt, double max_dist, std::string distance_mesh) {
+  mesh::compute_thickness(*this, image, dt, max_dist, distance_mesh);
+  return *this;
+}
+
 Point3 Mesh::center() const {
   double c[3];
   poly_data_->GetCenter(c);
@@ -1110,7 +1116,8 @@ Mesh& Mesh::setField(std::string name, Array array, const FieldType type) {
 
     int numVertices = numPoints();
     if (array->GetNumberOfTuples() != numVertices) {
-      std::cerr << "WARNING: Added a mesh field with a different number of elements than points\n";
+      std::cerr << "WARNING: Added a mesh field with a different number of elements than points ("
+                << array->GetNumberOfTuples() << " vs " << numVertices << ")\n";
     }
 
     array->SetName(name.c_str());
