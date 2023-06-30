@@ -172,7 +172,7 @@ class Mesh {
                             const Dims padding = Dims({1, 1, 1})) const;
 
   /// assign cortical thickness values from mesh points
-  Mesh& computeThickness(Image& image, Image* dt, double max_dist, std::string distance_mesh);
+  Mesh& computeThickness(Image& image, Image* dt = nullptr, double max_dist = 10000, std::string distance_mesh = "");
 
   // query functions //
 
