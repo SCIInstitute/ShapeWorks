@@ -76,6 +76,13 @@ class Optimize {
   { this->iteration_callback_ = f; }
 
   void SetBeforeEvaluateCallbackFunction(const std::function<void(void)> &f);
+
+  double Get_MinimumVariance();
+
+  bool GetOptimizing() {
+    return this->m_optimizing;
+  }
+
   //! Abort optimization
   void AbortOptimization();
 

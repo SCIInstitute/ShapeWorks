@@ -2115,6 +2115,12 @@ void Optimize::SetBeforeEvaluateCallbackFunction(const std::function<void(void)>
 }
 
 //---------------------------------------------------------------------------
+double Optimize::Get_MinimumVariance()
+{
+  return this->m_sampler->Get_MinimumVariance();
+}
+
+//---------------------------------------------------------------------------
 std::string Optimize::GetCheckpointDir() {
   int num_digits = std::to_string(abs(m_total_iterations)).length();
   std::stringstream ss;

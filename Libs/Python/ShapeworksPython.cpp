@@ -1694,6 +1694,17 @@ PYBIND11_MODULE(shapeworks_py, m)
           container.matrix_ = invcovariance;
           opt->SetInputInvCovarianceMatrix(container);
      })
+
+  .def("GetOptimizing",
+       &Optimize::GetOptimizing)
+  
+  .def("SetVerbosity",
+      &Optimize::SetVerbosity)
+
+  .def("GetMinimumVariance",
+     [](Optimize *opt){
+          return opt->Get_MinimumVariance();
+     })
   ;
 
   // DomainType
