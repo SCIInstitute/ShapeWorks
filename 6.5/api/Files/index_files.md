@@ -79,6 +79,7 @@ title: Files
             * **file [Libs/Mesh/PreviewMeshQC/math3d.h](../Files/math3d_8h.md#file-math3d.h)** 
             * **file [Libs/Mesh/PreviewMeshQC/stdafx.h](../Files/stdafx_8h.md#file-stdafx.h)** 
         * **file [Libs/Mesh/Mesh.h](../Files/Mesh_8h.md#file-mesh.h)** 
+        * **file [Libs/Mesh/MeshComputeThickness.h](../Files/MeshComputeThickness_8h.md#file-meshcomputethickness.h)** 
         * **file [Libs/Mesh/MeshUtils.h](../Files/MeshUtils_8h.md#file-meshutils.h)** 
         * **file [Libs/Mesh/MeshWarper.h](../Files/MeshWarper_8h.md#file-meshwarper.h)** <br>Mesh warping capability. 
         * **file [Libs/Mesh/itkMultiplyByConstantImageFilter.h](../Files/itkMultiplyByConstantImageFilter_8h.md#file-itkmultiplybyconstantimagefilter.h)** 
@@ -248,4 +249,4 @@ title: Files
 
 -------------------------------
 
-Updated on 2023-06-27 at 23:49:56 +0000
+Updated on 2023-06-30 at 16:21:41 +0000

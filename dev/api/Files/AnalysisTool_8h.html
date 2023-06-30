@@ -2478,6 +2478,8 @@
 <span class="w">    </span><span class="n">Local</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">-1</span><span class="p">,</span>
 <span class="w">  </span><span class="p">};</span>
 
+<span class="w">  </span><span class="k">enum</span><span class="w"> </span><span class="nc">GroupAnalysisType</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">None</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">Pvalues</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">NetworkAnalysis</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">LDA</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="p">};</span>
+
 <span class="w">  </span><span class="k">enum</span><span class="w"> </span><span class="nc">McaMode</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">Vanilla</span><span class="p">,</span><span class="w"> </span><span class="n">Within</span><span class="p">,</span><span class="w"> </span><span class="n">Between</span><span class="w"> </span><span class="p">};</span>
 
 <span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">PointType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Point</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="p">;</span>
@@ -2548,6 +2550,8 @@
 <span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">MODE_SINGLE_SAMPLE_C</span><span class="p">;</span>
 <span class="w">  </span><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">MODE_REGRESSION_C</span><span class="p">;</span>
 
+<span class="w">  </span><span class="n">GroupAnalysisType</span><span class="w"> </span><span class="nf">get_group_analysis_type</span><span class="p">();</span>
+
 <span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Q_SLOTS</span><span class="o">:</span>
 
 <span class="w">  </span><span class="c1">// analysis mode</span>
@@ -2617,6 +2621,9 @@
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">show_difference_to_mean_clicked</span><span class="p">();</span>
 
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">group_analysis_combo_changed</span><span class="p">();</span>
+
+
 <span class="w"> </span><span class="nl">Q_SIGNALS</span><span class="p">:</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_view</span><span class="p">();</span>
@@ -2636,6 +2643,7 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">update_interface</span><span class="p">();</span>
 
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">group_pvalues_valid</span><span class="p">();</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">groups_on</span><span class="p">();</span>
 
 <span class="w">  </span><span class="n">Particles</span><span class="w"> </span><span class="nf">convert_from_combined</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">VectorXd</span><span class="o">&amp;</span><span class="w"> </span><span class="n">points</span><span class="p">);</span>
 
@@ -2681,7 +2689,6 @@
 <span class="w">  </span><span class="n">ShapeList</span><span class="w"> </span><span class="n">group1_list_</span><span class="p">;</span>
 <span class="w">  </span><span class="n">ShapeList</span><span class="w"> </span><span class="n">group2_list_</span><span class="p">;</span>
 
-
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">feature_map_</span><span class="p">;</span>
 
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">current_group_names_</span><span class="p">;</span>
@@ -2694,6 +2701,7 @@
 <span class="w">  </span><span class="n">QSharedPointer</span><span class="o">&lt;</span><span class="n">NetworkAnalysisJob</span><span class="o">&gt;</span><span class="w"> </span><span class="n">network_analysis_job_</span><span class="p">;</span>
 
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">group_lda_job_running_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">lda_computed_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">block_group_change_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
 
 <span class="w">  </span><span class="n">AlignmentType</span><span class="w"> </span><span class="n">current_alignment_</span><span class="p">{</span><span class="n">AlignmentType</span><span class="o">::</span><span class="n">Local</span><span class="p">};</span>
@@ -2701,7 +2709,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-06-27 at 23:49:56 +0000</p>
+<p>Updated on 2023-06-30 at 16:21:41 +0000</p>
 
               
             </article>

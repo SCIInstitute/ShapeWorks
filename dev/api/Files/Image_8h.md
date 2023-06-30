@@ -52,7 +52,7 @@ class Image {
   using ImageType = itk::Image<PixelType, 3>;
   using StatsPtr = itk::StatisticsImageFilter<ImageType>::Pointer;
   using ImageIterator = itk::ImageRegionIterator<ImageType>;
-  using InterpolatorType = itk::LinearInterpolateImageFunction<ImageType, Image::PixelType>;
+  using InterpolatorType = itk::LinearInterpolateImageFunction<ImageType>;
 
   // constructors and assignment operators //
   Image(const Dims dims);
@@ -206,6 +206,8 @@ class Image {
 
   Coord physicalToLogical(const Point3& p) const;
 
+  bool isInside(const Point3& p) const;
+
   ImageIterator iterator();
 
   bool compare(const Image& other, bool verifyall = true, double tolerance = 0.0, double precision = 1e-12) const;
@@ -261,4 +263,4 @@ Image& operator/=(Image& img, const double x);
 
 -------------------------------
 
-Updated on 2023-06-27 at 23:49:56 +0000
+Updated on 2023-06-30 at 16:21:41 +0000

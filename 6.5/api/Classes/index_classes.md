@@ -258,6 +258,7 @@ title: Classes
     * **class [VtkMeshWrapper](../Classes/classshapeworks_1_1VtkMeshWrapper.md)** 
     * **class [WheelEventForwarder](../Classes/classshapeworks_1_1WheelEventForwarder.md)** 
     * **class [Worker](../Classes/classshapeworks_1_1Worker.md)** 
+    * **namespace [mesh](../Namespaces/namespaceshapeworks_1_1mesh.md)** 
     * **struct [powstruct](../Classes/structshapeworks_1_1powstruct.md)** 
     * **struct [powstruct< a, 0 >](../Classes/structshapeworks_1_1powstruct_3_01a_00_010_01_4.md)** 
     * **namespace [project](../Namespaces/namespaceshapeworks_1_1project.md)** 
@@ -275,4 +276,4 @@ title: Classes
 
 -------------------------------
 
-Updated on 2023-06-27 at 23:49:56 +0000
+Updated on 2023-06-30 at 16:21:41 +0000

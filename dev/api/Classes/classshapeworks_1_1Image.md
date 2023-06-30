@@ -23,7 +23,7 @@ title: shapeworks::Image
 | using itk::Image< PixelType, 3 > | **[ImageType](../Classes/classshapeworks_1_1Image.md#using-imagetype)**  |
 | using itk::StatisticsImageFilter< ImageType >::Pointer | **[StatsPtr](../Classes/classshapeworks_1_1Image.md#using-statsptr)**  |
 | using itk::ImageRegionIterator< ImageType > | **[ImageIterator](../Classes/classshapeworks_1_1Image.md#using-imageiterator)**  |
-| using itk::LinearInterpolateImageFunction< ImageType, Image::PixelType > | **[InterpolatorType](../Classes/classshapeworks_1_1Image.md#using-interpolatortype)**  |
+| using itk::LinearInterpolateImageFunction< ImageType > | **[InterpolatorType](../Classes/classshapeworks_1_1Image.md#using-interpolatortype)**  |
 
 ## Public Functions
 
@@ -107,6 +107,7 @@ title: shapeworks::Image
 | [IndexRegion](../Classes/classshapeworks_1_1IndexRegion.md) | **[physicalToLogical](../Classes/classshapeworks_1_1Image.md#function-physicaltological)**([PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md) region) const<br>converts a bounding box in physical space to this image's logical (index) coordinates  |
 | Point3 | **[logicalToPhysical](../Classes/classshapeworks_1_1Image.md#function-logicaltophysical)**(const [Coord](../Namespaces/namespaceshapeworks.md#using-coord) & c) const<br>converts from pixel coordinates to physical space  |
 | [Coord](../Namespaces/namespaceshapeworks.md#using-coord) | **[physicalToLogical](../Classes/classshapeworks_1_1Image.md#function-physicaltological)**(const Point3 & p) const<br>converts from a physical coordinate to a logical coordinate  |
+| bool | **[isInside](../Classes/classshapeworks_1_1Image.md#function-isinside)**(const Point3 & p) const<br>checks if a given point is inside the image  |
 | ImageIterator | **[iterator](../Classes/classshapeworks_1_1Image.md#function-iterator)**()<br>creates an image iterator and returns it  |
 | bool | **[compare](../Classes/classshapeworks_1_1Image.md#function-compare)**(const [Image](../Classes/classshapeworks_1_1Image.md) & other, bool verifyall =true, double tolerance =0.0, double precision =1e-12) const<br>compares this with another image using the region of interest filter  |
 | bool | **[operator==](../Classes/classshapeworks_1_1Image.md#function-operator==)**(const [Image](../Classes/classshapeworks_1_1Image.md) & other) const<br>compares this with another image using the region of interest filter  |
@@ -173,7 +174,7 @@ using shapeworks::Image::ImageIterator =  itk::ImageRegionIterator<ImageType>;
 ### using InterpolatorType
 
 ```cpp
-using shapeworks::Image::InterpolatorType =  itk::LinearInterpolateImageFunction<ImageType, Image::PixelType>;
+using shapeworks::Image::InterpolatorType =  itk::LinearInterpolateImageFunction<ImageType>;
 ```
 
 
@@ -960,6 +961,16 @@ Coord physicalToLogical(
 
 converts from a physical coordinate to a logical coordinate 
 
+### function isInside
+
+```cpp
+bool isInside(
+    const Point3 & p
+) const
+```
+
+checks if a given point is inside the image 
+
 ### function iterator
 
 ```cpp
@@ -1043,4 +1054,4 @@ friend struct SharedCommandData(
 
 -------------------------------
 
-Updated on 2023-06-27 at 23:49:56 +0000
+Updated on 2023-06-30 at 16:21:41 +0000

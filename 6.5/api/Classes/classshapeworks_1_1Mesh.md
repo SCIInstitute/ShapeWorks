@@ -73,6 +73,7 @@ title: shapeworks::Mesh
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[applySubdivisionFilter](../Classes/classshapeworks_1_1Mesh.md#function-applysubdivisionfilter)**(const SubdivisionType type =Butterfly, int subdivision =1)<br>applies subdivision filter (butterfly (default) or loop)  |
 | [Image](../Classes/classshapeworks_1_1Image.md) | **[toImage](../Classes/classshapeworks_1_1Mesh.md#function-toimage)**([PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md) region =[PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md)(), Point3 spacing =Point3({1., 1., 1.})) const<br>rasterizes specified region to create binary image of desired dims (default: unit spacing)  |
 | [Image](../Classes/classshapeworks_1_1Image.md) | **[toDistanceTransform](../Classes/classshapeworks_1_1Mesh.md#function-todistancetransform)**([PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md) region =[PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md)(), const Point3 spacing =Point3({1., 1., 1.}), const Dims padding =Dims({1, 1, 1})) const<br>converts specified region to distance transform image (default: unit spacing) with (logical) padding  |
+| [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[computeThickness](../Classes/classshapeworks_1_1Mesh.md#function-computethickness)**([Image](../Classes/classshapeworks_1_1Image.md) & image, [Image](../Classes/classshapeworks_1_1Image.md) * dt =nullptr, double max_dist =10000, std::string distance_mesh ="")<br>assign cortical thickness values from mesh points  |
 | Point3 | **[center](../Classes/classshapeworks_1_1Mesh.md#function-center)**() const<br>center of mesh  |
 | Point3 | **[centerOfMass](../Classes/classshapeworks_1_1Mesh.md#function-centerofmass)**() const<br>center of mass of mesh  |
 | int | **[numPoints](../Classes/classshapeworks_1_1Mesh.md#function-numpoints)**() const<br>number of points  |
@@ -619,6 +620,19 @@ Image toDistanceTransform(
 
 converts specified region to distance transform image (default: unit spacing) with (logical) padding 
 
+### function computeThickness
+
+```cpp
+Mesh & computeThickness(
+    Image & image,
+    Image * dt =nullptr,
+    double max_dist =10000,
+    std::string distance_mesh =""
+)
+```
+
+assign cortical thickness values from mesh points 
+
 ### function center
 
 ```cpp
@@ -880,4 +894,4 @@ friend struct SharedCommandData(
 
 -------------------------------
 
-Updated on 2023-06-27 at 23:49:56 +0000
+Updated on 2023-06-30 at 16:21:41 +0000

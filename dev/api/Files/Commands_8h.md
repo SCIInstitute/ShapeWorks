@@ -113,6 +113,7 @@ COMMAND_DECLARE(MeshToImage, MeshCommand);
 COMMAND_DECLARE(MeshToDT, MeshCommand);
 COMMAND_DECLARE(CompareMesh, MeshCommand);
 COMMAND_DECLARE(WarpMesh, MeshCommand);
+COMMAND_DECLARE(ComputeThickness, MeshCommand);
 
 // Misc Commands
 COMMAND_DECLARE(Seed, ShapeworksCommand);
@@ -127,4 +128,4 @@ COMMAND_DECLARE(ConvertProjectCommand, ProjectCommandGroup);
 
 -------------------------------
 
-Updated on 2023-06-27 at 23:49:56 +0000
+Updated on 2023-06-30 at 16:21:41 +0000

@@ -3008,6 +3008,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-isinside" class="md-nav__link">
+    function isInside
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-iterator" class="md-nav__link">
     function iterator
   </a>
@@ -3133,7 +3140,7 @@
 <td><strong><a href="classshapeworks_1_1Image.html#using-imageiterator">ImageIterator</a></strong></td>
 </tr>
 <tr>
-<td>using itk::LinearInterpolateImageFunction&lt; ImageType, Image::PixelType &gt;</td>
+<td>using itk::LinearInterpolateImageFunction&lt; ImageType &gt;</td>
 <td><strong><a href="classshapeworks_1_1Image.html#using-interpolatortype">InterpolatorType</a></strong></td>
 </tr>
 </tbody>
@@ -3460,6 +3467,10 @@
 <td><strong><a href="classshapeworks_1_1Image.html#function-physicaltological">physicalToLogical</a></strong>(const Point3 &amp; p) const<br>converts from a physical coordinate to a logical coordinate</td>
 </tr>
 <tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Image.html#function-isinside">isInside</a></strong>(const Point3 &amp; p) const<br>checks if a given point is inside the image</td>
+</tr>
+<tr>
 <td>ImageIterator</td>
 <td><strong><a href="classshapeworks_1_1Image.html#function-iterator">iterator</a></strong>()<br>creates an image iterator and returns it</td>
 </tr>
@@ -3544,7 +3555,7 @@
 <div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Image</span><span class="o">::</span><span class="n">ImageIterator</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">itk</span><span class="o">::</span><span class="n">ImageRegionIterator</span><span class="o">&lt;</span><span class="n">ImageType</span><span class="o">&gt;</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="using-interpolatortype">using InterpolatorType</h3>
-<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Image</span><span class="o">::</span><span class="n">InterpolatorType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">itk</span><span class="o">::</span><span class="n">LinearInterpolateImageFunction</span><span class="o">&lt;</span><span class="n">ImageType</span><span class="p">,</span><span class="w"> </span><span class="n">Image</span><span class="o">::</span><span class="n">PixelType</span><span class="o">&gt;</span><span class="p">;</span>
+<div class="highlight"><pre><span></span><code><span class="k">using</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Image</span><span class="o">::</span><span class="n">InterpolatorType</span><span class="w"> </span><span class="o">=</span><span class="w">  </span><span class="n">itk</span><span class="o">::</span><span class="n">LinearInterpolateImageFunction</span><span class="o">&lt;</span><span class="n">ImageType</span><span class="o">&gt;</span><span class="p">;</span>
 </code></pre></div>
 <h2 id="public-functions-documentation">Public Functions Documentation</h2>
 <h3 id="function-image">function Image</h3>
@@ -3998,6 +4009,12 @@
 <span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>converts from a physical coordinate to a logical coordinate </p>
+<h3 id="function-isinside">function isInside</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">isInside</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">p</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
+<p>checks if a given point is inside the image </p>
 <h3 id="function-iterator">function iterator</h3>
 <div class="highlight"><pre><span></span><code><span class="n">ImageIterator</span><span class="w"> </span><span class="n">iterator</span><span class="p">()</span>
 </code></pre></div>
@@ -4047,7 +4064,7 @@
 <span class="p">);</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-06-27 at 23:49:56 +0000</p>
+<p>Updated on 2023-06-30 at 16:21:41 +0000</p>
 
               
             </article>

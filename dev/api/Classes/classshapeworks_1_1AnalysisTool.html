@@ -2421,6 +2421,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#enum-groupanalysistype" class="md-nav__link">
+    enum GroupAnalysisType
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#enum-mcamode" class="md-nav__link">
     enum McaMode
   </a>
@@ -2723,6 +2730,13 @@
           <li class="md-nav__item">
   <a href="#slot-show_difference_to_mean_clicked" class="md-nav__link">
     slot show_difference_to_mean_clicked
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#slot-group_analysis_combo_changed" class="md-nav__link">
+    slot group_analysis_combo_changed
   </a>
   
 </li>
@@ -3033,6 +3047,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#function-get_group_analysis_type" class="md-nav__link">
+    function get_group_analysis_type
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -3118,6 +3139,10 @@
 <tr>
 <td>enum</td>
 <td Global="Global"><strong><a href="classshapeworks_1_1AnalysisTool.html#enum-alignmenttype">AlignmentType</a></strong></td>
+</tr>
+<tr>
+<td>enum</td>
+<td None="None"><strong><a href="classshapeworks_1_1AnalysisTool.html#enum-groupanalysistype">GroupAnalysisType</a></strong></td>
 </tr>
 <tr>
 <td>enum</td>
@@ -3297,6 +3322,10 @@
 <tr>
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1AnalysisTool.html#slot-show-difference-to-mean-clicked">show_difference_to_mean_clicked</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1AnalysisTool.html#slot-group-analysis-combo-changed">group_analysis_combo_changed</a></strong>()</td>
 </tr>
 </tbody>
 </table>
@@ -3480,6 +3509,10 @@
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1AnalysisTool.html#function-compute-shape-evaluations">compute_shape_evaluations</a></strong>()</td>
 </tr>
+<tr>
+<td>GroupAnalysisType</td>
+<td><strong><a href="classshapeworks_1_1AnalysisTool.html#function-get-group-analysis-type">get_group_analysis_type</a></strong>()</td>
+</tr>
 </tbody>
 </table>
 <h2 id="public-attributes">Public Attributes</h2>
@@ -3532,6 +3565,38 @@
 <tr>
 <td>Local</td>
 <td>-1</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="enum-groupanalysistype">enum GroupAnalysisType</h3>
+<table>
+<thead>
+<tr>
+<th>Enumerator</th>
+<th>Value</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>None</td>
+<td>0</td>
+<td></td>
+</tr>
+<tr>
+<td>Pvalues</td>
+<td>1</td>
+<td></td>
+</tr>
+<tr>
+<td>NetworkAnalysis</td>
+<td>2</td>
+<td></td>
+</tr>
+<tr>
+<td>LDA</td>
+<td>3</td>
 <td></td>
 </tr>
 </tbody>
@@ -3710,6 +3775,9 @@
 <h3 id="slot-show_difference_to_mean_clicked">slot show_difference_to_mean_clicked</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">show_difference_to_mean_clicked</span><span class="p">()</span>
 </code></pre></div>
+<h3 id="slot-group_analysis_combo_changed">slot group_analysis_combo_changed</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">group_analysis_combo_changed</span><span class="p">()</span>
+</code></pre></div>
 <h2 id="public-signals-documentation">Public Signals Documentation</h2>
 <h3 id="signal-update_view">signal update_view</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">update_view</span><span class="p">()</span>
@@ -3870,6 +3938,9 @@
 <h3 id="function-compute_shape_evaluations">function compute_shape_evaluations</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">compute_shape_evaluations</span><span class="p">()</span>
 </code></pre></div>
+<h3 id="function-get_group_analysis_type">function get_group_analysis_type</h3>
+<div class="highlight"><pre><span></span><code><span class="n">GroupAnalysisType</span><span class="w"> </span><span class="n">get_group_analysis_type</span><span class="p">()</span>
+</code></pre></div>
 <h2 id="public-attributes-documentation">Public Attributes Documentation</h2>
 <h3 id="variable-mode_all_samples_c">variable MODE_ALL_SAMPLES_C</h3>
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">MODE_ALL_SAMPLES_C</span><span class="p">;</span>
@@ -3887,7 +3958,7 @@
 <div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">MODE_REGRESSION_C</span><span class="p">;</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-06-27 at 23:49:54 +0000</p>
+<p>Updated on 2023-06-30 at 16:21:39 +0000</p>
 
               
             </article>

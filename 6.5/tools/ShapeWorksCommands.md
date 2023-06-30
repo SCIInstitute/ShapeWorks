@@ -1258,6 +1258,34 @@ shapeworks  compute-normals [args]...
 <a href="#top">Back to Top</a>
   
 [Back to Mesh Commands](#mesh-commands)
+### compute-thickness
+
+
+**Usage:**
+
+```
+shapeworks  compute-thickness [args]...
+```  
+
+
+**Description:** Computes thickness values each mesh vertex and output vtk meshes with scalar field defined  
+
+
+**Options:**
+
+**-h, --help:** show this help message and exit
+
+**--image=STRING:** Path of image.
+
+**--distance_transform=STRING:**  Path of distance_transform.
+
+**--max_dist=DOUBLE:** Maximum distance to determine thickness
+
+**--distance_mesh=STRING:**  Path to write distance mesh.  
+  
+<a href="#top">Back to Top</a>
+  
+[Back to Mesh Commands](#mesh-commands)
 ### coverage
 
 

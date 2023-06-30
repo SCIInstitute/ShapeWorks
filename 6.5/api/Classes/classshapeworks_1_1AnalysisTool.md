@@ -16,6 +16,7 @@ Inherits from QWidget
 |                | Name           |
 | -------------- | -------------- |
 | enum| **[AlignmentType](../Classes/classshapeworks_1_1AnalysisTool.md#enum-alignmenttype)** { Global = -2, Local = -1} |
+| enum| **[GroupAnalysisType](../Classes/classshapeworks_1_1AnalysisTool.md#enum-groupanalysistype)** { None = 0, Pvalues = 1, NetworkAnalysis = 2, LDA = 3} |
 | enum| **[McaMode](../Classes/classshapeworks_1_1AnalysisTool.md#enum-mcamode)** { Vanilla, Within, Between} |
 | using itk::Point< double, 3 > | **[PointType](../Classes/classshapeworks_1_1AnalysisTool.md#using-pointtype)**  |
 
@@ -63,6 +64,7 @@ Inherits from QWidget
 | void | **[handle_network_analysis_progress](../Classes/classshapeworks_1_1AnalysisTool.md#slot-handle-network-analysis-progress)**(int progress) |
 | void | **[handle_network_analysis_complete](../Classes/classshapeworks_1_1AnalysisTool.md#slot-handle-network-analysis-complete)**() |
 | void | **[show_difference_to_mean_clicked](../Classes/classshapeworks_1_1AnalysisTool.md#slot-show-difference-to-mean-clicked)**() |
+| void | **[group_analysis_combo_changed](../Classes/classshapeworks_1_1AnalysisTool.md#slot-group-analysis-combo-changed)**() |
 
 ## Public Signals
 
@@ -113,6 +115,7 @@ Inherits from QWidget
 | void | **[shutdown](../Classes/classshapeworks_1_1AnalysisTool.md#function-shutdown)**() |
 | bool | **[export_variance_graph](../Classes/classshapeworks_1_1AnalysisTool.md#function-export-variance-graph)**(QString filename) |
 | void | **[compute_shape_evaluations](../Classes/classshapeworks_1_1AnalysisTool.md#function-compute-shape-evaluations)**() |
+| GroupAnalysisType | **[get_group_analysis_type](../Classes/classshapeworks_1_1AnalysisTool.md#function-get-group-analysis-type)**() |
 
 ## Public Attributes
 
@@ -132,6 +135,18 @@ Inherits from QWidget
 | ---------- | ----- | ----------- |
 | Global | -2|   |
 | Local | -1|   |
+
+
+
+
+### enum GroupAnalysisType
+
+| Enumerator | Value | Description |
+| ---------- | ----- | ----------- |
+| None | 0|   |
+| Pvalues | 1|   |
+| NetworkAnalysis | 2|   |
+| LDA | 3|   |
 
 
 
@@ -459,6 +474,13 @@ void show_difference_to_mean_clicked()
 ```
 
 
+### slot group_analysis_combo_changed
+
+```cpp
+void group_analysis_combo_changed()
+```
+
+
 ## Public Signals Documentation
 
 ### signal update_view
@@ -781,6 +803,13 @@ void compute_shape_evaluations()
 ```
 
 
+### function get_group_analysis_type
+
+```cpp
+GroupAnalysisType get_group_analysis_type()
+```
+
+
 ## Public Attributes Documentation
 
 ### variable MODE_ALL_SAMPLES_C
@@ -820,4 +849,4 @@ static const std::string MODE_REGRESSION_C;
 
 -------------------------------
 
-Updated on 2023-06-27 at 23:49:54 +0000
+Updated on 2023-06-30 at 16:21:39 +0000

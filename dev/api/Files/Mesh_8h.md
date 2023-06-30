@@ -150,6 +150,8 @@ class Mesh {
   Image toDistanceTransform(PhysicalRegion region = PhysicalRegion(), const Point3 spacing = Point3({1., 1., 1.}),
                             const Dims padding = Dims({1, 1, 1})) const;
 
+  Mesh& computeThickness(Image& image, Image* dt = nullptr, double max_dist = 10000, std::string distance_mesh = "");
+
   // query functions //
 
   Point3 center() const;
@@ -254,4 +256,4 @@ class MeshReader {
 
 -------------------------------
 
-Updated on 2023-06-27 at 23:49:56 +0000
+Updated on 2023-06-30 at 16:21:41 +0000

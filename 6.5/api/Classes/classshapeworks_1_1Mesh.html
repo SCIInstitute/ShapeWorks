@@ -2770,6 +2770,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-computethickness" class="md-nav__link">
+    function computeThickness
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-center" class="md-nav__link">
     function center
   </a>
@@ -3210,6 +3217,10 @@
 <tr>
 <td><a href="classshapeworks_1_1Image.html">Image</a></td>
 <td><strong><a href="classshapeworks_1_1Mesh.html#function-todistancetransform">toDistanceTransform</a></strong>(<a href="classshapeworks_1_1PhysicalRegion.html">PhysicalRegion</a> region =<a href="classshapeworks_1_1PhysicalRegion.html">PhysicalRegion</a>(), const Point3 spacing =Point3({1., 1., 1.}), const Dims padding =Dims({1, 1, 1})) const<br>converts specified region to distance transform image (default: unit spacing) with (logical) padding</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-computethickness">computeThickness</a></strong>(<a href="classshapeworks_1_1Image.html">Image</a> &amp; image, <a href="classshapeworks_1_1Image.html">Image</a> * dt =nullptr, double max_dist =10000, std::string distance_mesh ="")<br>assign cortical thickness values from mesh points</td>
 </tr>
 <tr>
 <td>Point3</td>
@@ -3718,6 +3729,15 @@
 <span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>converts specified region to distance transform image (default: unit spacing) with (logical) padding </p>
+<h3 id="function-computethickness">function computeThickness</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">computeThickness</span><span class="p">(</span>
+<span class="w">    </span><span class="n">Image</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">image</span><span class="p">,</span>
+<span class="w">    </span><span class="n">Image</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">dt</span><span class="w"> </span><span class="o">=</span><span class="k">nullptr</span><span class="p">,</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">max_dist</span><span class="w"> </span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">distance_mesh</span><span class="w"> </span><span class="o">=</span><span class="s">&quot;&quot;</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>assign cortical thickness values from mesh points </p>
 <h3 id="function-center">function center</h3>
 <div class="highlight"><pre><span></span><code><span class="n">Point3</span><span class="w"> </span><span class="n">center</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
@@ -3873,7 +3893,7 @@
 <span class="p">);</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-06-27 at 23:49:56 +0000</p>
+<p>Updated on 2023-06-30 at 16:21:41 +0000</p>
 
               
             </article>

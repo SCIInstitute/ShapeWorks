@@ -2466,7 +2466,7 @@
 <span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">ImageType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">Image</span><span class="o">&lt;</span><span class="n">PixelType</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="p">;</span>
 <span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">StatsPtr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">StatisticsImageFilter</span><span class="o">&lt;</span><span class="n">ImageType</span><span class="o">&gt;::</span><span class="n">Pointer</span><span class="p">;</span>
 <span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">ImageIterator</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">ImageRegionIterator</span><span class="o">&lt;</span><span class="n">ImageType</span><span class="o">&gt;</span><span class="p">;</span>
-<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">InterpolatorType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">LinearInterpolateImageFunction</span><span class="o">&lt;</span><span class="n">ImageType</span><span class="p">,</span><span class="w"> </span><span class="n">Image</span><span class="o">::</span><span class="n">PixelType</span><span class="o">&gt;</span><span class="p">;</span>
+<span class="w">  </span><span class="k">using</span><span class="w"> </span><span class="n">InterpolatorType</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">itk</span><span class="o">::</span><span class="n">LinearInterpolateImageFunction</span><span class="o">&lt;</span><span class="n">ImageType</span><span class="o">&gt;</span><span class="p">;</span>
 
 <span class="w">  </span><span class="c1">// constructors and assignment operators //</span>
 <span class="w">  </span><span class="n">Image</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Dims</span><span class="w"> </span><span class="n">dims</span><span class="p">);</span>
@@ -2620,6 +2620,8 @@
 
 <span class="w">  </span><span class="n">Coord</span><span class="w"> </span><span class="nf">physicalToLogical</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="o">&amp;</span><span class="w"> </span><span class="n">p</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
 
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">isInside</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="o">&amp;</span><span class="w"> </span><span class="n">p</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
+
 <span class="w">  </span><span class="n">ImageIterator</span><span class="w"> </span><span class="nf">iterator</span><span class="p">();</span>
 
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">compare</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span><span class="p">,</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">verifyall</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">true</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">tolerance</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">precision</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">1e-12</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
@@ -2672,7 +2674,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-06-27 at 23:49:56 +0000</p>
+<p>Updated on 2023-06-30 at 16:21:41 +0000</p>
 
               
             </article>
