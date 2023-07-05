@@ -189,6 +189,7 @@ function install_conda() {
   if ! pip install swcc==1.0.5;                         then return 1; fi
   if ! pip install scikit-learn==1.1.1;                 then return 1; fi
   if ! pip install pydantic==1.10.7 typing_extensions==4.5.0; then return 1; fi
+  if ! pip install griffe==0.27.3;                      then return 1; fi
 
   for package in DataAugmentationUtilsPackage DatasetUtilsPackage DeepSSMUtilsPackage DocumentationUtilsPackage ShapeCohortGenPackage shapeworks ; do
     if [[ -e Python/${package}.tar.gz ]] ; then
