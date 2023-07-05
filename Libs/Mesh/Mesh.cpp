@@ -988,6 +988,11 @@ Mesh& Mesh::computeThickness(Image &image, Image *dt, double max_dist, std::stri
   return *this;
 }
 
+Mesh &Mesh::computeLandmarkGeodesics(const std::vector<Point3> &landmarks)
+{
+
+}
+
 Point3 Mesh::center() const {
   double c[3];
   poly_data_->GetCenter(c);
