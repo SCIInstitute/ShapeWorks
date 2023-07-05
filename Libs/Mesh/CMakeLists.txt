@@ -10,7 +10,6 @@ set(Mesh_sources
  MeshUtils.cpp
  MeshWarper.cpp
  MeshComputeThickness.cpp
- MeshLandmarkGeodesics.cpp
  )
 
 set(Mesh_headers

@@ -62,7 +62,6 @@
 #include "Libs/Optimize/Domain/VtkMeshWrapper.h"
 #include "Logging.h"
 #include "MeshComputeThickness.h"
-#include "MeshLandmarkGeodesics.h"
 #include "MeshUtils.h"
 #include "PreviewMeshQC/FEAreaCoverage.h"
 #include "PreviewMeshQC/FEVTKExport.h"
@@ -990,7 +989,11 @@ Mesh& Mesh::computeThickness(Image& image, Image* dt, double max_dist, std::stri
 }
 
 Mesh& Mesh::computeLandmarkGeodesics(const std::vector<Point3>& landmarks) {
-  mesh::compute_landmark_geodesics(*this, landmarks);
+  for (int i = 0; i < landmarks.size(); i++) {
+    auto field = geodesicDistance(landmarks[i]);
+    std::string name = "geodesic_distance_to_" + std::to_string(i);
+    setField(name, field, Mesh::FieldType::Point);
+  }
   return *this;
 }
 
