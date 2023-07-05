@@ -1,3 +1,5 @@
+#include <Logging.h>
+
 #include <boost/filesystem.hpp>
 
 #include "Commands.h"
@@ -1574,6 +1576,51 @@ bool ComputeThickness::execute(const optparse::Values &options, SharedCommandDat
     sharedData.mesh->computeThickness(img, &dt, max_dist, distance_mesh_filename);
   }
 
+  return sharedData.validMesh();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// LandmarkGeodesics
+///////////////////////////////////////////////////////////////////////////////
+void LandmarkGeodesics::buildParser() {
+  const std::string prog = "landmark-geodesics";
+  const std::string desc = "Computes geodesic distance to each landmark and store as a field";
+  parser.prog(prog).description(desc);
+
+  parser.add_option("--landmarks").action("store").type("string").set_default("").help("Path of landmarks file.");
+
+  Command::buildParser();
+}
+
+bool LandmarkGeodesics::execute(const optparse::Values &options, SharedCommandData &sharedData) {
+  if (!sharedData.validMesh()) {
+    std::cerr << "No mesh to operate on\n";
+    return false;
+  }
+
+  std::string filename = static_cast<std::string>(options.get("landmarks"));
+  if (filename == "") {
+    std::cerr << "Must specify a landmarks file\n";
+    return false;
+  }
+
+  Eigen::VectorXd points;
+  if (!ParticleSystemEvaluation::ReadParticleFile(filename, points)) {
+    SW_ERROR("Unable to read landmark file: {}", filename);
+    return false;
+  }
+
+  // convert points to landmarks
+  std::vector<Point3> landmarks;
+  for (int i = 0; i < points.size() / 3; ++i) {
+    Point3 p;
+    p[0] = points(3 * i);
+    p[1] = points(3 * i + 1);
+    p[2] = points(3 * i + 2);
+    landmarks.push_back(p);
+  }
+
+  sharedData.mesh->computeLandmarkGeodesics(landmarks);
 
   return sharedData.validMesh();
 }
