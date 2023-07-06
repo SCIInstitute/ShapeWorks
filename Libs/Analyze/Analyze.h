@@ -18,8 +18,6 @@ class Analyze {
   Analyze(ProjectHandle project);
 
   /// Run offline analysis, saving results to outfile
-  /// \param std_dev_range The number of standard deviations to use for the range
-  /// \param steps The number of steps to use for the range
   void run_offline_analysis(std::string outfile, float range, float steps);
 
   /// Return the list of shapes
