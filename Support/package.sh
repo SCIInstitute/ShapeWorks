@@ -60,6 +60,7 @@ cp -a Examples "package/${VERSION}"
 cp -a Python "package/${VERSION}"
 cp -a Installation "package/${VERSION}"
 cp install_shapeworks.sh package/${VERSION}
+cp python_requirements.txt package/${VERSION}
 cp docs/about/release-notes.md package/${VERSION}
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
