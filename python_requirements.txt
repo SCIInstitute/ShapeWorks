@@ -178,6 +178,7 @@ tzdata==2023.3
 uri-template==1.3.0
 urllib3==1.26.16
 verspec==0.1.0
+vtk==9.1.0
 watchdog==3.0.0
 wcwidth==0.2.6
 webcolors==1.13

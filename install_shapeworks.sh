@@ -106,7 +106,6 @@ function install_conda() {
 
   CONDA_PACKAGES=(python=3.9.13 \
     openblas=0.3.20 \
-    'vtk=9.1.0=qt*' \
     pip=22.1.2
    )		      
 
