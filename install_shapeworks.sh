@@ -117,6 +117,7 @@ function install_conda() {
 		     gmock=1.11.0 \
 		     doxygen=1.9.2 \
 		     graphviz=4.0.0 \
+		     eigen=3.4.0 \
 		     tbb=2021.5.0 \
 		     tbb-devel=2021.5.0 \
 		     boost=1.74.0 \
