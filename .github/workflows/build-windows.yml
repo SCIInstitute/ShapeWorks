@@ -17,6 +17,7 @@ env:
   GA_MEASUREMENT_ID: ${{ secrets.GA_MEASUREMENT_ID }}
   GA_API_SECRET: ${{ secrets.GA_API_SECRET }}
 
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -60,6 +61,18 @@ jobs:
     - name: Conda Installs
       shell: bash -l {0}
       run: .github/workflows/gha_conda.sh
+
+    - name: check path1
+      shell: bash -l {0}
+      run: which h5dump.exe
+
+    - name: Add to path
+      shell: bash -l {0}
+      run: echo "C:\c\Miniconda3\envs\shapeworks\Library\bin" >> $GITHUB_PATH
+
+    - name: check path1
+      shell: bash -l {0}
+      run: which h5dump.exe
 
     - name: Build Dependencies
       shell: bash -l {0}
