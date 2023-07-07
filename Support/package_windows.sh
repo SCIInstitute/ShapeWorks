@@ -36,6 +36,19 @@ ROOT=`pwd`
 
 BUILD="/c/build"
 CONDA_LOC="/c/Miniconda3/envs/shapeworks"
+
+echo "List all of sw env"
+find ${CONDA_LOC}
+
+echo conda list
+conda list
+
+echo pip list
+pip list
+
+echo "find libffi?"
+find ${CONDA_LOC} -iname "libffi*"
+
 cp ${CONDA_LOC}/python*.dll ${CONDA_LOC}/Library/bin/zlib.dll ${CONDA_LOC}/Library/bin/tbb12.dll ${CONDA_LOC}/Library/bin/zstd.dll ${CONDA_LOC}/Library/bin/libpng16.dll ${CONDA_LOC}/Library/bin/half.dll ${CONDA_LOC}/Library/bin/boost_filesystem.dll ${CONDA_LOC}/Library/bin/spdlog.dll ${CONDA_LOC}/DLLs/libffi*.dll $BUILD/bin/Release
 
 # install visual studio redistributables
