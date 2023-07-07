@@ -100,6 +100,12 @@ jobs:
       working-directory: "C:/build"
       run: xcopy /f C:\deps\bin\*.dll C:\build\bin\Release
 
+    - name: Conda list
+      shell: bash -l {0}
+      env:
+        PR_NUMBER: ${{ github.event.number }}
+      run: conda activate shapeworks && conda list
+
     - name: Build Binary Package
       shell: bash -l {0}
       env:
