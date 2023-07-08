@@ -64,7 +64,7 @@ jobs:
 
     - name: Add to path
       shell: bash -l {0}
-      run: echo "C:\c\Miniconda3\envs\shapeworks\Library\bin" >> $GITHUB_PATH
+      run: echo "C:\Miniconda3\envs\shapeworks\Library\bin" >> $GITHUB_PATH
 
     - name: check path1
       shell: bash -l {0}
