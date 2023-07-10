@@ -71,6 +71,7 @@ Section "ShapeWorks (required)"
   
   ; Put file there
   File "install_shapeworks.bat"
+  File "python_requirements.txt"
   File "Windows_README.txt"
   File /r "bin"
   File /r "Examples"
