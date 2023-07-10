@@ -12,8 +12,6 @@ Running DeepSSM requires an optimized shape model for training data. To run Deep
 
 In this example, we demonstrate DeepSSM in studio with parameterized Supershapes that have three dominant PCA modes. The data is available at [https://www.sci.utah.edu/~shapeworks/doc-resources/zips/supershapes.zip](https://www.sci.utah.edu/~shapeworks/doc-resources/zips/supershapes.zip). Loading the project spreadsheet and clicking to the analyze tab we see:
 
-have defined two domains, `left_atrium` and `appendage`.  The multiple domains are shown in the Data panel when importing a ShapeWorks Project Spreadsheet file with more than one column with the `shape` prefix. When we open this in Studio, we will see:
-
 ![ShapeWorks Project for DeepSSM - Analyze](../img/studio/studio_deepssm_load.png){: width="600" }
 
 ## Defining Data Split

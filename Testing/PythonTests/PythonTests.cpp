@@ -342,3 +342,7 @@ TEST(pythonTests, isolateTest) {
 TEST(pythonTests, projectTest) {
   run_isolated_test("project");
 }
+
+TEST(pythonTests, thicknessTest) {
+  run_test("thickness.py");
+}

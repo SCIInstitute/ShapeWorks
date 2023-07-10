@@ -81,7 +81,7 @@ jobs:
 
     - name: make
       shell: bash -l {0}
-      run: conda activate shapeworks && cd build && make -j4
+      run: conda activate shapeworks && cd build && make -j2
 
     - name: Check space6
       run: df -h

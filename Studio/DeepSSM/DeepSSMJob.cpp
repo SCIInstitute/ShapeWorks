@@ -93,8 +93,8 @@ void DeepSSMJob::run_augmentation()
                          params.get_aug_num_dims(), params.get_aug_percent_variability(),
                          sampler_type.toStdString(),
                          0,   /* mixture_num */
-                         //QThread::idealThreadCount(), /* processes */
-                         1,   /* processes */
+                         QThread::idealThreadCount(), /* processes */
+                         // 1,   /* processes */
                          nullptr /* world point list? */).cast<int>();
 
   params.set_training_num_dims(aug_dims);

@@ -85,7 +85,6 @@ class NetworkAnalysis:
         return mesh_points, mesh_normals, mean_shape, surface
 
     def run(self):
-        print("got here1", file=sys.stderr)
         project = self.project
         analyze = self.analyze
         num_pts = analyze.get_num_particles()
@@ -241,7 +240,6 @@ class NetworkAnalysis:
 
         # In[4]:
 
-        print("got here2", file=sys.stderr)
         print(str(len(group[group == 0])), 'in', group_values[0], 'group; ', str(len(group[group == 1])), 'in',
               group_values[1], 'group')
         print(str(len(particles)), 'of', str(num_pts), 'particles analyzed.')
