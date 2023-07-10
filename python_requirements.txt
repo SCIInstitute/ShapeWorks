@@ -183,6 +183,7 @@ traittypes==0.2.1
 trimesh==3.12.6
 typing_extensions==4.4.0
 uri-template==1.2.0
+urllib3==1.26.15
 vedo==2022.4.1
 verspec==0.1.0
 vtk==9.1.0

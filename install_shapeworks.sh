@@ -106,7 +106,6 @@ function install_conda() {
 
   CONDA_PACKAGES=(python=3.9.13 \
     openblas=0.3.20 \
-    'vtk=9.1.0=qt*' \
     pip=22.1.2
    )		      
 
@@ -117,6 +116,8 @@ function install_conda() {
 		     gmock=1.11.0 \
 		     doxygen=1.9.2 \
 		     graphviz=4.0.0 \
+		     eigen=3.4.0 \
+		     hdf5=1.12.2 \
 		     tbb=2021.5.0 \
 		     tbb-devel=2021.5.0 \
 		     boost=1.74.0 \
