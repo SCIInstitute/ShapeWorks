@@ -160,6 +160,7 @@ SimpleITK==2.1.1.2
 six==1.16.0
 sniffio==1.3.0
 soupsieve==2.4.1
+spm1d==0.4.2
 stack-data==0.6.2
 statsmodels==0.13.2
 swcc==1.0.5
