@@ -86,18 +86,6 @@ void Constraints::addPlane(const vnl_vector<double>& a, const vnl_vector<double>
   }
 }
 
-void Constraints::addSphere(const vnl_vector_fixed<double, DIMENSION>& v, double r) {
-  Eigen::Vector3d c;
-  c(0) = v[0];
-  c(1) = v[1];
-  c(2) = v[2];
-  SphereConstraint sphere_c;
-  sphere_c.setCenter(c);
-  sphere_c.setRadius(r);
-  sphereConstraints_.push_back(sphere_c);
-  active_ = true;
-}
-
 bool Constraints::transformConstraints(const vnl_matrix_fixed<double, 4, 4>& transform) {
   return transformPlanes(transform) & true;
 }
@@ -164,11 +152,6 @@ bool Constraints::isAnyViolated(const Point3& pos) {
       return true;
     }
   }
-  for (size_t i = 0; i < sphereConstraints_.size(); i++) {
-    if (sphereConstraints_[i].isViolated(pt)) {
-      return true;
-    }
-  }
   if (freeFormConstraint_.getMesh()) {
     if (freeFormConstraint_.isViolated(pt)) {
       return true;
@@ -181,10 +164,6 @@ void Constraints::printAll() {
   std::cout << "Cutting planes " << planeConstraints_.size() << std::endl;
   for (size_t i = 0; i < planeConstraints_.size(); i++) {
     planeConstraints_[i].print();
-  }
-  std::cout << "Cutting spheres " << sphereConstraints_.size() << std::endl;
-  for (size_t i = 0; i < sphereConstraints_.size(); i++) {
-    sphereConstraints_[i].print();
   }
 }
 
@@ -199,11 +178,6 @@ std::string Constraints::violationReport(const Point3& pos, size_t index) {
       stream << "CuttingPlane " << i << "/" << planeConstraints_.size() << ": "
              << planeConstraints_[i].constraintEval(pt) << " gradient(c=1) "
              << planeConstraints_[i].lagragianGradient(pt, 1, index).transpose() << std::endl;
-  }
-  for (size_t i = 0; i < sphereConstraints_.size(); i++) {
-    if (sphereConstraints_[i].constraintEval(pt) > 0)
-      stream << "Sphere " << i << "/" << planeConstraints_.size() << ": " << sphereConstraints_[i].constraintEval(pt)
-             << " gradient(c=1) " << sphereConstraints_[i].lagragianGradient(pt, pt, 1, index).transpose() << std::endl;
   }
   if (freeFormConstraint_.getMesh()) {
     if (freeFormConstraint_.constraintEval(pt) > 0)
@@ -226,11 +200,6 @@ std::vector<std::vector<double>> Constraints::violationReportData(const Point3& 
     pl.push_back(planeConstraints_[i].constraintEval(pt));
   }
   alls.push_back(pl);
-  std::vector<double> sp;
-  for (size_t i = 0; i < sphereConstraints_.size(); i++) {
-    sp.push_back(sphereConstraints_[i].constraintEval(pt));
-  }
-  alls.push_back(sp);
   std::vector<double> ff;
   if (freeFormConstraint_.readyForOptimize()) {
     ff.push_back(freeFormConstraint_.constraintEval(pt));
@@ -257,9 +226,6 @@ vnl_vector_fixed<double, 3> Constraints::constraintsLagrangianGradient(const Poi
     // std::endl;
     grad += planeConstraints_[i].lagragianGradient(pt, C, index);
   }
-  for (size_t i = 0; i < sphereConstraints_.size(); i++) {
-    grad += sphereConstraints_[i].lagragianGradient(prept, pt, C, index);
-  }
   if (freeFormConstraint_.readyForOptimize()) {
     grad += freeFormConstraint_.lagragianGradient(pt, C, index);
   }
@@ -277,9 +243,6 @@ void Constraints::InitializeLagrangianParameters(std::vector<double> mus) {
   for (size_t i = 0; i < planeConstraints_.size(); i++) {
     planeConstraints_[i].setMus(mus);
   }
-  for (size_t i = 0; i < sphereConstraints_.size(); i++) {
-    sphereConstraints_[i].setMus(mus);
-  }
   if (freeFormConstraint_.readyForOptimize()) {
     freeFormConstraint_.setMus(mus);
   }
@@ -293,9 +256,6 @@ void Constraints::UpdateMus(const Point3& pos, double C, size_t index) {
   pt(2) = pos[2];
   for (size_t i = 0; i < planeConstraints_.size(); i++) {
     planeConstraints_[i].updateMu(pt, C, index);
-  }
-  for (size_t i = 0; i < sphereConstraints_.size(); i++) {
-    sphereConstraints_[i].updateMu(pt, C, index);
   }
 
   if (freeFormConstraint_.readyForOptimize()) {
@@ -454,7 +414,7 @@ FreeFormConstraint& Constraints::getFreeformConstraint() { return freeFormConstr
 
 //-----------------------------------------------------------------------------
 bool Constraints::hasConstraints() {
-  if (!planeConstraints_.empty() || !sphereConstraints_.empty()) {
+  if (!planeConstraints_.empty()) {
     return true;
   }
 

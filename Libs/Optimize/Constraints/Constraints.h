@@ -7,7 +7,6 @@
 #include "FreeFormConstraint.h"
 #include "Libs/Mesh/Mesh.h"
 #include "PlaneConstraint.h"
-#include "SphereConstraint.h"
 #include "itkPoint.h"
 #include "vnl/vnl_cross.h"
 #include "vnl/vnl_inverse.h"
@@ -75,8 +74,6 @@ class Constraints {
   // Set constraints
   /// Adds a cutting-plane boundary constraint. Constraints are used to isolate areas of interest on shape surfaces
   void addPlane(const vnl_vector<double> &a, const vnl_vector<double> &b, const vnl_vector<double> &c);
-  /// Adds a sphere boundary constraint. Constraints are used to isolate areas of interest on shape surfaces
-  void addSphere(const vnl_vector_fixed<double, DIMENSION> &v, double r);
   /// Adds the free-form boundary constraint, or FFC. Constraints are used to isolate areas of interest on shape surfaces
   void addFreeFormConstraint(std::shared_ptr<shapeworks::Mesh> mesh);
 
@@ -89,8 +86,6 @@ class Constraints {
   // Constraint get function
   /// Returns the vector that constains all plane constraints, of type PlaneConstraint. See class PlaneConstraint for more info
   std::vector<PlaneConstraint> &getPlaneConstraints() { return planeConstraints_; }
-  /// Returns the vector that constains all sphere constraints, of type SphereConstraint. See class SphereConstraint for more info
-  std::vector<SphereConstraint> &getSphereConstraints() { return sphereConstraints_; }
   /// Returns the free form constraint, of type FreeFormConstraint. See class FreeFormConstraint for more info
   FreeFormConstraint& getFreeformConstraint();
 
@@ -137,8 +132,6 @@ class Constraints {
  private:
   /// Vector containing the cutting-plane boundary constraints. Constraints are used to isolate areas of interest on shape surfaces
   std::vector<PlaneConstraint> planeConstraints_;
-  /// Vector containing the sphere boundary constraints. Constraints are used to isolate areas of interest on shape surfaces
-  std::vector<SphereConstraint> sphereConstraints_;
   /// The object that constains a free-form boundary constraints. Constraints are used to isolate areas of interest on shape surfaces
   FreeFormConstraint freeFormConstraint_;
 

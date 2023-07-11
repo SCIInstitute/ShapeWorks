@@ -59,7 +59,6 @@ static bool check_constraint_violations(Optimize &app, double slack) {
   bool good = true;
   std::vector<std::string> types;
   types.push_back("plane");
-  types.push_back("sphere");
   types.push_back("free form");
   for (size_t domain = 0; domain < num_doms; domain++) {
     for (size_t i = 0; i < lists[domain].size(); i++) {
@@ -68,7 +67,7 @@ static bool check_constraint_violations(Optimize &app, double slack) {
       auto violation_report_data =
           app.GetSampler()->GetParticleSystem()->GetDomain(domain)->GetConstraints()->violationReportData(p);
 
-      for (int j = 0; j < 3; j++) {
+      for (int j = 0; j < 2; j++) {
         for (int k = 0; k < violation_report_data[j].size(); k++) {
           if (violation_report_data[j][k] > slack) {
             std::cout << "VIOLATION: Shape# " << int(domain / domains_per_shape) << " domain# "
