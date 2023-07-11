@@ -60,6 +60,7 @@ cp -a Examples "package/${VERSION}"
 cp -a Python "package/${VERSION}"
 cp -a Installation "package/${VERSION}"
 cp install_shapeworks.sh package/${VERSION}
+cp python_requirements.txt package/${VERSION}
 cp docs/about/release-notes.md package/${VERSION}
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
@@ -121,7 +122,7 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 
 else
     # Copy libraries from anaconda
-    conda_libs="libboost_iostreams libboost_filesystem libbz2 liblzma liblz4 libtbb libHalf libpython libz libspd"
+    conda_libs="libboost_iostreams libboost_filesystem libbz2 liblzma libtbb libHalf libpython libz libspd"
     for clib in $conda_libs; do
         cp ${CONDA_PREFIX}/lib/${clib}* lib
     done
