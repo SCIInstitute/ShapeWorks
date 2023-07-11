@@ -67,7 +67,7 @@ if [[ "$USE_CCACHE" == "ON" ]]; then
     echo "compression = true" > $CCACHE_DIR/ccache.conf
 fi
 
-CONDA_HASH=`sha1sum $SCRIPT_PATH/../../install_shapeworks.sh | awk '{ print $1 }'`
+CONDA_HASH=`cat $SCRIPT_PATH/../../install_shapeworks.sh $SCRIPT_PATH/../../python_requirements.txt | sha1sum | awk '{ print $1 }'`
 echo "CONDA_HASH = ${CONDA_HASH}"
 CONDA_FILE="conda-${PLATFORM}-${CONDA_HASH}.${SUFFIX}"
 
