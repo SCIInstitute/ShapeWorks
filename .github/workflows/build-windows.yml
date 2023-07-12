@@ -37,6 +37,10 @@ jobs:
       shell: bash -l {0}
       run: echo "$PATH"
 
+    - name: link
+      shell: bash -l {0}
+      run: cd /c/Users/runneradmin/bin && ln -s /c/Miniconda/condabin/conda.bat conda
+      
     # - name: Check Conda
     #   shell: bash -l {0}
     #   run: /c/Miniconda/condabin/conda.bat info
@@ -51,7 +55,7 @@ jobs:
 
     - name: Check Conda
       shell: bash -l {0}
-      run: conda.bat info
+      run: conda info
       
     - name: Setup Conda
       uses: conda-incubator/setup-miniconda@v2.2.0
