@@ -35,7 +35,7 @@ jobs:
 
     - name: Add to path
       shell: bash -l {0}
-      run: find /c/Miniconda3 -iname conda.exe
+      run: find / -iname conda.exe
       
     - name: Check Conda
       shell: bash -l {0}
