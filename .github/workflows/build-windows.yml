@@ -51,7 +51,7 @@ jobs:
 
     - name: Check Conda
       shell: bash -l {0}
-      run: conda info
+      run: conda.bat info
       
     - name: Setup Conda
       uses: conda-incubator/setup-miniconda@v2.2.0
