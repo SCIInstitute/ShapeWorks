@@ -74,6 +74,7 @@ title: shapeworks::Mesh
 | [Image](../Classes/classshapeworks_1_1Image.md) | **[toImage](../Classes/classshapeworks_1_1Mesh.md#function-toimage)**([PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md) region =[PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md)(), Point3 spacing =Point3({1., 1., 1.})) const<br>rasterizes specified region to create binary image of desired dims (default: unit spacing)  |
 | [Image](../Classes/classshapeworks_1_1Image.md) | **[toDistanceTransform](../Classes/classshapeworks_1_1Mesh.md#function-todistancetransform)**([PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md) region =[PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md)(), const Point3 spacing =Point3({1., 1., 1.}), const Dims padding =Dims({1, 1, 1})) const<br>converts specified region to distance transform image (default: unit spacing) with (logical) padding  |
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[computeThickness](../Classes/classshapeworks_1_1Mesh.md#function-computethickness)**([Image](../Classes/classshapeworks_1_1Image.md) & image, [Image](../Classes/classshapeworks_1_1Image.md) * dt =nullptr, double max_dist =10000, std::string distance_mesh ="")<br>assign cortical thickness values from mesh points  |
+| [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[computeLandmarkGeodesics](../Classes/classshapeworks_1_1Mesh.md#function-computelandmarkgeodesics)**(const std::vector< Point3 > & landmarks)<br>compute geodesic distances to landmarks and assign as fields  |
 | Point3 | **[center](../Classes/classshapeworks_1_1Mesh.md#function-center)**() const<br>center of mesh  |
 | Point3 | **[centerOfMass](../Classes/classshapeworks_1_1Mesh.md#function-centerofmass)**() const<br>center of mass of mesh  |
 | int | **[numPoints](../Classes/classshapeworks_1_1Mesh.md#function-numpoints)**() const<br>number of points  |
@@ -633,6 +634,16 @@ Mesh & computeThickness(
 
 assign cortical thickness values from mesh points 
 
+### function computeLandmarkGeodesics
+
+```cpp
+Mesh & computeLandmarkGeodesics(
+    const std::vector< Point3 > & landmarks
+)
+```
+
+compute geodesic distances to landmarks and assign as fields 
+
 ### function center
 
 ```cpp
@@ -894,4 +905,4 @@ friend struct SharedCommandData(
 
 -------------------------------
 
-Updated on 2023-07-11 at 16:40:31 +0000
+Updated on 2023-07-11 at 23:59:10 +0000

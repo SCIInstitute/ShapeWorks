@@ -2777,6 +2777,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-computelandmarkgeodesics" class="md-nav__link">
+    function computeLandmarkGeodesics
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-center" class="md-nav__link">
     function center
   </a>
@@ -3221,6 +3228,10 @@
 <tr>
 <td><a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp;</td>
 <td><strong><a href="classshapeworks_1_1Mesh.html#function-computethickness">computeThickness</a></strong>(<a href="classshapeworks_1_1Image.html">Image</a> &amp; image, <a href="classshapeworks_1_1Image.html">Image</a> * dt =nullptr, double max_dist =10000, std::string distance_mesh ="")<br>assign cortical thickness values from mesh points</td>
+</tr>
+<tr>
+<td><a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp;</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-computelandmarkgeodesics">computeLandmarkGeodesics</a></strong>(const std::vector&lt; Point3 &gt; &amp; landmarks)<br>compute geodesic distances to landmarks and assign as fields</td>
 </tr>
 <tr>
 <td>Point3</td>
@@ -3738,6 +3749,12 @@
 <span class="p">)</span>
 </code></pre></div>
 <p>assign cortical thickness values from mesh points </p>
+<h3 id="function-computelandmarkgeodesics">function computeLandmarkGeodesics</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">computeLandmarkGeodesics</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">landmarks</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>compute geodesic distances to landmarks and assign as fields </p>
 <h3 id="function-center">function center</h3>
 <div class="highlight"><pre><span></span><code><span class="n">Point3</span><span class="w"> </span><span class="n">center</span><span class="p">()</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
@@ -3893,7 +3910,7 @@
 <span class="p">);</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-07-11 at 16:40:31 +0000</p>
+<p>Updated on 2023-07-11 at 23:59:10 +0000</p>
 
               
             </article>

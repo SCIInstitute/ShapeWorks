@@ -29,6 +29,7 @@ title: Libs/Mesh/Mesh.h
 #pragma once
 
 #include <Image/ImageUtils.h>
+
 #include "Shapeworks.h"
 
 class vtkStaticCellLocator;
@@ -152,6 +153,8 @@ class Mesh {
 
   Mesh& computeThickness(Image& image, Image* dt = nullptr, double max_dist = 10000, std::string distance_mesh = "");
 
+  Mesh& computeLandmarkGeodesics(const std::vector<Point3>& landmarks);
+
   // query functions //
 
   Point3 center() const;
@@ -237,10 +240,8 @@ class Mesh {
   mutable vtkSmartPointer<vtkKdTreePointLocator> pointLocator;
   void updatePointLocator() const;
 
-
   Eigen::Vector3d computeBarycentricCoordinates(const Eigen::Vector3d& pt, int face)
       const;  // // WARNING: Copied directly from Meshwrapper. TODO: When refactoring, take this into account.
-
 };
 
 std::ostream& operator<<(std::ostream& os, const Mesh& mesh);
@@ -256,4 +257,4 @@ class MeshReader {
 
 -------------------------------
 
-Updated on 2023-07-11 at 16:40:31 +0000
+Updated on 2023-07-11 at 23:59:10 +0000

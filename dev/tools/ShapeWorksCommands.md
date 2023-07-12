@@ -1592,6 +1592,28 @@ shapeworks  invert-normal [args]...
 <a href="#top">Back to Top</a>
   
 [Back to Mesh Commands](#mesh-commands)
+### landmark-geodesics
+
+
+**Usage:**
+
+```
+shapeworks  landmark-geodesics [args]...
+```  
+
+
+**Description:** Computes geodesic distance to each landmark and store as a field  
+
+
+**Options:**
+
+**-h, --help:** show this help message and exit
+
+**--landmarks=STRING:** Path of landmarks file.  
+  
+<a href="#top">Back to Top</a>
+  
+[Back to Mesh Commands](#mesh-commands)
 ### mean-normals
 
 

@@ -2446,6 +2446,7 @@
 <div class="highlight"><pre><span></span><code><span class="cp">#pragma once</span>
 
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;Image/ImageUtils.h&gt;</span>
+
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Shapeworks.h&quot;</span>
 
 <span class="k">class</span><span class="w"> </span><span class="nc">vtkStaticCellLocator</span><span class="p">;</span>
@@ -2569,6 +2570,8 @@
 
 <span class="w">  </span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="n">computeThickness</span><span class="p">(</span><span class="n">Image</span><span class="o">&amp;</span><span class="w"> </span><span class="n">image</span><span class="p">,</span><span class="w"> </span><span class="n">Image</span><span class="o">*</span><span class="w"> </span><span class="n">dt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">nullptr</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">max_dist</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">10000</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">distance_mesh</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="p">);</span>
 
+<span class="w">  </span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">computeLandmarkGeodesics</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Point3</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">landmarks</span><span class="p">);</span>
+
 <span class="w">  </span><span class="c1">// query functions //</span>
 
 <span class="w">  </span><span class="n">Point3</span><span class="w"> </span><span class="nf">center</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
@@ -2654,10 +2657,8 @@
 <span class="w">  </span><span class="k">mutable</span><span class="w"> </span><span class="n">vtkSmartPointer</span><span class="o">&lt;</span><span class="n">vtkKdTreePointLocator</span><span class="o">&gt;</span><span class="w"> </span><span class="n">pointLocator</span><span class="p">;</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">updatePointLocator</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
 
-
 <span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="nf">computeBarycentricCoordinates</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="o">&amp;</span><span class="w"> </span><span class="n">pt</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">face</span><span class="p">)</span>
 <span class="w">      </span><span class="k">const</span><span class="p">;</span><span class="w">  </span><span class="c1">// // WARNING: Copied directly from Meshwrapper. TODO: When refactoring, take this into account.</span>
-
 <span class="p">};</span>
 
 <span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">&lt;&lt;</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">ostream</span><span class="o">&amp;</span><span class="w"> </span><span class="n">os</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="n">mesh</span><span class="p">);</span>
@@ -2670,7 +2671,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-07-11 at 16:40:31 +0000</p>
+<p>Updated on 2023-07-11 at 23:59:10 +0000</p>
 
               
             </article>

@@ -35,4 +35,4 @@ void compute_thickness(Mesh &mesh, Image &image, Image *dt, double max_dist, std
 
 -------------------------------
 
-Updated on 2023-07-11 at 16:40:31 +0000
+Updated on 2023-07-11 at 23:59:10 +0000

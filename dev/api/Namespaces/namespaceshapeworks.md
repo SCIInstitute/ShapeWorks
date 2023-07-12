@@ -324,6 +324,7 @@ User usage reporting (telemetry)  [More...](#detailed-description)
 | | **[COMMAND_DECLARE](../Namespaces/namespaceshapeworks.md#function-command-declare)**(CompareMesh , [MeshCommand](../Classes/classshapeworks_1_1MeshCommand.md) ) |
 | | **[COMMAND_DECLARE](../Namespaces/namespaceshapeworks.md#function-command-declare)**(WarpMesh , [MeshCommand](../Classes/classshapeworks_1_1MeshCommand.md) ) |
 | | **[COMMAND_DECLARE](../Namespaces/namespaceshapeworks.md#function-command-declare)**(ComputeThickness , [MeshCommand](../Classes/classshapeworks_1_1MeshCommand.md) ) |
+| | **[COMMAND_DECLARE](../Namespaces/namespaceshapeworks.md#function-command-declare)**(LandmarkGeodesics , [MeshCommand](../Classes/classshapeworks_1_1MeshCommand.md) ) |
 | | **[COMMAND_DECLARE](../Namespaces/namespaceshapeworks.md#function-command-declare)**(Seed , [ShapeworksCommand](../Classes/classshapeworks_1_1ShapeworksCommand.md) ) |
 | | **[COMMAND_DECLARE](../Namespaces/namespaceshapeworks.md#function-command-declare)**(OptimizeCommand , [OptimizeCommandGroup](../Classes/classshapeworks_1_1OptimizeCommandGroup.md) ) |
 | | **[COMMAND_DECLARE](../Namespaces/namespaceshapeworks.md#function-command-declare)**(GroomCommand , [GroomCommandGroup](../Classes/classshapeworks_1_1GroomCommandGroup.md) ) |
@@ -1656,6 +1657,16 @@ COMMAND_DECLARE(
 
 ```cpp
 COMMAND_DECLARE(
+    LandmarkGeodesics ,
+    MeshCommand 
+)
+```
+
+
+### function COMMAND_DECLARE
+
+```cpp
+COMMAND_DECLARE(
     Seed ,
     ShapeworksCommand 
 )
@@ -2579,4 +2590,4 @@ pi that doesn't depend on deprecated or non-std lib defines
 
 -------------------------------
 
-Updated on 2023-07-11 at 16:40:29 +0000
+Updated on 2023-07-11 at 23:59:08 +0000
