@@ -31,7 +31,7 @@ jobs:
       
     - name: Check Conda
       shell: bash -l {0}
-      run: C:\Miniconda\condabin\conda.bat info
+      run: /c/Miniconda/condabin/conda.bat info
       
     - name: Setup Conda
       uses: conda-incubator/setup-miniconda@v2.2.0
