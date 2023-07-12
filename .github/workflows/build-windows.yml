@@ -39,7 +39,7 @@ jobs:
 
     - name: link
       shell: bash -l {0}
-      run: cd /c/Users/runneradmin/bin && ln -s /c/Miniconda/condabin/conda.bat conda
+      run: cd /usr/bin && ln -s /c/Miniconda/condabin/conda.bat conda
       
     # - name: Check Conda
     #   shell: bash -l {0}
