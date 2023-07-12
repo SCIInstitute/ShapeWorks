@@ -31,7 +31,7 @@ jobs:
 
     - name: Add to path
       shell: bash -l {0}
-      run: echo "C:\Miniconda3\condabin" >> $GITHUB_PATH
+      run: echo "C:\Miniconda\condabin" >> $GITHUB_PATH
 
     - name: Check path
       shell: bash -l {0}
@@ -39,11 +39,11 @@ jobs:
 
     - name: Check Conda
       shell: bash -l {0}
-      run: /c/Miniconda3/condabin/conda.bat info
+      run: /c/Miniconda/condabin/conda.bat info
 
     - name: Check path
       shell: bash -l {0}
-      run: ls /c/Miniconda3/condabin
+      run: ls /c/Miniconda/condabin
 
     - name: Check path
       shell: bash -l {0}
