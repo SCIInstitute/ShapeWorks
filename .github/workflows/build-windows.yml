@@ -29,6 +29,10 @@ jobs:
     
     steps:
 
+    - name: Add to path
+      shell: bash -l {0}
+      run: echo "C:\Miniconda3\condabin" >> $GITHUB_PATH
+
     - name: Check Conda
       shell: bash -l {0}
       run: conda info
