@@ -28,10 +28,14 @@ jobs:
     runs-on: windows-2019
     
     steps:
-      
+
+    - name: Add to path
+      shell: bash -l {0}
+      run: echo "C:\Miniconda3\condabin" >> $GITHUB_PATH
+
     - name: Check Conda
       shell: bash -l {0}
-      run: /c/Miniconda/condabin/conda.bat info
+      run: conda info
       
     - name: Setup Conda
       uses: conda-incubator/setup-miniconda@v2.2.0
