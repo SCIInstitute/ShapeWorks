@@ -33,6 +33,10 @@ jobs:
       shell: bash -l {0}
       run: echo "C:\Miniconda3\bin" >> $GITHUB_PATH
 
+    - name: Add to path
+      shell: bash -l {0}
+      run: find /c/Miniconda3 -iname conda.exe
+      
     - name: Check Conda
       shell: bash -l {0}
       run: conda info
