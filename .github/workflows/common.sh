@@ -31,7 +31,7 @@ elif [[ "$OSTYPE" == "linux"* ]]; then
 else
     source /c/Users/runneradmin/.bash_profile
     PLATFORM="windows"
-    CONDA_PATH="C:\Miniconda3\envs\shapeworks"
+    CONDA_PATH="C:\Miniconda\envs\shapeworks"
     DEP_PATH="C:\deps"
     USE_CCACHE="OFF"
     SUFFIX="7z"

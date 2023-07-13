@@ -145,7 +145,7 @@ pyxdg==0.28
 PyYAML==6.0
 pyyaml_env_tag==0.1
 pyzmq==25.1.0
-requests==2.27.1
+requests==2.31.0
 requests-toolbelt==1.0.0
 rfc3339-validator==0.1.4
 rfc3986-validator==0.1.1
