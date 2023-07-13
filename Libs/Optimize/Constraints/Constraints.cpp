@@ -681,7 +681,7 @@ void Constraints::read(std::string filename) {
             plane.points().push_back({p[0].get<double>(), p[1].get<double>(), p[2].get<double>()});
           }
           if (plane.points().size() != 3) {
-            throw std::runtime_error("Planes should have three points");
+            throw std::runtime_error("File: " + filename + ": Planes should have three points");
           }
         }
         plane.updatePlaneFromPoints();
@@ -718,6 +718,10 @@ void Constraints::write(std::string filename) {
   for (auto& plane : planeConstraints_) {
     json planeJson;
     std::vector<json> points;
+    if (plane.points().size() != 3) {
+      SW_WARN("Not saving plane with less than 3 points");
+      continue;
+    }
     for (auto& point : plane.points()) {
       points.push_back({point[0], point[1], point[2]});
     }

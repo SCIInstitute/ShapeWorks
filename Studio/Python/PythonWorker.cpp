@@ -5,10 +5,9 @@
 namespace py = pybind11;
 using namespace pybind11::literals;  // to bring in the `_a` literal
 
-#include <Shape.h>
 #include <Logging.h>
 #include <Python/PythonWorker.h>
-#include <Logging.h>
+#include <Shape.h>
 
 #include <QFileInfo>
 #include <QMessageBox>
@@ -74,29 +73,28 @@ void PythonWorker::set_vtk_output_window(vtkSmartPointer<StudioVtkOutputWindow> 
 
 //---------------------------------------------------------------------------
 void PythonWorker::start_job(QSharedPointer<Job> job) {
-  if (this->init()) {
+  if (init()) {
     try {
-      this->current_job_ = job;
-      this->current_job_->run();
+      job->start_timer();
+      SW_LOG("Running Task: " + job->name().toStdString());
+      Q_EMIT job->progress(0);
+      current_job_ = job;
+      current_job_->run();
       SW_LOG(current_job_->get_completion_message().toStdString());
     } catch (py::error_already_set& e) {
       SW_ERROR(e.what());
     }
   }
 
-  this->python_logger_->clear_abort();
-  Q_EMIT this->current_job_->finished();
+  python_logger_->clear_abort();
+  if (current_job_) {
+    Q_EMIT current_job_->finished();
+  }
 }
 
 //---------------------------------------------------------------------------
 void PythonWorker::run_job(QSharedPointer<Job> job) {
-  Q_EMIT job->progress(0);
-  SW_LOG("Running Task: " + job->name().toStdString());
-
-  job->start_timer();
-  this->current_job_ = job;
   job->moveToThread(this->thread_);
-
   // run on python thread
   QMetaObject::invokeMethod(this, "start_job", Qt::QueuedConnection, Q_ARG(QSharedPointer<Job>, job));
 }
@@ -143,8 +141,8 @@ bool PythonWorker::init() {
   std::vector<std::string> python_path;
   std::fstream file;
 
-  std::string
-      python_path_file = home.toStdString() + "/.shapeworks/python_path_" + PythonWorker::python_api_version + ".txt";
+  std::string python_path_file =
+      home.toStdString() + "/.shapeworks/python_path_" + PythonWorker::python_api_version + ".txt";
   file.open(python_path_file, std::ios::in);
   std::cerr << "Reading python path from " << python_path_file << "\n";
   if (file.is_open()) {
@@ -171,7 +169,7 @@ bool PythonWorker::init() {
   } else {
     std::fstream file;
     QString path;
-    file.open(home.toStdString() + "/.shapeworks/path_"+PythonWorker::python_api_version+".txt", std::ios::in);
+    file.open(home.toStdString() + "/.shapeworks/path_" + PythonWorker::python_api_version + ".txt", std::ios::in);
     if (file.is_open()) {
       std::string line;
       while (getline(file, line)) {
@@ -200,19 +198,44 @@ bool PythonWorker::init() {
     py::module py_matplot_lib = py::module::import("matplotlib");
     py_matplot_lib.attr("use")("agg");
 
+    // search directories in python_path vector for the python executable
+    QString python_executable;
+
+#ifdef _WIN32
+    QString path_executable = python_home + "/python.exe";
+#else
+    QString path_executable = python_home + "/bin/python";
+#endif
+    SW_LOG("checking {}", path_executable);
+
+    // check that it exists and is a file and is executable
+    if (QFile::exists(path_executable) && QFileInfo(path_executable).isFile() &&
+        QFile::permissions(path_executable) & QFile::ExeUser) {
+      python_executable = path_executable;
+    } else {
+      SW_LOG("Unable to locate python executable");
+    }
+
+    // set up for multprocessing
+    py::module multiprocessing = py::module::import("multiprocessing");
+    // set the executable
+    multiprocessing.attr("set_executable")(python_executable.toStdString());
+    SW_DEBUG("Python executable: {}", python_executable.toStdString());
+
     this->python_logger_->set_callback(std::bind(&PythonWorker::incoming_python_message, this, std::placeholders::_1));
     this->python_logger_->set_progress_callback(
         std::bind(&PythonWorker::incoming_python_progress, this, std::placeholders::_1));
     py::module logger = py::module::import("logger");
+
+    SW_LOG("Initializing ShapeWorks Python Module");
 
     py::module sw_utils = py::module::import("shapeworks.utils");
 
     py::object get_version = sw_utils.attr("get_api_version");
     std::string version = get_version().cast<std::string>();
     if (version != PythonWorker::python_api_version) {
-      SW_ERROR("Unable to initialize Python. Expected API version " +
-          std::string(PythonWorker::python_api_version) +
-          " but found API version " + version + ". Please run " + script);
+      SW_ERROR("Unable to initialize Python. Expected API version " + std::string(PythonWorker::python_api_version) +
+               " but found API version " + version + ". Please run " + script);
       this->initialized_success_ = false;
       return false;
     }
@@ -241,9 +264,7 @@ bool PythonWorker::init() {
 }
 
 //---------------------------------------------------------------------------
-void PythonWorker::incoming_python_message(std::string message_string) {
-  SW_LOG(message_string);
-}
+void PythonWorker::incoming_python_message(std::string message_string) { SW_LOG(message_string); }
 
 //---------------------------------------------------------------------------
 void PythonWorker::end_python() {

@@ -799,3 +799,12 @@ TEST(MeshTests, boundaryLoopExtractor) {
   Mesh loop = MeshUtils::boundaryLoopExtractor(mesh);
   ASSERT_TRUE(loop == ground_truth);
 }
+
+TEST(MeshTests, thicknessTest) {
+  Mesh sphere(std::string(TEST_DATA_DIR) + "/thickness/sphere.vtk");
+  Image ct(std::string(TEST_DATA_DIR) + "/thickness/ct.nrrd");
+  Mesh thickness = sphere.computeThickness(ct);
+
+  Mesh baseline(std::string(TEST_DATA_DIR) + "/thickness/thickness.vtk");
+  ASSERT_TRUE(thickness == baseline);
+}
