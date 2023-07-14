@@ -39,7 +39,7 @@ class Analyze {
  public:
   Analyze(ProjectHandle project);
 
-  void run_offline_analysis(std::string outfile);
+  void run_offline_analysis(std::string outfile, float range, float steps);
 
   ShapeList get_shapes();
 
@@ -98,4 +98,4 @@ class Analyze {
 
 -------------------------------
 
-Updated on 2023-07-13 at 17:18:59 +0000
+Updated on 2023-07-14 at 00:36:46 +0000

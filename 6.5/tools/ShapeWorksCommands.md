@@ -55,7 +55,11 @@ shapeworks  analyze [args]...
 
 **--name=STRING:** Path to project file.
 
-**--output=STRING:** Path to output file.  
+**--output=STRING:** Path to output file.
+
+**--range=FLOAT:** Standard deviation range for PCA [default: 3.0].
+
+**--steps=INT:** Number of steps to use for PCA [default: 21].  
   
 <a href="#top">Back to Top</a>
   

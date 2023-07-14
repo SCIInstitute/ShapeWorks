@@ -18,7 +18,7 @@ High level analyze API.  [More...](#detailed-description)
 |                | Name           |
 | -------------- | -------------- |
 | | **[Analyze](../Classes/classshapeworks_1_1Analyze.md#function-analyze)**(ProjectHandle project) |
-| void | **[run_offline_analysis](../Classes/classshapeworks_1_1Analyze.md#function-run-offline-analysis)**(std::string outfile)<br>Run offline analysis, saving results to outfile.  |
+| void | **[run_offline_analysis](../Classes/classshapeworks_1_1Analyze.md#function-run-offline-analysis)**(std::string outfile, float range, float steps)<br>Run offline analysis, saving results to outfile.  |
 | ShapeList | **[get_shapes](../Classes/classshapeworks_1_1Analyze.md#function-get-shapes)**()<br>Return the list of shapes.  |
 | int | **[get_num_subjects](../Classes/classshapeworks_1_1Analyze.md#function-get-num-subjects)**()<br>Return the number of subjects.  |
 | int | **[get_num_modes](../Classes/classshapeworks_1_1Analyze.md#function-get-num-modes)**()<br>Return the number of modes.  |
@@ -59,7 +59,9 @@ Analyze(
 
 ```cpp
 void run_offline_analysis(
-    std::string outfile
+    std::string outfile,
+    float range,
+    float steps
 )
 ```
 
@@ -192,4 +194,4 @@ void set_group_selection(
 
 -------------------------------
 
-Updated on 2023-07-13 at 17:18:57 +0000
+Updated on 2023-07-14 at 00:36:45 +0000
