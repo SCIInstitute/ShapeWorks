@@ -1,5 +1,11 @@
 # Release Notes
 
+## ShapeWorks 6.4.2 - 2023-07-05
+
+### Fixes
+
+  * Fix python module versions preventing python import from working (#2104)
+
 ## ShapeWorks 6.4.1 - 2023-05-10
 
 ### Fixes

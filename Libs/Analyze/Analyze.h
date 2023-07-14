@@ -18,7 +18,7 @@ class Analyze {
   Analyze(ProjectHandle project);
 
   /// Run offline analysis, saving results to outfile
-  void run_offline_analysis(std::string outfile);
+  void run_offline_analysis(std::string outfile, float range, float steps);
 
   /// Return the list of shapes
   ShapeList get_shapes();
