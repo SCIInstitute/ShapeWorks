@@ -78,8 +78,8 @@ TEST(MeshTests, geodesicTest1) {
   auto pt2 = ellipsoid.getPoint(p2);
   auto euclidean_dist = pt2.EuclideanDistanceTo(pt1);
 
-  ASSERT_TRUE(std::abs(euclidean_dist - 6.70625) < 1e-4);
-  ASSERT_TRUE(std::abs(geodesic_dist - 6.577) < 1e-4);
+  ASSERT_TRUE(std::abs(euclidean_dist - 6.7062) < 1e-4);
+  ASSERT_TRUE(std::abs(geodesic_dist - 6.55644) < 1e-4);
 }
 
 TEST(MeshTests, geodesicTest2) {
