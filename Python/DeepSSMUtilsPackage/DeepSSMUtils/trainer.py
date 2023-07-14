@@ -77,14 +77,13 @@ def supervised_train(config_file):
 	with open(config_file) as json_file: 
 		parameters = json.load(json_file)
 	model_dir = parameters['paths']['out_dir'] + parameters['model_name'] + '/'
-	if not os.path.exists(model_dir):
-		os.makedirs(model_dir)
+	loaders.make_dir(model_dir)
 	loader_dir = parameters['paths']['loader_dir']
 	aug_dir = parameters['paths']['aug_dir']
 	num_epochs = parameters['trainer']['epochs']
 	learning_rate = parameters['trainer']['learning_rate']
 	eval_freq = parameters['trainer']['val_freq']
-	decay_lr = parameters['trainer']['decay_lr']
+	decay_lr = parameters['trainer']['decay_lr']['enabled']
 	fine_tune = parameters['fine_tune']['enabled']
 	loss_func = method_to_call = getattr(losses, parameters["loss"]["function"])
 	# load the loaders
@@ -318,15 +317,15 @@ def supervised_train(config_file):
 			json.dump(parameters, json_file, indent=2) 
 		print("Fine tuning complete, model saved. Best model after epoch " + str(best_ft_epoch))
 
-def supervised_train_tl(conflict_file):
-	with open(conflict_file) as json_file: 
+def supervised_train_tl(config_file):
+	with open(config_file) as json_file: 
 		parameters = json.load(json_file)
 	model_dir = parameters['paths']['out_dir'] + parameters['model_name'] + '/'
 	loaders.make_dir(model_dir)
 	loader_dir = parameters['paths']['loader_dir']
 	learning_rate = parameters['trainer']['learning_rate']
 	eval_freq = parameters['trainer']['val_freq']
-	decay_lr = parameters['trainer']['decay_lr']
+	decay_lr = parameters['trainer']['decay_lr']['enabled']
 	a_ae = parameters["tl_net"]["a_ae"]
 	c_ae = parameters["tl_net"]["c_ae"]
 	a_lat = parameters["tl_net"]["a_lat"]
@@ -339,7 +338,7 @@ def supervised_train_tl(conflict_file):
 	val_loader = torch.load(validation_loader_path)
 	print("Done.")
 	print("Defining model...")
-	net = model.DeepSSMNet_TLNet(conflict_file)
+	net = model.DeepSSMNet_TLNet(config_file)
 	device = net.device
 	net.to(device)
 	# intialize model weights
@@ -349,7 +348,8 @@ def supervised_train_tl(conflict_file):
 	train_params = net.parameters()
 	opt = torch.optim.Adam(train_params, learning_rate)
 	opt.zero_grad()
-	scheduler = StepLR(opt, step_size=1, gamma=0.99)
+	if decay_lr:
+		scheduler = set_scheduler(opt, parameters['trainer']['decay_lr'])
 	print("Done.")
 	# train
 	print("Beginning training on device = " + device + '\n')
@@ -381,8 +381,8 @@ def supervised_train_tl(conflict_file):
 			pca = pca.to(device)
 			mdl = mdl.to(device)
 			[pred_pt, lat, lat_img] = net(mdl, img)
-			loss = losses.deepssm.focal_loss(pred_pt, mdl, a_ae, c_ae)
-			train_rel_loss = losses.deepssm.focal_rel_loss(pred_pt, mdl, mean_mdl)
+			loss = losses.focal_loss(pred_pt, mdl, a_ae, c_ae)
+			train_rel_loss = losses.focal_rel_loss(pred_pt, mdl, mean_mdl)
 			loss.backward()
 			opt.step()
 			ae_train_losses.append(loss.item())
@@ -399,8 +399,8 @@ def supervised_train_tl(conflict_file):
 				mdl = mdl.to(device)
 				[pred_pt, lat, lat_img] = net(mdl, img)
 				# again in validation we simply compute standard l2 loss
-				loss_ae = losses.deepssm.focal_loss(pred_pt, mdl)
-				ae_val_rel_loss = losses.deepssm.focal_rel_loss(pred_pt, mdl, mean_mdl)
+				loss_ae = losses.focal_loss(pred_pt, mdl)
+				ae_val_rel_loss = losses.focal_rel_loss(pred_pt, mdl, mean_mdl)
 				ae_val_losses.append(loss_ae.item())
 				ae_val_rel_losses.append(ae_val_rel_loss.item())
 			
@@ -439,8 +439,8 @@ def supervised_train_tl(conflict_file):
 			pca = pca.to(device)
 			mdl = mdl.to(device)
 			[pred_pt, lat, lat_img] = net(mdl, img)
-			loss = losses.deepssm.focal_loss(lat_img, lat, a_lat, c_lat)
-			train_rel_loss = losses.deepssm.focal_rel_loss(lat_img, lat, lat*0)
+			loss = losses.focal_loss(lat_img, lat, a_lat, c_lat)
+			train_rel_loss = losses.focal_rel_loss(lat_img, lat, lat*0)
 			loss.backward()
 			opt.step()
 			tf_train_losses.append(loss.item())
@@ -457,8 +457,8 @@ def supervised_train_tl(conflict_file):
 				pca = pca.to(device)
 				mdl = mdl.to(device)
 				[pred_pt, lat, lat_img] = net(mdl, img)
-				loss_tf = losses.deepssm.focal_loss(lat_img, lat)
-				tf_val_rel_loss = losses.deepssm.focal_rel_loss(lat_img, lat, lat*0)
+				loss_tf = losses.focal_loss(lat_img, lat)
+				tf_val_rel_loss = losses.focal_rel_loss(lat_img, lat, lat*0)
 				tf_val_losses.append(loss_tf.item())
 				tf_val_rel_losses.append(tf_val_rel_loss.item())
 			
@@ -497,10 +497,10 @@ def supervised_train_tl(conflict_file):
 			pca = pca.to(device)
 			mdl = mdl.to(device)
 			[pred_pt, lat, lat_img] = net(mdl, img)
-			loss_ae = losses.deepssm.focal_loss(pred_pt, mdl, a_ae, c_ae)
-			ae_train_rel_loss = losses.deepssm.focal_loss(pred_pt, mdl, mean_mdl)
-			loss_tf = losses.deepssm.focal_loss(lat_img, lat, a_lat, c_lat)
-			tf_train_rel_loss = losses.deepssm.focal_rel_loss(lat_img, lat, lat*0)
+			loss_ae = losses.focal_loss(pred_pt, mdl, a_ae, c_ae)
+			ae_train_rel_loss = losses.focal_loss(pred_pt, mdl, mean_mdl)
+			loss_tf = losses.focal_loss(lat_img, lat, a_lat, c_lat)
+			tf_train_rel_loss = losses.focal_rel_loss(lat_img, lat, lat*0)
 			loss = loss_ae  + alpha*loss_tf
 			loss.backward()
 			opt.step()
@@ -519,10 +519,10 @@ def supervised_train_tl(conflict_file):
 				pca = pca.to(device)
 				mdl = mdl.to(device)
 				[pred_pt, lat, lat_img] = net(mdl,img)
-				loss_ae = losses.deepssm.focal_loss(pred_pt, mdl)
-				ae_val_rel_loss = losses.deepssm.focal_rel_loss(pred_pt, mdl, mean_mdl)
-				loss_tf = losses.deepssm.focal_loss(lat_img, lat)
-				tf_val_rel_loss = losses.deepssm.focal_rel_loss(lat_img, lat, lat*0)
+				loss_ae = losses.focal_loss(pred_pt, mdl)
+				ae_val_rel_loss = losses.focal_rel_loss(pred_pt, mdl, mean_mdl)
+				loss_tf = losses.focal_loss(lat_img, lat)
+				tf_val_rel_loss = losses.focal_rel_loss(lat_img, lat, lat*0)
 				
 				ae_val_rel_losses.append(ae_val_rel_loss.item())
 				tf_val_rel_losses.append(tf_val_rel_loss.item())
@@ -547,6 +547,6 @@ def supervised_train_tl(conflict_file):
 	logger.close()
 	torch.save(net.state_dict(), os.path.join(model_dir, 'final_model.torch'))
 	parameters['best_model_epochs'] = best_epoch
-	with open(conflict_file, "w") as json_file:
+	with open(config_file, "w") as json_file:
 		json.dump(parameters, json_file, indent=2) 
 	print("Training complete, model saved. Best model after epoch " + str(best_epoch))

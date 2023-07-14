@@ -590,13 +590,31 @@ def Run_Pipeline(args):
         "trainer": {
             "epochs": 10,
             "learning_rate": 0.001,
-            "decay_lr": False,
+            "decay_lr":{
+                "enabled":True,
+                "type":"CosineAnnealing",
+                "parameters":{
+                    "T_max":10,
+                    "eta_min":0
+                }
+            },
             "val_freq": 1
         },
         "fine_tune": {
             "enabled": False,
         },
-        "use_best_model": True
+        "use_best_model": True,
+        "tl_net":{
+			"enabled": True,# args.tl_net,
+			"ae_epochs": 10000,
+			"tf_epochs":100,
+			"joint_epochs":25,
+			"alpha":1,
+			"a_ae":0,
+			"c_ae":0,
+			"a_lat":0,
+			"c_lat":0
+	    }
     }
     if args.tiny_test:
         model_parameters["trainer"]["epochs"] = 1

@@ -5,7 +5,7 @@ import numpy as np
 from numpy import matlib
 import torch
 from torch.utils.data import DataLoader
-from DeepSSMUtils import model
+from DeepSSMUtils import model, loaders
 from shapeworks.utils import sw_message
 from shapeworks.utils import sw_progress
 from shapeworks.utils import sw_check_abort
@@ -20,8 +20,7 @@ def test(config_file, loader="test"):
 		parameters = json.load(json_file)
 	model_dir = parameters["paths"]["out_dir"] + parameters["model_name"]+ '/'
 	pred_dir = model_dir + loader + '_predictions/'
-	if not os.path.exists(pred_dir):
-		os.makedirs(pred_dir)
+	loaders.make_dir(pred_dir)
 	if parameters["use_best_model"]:
 		model_path = model_dir + 'best_model.torch'
 	else:
@@ -68,17 +67,14 @@ def test(config_file, loader="test"):
 
 	if parameters['tl_net']['enabled']:
 		predPath_tl = pred_dir + '/TL_Predictions'
-		if not os.path.exists(predPath_tl):
-			os.makedirs(predPath_tl)
+		loaders.make_dir(predPath_tl)
 	else:
 		predPath_ft = pred_dir + 'FT_Predictions/'
-		if not os.path.exists(predPath_ft):
-			os.makedirs(predPath_ft)
 		predPath_pca = pred_dir + 'PCA_Predictions/'
-		if not os.path.exists(predPath_pca):
-			os.makedirs(predPath_pca)
+		loaders.make_dir(predPath_ft)
+		loaders.make_dir(predPath_pca)
 		predicted_particle_files = []
-	for img, pca, mdl in test_loader:
+	for img, _, mdl in test_loader:
 		if sw_check_abort():
 			sw_message("Aborted")
 			return
@@ -86,6 +82,7 @@ def test(config_file, loader="test"):
 		sw_progress((index+1) / len(test_loader))
 		img = img.to(device)
 		if parameters['tl_net']['enabled']:
+			mdl = mdl.to(device)
 			[pred_tf, pred_mdl_tl] = model_tl(mdl, img)
 			pred_scores.append(pred_tf.cpu().data.numpy())
 			nmpred = predPath_tl + '/' + test_names[index] + '.particles'
