@@ -603,48 +603,68 @@
             "cumulative_explained_variance": 95.85995547214975,
             "pca_values": [
                 {
-                    "pca_value": -0.4,
-                    "lambda": -7.334318246007886,
+                    "pca_value": -0.30000001192092896,
+                    "lambda": -5.50073890308563,
                     "meshes": [
-                        "pca_mode_1_domain_0_minus_0.4.vtk"
+                        "pca_mode_1_domain_0_minus_0.3.vtk"
                     ],
                     "particles": [
-                        "pca_mode_1_domain_0_minus_0.4.pts"
+                        "pca_mode_1_domain_0_minus_0.3.pts"
                     ]
                 },
                 {
-                    "pca_value": 0.4,
-                    "lambda": 7.334318246007886,
+                    "pca_value": 0.30000001192092896,
+                    "lambda": 5.50073890308563,
                     "meshes": [
-                        "pca_mode_1_domain_0_plus_0.4.vtk"
+                        "pca_mode_1_domain_0_plus_0.3.vtk"
                     ],
                     "particles": [
-                        "pca_mode_1_domain_0_plus_0.4.pts"
+                        "pca_mode_1_domain_0_plus_0.3.pts"
                     ]
                 },
                 {
-                    "pca_value": -0.8,
-                    "lambda": -14.668636492015771,
+                    "pca_value": -0.6000000238418579,
+                    "lambda": -11.00147780617126,
                     "meshes": [
-                        "pca_mode_1_domain_0_minus_0.8.vtk"
+                        "pca_mode_1_domain_0_minus_0.6.vtk"
                     ],
                     "particles": [
-                        "pca_mode_1_domain_0_minus_0.8.pts"
+                        "pca_mode_1_domain_0_minus_0.6.pts"
                     ]
                 },
                 {
-                    "pca_value": 0.8,
-                    "lambda": 14.668636492015771,
+                    "pca_value": 0.6000000238418579,
+                    "lambda": 11.00147780617126,
                     "meshes": [
-                        "pca_mode_1_domain_0_plus_0.8.vtk"
+                        "pca_mode_1_domain_0_plus_0.6.vtk"
                     ],
                     "particles": [
-                        "pca_mode_1_domain_0_plus_0.8.pts"
+                        "pca_mode_1_domain_0_plus_0.6.pts"
                     ]
                 },
                 {
-                    "pca_value": -1.2000000000000002,
-                    "lambda": -22.002954738023657,
+                    "pca_value": -0.9000000357627869,
+                    "lambda": -16.502216709256892,
+                    "meshes": [
+                        "pca_mode_1_domain_0_minus_0.9.vtk"
+                    ],
+                    "particles": [
+                        "pca_mode_1_domain_0_minus_0.9.pts"
+                    ]
+                },
+                {
+                    "pca_value": 0.9000000357627869,
+                    "lambda": 16.502216709256892,
+                    "meshes": [
+                        "pca_mode_1_domain_0_plus_0.9.vtk"
+                    ],
+                    "particles": [
+                        "pca_mode_1_domain_0_plus_0.9.pts"
+                    ]
+                },
+                {
+                    "pca_value": -1.2000000476837158,
+                    "lambda": -22.00295561234252,
                     "meshes": [
                         "pca_mode_1_domain_0_minus_1.2.vtk"
                     ],
@@ -653,8 +673,8 @@
                     ]
                 },
                 {
-                    "pca_value": 1.2000000000000002,
-                    "lambda": 22.002954738023657,
+                    "pca_value": 1.2000000476837158,
+                    "lambda": 22.00295561234252,
                     "meshes": [
                         "pca_mode_1_domain_0_plus_1.2.vtk"
                     ],
@@ -663,43 +683,123 @@
                     ]
                 },
                 {
-                    "pca_value": -1.6,
-                    "lambda": -29.337272984031543,
+                    "pca_value": -1.5000000596046448,
+                    "lambda": -27.503694515428155,
                     "meshes": [
-                        "pca_mode_1_domain_0_minus_1.6.vtk"
+                        "pca_mode_1_domain_0_minus_1.5.vtk"
                     ],
                     "particles": [
-                        "pca_mode_1_domain_0_minus_1.6.pts"
+                        "pca_mode_1_domain_0_minus_1.5.pts"
                     ]
                 },
                 {
-                    "pca_value": 1.6,
-                    "lambda": 29.337272984031543,
+                    "pca_value": 1.5000000596046448,
+                    "lambda": 27.503694515428155,
                     "meshes": [
-                        "pca_mode_1_domain_0_plus_1.6.vtk"
+                        "pca_mode_1_domain_0_plus_1.5.vtk"
                     ],
                     "particles": [
-                        "pca_mode_1_domain_0_plus_1.6.pts"
+                        "pca_mode_1_domain_0_plus_1.5.pts"
                     ]
                 },
                 {
-                    "pca_value": -2.0,
-                    "lambda": -36.671591230039425,
+                    "pca_value": -1.8000000715255737,
+                    "lambda": -33.004433418513784,
                     "meshes": [
-                        "pca_mode_1_domain_0_minus_2.vtk"
+                        "pca_mode_1_domain_0_minus_1.8.vtk"
                     ],
                     "particles": [
-                        "pca_mode_1_domain_0_minus_2.pts"
+                        "pca_mode_1_domain_0_minus_1.8.pts"
                     ]
                 },
                 {
-                    "pca_value": 2.0,
-                    "lambda": 36.671591230039425,
+                    "pca_value": 1.8000000715255737,
+                    "lambda": 33.004433418513784,
                     "meshes": [
-                        "pca_mode_1_domain_0_plus_2.vtk"
+                        "pca_mode_1_domain_0_plus_1.8.vtk"
                     ],
                     "particles": [
-                        "pca_mode_1_domain_0_plus_2.pts"
+                        "pca_mode_1_domain_0_plus_1.8.pts"
+                    ]
+                },
+                {
+                    "pca_value": -2.1000000834465027,
+                    "lambda": -38.50517232159942,
+                    "meshes": [
+                        "pca_mode_1_domain_0_minus_2.1.vtk"
+                    ],
+                    "particles": [
+                        "pca_mode_1_domain_0_minus_2.1.pts"
+                    ]
+                },
+                {
+                    "pca_value": 2.1000000834465027,
+                    "lambda": 38.50517232159942,
+                    "meshes": [
+                        "pca_mode_1_domain_0_plus_2.1.vtk"
+                    ],
+                    "particles": [
+                        "pca_mode_1_domain_0_plus_2.1.pts"
+                    ]
+                },
+                {
+                    "pca_value": -2.4000000953674316,
+                    "lambda": -44.00591122468504,
+                    "meshes": [
+                        "pca_mode_1_domain_0_minus_2.4.vtk"
+                    ],
+                    "particles": [
+                        "pca_mode_1_domain_0_minus_2.4.pts"
+                    ]
+                },
+                {
+                    "pca_value": 2.4000000953674316,
+                    "lambda": 44.00591122468504,
+                    "meshes": [
+                        "pca_mode_1_domain_0_plus_2.4.vtk"
+                    ],
+                    "particles": [
+                        "pca_mode_1_domain_0_plus_2.4.pts"
+                    ]
+                },
+                {
+                    "pca_value": -2.7000001072883606,
+                    "lambda": -49.506650127770676,
+                    "meshes": [
+                        "pca_mode_1_domain_0_minus_2.7.vtk"
+                    ],
+                    "particles": [
+                        "pca_mode_1_domain_0_minus_2.7.pts"
+                    ]
+                },
+                {
+                    "pca_value": 2.7000001072883606,
+                    "lambda": 49.506650127770676,
+                    "meshes": [
+                        "pca_mode_1_domain_0_plus_2.7.vtk"
+                    ],
+                    "particles": [
+                        "pca_mode_1_domain_0_plus_2.7.pts"
+                    ]
+                },
+                {
+                    "pca_value": -3.0000001192092896,
+                    "lambda": -55.00738903085631,
+                    "meshes": [
+                        "pca_mode_1_domain_0_minus_3.vtk"
+                    ],
+                    "particles": [
+                        "pca_mode_1_domain_0_minus_3.pts"
+                    ]
+                },
+                {
+                    "pca_value": 3.0000001192092896,
+                    "lambda": 55.00738903085631,
+                    "meshes": [
+                        "pca_mode_1_domain_0_plus_3.vtk"
+                    ],
+                    "particles": [
+                        "pca_mode_1_domain_0_plus_3.pts"
                     ]
                 }
             ]
@@ -711,48 +811,68 @@
             "cumulative_explained_variance": 99.05617854393586,
             "pca_values": [
                 {
-                    "pca_value": -0.4,
-                    "lambda": -1.3392439102829514,
+                    "pca_value": -0.30000001192092896,
+                    "lambda": -1.0044329726247923,
                     "meshes": [
-                        "pca_mode_2_domain_0_minus_0.4.vtk"
+                        "pca_mode_2_domain_0_minus_0.3.vtk"
                     ],
                     "particles": [
-                        "pca_mode_2_domain_0_minus_0.4.pts"
+                        "pca_mode_2_domain_0_minus_0.3.pts"
                     ]
                 },
                 {
-                    "pca_value": 0.4,
-                    "lambda": 1.3392439102829514,
+                    "pca_value": 0.30000001192092896,
+                    "lambda": 1.0044329726247923,
                     "meshes": [
-                        "pca_mode_2_domain_0_plus_0.4.vtk"
+                        "pca_mode_2_domain_0_plus_0.3.vtk"
                     ],
                     "particles": [
-                        "pca_mode_2_domain_0_plus_0.4.pts"
+                        "pca_mode_2_domain_0_plus_0.3.pts"
                     ]
                 },
                 {
-                    "pca_value": -0.8,
-                    "lambda": -2.678487820565903,
+                    "pca_value": -0.6000000238418579,
+                    "lambda": -2.0088659452495845,
                     "meshes": [
-                        "pca_mode_2_domain_0_minus_0.8.vtk"
+                        "pca_mode_2_domain_0_minus_0.6.vtk"
                     ],
                     "particles": [
-                        "pca_mode_2_domain_0_minus_0.8.pts"
+                        "pca_mode_2_domain_0_minus_0.6.pts"
                     ]
                 },
                 {
-                    "pca_value": 0.8,
-                    "lambda": 2.678487820565903,
+                    "pca_value": 0.6000000238418579,
+                    "lambda": 2.0088659452495845,
                     "meshes": [
-                        "pca_mode_2_domain_0_plus_0.8.vtk"
+                        "pca_mode_2_domain_0_plus_0.6.vtk"
                     ],
                     "particles": [
-                        "pca_mode_2_domain_0_plus_0.8.pts"
+                        "pca_mode_2_domain_0_plus_0.6.pts"
                     ]
                 },
                 {
-                    "pca_value": -1.2000000000000002,
-                    "lambda": -4.017731730848855,
+                    "pca_value": -0.9000000357627869,
+                    "lambda": -3.0132989178743768,
+                    "meshes": [
+                        "pca_mode_2_domain_0_minus_0.9.vtk"
+                    ],
+                    "particles": [
+                        "pca_mode_2_domain_0_minus_0.9.pts"
+                    ]
+                },
+                {
+                    "pca_value": 0.9000000357627869,
+                    "lambda": 3.0132989178743768,
+                    "meshes": [
+                        "pca_mode_2_domain_0_plus_0.9.vtk"
+                    ],
+                    "particles": [
+                        "pca_mode_2_domain_0_plus_0.9.pts"
+                    ]
+                },
+                {
+                    "pca_value": -1.2000000476837158,
+                    "lambda": -4.017731890499169,
                     "meshes": [
                         "pca_mode_2_domain_0_minus_1.2.vtk"
                     ],
@@ -761,8 +881,8 @@
                     ]
                 },
                 {
-                    "pca_value": 1.2000000000000002,
-                    "lambda": 4.017731730848855,
+                    "pca_value": 1.2000000476837158,
+                    "lambda": 4.017731890499169,
                     "meshes": [
                         "pca_mode_2_domain_0_plus_1.2.vtk"
                     ],
@@ -771,43 +891,123 @@
                     ]
                 },
                 {
-                    "pca_value": -1.6,
-                    "lambda": -5.356975641131806,
+                    "pca_value": -1.5000000596046448,
+                    "lambda": -5.022164863123962,
                     "meshes": [
-                        "pca_mode_2_domain_0_minus_1.6.vtk"
+                        "pca_mode_2_domain_0_minus_1.5.vtk"
                     ],
                     "particles": [
-                        "pca_mode_2_domain_0_minus_1.6.pts"
+                        "pca_mode_2_domain_0_minus_1.5.pts"
                     ]
                 },
                 {
-                    "pca_value": 1.6,
-                    "lambda": 5.356975641131806,
+                    "pca_value": 1.5000000596046448,
+                    "lambda": 5.022164863123962,
                     "meshes": [
-                        "pca_mode_2_domain_0_plus_1.6.vtk"
+                        "pca_mode_2_domain_0_plus_1.5.vtk"
                     ],
                     "particles": [
-                        "pca_mode_2_domain_0_plus_1.6.pts"
+                        "pca_mode_2_domain_0_plus_1.5.pts"
                     ]
                 },
                 {
-                    "pca_value": -2.0,
-                    "lambda": -6.696219551414757,
+                    "pca_value": -1.8000000715255737,
+                    "lambda": -6.0265978357487535,
                     "meshes": [
-                        "pca_mode_2_domain_0_minus_2.vtk"
+                        "pca_mode_2_domain_0_minus_1.8.vtk"
                     ],
                     "particles": [
-                        "pca_mode_2_domain_0_minus_2.pts"
+                        "pca_mode_2_domain_0_minus_1.8.pts"
                     ]
                 },
                 {
-                    "pca_value": 2.0,
-                    "lambda": 6.696219551414757,
+                    "pca_value": 1.8000000715255737,
+                    "lambda": 6.0265978357487535,
                     "meshes": [
-                        "pca_mode_2_domain_0_plus_2.vtk"
+                        "pca_mode_2_domain_0_plus_1.8.vtk"
                     ],
                     "particles": [
-                        "pca_mode_2_domain_0_plus_2.pts"
+                        "pca_mode_2_domain_0_plus_1.8.pts"
+                    ]
+                },
+                {
+                    "pca_value": -2.1000000834465027,
+                    "lambda": -7.031030808373546,
+                    "meshes": [
+                        "pca_mode_2_domain_0_minus_2.1.vtk"
+                    ],
+                    "particles": [
+                        "pca_mode_2_domain_0_minus_2.1.pts"
+                    ]
+                },
+                {
+                    "pca_value": 2.1000000834465027,
+                    "lambda": 7.031030808373546,
+                    "meshes": [
+                        "pca_mode_2_domain_0_plus_2.1.vtk"
+                    ],
+                    "particles": [
+                        "pca_mode_2_domain_0_plus_2.1.pts"
+                    ]
+                },
+                {
+                    "pca_value": -2.4000000953674316,
+                    "lambda": -8.035463780998338,
+                    "meshes": [
+                        "pca_mode_2_domain_0_minus_2.4.vtk"
+                    ],
+                    "particles": [
+                        "pca_mode_2_domain_0_minus_2.4.pts"
+                    ]
+                },
+                {
+                    "pca_value": 2.4000000953674316,
+                    "lambda": 8.035463780998338,
+                    "meshes": [
+                        "pca_mode_2_domain_0_plus_2.4.vtk"
+                    ],
+                    "particles": [
+                        "pca_mode_2_domain_0_plus_2.4.pts"
+                    ]
+                },
+                {
+                    "pca_value": -2.7000001072883606,
+                    "lambda": -9.03989675362313,
+                    "meshes": [
+                        "pca_mode_2_domain_0_minus_2.7.vtk"
+                    ],
+                    "particles": [
+                        "pca_mode_2_domain_0_minus_2.7.pts"
+                    ]
+                },
+                {
+                    "pca_value": 2.7000001072883606,
+                    "lambda": 9.03989675362313,
+                    "meshes": [
+                        "pca_mode_2_domain_0_plus_2.7.vtk"
+                    ],
+                    "particles": [
+                        "pca_mode_2_domain_0_plus_2.7.pts"
+                    ]
+                },
+                {
+                    "pca_value": -3.0000001192092896,
+                    "lambda": -10.044329726247923,
+                    "meshes": [
+                        "pca_mode_2_domain_0_minus_3.vtk"
+                    ],
+                    "particles": [
+                        "pca_mode_2_domain_0_minus_3.pts"
+                    ]
+                },
+                {
+                    "pca_value": 3.0000001192092896,
+                    "lambda": 10.044329726247923,
+                    "meshes": [
+                        "pca_mode_2_domain_0_plus_3.vtk"
+                    ],
+                    "particles": [
+                        "pca_mode_2_domain_0_plus_3.pts"
                     ]
                 }
             ]
@@ -819,48 +1019,68 @@
             "cumulative_explained_variance": 100.0,
             "pca_values": [
                 {
-                    "pca_value": -0.4,
-                    "lambda": -0.7277564483053931,
+                    "pca_value": -0.30000001192092896,
+                    "lambda": -0.545817357917877,
                     "meshes": [
-                        "pca_mode_3_domain_0_minus_0.4.vtk"
+                        "pca_mode_3_domain_0_minus_0.3.vtk"
                     ],
                     "particles": [
-                        "pca_mode_3_domain_0_minus_0.4.pts"
+                        "pca_mode_3_domain_0_minus_0.3.pts"
                     ]
                 },
                 {
-                    "pca_value": 0.4,
-                    "lambda": 0.7277564483053931,
+                    "pca_value": 0.30000001192092896,
+                    "lambda": 0.545817357917877,
                     "meshes": [
-                        "pca_mode_3_domain_0_plus_0.4.vtk"
+                        "pca_mode_3_domain_0_plus_0.3.vtk"
                     ],
                     "particles": [
-                        "pca_mode_3_domain_0_plus_0.4.pts"
+                        "pca_mode_3_domain_0_plus_0.3.pts"
                     ]
                 },
                 {
-                    "pca_value": -0.8,
-                    "lambda": -1.4555128966107862,
+                    "pca_value": -0.6000000238418579,
+                    "lambda": -1.091634715835754,
                     "meshes": [
-                        "pca_mode_3_domain_0_minus_0.8.vtk"
+                        "pca_mode_3_domain_0_minus_0.6.vtk"
                     ],
                     "particles": [
-                        "pca_mode_3_domain_0_minus_0.8.pts"
+                        "pca_mode_3_domain_0_minus_0.6.pts"
                     ]
                 },
                 {
-                    "pca_value": 0.8,
-                    "lambda": 1.4555128966107862,
+                    "pca_value": 0.6000000238418579,
+                    "lambda": 1.091634715835754,
                     "meshes": [
-                        "pca_mode_3_domain_0_plus_0.8.vtk"
+                        "pca_mode_3_domain_0_plus_0.6.vtk"
                     ],
                     "particles": [
-                        "pca_mode_3_domain_0_plus_0.8.pts"
+                        "pca_mode_3_domain_0_plus_0.6.pts"
                     ]
                 },
                 {
-                    "pca_value": -1.2000000000000002,
-                    "lambda": -2.1832693449161793,
+                    "pca_value": -0.9000000357627869,
+                    "lambda": -1.637452073753631,
+                    "meshes": [
+                        "pca_mode_3_domain_0_minus_0.9.vtk"
+                    ],
+                    "particles": [
+                        "pca_mode_3_domain_0_minus_0.9.pts"
+                    ]
+                },
+                {
+                    "pca_value": 0.9000000357627869,
+                    "lambda": 1.637452073753631,
+                    "meshes": [
+                        "pca_mode_3_domain_0_plus_0.9.vtk"
+                    ],
+                    "particles": [
+                        "pca_mode_3_domain_0_plus_0.9.pts"
+                    ]
+                },
+                {
+                    "pca_value": -1.2000000476837158,
+                    "lambda": -2.183269431671508,
                     "meshes": [
                         "pca_mode_3_domain_0_minus_1.2.vtk"
                     ],
@@ -869,8 +1089,8 @@
                     ]
                 },
                 {
-                    "pca_value": 1.2000000000000002,
-                    "lambda": 2.1832693449161793,
+                    "pca_value": 1.2000000476837158,
+                    "lambda": 2.183269431671508,
                     "meshes": [
                         "pca_mode_3_domain_0_plus_1.2.vtk"
                     ],
@@ -879,43 +1099,123 @@
                     ]
                 },
                 {
-                    "pca_value": -1.6,
-                    "lambda": -2.9110257932215724,
+                    "pca_value": -1.5000000596046448,
+                    "lambda": -2.729086789589385,
                     "meshes": [
-                        "pca_mode_3_domain_0_minus_1.6.vtk"
+                        "pca_mode_3_domain_0_minus_1.5.vtk"
                     ],
                     "particles": [
-                        "pca_mode_3_domain_0_minus_1.6.pts"
+                        "pca_mode_3_domain_0_minus_1.5.pts"
                     ]
                 },
                 {
-                    "pca_value": 1.6,
-                    "lambda": 2.9110257932215724,
+                    "pca_value": 1.5000000596046448,
+                    "lambda": 2.729086789589385,
                     "meshes": [
-                        "pca_mode_3_domain_0_plus_1.6.vtk"
+                        "pca_mode_3_domain_0_plus_1.5.vtk"
                     ],
                     "particles": [
-                        "pca_mode_3_domain_0_plus_1.6.pts"
+                        "pca_mode_3_domain_0_plus_1.5.pts"
                     ]
                 },
                 {
-                    "pca_value": -2.0,
-                    "lambda": -3.638782241526965,
+                    "pca_value": -1.8000000715255737,
+                    "lambda": -3.274904147507262,
                     "meshes": [
-                        "pca_mode_3_domain_0_minus_2.vtk"
+                        "pca_mode_3_domain_0_minus_1.8.vtk"
                     ],
                     "particles": [
-                        "pca_mode_3_domain_0_minus_2.pts"
+                        "pca_mode_3_domain_0_minus_1.8.pts"
                     ]
                 },
                 {
-                    "pca_value": 2.0,
-                    "lambda": 3.638782241526965,
+                    "pca_value": 1.8000000715255737,
+                    "lambda": 3.274904147507262,
                     "meshes": [
-                        "pca_mode_3_domain_0_plus_2.vtk"
+                        "pca_mode_3_domain_0_plus_1.8.vtk"
                     ],
                     "particles": [
-                        "pca_mode_3_domain_0_plus_2.pts"
+                        "pca_mode_3_domain_0_plus_1.8.pts"
+                    ]
+                },
+                {
+                    "pca_value": -2.1000000834465027,
+                    "lambda": -3.8207215054251393,
+                    "meshes": [
+                        "pca_mode_3_domain_0_minus_2.1.vtk"
+                    ],
+                    "particles": [
+                        "pca_mode_3_domain_0_minus_2.1.pts"
+                    ]
+                },
+                {
+                    "pca_value": 2.1000000834465027,
+                    "lambda": 3.8207215054251393,
+                    "meshes": [
+                        "pca_mode_3_domain_0_plus_2.1.vtk"
+                    ],
+                    "particles": [
+                        "pca_mode_3_domain_0_plus_2.1.pts"
+                    ]
+                },
+                {
+                    "pca_value": -2.4000000953674316,
+                    "lambda": -4.366538863343016,
+                    "meshes": [
+                        "pca_mode_3_domain_0_minus_2.4.vtk"
+                    ],
+                    "particles": [
+                        "pca_mode_3_domain_0_minus_2.4.pts"
+                    ]
+                },
+                {
+                    "pca_value": 2.4000000953674316,
+                    "lambda": 4.366538863343016,
+                    "meshes": [
+                        "pca_mode_3_domain_0_plus_2.4.vtk"
+                    ],
+                    "particles": [
+                        "pca_mode_3_domain_0_plus_2.4.pts"
+                    ]
+                },
+                {
+                    "pca_value": -2.7000001072883606,
+                    "lambda": -4.912356221260893,
+                    "meshes": [
+                        "pca_mode_3_domain_0_minus_2.7.vtk"
+                    ],
+                    "particles": [
+                        "pca_mode_3_domain_0_minus_2.7.pts"
+                    ]
+                },
+                {
+                    "pca_value": 2.7000001072883606,
+                    "lambda": 4.912356221260893,
+                    "meshes": [
+                        "pca_mode_3_domain_0_plus_2.7.vtk"
+                    ],
+                    "particles": [
+                        "pca_mode_3_domain_0_plus_2.7.pts"
+                    ]
+                },
+                {
+                    "pca_value": -3.0000001192092896,
+                    "lambda": -5.45817357917877,
+                    "meshes": [
+                        "pca_mode_3_domain_0_minus_3.vtk"
+                    ],
+                    "particles": [
+                        "pca_mode_3_domain_0_minus_3.pts"
+                    ]
+                },
+                {
+                    "pca_value": 3.0000001192092896,
+                    "lambda": 5.45817357917877,
+                    "meshes": [
+                        "pca_mode_3_domain_0_plus_3.vtk"
+                    ],
+                    "particles": [
+                        "pca_mode_3_domain_0_plus_3.pts"
                     ]
                 }
             ]

@@ -130,7 +130,7 @@ Analyze::Analyze(ProjectHandle project) : project_(project), mesh_manager_(new M
 }
 
 //---------------------------------------------------------------------------
-void Analyze::run_offline_analysis(std::string outfile) {
+void Analyze::run_offline_analysis(std::string outfile, float range, float steps) {
   SW_LOG("ShapeWorks Offline Analysis");
   if (!project_->get_particles_present()) {
     throw std::runtime_error("Project has not been optimized, please run optimize first");
@@ -140,8 +140,6 @@ void Analyze::run_offline_analysis(std::string outfile) {
 
   json j;
 
-  double range = 2.0;  // TODO: make this configurable
-  double steps = 11;   // TODO: make this configurable
   int half_steps = (steps / 2.0);
   double increment = range / half_steps;
 
