@@ -425,7 +425,7 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
     optimize->SetDomainFlags(domain_flags);
   }
 
-  // add cutting planes
+  // add constraints
   int domain_count = 0;
   std::vector<Constraints> constraints;
   for (auto& s : subjects) {
