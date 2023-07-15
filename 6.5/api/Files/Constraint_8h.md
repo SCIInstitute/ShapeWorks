@@ -44,17 +44,11 @@ class Constraint {
   virtual void print() const = 0;
 
   // For augmented lagrangian
-  void setZ(double inz) { z_ = inz; }
-  double getZ() { return z_; }
   void setMus(std::vector<double> inmu) { mus_ = inmu; }
   std::vector<double> getMus() { return mus_; }
-  void setLambda(double inLambda) { lambda_ = inLambda; }
-  double getLambda() { return lambda_; }
 
   virtual Eigen::Vector3d constraintGradient(const Eigen::Vector3d &pt) const = 0;
   virtual double constraintEval(const Eigen::Vector3d &pt) const = 0;
-
-  void updateZ(const Eigen::Vector3d &pt, double C);
 
   void updateMu(const Eigen::Vector3d &pt, double C, size_t index);
 
@@ -65,8 +59,6 @@ class Constraint {
 
   // For augmented lagrangian
   std::vector<double> mus_;
-  double z_;
-  double lambda_;
 };
 
 }  // namespace shapeworks
@@ -75,4 +67,4 @@ class Constraint {
 
 -------------------------------
 
-Updated on 2023-07-14 at 16:08:22 +0000
+Updated on 2023-07-15 at 03:21:18 +0000

@@ -116,7 +116,7 @@ title: Classes
     * **class [Executable](../Classes/classshapeworks_1_1Executable.md)** 
     * **class [ExportImageDialog](../Classes/classshapeworks_1_1ExportImageDialog.md)** 
     * **class [ExportUtils](../Classes/classshapeworks_1_1ExportUtils.md)** <br>Export utilities for Studio. 
-    * **class [FreeFormConstraint](../Classes/classshapeworks_1_1FreeFormConstraint.md)** <br>[FreeFormConstraint](). 
+    * **class [FreeFormConstraint](../Classes/classshapeworks_1_1FreeFormConstraint.md)** 
     * **class [GenericContainer](../Classes/classshapeworks_1_1GenericContainer.md)** <br>This class seems to be only a wrapper around std::vector implementing ITK DataObject (for smart pointer?) 
     * **class [GenericContainerArray](../Classes/classshapeworks_1_1GenericContainerArray.md)** <br>This class appears to be an array of GenericContainers (e.g. std::vector) that implements the [Observer]() interface. The array size tracks the number of domains in the system. E.g. one per domain. 
     * **class [GradientDescentOptimizer](../Classes/classshapeworks_1_1GradientDescentOptimizer.md)** 
@@ -203,7 +203,7 @@ title: Classes
     * **class [Particles](../Classes/classshapeworks_1_1Particles.md)** <br>Representation of correspondence points for a shape including multiple domains. 
     * **class [PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md)** <br>physical bounds of a 3d region of space 
     * **class [PickResult](../Classes/classshapeworks_1_1PickResult.md)** 
-    * **class [PlaneConstraint](../Classes/classshapeworks_1_1PlaneConstraint.md)** <br>[PlaneConstraint](). 
+    * **class [PlaneConstraint](../Classes/classshapeworks_1_1PlaneConstraint.md)** 
     * **class [PlaneWidget](../Classes/classshapeworks_1_1PlaneWidget.md)** <br>[PlaneWidget](). 
     * **class [PowerOfTwoPointTree](../Classes/classshapeworks_1_1PowerOfTwoPointTree.md)** 
     * **class [PowerOfTwoPointTreeNode](../Classes/classshapeworks_1_1PowerOfTwoPointTreeNode.md)** 
@@ -235,7 +235,6 @@ title: Classes
     * **class [ShapeworksWorker](../Classes/classshapeworks_1_1ShapeworksWorker.md)** 
     * **struct [SharedCommandData](../Classes/structshapeworks_1_1SharedCommandData.md)** 
     * **class [SliceView](../Classes/classshapeworks_1_1SliceView.md)** <br>[SliceView](). 
-    * **class [SphereConstraint](../Classes/classshapeworks_1_1SphereConstraint.md)** 
     * **class [SplashScreen](../Classes/classshapeworks_1_1SplashScreen.md)** 
     * **class [StatsGroupLDAJob](../Classes/classshapeworks_1_1StatsGroupLDAJob.md)** 
     * **class [StatusBarWidget](../Classes/classshapeworks_1_1StatusBarWidget.md)** <br>[StatusBarWidget](). 
@@ -276,4 +275,4 @@ title: Classes
 
 -------------------------------
 
-Updated on 2023-07-14 at 16:08:22 +0000
+Updated on 2023-07-15 at 03:21:19 +0000

@@ -68,8 +68,6 @@ class OptimizeParameterFile {
 
   bool read_cutting_planes(TiXmlHandle* doc_handle, Optimize* optimize);
 
-  bool read_cutting_spheres(TiXmlHandle* doc_handle, Optimize* optimize);
-
   bool read_explanatory_variables(TiXmlHandle* doc_handle, Optimize* optimize);
 
   bool read_flag_particles(TiXmlHandle* doc_handle, Optimize* optimize);
@@ -90,4 +88,4 @@ class OptimizeParameterFile {
 
 -------------------------------
 
-Updated on 2023-07-14 at 16:08:22 +0000
+Updated on 2023-07-15 at 03:21:18 +0000

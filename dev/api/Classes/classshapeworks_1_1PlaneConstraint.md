@@ -1,6 +1,5 @@
 ---
 title: shapeworks::PlaneConstraint
-summary: PlaneConstraint. 
 
 ---
 
@@ -8,7 +7,7 @@ summary: PlaneConstraint.
 
 
 
-[PlaneConstraint]().  [More...](#detailed-description)
+ [More...](#detailed-description)
 
 
 `#include <PlaneConstraint.h>`
@@ -19,18 +18,18 @@ Inherits from [shapeworks::Constraint](../Classes/classshapeworks_1_1Constraint.
 
 |                | Name           |
 | -------------- | -------------- |
-| virtual bool | **[isViolated](../Classes/classshapeworks_1_1PlaneConstraint.md#function-isviolated)**(const Eigen::Vector3d & pt) const override |
-| virtual void | **[print](../Classes/classshapeworks_1_1PlaneConstraint.md#function-print)**() const override |
+| virtual bool | **[isViolated](../Classes/classshapeworks_1_1PlaneConstraint.md#function-isviolated)**(const Eigen::Vector3d & pt) const override<br>Returns if pt in Eigen format is violated by the constraint.  |
+| virtual void | **[print](../Classes/classshapeworks_1_1PlaneConstraint.md#function-print)**() const override<br>Prints the constraint neatly.  |
 | Eigen::Vector3d | **[getPlaneNormal](../Classes/classshapeworks_1_1PlaneConstraint.md#function-getplanenormal)**()<br>Get plane normal.  |
 | void | **[setPlaneNormal](../Classes/classshapeworks_1_1PlaneConstraint.md#function-setplanenormal)**(const Eigen::Vector3d & inPlane)<br>Set plane normal.  |
 | Eigen::Vector3d | **[getPlanePoint](../Classes/classshapeworks_1_1PlaneConstraint.md#function-getplanepoint)**()<br>Get plane center point.  |
 | void | **[setPlanePoint](../Classes/classshapeworks_1_1PlaneConstraint.md#function-setplanepoint)**(const vnl_vector< double > & point)<br>Set plane center point.  |
 | void | **[setPlanePoint](../Classes/classshapeworks_1_1PlaneConstraint.md#function-setplanepoint)**(const Eigen::Vector3d & p)<br>Set plane center point.  |
-| virtual Eigen::Vector3d | **[constraintGradient](../Classes/classshapeworks_1_1PlaneConstraint.md#function-constraintgradient)**(const Eigen::Vector3d & pt) const override |
+| virtual Eigen::Vector3d | **[constraintGradient](../Classes/classshapeworks_1_1PlaneConstraint.md#function-constraintgradient)**(const Eigen::Vector3d & pt) const override<br>Returns the gradient of the constraint.  |
 | std::vector< Eigen::Vector3d > & | **[points](../Classes/classshapeworks_1_1PlaneConstraint.md#function-points)**() |
 | double | **[getOffset](../Classes/classshapeworks_1_1PlaneConstraint.md#function-getoffset)**() |
 | void | **[setOffset](../Classes/classshapeworks_1_1PlaneConstraint.md#function-setoffset)**(double offset) |
-| virtual double | **[constraintEval](../Classes/classshapeworks_1_1PlaneConstraint.md#function-constrainteval)**(const Eigen::Vector3d & pt) const override |
+| virtual double | **[constraintEval](../Classes/classshapeworks_1_1PlaneConstraint.md#function-constrainteval)**(const Eigen::Vector3d & pt) const override<br>Returns the evaluation on the constraint, i.e. the signed distance to the constraint boundary.  |
 | void | **[updatePlaneFromPoints](../Classes/classshapeworks_1_1PlaneConstraint.md#function-updateplanefrompoints)**() |
 | vtkSmartPointer< vtkPlane > | **[getVTKPlane](../Classes/classshapeworks_1_1PlaneConstraint.md#function-getvtkplane)**()<br>Return this plane as a vtkPlane.  |
 
@@ -40,29 +39,22 @@ Inherits from [shapeworks::Constraint](../Classes/classshapeworks_1_1Constraint.
 
 |                | Name           |
 | -------------- | -------------- |
-| void | **[setZ](../Classes/classshapeworks_1_1Constraint.md#function-setz)**(double inz) |
-| double | **[getZ](../Classes/classshapeworks_1_1Constraint.md#function-getz)**() |
-| void | **[setMus](../Classes/classshapeworks_1_1Constraint.md#function-setmus)**(std::vector< double > inmu) |
-| std::vector< double > | **[getMus](../Classes/classshapeworks_1_1Constraint.md#function-getmus)**() |
-| void | **[setLambda](../Classes/classshapeworks_1_1Constraint.md#function-setlambda)**(double inLambda) |
-| double | **[getLambda](../Classes/classshapeworks_1_1Constraint.md#function-getlambda)**() |
-| void | **[updateZ](../Classes/classshapeworks_1_1Constraint.md#function-updatez)**(const Eigen::Vector3d & pt, double C) |
-| void | **[updateMu](../Classes/classshapeworks_1_1Constraint.md#function-updatemu)**(const Eigen::Vector3d & pt, double C, size_t index) |
-| Eigen::Vector3d | **[lagragianGradient](../Classes/classshapeworks_1_1Constraint.md#function-lagragiangradient)**(const Eigen::Vector3d & pt, double C, size_t index) const |
+| void | **[setMus](../Classes/classshapeworks_1_1Constraint.md#function-setmus)**(std::vector< double > inmu)<br>Initializes mu.  |
+| std::vector< double > | **[getMus](../Classes/classshapeworks_1_1Constraint.md#function-getmus)**()<br>Gets mu.  |
+| void | **[updateMu](../Classes/classshapeworks_1_1Constraint.md#function-updatemu)**(const Eigen::Vector3d & pt, double C, size_t index)<br>Updates the value of mu according to the augmented lagrangian update.  |
+| Eigen::Vector3d | **[lagragianGradient](../Classes/classshapeworks_1_1Constraint.md#function-lagragiangradient)**(const Eigen::Vector3d & pt, double C, size_t index) const<br>Computes the lagrangian gradient based on lagrangian inequality equations. NOTE: Not actually lagrangian. We are using quadratic penalty and not lagrangian because it works better.  |
 
 **Protected Functions inherited from [shapeworks::Constraint](../Classes/classshapeworks_1_1Constraint.md)**
 
 |                | Name           |
 | -------------- | -------------- |
-| int | **[sgn](../Classes/classshapeworks_1_1Constraint.md#function-sgn)**(double val) |
+| int | **[sgn](../Classes/classshapeworks_1_1Constraint.md#function-sgn)**(double val)<br>Returns the sign of the double.  |
 
 **Protected Attributes inherited from [shapeworks::Constraint](../Classes/classshapeworks_1_1Constraint.md)**
 
 |                | Name           |
 | -------------- | -------------- |
-| std::vector< double > | **[mus_](../Classes/classshapeworks_1_1Constraint.md#variable-mus-)**  |
-| double | **[z_](../Classes/classshapeworks_1_1Constraint.md#variable-z-)**  |
-| double | **[lambda_](../Classes/classshapeworks_1_1Constraint.md#variable-lambda-)**  |
+| std::vector< double > | **[mus_](../Classes/classshapeworks_1_1Constraint.md#variable-mus-)** <br>Mu is the lagrangian momentum term.  |
 
 
 ## Detailed Description
@@ -71,9 +63,8 @@ Inherits from [shapeworks::Constraint](../Classes/classshapeworks_1_1Constraint.
 class shapeworks::PlaneConstraint;
 ```
 
-[PlaneConstraint](). 
 
-Encapsulate functionality related to plane constraints 
+Encapsulate functionality related to cutting-plane constraints. Inherits from [Constraint](../Classes/classshapeworks_1_1Constraint.md). See [Constraint.h] for more information 
 
 ## Public Functions Documentation
 
@@ -85,6 +76,7 @@ virtual bool isViolated(
 ) const override
 ```
 
+Returns if pt in Eigen format is violated by the constraint. 
 
 **Reimplements**: [shapeworks::Constraint::isViolated](../Classes/classshapeworks_1_1Constraint.md#function-isviolated)
 
@@ -95,6 +87,7 @@ virtual bool isViolated(
 virtual void print() const override
 ```
 
+Prints the constraint neatly. 
 
 **Reimplements**: [shapeworks::Constraint::print](../Classes/classshapeworks_1_1Constraint.md#function-print)
 
@@ -153,6 +146,7 @@ inline virtual Eigen::Vector3d constraintGradient(
 ) const override
 ```
 
+Returns the gradient of the constraint. 
 
 **Reimplements**: [shapeworks::Constraint::constraintGradient](../Classes/classshapeworks_1_1Constraint.md#function-constraintgradient)
 
@@ -188,6 +182,7 @@ virtual double constraintEval(
 ) const override
 ```
 
+Returns the evaluation on the constraint, i.e. the signed distance to the constraint boundary. 
 
 **Reimplements**: [shapeworks::Constraint::constraintEval](../Classes/classshapeworks_1_1Constraint.md#function-constrainteval)
 
@@ -209,4 +204,4 @@ Return this plane as a vtkPlane.
 
 -------------------------------
 
-Updated on 2023-07-14 at 16:08:20 +0000
+Updated on 2023-07-15 at 03:21:18 +0000

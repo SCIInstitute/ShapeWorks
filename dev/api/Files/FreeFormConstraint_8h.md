@@ -17,7 +17,7 @@ title: Libs/Optimize/Constraints/FreeFormConstraint.h
 
 |                | Name           |
 | -------------- | -------------- |
-| class | **[shapeworks::FreeFormConstraint](../Classes/classshapeworks_1_1FreeFormConstraint.md)** <br>[FreeFormConstraint]().  |
+| class | **[shapeworks::FreeFormConstraint](../Classes/classshapeworks_1_1FreeFormConstraint.md)**  |
 
 
 
@@ -33,7 +33,6 @@ title: Libs/Optimize/Constraints/FreeFormConstraint.h
 class vtkFloatArray;
 
 namespace shapeworks {
-
 
 class FreeFormConstraint : public Constraint {
  public:
@@ -112,4 +111,4 @@ class FreeFormConstraint : public Constraint {
 
 -------------------------------
 
-Updated on 2023-07-14 at 16:08:22 +0000
+Updated on 2023-07-15 at 03:21:18 +0000

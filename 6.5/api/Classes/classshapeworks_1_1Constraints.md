@@ -7,7 +7,10 @@ title: shapeworks::Constraints
 
 
 
+ [More...](#detailed-description)
 
+
+`#include <Constraints.h>`
 
 ## Public Types
 
@@ -19,40 +22,38 @@ title: shapeworks::Constraints
 
 |                | Name           |
 | -------------- | -------------- |
-| | **[Constraints](../Classes/classshapeworks_1_1Constraints.md#function-constraints)**() |
+| | **[Constraints](../Classes/classshapeworks_1_1Constraints.md#function-constraints)**()<br>[Constraints](../Classes/classshapeworks_1_1Constraints.md) are inactive when initialized.  |
 | | **[~Constraints](../Classes/classshapeworks_1_1Constraints.md#function-~constraints)**() |
-| void | **[addPlane](../Classes/classshapeworks_1_1Constraints.md#function-addplane)**(const vnl_vector< double > & a, const vnl_vector< double > & b, const vnl_vector< double > & c) |
-| void | **[addSphere](../Classes/classshapeworks_1_1Constraints.md#function-addsphere)**(const vnl_vector_fixed< double, DIMENSION > & v, double r) |
-| void | **[addFreeFormConstraint](../Classes/classshapeworks_1_1Constraints.md#function-addfreeformconstraint)**(std::shared_ptr< [shapeworks::Mesh](../Classes/classshapeworks_1_1Mesh.md) > mesh) |
-| bool | **[transformConstraints](../Classes/classshapeworks_1_1Constraints.md#function-transformconstraints)**(const vnl_matrix_fixed< double, 4, 4 > & transform) |
-| bool | **[transformPlanes](../Classes/classshapeworks_1_1Constraints.md#function-transformplanes)**(const vnl_matrix_fixed< double, 4, 4 > & transform) |
-| std::stringstream | **[applyBoundaryConstraints](../Classes/classshapeworks_1_1Constraints.md#function-applyboundaryconstraints)**(vnl_vector_fixed< double, 3 > & gradE, const Point3 & pos) |
-| std::stringstream | **[applyBoundaryConstraints](../Classes/classshapeworks_1_1Constraints.md#function-applyboundaryconstraints)**(vnl_vector_fixed< float, 3 > & gradE, const Point3 & pos) |
-| std::stringstream | **[applyPlaneConstraints](../Classes/classshapeworks_1_1Constraints.md#function-applyplaneconstraints)**(vnl_vector_fixed< double, 3 > & gradE, const Point3 & pos) |
-| bool | **[writePlanes](../Classes/classshapeworks_1_1Constraints.md#function-writeplanes)**(std::string filename) |
-| bool | **[writeSpheres](../Classes/classshapeworks_1_1Constraints.md#function-writespheres)**(std::string filename) |
-| bool | **[writeFreeFormConstraint](../Classes/classshapeworks_1_1Constraints.md#function-writefreeformconstraint)**(std::string filename) |
-| bool | **[isCuttingPlaneDefined](../Classes/classshapeworks_1_1Constraints.md#function-iscuttingplanedefined)**() const |
-| bool | **[isCuttingSphereDefined](../Classes/classshapeworks_1_1Constraints.md#function-iscuttingspheredefined)**() const |
-| std::vector< [PlaneConstraint](../Classes/classshapeworks_1_1PlaneConstraint.md) > & | **[getPlaneConstraints](../Classes/classshapeworks_1_1Constraints.md#function-getplaneconstraints)**() |
-| std::vector< [SphereConstraint](../Classes/classshapeworks_1_1SphereConstraint.md) > & | **[getSphereConstraints](../Classes/classshapeworks_1_1Constraints.md#function-getsphereconstraints)**() |
-| bool | **[isAnyViolated](../Classes/classshapeworks_1_1Constraints.md#function-isanyviolated)**(const Point3 & pos) |
-| std::vector< int > | **[planesViolated](../Classes/classshapeworks_1_1Constraints.md#function-planesviolated)**(Eigen::Vector3d pt) |
-| void | **[printAll](../Classes/classshapeworks_1_1Constraints.md#function-printall)**() |
-| std::string | **[violationReport](../Classes/classshapeworks_1_1Constraints.md#function-violationreport)**(const Point3 & pos, size_t index) |
-| std::vector< std::vector< double > > | **[violationReportData](../Classes/classshapeworks_1_1Constraints.md#function-violationreportdata)**(const Point3 & pos) |
-| vnl_vector_fixed< double, 3 > | **[constraintsGradient](../Classes/classshapeworks_1_1Constraints.md#function-constraintsgradient)**(const Point3 & pos) const |
-| vnl_vector_fixed< double, 3 > | **[constraintsLagrangianGradient](../Classes/classshapeworks_1_1Constraints.md#function-constraintslagrangiangradient)**(const Point3 & pos, const Point3 & prepos, double C, size_t index) |
-| void | **[InitializeLagrangianParameters](../Classes/classshapeworks_1_1Constraints.md#function-initializelagrangianparameters)**(double lambda, std::vector< double > mus) |
-| void | **[UpdateZs](../Classes/classshapeworks_1_1Constraints.md#function-updatezs)**(const Point3 & pos, double C) |
-| void | **[UpdateMus](../Classes/classshapeworks_1_1Constraints.md#function-updatemus)**(const Point3 & pos, double C, size_t index) |
-| bool | **[GetActive](../Classes/classshapeworks_1_1Constraints.md#function-getactive)**() |
-| void | **[SetActive](../Classes/classshapeworks_1_1Constraints.md#function-setactive)**(bool ac) |
-| void | **[read](../Classes/classshapeworks_1_1Constraints.md#function-read)**(std::string filename) |
-| void | **[write](../Classes/classshapeworks_1_1Constraints.md#function-write)**(std::string filename) |
-| [FreeFormConstraint](../Classes/classshapeworks_1_1FreeFormConstraint.md) & | **[getFreeformConstraint](../Classes/classshapeworks_1_1Constraints.md#function-getfreeformconstraint)**() |
+| void | **[addPlane](../Classes/classshapeworks_1_1Constraints.md#function-addplane)**(const vnl_vector< double > & a, const vnl_vector< double > & b, const vnl_vector< double > & c)<br>Adds a cutting-plane boundary constraint. [Constraints](../Classes/classshapeworks_1_1Constraints.md) are used to isolate areas of interest on shape surfaces.  |
+| void | **[addFreeFormConstraint](../Classes/classshapeworks_1_1Constraints.md#function-addfreeformconstraint)**(std::shared_ptr< [shapeworks::Mesh](../Classes/classshapeworks_1_1Mesh.md) > mesh)<br>Adds the free-form boundary constraint, or FFC. [Constraints](../Classes/classshapeworks_1_1Constraints.md) are used to isolate areas of interest on shape surfaces.  |
+| bool | **[transformConstraints](../Classes/classshapeworks_1_1Constraints.md#function-transformconstraints)**(const vnl_matrix_fixed< double, 4, 4 > & transform)<br>Applies transformations to free-form constraints (FFCs)  |
+| bool | **[transformPlanes](../Classes/classshapeworks_1_1Constraints.md#function-transformplanes)**(const vnl_matrix_fixed< double, 4, 4 > & transform)<br>Applies transformations to cutting-plane constraints.  |
+| std::vector< [PlaneConstraint](../Classes/classshapeworks_1_1PlaneConstraint.md) > & | **[getPlaneConstraints](../Classes/classshapeworks_1_1Constraints.md#function-getplaneconstraints)**()<br>Returns the vector that constains all plane constraints, of type [PlaneConstraint](). See class [PlaneConstraint]() for more info.  |
+| [FreeFormConstraint](../Classes/classshapeworks_1_1FreeFormConstraint.md) & | **[getFreeformConstraint](../Classes/classshapeworks_1_1Constraints.md#function-getfreeformconstraint)**()<br>Returns the free form constraint, of type [FreeFormConstraint](). See class [FreeFormConstraint]() for more info.  |
+| bool | **[isAnyViolated](../Classes/classshapeworks_1_1Constraints.md#function-isanyviolated)**(const Point3 & pos)<br>Returns true if any constraint is violated by point pos.  |
+| void | **[printAll](../Classes/classshapeworks_1_1Constraints.md#function-printall)**()<br>Prints all constraints in a neat format. Make sure to disable multithreading if printing within to optimization to avoid jumbled output.  |
+| std::string | **[violationReport](../Classes/classshapeworks_1_1Constraints.md#function-violationreport)**(const Point3 & pos, size_t index)<br>Prints out a comprehensive violation report with each constraint that is violated and the magnitude of such violation by point pos. Index can be 0 if one does not have the index.  |
+| std::vector< std::vector< double > > | **[violationReportData](../Classes/classshapeworks_1_1Constraints.md#function-violationreportdata)**(const Point3 & pos)<br>Returns the distance to every cosntraint with [0] plane, [1] sphere, and [2] FFC.  |
+| vnl_vector_fixed< double, 3 > | **[constraintsLagrangianGradient](../Classes/classshapeworks_1_1Constraints.md#function-constraintslagrangiangradient)**(const Point3 & pos, const Point3 & prepos, double C, size_t index)<br>Returns the constraint gradient. prepos is the current particle, pos is the particle with an optimization update applied, C can be 1, and index is the index of the particle.  |
+| void | **[InitializeLagrangianParameters](../Classes/classshapeworks_1_1Constraints.md#function-initializelagrangianparameters)**(std::vector< double > mus)<br>Initializes lagrangian parameter mus.  |
+| void | **[UpdateMus](../Classes/classshapeworks_1_1Constraints.md#function-updatemus)**(const Point3 & pos, double C, size_t index)<br>Updates mus, the momentum variable of the augmented lagrangian.  |
+| bool | **[GetActive](../Classes/classshapeworks_1_1Constraints.md#function-getactive)**()<br>Gets the variable active, which determines whether constraints are being used.  |
+| void | **[SetActive](../Classes/classshapeworks_1_1Constraints.md#function-setactive)**(bool ac)<br>Sets the variable active, which determines whether constraints are being used.  |
+| void | **[read](../Classes/classshapeworks_1_1Constraints.md#function-read)**(std::string filename)<br>Reads in a constraint json file named filename.  |
+| void | **[write](../Classes/classshapeworks_1_1Constraints.md#function-write)**(std::string filename)<br>Writes out a constraint json file named filename.  |
 | bool | **[hasConstraints](../Classes/classshapeworks_1_1Constraints.md#function-hasconstraints)**() |
-| void | **[clipMesh](../Classes/classshapeworks_1_1Constraints.md#function-clipmesh)**([Mesh](../Classes/classshapeworks_1_1Mesh.md) & mesh) |
+| void | **[clipMesh](../Classes/classshapeworks_1_1Constraints.md#function-clipmesh)**([Mesh](../Classes/classshapeworks_1_1Mesh.md) & mesh)<br>Clips the mesh that has been passed into it by the constraints stored in this object.  |
+
+## Detailed Description
+
+```cpp
+class shapeworks::Constraints;
+```
+
+
+This class contains the set of boundary constraints that are appleid to the shapes in the dataset. They are used to isolate areas of interest on shape surfaces/volumes. These boundary constraints currently take the form of cutting planes, cutting spheres (deprecated), or free-form constraints (FFCs). Do not confuse these with the ApplyConstraints function found in the "domain" code, they refer to the action of snapping to the surface and do not serve to isolate areas of interest.
+
+Please check out Libs/Optimize/Constraints/Constraints for a constraints roadmap 
 
 ## Public Types Documentation
 
@@ -71,6 +72,7 @@ using shapeworks::Constraints::Point3 =  itk::Point<double, 3>;
 inline Constraints()
 ```
 
+[Constraints](../Classes/classshapeworks_1_1Constraints.md) are inactive when initialized. 
 
 ### function ~Constraints
 
@@ -89,16 +91,7 @@ void addPlane(
 )
 ```
 
-
-### function addSphere
-
-```cpp
-void addSphere(
-    const vnl_vector_fixed< double, DIMENSION > & v,
-    double r
-)
-```
-
+Adds a cutting-plane boundary constraint. [Constraints](../Classes/classshapeworks_1_1Constraints.md) are used to isolate areas of interest on shape surfaces. 
 
 ### function addFreeFormConstraint
 
@@ -108,6 +101,7 @@ void addFreeFormConstraint(
 )
 ```
 
+Adds the free-form boundary constraint, or FFC. [Constraints](../Classes/classshapeworks_1_1Constraints.md) are used to isolate areas of interest on shape surfaces. 
 
 ### function transformConstraints
 
@@ -117,6 +111,7 @@ bool transformConstraints(
 )
 ```
 
+Applies transformations to free-form constraints (FFCs) 
 
 ### function transformPlanes
 
@@ -126,77 +121,7 @@ bool transformPlanes(
 )
 ```
 
-
-### function applyBoundaryConstraints
-
-```cpp
-std::stringstream applyBoundaryConstraints(
-    vnl_vector_fixed< double, 3 > & gradE,
-    const Point3 & pos
-)
-```
-
-
-### function applyBoundaryConstraints
-
-```cpp
-std::stringstream applyBoundaryConstraints(
-    vnl_vector_fixed< float, 3 > & gradE,
-    const Point3 & pos
-)
-```
-
-
-### function applyPlaneConstraints
-
-```cpp
-std::stringstream applyPlaneConstraints(
-    vnl_vector_fixed< double, 3 > & gradE,
-    const Point3 & pos
-)
-```
-
-
-### function writePlanes
-
-```cpp
-inline bool writePlanes(
-    std::string filename
-)
-```
-
-
-### function writeSpheres
-
-```cpp
-inline bool writeSpheres(
-    std::string filename
-)
-```
-
-
-### function writeFreeFormConstraint
-
-```cpp
-inline bool writeFreeFormConstraint(
-    std::string filename
-)
-```
-
-
-### function isCuttingPlaneDefined
-
-```cpp
-inline bool isCuttingPlaneDefined() const
-```
-
-
-### function isCuttingSphereDefined
-
-```cpp
-inline bool isCuttingSphereDefined() const
-```
-
+Applies transformations to cutting-plane constraints. 
 
 ### function getPlaneConstraints
 
@@ -204,13 +129,15 @@ inline bool isCuttingSphereDefined() const
 inline std::vector< PlaneConstraint > & getPlaneConstraints()
 ```
 
+Returns the vector that constains all plane constraints, of type [PlaneConstraint](). See class [PlaneConstraint]() for more info. 
 
-### function getSphereConstraints
+### function getFreeformConstraint
 
 ```cpp
-inline std::vector< SphereConstraint > & getSphereConstraints()
+FreeFormConstraint & getFreeformConstraint()
 ```
 
+Returns the free form constraint, of type [FreeFormConstraint](). See class [FreeFormConstraint]() for more info. 
 
 ### function isAnyViolated
 
@@ -220,15 +147,7 @@ bool isAnyViolated(
 )
 ```
 
-
-### function planesViolated
-
-```cpp
-std::vector< int > planesViolated(
-    Eigen::Vector3d pt
-)
-```
-
+Returns true if any constraint is violated by point pos. 
 
 ### function printAll
 
@@ -236,6 +155,7 @@ std::vector< int > planesViolated(
 void printAll()
 ```
 
+Prints all constraints in a neat format. Make sure to disable multithreading if printing within to optimization to avoid jumbled output. 
 
 ### function violationReport
 
@@ -246,6 +166,7 @@ std::string violationReport(
 )
 ```
 
+Prints out a comprehensive violation report with each constraint that is violated and the magnitude of such violation by point pos. Index can be 0 if one does not have the index. 
 
 ### function violationReportData
 
@@ -255,15 +176,7 @@ std::vector< std::vector< double > > violationReportData(
 )
 ```
 
-
-### function constraintsGradient
-
-```cpp
-vnl_vector_fixed< double, 3 > constraintsGradient(
-    const Point3 & pos
-) const
-```
-
+Returns the distance to every cosntraint with [0] plane, [1] sphere, and [2] FFC. 
 
 ### function constraintsLagrangianGradient
 
@@ -276,26 +189,17 @@ vnl_vector_fixed< double, 3 > constraintsLagrangianGradient(
 )
 ```
 
+Returns the constraint gradient. prepos is the current particle, pos is the particle with an optimization update applied, C can be 1, and index is the index of the particle. 
 
 ### function InitializeLagrangianParameters
 
 ```cpp
 void InitializeLagrangianParameters(
-    double lambda,
     std::vector< double > mus
 )
 ```
 
-
-### function UpdateZs
-
-```cpp
-void UpdateZs(
-    const Point3 & pos,
-    double C
-)
-```
-
+Initializes lagrangian parameter mus. 
 
 ### function UpdateMus
 
@@ -307,6 +211,7 @@ void UpdateMus(
 )
 ```
 
+Updates mus, the momentum variable of the augmented lagrangian. 
 
 ### function GetActive
 
@@ -314,6 +219,7 @@ void UpdateMus(
 inline bool GetActive()
 ```
 
+Gets the variable active, which determines whether constraints are being used. 
 
 ### function SetActive
 
@@ -323,6 +229,7 @@ inline void SetActive(
 )
 ```
 
+Sets the variable active, which determines whether constraints are being used. 
 
 ### function read
 
@@ -332,6 +239,7 @@ void read(
 )
 ```
 
+Reads in a constraint json file named filename. 
 
 ### function write
 
@@ -341,13 +249,7 @@ void write(
 )
 ```
 
-
-### function getFreeformConstraint
-
-```cpp
-FreeFormConstraint & getFreeformConstraint()
-```
-
+Writes out a constraint json file named filename. 
 
 ### function hasConstraints
 
@@ -364,7 +266,8 @@ void clipMesh(
 )
 ```
 
+Clips the mesh that has been passed into it by the constraints stored in this object. 
 
 -------------------------------
 
-Updated on 2023-07-14 at 16:08:20 +0000
+Updated on 2023-07-15 at 03:21:17 +0000

@@ -17,7 +17,7 @@ title: Libs/Optimize/Constraints/PlaneConstraint.h
 
 |                | Name           |
 | -------------- | -------------- |
-| class | **[shapeworks::PlaneConstraint](../Classes/classshapeworks_1_1PlaneConstraint.md)** <br>[PlaneConstraint]().  |
+| class | **[shapeworks::PlaneConstraint](../Classes/classshapeworks_1_1PlaneConstraint.md)**  |
 
 
 
@@ -36,7 +36,6 @@ title: Libs/Optimize/Constraints/PlaneConstraint.h
 class vtkPlane;
 
 namespace shapeworks {
-
 
 class PlaneConstraint : public Constraint {
  public:
@@ -78,4 +77,4 @@ class PlaneConstraint : public Constraint {
 
 -------------------------------
 
-Updated on 2023-07-14 at 16:08:22 +0000
+Updated on 2023-07-15 at 03:21:18 +0000

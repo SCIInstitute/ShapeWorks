@@ -12,14 +12,14 @@
         <meta name="author" content="Shireen Elhabian et al.">
       
       
-        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.5/api/Classes/classshapeworks_1_1SphereConstraint.html">
+        <link rel="canonical" href="https://www.sci.utah.edu/software/shapeworks.html/6.5/api/Modules/group__Group-Constraint.html">
       
       <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.3.0, mkdocs-material-8.3.8">
     
     
       
-        <title>shapeworks::SphereConstraint - ShapeWorks</title>
+        <title>Constraint Classes - ShapeWorks</title>
       
     
     
@@ -84,7 +84,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#shapeworkssphereconstraint" class="md-skip">
+        <a href="#constraint-classes" class="md-skip">
           Skip to content
         </a>
       
@@ -122,7 +122,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              shapeworks::SphereConstraint
+              Constraint Classes
             
           </span>
         </div>
@@ -2198,7 +2198,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../Modules/index_groups.html" class="md-nav__link">
+      <a href="index_groups.html" class="md-nav__link">
         Groups
       </a>
     </li>
@@ -2226,7 +2226,7 @@
   
   
     <li class="md-nav__item">
-      <a href="index_classes.html" class="md-nav__link">
+      <a href="../Classes/index_classes.html" class="md-nav__link">
         Classes
       </a>
     </li>
@@ -2364,118 +2364,6 @@
     
   
   
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#public-functions" class="md-nav__link">
-    Public Functions
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#additional-inherited-members" class="md-nav__link">
-    Additional inherited members
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#public-functions-documentation" class="md-nav__link">
-    Public Functions Documentation
-  </a>
-  
-    <nav class="md-nav" aria-label="Public Functions Documentation">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#function-isviolated" class="md-nav__link">
-    function isViolated
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-print" class="md-nav__link">
-    function print
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-getcenter" class="md-nav__link">
-    function getCenter
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-setcenter" class="md-nav__link">
-    function setCenter
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-getradius" class="md-nav__link">
-    function getRadius
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-setradius" class="md-nav__link">
-    function setRadius
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-constraintgradient" class="md-nav__link">
-    function constraintGradient
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-constraintgradientsphere" class="md-nav__link">
-    function constraintGradientSphere
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-constrainteval" class="md-nav__link">
-    function constraintEval
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-constraintevalsphere" class="md-nav__link">
-    function constraintEvalSphere
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-lagragiangradient" class="md-nav__link">
-    function lagragianGradient
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
-  
 </nav>
                   </div>
                 </div>
@@ -2486,212 +2374,15 @@
             <article class="md-content__inner md-typeset">
               
                 
-  <a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/api/Classes/classshapeworks_1_1SphereConstraint.md" title="Edit this page" class="md-content__button md-icon">
+  <a href="https://github.com/SCIInstitute/ShapeWorks/edit/master/docs/api/Modules/group__Group-Constraint.md" title="Edit this page" class="md-content__button md-icon">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"/></svg>
   </a>
 
 
 
-<h1 id="shapeworkssphereconstraint">shapeworks::SphereConstraint</h1>
-<p>Inherits from <a href="classshapeworks_1_1Constraint.html">shapeworks::Constraint</a></p>
-<h2 id="public-functions">Public Functions</h2>
-<table>
-<thead>
-<tr>
-<th></th>
-<th>Name</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>virtual bool</td>
-<td><strong><a href="classshapeworks_1_1SphereConstraint.html#function-isviolated">isViolated</a></strong>(const Eigen::Vector3d &amp; pt) const override</td>
-</tr>
-<tr>
-<td>virtual void</td>
-<td><strong><a href="classshapeworks_1_1SphereConstraint.html#function-print">print</a></strong>() const override</td>
-</tr>
-<tr>
-<td>Eigen::Vector3d</td>
-<td><strong><a href="classshapeworks_1_1SphereConstraint.html#function-getcenter">getCenter</a></strong>()</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1SphereConstraint.html#function-setcenter">setCenter</a></strong>(Eigen::Vector3d inCenter)</td>
-</tr>
-<tr>
-<td>double</td>
-<td><strong><a href="classshapeworks_1_1SphereConstraint.html#function-getradius">getRadius</a></strong>()</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1SphereConstraint.html#function-setradius">setRadius</a></strong>(double inRadius)</td>
-</tr>
-<tr>
-<td>virtual Eigen::Vector3d</td>
-<td><strong><a href="classshapeworks_1_1SphereConstraint.html#function-constraintgradient">constraintGradient</a></strong>(const Eigen::Vector3d &amp; pt) const override</td>
-</tr>
-<tr>
-<td>Eigen::Vector3d</td>
-<td><strong><a href="classshapeworks_1_1SphereConstraint.html#function-constraintgradientsphere">constraintGradientSphere</a></strong>(const Eigen::Vector3d &amp; pt, const Eigen::Vector3d &amp; updpt) const</td>
-</tr>
-<tr>
-<td>virtual double</td>
-<td><strong><a href="classshapeworks_1_1SphereConstraint.html#function-constrainteval">constraintEval</a></strong>(const Eigen::Vector3d &amp; pt) const override</td>
-</tr>
-<tr>
-<td>double</td>
-<td><strong><a href="classshapeworks_1_1SphereConstraint.html#function-constraintevalsphere">constraintEvalSphere</a></strong>(const Eigen::Vector3d &amp; pt, const Eigen::Vector3d &amp; updpt) const</td>
-</tr>
-<tr>
-<td>Eigen::Vector3d</td>
-<td><strong><a href="classshapeworks_1_1SphereConstraint.html#function-lagragiangradient">lagragianGradient</a></strong>(const Eigen::Vector3d &amp; pt, const Eigen::Vector3d &amp; updpt, double C, size_t index) const</td>
-</tr>
-</tbody>
-</table>
-<h2 id="additional-inherited-members">Additional inherited members</h2>
-<p><strong>Public Functions inherited from <a href="classshapeworks_1_1Constraint.html">shapeworks::Constraint</a></strong></p>
-<table>
-<thead>
-<tr>
-<th></th>
-<th>Name</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1Constraint.html#function-setz">setZ</a></strong>(double inz)</td>
-</tr>
-<tr>
-<td>double</td>
-<td><strong><a href="classshapeworks_1_1Constraint.html#function-getz">getZ</a></strong>()</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1Constraint.html#function-setmus">setMus</a></strong>(std::vector&lt; double &gt; inmu)</td>
-</tr>
-<tr>
-<td>std::vector&lt; double &gt;</td>
-<td><strong><a href="classshapeworks_1_1Constraint.html#function-getmus">getMus</a></strong>()</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1Constraint.html#function-setlambda">setLambda</a></strong>(double inLambda)</td>
-</tr>
-<tr>
-<td>double</td>
-<td><strong><a href="classshapeworks_1_1Constraint.html#function-getlambda">getLambda</a></strong>()</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1Constraint.html#function-updatez">updateZ</a></strong>(const Eigen::Vector3d &amp; pt, double C)</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1Constraint.html#function-updatemu">updateMu</a></strong>(const Eigen::Vector3d &amp; pt, double C, size_t index)</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Protected Functions inherited from <a href="classshapeworks_1_1Constraint.html">shapeworks::Constraint</a></strong></p>
-<table>
-<thead>
-<tr>
-<th></th>
-<th>Name</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>int</td>
-<td><strong><a href="classshapeworks_1_1Constraint.html#function-sgn">sgn</a></strong>(double val)</td>
-</tr>
-</tbody>
-</table>
-<p><strong>Protected Attributes inherited from <a href="classshapeworks_1_1Constraint.html">shapeworks::Constraint</a></strong></p>
-<table>
-<thead>
-<tr>
-<th></th>
-<th>Name</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>std::vector&lt; double &gt;</td>
-<td><strong><a href="classshapeworks_1_1Constraint.html#variable-mus-">mus_</a></strong></td>
-</tr>
-<tr>
-<td>double</td>
-<td><strong><a href="classshapeworks_1_1Constraint.html#variable-z-">z_</a></strong></td>
-</tr>
-<tr>
-<td>double</td>
-<td><strong><a href="classshapeworks_1_1Constraint.html#variable-lambda-">lambda_</a></strong></td>
-</tr>
-</tbody>
-</table>
-<h2 id="public-functions-documentation">Public Functions Documentation</h2>
-<h3 id="function-isviolated">function isViolated</h3>
-<div class="highlight"><pre><span></span><code><span class="k">virtual</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="n">isViolated</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pt</span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span>
-</code></pre></div>
-<p><strong>Reimplements</strong>: <a href="classshapeworks_1_1Constraint.html#function-isviolated">shapeworks::Constraint::isViolated</a></p>
-<h3 id="function-print">function print</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">print</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span>
-</code></pre></div>
-<p><strong>Reimplements</strong>: <a href="classshapeworks_1_1Constraint.html#function-print">shapeworks::Constraint::print</a></p>
-<h3 id="function-getcenter">function getCenter</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">getCenter</span><span class="p">()</span>
-</code></pre></div>
-<h3 id="function-setcenter">function setCenter</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">setCenter</span><span class="p">(</span>
-<span class="w">    </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">inCenter</span>
-<span class="p">)</span>
-</code></pre></div>
-<h3 id="function-getradius">function getRadius</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">getRadius</span><span class="p">()</span>
-</code></pre></div>
-<h3 id="function-setradius">function setRadius</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="n">setRadius</span><span class="p">(</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">inRadius</span>
-<span class="p">)</span>
-</code></pre></div>
-<h3 id="function-constraintgradient">function constraintGradient</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">constraintGradient</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pt</span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span>
-</code></pre></div>
-<p><strong>Reimplements</strong>: <a href="classshapeworks_1_1Constraint.html#function-constraintgradient">shapeworks::Constraint::constraintGradient</a></p>
-<h3 id="function-constraintgradientsphere">function constraintGradientSphere</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">constraintGradientSphere</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pt</span><span class="p">,</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">updpt</span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
-<h3 id="function-constrainteval">function constraintEval</h3>
-<div class="highlight"><pre><span></span><code><span class="kr">inline</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">constraintEval</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pt</span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">override</span>
-</code></pre></div>
-<p><strong>Reimplements</strong>: <a href="classshapeworks_1_1Constraint.html#function-constrainteval">shapeworks::Constraint::constraintEval</a></p>
-<h3 id="function-constraintevalsphere">function constraintEvalSphere</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">constraintEvalSphere</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pt</span><span class="p">,</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">updpt</span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
-<h3 id="function-lagragiangradient">function lagragianGradient</h3>
-<div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">lagragianGradient</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">pt</span><span class="p">,</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">updpt</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">C</span><span class="p">,</span>
-<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">index</span>
-<span class="p">)</span><span class="w"> </span><span class="k">const</span>
-</code></pre></div>
+<h1 id="constraint-classes">Constraint Classes</h1>
 <hr />
-<p>Updated on 2023-07-14 at 16:08:21 +0000</p>
+<p>Updated on 2023-07-15 at 03:21:18 +0000</p>
 
               
             </article>

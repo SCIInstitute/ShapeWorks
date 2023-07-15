@@ -93,7 +93,6 @@ title: Files
             * **file [Libs/Optimize/Constraints/Constraints.h](../Files/Constraints_8h.md#file-constraints.h)** 
             * **file [Libs/Optimize/Constraints/FreeFormConstraint.h](../Files/FreeFormConstraint_8h.md#file-freeformconstraint.h)** 
             * **file [Libs/Optimize/Constraints/PlaneConstraint.h](../Files/PlaneConstraint_8h.md#file-planeconstraint.h)** 
-            * **file [Libs/Optimize/Constraints/SphereConstraint.h](../Files/SphereConstraint_8h.md#file-sphereconstraint.h)** 
         * **dir [Libs/Optimize/Container](../Files/dir_8703d550aef9c899d5cf3c4cd311a554.md#dir-libs/optimize/container)** 
             * **file [Libs/Optimize/Container/GenericContainer.h](../Files/GenericContainer_8h.md#file-genericcontainer.h)** 
             * **file [Libs/Optimize/Container/GenericContainerArray.h](../Files/GenericContainerArray_8h.md#file-genericcontainerarray.h)** 
@@ -249,4 +248,4 @@ title: Files
 
 -------------------------------
 
-Updated on 2023-07-14 at 16:08:22 +0000
+Updated on 2023-07-15 at 03:21:19 +0000

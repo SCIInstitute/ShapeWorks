@@ -43,7 +43,7 @@ User usage reporting (telemetry)  [More...](#detailed-description)
 | class | **[shapeworks::Executable](../Classes/classshapeworks_1_1Executable.md)**  |
 | class | **[shapeworks::ExportImageDialog](../Classes/classshapeworks_1_1ExportImageDialog.md)**  |
 | class | **[shapeworks::ExportUtils](../Classes/classshapeworks_1_1ExportUtils.md)** <br>Export utilities for Studio.  |
-| class | **[shapeworks::FreeFormConstraint](../Classes/classshapeworks_1_1FreeFormConstraint.md)** <br>[FreeFormConstraint]().  |
+| class | **[shapeworks::FreeFormConstraint](../Classes/classshapeworks_1_1FreeFormConstraint.md)**  |
 | class | **[shapeworks::GenericContainer](../Classes/classshapeworks_1_1GenericContainer.md)** <br>This class seems to be only a wrapper around std::vector implementing ITK DataObject (for smart pointer?)  |
 | class | **[shapeworks::GenericContainerArray](../Classes/classshapeworks_1_1GenericContainerArray.md)** <br>This class appears to be an array of GenericContainers (e.g. std::vector) that implements the [Observer]() interface. The array size tracks the number of domains in the system. E.g. one per domain.  |
 | class | **[shapeworks::GradientDescentOptimizer](../Classes/classshapeworks_1_1GradientDescentOptimizer.md)**  |
@@ -128,7 +128,7 @@ User usage reporting (telemetry)  [More...](#detailed-description)
 | class | **[shapeworks::ParticleSystemEvaluation](../Classes/classshapeworks_1_1ParticleSystemEvaluation.md)**  |
 | class | **[shapeworks::PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md)** <br>physical bounds of a 3d region of space  |
 | class | **[shapeworks::PickResult](../Classes/classshapeworks_1_1PickResult.md)**  |
-| class | **[shapeworks::PlaneConstraint](../Classes/classshapeworks_1_1PlaneConstraint.md)** <br>[PlaneConstraint]().  |
+| class | **[shapeworks::PlaneConstraint](../Classes/classshapeworks_1_1PlaneConstraint.md)**  |
 | class | **[shapeworks::PlaneWidget](../Classes/classshapeworks_1_1PlaneWidget.md)** <br>[PlaneWidget]().  |
 | class | **[shapeworks::PowerOfTwoPointTree](../Classes/classshapeworks_1_1PowerOfTwoPointTree.md)**  |
 | class | **[shapeworks::PowerOfTwoPointTreeNode](../Classes/classshapeworks_1_1PowerOfTwoPointTreeNode.md)**  |
@@ -160,7 +160,6 @@ User usage reporting (telemetry)  [More...](#detailed-description)
 | class | **[shapeworks::ShapeworksWorker](../Classes/classshapeworks_1_1ShapeworksWorker.md)**  |
 | struct | **[shapeworks::SharedCommandData](../Classes/structshapeworks_1_1SharedCommandData.md)**  |
 | class | **[shapeworks::SliceView](../Classes/classshapeworks_1_1SliceView.md)** <br>[SliceView]().  |
-| class | **[shapeworks::SphereConstraint](../Classes/classshapeworks_1_1SphereConstraint.md)**  |
 | class | **[shapeworks::SplashScreen](../Classes/classshapeworks_1_1SplashScreen.md)**  |
 | class | **[shapeworks::StatsGroupLDAJob](../Classes/classshapeworks_1_1StatsGroupLDAJob.md)**  |
 | class | **[shapeworks::StatusBarWidget](../Classes/classshapeworks_1_1StatusBarWidget.md)** <br>[StatusBarWidget]().  |
@@ -190,7 +189,7 @@ User usage reporting (telemetry)  [More...](#detailed-description)
 | -------------- | -------------- |
 | enum| **[DisplayMode](../Namespaces/namespaceshapeworks.md#enum-displaymode)** { Original = 0, Groomed = 1, Reconstructed = 2} |
 | enum| **[Axis](../Namespaces/namespaceshapeworks.md#enum-axis)** { invalid = -1, X, Y, Z}<br>handy way to specify an axis  |
-| enum class char | **[ConstraintType](../Namespaces/namespaceshapeworks.md#enum-constrainttype)** { Sphere = 'S', CuttingPlane = 'C', FreeForm = 'F'} |
+| enum class char | **[ConstraintType](../Namespaces/namespaceshapeworks.md#enum-constrainttype)** { CuttingPlane = 'C', FreeForm = 'F'} |
 | enum class int | **[CorrespondenceMode](../Namespaces/namespaceshapeworks.md#enum-correspondencemode)** { MeanEnergy = 0, EnsembleEntropy = 1, EnsembleRegressionEntropy = 3, EnsembleMixedEffectsEntropy = 4, MeshBasedGeneralEntropy = 5, MeshBasedGeneralMeanEnergy = 6} |
 | enum class char | **[DomainType](../Namespaces/namespaceshapeworks.md#enum-domaintype)** { Image = 'I', Mesh = 'M', Contour = 'C'} |
 | enum| **[ArrayTransferOptions](../Namespaces/namespaceshapeworks.md#enum-arraytransferoptions)** { COPY_ARRAY, SHARE_ARRAY, MOVE_ARRAY}<br>ways of tranferring Arrays to Python, copy being the least efficient but most conservative  |
@@ -455,7 +454,6 @@ handy way to specify an axis
 
 | Enumerator | Value | Description |
 | ---------- | ----- | ----------- |
-| Sphere | 'S'|   |
 | CuttingPlane | 'C'|   |
 | FreeForm | 'F'|   |
 
@@ -2590,4 +2588,4 @@ pi that doesn't depend on deprecated or non-std lib defines
 
 -------------------------------
 
-Updated on 2023-07-14 at 16:08:19 +0000
+Updated on 2023-07-15 at 03:21:17 +0000

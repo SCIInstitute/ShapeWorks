@@ -7,42 +7,47 @@ title: shapeworks::Constraint
 
 
 
+ [More...](#detailed-description)
 
 
-Inherited by [shapeworks::FreeFormConstraint](../Classes/classshapeworks_1_1FreeFormConstraint.md), [shapeworks::PlaneConstraint](../Classes/classshapeworks_1_1PlaneConstraint.md), [shapeworks::SphereConstraint](../Classes/classshapeworks_1_1SphereConstraint.md)
+`#include <Constraint.h>`
+
+Inherited by [shapeworks::FreeFormConstraint](../Classes/classshapeworks_1_1FreeFormConstraint.md), [shapeworks::PlaneConstraint](../Classes/classshapeworks_1_1PlaneConstraint.md)
 
 ## Public Functions
 
 |                | Name           |
 | -------------- | -------------- |
-| bool | **[isViolated](../Classes/classshapeworks_1_1Constraint.md#function-isviolated)**(const vnl_vector< double > & pt) const |
-| virtual bool | **[isViolated](../Classes/classshapeworks_1_1Constraint.md#function-isviolated)**(const Eigen::Vector3d & pt) const =0 |
-| virtual void | **[print](../Classes/classshapeworks_1_1Constraint.md#function-print)**() const =0 |
-| void | **[setZ](../Classes/classshapeworks_1_1Constraint.md#function-setz)**(double inz) |
-| double | **[getZ](../Classes/classshapeworks_1_1Constraint.md#function-getz)**() |
-| void | **[setMus](../Classes/classshapeworks_1_1Constraint.md#function-setmus)**(std::vector< double > inmu) |
-| std::vector< double > | **[getMus](../Classes/classshapeworks_1_1Constraint.md#function-getmus)**() |
-| void | **[setLambda](../Classes/classshapeworks_1_1Constraint.md#function-setlambda)**(double inLambda) |
-| double | **[getLambda](../Classes/classshapeworks_1_1Constraint.md#function-getlambda)**() |
-| virtual Eigen::Vector3d | **[constraintGradient](../Classes/classshapeworks_1_1Constraint.md#function-constraintgradient)**(const Eigen::Vector3d & pt) const =0 |
-| virtual double | **[constraintEval](../Classes/classshapeworks_1_1Constraint.md#function-constrainteval)**(const Eigen::Vector3d & pt) const =0 |
-| void | **[updateZ](../Classes/classshapeworks_1_1Constraint.md#function-updatez)**(const Eigen::Vector3d & pt, double C) |
-| void | **[updateMu](../Classes/classshapeworks_1_1Constraint.md#function-updatemu)**(const Eigen::Vector3d & pt, double C, size_t index) |
-| Eigen::Vector3d | **[lagragianGradient](../Classes/classshapeworks_1_1Constraint.md#function-lagragiangradient)**(const Eigen::Vector3d & pt, double C, size_t index) const |
+| bool | **[isViolated](../Classes/classshapeworks_1_1Constraint.md#function-isviolated)**(const vnl_vector< double > & pt) const<br>Returns if pt in vnl_vector format is violated by the constraint.  |
+| virtual bool | **[isViolated](../Classes/classshapeworks_1_1Constraint.md#function-isviolated)**(const Eigen::Vector3d & pt) const =0<br>Returns if pt in Eigen format is violated by the constraint.  |
+| virtual void | **[print](../Classes/classshapeworks_1_1Constraint.md#function-print)**() const =0<br>Prints the constraint neatly.  |
+| void | **[setMus](../Classes/classshapeworks_1_1Constraint.md#function-setmus)**(std::vector< double > inmu)<br>Initializes mu.  |
+| std::vector< double > | **[getMus](../Classes/classshapeworks_1_1Constraint.md#function-getmus)**()<br>Gets mu.  |
+| virtual Eigen::Vector3d | **[constraintGradient](../Classes/classshapeworks_1_1Constraint.md#function-constraintgradient)**(const Eigen::Vector3d & pt) const =0<br>Returns the gradient of the constraint.  |
+| virtual double | **[constraintEval](../Classes/classshapeworks_1_1Constraint.md#function-constrainteval)**(const Eigen::Vector3d & pt) const =0<br>Returns the evaluation on the constraint, i.e. the signed distance to the constraint boundary.  |
+| void | **[updateMu](../Classes/classshapeworks_1_1Constraint.md#function-updatemu)**(const Eigen::Vector3d & pt, double C, size_t index)<br>Updates the value of mu according to the augmented lagrangian update.  |
+| Eigen::Vector3d | **[lagragianGradient](../Classes/classshapeworks_1_1Constraint.md#function-lagragiangradient)**(const Eigen::Vector3d & pt, double C, size_t index) const<br>Computes the lagrangian gradient based on lagrangian inequality equations. NOTE: Not actually lagrangian. We are using quadratic penalty and not lagrangian because it works better.  |
 
 ## Protected Functions
 
 |                | Name           |
 | -------------- | -------------- |
-| int | **[sgn](../Classes/classshapeworks_1_1Constraint.md#function-sgn)**(double val) |
+| int | **[sgn](../Classes/classshapeworks_1_1Constraint.md#function-sgn)**(double val)<br>Returns the sign of the double.  |
 
 ## Protected Attributes
 
 |                | Name           |
 | -------------- | -------------- |
-| std::vector< double > | **[mus_](../Classes/classshapeworks_1_1Constraint.md#variable-mus-)**  |
-| double | **[z_](../Classes/classshapeworks_1_1Constraint.md#variable-z-)**  |
-| double | **[lambda_](../Classes/classshapeworks_1_1Constraint.md#variable-lambda-)**  |
+| std::vector< double > | **[mus_](../Classes/classshapeworks_1_1Constraint.md#variable-mus-)** <br>Mu is the lagrangian momentum term.  |
+
+## Detailed Description
+
+```cpp
+class shapeworks::Constraint;
+```
+
+
+This class is the general constraint class. Each instance represents a single constraint, either cutting-plane, sphere or free-form. They all inherit from this class. This class containts all the infrastructure to handle gradients and evaluations, which is shared among all constraint types. NOTE: Not actually using the augmented lagrangian. We are using quadratic penalty and not lagrangian because it works better. 
 
 ## Public Functions Documentation
 
@@ -54,6 +59,7 @@ inline bool isViolated(
 ) const
 ```
 
+Returns if pt in vnl_vector format is violated by the constraint. 
 
 ### function isViolated
 
@@ -63,8 +69,9 @@ virtual bool isViolated(
 ) const =0
 ```
 
+Returns if pt in Eigen format is violated by the constraint. 
 
-**Reimplemented by**: [shapeworks::FreeFormConstraint::isViolated](../Classes/classshapeworks_1_1FreeFormConstraint.md#function-isviolated), [shapeworks::PlaneConstraint::isViolated](../Classes/classshapeworks_1_1PlaneConstraint.md#function-isviolated), [shapeworks::SphereConstraint::isViolated](../Classes/classshapeworks_1_1SphereConstraint.md#function-isviolated)
+**Reimplemented by**: [shapeworks::FreeFormConstraint::isViolated](../Classes/classshapeworks_1_1FreeFormConstraint.md#function-isviolated), [shapeworks::PlaneConstraint::isViolated](../Classes/classshapeworks_1_1PlaneConstraint.md#function-isviolated)
 
 
 ### function print
@@ -73,24 +80,9 @@ virtual bool isViolated(
 virtual void print() const =0
 ```
 
+Prints the constraint neatly. 
 
-**Reimplemented by**: [shapeworks::FreeFormConstraint::print](../Classes/classshapeworks_1_1FreeFormConstraint.md#function-print), [shapeworks::PlaneConstraint::print](../Classes/classshapeworks_1_1PlaneConstraint.md#function-print), [shapeworks::SphereConstraint::print](../Classes/classshapeworks_1_1SphereConstraint.md#function-print)
-
-
-### function setZ
-
-```cpp
-inline void setZ(
-    double inz
-)
-```
-
-
-### function getZ
-
-```cpp
-inline double getZ()
-```
+**Reimplemented by**: [shapeworks::FreeFormConstraint::print](../Classes/classshapeworks_1_1FreeFormConstraint.md#function-print), [shapeworks::PlaneConstraint::print](../Classes/classshapeworks_1_1PlaneConstraint.md#function-print)
 
 
 ### function setMus
@@ -101,6 +93,7 @@ inline void setMus(
 )
 ```
 
+Initializes mu. 
 
 ### function getMus
 
@@ -108,22 +101,7 @@ inline void setMus(
 inline std::vector< double > getMus()
 ```
 
-
-### function setLambda
-
-```cpp
-inline void setLambda(
-    double inLambda
-)
-```
-
-
-### function getLambda
-
-```cpp
-inline double getLambda()
-```
-
+Gets mu. 
 
 ### function constraintGradient
 
@@ -133,8 +111,9 @@ virtual Eigen::Vector3d constraintGradient(
 ) const =0
 ```
 
+Returns the gradient of the constraint. 
 
-**Reimplemented by**: [shapeworks::FreeFormConstraint::constraintGradient](../Classes/classshapeworks_1_1FreeFormConstraint.md#function-constraintgradient), [shapeworks::PlaneConstraint::constraintGradient](../Classes/classshapeworks_1_1PlaneConstraint.md#function-constraintgradient), [shapeworks::SphereConstraint::constraintGradient](../Classes/classshapeworks_1_1SphereConstraint.md#function-constraintgradient)
+**Reimplemented by**: [shapeworks::FreeFormConstraint::constraintGradient](../Classes/classshapeworks_1_1FreeFormConstraint.md#function-constraintgradient), [shapeworks::PlaneConstraint::constraintGradient](../Classes/classshapeworks_1_1PlaneConstraint.md#function-constraintgradient)
 
 
 ### function constraintEval
@@ -145,18 +124,9 @@ virtual double constraintEval(
 ) const =0
 ```
 
+Returns the evaluation on the constraint, i.e. the signed distance to the constraint boundary. 
 
-**Reimplemented by**: [shapeworks::FreeFormConstraint::constraintEval](../Classes/classshapeworks_1_1FreeFormConstraint.md#function-constrainteval), [shapeworks::PlaneConstraint::constraintEval](../Classes/classshapeworks_1_1PlaneConstraint.md#function-constrainteval), [shapeworks::SphereConstraint::constraintEval](../Classes/classshapeworks_1_1SphereConstraint.md#function-constrainteval)
-
-
-### function updateZ
-
-```cpp
-void updateZ(
-    const Eigen::Vector3d & pt,
-    double C
-)
-```
+**Reimplemented by**: [shapeworks::FreeFormConstraint::constraintEval](../Classes/classshapeworks_1_1FreeFormConstraint.md#function-constrainteval), [shapeworks::PlaneConstraint::constraintEval](../Classes/classshapeworks_1_1PlaneConstraint.md#function-constrainteval)
 
 
 ### function updateMu
@@ -169,6 +139,7 @@ void updateMu(
 )
 ```
 
+Updates the value of mu according to the augmented lagrangian update. 
 
 ### function lagragianGradient
 
@@ -180,6 +151,7 @@ Eigen::Vector3d lagragianGradient(
 ) const
 ```
 
+Computes the lagrangian gradient based on lagrangian inequality equations. NOTE: Not actually lagrangian. We are using quadratic penalty and not lagrangian because it works better. 
 
 ## Protected Functions Documentation
 
@@ -191,6 +163,7 @@ inline int sgn(
 )
 ```
 
+Returns the sign of the double. 
 
 ## Protected Attributes Documentation
 
@@ -200,21 +173,8 @@ inline int sgn(
 std::vector< double > mus_;
 ```
 
-
-### variable z_
-
-```cpp
-double z_;
-```
-
-
-### variable lambda_
-
-```cpp
-double lambda_;
-```
-
+Mu is the lagrangian momentum term. 
 
 -------------------------------
 
-Updated on 2023-07-14 at 16:08:20 +0000
+Updated on 2023-07-15 at 03:21:17 +0000

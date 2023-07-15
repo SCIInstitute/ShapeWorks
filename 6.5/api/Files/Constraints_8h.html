@@ -2448,12 +2448,50 @@
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;FreeFormConstraint.h&quot;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Mesh/Mesh.h&quot;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;PlaneConstraint.h&quot;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;SphereConstraint.h&quot;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;itkPoint.h&quot;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;vnl/vnl_cross.h&quot;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;vnl/vnl_inverse.h&quot;</span>
 
 <span class="k">namespace</span><span class="w"> </span><span class="nn">shapeworks</span><span class="w"> </span><span class="p">{</span>
+
+<span class="cm">/* Constraints Roadmap</span>
+<span class="cm"> * For future tinkerers, this is a guide to all the code relevant to constraints to help you navigate the optimizer and change things if desired. In simple terms,</span>
+<span class="cm"> *      constraints define areas of interest by getting violation regions to repel particles by attaching a mechanism to all gradient updates that push them back</span>
+<span class="cm"> *      if a violation does occur. &quot;Look up quadratic penalty method&quot; for more information.</span>
+<span class="cm"> *</span>
+<span class="cm"> * - Reading json constraints: From Libs/Optimize/OptimizeParameters::set_up_optimize -&gt; Libs/Optimize/Constraints/Constraints::read</span>
+<span class="cm"> *</span>
+<span class="cm"> * - Initialization: The various steps in the constraints initialization are</span>
+<span class="cm"> *          +Libs/Optimize/Optimize::Initialize and ParticleSystem::AdvancedAllParticleSplitting initialize quadratic penalty mus.</span>
+<span class="cm"> *          +Libs/Optimize/Domain/{Image,Contour,Mesh}Domain determine the picking of the initial particle position to be optimized which is assured not to violate any constraint here</span>
+<span class="cm"> *          +Libs/Optimize/Sampler::AllocateDomainsAndNeighborhoods sets the constraints within the constraints class via Libs/Optimize/Constraints/Constraints::addSphere and addPlane, and initializes FFCs via Sampler::initialize_ffcs -&gt; Constraints::addFreeFormConstraint</span>
+<span class="cm"> *          +Libs/Optimize/Sampler::initialize_ffcs also computes the gradient fields to allow distance and gradient queries</span>
+<span class="cm"> *</span>
+<span class="cm"> * - Optimization: For optimization, the relevant constraints code is in Libs/Optimize/GradientDescentOptimizer::StartAdaptiveGaussSeidelOptimization in Step B,</span>
+<span class="cm"> *      where it calls GradientDescentOptimizer::AugmentedLagrangianConstraints to tweak any updates by our constraints class corrections to not violate constraints.</span>
+<span class="cm"> *      See constraints class.</span>
+<span class="cm"> *</span>
+<span class="cm"> * - Constraints class: This class implements a quadratic penalty style optimizer for the entire ShapeWorks particle system to apply boundary constraints.</span>
+<span class="cm"> *      This Libs/Optimize/Constraints/ directory contains the following files</span>
+<span class="cm"> *          +Constraints: Contains the processing of multiple interacting constraints and computing gradients for the optimizer. Constains all constraints for a full particle system (multiple shapes/domains).</span>
+<span class="cm"> *          +Constraint: A general class for any type of constraint. Contains only one constraint, but has quadratic penalty equations to facilitate any single-constraint operations.</span>
+<span class="cm"> *              *PlaneConstraint: Cutting plane constraints that use the equation of a plane to compute distances and gradients.</span>
+<span class="cm"> *              *SphereConstraint(deprecated): It uses the equation of a sphere.</span>
+<span class="cm"> *              *Free-form constraints: Use a signed geodesic mesh field to represent regions of interest of arbitrary shape, see below.</span>
+<span class="cm"> *</span>
+<span class="cm"> * - Mesh fields used for FFCs: FFCs use mesh field representations which are of class shapeworks::Mesh, located in Libs/Mesh/Mesh. Within Libs/Mesh/Mesh, the relevant functions are</span>
+<span class="cm"> *          +Mesh::clip: Clips by cutting plane</span>
+<span class="cm"> *          +Mesh::clipByField: Clips by a value field</span>
+<span class="cm"> *          +Mesh::getFFCValue: Allows getting the shortest signed geodesic distance of a point to any boundary</span>
+<span class="cm"> *          +Mesh::getFFCGradient: Allows getting the direction to the boundary. This might be the opposite direction for violated</span>
+<span class="cm"> *</span>
+<span class="cm"> * - The Parameter mesh_ffc_mode is exposed through Libs/Optimize/OptimizeParameters and are passed to Libs/Optimize/Optimize</span>
+<span class="cm"> *          +mesh_ffc_mode: when running on meshes, 0 is for mesh clipping (default) and 1 is for the quadratic penalty</span>
+<span class="cm"> *</span>
+<span class="cm"> * - DEPRECATED: Reading xml constraints: Constraints from xmls are read via Libs/Optimize/OptimizeParameterFile::read_cutting_planes and read_cutting_spheres,</span>
+<span class="cm"> *      then go through Optimize.cpp::SetCuttingPlane -&gt; Sampler-&gt;SetCuttingPlane and Libs/Optimize/Constraints/Constraints::addPlane. Same for spheres and FFCs (both deprecated).</span>
+<span class="cm"> *</span>
+<span class="cm">*/</span>
 
 <span class="k">class</span><span class="w"> </span><span class="nc">Constraints</span><span class="w"> </span><span class="p">{</span>
 <span class="w"> </span><span class="k">public</span><span class="o">:</span>
@@ -2465,36 +2503,17 @@
 
 <span class="w">  </span><span class="c1">// Set constraints</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="n">addPlane</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">vnl_vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="n">c</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">addSphere</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="n">DIMENSION</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="n">v</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">r</span><span class="p">);</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">addFreeFormConstraint</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">shapeworks</span><span class="o">::</span><span class="n">Mesh</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mesh</span><span class="p">);</span>
 
 <span class="w">  </span><span class="c1">// Transforms</span>
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">transformConstraints</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">vnl_matrix_fixed</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="n">transform</span><span class="p">);</span>
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">transformPlanes</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">vnl_matrix_fixed</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="n">transform</span><span class="p">);</span>
 
-<span class="w">  </span><span class="c1">// Apply functions</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">stringstream</span><span class="w"> </span><span class="nf">applyBoundaryConstraints</span><span class="p">(</span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="n">gradE</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="o">&amp;</span><span class="n">pos</span><span class="p">);</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">stringstream</span><span class="w"> </span><span class="nf">applyBoundaryConstraints</span><span class="p">(</span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="kt">float</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="n">gradE</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="o">&amp;</span><span class="n">pos</span><span class="p">);</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">stringstream</span><span class="w"> </span><span class="nf">applyPlaneConstraints</span><span class="p">(</span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="n">gradE</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="o">&amp;</span><span class="n">pos</span><span class="p">);</span>
-
-<span class="w">  </span><span class="c1">// Write constraints</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">writePlanes</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">filename</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">writeSpheres</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">filename</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">writeFreeFormConstraint</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">filename</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="nb">true</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="c1">// Is defined? functions</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">isCuttingPlaneDefined</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="o">!</span><span class="n">planeConstraints_</span><span class="p">.</span><span class="n">empty</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">isCuttingSphereDefined</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="o">!</span><span class="n">sphereConstraints_</span><span class="p">.</span><span class="n">empty</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
-
-<span class="w">  </span><span class="c1">// Plane constraint</span>
+<span class="w">  </span><span class="c1">// Constraint get function</span>
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">PlaneConstraint</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="n">getPlaneConstraints</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">planeConstraints_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">SphereConstraint</span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="n">getSphereConstraints</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">sphereConstraints_</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="n">FreeFormConstraint</span><span class="o">&amp;</span><span class="w"> </span><span class="n">getFreeformConstraint</span><span class="p">();</span>
 
-<span class="w">  </span><span class="c1">// Is any constraint violated by point pos?</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">isAnyViolated</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="o">&amp;</span><span class="n">pos</span><span class="p">);</span>
-
-<span class="w">  </span><span class="c1">// Constraint violations</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">planesViolated</span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">pt</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">isAnyViolated</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="o">&amp;</span><span class="n">pos</span><span class="p">);</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">printAll</span><span class="p">();</span>
 
@@ -2505,16 +2524,10 @@
 <span class="w">  </span><span class="c1">// ============================</span>
 <span class="w">  </span><span class="c1">// Augmented Lagragian Fuctions</span>
 <span class="w">  </span><span class="c1">// ============================</span>
-<span class="w">  </span><span class="c1">// Energy gradient computations</span>
-<span class="w">  </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="w"> </span><span class="n">constraintsGradient</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="o">&amp;</span><span class="n">pos</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="p">;</span>
 
-<span class="w">  </span><span class="c1">// Lagragian gradient computation</span>
 <span class="w">  </span><span class="n">vnl_vector_fixed</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="o">&gt;</span><span class="w"> </span><span class="n">constraintsLagrangianGradient</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="o">&amp;</span><span class="n">pos</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="o">&amp;</span><span class="n">prepos</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">C</span><span class="p">,</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">index</span><span class="p">);</span>
 
-<span class="w">  </span><span class="c1">// Parameters lambda, mu and z initialization</span>
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">InitializeLagrangianParameters</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">lambda</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mus</span><span class="p">);</span>
-
-<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">UpdateZs</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="o">&amp;</span><span class="n">pos</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">C</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">InitializeLagrangianParameters</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mus</span><span class="p">);</span>
 
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">UpdateMus</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="o">&amp;</span><span class="n">pos</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">C</span><span class="p">,</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">index</span><span class="p">);</span>
 
@@ -2524,31 +2537,21 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">read</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">filename</span><span class="p">);</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">write</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">filename</span><span class="p">);</span>
 
-<span class="w">  </span><span class="n">FreeFormConstraint</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">getFreeformConstraint</span><span class="p">();</span>
-
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">hasConstraints</span><span class="p">();</span>
 
-<span class="w">  </span><span class="c1">// return a mesh that has been clipped by the constraints</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">clipMesh</span><span class="p">(</span><span class="n">Mesh</span><span class="o">&amp;</span><span class="w"> </span><span class="n">mesh</span><span class="p">);</span>
 
 <span class="w"> </span><span class="k">private</span><span class="o">:</span>
 <span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">PlaneConstraint</span><span class="o">&gt;</span><span class="w"> </span><span class="n">planeConstraints_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">SphereConstraint</span><span class="o">&gt;</span><span class="w"> </span><span class="n">sphereConstraints_</span><span class="p">;</span>
-
 <span class="w">  </span><span class="n">FreeFormConstraint</span><span class="w"> </span><span class="n">freeFormConstraint_</span><span class="p">;</span>
 
-<span class="w">  </span><span class="c1">// Projections and intersects</span>
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">active_</span><span class="p">;</span>
-<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="nf">projectOntoLine</span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">p</span><span class="p">);</span>
-<span class="w">  </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="nf">linePlaneIntersect</span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">p0</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">l0</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">l</span><span class="p">);</span>
-<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">PlanePlaneIntersect</span><span class="p">(</span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">n1</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">p1</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">n2</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">p2</span><span class="p">,</span>
-<span class="w">                           </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="o">&amp;</span><span class="n">l0_result</span><span class="p">,</span><span class="w"> </span><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="o">&amp;</span><span class="n">l1_result</span><span class="p">);</span>
 <span class="p">};</span>
 
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-07-14 at 16:08:22 +0000</p>
+<p>Updated on 2023-07-15 at 03:21:18 +0000</p>
 
               
             </article>

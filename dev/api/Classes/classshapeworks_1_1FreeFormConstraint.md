@@ -1,6 +1,5 @@
 ---
 title: shapeworks::FreeFormConstraint
-summary: FreeFormConstraint. 
 
 ---
 
@@ -8,7 +7,7 @@ summary: FreeFormConstraint.
 
 
 
-[FreeFormConstraint]().  [More...](#detailed-description)
+ [More...](#detailed-description)
 
 
 `#include <FreeFormConstraint.h>`
@@ -20,13 +19,13 @@ Inherits from [shapeworks::Constraint](../Classes/classshapeworks_1_1Constraint.
 |                | Name           |
 | -------------- | -------------- |
 | | **[FreeFormConstraint](../Classes/classshapeworks_1_1FreeFormConstraint.md#function-freeformconstraint)**() |
-| void | **[setMesh](../Classes/classshapeworks_1_1FreeFormConstraint.md#function-setmesh)**(std::shared_ptr< [shapeworks::Mesh](../Classes/classshapeworks_1_1Mesh.md) > mesh) |
-| std::shared_ptr< [shapeworks::Mesh](../Classes/classshapeworks_1_1Mesh.md) > | **[getMesh](../Classes/classshapeworks_1_1FreeFormConstraint.md#function-getmesh)**() |
-| bool | **[readyForOptimize](../Classes/classshapeworks_1_1FreeFormConstraint.md#function-readyforoptimize)**() const |
-| virtual bool | **[isViolated](../Classes/classshapeworks_1_1FreeFormConstraint.md#function-isviolated)**(const Eigen::Vector3d & pt) const override |
-| virtual void | **[print](../Classes/classshapeworks_1_1FreeFormConstraint.md#function-print)**() const override |
-| virtual Eigen::Vector3d | **[constraintGradient](../Classes/classshapeworks_1_1FreeFormConstraint.md#function-constraintgradient)**(const Eigen::Vector3d & pt) const override |
-| virtual double | **[constraintEval](../Classes/classshapeworks_1_1FreeFormConstraint.md#function-constrainteval)**(const Eigen::Vector3d & pt) const override |
+| void | **[setMesh](../Classes/classshapeworks_1_1FreeFormConstraint.md#function-setmesh)**(std::shared_ptr< [shapeworks::Mesh](../Classes/classshapeworks_1_1Mesh.md) > mesh)<br>Sets the mesh that defines the FFC.  |
+| std::shared_ptr< [shapeworks::Mesh](../Classes/classshapeworks_1_1Mesh.md) > | **[getMesh](../Classes/classshapeworks_1_1FreeFormConstraint.md#function-getmesh)**()<br>Returns the mesh that defines the FFC.  |
+| bool | **[readyForOptimize](../Classes/classshapeworks_1_1FreeFormConstraint.md#function-readyforoptimize)**() const<br>Prepares for optimize.  |
+| virtual bool | **[isViolated](../Classes/classshapeworks_1_1FreeFormConstraint.md#function-isviolated)**(const Eigen::Vector3d & pt) const override<br>Returns if pt in Eigen format is violated by the constraint.  |
+| virtual void | **[print](../Classes/classshapeworks_1_1FreeFormConstraint.md#function-print)**() const override<br>Prints the constraint neatly.  |
+| virtual Eigen::Vector3d | **[constraintGradient](../Classes/classshapeworks_1_1FreeFormConstraint.md#function-constraintgradient)**(const Eigen::Vector3d & pt) const override<br>Returns the gradient of the constraint.  |
+| virtual double | **[constraintEval](../Classes/classshapeworks_1_1FreeFormConstraint.md#function-constrainteval)**(const Eigen::Vector3d & pt) const override<br>Returns the evaluation on the constraint, i.e. the signed distance to the constraint boundary.  |
 | void | **[setDefinition](../Classes/classshapeworks_1_1FreeFormConstraint.md#function-setdefinition)**(vtkSmartPointer< vtkPolyData > polyData)<br>Set polydata where per-vertex free form constraint definition exists.  |
 | vtkSmartPointer< vtkPolyData > | **[getDefinition](../Classes/classshapeworks_1_1FreeFormConstraint.md#function-getdefinition)**()<br>Get polydata where per-vertex free form constraint definition exists.  |
 | void | **[applyToPolyData](../Classes/classshapeworks_1_1FreeFormConstraint.md#function-applytopolydata)**(vtkSmartPointer< vtkPolyData > polyData)<br>Apply the free form constraint to a polydata.  |
@@ -49,29 +48,22 @@ Inherits from [shapeworks::Constraint](../Classes/classshapeworks_1_1Constraint.
 
 |                | Name           |
 | -------------- | -------------- |
-| void | **[setZ](../Classes/classshapeworks_1_1Constraint.md#function-setz)**(double inz) |
-| double | **[getZ](../Classes/classshapeworks_1_1Constraint.md#function-getz)**() |
-| void | **[setMus](../Classes/classshapeworks_1_1Constraint.md#function-setmus)**(std::vector< double > inmu) |
-| std::vector< double > | **[getMus](../Classes/classshapeworks_1_1Constraint.md#function-getmus)**() |
-| void | **[setLambda](../Classes/classshapeworks_1_1Constraint.md#function-setlambda)**(double inLambda) |
-| double | **[getLambda](../Classes/classshapeworks_1_1Constraint.md#function-getlambda)**() |
-| void | **[updateZ](../Classes/classshapeworks_1_1Constraint.md#function-updatez)**(const Eigen::Vector3d & pt, double C) |
-| void | **[updateMu](../Classes/classshapeworks_1_1Constraint.md#function-updatemu)**(const Eigen::Vector3d & pt, double C, size_t index) |
-| Eigen::Vector3d | **[lagragianGradient](../Classes/classshapeworks_1_1Constraint.md#function-lagragiangradient)**(const Eigen::Vector3d & pt, double C, size_t index) const |
+| void | **[setMus](../Classes/classshapeworks_1_1Constraint.md#function-setmus)**(std::vector< double > inmu)<br>Initializes mu.  |
+| std::vector< double > | **[getMus](../Classes/classshapeworks_1_1Constraint.md#function-getmus)**()<br>Gets mu.  |
+| void | **[updateMu](../Classes/classshapeworks_1_1Constraint.md#function-updatemu)**(const Eigen::Vector3d & pt, double C, size_t index)<br>Updates the value of mu according to the augmented lagrangian update.  |
+| Eigen::Vector3d | **[lagragianGradient](../Classes/classshapeworks_1_1Constraint.md#function-lagragiangradient)**(const Eigen::Vector3d & pt, double C, size_t index) const<br>Computes the lagrangian gradient based on lagrangian inequality equations. NOTE: Not actually lagrangian. We are using quadratic penalty and not lagrangian because it works better.  |
 
 **Protected Functions inherited from [shapeworks::Constraint](../Classes/classshapeworks_1_1Constraint.md)**
 
 |                | Name           |
 | -------------- | -------------- |
-| int | **[sgn](../Classes/classshapeworks_1_1Constraint.md#function-sgn)**(double val) |
+| int | **[sgn](../Classes/classshapeworks_1_1Constraint.md#function-sgn)**(double val)<br>Returns the sign of the double.  |
 
 **Protected Attributes inherited from [shapeworks::Constraint](../Classes/classshapeworks_1_1Constraint.md)**
 
 |                | Name           |
 | -------------- | -------------- |
-| std::vector< double > | **[mus_](../Classes/classshapeworks_1_1Constraint.md#variable-mus-)**  |
-| double | **[z_](../Classes/classshapeworks_1_1Constraint.md#variable-z-)**  |
-| double | **[lambda_](../Classes/classshapeworks_1_1Constraint.md#variable-lambda-)**  |
+| std::vector< double > | **[mus_](../Classes/classshapeworks_1_1Constraint.md#variable-mus-)** <br>Mu is the lagrangian momentum term.  |
 
 
 ## Detailed Description
@@ -80,9 +72,8 @@ Inherits from [shapeworks::Constraint](../Classes/classshapeworks_1_1Constraint.
 class shapeworks::FreeFormConstraint;
 ```
 
-[FreeFormConstraint](). 
 
-Encapsulate functionality related to free form constraints 
+Encapsulate functionality related to free-form constraints (FFC). Inherits from [Constraint](../Classes/classshapeworks_1_1Constraint.md). See [Constraint.h] for more information 
 
 ## Public Functions Documentation
 
@@ -101,6 +92,7 @@ inline void setMesh(
 )
 ```
 
+Sets the mesh that defines the FFC. 
 
 ### function getMesh
 
@@ -108,6 +100,7 @@ inline void setMesh(
 inline std::shared_ptr< shapeworks::Mesh > getMesh()
 ```
 
+Returns the mesh that defines the FFC. 
 
 ### function readyForOptimize
 
@@ -115,6 +108,7 @@ inline std::shared_ptr< shapeworks::Mesh > getMesh()
 bool readyForOptimize() const
 ```
 
+Prepares for optimize. 
 
 ### function isViolated
 
@@ -124,6 +118,7 @@ virtual bool isViolated(
 ) const override
 ```
 
+Returns if pt in Eigen format is violated by the constraint. 
 
 **Reimplements**: [shapeworks::Constraint::isViolated](../Classes/classshapeworks_1_1Constraint.md#function-isviolated)
 
@@ -134,6 +129,7 @@ virtual bool isViolated(
 inline virtual void print() const override
 ```
 
+Prints the constraint neatly. 
 
 **Reimplements**: [shapeworks::Constraint::print](../Classes/classshapeworks_1_1Constraint.md#function-print)
 
@@ -146,6 +142,7 @@ inline virtual Eigen::Vector3d constraintGradient(
 ) const override
 ```
 
+Returns the gradient of the constraint. 
 
 **Reimplements**: [shapeworks::Constraint::constraintGradient](../Classes/classshapeworks_1_1Constraint.md#function-constraintgradient)
 
@@ -158,6 +155,7 @@ inline virtual double constraintEval(
 ) const override
 ```
 
+Returns the evaluation on the constraint, i.e. the signed distance to the constraint boundary. 
 
 **Reimplements**: [shapeworks::Constraint::constraintEval](../Classes/classshapeworks_1_1Constraint.md#function-constrainteval)
 
@@ -310,4 +308,4 @@ Convert legacy FFC to new format.
 
 -------------------------------
 
-Updated on 2023-07-14 at 16:08:20 +0000
+Updated on 2023-07-15 at 03:21:17 +0000

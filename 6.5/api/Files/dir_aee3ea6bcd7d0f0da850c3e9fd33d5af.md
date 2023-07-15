@@ -16,7 +16,6 @@ title: Libs/Optimize/Constraints
 | **[Libs/Optimize/Constraints/ConstraintType.h](../Files/ConstraintType_8h.md#file-constrainttype.h)**  |
 | **[Libs/Optimize/Constraints/FreeFormConstraint.h](../Files/FreeFormConstraint_8h.md#file-freeformconstraint.h)**  |
 | **[Libs/Optimize/Constraints/PlaneConstraint.h](../Files/PlaneConstraint_8h.md#file-planeconstraint.h)**  |
-| **[Libs/Optimize/Constraints/SphereConstraint.h](../Files/SphereConstraint_8h.md#file-sphereconstraint.h)**  |
 
 
 
@@ -25,4 +24,4 @@ title: Libs/Optimize/Constraints
 
 -------------------------------
 
-Updated on 2023-07-14 at 16:08:22 +0000
+Updated on 2023-07-15 at 03:21:18 +0000
