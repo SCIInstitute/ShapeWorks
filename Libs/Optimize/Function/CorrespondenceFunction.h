@@ -175,7 +175,7 @@ class CorrespondenceFunction : public VectorFunction {
     num_dims = 0;
     num_samples = 0;
     m_PointsUpdate = std::make_shared<vnl_matrix_type>(10, 10);
-    m_InverseCovMatrix = std::make_shared<vnl_matrix_type>(10, 10);
+    m_InverseCovMatrix = std::make_shared<Eigen::MatrixXd>(10, 10);
     m_points_mean = std::make_shared<vnl_matrix_type>(10, 10);
   }
   virtual ~CorrespondenceFunction() {}
@@ -203,7 +203,7 @@ class CorrespondenceFunction : public VectorFunction {
   std::vector<bool> m_UseXYZ;
   std::vector<bool> m_UseNormals;
   std::shared_ptr<vnl_matrix_type> m_points_mean;
-  std::shared_ptr<vnl_matrix_type> m_InverseCovMatrix;
+  std::shared_ptr<Eigen::MatrixXd> m_InverseCovMatrix;
   int num_dims, num_samples;
 };
 }  // namespace shapeworks

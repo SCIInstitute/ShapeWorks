@@ -63,7 +63,7 @@ void LegacyCorrespondenceFunction ::ComputeCovarianceMatrix() {
 
   if (this->m_UseMeanEnergy) {
     pinvMat.set_identity();
-    m_InverseCovMatrix->clear();
+    m_InverseCovMatrix->setZero();
   } else {
     gramMat = points_minus_mean.transpose() * points_minus_mean;
 
@@ -83,7 +83,9 @@ void LegacyCorrespondenceFunction ::ComputeCovarianceMatrix() {
     const auto lhs = projMat * invLambda;
     const auto rhs =
         invLambda * projMat.transpose();  // invLambda doesn't need to be transposed since its a diagonal matrix
-    m_InverseCovMatrix->set_size(num_dims, num_dims);
+    if (m_InverseCovMatrix->rows() != num_dims || m_InverseCovMatrix->cols() != num_dims) {
+      m_InverseCovMatrix->resize(num_dims, num_dims);
+    }
     Utils::multiply_into(*m_InverseCovMatrix, lhs, rhs);
   }
   m_PointsUpdate->update(points_minus_mean * pinvMat);
@@ -108,9 +110,8 @@ void LegacyCorrespondenceFunction ::ComputeCovarianceMatrix() {
 }
 
 LegacyCorrespondenceFunction::VectorType LegacyCorrespondenceFunction ::Evaluate(unsigned int idx, unsigned int d,
-                                                                                       const ParticleSystem* system,
-                                                                                       double& maxdt,
-                                                                                       double& energy) const {
+                                                                                 const ParticleSystem* system,
+                                                                                 double& maxdt, double& energy) const {
   // NOTE: This code requires that indices be contiguous, i.e. it won't work if
   // you start deleting particles.
   const unsigned int DomainsPerShape = m_ShapeMatrix->GetDomainsPerShape();
@@ -130,10 +131,18 @@ LegacyCorrespondenceFunction::VectorType LegacyCorrespondenceFunction ::Evaluate
 
   vnl_matrix_type tmp1(3, 3, 0.0);
 
-  if (this->m_UseMeanEnergy)
+  if (this->m_UseMeanEnergy) {
     tmp1.set_identity();
-  else
-    tmp1 = m_InverseCovMatrix->extract(3, 3, k, k);
+  } else {
+    // extract 3x3 submatrix at k,k
+    Eigen::MatrixXd region = m_InverseCovMatrix->block(k, k, 3, 3);
+    // convert to vnl
+    for (unsigned int i = 0; i < 3; i++) {
+      for (unsigned int j = 0; j < 3; j++) {
+        tmp1(i, j) = region(i, j);
+      }
+    }
+  }
 
   vnl_matrix_type tmp = Xi.transpose() * tmp1;
 
