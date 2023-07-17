@@ -623,7 +623,7 @@ def Run_Pipeline(args):
     with open(config_file, "w") as outfile:
         json.dump(model_parameters, outfile, indent=2)
     # Train
-    DeepSSMUtils.trainDeepSSM(config_file)
+    # DeepSSMUtils.trainDeepSSM(config_file)
 
     ######################################################################################
     print("\nStep 11. Predict validation particles with trained DeepSSM and analyze accuracy.")

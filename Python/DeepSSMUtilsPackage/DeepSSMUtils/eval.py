@@ -61,7 +61,7 @@ def test(config_file, loader="test"):
 	f.close()
 	test_names_string = test_names_string.replace("[","").replace("]","").replace("'","").replace(" ","")
 	test_names = test_names_string.split(",")
-	sw_message("Predicting for test images...")
+	sw_message(f"Predicting for {loader} images...")
 	index = 0
 	pred_scores = []
 
@@ -73,7 +73,7 @@ def test(config_file, loader="test"):
 		predPath_pca = pred_dir + 'PCA_Predictions/'
 		loaders.make_dir(predPath_ft)
 		loaders.make_dir(predPath_pca)
-		predicted_particle_files = []
+	predicted_particle_files = []
 	for img, _, mdl in test_loader:
 		if sw_check_abort():
 			sw_message("Aborted")
@@ -82,14 +82,14 @@ def test(config_file, loader="test"):
 		sw_progress((index+1) / len(test_loader))
 		img = img.to(device)
 		if parameters['tl_net']['enabled']:
-			mdl = mdl.to(device)
+			mdl = torch.FloatTensor([1]).to(device)
 			[pred_tf, pred_mdl_tl] = model_tl(mdl, img)
 			pred_scores.append(pred_tf.cpu().data.numpy())
-			nmpred = predPath_tl + '/' + test_names[index] + '.particles'
-			np.savetxt(nmpred, pred_mdl_tl.squeeze().detach().cpu().numpy())
 			# save the AE latent space as shape descriptors
 			nmpred = predPath_tl + '/' + test_names[index] + '.npy'
 			np.save(nmpred, pred_tf.squeeze().detach().cpu().numpy())
+			nmpred = predPath_tl + '/' + test_names[index] + '.particles'
+			np.savetxt(nmpred, pred_mdl_tl.squeeze().detach().cpu().numpy())
 		else:
 			[pred, pred_mdl_pca] = model_pca(img)
 			[pred, pred_mdl_ft] = model_ft(img)
