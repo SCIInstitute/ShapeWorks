@@ -34,7 +34,7 @@ title: Utils
 | std::string | **[num2str](../Classes/classUtils.md#function-num2str)**(int num) |
 | std::vector< double > | **[linspace](../Classes/classUtils.md#function-linspace)**(double a, double b, size_t N) |
 | std::string | **[int2str](../Classes/classUtils.md#function-int2str)**(int n, int number_of_zeros) |
-| template <typename T \> <br>void | **[multiply_into](../Classes/classUtils.md#function-multiply-into)**(vnl_matrix< T > & out, const vnl_matrix< T > & lhs, const vnl_matrix< T > & rhs) |
+| template <typename T \> <br>void | **[multiply_into](../Classes/classUtils.md#function-multiply-into)**(Eigen::MatrixXd & out, const vnl_matrix< T > & lhs, const vnl_matrix< T > & rhs) |
 | double | **[averageThetaBruteForce](../Classes/classUtils.md#function-averagethetabruteforce)**(std::vector< double > thetas, double dtheta) |
 | double | **[averageThetaChord](../Classes/classUtils.md#function-averagethetachord)**(std::vector< double > thetas) |
 | double | **[averageThetaArc](../Classes/classUtils.md#function-averagethetaarc)**(std::vector< double > thetas) |
@@ -269,7 +269,7 @@ static std::string int2str(
 ```cpp
 template <typename T >
 static void multiply_into(
-    vnl_matrix< T > & out,
+    Eigen::MatrixXd & out,
     const vnl_matrix< T > & lhs,
     const vnl_matrix< T > & rhs
 )
@@ -382,4 +382,4 @@ static double averageThetaArc(
 
 -------------------------------
 
-Updated on 2023-07-15 at 03:21:18 +0000
+Updated on 2023-07-17 at 17:00:06 +0000

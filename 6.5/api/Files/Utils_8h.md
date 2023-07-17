@@ -99,6 +99,8 @@ title: Libs/Utils/Utils.h
 #endif
 #endif
 
+#include <Eigen/Core>
+
 #include <math.h>
 #include <iostream>
 #include <map>
@@ -179,7 +181,7 @@ public:
 
     // matrix multiplication without an allocation for the output
     template<typename T>
-    static void multiply_into(vnl_matrix<T> &out, const vnl_matrix<T> &lhs, const vnl_matrix<T> &rhs);
+    static void multiply_into(Eigen::MatrixXd &out, const vnl_matrix<T> &lhs, const vnl_matrix<T> &rhs);
 
   //--------------- average normal directions --------------------------------
     /* Trying every theta (with a step size of dtheta), find the theta that results in the smallest MSE.
@@ -215,4 +217,4 @@ private:
 
 -------------------------------
 
-Updated on 2023-07-15 at 03:21:18 +0000
+Updated on 2023-07-17 at 17:00:06 +0000

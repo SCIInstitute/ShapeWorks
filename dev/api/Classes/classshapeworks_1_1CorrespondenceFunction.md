@@ -102,7 +102,7 @@ Inherits from [shapeworks::VectorFunction](../Classes/classshapeworks_1_1VectorF
 | std::vector< bool > | **[m_UseXYZ](../Classes/classshapeworks_1_1CorrespondenceFunction.md#variable-m-usexyz)**  |
 | std::vector< bool > | **[m_UseNormals](../Classes/classshapeworks_1_1CorrespondenceFunction.md#variable-m-usenormals)**  |
 | std::shared_ptr< vnl_matrix_type > | **[m_points_mean](../Classes/classshapeworks_1_1CorrespondenceFunction.md#variable-m-points-mean)**  |
-| std::shared_ptr< vnl_matrix_type > | **[m_InverseCovMatrix](../Classes/classshapeworks_1_1CorrespondenceFunction.md#variable-m-inversecovmatrix)**  |
+| std::shared_ptr< Eigen::MatrixXd > | **[m_InverseCovMatrix](../Classes/classshapeworks_1_1CorrespondenceFunction.md#variable-m-inversecovmatrix)**  |
 | int | **[num_dims](../Classes/classshapeworks_1_1CorrespondenceFunction.md#variable-num-dims)**  |
 | int | **[num_samples](../Classes/classshapeworks_1_1CorrespondenceFunction.md#variable-num-samples)**  |
 
@@ -694,7 +694,7 @@ std::shared_ptr< vnl_matrix_type > m_points_mean;
 ### variable m_InverseCovMatrix
 
 ```cpp
-std::shared_ptr< vnl_matrix_type > m_InverseCovMatrix;
+std::shared_ptr< Eigen::MatrixXd > m_InverseCovMatrix;
 ```
 
 
@@ -714,4 +714,4 @@ int num_samples;
 
 -------------------------------
 
-Updated on 2023-07-15 at 03:21:17 +0000
+Updated on 2023-07-17 at 17:00:04 +0000

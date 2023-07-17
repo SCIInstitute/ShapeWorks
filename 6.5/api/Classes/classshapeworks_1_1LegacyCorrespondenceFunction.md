@@ -86,7 +86,7 @@ Inherits from [shapeworks::VectorFunction](../Classes/classshapeworks_1_1VectorF
 | int | **[m_Counter](../Classes/classshapeworks_1_1LegacyCorrespondenceFunction.md#variable-m-counter)**  |
 | bool | **[m_UseMeanEnergy](../Classes/classshapeworks_1_1LegacyCorrespondenceFunction.md#variable-m-usemeanenergy)**  |
 | std::shared_ptr< vnl_matrix_type > | **[m_points_mean](../Classes/classshapeworks_1_1LegacyCorrespondenceFunction.md#variable-m-points-mean)**  |
-| std::shared_ptr< vnl_matrix_type > | **[m_InverseCovMatrix](../Classes/classshapeworks_1_1LegacyCorrespondenceFunction.md#variable-m-inversecovmatrix)**  |
+| std::shared_ptr< Eigen::MatrixXd > | **[m_InverseCovMatrix](../Classes/classshapeworks_1_1LegacyCorrespondenceFunction.md#variable-m-inversecovmatrix)**  |
 
 ## Additional inherited members
 
@@ -580,10 +580,10 @@ std::shared_ptr< vnl_matrix_type > m_points_mean;
 ### variable m_InverseCovMatrix
 
 ```cpp
-std::shared_ptr< vnl_matrix_type > m_InverseCovMatrix;
+std::shared_ptr< Eigen::MatrixXd > m_InverseCovMatrix;
 ```
 
 
 -------------------------------
 
-Updated on 2023-07-15 at 03:21:17 +0000
+Updated on 2023-07-17 at 17:00:04 +0000
