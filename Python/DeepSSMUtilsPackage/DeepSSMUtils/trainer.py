@@ -48,7 +48,7 @@ def set_scheduler(opt, sched_params):
 	if sched_params["type"] == "Step":
 		step_size = sched_params['parameters']['step_size']
 		gamma = sched_params['parameters']['gamma']
-		scheduler = torch.optim.lr_scheduler.StepLR(opt, step_size=1, gamma=0.99)
+		scheduler = torch.optim.lr_scheduler.StepLR(opt, step_size=step_size, gamma=gamma)
 	elif sched_params["type"] == "CosineAnnealing":
 		T_max = sched_params["parameters"]["T_max"]
 		eta_min = sched_params["parameters"]["eta_min"]
@@ -191,9 +191,9 @@ def supervised_train(config_file):
 				img = img.to(device)
 				mdl = mdl.to(device)
 				[pred_pca, pred_mdl] = net(img)
-				v_loss = loss_func(pred_mdl, mdl)
+				v_loss = loss_func(pred_pca, pca)
 				val_losses.append(v_loss.item())
-				val_rel_loss = loss_func(pred_mdl, mdl) / loss_func(pred_mdl*0, mdl)
+				val_rel_loss = loss_func(pred_pca, pca) / loss_func(pred_pca*0, pca)
 				val_rel_losses.append(val_rel_loss.item())
 				pred_particles.extend(pred_mdl.detach().cpu().numpy())
 				true_particles.extend(mdl.detach().cpu().numpy())
@@ -244,7 +244,6 @@ def supervised_train(config_file):
 		ft_epochs = parameters['fine_tune']['epochs']
 		learning_rate = parameters['fine_tune']['learning_rate']
 		eval_freq = parameters['fine_tune']['val_freq']
-		decay_lr = parameters['fine_tune']['decay_lr']
 		loss_func = method_to_call = getattr(losses, parameters['fine_tune']["loss"])
 		# free the last params
 		for param in net.decoder.fc_fine.parameters():
@@ -270,11 +269,11 @@ def supervised_train(config_file):
 				img = img.to(device)
 				mdl = mdl.to(device)
 				[pred_pca, pred_mdl] = net(img)
-				loss = torch.mean((pred_mdl - mdl)**2)
+				loss = loss_func(pred_mdl, mdl)
 				loss.backward()
 				opt.step()
 				train_losses.append(loss.item())
-				train_rel_loss = F.mse_loss(pred_mdl, mdl) / F.mse_loss(pred_mdl*0, mdl)
+				train_rel_loss = loss_func(pred_mdl, mdl) / loss_func(pred_mdl*0, mdl)
 				train_rel_losses.append(train_rel_loss.item())
 				pred_particles.extend(pred_mdl.detach().cpu().numpy())
 				true_particles.extend(mdl.detach().cpu().numpy())
@@ -291,9 +290,9 @@ def supervised_train(config_file):
 					img = img.to(device)
 					mdl = mdl.to(device)
 					[pred_pca, pred_mdl] = net(img)
-					v_loss = torch.mean((pred_mdl - mdl)**2)
+					v_loss = loss_func(pred_mdl, mdl)
 					val_losses.append(v_loss.item())
-					val_rel_loss = (F.mse_loss(pred_mdl, mdl) / F.mse_loss(pred_mdl*0, mdl)).item()
+					val_rel_loss = (loss_func(pred_mdl, mdl) / loss_func(pred_mdl*0, mdl)).item()
 					val_rel_losses.append(val_rel_loss)
 					if val_rel_loss < best_ft_val_rel_error:
 						best_ft_val_rel_error = val_rel_loss
@@ -381,8 +380,12 @@ def supervised_train_tl(config_file):
 			pca = pca.to(device)
 			mdl = mdl.to(device)
 			[pred_pt, lat, lat_img] = net(mdl, img)
-			loss = losses.focal_loss(pred_pt, mdl, a_ae, c_ae)
-			train_rel_loss = losses.focal_rel_loss(pred_pt, mdl, mean_mdl)
+			if parameters["loss"]["function"] == "MSE":
+				loss = losses.MSE(pred_pt, mdl)
+				train_rel_loss = losses.MSE(pred_pt, mdl) / losses.MSE(pred_pt * 0, mdl)
+			else:
+				loss = losses.Focal(pred_pt, mdl, a_ae, c_ae)
+				train_rel_loss = losses.Focal(pred_pt, mdl, a_ae, c_ae) / losses.Focal(pred_pt * 0, mdl, a_ae, c_ae)
 			loss.backward()
 			opt.step()
 			ae_train_losses.append(loss.item())
@@ -399,8 +402,8 @@ def supervised_train_tl(config_file):
 				mdl = mdl.to(device)
 				[pred_pt, lat, lat_img] = net(mdl, img)
 				# again in validation we simply compute standard l2 loss
-				loss_ae = losses.focal_loss(pred_pt, mdl)
-				ae_val_rel_loss = losses.focal_rel_loss(pred_pt, mdl, mean_mdl)
+				loss_ae = losses.MSE(pred_pt, mdl)
+				ae_val_rel_loss = losses.MSE(pred_pt, mdl) / losses.MSE(pred_pt * 0, mdl)
 				ae_val_losses.append(loss_ae.item())
 				ae_val_rel_losses.append(ae_val_rel_loss.item())
 			
@@ -439,8 +442,12 @@ def supervised_train_tl(config_file):
 			pca = pca.to(device)
 			mdl = mdl.to(device)
 			[pred_pt, lat, lat_img] = net(mdl, img)
-			loss = losses.focal_loss(lat_img, lat, a_lat, c_lat)
-			train_rel_loss = losses.focal_rel_loss(lat_img, lat, lat*0)
+			if parameters["loss"]["function"] == "MSE":
+				loss = losses.MSE(lat, lat_img)
+				train_rel_loss = losses.MSE(lat, lat_img) / losses.MSE(lat * 0, lat_img)
+			else:
+				loss = losses.Focal(lat, lat_img, a_lat, c_lat)
+				train_rel_loss = losses.Focal(lat, lat_img, a_lat, c_lat) / losses.Focal(lat*0, lat_img, a_lat, c_lat)
 			loss.backward()
 			opt.step()
 			tf_train_losses.append(loss.item())
@@ -457,8 +464,8 @@ def supervised_train_tl(config_file):
 				pca = pca.to(device)
 				mdl = mdl.to(device)
 				[pred_pt, lat, lat_img] = net(mdl, img)
-				loss_tf = losses.focal_loss(lat_img, lat)
-				tf_val_rel_loss = losses.focal_rel_loss(lat_img, lat, lat*0)
+				loss_tf = losses.MSE(lat_img, lat)
+				tf_val_rel_loss =  losses.MSE(lat_img, lat) / losses.MSE(lat_img * 0, lat)
 				tf_val_losses.append(loss_tf.item())
 				tf_val_rel_losses.append(tf_val_rel_loss.item())
 			
@@ -497,10 +504,16 @@ def supervised_train_tl(config_file):
 			pca = pca.to(device)
 			mdl = mdl.to(device)
 			[pred_pt, lat, lat_img] = net(mdl, img)
-			loss_ae = losses.focal_loss(pred_pt, mdl, a_ae, c_ae)
-			ae_train_rel_loss = losses.focal_loss(pred_pt, mdl, mean_mdl)
-			loss_tf = losses.focal_loss(lat_img, lat, a_lat, c_lat)
-			tf_train_rel_loss = losses.focal_rel_loss(lat_img, lat, lat*0)
+			if parameters["loss"]["function"] == "MSE":
+				loss_ae = losses.MSE(pred_pt, mdl)
+				loss_tf = losses.MSE(lat_img, lat)
+				ae_train_rel_loss = losses.MSE(pred_pt, mdl) / losses.MSE(pred_pt * 0, mdl)
+				tf_train_rel_loss = losses.MSE(lat_img, lat) / losses.MSE(lat_img * 0, lat)
+			else:
+				loss_ae = losses.Focal(pred_pt, mdl, a_ae, c_ae)
+				loss_tf = losses.Focal(lat, lat_img, a_lat, c_lat)
+				ae_train_rel_loss = losses.Focal(pred_pt, mdl, a_ae, c_ae) / losses.Focal(pred_pt * 0, mdl, a_ae, c_ae)
+				tf_train_rel_loss = losses.Focal(lat, lat_img, a_lat, c_lat) / losses.Focal(lat*0, lat_img, a_lat, c_lat)
 			loss = loss_ae  + alpha*loss_tf
 			loss.backward()
 			opt.step()
@@ -519,10 +532,10 @@ def supervised_train_tl(config_file):
 				pca = pca.to(device)
 				mdl = mdl.to(device)
 				[pred_pt, lat, lat_img] = net(mdl,img)
-				loss_ae = losses.focal_loss(pred_pt, mdl)
-				ae_val_rel_loss = losses.focal_rel_loss(pred_pt, mdl, mean_mdl)
-				loss_tf = losses.focal_loss(lat_img, lat)
-				tf_val_rel_loss = losses.focal_rel_loss(lat_img, lat, lat*0)
+				loss_ae = losses.MSE(pred_pt, mdl)
+				ae_val_rel_loss = losses.MSE(pred_pt, mdl) / losses.MSE(pred_pt*0, mdl) 
+				loss_tf = losses.MSE(lat_img, lat)
+				tf_val_rel_loss = losses.MSE(lat, lat_img) / losses.MSE(lat * 0, lat_img)
 				
 				ae_val_rel_losses.append(ae_val_rel_loss.item())
 				tf_val_rel_losses.append(tf_val_rel_loss.item())

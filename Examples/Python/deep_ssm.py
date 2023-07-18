@@ -584,7 +584,7 @@ def Run_Pipeline(args):
             "linear": True
         },
         "loss": {
-            "function": "MSE",
+            "function": "Focal",
             "supervised_latent": True,
         },
         "trainer": {
@@ -595,25 +595,32 @@ def Run_Pipeline(args):
                 "type":"CosineAnnealing",
                 "parameters":{
                     "T_max":10,
-                    "eta_min":0
+                    "eta_min":0,
+                    "step_size": 1, 
+                    "gamma": 0.99
                 }
             },
             "val_freq": 1
         },
         "fine_tune": {
             "enabled": False,
+            "epochs": 10,
+            "loss": "MSE",
+            "learning_rate": 0.001,
+            "decay_lr": True,
+            "val_freq": 1
         },
         "use_best_model": True,
         "tl_net":{
-			"enabled": True,# args.tl_net,
+			"enabled": True,
 			"ae_epochs": 10000,
 			"tf_epochs":100,
 			"joint_epochs":25,
 			"alpha":1,
-			"a_ae":0,
-			"c_ae":0,
-			"a_lat":0,
-			"c_lat":0
+			"a_ae":10,
+			"c_ae":1.32,
+			"a_lat":10,
+			"c_lat":6.3
 	    }
     }
     if args.tiny_test:
@@ -623,7 +630,7 @@ def Run_Pipeline(args):
     with open(config_file, "w") as outfile:
         json.dump(model_parameters, outfile, indent=2)
     # Train
-    # DeepSSMUtils.trainDeepSSM(config_file)
+    DeepSSMUtils.trainDeepSSM(config_file)
 
     ######################################################################################
     print("\nStep 11. Predict validation particles with trained DeepSSM and analyze accuracy.")
