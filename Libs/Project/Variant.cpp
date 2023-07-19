@@ -77,3 +77,17 @@ Variant::operator std::vector<bool>() const {
   std::vector<bool> v((std::istream_iterator<bool>(iss)), std::istream_iterator<bool>());
   return v;
 }
+
+//---------------------------------------------------------------------------
+Variant::operator std::vector<std::string>() const {
+  std::istringstream iss(str_);
+  std::vector<std::string> v((std::istream_iterator<std::string>(iss)), std::istream_iterator<std::string>());
+
+  std::vector<std::string> v2;
+  // for each string, replace %20 with spaces
+  for (auto& s : v) {
+    s = StringUtils::replace_string(s, "%20", " ");
+    v2.push_back(s);
+  }
+  return v2;
+}
