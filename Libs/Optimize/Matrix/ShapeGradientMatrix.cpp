@@ -1,9 +1,17 @@
 #include "ShapeGradientMatrix.h"
 
+#include "Domain/MeshDomain.h"
+
 namespace shapeworks {
 
 void ShapeGradientMatrix::SetValues(const ParticleSystemType* ps, int idx, int d) {
   const typename ParticleSystem::PointType posLocal = ps->GetPosition(idx, d);
+
+  // idx : particle number (e.g. 0 ... 1024)
+  // d : domain number (eg. 0 ... number of subjects* m_DomainsPerShape)
+  // m_DomainPerShape : e.g. 2 for hip+femur
+  // dom : anatomical domain for this "domain"
+  // k : index into matrix?
 
   unsigned int k = 0;
   int dom = d % m_DomainsPerShape;
@@ -27,6 +35,11 @@ void ShapeGradientMatrix::SetValues(const ParticleSystemType* ps, int idx, int d
     k += idx * 3;
   }
   k += idx * m_AttributesPerDomain[dom];
+
+  static int count = 0;
+  // if (count++ < 500) {
+  //SW_LOG("k = {}, num = {}, dom = {}, idx = {}, d = {}", k, num, dom, idx, d);
+  //}
 
   int s = 0;
   if (m_use_xyz[dom]) {
@@ -105,7 +118,6 @@ void ShapeGradientMatrix::SetValues(const ParticleSystemType* ps, int idx, int d
         }
       }
     } else {
-      // TODO, figure out what is going on here
       point pt;
       pt.clear();
       pt[0] = posLocal[0];
@@ -113,14 +125,20 @@ void ShapeGradientMatrix::SetValues(const ParticleSystemType* ps, int idx, int d
       pt[2] = posLocal[2];
 
       for (int aa = 0; aa < m_AttributesPerDomain[dom]; aa++) {
-        point dc;
-        dc.clear();
-        const shapeworks::ImplicitSurfaceDomain<float>* domain =
-            static_cast<const shapeworks::ImplicitSurfaceDomain<float>*>(ps->GetDomain(d));
-        meshFIM* ptr = domain->GetMesh();
-        dc = ptr->GetFeatureDerivative(pt, aa);
+
+        const MeshDomain* domain = static_cast<const MeshDomain*>(ps->GetDomain(d));
+
+        auto mesh = domain->GetSWMesh();
+
+        auto field_attributes = ps->GetFieldAttributes();
+        Point3 point;
+        point[0] = pt[0];
+        point[1] = pt[1];
+        point[2] = pt[2];
+        Eigen::Vector3d gradient = mesh->computeFieldGradientAtPoint(field_attributes[aa], point);
+
         for (int vd = 0; vd < 3; vd++) {
-          this->operator()(aa + k, vd + 3 * (d / m_DomainsPerShape)) = dc[vd] * m_AttributeScales[num + aa + s];
+          this->operator()(aa + k, vd + 3 * (d / m_DomainsPerShape)) = gradient[vd] * m_AttributeScales[num + aa + s];
         }
       }
     }

@@ -121,11 +121,7 @@ class Sampler {
 
   void AddContour(vtkSmartPointer<vtkPolyData> poly_data);
 
-  void SetFidsFiles(const std::vector<std::string>& s) { m_FidsFiles = s; }
-
-  void SetFeaFiles(const std::vector<std::string>& s) { m_FeaMeshFiles = s; }
-
-  void SetFeaGradFiles(const std::vector<std::string>& s) { m_FeaGradFiles = s; }
+  void SetFieldAttributes(const std::vector<std::string>& s);
 
   void SetDomainsPerShape(int n) {
     m_DomainsPerShape = n;
@@ -439,6 +435,8 @@ class Sampler {
   std::vector<FreeFormConstraint> m_FFCs;
   std::vector<vtkSmartPointer<vtkPolyData>> m_meshes;
   bool m_meshFFCMode = false;
+
+  std::vector<std::string> fieldAttributes_;
 
   unsigned int m_verbosity;
 };

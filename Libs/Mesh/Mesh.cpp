@@ -910,6 +910,71 @@ void Mesh::computeFieldGradient(const std::string& field) const {
   poly_data_->GetPointData()->AddArray(gradient);
 }
 
+Eigen::Vector3d Mesh::computeFieldGradientAtPoint(const std::string& field, const Point3& query) const {
+  this->updateCellLocator();
+
+  // compute gradient if not already computed
+  if (poly_data_->GetPointData()->GetArray((std::string("gradient_") + field).c_str()) == nullptr) {
+    computeFieldGradient(field);
+  }
+
+  double closestPoint[3];
+  vtkIdType cellId;
+  int subId;
+  double dist;
+  cellLocator->FindClosestPoint(query.data(), closestPoint, cellId, subId, dist);
+
+  auto cell = poly_data_->GetCell(cellId);
+
+  size_t v1 = cell->GetPointId(0);
+  size_t v2 = cell->GetPointId(1);
+  size_t v3 = cell->GetPointId(2);
+
+  auto gradient = poly_data_->GetPointData()->GetArray((std::string("gradient_") + field).c_str());
+
+  Eigen::Vector3d grad1(gradient->GetTuple3(v1)[0], gradient->GetTuple3(v1)[1], gradient->GetTuple3(v1)[2]);
+  Eigen::Vector3d grad2(gradient->GetTuple3(v2)[0], gradient->GetTuple3(v2)[1], gradient->GetTuple3(v2)[2]);
+  Eigen::Vector3d grad3(gradient->GetTuple3(v3)[0], gradient->GetTuple3(v3)[1], gradient->GetTuple3(v3)[2]);
+
+  // Compute barycentric distances
+  Eigen::Vector3d cp(closestPoint[0], closestPoint[1], closestPoint[2]);
+  Eigen::Vector3d bary = computeBarycentricCoordinates(cp, cellId);
+
+  bary = bary / bary.sum();
+
+  Eigen::Vector3d result;
+  result = bary[0] * grad1 + bary[1] * grad2 + bary[2] * grad3;
+  return result;
+}
+
+double Mesh::interpolateFieldAtPoint(const std::string &field, const Point3 &query) const
+{
+  this->updateCellLocator();
+
+  double closestPoint[3];
+  vtkIdType cellId;
+  int subId;
+  double dist;
+  this->cellLocator->FindClosestPoint(query.data(), closestPoint, cellId, subId, dist);
+
+  auto cell = this->poly_data_->GetCell(cellId);
+
+  size_t v1 = cell->GetPointId(0);
+  size_t v2 = cell->GetPointId(1);
+  size_t v3 = cell->GetPointId(2);
+
+          // Compute barycentric distances
+  Eigen::Vector3d cp(closestPoint[0], closestPoint[1], closestPoint[2]);
+  Eigen::Vector3d bary = computeBarycentricCoordinates(cp, cellId);
+
+  bary = bary / bary.sum();
+
+  Eigen::Vector3d values(this->getFieldValue(field, v1), this->getFieldValue(field, v2),
+                         this->getFieldValue(field, v3));
+
+  return (bary * values.transpose()).mean();
+}
+
 Mesh& Mesh::applySubdivisionFilter(const SubdivisionType type, int subdivision) {
   if (type == Mesh::SubdivisionType::Loop) {
     auto filter = vtkSmartPointer<vtkLoopSubdivisionFilter>::New();
@@ -1513,30 +1578,8 @@ Eigen::Vector3d Mesh::computeBarycentricCoordinates(const Eigen::Vector3d& pt, i
 }
 
 double Mesh::getFFCValue(Eigen::Vector3d query) const {
-  this->updateCellLocator();
-
-  double closestPoint[3];
-  vtkIdType cellId;
-  int subId;
-  double dist;
-  this->cellLocator->FindClosestPoint(query.data(), closestPoint, cellId, subId, dist);
-
-  auto cell = this->poly_data_->GetCell(cellId);
-
-  size_t v1 = cell->GetPointId(0);
-  size_t v2 = cell->GetPointId(1);
-  size_t v3 = cell->GetPointId(2);
-
-  // Compute barycentric distances
-  Eigen::Vector3d cp(closestPoint[0], closestPoint[1], closestPoint[2]);
-  Eigen::Vector3d bary = computeBarycentricCoordinates(cp, cellId);
-
-  bary = bary / bary.sum();
-
-  Eigen::Vector3d values(this->getFieldValue("value", v1), this->getFieldValue("value", v2),
-                         this->getFieldValue("value", v3));
-
-  return (bary * values.transpose()).mean();
+  Point3 point(query.data());
+  return interpolateFieldAtPoint("value", point);
 }
 
 Eigen::Vector3d Mesh::getFFCGradient(Eigen::Vector3d query) const {

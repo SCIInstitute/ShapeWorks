@@ -9,7 +9,7 @@
 #include <boost/filesystem.hpp>
 #include <functional>
 
-#include "Libs/Optimize/Domain/VtkMeshWrapper.h"
+//#include "Libs/Optimize/Domain/VtkMeshWrapper.h"
 #include "Optimize.h"
 
 using namespace shapeworks;
@@ -43,6 +43,8 @@ const std::string fixed_subjects_choice = "fixed_subjects_choice";
 const std::string checkpointing_interval = "checkpointing_interval";
 const std::string save_init_splits = "save_init_splits";
 const std::string keep_checkpoints = "keep_checkpoints";
+const std::string field_attributes = "field_attributes";
+const std::string field_attribute_weights = "field_attribute_weights";
 }  // namespace Keys
 
 //---------------------------------------------------------------------------
@@ -76,9 +78,9 @@ OptimizeParameters::OptimizeParameters(ProjectHandle project) {
                                          Keys::fixed_subjects_choice,
                                          Keys::checkpointing_interval,
                                          Keys::save_init_splits,
-                                         Keys::keep_checkpoints
-
-  };
+                                         Keys::keep_checkpoints,
+                                         Keys::field_attributes,
+                                         Keys::field_attribute_weights};
 
   // check if params_ has any unknown keys
   for (auto& param : params_.get_map()) {
@@ -357,16 +359,40 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
     }
   }
 
+  auto field_attributes = get_field_attributes();
+  std::vector<int> attributes_per_domain;
+  auto field_weights = get_field_attribute_weights();
+  for (int i = 0; i < domains_per_shape; i++) {
+    attributes_per_domain.push_back(field_attributes.size());
+  }
+
+  // check that the number of weights matches the number of attributes
+  if (field_weights.size() != field_attributes.size()) {
+    throw std::runtime_error("The number of field attribute weights does not match the number of field attributes");
+  }
+
+
+  for (int j = 0; j < field_attributes.size(); j++) {
+    SW_LOG("Using scalar field attribute: {} with weight {}", field_attributes[j], field_weights[j]);
+    attr_scales.push_back(field_weights[j]);
+  }
+
+
+  for (int i = 0; i < domains_per_shape; i++) {
+    for (int j = 0; j < field_attributes.size(); j++) {
+      attr_scales.push_back(field_weights[j]);
+    }
+  }
+
+  optimize->SetAttributesPerDomain(attributes_per_domain);
+  bool use_extra_attributes = normals_enabled || field_attributes.size() > 0;
+
   optimize->SetUseNormals(use_normals);
   optimize->SetUseXYZ(use_xyz);
-  optimize->SetUseMeshBasedAttributes(normals_enabled);
+  optimize->SetUseMeshBasedAttributes(use_extra_attributes);
   optimize->SetAttributeScales(attr_scales);
+  optimize->SetFieldAttributes(field_attributes);
 
-  std::vector<int> attributes_per_domain;
-  for (int i = 0; i < domains_per_shape; i++) {
-    attributes_per_domain.push_back(0);
-  }
-  optimize->SetAttributesPerDomain(attributes_per_domain);
 
   int procrustes_interval = 0;
   if (get_use_procrustes()) {
@@ -597,5 +623,26 @@ void OptimizeParameters::set_save_init_splits(bool enabled) { params_.set(Keys::
 
 //---------------------------------------------------------------------------
 bool OptimizeParameters::get_keep_checkpoints() { return params_.get(Keys::keep_checkpoints, false); }
+
 //---------------------------------------------------------------------------
 void OptimizeParameters::set_keep_checkpoints(bool enabled) { params_.set(Keys::keep_checkpoints, enabled); }
+
+//---------------------------------------------------------------------------
+std::vector<std::string> OptimizeParameters::get_field_attributes() {
+  return params_.get(Keys::field_attributes, std::vector<std::string>());
+}
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_field_attributes(std::vector<std::string> attributes) {
+  params_.set(Keys::field_attributes, attributes);
+}
+
+//---------------------------------------------------------------------------
+std::vector<double> OptimizeParameters::get_field_attribute_weights() {
+  return params_.get(Keys::field_attribute_weights, std::vector<double>());
+}
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_field_attribute_weights(std::vector<double> weights) {
+  params_.set(Keys::field_attribute_weights, weights);
+}
