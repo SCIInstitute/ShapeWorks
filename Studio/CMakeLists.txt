@@ -310,6 +310,14 @@ if(WIN32)
                                 --libdir $<TARGET_FILE_DIR:ShapeWorksStudio>
                                 $<TARGET_FILE_DIR:ShapeWorksStudio>/ShapeWorksStudio.exe
   )
+
+  # install msvcp140.dll and vcruntime140.dll
+  file(TO_CMAKE_PATH "$ENV{windir}/SysWOW64" WIN_SYSDIR)
+  if (NOT EXISTS "${WIN_SYSDIR}")
+    file(TO_CMAKE_PATH "$ENV{windir}/system32" WIN_SYSDIR)
+  endif()
+  install(FILES "${WIN_SYSDIR}/msvcp140.dll" "${WIN_SYSDIR}/vcomp140.dll" "${WIN_SYSDIR}/vcruntime140.dll" "${WIN_SYSDIR}/vcruntime140_1.dll" DESTINATION bin)
+    
 endif(WIN32)
 
 
@@ -394,6 +402,6 @@ if (APPLE)
   # See https://doc.qt.io/qt-5/osx-deployment.html#macdeploy
   install(CODE "set(deployqt \"${deployqt}\")" COMPONENT Runtime)
   install(CODE [===[
-    execute_process(COMMAND "${deployqt}" "${CMAKE_INSTALL_PREFIX}/bin/ShapeWorksStudio.app" "-verbose=2")
+    execute_process(COMMAND "${deployqt}" "${CMAKE_INSTALL_PREFIX}/bin/ShapeWorksStudio.app" "-no-strip" "-verbose=3")
     ]===] COMPONENT Runtime)
 endif()

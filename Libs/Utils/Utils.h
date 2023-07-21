@@ -21,6 +21,8 @@
 #endif
 #endif
 
+#include <Eigen/Core>
+
 #include <math.h>
 #include <iostream>
 #include <map>
@@ -101,7 +103,7 @@ public:
 
     // matrix multiplication without an allocation for the output
     template<typename T>
-    static void multiply_into(vnl_matrix<T> &out, const vnl_matrix<T> &lhs, const vnl_matrix<T> &rhs);
+    static void multiply_into(Eigen::MatrixXd &out, const vnl_matrix<T> &lhs, const vnl_matrix<T> &rhs);
 
   //--------------- average normal directions --------------------------------
     /**

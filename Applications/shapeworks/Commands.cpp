@@ -146,6 +146,10 @@ bool OptimizeCommand::execute(const optparse::Values& options, SharedCommandData
       if (success) {
         project->save(projectFile);
       }
+      if (show_progress) {
+        // final newline so that the next line doesn't garble with the progress
+        std::cout << "\n";
+      }
 
       return success;
     } catch (std::exception& e) {
@@ -204,6 +208,11 @@ bool GroomCommand::execute(const optparse::Values& options, SharedCommandData& s
     if (success) {
       project->save(projectFile);
     }
+    if (show_progress) {
+      // final newline so that the next line doesn't garble with the progress
+      std::cout << "\n";
+    }
+
     return success;
   } catch (std::exception& e) {
     SW_ERROR(e.what());
@@ -221,6 +230,8 @@ void AnalyzeCommand::buildParser() {
 
   parser.add_option("--name").action("store").type("string").set_default("").help("Path to project file.");
   parser.add_option("--output").action("store").type("string").set_default("").help("Path to output file.");
+  parser.add_option("--range").action("store").type("float").set_default(3.0f).help("Standard deviation range for PCA [default: 3.0].");
+  parser.add_option("--steps").action("store").type("int").set_default(21).help("Number of steps to use for PCA [default: 21].");
 
   Command::buildParser();
 }
@@ -228,6 +239,8 @@ void AnalyzeCommand::buildParser() {
 bool AnalyzeCommand::execute(const optparse::Values& options, SharedCommandData& sharedData) {
   const std::string& projectFile(static_cast<std::string>(options.get("name")));
   const std::string& outputFile(static_cast<std::string>(options.get("output")));
+  const float range = static_cast<float>(options.get("range"));
+  const int steps = static_cast<int>(options.get("steps"));
 
   if (projectFile.length() == 0) {
     std::cerr << "Must specify project name with --name <project.xlsx|.swproj>\n";
@@ -259,7 +272,7 @@ bool AnalyzeCommand::execute(const optparse::Values& options, SharedCommandData&
     boost::filesystem::path dir(oldBasePath);
     boost::filesystem::path file(outputFile);
     boost::filesystem::path full_output = dir / file;
-    analyze.run_offline_analysis(full_output.string());
+    analyze.run_offline_analysis(full_output.string(), range, steps);
 
     boost::filesystem::current_path(oldBasePath);
 

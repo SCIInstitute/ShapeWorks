@@ -1242,6 +1242,12 @@ PYBIND11_MODULE(shapeworks_py, m)
        &Mesh::compareField,
        "compares two meshes based on fields",
        "other_mesh"_a, "name1"_a, "name2"_a="", "eps"_a=-1.0)
+
+  .def("computeThickness",
+       &Mesh::computeThickness,
+       "Computes cortical thickness",
+       "ct"_a, "dt"_a = nullptr, "maxDist"_a=10000, "distanceMesh"_a = "")
+
   ;
 
   // MeshWarping
@@ -1968,13 +1974,17 @@ PYBIND11_MODULE(shapeworks_py, m)
       "remove an entry",
       "key"_a)
 
-  .def("set_map",
-      &Parameters::set_map,
-      "set underlying map",
-      "map"_a)
+  .def("as_map",
+      [](const Parameters& params) -> decltype(auto) {
+          project::types::StringMap m = params.get_map();
+          std::map<std::string,std::string> map;
 
-  .def("get_map",
-      &Parameters::get_map,
+         for (auto& [k, v] : m) {
+           map[k] = v;
+         }
+
+         return map;
+       },
       "get underlying map")
 
   .def("reset_parameters",
@@ -2001,6 +2011,12 @@ PYBIND11_MODULE(shapeworks_py, m)
   .def(py::init< const char*> ())
 
   .def(py::init< bool> ())
+
+  .def("as_str",
+        [](const Variant& v) -> decltype(auto) {
+          return static_cast<std::string>(v);
+       },
+      "Return the variant string content")
 
   ; //Variant
 } // PYBIND11_MODULE(shapeworks_py)

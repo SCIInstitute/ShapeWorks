@@ -72,16 +72,6 @@ static void new_log() {
 }
 
 int main(int argc, char** argv) {
-  if (argc > 1) {
-    if (std::string(argv[1]) == "-c") {
-      return 0;
-    }
-  }
-
-  // print args
-  for (int i = 0; i < argc; i++) {
-    SW_LOG("Arg {}: {}", i, argv[i]);
-  }
   // tbb::task_scheduler_init init(1);
 
   try {

@@ -55,56 +55,69 @@ void UpdateChecker::run_update_check() {
 }
 
 void UpdateChecker::handleNetworkReply(QNetworkReply* reply) {
-  std::string response = QString(reply->readAll()).toStdString();
-
-  // get the json response
   try {
-    auto j = json::parse(response);
-    std::string platform = StudioUtils::get_platform_string().toStdString();
+    std::string response = QString(reply->readAll()).toStdString();
 
-    int major = j[platform]["major"].get<int>();
-    int minor = j[platform]["minor"].get<int>();
-    int patch = j[platform]["patch"].get<int>();
-    QString message = QString::fromStdString(j[platform]["message"].get<std::string>());
+    // get the json response
+    try {
+      auto j = json::parse(response);
+      std::string platform = StudioUtils::get_platform_string().toStdString();
 
-    bool update_available = false;
-    if (major > SHAPEWORKS_MAJOR_VERSION) {
-      update_available = true;
-    } else if (major == SHAPEWORKS_MAJOR_VERSION && minor > SHAPEWORKS_MINOR_VERSION) {
-      update_available = true;
-    } else if (major == SHAPEWORKS_MAJOR_VERSION && minor == SHAPEWORKS_MINOR_VERSION &&
-               patch > SHAPEWORKS_PATCH_VERSION) {
-      update_available = true;
-    }
+      int major = j[platform]["major"].get<int>();
+      int minor = j[platform]["minor"].get<int>();
+      int patch = j[platform]["patch"].get<int>();
+      QString message = QString::fromStdString(j[platform]["message"].get<std::string>());
 
-    if (update_available) {
-      auto url = QString("https://github.com/SCIInstitute/ShapeWorks/releases/latest");
+      bool update_available = false;
+      if (major > SHAPEWORKS_MAJOR_VERSION) {
+        update_available = true;
+      } else if (major == SHAPEWORKS_MAJOR_VERSION && minor > SHAPEWORKS_MINOR_VERSION) {
+        update_available = true;
+      } else if (major == SHAPEWORKS_MAJOR_VERSION && minor == SHAPEWORKS_MINOR_VERSION &&
+                 patch > SHAPEWORKS_PATCH_VERSION) {
+        update_available = true;
+      }
 
-      auto title = QString("New version available");
-      setWindowTitle(title);
-      ui_->label->setTextFormat(Qt::RichText);
-      ui_->label->setOpenExternalLinks(true);
-      ui_->label->setTextInteractionFlags(Qt::TextBrowserInteraction);
-      ui_->label->setText(QString("A new version of ShapeWorks is available.<br><br>"
-                                  "To download the latest version, please visit:<br><br><a href=\"%1\">%1</a><br><br>" +
-                                  message)
-                              .arg(url));
+      if (update_available) {
+        auto url = QString("https://github.com/SCIInstitute/ShapeWorks/releases/latest");
 
-      show();
-      raise();
+        auto title = QString("New version available");
+        setWindowTitle(title);
+        ui_->label->setTextFormat(Qt::RichText);
+        ui_->label->setOpenExternalLinks(true);
+        ui_->label->setTextInteractionFlags(Qt::TextBrowserInteraction);
+        ui_->label->setText(
+            QString("A new version of ShapeWorks is available.<br><br>"
+                    "To download the latest version, please visit:<br><br><a href=\"%1\">%1</a><br><br>" +
+                    message)
+                .arg(url));
 
-    } else {
+        show();
+        raise();
+
+      } else {
+        if (manual_trigger_) {
+          // show a messagebox saying there is no update
+          auto title = QString("No update available");
+          auto info = QString("You are running the latest version of ShapeWorks.");
+          QMessageBox::information(nullptr, title, info, QMessageBox::Ok);
+        }
+      }
+
+    } catch (json::exception& e) {
       if (manual_trigger_) {
+        SW_LOG("Unable to check for updates: {}", std::string(e.what()));
         // show a messagebox saying there is no update
-        auto title = QString("No update available");
-        auto info = QString("You are running the latest version of ShapeWorks.");
+        auto title = QString("An error occurred checking for updates");
+        auto info = QString("An error occurred checking for updates. Please try again later.");
         QMessageBox::information(nullptr, title, info, QMessageBox::Ok);
       }
+      return;
     }
 
-  } catch (json::exception& e) {
-    SW_LOG("Unable to check for updates: " + std::string(e.what()));
-    return;
+  } catch (...) {
+    // allowing it to pass further will close the program
+    // better that the update check just doesn't work as it's not critical
   }
 }
 }  // namespace shapeworks
