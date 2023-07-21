@@ -45,8 +45,8 @@ void DisentangledCorrespondenceFunction::ComputeCovarianceMatrices() {
       points_minus_mean_t.clear();
       points_minus_mean_t.set_size(num_dims, num_N);
       points_minus_mean_t.fill(0.0);
-      vnl_matrix_type inv_cov_t;
-      inv_cov_t.clear();
+      Eigen::MatrixXd inv_cov_t;
+      inv_cov_t.setZero();
 
       m_points_mean_time_cohort->at(time_inst).clear();
       m_points_mean_time_cohort->at(time_inst).set_size(num_dims, 1);
@@ -76,7 +76,7 @@ void DisentangledCorrespondenceFunction::ComputeCovarianceMatrices() {
       if (this->m_UseMeanEnergy)
       {
         pinvMat_t.set_identity();
-        m_InverseCovMatrices_time_cohort->at(time_inst).clear();
+        m_InverseCovMatrices_time_cohort->at(time_inst).setZero();
       }
       else
       {
@@ -92,7 +92,7 @@ void DisentangledCorrespondenceFunction::ComputeCovarianceMatrices() {
         vnl_matrix_type projMat_t = points_minus_mean_t * UG;
         const auto lhs = projMat_t * invLambda_t;
         const auto rhs = invLambda_t * projMat_t.transpose();
-        inv_cov_t.set_size(num_dims, num_dims);
+        inv_cov_t.resize(num_dims, num_dims);
         Utils::multiply_into(inv_cov_t, lhs, rhs);
       }
       // Update Gradient points update infor
@@ -145,8 +145,8 @@ void DisentangledCorrespondenceFunction::ComputeCovarianceMatrices() {
       points_minus_mean_n.clear();
       points_minus_mean_n.set_size(num_dims, num_T);
       points_minus_mean_n.fill(0.0);
-      vnl_matrix_type inv_cov_n;
-      inv_cov_n.clear();
+      Eigen::MatrixXd inv_cov_n;
+      inv_cov_n.setZero();
 
       m_points_mean_shape_cohort->at(sub).clear();
       m_points_mean_shape_cohort->at(sub).set_size(num_dims, 1);
@@ -176,7 +176,7 @@ void DisentangledCorrespondenceFunction::ComputeCovarianceMatrices() {
       if (this->m_UseMeanEnergy)
       {
         pinvMat_n.set_identity();
-        m_InverseCovMatrices_shape_cohort->at(sub).clear();
+        m_InverseCovMatrices_shape_cohort->at(sub).setZero();
       }
       else
       {
@@ -192,7 +192,7 @@ void DisentangledCorrespondenceFunction::ComputeCovarianceMatrices() {
         vnl_matrix_type projMat_n = points_minus_mean_n * UG;
         const auto lhs = projMat_n * invLambda_n;
         const auto rhs = invLambda_n * projMat_n.transpose();
-        inv_cov_n.set_size(num_dims, num_dims);
+        inv_cov_n.resize(num_dims, num_dims);
         Utils::multiply_into(inv_cov_n, lhs, rhs);
       }
 
@@ -250,10 +250,17 @@ DisentangledCorrespondenceFunction::VectorType DisentangledCorrespondenceFunctio
   Xi_time_cohort(1,0) = m_ShapeMatrix->operator()(shape_matrix_start_idx+1, cur_sub) - m_points_mean_time_cohort->at(cur_time_point).get(particle_idx+1, 0);
   Xi_time_cohort(2,0) = m_ShapeMatrix->operator()(shape_matrix_start_idx+2, cur_sub) - m_points_mean_time_cohort->at(cur_time_point).get(particle_idx+2, 0);
   vnl_matrix_type tmp1_time(3, 3, 0.0);
-  if (this->m_UseMeanEnergy)
+  if (this->m_UseMeanEnergy) {
     tmp1_time.set_identity();
-  else
-    tmp1_time = m_InverseCovMatrices_time_cohort->at(cur_time_point).extract(3,3,particle_idx, particle_idx);
+  } else {
+    Eigen::MatrixXd region = m_InverseCovMatrices_time_cohort->at(cur_time_point).block(particle_idx, particle_idx, 3, 3);
+    // convert to vnl
+    for (unsigned int i = 0; i < 3; i++) {
+      for (unsigned int j = 0; j < 3; j++) {
+        tmp1_time(i, j) = region(i, j);
+      }
+    }
+  }
   vnl_matrix_type tmp_time = Xi_time_cohort.transpose()*tmp1_time;
   tmp_time *= Xi_time_cohort;
 
@@ -263,10 +270,17 @@ DisentangledCorrespondenceFunction::VectorType DisentangledCorrespondenceFunctio
   Xi_shape_cohort(1,0) = m_ShapeMatrix->operator()(shape_matrix_start_idx+1, cur_sub) - m_points_mean_shape_cohort->at(cur_sub).get(particle_idx+1, 0);
   Xi_shape_cohort(2,0) = m_ShapeMatrix->operator()(shape_matrix_start_idx+2, cur_sub) - m_points_mean_shape_cohort->at(cur_sub).get(particle_idx+2, 0);
   vnl_matrix_type tmp1_shape(3, 3, 0.0);
-  if (this->m_UseMeanEnergy)
+  if (this->m_UseMeanEnergy) {
     tmp1_shape.set_identity();
-  else
-    tmp1_shape = m_InverseCovMatrices_shape_cohort->at(cur_sub).extract(3,3,particle_idx, particle_idx);
+  } else {
+    Eigen::MatrixXd region = m_InverseCovMatrices_shape_cohort->at(cur_sub).block(particle_idx, particle_idx, 3, 3);
+    // convert to vnl
+    for (unsigned int i = 0; i < 3; i++) {
+      for (unsigned int j = 0; j < 3; j++) {
+        tmp1_time(i, j) = region(i, j);
+      }
+    }
+  }
   vnl_matrix_type tmp_shape = Xi_shape_cohort.transpose()*tmp1_shape;
   tmp_shape *= Xi_shape_cohort;
 

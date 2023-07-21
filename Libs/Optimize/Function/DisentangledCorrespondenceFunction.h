@@ -148,8 +148,8 @@ class DisentangledCorrespondenceFunction : public VectorFunction {
     m_RecomputeCovarianceInterval = 1;
     m_Counter = 0;
     m_UseMeanEnergy = true;
-    m_InverseCovMatrices_time_cohort = std::make_shared<std::vector<vnl_matrix_type>>();
-    m_InverseCovMatrices_shape_cohort = std::make_shared<std::vector<vnl_matrix_type>>();
+    m_InverseCovMatrices_time_cohort = std::make_shared<std::vector<Eigen::MatrixXd>>();
+    m_InverseCovMatrices_shape_cohort = std::make_shared<std::vector<Eigen::MatrixXd>>();
     m_points_mean_time_cohort = std::make_shared<std::vector<vnl_matrix_type>>();
     m_points_mean_shape_cohort = std::make_shared<std::vector<vnl_matrix_type>>();
     m_Time_PointsUpdate = std::make_shared<std::vector<vnl_matrix_type>>();
@@ -176,7 +176,7 @@ class DisentangledCorrespondenceFunction : public VectorFunction {
     m_MinimumEigenValue_shape_cohort.resize(total_subjects, 0.0);
     m_MinimumEigenValue_time_cohort.resize(total_time_points, 0.0);
     for(int i = 0; i < total_time_points; ++i){
-      vnl_matrix_type temp_cov_matrix;
+      Eigen::MatrixXd temp_cov_matrix;
       vnl_matrix_type temp_points_matrix;
       vnl_matrix_type temp_mean_matrix;
       m_InverseCovMatrices_time_cohort->push_back(temp_cov_matrix);
@@ -184,7 +184,7 @@ class DisentangledCorrespondenceFunction : public VectorFunction {
       m_Time_PointsUpdate->push_back(temp_points_matrix);
     }
     for(int i = 0; i < total_subjects; ++i){
-      vnl_matrix_type temp_cov_matrix;
+      Eigen::MatrixXd temp_cov_matrix;
       vnl_matrix_type temp_points_matrix;
       vnl_matrix_type temp_mean_matrix;
       m_InverseCovMatrices_shape_cohort->push_back(temp_cov_matrix);
@@ -205,8 +205,8 @@ class DisentangledCorrespondenceFunction : public VectorFunction {
   bool m_UseMeanEnergy;
 
   // Inverse Covariance matrices across time and shape cohort
-  shared_vnl_matrix_array_type m_InverseCovMatrices_time_cohort; // T obj matrices each of dimensionality dM X N
-  shared_vnl_matrix_array_type m_InverseCovMatrices_shape_cohort; // N obj matrices each of dimensionality dM X T
+  std::shared_ptr<std::vector<Eigen::MatrixXd>> m_InverseCovMatrices_time_cohort; // T obj matrices each of dimensionality dM X N
+  std::shared_ptr<std::vector<Eigen::MatrixXd>> m_InverseCovMatrices_shape_cohort; // N obj matrices each of dimensionality dM X T
   // mean vectors across time and shape cohort
   shared_vnl_matrix_array_type m_points_mean_time_cohort; // T mean vectors each of dimension dM
   shared_vnl_matrix_array_type m_points_mean_shape_cohort; // N mean vectors each of dimension dM
