@@ -549,8 +549,10 @@ void Optimize::Initialize() {
 
   if (m_use_shape_statistics_in_init) {
     if (m_mesh_based_attributes) {
+      SW_DEBUG("Setting correspondence mode: mesh-based general entropy");
       m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::MeshBasedGeneralEntropy);
     } else {
+      SW_DEBUG("Setting correspondence mode: ensemble entropy");
       m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::EnsembleEntropy);
     }
 
@@ -564,8 +566,10 @@ void Optimize::Initialize() {
     if ((m_attributes_per_domain.size() > 0 &&
          *std::max_element(m_attributes_per_domain.begin(), m_attributes_per_domain.end()) > 0) ||
         m_mesh_based_attributes) {
+      SW_DEBUG("Setting correspondence mode: mesh-based mean energy");
       m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::MeshBasedGeneralMeanEnergy);
     } else {
+      SW_DEBUG("Setting correspondence mode: mean energy");
       m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::MeanEnergy);
     }
   }
@@ -796,6 +800,7 @@ void Optimize::RunOptimize() {
   if ((m_attributes_per_domain.size() > 0 &&
        *std::max_element(m_attributes_per_domain.begin(), m_attributes_per_domain.end()) > 0) ||
       m_mesh_based_attributes) {
+    SW_DEBUG("Setting correspondence mode: mesh-based general entropy");
     m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::MeshBasedGeneralEntropy);
   } else if (m_use_regression == true) {
     if (m_use_mixed_effects == true) {
@@ -804,8 +809,10 @@ void Optimize::RunOptimize() {
       m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::EnsembleRegressionEntropy);
     }
   } else if (m_starting_regularization == m_ending_regularization) {
+    SW_DEBUG("Setting correspondence mode: mean energy");
     m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::MeanEnergy);  // mean force
   } else {
+    SW_DEBUG("Setting correspondence mode: ensemble energy");
     m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::EnsembleEntropy);
   }
 
@@ -1368,6 +1375,8 @@ void Optimize::WritePointFilesWithFeatures(std::string iter_prefix) {
         outw << pN[0] << " " << pN[1] << " " << pN[2] << " ";
       }
 
+      // TODO: Needs rewrite:
+      /*
       // Only run the following code if we are dealing with ImplicitSurfaceDomains
       const ImplicitSurfaceDomain<float>* domain =
           dynamic_cast<const ImplicitSurfaceDomain<float>*>(m_sampler->GetParticleSystem()->GetDomain(i));
@@ -1387,6 +1396,7 @@ void Optimize::WritePointFilesWithFeatures(std::string iter_prefix) {
           }
         }
       }
+      */
 
       outw << std::endl;
 

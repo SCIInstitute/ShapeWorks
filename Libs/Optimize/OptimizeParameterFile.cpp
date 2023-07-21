@@ -563,7 +563,7 @@ bool OptimizeParameterFile::read_mesh_inputs(TiXmlHandle* docHandle, Optimize* o
       }
 
       if (this->verbosity_level_ <= 1) {
-        TriMesh::set_verbose(0);
+        //TriMesh::set_verbose(0);
       }
 
       /*

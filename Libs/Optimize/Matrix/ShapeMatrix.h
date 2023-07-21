@@ -8,7 +8,6 @@
 #include "Libs/Optimize/Domain/ImplicitSurfaceDomain.h"
 #include "Observer.h"
 #include "ParticleSystem.h"
-#include "TriMesh.h"
 #include "itkDataObject.h"
 #include "itkWeakPointer.h"
 #include "vnl/vnl_matrix.h"

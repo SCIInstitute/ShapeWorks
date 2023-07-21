@@ -5,7 +5,7 @@
 namespace shapeworks {
 
 void ShapeGradientMatrix::SetValues(const ParticleSystemType* ps, int idx, int d) {
-  const typename ParticleSystem::PointType posLocal = ps->GetPosition(idx, d);
+  const ParticleSystem::PointType posLocal = ps->GetPosition(idx, d);
 
   // idx : particle number (e.g. 0 ... 1024)
   // d : domain number (eg. 0 ... number of subjects* m_DomainsPerShape)
@@ -36,7 +36,7 @@ void ShapeGradientMatrix::SetValues(const ParticleSystemType* ps, int idx, int d
   }
   k += idx * m_AttributesPerDomain[dom];
 
-  static int count = 0;
+  //static int count = 0;
   // if (count++ < 500) {
   //SW_LOG("k = {}, num = {}, dom = {}, idx = {}, d = {}", k, num, dom, idx, d);
   //}
@@ -118,8 +118,7 @@ void ShapeGradientMatrix::SetValues(const ParticleSystemType* ps, int idx, int d
         }
       }
     } else {
-      point pt;
-      pt.clear();
+      Eigen::Vector3d pt;
       pt[0] = posLocal[0];
       pt[1] = posLocal[1];
       pt[2] = posLocal[2];

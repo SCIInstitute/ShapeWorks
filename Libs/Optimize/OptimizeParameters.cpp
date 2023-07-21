@@ -374,7 +374,6 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
 
   for (int j = 0; j < field_attributes.size(); j++) {
     SW_LOG("Using scalar field attribute: {} with weight {}", field_attributes[j], field_weights[j]);
-    attr_scales.push_back(field_weights[j]);
   }
 
 
