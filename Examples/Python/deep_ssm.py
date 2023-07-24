@@ -328,7 +328,7 @@ def Run_Pipeline(args):
     num_samples = 2961
     num_dim = 0
     percent_variability = 0.95
-    sampler = "gaussian"
+    sampler = "kde"
     if args.tiny_test:
         num_samples = 2
         percent_variability = 0.99
@@ -584,7 +584,7 @@ def Run_Pipeline(args):
             "linear": True
         },
         "loss": {
-            "function": "Focal",
+            "function": "MSE",
             "supervised_latent": True,
         },
         "trainer": {
@@ -612,7 +612,7 @@ def Run_Pipeline(args):
         },
         "use_best_model": True,
         "tl_net":{
-			"enabled": True,
+			"enabled": False,
 			"ae_epochs": 10000,
 			"tf_epochs":100,
 			"joint_epochs":25,
