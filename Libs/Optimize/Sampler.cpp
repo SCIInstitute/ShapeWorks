@@ -75,16 +75,6 @@ void Sampler::AllocateDomainsAndNeighborhoods() {
   for (unsigned int i = 0; i < this->m_DomainList.size(); i++) {
     auto domain = m_DomainList[i];
 
-    // Adding spheres to constraint object
-    if (m_Spheres.size() > i) {
-      for (unsigned int j = 0; j < m_Spheres[i].size(); j++) {
-        domain->GetConstraints()->addSphere(m_Spheres[i][j].center, m_Spheres[i][j].radius);
-        if (m_verbosity >= 1)
-          std::cout << "Adding sphere constraint to domain " << i << " shape " << j << " with center "
-                    << m_Spheres[i][j].center << " and radius " << m_Spheres[i][j].radius << std::endl;
-      }
-    }
-
     if (domain->GetDomainType() == shapeworks::DomainType::Image) {
         // Adding cutting planes to constraint object
         if (m_CuttingPlanes.size() > i) {
@@ -338,21 +328,6 @@ void Sampler::SetCuttingPlane(unsigned int i, const vnl_vector_fixed<double, Dim
   if (m_Initialized == true) {
     std::cout << "Initialized plane" << std::endl;
     m_ParticleSystem->GetDomain(i)->GetConstraints()->addPlane(va.as_ref(), vb.as_ref(), vc.as_ref());
-  }
-}
-
-void Sampler::AddSphere(unsigned int i, vnl_vector_fixed<double, Dimension>& c, double r) {
-  if (m_Spheres.size() < i + 1) {
-    m_Spheres.resize(i + 1);
-  }
-
-  m_Spheres[i].push_back(SphereType());
-  m_Spheres[i][m_Spheres[i].size() - 1].center = c;
-  m_Spheres[i][m_Spheres[i].size() - 1].radius = r;
-
-  if (m_Initialized == true) {
-    std::cout << "Initialized sphere" << std::endl;
-    m_ParticleSystem->GetDomain(i)->GetConstraints()->addSphere(c, r);
   }
 }
 

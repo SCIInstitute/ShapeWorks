@@ -4,7 +4,6 @@
 
 namespace shapeworks {
   enum class ConstraintType : char {
-    Sphere = 'S',
     CuttingPlane = 'C',
     FreeForm = 'F'
   };

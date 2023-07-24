@@ -10,10 +10,14 @@ class vtkPlane;
 
 namespace shapeworks {
 
-//! PlaneConstraint
-/*!
- * Encapsulate functionality related to plane constraints
+/**
+ * \class PlaneConstraint
+ * \ingroup Group-Constraints
+ *
+ *  Encapsulate functionality related to cutting-plane constraints. Inherits from Constraint. See Constraint.h for more information
+ *
  */
+
 class PlaneConstraint : public Constraint {
  public:
   bool isViolated(const Eigen::Vector3d &pt) const override;

@@ -108,7 +108,7 @@ nbconvert==6.5.4
 nbformat==5.9.0
 nbstripout==0.5.0
 nest-asyncio==1.5.6
-notebook==6.1.5
+notebook==6.4.12
 notebook_shim==0.2.3
 numpy==1.22.4
 openpyxl==3.1.2
@@ -133,7 +133,7 @@ pycparser==2.21
 pyct==0.5.0
 pydantic==1.10.7
 Pygments==2.15.1
-pymdown-extensions==9.5
+pymdown-extensions==10.0
 pyparsing==3.1.0
 pyrsistent==0.19.3
 python-dateutil==2.8.2

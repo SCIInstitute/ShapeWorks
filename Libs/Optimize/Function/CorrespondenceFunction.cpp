@@ -41,7 +41,9 @@ void CorrespondenceFunction::ComputeUpdates(const ParticleSystem* c) {
 
   if (this->m_UseMeanEnergy) {
     pinvMat.set_identity();
-    m_InverseCovMatrix->clear();
+
+    m_InverseCovMatrix->setZero();
+
   } else {
     gramMat = points_minus_mean.transpose() * points_minus_mean;
 
@@ -60,7 +62,11 @@ void CorrespondenceFunction::ComputeUpdates(const ParticleSystem* c) {
     const auto lhs = projMat * invLambda;
     const auto rhs =
         invLambda * projMat.transpose();  // invLambda doesn't need to be transposed since its a diagonal matrix
-    m_InverseCovMatrix->set_size(num_dims, num_dims);
+
+    // resize the inverse covariance matrix if necessary
+    if (m_InverseCovMatrix->rows() != num_dims || m_InverseCovMatrix->cols() != num_dims) {
+      m_InverseCovMatrix->resize(num_dims, num_dims);
+    }
     Utils::multiply_into(*m_InverseCovMatrix, lhs, rhs);
   }
 
@@ -166,7 +172,14 @@ CorrespondenceFunction::VectorType CorrespondenceFunction::Evaluate(unsigned int
   if (this->m_UseMeanEnergy) {
     tmp1.set_identity();
   } else {
-    tmp1 = m_InverseCovMatrix->extract(sz_Yidx, sz_Yidx, num, num);
+    // extract 3x3 submatrix at k,k
+    Eigen::MatrixXd region = m_InverseCovMatrix->block(sz_Yidx, sz_Yidx, 3, 3);
+    // convert to vnl
+    for (unsigned int i = 0; i < 3; i++) {
+      for (unsigned int j = 0; j < 3; j++) {
+        tmp1(i, j) = region(i, j);
+      }
+    }
   }
 
   vnl_matrix_type Y_dom_idx(sz_Yidx, 1, 0.0);

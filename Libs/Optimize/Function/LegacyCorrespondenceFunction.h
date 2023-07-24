@@ -144,7 +144,7 @@ class LegacyCorrespondenceFunction : public VectorFunction {
     m_Counter = 0;
     m_UseMeanEnergy = true;
     m_PointsUpdate = std::make_shared<vnl_matrix_type>(10, 10);
-    m_InverseCovMatrix = std::make_shared<vnl_matrix_type>(10, 10);
+    m_InverseCovMatrix = std::make_shared<Eigen::MatrixXd>(10, 10);
     m_points_mean = std::make_shared<vnl_matrix_type>(10, 10);
   }
   virtual ~LegacyCorrespondenceFunction() {}
@@ -164,7 +164,7 @@ class LegacyCorrespondenceFunction : public VectorFunction {
   bool m_UseMeanEnergy;
 
   std::shared_ptr<vnl_matrix_type> m_points_mean;       // 3Nx3N - used for energy computation
-  std::shared_ptr<vnl_matrix_type> m_InverseCovMatrix;  // 3NxM - used for energy computation
+  std::shared_ptr<Eigen::MatrixXd> m_InverseCovMatrix;  // 3NxM - used for energy computation
 };
 
 }  // namespace shapeworks
