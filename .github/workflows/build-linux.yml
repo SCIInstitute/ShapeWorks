@@ -43,7 +43,10 @@ jobs:
       run: df -h
 
     - name: Du1
-      run: cd / ; du -sh *
+      run: cd / ; du -sh * || true
+
+    - name: Du2
+      run: cd /__t ; du -sh * || true
       
     - name: Checkout code
       uses: actions/checkout@v3
@@ -93,7 +96,7 @@ jobs:
       run: df -h
 
     - name: Du
-      run: cd / ; du -sh *
+      run: cd / ; du -sh * || true
 
     - name: make install
       shell: bash -l {0}
