@@ -5,6 +5,7 @@ on:
     branches:
       - master
       - release_v*
+      - linux_disk_space
     tags:
     - '*'
   pull_request:
@@ -41,6 +42,9 @@ jobs:
     - name: Check space1
       run: df -h
 
+    - name: Du1
+      run: cd / ; du -sh *
+      
     - name: Checkout code
       uses: actions/checkout@v3
       with:
@@ -87,6 +91,9 @@ jobs:
 
     - name: Check space6
       run: df -h
+
+    - name: Du
+      run: cd / ; du -sh *
 
     - name: make install
       shell: bash -l {0}
