@@ -24,6 +24,7 @@ Sampler::Sampler() {
 
   m_LinkingFunction = DualVectorFunction::New();
   m_EnsembleEntropyFunction = LegacyCorrespondenceFunction::New();
+  m_DisentangledEnsembleEntropyFunction = DisentangledCorrespondenceFunction::New();
   m_EnsembleRegressionEntropyFunction = LegacyCorrespondenceFunction::New();
   m_EnsembleMixedEffectsEntropyFunction = LegacyCorrespondenceFunction::New();
   m_CorrespondenceFunction = CorrespondenceFunction::New();
@@ -36,6 +37,7 @@ Sampler::Sampler() {
   m_MixedEffectsShapeMatrix = MixedEffectsShapeMatrix::New();
 
   m_EnsembleEntropyFunction->SetShapeMatrix(m_LegacyShapeMatrix);
+  m_DisentangledEnsembleEntropyFunction->SetShapeMatrix(m_LegacyShapeMatrix);
 
   m_EnsembleRegressionEntropyFunction->SetShapeMatrix(m_LinearRegressionShapeMatrix);
   m_EnsembleMixedEffectsEntropyFunction->SetShapeMatrix(m_MixedEffectsShapeMatrix);
