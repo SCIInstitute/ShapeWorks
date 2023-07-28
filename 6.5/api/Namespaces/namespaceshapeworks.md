@@ -37,6 +37,7 @@ User usage reporting (telemetry)  [More...](#detailed-description)
 | class | **[shapeworks::DeepSSMJob](../Classes/classshapeworks_1_1DeepSSMJob.md)** <br>Qt Wrapper for DeepSSM.  |
 | class | **[shapeworks::DeepSSMParameters](../Classes/classshapeworks_1_1DeepSSMParameters.md)**  |
 | class | **[shapeworks::DeepSSMTool](../Classes/classshapeworks_1_1DeepSSMTool.md)**  |
+| class | **[shapeworks::DisentangledCorrespondenceFunction](../Classes/classshapeworks_1_1DisentangledCorrespondenceFunction.md)**  |
 | class | **[shapeworks::DualVectorFunction](../Classes/classshapeworks_1_1DualVectorFunction.md)**  |
 | class | **[shapeworks::ExcelProjectReader](../Classes/classshapeworks_1_1ExcelProjectReader.md)** <br>Excel file format reader for [Project]().  |
 | class | **[shapeworks::ExcelProjectWriter](../Classes/classshapeworks_1_1ExcelProjectWriter.md)** <br>Excel file format writer for [Project]().  |
@@ -190,7 +191,7 @@ User usage reporting (telemetry)  [More...](#detailed-description)
 | enum| **[DisplayMode](../Namespaces/namespaceshapeworks.md#enum-displaymode)** { Original = 0, Groomed = 1, Reconstructed = 2} |
 | enum| **[Axis](../Namespaces/namespaceshapeworks.md#enum-axis)** { invalid = -1, X, Y, Z}<br>handy way to specify an axis  |
 | enum class char | **[ConstraintType](../Namespaces/namespaceshapeworks.md#enum-constrainttype)** { CuttingPlane = 'C', FreeForm = 'F'} |
-| enum class int | **[CorrespondenceMode](../Namespaces/namespaceshapeworks.md#enum-correspondencemode)** { MeanEnergy = 0, EnsembleEntropy = 1, EnsembleRegressionEntropy = 3, EnsembleMixedEffectsEntropy = 4, MeshBasedGeneralEntropy = 5, MeshBasedGeneralMeanEnergy = 6} |
+| enum class int | **[CorrespondenceMode](../Namespaces/namespaceshapeworks.md#enum-correspondencemode)** { MeanEnergy = 0, EnsembleEntropy = 1, EnsembleRegressionEntropy = 3, EnsembleMixedEffectsEntropy = 4, MeshBasedGeneralEntropy = 5, MeshBasedGeneralMeanEnergy = 6, DisentagledEnsembleEntropy = 7, DisentangledEnsembleMeanEnergy = 8} |
 | enum class char | **[DomainType](../Namespaces/namespaceshapeworks.md#enum-domaintype)** { Image = 'I', Mesh = 'M', Contour = 'C'} |
 | enum| **[ArrayTransferOptions](../Namespaces/namespaceshapeworks.md#enum-arraytransferoptions)** { COPY_ARRAY, SHARE_ARRAY, MOVE_ARRAY}<br>ways of tranferring Arrays to Python, copy being the least efficient but most conservative  |
 | enum| **[LandmarkColumns](../Namespaces/namespaceshapeworks.md#enum-landmarkcolumns)** { VISIBLE_E, COLOR_E, NAME_E, POSITION_E, SET_BUTTON_E, COMMENT_E, END_E} |
@@ -470,6 +471,8 @@ handy way to specify an axis
 | EnsembleMixedEffectsEntropy | 4|   |
 | MeshBasedGeneralEntropy | 5|   |
 | MeshBasedGeneralMeanEnergy | 6|   |
+| DisentagledEnsembleEntropy | 7|   |
+| DisentangledEnsembleMeanEnergy | 8|   |
 
 
 
@@ -2588,4 +2591,4 @@ pi that doesn't depend on deprecated or non-std lib defines
 
 -------------------------------
 
-Updated on 2023-07-28 at 02:08:59 +0000
+Updated on 2023-07-28 at 04:11:55 +0000

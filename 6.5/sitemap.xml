@@ -461,6 +461,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.5/api/Classes/classshapeworks_1_1DisentangledCorrespondenceFunction.html</loc>
+         <lastmod>2023-07-28</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://www.sci.utah.edu/software/shapeworks.html/6.5/api/Classes/classshapeworks_1_1DualVectorFunction.html</loc>
          <lastmod>2023-07-28</lastmod>
          <changefreq>daily</changefreq>
@@ -1392,6 +1397,11 @@
     </url>
     <url>
          <loc>https://www.sci.utah.edu/software/shapeworks.html/6.5/api/Files/DeepSSMTool_8h.html</loc>
+         <lastmod>2023-07-28</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://www.sci.utah.edu/software/shapeworks.html/6.5/api/Files/DisentangledCorrespondenceFunction_8h.html</loc>
          <lastmod>2023-07-28</lastmod>
          <changefreq>daily</changefreq>
     </url>

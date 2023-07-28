@@ -114,6 +114,7 @@ title: Files
         * **dir [Libs/Optimize/Function](../Files/dir_0e4564af99249380ef1f30404400c0a3.md#dir-libs/optimize/function)** 
             * **file [Libs/Optimize/Function/CorrespondenceFunction.h](../Files/CorrespondenceFunction_8h.md#file-correspondencefunction.h)** 
             * **file [Libs/Optimize/Function/CurvatureSamplingFunction.h](../Files/CurvatureSamplingFunction_8h.md#file-curvaturesamplingfunction.h)** 
+            * **file [Libs/Optimize/Function/DisentangledCorrespondenceFunction.h](../Files/DisentangledCorrespondenceFunction_8h.md#file-disentangledcorrespondencefunction.h)** 
             * **file [Libs/Optimize/Function/DualVectorFunction.h](../Files/DualVectorFunction_8h.md#file-dualvectorfunction.h)** 
             * **file [Libs/Optimize/Function/LegacyCorrespondenceFunction.h](../Files/LegacyCorrespondenceFunction_8h.md#file-legacycorrespondencefunction.h)** 
             * **file [Libs/Optimize/Function/SamplingFunction.h](../Files/SamplingFunction_8h.md#file-samplingfunction.h)** 
@@ -248,4 +249,4 @@ title: Files
 
 -------------------------------
 
-Updated on 2023-07-28 at 02:09:01 +0000
+Updated on 2023-07-28 at 04:11:57 +0000

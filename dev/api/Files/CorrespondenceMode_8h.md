@@ -29,7 +29,9 @@ namespace shapeworks {
     EnsembleRegressionEntropy = 3,
     EnsembleMixedEffectsEntropy = 4,
     MeshBasedGeneralEntropy = 5,
-    MeshBasedGeneralMeanEnergy = 6
+    MeshBasedGeneralMeanEnergy = 6,
+    DisentagledEnsembleEntropy = 7,
+    DisentangledEnsembleMeanEnergy = 8
   };
 }
 ```
@@ -37,4 +39,4 @@ namespace shapeworks {
 
 -------------------------------
 
-Updated on 2023-07-28 at 02:09:01 +0000
+Updated on 2023-07-28 at 04:11:56 +0000

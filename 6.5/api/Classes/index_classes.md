@@ -110,6 +110,7 @@ title: Classes
     * **class [DeepSSMJob](../Classes/classshapeworks_1_1DeepSSMJob.md)** <br>Qt Wrapper for DeepSSM. 
     * **class [DeepSSMParameters](../Classes/classshapeworks_1_1DeepSSMParameters.md)** 
     * **class [DeepSSMTool](../Classes/classshapeworks_1_1DeepSSMTool.md)** 
+    * **class [DisentangledCorrespondenceFunction](../Classes/classshapeworks_1_1DisentangledCorrespondenceFunction.md)** 
     * **class [DualVectorFunction](../Classes/classshapeworks_1_1DualVectorFunction.md)** 
     * **class [ExcelProjectReader](../Classes/classshapeworks_1_1ExcelProjectReader.md)** <br>Excel file format reader for [Project](). 
     * **class [ExcelProjectWriter](../Classes/classshapeworks_1_1ExcelProjectWriter.md)** <br>Excel file format writer for [Project](). 
@@ -275,4 +276,4 @@ title: Classes
 
 -------------------------------
 
-Updated on 2023-07-28 at 02:09:01 +0000
+Updated on 2023-07-28 at 04:11:57 +0000

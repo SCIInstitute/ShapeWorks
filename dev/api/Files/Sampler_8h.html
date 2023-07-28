@@ -2461,6 +2461,7 @@
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Domain/MeshDomain.h&quot;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Domain/MeshWrapper.h&quot;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Function/CorrespondenceFunction.h&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Function/DisentangledCorrespondenceFunction.h&quot;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Function/CurvatureSamplingFunction.h&quot;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Function/DualVectorFunction.h&quot;</span>
 <span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;Libs/Optimize/Function/LegacyCorrespondenceFunction.h&quot;</span>
@@ -2622,6 +2623,12 @@
 <span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">mode</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">CorrespondenceMode</span><span class="o">::</span><span class="n">MeshBasedGeneralMeanEnergy</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
 <span class="w">      </span><span class="n">m_LinkingFunction</span><span class="o">-&gt;</span><span class="n">SetFunctionB</span><span class="p">(</span><span class="n">m_CorrespondenceFunction</span><span class="p">);</span>
 <span class="w">      </span><span class="n">m_CorrespondenceFunction</span><span class="o">-&gt;</span><span class="n">UseMeanEnergy</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">mode</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">CorrespondenceMode</span><span class="o">::</span><span class="n">DisentagledEnsembleEntropy</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">m_LinkingFunction</span><span class="o">-&gt;</span><span class="n">SetFunctionB</span><span class="p">(</span><span class="n">m_DisentangledEnsembleEntropyFunction</span><span class="p">);</span>
+<span class="w">      </span><span class="n">m_DisentangledEnsembleEntropyFunction</span><span class="o">-&gt;</span><span class="n">UseEntropy</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">mode</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">shapeworks</span><span class="o">::</span><span class="n">CorrespondenceMode</span><span class="o">::</span><span class="n">DisentangledEnsembleMeanEnergy</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="n">m_LinkingFunction</span><span class="o">-&gt;</span><span class="n">SetFunctionB</span><span class="p">(</span><span class="n">m_DisentangledEnsembleEntropyFunction</span><span class="p">);</span>
+<span class="w">      </span><span class="n">m_DisentangledEnsembleEntropyFunction</span><span class="o">-&gt;</span><span class="n">UseMeanEnergy</span><span class="p">();</span>
 <span class="w">    </span><span class="p">}</span>
 
 <span class="w">    </span><span class="n">m_CorrespondenceMode</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mode</span><span class="p">;</span>
@@ -2673,6 +2680,8 @@
 
 <span class="w">  </span><span class="n">LegacyCorrespondenceFunction</span><span class="o">*</span><span class="w"> </span><span class="nf">GetEnsembleEntropyFunction</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_EnsembleEntropyFunction</span><span class="p">.</span><span class="n">GetPointer</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
 
+<span class="w">  </span><span class="n">DisentangledCorrespondenceFunction</span><span class="o">*</span><span class="w"> </span><span class="nf">GetDisentangledEnsembleEntropyFunction</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">m_DisentangledEnsembleEntropyFunction</span><span class="p">.</span><span class="n">GetPointer</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
+
 <span class="w">  </span><span class="n">LegacyCorrespondenceFunction</span><span class="o">*</span><span class="w"> </span><span class="nf">GetEnsembleRegressionEntropyFunction</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">m_EnsembleRegressionEntropyFunction</span><span class="p">.</span><span class="n">GetPointer</span><span class="p">();</span>
 <span class="w">  </span><span class="p">}</span>
@@ -2689,6 +2698,10 @@
 
 <span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">LegacyCorrespondenceFunction</span><span class="o">*</span><span class="w"> </span><span class="nf">GetEnsembleEntropyFunction</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
 <span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">m_EnsembleEntropyFunction</span><span class="p">.</span><span class="n">GetPointer</span><span class="p">();</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">DisentangledCorrespondenceFunction</span><span class="o">*</span><span class="w"> </span><span class="nf">GetDisentangledEnsembleEntropyFunction</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">m_DisentangledEnsembleEntropyFunction</span><span class="p">.</span><span class="n">GetPointer</span><span class="p">();</span>
 <span class="w">  </span><span class="p">}</span>
 
 <span class="w">  </span><span class="k">const</span><span class="w"> </span><span class="n">LegacyCorrespondenceFunction</span><span class="o">*</span><span class="w"> </span><span class="nf">GetEnsembleRegressionEntropyFunction</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
@@ -2830,6 +2843,7 @@
 <span class="w">  </span><span class="n">LegacyCorrespondenceFunction</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_EnsembleEntropyFunction</span><span class="p">;</span>
 <span class="w">  </span><span class="n">LegacyCorrespondenceFunction</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_EnsembleRegressionEntropyFunction</span><span class="p">;</span>
 <span class="w">  </span><span class="n">LegacyCorrespondenceFunction</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_EnsembleMixedEffectsEntropyFunction</span><span class="p">;</span>
+<span class="w">  </span><span class="n">DisentangledCorrespondenceFunction</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_DisentangledEnsembleEntropyFunction</span><span class="p">;</span>
 <span class="w">  </span><span class="n">CorrespondenceFunction</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_CorrespondenceFunction</span><span class="p">;</span>
 
 <span class="w">  </span><span class="n">LegacyShapeMatrix</span><span class="o">::</span><span class="n">Pointer</span><span class="w"> </span><span class="n">m_LegacyShapeMatrix</span><span class="p">;</span>
@@ -2871,7 +2885,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-07-28 at 02:09:01 +0000</p>
+<p>Updated on 2023-07-28 at 04:11:56 +0000</p>
 
               
             </article>

@@ -2882,6 +2882,20 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-setusedisentangledspatiotemporalssm" class="md-nav__link">
+    function SetUseDisentangledSpatiotemporalSSM
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-getusedisentangledspatiotemporalssm" class="md-nav__link">
+    function GetUseDisentangledSpatiotemporalSSM
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-setnormalangle" class="md-nav__link">
     function SetNormalAngle
   </a>
@@ -3498,6 +3512,13 @@
           <li class="md-nav__item">
   <a href="#variable-m_use_mixed_effects" class="md-nav__link">
     variable m_use_mixed_effects
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#variable-m_use_disentangled_ssm" class="md-nav__link">
+    variable m_use_disentangled_ssm
   </a>
   
 </li>
@@ -4336,6 +4357,14 @@
 </tr>
 <tr>
 <td>void</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setusedisentangledspatiotemporalssm">SetUseDisentangledSpatiotemporalSSM</a></strong>(bool use_disentangled_ssm_4d)<br>Set if optimization should be done using disentangled spatiotemporal SSM method.</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-getusedisentangledspatiotemporalssm">GetUseDisentangledSpatiotemporalSSM</a></strong>()<br>Returns true if optimization is to be done using disentangled spatiotemporal SSM method.</td>
+</tr>
+<tr>
+<td>void</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#function-setnormalangle">SetNormalAngle</a></strong>(double normal_angle)<br>For good/bad analysis, set the normal angle to use (TODO: details)</td>
 </tr>
 <tr>
@@ -4695,6 +4724,10 @@
 <tr>
 <td>bool</td>
 <td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-use-mixed-effects">m_use_mixed_effects</a></strong></td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#variable-m-use-disentangled-ssm">m_use_disentangled_ssm</a></strong></td>
 </tr>
 <tr>
 <td>unsigned int</td>
@@ -5356,6 +5389,16 @@
 <span class="p">)</span>
 </code></pre></div>
 <p>Set if mixed effects should be used (TODO: details) </p>
+<h3 id="function-setusedisentangledspatiotemporalssm">function SetUseDisentangledSpatiotemporalSSM</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetUseDisentangledSpatiotemporalSSM</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">use_disentangled_ssm_4d</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>Set if optimization should be done using disentangled spatiotemporal SSM method. </p>
+<h3 id="function-getusedisentangledspatiotemporalssm">function GetUseDisentangledSpatiotemporalSSM</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">GetUseDisentangledSpatiotemporalSSM</span><span class="p">()</span>
+</code></pre></div>
+<p>Returns true if optimization is to be done using disentangled spatiotemporal SSM method. </p>
 <h3 id="function-setnormalangle">function SetNormalAngle</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetNormalAngle</span><span class="p">(</span>
 <span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">normal_angle</span>
@@ -5731,6 +5774,9 @@
 <h3 id="variable-m_use_mixed_effects">variable m_use_mixed_effects</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">m_use_mixed_effects</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
 </code></pre></div>
+<h3 id="variable-m_use_disentangled_ssm">variable m_use_disentangled_ssm</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">m_use_disentangled_ssm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="variable-m_domains_per_shape">variable m_domains_per_shape</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">m_domains_per_shape</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
 </code></pre></div>
@@ -5957,7 +6003,7 @@
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">m_remaining_time_message</span><span class="p">;</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-07-28 at 02:09:00 +0000</p>
+<p>Updated on 2023-07-28 at 04:11:55 +0000</p>
 
               
             </article>

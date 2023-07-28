@@ -114,6 +114,8 @@ Inherits from QObject, [shapeworks::Optimize](../Classes/classshapeworks_1_1Opti
 | void | **[SetKeepCheckpoints](../Classes/classshapeworks_1_1Optimize.md#function-setkeepcheckpoints)**(int keep_checkpoints)<br>Set if checkpoints should be kept (0=disable, 1=enable)  |
 | void | **[SetUseRegression](../Classes/classshapeworks_1_1Optimize.md#function-setuseregression)**(bool use_regression)<br>Set if regression should be used (TODO: details)  |
 | void | **[SetUseMixedEffects](../Classes/classshapeworks_1_1Optimize.md#function-setusemixedeffects)**(bool use_mixed_effects)<br>Set if mixed effects should be used (TODO: details)  |
+| void | **[SetUseDisentangledSpatiotemporalSSM](../Classes/classshapeworks_1_1Optimize.md#function-setusedisentangledspatiotemporalssm)**(bool use_disentangled_ssm_4d)<br>Set if optimization should be done using disentangled spatiotemporal SSM method.  |
+| bool | **[GetUseDisentangledSpatiotemporalSSM](../Classes/classshapeworks_1_1Optimize.md#function-getusedisentangledspatiotemporalssm)**()<br>Returns true if optimization is to be done using disentangled spatiotemporal SSM method.  |
 | void | **[SetNormalAngle](../Classes/classshapeworks_1_1Optimize.md#function-setnormalangle)**(double normal_angle)<br>For good/bad analysis, set the normal angle to use (TODO: details)  |
 | void | **[SetPerformGoodBad](../Classes/classshapeworks_1_1Optimize.md#function-setperformgoodbad)**(bool perform_good_bad)<br>Set if good/bad analysis should be done (TODO: details)  |
 | void | **[SetLogEnergy](../Classes/classshapeworks_1_1Optimize.md#function-setlogenergy)**(bool log_energy)<br>Set the log energy (TODO: details)  |
@@ -205,6 +207,7 @@ Inherits from QObject, [shapeworks::Optimize](../Classes/classshapeworks_1_1Opti
 | bool | **[m_optimizing](../Classes/classshapeworks_1_1Optimize.md#variable-m-optimizing)**  |
 | bool | **[m_use_regression](../Classes/classshapeworks_1_1Optimize.md#variable-m-use-regression)**  |
 | bool | **[m_use_mixed_effects](../Classes/classshapeworks_1_1Optimize.md#variable-m-use-mixed-effects)**  |
+| bool | **[m_use_disentangled_ssm](../Classes/classshapeworks_1_1Optimize.md#variable-m-use-disentangled-ssm)**  |
 | unsigned int | **[m_domains_per_shape](../Classes/classshapeworks_1_1Optimize.md#variable-m-domains-per-shape)**  |
 | shapeworks::DomainType | **[m_domain_type](../Classes/classshapeworks_1_1Optimize.md#variable-m-domain-type)**  |
 | std::vector< int > | **[m_number_of_particles](../Classes/classshapeworks_1_1Optimize.md#variable-m-number-of-particles)**  |
@@ -389,4 +392,4 @@ virtual void IterateCallback(
 
 -------------------------------
 
-Updated on 2023-07-28 at 02:09:00 +0000
+Updated on 2023-07-28 at 04:11:56 +0000

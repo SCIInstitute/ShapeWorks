@@ -42,6 +42,8 @@ title: shapeworks::OptimizeParameters
 | void | **[set_use_normals](../Classes/classshapeworks_1_1OptimizeParameters.md#function-set-use-normals)**(std::vector< bool > use_normals) |
 | double | **[get_normals_strength](../Classes/classshapeworks_1_1OptimizeParameters.md#function-get-normals-strength)**() |
 | void | **[set_normals_strength](../Classes/classshapeworks_1_1OptimizeParameters.md#function-set-normals-strength)**(double value) |
+| bool | **[get_use_disentangled_ssm](../Classes/classshapeworks_1_1OptimizeParameters.md#function-get-use-disentangled-ssm)**() |
+| void | **[set_use_disentangled_ssm](../Classes/classshapeworks_1_1OptimizeParameters.md#function-set-use-disentangled-ssm)**(bool value) |
 | bool | **[get_use_procrustes](../Classes/classshapeworks_1_1OptimizeParameters.md#function-get-use-procrustes)**() |
 | void | **[set_use_procrustes](../Classes/classshapeworks_1_1OptimizeParameters.md#function-set-use-procrustes)**(bool value) |
 | bool | **[get_use_procrustes_scaling](../Classes/classshapeworks_1_1OptimizeParameters.md#function-get-use-procrustes-scaling)**() |
@@ -294,6 +296,22 @@ double get_normals_strength()
 ```cpp
 void set_normals_strength(
     double value
+)
+```
+
+
+### function get_use_disentangled_ssm
+
+```cpp
+bool get_use_disentangled_ssm()
+```
+
+
+### function set_use_disentangled_ssm
+
+```cpp
+void set_use_disentangled_ssm(
+    bool value
 )
 ```
 
@@ -592,4 +610,4 @@ void set_keep_checkpoints(
 
 -------------------------------
 
-Updated on 2023-07-28 at 02:09:00 +0000
+Updated on 2023-07-28 at 04:11:56 +0000

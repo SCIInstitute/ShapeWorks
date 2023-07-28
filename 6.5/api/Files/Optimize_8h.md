@@ -166,6 +166,9 @@ class Optimize {
   void SetUseRegression(bool use_regression);
   void SetUseMixedEffects(bool use_mixed_effects);
 
+  void SetUseDisentangledSpatiotemporalSSM(bool use_disentangled_ssm_4d);
+  bool GetUseDisentangledSpatiotemporalSSM();
+
   void SetNormalAngle(double normal_angle);
   void SetPerformGoodBad(bool perform_good_bad);
   void SetLogEnergy(bool log_energy);
@@ -295,6 +298,7 @@ class Optimize {
   bool m_optimizing = false;
   bool m_use_regression = false;
   bool m_use_mixed_effects = false;
+  bool m_use_disentangled_ssm = false;
 
   // IO Parameters
   unsigned int m_domains_per_shape = 1;
@@ -398,4 +402,4 @@ class Optimize {
 
 -------------------------------
 
-Updated on 2023-07-28 at 02:09:01 +0000
+Updated on 2023-07-28 at 04:11:56 +0000

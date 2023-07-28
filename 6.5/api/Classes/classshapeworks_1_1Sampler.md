@@ -75,11 +75,13 @@ title: shapeworks::Sampler
 | [ShapeGradientMatrix](../Classes/classshapeworks_1_1ShapeGradientMatrix.md) * | **[GetGeneralShapeGradientMatrix](../Classes/classshapeworks_1_1Sampler.md#function-getgeneralshapegradientmatrix)**() |
 | [DualVectorFunction](../Classes/classshapeworks_1_1DualVectorFunction.md) * | **[GetLinkingFunction](../Classes/classshapeworks_1_1Sampler.md#function-getlinkingfunction)**() |
 | [LegacyCorrespondenceFunction](../Classes/classshapeworks_1_1LegacyCorrespondenceFunction.md) * | **[GetEnsembleEntropyFunction](../Classes/classshapeworks_1_1Sampler.md#function-getensembleentropyfunction)**() |
+| [DisentangledCorrespondenceFunction](../Classes/classshapeworks_1_1DisentangledCorrespondenceFunction.md) * | **[GetDisentangledEnsembleEntropyFunction](../Classes/classshapeworks_1_1Sampler.md#function-getdisentangledensembleentropyfunction)**() |
 | [LegacyCorrespondenceFunction](../Classes/classshapeworks_1_1LegacyCorrespondenceFunction.md) * | **[GetEnsembleRegressionEntropyFunction](../Classes/classshapeworks_1_1Sampler.md#function-getensembleregressionentropyfunction)**() |
 | [LegacyCorrespondenceFunction](../Classes/classshapeworks_1_1LegacyCorrespondenceFunction.md) * | **[GetEnsembleMixedEffectsEntropyFunction](../Classes/classshapeworks_1_1Sampler.md#function-getensemblemixedeffectsentropyfunction)**() |
 | [CorrespondenceFunction](../Classes/classshapeworks_1_1CorrespondenceFunction.md) * | **[GetMeshBasedGeneralEntropyGradientFunction](../Classes/classshapeworks_1_1Sampler.md#function-getmeshbasedgeneralentropygradientfunction)**() |
 | const [DualVectorFunction](../Classes/classshapeworks_1_1DualVectorFunction.md) * | **[GetLinkingFunction](../Classes/classshapeworks_1_1Sampler.md#function-getlinkingfunction)**() const |
 | const [LegacyCorrespondenceFunction](../Classes/classshapeworks_1_1LegacyCorrespondenceFunction.md) * | **[GetEnsembleEntropyFunction](../Classes/classshapeworks_1_1Sampler.md#function-getensembleentropyfunction)**() const |
+| const [DisentangledCorrespondenceFunction](../Classes/classshapeworks_1_1DisentangledCorrespondenceFunction.md) * | **[GetDisentangledEnsembleEntropyFunction](../Classes/classshapeworks_1_1Sampler.md#function-getdisentangledensembleentropyfunction)**() const |
 | const [LegacyCorrespondenceFunction](../Classes/classshapeworks_1_1LegacyCorrespondenceFunction.md) * | **[GetEnsembleRegressionEntropyFunction](../Classes/classshapeworks_1_1Sampler.md#function-getensembleregressionentropyfunction)**() const |
 | const [LegacyCorrespondenceFunction](../Classes/classshapeworks_1_1LegacyCorrespondenceFunction.md) * | **[GetEnsembleMixedEffectsEntropyFunction](../Classes/classshapeworks_1_1Sampler.md#function-getensemblemixedeffectsentropyfunction)**() const |
 | const [CorrespondenceFunction](../Classes/classshapeworks_1_1CorrespondenceFunction.md) * | **[GetMeshBasedGeneralEntropyGradientFunction](../Classes/classshapeworks_1_1Sampler.md#function-getmeshbasedgeneralentropygradientfunction)**() const |
@@ -148,6 +150,7 @@ title: shapeworks::Sampler
 | LegacyCorrespondenceFunction::Pointer | **[m_EnsembleEntropyFunction](../Classes/classshapeworks_1_1Sampler.md#variable-m-ensembleentropyfunction)**  |
 | LegacyCorrespondenceFunction::Pointer | **[m_EnsembleRegressionEntropyFunction](../Classes/classshapeworks_1_1Sampler.md#variable-m-ensembleregressionentropyfunction)**  |
 | LegacyCorrespondenceFunction::Pointer | **[m_EnsembleMixedEffectsEntropyFunction](../Classes/classshapeworks_1_1Sampler.md#variable-m-ensemblemixedeffectsentropyfunction)**  |
+| DisentangledCorrespondenceFunction::Pointer | **[m_DisentangledEnsembleEntropyFunction](../Classes/classshapeworks_1_1Sampler.md#variable-m-disentangledensembleentropyfunction)**  |
 | CorrespondenceFunction::Pointer | **[m_CorrespondenceFunction](../Classes/classshapeworks_1_1Sampler.md#variable-m-correspondencefunction)**  |
 | LegacyShapeMatrix::Pointer | **[m_LegacyShapeMatrix](../Classes/classshapeworks_1_1Sampler.md#variable-m-legacyshapematrix)**  |
 | LinearRegressionShapeMatrix::Pointer | **[m_LinearRegressionShapeMatrix](../Classes/classshapeworks_1_1Sampler.md#variable-m-linearregressionshapematrix)**  |
@@ -609,6 +612,13 @@ inline LegacyCorrespondenceFunction * GetEnsembleEntropyFunction()
 ```
 
 
+### function GetDisentangledEnsembleEntropyFunction
+
+```cpp
+inline DisentangledCorrespondenceFunction * GetDisentangledEnsembleEntropyFunction()
+```
+
+
 ### function GetEnsembleRegressionEntropyFunction
 
 ```cpp
@@ -641,6 +651,13 @@ inline const DualVectorFunction * GetLinkingFunction() const
 
 ```cpp
 inline const LegacyCorrespondenceFunction * GetEnsembleEntropyFunction() const
+```
+
+
+### function GetDisentangledEnsembleEntropyFunction
+
+```cpp
+inline const DisentangledCorrespondenceFunction * GetDisentangledEnsembleEntropyFunction() const
 ```
 
 
@@ -1051,6 +1068,13 @@ LegacyCorrespondenceFunction::Pointer m_EnsembleMixedEffectsEntropyFunction;
 ```
 
 
+### variable m_DisentangledEnsembleEntropyFunction
+
+```cpp
+DisentangledCorrespondenceFunction::Pointer m_DisentangledEnsembleEntropyFunction;
+```
+
+
 ### variable m_CorrespondenceFunction
 
 ```cpp
@@ -1095,4 +1119,4 @@ shapeworks::ShapeGradientMatrix::Pointer m_GeneralShapeGradMatrix;
 
 -------------------------------
 
-Updated on 2023-07-28 at 02:09:00 +0000
+Updated on 2023-07-28 at 04:11:56 +0000

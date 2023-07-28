@@ -2583,6 +2583,9 @@
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetUseRegression</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">use_regression</span><span class="p">);</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetUseMixedEffects</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">use_mixed_effects</span><span class="p">);</span>
 
+<span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetUseDisentangledSpatiotemporalSSM</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">use_disentangled_ssm_4d</span><span class="p">);</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="nf">GetUseDisentangledSpatiotemporalSSM</span><span class="p">();</span>
+
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetNormalAngle</span><span class="p">(</span><span class="kt">double</span><span class="w"> </span><span class="n">normal_angle</span><span class="p">);</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetPerformGoodBad</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">perform_good_bad</span><span class="p">);</span>
 <span class="w">  </span><span class="kt">void</span><span class="w"> </span><span class="nf">SetLogEnergy</span><span class="p">(</span><span class="kt">bool</span><span class="w"> </span><span class="n">log_energy</span><span class="p">);</span>
@@ -2712,6 +2715,7 @@
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_optimizing</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_use_regression</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
 <span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_use_mixed_effects</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+<span class="w">  </span><span class="kt">bool</span><span class="w"> </span><span class="n">m_use_disentangled_ssm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
 
 <span class="w">  </span><span class="c1">// IO Parameters</span>
 <span class="w">  </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">m_domains_per_shape</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
@@ -2812,7 +2816,7 @@
 <span class="p">}</span><span class="w">  </span><span class="c1">// namespace shapeworks</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-07-28 at 02:09:01 +0000</p>
+<p>Updated on 2023-07-28 at 04:11:56 +0000</p>
 
               
             </article>
