@@ -41,6 +41,12 @@ jobs:
     - name: Check space1
       run: df -h
 
+    - name: Free some space 
+      run: cd /__t ; rm -rf CodeQL go
+      
+    - name: Check space2
+      run: df -h
+      
     - name: Checkout code
       uses: actions/checkout@v3
       with:
@@ -52,7 +58,7 @@ jobs:
     - name: Get tags
       run: git fetch --unshallow origin +refs/tags/*:refs/tags/*
 
-    - name: Check space2
+    - name: Check space3
       run: df -h
 
     - name: Restore Caches
@@ -87,6 +93,9 @@ jobs:
 
     - name: Check space6
       run: df -h
+
+    - name: Du
+      run: cd / ; du -sh * || true
 
     - name: make install
       shell: bash -l {0}
