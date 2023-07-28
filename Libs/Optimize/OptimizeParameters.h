@@ -115,6 +115,12 @@ class OptimizeParameters {
   std::vector<double> get_field_attribute_weights();
   void set_field_attribute_weights(std::vector<double> weights);
 
+  bool get_use_geodesics_to_landmarks();
+  void set_use_geodesics_to_landmarks(bool value);
+
+  double get_geodesic_to_landmarks_weight();
+  void set_geodesic_to_landmarks_weight(double value);
+
  private:
   std::string get_output_prefix();
 
