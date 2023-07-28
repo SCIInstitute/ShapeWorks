@@ -47,6 +47,12 @@ jobs:
 
     - name: Du2
       run: cd /__t ; du -sh * || true
+
+    - name: Free space
+      run: cd /__t ; rm -rf CodeQL go
+      
+    - name: Check space1
+      run: df -h
       
     - name: Checkout code
       uses: actions/checkout@v3
