@@ -55,6 +55,9 @@ class OptimizeParameters {
   double get_normals_strength();
   void set_normals_strength(double value);
 
+  bool get_use_disentangled_ssm();
+  void set_use_disentangled_ssm(bool value);
+
   bool get_use_procrustes();
   void set_use_procrustes(bool value);
 
