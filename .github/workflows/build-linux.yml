@@ -5,7 +5,6 @@ on:
     branches:
       - master
       - release_v*
-      - linux_disk_space
     tags:
     - '*'
   pull_request:
@@ -42,16 +41,10 @@ jobs:
     - name: Check space1
       run: df -h
 
-    - name: Du1
-      run: cd / ; du -sh * || true
-
-    - name: Du2
-      run: cd /__t ; du -sh * || true
-
-    - name: Free space
+    - name: Free some space 
       run: cd /__t ; rm -rf CodeQL go
       
-    - name: Check space1
+    - name: Check space2
       run: df -h
       
     - name: Checkout code
@@ -65,7 +58,7 @@ jobs:
     - name: Get tags
       run: git fetch --unshallow origin +refs/tags/*:refs/tags/*
 
-    - name: Check space2
+    - name: Check space3
       run: df -h
 
     - name: Restore Caches
