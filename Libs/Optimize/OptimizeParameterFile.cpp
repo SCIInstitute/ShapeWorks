@@ -810,10 +810,6 @@ bool OptimizeParameterFile::read_constraints(TiXmlHandle* doc_handle, Optimize* 
     }
   }
 
-  if (!this->read_cutting_spheres(doc_handle, optimize)) {
-    return false;
-  }
-
   return true;
 }
 
@@ -1063,97 +1059,6 @@ bool OptimizeParameterFile::read_cutting_planes(TiXmlHandle* docHandle, Optimize
 
   return true;
 }
-
-//---------------------------------------------------------------------------
-bool OptimizeParameterFile::read_cutting_spheres(TiXmlHandle* doc_handle, Optimize* optimize)
-{
-  TiXmlElement* elem = nullptr;
-  std::istringstream inputsBuffer;
-  int numShapes = this->get_num_inputs(doc_handle);
-  // sphere radii and centers
-  std::vector<int> spheres_per_input;
-
-  elem = doc_handle->FirstChild("spheres_per_domain").Element();
-  if (elem) {
-    inputsBuffer.str(elem->GetText());
-    double val;
-
-    while (inputsBuffer >> val) {
-      spheres_per_input.push_back(val);
-    }
-    inputsBuffer.clear();
-    inputsBuffer.str("");
-    if (spheres_per_input.size() != numShapes) {
-      std::cerr <<
-                "ERROR: Incomplete cutting plane data! Number of cutting spheres for every input shape is required!!"
-                << std::endl;
-      return false;
-    }
-  }
-  int numSpheres = std::accumulate(spheres_per_input.begin(), spheres_per_input.end(), 0);
-
-  std::vector<double> radList;
-  double r;
-
-  elem = doc_handle->FirstChild("sphere_radii").Element();
-  if (elem) {
-    inputsBuffer.str(elem->GetText());
-
-    while (inputsBuffer >> r) {
-      radList.push_back(r);
-    }
-    inputsBuffer.clear();
-    inputsBuffer.str("");
-
-    if (radList.size() != numSpheres) {
-      std::cerr << "ERROR: Incomplete sphere radius data! No spheres will be loaded!!" <<
-                std::endl;
-      return false;
-    }
-    else {
-      elem = doc_handle->FirstChild("sphere_centers").Element();
-      if (elem) {
-        inputsBuffer.str(elem->GetText());
-
-        std::vector<double> spVals;
-        double pt;
-
-        while (inputsBuffer >> pt) {
-          spVals.push_back(pt);
-        }
-        inputsBuffer.clear();
-        inputsBuffer.str("");
-
-        if (spVals.size() < 3 * numSpheres) {
-          std::cerr << "ERROR: Incomplete sphere center data! No spheres will be loaded!!" <<
-                    std::endl;
-          return false;
-        }
-        else {
-          vnl_vector_fixed<double, 3> center;
-          double rad;
-          int c_ctr = 0;
-          int r_ctr = 0;
-
-          for (int shapeCount = 0; shapeCount < numShapes; shapeCount++) {
-            for (int sphereCount = 0; sphereCount < spheres_per_input[shapeCount];
-                 sphereCount++) {
-              center[0] = spVals[c_ctr++];
-              center[1] = spVals[c_ctr++];
-              center[2] = spVals[c_ctr++];
-
-              rad = radList[r_ctr++];
-
-              optimize->GetSampler()->AddSphere(shapeCount, center, rad);
-            }
-          }
-        }
-      }
-    }
-  }
-  return true;
-}
-
 
 //---------------------------------------------------------------------------
 bool OptimizeParameterFile::read_explanatory_variables(TiXmlHandle* doc_handle, Optimize* optimize)

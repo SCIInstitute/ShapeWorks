@@ -233,7 +233,7 @@ void FreeFormConstraint::computeGradientFields(std::shared_ptr<Mesh> mesh) {
     std::unique_ptr<SurfaceMesh> gcmesh;
     std::unique_ptr<VertexPositionGeometry> gcgeometry;
     std::tie(gcmesh, gcgeometry) = makeSurfaceMeshAndGeometry(V, F);
-    HeatMethodDistanceSolver heatSolver(*gcgeometry);
+    HeatMethodDistanceSolver heatSolver(*gcgeometry, 1.0, true);
 
     // Some vertices as source set
     std::vector<Vertex> sourceVerts;

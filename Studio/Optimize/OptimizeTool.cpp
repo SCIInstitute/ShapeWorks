@@ -58,6 +58,7 @@ OptimizeTool::OptimizeTool(Preferences& prefs, Telemetry& telemetry) : preferenc
       "This value should only be changed if an error occurs "
       "during optimization suggesting that it should be increased.  "
       "It has no effect on the optimization");
+  ui_->use_disentangled_ssm->setToolTip("Use disentangled Optimization technique to build spatiotemporal SSM.");
 
   QIntValidator* above_zero = new QIntValidator(1, std::numeric_limits<int>::max(), this);
   QIntValidator* zero_and_up = new QIntValidator(0, std::numeric_limits<int>::max(), this);
@@ -254,6 +255,7 @@ void OptimizeTool::load_params() {
   ui_->use_geodesic_distance->setChecked(params.get_use_geodesic_distance());
   ui_->use_normals->setChecked(params.get_use_normals()[0]);
   ui_->normals_strength->setText(QString::number(params.get_normals_strength()));
+  ui_->use_disentangled_ssm->setChecked(params.get_use_disentangled_ssm());
 
   ui_->procrustes->setChecked(params.get_use_procrustes());
   ui_->procrustes_scaling->setChecked(params.get_use_procrustes_scaling());
@@ -296,6 +298,7 @@ void OptimizeTool::store_params() {
   params.set_use_geodesic_distance(ui_->use_geodesic_distance->isChecked());
   params.set_use_normals({ui_->use_normals->isChecked()});
   params.set_normals_strength(ui_->normals_strength->text().toDouble());
+  params.set_use_disentangled_ssm(ui_->use_disentangled_ssm->isChecked());
 
   params.set_use_procrustes(ui_->procrustes->isChecked());
   params.set_use_procrustes_scaling(ui_->procrustes_scaling->isChecked());

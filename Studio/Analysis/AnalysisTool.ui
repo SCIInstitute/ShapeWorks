@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>438</width>
-    <height>1965</height>
+    <height>2193</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -501,7 +501,7 @@ QWidget#particles_panel {
             <item>
              <widget class="QLabel" name="view_label">
               <property name="text">
-               <string>View</string>
+               <string>Analysis</string>
               </property>
              </widget>
             </item>
@@ -598,11 +598,333 @@ QWidget#particles_panel {
                    <property name="verticalSpacing">
                     <number>12</number>
                    </property>
-                   <item row="1" column="0" colspan="3">
-                    <widget class="Line" name="line">
+                   <item row="2" column="1">
+                    <widget class="CustomSlider" name="group_slider">
+                     <property name="toolTip">
+                      <string>Group slider</string>
+                     </property>
+                     <property name="maximum">
+                      <number>20</number>
+                     </property>
+                     <property name="pageStep">
+                      <number>1</number>
+                     </property>
+                     <property name="value">
+                      <number>10</number>
+                     </property>
                      <property name="orientation">
                       <enum>Qt::Horizontal</enum>
                      </property>
+                     <property name="tickPosition">
+                      <enum>QSlider::TicksBelow</enum>
+                     </property>
+                     <property name="tickInterval">
+                      <number>10</number>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="4" column="2">
+                    <widget class="QPushButton" name="group2_button">
+                     <property name="enabled">
+                      <bool>true</bool>
+                     </property>
+                     <property name="toolTip">
+                      <string>Mean of right group</string>
+                     </property>
+                     <property name="text">
+                      <string>Mean</string>
+                     </property>
+                     <property name="checkable">
+                      <bool>true</bool>
+                     </property>
+                     <property name="checked">
+                      <bool>false</bool>
+                     </property>
+                     <property name="autoExclusive">
+                      <bool>false</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="1" colspan="2">
+                    <widget class="QComboBox" name="group_box">
+                     <property name="toolTip">
+                      <string>Select group set</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="6" column="0" colspan="3">
+                    <widget class="QGroupBox" name="groupBox">
+                     <property name="title">
+                      <string>Analysis</string>
+                     </property>
+                     <layout class="QGridLayout" name="gridLayout_20">
+                      <item row="0" column="0">
+                       <widget class="QLabel" name="method_label">
+                        <property name="text">
+                         <string>Method</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="0" column="1">
+                       <widget class="QComboBox" name="group_analysis_combo">
+                        <item>
+                         <property name="text">
+                          <string>- None -</string>
+                         </property>
+                        </item>
+                        <item>
+                         <property name="text">
+                          <string>Group Particle P-Values</string>
+                         </property>
+                        </item>
+                        <item>
+                         <property name="text">
+                          <string>Network Analysis</string>
+                         </property>
+                        </item>
+                        <item>
+                         <property name="text">
+                          <string>LDA</string>
+                         </property>
+                        </item>
+                       </widget>
+                      </item>
+                      <item row="1" column="0" colspan="2">
+                       <widget class="QStackedWidget" name="group_analysis_stacked_widget">
+                        <property name="currentIndex">
+                         <number>2</number>
+                        </property>
+                        <widget class="QWidget" name="group_pvalues_page">
+                         <layout class="QGridLayout" name="gridLayout_25">
+                          <item row="0" column="0">
+                           <widget class="QCheckBox" name="group_p_values_checkbox">
+                            <property name="text">
+                             <string>Display Per Particle Group P-values</string>
+                            </property>
+                           </widget>
+                          </item>
+                         </layout>
+                        </widget>
+                        <widget class="QWidget" name="network_analysis_page">
+                         <layout class="QGridLayout" name="gridLayout_15">
+                          <item row="0" column="0">
+                           <widget class="QLabel" name="label_6">
+                            <property name="text">
+                             <string>Feature Map</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item row="0" column="1" colspan="2">
+                           <widget class="QComboBox" name="network_feature">
+                            <property name="toolTip">
+                             <string>Select group set</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item row="1" column="0">
+                           <widget class="QLabel" name="label_15">
+                            <property name="toolTip">
+                             <string>0.05 is the standard value.</string>
+                            </property>
+                            <property name="text">
+                             <string>P-value Threshold</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item row="1" column="2">
+                           <widget class="QLineEdit" name="network_pvalue_threshold">
+                            <property name="toolTip">
+                             <string>0.05 is the standard value.</string>
+                            </property>
+                            <property name="alignment">
+                             <set>Qt::AlignCenter</set>
+                            </property>
+                           </widget>
+                          </item>
+                          <item row="2" column="0">
+                           <widget class="QLabel" name="label_14">
+                            <property name="toolTip">
+                             <string>0.05 is the standard value.</string>
+                            </property>
+                            <property name="text">
+                             <string>Cluster P-value</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item row="2" column="2">
+                           <widget class="QLineEdit" name="network_pvalue_of_interest">
+                            <property name="toolTip">
+                             <string>0.05 is the standard value.</string>
+                            </property>
+                            <property name="alignment">
+                             <set>Qt::AlignCenter</set>
+                            </property>
+                           </widget>
+                          </item>
+                          <item row="3" column="0">
+                           <widget class="QLabel" name="label_16">
+                            <property name="toolTip">
+                             <string>10,000 is the standard value for a larger sample size, however a large value will increase computation time.</string>
+                            </property>
+                            <property name="text">
+                             <string>Permutations</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item row="3" column="2">
+                           <widget class="QLineEdit" name="network_iterations">
+                            <property name="toolTip">
+                             <string>10,000 is the standard value for a larger sample size, however a large value will increase computation time.</string>
+                            </property>
+                            <property name="alignment">
+                             <set>Qt::AlignCenter</set>
+                            </property>
+                           </widget>
+                          </item>
+                          <item row="4" column="0" colspan="2">
+                           <widget class="QCheckBox" name="network_analysis_display">
+                            <property name="text">
+                             <string>Display</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item row="4" column="2">
+                           <widget class="QWidget" name="network_display_option_widget" native="true">
+                            <layout class="QGridLayout" name="gridLayout_22">
+                             <item row="0" column="0">
+                              <widget class="QRadioButton" name="network_analysis_option">
+                               <property name="text">
+                                <string>Network Analysis</string>
+                               </property>
+                               <property name="checked">
+                                <bool>true</bool>
+                               </property>
+                              </widget>
+                             </item>
+                             <item row="1" column="0">
+                              <widget class="QRadioButton" name="network_spm1d_option">
+                               <property name="text">
+                                <string>SPM1D</string>
+                               </property>
+                              </widget>
+                             </item>
+                            </layout>
+                           </widget>
+                          </item>
+                          <item row="5" column="0" colspan="3">
+                           <widget class="QPushButton" name="network_analysis_button">
+                            <property name="enabled">
+                             <bool>true</bool>
+                            </property>
+                            <property name="toolTip">
+                             <string>Network Analysis</string>
+                            </property>
+                            <property name="text">
+                             <string>Run</string>
+                            </property>
+                            <property name="checkable">
+                             <bool>false</bool>
+                            </property>
+                            <property name="autoExclusive">
+                             <bool>false</bool>
+                            </property>
+                           </widget>
+                          </item>
+                          <item row="6" column="0" colspan="3">
+                           <widget class="QWidget" name="network_progress_widget" native="true">
+                            <layout class="QGridLayout" name="gridLayout_23">
+                             <item row="2" column="0">
+                              <widget class="QProgressBar" name="network_progress">
+                               <property name="sizePolicy">
+                                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                                 <horstretch>0</horstretch>
+                                 <verstretch>0</verstretch>
+                                </sizepolicy>
+                               </property>
+                               <property name="value">
+                                <number>0</number>
+                               </property>
+                              </widget>
+                             </item>
+                            </layout>
+                           </widget>
+                          </item>
+                         </layout>
+                        </widget>
+                        <widget class="QWidget" name="lda_page">
+                         <layout class="QGridLayout" name="gridLayout_26">
+                          <property name="leftMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="topMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="rightMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="bottomMargin">
+                           <number>0</number>
+                          </property>
+                          <item row="0" column="0">
+                           <widget class="JKQTPlotter" name="lda_graph" native="true">
+                            <property name="sizePolicy">
+                             <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+                              <horstretch>0</horstretch>
+                              <verstretch>0</verstretch>
+                             </sizepolicy>
+                            </property>
+                            <property name="minimumSize">
+                             <size>
+                              <width>50</width>
+                              <height>50</height>
+                             </size>
+                            </property>
+                           </widget>
+                          </item>
+                          <item row="1" column="0">
+                           <widget class="QLabel" name="lda_hint_label">
+                            <property name="text">
+                             <string>(Resize or pop-out panel for a larger graph)</string>
+                            </property>
+                            <property name="alignment">
+                             <set>Qt::AlignCenter</set>
+                            </property>
+                            <property name="wordWrap">
+                             <bool>true</bool>
+                            </property>
+                           </widget>
+                          </item>
+                          <item row="2" column="0">
+                           <widget class="QWidget" name="lda_progress_widget" native="true">
+                            <layout class="QGridLayout" name="gridLayout_21">
+                             <item row="2" column="1">
+                              <widget class="QProgressBar" name="lda_progress">
+                               <property name="sizePolicy">
+                                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                                 <horstretch>0</horstretch>
+                                 <verstretch>0</verstretch>
+                                </sizepolicy>
+                               </property>
+                               <property name="value">
+                                <number>0</number>
+                               </property>
+                              </widget>
+                             </item>
+                             <item row="2" column="0">
+                              <widget class="QLabel" name="lda_label">
+                               <property name="text">
+                                <string>Computing LDA...</string>
+                               </property>
+                              </widget>
+                             </item>
+                            </layout>
+                           </widget>
+                          </item>
+                         </layout>
+                        </widget>
+                       </widget>
+                      </item>
+                     </layout>
                     </widget>
                    </item>
                    <item row="3" column="0" colspan="3">
@@ -659,6 +981,53 @@ QWidget#particles_panel {
                      </layout>
                     </widget>
                    </item>
+                   <item row="4" column="1">
+                    <widget class="QPushButton" name="difference_button">
+                     <property name="enabled">
+                      <bool>true</bool>
+                     </property>
+                     <property name="toolTip">
+                      <string>Diff of left to right</string>
+                     </property>
+                     <property name="text">
+                      <string>Diff --&gt;</string>
+                     </property>
+                     <property name="checkable">
+                      <bool>true</bool>
+                     </property>
+                     <property name="autoExclusive">
+                      <bool>false</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="2" column="2">
+                    <widget class="QComboBox" name="group_right">
+                     <property name="toolTip">
+                      <string>Group 2</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="0">
+                    <widget class="QLabel" name="label_3">
+                     <property name="text">
+                      <string>Group Set</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="2" column="0">
+                    <widget class="QComboBox" name="group_left">
+                     <property name="toolTip">
+                      <string>Group 1</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="0" colspan="3">
+                    <widget class="Line" name="line">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                    </widget>
+                   </item>
                    <item row="4" column="0">
                     <widget class="QPushButton" name="group1_button">
                      <property name="enabled">
@@ -681,366 +1050,18 @@ QWidget#particles_panel {
                      </property>
                     </widget>
                    </item>
-                   <item row="2" column="0">
-                    <widget class="QComboBox" name="group_left">
-                     <property name="toolTip">
-                      <string>Group 1</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="2" column="1">
-                    <widget class="CustomSlider" name="group_slider">
-                     <property name="toolTip">
-                      <string>Group slider</string>
-                     </property>
-                     <property name="maximum">
-                      <number>20</number>
-                     </property>
-                     <property name="pageStep">
-                      <number>1</number>
-                     </property>
-                     <property name="value">
-                      <number>10</number>
-                     </property>
+                   <item row="5" column="0">
+                    <spacer name="verticalSpacer">
                      <property name="orientation">
-                      <enum>Qt::Horizontal</enum>
+                      <enum>Qt::Vertical</enum>
                      </property>
-                     <property name="tickPosition">
-                      <enum>QSlider::TicksBelow</enum>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>20</width>
+                       <height>10</height>
+                      </size>
                      </property>
-                     <property name="tickInterval">
-                      <number>10</number>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="6" column="0" colspan="3">
-                    <widget class="QGroupBox" name="groupBox_2">
-                     <property name="title">
-                      <string>P-values</string>
-                     </property>
-                     <property name="checkable">
-                      <bool>false</bool>
-                     </property>
-                     <layout class="QGridLayout" name="gridLayout_27">
-                      <item row="0" column="0">
-                       <widget class="QPushButton" name="group_p_values_button">
-                        <property name="enabled">
-                         <bool>true</bool>
-                        </property>
-                        <property name="toolTip">
-                         <string>Display p-values on surface</string>
-                        </property>
-                        <property name="text">
-                         <string>Display</string>
-                        </property>
-                        <property name="checkable">
-                         <bool>true</bool>
-                        </property>
-                        <property name="autoExclusive">
-                         <bool>false</bool>
-                        </property>
-                       </widget>
-                      </item>
-                     </layout>
-                    </widget>
-                   </item>
-                   <item row="4" column="1">
-                    <widget class="QPushButton" name="difference_button">
-                     <property name="enabled">
-                      <bool>true</bool>
-                     </property>
-                     <property name="toolTip">
-                      <string>Diff of left to right</string>
-                     </property>
-                     <property name="text">
-                      <string>Diff --&gt;</string>
-                     </property>
-                     <property name="checkable">
-                      <bool>true</bool>
-                     </property>
-                     <property name="autoExclusive">
-                      <bool>false</bool>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="7" column="0" colspan="3">
-                    <widget class="QGroupBox" name="network_analysis_box">
-                     <property name="title">
-                      <string>Network Analysis</string>
-                     </property>
-                     <property name="checkable">
-                      <bool>false</bool>
-                     </property>
-                     <layout class="QGridLayout" name="gridLayout_15">
-                      <item row="6" column="0" colspan="2">
-                       <widget class="QPushButton" name="network_analysis_button">
-                        <property name="enabled">
-                         <bool>true</bool>
-                        </property>
-                        <property name="toolTip">
-                         <string>Network Analysis</string>
-                        </property>
-                        <property name="text">
-                         <string>Run</string>
-                        </property>
-                        <property name="checkable">
-                         <bool>false</bool>
-                        </property>
-                        <property name="autoExclusive">
-                         <bool>false</bool>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="4" column="1">
-                       <widget class="QLineEdit" name="network_iterations">
-                        <property name="toolTip">
-                         <string>10,000 is the standard value for a larger sample size, however a large value will increase computation time.</string>
-                        </property>
-                        <property name="alignment">
-                         <set>Qt::AlignCenter</set>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="4" column="0">
-                       <widget class="QLabel" name="label_16">
-                        <property name="toolTip">
-                         <string>10,000 is the standard value for a larger sample size, however a large value will increase computation time.</string>
-                        </property>
-                        <property name="text">
-                         <string>Permutations</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="5" column="1">
-                       <widget class="QWidget" name="network_display_option_widget" native="true">
-                        <layout class="QGridLayout" name="gridLayout_22">
-                         <item row="0" column="0">
-                          <widget class="QRadioButton" name="network_analysis_option">
-                           <property name="text">
-                            <string>Network Analysis</string>
-                           </property>
-                           <property name="checked">
-                            <bool>true</bool>
-                           </property>
-                          </widget>
-                         </item>
-                         <item row="1" column="0">
-                          <widget class="QRadioButton" name="network_spm1d_option">
-                           <property name="text">
-                            <string>SPM1D</string>
-                           </property>
-                          </widget>
-                         </item>
-                        </layout>
-                       </widget>
-                      </item>
-                      <item row="0" column="1">
-                       <widget class="QComboBox" name="network_feature">
-                        <property name="toolTip">
-                         <string>Select group set</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="0" column="0">
-                       <widget class="QLabel" name="label_6">
-                        <property name="text">
-                         <string>Feature Map</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="2" column="0">
-                       <widget class="QLabel" name="label_14">
-                        <property name="toolTip">
-                         <string>0.05 is the standard value.</string>
-                        </property>
-                        <property name="text">
-                         <string>Cluster P-value</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="2" column="1">
-                       <widget class="QLineEdit" name="network_pvalue_of_interest">
-                        <property name="toolTip">
-                         <string>0.05 is the standard value.</string>
-                        </property>
-                        <property name="alignment">
-                         <set>Qt::AlignCenter</set>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="5" column="0">
-                       <widget class="QCheckBox" name="network_analysis_display">
-                        <property name="text">
-                         <string>Display</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="7" column="0" colspan="2">
-                       <widget class="QWidget" name="network_progress_widget" native="true">
-                        <layout class="QGridLayout" name="gridLayout_23">
-                         <item row="2" column="0">
-                          <widget class="QProgressBar" name="network_progress">
-                           <property name="sizePolicy">
-                            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                             <horstretch>0</horstretch>
-                             <verstretch>0</verstretch>
-                            </sizepolicy>
-                           </property>
-                           <property name="value">
-                            <number>0</number>
-                           </property>
-                          </widget>
-                         </item>
-                        </layout>
-                       </widget>
-                      </item>
-                      <item row="1" column="1">
-                       <widget class="QLineEdit" name="network_pvalue_threshold">
-                        <property name="toolTip">
-                         <string>0.05 is the standard value.</string>
-                        </property>
-                        <property name="alignment">
-                         <set>Qt::AlignCenter</set>
-                        </property>
-                       </widget>
-                      </item>
-                      <item row="1" column="0">
-                       <widget class="QLabel" name="label_15">
-                        <property name="toolTip">
-                         <string>0.05 is the standard value.</string>
-                        </property>
-                        <property name="text">
-                         <string>P-value Threshold</string>
-                        </property>
-                       </widget>
-                      </item>
-                     </layout>
-                    </widget>
-                   </item>
-                   <item row="0" column="1" colspan="2">
-                    <widget class="QComboBox" name="group_box">
-                     <property name="toolTip">
-                      <string>Select group set</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="0" column="0">
-                    <widget class="QLabel" name="label_3">
-                     <property name="text">
-                      <string>Group Set</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="4" column="2">
-                    <widget class="QPushButton" name="group2_button">
-                     <property name="enabled">
-                      <bool>true</bool>
-                     </property>
-                     <property name="toolTip">
-                      <string>Mean of right group</string>
-                     </property>
-                     <property name="text">
-                      <string>Mean</string>
-                     </property>
-                     <property name="checkable">
-                      <bool>true</bool>
-                     </property>
-                     <property name="checked">
-                      <bool>false</bool>
-                     </property>
-                     <property name="autoExclusive">
-                      <bool>false</bool>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="2" column="2">
-                    <widget class="QComboBox" name="group_right">
-                     <property name="toolTip">
-                      <string>Group 2</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="8" column="0" colspan="3">
-                    <widget class="QGroupBox" name="groupBox_3">
-                     <property name="title">
-                      <string>LDA</string>
-                     </property>
-                     <property name="checkable">
-                      <bool>false</bool>
-                     </property>
-                     <layout class="QGridLayout" name="gridLayout_28">
-                      <item row="0" column="0">
-                       <widget class="QWidget" name="lda_panel" native="true">
-                        <layout class="QGridLayout" name="gridLayout_20">
-                         <property name="leftMargin">
-                          <number>0</number>
-                         </property>
-                         <property name="topMargin">
-                          <number>0</number>
-                         </property>
-                         <property name="rightMargin">
-                          <number>0</number>
-                         </property>
-                         <property name="bottomMargin">
-                          <number>0</number>
-                         </property>
-                         <item row="0" column="0">
-                          <widget class="JKQTPlotter" name="lda_graph" native="true">
-                           <property name="sizePolicy">
-                            <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-                             <horstretch>0</horstretch>
-                             <verstretch>0</verstretch>
-                            </sizepolicy>
-                           </property>
-                           <property name="minimumSize">
-                            <size>
-                             <width>50</width>
-                             <height>50</height>
-                            </size>
-                           </property>
-                          </widget>
-                         </item>
-                         <item row="2" column="0">
-                          <widget class="QWidget" name="lda_progress_widget" native="true">
-                           <layout class="QGridLayout" name="gridLayout_21">
-                            <item row="2" column="1">
-                             <widget class="QProgressBar" name="lda_progress">
-                              <property name="sizePolicy">
-                               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                                <horstretch>0</horstretch>
-                                <verstretch>0</verstretch>
-                               </sizepolicy>
-                              </property>
-                              <property name="value">
-                               <number>0</number>
-                              </property>
-                             </widget>
-                            </item>
-                            <item row="2" column="0">
-                             <widget class="QLabel" name="lda_label">
-                              <property name="text">
-                               <string>Computing LDA...</string>
-                              </property>
-                             </widget>
-                            </item>
-                           </layout>
-                          </widget>
-                         </item>
-                         <item row="1" column="0">
-                          <widget class="QLabel" name="lda_hint_label">
-                           <property name="text">
-                            <string>(Resize or pop-out panel for a larger graph)</string>
-                           </property>
-                           <property name="alignment">
-                            <set>Qt::AlignCenter</set>
-                           </property>
-                          </widget>
-                         </item>
-                        </layout>
-                       </widget>
-                      </item>
-                     </layout>
-                    </widget>
+                    </spacer>
                    </item>
                   </layout>
                  </widget>
@@ -2259,7 +2280,7 @@ Reference Domain</string>
             <item>
              <widget class="QLabel" name="particles_label">
               <property name="text">
-               <string>Particles</string>
+               <string>Good/Bad Particles</string>
               </property>
              </widget>
             </item>

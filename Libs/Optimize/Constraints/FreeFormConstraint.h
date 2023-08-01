@@ -7,18 +7,24 @@ class vtkFloatArray;
 
 namespace shapeworks {
 
-//! FreeFormConstraint
-/*!
- * Encapsulate functionality related to free form constraints
+/**
+ * \class FreeFormConstraint
+ * \ingroup Group-Constraints
+ *
+ *  Encapsulate functionality related to free-form constraints (FFC). Inherits from Constraint. See Constraint.h for more information
+ *
  */
 class FreeFormConstraint : public Constraint {
  public:
   FreeFormConstraint() {}
 
+  /// Sets the mesh that defines the FFC
   void setMesh(std::shared_ptr<shapeworks::Mesh> mesh) { mesh_ = mesh; }
 
+  /// Returns the mesh that defines the FFC
   std::shared_ptr<shapeworks::Mesh> getMesh() { return mesh_; }
 
+  /// Prepares for optimize
   bool readyForOptimize() const;
 
   bool isViolated(const Eigen::Vector3d& pt) const override;

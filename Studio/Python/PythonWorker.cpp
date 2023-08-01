@@ -220,7 +220,7 @@ bool PythonWorker::init() {
     py::module multiprocessing = py::module::import("multiprocessing");
     // set the executable
     multiprocessing.attr("set_executable")(python_executable.toStdString());
-    SW_LOG("Python executable: {}", python_executable.toStdString());
+    SW_DEBUG("Python executable: {}", python_executable.toStdString());
 
     this->python_logger_->set_callback(std::bind(&PythonWorker::incoming_python_message, this, std::placeholders::_1));
     this->python_logger_->set_progress_callback(

@@ -78,8 +78,8 @@ TEST(MeshTests, geodesicTest1) {
   auto pt2 = ellipsoid.getPoint(p2);
   auto euclidean_dist = pt2.EuclideanDistanceTo(pt1);
 
-  ASSERT_TRUE(std::abs(euclidean_dist - 6.70625) < 1e-4);
-  ASSERT_TRUE(std::abs(geodesic_dist - 6.577) < 1e-4);
+  ASSERT_TRUE(std::abs(euclidean_dist - 6.7062) < 1e-4);
+  ASSERT_TRUE(std::abs(geodesic_dist - 6.55644) < 1e-4);
 }
 
 TEST(MeshTests, geodesicTest2) {
@@ -798,4 +798,13 @@ TEST(MeshTests, boundaryLoopExtractor) {
   Mesh mesh(std::string(TEST_DATA_DIR) + "/shared_boundary/00_out_s.vtk");
   Mesh loop = MeshUtils::boundaryLoopExtractor(mesh);
   ASSERT_TRUE(loop == ground_truth);
+}
+
+TEST(MeshTests, thicknessTest) {
+  Mesh sphere(std::string(TEST_DATA_DIR) + "/thickness/sphere.vtk");
+  Image ct(std::string(TEST_DATA_DIR) + "/thickness/ct.nrrd");
+  Mesh thickness = sphere.computeThickness(ct);
+
+  Mesh baseline(std::string(TEST_DATA_DIR) + "/thickness/thickness.vtk");
+  ASSERT_TRUE(thickness == baseline);
 }

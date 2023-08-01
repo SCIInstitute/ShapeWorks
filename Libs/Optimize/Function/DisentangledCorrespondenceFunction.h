@@ -1,27 +1,25 @@
 #pragma once
-
 #include <vector>
-
-#include "LegacyCorrespondenceFunction.h"
+#include "DisentangledCorrespondenceFunction.h"
 #include "Libs/Optimize/Matrix/LegacyShapeMatrix.h"
 #include "VectorFunction.h"
 
 namespace shapeworks {
 
 /**
- * \class LegacyCorrespondenceFunction (ParticleEnsembleEntropyFunction)
- *
- *
+ * \class DisentangledCorrespondenceFunction
+ * This class implements the Correspondence Term where the entropy computation is disentangled 
+ * across time and shape domain, and builds a Sapatiotemporal SSM.
  */
-class LegacyCorrespondenceFunction : public VectorFunction {
+class DisentangledCorrespondenceFunction : public VectorFunction {
  public:
   constexpr static unsigned int VDimension = 3;
   /** Standard class typedefs. */
-  typedef LegacyCorrespondenceFunction Self;
+  typedef DisentangledCorrespondenceFunction Self;
   typedef itk::SmartPointer<Self> Pointer;
   typedef itk::SmartPointer<const Self> ConstPointer;
   typedef VectorFunction Superclass;
-  itkTypeMacro(LegacyCorrespondenceFunction, VectorFunction);
+  itkTypeMacro(DisentangledCorrespondenceFunction, VectorFunction);
 
   typedef LegacyShapeMatrix ShapeMatrixType;
 
@@ -32,6 +30,7 @@ class LegacyCorrespondenceFunction : public VectorFunction {
   typedef typename ParticleSystem::PointType PointType;
   typedef vnl_vector<DataType> vnl_vector_type;
   typedef vnl_matrix<DataType> vnl_matrix_type;
+  typedef std::shared_ptr<std::vector<vnl_matrix_type>> shared_vnl_matrix_array_type;
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
@@ -70,7 +69,7 @@ class LegacyCorrespondenceFunction : public VectorFunction {
     m_ShapeMatrix->BeforeIteration();
 
     if (m_Counter == 0) {
-      this->ComputeCovarianceMatrix();
+      this->ComputeCovarianceMatrices();
     }
   }
 
@@ -111,11 +110,14 @@ class LegacyCorrespondenceFunction : public VectorFunction {
   int GetRecomputeCovarianceInterval() const { return m_RecomputeCovarianceInterval; }
 
   virtual VectorFunction::Pointer Clone() {
-    LegacyCorrespondenceFunction::Pointer copy = LegacyCorrespondenceFunction::New();
+    DisentangledCorrespondenceFunction::Pointer copy = DisentangledCorrespondenceFunction::New();
 
-    copy->m_PointsUpdate = this->m_PointsUpdate;
+    copy->m_Shape_PointsUpdate = this->m_Shape_PointsUpdate;
+    copy->m_Time_PointsUpdate = this->m_Time_PointsUpdate;
     copy->m_MinimumVariance = this->m_MinimumVariance;
-    copy->m_MinimumEigenValue = this->m_MinimumEigenValue;
+    copy->m_MinimumEigenValue_shape_cohort = this->m_MinimumEigenValue_shape_cohort;
+    copy->m_MinimumEigenValue_time_cohort = this->m_MinimumEigenValue_time_cohort;
+
     copy->m_CurrentEnergy = this->m_CurrentEnergy;
     copy->m_HoldMinimumVariance = this->m_HoldMinimumVariance;
     copy->m_MinimumVarianceDecayConstant = this->m_MinimumVarianceDecayConstant;
@@ -126,15 +128,18 @@ class LegacyCorrespondenceFunction : public VectorFunction {
     copy->m_ParticleSystem = this->m_ParticleSystem;
     copy->m_ShapeMatrix = this->m_ShapeMatrix;
 
-    copy->m_InverseCovMatrix = this->m_InverseCovMatrix;
-    copy->m_points_mean = this->m_points_mean;
-    copy->m_UseMeanEnergy = this->m_UseMeanEnergy;
+
+    copy->m_InverseCovMatrices_time_cohort = this->m_InverseCovMatrices_time_cohort;
+    copy->m_InverseCovMatrices_shape_cohort = this->m_InverseCovMatrices_shape_cohort;
+
+    copy->m_points_mean_time_cohort = this->m_points_mean_time_cohort;
+    copy->m_points_mean_shape_cohort = this->m_points_mean_shape_cohort;
 
     return (VectorFunction::Pointer)copy;
   }
 
  protected:
-  LegacyCorrespondenceFunction() {
+  DisentangledCorrespondenceFunction() {
     // m_MinimumVarianceBase = 1.0;//exp(log(1.0e-5)/10000.0);
     m_HoldMinimumVariance = true;
     m_MinimumVariance = 1.0e-5;
@@ -143,19 +148,55 @@ class LegacyCorrespondenceFunction : public VectorFunction {
     m_RecomputeCovarianceInterval = 1;
     m_Counter = 0;
     m_UseMeanEnergy = true;
-    m_PointsUpdate = std::make_shared<vnl_matrix_type>(10, 10);
-    m_InverseCovMatrix = std::make_shared<Eigen::MatrixXd>(10, 10);
-    m_points_mean = std::make_shared<vnl_matrix_type>(10, 10);
+    m_InverseCovMatrices_time_cohort = std::make_shared<std::vector<Eigen::MatrixXd>>();
+    m_InverseCovMatrices_shape_cohort = std::make_shared<std::vector<Eigen::MatrixXd>>();
+    m_points_mean_time_cohort = std::make_shared<std::vector<vnl_matrix_type>>();
+    m_points_mean_shape_cohort = std::make_shared<std::vector<vnl_matrix_type>>();
+    m_Time_PointsUpdate = std::make_shared<std::vector<vnl_matrix_type>>();
+    m_Shape_PointsUpdate = std::make_shared<std::vector<vnl_matrix_type>>();
   }
-  virtual ~LegacyCorrespondenceFunction() {}
-  void operator=(const LegacyCorrespondenceFunction&);
-  LegacyCorrespondenceFunction(const LegacyCorrespondenceFunction&);
+  virtual ~DisentangledCorrespondenceFunction() {}
+  void operator=(const DisentangledCorrespondenceFunction&);
+  DisentangledCorrespondenceFunction(const DisentangledCorrespondenceFunction&);
   typename ShapeMatrixType::Pointer m_ShapeMatrix;
 
-  virtual void ComputeCovarianceMatrix();
-  std::shared_ptr<vnl_matrix_type> m_PointsUpdate;
+  // Computes Covariance Matrices across time and shape domain and then generate gradient updates for them.
+  virtual void ComputeCovarianceMatrices();
+
+  // Initialize size and clear relevant variables from previous iteration, before gradient updates computation.
+  void Initialize(){
+    const unsigned int total_time_points = m_ShapeMatrix->GetDomainsPerShape();
+    int total_subjects = m_ShapeMatrix->cols();
+    m_points_mean_time_cohort->clear();
+    m_points_mean_shape_cohort->clear();
+    m_InverseCovMatrices_time_cohort->clear();
+    m_InverseCovMatrices_shape_cohort->clear();
+    m_Shape_PointsUpdate->clear();
+    m_Time_PointsUpdate->clear();
+    m_MinimumEigenValue_shape_cohort.resize(total_subjects, 0.0);
+    m_MinimumEigenValue_time_cohort.resize(total_time_points, 0.0);
+    for(int i = 0; i < total_time_points; ++i){
+      Eigen::MatrixXd temp_cov_matrix;
+      vnl_matrix_type temp_points_matrix;
+      vnl_matrix_type temp_mean_matrix;
+      m_InverseCovMatrices_time_cohort->push_back(temp_cov_matrix);
+      m_points_mean_time_cohort->push_back(temp_mean_matrix);
+      m_Time_PointsUpdate->push_back(temp_points_matrix);
+    }
+    for(int i = 0; i < total_subjects; ++i){
+      Eigen::MatrixXd temp_cov_matrix;
+      vnl_matrix_type temp_points_matrix;
+      vnl_matrix_type temp_mean_matrix;
+      m_InverseCovMatrices_shape_cohort->push_back(temp_cov_matrix);
+      m_points_mean_shape_cohort->push_back(temp_mean_matrix);
+      m_Shape_PointsUpdate->push_back(temp_points_matrix);
+    }
+  }
+
   double m_MinimumVariance;
   double m_MinimumEigenValue;
+  std::vector<double> m_MinimumEigenValue_time_cohort;
+  std::vector<double> m_MinimumEigenValue_shape_cohort;
   double m_CurrentEnergy;
   bool m_HoldMinimumVariance;
   double m_MinimumVarianceDecayConstant;
@@ -163,8 +204,15 @@ class LegacyCorrespondenceFunction : public VectorFunction {
   int m_Counter;
   bool m_UseMeanEnergy;
 
-  std::shared_ptr<vnl_matrix_type> m_points_mean;       // 3Nx3N - used for energy computation
-  std::shared_ptr<Eigen::MatrixXd> m_InverseCovMatrix;  // 3NxM - used for energy computation
+  // Inverse Covariance matrices across time and shape cohort
+  std::shared_ptr<std::vector<Eigen::MatrixXd>> m_InverseCovMatrices_time_cohort; // T obj matrices each of dimensionality dM X N
+  std::shared_ptr<std::vector<Eigen::MatrixXd>> m_InverseCovMatrices_shape_cohort; // N obj matrices each of dimensionality dM X T
+  // mean vectors across time and shape cohort
+  shared_vnl_matrix_array_type m_points_mean_time_cohort; // T mean vectors each of dimension dM
+  shared_vnl_matrix_array_type m_points_mean_shape_cohort; // N mean vectors each of dimension dM
+  // Matrices for Gradient Updates across time and shape cohort
+  shared_vnl_matrix_array_type m_Time_PointsUpdate; // T update matrices each of dimensionality dM X N
+  shared_vnl_matrix_array_type m_Shape_PointsUpdate; // N update matrices each of dimensionality dM X T
 };
 
 }  // namespace shapeworks

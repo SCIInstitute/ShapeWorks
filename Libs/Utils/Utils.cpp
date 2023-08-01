@@ -412,17 +412,17 @@ std::string Utils::int2str(int n, int number_of_zeros)
 // A, VXL does an extra allocation and copy. This could be many GB large. Additionally Eigen
 // is slightly faster.
 template<typename T>
-void Utils::multiply_into(vnl_matrix<T> &out, const vnl_matrix<T> &lhs, const vnl_matrix<T> &rhs) {
+void Utils::multiply_into(Eigen::MatrixXd &out, const vnl_matrix<T> &lhs, const vnl_matrix<T> &rhs) {
   typedef Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> RowMajorMatrix;
-  Eigen::Map<RowMajorMatrix> eig_out(out.data_block(), out.rows(), out.cols());
+  //Eigen::Map<RowMajorMatrix> eig_out(out.data_block(), out.rows(), out.cols());
   Eigen::Map<const RowMajorMatrix> eig_lhs(lhs.data_block(), lhs.rows(), lhs.cols());
   Eigen::Map<const RowMajorMatrix> eig_rhs(rhs.data_block(), rhs.rows(), rhs.cols());
-  eig_out.noalias() = eig_lhs * eig_rhs;
+  out.noalias() = eig_lhs * eig_rhs;
 }
 
 // Explicitly instantiate this function templatized over double
 template void
-Utils::multiply_into(vnl_matrix<double> &, const vnl_matrix<double> &, const vnl_matrix<double> &);
+Utils::multiply_into(Eigen::MatrixXd &, const vnl_matrix<double> &, const vnl_matrix<double> &);
 
 
 //--------------- average normal directions --------------------------------

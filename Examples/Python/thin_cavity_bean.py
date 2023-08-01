@@ -108,8 +108,8 @@ def Run_Pipeline(args):
     # If running a tiny test, reduce some parameters
     if args.tiny_test:
         parameter_dictionary["number_of_particles"] = 32
-        parameter_dictionary["optimization_iterations"] = 25
-        parameter_dictionary["iterations_per_split"] = 25
+        parameter_dictionary["optimization_iterations"] = 50
+        parameter_dictionary["iterations_per_split"] = 50
     # Run multiscale optimization unless single scale is specified
     if not args.use_single_scale:
         parameter_dictionary["multiscale"] = 1

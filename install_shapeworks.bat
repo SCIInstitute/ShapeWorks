@@ -11,7 +11,7 @@ call conda config --add channels anaconda
 call conda config --add channels conda-forge
 
 REM install shapeworks deps
-call conda create --yes --name %CONDAENV% python=3.9.13 'vtk=9.1.0=qt*' pip=22.1.2
+call conda create --yes --name %CONDAENV% python=3.9.13 pip=22.1.2
 call conda activate %CONDAENV%
 
 REM reactivate shapeworks environment
@@ -20,30 +20,7 @@ call conda activate %CONDAENV%
 
 call pip install torch==1.11.0+cpu torchvision==0.12.0+cpu torchaudio===0.11.0 -f https://download.pytorch.org/whl/torch_stable.html
 
-
-call pip install numpy==1.22.4
-call pip install requests==2.27.1
-call pip install colorama==0.4.5
-call pip install notebook==6.1.5
-call pip install trimesh==3.12.6
-call pip install termcolor==1.1.0
-call pip install grip==4.6.1
-call pip install hotelling==0.5.0
-call pip install statsmodels==0.13.2
-call pip install shapely==1.8.2
-call pip install matplotlib==3.5.2
-call pip install itk==5.2.1.post1
-call pip install itkwidgets==0.32.1
-call pip install itk-elastix==0.13.0
-call pip install SimpleITK==2.1.1.2
-call pip install bokeh==2.4.3
-call pip install seaborn==0.11.2
-call pip install scikit-learn==1.1.1
-call pip install pyvista==0.34.1
-call pip install open3d==0.17.0
-call pip install spm1d==0.4.2
-
-call pip install swcc==1.0.5
+call pip install -r python_requirements.txt
 
 call pip install Python/DatasetUtilsPackage.tar.gz
 call pip install Python/DocumentationUtilsPackage.tar.gz

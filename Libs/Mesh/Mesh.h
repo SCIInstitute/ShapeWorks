@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Image/ImageUtils.h>
+
 #include "Shapeworks.h"
 
 class vtkStaticCellLocator;
@@ -93,7 +94,7 @@ class Mesh {
   /// applies the given transformation to the mesh
   Mesh& applyTransform(const MeshTransform transform);
 
-  /// applies the given rotation to the given axis 
+  /// applies the given rotation to the given axis
   Mesh& rotate(const double angle, const Axis axis);
 
   /// finds holes in a mesh and closes them
@@ -170,6 +171,12 @@ class Mesh {
   /// converts specified region to distance transform image (default: unit spacing) with (logical) padding
   Image toDistanceTransform(PhysicalRegion region = PhysicalRegion(), const Point3 spacing = Point3({1., 1., 1.}),
                             const Dims padding = Dims({1, 1, 1})) const;
+
+  /// assign cortical thickness values from mesh points
+  Mesh& computeThickness(Image& image, Image* dt = nullptr, double max_dist = 10000, std::string distance_mesh = "");
+
+  /// compute geodesic distances to landmarks and assign as fields
+  Mesh& computeLandmarkGeodesics(const std::vector<Point3>& landmarks);
 
   // query functions //
 
@@ -287,11 +294,9 @@ class Mesh {
   mutable vtkSmartPointer<vtkKdTreePointLocator> pointLocator;
   void updatePointLocator() const;
 
-
   /// Computes baricentric coordinates given a query point and a face number
   Eigen::Vector3d computeBarycentricCoordinates(const Eigen::Vector3d& pt, int face)
       const;  // // WARNING: Copied directly from Meshwrapper. TODO: When refactoring, take this into account.
-
 };
 
 /// stream insertion operators for Mesh

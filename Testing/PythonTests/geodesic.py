@@ -14,8 +14,7 @@ def geodesicTest1():
   pt1 = mesh.getPoint(p1)
   pt2 = mesh.getPoint(p2)
   euclidean_dist = np.linalg.norm(pt2 - pt1)
-
-  return abs(geodesic_dist - 6.577) < 1e-4 and abs(euclidean_dist - 6.70625) < 1e-4
+  return abs(geodesic_dist - 6.5564) < 1e-4 and abs(euclidean_dist - 6.70625) < 1e-4
 
 success &= utils.test(geodesicTest1)
 
@@ -25,7 +24,7 @@ def geodesicTest2():
   mesh.setField("GeodesicDistanceToLandmark", distField, Mesh.Point)
 
   ground_truth = Mesh(os.environ["DATA"] + "/geodesic1.vtk")
-
+  
   return mesh.compareField(ground_truth, "GeodesicDistanceToLandmark")
 
 success &= utils.test(geodesicTest2)

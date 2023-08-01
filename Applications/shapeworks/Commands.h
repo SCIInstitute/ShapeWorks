@@ -92,6 +92,8 @@ COMMAND_DECLARE(MeshToImage, MeshCommand);
 COMMAND_DECLARE(MeshToDT, MeshCommand);
 COMMAND_DECLARE(CompareMesh, MeshCommand);
 COMMAND_DECLARE(WarpMesh, MeshCommand);
+COMMAND_DECLARE(ComputeThickness, MeshCommand);
+COMMAND_DECLARE(LandmarkGeodesics, MeshCommand);
 
 // Misc Commands
 COMMAND_DECLARE(Seed, ShapeworksCommand);

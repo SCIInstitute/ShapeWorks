@@ -897,7 +897,7 @@ void VtkMeshWrapper::PrecomputeGeodesics(const Eigen::MatrixXd& V, const Eigen::
   {
     using namespace geometrycentral::surface;
     std::tie(gc_mesh_, gc_geometry_) = makeSurfaceMeshAndGeometry(V, F);
-    gc_heatsolver_ = std::make_unique<HeatMethodDistanceSolver>(*gc_geometry_);
+    gc_heatsolver_ = std::make_unique<HeatMethodDistanceSolver>(*gc_geometry_, 1.0, true);
   }
 
   // compute k-ring
