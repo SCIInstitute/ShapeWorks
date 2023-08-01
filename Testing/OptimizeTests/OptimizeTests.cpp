@@ -214,7 +214,7 @@ TEST(OptimizeTests, use_normals_test) {
   // run with parameter file
   Optimize app;
   ProjectHandle project = std::make_shared<Project>();
-  ASSERT_TRUE(project->load("optimize.xlsx"));
+  ASSERT_TRUE(project->load("optimize.swproj"));
   OptimizeParameters params(project);
   ASSERT_TRUE(params.set_up_optimize(&app));
   app.Run();
@@ -247,7 +247,7 @@ TEST(OptimizeTests, mesh_use_normals_test) {
   // run with parameter file
   Optimize app;
   ProjectHandle project = std::make_shared<Project>();
-  ASSERT_TRUE(project->load("optimize.xlsx"));
+  ASSERT_TRUE(project->load("optimize.swproj"));
   OptimizeParameters params(project);
   ASSERT_TRUE(params.set_up_optimize(&app));
   app.Run();
@@ -272,7 +272,7 @@ TEST(OptimizeTests, mesh_use_normals_test) {
 
 //---------------------------------------------------------------------------
 TEST(OptimizeTests, embedded_python_test) {
-  prep_temp("/optimize/simple", "embedded_python");
+  prep_temp("/simple", "embedded_python");
 
   // run with parameter file
   std::string paramfile = std::string("python_embedded.xml");
@@ -332,7 +332,7 @@ TEST(OptimizeTests, contour_domain_test) {
   // run with parameter file
   Optimize app;
   ProjectHandle project = std::make_shared<Project>();
-  ASSERT_TRUE(project->load("optimize.xlsx"));
+  ASSERT_TRUE(project->load("optimize.swproj"));
   OptimizeParameters params(project);
   ASSERT_TRUE(params.set_up_optimize(&app));
   app.Run();
@@ -530,7 +530,7 @@ TEST(OptimizeTests, cutting_plane_test) {
   // run with parameter file
   Optimize app;
   ProjectHandle project = std::make_shared<Project>();
-  ASSERT_TRUE(project->load("optimize.xlsx"));
+  ASSERT_TRUE(project->load("optimize.swproj"));
   OptimizeParameters params(project);
   ASSERT_TRUE(params.set_up_optimize(&app));
   app.Run();
