@@ -28,9 +28,6 @@ title: Libs/Optimize/Domain/ImplicitSurfaceDomain.h
 #pragma once
 
 #include "ImageDomainWithCurvature.h"
-#include "Libs/Mesh/meshFIM.h"
-#include "TriMesh.h"
-#include "TriMesh_algo.h"
 #include "vnl/vnl_cross.h"
 #include "vnl/vnl_inverse.h"
 #include "vnl/vnl_math.h"
@@ -111,34 +108,6 @@ class ImplicitSurfaceDomain : public ImageDomainWithCurvature<T> {
     return newpoint;
   }
 
-  void SetMesh(TriMesh* mesh) {
-    m_mesh = new meshFIM();
-    m_mesh->SetMesh(mesh);
-  };
-
-  void SetFeaMesh(const char* feaFile) { m_mesh->ReadFeatureFromFile(feaFile); };
-  void SetFeaGrad(const char* feaGradFile) { m_mesh->ReadFeatureGradientFromFile(feaGradFile); };
-  void SetFids(const char* fidsFile) {
-    m_mesh->ReadFaceIndexMap(fidsFile);
-    const typename ImageType::PointType orgn = this->GetOrigin();
-    m_mesh->imageOrigin[0] = orgn[0];
-    m_mesh->imageOrigin[1] = orgn[1];
-    m_mesh->imageOrigin[2] = orgn[2];
-    typename ImageType::RegionType::SizeType sz = this->GetSize();
-    m_mesh->imageSize[0] = sz[0];
-    m_mesh->imageSize[1] = sz[1];
-    m_mesh->imageSize[2] = sz[2];
-    typename ImageType::SpacingType sp = this->GetSpacing();
-    m_mesh->imageSpacing[0] = sp[0];
-    m_mesh->imageSpacing[1] = sp[1];
-    m_mesh->imageSpacing[2] = sp[2];
-    typename ImageType::RegionType::IndexType idx = this->GetIndex();
-    m_mesh->imageIndex[0] = idx[0];
-    m_mesh->imageIndex[1] = idx[1];
-    m_mesh->imageIndex[2] = idx[2];
-  };
-  meshFIM* GetMesh() { return m_mesh; }
-  meshFIM* GetMesh() const { return m_mesh; }
 
   PointType GetZeroCrossingPoint() const override {
     PointType p;
@@ -147,7 +116,7 @@ class ImplicitSurfaceDomain : public ImageDomainWithCurvature<T> {
     return p;
   }
 
-  ImplicitSurfaceDomain() : m_Tolerance(1.0e-4) { m_mesh = NULL; }
+  ImplicitSurfaceDomain() : m_Tolerance(1.0e-4) { }
   void PrintSelf(std::ostream& os, itk::Indent indent) const {
     Superclass::PrintSelf(os, indent);
     os << indent << "m_Tolerance = " << m_Tolerance << std::endl;
@@ -157,7 +126,7 @@ class ImplicitSurfaceDomain : public ImageDomainWithCurvature<T> {
  private:
   T m_Tolerance;
 
-  meshFIM* m_mesh;
+
 };
 
 }  // end namespace shapeworks
@@ -166,4 +135,4 @@ class ImplicitSurfaceDomain : public ImageDomainWithCurvature<T> {
 
 -------------------------------
 
-Updated on 2023-07-28 at 04:11:56 +0000
+Updated on 2023-08-01 at 19:48:17 +0000

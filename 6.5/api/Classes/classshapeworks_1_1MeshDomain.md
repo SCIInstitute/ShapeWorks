@@ -45,6 +45,7 @@ Inherits from [shapeworks::ParticleDomain](../Classes/classshapeworks_1_1Particl
 | virtual void | **[DeleteImages](../Classes/classshapeworks_1_1MeshDomain.md#function-deleteimages)**() override |
 | virtual void | **[DeletePartialDerivativeImages](../Classes/classshapeworks_1_1MeshDomain.md#function-deletepartialderivativeimages)**() override |
 | void | **[SetMesh](../Classes/classshapeworks_1_1MeshDomain.md#function-setmesh)**(std::shared_ptr< [shapeworks::MeshWrapper](../Classes/classshapeworks_1_1MeshWrapper.md) > mesh_) |
+| std::shared_ptr< [Mesh](../Classes/classshapeworks_1_1Mesh.md) > | **[GetSWMesh](../Classes/classshapeworks_1_1MeshDomain.md#function-getswmesh)**() const |
 | virtual void | **[UpdateZeroCrossingPoint](../Classes/classshapeworks_1_1MeshDomain.md#function-updatezerocrossingpoint)**() override |
 
 ## Additional inherited members
@@ -420,6 +421,13 @@ inline void SetMesh(
 ```
 
 
+### function GetSWMesh
+
+```cpp
+inline std::shared_ptr< Mesh > GetSWMesh() const
+```
+
+
 ### function UpdateZeroCrossingPoint
 
 ```cpp
@@ -432,4 +440,4 @@ inline virtual void UpdateZeroCrossingPoint() override
 
 -------------------------------
 
-Updated on 2023-07-28 at 04:11:55 +0000
+Updated on 2023-08-01 at 19:48:16 +0000

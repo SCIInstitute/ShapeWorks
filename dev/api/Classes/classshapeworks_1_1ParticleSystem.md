@@ -112,6 +112,8 @@ Inherits from itk::DataObject
 | unsigned int | **[GetDomainsPerShape](../Classes/classshapeworks_1_1ParticleSystem.md#function-getdomainspershape)**() const |
 | void | **[SetNumberOfDomains](../Classes/classshapeworks_1_1ParticleSystem.md#function-setnumberofdomains)**(unsigned int ) |
 | double | **[ComputeMaxDistNearestNeighbors](../Classes/classshapeworks_1_1ParticleSystem.md#function-computemaxdistnearestneighbors)**(size_t dom) |
+| void | **[SetFieldAttributes](../Classes/classshapeworks_1_1ParticleSystem.md#function-setfieldattributes)**(const std::vector< std::string > & field_attributes) |
+| const std::vector< std::string > & | **[GetFieldAttributes](../Classes/classshapeworks_1_1ParticleSystem.md#function-getfieldattributes)**() const |
 
 ## Protected Functions
 
@@ -120,12 +122,6 @@ Inherits from itk::DataObject
 | | **[ParticleSystem](../Classes/classshapeworks_1_1ParticleSystem.md#function-particlesystem)**() |
 | void | **[PrintSelf](../Classes/classshapeworks_1_1ParticleSystem.md#function-printself)**(std::ostream & os, itk::Indent indent) const |
 | virtual | **[~ParticleSystem](../Classes/classshapeworks_1_1ParticleSystem.md#function-~particlesystem)**() |
-| std::vector< DomainType::Pointer >::iterator | **[GetDomainsBegin](../Classes/classshapeworks_1_1ParticleSystem.md#function-getdomainsbegin)**() |
-| std::vector< DomainType::Pointer >::iterator | **[GetDomainsEnd](../Classes/classshapeworks_1_1ParticleSystem.md#function-getdomainsend)**() |
-| std::vector< [TransformType](../Classes/classshapeworks_1_1ParticleSystem.md#typedef-transformtype) >::iterator | **[GetTransformsBegin](../Classes/classshapeworks_1_1ParticleSystem.md#function-gettransformsbegin)**() |
-| std::vector< [TransformType](../Classes/classshapeworks_1_1ParticleSystem.md#typedef-transformtype) >::iterator | **[GetTransformsEnd](../Classes/classshapeworks_1_1ParticleSystem.md#function-gettransformsend)**() |
-| std::vector< [TransformType](../Classes/classshapeworks_1_1ParticleSystem.md#typedef-transformtype) >::iterator | **[GetInverseTransformsBegin](../Classes/classshapeworks_1_1ParticleSystem.md#function-getinversetransformsbegin)**() |
-| std::vector< [TransformType](../Classes/classshapeworks_1_1ParticleSystem.md#typedef-transformtype) >::iterator | **[GetInverseTransformsEnd](../Classes/classshapeworks_1_1ParticleSystem.md#function-getinversetransformsend)**() |
 | [TransformType](../Classes/classshapeworks_1_1ParticleSystem.md#typedef-transformtype) & | **[GetInverseTransform](../Classes/classshapeworks_1_1ParticleSystem.md#function-getinversetransform)**(unsigned int i) |
 | [TransformType](../Classes/classshapeworks_1_1ParticleSystem.md#typedef-transformtype) & | **[GetInverseTransform](../Classes/classshapeworks_1_1ParticleSystem.md#function-getinversetransform)**() |
 | [TransformType](../Classes/classshapeworks_1_1ParticleSystem.md#typedef-transformtype) & | **[GetInversePrefixTransform](../Classes/classshapeworks_1_1ParticleSystem.md#function-getinverseprefixtransform)**(unsigned int i) |
@@ -1070,6 +1066,22 @@ double ComputeMaxDistNearestNeighbors(
 ```
 
 
+### function SetFieldAttributes
+
+```cpp
+inline void SetFieldAttributes(
+    const std::vector< std::string > & field_attributes
+)
+```
+
+
+### function GetFieldAttributes
+
+```cpp
+inline const std::vector< std::string > & GetFieldAttributes() const
+```
+
+
 ## Protected Functions Documentation
 
 ### function ParticleSystem
@@ -1094,66 +1106,6 @@ void PrintSelf(
 ```cpp
 inline virtual ~ParticleSystem()
 ```
-
-
-### function GetDomainsBegin
-
-```cpp
-inline std::vector< DomainType::Pointer >::iterator GetDomainsBegin()
-```
-
-
-Return an iterator that points to the first element of the list of the domains. 
-
-
-### function GetDomainsEnd
-
-```cpp
-inline std::vector< DomainType::Pointer >::iterator GetDomainsEnd()
-```
-
-
-Return an iterator that points one position past the last element of the list of the domains. 
-
-
-### function GetTransformsBegin
-
-```cpp
-inline std::vector< TransformType >::iterator GetTransformsBegin()
-```
-
-
-Return an iterator that points to the first element of the list of the transforms. 
-
-
-### function GetTransformsEnd
-
-```cpp
-inline std::vector< TransformType >::iterator GetTransformsEnd()
-```
-
-
-Return an iterator that points one position past the last element of the list of the transforms. 
-
-
-### function GetInverseTransformsBegin
-
-```cpp
-inline std::vector< TransformType >::iterator GetInverseTransformsBegin()
-```
-
-
-Return an iterator that points to the first element of the list of the inverse transforms. 
-
-
-### function GetInverseTransformsEnd
-
-```cpp
-inline std::vector< TransformType >::iterator GetInverseTransformsEnd()
-```
-
-
-Return an iterator that points one position past the last element of the list of the transforms. 
 
 
 ### function GetInverseTransform
@@ -1211,4 +1163,4 @@ static constexpr int VDimension = 3;
 
 -------------------------------
 
-Updated on 2023-07-28 at 04:11:56 +0000
+Updated on 2023-08-01 at 19:48:16 +0000

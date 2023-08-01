@@ -29,12 +29,6 @@ Inherits from [shapeworks::ImageDomainWithCurvature< T >](../Classes/classshapew
 | virtual shapeworks::DomainType | **[GetDomainType](../Classes/classshapeworks_1_1ImplicitSurfaceDomain.md#function-getdomaintype)**() const override |
 | virtual bool | **[ApplyConstraints](../Classes/classshapeworks_1_1ImplicitSurfaceDomain.md#function-applyconstraints)**([PointType](../Classes/classshapeworks_1_1ImageDomain.md#using-pointtype) & p, int idx, bool dbg =false) const override |
 | [PointType](../Classes/classshapeworks_1_1ImageDomain.md#using-pointtype) | **[UpdateParticlePosition](../Classes/classshapeworks_1_1ImplicitSurfaceDomain.md#function-updateparticleposition)**(const [PointType](../Classes/classshapeworks_1_1ImageDomain.md#using-pointtype) & point, int idx, vnl_vector_fixed< double, DIMENSION > & update) const override |
-| void | **[SetMesh](../Classes/classshapeworks_1_1ImplicitSurfaceDomain.md#function-setmesh)**(TriMesh * mesh) |
-| void | **[SetFeaMesh](../Classes/classshapeworks_1_1ImplicitSurfaceDomain.md#function-setfeamesh)**(const char * feaFile) |
-| void | **[SetFeaGrad](../Classes/classshapeworks_1_1ImplicitSurfaceDomain.md#function-setfeagrad)**(const char * feaGradFile) |
-| void | **[SetFids](../Classes/classshapeworks_1_1ImplicitSurfaceDomain.md#function-setfids)**(const char * fidsFile) |
-| [meshFIM](../Classes/classmeshFIM.md) * | **[GetMesh](../Classes/classshapeworks_1_1ImplicitSurfaceDomain.md#function-getmesh)**() |
-| [meshFIM](../Classes/classmeshFIM.md) * | **[GetMesh](../Classes/classshapeworks_1_1ImplicitSurfaceDomain.md#function-getmesh)**() const |
 | virtual [PointType](../Classes/classshapeworks_1_1ImageDomain.md#using-pointtype) | **[GetZeroCrossingPoint](../Classes/classshapeworks_1_1ImplicitSurfaceDomain.md#function-getzerocrossingpoint)**() const override |
 | | **[ImplicitSurfaceDomain](../Classes/classshapeworks_1_1ImplicitSurfaceDomain.md#function-implicitsurfacedomain)**() |
 | void | **[PrintSelf](../Classes/classshapeworks_1_1ImplicitSurfaceDomain.md#function-printself)**(std::ostream & os, itk::Indent indent) const |
@@ -309,56 +303,6 @@ inline PointType UpdateParticlePosition(
 ```
 
 
-### function SetMesh
-
-```cpp
-inline void SetMesh(
-    TriMesh * mesh
-)
-```
-
-
-### function SetFeaMesh
-
-```cpp
-inline void SetFeaMesh(
-    const char * feaFile
-)
-```
-
-
-### function SetFeaGrad
-
-```cpp
-inline void SetFeaGrad(
-    const char * feaGradFile
-)
-```
-
-
-### function SetFids
-
-```cpp
-inline void SetFids(
-    const char * fidsFile
-)
-```
-
-
-### function GetMesh
-
-```cpp
-inline meshFIM * GetMesh()
-```
-
-
-### function GetMesh
-
-```cpp
-inline meshFIM * GetMesh() const
-```
-
-
 ### function GetZeroCrossingPoint
 
 ```cpp
@@ -398,4 +342,4 @@ inline virtual ~ImplicitSurfaceDomain()
 
 -------------------------------
 
-Updated on 2023-07-28 at 04:11:55 +0000
+Updated on 2023-08-01 at 19:48:15 +0000

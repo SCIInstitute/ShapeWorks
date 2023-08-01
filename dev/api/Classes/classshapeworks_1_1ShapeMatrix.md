@@ -25,14 +25,14 @@ Inherits from vnl_matrix< double >, [shapeworks::Observer](../Classes/classshape
 | typedef itk::SmartPointer< [Self](../Classes/classshapeworks_1_1ShapeMatrix.md) > | **[Pointer](../Classes/classshapeworks_1_1ShapeMatrix.md#typedef-pointer)**  |
 | typedef itk::SmartPointer< const [Self](../Classes/classshapeworks_1_1ShapeMatrix.md) > | **[ConstPointer](../Classes/classshapeworks_1_1ShapeMatrix.md#typedef-constpointer)**  |
 | typedef itk::WeakPointer< const [Self](../Classes/classshapeworks_1_1ShapeMatrix.md) > | **[ConstWeakPointer](../Classes/classshapeworks_1_1ShapeMatrix.md#typedef-constweakpointer)**  |
-| typedef [ParticleSystem](../Classes/classshapeworks_1_1ParticleSystem.md) | **[ParticleSystemType](../Classes/classshapeworks_1_1ShapeMatrix.md#typedef-particlesystemtype)**  |
 
 ## Public Functions
 
 |                | Name           |
 | -------------- | -------------- |
 | | **[itkNewMacro](../Classes/classshapeworks_1_1ShapeMatrix.md#function-itknewmacro)**([Self](../Classes/classshapeworks_1_1ShapeMatrix.md) ) |
-| virtual [Observer](../Classes/classshapeworks_1_1Observer.md) void | **[BeforeIteration](../Classes/classshapeworks_1_1ShapeMatrix.md#function-beforeiteration)**() |
+| | **[itkTypeMacro](../Classes/classshapeworks_1_1ShapeMatrix.md#function-itktypemacro)**([ShapeMatrix](../Classes/classshapeworks_1_1ShapeMatrix.md) , [Observer](../Classes/classshapeworks_1_1Observer.md) ) |
+| virtual void | **[BeforeIteration](../Classes/classshapeworks_1_1ShapeMatrix.md#function-beforeiteration)**() |
 | virtual void | **[AfterIteration](../Classes/classshapeworks_1_1ShapeMatrix.md#function-afteriteration)**() |
 | void | **[SetDomainsPerShape](../Classes/classshapeworks_1_1ShapeMatrix.md#function-setdomainspershape)**(int i) |
 | int | **[GetDomainsPerShape](../Classes/classshapeworks_1_1ShapeMatrix.md#function-getdomainspershape)**() const |
@@ -43,7 +43,7 @@ Inherits from vnl_matrix< double >, [shapeworks::Observer](../Classes/classshape
 | virtual void | **[SetMatrix](../Classes/classshapeworks_1_1ShapeMatrix.md#function-setmatrix)**(const vnl_matrix< double > & m) |
 | virtual void | **[ResizeMatrix](../Classes/classshapeworks_1_1ShapeMatrix.md#function-resizematrix)**(int rs, int cs) |
 | virtual void | **[DomainAddEventCallback](../Classes/classshapeworks_1_1ShapeMatrix.md#function-domainaddeventcallback)**(Object * , const itk::EventObject & ) |
-| void | **[SetValues](../Classes/classshapeworks_1_1ShapeMatrix.md#function-setvalues)**(const [ParticleSystemType](../Classes/classshapeworks_1_1ParticleSystem.md) * ps, int idx, int d) |
+| void | **[SetValues](../Classes/classshapeworks_1_1ShapeMatrix.md#function-setvalues)**(const [ParticleSystem](../Classes/classshapeworks_1_1ParticleSystem.md) * ps, int idx, int d) |
 | virtual void | **[PositionAddEventCallback](../Classes/classshapeworks_1_1ShapeMatrix.md#function-positionaddeventcallback)**(Object * o, const itk::EventObject & e) |
 | virtual void | **[PositionSetEventCallback](../Classes/classshapeworks_1_1ShapeMatrix.md#function-positionseteventcallback)**(Object * o, const itk::EventObject & e) |
 | virtual void | **[PositionRemoveEventCallback](../Classes/classshapeworks_1_1ShapeMatrix.md#function-positionremoveeventcallback)**(Object * , const itk::EventObject & ) |
@@ -76,7 +76,6 @@ Inherits from vnl_matrix< double >, [shapeworks::Observer](../Classes/classshape
 
 |                | Name           |
 | -------------- | -------------- |
-| | **[itkTypeMacro](../Classes/classshapeworks_1_1Observer.md#function-itktypemacro)**([Observer](../Classes/classshapeworks_1_1Observer.md) , DataObject ) |
 | virtual void | **[TransformSetEventCallback](../Classes/classshapeworks_1_1Observer.md#function-transformseteventcallback)**(Object * , const itk::EventObject & ) |
 | virtual void | **[PrefixTransformSetEventCallback](../Classes/classshapeworks_1_1Observer.md#function-prefixtransformseteventcallback)**(Object * , const itk::EventObject & ) |
 | virtual void | **[NeighborhoodSetEventCallback](../Classes/classshapeworks_1_1Observer.md#function-neighborhoodseteventcallback)**(Object * , const itk::EventObject & ) |
@@ -152,13 +151,6 @@ typedef itk::WeakPointer<const Self> shapeworks::ShapeMatrix::ConstWeakPointer;
 ```
 
 
-### typedef ParticleSystemType
-
-```cpp
-typedef ParticleSystem shapeworks::ShapeMatrix::ParticleSystemType;
-```
-
-
 ## Public Functions Documentation
 
 ### function itkNewMacro
@@ -170,13 +162,26 @@ itkNewMacro(
 ```
 
 
-Method for creation through the object factory. Run-time type information (and related methods). 
+Method for creation through the object factory. 
+
+
+### function itkTypeMacro
+
+```cpp
+itkTypeMacro(
+    ShapeMatrix ,
+    Observer 
+)
+```
+
+
+Run-time type information (and related methods). 
 
 
 ### function BeforeIteration
 
 ```cpp
-inline virtual Observer void BeforeIteration()
+inline virtual void BeforeIteration()
 ```
 
 
@@ -283,7 +288,7 @@ Callbacks that may be defined by a subclass. If a subclass defines one of these 
 
 ```cpp
 inline void SetValues(
-    const ParticleSystemType * ps,
+    const ParticleSystem * ps,
     int idx,
     int d
 )
@@ -380,4 +385,4 @@ int m_DomainsPerShape;
 
 -------------------------------
 
-Updated on 2023-07-28 at 04:11:56 +0000
+Updated on 2023-08-01 at 19:48:16 +0000

@@ -2749,6 +2749,27 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#function-computefieldgradient" class="md-nav__link">
+    function computeFieldGradient
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-computefieldgradientatpoint" class="md-nav__link">
+    function computeFieldGradientAtPoint
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-interpolatefieldatpoint" class="md-nav__link">
+    function interpolateFieldAtPoint
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#function-applysubdivisionfilter" class="md-nav__link">
     function applySubdivisionFilter
   </a>
@@ -3212,6 +3233,18 @@
 <tr>
 <td>Field</td>
 <td><strong><a href="classshapeworks_1_1Mesh.html#function-curvature">curvature</a></strong>(const CurvatureType type =Principal) const<br>computes curvature using principal (default) or gaussian or mean algorithms</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-computefieldgradient">computeFieldGradient</a></strong>(const std::string &amp; field) const<br>compute the gradient of a scalar field for all vertices</td>
+</tr>
+<tr>
+<td>Eigen::Vector3d</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-computefieldgradientatpoint">computeFieldGradientAtPoint</a></strong>(const std::string &amp; field, const Point3 &amp; query) const<br>compute the gradient of a scalar field at a point</td>
+</tr>
+<tr>
+<td>double</td>
+<td><strong><a href="classshapeworks_1_1Mesh.html#function-interpolatefieldatpoint">interpolateFieldAtPoint</a></strong>(const std::string &amp; field, const Point3 &amp; query) const<br>interpolate a scalar field at a given point</td>
 </tr>
 <tr>
 <td><a href="classshapeworks_1_1Mesh.html">Mesh</a> &amp;</td>
@@ -3718,6 +3751,26 @@
 <span class="p">)</span><span class="w"> </span><span class="k">const</span>
 </code></pre></div>
 <p>computes curvature using principal (default) or gaussian or mean algorithms </p>
+<h3 id="function-computefieldgradient">function computeFieldGradient</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">computeFieldGradient</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">field</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
+<p>compute the gradient of a scalar field for all vertices </p>
+<h3 id="function-computefieldgradientatpoint">function computeFieldGradientAtPoint</h3>
+<div class="highlight"><pre><span></span><code><span class="n">Eigen</span><span class="o">::</span><span class="n">Vector3d</span><span class="w"> </span><span class="n">computeFieldGradientAtPoint</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">field</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">query</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
+<p>compute the gradient of a scalar field at a point </p>
+<h3 id="function-interpolatefieldatpoint">function interpolateFieldAtPoint</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">interpolateFieldAtPoint</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">field</span><span class="p">,</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">Point3</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">query</span>
+<span class="p">)</span><span class="w"> </span><span class="k">const</span>
+</code></pre></div>
+<p>interpolate a scalar field at a given point </p>
 <h3 id="function-applysubdivisionfilter">function applySubdivisionFilter</h3>
 <div class="highlight"><pre><span></span><code><span class="n">Mesh</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">applySubdivisionFilter</span><span class="p">(</span>
 <span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">SubdivisionType</span><span class="w"> </span><span class="n">type</span><span class="w"> </span><span class="o">=</span><span class="n">Butterfly</span><span class="p">,</span>
@@ -3910,7 +3963,7 @@
 <span class="p">);</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-07-28 at 04:11:56 +0000</p>
+<p>Updated on 2023-08-01 at 19:48:17 +0000</p>
 
               
             </article>

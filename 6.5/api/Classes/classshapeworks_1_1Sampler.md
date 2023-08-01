@@ -48,9 +48,7 @@ title: shapeworks::Sampler
 | void | **[ApplyConstraintsToZeroCrossing](../Classes/classshapeworks_1_1Sampler.md#function-applyconstraintstozerocrossing)**() |
 | void | **[AddMesh](../Classes/classshapeworks_1_1Sampler.md#function-addmesh)**(std::shared_ptr< [shapeworks::MeshWrapper](../Classes/classshapeworks_1_1MeshWrapper.md) > mesh) |
 | void | **[AddContour](../Classes/classshapeworks_1_1Sampler.md#function-addcontour)**(vtkSmartPointer< vtkPolyData > poly_data) |
-| void | **[SetFidsFiles](../Classes/classshapeworks_1_1Sampler.md#function-setfidsfiles)**(const std::vector< std::string > & s) |
-| void | **[SetFeaFiles](../Classes/classshapeworks_1_1Sampler.md#function-setfeafiles)**(const std::vector< std::string > & s) |
-| void | **[SetFeaGradFiles](../Classes/classshapeworks_1_1Sampler.md#function-setfeagradfiles)**(const std::vector< std::string > & s) |
+| void | **[SetFieldAttributes](../Classes/classshapeworks_1_1Sampler.md#function-setfieldattributes)**(const std::vector< std::string > & s) |
 | void | **[SetDomainsPerShape](../Classes/classshapeworks_1_1Sampler.md#function-setdomainspershape)**(int n) |
 | void | **[SetCuttingPlane](../Classes/classshapeworks_1_1Sampler.md#function-setcuttingplane)**(unsigned int i, const vnl_vector_fixed< double, Dimension > & va, const vnl_vector_fixed< double, Dimension > & vb, const vnl_vector_fixed< double, Dimension > & vc) |
 | void | **[AddFreeFormConstraint](../Classes/classshapeworks_1_1Sampler.md#function-addfreeformconstraint)**(int domain, const [FreeFormConstraint](../Classes/classshapeworks_1_1FreeFormConstraint.md) & ffc) |
@@ -372,28 +370,10 @@ void AddContour(
 ```
 
 
-### function SetFidsFiles
+### function SetFieldAttributes
 
 ```cpp
-inline void SetFidsFiles(
-    const std::vector< std::string > & s
-)
-```
-
-
-### function SetFeaFiles
-
-```cpp
-inline void SetFeaFiles(
-    const std::vector< std::string > & s
-)
-```
-
-
-### function SetFeaGradFiles
-
-```cpp
-inline void SetFeaGradFiles(
+void SetFieldAttributes(
     const std::vector< std::string > & s
 )
 ```
@@ -1119,4 +1099,4 @@ shapeworks::ShapeGradientMatrix::Pointer m_GeneralShapeGradMatrix;
 
 -------------------------------
 
-Updated on 2023-07-28 at 04:11:56 +0000
+Updated on 2023-08-01 at 19:48:16 +0000

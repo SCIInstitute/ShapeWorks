@@ -183,9 +183,8 @@ class Optimize {
   int GetNumShapes();
   void SetMeshFiles(const std::vector<std::string>& mesh_files);
   void SetAttributeScales(const std::vector<double>& scales);
-  void SetFeaFiles(const std::vector<std::string>& files);
-  void SetFeaGradFiles(const std::vector<std::string>& files);
-  void SetFidsFiles(const std::vector<std::string>& files);
+
+  void SetFieldAttributes(const std::vector<std::string>& field_attributes);
 
   void SetParticleFlags(std::vector<int> flags);
   void SetDomainFlags(std::vector<int> flags);
@@ -393,7 +392,6 @@ class Optimize {
   std::chrono::system_clock::time_point m_last_update_time;
   std::chrono::system_clock::time_point m_last_remaining_update_time;
   std::string m_remaining_time_message;
-
 };
 
 }  // namespace shapeworks
@@ -402,4 +400,4 @@ class Optimize {
 
 -------------------------------
 
-Updated on 2023-07-28 at 04:11:56 +0000
+Updated on 2023-08-01 at 19:48:17 +0000

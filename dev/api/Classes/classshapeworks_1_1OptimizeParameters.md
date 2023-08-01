@@ -80,6 +80,14 @@ title: shapeworks::OptimizeParameters
 | void | **[set_save_init_splits](../Classes/classshapeworks_1_1OptimizeParameters.md#function-set-save-init-splits)**(bool enabled) |
 | bool | **[get_keep_checkpoints](../Classes/classshapeworks_1_1OptimizeParameters.md#function-get-keep-checkpoints)**() |
 | void | **[set_keep_checkpoints](../Classes/classshapeworks_1_1OptimizeParameters.md#function-set-keep-checkpoints)**(bool enabled) |
+| std::vector< std::string > | **[get_field_attributes](../Classes/classshapeworks_1_1OptimizeParameters.md#function-get-field-attributes)**() |
+| void | **[set_field_attributes](../Classes/classshapeworks_1_1OptimizeParameters.md#function-set-field-attributes)**(std::vector< std::string > attributes) |
+| std::vector< double > | **[get_field_attribute_weights](../Classes/classshapeworks_1_1OptimizeParameters.md#function-get-field-attribute-weights)**() |
+| void | **[set_field_attribute_weights](../Classes/classshapeworks_1_1OptimizeParameters.md#function-set-field-attribute-weights)**(std::vector< double > weights) |
+| bool | **[get_use_geodesics_to_landmarks](../Classes/classshapeworks_1_1OptimizeParameters.md#function-get-use-geodesics-to-landmarks)**() |
+| void | **[set_use_geodesics_to_landmarks](../Classes/classshapeworks_1_1OptimizeParameters.md#function-set-use-geodesics-to-landmarks)**(bool value) |
+| double | **[get_geodesic_to_landmarks_weight](../Classes/classshapeworks_1_1OptimizeParameters.md#function-get-geodesic-to-landmarks-weight)**() |
+| void | **[set_geodesic_to_landmarks_weight](../Classes/classshapeworks_1_1OptimizeParameters.md#function-set-geodesic-to-landmarks-weight)**(double value) |
 
 ## Detailed Description
 
@@ -608,6 +616,70 @@ void set_keep_checkpoints(
 ```
 
 
+### function get_field_attributes
+
+```cpp
+std::vector< std::string > get_field_attributes()
+```
+
+
+### function set_field_attributes
+
+```cpp
+void set_field_attributes(
+    std::vector< std::string > attributes
+)
+```
+
+
+### function get_field_attribute_weights
+
+```cpp
+std::vector< double > get_field_attribute_weights()
+```
+
+
+### function set_field_attribute_weights
+
+```cpp
+void set_field_attribute_weights(
+    std::vector< double > weights
+)
+```
+
+
+### function get_use_geodesics_to_landmarks
+
+```cpp
+bool get_use_geodesics_to_landmarks()
+```
+
+
+### function set_use_geodesics_to_landmarks
+
+```cpp
+void set_use_geodesics_to_landmarks(
+    bool value
+)
+```
+
+
+### function get_geodesic_to_landmarks_weight
+
+```cpp
+double get_geodesic_to_landmarks_weight()
+```
+
+
+### function set_geodesic_to_landmarks_weight
+
+```cpp
+void set_geodesic_to_landmarks_weight(
+    double value
+)
+```
+
+
 -------------------------------
 
-Updated on 2023-07-28 at 04:11:56 +0000
+Updated on 2023-08-01 at 19:48:16 +0000

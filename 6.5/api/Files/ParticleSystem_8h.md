@@ -78,7 +78,7 @@ class ParticleSystem : public itk::DataObject {
   typedef vnl_vector_fixed<double, VDimension> VectorType;
   typedef vnl_matrix<double> VnlMatrixType;
 
-  void RegisterObserver(Observer* attr);
+  void RegisterObserver(Observer *attr);
 
   void SynchronizePositions() {
     for (unsigned int d = 0; d < this->GetNumberOfDomains(); d++) {
@@ -92,7 +92,6 @@ class ParticleSystem : public itk::DataObject {
 
   const PointType &AddPosition(const PointType &, unsigned int d = 0);
   const PointType &SetPosition(const PointType &, unsigned long int k, unsigned int d = 0);
-
 
   void RemovePosition(unsigned long int k, unsigned int d = 0);
 
@@ -263,30 +262,21 @@ class ParticleSystem : public itk::DataObject {
     m_DomainsPerShape = num;
     m_FixedParticleFlags.resize(m_DomainsPerShape);
   }
-  unsigned int GetDomainsPerShape() const
-  { return m_DomainsPerShape; }
+  unsigned int GetDomainsPerShape() const { return m_DomainsPerShape; }
 
   void SetNumberOfDomains(unsigned int);
 
   // Returns the maximum distance between nearest neighbors in domain dom
   double ComputeMaxDistNearestNeighbors(size_t dom);
 
+  void SetFieldAttributes(const std::vector<std::string> &field_attributes) { m_FieldAttributes = field_attributes; }
+
+  const std::vector<std::string> &GetFieldAttributes() const { return m_FieldAttributes; }
+
  protected:
   ParticleSystem();
   void PrintSelf(std::ostream &os, itk::Indent indent) const;
   virtual ~ParticleSystem(){};
-
-  std::vector<DomainType::Pointer>::iterator GetDomainsBegin() { return m_Domains.begin(); }
-
-  std::vector<DomainType::Pointer>::iterator GetDomainsEnd() { return m_Domains.end(); }
-
-  std::vector<TransformType>::iterator GetTransformsBegin() { return m_Transforms.begin(); }
-
-  std::vector<TransformType>::iterator GetTransformsEnd() { return m_Transforms.end(); }
-
-  std::vector<TransformType>::iterator GetInverseTransformsBegin() { return m_InverseTransforms.begin(); }
-
-  std::vector<TransformType>::iterator GetInverseTransformsEnd() { return m_InverseTransforms.end(); }
 
   TransformType &GetInverseTransform(unsigned int i) { return m_InverseTransforms[i]; }
 
@@ -322,6 +312,8 @@ class ParticleSystem : public itk::DataObject {
 
   std::vector<std::vector<bool>> m_FixedParticleFlags;
 
+  std::vector<std::string> m_FieldAttributes;
+
   std::mt19937 m_rand{42};
 };
 
@@ -331,4 +323,4 @@ class ParticleSystem : public itk::DataObject {
 
 -------------------------------
 
-Updated on 2023-07-28 at 04:11:56 +0000
+Updated on 2023-08-01 at 19:48:17 +0000

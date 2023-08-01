@@ -70,6 +70,9 @@ title: shapeworks::Mesh
 | Field | **[geodesicDistance](../Classes/classshapeworks_1_1Mesh.md#function-geodesicdistance)**(const Point3 landmark) const<br>computes geodesic distance between a point (landmark) and each vertex on mesh  |
 | Field | **[geodesicDistance](../Classes/classshapeworks_1_1Mesh.md#function-geodesicdistance)**(const std::vector< Point3 > curve) const<br>computes geodesic distance between a set of points (curve) and each vertex on mesh  |
 | Field | **[curvature](../Classes/classshapeworks_1_1Mesh.md#function-curvature)**(const CurvatureType type =Principal) const<br>computes curvature using principal (default) or gaussian or mean algorithms  |
+| void | **[computeFieldGradient](../Classes/classshapeworks_1_1Mesh.md#function-computefieldgradient)**(const std::string & field) const<br>compute the gradient of a scalar field for all vertices  |
+| Eigen::Vector3d | **[computeFieldGradientAtPoint](../Classes/classshapeworks_1_1Mesh.md#function-computefieldgradientatpoint)**(const std::string & field, const Point3 & query) const<br>compute the gradient of a scalar field at a point  |
+| double | **[interpolateFieldAtPoint](../Classes/classshapeworks_1_1Mesh.md#function-interpolatefieldatpoint)**(const std::string & field, const Point3 & query) const<br>interpolate a scalar field at a given point  |
 | [Mesh](../Classes/classshapeworks_1_1Mesh.md) & | **[applySubdivisionFilter](../Classes/classshapeworks_1_1Mesh.md#function-applysubdivisionfilter)**(const SubdivisionType type =Butterfly, int subdivision =1)<br>applies subdivision filter (butterfly (default) or loop)  |
 | [Image](../Classes/classshapeworks_1_1Image.md) | **[toImage](../Classes/classshapeworks_1_1Mesh.md#function-toimage)**([PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md) region =[PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md)(), Point3 spacing =Point3({1., 1., 1.})) const<br>rasterizes specified region to create binary image of desired dims (default: unit spacing)  |
 | [Image](../Classes/classshapeworks_1_1Image.md) | **[toDistanceTransform](../Classes/classshapeworks_1_1Mesh.md#function-todistancetransform)**([PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md) region =[PhysicalRegion](../Classes/classshapeworks_1_1PhysicalRegion.md)(), const Point3 spacing =Point3({1., 1., 1.}), const Dims padding =Dims({1, 1, 1})) const<br>converts specified region to distance transform image (default: unit spacing) with (logical) padding  |
@@ -587,6 +590,38 @@ Field curvature(
 
 computes curvature using principal (default) or gaussian or mean algorithms 
 
+### function computeFieldGradient
+
+```cpp
+void computeFieldGradient(
+    const std::string & field
+) const
+```
+
+compute the gradient of a scalar field for all vertices 
+
+### function computeFieldGradientAtPoint
+
+```cpp
+Eigen::Vector3d computeFieldGradientAtPoint(
+    const std::string & field,
+    const Point3 & query
+) const
+```
+
+compute the gradient of a scalar field at a point 
+
+### function interpolateFieldAtPoint
+
+```cpp
+double interpolateFieldAtPoint(
+    const std::string & field,
+    const Point3 & query
+) const
+```
+
+interpolate a scalar field at a given point 
+
 ### function applySubdivisionFilter
 
 ```cpp
@@ -905,4 +940,4 @@ friend struct SharedCommandData(
 
 -------------------------------
 
-Updated on 2023-07-28 at 04:11:56 +0000
+Updated on 2023-08-01 at 19:48:17 +0000

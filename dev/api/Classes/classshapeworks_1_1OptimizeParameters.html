@@ -2840,6 +2840,62 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#function-get_field_attributes" class="md-nav__link">
+    function get_field_attributes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-set_field_attributes" class="md-nav__link">
+    function set_field_attributes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_field_attribute_weights" class="md-nav__link">
+    function get_field_attribute_weights
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-set_field_attribute_weights" class="md-nav__link">
+    function set_field_attribute_weights
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_use_geodesics_to_landmarks" class="md-nav__link">
+    function get_use_geodesics_to_landmarks
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-set_use_geodesics_to_landmarks" class="md-nav__link">
+    function set_use_geodesics_to_landmarks
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-get_geodesic_to_landmarks_weight" class="md-nav__link">
+    function get_geodesic_to_landmarks_weight
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#function-set_geodesic_to_landmarks_weight" class="md-nav__link">
+    function set_geodesic_to_landmarks_weight
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -3131,6 +3187,38 @@
 <td>void</td>
 <td><strong><a href="classshapeworks_1_1OptimizeParameters.html#function-set-keep-checkpoints">set_keep_checkpoints</a></strong>(bool enabled)</td>
 </tr>
+<tr>
+<td>std::vector&lt; std::string &gt;</td>
+<td><strong><a href="classshapeworks_1_1OptimizeParameters.html#function-get-field-attributes">get_field_attributes</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1OptimizeParameters.html#function-set-field-attributes">set_field_attributes</a></strong>(std::vector&lt; std::string &gt; attributes)</td>
+</tr>
+<tr>
+<td>std::vector&lt; double &gt;</td>
+<td><strong><a href="classshapeworks_1_1OptimizeParameters.html#function-get-field-attribute-weights">get_field_attribute_weights</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1OptimizeParameters.html#function-set-field-attribute-weights">set_field_attribute_weights</a></strong>(std::vector&lt; double &gt; weights)</td>
+</tr>
+<tr>
+<td>bool</td>
+<td><strong><a href="classshapeworks_1_1OptimizeParameters.html#function-get-use-geodesics-to-landmarks">get_use_geodesics_to_landmarks</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1OptimizeParameters.html#function-set-use-geodesics-to-landmarks">set_use_geodesics_to_landmarks</a></strong>(bool value)</td>
+</tr>
+<tr>
+<td>double</td>
+<td><strong><a href="classshapeworks_1_1OptimizeParameters.html#function-get-geodesic-to-landmarks-weight">get_geodesic_to_landmarks_weight</a></strong>()</td>
+</tr>
+<tr>
+<td>void</td>
+<td><strong><a href="classshapeworks_1_1OptimizeParameters.html#function-set-geodesic-to-landmarks-weight">set_geodesic_to_landmarks_weight</a></strong>(double value)</td>
+</tr>
 </tbody>
 </table>
 <h2 id="detailed-description">Detailed Description</h2>
@@ -3398,8 +3486,40 @@
 <span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">enabled</span>
 <span class="p">)</span>
 </code></pre></div>
+<h3 id="function-get_field_attributes">function get_field_attributes</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_field_attributes</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="function-set_field_attributes">function set_field_attributes</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_field_attributes</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">attributes</span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="function-get_field_attribute_weights">function get_field_attribute_weights</h3>
+<div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_field_attribute_weights</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="function-set_field_attribute_weights">function set_field_attribute_weights</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_field_attribute_weights</span><span class="p">(</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">weights</span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="function-get_use_geodesics_to_landmarks">function get_use_geodesics_to_landmarks</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">bool</span><span class="w"> </span><span class="n">get_use_geodesics_to_landmarks</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="function-set_use_geodesics_to_landmarks">function set_use_geodesics_to_landmarks</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_use_geodesics_to_landmarks</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">value</span>
+<span class="p">)</span>
+</code></pre></div>
+<h3 id="function-get_geodesic_to_landmarks_weight">function get_geodesic_to_landmarks_weight</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">double</span><span class="w"> </span><span class="n">get_geodesic_to_landmarks_weight</span><span class="p">()</span>
+</code></pre></div>
+<h3 id="function-set_geodesic_to_landmarks_weight">function set_geodesic_to_landmarks_weight</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">set_geodesic_to_landmarks_weight</span><span class="p">(</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">value</span>
+<span class="p">)</span>
+</code></pre></div>
 <hr />
-<p>Updated on 2023-07-28 at 04:11:56 +0000</p>
+<p>Updated on 2023-08-01 at 19:48:16 +0000</p>
 
               
             </article>

@@ -2973,22 +2973,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#function-setfeafiles" class="md-nav__link">
-    function SetFeaFiles
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-setfeagradfiles" class="md-nav__link">
-    function SetFeaGradFiles
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#function-setfidsfiles" class="md-nav__link">
-    function SetFidsFiles
+  <a href="#function-setfieldattributes" class="md-nav__link">
+    function SetFieldAttributes
   </a>
   
 </li>
@@ -4409,15 +4395,7 @@
 </tr>
 <tr>
 <td>void</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#function-setfeafiles">SetFeaFiles</a></strong>(const std::vector&lt; std::string &gt; &amp; files)<br>Set FEA files (TODO: details)</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#function-setfeagradfiles">SetFeaGradFiles</a></strong>(const std::vector&lt; std::string &gt; &amp; files)<br>Set FEA grad files (TODO: details)</td>
-</tr>
-<tr>
-<td>void</td>
-<td><strong><a href="classshapeworks_1_1Optimize.html#function-setfidsfiles">SetFidsFiles</a></strong>(const std::vector&lt; std::string &gt; &amp; files)<br>Set FIDS files (TODO: details)</td>
+<td><strong><a href="classshapeworks_1_1Optimize.html#function-setfieldattributes">SetFieldAttributes</a></strong>(const std::vector&lt; std::string &gt; &amp; field_attributes)<br>Set the field attributes.</td>
 </tr>
 <tr>
 <td>void</td>
@@ -5462,24 +5440,12 @@
 <span class="p">)</span>
 </code></pre></div>
 <p>Set attribute scales (TODO: details) </p>
-<h3 id="function-setfeafiles">function SetFeaFiles</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetFeaFiles</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">files</span>
+<h3 id="function-setfieldattributes">function SetFieldAttributes</h3>
+<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetFieldAttributes</span><span class="p">(</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">field_attributes</span>
 <span class="p">)</span>
 </code></pre></div>
-<p>Set FEA files (TODO: details) </p>
-<h3 id="function-setfeagradfiles">function SetFeaGradFiles</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetFeaGradFiles</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">files</span>
-<span class="p">)</span>
-</code></pre></div>
-<p>Set FEA grad files (TODO: details) </p>
-<h3 id="function-setfidsfiles">function SetFidsFiles</h3>
-<div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetFidsFiles</span><span class="p">(</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">files</span>
-<span class="p">)</span>
-</code></pre></div>
-<p>Set FIDS files (TODO: details) </p>
+<p>Set the field attributes. </p>
 <h3 id="function-setparticleflags">function SetParticleFlags</h3>
 <div class="highlight"><pre><span></span><code><span class="kt">void</span><span class="w"> </span><span class="n">SetParticleFlags</span><span class="p">(</span>
 <span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">flags</span>
@@ -6003,7 +5969,7 @@
 <div class="highlight"><pre><span></span><code><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">m_remaining_time_message</span><span class="p">;</span>
 </code></pre></div>
 <hr />
-<p>Updated on 2023-07-28 at 04:11:55 +0000</p>
+<p>Updated on 2023-08-01 at 19:48:16 +0000</p>
 
               
             </article>

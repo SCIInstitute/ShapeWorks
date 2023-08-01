@@ -127,9 +127,7 @@ Inherits from QObject, [shapeworks::Optimize](../Classes/classshapeworks_1_1Opti
 | int | **[GetNumShapes](../Classes/classshapeworks_1_1Optimize.md#function-getnumshapes)**()<br>Get number of shapes.  |
 | void | **[SetMeshFiles](../Classes/classshapeworks_1_1Optimize.md#function-setmeshfiles)**(const std::vector< std::string > & mesh_files)<br>Set the mesh files (TODO: details)  |
 | void | **[SetAttributeScales](../Classes/classshapeworks_1_1Optimize.md#function-setattributescales)**(const std::vector< double > & scales)<br>Set attribute scales (TODO: details)  |
-| void | **[SetFeaFiles](../Classes/classshapeworks_1_1Optimize.md#function-setfeafiles)**(const std::vector< std::string > & files)<br>Set FEA files (TODO: details)  |
-| void | **[SetFeaGradFiles](../Classes/classshapeworks_1_1Optimize.md#function-setfeagradfiles)**(const std::vector< std::string > & files)<br>Set FEA grad files (TODO: details)  |
-| void | **[SetFidsFiles](../Classes/classshapeworks_1_1Optimize.md#function-setfidsfiles)**(const std::vector< std::string > & files)<br>Set FIDS files (TODO: details)  |
+| void | **[SetFieldAttributes](../Classes/classshapeworks_1_1Optimize.md#function-setfieldattributes)**(const std::vector< std::string > & field_attributes)<br>Set the field attributes.  |
 | void | **[SetParticleFlags](../Classes/classshapeworks_1_1Optimize.md#function-setparticleflags)**(std::vector< int > flags)<br>Set Particle Flags (TODO: details)  |
 | void | **[SetDomainFlags](../Classes/classshapeworks_1_1Optimize.md#function-setdomainflags)**(std::vector< int > flags)<br>Set Domain Flags (TODO: details)  |
 | void | **[SetSharedBoundaryEnabled](../Classes/classshapeworks_1_1Optimize.md#function-setsharedboundaryenabled)**(bool enabled)<br>Shared boundary settings.  |
@@ -392,4 +390,4 @@ virtual void IterateCallback(
 
 -------------------------------
 
-Updated on 2023-07-28 at 04:11:56 +0000
+Updated on 2023-08-01 at 19:48:16 +0000

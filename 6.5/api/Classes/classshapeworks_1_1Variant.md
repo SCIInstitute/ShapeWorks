@@ -26,6 +26,7 @@ summary: Variant class to represent multiple types.
 | | **[Variant](../Classes/classshapeworks_1_1Variant.md#function-variant)**(std::vector< double > v) |
 | | **[Variant](../Classes/classshapeworks_1_1Variant.md#function-variant)**(std::vector< int > v) |
 | | **[Variant](../Classes/classshapeworks_1_1Variant.md#function-variant)**(std::vector< bool > v) |
+| | **[Variant](../Classes/classshapeworks_1_1Variant.md#function-variant)**(std::vector< std::string > v) |
 | | **[operator std::string](../Classes/classshapeworks_1_1Variant.md#function-operator-stdstring)**() const |
 | | **[operator bool](../Classes/classshapeworks_1_1Variant.md#function-operator-bool)**() const |
 | | **[operator int](../Classes/classshapeworks_1_1Variant.md#function-operator-int)**() const |
@@ -37,6 +38,7 @@ summary: Variant class to represent multiple types.
 | | **[operator std::vector< double >](../Classes/classshapeworks_1_1Variant.md#function-operator-stdvector<-double->)**() const |
 | | **[operator std::vector< int >](../Classes/classshapeworks_1_1Variant.md#function-operator-stdvector<-int->)**() const |
 | | **[operator std::vector< bool >](../Classes/classshapeworks_1_1Variant.md#function-operator-stdvector<-bool->)**() const |
+| | **[operator std::vector< std::string >](../Classes/classshapeworks_1_1Variant.md#function-operator-stdvector<-stdstring->)**() const |
 
 ## Detailed Description
 
@@ -129,6 +131,15 @@ inline Variant(
 ```
 
 
+### function Variant
+
+```cpp
+inline Variant(
+    std::vector< std::string > v
+)
+```
+
+
 ### function operator std::string
 
 ```cpp
@@ -206,6 +217,13 @@ operator std::vector< bool >() const
 ```
 
 
+### function operator std::vector< std::string >
+
+```cpp
+operator std::vector< std::string >() const
+```
+
+
 -------------------------------
 
-Updated on 2023-07-28 at 04:11:56 +0000
+Updated on 2023-08-01 at 19:48:17 +0000
