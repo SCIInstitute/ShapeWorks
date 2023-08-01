@@ -3,9 +3,6 @@
 #include <Eigen/Core>
 #include <vector>
 
-#include "Shapeworks.h"
-#include "itkParticlePositionReader.h"
-
 namespace shapeworks {
 
 class ParticleSystemEvaluation {
