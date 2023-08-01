@@ -587,7 +587,7 @@ TEST(OptimizeTests, multi_domain_constraint) {
   // run with parameter file
   Optimize app;
   ProjectHandle project = std::make_shared<Project>();
-  ASSERT_TRUE(project->load("optimize.xlsx"));
+  ASSERT_TRUE(project->load("optimize.swproj"));
   OptimizeParameters params(project);
   ASSERT_TRUE(params.set_up_optimize(&app));
   app.Run();
@@ -616,7 +616,7 @@ TEST(OptimizeTests, mesh_ffc_test) {
   // run with parameter file
   Optimize app;
   ProjectHandle project = std::make_shared<Project>();
-  ASSERT_TRUE(project->load("optimize.xlsx"));
+  ASSERT_TRUE(project->load("optimize.swproj"));
   OptimizeParameters params(project);
   ASSERT_TRUE(params.set_up_optimize(&app));
   app.Run();
@@ -650,7 +650,7 @@ TEST(OptimizeTests, mesh_ffc_test_aug_lag) {
   // run with parameter file
   Optimize app;
   ProjectHandle project = std::make_shared<Project>();
-  ASSERT_TRUE(project->load("optimize.xlsx"));
+  ASSERT_TRUE(project->load("optimize.swproj"));
   OptimizeParameters params(project);
   ASSERT_TRUE(params.set_up_optimize(&app));
   app.Run();
