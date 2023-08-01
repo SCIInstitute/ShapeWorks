@@ -187,7 +187,7 @@ bool Optimize::Run() {
     this->iteration_callback_ = nullptr;
     // Disable finalize_interpreter as it is crashing with Open3D
     // I am not sure why yet.
-    //py::finalize_interpreter();
+    // py::finalize_interpreter();
   }
 
   UpdateProject();
@@ -480,6 +480,7 @@ void Optimize::InitializeSampler() {
   for (unsigned int i = 0; i < this->m_domain_flags.size(); i++) {
     this->GetSampler()->GetParticleSystem()->FlagDomain(this->m_domain_flags[i]);
   }
+
   m_sampler->Initialize();
 
   m_sampler->GetOptimizer()->SetTolerance(0.0);
@@ -553,8 +554,10 @@ void Optimize::Initialize() {
 
   if (m_use_shape_statistics_in_init) {
     if (m_mesh_based_attributes) {
+      SW_DEBUG("Setting correspondence mode: mesh-based general entropy");
       m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::MeshBasedGeneralEntropy);
     } else {
+      SW_DEBUG("Setting correspondence mode: ensemble entropy");
       m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::EnsembleEntropy);
     }
 
@@ -571,8 +574,10 @@ void Optimize::Initialize() {
     if ((m_attributes_per_domain.size() > 0 &&
          *std::max_element(m_attributes_per_domain.begin(), m_attributes_per_domain.end()) > 0) ||
         m_mesh_based_attributes) {
+      SW_DEBUG("Setting correspondence mode: mesh-based mean energy");
       m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::MeshBasedGeneralMeanEnergy);
     } else {
+      SW_DEBUG("Setting correspondence mode: mean energy");
       m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::MeanEnergy);
     }
   }
@@ -734,7 +739,6 @@ void Optimize::AddAdaptivity() {
 
   double minRad = 3.0 * this->GetMinNeighborhoodRadius();
 
-
   m_sampler->GetCurvatureGradientFunction()->SetRho(m_adaptivity_strength);
   m_sampler->GetLinkingFunction()->SetRelativeGradientScaling(m_initial_relative_weighting);
   m_sampler->GetLinkingFunction()->SetRelativeEnergyScaling(m_initial_relative_weighting);
@@ -815,6 +819,7 @@ void Optimize::RunOptimize() {
   else if ((m_attributes_per_domain.size() > 0 &&
        *std::max_element(m_attributes_per_domain.begin(), m_attributes_per_domain.end()) > 0) ||
       m_mesh_based_attributes) {
+    SW_DEBUG("Setting correspondence mode: mesh-based general entropy");
     m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::MeshBasedGeneralEntropy);
   } else if (m_use_regression == true) {
     if (m_use_mixed_effects == true) {
@@ -823,8 +828,10 @@ void Optimize::RunOptimize() {
       m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::EnsembleRegressionEntropy);
     }
   } else if (m_starting_regularization == m_ending_regularization) {
+    SW_DEBUG("Setting correspondence mode: mean energy");
     m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::MeanEnergy);  // mean force
   } else {
+    SW_DEBUG("Setting correspondence mode: ensemble energy");
     m_sampler->SetCorrespondenceMode(shapeworks::CorrespondenceMode::EnsembleEntropy);
   }
 
@@ -1387,6 +1394,8 @@ void Optimize::WritePointFilesWithFeatures(std::string iter_prefix) {
         outw << pN[0] << " " << pN[1] << " " << pN[2] << " ";
       }
 
+      // TODO: Needs rewrite:
+      /*
       // Only run the following code if we are dealing with ImplicitSurfaceDomains
       const ImplicitSurfaceDomain<float>* domain =
           dynamic_cast<const ImplicitSurfaceDomain<float>*>(m_sampler->GetParticleSystem()->GetDomain(i));
@@ -1406,6 +1415,7 @@ void Optimize::WritePointFilesWithFeatures(std::string iter_prefix) {
           }
         }
       }
+      */
 
       outw << std::endl;
 
@@ -1548,9 +1558,9 @@ void Optimize::WriteParameters(std::string output_dir) {
   std::vector<double> intercept;
 
   if (m_use_mixed_effects == true) {
-    vnl_vector<double> slopevec = dynamic_cast<MixedEffectsShapeMatrix*>(
-                                      m_sampler->GetEnsembleMixedEffectsEntropyFunction()->GetShapeMatrix())
-                                      ->GetSlope();
+    vnl_vector<double> slopevec =
+        dynamic_cast<MixedEffectsShapeMatrix*>(m_sampler->GetEnsembleMixedEffectsEntropyFunction()->GetShapeMatrix())
+            ->GetSlope();
 
     for (unsigned int i = 0; i < slopevec.size(); i++) {
       slope.push_back(slopevec[i]);
@@ -1562,9 +1572,9 @@ void Optimize::WriteParameters(std::string output_dir) {
     }
     out.close();
 
-    vnl_vector<double> interceptvec = dynamic_cast<MixedEffectsShapeMatrix*>(
-                                          m_sampler->GetEnsembleMixedEffectsEntropyFunction()->GetShapeMatrix())
-                                          ->GetIntercept();
+    vnl_vector<double> interceptvec =
+        dynamic_cast<MixedEffectsShapeMatrix*>(m_sampler->GetEnsembleMixedEffectsEntropyFunction()->GetShapeMatrix())
+            ->GetIntercept();
 
     for (unsigned int i = 0; i < slopevec.size(); i++) {
       intercept.push_back(interceptvec[i]);
@@ -1582,9 +1592,9 @@ void Optimize::WriteParameters(std::string output_dir) {
     std::cout << "writing " << slopename << std::endl;
     std::cout << "writing " << interceptname << std::endl;
 
-    vnl_matrix<double> sloperand_mat = dynamic_cast<MixedEffectsShapeMatrix*>(
-                                           m_sampler->GetEnsembleMixedEffectsEntropyFunction()->GetShapeMatrix())
-                                           ->GetSlopeRandom();
+    vnl_matrix<double> sloperand_mat =
+        dynamic_cast<MixedEffectsShapeMatrix*>(m_sampler->GetEnsembleMixedEffectsEntropyFunction()->GetShapeMatrix())
+            ->GetSlopeRandom();
 
     out.open(slopename.c_str());
     for (unsigned int i = 0; i < sloperand_mat.rows(); i++) {
@@ -1595,9 +1605,9 @@ void Optimize::WriteParameters(std::string output_dir) {
     }
     out.close();
 
-    vnl_matrix<double> interceptrand_mat = dynamic_cast<MixedEffectsShapeMatrix*>(
-                                               m_sampler->GetEnsembleMixedEffectsEntropyFunction()->GetShapeMatrix())
-                                               ->GetInterceptRandom();
+    vnl_matrix<double> interceptrand_mat =
+        dynamic_cast<MixedEffectsShapeMatrix*>(m_sampler->GetEnsembleMixedEffectsEntropyFunction()->GetShapeMatrix())
+            ->GetInterceptRandom();
 
     out.open(interceptname.c_str());
     for (unsigned int i = 0; i < interceptrand_mat.rows(); i++) {
@@ -1608,9 +1618,9 @@ void Optimize::WriteParameters(std::string output_dir) {
     }
     out.close();
   } else {
-    vnl_vector<double> slopevec = dynamic_cast<LinearRegressionShapeMatrix*>(
-                                      m_sampler->GetEnsembleRegressionEntropyFunction()->GetShapeMatrix())
-                                      ->GetSlope();
+    vnl_vector<double> slopevec =
+        dynamic_cast<LinearRegressionShapeMatrix*>(m_sampler->GetEnsembleRegressionEntropyFunction()->GetShapeMatrix())
+            ->GetSlope();
 
     for (unsigned int i = 0; i < slopevec.size(); i++) {
       slope.push_back(slopevec[i]);
@@ -1623,9 +1633,9 @@ void Optimize::WriteParameters(std::string output_dir) {
     out.close();
 
     std::vector<double> intercept;
-    vnl_vector<double> interceptvec = dynamic_cast<LinearRegressionShapeMatrix*>(
-                                          m_sampler->GetEnsembleRegressionEntropyFunction()->GetShapeMatrix())
-                                          ->GetIntercept();
+    vnl_vector<double> interceptvec =
+        dynamic_cast<LinearRegressionShapeMatrix*>(m_sampler->GetEnsembleRegressionEntropyFunction()->GetShapeMatrix())
+            ->GetIntercept();
 
     for (unsigned int i = 0; i < slopevec.size(); i++) {
       intercept.push_back(interceptvec[i]);
@@ -1934,13 +1944,9 @@ void Optimize::SetMeshFiles(const std::vector<std::string>& mesh_files) { m_samp
 void Optimize::SetAttributeScales(const std::vector<double>& scales) { this->m_sampler->SetAttributeScales(scales); }
 
 //---------------------------------------------------------------------------
-void Optimize::SetFeaFiles(const std::vector<std::string>& files) { this->m_sampler->SetFeaFiles(files); }
-
-//---------------------------------------------------------------------------
-void Optimize::SetFeaGradFiles(const std::vector<std::string>& files) { this->m_sampler->SetFeaGradFiles(files); }
-
-//---------------------------------------------------------------------------
-void Optimize::SetFidsFiles(const std::vector<std::string>& files) { this->m_sampler->SetFidsFiles(files); }
+void Optimize::SetFieldAttributes(const std::vector<std::string>& field_attributes) {
+  m_sampler->SetFieldAttributes(field_attributes);
+}
 
 //---------------------------------------------------------------------------
 void Optimize::SetParticleFlags(std::vector<int> flags) { this->m_particle_flags = flags; }

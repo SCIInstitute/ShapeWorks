@@ -9,7 +9,7 @@
 #include <boost/filesystem.hpp>
 #include <functional>
 
-#include "Libs/Optimize/Domain/VtkMeshWrapper.h"
+//#include "Libs/Optimize/Domain/VtkMeshWrapper.h"
 #include "Optimize.h"
 
 using namespace shapeworks;
@@ -44,6 +44,10 @@ const std::string checkpointing_interval = "checkpointing_interval";
 const std::string save_init_splits = "save_init_splits";
 const std::string keep_checkpoints = "keep_checkpoints";
 const std::string use_disentangled_ssm = "use_disentangled_ssm";
+const std::string field_attributes = "field_attributes";
+const std::string field_attribute_weights = "field_attribute_weights";
+const std::string use_geodesics_to_landmarks = "use_geodesics_to_landmarks";
+const std::string geodesics_to_landmarks_weight = "geodesics_to_landmarks_weight";
 }  // namespace Keys
 
 //---------------------------------------------------------------------------
@@ -77,6 +81,11 @@ OptimizeParameters::OptimizeParameters(ProjectHandle project) {
                                          Keys::fixed_subjects_choice,
                                          Keys::checkpointing_interval,
                                          Keys::save_init_splits,
+                                         Keys::keep_checkpoints,
+                                         Keys::field_attributes,
+                                         Keys::field_attribute_weights,
+                                         Keys::use_geodesics_to_landmarks,
+                                         Keys::geodesics_to_landmarks_weight,
                                          Keys::keep_checkpoints,
                                          Keys::use_disentangled_ssm
 
@@ -348,8 +357,21 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
   std::vector<bool> use_xyz;
   std::vector<double> attr_scales;
 
-  // xyz forced
+  auto field_attributes = get_field_attributes();
+  auto field_weights = get_field_attribute_weights();
+
+  if (get_use_geodesics_to_landmarks()) {
+    // for each landmark, add to field attributes
+    auto landmarks = project_->get_landmarks(0);
+    // TODO: per domain???
+    for (int i = 0; i < landmarks.size(); i++) {
+      field_attributes.push_back("geodesic_distance_to_" + std::to_string(i));
+      field_weights.push_back(get_geodesic_to_landmarks_weight());
+    }
+  }
+
   for (int i = 0; i < domains_per_shape; i++) {
+    // xyz forced
     use_xyz.push_back(1);
     attr_scales.push_back(1);
     attr_scales.push_back(1);
@@ -366,16 +388,34 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
     }
   }
 
-  optimize->SetUseNormals(use_normals);
-  optimize->SetUseXYZ(use_xyz);
-  optimize->SetUseMeshBasedAttributes(normals_enabled);
-  optimize->SetAttributeScales(attr_scales);
-
   std::vector<int> attributes_per_domain;
   for (int i = 0; i < domains_per_shape; i++) {
-    attributes_per_domain.push_back(0);
+    attributes_per_domain.push_back(field_attributes.size());
   }
+
+  // check that the number of weights matches the number of attributes
+  if (field_weights.size() != field_attributes.size()) {
+    throw std::runtime_error("The number of field attribute weights does not match the number of field attributes");
+  }
+
+  for (int j = 0; j < field_attributes.size(); j++) {
+    SW_LOG("Using scalar field attribute: {} with weight {}", field_attributes[j], field_weights[j]);
+  }
+
+  for (int i = 0; i < domains_per_shape; i++) {
+    for (int j = 0; j < field_attributes.size(); j++) {
+      attr_scales.push_back(field_weights[j]);
+    }
+  }
+
   optimize->SetAttributesPerDomain(attributes_per_domain);
+  bool use_extra_attributes = normals_enabled || field_attributes.size() > 0;
+
+  optimize->SetUseNormals(use_normals);
+  optimize->SetUseXYZ(use_xyz);
+  optimize->SetUseMeshBasedAttributes(use_extra_attributes);
+  optimize->SetAttributeScales(attr_scales);
+  optimize->SetFieldAttributes(field_attributes);
 
   int procrustes_interval = 0;
   if (get_use_procrustes()) {
@@ -503,6 +543,27 @@ bool OptimizeParameters::set_up_optimize(Optimize* optimize) {
           constraint.clipMesh(mesh);
         }
 
+        /// HERE!
+
+        if (get_use_geodesics_to_landmarks()) {
+          auto filenames = s->get_landmarks_filenames();
+          Eigen::VectorXd points;
+          if (!ParticleSystemEvaluation::ReadParticleFile(filenames[0], points)) {
+            SW_ERROR("Unable to read landmark file: {}", filenames[0]);
+          }
+
+          // convert points to landmarks
+          std::vector<Point3> landmarks;
+          for (int i = 0; i < points.size() / 3; ++i) {
+            Point3 p;
+            p[0] = points(3 * i);
+            p[1] = points(3 * i + 1);
+            p[2] = points(3 * i + 2);
+            landmarks.push_back(p);
+          }
+          mesh.computeLandmarkGeodesics(landmarks);
+        }
+
         auto poly_data = mesh.getVTKMesh();
 
         if (poly_data) {
@@ -606,5 +667,46 @@ void OptimizeParameters::set_save_init_splits(bool enabled) { params_.set(Keys::
 
 //---------------------------------------------------------------------------
 bool OptimizeParameters::get_keep_checkpoints() { return params_.get(Keys::keep_checkpoints, false); }
+
 //---------------------------------------------------------------------------
 void OptimizeParameters::set_keep_checkpoints(bool enabled) { params_.set(Keys::keep_checkpoints, enabled); }
+
+//---------------------------------------------------------------------------
+std::vector<std::string> OptimizeParameters::get_field_attributes() {
+  return params_.get(Keys::field_attributes, std::vector<std::string>());
+}
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_field_attributes(std::vector<std::string> attributes) {
+  params_.set(Keys::field_attributes, attributes);
+}
+
+//---------------------------------------------------------------------------
+std::vector<double> OptimizeParameters::get_field_attribute_weights() {
+  return params_.get(Keys::field_attribute_weights, std::vector<double>());
+}
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_field_attribute_weights(std::vector<double> weights) {
+  params_.set(Keys::field_attribute_weights, weights);
+}
+
+//---------------------------------------------------------------------------
+bool OptimizeParameters::get_use_geodesics_to_landmarks() {
+  return params_.get(Keys::use_geodesics_to_landmarks, false);
+}
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_use_geodesics_to_landmarks(bool enabled) {
+  params_.set(Keys::use_geodesics_to_landmarks, enabled);
+}
+
+//---------------------------------------------------------------------------
+double OptimizeParameters::get_geodesic_to_landmarks_weight() {
+  return params_.get(Keys::geodesics_to_landmarks_weight, 1.0);
+}
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_geodesic_to_landmarks_weight(double value) {
+  params_.set(Keys::geodesics_to_landmarks_weight, value);
+}

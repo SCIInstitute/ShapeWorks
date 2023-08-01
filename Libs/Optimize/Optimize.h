@@ -236,12 +236,9 @@ class Optimize {
   void SetMeshFiles(const std::vector<std::string>& mesh_files);
   //! Set attribute scales (TODO: details)
   void SetAttributeScales(const std::vector<double>& scales);
-  //! Set FEA files (TODO: details)
-  void SetFeaFiles(const std::vector<std::string>& files);
-  //! Set FEA grad files (TODO: details)
-  void SetFeaGradFiles(const std::vector<std::string>& files);
-  //! Set FIDS files (TODO: details)
-  void SetFidsFiles(const std::vector<std::string>& files);
+
+  //! Set the field attributes
+  void SetFieldAttributes(const std::vector<std::string>& field_attributes);
 
   //! Set Particle Flags (TODO: details)
   void SetParticleFlags(std::vector<int> flags);
@@ -468,7 +465,6 @@ class Optimize {
   std::chrono::system_clock::time_point m_last_update_time;
   std::chrono::system_clock::time_point m_last_remaining_update_time;
   std::string m_remaining_time_message;
-
 };
 
 }  // namespace shapeworks

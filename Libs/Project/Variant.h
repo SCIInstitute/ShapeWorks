@@ -3,6 +3,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <Utils/StringUtils.h>
 
 namespace shapeworks {
 
@@ -14,7 +15,13 @@ std::string variant_to_string(T begin, T end) {
     if (!first) {
       ss << " ";
     }
-    ss << *begin;
+    if constexpr (std::is_same<T, std::string>::value) {
+      // cast to string and replace spaces
+      std::string s(*begin);
+      ss << StringUtils::replace_string(s," ", "%20");
+    } else {
+      ss << *begin;
+    }
     first = false;
   }
   return ss.str();
@@ -36,6 +43,7 @@ class Variant {
   Variant(std::vector<double> v) : str_(variant_to_string(v.begin(), v.end())), valid_(true) {}
   Variant(std::vector<int> v) : str_(variant_to_string(v.begin(), v.end())), valid_(true) {}
   Variant(std::vector<bool> v) : str_(variant_to_string(v.begin(), v.end())), valid_(true) {}
+  Variant(std::vector<std::string> v) : str_(variant_to_string(v.begin(), v.end())), valid_(true) {}
 
   operator std::string() const;
   operator bool() const;
@@ -48,6 +56,7 @@ class Variant {
   operator std::vector<double>() const;
   operator std::vector<int>() const;
   operator std::vector<bool>() const;
+  operator std::vector<std::string>() const;
 
  private:
   std::string str_;

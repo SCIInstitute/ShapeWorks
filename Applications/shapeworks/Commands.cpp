@@ -126,7 +126,13 @@ bool OptimizeCommand::execute(const optparse::Values& options, SharedCommandData
     try {
       // load spreadsheet project
       ProjectHandle project = std::make_shared<Project>();
-      project->load(projectFile);
+      try {
+        project->load(projectFile);
+      } catch (std::exception& e) {
+        SW_ERROR("Project failed to load: {}", e.what());
+        return false;
+      }
+
 
       const auto oldBasePath = boost::filesystem::current_path();
       auto base = StringUtils::getPath(projectFile);

@@ -145,8 +145,8 @@ class ShapeGradientMatrix : public vnl_matrix<double>, public Observer {
   ShapeGradientMatrix(const Self&);  // purposely not implemented
   void operator=(const Self&);       // purposely not implemented
 
-  std::vector<bool> m_use_xyz;
-  std::vector<bool> m_use_normals;
+  std::vector<bool> m_use_xyz;  // one per anatomy/domain?
+  std::vector<bool> m_use_normals;  // one per anatomy/domain?
   std::vector<int> m_AttributesPerDomain;
   std::vector<double> m_AttributeScales;
 

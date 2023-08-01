@@ -700,9 +700,7 @@ void ShapeWorksStudioApp::handle_progress_with_message(int value, std::string st
 }
 
 //---------------------------------------------------------------------------
-void ShapeWorksStudioApp::handle_progress(int value) {
-  status_bar_->set_progress(value);
-}
+void ShapeWorksStudioApp::handle_progress(int value) { status_bar_->set_progress(value); }
 
 //---------------------------------------------------------------------------
 void ShapeWorksStudioApp::set_message(MessageType message_type, QString message) {
@@ -1347,8 +1345,11 @@ void ShapeWorksStudioApp::update_display(bool force) {
   } else {
     current_display_mode_ = mode;
 
-    visualizer_->set_mean(analysis_tool_->get_mean_shape_points().get_combined_global_particles());
-    visualizer_->set_mean_shape(analysis_tool_->get_mean_shape());
+    // if analysis mode
+    if (session_->get_tool_state() == Session::ANALYSIS_C) {
+      visualizer_->set_mean(analysis_tool_->get_mean_shape_points().get_combined_global_particles());
+      visualizer_->set_mean_shape(analysis_tool_->get_mean_shape());
+    }
 
     if (mode == AnalysisTool::MODE_ALL_SAMPLES_C) {
       session_->calculate_reconstructed_samples();
