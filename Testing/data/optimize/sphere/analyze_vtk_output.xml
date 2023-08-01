@@ -1,0 +1,6 @@
+<point_files>
+vtk_output_particles/sphere10_DT_world.vtk
+vtk_output_particles/sphere20_DT_world.vtk
+vtk_output_particles/sphere30_DT_world.vtk
+vtk_output_particles/sphere40_DT_world.vtk
+</point_files>
