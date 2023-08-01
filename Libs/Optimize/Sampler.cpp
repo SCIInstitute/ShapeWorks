@@ -73,7 +73,6 @@ void Sampler::AllocateDomainsAndNeighborhoods() {
   // *after* registering the attributes to the particle system since some of
   // them respond to AddDomain.
   // Here, the Constraints actually get added to the constraints class
-  int ctr = 0;
   for (unsigned int i = 0; i < this->m_DomainList.size(); i++) {
     auto domain = m_DomainList[i];
 
@@ -90,8 +89,6 @@ void Sampler::AllocateDomainsAndNeighborhoods() {
                       << std::endl;
         }
       }
-
-      auto imageDomain = static_cast<ImplicitSurfaceDomain<ImageType::PixelType>*>(domain.get());
 
       // Adding free-form constraints to constraint object
       // std::cout << "m_FFCs.size() " << m_FFCs.size() << std::endl;
@@ -148,7 +145,6 @@ void Sampler::ReadPointsFiles() {
 void Sampler::InitializeOptimizationFunctions() {
   // Set the minimum neighborhood radius and maximum sigma based on the
   // domain of the 1st input image.
-  unsigned int maxdim = 0;
   double maxradius = -1.0;
   double minimumNeighborhoodRadius = this->m_Spacing;
 
