@@ -15,7 +15,14 @@
 
 using namespace shapeworks;
 
-// until we have a "groom" library we can call
+//---------------------------------------------------------------------------
+static void prep_temp(std::string data, std::string name) {
+  TestUtils::Instance().prep_temp(std::string(TEST_DATA_DIR) + "/optimize/shared", "shared");
+  TestUtils::Instance().prep_temp(std::string(TEST_DATA_DIR) + data, name);
+}
+
+//---------------------------------------------------------------------------
+// TODO: Replace this with Image class calls
 static void prep_distance_transform(std::string input, std::string output) {
   using ImageType = itk::Image<float, 3>;
   using ReaderType = itk::ImageFileReader<ImageType>;
@@ -38,7 +45,6 @@ static void prep_distance_transform(std::string input, std::string output) {
   writer->SetUseCompression(true);
   writer->Update();
 }
-
 
 //---------------------------------------------------------------------------
 static bool check_constraint_violations(Optimize &app, double slack) {
@@ -90,7 +96,7 @@ static bool check_constraint_violations(Optimize &app, double slack) {
 
 //---------------------------------------------------------------------------
 TEST(OptimizeTests, sample) {
-  setupenv(std::string(TEST_DATA_DIR) + "/optimize/sphere");
+  prep_temp("/optimize/sphere", "sample");
 
   // make sure we clean out at least one necessary file to make sure we re-run
   std::remove("optimize_particles/sphere10_DT_world.particles");
@@ -98,7 +104,7 @@ TEST(OptimizeTests, sample) {
   // run with parameter file
   Optimize app;
   ProjectHandle project = std::make_shared<Project>();
-  ASSERT_TRUE(project->load("optimize.xlsx"));
+  ASSERT_TRUE(project->load("optimize.swproj"));
   OptimizeParameters params(project);
   ASSERT_TRUE(params.set_up_optimize(&app));
   app.Run();
@@ -124,7 +130,8 @@ TEST(OptimizeTests, sample) {
 
 //---------------------------------------------------------------------------
 TEST(OptimizeTests, open_mesh_test) {
-  setupenv(std::string(TEST_DATA_DIR) + "/optimize/hemisphere");
+  prep_temp("/optimize/hemisphere", "open_mesh_test");
+  //setupenv(std::string(TEST_DATA_DIR) + "/optimize/hemisphere");
 
   // make sure we clean out at least one necessary file to make sure we re-run
   std::remove("optimize_particles/hemisphere00_world.particles");
@@ -372,8 +379,6 @@ TEST(OptimizeTests, contour_domain_test) {
   ASSERT_GT(values[values.size() - 1], 2000.0);
   ASSERT_LT(values[values.size() - 2], 1.0);
 }
-
-
 
 //---------------------------------------------------------------------------
 TEST(OptimizeTests, procrustes_disabled_test) {
