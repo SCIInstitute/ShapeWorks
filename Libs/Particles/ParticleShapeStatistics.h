@@ -9,8 +9,6 @@
 
 #include "ParticleSystemEvaluation.h"
 #include "Shapeworks.h"
-#include "itkParticlePositionReader.h"
-#include "itkParticlePositionWriter.h"
 
 namespace shapeworks {
 
@@ -153,7 +151,6 @@ class ParticleShapeStatistics {
   Eigen::MatrixXd& matrix() { return m_Matrix; };
 
  private:
-
   unsigned int m_numSamples1;
   unsigned int m_numSamples2;
   unsigned int m_numSamples;

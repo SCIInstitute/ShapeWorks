@@ -2,12 +2,11 @@
 #include "Sampler.h"
 
 #include <Logging.h>
+#include <Particles/ParticleFile.h>
 
 #include "Libs/Optimize/Domain/ContourDomain.h"
-#include "Libs/Optimize/Domain/ImageDomain.h"
 #include "Libs/Optimize/Utils/ObjectReader.h"
-#include "itkImageRegionIterator.h"
-#include "itkParticlePositionReader.h"
+
 
 namespace shapeworks {
 
@@ -130,10 +129,8 @@ void Sampler::ReadPointsFiles() {
   // If points file names have been specified, then read the initial points.
   for (unsigned int i = 0; i < m_PointsFiles.size(); i++) {
     if (m_PointsFiles[i] != "") {
-      ParticlePositionReader::Pointer reader = ParticlePositionReader::New();
-      reader->SetFileName(m_PointsFiles[i].c_str());
-      reader->Update();
-      this->GetParticleSystem()->AddPositionList(reader->GetOutput(), i);
+      auto points = particles::read_particles_as_vector(m_PointsFiles[i]);
+      this->GetParticleSystem()->AddPositionList(points, i);
     }
   }
 

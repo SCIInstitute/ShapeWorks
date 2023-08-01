@@ -174,10 +174,6 @@ class Optimize {
   void SetOptimizationIterationsCompleted(int optimization_iterations_completed);
   //! Set the number of iterations per split
   void SetIterationsPerSplit(int iterations_per_split);
-  //! Set the init criterion (TODO: details)
-  void SetInitializationCriterion(double init_criterion);
-  //! Set the optimization criterion (TODO: details)
-  void SetOptimizationCriterion(double opt_criterion);
   //! Set if shape statistics should be used in initialization
   void SetUseShapeStatisticsInInit(bool use_shape_statistics_in_init);
   //! Set the interval for running procrustes (0 to disable)
@@ -208,9 +204,9 @@ class Optimize {
   //! Set if mixed effects should be used (TODO: details)
   void SetUseMixedEffects(bool use_mixed_effects);
 
-  //! Set if optimization should be done using disentangled spatiotemporal SSM method 
+  //! Set if optimization should be done using disentangled spatiotemporal SSM method
   void SetUseDisentangledSpatiotemporalSSM(bool use_disentangled_ssm_4d);
-  //! Returns true if optimization is to be done using disentangled spatiotemporal SSM method 
+  //! Returns true if optimization is to be done using disentangled spatiotemporal SSM method
   bool GetUseDisentangledSpatiotemporalSSM();
 
   //! For good/bad analysis, set the normal angle to use (TODO: details)
@@ -291,7 +287,7 @@ class Optimize {
   //! n * number_of_triangles
   void SetGeodesicsCacheSizeMultiplier(size_t n);
 
-  shapeworks::OptimizationVisualizer& GetVisualizer();
+  OptimizationVisualizer& GetVisualizer();
   void SetShowVisualizer(bool show);
   bool GetShowVisualizer();
 
@@ -301,6 +297,8 @@ class Optimize {
   vnl_vector_fixed<double, 3> TransformPoint(int domain, vnl_vector_fixed<double, 3> input);
 
   void UpdateProgress();
+
+  void set_particle_format(std::string format) { particle_format_ = format; }
 
  protected:
   //! Set the iteration callback. Derived classes should override to set their own callback
@@ -399,8 +397,6 @@ class Optimize {
   int m_optimization_iterations = 2000;
   int m_optimization_iterations_completed = 0;
   int m_iterations_per_split = 1000;
-  double m_initialization_criterion = 1e-6;
-  double m_optimization_criterion = 1e-6;
   bool m_use_shape_statistics_in_init = false;
   unsigned int m_procrustes_interval = 3;
   bool m_procrustes_scaling = true;
@@ -459,6 +455,7 @@ class Optimize {
   bool show_visualizer_ = false;
   shapeworks::OptimizationVisualizer visualizer_;
 
+  std::string particle_format_ = "particles";
   std::shared_ptr<Project> project_;
 
   std::chrono::system_clock::time_point m_start_time;

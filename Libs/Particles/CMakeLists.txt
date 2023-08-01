@@ -12,8 +12,6 @@ set(Particles_sources
 set(Particles_headers
   ParticleSystemEvaluation.h
   ParticleShapeStatistics.h
-  itkParticlePositionReader.h
-  itkParticlePositionWriter.h
   EvaluationUtil.h
   ShapeEvaluation.h
   ReconstructSurface.h

@@ -10,7 +10,7 @@
 
 namespace shapeworks::particles {
 //---------------------------------------------------------------------------
-void write_vtk_particles(std::string filename, const Eigen::VectorXd& points) {
+static void write_vtk_particles(std::string filename, const Eigen::VectorXd& points) {
   auto vtk_points = vtkSmartPointer<vtkPoints>::New();
   int num_points = points.size() / 3;
   int idx = 0;
@@ -29,7 +29,7 @@ void write_vtk_particles(std::string filename, const Eigen::VectorXd& points) {
 }
 
 //---------------------------------------------------------------------------
-Eigen::VectorXd read_vtk_particles(std::string filename) {
+static Eigen::VectorXd read_vtk_particles(std::string filename) {
   auto reader = vtkSmartPointer<vtkPolyDataReader>::New();
   reader->SetFileName(filename.c_str());
   reader->Update();
@@ -106,6 +106,38 @@ void write_particles(std::string filename, const Eigen::VectorXd& points) {
     out << points[idx++] << " " << points[idx++] << " " << points[idx++] << "\n";
   }
   out.close();
+}
+
+//---------------------------------------------------------------------------
+std::vector<itk::Point<double, 3> > read_particles_as_vector(std::string filename) {
+  Eigen::VectorXd particles = read_particles(filename);
+
+  int num_points = particles.size() / 3;
+  // now convert to vector of itk points
+  std::vector<itk::Point<double, 3> > points;
+  points.resize(num_points);
+  int idx = 0;
+  for (int i = 0; i < num_points; i++) {
+    points[i][0] = particles[idx++];
+    points[i][1] = particles[idx++];
+    points[i][2] = particles[idx++];
+  }
+
+  return points;
+}
+
+//---------------------------------------------------------------------------
+void write_particles_from_vector(std::string filename, std::vector<itk::Point<double, 3> > points) {
+  Eigen::VectorXd particles;
+  particles.setZero();
+  particles.resize(points.size() * 3);
+  int idx = 0;
+  for (int i = 0; i < points.size(); i++) {
+    particles[idx++] = points[i][0];
+    particles[idx++] = points[i][1];
+    particles[idx++] = points[i][2];
+  }
+  write_particles(filename, particles);
 }
 
 }  // namespace shapeworks::particles

@@ -21,7 +21,6 @@ static void prep_temp(std::string data, std::string name) {
   TestUtils::Instance().prep_temp(std::string(TEST_DATA_DIR) + data, name);
 }
 
-
 //---------------------------------------------------------------------------
 static bool check_constraint_violations(Optimize &app, double slack) {
   // Check that points don't violate the constraints
@@ -669,4 +668,38 @@ TEST(OptimizeTests, mesh_ffc_test_aug_lag) {
 
   bool good = check_constraint_violations(app, 20.0e-1);
   ASSERT_TRUE(good);
+}
+
+//---------------------------------------------------------------------------
+TEST(OptimizeTests, vtk_output) {
+  prep_temp("/optimize/sphere", "vtk_output");
+
+  // make sure we clean out at least one necessary file to make sure we re-run
+  std::remove("vtk_output_particles/sphere10_DT_world.vtk");
+
+  // run with parameter file
+  Optimize app;
+  ProjectHandle project = std::make_shared<Project>();
+  ASSERT_TRUE(project->load("vtk_output.swproj"));
+  OptimizeParameters params(project);
+  ASSERT_TRUE(params.set_up_optimize(&app));
+  app.Run();
+
+  // compute stats
+  ParticleShapeStatistics stats;
+  stats.ReadPointFiles("analyze_vtk_output.xml");
+  stats.ComputeModes();
+  stats.PrincipalComponentProjections();
+
+  // print out eigenvalues (for debugging)
+  auto values = stats.Eigenvalues();
+  for (int i = 0; i < values.size(); i++) {
+    std::cerr << "Eigenvalue " << i << " : " << values[i] << "\n";
+  }
+
+  // check the first mode of variation.
+  // If Procrustes scaling is working, this should be small.
+  // Otherwise it is quite large (>4000).
+  double value = values[values.size() - 1];
+  ASSERT_LT(value, 100);
 }
