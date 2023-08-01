@@ -165,7 +165,7 @@ TEST(OptimizeTests, open_mesh_test) {
 
 //---------------------------------------------------------------------------
 TEST(OptimizeTests, fixed_domain) {
-  setupenv(std::string(TEST_DATA_DIR) + "/optimize/fixed_domain");
+  prep_temp("/optimize/fixed_domain", "fixed_domain");
 
   // make sure we clean out the output file of interest
   std::remove("optimize_particles/sphere10_DT_world.particles");
@@ -199,7 +199,7 @@ TEST(OptimizeTests, fixed_domain) {
 
 //---------------------------------------------------------------------------
 TEST(OptimizeTests, fixed_mesh_domain_test) {
-  setupenv(std::string(TEST_DATA_DIR) + "/optimize/fixed_mesh_domain");
+  prep_temp("/optimize/fixed_mesh_domain", "fixed_mesh_domain");
 
   // make sure we clean out the output file of interest
   std::remove("optimize_particles/id0000_ss3_world.particles");
