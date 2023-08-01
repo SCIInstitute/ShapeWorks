@@ -124,6 +124,10 @@ class OptimizeParameters {
   double get_geodesic_to_landmarks_weight();
   void set_geodesic_to_landmarks_weight(double value);
 
+  std::string get_particle_format();
+  void set_particle_format(std::string format);
+
+
  private:
   std::string get_output_prefix();
 

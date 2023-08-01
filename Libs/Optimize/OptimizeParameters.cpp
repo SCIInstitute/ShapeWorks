@@ -48,6 +48,7 @@ const std::string field_attributes = "field_attributes";
 const std::string field_attribute_weights = "field_attribute_weights";
 const std::string use_geodesics_to_landmarks = "use_geodesics_to_landmarks";
 const std::string geodesics_to_landmarks_weight = "geodesics_to_landmarks_weight";
+const std::string particle_format = "particles";
 }  // namespace Keys
 
 //---------------------------------------------------------------------------
@@ -87,8 +88,8 @@ OptimizeParameters::OptimizeParameters(ProjectHandle project) {
                                          Keys::use_geodesics_to_landmarks,
                                          Keys::geodesics_to_landmarks_weight,
                                          Keys::keep_checkpoints,
-                                         Keys::use_disentangled_ssm
-
+                                         Keys::use_disentangled_ssm,
+                                         Keys::particle_format
   };
 
   // check if params_ has any unknown keys
@@ -710,3 +711,9 @@ double OptimizeParameters::get_geodesic_to_landmarks_weight() {
 void OptimizeParameters::set_geodesic_to_landmarks_weight(double value) {
   params_.set(Keys::geodesics_to_landmarks_weight, value);
 }
+
+//---------------------------------------------------------------------------
+std::string OptimizeParameters::get_particle_format() { return params_.get(Keys::particle_format, "particles"); }
+
+//---------------------------------------------------------------------------
+void OptimizeParameters::set_particle_format(std::string format) { params_.set(Keys::particle_format, format); }
